@@ -29,6 +29,11 @@
  */
 package org.pushingpixels.mosaic.components
 
+import androidx.compose.animation.AnimatedValueModel
+import androidx.compose.animation.VectorConverter
+import androidx.compose.animation.asDisposableClock
+import androidx.compose.animation.core.*
+import androidx.compose.animation.transition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
@@ -45,18 +50,26 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.AnimationClockAmbient
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.mosaic.AmbientTextColor
 import org.pushingpixels.mosaic.MosaicSkin
 
 private val CheckboxSize = 14.dp
+private val CheckMarkDrawFraction = FloatPropKey()
 
 interface CheckBoxColors {
+    @Composable
     fun backgroundColor(selected: Boolean): Color
 
+    @Composable
     fun borderColor(selected: Boolean): Color
 
+    @Composable
     fun markColor(selected: Boolean): Color
+
+    @Composable
+    fun textColor(): Color
 }
 
 @Composable
@@ -66,12 +79,29 @@ fun defaultCheckBoxColors(
     borderColor: Color = MosaicSkin.colors.enabledForeground,
     selectedBorderColor: Color = MosaicSkin.colors.selectedForeground,
     markColor: Color = MosaicSkin.colors.enabledForeground,
-    selectedMarkColor: Color = MosaicSkin.colors.selectedForeground
-): CheckBoxColors = DefaultCheckBoxColors(
-    backgroundColor, selectedBackgroundColor,
-    borderColor, selectedBorderColor,
-    markColor, selectedMarkColor
-)
+    selectedMarkColor: Color = MosaicSkin.colors.selectedForeground,
+    textColor: Color = MosaicSkin.colors.enabledForeground
+): CheckBoxColors {
+    val clock = AnimationClockAmbient.current.asDisposableClock()
+    return remember(
+        backgroundColor, selectedBackgroundColor,
+        borderColor, selectedBorderColor,
+        markColor, selectedMarkColor,
+        textColor,
+        clock
+    ) {
+        DefaultCheckBoxColors(
+            backgroundColor = backgroundColor,
+            selectedBackgroundColor = selectedBackgroundColor,
+            borderColor = borderColor,
+            selectedBorderColor = selectedBorderColor,
+            markColor = markColor,
+            selectedMarkColor = selectedMarkColor,
+            textColor = textColor,
+            clock = clock
+        )
+    }
+}
 
 private class DefaultCheckBoxColors(
     private val backgroundColor: Color,
@@ -79,18 +109,71 @@ private class DefaultCheckBoxColors(
     private val borderColor: Color,
     private val selectedBorderColor: Color,
     private val markColor: Color,
-    private val selectedMarkColor: Color
+    private val selectedMarkColor: Color,
+    private val textColor: Color,
+    private val clock: AnimationClockObservable
 ) : CheckBoxColors {
+
+    private val animatedBackgroundColorTracker = LazyAnimatedValue<Color, AnimationVector4D> { target ->
+        AnimatedValueModel(target, (Color.VectorConverter)(target.colorSpace), clock)
+    }
+
+    private val animatedMarkColorTracker = LazyAnimatedValue<Color, AnimationVector4D> { target ->
+        AnimatedValueModel(target, (Color.VectorConverter)(target.colorSpace), clock)
+    }
+
+    private val animatedBorderColorTracker = LazyAnimatedValue<Color, AnimationVector4D> { target ->
+        AnimatedValueModel(target, (Color.VectorConverter)(target.colorSpace), clock)
+    }
+
+    @Composable
     override fun backgroundColor(selected: Boolean): Color {
-        return if (selected) selectedBackgroundColor else backgroundColor
+        val target = if (selected) {
+            selectedBackgroundColor
+        } else {
+            backgroundColor
+        }
+
+        val animatedBackgroundColor = animatedBackgroundColorTracker.animatedValueForTarget(target)
+
+        if (animatedBackgroundColor.targetValue != target) {
+            animatedBackgroundColor.animateTo(
+                target,
+                tween(durationMillis = MosaicSkin.animationConfig.regular)
+            )
+        }
+
+        return animatedBackgroundColor.value
     }
 
+    @Composable
     override fun borderColor(selected: Boolean): Color {
-        return if (selected) selectedBorderColor else borderColor
+        val target = if (selected) {
+            selectedBorderColor
+        } else {
+            borderColor
+        }
+
+        val animatedBorderColor = animatedBorderColorTracker.animatedValueForTarget(target)
+
+        if (animatedBorderColor.targetValue != target) {
+            animatedBorderColor.animateTo(
+                target,
+                tween(durationMillis = MosaicSkin.animationConfig.regular)
+            )
+        }
+
+        return animatedBorderColor.value
     }
 
+    @Composable
     override fun markColor(selected: Boolean): Color {
-        return if (selected) selectedMarkColor else markColor
+        return selectedMarkColor
+    }
+
+    @Composable
+    override fun textColor(): Color {
+        return textColor
     }
 
     override fun equals(other: Any?): Boolean {
@@ -100,7 +183,7 @@ private class DefaultCheckBoxColors(
         other as DefaultCheckBoxColors
 
         if (backgroundColor != other.backgroundColor) return false
-        if (selectedBackgroundColor != other.selectedBorderColor) return false
+        if (selectedBackgroundColor != other.selectedBackgroundColor) return false
         if (borderColor != other.borderColor) return false
         if (selectedBorderColor != other.selectedBorderColor) return false
         if (markColor != other.markColor) return false
@@ -121,6 +204,27 @@ private class DefaultCheckBoxColors(
 }
 
 @Composable
+fun CheckMarkTransitionDefinition(duration: Int) : TransitionDefinition<Boolean> {
+    return transitionDefinition<Boolean> {
+        state(false) {
+            this[CheckMarkDrawFraction] = 0.0f
+        }
+
+        state(true) {
+            this[CheckMarkDrawFraction] = 1.0f
+        }
+
+        transition(false to true) {
+            CheckMarkDrawFraction using tween(durationMillis = duration)
+        }
+
+        transition(true to false) {
+            CheckMarkDrawFraction using tween(durationMillis = duration)
+        }
+    }
+}
+
+@Composable
 fun MosaicCheckBox(
     modifier: Modifier = Modifier,
     shape: Shape = MosaicSkin.shapes.small,
@@ -130,6 +234,13 @@ fun MosaicCheckBox(
     content: @Composable RowScope.() -> Unit
 ) {
     val checkedState = remember { mutableStateOf(checked) }
+
+    // Transition for animating the alpha channel of the checkbox mark
+    val transitionState = transition(
+        definition = CheckMarkTransitionDefinition(MosaicSkin.animationConfig.short),
+        initState = checkedState.value,
+        toState = checkedState.value
+    )
 
     // The toggleable modifier is set on the checkbox mark, as well as on the
     // content so that the whole thing is clickable to toggle the control.
@@ -144,11 +255,11 @@ fun MosaicCheckBox(
         ),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Canvas(modifier.wrapContentSize(Alignment.Center).size(CheckboxSize)) {
-            val fillColor = colors.backgroundColor(checkedState.value)
-            val borderColor = colors.borderColor(checkedState.value)
-            val markColor = colors.markColor(checkedState.value)
+        val fillColor = colors.backgroundColor(checkedState.value)
+        val borderColor = colors.borderColor(checkedState.value)
+        val markColor = colors.markColor(checkedState.value)
 
+        Canvas(modifier.wrapContentSize(Alignment.Center).size(CheckboxSize)) {
             val width = this.size.width
             val height = this.size.height
             val oneDp = 1.dp.toPx()
@@ -166,22 +277,22 @@ fun MosaicCheckBox(
                 color = borderColor
             )
 
-            if (checkedState.value) {
-                val path = Path()
-                path.moveTo(0.22f * width, 0.45f * height)
-                path.lineTo(0.45f * width, 0.7f * height)
-                path.lineTo(0.73f * width, 0.25f * height)
+            // Draw the checkbox mark with the alpha that corresponds to the current
+            // selection and potential transition
+            val path = Path()
+            path.moveTo(0.22f * width, 0.45f * height)
+            path.lineTo(0.45f * width, 0.7f * height)
+            path.lineTo(0.73f * width, 0.25f * height)
 
-                drawPath(
-                    path = path,
-                    color = markColor,
-                    style = Stroke(width = outerStroke)
-                )
-            }
+            drawPath(
+                path = path,
+                color = markColor.copy(alpha = transitionState[CheckMarkDrawFraction]),
+                style = Stroke(width = outerStroke)
+            )
         }
         // Unlike buttons, the rest of the content should ignore (at least for now)
         // the selected state of the checkbox for drawing the text
-        Providers(AmbientTextColor provides colors.borderColor(false)) {
+        Providers(AmbientTextColor provides colors.textColor()) {
             Row(
                 Modifier
                     .defaultMinSizeConstraints(

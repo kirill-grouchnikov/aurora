@@ -98,7 +98,7 @@ fun defaultButtonColors(
     }
 }
 
-class LazyAnimatedValue<T, V : AnimationVector>(
+internal class LazyAnimatedValue<T, V : AnimationVector>(
     private val factory: (target: T) -> AnimatedValue<T, V>
 ) {
     private var animatedValue: AnimatedValue<T, V>? = null
@@ -211,7 +211,6 @@ private class DefaultButtonColors(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MosaicToggleButton(
     modifier: Modifier = Modifier,
