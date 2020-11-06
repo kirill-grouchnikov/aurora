@@ -36,7 +36,10 @@ import androidx.compose.runtime.staticAmbientOf
 import androidx.compose.ui.unit.dp
 
 @Immutable
-data class ButtonShaper(val shape: CornerBasedShape = RoundedCornerShape(4.dp)) {
+data class ButtonShaper(
+    val small: CornerBasedShape = RoundedCornerShape(2.dp),
+    val regular: CornerBasedShape = RoundedCornerShape(4.dp)
+) {
 }
 
 internal val AmbientShapes = staticAmbientOf { ButtonShaper() }

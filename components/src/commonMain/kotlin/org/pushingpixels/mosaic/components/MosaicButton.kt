@@ -128,7 +128,7 @@ private class DefaultButtonColors(
 fun MosaicToggleButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
-    shape: Shape = MosaicSkin.shapes.shape,
+    shape: Shape = MosaicSkin.shapes.regular,
     colors: ButtonColors = defaultButtonColors(),
     content: @Composable RowScope.() -> Unit
 ) {

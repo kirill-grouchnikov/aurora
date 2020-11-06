@@ -30,10 +30,10 @@
 package org.pushingpixels.mosaic.components
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Providers
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -46,13 +46,10 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.mosaic.AmbientTextColor
 import org.pushingpixels.mosaic.MosaicSkin
 
-private val CheckboxSize = 20.dp
-
-enum class CheckBoxState {
-    IDLE, CHECKED
-}
+private val CheckboxSize = 14.dp
 
 interface CheckBoxColors {
     fun backgroundColor(selected: Boolean): Color
@@ -126,63 +123,75 @@ private class DefaultCheckBoxColors(
 @Composable
 fun MosaicCheckBox(
     modifier: Modifier = Modifier,
-    shape: Shape = MosaicSkin.shapes.shape,
+    shape: Shape = MosaicSkin.shapes.small,
     colors: CheckBoxColors = defaultCheckBoxColors(),
-    initialValue: Boolean = false
+    checked: Boolean = false,
+    onCheckedChange: (Boolean) -> Unit,
+    content: @Composable RowScope.() -> Unit
 ) {
-    val checked = remember { mutableStateOf(initialValue) }
+    val checkedState = remember { mutableStateOf(checked) }
 
-    val checkState = remember {
-        mutableStateOf(if (initialValue) CheckBoxState.CHECKED else CheckBoxState.IDLE)
-    }
-
-    Canvas(
-        modifier.wrapContentSize(Alignment.Center)
-            .size(CheckboxSize)
-            .toggleable(
-                value = checked.value,
-                onValueChange = {
-                    checked.value = it
-                    checkState.value = if (checked.value) {
-                        CheckBoxState.CHECKED
-                    } else {
-                        CheckBoxState.IDLE
-                    }
-                },
-                indication = null
-            )
+    // The toggleable modifier is set on the checkbox mark, as well as on the
+    // content so that the whole thing is clickable to toggle the control.
+    Row(
+        modifier = modifier.toggleable(
+            value = checkedState.value,
+            onValueChange = {
+                checkedState.value = it
+                onCheckedChange.invoke(checkedState.value)
+            },
+            indication = null
+        ),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        val fillColor = colors.backgroundColor(checkState.value == CheckBoxState.CHECKED)
-        val borderColor = colors.borderColor(checkState.value == CheckBoxState.CHECKED)
-        val markColor = colors.markColor(checkState.value == CheckBoxState.CHECKED)
+        Canvas(modifier.wrapContentSize(Alignment.Center).size(CheckboxSize)) {
+            val fillColor = colors.backgroundColor(checkedState.value)
+            val borderColor = colors.borderColor(checkedState.value)
+            val markColor = colors.markColor(checkedState.value)
 
-        val width = this.size.width
-        val height = this.size.height
-        val oneDp = 1.dp.toPx()
-        val outerStroke = 2.dp.toPx()
+            val width = this.size.width
+            val height = this.size.height
+            val oneDp = 1.dp.toPx()
+            val outerStroke = 1.5.dp.toPx()
 
-        drawRect(
-            fillColor,
-            topLeft = Offset(oneDp, oneDp),
-            size = Size(width - 2 * oneDp, height - 2 * oneDp)
-        )
+            drawRect(
+                fillColor,
+                topLeft = Offset(oneDp, oneDp),
+                size = Size(width - 2 * oneDp, height - 2 * oneDp)
+            )
 
-        drawOutline(
-            outline = shape.createOutline(Size(width, height), this),
-            style = Stroke(width = outerStroke),
-            color = borderColor
-        )
+            drawOutline(
+                outline = shape.createOutline(Size(width, height), this),
+                style = Stroke(width = outerStroke),
+                color = borderColor
+            )
 
-        if (checkState.value == CheckBoxState.CHECKED) {
-            val path = Path()
-            path.moveTo(0.22f * width, 0.45f * height)
-            path.lineTo(0.45f * width, 0.7f * height)
-            path.lineTo(0.73f * width, 0.25f * height)
+            if (checkedState.value) {
+                val path = Path()
+                path.moveTo(0.22f * width, 0.45f * height)
+                path.lineTo(0.45f * width, 0.7f * height)
+                path.lineTo(0.73f * width, 0.25f * height)
 
-            drawPath(
-                path = path,
-                color = markColor,
-                style = Stroke(width = outerStroke)
+                drawPath(
+                    path = path,
+                    color = markColor,
+                    style = Stroke(width = outerStroke)
+                )
+            }
+        }
+        // Unlike buttons, the rest of the content should ignore (at least for now)
+        // the selected state of the checkbox for drawing the text
+        Providers(AmbientTextColor provides colors.borderColor(false)) {
+            Row(
+                Modifier
+                    .defaultMinSizeConstraints(
+                        minWidth = 0.dp,
+                        minHeight = CheckboxSize
+                    )
+                    .padding(4.dp, 10.dp, 4.dp, 8.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                children = content
             )
         }
     }

@@ -39,9 +39,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.mosaic.MosaicSkin
-import org.pushingpixels.mosaic.components.MosaicToggleButton
 import org.pushingpixels.mosaic.components.MosaicCheckBox
 import org.pushingpixels.mosaic.components.MosaicText
+import org.pushingpixels.mosaic.components.MosaicToggleButton
 
 fun main() {
     Window("Mosaic Demo", IntSize(500, 400)) {
@@ -61,12 +61,28 @@ fun main() {
 fun DemoContent() {
     Column(modifier = Modifier.fillMaxHeight().fillMaxWidth().padding(8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            MosaicCheckBox(Modifier.padding(8.dp))
-            MosaicText(text = "Checkbox unselected")
+            MosaicCheckBox(
+                checked = false,
+                onCheckedChange = { println("Check 1! $it") }
+            ) {
+                MosaicText(text = "Checkbox unselected")
+            }
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
-            MosaicCheckBox(Modifier.padding(8.dp), initialValue = true)
-            MosaicText(text = "Checkbox selected")
+            MosaicCheckBox(
+                checked = true,
+                onCheckedChange = { it -> println("Check 2! $it") }
+            ) {
+                MosaicText(text = "Checkbox selected")
+            }
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            MosaicCheckBox(
+                checked = true,
+                onCheckedChange = { println("Check 3! $it") }
+            ) {
+                MosaicText(text = "Checkbox selected")
+            }
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             MosaicToggleButton(onClick = { println("Clicked!") }) {
