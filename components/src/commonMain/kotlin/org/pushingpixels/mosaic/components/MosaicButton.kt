@@ -29,6 +29,10 @@
  */
 package org.pushingpixels.mosaic.components
 
+import androidx.compose.animation.AnimatedValueModel
+import androidx.compose.animation.VectorConverter
+import androidx.compose.animation.asDisposableClock
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.InteractionState
@@ -46,6 +50,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.AnimationClockAmbient
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.mosaic.AmbientTextColor
 import org.pushingpixels.mosaic.MosaicSkin
@@ -55,10 +60,13 @@ enum class ButtonState {
 }
 
 interface ButtonColors {
+    @Composable
     fun backgroundColor(selected: Boolean): Color
 
+    @Composable
     fun borderColor(selected: Boolean): Color
 
+    @Composable
     fun textColor(selected: Boolean): Color
 }
 
@@ -69,12 +77,36 @@ fun defaultButtonColors(
     borderColor: Color = MosaicSkin.colors.enabledForeground,
     selectedBorderColor: Color = MosaicSkin.colors.selectedForeground,
     textColor: Color = MosaicSkin.colors.enabledForeground,
-    selectedTextColor: Color = MosaicSkin.colors.selectedForeground
-): ButtonColors = DefaultButtonColors(
-    backgroundColor, selectedBackgroundColor,
-    borderColor, selectedBorderColor,
-    textColor, selectedTextColor
-)
+    selectedTextColor: Color = MosaicSkin.colors.selectedForeground,
+): ButtonColors {
+    val clock = AnimationClockAmbient.current.asDisposableClock()
+    return remember(
+        backgroundColor, selectedBackgroundColor,
+        borderColor, selectedBorderColor,
+        textColor, selectedTextColor,
+        clock
+    ) {
+        DefaultButtonColors(
+            backgroundColor = backgroundColor,
+            selectedBackgroundColor = selectedBackgroundColor,
+            borderColor = borderColor,
+            selectedBorderColor = selectedBorderColor,
+            textColor = textColor,
+            selectedTextColor = selectedTextColor,
+            clock = clock
+        )
+    }
+}
+
+class LazyAnimatedValue<T, V : AnimationVector>(
+    private val factory: (target: T) -> AnimatedValue<T, V>
+) {
+    private var animatedValue: AnimatedValue<T, V>? = null
+
+    fun animatedValueForTarget(targetValue: T): AnimatedValue<T, V> {
+        return animatedValue ?: factory(targetValue).also { animatedValue = it }
+    }
+}
 
 private class DefaultButtonColors(
     private val backgroundColor: Color,
@@ -82,18 +114,74 @@ private class DefaultButtonColors(
     private val borderColor: Color,
     private val selectedBorderColor: Color,
     private val textColor: Color,
-    private val selectedTextColor: Color
+    private val selectedTextColor: Color,
+    private val clock: AnimationClockObservable
 ) : ButtonColors {
+
+    private val animatedBackgroundColorTracker = LazyAnimatedValue<Color, AnimationVector4D> { target ->
+        AnimatedValueModel(target, (Color.VectorConverter)(target.colorSpace), clock)
+    }
+
+    private val animatedTextColorTracker = LazyAnimatedValue<Color, AnimationVector4D> { target ->
+        AnimatedValueModel(target, (Color.VectorConverter)(target.colorSpace), clock)
+    }
+
+    private val animatedBorderColorTracker = LazyAnimatedValue<Color, AnimationVector4D> { target ->
+        AnimatedValueModel(target, (Color.VectorConverter)(target.colorSpace), clock)
+    }
+
+    @Composable
     override fun backgroundColor(selected: Boolean): Color {
-        return if (selected) selectedBackgroundColor else backgroundColor
+        val target = if (selected) {
+            selectedBackgroundColor
+        } else {
+            backgroundColor
+        }
+
+        val animatedBackgroundColor = animatedBackgroundColorTracker.animatedValueForTarget(target)
+
+        if (animatedBackgroundColor.targetValue != target) {
+            animatedBackgroundColor.animateTo(target,
+                tween(durationMillis = MosaicSkin.animationConfig.regular))
+        }
+
+        return animatedBackgroundColor.value
     }
 
+    @Composable
     override fun borderColor(selected: Boolean): Color {
-        return if (selected) selectedBorderColor else borderColor
+        val target = if (selected) {
+            selectedBorderColor
+        } else {
+            borderColor
+        }
+
+        val animatedBorderColor = animatedBorderColorTracker.animatedValueForTarget(target)
+
+        if (animatedBorderColor.targetValue != target) {
+            animatedBorderColor.animateTo(target,
+                tween(durationMillis = MosaicSkin.animationConfig.regular))
+        }
+
+        return animatedBorderColor.value
     }
 
+    @Composable
     override fun textColor(selected: Boolean): Color {
-        return if (selected) selectedTextColor else textColor
+        val target = if (selected) {
+            selectedTextColor
+        } else {
+            textColor
+        }
+
+        val animatedTextColor = animatedTextColorTracker.animatedValueForTarget(target)
+
+        if (animatedTextColor.targetValue != target) {
+            animatedTextColor.animateTo(target,
+                tween(durationMillis = MosaicSkin.animationConfig.regular))
+        }
+
+        return animatedTextColor.value
     }
 
     override fun equals(other: Any?): Boolean {

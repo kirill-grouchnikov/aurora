@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.dp
 data class ButtonShaper(
     val small: CornerBasedShape = RoundedCornerShape(2.dp),
     val regular: CornerBasedShape = RoundedCornerShape(4.dp)
-) {
-}
+)
 
 internal val AmbientShapes = staticAmbientOf { ButtonShaper() }

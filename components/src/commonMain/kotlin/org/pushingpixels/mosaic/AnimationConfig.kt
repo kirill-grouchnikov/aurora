@@ -29,40 +29,13 @@
  */
 package org.pushingpixels.mosaic
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ComposableContract
-import androidx.compose.runtime.Providers
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticAmbientOf
 
-object MosaicSkin {
-    @Composable
-    @ComposableContract(readonly = true)
-    val colors: Colors
-        get() = AmbientColors.current
+@Immutable
+data class AnimationConfig(
+    val short: Int = 150,
+    val regular: Int = 250
+)
 
-    @Composable
-    @ComposableContract(readonly = true)
-    val shapes: ButtonShaper
-        get() = AmbientShapes.current
-
-    @Composable
-    @ComposableContract(readonly = true)
-    val animationConfig: AnimationConfig
-        get() = AmbientAnimationConfig.current
-}
-
-@Composable
-fun MosaicSkin(
-    colors: Colors = MosaicSkin.colors,
-    shapes: ButtonShaper = MosaicSkin.shapes,
-    animationConfig: AnimationConfig = MosaicSkin.animationConfig,
-    content: @Composable () -> Unit
-) {
-    Providers(
-        AmbientColors provides colors,
-        AmbientShapes provides shapes,
-        AmbientAnimationConfig provides animationConfig
-    ) {
-        content()
-    }
-}
-
+internal val AmbientAnimationConfig = staticAmbientOf { AnimationConfig() }
