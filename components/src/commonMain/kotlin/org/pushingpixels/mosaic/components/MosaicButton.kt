@@ -34,7 +34,6 @@ import androidx.compose.animation.VectorConverter
 import androidx.compose.animation.asDisposableClock
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.InteractionState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -98,16 +97,6 @@ fun defaultButtonColors(
     }
 }
 
-internal class LazyAnimatedValue<T, V : AnimationVector>(
-    private val factory: (target: T) -> AnimatedValue<T, V>
-) {
-    private var animatedValue: AnimatedValue<T, V>? = null
-
-    fun animatedValueForTarget(targetValue: T): AnimatedValue<T, V> {
-        return animatedValue ?: factory(targetValue).also { animatedValue = it }
-    }
-}
-
 private class DefaultButtonColors(
     private val backgroundColor: Color,
     private val selectedBackgroundColor: Color,
@@ -118,17 +107,9 @@ private class DefaultButtonColors(
     private val clock: AnimationClockObservable
 ) : ButtonColors {
 
-    private val animatedBackgroundColorTracker = LazyAnimatedValue<Color, AnimationVector4D> { target ->
-        AnimatedValueModel(target, (Color.VectorConverter)(target.colorSpace), clock)
-    }
-
-    private val animatedTextColorTracker = LazyAnimatedValue<Color, AnimationVector4D> { target ->
-        AnimatedValueModel(target, (Color.VectorConverter)(target.colorSpace), clock)
-    }
-
-    private val animatedBorderColorTracker = LazyAnimatedValue<Color, AnimationVector4D> { target ->
-        AnimatedValueModel(target, (Color.VectorConverter)(target.colorSpace), clock)
-    }
+    private lateinit var animatedBackgroundColorTracker: AnimatedValue<Color, AnimationVector4D>
+    private lateinit var animatedTextColorTracker: AnimatedValue<Color, AnimationVector4D>
+    private lateinit var animatedBorderColorTracker: AnimatedValue<Color, AnimationVector4D>
 
     @Composable
     override fun backgroundColor(selected: Boolean): Color {
@@ -138,14 +119,19 @@ private class DefaultButtonColors(
             backgroundColor
         }
 
-        val animatedBackgroundColor = animatedBackgroundColorTracker.animatedValueForTarget(target)
-
-        if (animatedBackgroundColor.targetValue != target) {
-            animatedBackgroundColor.animateTo(target,
-                tween(durationMillis = MosaicSkin.animationConfig.regular))
+        if (!::animatedBackgroundColorTracker.isInitialized) {
+            animatedBackgroundColorTracker =
+                AnimatedValueModel(target, (Color.VectorConverter)(target.colorSpace), clock)
         }
 
-        return animatedBackgroundColor.value
+        if (animatedBackgroundColorTracker.targetValue != target) {
+            animatedBackgroundColorTracker.animateTo(
+                target,
+                tween(durationMillis = MosaicSkin.animationConfig.regular)
+            )
+        }
+
+        return animatedBackgroundColorTracker.value
     }
 
     @Composable
@@ -156,14 +142,19 @@ private class DefaultButtonColors(
             borderColor
         }
 
-        val animatedBorderColor = animatedBorderColorTracker.animatedValueForTarget(target)
-
-        if (animatedBorderColor.targetValue != target) {
-            animatedBorderColor.animateTo(target,
-                tween(durationMillis = MosaicSkin.animationConfig.regular))
+        if (!::animatedBorderColorTracker.isInitialized) {
+            animatedBorderColorTracker =
+                AnimatedValueModel(target, (Color.VectorConverter)(target.colorSpace), clock)
         }
 
-        return animatedBorderColor.value
+        if (animatedBorderColorTracker.targetValue != target) {
+            animatedBorderColorTracker.animateTo(
+                target,
+                tween(durationMillis = MosaicSkin.animationConfig.regular)
+            )
+        }
+
+        return animatedBorderColorTracker.value
     }
 
     @Composable
@@ -174,14 +165,19 @@ private class DefaultButtonColors(
             textColor
         }
 
-        val animatedTextColor = animatedTextColorTracker.animatedValueForTarget(target)
-
-        if (animatedTextColor.targetValue != target) {
-            animatedTextColor.animateTo(target,
-                tween(durationMillis = MosaicSkin.animationConfig.regular))
+        if (!::animatedTextColorTracker.isInitialized) {
+            animatedTextColorTracker =
+                AnimatedValueModel(target, (Color.VectorConverter)(target.colorSpace), clock)
         }
 
-        return animatedTextColor.value
+        if (animatedTextColorTracker.targetValue != target) {
+            animatedTextColorTracker.animateTo(
+                target,
+                tween(durationMillis = MosaicSkin.animationConfig.regular)
+            )
+        }
+
+        return animatedTextColorTracker.value
     }
 
     override fun equals(other: Any?): Boolean {

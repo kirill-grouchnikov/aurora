@@ -114,17 +114,8 @@ private class DefaultCheckBoxColors(
     private val clock: AnimationClockObservable
 ) : CheckBoxColors {
 
-    private val animatedBackgroundColorTracker = LazyAnimatedValue<Color, AnimationVector4D> { target ->
-        AnimatedValueModel(target, (Color.VectorConverter)(target.colorSpace), clock)
-    }
-
-    private val animatedMarkColorTracker = LazyAnimatedValue<Color, AnimationVector4D> { target ->
-        AnimatedValueModel(target, (Color.VectorConverter)(target.colorSpace), clock)
-    }
-
-    private val animatedBorderColorTracker = LazyAnimatedValue<Color, AnimationVector4D> { target ->
-        AnimatedValueModel(target, (Color.VectorConverter)(target.colorSpace), clock)
-    }
+    private lateinit var animatedBackgroundColorTracker: AnimatedValue<Color, AnimationVector4D>
+    private lateinit var animatedBorderColorTracker: AnimatedValue<Color, AnimationVector4D>
 
     @Composable
     override fun backgroundColor(selected: Boolean): Color {
@@ -134,16 +125,19 @@ private class DefaultCheckBoxColors(
             backgroundColor
         }
 
-        val animatedBackgroundColor = animatedBackgroundColorTracker.animatedValueForTarget(target)
+        if (!::animatedBackgroundColorTracker.isInitialized) {
+            animatedBackgroundColorTracker =
+                AnimatedValueModel(target, (Color.VectorConverter)(target.colorSpace), clock)
+        }
 
-        if (animatedBackgroundColor.targetValue != target) {
-            animatedBackgroundColor.animateTo(
+        if (animatedBackgroundColorTracker.targetValue != target) {
+            animatedBackgroundColorTracker.animateTo(
                 target,
                 tween(durationMillis = MosaicSkin.animationConfig.regular)
             )
         }
 
-        return animatedBackgroundColor.value
+        return animatedBackgroundColorTracker.value
     }
 
     @Composable
@@ -154,16 +148,19 @@ private class DefaultCheckBoxColors(
             borderColor
         }
 
-        val animatedBorderColor = animatedBorderColorTracker.animatedValueForTarget(target)
+        if (!::animatedBorderColorTracker.isInitialized) {
+            animatedBorderColorTracker =
+                AnimatedValueModel(target, (Color.VectorConverter)(target.colorSpace), clock)
+        }
 
-        if (animatedBorderColor.targetValue != target) {
-            animatedBorderColor.animateTo(
+        if (animatedBorderColorTracker.targetValue != target) {
+            animatedBorderColorTracker.animateTo(
                 target,
                 tween(durationMillis = MosaicSkin.animationConfig.regular)
             )
         }
 
-        return animatedBorderColor.value
+        return animatedBorderColorTracker.value
     }
 
     @Composable
