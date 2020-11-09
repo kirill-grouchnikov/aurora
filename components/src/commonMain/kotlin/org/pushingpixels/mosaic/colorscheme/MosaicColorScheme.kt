@@ -27,42 +27,7 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.mosaic
+package org.pushingpixels.mosaic.colorscheme
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ComposableContract
-import androidx.compose.runtime.Providers
-
-object MosaicSkin {
-    @Composable
-    @ComposableContract(readonly = true)
-    val colorSchemes: ColorSchemes
-        get() = AmbientColorSchemes.current
-
-    @Composable
-    @ComposableContract(readonly = true)
-    val shapes: ButtonShaper
-        get() = AmbientShapes.current
-
-    @Composable
-    @ComposableContract(readonly = true)
-    val animationConfig: AnimationConfig
-        get() = AmbientAnimationConfig.current
+interface MosaicColorScheme: SchemeBaseColors {
 }
-
-@Composable
-fun MosaicSkin(
-    colorSchemes: ColorSchemes = MosaicSkin.colorSchemes,
-    shapes: ButtonShaper = MosaicSkin.shapes,
-    animationConfig: AnimationConfig = MosaicSkin.animationConfig,
-    content: @Composable () -> Unit
-) {
-    Providers(
-        AmbientColorSchemes provides colorSchemes,
-        AmbientShapes provides shapes,
-        AmbientAnimationConfig provides animationConfig
-    ) {
-        content()
-    }
-}
-

@@ -27,38 +27,23 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.mosaic
+package org.pushingpixels.mosaic.colorscheme
 
-import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 
-@Immutable
-class Colors(
-    background: Color, foreground: Color, enabledBackground: Color,
-    enabledForeground: Color, selectedBackground: Color,
-    selectedForeground: Color
-) {
-    var background by mutableStateOf(background, structuralEqualityPolicy())
-        internal set
-    var foreground by mutableStateOf(foreground, structuralEqualityPolicy())
-        internal set
-    var enabledBackground by mutableStateOf(enabledBackground, structuralEqualityPolicy())
-        internal set
-    var enabledForeground by mutableStateOf(enabledForeground, structuralEqualityPolicy())
-        internal set
-    var selectedBackground by mutableStateOf(selectedBackground, structuralEqualityPolicy())
-        internal set
-    var selectedForeground by mutableStateOf(selectedForeground, structuralEqualityPolicy())
-        internal set
+class BaseColorScheme(
+    val displayName: String,
+    val backgroundStart: Color,
+    val backgroundEnd: Color,
+    val foreground: Color
+) : MosaicColorScheme {
+    constructor(displayName: String, background: Color, foreground: Color) :
+            this(displayName, background, background, foreground)
+
+    override val backgroundColorEnd: Color
+        get() = backgroundEnd
+    override val backgroundColorStart: Color
+        get() = backgroundStart
+    override val foregroundColor: Color
+        get() = foreground
 }
-
-fun businessColors() = Colors(
-    background = Color(0xFFEFF1F3),
-    foreground = Color(0xFF0E1318),
-    enabledBackground = Color(0xFFBFC8D2),
-    enabledForeground = Color(0xFF0E1318),
-    selectedBackground = Color(0xFFF9E07D),
-    selectedForeground = Color(0xFF00C8E8)
-)
-
-val AmbientColors = staticAmbientOf { businessColors() }

@@ -42,6 +42,7 @@ import org.pushingpixels.mosaic.MosaicSkin
 import org.pushingpixels.mosaic.components.MosaicCheckBox
 import org.pushingpixels.mosaic.components.MosaicText
 import org.pushingpixels.mosaic.components.MosaicToggleButton
+import org.pushingpixels.mosaic.graphiteColorSchemes
 
 fun main() {
     Window("Mosaic Demo", IntSize(500, 400)) {
@@ -50,7 +51,10 @@ fun main() {
                 modifier = Modifier,
                 alignment = Alignment.TopStart
             ) {
-                Canvas(Modifier.matchParentSize().background(MosaicSkin.colors.background)) {}
+                Canvas(
+                    Modifier.matchParentSize()
+                        .background(MosaicSkin.colorSchemes.background.backgroundColorStart)
+                ) {}
                 DemoContent()
             }
         }
@@ -59,34 +63,57 @@ fun main() {
 
 @Composable
 fun DemoContent() {
-    Column(modifier = Modifier.fillMaxHeight().fillMaxWidth().padding(8.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            MosaicCheckBox(
-                checked = false,
-                onCheckedChange = { println("Check 1! $it") }
-            ) {
-                MosaicText(text = "Checkbox unselected")
+    Column(modifier = Modifier.fillMaxHeight().fillMaxWidth()) {
+        Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                MosaicCheckBox(
+                    checked = false,
+                    onCheckedChange = { println("Check 1! $it") }
+                ) {
+                    MosaicText(text = "Checkbox unselected")
+                }
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                MosaicCheckBox(
+                    checked = true,
+                    onCheckedChange = { it -> println("Check 2! $it") }
+                ) {
+                    MosaicText(text = "Checkbox selected")
+                }
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                MosaicCheckBox(
+                    checked = true,
+                    onCheckedChange = { println("Check 3! $it") }
+                ) {
+                    MosaicText(text = "Checkbox selected")
+                }
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                MosaicToggleButton(onClick = { println("Clicked 1!") }) {
+                    MosaicText("Toggle button 1")
+                }
             }
         }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            MosaicCheckBox(
-                checked = true,
-                onCheckedChange = { it -> println("Check 2! $it") }
+        MosaicSkin(colorSchemes = graphiteColorSchemes()) {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+                    .background(MosaicSkin.colorSchemes.background.backgroundColorStart)
+                    .padding(8.dp)
             ) {
-                MosaicText(text = "Checkbox selected")
-            }
-        }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            MosaicCheckBox(
-                checked = true,
-                onCheckedChange = { println("Check 3! $it") }
-            ) {
-                MosaicText(text = "Checkbox selected")
-            }
-        }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            MosaicToggleButton(onClick = { println("Clicked!") }) {
-                MosaicText("Toggle button")
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    MosaicCheckBox(
+                        checked = true,
+                        onCheckedChange = { println("Check 4! $it") }
+                    ) {
+                        MosaicText(text = "Checkbox selected")
+                    }
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    MosaicToggleButton(onClick = { println("Clicked 2!") }) {
+                        MosaicText("Toggle button 2")
+                    }
+                }
             }
         }
     }

@@ -29,10 +29,11 @@
  */
 package org.pushingpixels.mosaic.components
 
-import androidx.compose.animation.AnimatedValueModel
-import androidx.compose.animation.VectorConverter
-import androidx.compose.animation.asDisposableClock
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.FloatPropKey
+import androidx.compose.animation.core.TransitionDefinition
+import androidx.compose.animation.core.transitionDefinition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.transition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.InteractionState
 import androidx.compose.foundation.clickable
@@ -43,181 +44,124 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.AnimationClockAmbient
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.mosaic.AmbientTextColor
 import org.pushingpixels.mosaic.MosaicSkin
+import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
 
 enum class ButtonState {
     IDLE, SELECTED
 }
 
+private val ColorTransitionFraction = FloatPropKey()
+
 interface ButtonColors {
     @Composable
-    fun backgroundColor(selected: Boolean): Color
+    fun backgroundColorScheme(selected: Boolean): MosaicColorScheme
 
     @Composable
-    fun borderColor(selected: Boolean): Color
+    fun borderColorScheme(selected: Boolean): MosaicColorScheme
 
     @Composable
-    fun textColor(selected: Boolean): Color
+    fun textColorScheme(selected: Boolean): MosaicColorScheme
 }
 
 @Composable
 fun defaultButtonColors(
-    backgroundColor: Color = MosaicSkin.colors.enabledBackground,
-    selectedBackgroundColor: Color = MosaicSkin.colors.selectedBackground,
-    borderColor: Color = MosaicSkin.colors.enabledForeground,
-    selectedBorderColor: Color = MosaicSkin.colors.selectedForeground,
-    textColor: Color = MosaicSkin.colors.enabledForeground,
-    selectedTextColor: Color = MosaicSkin.colors.selectedForeground,
+    backgroundColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.enabled,
+    selectedBackgroundColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.selected,
+    borderColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.enabled,
+    selectedBorderColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.selected,
+    textColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.enabled,
+    selectedTextColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.selected,
 ): ButtonColors {
-    val clock = AnimationClockAmbient.current.asDisposableClock()
-    return remember(
-        backgroundColor, selectedBackgroundColor,
-        borderColor, selectedBorderColor,
-        textColor, selectedTextColor,
-        clock
-    ) {
-        DefaultButtonColors(
-            backgroundColor = backgroundColor,
-            selectedBackgroundColor = selectedBackgroundColor,
-            borderColor = borderColor,
-            selectedBorderColor = selectedBorderColor,
-            textColor = textColor,
-            selectedTextColor = selectedTextColor,
-            clock = clock
-        )
-    }
+    return DefaultButtonColors(
+        backgroundColorScheme = backgroundColorScheme,
+        selectedBackgroundColorScheme = selectedBackgroundColorScheme,
+        borderColorScheme = borderColorScheme,
+        selectedBorderColorScheme = selectedBorderColorScheme,
+        textColorScheme = textColorScheme,
+        selectedTextColorScheme = selectedTextColorScheme
+    )
 }
 
 private class DefaultButtonColors(
-    private val backgroundColor: Color,
-    private val selectedBackgroundColor: Color,
-    private val borderColor: Color,
-    private val selectedBorderColor: Color,
-    private val textColor: Color,
-    private val selectedTextColor: Color,
-    private val clock: AnimationClockObservable
+    private val backgroundColorScheme: MosaicColorScheme,
+    private val selectedBackgroundColorScheme: MosaicColorScheme,
+    private val borderColorScheme: MosaicColorScheme,
+    private val selectedBorderColorScheme: MosaicColorScheme,
+    private val textColorScheme: MosaicColorScheme,
+    private val selectedTextColorScheme: MosaicColorScheme
 ) : ButtonColors {
 
-    private lateinit var animatedBackgroundColorTracker: AnimatedValue<Color, AnimationVector4D>
-    private lateinit var animatedTextColorTracker: AnimatedValue<Color, AnimationVector4D>
-    private lateinit var animatedBorderColorTracker: AnimatedValue<Color, AnimationVector4D>
-
     @Composable
-    override fun backgroundColor(selected: Boolean): Color {
-        val target = if (selected) {
-            selectedBackgroundColor
-        } else {
-            backgroundColor
-        }
-
-        if (!::animatedBackgroundColorTracker.isInitialized) {
-            animatedBackgroundColorTracker =
-                AnimatedValueModel(target, (Color.VectorConverter)(target.colorSpace), clock)
-        }
-
-        if (animatedBackgroundColorTracker.targetValue != target) {
-            animatedBackgroundColorTracker.animateTo(
-                target,
-                tween(durationMillis = MosaicSkin.animationConfig.regular)
-            )
-        }
-
-        return animatedBackgroundColorTracker.value
+    override fun backgroundColorScheme(selected: Boolean): MosaicColorScheme {
+        return if (selected) selectedBackgroundColorScheme else backgroundColorScheme
     }
 
     @Composable
-    override fun borderColor(selected: Boolean): Color {
-        val target = if (selected) {
-            selectedBorderColor
-        } else {
-            borderColor
-        }
-
-        if (!::animatedBorderColorTracker.isInitialized) {
-            animatedBorderColorTracker =
-                AnimatedValueModel(target, (Color.VectorConverter)(target.colorSpace), clock)
-        }
-
-        if (animatedBorderColorTracker.targetValue != target) {
-            animatedBorderColorTracker.animateTo(
-                target,
-                tween(durationMillis = MosaicSkin.animationConfig.regular)
-            )
-        }
-
-        return animatedBorderColorTracker.value
+    override fun borderColorScheme(selected: Boolean): MosaicColorScheme {
+        return if (selected) selectedBorderColorScheme else borderColorScheme
     }
 
     @Composable
-    override fun textColor(selected: Boolean): Color {
-        val target = if (selected) {
-            selectedTextColor
-        } else {
-            textColor
-        }
-
-        if (!::animatedTextColorTracker.isInitialized) {
-            animatedTextColorTracker =
-                AnimatedValueModel(target, (Color.VectorConverter)(target.colorSpace), clock)
-        }
-
-        if (animatedTextColorTracker.targetValue != target) {
-            animatedTextColorTracker.animateTo(
-                target,
-                tween(durationMillis = MosaicSkin.animationConfig.regular)
-            )
-        }
-
-        return animatedTextColorTracker.value
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || this::class != other::class) return false
-
-        other as DefaultButtonColors
-
-        if (backgroundColor != other.backgroundColor) return false
-        if (selectedBackgroundColor != other.selectedBackgroundColor) return false
-        if (borderColor != other.borderColor) return false
-        if (selectedBorderColor != other.selectedBorderColor) return false
-        if (textColor != other.textColor) return false
-        if (selectedTextColor != other.selectedTextColor) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = backgroundColor.hashCode()
-        result = 31 * result + selectedBackgroundColor.hashCode()
-        result = 31 * result + borderColor.hashCode()
-        result = 31 * result + selectedBorderColor.hashCode()
-        result = 31 * result + textColor.hashCode()
-        result = 31 * result + selectedTextColor.hashCode()
-        return result
+    override fun textColorScheme(selected: Boolean): MosaicColorScheme {
+        return if (selected) selectedTextColorScheme else textColorScheme
     }
 }
+
+@Composable
+private fun getColorTransitionDefinition(duration: Int): TransitionDefinition<ButtonState> {
+    return transitionDefinition {
+        state(ButtonState.IDLE) {
+            this[ColorTransitionFraction] = 0.0f
+        }
+
+        state(ButtonState.SELECTED) {
+            this[ColorTransitionFraction] = 1.0f
+        }
+
+        transition(ButtonState.IDLE to ButtonState.SELECTED) {
+            ColorTransitionFraction using tween(durationMillis = duration)
+        }
+
+        transition(ButtonState.SELECTED to ButtonState.IDLE) {
+            ColorTransitionFraction using tween(durationMillis = duration)
+        }
+    }
+}
+
+// This will be initialized on first usage using the getColorTransitionDefinition
+// with duration animation coming from [AmbientAnimationConfig]
+private lateinit var ColorTransitionDefinition: TransitionDefinition<ButtonState>
 
 @Composable
 fun MosaicToggleButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     shape: Shape = MosaicSkin.shapes.regular,
-    colors: ButtonColors = defaultButtonColors(),
+    colorsSchemes: ButtonColors = defaultButtonColors(),
     content: @Composable RowScope.() -> Unit
 ) {
     val state = remember { InteractionState() }
 
     val buttonState = remember { mutableStateOf(ButtonState.IDLE) }
+
+    // Transition for animating the colors of the button
+    if (!::ColorTransitionDefinition.isInitialized) {
+        ColorTransitionDefinition =
+            getColorTransitionDefinition(MosaicSkin.animationConfig.regular)
+    }
+    val colorTransitionState = transition(
+        definition = ColorTransitionDefinition,
+        initState = buttonState.value,
+        toState = buttonState.value
+    )
 
     Box(
         modifier = modifier.clickable(onClick = {
@@ -230,24 +174,39 @@ fun MosaicToggleButton(
         }, interactionState = state, indication = null),
         alignment = Alignment.TopStart
     ) {
-        val fillColor = colors.backgroundColor(buttonState.value == ButtonState.SELECTED)
-        val borderColor = colors.borderColor(buttonState.value == ButtonState.SELECTED)
-        val textColor = colors.textColor(buttonState.value == ButtonState.SELECTED)
+        val colorTransitionPosition = colorTransitionState[ColorTransitionFraction]
+
+        val fillColor = androidx.compose.ui.graphics.lerp(
+            colorsSchemes.backgroundColorScheme(false).backgroundColorStart,
+            colorsSchemes.backgroundColorScheme(true).backgroundColorStart,
+            colorTransitionPosition
+        )
+        val borderColor = androidx.compose.ui.graphics.lerp(
+            colorsSchemes.borderColorScheme(false).foregroundColor,
+            colorsSchemes.borderColorScheme(true).foregroundColor,
+            colorTransitionPosition
+        )
+        val textColor = androidx.compose.ui.graphics.lerp(
+            colorsSchemes.textColorScheme(false).foregroundColor,
+            colorsSchemes.textColorScheme(true).foregroundColor,
+            colorTransitionPosition
+        )
 
         Canvas(modifier.matchParentSize().padding(2.dp)) {
             val width = this.size.width
             val height = this.size.height
-            val oneDp = 1.dp.toPx()
             val outerStroke = 2.dp.toPx()
 
-            drawRect(
-                fillColor,
-                topLeft = Offset(oneDp, oneDp),
-                size = Size(width - 2 * oneDp, height - 2 * oneDp)
+            val toDraw = shape.createOutline(Size(width, height), this)
+
+            drawOutline(
+                outline = toDraw,
+                style = Fill,
+                color = fillColor
             )
 
             drawOutline(
-                outline = shape.createOutline(Size(width, height), this),
+                outline = toDraw,
                 style = Stroke(width = outerStroke),
                 color = borderColor
             )
