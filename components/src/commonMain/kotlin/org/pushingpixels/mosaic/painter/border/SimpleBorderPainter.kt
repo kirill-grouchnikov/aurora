@@ -27,49 +27,43 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.mosaic
+package org.pushingpixels.mosaic.painter.border
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ComposableContract
-import androidx.compose.runtime.Providers
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.LinearGradient
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.unit.dp
+import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
 
-object MosaicSkin {
-    @Composable
-    @ComposableContract(readonly = true)
-    val colorSchemes: ColorSchemes
-        get() = AmbientColorSchemes.current
-
-    @Composable
-    @ComposableContract(readonly = true)
-    val shapes: ButtonShaper
-        get() = AmbientShapes.current
-
-    @Composable
-    @ComposableContract(readonly = true)
-    val painters: Painters
-        get() = AmbientPainters.current
-
-    @Composable
-    @ComposableContract(readonly = true)
-    val animationConfig: AnimationConfig
-        get() = AmbientAnimationConfig.current
-}
-
-@Composable
-fun MosaicSkin(
-    colorSchemes: ColorSchemes = MosaicSkin.colorSchemes,
-    shapes: ButtonShaper = MosaicSkin.shapes,
-    painters: Painters = MosaicSkin.painters,
-    animationConfig: AnimationConfig = MosaicSkin.animationConfig,
-    content: @Composable () -> Unit
-) {
-    Providers(
-        AmbientColorSchemes provides colorSchemes,
-        AmbientShapes provides shapes,
-        AmbientPainters provides painters,
-        AmbientAnimationConfig provides animationConfig
+class SimpleBorderPainter : MosaicBorderPainter {
+    override fun paintBorder(
+        drawScope: DrawScope,
+        size: Size,
+        outline: Outline,
+        outlineInner: Outline,
+        borderScheme: MosaicColorScheme
     ) {
-        content()
+        with(drawScope) {
+            drawOutline(
+                outline = outline,
+                style = Stroke(width = 1.5.dp.toPx()),
+                brush = LinearGradient(
+                    listOf(borderScheme.backgroundColorStart, borderScheme.backgroundColorEnd),
+                    startX = 0.0f,
+                    startY = 0.0f,
+                    endX = 0.0f,
+                    endY = size.height,
+                    tileMode = TileMode.Clamp
+                )
+            )
+        }
+    }
+
+    override fun isPaintingInnerOutline(): Boolean {
+        return false
     }
 }
-

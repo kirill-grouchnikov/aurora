@@ -47,12 +47,11 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.drawOutline
-import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.mosaic.AmbientTextColor
 import org.pushingpixels.mosaic.MosaicSkin
+import org.pushingpixels.mosaic.colorscheme.BaseColorScheme
 import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
 
 private val CheckboxSize = 14.dp
@@ -61,7 +60,7 @@ private val ColorTransitionFraction = FloatPropKey()
 
 interface CheckBoxColors {
     @Composable
-    fun backgroundColorScheme(selected: Boolean): MosaicColorScheme
+    fun fillColorScheme(selected: Boolean): MosaicColorScheme
 
     @Composable
     fun borderColorScheme(selected: Boolean): MosaicColorScheme
@@ -75,7 +74,7 @@ interface CheckBoxColors {
 
 @Composable
 fun defaultCheckBoxColors(
-    backgroundColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.enabled,
+    fillColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.enabled,
     selectedBackgroundColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.selected,
     borderColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.enabled,
     selectedBorderColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.selected,
@@ -84,8 +83,8 @@ fun defaultCheckBoxColors(
     textColor: Color = MosaicSkin.colorSchemes.enabled.foregroundColor
 ): CheckBoxColors {
     return DefaultCheckBoxColors(
-        backgroundColorScheme = backgroundColorScheme,
-        selectedBackgroundColorScheme = selectedBackgroundColorScheme,
+        fillColorScheme = fillColorScheme,
+        selectedFillColorScheme = selectedBackgroundColorScheme,
         borderColorScheme = borderColorScheme,
         selectedBorderColorScheme = selectedBorderColorScheme,
         markColor = markColor,
@@ -95,8 +94,8 @@ fun defaultCheckBoxColors(
 }
 
 private class DefaultCheckBoxColors(
-    private val backgroundColorScheme: MosaicColorScheme,
-    private val selectedBackgroundColorScheme: MosaicColorScheme,
+    private val fillColorScheme: MosaicColorScheme,
+    private val selectedFillColorScheme: MosaicColorScheme,
     private val borderColorScheme: MosaicColorScheme,
     private val selectedBorderColorScheme: MosaicColorScheme,
     private val markColor: Color,
@@ -104,8 +103,8 @@ private class DefaultCheckBoxColors(
     private val textColor: Color
 ) : CheckBoxColors {
     @Composable
-    override fun backgroundColorScheme(selected: Boolean): MosaicColorScheme {
-        return if (selected) selectedBackgroundColorScheme else backgroundColorScheme
+    override fun fillColorScheme(selected: Boolean): MosaicColorScheme {
+        return if (selected) selectedFillColorScheme else fillColorScheme
     }
 
     @Composable
@@ -222,35 +221,60 @@ fun MosaicCheckBox(
     ) {
         val colorTransitionPosition = colorTransitionState[ColorTransitionFraction]
 
-        val fillColor = androidx.compose.ui.graphics.lerp(
-            colorsSchemes.backgroundColorScheme(false).backgroundColorStart,
-            colorsSchemes.backgroundColorScheme(true).backgroundColorStart,
+        val fillColorStart = androidx.compose.ui.graphics.lerp(
+            colorsSchemes.fillColorScheme(false).backgroundColorStart,
+            colorsSchemes.fillColorScheme(true).backgroundColorStart,
             colorTransitionPosition
         )
-        val borderColor = androidx.compose.ui.graphics.lerp(
+        val fillColorEnd = androidx.compose.ui.graphics.lerp(
+            colorsSchemes.fillColorScheme(false).backgroundColorEnd,
+            colorsSchemes.fillColorScheme(true).backgroundColorEnd,
+            colorTransitionPosition
+        )
+        val borderColorStart = androidx.compose.ui.graphics.lerp(
+            colorsSchemes.borderColorScheme(false).foregroundColor,
+            colorsSchemes.borderColorScheme(true).foregroundColor,
+            colorTransitionPosition
+        )
+        val borderColorEnd = androidx.compose.ui.graphics.lerp(
             colorsSchemes.borderColorScheme(false).foregroundColor,
             colorsSchemes.borderColorScheme(true).foregroundColor,
             colorTransitionPosition
         )
         val markColor = colorsSchemes.markColor(true)
 
+        // TODO: figure out how to not create a new color scheme object on every
+        // redraw
+        val currBackgroundColorScheme = BaseColorScheme(
+            displayName = "dummy",
+            backgroundStart = fillColorStart,
+            backgroundEnd = fillColorEnd,
+            foreground = colorsSchemes.textColor()
+        )
+        val currBorderColorScheme = BaseColorScheme(
+            displayName = "dummy",
+            backgroundStart = borderColorStart,
+            backgroundEnd = borderColorEnd,
+            foreground = colorsSchemes.textColor()
+        )
+        val fillPainter = MosaicSkin.painters.fillPainter
+        val borderPainter = MosaicSkin.painters.borderPainter
+
         Canvas(modifier.wrapContentSize(Alignment.Center).size(CheckboxSize)) {
             val width = this.size.width
             val height = this.size.height
             val outerStroke = 1.5.dp.toPx()
 
-            val toDraw = shape.createOutline(Size(width, height), this)
+            val outline = shape.createOutline(Size(width, height), this)
 
-            drawOutline(
-                outline = toDraw,
-                style = Fill,
-                color = fillColor
+            fillPainter.paintContourBackground(
+                this, this.size, outline, currBackgroundColorScheme
             )
 
-            drawOutline(
-                outline = toDraw,
-                style = Stroke(width = outerStroke),
-                color = borderColor
+            val outlineInner = shape.createOutline(Size(width, height), this)
+
+            borderPainter.paintBorder(
+                this, this.size, outline, outlineInner, currBorderColorScheme
             )
 
             // Draw the checkbox mark with the alpha that corresponds to the current

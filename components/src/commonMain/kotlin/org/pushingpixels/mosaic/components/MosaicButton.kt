@@ -46,12 +46,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.drawOutline
-import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.mosaic.AmbientTextColor
 import org.pushingpixels.mosaic.MosaicSkin
+import org.pushingpixels.mosaic.colorscheme.BaseColorScheme
 import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
 
 enum class ButtonState {
@@ -62,7 +60,7 @@ private val ColorTransitionFraction = FloatPropKey()
 
 interface ButtonColors {
     @Composable
-    fun backgroundColorScheme(selected: Boolean): MosaicColorScheme
+    fun fillColorScheme(selected: Boolean): MosaicColorScheme
 
     @Composable
     fun borderColorScheme(selected: Boolean): MosaicColorScheme
@@ -73,16 +71,16 @@ interface ButtonColors {
 
 @Composable
 fun defaultButtonColors(
-    backgroundColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.enabled,
-    selectedBackgroundColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.selected,
+    fillColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.enabled,
+    selectedFillColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.selected,
     borderColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.enabled,
     selectedBorderColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.selected,
     textColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.enabled,
     selectedTextColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.selected,
 ): ButtonColors {
     return DefaultButtonColors(
-        backgroundColorScheme = backgroundColorScheme,
-        selectedBackgroundColorScheme = selectedBackgroundColorScheme,
+        fillColorScheme = fillColorScheme,
+        selectedFillColorScheme = selectedFillColorScheme,
         borderColorScheme = borderColorScheme,
         selectedBorderColorScheme = selectedBorderColorScheme,
         textColorScheme = textColorScheme,
@@ -91,8 +89,8 @@ fun defaultButtonColors(
 }
 
 private class DefaultButtonColors(
-    private val backgroundColorScheme: MosaicColorScheme,
-    private val selectedBackgroundColorScheme: MosaicColorScheme,
+    private val fillColorScheme: MosaicColorScheme,
+    private val selectedFillColorScheme: MosaicColorScheme,
     private val borderColorScheme: MosaicColorScheme,
     private val selectedBorderColorScheme: MosaicColorScheme,
     private val textColorScheme: MosaicColorScheme,
@@ -100,8 +98,8 @@ private class DefaultButtonColors(
 ) : ButtonColors {
 
     @Composable
-    override fun backgroundColorScheme(selected: Boolean): MosaicColorScheme {
-        return if (selected) selectedBackgroundColorScheme else backgroundColorScheme
+    override fun fillColorScheme(selected: Boolean): MosaicColorScheme {
+        return if (selected) selectedFillColorScheme else fillColorScheme
     }
 
     @Composable
@@ -176,12 +174,22 @@ fun MosaicToggleButton(
     ) {
         val colorTransitionPosition = colorTransitionState[ColorTransitionFraction]
 
-        val fillColor = androidx.compose.ui.graphics.lerp(
-            colorsSchemes.backgroundColorScheme(false).backgroundColorStart,
-            colorsSchemes.backgroundColorScheme(true).backgroundColorStart,
+        val fillColorStart = androidx.compose.ui.graphics.lerp(
+            colorsSchemes.fillColorScheme(false).backgroundColorStart,
+            colorsSchemes.fillColorScheme(true).backgroundColorStart,
             colorTransitionPosition
         )
-        val borderColor = androidx.compose.ui.graphics.lerp(
+        val fillColorEnd = androidx.compose.ui.graphics.lerp(
+            colorsSchemes.fillColorScheme(false).backgroundColorEnd,
+            colorsSchemes.fillColorScheme(true).backgroundColorEnd,
+            colorTransitionPosition
+        )
+        val borderColorStart = androidx.compose.ui.graphics.lerp(
+            colorsSchemes.borderColorScheme(false).foregroundColor,
+            colorsSchemes.borderColorScheme(true).foregroundColor,
+            colorTransitionPosition
+        )
+        val borderColorEnd = androidx.compose.ui.graphics.lerp(
             colorsSchemes.borderColorScheme(false).foregroundColor,
             colorsSchemes.borderColorScheme(true).foregroundColor,
             colorTransitionPosition
@@ -192,23 +200,37 @@ fun MosaicToggleButton(
             colorTransitionPosition
         )
 
+        // TODO: figure out how to not create a new color scheme object on every
+        // redraw
+        val currBackgroundColorScheme = BaseColorScheme(
+            displayName = "dummy",
+            backgroundStart = fillColorStart,
+            backgroundEnd = fillColorEnd,
+            foreground = textColor
+        )
+        val currBorderColorScheme = BaseColorScheme(
+            displayName = "dummy",
+            backgroundStart = borderColorStart,
+            backgroundEnd = borderColorEnd,
+            foreground = textColor
+        )
+        val fillPainter = MosaicSkin.painters.fillPainter
+        val borderPainter = MosaicSkin.painters.borderPainter
+
         Canvas(modifier.matchParentSize().padding(2.dp)) {
             val width = this.size.width
             val height = this.size.height
-            val outerStroke = 2.dp.toPx()
 
-            val toDraw = shape.createOutline(Size(width, height), this)
+            val outline = shape.createOutline(Size(width, height), this)
 
-            drawOutline(
-                outline = toDraw,
-                style = Fill,
-                color = fillColor
+            fillPainter.paintContourBackground(
+                this, this.size, outline, currBackgroundColorScheme
             )
 
-            drawOutline(
-                outline = toDraw,
-                style = Stroke(width = outerStroke),
-                color = borderColor
+            val outlineInner = shape.createOutline(Size(width, height), this)
+
+            borderPainter.paintBorder(
+                this, this.size, outline, outlineInner, currBorderColorScheme
             )
         }
         Providers(AmbientTextColor provides textColor) {
