@@ -36,11 +36,11 @@ import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
 
 @Immutable
 class ColorSchemes(
-    background: MosaicColorScheme,
+    canvas: MosaicColorScheme,
     enabled: MosaicColorScheme,
     selected: MosaicColorScheme
 ) {
-    var background by mutableStateOf(background, structuralEqualityPolicy())
+    var canvas by mutableStateOf(canvas, structuralEqualityPolicy())
         internal set
     var enabled by mutableStateOf(enabled, structuralEqualityPolicy())
         internal set
@@ -49,7 +49,7 @@ class ColorSchemes(
 }
 
 fun businessColorSchemes() = ColorSchemes(
-    background = BaseColorScheme(displayName = "Business background",
+    canvas = BaseColorScheme(displayName = "Business canvas",
         background = Color(0xFFEFF1F3),
         foreground = Color(0xFF0E1318)),
     enabled = BaseColorScheme(displayName = "Business enabled",
@@ -61,7 +61,7 @@ fun businessColorSchemes() = ColorSchemes(
 )
 
 fun graphiteColorSchemes() = ColorSchemes(
-    background = BaseColorScheme(displayName = "Graphite background",
+    canvas = BaseColorScheme(displayName = "Graphite canvas",
         background = Color(0xFF595959),
         foreground = Color(0xFFB4B4B4)),
     enabled = BaseColorScheme(displayName = "Graphite enabled",

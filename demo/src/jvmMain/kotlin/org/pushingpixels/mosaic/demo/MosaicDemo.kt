@@ -53,7 +53,7 @@ fun main() {
             ) {
                 Canvas(
                     Modifier.matchParentSize()
-                        .background(MosaicSkin.colorSchemes.background.backgroundColorStart)
+                        .background(MosaicSkin.colorSchemes.canvas.backgroundColorStart)
                 ) {}
                 DemoContent()
             }
@@ -98,7 +98,7 @@ fun DemoContent() {
         MosaicSkin(colorSchemes = graphiteColorSchemes()) {
             Column(
                 modifier = Modifier.fillMaxWidth()
-                    .background(MosaicSkin.colorSchemes.background.backgroundColorStart)
+                    .background(MosaicSkin.colorSchemes.canvas.backgroundColorStart)
                     .padding(8.dp)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
