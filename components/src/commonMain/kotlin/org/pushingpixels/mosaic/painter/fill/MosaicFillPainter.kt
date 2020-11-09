@@ -29,7 +29,6 @@
  */
 package org.pushingpixels.mosaic.painter.fill
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.DrawScope

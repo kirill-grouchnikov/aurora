@@ -44,7 +44,7 @@ class SimpleBorderPainter : MosaicBorderPainter {
         drawScope: DrawScope,
         size: Size,
         outline: Outline,
-        outlineInner: Outline,
+        outlineInner: Outline?,
         borderScheme: MosaicColorScheme
     ) {
         with(drawScope) {

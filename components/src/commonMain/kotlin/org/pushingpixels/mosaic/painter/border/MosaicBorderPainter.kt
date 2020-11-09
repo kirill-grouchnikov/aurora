@@ -37,7 +37,7 @@ import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
 
 interface MosaicBorderPainter {
     fun paintBorder(
-        drawScope: DrawScope, size: Size, outline: Outline, outlineInner: Outline,
+        drawScope: DrawScope, size: Size, outline: Outline, outlineInner: Outline?,
         borderScheme: MosaicColorScheme
     )
 

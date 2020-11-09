@@ -44,9 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.mosaic.AmbientTextColor
@@ -263,7 +261,6 @@ fun MosaicCheckBox(
         Canvas(modifier.wrapContentSize(Alignment.Center).size(CheckboxSize)) {
             val width = this.size.width
             val height = this.size.height
-            val outerStroke = 1.5.dp.toPx()
 
             val outline = shape.createOutline(Size(width, height), this)
 
@@ -271,23 +268,25 @@ fun MosaicCheckBox(
                 this, this.size, outline, currBackgroundColorScheme
             )
 
-            val outlineInner = shape.createOutline(Size(width, height), this)
-
             borderPainter.paintBorder(
-                this, this.size, outline, outlineInner, currBorderColorScheme
+                this, this.size, outline, null, currBorderColorScheme
             )
 
             // Draw the checkbox mark with the alpha that corresponds to the current
             // selection and potential transition
             val path = Path()
-            path.moveTo(0.22f * width, 0.45f * height)
-            path.lineTo(0.45f * width, 0.7f * height)
-            path.lineTo(0.73f * width, 0.25f * height)
+            path.moveTo(0.25f * width, 0.48f * height)
+            path.lineTo(0.48f * width, 0.73f * height)
+            path.lineTo(0.76f * width, 0.28f * height)
 
+            val markStroke = 0.12f * width
             drawPath(
                 path = path,
                 color = markColor.copy(alpha = markAlphaTransitionState[CheckMarkDrawFraction]),
-                style = Stroke(width = outerStroke)
+                style = Stroke(
+                    width = markStroke,
+                    cap = StrokeCap.Round, join = StrokeJoin.Round
+                )
             )
         }
         // Unlike buttons, the rest of the content should ignore (at least for now)

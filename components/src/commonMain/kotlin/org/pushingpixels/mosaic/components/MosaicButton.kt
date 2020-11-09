@@ -227,10 +227,8 @@ fun MosaicToggleButton(
                 this, this.size, outline, currBackgroundColorScheme
             )
 
-            val outlineInner = shape.createOutline(Size(width, height), this)
-
             borderPainter.paintBorder(
-                this, this.size, outline, outlineInner, currBorderColorScheme
+                this, this.size, outline, null, currBorderColorScheme
             )
         }
         Providers(AmbientTextColor provides textColor) {
