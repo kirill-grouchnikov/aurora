@@ -38,10 +38,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import components.MosaicCheckBox
+import components.MosaicText
+import components.MosaicToggleButton
 import org.pushingpixels.mosaic.MosaicSkin
-import org.pushingpixels.mosaic.components.MosaicCheckBox
-import org.pushingpixels.mosaic.components.MosaicText
-import org.pushingpixels.mosaic.components.MosaicToggleButton
 import org.pushingpixels.mosaic.graphiteColorSchemes
 
 fun main() {
