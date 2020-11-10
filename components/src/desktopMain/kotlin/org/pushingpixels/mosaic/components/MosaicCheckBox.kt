@@ -27,7 +27,7 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package components
+package org.pushingpixels.mosaic.components
 
 import androidx.compose.animation.core.FloatPropKey
 import androidx.compose.animation.core.TransitionDefinition
@@ -35,6 +35,7 @@ import androidx.compose.animation.core.transitionDefinition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.transition
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
@@ -43,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.mosaic.AmbientTextColor
 import org.pushingpixels.mosaic.MosaicSkin
@@ -144,7 +146,7 @@ private fun getCheckMarkTransitionDefinition(duration: Int): TransitionDefinitio
 private lateinit var CheckMarkTransitionDefinition: TransitionDefinition<Boolean>
 
 @Composable
-private fun getColorTransitionDefinition(duration: Int): TransitionDefinition<Boolean> {
+private fun getSelectedTransitionDefinition(duration: Int): TransitionDefinition<Boolean> {
     return transitionDefinition {
         state(false) {
             this[ColorTransitionFraction] = 0.0f
@@ -199,7 +201,7 @@ fun MosaicCheckBox(
     // Transition for animating the colors of the checkbox
     if (!::ColorTransitionDefinition.isInitialized) {
         ColorTransitionDefinition =
-            getColorTransitionDefinition(MosaicSkin.animationConfig.regular)
+            getSelectedTransitionDefinition(MosaicSkin.animationConfig.regular)
     }
     val colorTransitionState = transition(
         definition = ColorTransitionDefinition,
@@ -211,13 +213,13 @@ fun MosaicCheckBox(
     // content so that the whole thing is clickable to toggle the control.
     Row(
         modifier = modifier.toggleable(
-            value = checkedState.value,
-            onValueChange = {
-                checkedState.value = it
-                onCheckedChange.invoke(checkedState.value)
-            },
-            indication = null
-        ),
+                value = checkedState.value,
+                onValueChange = {
+                    checkedState.value = it
+                    onCheckedChange.invoke(checkedState.value)
+                },
+                indication = null
+            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         val colorTransitionPosition = colorTransitionState[ColorTransitionFraction]
