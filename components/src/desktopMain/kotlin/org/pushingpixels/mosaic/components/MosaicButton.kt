@@ -29,6 +29,7 @@
  */
 package org.pushingpixels.mosaic.components
 
+import androidx.compose.animation.asDisposableClock
 import androidx.compose.animation.core.*
 import androidx.compose.animation.transition
 import androidx.compose.foundation.Canvas
@@ -210,9 +211,9 @@ internal class ModelStateInfo(var currModelState: ComponentState) {
         sync()
     }
 
-    fun dumpState() {
+    fun dumpState(stateTransitionPosition: Float) {
         println("######")
-        println("Curr state ${currModelState}, position ${stateTransitionFloat.value}")
+        println("Curr state ${currModelState}, position $stateTransitionPosition")
         for ((state, currRange) in stateContributionMap) {
             println("\t $state at ${currRange.contribution} [${currRange.start}-${currRange.end}]")
         }
@@ -220,8 +221,6 @@ internal class ModelStateInfo(var currModelState: ComponentState) {
         println("######")
     }
 }
-
-lateinit var stateTransitionFloat: AnimatedFloat
 
 @Immutable
 private class ButtonDrawingCache(
@@ -238,10 +237,27 @@ fun MosaicToggleButton(
     shape: Shape = MosaicSkin.shapes.regular,
     content: @Composable RowScope.() -> Unit
 ) {
+    MosaicToggleButton(
+        modifier = modifier,
+        onClick = onClick,
+        shape = shape,
+        stateTransitionFloat = AnimatedFloat(0.0f, AnimationClockAmbient.current.asDisposableClock()),
+        content = content
+    )
+}
+
+@Composable
+private fun MosaicToggleButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+    shape: Shape = MosaicSkin.shapes.regular,
+    stateTransitionFloat: AnimatedFloat,
+    content: @Composable RowScope.() -> Unit
+) {
     val state = remember { InteractionState() }
     val drawingCache = remember { ButtonDrawingCache() }
 
-    val buttonSelectedState = remember { mutableStateOf(ButtonState.IDLE) }
+    val selectedState = remember { mutableStateOf(ButtonState.IDLE) }
     val rolloverState = remember { mutableStateOf(false) }
 
     val modelStateInfo = remember {
@@ -260,8 +276,8 @@ fun MosaicToggleButton(
     }
     val selectionTransitionState = transition(
         definition = SelectedTransitionDefinition,
-        initState = buttonSelectedState.value,
-        toState = buttonSelectedState.value
+        initState = selectedState.value,
+        toState = selectedState.value
     )
     // Transition for the rollover state
     if (!::RolloverTransitionDefinition.isInitialized) {
@@ -282,18 +298,14 @@ fun MosaicToggleButton(
     val currentState = ComponentState.getState(
         isEnabled = true,
         isRollover = rolloverState.value,
-        isSelected = (buttonSelectedState.value == ButtonState.SELECTED)
+        isSelected = (selectedState.value == ButtonState.SELECTED)
     )
 
     var duration = MosaicSkin.animationConfig.regular
     if (currentState != modelStateInfo.currModelState) {
-        if (::stateTransitionFloat.isInitialized) {
-            stateTransitionFloat.stop()
-        } else {
-            stateTransitionFloat = AnimatedFloat(0.0f, AnimationClockAmbient.current)
-        }
+        stateTransitionFloat.stop()
         println("******** Have new state to move to $currentState ********")
-        modelStateInfo.dumpState()
+        modelStateInfo.dumpState(stateTransitionFloat.value)
         // Need to transition to the new state
         if (modelStateInfo.stateContributionMap.containsKey(currentState)) {
             println("Already has new state")
@@ -335,19 +347,19 @@ fun MosaicToggleButton(
 
         modelStateInfo.currModelState = currentState
         println("******** After moving to new state *****")
-        modelStateInfo.dumpState()
+        modelStateInfo.dumpState(stateTransitionFloat.value)
 
         println("Animating over $duration from ${stateTransitionFloat.value} to 1.0f")
         stateTransitionFloat.animateTo(
             targetValue = 1.0f,
             anim = FloatTweenSpec(duration = duration),
             onEnd = { endReason, endValue ->
-                println("Ended with reason $endReason at ${endValue} / ${stateTransitionFloat.value}")
+                println("Ended with reason $endReason at $endValue / ${stateTransitionFloat.value}")
                 if (endReason == AnimationEndReason.TargetReached) {
                     modelStateInfo.updateActiveStates(1.0f)
                     modelStateInfo.clear()
                     println("******** After clear (target reached) ********")
-                    modelStateInfo.dumpState()
+                    modelStateInfo.dumpState(stateTransitionFloat.value)
                 }
             }
         )
@@ -355,10 +367,10 @@ fun MosaicToggleButton(
         println()
     }
 
-    if (::stateTransitionFloat.isInitialized && stateTransitionFloat.isRunning) {
+    if (stateTransitionFloat.isRunning) {
         modelStateInfo.updateActiveStates(stateTransitionFloat.value)
         println("********* During animation ${stateTransitionFloat.value} to ${stateTransitionFloat.targetValue} *******")
-        modelStateInfo.dumpState()
+        modelStateInfo.dumpState(stateTransitionFloat.value)
     }
 
     Box(
@@ -376,7 +388,7 @@ fun MosaicToggleButton(
                     false
                 })
             .clickable(onClick = {
-                buttonSelectedState.value = if (buttonSelectedState.value == ButtonState.IDLE) {
+                selectedState.value = if (selectedState.value == ButtonState.IDLE) {
                     ButtonState.SELECTED
                 } else {
                     ButtonState.IDLE
