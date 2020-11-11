@@ -44,6 +44,7 @@ import org.pushingpixels.mosaic.components.MosaicCheckBox
 import org.pushingpixels.mosaic.components.MosaicText
 import org.pushingpixels.mosaic.components.MosaicToggleButton
 import org.pushingpixels.mosaic.graphiteColorSchemes
+import org.pushingpixels.mosaic.skin.graphiteColorSchemeBundle
 import org.pushingpixels.mosaic.skin.marinerColorSchemeBundle
 import org.pushingpixels.mosaic.skin.marinerColorSchemes
 
@@ -73,7 +74,7 @@ fun DemoContent() {
                     checked = false,
                     onCheckedChange = { println("Check 1! $it") }
                 ) {
-                    MosaicText(text = "Checkbox unselected")
+                    MosaicText(text = "Checkbox 1 unselected")
                 }
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -81,7 +82,7 @@ fun DemoContent() {
                     checked = true,
                     onCheckedChange = { it -> println("Check 2! $it") }
                 ) {
-                    MosaicText(text = "Checkbox selected")
+                    MosaicText(text = "Checkbox 2 selected")
                 }
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -89,7 +90,7 @@ fun DemoContent() {
                     checked = true,
                     onCheckedChange = { println("Check 3! $it") }
                 ) {
-                    MosaicText(text = "Checkbox selected")
+                    MosaicText(text = "Checkbox 3 selected")
                 }
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -112,12 +113,36 @@ fun DemoContent() {
                         checked = true,
                         onCheckedChange = { println("Check 4! $it") }
                     ) {
-                        MosaicText(text = "Checkbox selected")
+                        MosaicText(text = "Checkbox 4 selected")
                     }
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     MosaicToggleButton(onClick = { println("Clicked 2!") }) {
                         MosaicText("Toggle button 2")
+                    }
+                }
+            }
+        }
+        MosaicSkin(
+            colorSchemes = graphiteColorSchemes(),
+            colorSchemeBundle = ColorSchemeBundle(graphiteColorSchemeBundle())
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+                    .background(MosaicSkin.colorSchemes.canvas.backgroundColorStart)
+                    .padding(8.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    MosaicCheckBox(
+                        checked = true,
+                        onCheckedChange = { println("Check 5! $it") }
+                    ) {
+                        MosaicText(text = "Checkbox 5 selected")
+                    }
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    MosaicToggleButton(onClick = { println("Clicked 3!") }) {
+                        MosaicText("Toggle button 3")
                     }
                 }
             }
