@@ -44,8 +44,8 @@ import org.pushingpixels.mosaic.utils.getInterpolatedColor
  */
 sealed class ShiftColorScheme(
     origScheme: MosaicColorScheme, backgroundShiftColor: Color,
-    backgroundShiftFactor: Float, foregroundShiftColor: Color, foregroundShiftFactor: Float,
-    shiftByBrightness: Boolean
+    backgroundShiftFactor: Float, foregroundShiftColor: Color,
+    foregroundShiftFactor: Float, shiftByBrightness: Boolean
 ) : BaseColorScheme(
     displayName = "Shift " + origScheme.getDisplayName() + " to backgr [" + backgroundShiftColor.toString() + "] "
             + (100 * backgroundShiftFactor).toInt() + "%, foregr [" + foregroundShiftColor.toString() + "]"
@@ -81,21 +81,21 @@ sealed class ShiftColorScheme(
 
 /**
  * Shaded color scheme. A shaded color scheme is a color scheme that is shifted
- * to black color.
+ * towards black color.
  */
 class ShadeColorScheme(origColorScheme: MosaicColorScheme, shadeFactor: Float) :
     ShiftColorScheme(origColorScheme, Color.Black, shadeFactor)
 
 /**
  * Tinted color scheme. A tinted color scheme is a color scheme that is shifted
- * to white color.
+ * towards white color.
  */
 class TintColorScheme(origColorScheme: MosaicColorScheme, shadeFactor: Float) :
     ShiftColorScheme(origColorScheme, Color.White, shadeFactor)
 
 /**
  * Toned color scheme. A toned color scheme is a color scheme that is shifted
- * to gray color.
+ * towards gray color.
  */
 class ToneColorScheme(origColorScheme: MosaicColorScheme, shadeFactor: Float) :
     ShiftColorScheme(origColorScheme, Color.Gray, shadeFactor)
