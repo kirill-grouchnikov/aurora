@@ -47,6 +47,7 @@ private fun businessCanvas() =
 private fun businessEnabled() =
     BaseColorScheme(
         displayName = "Business enabled",
+//        background = Color.Red,
         backgroundStart = Color(0xFFE5EAEF),
         backgroundEnd = Color(0xFFBFC8D2),
         foreground = Color(0xFF0E1318)
@@ -55,6 +56,7 @@ private fun businessEnabled() =
 private fun businessActive() =
     BaseColorScheme(
         displayName = "Business active",
+//        background = Color.Blue,
         backgroundStart = Color(0xFFF2F7FB),
         backgroundEnd = Color(0xFFD1DAE2),
         foreground = Color(0xFF505152)

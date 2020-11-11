@@ -110,7 +110,7 @@ internal fun populateColorScheme(
     var backgroundEnd = currStateScheme.backgroundColorEnd
     var foreground = currStateScheme.foregroundColor
 
-    println("Starting with $currState at $backgroundStart")
+    //println("Starting with $currState at $backgroundStart")
 
     for (contribution in modelStateInfo.stateContributionMap) {
         if (contribution.key == currState) {
@@ -136,7 +136,7 @@ internal fun populateColorScheme(
             foreground, contributionScheme.foregroundColor, 1.0f - amount
         )
 
-        println("\tcontribution of $amount from ${contribution.key} to $backgroundStart")
+        //println("\tcontribution of $amount from ${contribution.key} to $backgroundStart")
     }
 
     // Update the mutable color scheme with the interpolated colors

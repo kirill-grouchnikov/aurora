@@ -236,7 +236,6 @@ fun MosaicToggleButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     shape: Shape = MosaicSkin.shapes.regular,
-    colorsSchemes: ButtonColors = defaultButtonColors(),
     content: @Composable RowScope.() -> Unit
 ) {
     val state = remember { InteractionState() }
@@ -302,22 +301,13 @@ fun MosaicToggleButton(
             val transitionPosition = modelStateInfo.stateContributionMap[currentState]!!.contribution
             duration = (duration * (1.0f - transitionPosition)).toInt()
             stateTransitionFloat.setBounds(transitionPosition, 1.0f)
+            stateTransitionFloat.snapTo(transitionPosition)
         } else {
-            println("Does not have new state (curr state ${modelStateInfo.currModelState}")
-            stateTransitionFloat.snapTo(0.0f)
+            println("Does not have new state (curr state ${modelStateInfo.currModelState}) at ${stateTransitionFloat.value}")
             stateTransitionFloat.setBounds(0.0f, 1.0f)
+            stateTransitionFloat.snapTo(0.0f)
+            println("\tat ${stateTransitionFloat.value}")
         }
-        println("Animating over $duration")
-        stateTransitionFloat.animateTo(
-            targetValue = 1.0f,
-            anim = FloatTweenSpec(duration = duration),
-            onEnd = { _, _ ->
-                modelStateInfo.updateActiveStates(1.0f)
-                modelStateInfo.clear()
-                println("******** After clear ********")
-                modelStateInfo.dumpState()
-            }
-        )
 
         // Create a new contribution map
         val newContributionMap: MutableMap<ComponentState, StateContributionInfo> = HashMap()
@@ -346,6 +336,21 @@ fun MosaicToggleButton(
         modelStateInfo.currModelState = currentState
         println("******** After moving to new state *****")
         modelStateInfo.dumpState()
+
+        println("Animating over $duration from ${stateTransitionFloat.value} to 1.0f")
+        stateTransitionFloat.animateTo(
+            targetValue = 1.0f,
+            anim = FloatTweenSpec(duration = duration),
+            onEnd = { endReason, endValue ->
+                println("Ended with reason $endReason at ${endValue} / ${stateTransitionFloat.value}")
+                if (endReason == AnimationEndReason.TargetReached) {
+                    modelStateInfo.updateActiveStates(1.0f)
+                    modelStateInfo.clear()
+                    println("******** After clear (target reached) ********")
+                    modelStateInfo.dumpState()
+                }
+            }
+        )
 
         println()
     }
