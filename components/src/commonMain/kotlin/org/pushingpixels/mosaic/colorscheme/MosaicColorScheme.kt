@@ -32,7 +32,7 @@ package org.pushingpixels.mosaic.colorscheme
 import androidx.compose.ui.graphics.Color
 
 interface MosaicColorScheme : SchemeBaseColors {
-    fun getDisplayName(): String
+    fun displayName(): String
 
     /**
      * Creates a shift version of `this` scheme.

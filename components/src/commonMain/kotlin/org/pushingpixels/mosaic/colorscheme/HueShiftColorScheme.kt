@@ -42,7 +42,7 @@ class HueShiftColorScheme(
     hueShiftFactor: Float
 ) : BaseColorScheme(
     displayName =
-    "Hue-shift " + origScheme.getDisplayName() + " "
+    "Hue-shift " + origScheme.displayName() + " "
             + (100 * hueShiftFactor).toInt() + "%",
     backgroundStart = getHueShiftedColor(origScheme.backgroundColorStart, hueShiftFactor),
     backgroundEnd = getHueShiftedColor(origScheme.backgroundColorEnd, hueShiftFactor),

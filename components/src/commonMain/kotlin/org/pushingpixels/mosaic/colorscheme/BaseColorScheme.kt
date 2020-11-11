@@ -47,7 +47,7 @@ open class BaseColorScheme(
     override val foregroundColor: Color
         get() = foreground
 
-    override fun getDisplayName(): String {
+    override fun displayName(): String {
         return displayName
     }
 

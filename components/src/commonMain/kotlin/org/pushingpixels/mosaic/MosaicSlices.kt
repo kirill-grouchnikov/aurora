@@ -104,15 +104,11 @@ class ComponentState(
      * Component state name. Does not have to be unique. The name is
      * only used in the [.toString].
      * @param facetsOn
-     * Indicates that are turned on for this state. For example,
-     * [.ROLLOVER_SELECTED] should pass both
-     * [ComponentStateFacet.ROLLOVER] and
-     * [ComponentStateFacet.SELECTION].
+     * Indicates that are turned on for this state. For example, [.ROLLOVER_SELECTED] should pass both
+     * [ComponentStateFacet.ROLLOVER] and [ComponentStateFacet.SELECTION].
      * @param facetsOff
-     * Indicates that are turned on for this state. For example,
-     * [.DISABLED_UNSELECTED] should pass both
-     * [ComponentStateFacet.ENABLE] and
-     * [ComponentStateFacet.SELECTION].
+     * Indicates that are turned on for this state. For example, [.DISABLED_UNSELECTED] should pass both
+     * [ComponentStateFacet.ENABLE] and [ComponentStateFacet.SELECTION].
      */
     constructor(
         name: String, facetsOn: Array<ComponentStateFacet>?,
@@ -448,19 +444,14 @@ class ComponentState(
      * Component state name. Does not have to be unique. The name is
      * only used in the [.toString].
      * @param hardFallback
-     * The fallback state that will be used in
-     * [SubstanceColorSchemeBundle.getColorScheme]
+     * The fallback state that will be used in [MosaicColorSchemeBundle.getColorScheme]
      * in case [.bestFit] returns `null`
      * @param facetsOn
-     * Indicates that are turned on for this state. For example,
-     * [.ROLLOVER_SELECTED] should pass both
-     * [ComponentStateFacet.ROLLOVER] and
-     * [ComponentStateFacet.SELECTION].
+     * Indicates that are turned on for this state. For example, [.ROLLOVER_SELECTED] should pass both
+     * [ComponentStateFacet.ROLLOVER] and [ComponentStateFacet.SELECTION].
      * @param facetsOff
-     * Indicates that are turned on for this state. For example,
-     * [.DISABLED_UNSELECTED] should pass both
-     * [ComponentStateFacet.ENABLE] and
-     * [ComponentStateFacet.SELECTION].
+     * Indicates that are turned on for this state. For example, [.DISABLED_UNSELECTED] should pass both
+     * [ComponentStateFacet.ENABLE] and [ComponentStateFacet.SELECTION].
      */
     init {
         requireNotNull(name) { "Component state name must be non-null" }
@@ -474,7 +465,136 @@ class ComponentState(
         if (facetsOff != null) {
             facetsTurnedOff.addAll(facetsOff)
         }
-        mapping = HashMap<ComponentStateFacet, Boolean>()
+        mapping = HashMap()
         allStates.add(this)
     }
 }
+
+/**
+ * Allows associating different color schemes to different visual parts of UI components. For
+ * example, the checkbox has three different visual areas:
+ *
+ *  * Border - assciated with [.BORDER]
+ *  * Fill - associated with [.MARK_BOX]
+ *  * Check mark - associated with [.MARK]
+ *
+ * Applications can create custom instances of this class to further refine the control over the
+ * painting. In this case, the custom UI delegates must be created to use these new association
+ * kinds.
+ *
+ * @author Kirill Grouchnikov
+ */
+class ColorSchemeAssociationKind(
+    /**
+     * Name for this association kind.
+     */
+    private val name: String,
+    /**
+     * Fallback for this association kind. This is used when no color scheme is associated with
+     * this kind. For example, [.TAB_BORDER] specifies that its fallback is
+     * [.BORDER]. When the tabs are painted, it will
+     * try to use the color scheme associated with [.TAB_BORDER]. If none was registered,
+     * it will fall back to use the color scheme associated with [.BORDER], and if that is
+     * not registered as well, will use the color scheme associated with [.FILL].
+     */
+    val fallback: ColorSchemeAssociationKind?
+) {
+    override fun toString(): String {
+        return name
+    }
+
+    companion object {
+        /**
+         * All known association kind values.
+         */
+        private val values: MutableSet<ColorSchemeAssociationKind> = HashSet()
+
+        /**
+         * The default visual area that is used for the inner part of most controls.
+         */
+        val FILL = ColorSchemeAssociationKind("fill", null)
+
+        /**
+         * Visual area of separators.
+         */
+        val SEPARATOR = ColorSchemeAssociationKind("separator", FILL)
+
+        /**
+         * Fill visual area of the tabs.
+         */
+        val TAB = ColorSchemeAssociationKind("tab", FILL)
+
+        /**
+         * Border visual area of non-tab controls.
+         */
+        val BORDER = ColorSchemeAssociationKind("border", FILL)
+
+        /**
+         * Visual area of marks. Used for painting check marks of checkboxes and radio buttons, as
+         * well as arrow icons of combo boxes, spinners and more.
+         */
+        val MARK = ColorSchemeAssociationKind("mark", BORDER)
+
+        /**
+         * Visual area of mark boxes. Used for painting the box of checkboxes and radio buttons.
+         */
+        val MARK_BOX = ColorSchemeAssociationKind("markBox", FILL)
+
+        /**
+         * Visual area of focus indication.
+         */
+        val FOCUS = ColorSchemeAssociationKind("focus", MARK)
+
+        /**
+         * Border visual area of the tabs.
+         */
+        val TAB_BORDER = ColorSchemeAssociationKind("tabBorder", BORDER)
+
+        /**
+         * Highlight visual areas for lists, tables, trees and menus.
+         */
+        val HIGHLIGHT = ColorSchemeAssociationKind("highlight", FILL)
+
+        /**
+         * Highlight visual areas for text components.
+         */
+        val HIGHLIGHT_TEXT = ColorSchemeAssociationKind("highlightText", HIGHLIGHT)
+
+        /**
+         * Border visual areas for highlighted regions of lists, tables, trees and menus.
+         */
+        val HIGHLIGHT_BORDER = ColorSchemeAssociationKind("highlightBorder", BORDER)
+
+        /**
+         * Visual area of marks in highlighted regions of lists, tables, trees and menus.
+         */
+        val HIGHLIGHT_MARK = ColorSchemeAssociationKind("highlightMark", MARK)
+
+        /**
+         * Returns all available association kinds.
+         *
+         * @return All available association kinds.
+         */
+        fun values(): Set<ColorSchemeAssociationKind> {
+            return values.toCollection(LinkedHashSet(values.size))
+        }
+    }
+
+    /**
+     * Creates a new association kind.
+     *
+     * @param name     Association kind name.
+     * @param fallback Fallback association kind. This is used when no color scheme is
+     * associated with this kind. For example, [.TAB_BORDER] specifies that its
+     * fallback is [.BORDER]. When the tabbed pane is
+     * painting the tabs, it will try to use the color scheme associated with
+     * [.TAB_BORDER].
+     * If none was registered, it will fall back to use the color scheme associated
+     * with [.BORDER], and if that is not registered as well, will use the
+     * color scheme associated with [.FILL].
+     */
+    init {
+        values.add(this)
+    }
+}
+

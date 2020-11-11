@@ -108,29 +108,32 @@ private fun EOCF_sRGB(srgb: Float): Float {
     return if (srgb <= 0.04045f) srgb / 12.92f else ((srgb + 0.055f) / 1.055f).pow(2.4f)
 }
 
+// See https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB
 internal fun RGBtoHSB(from: Color): FloatArray {
+    val result = FloatArray(3)
+
     val r = from.red
     val g = from.green
     val b = from.blue
-    val cmax = max(max(r, g), b)
-    val cmin = min(min(r, g), b)
-    val delta = cmax - cmin
 
-    val result = FloatArray(3)
+    val xmax = max(max(r, g), b)
+    val xmin = min(min(r, g), b)
+    val chroma = xmax - xmin
+
     // brightness
-    result[2] = cmax
+    result[2] = xmax
     // saturation
-    result[1] = if (cmax == 0.0f) 0.0f else delta / cmax
+    result[1] = if (result[2] == 0.0f) 0.0f else chroma / result[2]
     // hue
-    if (delta == 0.0f) {
+    if (chroma == 0.0f) {
         result[0] = 0.0f
     } else {
-        if (cmax == r) {
-            result[0] = (g - b) / delta
-        } else if (cmax == g) {
-            result[0] = 1.0f / 3.0f + (b - r) / delta
+        if (xmax == r) {
+            result[0] = (1.0f / 6.0f) * ((g - b) / chroma)
+        } else if (xmax == g) {
+            result[0] = (1.0f / 6.0f) * (2 + (b - r) / chroma)
         } else {
-            result[0] = 2f / 3 + (r - g) / delta
+            result[0] = (1.0f / 6.0f) * (4 + (r - g) / chroma)
         }
         if (result[0] < 0.0f) {
             result[0] = 0.0f
@@ -139,6 +142,7 @@ internal fun RGBtoHSB(from: Color): FloatArray {
     return result
 }
 
+// See https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_RGB
 internal fun HSBtoRGB(from: FloatArray): Color {
     val hue = from[0]
     val saturation = from[1]

@@ -38,11 +38,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.mosaic.ColorSchemeBundle
+import org.pushingpixels.mosaic.MosaicSkin
 import org.pushingpixels.mosaic.components.MosaicCheckBox
 import org.pushingpixels.mosaic.components.MosaicText
 import org.pushingpixels.mosaic.components.MosaicToggleButton
-import org.pushingpixels.mosaic.MosaicSkin
 import org.pushingpixels.mosaic.graphiteColorSchemes
+import org.pushingpixels.mosaic.skin.marinerColorSchemeBundle
+import org.pushingpixels.mosaic.skin.marinerColorSchemes
 
 fun main() {
     Window("Mosaic Demo", IntSize(500, 400)) {
@@ -95,7 +98,10 @@ fun DemoContent() {
                 }
             }
         }
-        MosaicSkin(colorSchemes = graphiteColorSchemes()) {
+        MosaicSkin(
+            colorSchemes = marinerColorSchemes(),
+            colorSchemeBundle = ColorSchemeBundle(marinerColorSchemeBundle())
+        ) {
             Column(
                 modifier = Modifier.fillMaxWidth()
                     .background(MosaicSkin.colorSchemes.canvas.backgroundColorStart)

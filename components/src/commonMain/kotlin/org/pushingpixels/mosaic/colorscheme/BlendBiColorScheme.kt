@@ -41,8 +41,8 @@ class BlendBiColorScheme(
     secondScheme: MosaicColorScheme, firstSchemeLikeness: Float
 ) : BaseColorScheme(
     displayName =
-    "Blended " + firstScheme.getDisplayName() + " & "
-            + secondScheme.getDisplayName() + " " + firstSchemeLikeness,
+    "Blended " + firstScheme.displayName() + " & "
+            + secondScheme.displayName() + " " + firstSchemeLikeness,
     backgroundStart = getInterpolatedColor(
         firstScheme.backgroundColorStart,
         secondScheme.backgroundColorStart, firstSchemeLikeness

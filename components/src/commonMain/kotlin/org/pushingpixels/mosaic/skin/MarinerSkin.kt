@@ -27,56 +27,51 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.mosaic
+package org.pushingpixels.mosaic.skin
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ComposableContract
-import androidx.compose.runtime.Providers
+import androidx.compose.ui.graphics.Color
+import org.pushingpixels.mosaic.ColorSchemes
+import org.pushingpixels.mosaic.colorscheme.BaseColorScheme
+import org.pushingpixels.mosaic.colorscheme.MosaicColorSchemeBundle
 
-object MosaicSkin {
-    @Composable
-    @ComposableContract(readonly = true)
-    val colorSchemes: ColorSchemes
-        get() = AmbientColorSchemes.current
+private fun marinerCanvas() =
+    BaseColorScheme(
+        displayName = "Mariner canvas",
+        background = Color(0xFFFAFEF8),
+        foreground = Color(0xFF000000)
+    )
 
-    @Composable
-    @ComposableContract(readonly = true)
-    val colorSchemeBundle: ColorSchemeBundle
-        get() = AmbientColorSchemeBundles.current
+private fun marinerEnabled() =
+    BaseColorScheme(
+        displayName = "Mariner enabled",
+        backgroundStart = Color(0xFFEAEEF1),
+        backgroundEnd = Color(0xFFCDCDCF),
+        foreground = Color(0xFF000000)
+    )
 
-    @Composable
-    @ComposableContract(readonly = true)
-    val shapes: ButtonShaper
-        get() = AmbientShapes.current
+private fun marinerDisabled() =
+    BaseColorScheme(
+        displayName = "Mariner disabled",
+        backgroundStart = Color(0xFFEAEEF1),
+        backgroundEnd = Color(0xFFCDCDCF),
+        foreground = Color(0xFF666666)
+    )
 
-    @Composable
-    @ComposableContract(readonly = true)
-    val painters: Painters
-        get() = AmbientPainters.current
+private fun marinerActive() =
+    BaseColorScheme(
+        displayName = "Mariner active",
+        backgroundStart = Color(0xFFFFECBA),
+        backgroundEnd = Color(0xFFEECD82),
+        foreground = Color(0xFF4A1903)
+    )
 
-    @Composable
-    @ComposableContract(readonly = true)
-    val animationConfig: AnimationConfig
-        get() = AmbientAnimationConfig.current
-}
+fun marinerColorSchemes() = ColorSchemes(
+    canvas = marinerCanvas(),
+    enabled = marinerEnabled(),
+    selected = marinerActive()
+)
 
-@Composable
-fun MosaicSkin(
-    colorSchemes: ColorSchemes = MosaicSkin.colorSchemes,
-    colorSchemeBundle: ColorSchemeBundle = MosaicSkin.colorSchemeBundle,
-    shapes: ButtonShaper = MosaicSkin.shapes,
-    painters: Painters = MosaicSkin.painters,
-    animationConfig: AnimationConfig = MosaicSkin.animationConfig,
-    content: @Composable () -> Unit
-) {
-    Providers(
-        AmbientColorSchemes provides colorSchemes,
-        AmbientColorSchemeBundles provides colorSchemeBundle,
-        AmbientShapes provides shapes,
-        AmbientPainters provides painters,
-        AmbientAnimationConfig provides animationConfig
-    ) {
-        content()
-    }
+fun marinerColorSchemeBundle(): MosaicColorSchemeBundle {
+    return MosaicColorSchemeBundle(marinerActive(), marinerEnabled(), marinerDisabled())
 }
 

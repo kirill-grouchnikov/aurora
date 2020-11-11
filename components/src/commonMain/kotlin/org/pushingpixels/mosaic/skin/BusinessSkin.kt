@@ -27,39 +27,64 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.mosaic
+package org.pushingpixels.mosaic.skin
 
-import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
+import org.pushingpixels.mosaic.ColorSchemeAssociationKind
+import org.pushingpixels.mosaic.ColorSchemes
+import org.pushingpixels.mosaic.ComponentState
 import org.pushingpixels.mosaic.colorscheme.BaseColorScheme
-import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
-import org.pushingpixels.mosaic.skin.businessColorSchemes
-
-@Immutable
-class ColorSchemes(
-    canvas: MosaicColorScheme,
-    enabled: MosaicColorScheme,
-    selected: MosaicColorScheme
-) {
-    var canvas by mutableStateOf(canvas, structuralEqualityPolicy())
-        internal set
-    var enabled by mutableStateOf(enabled, structuralEqualityPolicy())
-        internal set
-    var selected by mutableStateOf(selected, structuralEqualityPolicy())
-        internal set
-}
+import org.pushingpixels.mosaic.colorscheme.MosaicColorSchemeBundle
 
 
-fun graphiteColorSchemes() = ColorSchemes(
-    canvas = BaseColorScheme(displayName = "Graphite canvas",
-        background = Color(0xFF595959),
-        foreground = Color(0xFFB4B4B4)),
-    enabled = BaseColorScheme(displayName = "Graphite enabled",
-        background = Color(0xFF3F3F3F),
-        foreground = Color(0xFFC4C4C4)),
-    selected = BaseColorScheme(displayName = "Graphite selected",
-        background = Color(0xFFBCC0C5),
-        foreground = Color(0xFF1B2025))
+private fun businessCanvas() =
+    BaseColorScheme(
+        displayName = "Business canvas",
+        background = Color(0xFFEFF1F3),
+        foreground = Color(0xFF0E1318)
+    )
+
+private fun businessEnabled() =
+    BaseColorScheme(
+        displayName = "Business enabled",
+        backgroundStart = Color(0xFFE5EAEF),
+        backgroundEnd = Color(0xFFBFC8D2),
+        foreground = Color(0xFF0E1318)
+    )
+
+private fun businessActive() =
+    BaseColorScheme(
+        displayName = "Business active",
+        backgroundStart = Color(0xFFF2F7FB),
+        backgroundEnd = Color(0xFFD1DAE2),
+        foreground = Color(0xFF505152)
+    )
+
+private fun businessSelected() =
+    BaseColorScheme(
+        displayName = "Business selected",
+        background = Color(0xFFF9E07D),
+        foreground = Color(0xFF00C8E8)
+    )
+
+fun businessColorSchemes() = ColorSchemes(
+    canvas = businessCanvas(),
+    enabled = businessEnabled(),
+    selected = businessSelected()
 )
 
-val AmbientColorSchemes = staticAmbientOf { businessColorSchemes() }
+fun businessColorSchemeBundle(): MosaicColorSchemeBundle {
+    val activeScheme = businessActive()
+    val enabledScheme = businessEnabled()
+
+    val result = MosaicColorSchemeBundle(
+        activeScheme, enabledScheme, enabledScheme
+    )
+
+    result.registerColorScheme(
+        businessSelected(), ColorSchemeAssociationKind.FILL, ComponentState.SELECTED
+    )
+
+    return result
+}
+

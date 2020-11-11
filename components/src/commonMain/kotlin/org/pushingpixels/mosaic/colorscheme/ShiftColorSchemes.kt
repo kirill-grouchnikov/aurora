@@ -42,12 +42,12 @@ import org.pushingpixels.mosaic.utils.getInterpolatedColor
  *
  * @author Kirill Grouchnikov
  */
-sealed class ShiftColorScheme(
+open class ShiftColorScheme(
     origScheme: MosaicColorScheme, backgroundShiftColor: Color,
     backgroundShiftFactor: Float, foregroundShiftColor: Color,
     foregroundShiftFactor: Float, shiftByBrightness: Boolean
 ) : BaseColorScheme(
-    displayName = "Shift " + origScheme.getDisplayName() + " to backgr [" + backgroundShiftColor.toString() + "] "
+    displayName = "Shift " + origScheme.displayName() + " to backgr [" + backgroundShiftColor.toString() + "] "
             + (100 * backgroundShiftFactor).toInt() + "%, foregr [" + foregroundShiftColor.toString() + "]"
             + (100 * foregroundShiftFactor).toInt() + "%",
     backgroundStart = getInterpolatedColor(

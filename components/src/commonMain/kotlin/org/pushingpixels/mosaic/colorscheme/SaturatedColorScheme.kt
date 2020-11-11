@@ -40,7 +40,7 @@ import org.pushingpixels.mosaic.utils.getSaturatedColor
  */
 class SaturatedColorScheme(origScheme: MosaicColorScheme, saturationFactor: Float) : BaseColorScheme(
     displayName = "Saturated (" + (100 * saturationFactor).toInt() + "%) "
-            + origScheme.getDisplayName(),
+            + origScheme.displayName(),
     backgroundStart = getSaturatedColor(origScheme.backgroundColorStart, saturationFactor),
     backgroundEnd = getSaturatedColor(origScheme.backgroundColorEnd, saturationFactor),
     foreground = origScheme.foregroundColor

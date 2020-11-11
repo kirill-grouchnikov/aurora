@@ -40,7 +40,7 @@ import org.pushingpixels.mosaic.utils.invertColor
  */
 class InvertedColorScheme(origScheme: MosaicColorScheme) :
     BaseColorScheme(
-        displayName = "Negated " + origScheme.getDisplayName(),
+        displayName = "Negated " + origScheme.displayName(),
         backgroundStart = invertColor(origScheme.backgroundColorEnd),
         backgroundEnd = invertColor(origScheme.backgroundColorStart),
         foreground = invertColor(origScheme.foregroundColor)
