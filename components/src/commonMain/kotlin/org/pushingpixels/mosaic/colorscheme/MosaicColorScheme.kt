@@ -29,5 +29,103 @@
  */
 package org.pushingpixels.mosaic.colorscheme
 
-interface MosaicColorScheme: SchemeBaseColors {
+import androidx.compose.ui.graphics.Color
+
+interface MosaicColorScheme : SchemeBaseColors {
+    fun getDisplayName(): String
+
+    /**
+     * Creates a shift version of `this` scheme.
+     *
+     * @param backgroundShiftColor  Shift color for background colors. Should have full opacity.
+     * @param backgroundShiftFactor Value in 0.0...1.0 range. Larger values shift more towards the
+     * specified color.
+     * @param foregroundShiftColor  Shift color for foreground colors. Should have full opacity.
+     * @param foregroundShiftFactor Value in 0.0...1.0 range. Larger values shift more towards the
+     * specified color.
+     * @return Shift version of `this` scheme.
+     */
+    fun shift(
+        backgroundShiftColor: Color,
+        backgroundShiftFactor: Float, foregroundShiftColor: Color,
+        foregroundShiftFactor: Float
+    ): MosaicColorScheme
+
+    /**
+     * Creates a tinted (shifted towards white) version of `this`
+     * color scheme.
+     *
+     * @param tintFactor Value in 0.0...1.0 range. Larger values shift more towards
+     * white color.
+     * @return Tinted version of `this` scheme.
+     */
+    fun tint(tintFactor: Float): MosaicColorScheme
+
+    /**
+     * Creates a toned (shifted towards gray) version of `this` color
+     * scheme.
+     *
+     * @param toneFactor Value in 0.0...1.0 range. Larger values shift more towards
+     * gray color.
+     * @return Toned version of `this` scheme.
+     */
+    fun tone(toneFactor: Float): MosaicColorScheme
+
+    /**
+     * Creates a shaded (shifted towards black) version of `this`
+     * color scheme.
+     *
+     * @param shadeFactor Value in 0.0...1.0 range. Larger values shift more towards
+     * black color.
+     * @return Shaded version of `this` scheme.
+     */
+    fun shade(shadeFactor: Float): MosaicColorScheme
+
+    /**
+     * Creates a saturated or desaturated version of `this` scheme.
+     * The value and brightness stay the same.
+     *
+     * @param saturateFactor Value in -1.0...1.0 range. Positive values create more
+     * saturated colors. Negative values create more desaturated
+     * colors.
+     * @return Saturated version of `this` scheme.
+     */
+    fun saturate(saturateFactor: Float): MosaicColorScheme
+
+    /**
+     * Creates an inverted version of `this` scheme.
+     *
+     * @return Inverted version of `this` scheme.
+     */
+    fun invert(): MosaicColorScheme
+
+    /**
+     * Creates a negated version of `this` scheme.
+     *
+     * @return Negated version of `this` scheme.
+     */
+    fun negate(): MosaicColorScheme
+
+    /**
+     * Creates a hue-shifted (in HSB space) version of `this` color
+     * scheme.
+     *
+     * @param hueShiftFactor Value in -1.0...1.0 range.
+     * @return Hue-shifted version of `this` scheme.
+     */
+    fun hueShift(hueShiftFactor: Float): MosaicColorScheme
+
+    /**
+     * Creates a blended version of `this` color scheme based on another
+     * color scheme.
+     *
+     * @param otherScheme          The other color scheme for blending colors.
+     * @param likenessToThisScheme Defines how close the colors of the resulting
+     * color scheme are to this scheme. Value of 1.0 returns a color
+     * scheme with the exact colors of this color scheme. Value of 0.0
+     * returns a color scheme with the exact colors of the other color
+     * scheme.
+     * @return Blended color scheme.
+     */
+    fun blendWith(otherScheme: MosaicColorScheme, likenessToThisScheme: Float): MosaicColorScheme
 }

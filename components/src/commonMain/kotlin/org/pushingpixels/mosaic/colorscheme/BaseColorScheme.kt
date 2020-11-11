@@ -31,7 +31,7 @@ package org.pushingpixels.mosaic.colorscheme
 
 import androidx.compose.ui.graphics.Color
 
-class BaseColorScheme(
+open class BaseColorScheme(
     val displayName: String,
     val backgroundStart: Color,
     val backgroundEnd: Color,
@@ -46,4 +46,53 @@ class BaseColorScheme(
         get() = backgroundStart
     override val foregroundColor: Color
         get() = foreground
+
+    override fun getDisplayName(): String {
+        return displayName
+    }
+
+    override fun shift(
+        backgroundShiftColor: Color,
+        backgroundShiftFactor: Float,
+        foregroundShiftColor: Color,
+        foregroundShiftFactor: Float
+    ): MosaicColorScheme {
+        return ShiftColorScheme(
+            this, backgroundShiftColor,
+            backgroundShiftFactor, foregroundShiftColor,
+            foregroundShiftFactor, true
+        )
+    }
+
+    override fun shade(shadeFactor: Float): MosaicColorScheme {
+        return ShadeColorScheme(this, shadeFactor)
+    }
+
+    override fun tint(tintFactor: Float): MosaicColorScheme {
+        return TintColorScheme(this, tintFactor)
+    }
+
+    override fun tone(toneFactor: Float): MosaicColorScheme {
+        return ToneColorScheme(this, toneFactor)
+    }
+
+    override fun negate(): MosaicColorScheme {
+        return NegatedColorScheme(this)
+    }
+
+    override fun invert(): MosaicColorScheme {
+        return InvertedColorScheme(this)
+    }
+
+    override fun saturate(saturateFactor: Float): MosaicColorScheme {
+        return SaturatedColorScheme(this, saturateFactor)
+    }
+
+    override fun hueShift(hueShiftFactor: Float): MosaicColorScheme {
+        return HueShiftColorScheme(this, hueShiftFactor)
+    }
+
+    override fun blendWith(otherScheme: MosaicColorScheme, likenessToThisScheme: Float): MosaicColorScheme {
+        return BlendBiColorScheme(this, otherScheme, likenessToThisScheme)
+    }
 }
