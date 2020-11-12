@@ -54,7 +54,10 @@ fun main() {
             ) {
                 Canvas(
                     Modifier.matchParentSize()
-                        .background(MosaicSkin.colorSchemes.canvas.backgroundColorStart)
+                        .background(
+                            MosaicSkin.colors
+                                .getBackgroundColorScheme(DecorationAreaType.NONE).backgroundColorStart
+                        )
                 ) {}
                 DemoContent()
             }

@@ -29,9 +29,7 @@
  */
 package org.pushingpixels.mosaic.skin
 
-import androidx.compose.ui.graphics.Color
 import org.pushingpixels.mosaic.*
-import org.pushingpixels.mosaic.colorscheme.BaseColorScheme
 import org.pushingpixels.mosaic.colorscheme.MosaicColorSchemeBundle
 import org.pushingpixels.mosaic.colorscheme.MosaicSkinColors
 import org.pushingpixels.mosaic.utils.getColorSchemes
@@ -125,6 +123,11 @@ fun marinerSkinColors(): MosaicSkinColors {
     headerSchemeBundle.registerColorScheme(
         headerBorderColorScheme,
         ColorSchemeAssociationKind.BORDER
+    )
+    // TODO - this is different from the original
+    headerSchemeBundle.registerColorScheme(
+        enabledMarkScheme.shade(0.8f), ColorSchemeAssociationKind.MARK,
+        ComponentState.SELECTED
     )
     result.registerDecorationAreaSchemeBundle(
         headerSchemeBundle, headerColorScheme,

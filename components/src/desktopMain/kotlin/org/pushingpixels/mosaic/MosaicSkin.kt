@@ -43,16 +43,6 @@ object MosaicSkin {
 
     @Composable
     @ComposableContract(readonly = true)
-    val colorSchemes: ColorSchemes
-        get() = AmbientColorSchemes.current
-
-    @Composable
-    @ComposableContract(readonly = true)
-    val colorSchemeBundle: ColorSchemeBundle
-        get() = AmbientColorSchemeBundles.current
-
-    @Composable
-    @ComposableContract(readonly = true)
     val colors: MosaicSkinColors
         get() = AmbientSkinColors.current
 
@@ -74,8 +64,6 @@ object MosaicSkin {
 
 @Composable
 fun MosaicSkin(
-    colorSchemes: ColorSchemes = MosaicSkin.colorSchemes,
-    colorSchemeBundle: ColorSchemeBundle = MosaicSkin.colorSchemeBundle,
     colors: MosaicSkinColors = MosaicSkin.colors,
     shapes: ButtonShaper = MosaicSkin.shapes,
     painters: Painters = MosaicSkin.painters,
@@ -83,8 +71,6 @@ fun MosaicSkin(
     content: @Composable () -> Unit
 ) {
     MosaicSkin(decorationArea = DecorationArea(DecorationAreaType.NONE),
-        colorSchemes = colorSchemes,
-        colorSchemeBundle = colorSchemeBundle,
         colors = colors,
         shapes = shapes,
         painters = painters,
@@ -95,8 +81,6 @@ fun MosaicSkin(
 @Composable
 private fun MosaicSkin(
     decorationArea: DecorationArea = MosaicSkin.decorationArea,
-    colorSchemes: ColorSchemes = MosaicSkin.colorSchemes,
-    colorSchemeBundle: ColorSchemeBundle = MosaicSkin.colorSchemeBundle,
     colors: MosaicSkinColors = MosaicSkin.colors,
     shapes: ButtonShaper = MosaicSkin.shapes,
     painters: Painters = MosaicSkin.painters,
@@ -105,8 +89,6 @@ private fun MosaicSkin(
 ) {
     Providers(
         AmbientDecorationArea provides decorationArea,
-        AmbientColorSchemes provides colorSchemes,
-        AmbientColorSchemeBundles provides colorSchemeBundle,
         AmbientSkinColors provides colors,
         AmbientShapes provides shapes,
         AmbientPainters provides painters,

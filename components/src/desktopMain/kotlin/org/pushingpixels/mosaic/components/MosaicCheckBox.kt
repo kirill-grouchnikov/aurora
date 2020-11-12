@@ -29,13 +29,13 @@
  */
 package org.pushingpixels.mosaic.components
 
-import androidx.compose.animation.core.FloatPropKey
+import androidx.compose.animation.asDisposableClock
+import androidx.compose.animation.core.AnimatedFloat
+import androidx.compose.animation.core.AnimationEndReason
+import androidx.compose.animation.core.FloatTweenSpec
 import androidx.compose.animation.core.TransitionDefinition
-import androidx.compose.animation.core.transitionDefinition
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.transition
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
@@ -45,222 +45,245 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerMoveFilter
+import androidx.compose.ui.platform.AnimationClockAmbient
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.mosaic.AmbientTextColor
-import org.pushingpixels.mosaic.MosaicSkin
-import org.pushingpixels.mosaic.colorscheme.BaseColorScheme
-import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
+import org.pushingpixels.mosaic.*
+import org.pushingpixels.mosaic.utils.*
+import java.util.*
 
 private val CheckboxSize = 14.dp
-private val CheckMarkDrawFraction = FloatPropKey()
-private val ColorTransitionFraction = FloatPropKey()
 
-interface CheckBoxColors {
-    @Composable
-    fun fillColorScheme(selected: Boolean): MosaicColorScheme
-
-    @Composable
-    fun borderColorScheme(selected: Boolean): MosaicColorScheme
-
-    @Composable
-    fun markColor(selected: Boolean): Color
-
-    @Composable
-    fun textColor(): Color
-}
-
-@Composable
-fun defaultCheckBoxColors(
-    fillColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.enabled,
-    selectedBackgroundColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.selected,
-    borderColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.enabled,
-    selectedBorderColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.selected,
-    markColor: Color = MosaicSkin.colorSchemes.enabled.foregroundColor,
-    selectedMarkColor: Color = MosaicSkin.colorSchemes.selected.foregroundColor,
-    textColor: Color = MosaicSkin.colorSchemes.enabled.foregroundColor
-): CheckBoxColors {
-    return DefaultCheckBoxColors(
-        fillColorScheme = fillColorScheme,
-        selectedFillColorScheme = selectedBackgroundColorScheme,
-        borderColorScheme = borderColorScheme,
-        selectedBorderColorScheme = selectedBorderColorScheme,
-        markColor = markColor,
-        selectedMarkColor = selectedMarkColor,
-        textColor = textColor
-    )
-}
-
-private class DefaultCheckBoxColors(
-    private val fillColorScheme: MosaicColorScheme,
-    private val selectedFillColorScheme: MosaicColorScheme,
-    private val borderColorScheme: MosaicColorScheme,
-    private val selectedBorderColorScheme: MosaicColorScheme,
-    private val markColor: Color,
-    private val selectedMarkColor: Color,
-    private val textColor: Color
-) : CheckBoxColors {
-    @Composable
-    override fun fillColorScheme(selected: Boolean): MosaicColorScheme {
-        return if (selected) selectedFillColorScheme else fillColorScheme
-    }
-
-    @Composable
-    override fun borderColorScheme(selected: Boolean): MosaicColorScheme {
-        return if (selected) selectedBorderColorScheme else borderColorScheme
-    }
-
-    @Composable
-    override fun markColor(selected: Boolean): Color {
-        return selectedMarkColor
-    }
-
-    @Composable
-    override fun textColor(): Color {
-        return textColor
-    }
-}
-
-@Composable
-private fun getCheckMarkTransitionDefinition(duration: Int): TransitionDefinition<Boolean> {
-    return transitionDefinition {
-        state(false) {
-            this[CheckMarkDrawFraction] = 0.0f
-        }
-
-        state(true) {
-            this[CheckMarkDrawFraction] = 1.0f
-        }
-
-        transition(false to true) {
-            CheckMarkDrawFraction using tween(durationMillis = duration)
-        }
-
-        transition(true to false) {
-            CheckMarkDrawFraction using tween(durationMillis = duration)
-        }
-    }
-}
-
-// This will be initialized on first usage using the getCheckMarkTransitionDefinition
+// This will be initialized on first usage using the getSelectedTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
-private lateinit var CheckMarkTransitionDefinition: TransitionDefinition<Boolean>
+private lateinit var SelectedTransitionDefinition: TransitionDefinition<ButtonState>
 
-@Composable
-private fun getSelectedTransitionDefinition(duration: Int): TransitionDefinition<Boolean> {
-    return transitionDefinition {
-        state(false) {
-            this[ColorTransitionFraction] = 0.0f
-        }
-
-        state(true) {
-            this[ColorTransitionFraction] = 1.0f
-        }
-
-        transition(false to true) {
-            ColorTransitionFraction using tween(durationMillis = duration)
-        }
-
-        transition(true to false) {
-            ColorTransitionFraction using tween(durationMillis = duration)
-        }
-    }
-}
-
-// This will be initialized on first usage using the getColorTransitionDefinition
+// This will be initialized on first usage using the getRolloverTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
-private lateinit var ColorTransitionDefinition: TransitionDefinition<Boolean>
+private lateinit var RolloverTransitionDefinition: TransitionDefinition<Boolean>
 
 @Immutable
-private class DrawingCache(
-    val markPath: Path = Path(),
+private class CheckBoxDrawingCache(
+    val colorScheme: MutableColorScheme = MutableColorScheme(
+        displayName = "Internal mutable",
+        background = Color.White, foreground = Color.Black
+    ),
+    val markPath: Path = Path()
 )
 
 @Composable
 fun MosaicCheckBox(
     modifier: Modifier = Modifier,
     shape: Shape = MosaicSkin.shapes.small,
-    colorsSchemes: CheckBoxColors = defaultCheckBoxColors(),
     checked: Boolean = false,
     onCheckedChange: (Boolean) -> Unit,
     content: @Composable RowScope.() -> Unit
 ) {
-    val checkedState = remember { mutableStateOf(checked) }
-    val drawingCache = remember { DrawingCache() }
+    MosaicCheckBox(
+        modifier = modifier,
+        shape = shape,
+        checked = checked,
+        onCheckedChange = onCheckedChange,
+        stateTransitionFloat = AnimatedFloat(0.0f, AnimationClockAmbient.current.asDisposableClock()),
+        content = content
+    )
+}
 
-    // Transition for animating the alpha channel of the checkbox mark
-    if (!::CheckMarkTransitionDefinition.isInitialized) {
-        CheckMarkTransitionDefinition =
-            getCheckMarkTransitionDefinition(MosaicSkin.animationConfig.short)
+@Composable
+fun MosaicCheckBox(
+    modifier: Modifier = Modifier,
+    shape: Shape = MosaicSkin.shapes.small,
+    checked: Boolean = false,
+    onCheckedChange: (Boolean) -> Unit,
+    stateTransitionFloat: AnimatedFloat,
+    content: @Composable RowScope.() -> Unit
+) {
+    val drawingCache = remember { CheckBoxDrawingCache() }
+
+    val selectedState = remember { mutableStateOf(if (checked) ButtonState.SELECTED else ButtonState.IDLE) }
+    val rolloverState = remember { mutableStateOf(false) }
+
+    val modelStateInfo = remember {
+        ModelStateInfo(
+            ComponentState.getState(
+                isEnabled = true, isRollover = false,
+                isSelected = checked
+            )
+        )
     }
-    val markAlphaTransitionState = transition(
-        definition = CheckMarkTransitionDefinition,
-        initState = checkedState.value,
-        toState = checkedState.value
+    val markAlpha = remember { mutableStateOf(if (checked) 1.0f else 0.0f) }
+
+    val decorationAreaType = MosaicSkin.decorationArea.type
+
+    // Transition for the selection state
+    if (!::SelectedTransitionDefinition.isInitialized) {
+        SelectedTransitionDefinition =
+            getSelectedTransitionDefinition(MosaicSkin.animationConfig.short)
+    }
+    val selectionTransitionState = transition(
+        definition = SelectedTransitionDefinition,
+        initState = selectedState.value,
+        toState = selectedState.value
+    )
+    // Transition for the rollover state
+    if (!::RolloverTransitionDefinition.isInitialized) {
+        RolloverTransitionDefinition =
+            getRolloverTransitionDefinition(MosaicSkin.animationConfig.regular)
+    }
+    val rolloverTransitionState = transition(
+        definition = RolloverTransitionDefinition,
+        initState = rolloverState.value,
+        toState = rolloverState.value
     )
 
-    // Transition for animating the colors of the checkbox
-    if (!::ColorTransitionDefinition.isInitialized) {
-        ColorTransitionDefinition =
-            getSelectedTransitionDefinition(MosaicSkin.animationConfig.regular)
-    }
-    val colorTransitionState = transition(
-        definition = ColorTransitionDefinition,
-        initState = checkedState.value,
-        toState = checkedState.value
+    // TODO - how to trigger the state transition animation without these two transitions
+    // that track the changes in selected and rollover states?
+    selectionTransitionState[SelectionTransitionFraction]
+    rolloverTransitionState[RolloverTransitionFraction]
+
+    val currentState = ComponentState.getState(
+        isEnabled = true,
+        isRollover = rolloverState.value,
+        isSelected = (selectedState.value == ButtonState.SELECTED)
     )
+
+    var duration = MosaicSkin.animationConfig.regular
+    if (currentState != modelStateInfo.currModelState) {
+        stateTransitionFloat.stop()
+        println("******** Have new state to move to $currentState ********")
+        modelStateInfo.dumpState(stateTransitionFloat.value)
+        // Need to transition to the new state
+        if (modelStateInfo.stateContributionMap.containsKey(currentState)) {
+            println("Already has new state")
+            // Going to a state that is already partially active
+            val transitionPosition = modelStateInfo.stateContributionMap[currentState]!!.contribution
+            duration = (duration * (1.0f - transitionPosition)).toInt()
+            stateTransitionFloat.setBounds(transitionPosition, 1.0f)
+            stateTransitionFloat.snapTo(transitionPosition)
+        } else {
+            println("Does not have new state (curr state ${modelStateInfo.currModelState}) at ${stateTransitionFloat.value}")
+            stateTransitionFloat.setBounds(0.0f, 1.0f)
+            stateTransitionFloat.snapTo(0.0f)
+            println("\tat ${stateTransitionFloat.value}")
+        }
+
+        // Create a new contribution map
+        val newContributionMap: MutableMap<ComponentState, StateContributionInfo> = HashMap()
+        if (modelStateInfo.stateContributionMap.containsKey(currentState)) {
+            // 1. the new state goes from current value to 1.0
+            // 2. the rest go from current value to 0.0
+            for ((contribState, currRange) in modelStateInfo.stateContributionMap.entries) {
+                val newEnd = if (contribState == currentState) 1.0f else 0.0f
+                newContributionMap[contribState] = StateContributionInfo(
+                    currRange.contribution, newEnd
+                )
+            }
+        } else {
+            // 1. all existing states go from current value to 0.0
+            // 2. the new state goes from 0.0 to 1.0
+            for ((contribState, currRange) in modelStateInfo.stateContributionMap.entries) {
+                newContributionMap[contribState] = StateContributionInfo(
+                    currRange.contribution, 0.0f
+                )
+            }
+            newContributionMap[currentState] = StateContributionInfo(0.0f, 1.0f)
+        }
+        modelStateInfo.stateContributionMap = newContributionMap
+        modelStateInfo.sync()
+
+        modelStateInfo.currModelState = currentState
+        println("******** After moving to new state *****")
+        modelStateInfo.dumpState(stateTransitionFloat.value)
+
+        println("Animating over $duration from ${stateTransitionFloat.value} to 1.0f")
+        stateTransitionFloat.animateTo(
+            targetValue = 1.0f,
+            anim = FloatTweenSpec(duration = duration),
+            onEnd = { endReason, endValue ->
+                println("Ended with reason $endReason at $endValue / ${stateTransitionFloat.value}")
+                if (endReason == AnimationEndReason.TargetReached) {
+                    modelStateInfo.updateActiveStates(1.0f)
+                    modelStateInfo.clear()
+                    println("******** After clear (target reached) ********")
+                    modelStateInfo.dumpState(stateTransitionFloat.value)
+                    markAlpha.value = if (modelStateInfo.currModelState.isFacetActive(ComponentStateFacet.SELECTION)) 1.0f else 0.0f
+                }
+            }
+        )
+
+        println()
+    }
+
+    if (stateTransitionFloat.isRunning) {
+        modelStateInfo.updateActiveStates(stateTransitionFloat.value)
+        println("********* During animation ${stateTransitionFloat.value} to ${stateTransitionFloat.targetValue} *******")
+        modelStateInfo.dumpState(stateTransitionFloat.value)
+    }
 
     // The toggleable modifier is set on the checkbox mark, as well as on the
     // content so that the whole thing is clickable to toggle the control.
     Row(
-        modifier = modifier.toggleable(
-                value = checkedState.value,
+        modifier = modifier
+            .pointerMoveFilter(
+                onEnter = {
+                    rolloverState.value = true
+                    false
+                },
+                onExit = {
+                    rolloverState.value = false
+                    false
+                },
+                onMove = {
+                    false
+                })
+            .toggleable(
+                value = (selectedState.value == ButtonState.SELECTED),
                 onValueChange = {
-                    checkedState.value = it
-                    onCheckedChange.invoke(checkedState.value)
+                    selectedState.value = if (it) ButtonState.SELECTED else ButtonState.IDLE
+                    onCheckedChange.invoke(selectedState.value == ButtonState.SELECTED)
                 },
                 indication = null
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val colorTransitionPosition = colorTransitionState[ColorTransitionFraction]
+        // Populate the cached color scheme for filling the mark box
+        // based on the current model state info
+        populateColorScheme(
+            drawingCache.colorScheme, modelStateInfo, decorationAreaType,
+            ColorSchemeAssociationKind.MARK_BOX
+        )
+        // And retrieve the mark box colors
+        val fillColorStart = drawingCache.colorScheme.backgroundColorStart
+        val fillColorEnd = drawingCache.colorScheme.backgroundColorEnd
 
-        // TODO - replace with optical-based interpolation
-        val fillColorStart = lerp(
-            colorsSchemes.fillColorScheme(false).backgroundColorStart,
-            colorsSchemes.fillColorScheme(true).backgroundColorStart,
-            colorTransitionPosition
+        // Populate the cached color scheme for drawing the mark box border
+        // based on the current model state info
+        populateColorScheme(
+            drawingCache.colorScheme, modelStateInfo, decorationAreaType,
+            ColorSchemeAssociationKind.BORDER
         )
-        val fillColorEnd = lerp(
-            colorsSchemes.fillColorScheme(false).backgroundColorEnd,
-            colorsSchemes.fillColorScheme(true).backgroundColorEnd,
-            colorTransitionPosition
-        )
-        val borderColorStart = lerp(
-            colorsSchemes.borderColorScheme(false).foregroundColor,
-            colorsSchemes.borderColorScheme(true).foregroundColor,
-            colorTransitionPosition
-        )
-        val borderColorEnd = lerp(
-            colorsSchemes.borderColorScheme(false).foregroundColor,
-            colorsSchemes.borderColorScheme(true).foregroundColor,
-            colorTransitionPosition
-        )
-        val markColor = colorsSchemes.markColor(true)
+        // And retrieve the mark box border colors
+        val borderColorStart = drawingCache.colorScheme.foregroundColor
+        val borderColorEnd = drawingCache.colorScheme.foregroundColor
 
-        // TODO: figure out how to not create a new color scheme object on every
-        // redraw
-        val currBackgroundColorScheme = BaseColorScheme(
-            displayName = "dummy",
-            backgroundStart = fillColorStart,
-            backgroundEnd = fillColorEnd,
-            foreground = colorsSchemes.textColor()
-        )
-        val currBorderColorScheme = BaseColorScheme(
-            displayName = "dummy",
-            backgroundStart = borderColorStart,
-            backgroundEnd = borderColorEnd,
-            foreground = colorsSchemes.textColor()
-        )
+        // Mark color
+        // TODO - fix the state and use the right color
+        val markColor = MosaicSkin.colors.getColorScheme(decorationAreaType,
+            ColorSchemeAssociationKind.MARK, ComponentState.SELECTED).foregroundColor
+
+        // Checkmark alpha is the combined strength of all the
+        // states that have the selection bit turned on
+        markAlpha.value = modelStateInfo.stateContributionMap.filter { it.key.isFacetActive(ComponentStateFacet.SELECTION) }
+            .map { it.value }
+            .sumByDouble { it.contribution.toDouble() }
+            .toFloat()
+
+        println("Mark alpha $markAlpha")
+
+        // Text color
+        // TODO - fix the state
+        val textColor = MosaicSkin.colors.getColorScheme(decorationAreaType,
+            ColorSchemeAssociationKind.FILL, ComponentState.ENABLED).foregroundColor
+
         val fillPainter = MosaicSkin.painters.fillPainter
         val borderPainter = MosaicSkin.painters.borderPainter
 
@@ -270,12 +293,20 @@ fun MosaicCheckBox(
 
             val outline = shape.createOutline(Size(width, height), this)
 
+            // Populate the cached color scheme for filling the button container
+            drawingCache.colorScheme.backgroundStart = fillColorStart
+            drawingCache.colorScheme.backgroundEnd = fillColorEnd
+            drawingCache.colorScheme.foreground = textColor
             fillPainter.paintContourBackground(
-                this, this.size, outline, currBackgroundColorScheme
+                this, this.size, outline, drawingCache.colorScheme
             )
 
+            // Populate the cached color scheme for drawing the button border
+            drawingCache.colorScheme.backgroundStart = borderColorStart
+            drawingCache.colorScheme.backgroundEnd = borderColorEnd
+            drawingCache.colorScheme.foreground = textColor
             borderPainter.paintBorder(
-                this, this.size, outline, null, currBorderColorScheme
+                this, this.size, outline, null, drawingCache.colorScheme
             )
 
             // Draw the checkbox mark with the alpha that corresponds to the current
@@ -290,17 +321,18 @@ fun MosaicCheckBox(
 
                 drawPath(
                     path = markPath,
-                    color = markColor.copy(alpha = markAlphaTransitionState[CheckMarkDrawFraction]),
+                    color = markColor.copy(alpha = markAlpha.value),
                     style = Stroke(
                         width = markStroke,
-                        cap = StrokeCap.Round, join = StrokeJoin.Round
+                        cap = StrokeCap.Round,
+                        join = StrokeJoin.Round
                     )
                 )
             }
         }
         // Unlike buttons, the rest of the content should ignore (at least for now)
         // the selected state of the checkbox for drawing the text
-        Providers(AmbientTextColor provides colorsSchemes.textColor()) {
+        Providers(AmbientTextColor provides textColor) {
             Row(
                 Modifier
                     .defaultMinSizeConstraints(

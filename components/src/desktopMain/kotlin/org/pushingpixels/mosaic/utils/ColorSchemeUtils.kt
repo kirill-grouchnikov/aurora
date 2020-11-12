@@ -37,7 +37,6 @@ import org.pushingpixels.mosaic.MosaicSkin
 import org.pushingpixels.mosaic.colorscheme.BaseColorScheme
 import org.pushingpixels.mosaic.colorscheme.ColorSchemes
 import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
-import org.pushingpixels.mosaic.components.ModelStateInfo
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader

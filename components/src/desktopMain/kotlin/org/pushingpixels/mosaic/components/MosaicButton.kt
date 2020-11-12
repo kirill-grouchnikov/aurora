@@ -49,123 +49,16 @@ import org.pushingpixels.mosaic.AmbientTextColor
 import org.pushingpixels.mosaic.ColorSchemeAssociationKind
 import org.pushingpixels.mosaic.ComponentState
 import org.pushingpixels.mosaic.MosaicSkin
-import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
-import org.pushingpixels.mosaic.utils.MutableColorScheme
-import org.pushingpixels.mosaic.utils.populateColorScheme
+import org.pushingpixels.mosaic.utils.*
 import java.util.*
-
-enum class ButtonState {
-    IDLE, SELECTED
-}
-
-private val SelectionTransitionFraction = FloatPropKey()
-private val RolloverTransitionFraction = FloatPropKey()
-
-@Composable
-private fun getSelectedTransitionDefinition(duration: Int): TransitionDefinition<ButtonState> {
-    return transitionDefinition {
-        state(ButtonState.IDLE) {
-            this[SelectionTransitionFraction] = 0.0f
-        }
-
-        state(ButtonState.SELECTED) {
-            this[SelectionTransitionFraction] = 1.0f
-        }
-
-        transition(ButtonState.IDLE to ButtonState.SELECTED) {
-            SelectionTransitionFraction using tween(durationMillis = duration)
-        }
-
-        transition(ButtonState.SELECTED to ButtonState.IDLE) {
-            SelectionTransitionFraction using tween(durationMillis = duration)
-        }
-    }
-}
 
 // This will be initialized on first usage using the getSelectedTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
 private lateinit var SelectedTransitionDefinition: TransitionDefinition<ButtonState>
 
-@Composable
-private fun getRolloverTransitionDefinition(duration: Int): TransitionDefinition<Boolean> {
-    return transitionDefinition {
-        state(false) {
-            this[RolloverTransitionFraction] = 0.0f
-        }
-
-        state(true) {
-            this[RolloverTransitionFraction] = 1.0f
-        }
-
-        transition(false to true) {
-            RolloverTransitionFraction using tween(durationMillis = duration)
-        }
-
-        transition(true to false) {
-            RolloverTransitionFraction using tween(durationMillis = duration)
-        }
-    }
-}
-
-// This will be initialized on first usage using the getSelectedTransitionDefinition
+// This will be initialized on first usage using the getRolloverTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
 private lateinit var RolloverTransitionDefinition: TransitionDefinition<Boolean>
-
-internal class StateContributionInfo(var start: Float, var end: Float) {
-    var contribution: Float
-
-    fun updateContribution(timelinePosition: Float) {
-        contribution = start + timelinePosition * (end - start)
-    }
-
-    init {
-        contribution = start
-    }
-}
-
-internal class ModelStateInfo(var currModelState: ComponentState) {
-    var stateContributionMap: MutableMap<ComponentState, StateContributionInfo>
-    var activeStrength: Float
-
-    init {
-        activeStrength = 0.0f
-        stateContributionMap = HashMap()
-        stateContributionMap[currModelState] = StateContributionInfo(1.0f, 1.0f)
-        sync()
-    }
-
-    fun sync() {
-        activeStrength = 0.0f
-        for ((activeState, value) in stateContributionMap) {
-            if (activeState.isActive) {
-                activeStrength += value.contribution
-            }
-        }
-    }
-
-    fun clear() {
-        stateContributionMap.clear()
-        stateContributionMap[currModelState] = StateContributionInfo(1.0f, 1.0f)
-        sync()
-    }
-
-    fun updateActiveStates(position: Float) {
-        for (pair in stateContributionMap.values) {
-            pair.updateContribution(position)
-        }
-        sync()
-    }
-
-    fun dumpState(stateTransitionPosition: Float) {
-        println("######")
-        println("Curr state ${currModelState}, position $stateTransitionPosition")
-        for ((state, currRange) in stateContributionMap) {
-            println("\t $state at ${currRange.contribution} [${currRange.start}-${currRange.end}]")
-        }
-        println("\tActive strength $activeStrength")
-        println("######")
-    }
-}
 
 @Immutable
 private class ButtonDrawingCache(
@@ -274,7 +167,7 @@ private fun MosaicToggleButton(
             // 1. the new state goes from current value to 1.0
             // 2. the rest go from current value to 0.0
             for ((contribState, currRange) in modelStateInfo.stateContributionMap.entries) {
-                val newEnd = if (contribState === currentState) 1.0f else 0.0f
+                val newEnd = if (contribState == currentState) 1.0f else 0.0f
                 newContributionMap[contribState] = StateContributionInfo(
                     currRange.contribution, newEnd
                 )
