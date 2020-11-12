@@ -61,61 +61,6 @@ enum class ButtonState {
 private val SelectionTransitionFraction = FloatPropKey()
 private val RolloverTransitionFraction = FloatPropKey()
 
-interface ButtonColors {
-    @Composable
-    fun fillColorScheme(selected: Boolean): MosaicColorScheme
-
-    @Composable
-    fun borderColorScheme(selected: Boolean): MosaicColorScheme
-
-    @Composable
-    fun textColorScheme(selected: Boolean): MosaicColorScheme
-}
-
-@Composable
-fun defaultButtonColors(
-    fillColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.enabled,
-    selectedFillColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.selected,
-    borderColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.enabled,
-    selectedBorderColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.selected,
-    textColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.enabled,
-    selectedTextColorScheme: MosaicColorScheme = MosaicSkin.colorSchemes.selected,
-): ButtonColors {
-    return DefaultButtonColors(
-        fillColorScheme = fillColorScheme,
-        selectedFillColorScheme = selectedFillColorScheme,
-        borderColorScheme = borderColorScheme,
-        selectedBorderColorScheme = selectedBorderColorScheme,
-        textColorScheme = textColorScheme,
-        selectedTextColorScheme = selectedTextColorScheme
-    )
-}
-
-private class DefaultButtonColors(
-    private val fillColorScheme: MosaicColorScheme,
-    private val selectedFillColorScheme: MosaicColorScheme,
-    private val borderColorScheme: MosaicColorScheme,
-    private val selectedBorderColorScheme: MosaicColorScheme,
-    private val textColorScheme: MosaicColorScheme,
-    private val selectedTextColorScheme: MosaicColorScheme
-) : ButtonColors {
-
-    @Composable
-    override fun fillColorScheme(selected: Boolean): MosaicColorScheme {
-        return if (selected) selectedFillColorScheme else fillColorScheme
-    }
-
-    @Composable
-    override fun borderColorScheme(selected: Boolean): MosaicColorScheme {
-        return if (selected) selectedBorderColorScheme else borderColorScheme
-    }
-
-    @Composable
-    override fun textColorScheme(selected: Boolean): MosaicColorScheme {
-        return if (selected) selectedTextColorScheme else textColorScheme
-    }
-}
-
 @Composable
 private fun getSelectedTransitionDefinition(duration: Int): TransitionDefinition<ButtonState> {
     return transitionDefinition {

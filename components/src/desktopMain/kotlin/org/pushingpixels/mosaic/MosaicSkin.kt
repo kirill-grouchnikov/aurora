@@ -33,7 +33,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ComposableContract
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.emptyContent
-import androidx.compose.ui.Modifier
 import org.pushingpixels.mosaic.colorscheme.MosaicSkinColors
 
 object MosaicSkin {
@@ -75,6 +74,26 @@ object MosaicSkin {
 
 @Composable
 fun MosaicSkin(
+    colorSchemes: ColorSchemes = MosaicSkin.colorSchemes,
+    colorSchemeBundle: ColorSchemeBundle = MosaicSkin.colorSchemeBundle,
+    colors: MosaicSkinColors = MosaicSkin.colors,
+    shapes: ButtonShaper = MosaicSkin.shapes,
+    painters: Painters = MosaicSkin.painters,
+    animationConfig: AnimationConfig = MosaicSkin.animationConfig,
+    content: @Composable () -> Unit
+) {
+    MosaicSkin(decorationArea = DecorationArea(DecorationAreaType.NONE),
+        colorSchemes = colorSchemes,
+        colorSchemeBundle = colorSchemeBundle,
+        colors = colors,
+        shapes = shapes,
+        painters = painters,
+        animationConfig = animationConfig,
+        content = content)
+}
+
+@Composable
+private fun MosaicSkin(
     decorationArea: DecorationArea = MosaicSkin.decorationArea,
     colorSchemes: ColorSchemes = MosaicSkin.colorSchemes,
     colorSchemeBundle: ColorSchemeBundle = MosaicSkin.colorSchemeBundle,
@@ -106,10 +125,10 @@ fun DecorationArea(
         content()
     }
 }
-
-class DecorationAreaModifier(val type: DecorationAreaType): Modifier.Element
-
-fun Modifier.decorationArea(type: DecorationAreaType) =
-    this.then(DecorationAreaModifier(type))
-
+//
+//class DecorationAreaModifier(val type: DecorationAreaType): Modifier.Element
+//
+//fun Modifier.decorationArea(type: DecorationAreaType) =
+//    this.then(DecorationAreaModifier(type))
+//
 
