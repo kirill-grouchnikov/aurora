@@ -44,6 +44,7 @@ import org.pushingpixels.mosaic.MosaicSkin
 import org.pushingpixels.mosaic.components.MosaicCheckBox
 import org.pushingpixels.mosaic.components.MosaicText
 import org.pushingpixels.mosaic.components.MosaicToggleButton
+import org.pushingpixels.mosaic.components.mosaicBackground
 
 fun main() {
     Window("Mosaic Demo", IntSize(500, 400)) {
@@ -54,10 +55,7 @@ fun main() {
             ) {
                 Canvas(
                     Modifier.matchParentSize()
-                        .background(
-                            MosaicSkin.colors
-                                .getBackgroundColorScheme(DecorationAreaType.NONE).backgroundColorStart
-                        )
+                        .mosaicBackground()
                 ) {}
                 DemoContent()
             }
@@ -72,10 +70,7 @@ fun DemoContent() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(
-                        MosaicSkin.colors
-                            .getBackgroundColorScheme(DecorationAreaType.HEADER).backgroundColorStart
-                    )
+                    .mosaicBackground()
                     .padding(8.dp)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -113,10 +108,7 @@ fun DemoContent() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(
-                        MosaicSkin.colors
-                            .getBackgroundColorScheme(DecorationAreaType.NONE).backgroundColorStart
-                    )
+                    .mosaicBackground()
                     .padding(8.dp)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -138,10 +130,7 @@ fun DemoContent() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(
-                        MosaicSkin.colors
-                            .getBackgroundColorScheme(DecorationAreaType.FOOTER).backgroundColorStart
-                    )
+                    .mosaicBackground()
                     .padding(8.dp)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {

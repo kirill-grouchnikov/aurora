@@ -54,10 +54,14 @@ fun marinerSkinColors(): MosaicSkinColors {
 
     defaultSchemeBundle.registerAlpha(0.8f, ComponentState.DISABLED_SELECTED)
     defaultSchemeBundle.registerAlpha(0.8f, ComponentState.DISABLED_UNSELECTED)
-    defaultSchemeBundle.registerColorScheme(disabledSelectedScheme, ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_SELECTED)
-    defaultSchemeBundle.registerColorScheme(disabledScheme, ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_UNSELECTED)
+    defaultSchemeBundle.registerColorScheme(
+        disabledSelectedScheme, ColorSchemeAssociationKind.FILL,
+        ComponentState.DISABLED_SELECTED
+    )
+    defaultSchemeBundle.registerColorScheme(
+        disabledScheme, ColorSchemeAssociationKind.FILL,
+        ComponentState.DISABLED_UNSELECTED
+    )
 
     // borders
     val activeBorderScheme = schemes["Mariner Active Border"]
@@ -77,8 +81,6 @@ fun marinerSkinColors(): MosaicSkinColors {
     )
 
     // marks
-
-    // marks
     val activeMarkScheme = schemes["Mariner Active Mark"]
     val enabledMarkScheme = schemes["Mariner Enabled Mark"]
     defaultSchemeBundle.registerColorScheme(
@@ -90,18 +92,18 @@ fun marinerSkinColors(): MosaicSkinColors {
         ComponentState.ENABLED
     )
 
-    val uneditable =
-        ComponentState("uneditable", arrayOf(ComponentStateFacet.ENABLE),
-            arrayOf(ComponentStateFacet.EDITABLE))
+    val uneditableState =
+        ComponentState(
+            "uneditable", arrayOf(ComponentStateFacet.ENABLE),
+            arrayOf(ComponentStateFacet.EDITABLE)
+        )
     val uneditableControls = schemes["Mariner Uneditable"]
     defaultSchemeBundle.registerColorScheme(
         uneditableControls, ColorSchemeAssociationKind.FILL,
-        uneditable
+        uneditableState
     )
 
     result.registerDecorationAreaSchemeBundle(defaultSchemeBundle, DecorationAreaType.NONE)
-
-    // header color scheme bundle
 
     // header color scheme bundle
     val headerColorScheme = schemes["Mariner Header"]
@@ -111,12 +113,12 @@ fun marinerSkinColors(): MosaicSkinColors {
     )
     headerSchemeBundle.registerAlpha(0.4f, ComponentState.DISABLED_SELECTED, ComponentState.DISABLED_UNSELECTED)
     headerSchemeBundle.registerColorScheme(
-        headerColorScheme,ColorSchemeAssociationKind.FILL,
+        headerColorScheme, ColorSchemeAssociationKind.FILL,
         ComponentState.DISABLED_SELECTED, ComponentState.DISABLED_UNSELECTED
     )
     // TODO - this is different from the original
     headerSchemeBundle.registerColorScheme(
-        activeScheme,ColorSchemeAssociationKind.FILL,
+        activeScheme, ColorSchemeAssociationKind.FILL,
         ComponentState.ROLLOVER_UNSELECTED, ComponentState.ROLLOVER_SELECTED
     )
     headerSchemeBundle.registerColorScheme(headerColorScheme, ColorSchemeAssociationKind.MARK)
@@ -136,8 +138,6 @@ fun marinerSkinColors(): MosaicSkinColors {
     )
 
     // footer color scheme bundle
-
-    // footer color scheme bundle
     val enabledFooterScheme = schemes["Mariner Footer Enabled"]
     val disabledFooterScheme = schemes["Mariner Footer Disabled"]
 
@@ -148,10 +148,16 @@ fun marinerSkinColors(): MosaicSkinColors {
 
     footerSchemeBundle.registerAlpha(0.5f, ComponentState.DISABLED_SELECTED)
     footerSchemeBundle.registerAlpha(0.8f, ComponentState.DISABLED_UNSELECTED)
-    footerSchemeBundle.registerColorScheme(activeScheme, ColorSchemeAssociationKind.FILL,ComponentState.DISABLED_SELECTED)
-    footerSchemeBundle.registerColorScheme(disabledFooterScheme, ColorSchemeAssociationKind.FILL,ComponentState.DISABLED_UNSELECTED)
-
-    // borders
+    footerSchemeBundle.registerColorScheme(
+        activeScheme,
+        ColorSchemeAssociationKind.FILL,
+        ComponentState.DISABLED_SELECTED
+    )
+    footerSchemeBundle.registerColorScheme(
+        disabledFooterScheme,
+        ColorSchemeAssociationKind.FILL,
+        ComponentState.DISABLED_UNSELECTED
+    )
 
     // borders
     val footerEnabledBorderScheme = schemes["Mariner Footer Enabled Border"]
@@ -169,8 +175,6 @@ fun marinerSkinColors(): MosaicSkinColors {
     )
 
     // marks
-
-    // marks
     val footerEnabledMarkScheme = schemes["Mariner Footer Enabled Mark"]
     footerSchemeBundle.registerColorScheme(
         activeMarkScheme, ColorSchemeAssociationKind.MARK,
@@ -180,8 +184,6 @@ fun marinerSkinColors(): MosaicSkinColors {
         footerEnabledMarkScheme,
         ColorSchemeAssociationKind.MARK, ComponentState.ENABLED
     )
-
-    // separators
 
     // separators
     val footerSeparatorScheme = schemes["Mariner Footer Separator"]

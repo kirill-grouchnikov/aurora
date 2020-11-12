@@ -736,7 +736,7 @@ class MosaicSkinColors {
      * @param decorationAreaType Decoration area type.
      * @return The background color scheme for the specified decoration area type.
      */
-    fun getBackgroundColorScheme(decorationAreaType: DecorationAreaType?): MosaicColorScheme {
+    fun getBackgroundColorScheme(decorationAreaType: DecorationAreaType): MosaicColorScheme {
         // 1 - check the registered background scheme for this specific area type.
         if (backgroundColorSchemeMap.containsKey(decorationAreaType)) {
             return backgroundColorSchemeMap[decorationAreaType]!!
