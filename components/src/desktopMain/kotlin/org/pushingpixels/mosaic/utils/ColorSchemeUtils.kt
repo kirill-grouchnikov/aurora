@@ -29,11 +29,18 @@
  */
 package org.pushingpixels.mosaic.utils
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import org.pushingpixels.mosaic.ColorSchemeAssociationKind
+import org.pushingpixels.mosaic.DecorationAreaType
+import org.pushingpixels.mosaic.MosaicSkin
+import org.pushingpixels.mosaic.colorscheme.BaseColorScheme
+import org.pushingpixels.mosaic.colorscheme.ColorSchemes
 import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
-import org.pushingpixels.mosaic.colorscheme.MosaicColorSchemeBundle
 import org.pushingpixels.mosaic.components.ModelStateInfo
+import java.io.BufferedReader
+import java.io.InputStream
+import java.io.InputStreamReader
 
 internal data class MutableColorScheme(
     val displayName: String,
@@ -97,14 +104,18 @@ internal data class MutableColorScheme(
     }
 }
 
+@Composable
 internal fun populateColorScheme(
     colorScheme: MutableColorScheme,
     modelStateInfo: ModelStateInfo,
-    associationKind: ColorSchemeAssociationKind,
-    colorSchemeBundle: MosaicColorSchemeBundle
+    decorationAreaType: DecorationAreaType,
+    associationKind: ColorSchemeAssociationKind
 ) {
     val currState = modelStateInfo.currModelState
-    val currStateScheme = colorSchemeBundle.getColorScheme(associationKind, currState, true)!!
+    val currStateScheme = MosaicSkin.colors.getColorScheme(
+        decorationAreaType = decorationAreaType,
+        associationKind = associationKind,
+        componentState = currState)
 
     var backgroundStart = currStateScheme.backgroundColorStart
     var backgroundEnd = currStateScheme.backgroundColorEnd
@@ -123,8 +134,10 @@ internal fun populateColorScheme(
             continue
         }
         // Get the color scheme that matches the contribution state
-        val contributionScheme =
-            colorSchemeBundle.getColorScheme(associationKind, contribution.key, true)!!
+        val contributionScheme = MosaicSkin.colors.getColorScheme(
+            decorationAreaType = decorationAreaType,
+            associationKind = associationKind,
+            componentState = contribution.key)
         // And interpolate the colors
         backgroundStart = getInterpolatedColor(
             backgroundStart, contributionScheme.backgroundColorStart, 1.0f - amount
@@ -143,4 +156,219 @@ internal fun populateColorScheme(
     colorScheme.backgroundStart = backgroundStart
     colorScheme.backgroundEnd = backgroundEnd
     colorScheme.foreground = foreground
+}
+
+private fun decodeColor(value: String, colorMap: Map<String, Color>): Color {
+    if (value.startsWith("@")) {
+        return colorMap[value.substring(1)]!!
+    }
+    val decodedInt = Integer.decode(value)
+    return Color(decodedInt shr 16 and 0xFF, decodedInt shr 8 and 0xFF, decodedInt and 0xFF)
+}
+
+fun getColorSchemes(inputStream: InputStream): ColorSchemes {
+    val schemes: MutableList<MosaicColorScheme> = java.util.ArrayList<MosaicColorScheme>()
+    val colorMap: MutableMap<String, Color> = HashMap<String, Color>()
+    var ultraLight: Color? = null
+    var extraLight: Color? = null
+    var light: Color? = null
+    var mid: Color? = null
+    var dark: Color? = null
+    var ultraDark: Color? = null
+    var foreground: Color? = null
+    var background: Color? = null
+    var backgroundStart: Color? = null
+    var backgroundEnd: Color? = null
+    var name: String? = null
+    val additionalColors: MutableMap<String, Color> = HashMap()
+    var inColorSchemeBlock = false
+    var inColorsBlock = false
+    var lineNumber = 0
+    try {
+        BufferedReader(InputStreamReader(inputStream)).use { reader ->
+            while (true) {
+                var line: String? = reader.readLine()
+                lineNumber++
+                if (line == null) break
+                line = line.trim { it <= ' ' }
+                if (line.isEmpty()) continue
+                if (line.startsWith("#")) {
+                    // allow comments
+                    continue
+                }
+                if (line.contains("{")) {
+                    require(!(inColorSchemeBlock || inColorsBlock)) { "Already in color scheme or colors definition, line $lineNumber" }
+                    name = line.substring(0, line.indexOf("{")).trim { it <= ' ' }
+                    if (name == "@colors") {
+                        inColorsBlock = true
+                    } else {
+                        inColorSchemeBlock = true
+                    }
+                    continue
+                }
+                if (line.contains("}")) {
+                    require(!(!inColorSchemeBlock && !inColorsBlock)) { "Not in color scheme or colors definition, line $lineNumber" }
+                    if (inColorsBlock) {
+                        // Colors have already been processed
+                        inColorsBlock = false
+                        continue
+                    }
+                    inColorSchemeBlock = false
+//                    if (background == null) {
+//                        require(
+//                            !(name == null || ultraLight == null
+//                                    || extraLight == null || light == null || mid == null
+//                                    || dark == null || ultraDark == null || foreground == null)
+//                        ) { "Incomplete specification of '$name', line $lineNumber" }
+//                    } else {
+//                        require(!(name == null || foreground == null)) { "Incomplete specification '$name', line $lineNumber" }
+//                    }
+
+                    schemes.add(
+                        BaseColorScheme(
+                            displayName = name!!,
+                            backgroundStart = background ?: backgroundStart!!,
+                            backgroundEnd = background ?: backgroundEnd!!,
+                            foreground = foreground!!
+                        )
+                    )
+
+//                    val colors: Array<Color?> = if (background != null) arrayOf<Color?>(
+//                        background, background, background, background, background, background,
+//                        foreground
+//                    ) else arrayOf<Color?>(ultraLight, extraLight, light, mid, dark, ultraDark, foreground)
+//                    if (kind === ColorSchemeKind.LIGHT) {
+//                        schemes.add(getLightColorScheme(name, colors, HashMap(additionalColors)))
+//                    } else {
+//                        schemes.add(getDarkColorScheme(name, colors, HashMap(additionalColors)))
+//                    }
+                    name = null
+//                    kind = null
+                    ultraLight = null
+                    extraLight = null
+                    light = null
+                    mid = null
+                    dark = null
+                    ultraDark = null
+                    foreground = null
+                    background = null
+                    backgroundStart = null
+                    backgroundEnd = null
+                    additionalColors.clear()
+                    continue
+                }
+                val split = line.split("=".toRegex()).toTypedArray()
+                require(split.size == 2) { "Unsupported format in line $line [$lineNumber]" }
+                val key = split[0].trim { it <= ' ' }
+                val value = split[1].trim { it <= ' ' }
+                if (inColorsBlock) {
+                    colorMap[key] = decodeColor(value, colorMap)
+                    continue
+                }
+                if ("kind" == key) {
+                    continue
+//                    if (kind == null) {
+//                        if ("Light" == value) {
+//                            kind = ColorSchemeKind.LIGHT
+//                            continue
+//                        }
+//                        if ("Dark" == value) {
+//                            kind = ColorSchemeKind.DARK
+//                            continue
+//                        }
+//                        throw IllegalArgumentException("Unsupported format in line $line [$lineNumber]")
+//                    }
+//                    throw IllegalArgumentException("'kind' should only be defined once, line $lineNumber")
+                }
+                if ("colorUltraLight" == key) {
+                    if (ultraLight == null) {
+                        ultraLight = decodeColor(value, colorMap)
+                        backgroundStart = ultraLight
+                        continue
+                    }
+                    throw IllegalArgumentException("'ultraLight' should only be defined once, line $lineNumber")
+                }
+                if ("colorExtraLight" == key) {
+                    if (extraLight == null) {
+                        extraLight = decodeColor(value, colorMap)
+                        continue
+                    }
+                    throw IllegalArgumentException("'extraLight' should only be defined once, line $lineNumber")
+                }
+                if ("colorLight" == key) {
+                    if (light == null) {
+                        light = decodeColor(value, colorMap)
+                        continue
+                    }
+                    throw IllegalArgumentException("'light' should only be defined once, line $lineNumber")
+                }
+                if ("colorMid" == key) {
+                    if (mid == null) {
+                        mid = decodeColor(value, colorMap)
+                        backgroundEnd = mid
+                        continue
+                    }
+                    throw IllegalArgumentException("'mid' should only be defined once, line $lineNumber")
+                }
+                if ("colorDark" == key) {
+                    if (dark == null) {
+                        dark = decodeColor(value, colorMap)
+                        continue
+                    }
+                    throw IllegalArgumentException("'dark' should only be defined once, line $lineNumber")
+                }
+                if ("colorUltraDark" == key) {
+                    if (ultraDark == null) {
+                        ultraDark = decodeColor(value, colorMap)
+                        continue
+                    }
+                    throw IllegalArgumentException("'ultraDark' should only be defined once, line $lineNumber")
+                }
+                if ("colorForeground" == key) {
+                    if (foreground == null) {
+                        foreground = decodeColor(value, colorMap)
+                        continue
+                    }
+                    throw IllegalArgumentException("'foreground' should only be defined once, line $lineNumber")
+                }
+                if ("colorBackground" == key) {
+                    if (value.contains("->")) {
+                        val splitInner = value.split("->".toRegex()).toTypedArray()
+                        val colorStart: Color = decodeColor(splitInner[0].trim { it <= ' ' }, colorMap)
+                        val colorEnd: Color = decodeColor(splitInner[1].trim { it <= ' ' }, colorMap)
+                        ultraLight = colorStart
+                        extraLight = getInterpolatedColor(colorStart, colorEnd, 0.9f)
+                        light = getInterpolatedColor(colorStart, colorEnd, 0.7f)
+                        mid = getInterpolatedColor(colorStart, colorEnd, 0.5f)
+                        dark = getInterpolatedColor(colorStart, colorEnd, 0.2f)
+                        ultraDark = colorEnd
+                        continue
+                    } else {
+                        if (background == null) {
+                            background = decodeColor(value, colorMap)
+                            continue
+                        }
+                    }
+                    throw IllegalArgumentException("'foreground' should only be defined once, line $lineNumber")
+                }
+                additionalColors[key] = decodeColor(value, colorMap)
+            }
+        }
+    } catch (t: Throwable) {
+        throw IllegalArgumentException(t)
+    }
+    return object : ColorSchemes {
+        override val all: Collection<MosaicColorScheme>
+            get() = schemes.map { it }
+
+        override
+        operator fun get(displayName: String): MosaicColorScheme {
+            for (scheme in schemes) {
+                if (scheme.displayName() == displayName) {
+                    return scheme
+                }
+            }
+            throw IllegalArgumentException("Requested non-existent $displayName")
+        }
+    }
 }

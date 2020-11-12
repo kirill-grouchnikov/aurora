@@ -29,54 +29,12 @@
  */
 package org.pushingpixels.mosaic
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ComposableContract
-import androidx.compose.runtime.Providers
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticAmbientOf
 
-object MosaicSkin {
-    @Composable
-    @ComposableContract(readonly = true)
-    val colorSchemes: ColorSchemes
-        get() = AmbientColorSchemes.current
+@Immutable
+data class DecorationArea(
+    val type: DecorationAreaType = DecorationAreaType.NONE
+)
 
-    @Composable
-    @ComposableContract(readonly = true)
-    val colorSchemeBundle: ColorSchemeBundle
-        get() = AmbientColorSchemeBundles.current
-
-    @Composable
-    @ComposableContract(readonly = true)
-    val shapes: ButtonShaper
-        get() = AmbientShapes.current
-
-    @Composable
-    @ComposableContract(readonly = true)
-    val painters: Painters
-        get() = AmbientPainters.current
-
-    @Composable
-    @ComposableContract(readonly = true)
-    val animationConfig: AnimationConfig
-        get() = AmbientAnimationConfig.current
-}
-
-@Composable
-fun MosaicSkin(
-    colorSchemes: ColorSchemes = MosaicSkin.colorSchemes,
-    colorSchemeBundle: ColorSchemeBundle = MosaicSkin.colorSchemeBundle,
-    shapes: ButtonShaper = MosaicSkin.shapes,
-    painters: Painters = MosaicSkin.painters,
-    animationConfig: AnimationConfig = MosaicSkin.animationConfig,
-    content: @Composable () -> Unit
-) {
-    Providers(
-        AmbientColorSchemes provides colorSchemes,
-        AmbientColorSchemeBundles provides colorSchemeBundle,
-        AmbientShapes provides shapes,
-        AmbientPainters provides painters,
-        AmbientAnimationConfig provides animationConfig
-    ) {
-        content()
-    }
-}
-
+internal val AmbientDecorationArea = staticAmbientOf { DecorationArea() }

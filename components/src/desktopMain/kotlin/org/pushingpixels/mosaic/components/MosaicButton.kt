@@ -269,6 +269,8 @@ private fun MosaicToggleButton(
         )
     }
 
+    val decorationAreaType = MosaicSkin.decorationArea.type
+
     // Transition for the selection state
     if (!::SelectedTransitionDefinition.isInitialized) {
         SelectedTransitionDefinition =
@@ -400,8 +402,8 @@ private fun MosaicToggleButton(
         // Populate the cached color scheme for filling the button container
         // based on the current model state info
         populateColorScheme(
-            drawingCache.colorScheme, modelStateInfo,
-            ColorSchemeAssociationKind.FILL, MosaicSkin.colorSchemeBundle.bundle
+            drawingCache.colorScheme, modelStateInfo, decorationAreaType,
+            ColorSchemeAssociationKind.FILL
         )
         // And retrieve the container fill colors
         val fillColorStart = drawingCache.colorScheme.backgroundColorStart
@@ -411,8 +413,8 @@ private fun MosaicToggleButton(
         // Populate the cached color scheme for drawing the button border
         // based on the current model state info
         populateColorScheme(
-            drawingCache.colorScheme, modelStateInfo,
-            ColorSchemeAssociationKind.BORDER, MosaicSkin.colorSchemeBundle.bundle
+            drawingCache.colorScheme, modelStateInfo, decorationAreaType,
+            ColorSchemeAssociationKind.BORDER
         )
         // And retrieve the border colors
         val borderColorStart = drawingCache.colorScheme.foregroundColor

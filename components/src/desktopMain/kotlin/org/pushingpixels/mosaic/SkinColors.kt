@@ -27,51 +27,16 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.mosaic.skin
+package org.pushingpixels.mosaic
 
-import androidx.compose.ui.graphics.Color
-import org.pushingpixels.mosaic.ColorSchemes
-import org.pushingpixels.mosaic.colorscheme.BaseColorScheme
-import org.pushingpixels.mosaic.colorscheme.MosaicColorSchemeBundle
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticAmbientOf
+import org.pushingpixels.mosaic.colorscheme.MosaicSkinColors
+import org.pushingpixels.mosaic.skin.marinerSkinColors
 
-private fun marinerCanvas() =
-    BaseColorScheme(
-        displayName = "Mariner canvas",
-        background = Color(0xFFFAFEF8),
-        foreground = Color(0xFF000000)
-    )
-
-private fun marinerEnabled() =
-    BaseColorScheme(
-        displayName = "Mariner enabled",
-        backgroundStart = Color(0xFFEAEEF1),
-        backgroundEnd = Color(0xFFCDCDCF),
-        foreground = Color(0xFF000000)
-    )
-
-private fun marinerDisabled() =
-    BaseColorScheme(
-        displayName = "Mariner disabled",
-        backgroundStart = Color(0xFFEAEEF1),
-        backgroundEnd = Color(0xFFCDCDCF),
-        foreground = Color(0xFF666666)
-    )
-
-private fun marinerActive() =
-    BaseColorScheme(
-        displayName = "Mariner active",
-        backgroundStart = Color(0xFFFFECBA),
-        backgroundEnd = Color(0xFFEECD82),
-        foreground = Color(0xFF4A1903)
-    )
-
-fun marinerColorSchemes() = ColorSchemes(
-    canvas = marinerCanvas(),
-    enabled = marinerEnabled(),
-    selected = marinerActive()
+@Immutable
+class SkinColors(
+    val bundle: MosaicSkinColors
 )
 
-fun marinerColorSchemeBundle(): MosaicColorSchemeBundle {
-    return MosaicColorSchemeBundle(marinerActive(), marinerEnabled(), marinerDisabled())
-}
-
+val AmbientSkinColors = staticAmbientOf { marinerSkinColors() }

@@ -29,6 +29,10 @@
  */
 package org.pushingpixels.mosaic
 
+import javax.swing.JProgressBar
+import javax.swing.text.JTextComponent
+
+
 /**
  * Defines a single facet of core and custom [ComponentState]s. See Javadocs of the
  * [ComponentState] class for more information on state facets.
@@ -59,6 +63,18 @@ class ComponentStateFacet(var name: String, value: Int) {
          * Facet that describes the press bit.
          */
         val PRESS = ComponentStateFacet("press", 50)
+
+        /**
+         * Facet that describes the determinate bit. This is relevant for [JProgressBar]
+         * control and its [JProgressBar.setIndeterminate] API.
+         */
+        val DETERMINATE = ComponentStateFacet("determinate", 10)
+
+        /**
+         * Facet that describes the editable bit. This is relevant for [JTextComponent]
+         * derived controls and its [JTextComponent.setEditable] API.
+         */
+        val EDITABLE = ComponentStateFacet("editable", 50)
     }
 
     /**
@@ -597,4 +613,55 @@ class ColorSchemeAssociationKind(
         values.add(this)
     }
 }
+
+/**
+ * Enumeration of available decoration area types.
+ *
+ * @author Kirill Grouchnikov
+ */
+class DecorationAreaType(val displayName: String) {
+    override fun toString(): String {
+        return displayName
+    }
+
+    companion object {
+        /**
+         * Title pane of primary, top-level windows (frames, dialogs).
+         */
+        val PRIMARY_TITLE_PANE = DecorationAreaType("Primary title pane")
+
+        /**
+         * Title pane of secondary, non top-level windows (internal frames, desktop icons).
+         */
+        val SECONDARY_TITLE_PANE = DecorationAreaType("Secondary title pane")
+
+        /**
+         * Tool bar.
+         */
+        val TOOLBAR = DecorationAreaType("Toolbar")
+
+        /**
+         * Any area that can be placed in the top portion of its window. Menu bar is an example of a
+         * core Swing component.
+         */
+        val HEADER = DecorationAreaType("Header")
+
+        /**
+         * Any area that can be placed in the bottom portion of its window.
+         */
+        val FOOTER = DecorationAreaType("Footer")
+
+        /**
+         * Control pane area, such as sidebars / task panes or ribbon bands in Flamingo.
+         */
+        val CONTROL_PANE = DecorationAreaType("Control pane")
+
+        /**
+         * The default decoration area type. Components placed in areas with this type do not get
+         * any special background decoration painting.
+         */
+        val NONE = DecorationAreaType("None")
+    }
+}
+
 

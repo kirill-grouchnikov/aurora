@@ -38,15 +38,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.mosaic.ColorSchemeBundle
+import org.pushingpixels.mosaic.DecorationArea
+import org.pushingpixels.mosaic.DecorationAreaType
 import org.pushingpixels.mosaic.MosaicSkin
 import org.pushingpixels.mosaic.components.MosaicCheckBox
 import org.pushingpixels.mosaic.components.MosaicText
 import org.pushingpixels.mosaic.components.MosaicToggleButton
-import org.pushingpixels.mosaic.graphiteColorSchemes
-import org.pushingpixels.mosaic.skin.graphiteColorSchemeBundle
-import org.pushingpixels.mosaic.skin.marinerColorSchemeBundle
-import org.pushingpixels.mosaic.skin.marinerColorSchemes
 
 fun main() {
     Window("Mosaic Demo", IntSize(500, 400)) {
@@ -68,44 +65,55 @@ fun main() {
 @Composable
 fun DemoContent() {
     Column(modifier = Modifier.fillMaxHeight().fillMaxWidth()) {
-        Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                MosaicCheckBox(
-                    checked = false,
-                    onCheckedChange = { println("Check 1! $it") }
-                ) {
-                    MosaicText(text = "Checkbox 1 unselected")
+        DecorationArea(decorationAreaType = DecorationAreaType.HEADER) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        MosaicSkin.colors
+                            .getBackgroundColorScheme(DecorationAreaType.HEADER).backgroundColorStart
+                    )
+                    .padding(8.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    MosaicCheckBox(
+                        checked = false,
+                        onCheckedChange = { println("Check 1! $it") }
+                    ) {
+                        MosaicText(text = "Checkbox 1 unselected")
+                    }
                 }
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                MosaicCheckBox(
-                    checked = true,
-                    onCheckedChange = { it -> println("Check 2! $it") }
-                ) {
-                    MosaicText(text = "Checkbox 2 selected")
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    MosaicCheckBox(
+                        checked = true,
+                        onCheckedChange = { it -> println("Check 2! $it") }
+                    ) {
+                        MosaicText(text = "Checkbox 2 selected")
+                    }
                 }
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                MosaicCheckBox(
-                    checked = true,
-                    onCheckedChange = { println("Check 3! $it") }
-                ) {
-                    MosaicText(text = "Checkbox 3 selected")
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    MosaicCheckBox(
+                        checked = true,
+                        onCheckedChange = { println("Check 3! $it") }
+                    ) {
+                        MosaicText(text = "Checkbox 3 selected")
+                    }
                 }
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                MosaicToggleButton(onClick = { println("Clicked 1!") }) {
-                    MosaicText("Toggle button 1")
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    MosaicToggleButton(onClick = { println("Clicked 1!") }) {
+                        MosaicText("Toggle button 1")
+                    }
                 }
             }
         }
-        MosaicSkin(
-            colorSchemes = marinerColorSchemes(),
-            colorSchemeBundle = ColorSchemeBundle(marinerColorSchemeBundle())
-        ) {
+        DecorationArea(decorationAreaType = DecorationAreaType.NONE) {
             Column(
-                modifier = Modifier.fillMaxWidth()
-                    .background(MosaicSkin.colorSchemes.canvas.backgroundColorStart)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        MosaicSkin.colors
+                            .getBackgroundColorScheme(DecorationAreaType.NONE).backgroundColorStart
+                    )
                     .padding(8.dp)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -123,13 +131,14 @@ fun DemoContent() {
                 }
             }
         }
-        MosaicSkin(
-            colorSchemes = graphiteColorSchemes(),
-            colorSchemeBundle = ColorSchemeBundle(graphiteColorSchemeBundle())
-        ) {
+        DecorationArea(decorationAreaType = DecorationAreaType.FOOTER) {
             Column(
-                modifier = Modifier.fillMaxWidth()
-                    .background(MosaicSkin.colorSchemes.canvas.backgroundColorStart)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        MosaicSkin.colors
+                            .getBackgroundColorScheme(DecorationAreaType.FOOTER).backgroundColorStart
+                    )
                     .padding(8.dp)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
