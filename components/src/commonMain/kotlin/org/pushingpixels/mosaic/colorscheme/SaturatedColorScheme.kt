@@ -41,6 +41,7 @@ import org.pushingpixels.mosaic.utils.getSaturatedColor
 class SaturatedColorScheme(origScheme: MosaicColorScheme, saturationFactor: Float) : BaseColorScheme(
     displayName = "Saturated (" + (100 * saturationFactor).toInt() + "%) "
             + origScheme.displayName(),
+    _isDark = origScheme.isDark(),
     ultraLight = getSaturatedColor(origScheme.ultraLightColor, saturationFactor),
     extraLight = getSaturatedColor(origScheme.extraLightColor, saturationFactor),
     light = getSaturatedColor(origScheme.lightColor, saturationFactor),

@@ -35,6 +35,17 @@ interface MosaicColorScheme : SchemeBaseColors {
     fun displayName(): String
 
     /**
+     * Returns indication whether this color scheme uses dark colors. Note that
+     * this method may be removed in the future. It is highly recommended to use
+     * one of the colors from the parent [SchemeBaseColors] and [SchemeDerivedColors]
+     * interfaces instead.
+     *
+     * @return `true` if this color scheme uses dark colors,
+     * `false` otherwise.
+     */
+    fun isDark(): Boolean
+
+    /**
      * Creates a shift version of `this` scheme.
      *
      * @param backgroundShiftColor  Shift color for background colors. Should have full opacity.

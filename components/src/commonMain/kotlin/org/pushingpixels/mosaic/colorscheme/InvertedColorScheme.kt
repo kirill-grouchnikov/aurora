@@ -41,6 +41,7 @@ import org.pushingpixels.mosaic.utils.invertColor
 class InvertedColorScheme(origScheme: MosaicColorScheme) :
     BaseColorScheme(
         displayName = "Negated " + origScheme.displayName(),
+        _isDark = origScheme.isDark(),
         ultraLight = invertColor(origScheme.ultraDarkColor),
         extraLight = invertColor(origScheme.darkColor),
         light = invertColor(origScheme.midColor),

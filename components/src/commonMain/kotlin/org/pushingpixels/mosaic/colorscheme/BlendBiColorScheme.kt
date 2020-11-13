@@ -43,6 +43,7 @@ class BlendBiColorScheme(
     displayName =
     "Blended " + firstScheme.displayName() + " & "
             + secondScheme.displayName() + " " + firstSchemeLikeness,
+    _isDark = firstScheme.isDark(),
     ultraLight = getInterpolatedColor(
         firstScheme.ultraLightColor,
         secondScheme.ultraLightColor, firstSchemeLikeness

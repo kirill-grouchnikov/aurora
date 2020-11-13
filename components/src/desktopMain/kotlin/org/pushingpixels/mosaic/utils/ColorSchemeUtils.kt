@@ -43,6 +43,7 @@ import java.io.InputStreamReader
 
 internal data class MutableColorScheme(
     val displayName: String,
+    var _isDark: Boolean,
     var ultraLight: Color,
     var extraLight: Color,
     var light: Color,
@@ -69,6 +70,10 @@ internal data class MutableColorScheme(
 
     override fun displayName(): String {
         return displayName
+    }
+
+    override fun isDark(): Boolean {
+        return _isDark
     }
 
     override fun shift(
@@ -124,7 +129,8 @@ internal fun populateColorScheme(
     val currStateScheme = MosaicSkin.colors.getColorScheme(
         decorationAreaType = decorationAreaType,
         associationKind = associationKind,
-        componentState = currState)
+        componentState = currState
+    )
 
     var ultraLight = currStateScheme.ultraLightColor
     var extraLight = currStateScheme.extraLightColor
@@ -150,7 +156,8 @@ internal fun populateColorScheme(
         val contributionScheme = MosaicSkin.colors.getColorScheme(
             decorationAreaType = decorationAreaType,
             associationKind = associationKind,
-            componentState = contribution.key)
+            componentState = contribution.key
+        )
         // And interpolate the colors
         ultraLight = getInterpolatedColor(
             ultraLight, contributionScheme.ultraLightColor, 1.0f - amount
@@ -195,6 +202,10 @@ private fun decodeColor(value: String, colorMap: Map<String, Color>): Color {
     return Color(decodedInt shr 16 and 0xFF, decodedInt shr 8 and 0xFF, decodedInt and 0xFF)
 }
 
+private enum class ColorSchemeKind {
+    LIGHT, DARK
+}
+
 fun getColorSchemes(inputStream: InputStream): ColorSchemes {
     val schemes: MutableList<MosaicColorScheme> = java.util.ArrayList<MosaicColorScheme>()
     val colorMap: MutableMap<String, Color> = HashMap<String, Color>()
@@ -207,6 +218,7 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
     var foreground: Color? = null
     var background: Color? = null
     var name: String? = null
+    var kind: ColorSchemeKind? = null
     val additionalColors: MutableMap<String, Color> = HashMap()
     var inColorSchemeBlock = false
     var inColorsBlock = false
@@ -254,6 +266,7 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
                     schemes.add(
                         BaseColorScheme(
                             displayName = name!!,
+                            _isDark = (kind == ColorSchemeKind.DARK),
                             ultraLight = ultraLight!!,
                             extraLight = extraLight!!,
                             light = light!!,
@@ -274,7 +287,7 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
 //                        schemes.add(getDarkColorScheme(name, colors, HashMap(additionalColors)))
 //                    }
                     name = null
-//                    kind = null
+                    kind = null
                     ultraLight = null
                     extraLight = null
                     light = null
@@ -295,19 +308,18 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
                     continue
                 }
                 if ("kind" == key) {
-                    continue
-//                    if (kind == null) {
-//                        if ("Light" == value) {
-//                            kind = ColorSchemeKind.LIGHT
-//                            continue
-//                        }
-//                        if ("Dark" == value) {
-//                            kind = ColorSchemeKind.DARK
-//                            continue
-//                        }
-//                        throw IllegalArgumentException("Unsupported format in line $line [$lineNumber]")
-//                    }
-//                    throw IllegalArgumentException("'kind' should only be defined once, line $lineNumber")
+                    if (kind == null) {
+                        if ("Light" == value) {
+                            kind = ColorSchemeKind.LIGHT
+                            continue
+                        }
+                        if ("Dark" == value) {
+                            kind = ColorSchemeKind.DARK
+                            continue
+                        }
+                        throw IllegalArgumentException("Unsupported format in line $line [$lineNumber]")
+                    }
+                    throw IllegalArgumentException("'kind' should only be defined once, line $lineNumber")
                 }
                 if ("colorUltraLight" == key) {
                     if (ultraLight == null) {

@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 
 open class BaseColorScheme(
     val displayName: String,
+    val _isDark: Boolean,
     val ultraLight: Color = Color.White,
     val extraLight: Color = Color.White,
     val light: Color = Color.White,
@@ -58,6 +59,10 @@ open class BaseColorScheme(
 
     override fun displayName(): String {
         return displayName
+    }
+
+    override fun isDark(): Boolean {
+        return _isDark
     }
 
     override fun shift(

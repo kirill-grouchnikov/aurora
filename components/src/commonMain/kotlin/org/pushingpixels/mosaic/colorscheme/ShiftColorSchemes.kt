@@ -50,6 +50,7 @@ open class ShiftColorScheme(
     displayName = "Shift " + origScheme.displayName() + " to backgr [" + backgroundShiftColor.toString() + "] "
             + (100 * backgroundShiftFactor).toInt() + "%, foregr [" + foregroundShiftColor.toString() + "]"
             + (100 * foregroundShiftFactor).toInt() + "%",
+    _isDark = origScheme.isDark(),
     ultraLight = getInterpolatedColor(
         color1 = if (shiftByBrightness) deriveByBrightness(
             backgroundShiftColor,
