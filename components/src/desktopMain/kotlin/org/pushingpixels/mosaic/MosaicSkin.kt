@@ -29,11 +29,17 @@
  */
 package org.pushingpixels.mosaic
 
+import androidx.compose.desktop.Window
+import androidx.compose.desktop.WindowEvents
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ComposableContract
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.emptyContent
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.window.MenuBar
 import org.pushingpixels.mosaic.colorscheme.MosaicSkinColors
+import java.awt.image.BufferedImage
 
 object MosaicSkin {
     @Composable
@@ -69,18 +75,35 @@ data class MosaicSkinDefinition(
     val painters: Painters
 ) : MosaicTrait
 
-@Composable
-fun MosaicSkin(
+fun MosaicWindow(
+    title: String,
     skin: MosaicSkinDefinition,
-    animationConfig: AnimationConfig = MosaicSkin.animationConfig,
-    content: @Composable () -> Unit
+    size: IntSize,
+    location: IntOffset = IntOffset.Zero,
+    centered: Boolean = true,
+    icon: BufferedImage? = null,
+    menuBar: MenuBar? = null,
+    undecorated: Boolean = false,
+    events: WindowEvents = WindowEvents(),
+    onDismissEvent: (() -> Unit)? = null,
+    content: @Composable () -> Unit = emptyContent()
+) = Window(
+    title = title,
+    size = size,
+    location = location,
+    centered = centered,
+    icon = icon,
+    menuBar = menuBar,
+    undecorated = undecorated,
+    events = events,
+    onDismissEvent = onDismissEvent
 ) {
     MosaicSkin(
         decorationArea = DecorationArea(DecorationAreaType.NONE),
         colors = skin.colors,
         shapes = skin.shapes,
         painters = skin.painters,
-        animationConfig = animationConfig,
+        animationConfig = MosaicSkin.animationConfig,
         content = content
     )
 }
@@ -114,10 +137,4 @@ fun DecorationArea(
         content()
     }
 }
-//
-//class DecorationAreaModifier(val type: DecorationAreaType): Modifier.Element
-//
-//fun Modifier.decorationArea(type: DecorationAreaType) =
-//    this.then(DecorationAreaModifier(type))
-//
 

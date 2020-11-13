@@ -29,7 +29,6 @@
  */
 package org.pushingpixels.mosaic.demo
 
-import androidx.compose.desktop.Window
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
@@ -39,7 +38,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.mosaic.DecorationArea
 import org.pushingpixels.mosaic.DecorationAreaType
-import org.pushingpixels.mosaic.MosaicSkin
+import org.pushingpixels.mosaic.MosaicWindow
 import org.pushingpixels.mosaic.components.MosaicCheckBox
 import org.pushingpixels.mosaic.components.MosaicText
 import org.pushingpixels.mosaic.components.MosaicToggleButton
@@ -47,18 +46,20 @@ import org.pushingpixels.mosaic.components.mosaicBackground
 import org.pushingpixels.mosaic.skin.marinerSkin
 
 fun main() {
-    Window("Mosaic Demo", IntSize(500, 400)) {
-        MosaicSkin(skin = marinerSkin()) {
-            Box(
-                modifier = Modifier,
-                alignment = Alignment.TopStart
-            ) {
-                Canvas(
-                    Modifier.matchParentSize()
-                        .mosaicBackground()
-                ) {}
-                DemoContent()
-            }
+    MosaicWindow(
+        title = "Mosaic Demo",
+        skin = marinerSkin(),
+        size = IntSize(500, 400)
+    ) {
+        Box(
+            modifier = Modifier,
+            alignment = Alignment.TopStart
+        ) {
+            Canvas(
+                Modifier.matchParentSize()
+                    .mosaicBackground()
+            ) {}
+            DemoContent()
         }
     }
 }
