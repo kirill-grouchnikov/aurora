@@ -212,7 +212,8 @@ fun MosaicCheckBox(
                     modelStateInfo.clear()
                     println("******** After clear (target reached) ********")
                     modelStateInfo.dumpState(stateTransitionFloat.value)
-                    markAlpha.value = if (modelStateInfo.currModelState.isFacetActive(ComponentStateFacet.SELECTION)) 1.0f else 0.0f
+                    markAlpha.value =
+                        if (modelStateInfo.currModelState.isFacetActive(ComponentStateFacet.SELECTION)) 1.0f else 0.0f
                 }
             }
         )
@@ -283,23 +284,29 @@ fun MosaicCheckBox(
         val borderIsDark = drawingCache.colorScheme.isDark
 
         // Mark color
-        // TODO - fix the state and use the right color
-        val markColor = MosaicSkin.colors.getColorScheme(decorationAreaType,
-            ColorSchemeAssociationKind.MARK, ComponentState.SELECTED).markColor
+        val markColor = getStateAwareColor(
+            modelStateInfo,
+            decorationAreaType, ColorSchemeAssociationKind.MARK
+        ) { it.markColor }
 
         // Checkmark alpha is the combined strength of all the
         // states that have the selection bit turned on
-        markAlpha.value = modelStateInfo.stateContributionMap.filter { it.key.isFacetActive(ComponentStateFacet.SELECTION) }
-            .map { it.value }
-            .sumByDouble { it.contribution.toDouble() }
-            .toFloat()
+        markAlpha.value =
+            modelStateInfo.stateContributionMap.filter { it.key.isFacetActive(ComponentStateFacet.SELECTION) }
+                .map { it.value }
+                .sumByDouble { it.contribution.toDouble() }
+                .toFloat()
 
         println("Mark alpha ${markAlpha.value}")
 
-        // Text color
-        // TODO - fix the state
-        val textColor = MosaicSkin.colors.getColorScheme(decorationAreaType,
-            ColorSchemeAssociationKind.FILL, ComponentState.ENABLED).foregroundColor
+        // Text color. Note that the text doesn't "participate" in state changes that
+        // involve rollover, selection or pressed bits
+        val textColor = MosaicSkin.colors.getColorScheme(
+            decorationAreaType = decorationAreaType,
+            associationKind = ColorSchemeAssociationKind.FILL,
+            componentState = if (currentState.isDisabled) ComponentState.DISABLED_UNSELECTED
+            else ComponentState.ENABLED
+        ).foregroundColor
 
         val fillPainter = MosaicSkin.painters.fillPainter
         val borderPainter = MosaicSkin.painters.borderPainter
@@ -357,8 +364,6 @@ fun MosaicCheckBox(
                 )
             }
         }
-        // Unlike buttons, the rest of the content should ignore (at least for now)
-        // the selected state of the checkbox for drawing the text
         Providers(AmbientTextColor provides textColor) {
             Row(
                 Modifier

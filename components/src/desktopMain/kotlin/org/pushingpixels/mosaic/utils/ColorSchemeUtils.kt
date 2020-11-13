@@ -207,6 +207,46 @@ internal fun populateColorScheme(
     colorScheme.foreground = foreground
 }
 
+@Composable
+internal fun getStateAwareColor(
+    modelStateInfo: ModelStateInfo,
+    decorationAreaType: DecorationAreaType,
+    associationKind: ColorSchemeAssociationKind,
+    query: (MosaicColorScheme) -> Color
+): Color {
+    val currState = modelStateInfo.currModelState
+    val currStateScheme = MosaicSkin.colors.getColorScheme(
+        decorationAreaType = decorationAreaType,
+        associationKind = associationKind,
+        componentState = currState
+    )
+
+    var result = query.invoke(currStateScheme)
+
+    for (contribution in modelStateInfo.stateContributionMap) {
+        if (contribution.key == currState) {
+            // Already accounted for the currently active state
+            continue
+        }
+        val amount = contribution.value.contribution
+        if (amount == 0.0f) {
+            // Skip a zero-amount contribution
+            continue
+        }
+        // Get the color scheme that matches the contribution state
+        val contributionScheme = MosaicSkin.colors.getColorScheme(
+            decorationAreaType = decorationAreaType,
+            associationKind = associationKind,
+            componentState = contribution.key
+        )
+
+        // Interpolate the color based on the scheme and contribution amount
+        result = getInterpolatedColor(result, query.invoke(contributionScheme), 1.0f - amount)
+    }
+
+    return result
+}
+
 private fun decodeColor(value: String, colorMap: Map<String, Color>): Color {
     if (value.startsWith("@")) {
         return colorMap[value.substring(1)]!!

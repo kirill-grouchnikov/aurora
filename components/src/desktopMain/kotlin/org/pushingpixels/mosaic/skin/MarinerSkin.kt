@@ -131,7 +131,8 @@ fun marinerSkinColors(): MosaicSkinColors {
     // TODO - this is different from the original
     headerSchemeBundle.registerColorScheme(
         enabledMarkScheme.shade(0.8f), ColorSchemeAssociationKind.MARK,
-        ComponentState.SELECTED
+        ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED,
+        ComponentState.PRESSED_SELECTED
     )
     result.registerDecorationAreaSchemeBundle(
         headerSchemeBundle, headerColorScheme,
