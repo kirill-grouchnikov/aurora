@@ -27,10 +27,48 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.mosaic
+package org.pushingpixels.mosaic.painter
 
-import androidx.compose.runtime.staticAmbientOf
-import org.pushingpixels.mosaic.skin.marinerSkinColors
+import androidx.compose.ui.graphics.Color
+import org.pushingpixels.mosaic.MosaicTrait
+import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
 
-// TODO - figure out the default (that might need to throw if not initialized)
-val AmbientSkinColors = staticAmbientOf { marinerSkinColors() }
+/**
+ * Base painter with fraction-based stops and a color query associated with each
+ * stop. This class allows creating multi-stop gradients with exact control over
+ * which color is used at every gradient control point.
+ *
+ * @author Kirill Grouchnikov
+ */
+abstract class FractionBasedPainter(
+    override val displayName: String, private val fractions: FloatArray,
+    private val colorQueries: Array<(MosaicColorScheme) -> Color>
+) : MosaicTrait {
+    /**
+     * Returns the fractions of this painter.
+     *
+     * @return Fractions of this painter.
+     */
+    fun getFractions(): FloatArray {
+        return fractions.copyOf()
+    }
+
+    /**
+     * Returns the color queries of this painter.
+     *
+     * @return Color queries of this painter.
+     */
+    fun getColorQueries(): Array<(MosaicColorScheme) -> Color> {
+        return colorQueries.copyOf()
+    }
+
+    init {
+        require(!(fractions == null || colorQueries == null)) { "Cannot pass null arguments" }
+        require(fractions.size == colorQueries.size) { "Argument length does not match" }
+        val length = fractions.size
+        require(!(fractions[0] != 0.0f || fractions[length - 1] != 1.0f)) { "End fractions must be 0.0 and 1.0" }
+        for (i in 0 until length - 1) {
+            require(fractions[i + 1] > fractions[i]) { "Fractions must be strictly increasing" }
+        }
+    }
+}

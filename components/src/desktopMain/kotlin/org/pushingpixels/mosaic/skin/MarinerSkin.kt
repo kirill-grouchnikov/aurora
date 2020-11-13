@@ -32,6 +32,7 @@ package org.pushingpixels.mosaic.skin
 import org.pushingpixels.mosaic.*
 import org.pushingpixels.mosaic.colorscheme.MosaicColorSchemeBundle
 import org.pushingpixels.mosaic.colorscheme.MosaicSkinColors
+import org.pushingpixels.mosaic.painter.fill.FractionBasedFillPainter
 import org.pushingpixels.mosaic.utils.getColorSchemes
 
 fun marinerSkinColors(): MosaicSkinColors {
@@ -198,5 +199,20 @@ fun marinerSkinColors(): MosaicSkinColors {
         DecorationAreaType.FOOTER, DecorationAreaType.TOOLBAR, DecorationAreaType.CONTROL_PANE
     )
     return result
+}
+
+fun marinerSkin(): MosaicSkinDefinition {
+    return MosaicSkinDefinition(
+        displayName = "Mariner",
+        colors = marinerSkinColors(),
+        painters = Painters(
+            fillPainter = FractionBasedFillPainter(
+                displayName = "Mariner",
+                fractions = floatArrayOf(0.0f, 0.5f, 1.0f),
+                colorQueries = arrayOf({ it.extraLightColor }, { it.lightColor }, { it.midColor })
+            )
+        ),
+        shapes = ButtonShaper()
+    )
 }
 

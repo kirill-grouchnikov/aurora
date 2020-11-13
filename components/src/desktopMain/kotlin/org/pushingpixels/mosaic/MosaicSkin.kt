@@ -62,20 +62,27 @@ object MosaicSkin {
         get() = AmbientAnimationConfig.current
 }
 
+data class MosaicSkinDefinition(
+    override val displayName: String,
+    val colors: MosaicSkinColors,
+    val shapes: ButtonShaper,
+    val painters: Painters
+) : MosaicTrait
+
 @Composable
 fun MosaicSkin(
-    colors: MosaicSkinColors = MosaicSkin.colors,
-    shapes: ButtonShaper = MosaicSkin.shapes,
-    painters: Painters = MosaicSkin.painters,
+    skin: MosaicSkinDefinition,
     animationConfig: AnimationConfig = MosaicSkin.animationConfig,
     content: @Composable () -> Unit
 ) {
-    MosaicSkin(decorationArea = DecorationArea(DecorationAreaType.NONE),
-        colors = colors,
-        shapes = shapes,
-        painters = painters,
+    MosaicSkin(
+        decorationArea = DecorationArea(DecorationAreaType.NONE),
+        colors = skin.colors,
+        shapes = skin.shapes,
+        painters = skin.painters,
         animationConfig = animationConfig,
-        content = content)
+        content = content
+    )
 }
 
 @Composable

@@ -31,7 +31,6 @@ package org.pushingpixels.mosaic.demo
 
 import androidx.compose.desktop.Window
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -45,10 +44,11 @@ import org.pushingpixels.mosaic.components.MosaicCheckBox
 import org.pushingpixels.mosaic.components.MosaicText
 import org.pushingpixels.mosaic.components.MosaicToggleButton
 import org.pushingpixels.mosaic.components.mosaicBackground
+import org.pushingpixels.mosaic.skin.marinerSkin
 
 fun main() {
     Window("Mosaic Demo", IntSize(500, 400)) {
-        MosaicSkin {
+        MosaicSkin(skin = marinerSkin()) {
             Box(
                 modifier = Modifier,
                 alignment = Alignment.TopStart
