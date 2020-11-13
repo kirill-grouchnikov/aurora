@@ -32,8 +32,8 @@ package org.pushingpixels.mosaic.colorscheme
 import androidx.compose.ui.graphics.Color
 
 open class BaseColorScheme(
-    val displayName: String,
-    val _isDark: Boolean,
+    override val displayName: String,
+    override val isDark: Boolean,
     val ultraLight: Color = Color.White,
     val extraLight: Color = Color.White,
     val light: Color = Color.White,
@@ -46,7 +46,7 @@ open class BaseColorScheme(
      * Resolver for the derived colors.
      */
     private val derivedColorsResolver: SchemeDerivedColors =
-        if (_isDark) DerivedColorsResolverDark(this) else DerivedColorsResolverLight(this)
+        if (isDark) DerivedColorsResolverDark(this) else DerivedColorsResolverLight(this)
 
     override val ultraLightColor: Color
         get() = ultraLight
@@ -85,14 +85,6 @@ open class BaseColorScheme(
         get() = derivedColorsResolver.markColor
     override val echoColor: Color
         get() = derivedColorsResolver.echoColor
-
-    override fun displayName(): String {
-        return displayName
-    }
-
-    override fun isDark(): Boolean {
-        return _isDark
-    }
 
     override fun shift(
         backgroundShiftColor: Color,

@@ -40,8 +40,8 @@ import java.io.InputStream
 import java.io.InputStreamReader
 
 internal data class MutableColorScheme(
-    val displayName: String,
-    var _isDark: Boolean,
+    override val displayName: String,
+    override var isDark: Boolean,
     var ultraLight: Color,
     var extraLight: Color,
     var light: Color,
@@ -88,15 +88,6 @@ internal data class MutableColorScheme(
         get() = throw UnsupportedOperationException()
     override val echoColor: Color
         get() = throw UnsupportedOperationException()
-
-
-    override fun displayName(): String {
-        return displayName
-    }
-
-    override fun isDark(): Boolean {
-        return _isDark
-    }
 
     override fun shift(
         backgroundShiftColor: Color,
@@ -411,7 +402,7 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
         override
         operator fun get(displayName: String): MosaicColorScheme {
             for (scheme in schemes) {
-                if (scheme.displayName() == displayName) {
+                if (scheme.displayName == displayName) {
                     return scheme
                 }
             }

@@ -64,7 +64,7 @@ private lateinit var RolloverTransitionDefinition: TransitionDefinition<Boolean>
 private class ButtonDrawingCache(
     val colorScheme: MutableColorScheme = MutableColorScheme(
         displayName = "Internal mutable",
-        _isDark = false,
+        isDark = false,
         ultraLight = Color.White,
         extraLight = Color.White,
         light = Color.White,
@@ -257,7 +257,7 @@ private fun MosaicToggleButton(
         val fillMid = drawingCache.colorScheme.midColor
         val fillDark = drawingCache.colorScheme.darkColor
         val fillUltraDark = drawingCache.colorScheme.ultraDarkColor
-        val fillIsDark = drawingCache.colorScheme._isDark
+        val fillIsDark = drawingCache.colorScheme.isDark
 
         val textColor = drawingCache.colorScheme.foregroundColor
 
@@ -274,7 +274,7 @@ private fun MosaicToggleButton(
         val borderMid = drawingCache.colorScheme.midColor
         val borderDark = drawingCache.colorScheme.darkColor
         val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
-        val borderIsDark = drawingCache.colorScheme._isDark
+        val borderIsDark = drawingCache.colorScheme.isDark
 
         val fillPainter = MosaicSkin.painters.fillPainter
         val borderPainter = MosaicSkin.painters.borderPainter
@@ -292,7 +292,7 @@ private fun MosaicToggleButton(
             drawingCache.colorScheme.mid = fillMid
             drawingCache.colorScheme.dark = fillDark
             drawingCache.colorScheme.ultraDark = fillUltraDark
-            drawingCache.colorScheme._isDark = fillIsDark
+            drawingCache.colorScheme.isDark = fillIsDark
             drawingCache.colorScheme.foreground = textColor
             fillPainter.paintContourBackground(
                 this, this.size, outline, drawingCache.colorScheme
@@ -305,7 +305,7 @@ private fun MosaicToggleButton(
             drawingCache.colorScheme.mid = borderMid
             drawingCache.colorScheme.dark = borderDark
             drawingCache.colorScheme.ultraDark = borderUltraDark
-            drawingCache.colorScheme._isDark = borderIsDark
+            drawingCache.colorScheme.isDark = borderIsDark
             drawingCache.colorScheme.foreground = textColor
             borderPainter.paintBorder(
                 this, this.size, outline, null, drawingCache.colorScheme

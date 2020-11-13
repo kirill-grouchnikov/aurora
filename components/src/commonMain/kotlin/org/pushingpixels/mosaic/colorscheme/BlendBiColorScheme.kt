@@ -41,9 +41,9 @@ class BlendBiColorScheme(
     secondScheme: MosaicColorScheme, firstSchemeLikeness: Float
 ) : BaseColorScheme(
     displayName =
-    "Blended " + firstScheme.displayName() + " & "
-            + secondScheme.displayName() + " " + firstSchemeLikeness,
-    _isDark = firstScheme.isDark(),
+    "Blended " + firstScheme.displayName + " & "
+            + secondScheme.displayName + " " + firstSchemeLikeness,
+    isDark = firstScheme.isDark,
     ultraLight = getInterpolatedColor(
         firstScheme.ultraLightColor,
         secondScheme.ultraLightColor, firstSchemeLikeness

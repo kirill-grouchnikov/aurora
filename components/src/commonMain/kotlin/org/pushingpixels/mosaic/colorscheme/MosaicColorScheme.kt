@@ -30,10 +30,9 @@
 package org.pushingpixels.mosaic.colorscheme
 
 import androidx.compose.ui.graphics.Color
+import org.pushingpixels.mosaic.MosaicTrait
 
-interface MosaicColorScheme : SchemeBaseColors, SchemeDerivedColors {
-    fun displayName(): String
-
+interface MosaicColorScheme : SchemeBaseColors, SchemeDerivedColors, MosaicTrait {
     /**
      * Returns indication whether this color scheme uses dark colors. Note that
      * this method may be removed in the future. It is highly recommended to use
@@ -43,7 +42,7 @@ interface MosaicColorScheme : SchemeBaseColors, SchemeDerivedColors {
      * @return `true` if this color scheme uses dark colors,
      * `false` otherwise.
      */
-    fun isDark(): Boolean
+    val isDark: Boolean
 
     /**
      * Creates a shift version of `this` scheme.

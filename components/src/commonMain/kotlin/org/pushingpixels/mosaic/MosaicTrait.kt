@@ -27,26 +27,16 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.mosaic.colorscheme
-
-import org.pushingpixels.mosaic.utils.getSaturatedColor
+package org.pushingpixels.mosaic
 
 /**
- * Saturated color scheme. A saturated color scheme is a color scheme that is
- * saturated / desaturated (using HSV).
+ * Base interface for Mosaic traits
  *
  * @author Kirill Grouchnikov
- * @see ShiftColorScheme
  */
-class SaturatedColorScheme(origScheme: MosaicColorScheme, saturationFactor: Float) : BaseColorScheme(
-    displayName = "Saturated (" + (100 * saturationFactor).toInt() + "%) "
-            + origScheme.displayName,
-    isDark = origScheme.isDark,
-    ultraLight = getSaturatedColor(origScheme.ultraLightColor, saturationFactor),
-    extraLight = getSaturatedColor(origScheme.extraLightColor, saturationFactor),
-    light = getSaturatedColor(origScheme.lightColor, saturationFactor),
-    mid = getSaturatedColor(origScheme.midColor, saturationFactor),
-    dark = getSaturatedColor(origScheme.darkColor, saturationFactor),
-    ultraDark = getSaturatedColor(origScheme.ultraDarkColor, saturationFactor),
-    foreground = origScheme.foregroundColor
-)
+interface MosaicTrait {
+    /**
+     * The display name of `this` trait.
+     */
+    val displayName: String
+}

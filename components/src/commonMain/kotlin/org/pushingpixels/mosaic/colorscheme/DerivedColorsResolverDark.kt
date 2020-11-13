@@ -47,7 +47,7 @@ internal class DerivedColorsResolverDark(scheme: MosaicColorScheme) : SchemeDeri
      */
     private val scheme: MosaicColorScheme
     override fun toString(): String {
-        return "Resolver for " + scheme.displayName()
+        return "Resolver for " + scheme.displayName
     }
 
     override val lineColor: Color
@@ -81,7 +81,7 @@ internal class DerivedColorsResolverDark(scheme: MosaicColorScheme) : SchemeDeri
      * The original color scheme.
      */
     init {
-        require(scheme.isDark()) { "The scheme must be dark: " + scheme.displayName() }
+        require(scheme.isDark) { "The scheme must be dark: " + scheme.displayName }
         this.scheme = scheme
     }
 }

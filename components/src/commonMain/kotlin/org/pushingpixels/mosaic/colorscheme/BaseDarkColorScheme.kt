@@ -35,4 +35,4 @@ package org.pushingpixels.mosaic.colorscheme
  * @author Kirill Grouchnikov
  */
 abstract class BaseDarkColorScheme(displayName: String) :
-    BaseColorScheme(displayName = displayName, _isDark = true)
+    BaseColorScheme(displayName = displayName, isDark = true)
