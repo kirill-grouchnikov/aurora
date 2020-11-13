@@ -29,17 +29,26 @@
  */
 package org.pushingpixels.mosaic.painter.border
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.LinearGradient
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
+import org.pushingpixels.mosaic.painter.FractionBasedPainter
 
-class SimpleBorderPainter : MosaicBorderPainter {
+/**
+ * Border painter with fraction-based stops and a color query associated with
+ * each stop. This class allows creating multi-gradient borders with exact
+ * control over which color is used at every gradient control point.
+ *
+ * @author Kirill Grouchnikov
+ */
+class FractionBasedBorderPainter(
+    displayName: String, fractions: FloatArray,
+    colorQueries: Array<(MosaicColorScheme) -> Color>
+) : FractionBasedPainter(displayName, fractions, colorQueries), MosaicBorderPainter {
     override fun paintBorder(
         drawScope: DrawScope,
         size: Size,
@@ -51,13 +60,14 @@ class SimpleBorderPainter : MosaicBorderPainter {
             drawOutline(
                 outline = outline,
                 style = Stroke(width = 1.5.dp.toPx()),
-                brush = LinearGradient(
-                    listOf(borderScheme.ultraLightColor, borderScheme.lightColor),
-                    startX = 0.0f,
-                    startY = 0.0f,
-                    endX = 0.0f,
-                    endY = size.height,
-                    tileMode = TileMode.Clamp
+                brush = ShaderBrush(
+                    LinearGradientShader(
+                        from = Offset(0.0f, 0.0f),
+                        to = Offset(0.0f, size.height),
+                        colors = getColorQueries().map { it.invoke(borderScheme) },
+                        colorStops = getFractions().toList(),
+                        tileMode = TileMode.Repeated
+                    )
                 )
             )
         }

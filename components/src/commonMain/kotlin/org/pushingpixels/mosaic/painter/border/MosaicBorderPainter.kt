@@ -29,7 +29,6 @@
  */
 package org.pushingpixels.mosaic.painter.border
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -41,5 +40,5 @@ interface MosaicBorderPainter {
         borderScheme: MosaicColorScheme
     )
 
-    fun isPaintingInnerOutline(): Boolean
+    val isPaintingInnerOutline: Boolean
 }
