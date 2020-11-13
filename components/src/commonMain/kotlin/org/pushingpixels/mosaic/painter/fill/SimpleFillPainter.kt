@@ -50,7 +50,7 @@ class SimpleFillPainter : MosaicFillPainter {
                 outline = outline,
                 style = Fill,
                 brush = LinearGradient(
-                    listOf(fillScheme.backgroundColorStart, fillScheme.backgroundColorEnd),
+                    listOf(fillScheme.ultraLightColor, fillScheme.lightColor),
                     startX = 0.0f,
                     startY = 0.0f,
                     endX = 0.0f,

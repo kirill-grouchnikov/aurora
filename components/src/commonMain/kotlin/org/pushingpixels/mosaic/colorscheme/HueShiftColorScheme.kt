@@ -44,7 +44,11 @@ class HueShiftColorScheme(
     displayName =
     "Hue-shift " + origScheme.displayName() + " "
             + (100 * hueShiftFactor).toInt() + "%",
-    backgroundStart = getHueShiftedColor(origScheme.backgroundColorStart, hueShiftFactor),
-    backgroundEnd = getHueShiftedColor(origScheme.backgroundColorEnd, hueShiftFactor),
+    ultraLight = getHueShiftedColor(origScheme.ultraLightColor, hueShiftFactor),
+    extraLight = getHueShiftedColor(origScheme.extraLightColor, hueShiftFactor),
+    light = getHueShiftedColor(origScheme.lightColor, hueShiftFactor),
+    mid = getHueShiftedColor(origScheme.midColor, hueShiftFactor),
+    dark = getHueShiftedColor(origScheme.darkColor, hueShiftFactor),
+    ultraDark = getHueShiftedColor(origScheme.ultraDarkColor, hueShiftFactor),
     foreground = getHueShiftedColor(origScheme.foregroundColor, hueShiftFactor / 2.0f)
 )

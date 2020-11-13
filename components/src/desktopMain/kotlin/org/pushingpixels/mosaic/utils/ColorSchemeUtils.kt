@@ -43,17 +43,27 @@ import java.io.InputStreamReader
 
 internal data class MutableColorScheme(
     val displayName: String,
-    var backgroundStart: Color,
-    var backgroundEnd: Color,
+    var ultraLight: Color,
+    var extraLight: Color,
+    var light: Color,
+    var mid: Color,
+    var dark: Color,
+    var ultraDark: Color,
     var foreground: Color
 ) : MosaicColorScheme {
-    constructor(displayName: String, background: Color, foreground: Color) :
-            this(displayName, background, background, foreground)
 
-    override val backgroundColorEnd: Color
-        get() = backgroundEnd
-    override val backgroundColorStart: Color
-        get() = backgroundStart
+    override val ultraLightColor: Color
+        get() = ultraLight
+    override val extraLightColor: Color
+        get() = extraLight
+    override val lightColor: Color
+        get() = light
+    override val midColor: Color
+        get() = mid
+    override val darkColor: Color
+        get() = dark
+    override val ultraDarkColor: Color
+        get() = ultraDark
     override val foregroundColor: Color
         get() = foreground
 
@@ -116,8 +126,12 @@ internal fun populateColorScheme(
         associationKind = associationKind,
         componentState = currState)
 
-    var backgroundStart = currStateScheme.backgroundColorStart
-    var backgroundEnd = currStateScheme.backgroundColorEnd
+    var ultraLight = currStateScheme.ultraLightColor
+    var extraLight = currStateScheme.extraLightColor
+    var light = currStateScheme.lightColor
+    var mid = currStateScheme.midColor
+    var dark = currStateScheme.darkColor
+    var ultraDark = currStateScheme.ultraDarkColor
     var foreground = currStateScheme.foregroundColor
 
     //println("Starting with $currState at $backgroundStart")
@@ -138,11 +152,23 @@ internal fun populateColorScheme(
             associationKind = associationKind,
             componentState = contribution.key)
         // And interpolate the colors
-        backgroundStart = getInterpolatedColor(
-            backgroundStart, contributionScheme.backgroundColorStart, 1.0f - amount
+        ultraLight = getInterpolatedColor(
+            ultraLight, contributionScheme.ultraLightColor, 1.0f - amount
         )
-        backgroundEnd = getInterpolatedColor(
-            backgroundEnd, contributionScheme.backgroundColorEnd, 1.0f - amount
+        extraLight = getInterpolatedColor(
+            extraLight, contributionScheme.extraLightColor, 1.0f - amount
+        )
+        light = getInterpolatedColor(
+            light, contributionScheme.lightColor, 1.0f - amount
+        )
+        mid = getInterpolatedColor(
+            mid, contributionScheme.midColor, 1.0f - amount
+        )
+        dark = getInterpolatedColor(
+            dark, contributionScheme.darkColor, 1.0f - amount
+        )
+        ultraDark = getInterpolatedColor(
+            ultraDark, contributionScheme.ultraDarkColor, 1.0f - amount
         )
         foreground = getInterpolatedColor(
             foreground, contributionScheme.foregroundColor, 1.0f - amount
@@ -152,8 +178,12 @@ internal fun populateColorScheme(
     }
 
     // Update the mutable color scheme with the interpolated colors
-    colorScheme.backgroundStart = backgroundStart
-    colorScheme.backgroundEnd = backgroundEnd
+    colorScheme.ultraLight = ultraLight
+    colorScheme.extraLight = extraLight
+    colorScheme.light = light
+    colorScheme.mid = mid
+    colorScheme.dark = dark
+    colorScheme.ultraDark = ultraDark
     colorScheme.foreground = foreground
 }
 
@@ -176,8 +206,6 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
     var ultraDark: Color? = null
     var foreground: Color? = null
     var background: Color? = null
-    var backgroundStart: Color? = null
-    var backgroundEnd: Color? = null
     var name: String? = null
     val additionalColors: MutableMap<String, Color> = HashMap()
     var inColorSchemeBlock = false
@@ -226,8 +254,12 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
                     schemes.add(
                         BaseColorScheme(
                             displayName = name!!,
-                            backgroundStart = background ?: backgroundStart!!,
-                            backgroundEnd = background ?: backgroundEnd!!,
+                            ultraLight = ultraLight!!,
+                            extraLight = extraLight!!,
+                            light = light!!,
+                            mid = mid!!,
+                            dark = dark!!,
+                            ultraDark = ultraDark!!,
                             foreground = foreground!!
                         )
                     )
@@ -251,8 +283,6 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
                     ultraDark = null
                     foreground = null
                     background = null
-                    backgroundStart = null
-                    backgroundEnd = null
                     additionalColors.clear()
                     continue
                 }
@@ -282,7 +312,6 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
                 if ("colorUltraLight" == key) {
                     if (ultraLight == null) {
                         ultraLight = decodeColor(value, colorMap)
-                        backgroundStart = ultraLight
                         continue
                     }
                     throw IllegalArgumentException("'ultraLight' should only be defined once, line $lineNumber")
@@ -304,7 +333,6 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
                 if ("colorMid" == key) {
                     if (mid == null) {
                         mid = decodeColor(value, colorMap)
-                        backgroundEnd = mid
                         continue
                     }
                     throw IllegalArgumentException("'mid' should only be defined once, line $lineNumber")

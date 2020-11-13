@@ -33,6 +33,10 @@ import androidx.compose.ui.graphics.Color
 
 interface SchemeBaseColors {
     val foregroundColor: Color
-    val backgroundColorStart: Color
-    val backgroundColorEnd: Color
+    val ultraLightColor: Color
+    val extraLightColor: Color
+    val lightColor: Color
+    val midColor: Color
+    val darkColor: Color
+    val ultraDarkColor: Color
 }

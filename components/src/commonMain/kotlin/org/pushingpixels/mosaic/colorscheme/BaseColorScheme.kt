@@ -33,17 +33,26 @@ import androidx.compose.ui.graphics.Color
 
 open class BaseColorScheme(
     val displayName: String,
-    val backgroundStart: Color,
-    val backgroundEnd: Color,
+    val ultraLight: Color = Color.White,
+    val extraLight: Color = Color.White,
+    val light: Color = Color.White,
+    val mid: Color = Color.White,
+    val dark: Color = Color.White,
+    val ultraDark: Color = Color.White,
     val foreground: Color
 ) : MosaicColorScheme {
-    constructor(displayName: String, background: Color, foreground: Color) :
-            this(displayName, background, background, foreground)
-
-    override val backgroundColorEnd: Color
-        get() = backgroundEnd
-    override val backgroundColorStart: Color
-        get() = backgroundStart
+    override val ultraLightColor: Color
+        get() = ultraLight
+    override val extraLightColor: Color
+        get() = extraLight
+    override val lightColor: Color
+        get() = light
+    override val midColor: Color
+        get() = mid
+    override val darkColor: Color
+        get() = dark
+    override val ultraDarkColor: Color
+        get() = ultraDark
     override val foregroundColor: Color
         get() = foreground
 

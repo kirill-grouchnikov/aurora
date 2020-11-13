@@ -64,7 +64,13 @@ private lateinit var RolloverTransitionDefinition: TransitionDefinition<Boolean>
 private class ButtonDrawingCache(
     val colorScheme: MutableColorScheme = MutableColorScheme(
         displayName = "Internal mutable",
-        background = Color.White, foreground = Color.Black
+        ultraLight = Color.White,
+        extraLight = Color.White,
+        light = Color.White,
+        mid = Color.White,
+        dark = Color.White,
+        ultraDark = Color.White,
+        foreground = Color.Black
     )
 )
 
@@ -244,8 +250,13 @@ private fun MosaicToggleButton(
             ColorSchemeAssociationKind.FILL
         )
         // And retrieve the container fill colors
-        val fillColorStart = drawingCache.colorScheme.backgroundColorStart
-        val fillColorEnd = drawingCache.colorScheme.backgroundColorEnd
+        val fillUltraLight = drawingCache.colorScheme.ultraLightColor
+        val fillExtraLight = drawingCache.colorScheme.extraLightColor
+        val fillLight = drawingCache.colorScheme.lightColor
+        val fillMid = drawingCache.colorScheme.midColor
+        val fillDark = drawingCache.colorScheme.darkColor
+        val fillUltraDark = drawingCache.colorScheme.ultraDarkColor
+        
         val textColor = drawingCache.colorScheme.foregroundColor
 
         // Populate the cached color scheme for drawing the button border
@@ -255,8 +266,12 @@ private fun MosaicToggleButton(
             ColorSchemeAssociationKind.BORDER
         )
         // And retrieve the border colors
-        val borderColorStart = drawingCache.colorScheme.foregroundColor
-        val borderColorEnd = drawingCache.colorScheme.foregroundColor
+        val borderUltraLight = drawingCache.colorScheme.ultraLightColor
+        val borderExtraLight = drawingCache.colorScheme.extraLightColor
+        val borderLight = drawingCache.colorScheme.lightColor
+        val borderMid = drawingCache.colorScheme.midColor
+        val borderDark = drawingCache.colorScheme.darkColor
+        val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
 
         val fillPainter = MosaicSkin.painters.fillPainter
         val borderPainter = MosaicSkin.painters.borderPainter
@@ -268,16 +283,24 @@ private fun MosaicToggleButton(
             val outline = shape.createOutline(Size(width, height), this)
 
             // Populate the cached color scheme for filling the button container
-            drawingCache.colorScheme.backgroundStart = fillColorStart
-            drawingCache.colorScheme.backgroundEnd = fillColorEnd
+            drawingCache.colorScheme.ultraLight = fillUltraLight
+            drawingCache.colorScheme.extraLight = fillExtraLight
+            drawingCache.colorScheme.light = fillLight
+            drawingCache.colorScheme.mid = fillMid
+            drawingCache.colorScheme.dark = fillDark
+            drawingCache.colorScheme.ultraDark = fillUltraDark
             drawingCache.colorScheme.foreground = textColor
             fillPainter.paintContourBackground(
                 this, this.size, outline, drawingCache.colorScheme
             )
 
             // Populate the cached color scheme for drawing the button border
-            drawingCache.colorScheme.backgroundStart = borderColorStart
-            drawingCache.colorScheme.backgroundEnd = borderColorEnd
+            drawingCache.colorScheme.ultraLight = borderUltraLight
+            drawingCache.colorScheme.extraLight = borderExtraLight
+            drawingCache.colorScheme.light = borderLight
+            drawingCache.colorScheme.mid = borderMid
+            drawingCache.colorScheme.dark = borderDark
+            drawingCache.colorScheme.ultraDark = borderUltraDark
             drawingCache.colorScheme.foreground = textColor
             borderPainter.paintBorder(
                 this, this.size, outline, null, drawingCache.colorScheme

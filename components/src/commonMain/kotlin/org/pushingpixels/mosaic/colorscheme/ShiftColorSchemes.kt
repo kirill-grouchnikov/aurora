@@ -50,20 +50,52 @@ open class ShiftColorScheme(
     displayName = "Shift " + origScheme.displayName() + " to backgr [" + backgroundShiftColor.toString() + "] "
             + (100 * backgroundShiftFactor).toInt() + "%, foregr [" + foregroundShiftColor.toString() + "]"
             + (100 * foregroundShiftFactor).toInt() + "%",
-    backgroundStart = getInterpolatedColor(
+    ultraLight = getInterpolatedColor(
         color1 = if (shiftByBrightness) deriveByBrightness(
             backgroundShiftColor,
-            origScheme.backgroundColorStart
+            origScheme.ultraLightColor
         ) else backgroundShiftColor,
-        color2 = origScheme.backgroundColorStart,
+        color2 = origScheme.ultraLightColor,
         color1Likeness = backgroundShiftFactor
     ),
-    backgroundEnd = getInterpolatedColor(
+    extraLight = getInterpolatedColor(
         color1 = if (shiftByBrightness) deriveByBrightness(
             backgroundShiftColor,
-            origScheme.backgroundColorEnd
+            origScheme.extraLightColor
         ) else backgroundShiftColor,
-        color2 = origScheme.backgroundColorEnd,
+        color2 = origScheme.extraLightColor,
+        color1Likeness = backgroundShiftFactor
+    ),
+    light = getInterpolatedColor(
+        color1 = if (shiftByBrightness) deriveByBrightness(
+            backgroundShiftColor,
+            origScheme.lightColor
+        ) else backgroundShiftColor,
+        color2 = origScheme.lightColor,
+        color1Likeness = backgroundShiftFactor
+    ),
+    mid = getInterpolatedColor(
+        color1 = if (shiftByBrightness) deriveByBrightness(
+            backgroundShiftColor,
+            origScheme.midColor
+        ) else backgroundShiftColor,
+        color2 = origScheme.midColor,
+        color1Likeness = backgroundShiftFactor
+    ),
+    dark = getInterpolatedColor(
+        color1 = if (shiftByBrightness) deriveByBrightness(
+            backgroundShiftColor,
+            origScheme.darkColor
+        ) else backgroundShiftColor,
+        color2 = origScheme.darkColor,
+        color1Likeness = backgroundShiftFactor
+    ),
+    ultraDark = getInterpolatedColor(
+        color1 = if (shiftByBrightness) deriveByBrightness(
+            backgroundShiftColor,
+            origScheme.ultraDarkColor
+        ) else backgroundShiftColor,
+        color2 = origScheme.ultraDarkColor,
         color1Likeness = backgroundShiftFactor
     ),
     foreground = getInterpolatedColor(

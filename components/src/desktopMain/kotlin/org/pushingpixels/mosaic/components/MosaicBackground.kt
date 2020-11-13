@@ -38,10 +38,11 @@ import org.pushingpixels.mosaic.MosaicSkin
 
 @Composable
 fun Modifier.mosaicBackground() = this.then(
+    // TODO - this also needs to draw overlays from the current skin that match the decoration area
     // TODO - get the right color
     MosaicBackground(
         color =
-        MosaicSkin.colors.getBackgroundColorScheme(MosaicSkin.decorationArea.type).backgroundColorStart
+        MosaicSkin.colors.getBackgroundColorScheme(MosaicSkin.decorationArea.type).ultraLightColor
     )
 )
 

@@ -52,7 +52,7 @@ class SimpleBorderPainter : MosaicBorderPainter {
                 outline = outline,
                 style = Stroke(width = 1.5.dp.toPx()),
                 brush = LinearGradient(
-                    listOf(borderScheme.backgroundColorStart, borderScheme.backgroundColorEnd),
+                    listOf(borderScheme.ultraLightColor, borderScheme.lightColor),
                     startX = 0.0f,
                     startY = 0.0f,
                     endX = 0.0f,

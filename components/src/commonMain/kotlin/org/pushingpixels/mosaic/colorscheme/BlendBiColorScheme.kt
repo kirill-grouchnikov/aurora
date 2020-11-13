@@ -43,13 +43,29 @@ class BlendBiColorScheme(
     displayName =
     "Blended " + firstScheme.displayName() + " & "
             + secondScheme.displayName() + " " + firstSchemeLikeness,
-    backgroundStart = getInterpolatedColor(
-        firstScheme.backgroundColorStart,
-        secondScheme.backgroundColorStart, firstSchemeLikeness
+    ultraLight = getInterpolatedColor(
+        firstScheme.ultraLightColor,
+        secondScheme.ultraLightColor, firstSchemeLikeness
     ),
-    backgroundEnd = getInterpolatedColor(
-        firstScheme.backgroundColorEnd,
-        secondScheme.backgroundColorEnd, firstSchemeLikeness
+    extraLight = getInterpolatedColor(
+        firstScheme.extraLightColor,
+        secondScheme.extraLightColor, firstSchemeLikeness
+    ),
+    light = getInterpolatedColor(
+        firstScheme.lightColor,
+        secondScheme.lightColor, firstSchemeLikeness
+    ),
+    mid = getInterpolatedColor(
+        firstScheme.midColor,
+        secondScheme.midColor, firstSchemeLikeness
+    ),
+    dark = getInterpolatedColor(
+        firstScheme.darkColor,
+        secondScheme.darkColor, firstSchemeLikeness
+    ),
+    ultraDark = getInterpolatedColor(
+        firstScheme.ultraDarkColor,
+        secondScheme.ultraDarkColor, firstSchemeLikeness
     ),
     foreground = getInterpolatedColor(
         firstScheme.foregroundColor,
