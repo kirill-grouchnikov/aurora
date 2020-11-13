@@ -32,9 +32,10 @@ package org.pushingpixels.mosaic.painter.fill
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import org.pushingpixels.mosaic.MosaicTrait
 import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
 
-interface MosaicFillPainter {
+interface MosaicFillPainter: MosaicTrait {
     fun paintContourBackground(
         drawScope: DrawScope, size: Size, outline: Outline,
         fillScheme: MosaicColorScheme

@@ -29,19 +29,20 @@
  */
 package org.pushingpixels.mosaic.painter.border
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.LinearGradient
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
+import org.pushingpixels.mosaic.utils.getInterpolatedColor
 
-class SimpleBorderPainter : MosaicBorderPainter {
+open class StandardBorderPainter : MosaicBorderPainter {
     override val displayName: String
-        get() = "Simple"
+        get() = "Standard"
+    override val isPaintingInnerOutline: Boolean
+        get() = false
 
     override fun paintBorder(
         drawScope: DrawScope,
@@ -50,22 +51,61 @@ class SimpleBorderPainter : MosaicBorderPainter {
         outlineInner: Outline?,
         borderScheme: MosaicColorScheme
     ) {
+        val top = getTopBorderColor(borderScheme)
+        val mid = getMidBorderColor(borderScheme)
+        val bottom = getBottomBorderColor(borderScheme)
+        println("Border from ${borderScheme.displayName} is $top $mid $bottom")
         with(drawScope) {
             drawOutline(
                 outline = outline,
                 style = Stroke(width = 1.5.dp.toPx()),
-                brush = LinearGradient(
-                    listOf(borderScheme.ultraLightColor, borderScheme.lightColor),
-                    startX = 0.0f,
-                    startY = 0.0f,
-                    endX = 0.0f,
-                    endY = size.height,
-                    tileMode = TileMode.Clamp
+                brush = ShaderBrush(
+                    LinearGradientShader(
+                        from = Offset(0.0f, 0.0f),
+                        to = Offset(0.0f, size.height),
+                        colors = listOf(
+                            getTopBorderColor(borderScheme),
+                            getMidBorderColor(borderScheme),
+                            getBottomBorderColor(borderScheme)
+                        ),
+                        colorStops = listOf(0.0f, 0.5f, 1.0f),
+                        tileMode = TileMode.Repeated
+                    )
                 )
             )
         }
     }
 
-    override val isPaintingInnerOutline: Boolean
-        get() = false
+    /**
+     * Computes the color of the top portion of the border. Override to provide different visual.
+     *
+     * @param borderScheme
+     * The border color scheme.
+     * @return The color of the top portion of the border.
+     */
+    open fun getTopBorderColor(borderScheme: MosaicColorScheme): Color {
+        return borderScheme.ultraDarkColor
+    }
+
+    /**
+     * Computes the color of the middle portion of the border. Override to provide different visual.
+     *
+     * @param borderScheme
+     * The border color scheme.
+     * @return The color of the middle portion of the border.
+     */
+    open fun getMidBorderColor(borderScheme: MosaicColorScheme): Color {
+        return borderScheme.darkColor
+    }
+
+    /**
+     * Computes the color of the bottom portion of the border. Override to provide different visual.
+     *
+     * @param borderScheme
+     * The border color scheme.
+     * @return The color of the bottom portion of the border.
+     */
+    open fun getBottomBorderColor(borderScheme: MosaicColorScheme): Color {
+        return getInterpolatedColor(borderScheme.darkColor, borderScheme.midColor, 0.5f)
+    }
 }

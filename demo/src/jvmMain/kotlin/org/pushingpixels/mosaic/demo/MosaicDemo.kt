@@ -43,12 +43,13 @@ import org.pushingpixels.mosaic.components.MosaicCheckBox
 import org.pushingpixels.mosaic.components.MosaicText
 import org.pushingpixels.mosaic.components.MosaicToggleButton
 import org.pushingpixels.mosaic.components.mosaicBackground
+import org.pushingpixels.mosaic.skin.autumnSkin
 import org.pushingpixels.mosaic.skin.marinerSkin
 
 fun main() {
     MosaicWindow(
         title = "Mosaic Demo",
-        skin = marinerSkin(),
+        skin = autumnSkin(),
         size = IntSize(500, 400)
     ) {
         Box(

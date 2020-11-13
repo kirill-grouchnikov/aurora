@@ -29,38 +29,42 @@
  */
 package org.pushingpixels.mosaic.painter.fill
 
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.LinearGradient
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.drawOutline
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.Color
 import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
+import org.pushingpixels.mosaic.utils.getInterpolatedColor
 
-class SimpleFillPainter : MosaicFillPainter {
+/**
+ * Fill painter that returns images with matte appearance. This class is part of
+ * officially supported API.
+ *
+ * @author Kirill Grouchnikov
+ */
+class MatteFillPainter : ClassicFillPainter() {
     override val displayName: String
-        get() = "Simple"
+        get() = "Matte"
 
-    override fun paintContourBackground(
-        drawScope: DrawScope,
-        size: Size,
-        outline: Outline,
-        fillScheme: MosaicColorScheme
-    ) {
-        with(drawScope) {
-            drawOutline(
-                outline = outline,
-                style = Fill,
-                brush = LinearGradient(
-                    listOf(fillScheme.ultraLightColor, fillScheme.lightColor),
-                    startX = 0.0f,
-                    startY = 0.0f,
-                    endX = 0.0f,
-                    endY = size.height,
-                    tileMode = TileMode.Clamp
-                )
-            )
-        }
+    override fun getTopFillColor(fillScheme: MosaicColorScheme): Color {
+        return getInterpolatedColor(
+            super.getBottomFillColor(fillScheme),
+            super.getMidFillColorTop(fillScheme), 0.5f
+        )
+    }
+
+    override fun getMidFillColorTop(fillScheme: MosaicColorScheme): Color {
+        return getInterpolatedColor(
+            super.getMidFillColorTop(fillScheme),
+            super.getBottomFillColor(fillScheme), 0.7f
+        )
+    }
+
+    override fun getBottomFillColor(fillScheme: MosaicColorScheme): Color {
+        return super.getMidFillColorTop(fillScheme)
+    }
+
+    companion object {
+        /**
+         * Reusable instance of this painter.
+         */
+        val INSTANCE = MatteFillPainter()
     }
 }

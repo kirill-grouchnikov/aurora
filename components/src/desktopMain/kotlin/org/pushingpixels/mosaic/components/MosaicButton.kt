@@ -30,7 +30,10 @@
 package org.pushingpixels.mosaic.components
 
 import androidx.compose.animation.asDisposableClock
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.AnimatedFloat
+import androidx.compose.animation.core.AnimationEndReason
+import androidx.compose.animation.core.FloatTweenSpec
+import androidx.compose.animation.core.TransitionDefinition
 import androidx.compose.animation.transition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.InteractionState
@@ -42,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.platform.AnimationClockAmbient
 import androidx.compose.ui.unit.dp
@@ -298,6 +302,9 @@ private fun MosaicToggleButton(
                 this, this.size, outline, drawingCache.colorScheme
             )
 
+            // TODO - proper inner outline computation by the button shaper
+            var innerOutline = if (borderPainter.isPaintingInnerOutline)
+            shape.createOutline(Size(width - 3.dp.toPx(), height - 3.dp.toPx()), this) else null
             // Populate the cached color scheme for drawing the button border
             drawingCache.colorScheme.ultraLight = borderUltraLight
             drawingCache.colorScheme.extraLight = borderExtraLight
@@ -307,8 +314,9 @@ private fun MosaicToggleButton(
             drawingCache.colorScheme.ultraDark = borderUltraDark
             drawingCache.colorScheme.isDark = borderIsDark
             drawingCache.colorScheme.foreground = textColor
+
             borderPainter.paintBorder(
-                this, this.size, outline, null, drawingCache.colorScheme
+                this, this.size, outline, innerOutline, drawingCache.colorScheme
             )
         }
 

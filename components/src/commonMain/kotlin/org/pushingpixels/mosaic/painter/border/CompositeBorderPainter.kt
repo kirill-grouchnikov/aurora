@@ -27,40 +27,44 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.mosaic.painter.fill
+package org.pushingpixels.mosaic.painter.border
 
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.LinearGradient
 import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.unit.dp
 import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
 
-class SimpleFillPainter : MosaicFillPainter {
-    override val displayName: String
-        get() = "Simple"
+/**
+ * Composite border painter that delegates the painting of outer and inner
+ * contours.
+ *
+ * @author Kirill Grouchnikov
+ */
+class CompositeBorderPainter(
+    override val displayName: String,
+    val outer: MosaicBorderPainter, val inner: MosaicBorderPainter
+) : MosaicBorderPainter {
 
-    override fun paintContourBackground(
+    override val isPaintingInnerOutline: Boolean
+        get() = true
+
+    override fun paintBorder(
         drawScope: DrawScope,
         size: Size,
         outline: Outline,
-        fillScheme: MosaicColorScheme
+        outlineInner: Outline?,
+        borderScheme: MosaicColorScheme
     ) {
         with(drawScope) {
-            drawOutline(
-                outline = outline,
-                style = Fill,
-                brush = LinearGradient(
-                    listOf(fillScheme.ultraLightColor, fillScheme.lightColor),
-                    startX = 0.0f,
-                    startY = 0.0f,
-                    endX = 0.0f,
-                    endY = size.height,
-                    tileMode = TileMode.Clamp
-                )
-            )
+            if (outlineInner != null) {
+                // TODO - remove the translation when the proper inner outline is in
+                translate(1.5.dp.toPx(), 1.5.dp.toPx()) {
+                    inner.paintBorder(drawScope, size, outlineInner, null, borderScheme)
+                }
+            }
         }
+        outer.paintBorder(drawScope, size, outline, null, borderScheme)
     }
 }

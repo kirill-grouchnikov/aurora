@@ -27,40 +27,33 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.mosaic.painter.fill
+package org.pushingpixels.mosaic.painter.border
 
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.LinearGradient
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.drawOutline
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.Color
 import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
+import org.pushingpixels.mosaic.utils.getInterpolatedColor
 
-class SimpleFillPainter : MosaicFillPainter {
+/**
+ * Border painter that returns images with classic appearance.
+ *
+ * @author Kirill Grouchnikov
+ */
+class ClassicBorderPainter : StandardBorderPainter() {
     override val displayName: String
-        get() = "Simple"
+        get() = "Classic"
 
-    override fun paintContourBackground(
-        drawScope: DrawScope,
-        size: Size,
-        outline: Outline,
-        fillScheme: MosaicColorScheme
-    ) {
-        with(drawScope) {
-            drawOutline(
-                outline = outline,
-                style = Fill,
-                brush = LinearGradient(
-                    listOf(fillScheme.ultraLightColor, fillScheme.lightColor),
-                    startX = 0.0f,
-                    startY = 0.0f,
-                    endX = 0.0f,
-                    endY = size.height,
-                    tileMode = TileMode.Clamp
-                )
-            )
-        }
+    override fun getTopBorderColor(borderScheme: MosaicColorScheme): Color {
+        return getInterpolatedColor(
+            super.getTopBorderColor(borderScheme),
+            super.getMidBorderColor(borderScheme), 0.0f
+        )
+    }
+
+    override fun getMidBorderColor(borderScheme: MosaicColorScheme): Color {
+        return getTopBorderColor(borderScheme)
+    }
+
+    override fun getBottomBorderColor(borderScheme: MosaicColorScheme): Color {
+        return getTopBorderColor(borderScheme)
     }
 }

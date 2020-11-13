@@ -95,39 +95,52 @@ internal data class MutableColorScheme(
         foregroundShiftColor: Color,
         foregroundShiftFactor: Float
     ): MosaicColorScheme {
-        throw UnsupportedOperationException()
+        // TODO - what are the performance implications?
+        return ShiftColorScheme(
+            this, backgroundShiftColor,
+            backgroundShiftFactor, foregroundShiftColor,
+            foregroundShiftFactor, true
+        )
     }
 
     override fun shade(shadeFactor: Float): MosaicColorScheme {
-        throw UnsupportedOperationException()
-    }
-
-    override fun tone(toneFactor: Float): MosaicColorScheme {
-        throw UnsupportedOperationException()
+        // TODO - what are the performance implications?
+        return ShadeColorScheme(this, shadeFactor)
     }
 
     override fun tint(tintFactor: Float): MosaicColorScheme {
-        throw UnsupportedOperationException()
+        // TODO - what are the performance implications?
+        return TintColorScheme(this, tintFactor)
     }
 
-    override fun saturate(saturateFactor: Float): MosaicColorScheme {
-        throw UnsupportedOperationException()
-    }
-
-    override fun blendWith(otherScheme: MosaicColorScheme, likenessToThisScheme: Float): MosaicColorScheme {
-        throw UnsupportedOperationException()
+    override fun tone(toneFactor: Float): MosaicColorScheme {
+        // TODO - what are the performance implications?
+        return ToneColorScheme(this, toneFactor)
     }
 
     override fun negate(): MosaicColorScheme {
-        throw UnsupportedOperationException()
+        // TODO - what are the performance implications?
+        return NegatedColorScheme(this)
     }
 
     override fun invert(): MosaicColorScheme {
-        throw UnsupportedOperationException()
+        // TODO - what are the performance implications?
+        return InvertedColorScheme(this)
+    }
+
+    override fun saturate(saturateFactor: Float): MosaicColorScheme {
+        // TODO - what are the performance implications?
+        return SaturatedColorScheme(this, saturateFactor)
     }
 
     override fun hueShift(hueShiftFactor: Float): MosaicColorScheme {
-        throw UnsupportedOperationException()
+        // TODO - what are the performance implications?
+        return HueShiftColorScheme(this, hueShiftFactor)
+    }
+
+    override fun blendWith(otherScheme: MosaicColorScheme, likenessToThisScheme: Float): MosaicColorScheme {
+        // TODO - what are the performance implications?
+        return BlendBiColorScheme(this, otherScheme, likenessToThisScheme)
     }
 }
 
