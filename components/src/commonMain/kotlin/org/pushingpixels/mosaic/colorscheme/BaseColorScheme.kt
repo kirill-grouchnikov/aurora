@@ -40,8 +40,14 @@ open class BaseColorScheme(
     val mid: Color = Color.White,
     val dark: Color = Color.White,
     val ultraDark: Color = Color.White,
-    val foreground: Color
+    val foreground: Color = Color.Black
 ) : MosaicColorScheme {
+    /**
+     * Resolver for the derived colors.
+     */
+    private val derivedColorsResolver: SchemeDerivedColors =
+        if (_isDark) DerivedColorsResolverDark(this) else DerivedColorsResolverLight(this)
+
     override val ultraLightColor: Color
         get() = ultraLight
     override val extraLightColor: Color
@@ -56,6 +62,29 @@ open class BaseColorScheme(
         get() = ultraDark
     override val foregroundColor: Color
         get() = foreground
+
+    override val backgroundFillColor: Color
+        get() = derivedColorsResolver.backgroundFillColor
+    override val accentedBackgroundFillColor: Color
+        get() = derivedColorsResolver.accentedBackgroundFillColor
+    override val focusRingColor: Color
+        get() = derivedColorsResolver.focusRingColor
+    override val lineColor: Color
+        get() = derivedColorsResolver.lineColor
+    override val selectionForegroundColor: Color
+        get() = derivedColorsResolver.selectionForegroundColor
+    override val selectionBackgroundColor: Color
+        get() = derivedColorsResolver.selectionBackgroundColor
+    override val textBackgroundFillColor: Color
+        get() = derivedColorsResolver.textBackgroundFillColor
+    override val separatorPrimaryColor: Color
+        get() = derivedColorsResolver.separatorPrimaryColor
+    override val separatorSecondaryColor: Color
+        get() = derivedColorsResolver.separatorSecondaryColor
+    override val markColor: Color
+        get() = derivedColorsResolver.markColor
+    override val echoColor: Color
+        get() = derivedColorsResolver.echoColor
 
     override fun displayName(): String {
         return displayName

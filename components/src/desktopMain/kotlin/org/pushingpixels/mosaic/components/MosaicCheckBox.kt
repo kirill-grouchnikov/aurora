@@ -285,7 +285,7 @@ fun MosaicCheckBox(
         // Mark color
         // TODO - fix the state and use the right color
         val markColor = MosaicSkin.colors.getColorScheme(decorationAreaType,
-            ColorSchemeAssociationKind.MARK, ComponentState.SELECTED).foregroundColor
+            ColorSchemeAssociationKind.MARK, ComponentState.SELECTED).markColor
 
         // Checkmark alpha is the combined strength of all the
         // states that have the selection bit turned on

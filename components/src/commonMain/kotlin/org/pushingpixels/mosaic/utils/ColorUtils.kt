@@ -267,4 +267,17 @@ fun getHueShiftedColor(color: Color, hueShift: Float): Color {
     return HSBtoRGB(floatArrayOf(hue, hsbvals[1], hsbvals[2]))
 }
 
+/**
+ * Returns darker version of the specified color.
+ *
+ * @param color Color.
+ * @param diff  Difference factor (values closer to 1.0 will produce results
+ * closer to black color).
+ * @return Darker version of the specified color.
+ */
+fun getDarkerColor(color: Color, diff: Float): Color {
+    return getInterpolatedColor(color, Color.Black, 1.0f - diff)
+}
+
+
 

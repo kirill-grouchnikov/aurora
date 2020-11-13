@@ -34,9 +34,7 @@ import androidx.compose.ui.graphics.Color
 import org.pushingpixels.mosaic.ColorSchemeAssociationKind
 import org.pushingpixels.mosaic.DecorationAreaType
 import org.pushingpixels.mosaic.MosaicSkin
-import org.pushingpixels.mosaic.colorscheme.BaseColorScheme
-import org.pushingpixels.mosaic.colorscheme.ColorSchemes
-import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
+import org.pushingpixels.mosaic.colorscheme.*
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -67,6 +65,30 @@ internal data class MutableColorScheme(
         get() = ultraDark
     override val foregroundColor: Color
         get() = foreground
+
+    override val backgroundFillColor: Color
+        get() = throw UnsupportedOperationException()
+    override val accentedBackgroundFillColor: Color
+        get() = throw UnsupportedOperationException()
+    override val focusRingColor: Color
+        get() = throw UnsupportedOperationException()
+    override val lineColor: Color
+        get() = throw UnsupportedOperationException()
+    override val selectionForegroundColor: Color
+        get() = throw UnsupportedOperationException()
+    override val selectionBackgroundColor: Color
+        get() = throw UnsupportedOperationException()
+    override val textBackgroundFillColor: Color
+        get() = throw UnsupportedOperationException()
+    override val separatorPrimaryColor: Color
+        get() = throw UnsupportedOperationException()
+    override val separatorSecondaryColor: Color
+        get() = throw UnsupportedOperationException()
+    override val markColor: Color
+        get() = throw UnsupportedOperationException()
+    override val echoColor: Color
+        get() = throw UnsupportedOperationException()
+
 
     override fun displayName(): String {
         return displayName
@@ -208,7 +230,7 @@ private enum class ColorSchemeKind {
 
 fun getColorSchemes(inputStream: InputStream): ColorSchemes {
     val schemes: MutableList<MosaicColorScheme> = java.util.ArrayList<MosaicColorScheme>()
-    val colorMap: MutableMap<String, Color> = HashMap<String, Color>()
+    val colorMap: MutableMap<String, Color> = HashMap()
     var ultraLight: Color? = null
     var extraLight: Color? = null
     var light: Color? = null
@@ -253,39 +275,25 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
                         continue
                     }
                     inColorSchemeBlock = false
-//                    if (background == null) {
-//                        require(
-//                            !(name == null || ultraLight == null
-//                                    || extraLight == null || light == null || mid == null
-//                                    || dark == null || ultraDark == null || foreground == null)
-//                        ) { "Incomplete specification of '$name', line $lineNumber" }
-//                    } else {
-//                        require(!(name == null || foreground == null)) { "Incomplete specification '$name', line $lineNumber" }
-//                    }
+                    if (background == null) {
+                        require(
+                            !(name == null || ultraLight == null
+                                    || extraLight == null || light == null || mid == null
+                                    || dark == null || ultraDark == null || foreground == null)
+                        ) { "Incomplete specification of '$name', line $lineNumber" }
+                    } else {
+                        require(!(name == null || foreground == null)) { "Incomplete specification '$name', line $lineNumber" }
+                    }
 
-                    schemes.add(
-                        BaseColorScheme(
-                            displayName = name!!,
-                            _isDark = (kind == ColorSchemeKind.DARK),
-                            ultraLight = ultraLight!!,
-                            extraLight = extraLight!!,
-                            light = light!!,
-                            mid = mid!!,
-                            dark = dark!!,
-                            ultraDark = ultraDark!!,
-                            foreground = foreground!!
-                        )
-                    )
-
-//                    val colors: Array<Color?> = if (background != null) arrayOf<Color?>(
-//                        background, background, background, background, background, background,
-//                        foreground
-//                    ) else arrayOf<Color?>(ultraLight, extraLight, light, mid, dark, ultraDark, foreground)
-//                    if (kind === ColorSchemeKind.LIGHT) {
-//                        schemes.add(getLightColorScheme(name, colors, HashMap(additionalColors)))
-//                    } else {
-//                        schemes.add(getDarkColorScheme(name, colors, HashMap(additionalColors)))
-//                    }
+                    val colors: Array<Color> = if (background != null) arrayOf(
+                        background!!, background!!, background!!, background!!, background!!, background!!,
+                        foreground!!
+                    ) else arrayOf(ultraLight!!, extraLight!!, light!!, mid!!, dark!!, ultraDark!!, foreground!!)
+                    if (kind === ColorSchemeKind.LIGHT) {
+                        schemes.add(getLightColorScheme(name!!, colors, HashMap(additionalColors)))
+                    } else {
+                        schemes.add(getDarkColorScheme(name!!, colors, HashMap(additionalColors)))
+                    }
                     name = null
                     kind = null
                     ultraLight = null
@@ -409,5 +417,101 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
             }
             throw IllegalArgumentException("Requested non-existent $displayName")
         }
+    }
+}
+
+private fun getLightColorScheme(
+    name: String, colors: Array<Color>,
+    additionalColors: Map<String, Color>
+): MosaicColorScheme {
+    require(colors.size == 7) { "Color encoding must have 7 components" }
+    return object : BaseLightColorScheme(name) {
+        // Base
+        override val ultraLightColor: Color
+            get() = colors[0]
+        override val extraLightColor: Color
+            get() = colors[1]
+        override val lightColor: Color
+            get() = colors[2]
+        override val midColor: Color
+            get() = colors[3]
+        override val darkColor: Color
+            get() = colors[4]
+        override val ultraDarkColor: Color
+            get() = colors[5]
+        override val foregroundColor: Color
+            get() = colors[6]
+
+        // Derived
+        override val lineColor: Color
+            get() = additionalColors["colorLine"] ?: super.lineColor
+        override  val backgroundFillColor: Color
+            get() = additionalColors["colorBackgroundFill"] ?: super.backgroundFillColor
+        override val accentedBackgroundFillColor: Color
+            get() = additionalColors["colorAccentedBackgroundFill"] ?: super.accentedBackgroundFillColor
+        override val textBackgroundFillColor: Color
+            get() = additionalColors["colorTextBackgroundFill"] ?: super.textBackgroundFillColor
+        override val selectionBackgroundColor: Color
+            get() = additionalColors["colorSelectionBackground"] ?: super.selectionBackgroundColor
+        override val selectionForegroundColor: Color
+            get() = additionalColors["colorSelectionForeground"] ?: super.selectionForegroundColor
+        override val focusRingColor: Color
+            get() = additionalColors["colorFocusRing"] ?: super.focusRingColor
+        override val separatorPrimaryColor: Color
+            get() = additionalColors["colorSeparatorPrimary"] ?: super.separatorPrimaryColor
+        override val separatorSecondaryColor: Color
+            get() = additionalColors["colorSeparatorSecondary"] ?: super.separatorSecondaryColor
+        override val markColor: Color
+            get() = additionalColors["colorMark"] ?: super.markColor
+        override val echoColor: Color
+            get() = additionalColors["colorEcho"] ?: super.echoColor
+    }
+}
+
+private fun getDarkColorScheme(
+    name: String, colors: Array<Color>,
+    additionalColors: Map<String, Color>
+): MosaicColorScheme {
+    require(colors.size == 7) { "Color encoding must have 7 components" }
+    return object : BaseDarkColorScheme(name) {
+        // Base
+        override val ultraLightColor: Color
+            get() = colors[0]
+        override val extraLightColor: Color
+            get() = colors[1]
+        override val lightColor: Color
+            get() = colors[2]
+        override val midColor: Color
+            get() = colors[3]
+        override val darkColor: Color
+            get() = colors[4]
+        override val ultraDarkColor: Color
+            get() = colors[5]
+        override val foregroundColor: Color
+            get() = colors[6]
+
+        // Derived
+        override val lineColor: Color
+            get() = additionalColors["colorLine"] ?: super.lineColor
+        override  val backgroundFillColor: Color
+            get() = additionalColors["colorBackgroundFill"] ?: super.backgroundFillColor
+        override val accentedBackgroundFillColor: Color
+            get() = additionalColors["colorAccentedBackgroundFill"] ?: super.accentedBackgroundFillColor
+        override val textBackgroundFillColor: Color
+            get() = additionalColors["colorTextBackgroundFill"] ?: super.textBackgroundFillColor
+        override val selectionBackgroundColor: Color
+            get() = additionalColors["colorSelectionBackground"] ?: super.selectionBackgroundColor
+        override val selectionForegroundColor: Color
+            get() = additionalColors["colorSelectionForeground"] ?: super.selectionForegroundColor
+        override val focusRingColor: Color
+            get() = additionalColors["colorFocusRing"] ?: super.focusRingColor
+        override val separatorPrimaryColor: Color
+            get() = additionalColors["colorSeparatorPrimary"] ?: super.separatorPrimaryColor
+        override val separatorSecondaryColor: Color
+            get() = additionalColors["colorSeparatorSecondary"] ?: super.separatorSecondaryColor
+        override val markColor: Color
+            get() = additionalColors["colorMark"] ?: super.markColor
+        override val echoColor: Color
+            get() = additionalColors["colorEcho"] ?: super.echoColor
     }
 }

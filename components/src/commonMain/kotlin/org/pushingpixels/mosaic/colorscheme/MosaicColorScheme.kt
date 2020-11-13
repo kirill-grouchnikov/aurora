@@ -31,7 +31,7 @@ package org.pushingpixels.mosaic.colorscheme
 
 import androidx.compose.ui.graphics.Color
 
-interface MosaicColorScheme : SchemeBaseColors {
+interface MosaicColorScheme : SchemeBaseColors, SchemeDerivedColors {
     fun displayName(): String
 
     /**

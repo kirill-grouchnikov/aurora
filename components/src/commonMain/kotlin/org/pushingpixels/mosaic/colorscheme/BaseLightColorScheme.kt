@@ -27,27 +27,12 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.mosaic.components
+package org.pushingpixels.mosaic.colorscheme
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.ContentDrawScope
-import androidx.compose.ui.DrawModifier
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import org.pushingpixels.mosaic.MosaicSkin
-
-@Composable
-fun Modifier.mosaicBackground() = this.then(
-    // TODO - this also needs to draw overlays from the current skin that match the decoration area
-    MosaicBackground(
-        color =
-        MosaicSkin.colors.getBackgroundColorScheme(MosaicSkin.decorationArea.type).backgroundFillColor
-    )
-)
-
-private class MosaicBackground(private val color: Color) : DrawModifier {
-    override fun ContentDrawScope.draw() {
-        drawRect(color = color)
-        drawContent()
-    }
-}
+/**
+ * Base class for light color schemes.
+ *
+ * @author Kirill Grouchnikov
+ */
+abstract class BaseLightColorScheme(displayName: String) :
+    BaseColorScheme(displayName = displayName, _isDark = false)
