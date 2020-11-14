@@ -29,7 +29,6 @@
  */
 package org.pushingpixels.mosaic.painter.fill
 
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -57,19 +56,16 @@ open class StandardFillPainter : MosaicFillPainter {
             drawOutline(
                 outline = outline,
                 style = Fill,
-                brush = ShaderBrush(
-                    LinearGradientShader(
-                        from = Offset(0.0f, 0.0f),
-                        to = Offset(0.0f, size.height),
-                        colors = listOf(
-                            getTopFillColor(fillScheme),
-                            getMidFillColorTop(fillScheme),
-                            getMidFillColorBottom(fillScheme),
-                            getBottomFillColor(fillScheme)
-                        ),
-                        colorStops = listOf(0.0f, 0.4999999f, 0.5f, 1.0f),
-                        tileMode = TileMode.Clamp
-                    )
+                brush = LinearGradient(
+                    0.0f to getTopFillColor(fillScheme),
+                    0.4999999f to getMidFillColorTop(fillScheme),
+                    0.5f to getMidFillColorBottom(fillScheme),
+                    1.0f to getBottomFillColor(fillScheme),
+                    startX = 0.0f,
+                    startY = 0.0f,
+                    endX = 0.0f,
+                    endY = size.height,
+                    tileMode = TileMode.Clamp
                 )
             )
         }

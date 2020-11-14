@@ -29,7 +29,6 @@
  */
 package org.pushingpixels.mosaic.painter.border
 
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -51,26 +50,19 @@ open class StandardBorderPainter : MosaicBorderPainter {
         outlineInner: Outline?,
         borderScheme: MosaicColorScheme
     ) {
-        val top = getTopBorderColor(borderScheme)
-        val mid = getMidBorderColor(borderScheme)
-        val bottom = getBottomBorderColor(borderScheme)
-        println("Border from ${borderScheme.displayName} is $top $mid $bottom")
         with(drawScope) {
             drawOutline(
                 outline = outline,
                 style = Stroke(width = 1.5.dp.toPx()),
-                brush = ShaderBrush(
-                    LinearGradientShader(
-                        from = Offset(0.0f, 0.0f),
-                        to = Offset(0.0f, size.height),
-                        colors = listOf(
-                            getTopBorderColor(borderScheme),
-                            getMidBorderColor(borderScheme),
-                            getBottomBorderColor(borderScheme)
-                        ),
-                        colorStops = listOf(0.0f, 0.5f, 1.0f),
-                        tileMode = TileMode.Repeated
-                    )
+                brush = LinearGradient(
+                    0.0f to getTopBorderColor(borderScheme),
+                    0.5f to getMidBorderColor(borderScheme),
+                    1.0f to getBottomBorderColor(borderScheme),
+                    startX = 0.0f,
+                    startY = 0.0f,
+                    endX = 0.0f,
+                    endY = size.height,
+                    tileMode = TileMode.Repeated
                 )
             )
         }
