@@ -45,16 +45,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.platform.AnimationClockAmbient
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.mosaic.AmbientTextColor
-import org.pushingpixels.mosaic.ColorSchemeAssociationKind
-import org.pushingpixels.mosaic.ComponentState
-import org.pushingpixels.mosaic.MosaicSkin
+import org.pushingpixels.mosaic.*
 import org.pushingpixels.mosaic.utils.*
 import java.util.*
+
 
 // This will be initialized on first usage using the getSelectedTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
@@ -83,13 +80,13 @@ private class ButtonDrawingCache(
 fun MosaicToggleButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
-    shape: Shape = MosaicSkin.shapes.regular,
+    sides: ButtonSides = ButtonSides(),
     content: @Composable RowScope.() -> Unit
 ) {
     MosaicToggleButton(
         modifier = modifier,
         onClick = onClick,
-        shape = shape,
+        sides = sides,
         stateTransitionFloat = AnimatedFloat(0.0f, AnimationClockAmbient.current.asDisposableClock()),
         content = content
     )
@@ -98,8 +95,8 @@ fun MosaicToggleButton(
 @Composable
 private fun MosaicToggleButton(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {},
-    shape: Shape = MosaicSkin.shapes.regular,
+    onClick: () -> Unit,
+    sides: ButtonSides,
     stateTransitionFloat: AnimatedFloat,
     content: @Composable RowScope.() -> Unit
 ) {
@@ -282,12 +279,26 @@ private fun MosaicToggleButton(
 
         val fillPainter = MosaicSkin.painters.fillPainter
         val borderPainter = MosaicSkin.painters.borderPainter
+        val buttonShaper = MosaicSkin.buttonShaper
 
         Canvas(modifier.matchParentSize().padding(2.dp)) {
             val width = this.size.width
             val height = this.size.height
 
-            val outline = shape.createOutline(Size(width, height), this)
+            val openDelta = 3
+            val deltaLeft = if (sides.openSides.contains(Side.LEFT)) openDelta else 0
+            val deltaRight = if (sides.openSides.contains(Side.RIGHT)) openDelta else 0
+            val deltaTop = if (sides.openSides.contains(Side.TOP)) openDelta else 0
+            val deltaBottom = if (sides.openSides.contains(Side.BOTTOM)) openDelta else 0
+
+            val outline = buttonShaper.getButtonOutline(
+                width = width + deltaLeft + deltaRight,
+                height = height + deltaTop + deltaBottom,
+                extraInsets = 0.5f,
+                isInner = false,
+                sides = sides,
+                drawScope = this
+            )
 
             // Populate the cached color scheme for filling the button container
             drawingCache.colorScheme.ultraLight = fillUltraLight
@@ -302,9 +313,6 @@ private fun MosaicToggleButton(
                 this, this.size, outline, drawingCache.colorScheme
             )
 
-            // TODO - proper inner outline computation by the button shaper
-            var innerOutline = if (borderPainter.isPaintingInnerOutline)
-            shape.createOutline(Size(width - 3.dp.toPx(), height - 3.dp.toPx()), this) else null
             // Populate the cached color scheme for drawing the button border
             drawingCache.colorScheme.ultraLight = borderUltraLight
             drawingCache.colorScheme.extraLight = borderExtraLight
@@ -314,6 +322,16 @@ private fun MosaicToggleButton(
             drawingCache.colorScheme.ultraDark = borderUltraDark
             drawingCache.colorScheme.isDark = borderIsDark
             drawingCache.colorScheme.foreground = textColor
+
+            val innerOutline = if (borderPainter.isPaintingInnerOutline)
+                buttonShaper.getButtonOutline(
+                    width = width + deltaLeft + deltaRight,
+                    height = height + deltaTop + deltaBottom,
+                    extraInsets = 1.0f,
+                    isInner = true,
+                    sides = sides,
+                    drawScope = this
+                ) else null
 
             borderPainter.paintBorder(
                 this, this.size, outline, innerOutline, drawingCache.colorScheme

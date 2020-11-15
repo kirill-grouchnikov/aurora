@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.window.MenuBar
 import org.pushingpixels.mosaic.colorscheme.MosaicSkinColors
+import org.pushingpixels.mosaic.shaper.MosaicButtonShaper
 import java.awt.image.BufferedImage
 
 object MosaicSkin {
@@ -54,8 +55,8 @@ object MosaicSkin {
 
     @Composable
     @ComposableContract(readonly = true)
-    val shapes: ButtonShaper
-        get() = AmbientShapes.current
+    val buttonShaper: MosaicButtonShaper
+        get() = AmbientButtonShaper.current
 
     @Composable
     @ComposableContract(readonly = true)
@@ -71,7 +72,7 @@ object MosaicSkin {
 data class MosaicSkinDefinition(
     override val displayName: String,
     val colors: MosaicSkinColors,
-    val shapes: ButtonShaper,
+    val buttonShaper: MosaicButtonShaper,
     val painters: Painters
 ) : MosaicTrait
 
@@ -101,7 +102,7 @@ fun MosaicWindow(
     MosaicSkin(
         decorationArea = DecorationArea(DecorationAreaType.NONE),
         colors = skin.colors,
-        shapes = skin.shapes,
+        buttonShaper = skin.buttonShaper,
         painters = skin.painters,
         animationConfig = MosaicSkin.animationConfig,
         content = content
@@ -112,7 +113,7 @@ fun MosaicWindow(
 private fun MosaicSkin(
     decorationArea: DecorationArea = MosaicSkin.decorationArea,
     colors: MosaicSkinColors = MosaicSkin.colors,
-    shapes: ButtonShaper = MosaicSkin.shapes,
+    buttonShaper: MosaicButtonShaper = MosaicSkin.buttonShaper,
     painters: Painters = MosaicSkin.painters,
     animationConfig: AnimationConfig = MosaicSkin.animationConfig,
     content: @Composable () -> Unit
@@ -120,7 +121,7 @@ private fun MosaicSkin(
     Providers(
         AmbientDecorationArea provides decorationArea,
         AmbientSkinColors provides colors,
-        AmbientShapes provides shapes,
+        AmbientButtonShaper provides buttonShaper,
         AmbientPainters provides painters,
         AmbientAnimationConfig provides animationConfig
     ) {

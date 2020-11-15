@@ -29,8 +29,7 @@
  */
 package org.pushingpixels.mosaic
 
-import javax.swing.JProgressBar
-import javax.swing.text.JTextComponent
+import androidx.compose.runtime.Immutable
 
 
 /**
@@ -663,5 +662,38 @@ class DecorationAreaType(val displayName: String) {
         val NONE = DecorationAreaType("None")
     }
 }
+
+/**
+ * Enumerates available sides.
+ *
+ * @author Kirill Grouchnikov
+ */
+enum class Side {
+    /**
+     * Left side.
+     */
+    LEFT,
+
+    /**
+     * Right side.
+     */
+    RIGHT,
+
+    /**
+     * Top side.
+     */
+    TOP,
+
+    /**
+     * Bottom side.
+     */
+    BOTTOM
+}
+
+@Immutable
+data class ButtonSides(
+    val openSides: Set<Side> = emptySet(),
+    val straightSides: Set<Side> = emptySet()
+)
 
 

@@ -27,10 +27,53 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.mosaic
+package org.pushingpixels.mosaic.shaper
 
-import androidx.compose.runtime.staticAmbientOf
-import org.pushingpixels.mosaic.shaper.ClassicButtonShaper
-import org.pushingpixels.mosaic.shaper.MosaicButtonShaper
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.unit.dp
+import org.pushingpixels.mosaic.ButtonSides
+import org.pushingpixels.mosaic.utils.getBaseOutline
 
-internal val AmbientButtonShaper  = staticAmbientOf<MosaicButtonShaper> { ClassicButtonShaper() }
+/**
+ * Button shaper that returns rectangular buttons with slightly rounded corners.
+ *
+ * @author Kirill Grouchnikov
+ */
+class ClassicButtonShaper : MosaicButtonShaper, RectangularButtonShaper {
+    override val displayName: String
+        get() = "Classic"
+
+    override fun getButtonOutline(
+        width: Float,
+        height: Float,
+        extraInsets: Float,
+        isInner: Boolean,
+        sides: ButtonSides,
+        drawScope: DrawScope
+    ): Outline {
+        var radius = getCornerRadius(width, height, extraInsets, drawScope)
+        if (isInner) {
+            radius -= 1.0f
+            if (radius < 0.0f) radius = 0.0f
+        }
+
+        return getBaseOutline(
+            width, height, radius, sides.straightSides,
+            extraInsets
+        )
+    }
+
+    override fun getCornerRadius(width: Float, height: Float, insets: Float, drawScope: DrawScope): Float {
+        with(drawScope) {
+            return 3.0f.dp.toPx()
+        }
+    }
+
+    companion object {
+        /**
+         * Reusable instance of this shaper.
+         */
+        val INSTANCE = ClassicButtonShaper()
+    }
+}

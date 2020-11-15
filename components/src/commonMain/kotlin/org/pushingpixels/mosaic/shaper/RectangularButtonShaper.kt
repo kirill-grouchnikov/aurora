@@ -27,10 +27,21 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.mosaic
+package org.pushingpixels.mosaic.shaper
 
-import androidx.compose.runtime.staticAmbientOf
-import org.pushingpixels.mosaic.shaper.ClassicButtonShaper
-import org.pushingpixels.mosaic.shaper.MosaicButtonShaper
+import androidx.compose.ui.graphics.drawscope.DrawScope
 
-internal val AmbientButtonShaper  = staticAmbientOf<MosaicButtonShaper> { ClassicButtonShaper() }
+/**
+ * Interface for rectangular-based button shapers.
+ *
+ * @author Kirill Grouchnikov
+ */
+interface RectangularButtonShaper {
+    /**
+     * Returns the corner radius of a button.
+     *
+     * @param insets Button insets.
+     * @return Corner radius of a button.
+     */
+    fun getCornerRadius(width: Float, height: Float, insets: Float, drawScope: DrawScope): Float
+}

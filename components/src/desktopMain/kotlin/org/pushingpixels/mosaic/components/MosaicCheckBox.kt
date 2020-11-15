@@ -41,8 +41,10 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.platform.AnimationClockAmbient
@@ -80,14 +82,12 @@ private class CheckBoxDrawingCache(
 @Composable
 fun MosaicCheckBox(
     modifier: Modifier = Modifier,
-    shape: Shape = MosaicSkin.shapes.small,
     checked: Boolean = false,
     onCheckedChange: (Boolean) -> Unit,
     content: @Composable RowScope.() -> Unit
 ) {
     MosaicCheckBox(
         modifier = modifier,
-        shape = shape,
         checked = checked,
         onCheckedChange = onCheckedChange,
         stateTransitionFloat = AnimatedFloat(0.0f, AnimationClockAmbient.current.asDisposableClock()),
@@ -98,7 +98,6 @@ fun MosaicCheckBox(
 @Composable
 fun MosaicCheckBox(
     modifier: Modifier = Modifier,
-    shape: Shape = MosaicSkin.shapes.small,
     checked: Boolean = false,
     onCheckedChange: (Boolean) -> Unit,
     stateTransitionFloat: AnimatedFloat,
@@ -315,9 +314,15 @@ fun MosaicCheckBox(
             val width = this.size.width
             val height = this.size.height
 
-            val outline = shape.createOutline(Size(width, height), this)
+            val outline = getBaseOutline(
+                width = this.size.width,
+                height = this.size.height,
+                radius = 3.0f.dp.toPx(),
+                straightSides = null,
+                insets = 0.5f
+            )
 
-            // Populate the cached color scheme for filling the button container
+            // Populate the cached color scheme for filling the markbox
             drawingCache.colorScheme.ultraLight = fillUltraLight
             drawingCache.colorScheme.extraLight = fillExtraLight
             drawingCache.colorScheme.light = fillLight
@@ -330,7 +335,7 @@ fun MosaicCheckBox(
                 this, this.size, outline, drawingCache.colorScheme
             )
 
-            // Populate the cached color scheme for drawing the button border
+            // Populate the cached color scheme for drawing the markbox border
             drawingCache.colorScheme.ultraLight = borderUltraLight
             drawingCache.colorScheme.extraLight = borderExtraLight
             drawingCache.colorScheme.light = borderLight
@@ -339,8 +344,17 @@ fun MosaicCheckBox(
             drawingCache.colorScheme.ultraDark = borderUltraDark
             drawingCache.colorScheme.isDark = borderIsDark
             drawingCache.colorScheme.foreground = textColor
+
+            val outlineInner = if (borderPainter.isPaintingInnerOutline) getBaseOutline(
+                width = this.size.width,
+                height = this.size.height,
+                radius = 3.0f.dp.toPx() - 1,
+                straightSides = null,
+                insets = 2.0f
+            ) else null
+
             borderPainter.paintBorder(
-                this, this.size, outline, null, drawingCache.colorScheme
+                this, this.size, outline, outlineInner, drawingCache.colorScheme
             )
 
             // Draw the checkbox mark with the alpha that corresponds to the current

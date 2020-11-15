@@ -32,8 +32,6 @@ package org.pushingpixels.mosaic.painter.border
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.translate
-import androidx.compose.ui.unit.dp
 import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
 
 /**
@@ -57,13 +55,8 @@ class CompositeBorderPainter(
         outlineInner: Outline?,
         borderScheme: MosaicColorScheme
     ) {
-        with(drawScope) {
-            if (outlineInner != null) {
-                // TODO - remove the translation when the proper inner outline is in
-                translate(1.5.dp.toPx(), 1.5.dp.toPx()) {
-                    inner.paintBorder(drawScope, size, outlineInner, null, borderScheme)
-                }
-            }
+        if (outlineInner != null) {
+            inner.paintBorder(drawScope, size, outlineInner, null, borderScheme)
         }
         outer.paintBorder(drawScope, size, outline, null, borderScheme)
     }

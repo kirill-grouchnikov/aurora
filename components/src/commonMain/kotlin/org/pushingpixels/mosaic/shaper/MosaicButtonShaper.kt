@@ -27,10 +27,24 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.mosaic
+package org.pushingpixels.mosaic.shaper
 
-import androidx.compose.runtime.staticAmbientOf
-import org.pushingpixels.mosaic.shaper.ClassicButtonShaper
-import org.pushingpixels.mosaic.shaper.MosaicButtonShaper
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import org.pushingpixels.mosaic.ButtonSides
+import org.pushingpixels.mosaic.MosaicTrait
 
-internal val AmbientButtonShaper  = staticAmbientOf<MosaicButtonShaper> { ClassicButtonShaper() }
+/**
+ * Button shaper interface.
+ *
+ * @author Kirill Grouchnikov
+ */
+interface MosaicButtonShaper : MosaicTrait {
+    /**
+     * Returns the outline path.
+     */
+    fun getButtonOutline(
+        width: Float, height: Float, extraInsets: Float,
+        isInner: Boolean, sides: ButtonSides, drawScope: DrawScope
+    ): Outline
+}

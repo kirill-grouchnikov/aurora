@@ -53,7 +53,7 @@ open class StandardBorderPainter : MosaicBorderPainter {
         with(drawScope) {
             drawOutline(
                 outline = outline,
-                style = Stroke(width = 1.5.dp.toPx()),
+                style = Stroke(width = 1.0f),
                 brush = LinearGradient(
                     0.0f to getTopBorderColor(borderScheme),
                     0.5f to getMidBorderColor(borderScheme),

@@ -34,6 +34,7 @@ import org.pushingpixels.mosaic.colorscheme.MosaicColorSchemeBundle
 import org.pushingpixels.mosaic.colorscheme.MosaicSkinColors
 import org.pushingpixels.mosaic.painter.border.FractionBasedBorderPainter
 import org.pushingpixels.mosaic.painter.fill.FractionBasedFillPainter
+import org.pushingpixels.mosaic.shaper.ClassicButtonShaper
 import org.pushingpixels.mosaic.utils.getColorSchemes
 
 fun marinerSkinColors(): MosaicSkinColors {
@@ -219,7 +220,7 @@ fun marinerSkin(): MosaicSkinDefinition {
                 colorQueries = arrayOf({ it.ultraDarkColor }, { it.darkColor }, { it.midColor })
             )
         ),
-        shapes = ButtonShaper()
+        buttonShaper = ClassicButtonShaper()
     )
 }
 
