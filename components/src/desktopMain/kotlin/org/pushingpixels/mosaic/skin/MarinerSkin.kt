@@ -33,6 +33,8 @@ import org.pushingpixels.mosaic.*
 import org.pushingpixels.mosaic.colorscheme.MosaicColorSchemeBundle
 import org.pushingpixels.mosaic.colorscheme.MosaicSkinColors
 import org.pushingpixels.mosaic.painter.border.FractionBasedBorderPainter
+import org.pushingpixels.mosaic.painter.decoration.FlatDecorationPainter
+import org.pushingpixels.mosaic.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.mosaic.painter.fill.FractionBasedFillPainter
 import org.pushingpixels.mosaic.shaper.ClassicButtonShaper
 import org.pushingpixels.mosaic.utils.getColorSchemes
@@ -210,15 +212,18 @@ fun marinerSkin(): MosaicSkinDefinition {
         colors = marinerSkinColors(),
         painters = Painters(
             fillPainter = FractionBasedFillPainter(
-                displayName = "Mariner",
-                fractions = floatArrayOf(0.0f, 0.5f, 1.0f),
-                colorQueries = arrayOf({ it.extraLightColor }, { it.lightColor }, { it.midColor })
+                0.0f to { it.extraLightColor },
+                0.5f to { it.lightColor },
+                1.0f to { it.midColor },
+                displayName = "Mariner"
             ),
             borderPainter = FractionBasedBorderPainter(
-                displayName = "Mariner",
-                fractions = floatArrayOf(0.0f, 0.5f, 1.0f),
-                colorQueries = arrayOf({ it.ultraDarkColor }, { it.darkColor }, { it.midColor })
-            )
+                0.0f to { it.ultraDarkColor },
+                0.5f to { it.darkColor },
+                1.0f to { it.midColor },
+                displayName = "Mariner"
+            ),
+            decorationPainter = MatteDecorationPainter()
         ),
         buttonShaper = ClassicButtonShaper()
     )

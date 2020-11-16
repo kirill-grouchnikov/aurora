@@ -49,7 +49,7 @@ import org.pushingpixels.mosaic.skin.marinerSkin
 fun main() {
     MosaicWindow(
         title = "Mosaic Demo",
-        skin = autumnSkin(),
+        skin = marinerSkin(),
         size = IntSize(500, 400)
     ) {
         Box(

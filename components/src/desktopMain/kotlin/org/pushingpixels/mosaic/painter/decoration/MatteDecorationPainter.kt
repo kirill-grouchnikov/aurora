@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Mosaic, Kirill Grouchnikov. All Rights Reserved.
+ * Copyright (c) 2005-2020 Radiance Kirill Grouchnikov. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -27,48 +27,76 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.mosaic.painter.fill
+package org.pushingpixels.mosaic.painter.decoration
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.unit.dp
+import org.pushingpixels.mosaic.DecorationAreaType
 import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
-import org.pushingpixels.mosaic.painter.ColorQueryStop
-import org.pushingpixels.mosaic.painter.FractionBasedPainter
+import org.pushingpixels.mosaic.utils.getInterpolatedColor
+import java.lang.Float.max
 
 /**
- * Fill painter with fraction-based stops and a color query associated with each
- * stop. This class allows creating multi-gradient fills with exact control over
- * which color is used at every gradient control point.
+ * Implementation of [SubstanceDecorationPainter] that uses matte painting
+ * on decoration areas.
  *
  * @author Kirill Grouchnikov
  */
-class FractionBasedFillPainter(
-    vararg colorQueryStops: ColorQueryStop,
-    displayName: String
-) : FractionBasedPainter(displayName, *colorQueryStops), MosaicFillPainter {
-    override fun paintContourBackground(
+class MatteDecorationPainter : MosaicDecorationPainter {
+    override val displayName: String
+        get() = "Matte"
+
+    override fun paintDecorationArea(
         drawScope: DrawScope,
-        size: Size,
+        decorationAreaType: DecorationAreaType,
+        componentSize: Size,
         outline: Outline,
-        fillScheme: MosaicColorScheme
+        offsetFromRoot: Offset,
+        colorScheme: MosaicColorScheme
     ) {
         with(drawScope) {
+            val startColor = colorScheme.lightColor
+            val endColor = getInterpolatedColor(startColor, colorScheme.midColor, 0.4f)
+            val flexPoint = FLEX_POINT.dp.toPx()
+            val gradientHeight = max(
+                flexPoint,
+                componentSize.height + offsetFromRoot.y
+            )
+            // 0 - flex : light -> medium
+            // flex - : medium fill
+            val paint = if (gradientHeight == flexPoint)
+                LinearGradient(
+                    0.0f to startColor,
+                    1.0f to endColor,
+                    startX = 0.0f,
+                    startY = -offsetFromRoot.y,
+                    endX = 0.0f,
+                    endY = gradientHeight - offsetFromRoot.y,
+                    tileMode = TileMode.Clamp
+                )
+            else LinearGradient(
+                0.0f to startColor,
+                flexPoint / gradientHeight to endColor,
+                1.0f to endColor,
+                startX = 0.0f,
+                startY = -offsetFromRoot.y,
+                endX = 0.0f,
+                endY = componentSize.height - offsetFromRoot.y,
+                tileMode = TileMode.Clamp
+            )
             drawOutline(
                 outline = outline,
                 style = Fill,
-                brush = ShaderBrush(
-                    LinearGradientShader(
-                        from = Offset(0.0f, 0.0f),
-                        to = Offset(0.0f, size.height),
-                        colors = getColorQueries().map { it.invoke(fillScheme) },
-                        colorStops = getFractions().toList(),
-                        tileMode = TileMode.Repeated
-                    )
-                )
+                brush = paint
             )
         }
+    }
+
+    companion object {
+        private const val FLEX_POINT = 50
     }
 }

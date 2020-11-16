@@ -35,6 +35,7 @@ import androidx.compose.animation.core.AnimationEndReason
 import androidx.compose.animation.core.FloatTweenSpec
 import androidx.compose.animation.core.TransitionDefinition
 import androidx.compose.animation.transition
+import androidx.compose.desktop.AppWindowAmbient
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.InteractionState
 import androidx.compose.foundation.clickable
@@ -42,10 +43,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.pointer.pointerMoveFilter
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.AnimationClockAmbient
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.mosaic.*
@@ -105,6 +106,7 @@ private fun MosaicToggleButton(
 
     val selectedState = remember { mutableStateOf(ButtonState.IDLE) }
     val rolloverState = remember { mutableStateOf(false) }
+    val offset = remember { mutableStateOf(Offset(0.0f, 0.0f)) }
 
     val modelStateInfo = remember {
         ModelStateInfo(
@@ -242,7 +244,10 @@ private fun MosaicToggleButton(
                     ButtonState.IDLE
                 }
                 onClick.invoke()
-            }, interactionState = state, indication = null),
+            }, interactionState = state, indication = null)
+            .onGloballyPositioned {
+                offset.value = it.localToRoot(Offset(0.0f, 0.0f))
+            },
         alignment = Alignment.TopStart
     ) {
         // Populate the cached color scheme for filling the button container
@@ -280,6 +285,9 @@ private fun MosaicToggleButton(
         val fillPainter = MosaicSkin.painters.fillPainter
         val borderPainter = MosaicSkin.painters.borderPainter
         val buttonShaper = MosaicSkin.buttonShaper
+        val appWindow = AppWindowAmbient.current!!
+        println("" + appWindow.y + ":" + offset.value.y)
+
 
         Canvas(modifier.matchParentSize().padding(2.dp)) {
             val width = this.size.width
@@ -336,6 +344,8 @@ private fun MosaicToggleButton(
             borderPainter.paintBorder(
                 this, this.size, outline, innerOutline, drawingCache.colorScheme
             )
+
+
         }
 
         // Pass our text color to the children

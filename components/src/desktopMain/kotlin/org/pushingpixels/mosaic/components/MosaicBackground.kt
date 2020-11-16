@@ -33,22 +33,65 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.ContentDrawScope
 import androidx.compose.ui.DrawModifier
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.OnGloballyPositionedModifier
+import org.pushingpixels.mosaic.ColorSchemeAssociationKind
+import org.pushingpixels.mosaic.ComponentState
+import org.pushingpixels.mosaic.DecorationAreaType
 import org.pushingpixels.mosaic.MosaicSkin
+import org.pushingpixels.mosaic.colorscheme.MosaicSkinColors
+import org.pushingpixels.mosaic.painter.decoration.MosaicDecorationPainter
+
 
 @Composable
 fun Modifier.mosaicBackground() = this.then(
-    // TODO - this needs to use the decoration painter on relevant areas
-    // TODO - this also needs to draw overlays from the current skin that match the decoration area
     MosaicBackground(
-        color =
-        MosaicSkin.colors.getBackgroundColorScheme(MosaicSkin.decorationArea.type).backgroundFillColor
+        decorationAreaType = MosaicSkin.decorationArea.type,
+        colors = MosaicSkin.colors,
+        decorationPainter = MosaicSkin.painters.decorationPainter
     )
 )
 
-private class MosaicBackground(private val color: Color) : DrawModifier {
+private class MosaicBackground(
+    private val decorationAreaType: DecorationAreaType,
+    private val colors: MosaicSkinColors,
+    private val decorationPainter: MosaicDecorationPainter
+) : OnGloballyPositionedModifier, DrawModifier {
+    var offset = Offset(0.0f, 0.0f)
+
+    override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
+        offset = coordinates.localToRoot(Offset(0.0f, 0.0f))
+    }
+
     override fun ContentDrawScope.draw() {
-        drawRect(color = color)
+        // TODO - this needs to use the decoration painter on relevant areas
+        // TODO - this also needs to draw overlays from the current skin that match the decoration area
+        println(offset.y)
+
+        if (decorationAreaType != DecorationAreaType.NONE
+            && colors.isRegisteredAsDecorationArea(decorationAreaType)
+        ) {
+            decorationPainter.paintDecorationArea(
+                drawScope = this,
+                decorationAreaType = decorationAreaType,
+                componentSize = size,
+                outline = Outline.Rectangle(Rect(Offset(0.0f, 0.0f), size)),
+                offsetFromRoot = offset,
+                colorScheme = colors.getBackgroundColorScheme(decorationAreaType)
+            )
+        } else {
+            drawRect(
+                color = colors.getColorScheme(
+                    decorationAreaType = decorationAreaType,
+                    associationKind = ColorSchemeAssociationKind.FILL,
+                    componentState = ComponentState.ENABLED
+                ).backgroundFillColor
+            )
+        }
+
         drawContent()
     }
 }

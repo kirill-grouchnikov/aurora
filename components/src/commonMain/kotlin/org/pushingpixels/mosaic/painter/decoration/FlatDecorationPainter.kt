@@ -27,22 +27,41 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.mosaic
+package org.pushingpixels.mosaic.painter.decoration
 
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.staticAmbientOf
-import org.pushingpixels.mosaic.painter.border.MosaicBorderPainter
-import org.pushingpixels.mosaic.painter.border.SimpleBorderPainter
-import org.pushingpixels.mosaic.painter.decoration.FlatDecorationPainter
-import org.pushingpixels.mosaic.painter.decoration.MosaicDecorationPainter
-import org.pushingpixels.mosaic.painter.fill.MosaicFillPainter
-import org.pushingpixels.mosaic.painter.fill.SimpleFillPainter
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Fill
+import org.pushingpixels.mosaic.DecorationAreaType
+import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
 
-@Immutable
-data class Painters(
-    val fillPainter: MosaicFillPainter = SimpleFillPainter(),
-    val borderPainter: MosaicBorderPainter = SimpleBorderPainter(),
-    val decorationPainter: MosaicDecorationPainter = FlatDecorationPainter()
-)
+/**
+ * Decoration painter that paints a flat appearance. This class is part of
+ * officially supported API.
+ *
+ * @author Kirill Grouchnikov
+ */
+class FlatDecorationPainter : MosaicDecorationPainter {
+    override val displayName: String
+        get() = "Flat"
 
-internal val AmbientPainters = staticAmbientOf { Painters() }
+    override fun paintDecorationArea(
+        drawScope: DrawScope,
+        decorationAreaType: DecorationAreaType,
+        componentSize: Size,
+        outline: Outline,
+        offsetFromRoot: Offset,
+        colorScheme: MosaicColorScheme
+    ) {
+        with(drawScope) {
+            drawOutline(
+                outline = outline,
+                style = Fill,
+                color = colorScheme.backgroundFillColor
+            )
+        }
+    }
+}

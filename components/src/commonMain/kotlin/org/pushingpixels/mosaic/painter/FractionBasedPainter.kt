@@ -40,17 +40,23 @@ import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
  *
  * @author Kirill Grouchnikov
  */
+
+typealias ColorQueryStop = Pair<Float, (MosaicColorScheme) -> Color>
+
 abstract class FractionBasedPainter(
-    override val displayName: String, private val fractions: FloatArray,
-    private val colorQueries: Array<(MosaicColorScheme) -> Color>
+    override val displayName: String,
+    vararg colorQueryStops: ColorQueryStop
 ) : MosaicTrait {
+    private val fractions: List<Float> = colorQueryStops.map { it.first }
+    private val colorQueries: List<(MosaicColorScheme) -> Color> = colorQueryStops.map { it.second }
+
     /**
      * Returns the fractions of this painter.
      *
      * @return Fractions of this painter.
      */
     fun getFractions(): FloatArray {
-        return fractions.copyOf()
+        return fractions.toFloatArray()
     }
 
     /**
@@ -59,12 +65,10 @@ abstract class FractionBasedPainter(
      * @return Color queries of this painter.
      */
     fun getColorQueries(): Array<(MosaicColorScheme) -> Color> {
-        return colorQueries.copyOf()
+        return colorQueries.toTypedArray()
     }
 
     init {
-        require(!(fractions == null || colorQueries == null)) { "Cannot pass null arguments" }
-        require(fractions.size == colorQueries.size) { "Argument length does not match" }
         val length = fractions.size
         require(!(fractions[0] != 0.0f || fractions[length - 1] != 1.0f)) { "End fractions must be 0.0 and 1.0" }
         for (i in 0 until length - 1) {

@@ -27,22 +27,36 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.mosaic
+package org.pushingpixels.mosaic.painter.decoration
 
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.staticAmbientOf
-import org.pushingpixels.mosaic.painter.border.MosaicBorderPainter
-import org.pushingpixels.mosaic.painter.border.SimpleBorderPainter
-import org.pushingpixels.mosaic.painter.decoration.FlatDecorationPainter
-import org.pushingpixels.mosaic.painter.decoration.MosaicDecorationPainter
-import org.pushingpixels.mosaic.painter.fill.MosaicFillPainter
-import org.pushingpixels.mosaic.painter.fill.SimpleFillPainter
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import org.pushingpixels.mosaic.DecorationAreaType
+import org.pushingpixels.mosaic.MosaicTrait
+import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
 
-@Immutable
-data class Painters(
-    val fillPainter: MosaicFillPainter = SimpleFillPainter(),
-    val borderPainter: MosaicBorderPainter = SimpleBorderPainter(),
-    val decorationPainter: MosaicDecorationPainter = FlatDecorationPainter()
-)
-
-internal val AmbientPainters = staticAmbientOf { Painters() }
+/**
+ * Decoration painter interface for Mosaic.
+ *
+ * @author Kirill Grouchnikov
+ */
+interface MosaicDecorationPainter : MosaicTrait {
+    /**
+     * Paints the decoration area as a specified shape.
+     *
+     * @param drawScope Draw scope.
+     * @param decorationAreaType Decoration area type.
+     * @param outline            Outline to fill.
+     * @param colorScheme        Color scheme for painting the decoration area.
+     */
+    fun paintDecorationArea(
+        drawScope: DrawScope,
+        decorationAreaType: DecorationAreaType,
+        componentSize: Size,
+        outline: Outline,
+        offsetFromRoot: Offset,
+        colorScheme: MosaicColorScheme
+    )
+}
