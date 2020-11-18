@@ -203,6 +203,7 @@ internal fun colorizeBgra8888(
     val size = src.size / 4
     val result = ByteArray(src.size)
     for (pos in 0 until size) {
+        // Convert byte channel values to [0.0-1.0] floats for manipulation
         val b = (256 + src[4 * pos].toInt()) / 255.0f
         val g = (256 + src[4 * pos + 1].toInt()) / 255.0f
         val r = (256 + src[4 * pos + 2].toInt()) / 255.0f
@@ -212,25 +213,28 @@ internal fun colorizeBgra8888(
         val hsb = RGBtoHSB(r, g, b)
 
         val pixelColor = interpolated[(brightness * MAPSTEPS).toInt()]!!
-        val ri = pixelColor.red
-        val gi = pixelColor.green
-        val bi = pixelColor.blue
-        val hsbi = RGBtoHSB(ri, gi, bi)
+        val hsbInterpolated = RGBtoHSB(pixelColor)
 
-        hsb[0] = hsbi[0]
-        hsb[1] = hsbi[1]
+        // Preserve hue and value
+        hsb[0] = hsbInterpolated[0]
+        hsb[1] = hsbInterpolated[1]
+        // And remap the brightness
         if (originalBrightnessFactor >= 0.0f) {
             hsb[2] = (originalBrightnessFactor * hsb[2]
-                    + (1.0f - originalBrightnessFactor) * hsbi[2])
+                    + (1.0f - originalBrightnessFactor) * hsbInterpolated[2])
         } else {
-            hsb[2] = hsb[2] * hsbi[2] * (1.0f + originalBrightnessFactor)
+            hsb[2] = hsb[2] * hsbInterpolated[2] * (1.0f + originalBrightnessFactor)
         }
-        val finalPixel = HSBtoRGB(floatArrayOf(hsb[0], hsb[1], hsb[2]))
-        val finalAlpha = (a * alpha * 255.0f + 0.5f).toByte()
-        val finalRed = (finalPixel.red * 255.0f + 0.5f).toByte()
-        val finalGreen = (finalPixel.green * 255.0f + 0.5f).toByte()
-        val finalBlue = (finalPixel.blue * 255.0f + 0.5f).toByte()
 
+        // Convert the remapped HSB back to RGB
+        val finalPixel = HSBtoRGB(floatArrayOf(hsb[0], hsb[1], hsb[2]))
+        // And compute the final channel values as bytes
+        val finalAlpha = (a * alpha * 255.0f + 0.5f).toInt().toByte()
+        val finalRed = (finalPixel.red * 255.0f + 0.5f).toInt().toByte()
+        val finalGreen = (finalPixel.green * 255.0f + 0.5f).toInt().toByte()
+        val finalBlue = (finalPixel.blue * 255.0f + 0.5f).toInt().toByte()
+
+        // Put the byte values in BGRA order
         result[4 * pos] = finalBlue
         result[4 * pos + 1] = finalGreen
         result[4 * pos + 2] = finalRed
