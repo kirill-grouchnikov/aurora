@@ -35,7 +35,6 @@ import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
-
 data class ConvolutionKernel(
     val width: Int, val height: Int,
     val matrix: FloatArray
@@ -45,7 +44,9 @@ data class ConvolutionKernel(
 }
 
 internal fun convolve(width: Int, height: Int, src: IntArray, kernel: ConvolutionKernel): IntArray {
-    // TODO - verify the validity of kernel data (size, etc) and source data
+    require(src.size == width * height) { "Source spec inconsistent" }
+    require((kernel.width % 2 == 1) && (kernel.height % 2 == 1)) { "Only support odd-sized kernel matrix" }
+    require(kernel.matrix.size == kernel.width * kernel.height) { "Kernel matrix spec inconsistent" }
 
     // TODO - can this be made more efficient without allocating an extra array?
     val temp = FloatArray(4 * width * height)
@@ -128,10 +129,12 @@ internal fun colorizeBgra8888(
     val dark = scheme.darkColor
     val ultraDark = scheme.ultraDarkColor
 
-    // Are the colors identical?
+    // Step 1 - map the color scheme colors based on their brightness
     if (ultraLight == extraLight && ultraLight == light && ultraLight == mid &&
         ultraLight == dark && ultraLight == ultraDark
     ) {
+        // If the background colors are identical, create a lighter and a darker
+        // version for brightness mapping
         val lighter = deriveByBrightness(light, 0.2f)
         val darker = deriveByBrightness(light, -0.2f)
         schemeColorMapping[(getColorBrightness(lighter) * 255.0f).toInt()] = lighter
@@ -148,6 +151,8 @@ internal fun colorizeBgra8888(
 
     var schemeBrightness: List<Int> = ArrayList(schemeColorMapping.keys).sorted()
 
+    // Step 2 - create a "stretched" brightness mapping where the lowest brightness
+    // is mapped to 0 and the highest to 255
     val lowestSchemeBrightness = schemeBrightness[0]
     val highestSchemeBrightness = schemeBrightness[schemeBrightness.size - 1]
     val hasSameBrightness = highestSchemeBrightness == lowestSchemeBrightness
@@ -161,6 +166,9 @@ internal fun colorizeBgra8888(
     }
     schemeBrightness = ArrayList(stretchedColorMapping.keys).sorted()
 
+    // Step 3 - create the full brightness mapping that assigns colors to
+    // all intermediate brightness values. The intermediate brightness values
+    // are in discrete range
     val interpolated = arrayOfNulls<Color>(MAPSTEPS)
     for (i in 0 until MAPSTEPS) {
         val brightness = (256.0 * i / MAPSTEPS).toInt()
@@ -190,6 +198,8 @@ internal fun colorizeBgra8888(
         }
     }
 
+    // Step 4 - use the brightness mapping to colorize each original pixel "into"
+    // our target color scheme. The hue and the value of each original pixel are preserved.
     val size = src.size / 4
     val result = ByteArray(src.size)
     for (pos in 0 until size) {

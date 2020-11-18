@@ -32,7 +32,10 @@ package org.pushingpixels.mosaic.utils
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asDesktopBitmap
-import org.jetbrains.skija.*
+import org.jetbrains.skija.ColorAlphaType
+import org.jetbrains.skija.ColorInfo
+import org.jetbrains.skija.ColorType
+import org.jetbrains.skija.ImageInfo
 import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
 import kotlin.math.max
 import kotlin.math.min
@@ -47,20 +50,12 @@ internal object NoiseFactory {
     /**
      * Returns a noise image.
      *
-     * @param scheme
-     * The color scheme to use for rendering the image.
-     * @param width
-     * Image width.
-     * @param height
-     * Image height.
-     * @param xFactor
-     * X stretch factor.
-     * @param yFactor
-     * Y stretch factor.
-     * @param hasConstantZ
-     * Indication whether the Z is constant.
-     * @param toBlur
-     * Indication whether the resulting image should be blurred.
+     * @param scheme The color scheme to use for rendering the noise image.
+     * @param width Noise image width.
+     * @param height  Noise image height.
+     * @param xFactor X stretch factor.
+     * @param yFactor Y stretch factor.
+     * @param hasConstantZ Indication whether the Z is constant.
      * @return Noise image.
      */
     fun getNoiseImage(
@@ -70,6 +65,7 @@ internal object NoiseFactory {
         val c1: Color = scheme.darkColor
         val c3: Color = scheme.lightColor
 
+        // Step 1 - create a noise pixel map
         val noiseBuffer = IntArray(width * height)
         val m2 = xFactor * width * xFactor * width + (yFactor * height
                 * yFactor * height)
@@ -89,7 +85,7 @@ internal object NoiseFactory {
             }
         }
 
-        // Convolve to soften the noise
+        // Step 2 - convolve to soften the noise
         val convolved = convolve(
             width = width,
             height = height,
@@ -101,8 +97,8 @@ internal object NoiseFactory {
             )
         )
 
-        // Convert an array of integers (each integer is 8888 of ARGB) into an array
-        // of bytes that Skija expects
+        // Step 3 - convert an array of integers (each integer is 8888 of ARGB) into an
+        // array of bytes (in BGRA order) that Skija expects
         val byteDstBuffer = ByteArray(4 * width * height)
         pos = 0
         for (j in 0 until height) {
@@ -122,6 +118,7 @@ internal object NoiseFactory {
             }
         }
 
+        // Step 4 - create a Skija bitmap
         val result = ImageBitmap(width = width, height = height)
         val skijaBitmap = result.asDesktopBitmap()
         skijaBitmap.installPixels(
