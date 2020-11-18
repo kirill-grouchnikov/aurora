@@ -42,11 +42,8 @@ import kotlin.math.*
  * @return Interpolated RGB value.
  */
 internal fun getInterpolatedColor(color1: Color, color2: Color, color1Likeness: Float): Color {
-    if (color1Likeness < 0.0 || color1Likeness > 1.0) {
-        throw IllegalArgumentException(
-            "Color likeness should be in 0.0-1.0 range [is "
-                    + color1Likeness + "]"
-        )
+    require((color1Likeness >= 0.0f) && (color1Likeness <= 1.0f)) {
+        "Color likeness should be in 0.0-1.0 range [is $color1Likeness]"
     }
     val alpha1: Float = color1.alpha
     val alpha2: Float = color2.alpha
@@ -56,6 +53,27 @@ internal fun getInterpolatedColor(color1: Color, color2: Color, color1Likeness: 
     val a = if (alpha1 == alpha2) alpha1 else
         round(color1Likeness * alpha1 + (1.0f - color1Likeness) * alpha2)
     return Color(r, g, b, a, color1.colorSpace)
+}
+
+fun getInterpolatedRGB(
+    color1: Color, color2: Color,
+    color1Likeness: Float
+): Int {
+    require((color1Likeness >= 0.0f) && (color1Likeness <= 1.0f)) {
+        "Color likeness should be in 0.0-1.0 range [is $color1Likeness]"
+    }
+    val alpha1: Float = color1.alpha
+    val alpha2: Float = color2.alpha
+    val r = getInterpolatedChannelValue(color1.red, color2.red, color1Likeness)
+    val g = getInterpolatedChannelValue(color1.green, color2.green, color1Likeness)
+    val b = getInterpolatedChannelValue(color1.blue, color2.blue, color1Likeness)
+    val a = if (alpha1 == alpha2) alpha1 else
+        round(color1Likeness * alpha1 + (1.0f - color1Likeness) * alpha2)
+
+    return ((a * 255.0f + 0.5f).toInt() shl 24) or
+            ((r * 255.0f + 0.5f).toInt() shl 16) or
+            ((g * 255.0f + 0.5f).toInt() shl 8) or
+            (b * 255.0f + 0.5f).toInt()
 }
 
 private fun getInterpolatedChannelValue(value1: Float, value2: Float, value1Likeness: Float): Float {
@@ -108,13 +126,21 @@ private fun EOCF_sRGB(srgb: Float): Float {
     return if (srgb <= 0.04045f) srgb / 12.92f else ((srgb + 0.055f) / 1.055f).pow(2.4f)
 }
 
-// See https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB
-internal fun RGBtoHSB(from: Color): FloatArray {
-    val result = FloatArray(3)
+internal fun RGBtoHSB(fromArgb: Int): FloatArray {
+    val r = fromArgb ushr 16 and 0xFF
+    val g = fromArgb ushr 8 and 0xFF
+    val b = fromArgb ushr 0 and 0xFF
 
-    val r = from.red
-    val g = from.green
-    val b = from.blue
+    return RGBtoHSB(r = r / 255.0f, g = g / 255.0f, b = b / 255.0f)
+}
+
+internal fun RGBtoHSB(from: Color): FloatArray {
+    return RGBtoHSB(from.red, from.green, from.blue)
+}
+
+// See https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB
+internal fun RGBtoHSB(r: Float, g: Float, b: Float): FloatArray {
+    val result = FloatArray(3)
 
     val xmax = max(max(r, g), b)
     val xmin = min(min(r, g), b)
@@ -277,6 +303,54 @@ internal fun getHueShiftedColor(color: Color, hueShift: Float): Color {
  */
 internal fun getDarkerColor(color: Color, diff: Float): Color {
     return getInterpolatedColor(color, Color.Black, 1.0f - diff)
+}
+
+private fun encode(number: Float): String? {
+    require(!(number < 0 || number > 1.0f)) { "" + number }
+    val hex = "0123456789ABCDEF"
+    val asInt = (255.0f * number + 0.5f).toInt()
+    val c1 = hex[asInt / 16]
+    val c2 = hex[asInt % 16]
+    return c1.toString() + "" + c2
+}
+
+internal fun encode(color: Color): String? {
+    return ("#" + encode(color.alpha) + encode(color.red) + encode(color.green)
+            + encode(color.blue))
+}
+
+/**
+ * Returns the brightness of the specified color.
+ *
+ * @param rgb RGB value of a color.
+ * @return The brightness of the specified color in [0.0-1.0] range
+ */
+internal fun getColorBrightness(color: Color): Float {
+    // Note that alpha is ignored
+    return getColorBrightness(color.red, color.green, color.blue)
+}
+
+/**
+ * Returns the brightness of the specified color.
+ *
+ * @param rgb RGB value of a color.
+ * @return The brightness of the specified color in [0.0-1.0] range
+ */
+internal fun getColorBrightness(argb: Int): Float {
+    // Note that alpha is ignored
+    val r = argb ushr 16 and 0xFF
+    val g = argb ushr 8 and 0xFF
+    val b = argb ushr 0 and 0xFF
+
+    return getColorBrightness(r / 255.0f, g / 255.0f, b / 255.0f)
+}
+
+/**
+ * Returns the brightness of the specified color in [0.0-1.0] range
+ */
+internal fun getColorBrightness(r: Float, g: Float, b: Float): Float {
+    // See https://en.wikipedia.org/wiki/Relative_luminance
+    return (2126.0f * r + 7152.0f * g + 722.0f * b) / 10000.0f
 }
 
 

@@ -35,7 +35,7 @@ import org.pushingpixels.mosaic.colorscheme.MosaicSkinColors
 import org.pushingpixels.mosaic.painter.border.ClassicBorderPainter
 import org.pushingpixels.mosaic.painter.border.CompositeBorderPainter
 import org.pushingpixels.mosaic.painter.border.DelegateBorderPainter
-import org.pushingpixels.mosaic.painter.decoration.FlatDecorationPainter
+import org.pushingpixels.mosaic.painter.decoration.MarbleNoiseDecorationPainter
 import org.pushingpixels.mosaic.painter.fill.MatteFillPainter
 import org.pushingpixels.mosaic.shaper.ClassicButtonShaper
 import org.pushingpixels.mosaic.utils.getColorSchemes
@@ -128,7 +128,7 @@ fun autumnSkin(): MosaicSkinDefinition {
                 DelegateBorderPainter(
                     "Autumn Inner", ClassicBorderPainter()
                 ) { it.tint(0.8f) }),
-            decorationPainter = FlatDecorationPainter()
+            decorationPainter = MarbleNoiseDecorationPainter()
         ),
         buttonShaper = ClassicButtonShaper()
     )

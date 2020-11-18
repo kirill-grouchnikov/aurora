@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2020 Radiance Kirill Grouchnikov. All Rights Reserved.
+ * Copyright (c) 2020 Mosaic Kirill Grouchnikov. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import org.pushingpixels.mosaic.DecorationAreaType
 import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
 import org.pushingpixels.mosaic.utils.getInterpolatedColor
-import java.lang.Float.max
 
 /**
  * Implementation of [SubstanceDecorationPainter] that uses matte painting
@@ -62,7 +61,7 @@ class MatteDecorationPainter : MosaicDecorationPainter {
             val startColor = colorScheme.lightColor
             val endColor = getInterpolatedColor(startColor, colorScheme.midColor, 0.4f)
             val flexPoint = FLEX_POINT.dp.toPx()
-            val gradientHeight = max(
+            val gradientHeight = kotlin.math.max(
                 flexPoint,
                 componentSize.height + offsetFromRoot.y
             )

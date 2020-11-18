@@ -29,6 +29,7 @@
  */
 package org.pushingpixels.mosaic.demo
 
+import androidx.compose.desktop.initCompose
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
@@ -44,14 +45,17 @@ import org.pushingpixels.mosaic.components.MosaicText
 import org.pushingpixels.mosaic.components.MosaicToggleButton
 import org.pushingpixels.mosaic.components.mosaicBackground
 import org.pushingpixels.mosaic.skin.autumnSkin
-import org.pushingpixels.mosaic.skin.marinerSkin
 
 fun main() {
+    // TODO - this is needed until https://github.com/JetBrains/compose-jb/issues/111 is fixed
+    initCompose()
+
     MosaicWindow(
         title = "Mosaic Demo",
-        skin = marinerSkin(),
+        skin = autumnSkin(),
         size = IntSize(500, 400)
     ) {
+        //ImageBitmap(100, 100)
         Box(
             modifier = Modifier,
             alignment = Alignment.TopStart
