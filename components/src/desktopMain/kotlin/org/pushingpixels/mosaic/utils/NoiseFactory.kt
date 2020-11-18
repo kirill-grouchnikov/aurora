@@ -32,8 +32,7 @@ package org.pushingpixels.mosaic.utils
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asDesktopBitmap
-import org.jetbrains.skija.ColorAlphaType
-import org.jetbrains.skija.ImageInfo
+import org.jetbrains.skija.*
 import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
 import kotlin.math.max
 import kotlin.math.min
@@ -83,21 +82,7 @@ internal object NoiseFactory {
                 val noise = 0.5f + 0.5f * PerlinNoiseGenerator.noise(ii, jj, z)
                 val likeness = max(0.0f, min(1.0f, 2.0f * noise.toFloat()))
 
-                val rgb = getInterpolatedRGB(c3, c1, likeness)
-
-//                // Blue
-//                byteDstBuffer[4 * pos] = (rgb ushr 0 and 0xFF).toByte()
-//                //(255.0f * b + 0.5f).toInt().toByte()
-//                // Green
-//                byteDstBuffer[4 * pos + 1] = (rgb ushr 8 and 0xFF).toByte()
-//                //(255.0f * g + 0.5f).toInt().toByte()
-//                // Red
-//                byteDstBuffer[4 * pos + 2] = (rgb ushr 16 and 0xFF).toByte()
-//                //(255.0f * r + 0.5f).toInt().toByte()
-//                // Alpha
-//                byteDstBuffer[4 * pos + 3] = 255.toByte()
-
-                noiseBuffer[pos] = rgb
+                noiseBuffer[pos] = getInterpolatedRGB(c3, c1, likeness)
 
                 // Go to the next pixel
                 pos++
@@ -140,7 +125,7 @@ internal object NoiseFactory {
         val result = ImageBitmap(width = width, height = height)
         val skijaBitmap = result.asDesktopBitmap()
         skijaBitmap.installPixels(
-            ImageInfo.makeN32(width, height, ColorAlphaType.UNPREMUL),
+            ImageInfo(ColorInfo(ColorType.BGRA_8888, ColorAlphaType.UNPREMUL, null), width, height),
             byteDstBuffer, 4L * width
         )
         return result

@@ -36,10 +36,12 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.clipPath
 import org.jetbrains.skija.ColorAlphaType
+import org.jetbrains.skija.ColorInfo
+import org.jetbrains.skija.ColorType
 import org.jetbrains.skija.ImageInfo
 import org.pushingpixels.mosaic.DecorationAreaType
 import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
-import org.pushingpixels.mosaic.utils.colorize
+import org.pushingpixels.mosaic.utils.colorizeBgra8888
 
 /**
  * Implementation of [MosaicDecorationPainter] that uses an image source to paint on
@@ -165,15 +167,15 @@ abstract class ImageWrapperDecorationPainter(
             val tileWidth = originalTile.width
             val tileHeight = originalTile.height
 
-            // Get pixels from the original tile
+            // Get pixels from the original tile in BGRA_8888 format
             val originalBitmap = originalTile.asDesktopBitmap()
             val originalPixels = originalBitmap.readPixels(
-                ImageInfo.makeN32(tileWidth, tileHeight, originalBitmap.alphaType),
+                ImageInfo(ColorInfo(ColorType.BGRA_8888, originalBitmap.alphaType, null), tileWidth, tileHeight),
                 tileWidth.toLong() * originalBitmap.bytesPerPixel, 0, 0
             )
 
             // Colorize the pixels
-            val colorizedPixels = colorize(
+            val colorizedPixels = colorizeBgra8888(
                 width = tileWidth,
                 height = tileHeight,
                 src = originalPixels!!,
@@ -182,29 +184,17 @@ abstract class ImageWrapperDecorationPainter(
                 alpha = 1.0f
             )
 
-            // And convert them to an ImageBitmap
-            val result = ImageBitmap(width = tileWidth, height = tileHeight)
+            // And convert them to an ImageBitmap in the same BGRA_8888 format
+            result = ImageBitmap(width = tileWidth, height = tileHeight)
             val skijaBitmap = result.asDesktopBitmap()
             skijaBitmap.installPixels(
-                ImageInfo.makeN32(tileWidth, tileHeight, ColorAlphaType.UNPREMUL),
+                ImageInfo(ColorInfo(ColorType.BGRA_8888, ColorAlphaType.UNPREMUL, null), tileWidth, tileHeight),
                 colorizedPixels, 4L * tileWidth
             )
 
             // Cache the bitmap
             colorizedTileMap[scheme.displayName] = result
-//            val tileBi: BufferedImage = SubstanceCoreUtilities.getBlankImage(
-//                (tileWidth / scaleFactor).toInt(),
-//                (tileHeight / scaleFactor).toInt()
-//            )
-//            val tile2D = tileBi.createGraphics()
-//            tile2D.drawImage(
-//                originalTile, 0, 0, (tileWidth / scaleFactor).toInt(),
-//                (tileHeight / scaleFactor).toInt(), null
-//            )
-//            tile2D.dispose()
-//            result = SubstanceImageCreator.getColorSchemeImage(tileBi, scheme, 0.0f, 1.0f)
-//            colorizedTileMap[scheme.getDisplayName()] = result
         }
-        return colorizedTileMap[scheme.displayName]!!
+        return result
     }
 }

@@ -112,13 +112,11 @@ internal fun convolve(width: Int, height: Int, src: IntArray, kernel: Convolutio
     return result
 }
 
-internal fun colorize(
+internal fun colorizeBgra8888(
     width: Int, height: Int, src: ByteArray, scheme: MosaicColorScheme,
     originalBrightnessFactor: Float,
     alpha: Float
 ): ByteArray {
-    requireNotNull(scheme) { "mixColor cannot be null" }
-
     val MAPSTEPS = 512
 
     // collect the brightness factors of the color scheme
@@ -227,7 +225,6 @@ internal fun colorize(
         result[4 * pos + 1] = finalGreen
         result[4 * pos + 2] = finalRed
         result[4 * pos + 3] = finalAlpha
-//        result[pos] = (finalAlpha shl 24) or (finalRed shl 16) or (finalGreen shl 8) or (finalBlue)
     }
 
     return result
