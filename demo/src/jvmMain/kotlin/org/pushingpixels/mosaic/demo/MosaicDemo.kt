@@ -35,6 +35,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.LinearGradient
+import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.mosaic.DecorationArea
@@ -72,6 +78,26 @@ fun main() {
 @Composable
 fun DemoContent() {
     Column(modifier = Modifier.fillMaxHeight().fillMaxWidth()) {
+        DecorationArea(decorationAreaType = DecorationAreaType.TOOLBAR) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                    .fillMaxWidth()
+                    .mosaicBackground()
+                    .padding(8.dp)
+            ) {
+                MosaicCheckBox(
+                    checked = true,
+                    onCheckedChange = { println("Check 0! $it") }
+                ) {
+                    MosaicText(text = "Checkbox 0 selected")
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    MosaicToggleButton(onClick = { println("Clicked 0!") }) {
+                        MosaicText("Toggle button 0")
+                    }
+                }
+            }
+        }
         DecorationArea(decorationAreaType = DecorationAreaType.HEADER) {
             Column(
                 modifier = Modifier
@@ -90,7 +116,7 @@ fun DemoContent() {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     MosaicCheckBox(
                         checked = true,
-                        onCheckedChange = { it -> println("Check 2! $it") }
+                        onCheckedChange = { println("Check 2! $it") }
                     ) {
                         MosaicText(text = "Checkbox 2 selected")
                     }

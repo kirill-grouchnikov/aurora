@@ -118,6 +118,8 @@ internal fun colorizeBgra8888(
     originalBrightnessFactor: Float,
     alpha: Float
 ): ByteArray {
+    // TODO - when this is extracted into its own filter class, move
+    //  this constant out of the function
     val MAPSTEPS = 512
 
     // collect the brightness factors of the color scheme

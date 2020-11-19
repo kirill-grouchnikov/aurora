@@ -39,13 +39,8 @@ import org.pushingpixels.mosaic.utils.NoiseFactory
  * @author Kirill Grouchnikov
  */
 class MarbleNoiseDecorationPainter : ImageWrapperDecorationPainter(
-    originalTile = NoiseFactory.getNoiseImage(
-        MetallicColorScheme(), 400, 400, 0.8, 0.8, false
-    ),
+    originalTile = NoiseFactory.getNoiseImage(MetallicColorScheme(), 400, 400, 0.8, 0.8, false),
     textureAlpha = 0.7f
-//    originalTile = SampleFactory.getNoiseImage(
-//        MetallicColorScheme(), 400, 400
-//    )
 ) {
     override val displayName = "Marble Noise"
 }

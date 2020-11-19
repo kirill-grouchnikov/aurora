@@ -37,8 +37,11 @@ import org.pushingpixels.mosaic.painter.border.CompositeBorderPainter
 import org.pushingpixels.mosaic.painter.border.DelegateBorderPainter
 import org.pushingpixels.mosaic.painter.decoration.MarbleNoiseDecorationPainter
 import org.pushingpixels.mosaic.painter.fill.MatteFillPainter
+import org.pushingpixels.mosaic.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.mosaic.shaper.ClassicButtonShaper
 import org.pushingpixels.mosaic.utils.getColorSchemes
+import org.pushingpixels.substance.api.painter.overlay.TopShadowOverlayPainter
+
 
 private fun autumnSkinColors(): MosaicSkinColors {
     val result = MosaicSkinColors()
@@ -116,20 +119,33 @@ private fun autumnSkinColors(): MosaicSkinColors {
 }
 
 fun autumnSkin(): MosaicSkinDefinition {
+    val painters = Painters(
+        fillPainter = MatteFillPainter(),
+        borderPainter = CompositeBorderPainter("Autumn",
+            DelegateBorderPainter(
+                "Autumn Outer", ClassicBorderPainter()
+            ) { it.shade(0.1f) },
+            DelegateBorderPainter(
+                "Autumn Inner", ClassicBorderPainter()
+            ) { it.tint(0.8f) }),
+        decorationPainter = MarbleNoiseDecorationPainter()
+    )
+    // add an overlay painter to paint a drop shadow along the top
+    // edge of toolbars
+    painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(50), DecorationAreaType.TOOLBAR)
+    // add an overlay painter to paint separator lines along the bottom
+    // edges of title panes and menu bars
+    painters.addOverlayPainter(
+        BottomLineOverlayPainter(colorSchemeQuery = { it.darkColor }),
+        DecorationAreaType.PRIMARY_TITLE_PANE,
+        DecorationAreaType.SECONDARY_TITLE_PANE,
+        DecorationAreaType.HEADER
+    )
+
     return MosaicSkinDefinition(
         displayName = "Autumn",
         colors = autumnSkinColors(),
-        painters = Painters(
-            fillPainter = MatteFillPainter(),
-            borderPainter = CompositeBorderPainter("Autumn",
-                DelegateBorderPainter(
-                    "Autumn Outer", ClassicBorderPainter()
-                ) { it.shade(0.1f) },
-                DelegateBorderPainter(
-                    "Autumn Inner", ClassicBorderPainter()
-                ) { it.tint(0.8f) }),
-            decorationPainter = MarbleNoiseDecorationPainter()
-        ),
+        painters = painters,
         buttonShaper = ClassicButtonShaper()
     )
 }

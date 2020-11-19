@@ -44,6 +44,7 @@ import org.pushingpixels.mosaic.DecorationAreaType
 import org.pushingpixels.mosaic.MosaicSkin
 import org.pushingpixels.mosaic.colorscheme.MosaicSkinColors
 import org.pushingpixels.mosaic.painter.decoration.MosaicDecorationPainter
+import org.pushingpixels.mosaic.painter.overlay.MosaicOverlayPainter
 
 
 @Composable
@@ -51,14 +52,16 @@ fun Modifier.mosaicBackground() = this.then(
     MosaicBackground(
         decorationAreaType = MosaicSkin.decorationArea.type,
         colors = MosaicSkin.colors,
-        decorationPainter = MosaicSkin.painters.decorationPainter
+        decorationPainter = MosaicSkin.painters.decorationPainter,
+        overlayPainters = MosaicSkin.painters.getOverlayPainters(MosaicSkin.decorationArea.type)
     )
 )
 
 private class MosaicBackground(
     private val decorationAreaType: DecorationAreaType,
     private val colors: MosaicSkinColors,
-    private val decorationPainter: MosaicDecorationPainter
+    private val decorationPainter: MosaicDecorationPainter,
+    private val overlayPainters: List<MosaicOverlayPainter>
 ) : OnGloballyPositionedModifier, DrawModifier {
     var offset = Offset(0.0f, 0.0f)
 
@@ -90,6 +93,18 @@ private class MosaicBackground(
                     componentState = ComponentState.ENABLED
                 ).backgroundFillColor
             )
+        }
+
+        if (overlayPainters.isNotEmpty()) {
+            for (overlayPainter in overlayPainters) {
+                overlayPainter.paintOverlay(
+                    drawScope = this,
+                    decorationAreaType = decorationAreaType,
+                    width = size.width,
+                    height = size.height,
+                    colors = colors
+                )
+            }
         }
 
         drawContent()

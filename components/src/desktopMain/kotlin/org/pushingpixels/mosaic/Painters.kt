@@ -37,12 +37,86 @@ import org.pushingpixels.mosaic.painter.decoration.FlatDecorationPainter
 import org.pushingpixels.mosaic.painter.decoration.MosaicDecorationPainter
 import org.pushingpixels.mosaic.painter.fill.MosaicFillPainter
 import org.pushingpixels.mosaic.painter.fill.SimpleFillPainter
+import org.pushingpixels.mosaic.painter.overlay.MosaicOverlayPainter
+import java.util.*
 
-@Immutable
 data class Painters(
     val fillPainter: MosaicFillPainter = SimpleFillPainter(),
     val borderPainter: MosaicBorderPainter = SimpleBorderPainter(),
-    val decorationPainter: MosaicDecorationPainter = FlatDecorationPainter()
-)
+    val decorationPainter: MosaicDecorationPainter = FlatDecorationPainter(),
+    val overlayPaintersMap: MutableMap<DecorationAreaType, MutableList<MosaicOverlayPainter>> = hashMapOf()
+) {
+    /**
+     * Adds the specified overlay painter to the end of the list of overlay
+     * painters associated with the specified decoration area types.
+     *
+     * @param overlayPainter Overlay painter to add to the end of the list of overlay
+     * painters associated with the specified decoration area types.
+     * @param areaTypes      Decoration area types.
+     */
+    fun addOverlayPainter(
+        overlayPainter: MosaicOverlayPainter,
+        vararg areaTypes: DecorationAreaType
+    ) {
+        for (areaType in areaTypes) {
+            if (!overlayPaintersMap.containsKey(areaType)) {
+                overlayPaintersMap[areaType] = arrayListOf()
+            }
+            overlayPaintersMap[areaType]!!.add(overlayPainter)
+        }
+    }
+
+    /**
+     * Removes the specified overlay painter from the list of overlay painters
+     * associated with the specified decoration area types.
+     *
+     * @param overlayPainter Overlay painter to remove from the list of overlay painters
+     * associated with the specified decoration area types.
+     * @param areaTypes      Decoration area types.
+     */
+    fun removeOverlayPainter(
+        overlayPainter: MosaicOverlayPainter,
+        vararg areaTypes: DecorationAreaType
+    ) {
+        for (areaType in areaTypes) {
+            if (!overlayPaintersMap.containsKey(areaType)) {
+                return
+            }
+            overlayPaintersMap[areaType]!!.remove(overlayPainter)
+            if (overlayPaintersMap[areaType]!!.isEmpty()) {
+                overlayPaintersMap.remove(areaType)
+            }
+        }
+    }
+
+    /**
+     * Removes all overlay painters associated with the specified decoration area types.
+     *
+     * @param areaTypes Decoration area types.
+     */
+    fun clearOverlayPainters(vararg areaTypes: DecorationAreaType) {
+        for (areaType in areaTypes) {
+            if (!overlayPaintersMap.containsKey(areaType)) {
+                return
+            }
+            overlayPaintersMap[areaType]!!.clear()
+            overlayPaintersMap.remove(areaType)
+        }
+    }
+
+    /**
+     * Returns a non-null, non-modifiable list of overlay painters associated
+     * with the specified decoration area type.
+     *
+     * @param decorationAreaType Decoration area type.
+     * @return A non-null, non-modifiable list of overlay painters associated
+     * with the specified decoration area type.
+     */
+    fun getOverlayPainters(decorationAreaType: DecorationAreaType): List<MosaicOverlayPainter> {
+        return if (!overlayPaintersMap.containsKey(decorationAreaType)) {
+            emptyList()
+        } else Collections.unmodifiableList(overlayPaintersMap[decorationAreaType])
+    }
+}
 
 internal val AmbientPainters = staticAmbientOf { Painters() }
