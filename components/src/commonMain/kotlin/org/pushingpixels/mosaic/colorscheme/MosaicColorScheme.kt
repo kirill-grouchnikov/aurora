@@ -139,3 +139,16 @@ interface MosaicColorScheme : SchemeBaseColors, SchemeDerivedColors, MosaicTrait
      */
     fun blendWith(otherScheme: MosaicColorScheme, likenessToThisScheme: Float): MosaicColorScheme
 }
+
+fun composite(
+    base: (MosaicColorScheme) -> Color,
+    vararg transforms: (Color) -> Color
+): (MosaicColorScheme) -> Color {
+    return { scheme ->
+        var result: Color = base.invoke(scheme)
+        for (transform in transforms) {
+            result = transform.invoke(result)
+        }
+        result
+    }
+}

@@ -35,12 +35,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ComposableContract
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.emptyContent
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.window.MenuBar
+import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
 import org.pushingpixels.mosaic.colorscheme.MosaicSkinColors
 import org.pushingpixels.mosaic.shaper.MosaicButtonShaper
 import java.awt.image.BufferedImage
+
 
 object MosaicSkin {
     @Composable

@@ -38,9 +38,9 @@ import org.pushingpixels.mosaic.painter.border.DelegateBorderPainter
 import org.pushingpixels.mosaic.painter.decoration.MarbleNoiseDecorationPainter
 import org.pushingpixels.mosaic.painter.fill.MatteFillPainter
 import org.pushingpixels.mosaic.painter.overlay.BottomLineOverlayPainter
+import org.pushingpixels.mosaic.painter.overlay.TopShadowOverlayPainter
 import org.pushingpixels.mosaic.shaper.ClassicButtonShaper
 import org.pushingpixels.mosaic.utils.getColorSchemes
-import org.pushingpixels.substance.api.painter.overlay.TopShadowOverlayPainter
 
 
 private fun autumnSkinColors(): MosaicSkinColors {

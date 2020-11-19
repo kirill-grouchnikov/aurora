@@ -42,14 +42,14 @@ import org.pushingpixels.mosaic.utils.deriveByBrightness
 import org.pushingpixels.mosaic.utils.getAlphaColor
 
 /**
- * Overlay painter that paints a few pixel-high drop shadow at the top edge of
- * the relevant decoration area. The constructor is private to enforce that
+ * Overlay painter that paints a few pixel-high drop shadow at the bottom edge
+ * of the relevant decoration area. The constructor is private to enforce that
  * [.getInstance] is the only way an application can get an instance of this class.
  *
  * @author Kirill Grouchnikov
  */
-class TopShadowOverlayPainter private constructor(private val startAlpha: Float) : MosaicOverlayPainter {
-    override val displayName = "Top Shadow"
+class BottomShadowOverlayPainter private constructor(private val endAlpha: Float) : MosaicOverlayPainter {
+    override val displayName = "Bottom Shadow"
 
     override fun paintOverlay(
         drawScope: DrawScope,
@@ -71,13 +71,13 @@ class TopShadowOverlayPainter private constructor(private val startAlpha: Float)
                 style = Fill,
                 brush = LinearGradient(
                     colors = listOf(
-                        getAlphaColor(shadowColor, startAlpha),
-                        getAlphaColor(shadowColor, 16.0f / 255.0f)
+                        getAlphaColor(shadowColor, 16.0f / 255.0f),
+                        getAlphaColor(shadowColor, endAlpha)
                     ),
                     startX = 0.0f,
-                    startY = 0.0f,
+                    startY = size.height - shadowHeight,
                     endX = 0.0f,
-                    endY = shadowHeight,
+                    endY = size.height,
                     tileMode = TileMode.Clamp
                 )
             )
@@ -85,24 +85,24 @@ class TopShadowOverlayPainter private constructor(private val startAlpha: Float)
     }
 
     companion object {
-        private val MAP: MutableMap<Int, TopShadowOverlayPainter> = HashMap()
-        private const val DEFAULT_SHADOW_START_ALPHA = 160.0f / 255.0f
-        private const val MIN_SHADOW_START_ALPHA = 32.0f / 255.0f
+        private val MAP: MutableMap<Int, BottomShadowOverlayPainter> = HashMap()
+        private const val DEFAULT_SHADOW_END_ALPHA = 128.0f / 255.0f
+        private const val MIN_SHADOW_END_ALPHA = 32.0f / 255.0f
 
         /**
-         * Returns an instance of top shadow overlay painter with the requested strength.
+         * Returns an instance of bottom shadow overlay painter with the requested strength.
          *
          * @param strength Drop shadow strength. Must be in [0..100] range.
-         * @return Top shadow overlay painter with the requested strength.
+         * @return Bottom shadow overlay painter with the requested strength.
          */
         @Synchronized
-        fun getInstance(strength: Int): TopShadowOverlayPainter {
+        fun getInstance(strength: Int): BottomShadowOverlayPainter {
             require(!(strength < 0 || strength > 100)) { "Strength must be in [0..100] range" }
             var result = MAP[strength]
             if (result == null) {
-                val startAlpha = MIN_SHADOW_START_ALPHA +
-                        (DEFAULT_SHADOW_START_ALPHA - MIN_SHADOW_START_ALPHA) * strength / 100
-                result = TopShadowOverlayPainter(startAlpha = startAlpha)
+                val endAlpha = MIN_SHADOW_END_ALPHA +
+                        (DEFAULT_SHADOW_END_ALPHA - MIN_SHADOW_END_ALPHA) * strength / 100
+                result = BottomShadowOverlayPainter(endAlpha = endAlpha)
                 MAP[strength] = result
             }
             return result

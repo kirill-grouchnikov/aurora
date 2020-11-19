@@ -32,12 +32,17 @@ package org.pushingpixels.mosaic.skin
 import org.pushingpixels.mosaic.*
 import org.pushingpixels.mosaic.colorscheme.MosaicColorSchemeBundle
 import org.pushingpixels.mosaic.colorscheme.MosaicSkinColors
+import org.pushingpixels.mosaic.colorscheme.composite
 import org.pushingpixels.mosaic.painter.border.FractionBasedBorderPainter
-import org.pushingpixels.mosaic.painter.decoration.FlatDecorationPainter
 import org.pushingpixels.mosaic.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.mosaic.painter.fill.FractionBasedFillPainter
+import org.pushingpixels.mosaic.painter.overlay.BottomLineOverlayPainter
+import org.pushingpixels.mosaic.painter.overlay.BottomShadowOverlayPainter
+import org.pushingpixels.mosaic.painter.overlay.TopBezelOverlayPainter
 import org.pushingpixels.mosaic.shaper.ClassicButtonShaper
+import org.pushingpixels.mosaic.utils.deriveByBrightness
 import org.pushingpixels.mosaic.utils.getColorSchemes
+
 
 fun marinerSkinColors(): MosaicSkinColors {
     val result = MosaicSkinColors()
@@ -207,24 +212,59 @@ fun marinerSkinColors(): MosaicSkinColors {
 }
 
 fun marinerSkin(): MosaicSkinDefinition {
+    val painters = Painters(
+        fillPainter = FractionBasedFillPainter(
+            0.0f to { it.extraLightColor },
+            0.5f to { it.lightColor },
+            1.0f to { it.midColor },
+            displayName = "Mariner"
+        ),
+        borderPainter = FractionBasedBorderPainter(
+            0.0f to { it.ultraDarkColor },
+            0.5f to { it.darkColor },
+            1.0f to { it.midColor },
+            displayName = "Mariner"
+        ),
+        decorationPainter = MatteDecorationPainter()
+    )
+
+    // add an overlay painter to paint a bezel line along the top
+    // edge of footer
+    painters.addOverlayPainter(
+        TopBezelOverlayPainter(
+            colorSchemeQueryTop = { it.ultraDarkColor },
+            colorSchemeQueryBottom = { it.lightColor }
+        ),
+        DecorationAreaType.FOOTER
+    )
+
+    // add two overlay painters to create a bezel line between
+    // menu bar and toolbars
+    painters.addOverlayPainter(
+        BottomLineOverlayPainter(
+            composite({ it.ultraDarkColor }, { deriveByBrightness(it, -0.5f) })
+        ),
+        DecorationAreaType.HEADER
+    )
+
+    // add overlay painter to paint drop shadows along the bottom
+    // edges of toolbars
+    painters.addOverlayPainter(
+        BottomShadowOverlayPainter.getInstance(100),
+        DecorationAreaType.TOOLBAR
+    )
+
+    // add overlay painter to paint a dark line along the bottom
+    // edge of toolbars
+    painters.addOverlayPainter(
+        BottomLineOverlayPainter(colorSchemeQuery = { it.ultraDarkColor }),
+        DecorationAreaType.TOOLBAR
+    )
+
     return MosaicSkinDefinition(
         displayName = "Mariner",
         colors = marinerSkinColors(),
-        painters = Painters(
-            fillPainter = FractionBasedFillPainter(
-                0.0f to { it.extraLightColor },
-                0.5f to { it.lightColor },
-                1.0f to { it.midColor },
-                displayName = "Mariner"
-            ),
-            borderPainter = FractionBasedBorderPainter(
-                0.0f to { it.ultraDarkColor },
-                0.5f to { it.darkColor },
-                1.0f to { it.midColor },
-                displayName = "Mariner"
-            ),
-            decorationPainter = MatteDecorationPainter()
-        ),
+        painters = painters,
         buttonShaper = ClassicButtonShaper()
     )
 }
