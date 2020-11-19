@@ -27,13 +27,11 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.substance.api.shaper
+package org.pushingpixels.mosaic.shaper
 
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import org.pushingpixels.mosaic.ButtonSides
-import org.pushingpixels.mosaic.shaper.MosaicButtonShaper
-import org.pushingpixels.mosaic.shaper.RectangularButtonShaper
 import org.pushingpixels.mosaic.utils.getBaseOutline
 
 /**

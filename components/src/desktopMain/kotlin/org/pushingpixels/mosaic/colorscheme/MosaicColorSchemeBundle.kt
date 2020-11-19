@@ -4,6 +4,7 @@ import org.pushingpixels.mosaic.ColorSchemeAssociationKind
 import org.pushingpixels.mosaic.ComponentState
 import org.pushingpixels.mosaic.ComponentStateFacet
 import org.pushingpixels.mosaic.DecorationAreaType
+import org.pushingpixels.mosaic.painter.decoration.MosaicDecorationPainter
 
 
 /**
@@ -424,10 +425,7 @@ class MosaicSkinColors {
      * Set of all decoration area types that are not explicitly registered in
      * [.colorSchemeBundleMap] but still are considered as decoration
      * areas in this skin. Controls in such areas will have their background painted by
-     *
-     *
-     * [SubstanceDecorationPainter.paintDecorationArea]
-     * instead of a simple background fill.
+     * [MosaicDecorationPainter.paintDecorationArea] instead of a simple background fill.
      */
     private val decoratedAreaSet: MutableSet<DecorationAreaType>
 
@@ -588,8 +586,7 @@ class MosaicSkinColors {
      * @param backgroundColorScheme The color scheme to use for background of controls in
      * decoration areas.
      * @param areaTypes             Enumerates the area types that are affected by the parameters.
-     * Each decoration area type will be painted by
-     * [SubstanceDecorationPainter.paintDecorationArea]
+     * Each decoration area type will be painted by [MosaicDecorationPainter.paintDecorationArea]
      */
     fun registerAsDecorationArea(
         backgroundColorScheme: MosaicColorScheme,
@@ -603,15 +600,13 @@ class MosaicSkinColors {
 
     /**
      * Returns indication whether the specified decoration area type should have
-     * their background painted by
-     * [SubstanceDecorationPainter.paintDecorationArea]
+     * their background painted by [MosaicDecorationPainter.paintDecorationArea]
      * instead of a simple background fill.
      *
      * @param decorationType Decoration area type.
      * @return `true` if specified decoration area type should have
-     * their background painted by
-     * [SubstanceDecorationPainter.paintDecorationArea]
-     * , `false` otherwise.
+     * their background painted by [MosaicDecorationPainter.paintDecorationArea],
+     * `false` otherwise.
      */
     fun isRegisteredAsDecorationArea(decorationType: DecorationAreaType?): Boolean {
         return decoratedAreaSet.contains(decorationType)
@@ -620,9 +615,8 @@ class MosaicSkinColors {
     /**
      * Returns the main active color scheme for the specific decoration area
      * type. Custom painting code that needs to consult the colors of the
-     * specific component should use
-     * [.getColorScheme] method and various
-     * [SubstanceColorScheme] methods.
+     * specific component should use [.getColorScheme] method and various
+     * [MosaicColorScheme] methods.
      *
      * @param decorationAreaType Decoration area type.
      * @return The main active color scheme for this skin.
@@ -639,9 +633,8 @@ class MosaicSkinColors {
     /**
      * Returns the main enabled color scheme for the specific decoration area
      * type. Custom painting code that needs to consult the colors of the
-     * specific component should use
-     * [.getColorScheme] method and various
-     * [SubstanceColorScheme] methods.
+     * specific component should use [.getColorScheme] method and various
+     * [MosaicColorScheme] methods.
      *
      * @param decorationAreaType Decoration area type.
      * @return The main enabled color scheme for this skin.
@@ -658,9 +651,8 @@ class MosaicSkinColors {
     /**
      * Returns the main disabled color scheme for the specific decoration area
      * type. Custom painting code that needs to consult the colors of the
-     * specific component should use
-     * [.getColorScheme] method and various
-     * [SubstanceColorScheme] methods.
+     * specific component should use [.getColorScheme] method and various
+     * [MosaicColorScheme] methods.
      *
      * @param decorationAreaType Decoration area type.
      * @return The main disabled color scheme for this skin.
@@ -718,18 +710,16 @@ class MosaicSkinColors {
         // are decoration-specific scheme bundles.
         if (colorSchemeBundleMap.size > 1) {
             if (colorSchemeBundleMap.containsKey(decorationAreaType)) {
-                return colorSchemeBundleMap[decorationAreaType]?.
-                getColorScheme(associationKind, componentState, false)
+                return colorSchemeBundleMap[decorationAreaType]?.getColorScheme(associationKind, componentState, false)
             }
         }
-        return colorSchemeBundleMap[DecorationAreaType.NONE]?.
-            getColorScheme(associationKind, componentState, false)
+        return colorSchemeBundleMap[DecorationAreaType.NONE]?.getColorScheme(associationKind, componentState, false)
     }
 
     /**
      * Returns the background color scheme for the specified decoration area
      * type. This method is mainly for the internal use of
-     * [SubstanceDecorationPainter.paintDecorationArea]
+     * [MosaicDecorationPainter.paintDecorationArea]
      * but can be used in applications that wish to provide custom overlay
      * background painting.
      *

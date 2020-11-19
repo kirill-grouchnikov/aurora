@@ -40,7 +40,7 @@ import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
 import org.pushingpixels.mosaic.utils.getInterpolatedColor
 
 /**
- * Implementation of [SubstanceDecorationPainter] that uses matte painting
+ * Implementation of [MosaicDecorationPainter] that uses matte painting
  * on decoration areas.
  *
  * @author Kirill Grouchnikov
