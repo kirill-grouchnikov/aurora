@@ -40,7 +40,6 @@ import org.pushingpixels.mosaic.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.mosaic.painter.overlay.BottomShadowOverlayPainter
 import org.pushingpixels.mosaic.painter.overlay.TopBezelOverlayPainter
 import org.pushingpixels.mosaic.shaper.ClassicButtonShaper
-import org.pushingpixels.mosaic.utils.deriveByBrightness
 import org.pushingpixels.mosaic.utils.getColorSchemes
 
 
@@ -242,7 +241,7 @@ fun marinerSkin(): MosaicSkinDefinition {
     // menu bar and toolbars
     painters.addOverlayPainter(
         BottomLineOverlayPainter(
-            composite({ it.ultraDarkColor }, { deriveByBrightness(it, -0.5f) })
+            composite({ it.ultraDarkColor }, ColorTransforms.brightness(0.5f))
         ),
         DecorationAreaType.HEADER
     )
@@ -268,4 +267,3 @@ fun marinerSkin(): MosaicSkinDefinition {
         buttonShaper = ClassicButtonShaper()
     )
 }
-

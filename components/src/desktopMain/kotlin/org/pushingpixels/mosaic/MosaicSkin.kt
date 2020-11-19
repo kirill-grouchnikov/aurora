@@ -39,9 +39,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.window.MenuBar
-import org.pushingpixels.mosaic.colorscheme.MosaicColorScheme
 import org.pushingpixels.mosaic.colorscheme.MosaicSkinColors
 import org.pushingpixels.mosaic.shaper.MosaicButtonShaper
+import org.pushingpixels.mosaic.utils.deriveByBrightness
+import org.pushingpixels.mosaic.utils.getAlphaColor
 import java.awt.image.BufferedImage
 
 
@@ -142,3 +143,12 @@ fun DecorationArea(
     }
 }
 
+object ColorTransforms {
+    fun alpha(alpha: Float): (Color) -> Color {
+        return { getAlphaColor(it, alpha) }
+    }
+
+    fun brightness(brightnessFactor: Float): (Color) -> Color {
+        return { deriveByBrightness(it, brightnessFactor) }
+    }
+}
