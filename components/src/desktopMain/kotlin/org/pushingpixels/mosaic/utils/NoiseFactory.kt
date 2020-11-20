@@ -70,12 +70,13 @@ internal object NoiseFactory {
         val m2 = xFactor * width * xFactor * width + (yFactor * height
                 * yFactor * height)
         var pos = 0
-        for (j in 0 until height) {
-            val jj = yFactor * j
-            for (i in 0 until width) {
-                val ii = xFactor * i
-                val z = if (hasConstantZ) 1.0 else sqrt(m2 - ii * ii - jj * jj)
-                val noise = 0.5f + 0.5f * PerlinNoiseGenerator.noise(ii, jj, z)
+        for (row in 0 until height) {
+            val tweakedRow = yFactor * row
+            for (column in 0 until width) {
+                val tweakedColumn = xFactor * column
+                val z = if (hasConstantZ) 1.0 else
+                    sqrt(m2 - tweakedColumn * tweakedColumn - tweakedRow * tweakedRow)
+                val noise = 0.5f + 0.5f * PerlinNoiseGenerator.noise(tweakedColumn, tweakedRow, z)
                 val likeness = max(0.0f, min(1.0f, 2.0f * noise.toFloat()))
 
                 noiseBuffer[pos] = getInterpolatedRGB(c3, c1, likeness)
@@ -100,22 +101,17 @@ internal object NoiseFactory {
         // Step 3 - convert an array of integers (each integer is 8888 of ARGB) into an
         // array of bytes (in BGRA order) that Skija expects
         val byteDstBuffer = ByteArray(4 * width * height)
-        pos = 0
-        for (j in 0 until height) {
-            for (i in 0 until width) {
-                val rgb = convolved[pos]
-                // The order of the bytes corresponds to BGRA_8888
-                // Blue
-                byteDstBuffer[4 * pos] = (rgb ushr 0 and 0xFF).toByte()
-                // Green
-                byteDstBuffer[4 * pos + 1] = (rgb ushr 8 and 0xFF).toByte()
-                // Red
-                byteDstBuffer[4 * pos + 2] = (rgb ushr 16 and 0xFF).toByte()
-                // Alpha
-                byteDstBuffer[4 * pos + 3] = 255.toByte()
-
-                pos++
-            }
+        for (pos in 0 until width * height) {
+            val rgb = convolved[pos]
+            // The order of the bytes corresponds to BGRA_8888
+            // Blue
+            byteDstBuffer[4 * pos] = (rgb ushr 0 and 0xFF).toByte()
+            // Green
+            byteDstBuffer[4 * pos + 1] = (rgb ushr 8 and 0xFF).toByte()
+            // Red
+            byteDstBuffer[4 * pos + 2] = (rgb ushr 16 and 0xFF).toByte()
+            // Alpha
+            byteDstBuffer[4 * pos + 3] = 255.toByte()
         }
 
         // Step 4 - create a Skija bitmap

@@ -53,8 +53,8 @@ internal fun convolve(width: Int, height: Int, src: IntArray, kernel: Convolutio
 
     // Compute combined channel-based contributions
     var srcPosition = 0
-    for (j in 0 until height) {
-        for (i in 0 until width) {
+    for (srcRow in 0 until height) {
+        for (srcColumn in 0 until width) {
             // Get the pixel at the source
             val srcPixel = src[srcPosition]
             val srcAlpha = srcPixel ushr 24 and 0xFF
@@ -64,13 +64,13 @@ internal fun convolve(width: Int, height: Int, src: IntArray, kernel: Convolutio
 
             // Update all the pixels that this pixel contributes to in the destination
             for (d in 0 until kernel.width * kernel.height) {
-                var dstRow = j + (d / kernel.width - kernel.verticalHalfSpan)
+                var dstRow = srcRow + (d / kernel.width - kernel.verticalHalfSpan)
                 // Clamp destination row to be in [0..height) range so that pixels
                 // on edges get consistent contribution and we don't end up with
                 // tiling artifacts
                 dstRow = max(0, min(height - 1, dstRow))
 
-                var dstColumn = i + (d % kernel.width - kernel.horizontalHalfSpan)
+                var dstColumn = srcColumn + (d % kernel.width - kernel.horizontalHalfSpan)
                 // Clamp destination column to be in [0..width) range so that pixels
                 // on edges get consistent contribution and we don't end up with
                 // tiling artifacts
@@ -94,20 +94,14 @@ internal fun convolve(width: Int, height: Int, src: IntArray, kernel: Convolutio
 
     // Pack combined contributions into the result
     val result = IntArray(width * height)
+    for (dstPosition in 0 until width * height) {
+        val alpha = max(0, min(255, (temp[4 * dstPosition] + 0.5f).toInt()))
+        val red = max(0, min(255, (temp[4 * dstPosition + 1] + 0.5f).toInt()))
+        val green = max(0, min(255, (temp[4 * dstPosition + 2] + 0.5f).toInt()))
+        val blue = max(0, min(255, (temp[4 * dstPosition + 3] + 0.5f).toInt()))
 
-    var dstPosition = 0
-    for (j in 0 until height) {
-        for (i in 0 until width) {
-            val alpha = max(0, min(255, (temp[4 * dstPosition] + 0.5f).toInt()))
-            val red = max(0, min(255, (temp[4 * dstPosition + 1] + 0.5f).toInt()))
-            val green = max(0, min(255, (temp[4 * dstPosition + 2] + 0.5f).toInt()))
-            val blue = max(0, min(255, (temp[4 * dstPosition + 3] + 0.5f).toInt()))
-
-            // Pack the channels into a single Int
-            result[dstPosition] = (alpha shl 24) or (red shl 16) or (green shl 8) or blue
-
-            dstPosition++
-        }
+        // Pack the channels into a single Int
+        result[dstPosition] = (alpha shl 24) or (red shl 16) or (green shl 8) or blue
     }
 
     return result
