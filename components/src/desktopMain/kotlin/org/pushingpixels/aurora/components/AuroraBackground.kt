@@ -38,14 +38,13 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
+import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.ColorSchemeAssociationKind
 import org.pushingpixels.aurora.ComponentState
 import org.pushingpixels.aurora.DecorationAreaType
-import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.painter.decoration.AuroraDecorationPainter
 import org.pushingpixels.aurora.painter.overlay.AuroraOverlayPainter
-
 
 @Composable
 fun Modifier.auroraBackground() = this.then(
@@ -70,13 +69,11 @@ private class AuroraBackground(
     }
 
     override fun ContentDrawScope.draw() {
-        // TODO - this needs to use the decoration painter on relevant areas
-        // TODO - this also needs to draw overlays from the current skin that match the decoration area
-        println(offset.y)
-
         if (decorationAreaType != DecorationAreaType.NONE
             && colors.isRegisteredAsDecorationArea(decorationAreaType)
         ) {
+            // If the current skin has a decoration painter that provides custom visuals
+            // for this decoration area, use it
             decorationPainter.paintDecorationArea(
                 drawScope = this,
                 decorationAreaType = decorationAreaType,
@@ -86,6 +83,7 @@ private class AuroraBackground(
                 colorScheme = colors.getBackgroundColorScheme(decorationAreaType)
             )
         } else {
+            // Otherwise use flat color fill
             drawRect(
                 color = colors.getColorScheme(
                     decorationAreaType = decorationAreaType,
@@ -96,6 +94,8 @@ private class AuroraBackground(
         }
 
         if (overlayPainters.isNotEmpty()) {
+            // If we have overlay painters registered for this decoration area, ask
+            // each one to paint their visuals
             for (overlayPainter in overlayPainters) {
                 overlayPainter.paintOverlay(
                     drawScope = this,
@@ -107,6 +107,7 @@ private class AuroraBackground(
             }
         }
 
+        // And don't forget to draw the content
         drawContent()
     }
 }
