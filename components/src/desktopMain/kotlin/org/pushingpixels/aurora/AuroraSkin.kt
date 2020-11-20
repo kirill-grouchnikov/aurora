@@ -89,7 +89,7 @@ fun AuroraWindow(
     menuBar: MenuBar? = null,
     undecorated: Boolean = false,
     events: WindowEvents = WindowEvents(),
-    onDismissEvent: (() -> Unit)? = null,
+    onDismissRequest: (() -> Unit)? = null,
     content: @Composable () -> Unit = emptyContent()
 ) = Window(
     title = title,
@@ -100,7 +100,7 @@ fun AuroraWindow(
     menuBar = menuBar,
     undecorated = undecorated,
     events = events,
-    onDismissEvent = onDismissEvent
+    onDismissRequest = onDismissRequest
 ) {
     AuroraSkin(
         decorationArea = DecorationArea(DecorationAreaType.NONE),

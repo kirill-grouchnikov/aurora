@@ -388,7 +388,7 @@ fun AuroraCheckBox(
                     .padding(4.dp, 10.dp, 4.dp, 8.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
-                children = content
+                content = content
             )
         }
     }

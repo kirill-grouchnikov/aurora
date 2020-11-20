@@ -359,7 +359,7 @@ private fun AuroraToggleButton(
                     .padding(8.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
-                children = content
+                content = content
             )
         }
     }
