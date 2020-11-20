@@ -22,11 +22,11 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "org.pushingpixels.mosaic.demo.MosaicDemoKt"
+        mainClass = "org.pushingpixels.aurora.demo.AuroraDemoKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "MosaicDemo"
+            packageName = "AuroraDemo"
             modules("jdk.crypto.ec")
         }
     }
