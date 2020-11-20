@@ -47,7 +47,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerMoveFilter
-import androidx.compose.ui.platform.AnimationClockAmbient
+import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.utils.*
@@ -90,7 +90,7 @@ fun AuroraCheckBox(
         modifier = modifier,
         checked = checked,
         onCheckedChange = onCheckedChange,
-        stateTransitionFloat = AnimatedFloat(0.0f, AnimationClockAmbient.current.asDisposableClock()),
+        stateTransitionFloat = AnimatedFloat(0.0f, AmbientAnimationClock.current.asDisposableClock()),
         content = content
     )
 }

@@ -47,7 +47,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.AnimationClockAmbient
+import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.utils.*
@@ -88,7 +88,7 @@ fun AuroraToggleButton(
         modifier = modifier,
         onClick = onClick,
         sides = sides,
-        stateTransitionFloat = AnimatedFloat(0.0f, AnimationClockAmbient.current.asDisposableClock()),
+        stateTransitionFloat = AnimatedFloat(0.0f, AmbientAnimationClock.current.asDisposableClock()),
         content = content
     )
 }
