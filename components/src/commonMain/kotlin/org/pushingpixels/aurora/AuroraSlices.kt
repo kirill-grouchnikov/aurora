@@ -433,12 +433,19 @@ class ComponentState(
          */
         fun getState(
             isEnabled: Boolean,
-            isRollover: Boolean, isSelected: Boolean
+            isRollover: Boolean,
+            isSelected: Boolean,
+            isPressed: Boolean
         ): ComponentState {
             if (!isEnabled) {
                 return if (isSelected) {
                     DISABLED_SELECTED
                 } else DISABLED_UNSELECTED
+            }
+            if (isPressed) {
+                return if (isSelected) {
+                    PRESSED_SELECTED
+                } else PRESSED_UNSELECTED
             }
             if (isSelected) {
                 return if (isRollover) {

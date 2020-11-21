@@ -83,6 +83,7 @@ internal class ModelStateInfo(var currModelState: ComponentState) {
     }
 
     fun dumpState(stateTransitionPosition: Float) {
+        if (true) return
         println("######")
         println("Curr state ${currModelState}, position $stateTransitionPosition")
         for ((state, currRange) in stateContributionMap) {
@@ -94,16 +95,17 @@ internal class ModelStateInfo(var currModelState: ComponentState) {
 }
 
 enum class ButtonState {
-    IDLE, SELECTED
+    UNSELECTED, SELECTED
 }
 
 internal val SelectionTransitionFraction = FloatPropKey()
 internal val RolloverTransitionFraction = FloatPropKey()
+internal val PressedTransitionFraction = FloatPropKey()
 
 @Composable
 internal fun getSelectedTransitionDefinition(duration: Int): TransitionDefinition<ButtonState> {
     return transitionDefinition {
-        state(ButtonState.IDLE) {
+        state(ButtonState.UNSELECTED) {
             this[SelectionTransitionFraction] = 0.0f
         }
 
@@ -111,11 +113,11 @@ internal fun getSelectedTransitionDefinition(duration: Int): TransitionDefinitio
             this[SelectionTransitionFraction] = 1.0f
         }
 
-        transition(ButtonState.IDLE to ButtonState.SELECTED) {
+        transition(ButtonState.UNSELECTED to ButtonState.SELECTED) {
             SelectionTransitionFraction using tween(durationMillis = duration)
         }
 
-        transition(ButtonState.SELECTED to ButtonState.IDLE) {
+        transition(ButtonState.SELECTED to ButtonState.UNSELECTED) {
             SelectionTransitionFraction using tween(durationMillis = duration)
         }
     }
@@ -138,6 +140,27 @@ internal fun getRolloverTransitionDefinition(duration: Int): TransitionDefinitio
 
         transition(true to false) {
             RolloverTransitionFraction using tween(durationMillis = duration)
+        }
+    }
+}
+
+@Composable
+internal fun getPressedTransitionDefinition(duration: Int): TransitionDefinition<Boolean> {
+    return transitionDefinition {
+        state(false) {
+            this[PressedTransitionFraction] = 0.0f
+        }
+
+        state(true) {
+            this[PressedTransitionFraction] = 1.0f
+        }
+
+        transition(false to true) {
+            PressedTransitionFraction using tween(durationMillis = duration)
+        }
+
+        transition(true to false) {
+            PressedTransitionFraction using tween(durationMillis = duration)
         }
     }
 }

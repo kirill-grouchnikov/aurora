@@ -35,8 +35,8 @@ import androidx.compose.animation.core.AnimationEndReason
 import androidx.compose.animation.core.FloatTweenSpec
 import androidx.compose.animation.core.TransitionDefinition
 import androidx.compose.animation.transition
-import androidx.compose.desktop.AppWindowAmbient
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Interaction
 import androidx.compose.foundation.InteractionState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -61,6 +61,10 @@ private lateinit var SelectedTransitionDefinition: TransitionDefinition<ButtonSt
 // This will be initialized on first usage using the getRolloverTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
 private lateinit var RolloverTransitionDefinition: TransitionDefinition<Boolean>
+
+// This will be initialized on first usage using the getPressedTransitionDefinition
+// with duration animation coming from [AmbientAnimationConfig]
+private lateinit var PressedTransitionDefinition: TransitionDefinition<Boolean>
 
 @Immutable
 private class AuroraDrawingCache(
@@ -101,18 +105,19 @@ private fun AuroraToggleButton(
     stateTransitionFloat: AnimatedFloat,
     content: @Composable RowScope.() -> Unit
 ) {
-    val state = remember { InteractionState() }
     val drawingCache = remember { AuroraDrawingCache() }
 
-    val selectedState = remember { mutableStateOf(ButtonState.IDLE) }
+    val selectedState = remember { mutableStateOf(ButtonState.UNSELECTED) }
     val rolloverState = remember { mutableStateOf(false) }
+    val interactionState = remember { InteractionState() }
+    val isPressed = Interaction.Pressed in interactionState
     val offset = remember { mutableStateOf(Offset(0.0f, 0.0f)) }
 
     val modelStateInfo = remember {
         ModelStateInfo(
             ComponentState.getState(
                 isEnabled = true, isRollover = false,
-                isSelected = false
+                isSelected = false, isPressed = isPressed
             )
         )
     }
@@ -139,36 +144,48 @@ private fun AuroraToggleButton(
         initState = rolloverState.value,
         toState = rolloverState.value
     )
+    // Transition for the pressed state
+    if (!::PressedTransitionDefinition.isInitialized) {
+        PressedTransitionDefinition =
+            getPressedTransitionDefinition(AuroraSkin.animationConfig.regular)
+    }
+    val pressedTransitionState = transition(
+        definition = PressedTransitionDefinition,
+        initState = isPressed,
+        toState = isPressed
+    )
 
-    // TODO - how to trigger the state transition animation without these two transitions
+    // TODO - how to trigger the state transition animation without these transitions
     // that track the changes in selected and rollover states?
     selectionTransitionState[SelectionTransitionFraction]
     rolloverTransitionState[RolloverTransitionFraction]
+    pressedTransitionState[PressedTransitionFraction]
 
     val currentState = ComponentState.getState(
         isEnabled = true,
         isRollover = rolloverState.value,
-        isSelected = (selectedState.value == ButtonState.SELECTED)
+        isSelected = (selectedState.value == ButtonState.SELECTED),
+        isPressed = isPressed
     )
 
     var duration = AuroraSkin.animationConfig.regular
     if (currentState != modelStateInfo.currModelState) {
         stateTransitionFloat.stop()
-        println("******** Have new state to move to $currentState ********")
+        //println("******** Have new state to move to $currentState ********")
         modelStateInfo.dumpState(stateTransitionFloat.value)
         // Need to transition to the new state
         if (modelStateInfo.stateContributionMap.containsKey(currentState)) {
-            println("Already has new state")
+            //println("Already has new state")
             // Going to a state that is already partially active
             val transitionPosition = modelStateInfo.stateContributionMap[currentState]!!.contribution
             duration = (duration * (1.0f - transitionPosition)).toInt()
             stateTransitionFloat.setBounds(transitionPosition, 1.0f)
             stateTransitionFloat.snapTo(transitionPosition)
         } else {
-            println("Does not have new state (curr state ${modelStateInfo.currModelState}) at ${stateTransitionFloat.value}")
+            //println("Does not have new state (curr state ${modelStateInfo.currModelState}) at ${stateTransitionFloat.value}")
             stateTransitionFloat.setBounds(0.0f, 1.0f)
             stateTransitionFloat.snapTo(0.0f)
-            println("\tat ${stateTransitionFloat.value}")
+            //println("\tat ${stateTransitionFloat.value}")
         }
 
         // Create a new contribution map
@@ -196,30 +213,30 @@ private fun AuroraToggleButton(
         modelStateInfo.sync()
 
         modelStateInfo.currModelState = currentState
-        println("******** After moving to new state *****")
+        //println("******** After moving to new state *****")
         modelStateInfo.dumpState(stateTransitionFloat.value)
 
-        println("Animating over $duration from ${stateTransitionFloat.value} to 1.0f")
+        //println("Animating over $duration from ${stateTransitionFloat.value} to 1.0f")
         stateTransitionFloat.animateTo(
             targetValue = 1.0f,
             anim = FloatTweenSpec(duration = duration),
             onEnd = { endReason, endValue ->
-                println("Ended with reason $endReason at $endValue / ${stateTransitionFloat.value}")
+                //println("Ended with reason $endReason at $endValue / ${stateTransitionFloat.value}")
                 if (endReason == AnimationEndReason.TargetReached) {
                     modelStateInfo.updateActiveStates(1.0f)
                     modelStateInfo.clear()
-                    println("******** After clear (target reached) ********")
+                    //println("******** After clear (target reached) ********")
                     modelStateInfo.dumpState(stateTransitionFloat.value)
                 }
             }
         )
 
-        println()
+        //println()
     }
 
     if (stateTransitionFloat.isRunning) {
         modelStateInfo.updateActiveStates(stateTransitionFloat.value)
-        println("********* During animation ${stateTransitionFloat.value} to ${stateTransitionFloat.targetValue} *******")
+        //("********* During animation ${stateTransitionFloat.value} to ${stateTransitionFloat.targetValue} *******")
         modelStateInfo.dumpState(stateTransitionFloat.value)
     }
 
@@ -238,13 +255,13 @@ private fun AuroraToggleButton(
                     false
                 })
             .clickable(onClick = {
-                selectedState.value = if (selectedState.value == ButtonState.IDLE) {
+                selectedState.value = if (selectedState.value == ButtonState.UNSELECTED) {
                     ButtonState.SELECTED
                 } else {
-                    ButtonState.IDLE
+                    ButtonState.UNSELECTED
                 }
                 onClick.invoke()
-            }, interactionState = state, indication = null)
+            }, interactionState = interactionState, indication = null)
             .onGloballyPositioned {
                 offset.value = it.localToRoot(Offset(0.0f, 0.0f))
             },
@@ -285,9 +302,6 @@ private fun AuroraToggleButton(
         val fillPainter = AuroraSkin.painters.fillPainter
         val borderPainter = AuroraSkin.painters.borderPainter
         val buttonShaper = AuroraSkin.buttonShaper
-        val appWindow = AppWindowAmbient.current!!
-        println("" + appWindow.y + ":" + offset.value.y)
-
 
         Canvas(modifier.matchParentSize().padding(2.dp)) {
             val width = this.size.width

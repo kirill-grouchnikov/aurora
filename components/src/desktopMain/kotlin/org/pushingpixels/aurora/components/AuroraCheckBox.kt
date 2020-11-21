@@ -35,7 +35,7 @@ import androidx.compose.animation.core.AnimationEndReason
 import androidx.compose.animation.core.FloatTweenSpec
 import androidx.compose.animation.core.TransitionDefinition
 import androidx.compose.animation.transition
-import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
@@ -62,6 +62,10 @@ private lateinit var SelectedTransitionDefinition: TransitionDefinition<ButtonSt
 // This will be initialized on first usage using the getRolloverTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
 private lateinit var RolloverTransitionDefinition: TransitionDefinition<Boolean>
+
+// This will be initialized on first usage using the getPressedTransitionDefinition
+// with duration animation coming from [AmbientAnimationConfig]
+private lateinit var PressedTransitionDefinition: TransitionDefinition<Boolean>
 
 @Immutable
 private class CheckBoxDrawingCache(
@@ -96,7 +100,7 @@ fun AuroraCheckBox(
 }
 
 @Composable
-fun AuroraCheckBox(
+private fun AuroraCheckBox(
     modifier: Modifier = Modifier,
     checked: Boolean = false,
     onCheckedChange: (Boolean) -> Unit,
@@ -105,14 +109,18 @@ fun AuroraCheckBox(
 ) {
     val drawingCache = remember { CheckBoxDrawingCache() }
 
-    val selectedState = remember { mutableStateOf(if (checked) ButtonState.SELECTED else ButtonState.IDLE) }
+    val selectedState = remember { mutableStateOf(if (checked) ButtonState.SELECTED else ButtonState.UNSELECTED) }
     val rolloverState = remember { mutableStateOf(false) }
+    val interactionState = remember { InteractionState() }
+    val isPressed = Interaction.Pressed in interactionState
 
     val modelStateInfo = remember {
         ModelStateInfo(
             ComponentState.getState(
-                isEnabled = true, isRollover = false,
-                isSelected = checked
+                isEnabled = true,
+                isRollover = false,
+                isSelected = checked,
+                isPressed = isPressed
             )
         )
     }
@@ -140,36 +148,48 @@ fun AuroraCheckBox(
         initState = rolloverState.value,
         toState = rolloverState.value
     )
+    // Transition for the pressed state
+    if (!::PressedTransitionDefinition.isInitialized) {
+        PressedTransitionDefinition =
+            getPressedTransitionDefinition(AuroraSkin.animationConfig.regular)
+    }
+    val pressedTransitionState = transition(
+        definition = PressedTransitionDefinition,
+        initState = isPressed,
+        toState = isPressed
+    )
 
-    // TODO - how to trigger the state transition animation without these two transitions
+    // TODO - how to trigger the state transition animation without these transitions
     // that track the changes in selected and rollover states?
     selectionTransitionState[SelectionTransitionFraction]
     rolloverTransitionState[RolloverTransitionFraction]
+    pressedTransitionState[PressedTransitionFraction]
 
     val currentState = ComponentState.getState(
         isEnabled = true,
         isRollover = rolloverState.value,
-        isSelected = (selectedState.value == ButtonState.SELECTED)
+        isSelected = (selectedState.value == ButtonState.SELECTED),
+        isPressed = isPressed
     )
 
     var duration = AuroraSkin.animationConfig.regular
     if (currentState != modelStateInfo.currModelState) {
         stateTransitionFloat.stop()
-        println("******** Have new state to move to $currentState ********")
+        //println("******** Have new state to move to $currentState ********")
         modelStateInfo.dumpState(stateTransitionFloat.value)
         // Need to transition to the new state
         if (modelStateInfo.stateContributionMap.containsKey(currentState)) {
-            println("Already has new state")
+            //println("Already has new state")
             // Going to a state that is already partially active
             val transitionPosition = modelStateInfo.stateContributionMap[currentState]!!.contribution
             duration = (duration * (1.0f - transitionPosition)).toInt()
             stateTransitionFloat.setBounds(transitionPosition, 1.0f)
             stateTransitionFloat.snapTo(transitionPosition)
         } else {
-            println("Does not have new state (curr state ${modelStateInfo.currModelState}) at ${stateTransitionFloat.value}")
+            //println("Does not have new state (curr state ${modelStateInfo.currModelState}) at ${stateTransitionFloat.value}")
             stateTransitionFloat.setBounds(0.0f, 1.0f)
             stateTransitionFloat.snapTo(0.0f)
-            println("\tat ${stateTransitionFloat.value}")
+            //println("\tat ${stateTransitionFloat.value}")
         }
 
         // Create a new contribution map
@@ -197,19 +217,19 @@ fun AuroraCheckBox(
         modelStateInfo.sync()
 
         modelStateInfo.currModelState = currentState
-        println("******** After moving to new state *****")
+        //println("******** After moving to new state *****")
         modelStateInfo.dumpState(stateTransitionFloat.value)
 
-        println("Animating over $duration from ${stateTransitionFloat.value} to 1.0f")
+        //println("Animating over $duration from ${stateTransitionFloat.value} to 1.0f")
         stateTransitionFloat.animateTo(
             targetValue = 1.0f,
             anim = FloatTweenSpec(duration = duration),
             onEnd = { endReason, endValue ->
-                println("Ended with reason $endReason at $endValue / ${stateTransitionFloat.value}")
+                //println("Ended with reason $endReason at $endValue / ${stateTransitionFloat.value}")
                 if (endReason == AnimationEndReason.TargetReached) {
                     modelStateInfo.updateActiveStates(1.0f)
                     modelStateInfo.clear()
-                    println("******** After clear (target reached) ********")
+                    //println("******** After clear (target reached) ********")
                     modelStateInfo.dumpState(stateTransitionFloat.value)
                     markAlpha.value =
                         if (modelStateInfo.currModelState.isFacetActive(ComponentStateFacet.SELECTION)) 1.0f else 0.0f
@@ -217,12 +237,12 @@ fun AuroraCheckBox(
             }
         )
 
-        println()
+        //println()
     }
 
     if (stateTransitionFloat.isRunning) {
         modelStateInfo.updateActiveStates(stateTransitionFloat.value)
-        println("********* During animation ${stateTransitionFloat.value} to ${stateTransitionFloat.targetValue} *******")
+        //println("********* During animation ${stateTransitionFloat.value} to ${stateTransitionFloat.targetValue} *******")
         modelStateInfo.dumpState(stateTransitionFloat.value)
     }
 
@@ -245,9 +265,10 @@ fun AuroraCheckBox(
             .toggleable(
                 value = (selectedState.value == ButtonState.SELECTED),
                 onValueChange = {
-                    selectedState.value = if (it) ButtonState.SELECTED else ButtonState.IDLE
+                    selectedState.value = if (it) ButtonState.SELECTED else ButtonState.UNSELECTED
                     onCheckedChange.invoke(selectedState.value == ButtonState.SELECTED)
                 },
+                interactionState = interactionState,
                 indication = null
             ),
         verticalAlignment = Alignment.CenterVertically
@@ -296,7 +317,7 @@ fun AuroraCheckBox(
                 .sumByDouble { it.contribution.toDouble() }
                 .toFloat()
 
-        println("Mark alpha ${markAlpha.value}")
+        //println("Mark alpha ${markAlpha.value}")
 
         // Text color. Note that the text doesn't "participate" in state changes that
         // involve rollover, selection or pressed bits
