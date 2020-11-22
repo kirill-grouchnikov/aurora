@@ -92,12 +92,13 @@ class DelegateBorderPainter(
         size: Size,
         outline: Outline,
         outlineInner: Outline?,
-        borderScheme: AuroraColorScheme
+        borderScheme: AuroraColorScheme,
+        alpha: Float
     ) {
         // TODO: cache the transformed scheme
         super.paintBorder(
             drawScope, size, outline, outlineInner,
-            transform.invoke(borderScheme)
+            transform.invoke(borderScheme), alpha
         )
     }
 }

@@ -55,7 +55,8 @@ class FractionBasedBorderPainter(
         size: Size,
         outline: Outline,
         outlineInner: Outline?,
-        borderScheme: AuroraColorScheme
+        borderScheme: AuroraColorScheme,
+        alpha: Float
     ) {
         with(drawScope) {
             drawOutline(
@@ -69,7 +70,8 @@ class FractionBasedBorderPainter(
                         colorStops = getFractions().toList(),
                         tileMode = TileMode.Repeated
                     )
-                )
+                ),
+                alpha = alpha
             )
         }
     }

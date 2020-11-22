@@ -53,7 +53,8 @@ class FractionBasedFillPainter(
         drawScope: DrawScope,
         size: Size,
         outline: Outline,
-        fillScheme: AuroraColorScheme
+        fillScheme: AuroraColorScheme,
+        alpha: Float
     ) {
         with(drawScope) {
             drawOutline(
@@ -67,7 +68,8 @@ class FractionBasedFillPainter(
                         colorStops = getFractions().toList(),
                         tileMode = TileMode.Repeated
                     )
-                )
+                ),
+                alpha = alpha
             )
         }
     }

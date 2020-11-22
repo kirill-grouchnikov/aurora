@@ -53,11 +53,12 @@ class CompositeBorderPainter(
         size: Size,
         outline: Outline,
         outlineInner: Outline?,
-        borderScheme: AuroraColorScheme
+        borderScheme: AuroraColorScheme,
+        alpha: Float
     ) {
         if (outlineInner != null) {
-            inner.paintBorder(drawScope, size, outlineInner, null, borderScheme)
+            inner.paintBorder(drawScope, size, outlineInner, null, borderScheme, alpha)
         }
-        outer.paintBorder(drawScope, size, outline, null, borderScheme)
+        outer.paintBorder(drawScope, size, outline, null, borderScheme, alpha)
     }
 }

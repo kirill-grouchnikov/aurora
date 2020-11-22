@@ -83,14 +83,16 @@ private class AuroraDrawingCache(
 
 @Composable
 fun AuroraToggleButton(
-    modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     sides: ButtonSides = ButtonSides(),
     content: @Composable RowScope.() -> Unit
 ) {
     AuroraToggleButton(
-        modifier = modifier,
         onClick = onClick,
+        modifier = modifier,
+        enabled = enabled,
         sides = sides,
         stateTransitionFloat = AnimatedFloat(0.0f, AmbientAnimationClock.current.asDisposableClock()),
         content = content
@@ -99,8 +101,9 @@ fun AuroraToggleButton(
 
 @Composable
 private fun AuroraToggleButton(
-    modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    modifier: Modifier,
+    enabled: Boolean,
     sides: ButtonSides,
     stateTransitionFloat: AnimatedFloat,
     content: @Composable RowScope.() -> Unit
@@ -116,7 +119,7 @@ private fun AuroraToggleButton(
     val modelStateInfo = remember {
         ModelStateInfo(
             ComponentState.getState(
-                isEnabled = true, isRollover = false,
+                isEnabled = enabled, isRollover = false,
                 isSelected = false, isPressed = isPressed
             )
         )
@@ -162,7 +165,7 @@ private fun AuroraToggleButton(
     pressedTransitionState[PressedTransitionFraction]
 
     val currentState = ComponentState.getState(
-        isEnabled = true,
+        isEnabled = enabled,
         isRollover = rolloverState.value,
         isSelected = (selectedState.value == ButtonState.SELECTED),
         isPressed = isPressed
@@ -254,14 +257,19 @@ private fun AuroraToggleButton(
                 onMove = {
                     false
                 })
-            .clickable(onClick = {
-                selectedState.value = if (selectedState.value == ButtonState.UNSELECTED) {
-                    ButtonState.SELECTED
-                } else {
-                    ButtonState.UNSELECTED
-                }
-                onClick.invoke()
-            }, interactionState = interactionState, indication = null)
+            .clickable(
+                onClick = {
+                    selectedState.value = if (selectedState.value == ButtonState.UNSELECTED) {
+                        ButtonState.SELECTED
+                    } else {
+                        ButtonState.UNSELECTED
+                    }
+                    onClick.invoke()
+                },
+                enabled = enabled,
+                interactionState = interactionState,
+                indication = null
+            )
             .onGloballyPositioned {
                 offset.value = it.localToRoot(Offset(0.0f, 0.0f))
             },
@@ -282,7 +290,12 @@ private fun AuroraToggleButton(
         val fillUltraDark = drawingCache.colorScheme.ultraDarkColor
         val fillIsDark = drawingCache.colorScheme.isDark
 
-        val textColor = drawingCache.colorScheme.foregroundColor
+        val textColor = getTextColor(
+            modelStateInfo = modelStateInfo,
+            skinColors = AuroraSkin.colors,
+            decorationAreaType = AuroraSkin.decorationArea.type,
+            isTextInFilledArea = true
+        )
 
         // Populate the cached color scheme for drawing the button border
         // based on the current model state info
@@ -302,6 +315,9 @@ private fun AuroraToggleButton(
         val fillPainter = AuroraSkin.painters.fillPainter
         val borderPainter = AuroraSkin.painters.borderPainter
         val buttonShaper = AuroraSkin.buttonShaper
+
+        val alpha = if (currentState.isDisabled)
+            AuroraSkin.colors.getAlpha(decorationAreaType, currentState) else 1.0f
 
         Canvas(modifier.matchParentSize().padding(2.dp)) {
             val width = this.size.width
@@ -332,7 +348,7 @@ private fun AuroraToggleButton(
             drawingCache.colorScheme.isDark = fillIsDark
             drawingCache.colorScheme.foreground = textColor
             fillPainter.paintContourBackground(
-                this, this.size, outline, drawingCache.colorScheme
+                this, this.size, outline, drawingCache.colorScheme, alpha
             )
 
             // Populate the cached color scheme for drawing the button border
@@ -356,10 +372,8 @@ private fun AuroraToggleButton(
                 ) else null
 
             borderPainter.paintBorder(
-                this, this.size, outline, innerOutline, drawingCache.colorScheme
+                this, this.size, outline, innerOutline, drawingCache.colorScheme, alpha
             )
-
-
         }
 
         // Pass our text color to the children

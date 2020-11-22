@@ -37,8 +37,12 @@ import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 
 interface AuroraBorderPainter: AuroraTrait {
     fun paintBorder(
-        drawScope: DrawScope, size: Size, outline: Outline, outlineInner: Outline?,
-        borderScheme: AuroraColorScheme
+        drawScope: DrawScope,
+        size: Size,
+        outline: Outline,
+        outlineInner: Outline?,
+        borderScheme: AuroraColorScheme,
+        alpha: Float
     )
 
     val isPaintingInnerOutline: Boolean

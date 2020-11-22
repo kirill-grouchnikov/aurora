@@ -48,7 +48,8 @@ class SimpleBorderPainter : AuroraBorderPainter {
         size: Size,
         outline: Outline,
         outlineInner: Outline?,
-        borderScheme: AuroraColorScheme
+        borderScheme: AuroraColorScheme,
+        alpha: Float
     ) {
         with(drawScope) {
             drawOutline(
@@ -61,7 +62,8 @@ class SimpleBorderPainter : AuroraBorderPainter {
                     endX = 0.0f,
                     endY = size.height,
                     tileMode = TileMode.Clamp
-                )
+                ),
+                alpha = alpha
             )
         }
     }

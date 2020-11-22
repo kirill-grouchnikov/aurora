@@ -33,13 +33,15 @@ import androidx.compose.desktop.initCompose
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.AuroraWindow
 import org.pushingpixels.aurora.DecorationArea
 import org.pushingpixels.aurora.DecorationAreaType
-import org.pushingpixels.aurora.AuroraWindow
 import org.pushingpixels.aurora.components.AuroraCheckBox
 import org.pushingpixels.aurora.components.AuroraText
 import org.pushingpixels.aurora.components.AuroraToggleButton
@@ -70,109 +72,52 @@ fun main() {
 }
 
 @Composable
+fun DemoArea(modifier: Modifier = Modifier) {
+    Row(
+        verticalAlignment = Alignment.Top, modifier = modifier
+            .fillMaxWidth()
+            .auroraBackground()
+            .padding(8.dp)
+    ) {
+        val enabled = remember { mutableStateOf(true) }
+        AuroraCheckBox(
+            checked = true,
+            onCheckedChange = { enabled.value = !enabled.value }
+        ) {
+            AuroraText(text = "content enabled")
+        }
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)
+        ) {
+            AuroraCheckBox(
+                checked = true,
+                onCheckedChange = { println("Check! $it") },
+                enabled = enabled.value
+            ) {
+                AuroraText(text = "sample check")
+            }
+            AuroraToggleButton(enabled = enabled.value,
+                onClick = { println("Clicked!") }) {
+                AuroraText("sample toggle")
+            }
+        }
+    }
+}
+
+@Composable
 fun DemoContent() {
     Column(modifier = Modifier.fillMaxHeight().fillMaxWidth()) {
         DecorationArea(decorationAreaType = DecorationAreaType.TOOLBAR) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                    .fillMaxWidth()
-                    .auroraBackground()
-                    .padding(8.dp)
-            ) {
-                AuroraCheckBox(
-                    checked = true,
-                    onCheckedChange = { println("Check 0! $it") }
-                ) {
-                    AuroraText(text = "Checkbox 0 selected")
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    AuroraToggleButton(onClick = { println("Clicked 0!") }) {
-                        AuroraText("Toggle button 0")
-                    }
-                }
-            }
+            DemoArea()
         }
         DecorationArea(decorationAreaType = DecorationAreaType.HEADER) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .auroraBackground()
-                    .padding(8.dp)
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    AuroraCheckBox(
-                        checked = false,
-                        onCheckedChange = { println("Check 1! $it") }
-                    ) {
-                        AuroraText(text = "Checkbox 1 unselected")
-                    }
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    AuroraCheckBox(
-                        checked = true,
-                        onCheckedChange = { println("Check 2! $it") }
-                    ) {
-                        AuroraText(text = "Checkbox 2 selected")
-                    }
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    AuroraCheckBox(
-                        checked = true,
-                        onCheckedChange = { println("Check 3! $it") }
-                    ) {
-                        AuroraText(text = "Checkbox 3 selected")
-                    }
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    AuroraToggleButton(onClick = { println("Clicked 1!") }) {
-                        AuroraText("Toggle button 1")
-                    }
-                }
-            }
+            DemoArea()
         }
         DecorationArea(decorationAreaType = DecorationAreaType.NONE) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .auroraBackground()
-                    .padding(8.dp)
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    AuroraCheckBox(
-                        checked = true,
-                        onCheckedChange = { println("Check 4! $it") }
-                    ) {
-                        AuroraText(text = "Checkbox 4 selected")
-                    }
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    AuroraToggleButton(onClick = { println("Clicked 2!") }) {
-                        AuroraText("Toggle button 2")
-                    }
-                }
-            }
+            DemoArea()
         }
         DecorationArea(decorationAreaType = DecorationAreaType.FOOTER) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .auroraBackground()
-                    .padding(8.dp)
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    AuroraCheckBox(
-                        checked = true,
-                        onCheckedChange = { println("Check 5! $it") }
-                    ) {
-                        AuroraText(text = "Checkbox 5 selected")
-                    }
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    AuroraToggleButton(onClick = { println("Clicked 3!") }) {
-                        AuroraText("Toggle button 3")
-                    }
-                }
-            }
+            DemoArea()
         }
     }
 }

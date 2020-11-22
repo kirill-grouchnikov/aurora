@@ -46,7 +46,8 @@ class SimpleFillPainter : AuroraFillPainter {
         drawScope: DrawScope,
         size: Size,
         outline: Outline,
-        fillScheme: AuroraColorScheme
+        fillScheme: AuroraColorScheme,
+        alpha: Float
     ) {
         with(drawScope) {
             drawOutline(
@@ -59,7 +60,8 @@ class SimpleFillPainter : AuroraFillPainter {
                     endX = 0.0f,
                     endY = size.height,
                     tileMode = TileMode.Clamp
-                )
+                ),
+                alpha = alpha
             )
         }
     }

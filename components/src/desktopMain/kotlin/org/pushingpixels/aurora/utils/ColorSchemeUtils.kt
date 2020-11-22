@@ -31,13 +31,15 @@ package org.pushingpixels.aurora.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import org.pushingpixels.aurora.ColorSchemeAssociationKind
-import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.AuroraSkin
+import org.pushingpixels.aurora.ColorSchemeAssociationKind
+import org.pushingpixels.aurora.ComponentState
+import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.colorscheme.*
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
+
 
 internal data class MutableColorScheme(
     override val displayName: String,
@@ -259,6 +261,60 @@ internal fun getStateAwareColor(
 
     return result
 }
+
+internal fun getTextColor(
+    modelStateInfo: ModelStateInfo,
+    skinColors: AuroraSkinColors,
+    decorationAreaType: DecorationAreaType,
+    isTextInFilledArea: Boolean
+): Color {
+    var currState = modelStateInfo.currModelState
+    var activeStates: Map<ComponentState, StateContributionInfo>? = modelStateInfo.stateContributionMap
+
+    // Special case for when text is not drawn in the filled area
+    if (!isTextInFilledArea) {
+        currState = if (currState.isDisabled) ComponentState.DISABLED_UNSELECTED else ComponentState.ENABLED
+        activeStates = null
+    }
+
+    val colorScheme = skinColors.getColorScheme(decorationAreaType, currState)
+    var foreground: Color
+    if (currState.isDisabled || activeStates == null || activeStates.size == 1) {
+        // Disabled state or only one active state being tracked
+        foreground = colorScheme.foregroundColor
+    } else {
+        // Get the combined foreground color from all states
+        var aggrRed = 0f
+        var aggrGreen = 0f
+        var aggrBlue = 0f
+        for ((activeState, value) in activeStates) {
+            val contribution = value.contribution
+            val activeColorScheme = skinColors.getColorScheme(decorationAreaType, activeState)
+            val activeForeground = activeColorScheme.foregroundColor
+            aggrRed += contribution * activeForeground.red
+            aggrGreen += contribution * activeForeground.green
+            aggrBlue += contribution * activeForeground.blue
+        }
+        foreground = Color(red = aggrRed, blue = aggrBlue, green = aggrGreen, alpha = 1.0f)
+    }
+
+    val baseAlpha = skinColors.getAlpha(
+        decorationAreaType = decorationAreaType,
+        componentState = currState
+    )
+
+    if (baseAlpha < 1.0f) {
+        // Blend with the background fill
+        val backgroundColorScheme = skinColors.getColorScheme(
+            decorationAreaType,
+            if (currState.isDisabled) ComponentState.DISABLED_UNSELECTED else ComponentState.ENABLED
+        )
+        val bgFillColor = backgroundColorScheme.backgroundFillColor
+        foreground = getInterpolatedColor(foreground, bgFillColor, baseAlpha)
+    }
+    return foreground
+}
+
 
 private fun decodeColor(value: String, colorMap: Map<String, Color>): Color {
     if (value.startsWith("@")) {
@@ -489,7 +545,7 @@ private fun getLightColorScheme(
         // Derived
         override val lineColor: Color
             get() = additionalColors["colorLine"] ?: super.lineColor
-        override  val backgroundFillColor: Color
+        override val backgroundFillColor: Color
             get() = additionalColors["colorBackgroundFill"] ?: super.backgroundFillColor
         override val accentedBackgroundFillColor: Color
             get() = additionalColors["colorAccentedBackgroundFill"] ?: super.accentedBackgroundFillColor
@@ -537,7 +593,7 @@ private fun getDarkColorScheme(
         // Derived
         override val lineColor: Color
             get() = additionalColors["colorLine"] ?: super.lineColor
-        override  val backgroundFillColor: Color
+        override val backgroundFillColor: Color
             get() = additionalColors["colorBackgroundFill"] ?: super.backgroundFillColor
         override val accentedBackgroundFillColor: Color
             get() = additionalColors["colorAccentedBackgroundFill"] ?: super.accentedBackgroundFillColor

@@ -88,12 +88,14 @@ fun AuroraCheckBox(
     modifier: Modifier = Modifier,
     checked: Boolean = false,
     onCheckedChange: (Boolean) -> Unit,
+    enabled: Boolean = true,
     content: @Composable RowScope.() -> Unit
 ) {
     AuroraCheckBox(
         modifier = modifier,
         checked = checked,
         onCheckedChange = onCheckedChange,
+        enabled = enabled,
         stateTransitionFloat = AnimatedFloat(0.0f, AmbientAnimationClock.current.asDisposableClock()),
         content = content
     )
@@ -104,6 +106,7 @@ private fun AuroraCheckBox(
     modifier: Modifier = Modifier,
     checked: Boolean = false,
     onCheckedChange: (Boolean) -> Unit,
+    enabled: Boolean,
     stateTransitionFloat: AnimatedFloat,
     content: @Composable RowScope.() -> Unit
 ) {
@@ -117,7 +120,7 @@ private fun AuroraCheckBox(
     val modelStateInfo = remember {
         ModelStateInfo(
             ComponentState.getState(
-                isEnabled = true,
+                isEnabled = enabled,
                 isRollover = false,
                 isSelected = checked,
                 isPressed = isPressed
@@ -166,7 +169,7 @@ private fun AuroraCheckBox(
     pressedTransitionState[PressedTransitionFraction]
 
     val currentState = ComponentState.getState(
-        isEnabled = true,
+        isEnabled = enabled,
         isRollover = rolloverState.value,
         isSelected = (selectedState.value == ButtonState.SELECTED),
         isPressed = isPressed
@@ -268,6 +271,7 @@ private fun AuroraCheckBox(
                     selectedState.value = if (it) ButtonState.SELECTED else ButtonState.UNSELECTED
                     onCheckedChange.invoke(selectedState.value == ButtonState.SELECTED)
                 },
+                enabled = enabled,
                 interactionState = interactionState,
                 indication = null
             ),
@@ -321,12 +325,14 @@ private fun AuroraCheckBox(
 
         // Text color. Note that the text doesn't "participate" in state changes that
         // involve rollover, selection or pressed bits
-        val textColor = AuroraSkin.colors.getColorScheme(
+        val textColor = getTextColor(
+            modelStateInfo = modelStateInfo,
+            skinColors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
-            associationKind = ColorSchemeAssociationKind.FILL,
-            componentState = if (currentState.isDisabled) ComponentState.DISABLED_UNSELECTED
-            else ComponentState.ENABLED
-        ).foregroundColor
+            isTextInFilledArea = false
+        )
+        val alpha = if (currentState.isDisabled)
+            AuroraSkin.colors.getAlpha(decorationAreaType, currentState) else 1.0f
 
         val fillPainter = AuroraSkin.painters.fillPainter
         val borderPainter = AuroraSkin.painters.borderPainter
@@ -353,7 +359,7 @@ private fun AuroraCheckBox(
             drawingCache.colorScheme.isDark = fillIsDark
             drawingCache.colorScheme.foreground = textColor
             fillPainter.paintContourBackground(
-                this, this.size, outline, drawingCache.colorScheme
+                this, this.size, outline, drawingCache.colorScheme, alpha
             )
 
             // Populate the cached color scheme for drawing the markbox border
@@ -375,7 +381,7 @@ private fun AuroraCheckBox(
             ) else null
 
             borderPainter.paintBorder(
-                this, this.size, outline, outlineInner, drawingCache.colorScheme
+                this, this.size, outline, outlineInner, drawingCache.colorScheme, alpha
             )
 
             // Draw the checkbox mark with the alpha that corresponds to the current
@@ -388,6 +394,8 @@ private fun AuroraCheckBox(
                 markPath.lineTo(0.48f * width, 0.73f * height)
                 markPath.lineTo(0.76f * width, 0.28f * height)
 
+                // Note that we apply alpha twice - once for the selected / checked
+                // state or transition, and the second time based on the enabled state
                 drawPath(
                     path = markPath,
                     color = markColor.copy(alpha = markAlpha.value),
@@ -395,7 +403,8 @@ private fun AuroraCheckBox(
                         width = markStroke,
                         cap = StrokeCap.Round,
                         join = StrokeJoin.Round
-                    )
+                    ),
+                    alpha = alpha
                 )
             }
         }

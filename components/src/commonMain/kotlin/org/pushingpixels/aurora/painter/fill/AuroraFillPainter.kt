@@ -37,7 +37,10 @@ import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 
 interface AuroraFillPainter: AuroraTrait {
     fun paintContourBackground(
-        drawScope: DrawScope, size: Size, outline: Outline,
-        fillScheme: AuroraColorScheme
+        drawScope: DrawScope,
+        size: Size,
+        outline: Outline,
+        fillScheme: AuroraColorScheme,
+        alpha: Float
     )
 }
