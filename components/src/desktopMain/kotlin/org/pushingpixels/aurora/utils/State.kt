@@ -103,21 +103,21 @@ internal val RolloverTransitionFraction = FloatPropKey()
 internal val PressedTransitionFraction = FloatPropKey()
 
 @Composable
-internal fun getSelectedTransitionDefinition(duration: Int): TransitionDefinition<ButtonState> {
+internal fun getSelectedTransitionDefinition(duration: Int): TransitionDefinition<Boolean> {
     return transitionDefinition {
-        state(ButtonState.UNSELECTED) {
+        state(false) {
             this[SelectionTransitionFraction] = 0.0f
         }
 
-        state(ButtonState.SELECTED) {
+        state(true) {
             this[SelectionTransitionFraction] = 1.0f
         }
 
-        transition(ButtonState.UNSELECTED to ButtonState.SELECTED) {
+        transition(false to true) {
             SelectionTransitionFraction using tween(durationMillis = duration)
         }
 
-        transition(ButtonState.SELECTED to ButtonState.UNSELECTED) {
+        transition(true to false) {
             SelectionTransitionFraction using tween(durationMillis = duration)
         }
     }

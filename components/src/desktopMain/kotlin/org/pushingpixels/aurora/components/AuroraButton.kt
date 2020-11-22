@@ -56,7 +56,7 @@ import java.util.*
 
 // This will be initialized on first usage using the getSelectedTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
-private lateinit var SelectedTransitionDefinition: TransitionDefinition<ButtonState>
+private lateinit var SelectedTransitionDefinition: TransitionDefinition<Boolean>
 
 // This will be initialized on first usage using the getRolloverTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
@@ -110,7 +110,7 @@ private fun AuroraToggleButton(
 ) {
     val drawingCache = remember { AuroraDrawingCache() }
 
-    val selectedState = remember { mutableStateOf(ButtonState.UNSELECTED) }
+    val selectedState = remember { mutableStateOf(false) }
     val rolloverState = remember { mutableStateOf(false) }
     val interactionState = remember { InteractionState() }
     val isPressed = Interaction.Pressed in interactionState
@@ -159,7 +159,7 @@ private fun AuroraToggleButton(
     )
 
     // TODO - how to trigger the state transition animation without these transitions
-    // that track the changes in selected and rollover states?
+    //  that track the changes in different states?
     selectionTransitionState[SelectionTransitionFraction]
     rolloverTransitionState[RolloverTransitionFraction]
     pressedTransitionState[PressedTransitionFraction]
@@ -167,7 +167,7 @@ private fun AuroraToggleButton(
     val currentState = ComponentState.getState(
         isEnabled = enabled,
         isRollover = rolloverState.value,
-        isSelected = (selectedState.value == ButtonState.SELECTED),
+        isSelected = selectedState.value,
         isPressed = isPressed
     )
 
@@ -259,11 +259,7 @@ private fun AuroraToggleButton(
                 })
             .clickable(
                 onClick = {
-                    selectedState.value = if (selectedState.value == ButtonState.UNSELECTED) {
-                        ButtonState.SELECTED
-                    } else {
-                        ButtonState.UNSELECTED
-                    }
+                    selectedState.value = !selectedState.value
                     onClick.invoke()
                 },
                 enabled = enabled,

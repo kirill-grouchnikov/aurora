@@ -57,7 +57,7 @@ private val CheckboxSize = 14.dp
 
 // This will be initialized on first usage using the getSelectedTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
-private lateinit var SelectedTransitionDefinition: TransitionDefinition<ButtonState>
+private lateinit var SelectedTransitionDefinition: TransitionDefinition<Boolean>
 
 // This will be initialized on first usage using the getRolloverTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
@@ -112,7 +112,7 @@ private fun AuroraCheckBox(
 ) {
     val drawingCache = remember { CheckBoxDrawingCache() }
 
-    val selectedState = remember { mutableStateOf(if (checked) ButtonState.SELECTED else ButtonState.UNSELECTED) }
+    val selectedState = remember { mutableStateOf(checked) }
     val rolloverState = remember { mutableStateOf(false) }
     val interactionState = remember { InteractionState() }
     val isPressed = Interaction.Pressed in interactionState
@@ -163,7 +163,7 @@ private fun AuroraCheckBox(
     )
 
     // TODO - how to trigger the state transition animation without these transitions
-    // that track the changes in selected and rollover states?
+    //  that track the changes in different states?
     selectionTransitionState[SelectionTransitionFraction]
     rolloverTransitionState[RolloverTransitionFraction]
     pressedTransitionState[PressedTransitionFraction]
@@ -171,7 +171,7 @@ private fun AuroraCheckBox(
     val currentState = ComponentState.getState(
         isEnabled = enabled,
         isRollover = rolloverState.value,
-        isSelected = (selectedState.value == ButtonState.SELECTED),
+        isSelected = selectedState.value,
         isPressed = isPressed
     )
 
@@ -266,10 +266,10 @@ private fun AuroraCheckBox(
                     false
                 })
             .toggleable(
-                value = (selectedState.value == ButtonState.SELECTED),
+                value = selectedState.value,
                 onValueChange = {
-                    selectedState.value = if (it) ButtonState.SELECTED else ButtonState.UNSELECTED
-                    onCheckedChange.invoke(selectedState.value == ButtonState.SELECTED)
+                    selectedState.value = !selectedState.value
+                    onCheckedChange.invoke(selectedState.value)
                 },
                 enabled = enabled,
                 interactionState = interactionState,
