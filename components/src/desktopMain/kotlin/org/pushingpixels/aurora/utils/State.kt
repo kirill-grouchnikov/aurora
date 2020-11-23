@@ -94,10 +94,6 @@ internal class ModelStateInfo(var currModelState: ComponentState) {
     }
 }
 
-enum class ButtonState {
-    UNSELECTED, SELECTED
-}
-
 internal val SelectionTransitionFraction = FloatPropKey()
 internal val RolloverTransitionFraction = FloatPropKey()
 internal val PressedTransitionFraction = FloatPropKey()

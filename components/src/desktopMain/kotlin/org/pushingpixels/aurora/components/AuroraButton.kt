@@ -114,7 +114,6 @@ private fun AuroraToggleButton(
     val rolloverState = remember { mutableStateOf(false) }
     val interactionState = remember { InteractionState() }
     val isPressed = Interaction.Pressed in interactionState
-    val offset = remember { mutableStateOf(Offset(0.0f, 0.0f)) }
 
     val modelStateInfo = remember {
         ModelStateInfo(
@@ -265,10 +264,7 @@ private fun AuroraToggleButton(
                 enabled = enabled,
                 interactionState = interactionState,
                 indication = null
-            )
-            .onGloballyPositioned {
-                offset.value = it.localToRoot(Offset(0.0f, 0.0f))
-            },
+            ),
         contentAlignment = Alignment.TopStart
     ) {
         // Populate the cached color scheme for filling the button container
