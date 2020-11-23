@@ -112,24 +112,9 @@ private fun AuroraCheckBox(
 ) {
     val drawingCache = remember { CheckBoxDrawingCache() }
 
-    val selectedState = remember { mutableStateOf(checked) }
-    val rolloverState = remember { mutableStateOf(false) }
-    val interactionState = remember { InteractionState() }
-    val isPressed = Interaction.Pressed in interactionState
-
-    val modelStateInfo = remember {
-        ModelStateInfo(
-            ComponentState.getState(
-                isEnabled = enabled,
-                isRollover = false,
-                isSelected = checked,
-                isPressed = isPressed
-            )
-        )
-    }
+    val stateTransitionTracker =
+        remember { StateTransitionTracker(enabled, stateTransitionFloat) }
     val markAlpha = remember { mutableStateOf(if (checked) 1.0f else 0.0f) }
-
-    val decorationAreaType = AuroraSkin.decorationArea.type
 
     // Transition for the selection state
     if (!::SelectedTransitionDefinition.isInitialized) {
@@ -138,8 +123,8 @@ private fun AuroraCheckBox(
     }
     val selectionTransitionState = transition(
         definition = SelectedTransitionDefinition,
-        initState = selectedState.value,
-        toState = selectedState.value
+        initState = stateTransitionTracker.selectedState.value,
+        toState = stateTransitionTracker.selectedState.value
     )
     // Transition for the rollover state
     if (!::RolloverTransitionDefinition.isInitialized) {
@@ -148,8 +133,8 @@ private fun AuroraCheckBox(
     }
     val rolloverTransitionState = transition(
         definition = RolloverTransitionDefinition,
-        initState = rolloverState.value,
-        toState = rolloverState.value
+        initState = stateTransitionTracker.rolloverState.value,
+        toState = stateTransitionTracker.rolloverState.value
     )
     // Transition for the pressed state
     if (!::PressedTransitionDefinition.isInitialized) {
@@ -158,8 +143,8 @@ private fun AuroraCheckBox(
     }
     val pressedTransitionState = transition(
         definition = PressedTransitionDefinition,
-        initState = isPressed,
-        toState = isPressed
+        initState = Interaction.Pressed in stateTransitionTracker.interactionState,
+        toState = Interaction.Pressed in stateTransitionTracker.interactionState
     )
 
     // TODO - how to trigger the state transition animation without these transitions
@@ -168,111 +153,33 @@ private fun AuroraCheckBox(
     rolloverTransitionState[RolloverTransitionFraction]
     pressedTransitionState[PressedTransitionFraction]
 
-    val currentState = ComponentState.getState(
-        isEnabled = enabled,
-        isRollover = rolloverState.value,
-        isSelected = selectedState.value,
-        isPressed = isPressed
-    )
-
-    var duration = AuroraSkin.animationConfig.regular
-    if (currentState != modelStateInfo.currModelState) {
-        stateTransitionFloat.stop()
-        //println("******** Have new state to move to $currentState ********")
-        modelStateInfo.dumpState(stateTransitionFloat.value)
-        // Need to transition to the new state
-        if (modelStateInfo.stateContributionMap.containsKey(currentState)) {
-            //println("Already has new state")
-            // Going to a state that is already partially active
-            val transitionPosition = modelStateInfo.stateContributionMap[currentState]!!.contribution
-            duration = (duration * (1.0f - transitionPosition)).toInt()
-            stateTransitionFloat.setBounds(transitionPosition, 1.0f)
-            stateTransitionFloat.snapTo(transitionPosition)
-        } else {
-            //println("Does not have new state (curr state ${modelStateInfo.currModelState}) at ${stateTransitionFloat.value}")
-            stateTransitionFloat.setBounds(0.0f, 1.0f)
-            stateTransitionFloat.snapTo(0.0f)
-            //println("\tat ${stateTransitionFloat.value}")
-        }
-
-        // Create a new contribution map
-        val newContributionMap: MutableMap<ComponentState, StateContributionInfo> = HashMap()
-        if (modelStateInfo.stateContributionMap.containsKey(currentState)) {
-            // 1. the new state goes from current value to 1.0
-            // 2. the rest go from current value to 0.0
-            for ((contribState, currRange) in modelStateInfo.stateContributionMap.entries) {
-                val newEnd = if (contribState == currentState) 1.0f else 0.0f
-                newContributionMap[contribState] = StateContributionInfo(
-                    currRange.contribution, newEnd
-                )
-            }
-        } else {
-            // 1. all existing states go from current value to 0.0
-            // 2. the new state goes from 0.0 to 1.0
-            for ((contribState, currRange) in modelStateInfo.stateContributionMap.entries) {
-                newContributionMap[contribState] = StateContributionInfo(
-                    currRange.contribution, 0.0f
-                )
-            }
-            newContributionMap[currentState] = StateContributionInfo(0.0f, 1.0f)
-        }
-        modelStateInfo.stateContributionMap = newContributionMap
-        modelStateInfo.sync()
-
-        modelStateInfo.currModelState = currentState
-        //println("******** After moving to new state *****")
-        modelStateInfo.dumpState(stateTransitionFloat.value)
-
-        //println("Animating over $duration from ${stateTransitionFloat.value} to 1.0f")
-        stateTransitionFloat.animateTo(
-            targetValue = 1.0f,
-            anim = FloatTweenSpec(duration = duration),
-            onEnd = { endReason, endValue ->
-                //println("Ended with reason $endReason at $endValue / ${stateTransitionFloat.value}")
-                if (endReason == AnimationEndReason.TargetReached) {
-                    modelStateInfo.updateActiveStates(1.0f)
-                    modelStateInfo.clear()
-                    //println("******** After clear (target reached) ********")
-                    modelStateInfo.dumpState(stateTransitionFloat.value)
-                    markAlpha.value =
-                        if (modelStateInfo.currModelState.isFacetActive(ComponentStateFacet.SELECTION)) 1.0f else 0.0f
-                }
-            }
-        )
-
-        //println()
-    }
-
-    if (stateTransitionFloat.isRunning) {
-        modelStateInfo.updateActiveStates(stateTransitionFloat.value)
-        //println("********* During animation ${stateTransitionFloat.value} to ${stateTransitionFloat.targetValue} *******")
-        modelStateInfo.dumpState(stateTransitionFloat.value)
-    }
+    stateTransitionTracker.update(enabled)
 
     // The toggleable modifier is set on the checkbox mark, as well as on the
     // content so that the whole thing is clickable to toggle the control.
+    val decorationAreaType = AuroraSkin.decorationArea.type
     Row(
         modifier = modifier
             .pointerMoveFilter(
                 onEnter = {
-                    rolloverState.value = true
+                    stateTransitionTracker.rolloverState.value = true
                     false
                 },
                 onExit = {
-                    rolloverState.value = false
+                    stateTransitionTracker.rolloverState.value = false
                     false
                 },
                 onMove = {
                     false
                 })
             .toggleable(
-                value = selectedState.value,
+                value = stateTransitionTracker.selectedState.value,
                 onValueChange = {
-                    selectedState.value = !selectedState.value
-                    onCheckedChange.invoke(selectedState.value)
+                    stateTransitionTracker.selectedState.value = !stateTransitionTracker.selectedState.value
+                    onCheckedChange.invoke(stateTransitionTracker.selectedState.value)
                 },
                 enabled = enabled,
-                interactionState = interactionState,
+                interactionState = stateTransitionTracker.interactionState,
                 indication = null
             ),
         verticalAlignment = Alignment.CenterVertically
@@ -280,7 +187,7 @@ private fun AuroraCheckBox(
         // Populate the cached color scheme for filling the mark box
         // based on the current model state info
         populateColorScheme(
-            drawingCache.colorScheme, modelStateInfo, decorationAreaType,
+            drawingCache.colorScheme, stateTransitionTracker.modelStateInfo, decorationAreaType,
             ColorSchemeAssociationKind.MARK_BOX
         )
         // And retrieve the mark box colors
@@ -295,7 +202,7 @@ private fun AuroraCheckBox(
         // Populate the cached color scheme for drawing the mark box border
         // based on the current model state info
         populateColorScheme(
-            drawingCache.colorScheme, modelStateInfo, decorationAreaType,
+            drawingCache.colorScheme, stateTransitionTracker.modelStateInfo, decorationAreaType,
             ColorSchemeAssociationKind.BORDER
         )
         // And retrieve the mark box border colors
@@ -309,14 +216,15 @@ private fun AuroraCheckBox(
 
         // Mark color
         val markColor = getStateAwareColor(
-            modelStateInfo,
+            stateTransitionTracker.modelStateInfo,
             decorationAreaType, ColorSchemeAssociationKind.MARK
         ) { it.markColor }
 
         // Checkmark alpha is the combined strength of all the
         // states that have the selection bit turned on
         markAlpha.value =
-            modelStateInfo.stateContributionMap.filter { it.key.isFacetActive(ComponentStateFacet.SELECTION) }
+            stateTransitionTracker.modelStateInfo.stateContributionMap
+                .filter { it.key.isFacetActive(ComponentStateFacet.SELECTION) }
                 .map { it.value }
                 .sumByDouble { it.contribution.toDouble() }
                 .toFloat()
@@ -326,13 +234,13 @@ private fun AuroraCheckBox(
         // Text color. Note that the text doesn't "participate" in state changes that
         // involve rollover, selection or pressed bits
         val textColor = getTextColor(
-            modelStateInfo = modelStateInfo,
+            modelStateInfo = stateTransitionTracker.modelStateInfo,
             skinColors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
             isTextInFilledArea = false
         )
-        val alpha = if (currentState.isDisabled)
-            AuroraSkin.colors.getAlpha(decorationAreaType, currentState) else 1.0f
+        val alpha = if (stateTransitionTracker.currentState.isDisabled)
+            AuroraSkin.colors.getAlpha(decorationAreaType, stateTransitionTracker.currentState) else 1.0f
 
         val fillPainter = AuroraSkin.painters.fillPainter
         val borderPainter = AuroraSkin.painters.borderPainter

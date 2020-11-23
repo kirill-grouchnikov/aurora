@@ -29,13 +29,15 @@
  */
 package org.pushingpixels.aurora.utils
 
-import androidx.compose.animation.core.FloatPropKey
-import androidx.compose.animation.core.TransitionDefinition
-import androidx.compose.animation.core.transitionDefinition
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.Interaction
+import androidx.compose.foundation.InteractionState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.ComponentState
-import java.util.HashMap
+import java.util.*
 
 internal class StateContributionInfo(var start: Float, var end: Float) {
     var contribution: Float
@@ -83,7 +85,6 @@ internal class ModelStateInfo(var currModelState: ComponentState) {
     }
 
     fun dumpState(stateTransitionPosition: Float) {
-        if (true) return
         println("######")
         println("Curr state ${currModelState}, position $stateTransitionPosition")
         for ((state, currRange) in stateContributionMap) {
@@ -91,6 +92,113 @@ internal class ModelStateInfo(var currModelState: ComponentState) {
         }
         println("\tActive strength $activeStrength")
         println("######")
+    }
+}
+
+internal class StateTransitionTracker(
+    enabled: Boolean,
+    private val stateTransitionFloat: AnimatedFloat
+) {
+    var selectedState: MutableState<Boolean> = mutableStateOf(false)
+    var rolloverState: MutableState<Boolean> = mutableStateOf(false)
+    var interactionState = InteractionState()
+    var modelStateInfo: ModelStateInfo =
+        ModelStateInfo(
+            ComponentState.getState(
+                isEnabled = enabled, isRollover = false,
+                isSelected = false, isPressed = false
+            )
+        )
+
+    var currentState = ComponentState.getState(
+        isEnabled = enabled,
+        isRollover = false,
+        isSelected = false,
+        isPressed = false
+    )
+
+    @Composable
+    fun update(isEnabled: Boolean) {
+        val isPressed = Interaction.Pressed in interactionState
+        currentState = ComponentState.getState(
+            isEnabled = isEnabled,
+            isRollover = rolloverState.value,
+            isSelected = selectedState.value,
+            isPressed = isPressed
+        )
+
+        var duration = AuroraSkin.animationConfig.regular
+        if (currentState != modelStateInfo.currModelState) {
+            stateTransitionFloat.stop()
+            //println("******** Have new state to move to $currentState ********")
+            //modelStateInfo.dumpState(stateTransitionFloat.value)
+            // Need to transition to the new state
+            if (modelStateInfo.stateContributionMap.containsKey(currentState)) {
+                //println("Already has new state")
+                // Going to a state that is already partially active
+                val transitionPosition = modelStateInfo.stateContributionMap[currentState]!!.contribution
+                duration = (duration * (1.0f - transitionPosition)).toInt()
+                stateTransitionFloat.setBounds(transitionPosition, 1.0f)
+                stateTransitionFloat.snapTo(transitionPosition)
+            } else {
+                //println("Does not have new state (curr state ${modelStateInfo.currModelState}) at ${stateTransitionFloat.value}")
+                stateTransitionFloat.setBounds(0.0f, 1.0f)
+                stateTransitionFloat.snapTo(0.0f)
+                //println("\tat ${stateTransitionFloat.value}")
+            }
+
+            // Create a new contribution map
+            val newContributionMap: MutableMap<ComponentState, StateContributionInfo> = HashMap()
+            if (modelStateInfo.stateContributionMap.containsKey(currentState)) {
+                // 1. the new state goes from current value to 1.0
+                // 2. the rest go from current value to 0.0
+                for ((contribState, currRange) in modelStateInfo.stateContributionMap.entries) {
+                    val newEnd = if (contribState == currentState) 1.0f else 0.0f
+                    newContributionMap[contribState] = StateContributionInfo(
+                        currRange.contribution, newEnd
+                    )
+                }
+            } else {
+                // 1. all existing states go from current value to 0.0
+                // 2. the new state goes from 0.0 to 1.0
+                for ((contribState, currRange) in modelStateInfo.stateContributionMap.entries) {
+                    newContributionMap[contribState] = StateContributionInfo(
+                        currRange.contribution, 0.0f
+                    )
+                }
+                newContributionMap[currentState] = StateContributionInfo(0.0f, 1.0f)
+            }
+            modelStateInfo.stateContributionMap = newContributionMap
+            modelStateInfo.sync()
+
+            modelStateInfo.currModelState = currentState
+            //println("******** After moving to new state *****")
+            //modelStateInfo.dumpState(stateTransitionFloat.value)
+
+            //println("Animating over $duration from ${stateTransitionFloat.value} to 1.0f")
+            stateTransitionFloat.animateTo(
+                targetValue = 1.0f,
+                anim = FloatTweenSpec(duration = duration),
+                onEnd = { endReason, endValue ->
+                    //println("Ended with reason $endReason at $endValue / ${stateTransitionFloat.value}")
+                    if (endReason == AnimationEndReason.TargetReached) {
+                        modelStateInfo.updateActiveStates(1.0f)
+                        modelStateInfo.clear()
+                        //println("******** After clear (target reached) ********")
+                        //modelStateInfo.dumpState(stateTransitionFloat.value)
+                    }
+                }
+            )
+
+            //println()
+        }
+
+        if (stateTransitionFloat.isRunning) {
+            modelStateInfo.updateActiveStates(stateTransitionFloat.value)
+            //("********* During animation ${stateTransitionFloat.value} to ${stateTransitionFloat.targetValue} *******")
+            //modelStateInfo.dumpState(stateTransitionFloat.value)
+        }
+
     }
 }
 
