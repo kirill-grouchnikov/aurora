@@ -269,7 +269,7 @@ private fun AuroraToggleButton(
             .onGloballyPositioned {
                 offset.value = it.localToRoot(Offset(0.0f, 0.0f))
             },
-        alignment = Alignment.TopStart
+        contentAlignment = Alignment.TopStart
     ) {
         // Populate the cached color scheme for filling the button container
         // based on the current model state info

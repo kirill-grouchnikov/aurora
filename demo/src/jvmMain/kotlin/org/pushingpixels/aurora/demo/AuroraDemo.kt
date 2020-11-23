@@ -60,7 +60,7 @@ fun main() {
         //ImageBitmap(100, 100)
         Box(
             modifier = Modifier,
-            alignment = Alignment.TopStart
+            contentAlignment = Alignment.TopStart
         ) {
             Canvas(
                 Modifier.matchParentSize()

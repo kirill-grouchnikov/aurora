@@ -7,8 +7,8 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jetbrains.compose:compose-gradle-plugin:0.2.0-build127")
-        classpath(kotlin("gradle-plugin", version = "1.4.10"))
+        classpath("org.jetbrains.compose:compose-gradle-plugin:0.2.0-build128")
+        classpath(kotlin("gradle-plugin", version = "1.4.20"))
         classpath("com.github.ben-manes:gradle-versions-plugin:0.36.0")
     }
 }
