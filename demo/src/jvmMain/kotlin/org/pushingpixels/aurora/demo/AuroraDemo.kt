@@ -72,17 +72,18 @@ fun main() {
 }
 
 @Composable
-fun DemoArea(modifier: Modifier = Modifier) {
+fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
     Row(
-        verticalAlignment = Alignment.Top, modifier = modifier
+        verticalAlignment = Alignment.Top,
+        modifier = modifier
             .fillMaxWidth()
             .auroraBackground()
             .padding(8.dp)
     ) {
         val enabled = remember { mutableStateOf(true) }
         AuroraCheckBox(
-            checked = true,
-            onCheckedChange = { enabled.value = !enabled.value }
+            selected = true,
+            onSelectedChange = { enabled.value = !enabled.value }
         ) {
             AuroraText(text = "content enabled")
         }
@@ -90,14 +91,15 @@ fun DemoArea(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)
         ) {
             AuroraCheckBox(
-                checked = true,
-                onCheckedChange = { println("Check! $it") },
+                selected = selected,
+                onSelectedChange = { println("Selected checkbox? $it") },
                 enabled = enabled.value
             ) {
                 AuroraText(text = "sample check")
             }
             AuroraToggleButton(enabled = enabled.value,
-                onClick = { println("Clicked!") }) {
+                selected = selected,
+                onSelectedChange = { println("Selected toggle? $it") }) {
                 AuroraText("sample toggle")
             }
         }
@@ -108,16 +110,16 @@ fun DemoArea(modifier: Modifier = Modifier) {
 fun DemoContent() {
     Column(modifier = Modifier.fillMaxHeight().fillMaxWidth()) {
         DecorationArea(decorationAreaType = DecorationAreaType.TOOLBAR) {
-            DemoArea()
+            DemoArea(selected = true)
         }
         DecorationArea(decorationAreaType = DecorationAreaType.HEADER) {
-            DemoArea()
+            DemoArea(selected = false)
         }
         DecorationArea(decorationAreaType = DecorationAreaType.NONE) {
-            DemoArea()
+            DemoArea(selected = true)
         }
         DecorationArea(decorationAreaType = DecorationAreaType.FOOTER) {
-            DemoArea()
+            DemoArea(selected = false)
         }
     }
 }

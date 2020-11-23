@@ -35,8 +35,8 @@ import androidx.compose.animation.core.TransitionDefinition
 import androidx.compose.animation.transition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Interaction
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Providers
@@ -80,16 +80,18 @@ private class AuroraDrawingCache(
 
 @Composable
 fun AuroraToggleButton(
-    onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    selected: Boolean = false,
+    onSelectedChange: (Boolean) -> Unit = {},
     sides: ButtonSides = ButtonSides(),
     content: @Composable RowScope.() -> Unit
 ) {
     AuroraToggleButton(
-        onClick = onClick,
         modifier = modifier,
         enabled = enabled,
+        selected = selected,
+        onSelectedChange = onSelectedChange,
         sides = sides,
         stateTransitionFloat = AnimatedFloat(0.0f, AmbientAnimationClock.current.asDisposableClock()),
         content = content
@@ -98,9 +100,10 @@ fun AuroraToggleButton(
 
 @Composable
 private fun AuroraToggleButton(
-    onClick: () -> Unit,
     modifier: Modifier,
     enabled: Boolean,
+    selected: Boolean,
+    onSelectedChange: (Boolean) -> Unit,
     sides: ButtonSides,
     stateTransitionFloat: AnimatedFloat,
     content: @Composable RowScope.() -> Unit
@@ -108,7 +111,7 @@ private fun AuroraToggleButton(
     val drawingCache = remember { AuroraDrawingCache() }
 
     val stateTransitionTracker =
-        remember { StateTransitionTracker(enabled, stateTransitionFloat) }
+        remember { StateTransitionTracker(enabled, selected, stateTransitionFloat) }
 
 
     // Transition for the selection state
@@ -165,15 +168,15 @@ private fun AuroraToggleButton(
                 onMove = {
                     false
                 })
-            .clickable(
-                onClick = {
-                    stateTransitionTracker.selectedState.value = !stateTransitionTracker.selectedState.value
-                    onClick.invoke()
-                },
+            .toggleable(
+                value = stateTransitionTracker.selectedState.value,
                 enabled = enabled,
                 interactionState = stateTransitionTracker.interactionState,
-                indication = null
-            ),
+                indication = null,
+                onValueChange = {
+                    stateTransitionTracker.selectedState.value = it
+                    onSelectedChange.invoke(it)
+                }),
         contentAlignment = Alignment.TopStart
     ) {
         // Populate the cached color scheme for filling the button container

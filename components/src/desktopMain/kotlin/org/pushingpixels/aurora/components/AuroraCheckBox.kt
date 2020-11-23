@@ -31,11 +31,10 @@ package org.pushingpixels.aurora.components
 
 import androidx.compose.animation.asDisposableClock
 import androidx.compose.animation.core.AnimatedFloat
-import androidx.compose.animation.core.AnimationEndReason
-import androidx.compose.animation.core.FloatTweenSpec
 import androidx.compose.animation.core.TransitionDefinition
 import androidx.compose.animation.transition
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Interaction
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
@@ -49,9 +48,11 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.*
+import org.pushingpixels.aurora.AmbientTextColor
+import org.pushingpixels.aurora.AuroraSkin
+import org.pushingpixels.aurora.ColorSchemeAssociationKind
+import org.pushingpixels.aurora.ComponentStateFacet
 import org.pushingpixels.aurora.utils.*
-import java.util.*
 
 private val CheckboxSize = 14.dp
 
@@ -86,15 +87,15 @@ private class CheckBoxDrawingCache(
 @Composable
 fun AuroraCheckBox(
     modifier: Modifier = Modifier,
-    checked: Boolean = false,
-    onCheckedChange: (Boolean) -> Unit,
+    selected: Boolean = false,
+    onSelectedChange: (Boolean) -> Unit,
     enabled: Boolean = true,
     content: @Composable RowScope.() -> Unit
 ) {
     AuroraCheckBox(
         modifier = modifier,
-        checked = checked,
-        onCheckedChange = onCheckedChange,
+        selected = selected,
+        onSelectedChange = onSelectedChange,
         enabled = enabled,
         stateTransitionFloat = AnimatedFloat(0.0f, AmbientAnimationClock.current.asDisposableClock()),
         content = content
@@ -104,8 +105,8 @@ fun AuroraCheckBox(
 @Composable
 private fun AuroraCheckBox(
     modifier: Modifier = Modifier,
-    checked: Boolean = false,
-    onCheckedChange: (Boolean) -> Unit,
+    selected: Boolean = false,
+    onSelectedChange: (Boolean) -> Unit,
     enabled: Boolean,
     stateTransitionFloat: AnimatedFloat,
     content: @Composable RowScope.() -> Unit
@@ -113,8 +114,8 @@ private fun AuroraCheckBox(
     val drawingCache = remember { CheckBoxDrawingCache() }
 
     val stateTransitionTracker =
-        remember { StateTransitionTracker(enabled, stateTransitionFloat) }
-    val markAlpha = remember { mutableStateOf(if (checked) 1.0f else 0.0f) }
+        remember { StateTransitionTracker(enabled, selected, stateTransitionFloat) }
+    val markAlpha = remember { mutableStateOf(if (selected) 1.0f else 0.0f) }
 
     // Transition for the selection state
     if (!::SelectedTransitionDefinition.isInitialized) {
@@ -176,7 +177,7 @@ private fun AuroraCheckBox(
                 value = stateTransitionTracker.selectedState.value,
                 onValueChange = {
                     stateTransitionTracker.selectedState.value = !stateTransitionTracker.selectedState.value
-                    onCheckedChange.invoke(stateTransitionTracker.selectedState.value)
+                    onSelectedChange.invoke(stateTransitionTracker.selectedState.value)
                 },
                 enabled = enabled,
                 interactionState = stateTransitionTracker.interactionState,
