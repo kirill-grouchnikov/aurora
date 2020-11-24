@@ -31,7 +31,6 @@ package org.pushingpixels.aurora.utils
 
 import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
-import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
@@ -117,7 +116,7 @@ internal fun colorizeBgra8888(
     val MAPSTEPS = 512
 
     // collect the brightness factors of the color scheme
-    val schemeColorMapping = TreeMap<Int, Color>()
+    val schemeColorMapping = hashMapOf<Int, Color>()
     val ultraLight = scheme.ultraLightColor
     val extraLight = scheme.extraLightColor
     val light = scheme.lightColor
@@ -153,7 +152,7 @@ internal fun colorizeBgra8888(
     val highestSchemeBrightness = schemeBrightness[schemeBrightness.size - 1]
     val hasSameBrightness = highestSchemeBrightness == lowestSchemeBrightness
 
-    val stretchedColorMapping: MutableMap<Int, Color> = TreeMap<Int, Color>()
+    val stretchedColorMapping: MutableMap<Int, Color> = hashMapOf()
     for ((brightness, value) in schemeColorMapping) {
         val stretched = if (hasSameBrightness) brightness
         else 255 - 255 * (highestSchemeBrightness - brightness) /

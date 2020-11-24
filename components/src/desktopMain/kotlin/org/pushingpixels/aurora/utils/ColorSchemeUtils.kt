@@ -40,7 +40,6 @@ import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
 
-
 internal data class MutableColorScheme(
     override val displayName: String,
     override var isDark: Boolean,
@@ -329,7 +328,7 @@ private enum class ColorSchemeKind {
 }
 
 fun getColorSchemes(inputStream: InputStream): ColorSchemes {
-    val schemes: MutableList<AuroraColorScheme> = java.util.ArrayList<AuroraColorScheme>()
+    val schemes: MutableList<AuroraColorScheme> = arrayListOf()
     val colorMap: MutableMap<String, Color> = HashMap()
     var ultraLight: Color? = null
     var extraLight: Color? = null

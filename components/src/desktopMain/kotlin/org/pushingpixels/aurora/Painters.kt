@@ -32,12 +32,12 @@ package org.pushingpixels.aurora
 import androidx.compose.runtime.staticAmbientOf
 import org.pushingpixels.aurora.painter.border.AuroraBorderPainter
 import org.pushingpixels.aurora.painter.border.SimpleBorderPainter
-import org.pushingpixels.aurora.painter.decoration.FlatDecorationPainter
 import org.pushingpixels.aurora.painter.decoration.AuroraDecorationPainter
+import org.pushingpixels.aurora.painter.decoration.FlatDecorationPainter
 import org.pushingpixels.aurora.painter.fill.AuroraFillPainter
 import org.pushingpixels.aurora.painter.fill.SimpleFillPainter
 import org.pushingpixels.aurora.painter.overlay.AuroraOverlayPainter
-import java.util.*
+import java.util.Collections
 
 data class Painters(
     val fillPainter: AuroraFillPainter = SimpleFillPainter(),

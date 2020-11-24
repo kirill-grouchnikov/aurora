@@ -37,7 +37,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.ComponentState
-import java.util.*
 
 internal class StateContributionInfo(var start: Float, var end: Float) {
     var contribution: Float
@@ -114,7 +113,7 @@ internal class StateTransitionTracker(
     var currentState = ComponentState.getState(
         isEnabled = enabled,
         isRollover = false,
-        isSelected = false,
+        isSelected = selected,
         isPressed = false
     )
 
