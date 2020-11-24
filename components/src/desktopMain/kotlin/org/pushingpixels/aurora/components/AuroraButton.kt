@@ -120,7 +120,6 @@ private fun AuroraToggleButton(
     val stateTransitionTracker =
         remember { StateTransitionTracker(enabled, selected, interactionState, stateTransitionFloat) }
 
-
     // Transition for the selection state
     if (!::SelectedTransitionDefinition.isInitialized) {
         SelectedTransitionDefinition =

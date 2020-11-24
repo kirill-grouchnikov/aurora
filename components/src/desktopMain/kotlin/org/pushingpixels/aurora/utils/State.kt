@@ -117,7 +117,6 @@ internal class StateTransitionTracker(
         isPressed = false
     )
 
-    //@Composable
     fun update(isEnabled: Boolean, isPressed: Boolean, duration: Int, dump: Boolean = false) {
         var duration = duration
         currentState = ComponentState.getState(

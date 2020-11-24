@@ -226,7 +226,6 @@ internal fun getStateAwareColor(
     modelStateInfo: ModelStateInfo,
     decorationAreaType: DecorationAreaType,
     associationKind: ColorSchemeAssociationKind,
-    dump: Boolean = false,
     query: (AuroraColorScheme) -> Color,
 ): Color {
     val currState = modelStateInfo.currModelState
@@ -237,11 +236,9 @@ internal fun getStateAwareColor(
     )
 
     var result = query.invoke(currStateScheme)
-    if (dump) println("From $currState at ${currStateScheme.displayName} -> $result")
 
     if (currState.isDisabled || modelStateInfo.stateContributionMap.size == 1) {
         // Disabled state or only one active state being tracked
-        if (dump) println("\tReturning (one active state)")
         return result
     }
 
@@ -264,7 +261,6 @@ internal fun getStateAwareColor(
 
         // Interpolate the color based on the scheme and contribution amount
         result = getInterpolatedColor(result, query.invoke(contributionScheme), 1.0f - amount)
-        if (dump) println("\tvia ${contribution.key} / $amount at ${contributionScheme.displayName} -> $result")
     }
 
     return result
