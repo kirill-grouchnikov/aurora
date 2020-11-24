@@ -136,7 +136,6 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     ) {
                         AuroraText("under")
                     }
-
                 }
             }
         }

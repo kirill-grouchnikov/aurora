@@ -36,7 +36,6 @@ import androidx.compose.animation.transition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Interaction
 import androidx.compose.foundation.InteractionState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.Composable
@@ -45,9 +44,9 @@ import androidx.compose.runtime.Providers
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.clipRect
-import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.unit.dp
@@ -256,54 +255,55 @@ private fun AuroraToggleButton(
             val deltaTop = if (sides.openSides.contains(Side.TOP)) openDelta else 0
             val deltaBottom = if (sides.openSides.contains(Side.BOTTOM)) openDelta else 0
 
-            clipRect(left = 0.0f, top = 0.0f, right = width, bottom = height) {
-                translate(left = -deltaLeft.toFloat(), top = -deltaTop.toFloat()) {
-                    val outline = buttonShaper.getButtonOutline(
+            withTransform({
+                clipRect(left = 0.0f, top = 0.0f, right = width, bottom = height, clipOp = ClipOp.Intersect)
+                translate(left = -deltaLeft.toFloat(), top = -deltaTop.toFloat())
+            }) {
+                val outline = buttonShaper.getButtonOutline(
+                    width = width + deltaLeft + deltaRight,
+                    height = height + deltaTop + deltaBottom,
+                    extraInsets = 0.5f,
+                    isInner = false,
+                    sides = sides,
+                    drawScope = this
+                )
+
+                // Populate the cached color scheme for filling the button container
+                drawingCache.colorScheme.ultraLight = fillUltraLight
+                drawingCache.colorScheme.extraLight = fillExtraLight
+                drawingCache.colorScheme.light = fillLight
+                drawingCache.colorScheme.mid = fillMid
+                drawingCache.colorScheme.dark = fillDark
+                drawingCache.colorScheme.ultraDark = fillUltraDark
+                drawingCache.colorScheme.isDark = fillIsDark
+                drawingCache.colorScheme.foreground = textColor
+                fillPainter.paintContourBackground(
+                    this, this.size, outline, drawingCache.colorScheme, alpha
+                )
+
+                // Populate the cached color scheme for drawing the button border
+                drawingCache.colorScheme.ultraLight = borderUltraLight
+                drawingCache.colorScheme.extraLight = borderExtraLight
+                drawingCache.colorScheme.light = borderLight
+                drawingCache.colorScheme.mid = borderMid
+                drawingCache.colorScheme.dark = borderDark
+                drawingCache.colorScheme.ultraDark = borderUltraDark
+                drawingCache.colorScheme.isDark = borderIsDark
+                drawingCache.colorScheme.foreground = textColor
+
+                val innerOutline = if (borderPainter.isPaintingInnerOutline)
+                    buttonShaper.getButtonOutline(
                         width = width + deltaLeft + deltaRight,
                         height = height + deltaTop + deltaBottom,
-                        extraInsets = 0.5f,
-                        isInner = false,
+                        extraInsets = 1.0f,
+                        isInner = true,
                         sides = sides,
                         drawScope = this
-                    )
+                    ) else null
 
-                    // Populate the cached color scheme for filling the button container
-                    drawingCache.colorScheme.ultraLight = fillUltraLight
-                    drawingCache.colorScheme.extraLight = fillExtraLight
-                    drawingCache.colorScheme.light = fillLight
-                    drawingCache.colorScheme.mid = fillMid
-                    drawingCache.colorScheme.dark = fillDark
-                    drawingCache.colorScheme.ultraDark = fillUltraDark
-                    drawingCache.colorScheme.isDark = fillIsDark
-                    drawingCache.colorScheme.foreground = textColor
-                    fillPainter.paintContourBackground(
-                        this, this.size, outline, drawingCache.colorScheme, alpha
-                    )
-
-                    // Populate the cached color scheme for drawing the button border
-                    drawingCache.colorScheme.ultraLight = borderUltraLight
-                    drawingCache.colorScheme.extraLight = borderExtraLight
-                    drawingCache.colorScheme.light = borderLight
-                    drawingCache.colorScheme.mid = borderMid
-                    drawingCache.colorScheme.dark = borderDark
-                    drawingCache.colorScheme.ultraDark = borderUltraDark
-                    drawingCache.colorScheme.isDark = borderIsDark
-                    drawingCache.colorScheme.foreground = textColor
-
-                    val innerOutline = if (borderPainter.isPaintingInnerOutline)
-                        buttonShaper.getButtonOutline(
-                            width = width + deltaLeft + deltaRight,
-                            height = height + deltaTop + deltaBottom,
-                            extraInsets = 1.0f,
-                            isInner = true,
-                            sides = sides,
-                            drawScope = this
-                        ) else null
-
-                    borderPainter.paintBorder(
-                        this, this.size, outline, innerOutline, drawingCache.colorScheme, alpha
-                    )
-                }
+                borderPainter.paintBorder(
+                    this, this.size, outline, innerOutline, drawingCache.colorScheme, alpha
+                )
             }
         }
 
