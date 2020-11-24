@@ -36,6 +36,7 @@ import androidx.compose.animation.transition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Interaction
 import androidx.compose.foundation.InteractionState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.Composable
@@ -199,6 +200,239 @@ private fun AuroraToggleButton(
                     stateTransitionTracker.selectedState.value = it
                     onSelectedChange.invoke(it)
                 }),
+        contentAlignment = Alignment.TopStart
+    ) {
+        // Populate the cached color scheme for filling the button container
+        // based on the current model state info
+        populateColorScheme(
+            drawingCache.colorScheme, stateTransitionTracker.modelStateInfo, decorationAreaType,
+            ColorSchemeAssociationKind.FILL
+        )
+        // And retrieve the container fill colors
+        val fillUltraLight = drawingCache.colorScheme.ultraLightColor
+        val fillExtraLight = drawingCache.colorScheme.extraLightColor
+        val fillLight = drawingCache.colorScheme.lightColor
+        val fillMid = drawingCache.colorScheme.midColor
+        val fillDark = drawingCache.colorScheme.darkColor
+        val fillUltraDark = drawingCache.colorScheme.ultraDarkColor
+        val fillIsDark = drawingCache.colorScheme.isDark
+
+        val textColor = getTextColor(
+            modelStateInfo = stateTransitionTracker.modelStateInfo,
+            skinColors = AuroraSkin.colors,
+            decorationAreaType = AuroraSkin.decorationArea.type,
+            isTextInFilledArea = true
+        )
+
+        // Populate the cached color scheme for drawing the button border
+        // based on the current model state info
+        populateColorScheme(
+            drawingCache.colorScheme, stateTransitionTracker.modelStateInfo, decorationAreaType,
+            ColorSchemeAssociationKind.BORDER
+        )
+        // And retrieve the border colors
+        val borderUltraLight = drawingCache.colorScheme.ultraLightColor
+        val borderExtraLight = drawingCache.colorScheme.extraLightColor
+        val borderLight = drawingCache.colorScheme.lightColor
+        val borderMid = drawingCache.colorScheme.midColor
+        val borderDark = drawingCache.colorScheme.darkColor
+        val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
+        val borderIsDark = drawingCache.colorScheme.isDark
+
+        val fillPainter = AuroraSkin.painters.fillPainter
+        val borderPainter = AuroraSkin.painters.borderPainter
+        val buttonShaper = AuroraSkin.buttonShaper
+
+        val alpha = if (stateTransitionTracker.currentState.isDisabled)
+            AuroraSkin.colors.getAlpha(decorationAreaType, stateTransitionTracker.currentState) else 1.0f
+
+        Canvas(modifier.matchParentSize()) {
+            val width = this.size.width
+            val height = this.size.height
+
+            val openDelta = 3
+            val deltaLeft = if (sides.openSides.contains(Side.LEFT)) openDelta else 0
+            val deltaRight = if (sides.openSides.contains(Side.RIGHT)) openDelta else 0
+            val deltaTop = if (sides.openSides.contains(Side.TOP)) openDelta else 0
+            val deltaBottom = if (sides.openSides.contains(Side.BOTTOM)) openDelta else 0
+
+            withTransform({
+                clipRect(left = 0.0f, top = 0.0f, right = width, bottom = height, clipOp = ClipOp.Intersect)
+                translate(left = -deltaLeft.toFloat(), top = -deltaTop.toFloat())
+            }) {
+                val outline = buttonShaper.getButtonOutline(
+                    width = width + deltaLeft + deltaRight,
+                    height = height + deltaTop + deltaBottom,
+                    extraInsets = 0.5f,
+                    isInner = false,
+                    sides = sides,
+                    drawScope = this
+                )
+
+                // Populate the cached color scheme for filling the button container
+                drawingCache.colorScheme.ultraLight = fillUltraLight
+                drawingCache.colorScheme.extraLight = fillExtraLight
+                drawingCache.colorScheme.light = fillLight
+                drawingCache.colorScheme.mid = fillMid
+                drawingCache.colorScheme.dark = fillDark
+                drawingCache.colorScheme.ultraDark = fillUltraDark
+                drawingCache.colorScheme.isDark = fillIsDark
+                drawingCache.colorScheme.foreground = textColor
+                fillPainter.paintContourBackground(
+                    this, this.size, outline, drawingCache.colorScheme, alpha
+                )
+
+                // Populate the cached color scheme for drawing the button border
+                drawingCache.colorScheme.ultraLight = borderUltraLight
+                drawingCache.colorScheme.extraLight = borderExtraLight
+                drawingCache.colorScheme.light = borderLight
+                drawingCache.colorScheme.mid = borderMid
+                drawingCache.colorScheme.dark = borderDark
+                drawingCache.colorScheme.ultraDark = borderUltraDark
+                drawingCache.colorScheme.isDark = borderIsDark
+                drawingCache.colorScheme.foreground = textColor
+
+                val innerOutline = if (borderPainter.isPaintingInnerOutline)
+                    buttonShaper.getButtonOutline(
+                        width = width + deltaLeft + deltaRight,
+                        height = height + deltaTop + deltaBottom,
+                        extraInsets = 1.0f,
+                        isInner = true,
+                        sides = sides,
+                        drawScope = this
+                    ) else null
+
+                borderPainter.paintBorder(
+                    this, this.size, outline, innerOutline, drawingCache.colorScheme, alpha
+                )
+            }
+        }
+
+        // Pass our text color to the children
+        Providers(AmbientTextColor provides textColor) {
+            Row(
+                Modifier
+                    .defaultMinSizeConstraints(
+                        minWidth = 64.dp,
+                        minHeight = 36.dp
+                    )
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                content = content
+            )
+        }
+    }
+}
+
+@Composable
+fun AuroraButton(
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    onClick: () -> Unit = {},
+    sides: ButtonSides = ButtonSides(),
+    content: @Composable RowScope.() -> Unit
+) {
+    AuroraButton(
+        modifier = modifier,
+        enabled = enabled,
+        onClick = onClick,
+        sides = sides,
+        interactionState = remember { InteractionState() },
+        stateTransitionFloat = AnimatedFloat(0.0f, AmbientAnimationClock.current.asDisposableClock()),
+        content = content
+    )
+}
+
+@Composable
+private fun AuroraButton(
+    modifier: Modifier,
+    enabled: Boolean,
+    onClick: () -> Unit,
+    sides: ButtonSides,
+    interactionState: InteractionState,
+    stateTransitionFloat: AnimatedFloat,
+    content: @Composable RowScope.() -> Unit
+) {
+    val drawingCache = remember { AuroraDrawingCache() }
+
+    val stateTransitionTracker =
+        remember { StateTransitionTracker(enabled, false, stateTransitionFloat) }
+
+    // Transition for the selection state
+    if (!::SelectedTransitionDefinition.isInitialized) {
+        SelectedTransitionDefinition =
+            getSelectedTransitionDefinition(AuroraSkin.animationConfig.regular)
+    }
+    val selectionTransitionState = transition(
+        definition = SelectedTransitionDefinition,
+        initState = stateTransitionTracker.selectedState.value,
+        toState = stateTransitionTracker.selectedState.value
+    )
+    // Transition for the rollover state
+    if (!::RolloverTransitionDefinition.isInitialized) {
+        RolloverTransitionDefinition =
+            getRolloverTransitionDefinition(AuroraSkin.animationConfig.regular)
+    }
+    val rolloverTransitionState = transition(
+        definition = RolloverTransitionDefinition,
+        initState = stateTransitionTracker.rolloverState.value,
+        toState = stateTransitionTracker.rolloverState.value
+    )
+    // Transition for the pressed state
+    if (!::PressedTransitionDefinition.isInitialized) {
+        PressedTransitionDefinition =
+            getPressedTransitionDefinition(AuroraSkin.animationConfig.regular)
+    }
+    val pressedTransitionState = transition(
+        definition = PressedTransitionDefinition,
+        initState = Interaction.Pressed in interactionState,
+        toState = Interaction.Pressed in interactionState
+    )
+    // Transition for the enabled state
+    if (!::EnabledTransitionDefinition.isInitialized) {
+        EnabledTransitionDefinition =
+            getEnabledTransitionDefinition(AuroraSkin.animationConfig.regular)
+    }
+    val enabledTransitionState = transition(
+        definition = EnabledTransitionDefinition,
+        initState = enabled,
+        toState = enabled
+    )
+
+    // TODO - how to trigger the state transition animation without these transitions
+    //  that track the changes in different states?
+    selectionTransitionState[SelectionTransitionFraction]
+    rolloverTransitionState[RolloverTransitionFraction]
+    pressedTransitionState[PressedTransitionFraction]
+    enabledTransitionState[EnabledTransitionFraction]
+
+    stateTransitionTracker.update(
+        enabled, Interaction.Pressed in interactionState,
+        AuroraSkin.animationConfig.regular
+    )
+
+    val decorationAreaType = AuroraSkin.decorationArea.type
+    Box(
+        modifier = modifier
+            .pointerMoveFilter(
+                onEnter = {
+                    stateTransitionTracker.rolloverState.value = true
+                    false
+                },
+                onExit = {
+                    stateTransitionTracker.rolloverState.value = false
+                    false
+                },
+                onMove = {
+                    false
+                })
+            .clickable(
+                enabled = enabled,
+                onClick = onClick,
+                interactionState = interactionState,
+                indication = null
+            ),
         contentAlignment = Alignment.TopStart
     ) {
         // Populate the cached color scheme for filling the button container

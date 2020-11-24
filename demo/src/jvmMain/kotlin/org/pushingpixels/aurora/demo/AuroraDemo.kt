@@ -67,6 +67,7 @@ fun main() {
 
 @Composable
 fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
+    // TODO - convert this to use ConstraintLayout
     Row(
         verticalAlignment = Alignment.Top,
         modifier = modifier
@@ -82,60 +83,68 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
             AuroraText(text = "content enabled")
         }
         Column(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            AuroraCheckBox(
-                selected = selected,
-                onSelectedChange = { println("Selected checkbox? $it") },
-                enabled = enabled.value
-            ) {
-                AuroraText(text = "sample check")
-            }
-            AuroraRadioButton(
-                selected = selected,
-                onSelectedChange = { println("Selected radio? $it") },
-                enabled = enabled.value
-            ) {
-                AuroraText(text = "sample radio")
-            }
             Row(modifier = Modifier.fillMaxWidth()) {
-                AuroraToggleButton(enabled = enabled.value,
+                AuroraCheckBox(
+                    selected = selected,
+                    onSelectedChange = { println("Selected checkbox? $it") },
+                    enabled = enabled.value
+                ) {
+                    AuroraText(text = "sample check")
+                }
+                AuroraRadioButton(
+                    selected = selected,
+                    onSelectedChange = { println("Selected radio? $it") },
+                    enabled = enabled.value
+                ) {
+                    AuroraText(text = "sample radio")
+                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                AuroraButton(
+                    enabled = enabled.value,
+                    onClick = { println("Clicked!") }) {
+                    AuroraText("sample button")
+                }
+                AuroraToggleButton(
+                    enabled = enabled.value,
                     selected = selected,
                     onSelectedChange = { println("Selected toggle? $it") }) {
                     AuroraText("sample toggle")
                 }
-
-                Row(
-                    modifier = Modifier.padding(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(0.dp)
+            }
+            Row(modifier = Modifier.fillMaxWidth()) {
+                AuroraToggleButton(
+                    enabled = enabled.value,
+                    selected = false,
+                    onSelectedChange = { println("Selected bold? $it") },
+                    sides = ButtonSides(straightSides = setOf(Side.RIGHT))
                 ) {
-                    AuroraToggleButton(
-                        enabled = enabled.value,
-                        selected = false,
-                        onSelectedChange = { println("Selected bold? $it") },
-                        sides = ButtonSides(straightSides = setOf(Side.RIGHT))
-                    ) {
-                        AuroraText("bold")
-                    }
-                    AuroraToggleButton(
-                        enabled = enabled.value,
-                        selected = true,
-                        onSelectedChange = { println("Selected italic? $it") },
-                        sides = ButtonSides(
-                            straightSides = setOf(Side.LEFT, Side.RIGHT),
-                            openSides = setOf(Side.LEFT, Side.RIGHT)
-                        )
-                    ) {
-                        AuroraText("italic")
-                    }
-                    AuroraToggleButton(
-                        enabled = enabled.value,
-                        selected = false,
-                        onSelectedChange = { println("Selected under? $it") },
-                        sides = ButtonSides(straightSides = setOf(Side.LEFT))
-                    ) {
-                        AuroraText("under")
-                    }
+                    AuroraText("bold")
+                }
+                AuroraToggleButton(
+                    enabled = enabled.value,
+                    selected = true,
+                    onSelectedChange = { println("Selected italic? $it") },
+                    sides = ButtonSides(
+                        straightSides = setOf(Side.LEFT, Side.RIGHT),
+                        openSides = setOf(Side.LEFT, Side.RIGHT)
+                    )
+                ) {
+                    AuroraText("italic")
+                }
+                AuroraToggleButton(
+                    enabled = enabled.value,
+                    selected = false,
+                    onSelectedChange = { println("Selected under? $it") },
+                    sides = ButtonSides(straightSides = setOf(Side.LEFT))
+                ) {
+                    AuroraText("under")
                 }
             }
         }
