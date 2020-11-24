@@ -97,7 +97,6 @@ internal class ModelStateInfo(var currModelState: ComponentState) {
 internal class StateTransitionTracker(
     enabled: Boolean,
     selected: Boolean,
-    private val interactionState: InteractionState,
     private val stateTransitionFloat: AnimatedFloat
 ) {
     var selectedState: MutableState<Boolean> = mutableStateOf(selected)

@@ -121,7 +121,7 @@ private fun AuroraCheckBox(
     val drawingCache = remember { CheckBoxDrawingCache() }
 
     val stateTransitionTracker =
-        remember { StateTransitionTracker(enabled, selected, interactionState, stateTransitionFloat) }
+        remember { StateTransitionTracker(enabled, selected, stateTransitionFloat) }
     val markAlpha = remember { mutableStateOf(if (selected) 1.0f else 0.0f) }
 
     // Transition for the selection state

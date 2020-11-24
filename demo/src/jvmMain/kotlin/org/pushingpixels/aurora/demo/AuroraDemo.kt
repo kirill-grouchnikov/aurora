@@ -39,9 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.AuroraWindow
-import org.pushingpixels.aurora.DecorationArea
-import org.pushingpixels.aurora.DecorationAreaType
+import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.components.*
 import org.pushingpixels.aurora.skin.marinerSkin
 
@@ -100,10 +98,46 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
             ) {
                 AuroraText(text = "sample radio")
             }
-            AuroraToggleButton(enabled = enabled.value,
-                selected = selected,
-                onSelectedChange = { println("Selected toggle? $it") }) {
-                AuroraText("sample toggle")
+            Row(modifier = Modifier.fillMaxWidth()) {
+                AuroraToggleButton(enabled = enabled.value,
+                    selected = selected,
+                    onSelectedChange = { println("Selected toggle? $it") }) {
+                    AuroraText("sample toggle")
+                }
+
+                Row(
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(0.dp)
+                ) {
+                    AuroraToggleButton(
+                        enabled = enabled.value,
+                        selected = false,
+                        onSelectedChange = { println("Selected bold? $it") },
+                        sides = ButtonSides(straightSides = setOf(Side.RIGHT))
+                    ) {
+                        AuroraText("bold")
+                    }
+                    AuroraToggleButton(
+                        enabled = enabled.value,
+                        selected = true,
+                        onSelectedChange = { println("Selected italic? $it") },
+                        sides = ButtonSides(
+                            straightSides = setOf(Side.LEFT, Side.RIGHT),
+                            openSides = setOf(Side.LEFT, Side.RIGHT)
+                        )
+                    ) {
+                        AuroraText("italic")
+                    }
+                    AuroraToggleButton(
+                        enabled = enabled.value,
+                        selected = false,
+                        onSelectedChange = { println("Selected under? $it") },
+                        sides = ButtonSides(straightSides = setOf(Side.LEFT))
+                    ) {
+                        AuroraText("under")
+                    }
+
+                }
             }
         }
     }

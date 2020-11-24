@@ -122,7 +122,7 @@ private fun AuroraRadioButton(
     val drawingCache = remember { RadioButtonDrawingCache() }
 
     val stateTransitionTracker =
-        remember { StateTransitionTracker(enabled, selected, interactionState, stateTransitionFloat) }
+        remember { StateTransitionTracker(enabled, selected, stateTransitionFloat) }
     val markAlpha = remember { mutableStateOf(if (selected) 1.0f else 0.0f) }
 
     // Transition for the selection state
