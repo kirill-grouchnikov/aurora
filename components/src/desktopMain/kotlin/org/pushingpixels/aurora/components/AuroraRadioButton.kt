@@ -31,10 +31,13 @@ package org.pushingpixels.aurora.components
 
 import androidx.compose.animation.asDisposableClock
 import androidx.compose.animation.core.AnimatedFloat
+import androidx.compose.animation.core.AnimationEndReason
+import androidx.compose.animation.core.FloatTweenSpec
 import androidx.compose.animation.core.TransitionDefinition
 import androidx.compose.animation.transition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Interaction
+import androidx.compose.foundation.InteractionState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
@@ -50,10 +53,7 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.AmbientTextColor
-import org.pushingpixels.aurora.AuroraSkin
-import org.pushingpixels.aurora.ColorSchemeAssociationKind
-import org.pushingpixels.aurora.ComponentStateFacet
+import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.utils.*
 
 // TODO - should this go into a SizeUtils class?
@@ -61,15 +61,19 @@ private val RadioButtonSize = 14.dp
 
 // This will be initialized on first usage using the getSelectedTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
-private lateinit var SelectedTransitionDefinition: TransitionDefinition<Boolean>
+private lateinit var RBSelectedTransitionDefinition: TransitionDefinition<Boolean>
 
 // This will be initialized on first usage using the getRolloverTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
-private lateinit var RolloverTransitionDefinition: TransitionDefinition<Boolean>
+private lateinit var RBRolloverTransitionDefinition: TransitionDefinition<Boolean>
 
 // This will be initialized on first usage using the getPressedTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
-private lateinit var PressedTransitionDefinition: TransitionDefinition<Boolean>
+private lateinit var RBPressedTransitionDefinition: TransitionDefinition<Boolean>
+
+// This will be initialized on first usage using the getEnabledTransitionDefinition
+// with duration animation coming from [AmbientAnimationConfig]
+private lateinit var RBEnabledTransitionDefinition: TransitionDefinition<Boolean>
 
 @Immutable
 private class RadioButtonDrawingCache(
@@ -115,39 +119,70 @@ private fun AuroraRadioButton(
 ) {
     val drawingCache = remember { RadioButtonDrawingCache() }
 
-    val stateTransitionTracker =
-        remember { StateTransitionTracker(enabled, selected, stateTransitionFloat) }
+//    val stateTransitionTracker =
+//        remember { StateTransitionTracker(enabled, selected, interactionState, stateTransitionFloat) }
+//    println("Updating with enabled=$enabled and pressed=${Interaction.Pressed in interactionState}")
+//    val animationDuration = AuroraSkin.animationConfig.regular
+//    update(enabled, Interaction.Pressed in interactionState,
+//        duration = animationDuration, dump = true)
+//    modelStateInfo.dumpState(stateTransitionFloat.value)
+//    val markAlpha = remember { mutableStateOf(if (selected) 1.0f else 0.0f) }
+    val selectedState = remember { mutableStateOf(selected) }
+    val rolloverState = remember { mutableStateOf(false) }
+    val interactionState = remember { InteractionState() }
+    val isPressed = Interaction.Pressed in interactionState
+
+    val modelStateInfo = remember {
+        ModelStateInfo(
+            ComponentState.getState(
+                isEnabled = enabled,
+                isRollover = false,
+                isSelected = selected,
+                isPressed = isPressed
+            )
+        )
+    }
     val markAlpha = remember { mutableStateOf(if (selected) 1.0f else 0.0f) }
 
     // Transition for the selection state
-    if (!::SelectedTransitionDefinition.isInitialized) {
-        SelectedTransitionDefinition =
+    if (!::RBSelectedTransitionDefinition.isInitialized) {
+        RBSelectedTransitionDefinition =
             getSelectedTransitionDefinition(AuroraSkin.animationConfig.short)
     }
     val selectionTransitionState = transition(
-        definition = SelectedTransitionDefinition,
-        initState = stateTransitionTracker.selectedState.value,
-        toState = stateTransitionTracker.selectedState.value
+        definition = RBSelectedTransitionDefinition,
+        initState = selectedState.value,
+        toState = selectedState.value
     )
     // Transition for the rollover state
-    if (!::RolloverTransitionDefinition.isInitialized) {
-        RolloverTransitionDefinition =
+    if (!::RBRolloverTransitionDefinition.isInitialized) {
+        RBRolloverTransitionDefinition =
             getRolloverTransitionDefinition(AuroraSkin.animationConfig.regular)
     }
     val rolloverTransitionState = transition(
-        definition = RolloverTransitionDefinition,
-        initState = stateTransitionTracker.rolloverState.value,
-        toState = stateTransitionTracker.rolloverState.value
+        definition = RBRolloverTransitionDefinition,
+        initState = rolloverState.value,
+        toState = rolloverState.value
     )
     // Transition for the pressed state
-    if (!::PressedTransitionDefinition.isInitialized) {
-        PressedTransitionDefinition =
+    if (!::RBPressedTransitionDefinition.isInitialized) {
+        RBPressedTransitionDefinition =
             getPressedTransitionDefinition(AuroraSkin.animationConfig.regular)
     }
     val pressedTransitionState = transition(
-        definition = PressedTransitionDefinition,
-        initState = Interaction.Pressed in stateTransitionTracker.interactionState,
-        toState = Interaction.Pressed in stateTransitionTracker.interactionState
+        definition = RBPressedTransitionDefinition,
+        initState = isPressed,
+        toState = isPressed
+    )
+    // Transition for the enabled state
+    if (!::RBEnabledTransitionDefinition.isInitialized) {
+        RBEnabledTransitionDefinition =
+            getEnabledTransitionDefinition(AuroraSkin.animationConfig.regular)
+    }
+    val enabledTransitionState = transition(
+        definition = RBEnabledTransitionDefinition,
+        initState = enabled,
+        toState = enabled
     )
 
     // TODO - how to trigger the state transition animation without these transitions
@@ -155,8 +190,88 @@ private fun AuroraRadioButton(
     selectionTransitionState[SelectionTransitionFraction]
     rolloverTransitionState[RolloverTransitionFraction]
     pressedTransitionState[PressedTransitionFraction]
+    enabledTransitionState[EnabledTransitionFraction]
 
-    stateTransitionTracker.update(enabled)
+    val currentState = ComponentState.getState(
+        isEnabled = enabled,
+        isRollover = rolloverState.value,
+        isSelected = selectedState.value,
+        isPressed = isPressed
+    )
+
+    var duration = AuroraSkin.animationConfig.regular
+    if (currentState != modelStateInfo.currModelState) {
+        stateTransitionFloat.stop()
+        //println("******** Have new state to move to $currentState ********")
+        modelStateInfo.dumpState(stateTransitionFloat.value)
+        // Need to transition to the new state
+        if (modelStateInfo.stateContributionMap.containsKey(currentState)) {
+            //println("Already has new state")
+            // Going to a state that is already partially active
+            val transitionPosition = modelStateInfo.stateContributionMap[currentState]!!.contribution
+            duration = (duration * (1.0f - transitionPosition)).toInt()
+            stateTransitionFloat.setBounds(transitionPosition, 1.0f)
+            stateTransitionFloat.snapTo(transitionPosition)
+        } else {
+            //println("Does not have new state (curr state ${modelStateInfo.currModelState}) at ${stateTransitionFloat.value}")
+            stateTransitionFloat.setBounds(0.0f, 1.0f)
+            stateTransitionFloat.snapTo(0.0f)
+            //println("\tat ${stateTransitionFloat.value}")
+        }
+
+        // Create a new contribution map
+        val newContributionMap: MutableMap<ComponentState, StateContributionInfo> = HashMap()
+        if (modelStateInfo.stateContributionMap.containsKey(currentState)) {
+            // 1. the new state goes from current value to 1.0
+            // 2. the rest go from current value to 0.0
+            for ((contribState, currRange) in modelStateInfo.stateContributionMap.entries) {
+                val newEnd = if (contribState == currentState) 1.0f else 0.0f
+                newContributionMap[contribState] = StateContributionInfo(
+                    currRange.contribution, newEnd
+                )
+            }
+        } else {
+            // 1. all existing states go from current value to 0.0
+            // 2. the new state goes from 0.0 to 1.0
+            for ((contribState, currRange) in modelStateInfo.stateContributionMap.entries) {
+                newContributionMap[contribState] = StateContributionInfo(
+                    currRange.contribution, 0.0f
+                )
+            }
+            newContributionMap[currentState] = StateContributionInfo(0.0f, 1.0f)
+        }
+        modelStateInfo.stateContributionMap = newContributionMap
+        modelStateInfo.sync()
+
+        modelStateInfo.currModelState = currentState
+        //println("******** After moving to new state *****")
+        modelStateInfo.dumpState(stateTransitionFloat.value)
+
+        //println("Animating over $duration from ${stateTransitionFloat.value} to 1.0f")
+        stateTransitionFloat.animateTo(
+            targetValue = 1.0f,
+            anim = FloatTweenSpec(duration = duration),
+            onEnd = { endReason, endValue ->
+                //println("Ended with reason $endReason at $endValue / ${stateTransitionFloat.value}")
+                if (endReason == AnimationEndReason.TargetReached) {
+                    modelStateInfo.updateActiveStates(1.0f)
+                    modelStateInfo.clear()
+                    //println("******** After clear (target reached) ********")
+                    modelStateInfo.dumpState(stateTransitionFloat.value)
+                    markAlpha.value =
+                        if (modelStateInfo.currModelState.isFacetActive(ComponentStateFacet.SELECTION)) 1.0f else 0.0f
+                }
+            }
+        )
+
+        //println()
+    }
+
+    if (stateTransitionFloat.isRunning) {
+        modelStateInfo.updateActiveStates(stateTransitionFloat.value)
+        //println("********* During animation ${stateTransitionFloat.value} to ${stateTransitionFloat.targetValue} *******")
+        modelStateInfo.dumpState(stateTransitionFloat.value)
+    }
 
     // The toggleable modifier is set on the checkbox mark, as well as on the
     // content so that the whole thing is clickable to toggle the control.
@@ -165,24 +280,30 @@ private fun AuroraRadioButton(
         modifier = modifier
             .pointerMoveFilter(
                 onEnter = {
-                    stateTransitionTracker.rolloverState.value = true
+                    rolloverState.value = true
                     false
                 },
                 onExit = {
-                    stateTransitionTracker.rolloverState.value = false
+                    rolloverState.value = false
                     false
                 },
                 onMove = {
                     false
                 })
             .toggleable(
-                value = stateTransitionTracker.selectedState.value,
+                value = selectedState.value,
                 onValueChange = {
-                    stateTransitionTracker.selectedState.value = !stateTransitionTracker.selectedState.value
-                    onSelectedChange.invoke(stateTransitionTracker.selectedState.value)
+                    selectedState.value = !selectedState.value
+//                    println("*** After selection toggle!")
+//                    update(isEnabled = enabled,
+//                        isPressed = Interaction.Pressed in interactionState,
+//                        duration = animationDuration,
+//                        dump = true)
+//                    modelStateInfo.dumpState(stateTransitionFloat.value)
+                    onSelectedChange.invoke(selectedState.value)
                 },
                 enabled = enabled,
-                interactionState = stateTransitionTracker.interactionState,
+                interactionState = interactionState,
                 indication = null
             ),
         verticalAlignment = Alignment.CenterVertically
@@ -190,7 +311,7 @@ private fun AuroraRadioButton(
         // Populate the cached color scheme for filling the mark box
         // based on the current model state info
         populateColorScheme(
-            drawingCache.colorScheme, stateTransitionTracker.modelStateInfo, decorationAreaType,
+            drawingCache.colorScheme, modelStateInfo, decorationAreaType,
             ColorSchemeAssociationKind.MARK_BOX
         )
         // And retrieve the mark box colors
@@ -205,7 +326,7 @@ private fun AuroraRadioButton(
         // Populate the cached color scheme for drawing the mark box border
         // based on the current model state info
         populateColorScheme(
-            drawingCache.colorScheme, stateTransitionTracker.modelStateInfo, decorationAreaType,
+            drawingCache.colorScheme, modelStateInfo, decorationAreaType,
             ColorSchemeAssociationKind.BORDER
         )
         // And retrieve the mark box border colors
@@ -218,15 +339,16 @@ private fun AuroraRadioButton(
         val borderIsDark = drawingCache.colorScheme.isDark
 
         // Mark color
+        println("### Getting radio mark color for ${modelStateInfo.currModelState}")
         val markColor = getStateAwareColor(
-            stateTransitionTracker.modelStateInfo,
-            decorationAreaType, ColorSchemeAssociationKind.MARK
+            modelStateInfo,
+            decorationAreaType, ColorSchemeAssociationKind.MARK, true
         ) { it.markColor }
 
         // Checkmark alpha is the combined strength of all the
         // states that have the selection bit turned on
         markAlpha.value =
-            stateTransitionTracker.modelStateInfo.stateContributionMap
+            modelStateInfo.stateContributionMap
                 .filter { it.key.isFacetActive(ComponentStateFacet.SELECTION) }
                 .map { it.value }
                 .sumByDouble { it.contribution.toDouble() }
@@ -237,13 +359,13 @@ private fun AuroraRadioButton(
         // Text color. Note that the text doesn't "participate" in state changes that
         // involve rollover, selection or pressed bits
         val textColor = getTextColor(
-            modelStateInfo = stateTransitionTracker.modelStateInfo,
+            modelStateInfo = modelStateInfo,
             skinColors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
             isTextInFilledArea = false
         )
-        val alpha = if (stateTransitionTracker.currentState.isDisabled)
-            AuroraSkin.colors.getAlpha(decorationAreaType, stateTransitionTracker.currentState) else 1.0f
+        val alpha = if (currentState.isDisabled)
+            AuroraSkin.colors.getAlpha(decorationAreaType, currentState) else 1.0f
 
         val fillPainter = AuroraSkin.painters.fillPainter
         val borderPainter = AuroraSkin.painters.borderPainter
@@ -316,6 +438,8 @@ private fun AuroraRadioButton(
 
             // Note that we apply alpha twice - once for the selected / checked
             // state or transition, and the second time based on the enabled state
+            println("Radio mark for " + currentState + " mark alpha "
+                     + markAlpha.value + " and alpha " + alpha)
             drawOutline(
                 outline = outlineMark,
                 color = markColor.copy(alpha = markAlpha.value),

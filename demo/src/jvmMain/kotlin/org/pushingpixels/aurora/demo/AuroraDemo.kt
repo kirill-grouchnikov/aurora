@@ -43,7 +43,6 @@ import org.pushingpixels.aurora.AuroraWindow
 import org.pushingpixels.aurora.DecorationArea
 import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.components.*
-import org.pushingpixels.aurora.skin.autumnSkin
 import org.pushingpixels.aurora.skin.marinerSkin
 
 fun main() {

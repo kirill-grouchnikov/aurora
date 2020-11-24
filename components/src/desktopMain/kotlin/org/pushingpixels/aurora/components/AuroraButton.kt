@@ -35,6 +35,7 @@ import androidx.compose.animation.core.TransitionDefinition
 import androidx.compose.animation.transition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Interaction
+import androidx.compose.foundation.InteractionState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.Composable
@@ -62,6 +63,10 @@ private lateinit var RolloverTransitionDefinition: TransitionDefinition<Boolean>
 // This will be initialized on first usage using the getPressedTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
 private lateinit var PressedTransitionDefinition: TransitionDefinition<Boolean>
+
+// This will be initialized on first usage using the getEnabledTransitionDefinition
+// with duration animation coming from [AmbientAnimationConfig]
+private lateinit var EnabledTransitionDefinition: TransitionDefinition<Boolean>
 
 @Immutable
 private class AuroraDrawingCache(
@@ -93,6 +98,7 @@ fun AuroraToggleButton(
         selected = selected,
         onSelectedChange = onSelectedChange,
         sides = sides,
+        interactionState = remember { InteractionState() },
         stateTransitionFloat = AnimatedFloat(0.0f, AmbientAnimationClock.current.asDisposableClock()),
         content = content
     )
@@ -105,13 +111,14 @@ private fun AuroraToggleButton(
     selected: Boolean,
     onSelectedChange: (Boolean) -> Unit,
     sides: ButtonSides,
+    interactionState: InteractionState,
     stateTransitionFloat: AnimatedFloat,
     content: @Composable RowScope.() -> Unit
 ) {
     val drawingCache = remember { AuroraDrawingCache() }
 
     val stateTransitionTracker =
-        remember { StateTransitionTracker(enabled, selected, stateTransitionFloat) }
+        remember { StateTransitionTracker(enabled, selected, interactionState, stateTransitionFloat) }
 
 
     // Transition for the selection state
@@ -141,8 +148,18 @@ private fun AuroraToggleButton(
     }
     val pressedTransitionState = transition(
         definition = PressedTransitionDefinition,
-        initState = Interaction.Pressed in stateTransitionTracker.interactionState,
-        toState = Interaction.Pressed in stateTransitionTracker.interactionState
+        initState = Interaction.Pressed in interactionState,
+        toState = Interaction.Pressed in interactionState
+    )
+    // Transition for the enabled state
+    if (!::EnabledTransitionDefinition.isInitialized) {
+        EnabledTransitionDefinition =
+            getEnabledTransitionDefinition(AuroraSkin.animationConfig.regular)
+    }
+    val enabledTransitionState = transition(
+        definition = EnabledTransitionDefinition,
+        initState = enabled,
+        toState = enabled
     )
 
     // TODO - how to trigger the state transition animation without these transitions
@@ -150,8 +167,10 @@ private fun AuroraToggleButton(
     selectionTransitionState[SelectionTransitionFraction]
     rolloverTransitionState[RolloverTransitionFraction]
     pressedTransitionState[PressedTransitionFraction]
+    enabledTransitionState[EnabledTransitionFraction]
 
-    stateTransitionTracker.update(enabled)
+    stateTransitionTracker.update(enabled, Interaction.Pressed in interactionState,
+        AuroraSkin.animationConfig.regular)
 
     val decorationAreaType = AuroraSkin.decorationArea.type
     Box(
@@ -171,7 +190,7 @@ private fun AuroraToggleButton(
             .toggleable(
                 value = stateTransitionTracker.selectedState.value,
                 enabled = enabled,
-                interactionState = stateTransitionTracker.interactionState,
+                interactionState = interactionState,
                 indication = null,
                 onValueChange = {
                     stateTransitionTracker.selectedState.value = it

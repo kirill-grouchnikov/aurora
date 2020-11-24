@@ -97,11 +97,11 @@ internal class ModelStateInfo(var currModelState: ComponentState) {
 internal class StateTransitionTracker(
     enabled: Boolean,
     selected: Boolean,
+    private val interactionState: InteractionState,
     private val stateTransitionFloat: AnimatedFloat
 ) {
     var selectedState: MutableState<Boolean> = mutableStateOf(selected)
     var rolloverState: MutableState<Boolean> = mutableStateOf(false)
-    var interactionState = InteractionState()
     var modelStateInfo: ModelStateInfo =
         ModelStateInfo(
             ComponentState.getState(
@@ -117,9 +117,9 @@ internal class StateTransitionTracker(
         isPressed = false
     )
 
-    @Composable
-    fun update(isEnabled: Boolean) {
-        val isPressed = Interaction.Pressed in interactionState
+    //@Composable
+    fun update(isEnabled: Boolean, isPressed: Boolean, duration: Int, dump: Boolean = false) {
+        var duration = duration
         currentState = ComponentState.getState(
             isEnabled = isEnabled,
             isRollover = rolloverState.value,
@@ -127,11 +127,12 @@ internal class StateTransitionTracker(
             isPressed = isPressed
         )
 
-        var duration = AuroraSkin.animationConfig.regular
         if (currentState != modelStateInfo.currModelState) {
             stateTransitionFloat.stop()
-            //println("******** Have new state to move to $currentState ********")
-            //modelStateInfo.dumpState(stateTransitionFloat.value)
+            if (dump) {
+                println("******** Have new state to move to $currentState ********")
+                modelStateInfo.dumpState(stateTransitionFloat.value)
+            }
             // Need to transition to the new state
             if (modelStateInfo.stateContributionMap.containsKey(currentState)) {
                 //println("Already has new state")
@@ -172,8 +173,10 @@ internal class StateTransitionTracker(
             modelStateInfo.sync()
 
             modelStateInfo.currModelState = currentState
-            //println("******** After moving to new state *****")
-            //modelStateInfo.dumpState(stateTransitionFloat.value)
+            if (dump) {
+                println("******** After moving to new state *****")
+                modelStateInfo.dumpState(stateTransitionFloat.value)
+            }
 
             //println("Animating over $duration from ${stateTransitionFloat.value} to 1.0f")
             stateTransitionFloat.animateTo(
@@ -195,8 +198,10 @@ internal class StateTransitionTracker(
 
         if (stateTransitionFloat.isRunning) {
             modelStateInfo.updateActiveStates(stateTransitionFloat.value)
-            //("********* During animation ${stateTransitionFloat.value} to ${stateTransitionFloat.targetValue} *******")
-            //modelStateInfo.dumpState(stateTransitionFloat.value)
+            if (dump) {
+                println("********* During animation ${stateTransitionFloat.value} to ${stateTransitionFloat.targetValue} *******")
+                modelStateInfo.dumpState(stateTransitionFloat.value)
+            }
         }
 
     }
@@ -205,6 +210,7 @@ internal class StateTransitionTracker(
 internal val SelectionTransitionFraction = FloatPropKey()
 internal val RolloverTransitionFraction = FloatPropKey()
 internal val PressedTransitionFraction = FloatPropKey()
+internal val EnabledTransitionFraction = FloatPropKey()
 
 @Composable
 internal fun getSelectedTransitionDefinition(duration: Int): TransitionDefinition<Boolean> {
@@ -265,6 +271,27 @@ internal fun getPressedTransitionDefinition(duration: Int): TransitionDefinition
 
         transition(true to false) {
             PressedTransitionFraction using tween(durationMillis = duration)
+        }
+    }
+}
+
+@Composable
+internal fun getEnabledTransitionDefinition(duration: Int): TransitionDefinition<Boolean> {
+    return transitionDefinition {
+        state(false) {
+            this[EnabledTransitionFraction] = 0.0f
+        }
+
+        state(true) {
+            this[EnabledTransitionFraction] = 1.0f
+        }
+
+        transition(false to true) {
+            EnabledTransitionFraction using tween(durationMillis = duration)
+        }
+
+        transition(true to false) {
+            EnabledTransitionFraction using tween(durationMillis = duration)
         }
     }
 }
