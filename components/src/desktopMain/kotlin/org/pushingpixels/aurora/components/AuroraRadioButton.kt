@@ -40,11 +40,13 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.unit.dp
@@ -55,7 +57,7 @@ import org.pushingpixels.aurora.ComponentStateFacet
 import org.pushingpixels.aurora.utils.*
 
 // TODO - should this go into a SizeUtils class?
-private val CheckboxSize = 14.dp
+private val RadioButtonSize = 14.dp
 
 // This will be initialized on first usage using the getSelectedTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
@@ -70,7 +72,7 @@ private lateinit var RolloverTransitionDefinition: TransitionDefinition<Boolean>
 private lateinit var PressedTransitionDefinition: TransitionDefinition<Boolean>
 
 @Immutable
-private class CheckBoxDrawingCache(
+private class RadioButtonDrawingCache(
     val colorScheme: MutableColorScheme = MutableColorScheme(
         displayName = "Internal mutable",
         isDark = false,
@@ -81,19 +83,18 @@ private class CheckBoxDrawingCache(
         dark = Color.White,
         ultraDark = Color.White,
         foreground = Color.Black
-    ),
-    val markPath: Path = Path()
+    )
 )
 
 @Composable
-fun AuroraCheckBox(
+fun AuroraRadioButton(
     modifier: Modifier = Modifier,
     selected: Boolean = false,
     onSelectedChange: (Boolean) -> Unit,
     enabled: Boolean = true,
     content: @Composable RowScope.() -> Unit
 ) {
-    AuroraCheckBox(
+    AuroraRadioButton(
         modifier = modifier,
         selected = selected,
         onSelectedChange = onSelectedChange,
@@ -104,7 +105,7 @@ fun AuroraCheckBox(
 }
 
 @Composable
-private fun AuroraCheckBox(
+private fun AuroraRadioButton(
     modifier: Modifier = Modifier,
     selected: Boolean = false,
     onSelectedChange: (Boolean) -> Unit,
@@ -112,7 +113,7 @@ private fun AuroraCheckBox(
     stateTransitionFloat: AnimatedFloat,
     content: @Composable RowScope.() -> Unit
 ) {
-    val drawingCache = remember { CheckBoxDrawingCache() }
+    val drawingCache = remember { RadioButtonDrawingCache() }
 
     val stateTransitionTracker =
         remember { StateTransitionTracker(enabled, selected, stateTransitionFloat) }
@@ -247,17 +248,20 @@ private fun AuroraCheckBox(
         val fillPainter = AuroraSkin.painters.fillPainter
         val borderPainter = AuroraSkin.painters.borderPainter
 
-        Canvas(modifier.wrapContentSize(Alignment.Center).size(CheckboxSize)) {
+        Canvas(modifier.wrapContentSize(Alignment.Center).size(RadioButtonSize)) {
             val width = this.size.width
             val height = this.size.height
 
-            val outline = getBaseOutline(
-                width = this.size.width,
-                height = this.size.height,
-                radius = 3.0f.dp.toPx(),
-                straightSides = null,
-                insets = 0.5f
-            )
+            val outline = Outline.Generic(Path().also {
+                it.addOval(
+                    Rect(
+                        left = 0.5f,
+                        top = 0.5f,
+                        right = width - 1.0f,
+                        bottom = height - 1.0f
+                    )
+                )
+            })
 
             // Populate the cached color scheme for filling the markbox
             drawingCache.colorScheme.ultraLight = fillUltraLight
@@ -282,48 +286,49 @@ private fun AuroraCheckBox(
             drawingCache.colorScheme.isDark = borderIsDark
             drawingCache.colorScheme.foreground = textColor
 
-            val outlineInner = if (borderPainter.isPaintingInnerOutline) getBaseOutline(
-                width = this.size.width,
-                height = this.size.height,
-                radius = 3.0f.dp.toPx() - 1,
-                straightSides = null,
-                insets = 2.0f
-            ) else null
+            val outlineInner = if (borderPainter.isPaintingInnerOutline) Outline.Generic(Path().also {
+                it.addOval(
+                    Rect(
+                        left = 1.0f,
+                        top = 1.0f,
+                        right = width - 2.0f,
+                        bottom = height - 2.0f
+                    )
+                )
+            }) else null
 
             borderPainter.paintBorder(
                 this, this.size, outline, outlineInner, drawingCache.colorScheme, alpha
             )
 
-            // Draw the checkbox mark with the alpha that corresponds to the current
+            // Draw the radio mark with the alpha that corresponds to the current
             // selection and potential transition
-            val markStroke = 0.12f * width
-
-            with(drawingCache) {
-                markPath.reset()
-                markPath.moveTo(0.25f * width, 0.48f * height)
-                markPath.lineTo(0.48f * width, 0.73f * height)
-                markPath.lineTo(0.76f * width, 0.28f * height)
-
-                // Note that we apply alpha twice - once for the selected / checked
-                // state or transition, and the second time based on the enabled state
-                drawPath(
-                    path = markPath,
-                    color = markColor.copy(alpha = markAlpha.value),
-                    style = Stroke(
-                        width = markStroke,
-                        cap = StrokeCap.Round,
-                        join = StrokeJoin.Round
-                    ),
-                    alpha = alpha
+            val markCenter = this.size.width / 2.0f
+            val markRadius = this.size.width / 4.5f
+            val outlineMark = Outline.Generic(Path().also {
+                it.addOval(
+                    Rect(
+                        center = Offset(markCenter, markCenter),
+                        radius = markRadius
+                    )
                 )
-            }
+            })
+
+            // Note that we apply alpha twice - once for the selected / checked
+            // state or transition, and the second time based on the enabled state
+            drawOutline(
+                outline = outlineMark,
+                color = markColor.copy(alpha = markAlpha.value),
+                style = Fill,
+                alpha = alpha
+            )
         }
         Providers(AmbientTextColor provides textColor) {
             Row(
                 Modifier
                     .defaultMinSizeConstraints(
                         minWidth = 0.dp,
-                        minHeight = CheckboxSize
+                        minHeight = RadioButtonSize
                     )
                     .padding(4.dp, 10.dp, 4.dp, 8.dp),
                 horizontalArrangement = Arrangement.Center,

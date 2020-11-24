@@ -42,11 +42,9 @@ import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.AuroraWindow
 import org.pushingpixels.aurora.DecorationArea
 import org.pushingpixels.aurora.DecorationAreaType
-import org.pushingpixels.aurora.components.AuroraCheckBox
-import org.pushingpixels.aurora.components.AuroraText
-import org.pushingpixels.aurora.components.AuroraToggleButton
-import org.pushingpixels.aurora.components.auroraBackground
+import org.pushingpixels.aurora.components.*
 import org.pushingpixels.aurora.skin.autumnSkin
+import org.pushingpixels.aurora.skin.marinerSkin
 
 fun main() {
     // TODO - this is needed until https://github.com/JetBrains/compose-jb/issues/111 is fixed
@@ -54,10 +52,9 @@ fun main() {
 
     AuroraWindow(
         title = "Aurora Demo",
-        skin = autumnSkin(),
-        size = IntSize(500, 400)
+        skin = marinerSkin(),
+        size = IntSize(500, 600)
     ) {
-        //ImageBitmap(100, 100)
         Box(
             modifier = Modifier,
             contentAlignment = Alignment.TopStart
@@ -96,6 +93,13 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                 enabled = enabled.value
             ) {
                 AuroraText(text = "sample check")
+            }
+            AuroraRadioButton(
+                selected = selected,
+                onSelectedChange = { println("Selected radio? $it") },
+                enabled = enabled.value
+            ) {
+                AuroraText(text = "sample radio")
             }
             AuroraToggleButton(enabled = enabled.value,
                 selected = selected,
