@@ -1,1 +1,1 @@
-include(":components", ":demo")
+include(":skin", ":components", ":demo")

@@ -31,8 +31,6 @@ package org.pushingpixels.aurora.components
 
 import androidx.compose.animation.asDisposableClock
 import androidx.compose.animation.core.AnimatedFloat
-import androidx.compose.animation.core.AnimationEndReason
-import androidx.compose.animation.core.FloatTweenSpec
 import androidx.compose.animation.core.TransitionDefinition
 import androidx.compose.animation.transition
 import androidx.compose.foundation.Canvas
@@ -52,6 +50,11 @@ import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
+import org.pushingpixels.aurora.components.utils.*
+import org.pushingpixels.aurora.components.utils.StateTransitionTracker
+import org.pushingpixels.aurora.components.utils.getPressedTransitionDefinition
+import org.pushingpixels.aurora.components.utils.getRolloverTransitionDefinition
+import org.pushingpixels.aurora.components.utils.getSelectedTransitionDefinition
 import org.pushingpixels.aurora.utils.*
 
 // TODO - should this go into a SizeUtils class?

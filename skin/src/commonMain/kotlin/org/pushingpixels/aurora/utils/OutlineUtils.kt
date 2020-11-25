@@ -49,7 +49,7 @@ import org.pushingpixels.aurora.Side
  * Contains all sides which are straight.
  * @return The basic outline for the specified parameters.
  */
-internal fun getBaseOutline(
+fun getBaseOutline(
     width: Float, height: Float,
     radius: Float, straightSides: Set<Side>? = null,
     insets: Float = 0.0f

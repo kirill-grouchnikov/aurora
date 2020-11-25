@@ -27,15 +27,12 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.aurora.utils
+package org.pushingpixels.aurora.components.utils
 
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.Interaction
-import androidx.compose.foundation.InteractionState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.ComponentState
 
 internal class StateContributionInfo(var start: Float, var end: Float) {

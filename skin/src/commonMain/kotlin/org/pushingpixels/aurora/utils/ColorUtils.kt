@@ -41,7 +41,7 @@ import kotlin.math.*
  * color will be to `color2`.
  * @return Interpolated RGB value.
  */
-internal fun getInterpolatedColor(color1: Color, color2: Color, color1Likeness: Float): Color {
+fun getInterpolatedColor(color1: Color, color2: Color, color1Likeness: Float): Color {
     require((color1Likeness >= 0.0f) && (color1Likeness <= 1.0f)) {
         "Color likeness should be in 0.0-1.0 range [is $color1Likeness]"
     }

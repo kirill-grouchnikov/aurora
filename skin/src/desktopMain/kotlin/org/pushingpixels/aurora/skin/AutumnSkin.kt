@@ -42,7 +42,6 @@ import org.pushingpixels.aurora.painter.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.utils.getColorSchemes
 
-
 private fun autumnSkinColors(): AuroraSkinColors {
     val result = AuroraSkinColors()
     val schemes = getColorSchemes(
@@ -95,9 +94,9 @@ private fun autumnSkinColors(): AuroraSkinColors {
     )
 
     result.registerDecorationAreaSchemeBundle(
-        titlePaneSchemeBundle,
-        activeScheme, DecorationAreaType.PRIMARY_TITLE_PANE,
-        DecorationAreaType.SECONDARY_TITLE_PANE
+        bundle = titlePaneSchemeBundle,
+        backgroundColorScheme = activeScheme,
+        DecorationAreaType.PRIMARY_TITLE_PANE, DecorationAreaType.SECONDARY_TITLE_PANE
     )
 
     val backgroundScheme = schemes["Autumn Background"]
