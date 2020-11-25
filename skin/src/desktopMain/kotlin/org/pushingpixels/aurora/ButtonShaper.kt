@@ -30,7 +30,7 @@
 package org.pushingpixels.aurora
 
 import androidx.compose.runtime.staticAmbientOf
-import org.pushingpixels.aurora.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.shaper.AuroraButtonShaper
+import org.pushingpixels.aurora.shaper.ClassicButtonShaper
 
 internal val AmbientButtonShaper  = staticAmbientOf<AuroraButtonShaper> { ClassicButtonShaper() }

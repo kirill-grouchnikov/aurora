@@ -49,13 +49,12 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.*
+import org.pushingpixels.aurora.AmbientTextColor
+import org.pushingpixels.aurora.AuroraSkin
+import org.pushingpixels.aurora.ColorSchemeAssociationKind
+import org.pushingpixels.aurora.ComponentStateFacet
 import org.pushingpixels.aurora.components.utils.*
-import org.pushingpixels.aurora.components.utils.StateTransitionTracker
-import org.pushingpixels.aurora.components.utils.getPressedTransitionDefinition
-import org.pushingpixels.aurora.components.utils.getRolloverTransitionDefinition
-import org.pushingpixels.aurora.components.utils.getSelectedTransitionDefinition
-import org.pushingpixels.aurora.utils.*
+import org.pushingpixels.aurora.utils.getBaseOutline
 
 // TODO - should this go into a SizeUtils class?
 private val CheckboxSize = 14.dp

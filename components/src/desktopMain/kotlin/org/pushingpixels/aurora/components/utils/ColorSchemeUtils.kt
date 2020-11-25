@@ -36,7 +36,6 @@ import org.pushingpixels.aurora.ColorSchemeAssociationKind
 import org.pushingpixels.aurora.ComponentState
 import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.colorscheme.*
-import org.pushingpixels.aurora.components.utils.ModelStateInfo
 import org.pushingpixels.aurora.utils.getInterpolatedColor
 
 internal data class MutableColorScheme(

@@ -53,7 +53,6 @@ import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.components.utils.*
-import org.pushingpixels.aurora.utils.*
 
 
 // This will be initialized on first usage using the getSelectedTransitionDefinition

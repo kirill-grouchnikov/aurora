@@ -31,8 +31,8 @@ package org.pushingpixels.aurora.shaper
 
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import org.pushingpixels.aurora.ButtonSides
 import org.pushingpixels.aurora.AuroraTrait
+import org.pushingpixels.aurora.ButtonSides
 
 /**
  * Button shaper interface.

@@ -33,8 +33,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.AuroraTrait
+import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 
 /**

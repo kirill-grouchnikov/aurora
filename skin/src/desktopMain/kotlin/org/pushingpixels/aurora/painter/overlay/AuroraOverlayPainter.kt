@@ -30,8 +30,8 @@
 package org.pushingpixels.aurora.painter.overlay
 
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.AuroraTrait
+import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 
 /**

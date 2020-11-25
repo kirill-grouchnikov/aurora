@@ -37,7 +37,7 @@ import org.pushingpixels.aurora.painter.decoration.FlatDecorationPainter
 import org.pushingpixels.aurora.painter.fill.AuroraFillPainter
 import org.pushingpixels.aurora.painter.fill.SimpleFillPainter
 import org.pushingpixels.aurora.painter.overlay.AuroraOverlayPainter
-import java.util.Collections
+import java.util.*
 
 data class Painters(
     val fillPainter: AuroraFillPainter = SimpleFillPainter(),
