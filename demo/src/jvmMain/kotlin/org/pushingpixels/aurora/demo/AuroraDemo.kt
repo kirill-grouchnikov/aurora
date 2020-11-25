@@ -146,11 +146,11 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
 @Composable
 fun DemoContent() {
     Column(modifier = Modifier.fillMaxHeight().fillMaxWidth()) {
-        DecorationArea(decorationAreaType = DecorationAreaType.TOOLBAR) {
-            DemoArea(selected = true)
-        }
         DecorationArea(decorationAreaType = DecorationAreaType.HEADER) {
             DemoArea(selected = false)
+        }
+        DecorationArea(decorationAreaType = DecorationAreaType.TOOLBAR) {
+            DemoArea(selected = true)
         }
         DecorationArea(decorationAreaType = DecorationAreaType.NONE) {
             DemoArea(selected = true)
