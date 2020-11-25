@@ -37,8 +37,7 @@ import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.utils.getInterpolatedColor
 
 /**
- * Gradient painter that returns images with subtle 3D gradient appearance. This class is part of
- * officially supported API.
+ * Fill painter that paints a subtle gradient appearance.
  *
  * @author Kirill Grouchnikov
  */

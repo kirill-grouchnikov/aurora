@@ -39,8 +39,7 @@ import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 
 /**
- * Decoration painter that paints a flat appearance. This class is part of
- * officially supported API.
+ * Decoration painter that paints a flat appearance.
  *
  * @author Kirill Grouchnikov
  */

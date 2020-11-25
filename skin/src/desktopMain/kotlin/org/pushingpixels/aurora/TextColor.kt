@@ -32,4 +32,5 @@ package org.pushingpixels.aurora
 import androidx.compose.runtime.ambientOf
 import androidx.compose.ui.graphics.Color
 
-val AmbientTextColor = ambientOf { Color.Black }
+val AmbientTextColor = ambientOf<Color>()
+

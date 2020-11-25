@@ -30,7 +30,6 @@
 package org.pushingpixels.aurora
 
 import androidx.compose.runtime.staticAmbientOf
-import org.pushingpixels.aurora.skin.marinerSkinColors
+import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 
-// TODO - figure out the default (that might need to throw if not initialized)
-val AmbientSkinColors = staticAmbientOf { marinerSkinColors() }
+val AmbientSkinColors = staticAmbientOf<AuroraSkinColors>()

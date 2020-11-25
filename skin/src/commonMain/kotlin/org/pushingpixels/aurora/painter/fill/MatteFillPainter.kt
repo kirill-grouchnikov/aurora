@@ -34,8 +34,7 @@ import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.utils.getInterpolatedColor
 
 /**
- * Fill painter that returns images with matte appearance. This class is part of
- * officially supported API.
+ * Fill painter that returns images with matte appearance.
  *
  * @author Kirill Grouchnikov
  */
