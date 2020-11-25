@@ -30,7 +30,6 @@
 package org.pushingpixels.aurora.demo
 
 import androidx.compose.desktop.initCompose
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -42,25 +41,17 @@ import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.components.*
 import org.pushingpixels.aurora.skin.geminiSkin
-import org.pushingpixels.aurora.skin.marinerSkin
 
 fun main() {
-    // TODO - this is needed until https://github.com/JetBrains/compose-jb/issues/111 is fixed
-    initCompose()
-
     AuroraWindow(
         title = "Aurora Demo",
         skin = geminiSkin(),
         size = IntSize(500, 600)
     ) {
         Box(
-            modifier = Modifier,
+            modifier = Modifier.auroraBackground(),
             contentAlignment = Alignment.TopStart
         ) {
-            Canvas(
-                Modifier.matchParentSize()
-                    .auroraBackground()
-            ) {}
             DemoContent()
         }
     }
