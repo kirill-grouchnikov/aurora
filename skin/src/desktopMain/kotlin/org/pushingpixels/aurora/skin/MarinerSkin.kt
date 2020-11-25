@@ -42,8 +42,7 @@ import org.pushingpixels.aurora.painter.overlay.TopBezelOverlayPainter
 import org.pushingpixels.aurora.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.utils.getColorSchemes
 
-
-fun marinerSkinColors(): AuroraSkinColors {
+private fun marinerSkinColors(): AuroraSkinColors {
     val result = AuroraSkinColors()
     val schemes = getColorSchemes(
         AuroraSkin::class.java.getResourceAsStream(

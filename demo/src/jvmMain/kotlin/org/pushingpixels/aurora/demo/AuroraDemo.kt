@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.components.*
+import org.pushingpixels.aurora.skin.geminiSkin
 import org.pushingpixels.aurora.skin.marinerSkin
 
 fun main() {
@@ -49,7 +50,7 @@ fun main() {
 
     AuroraWindow(
         title = "Aurora Demo",
-        skin = marinerSkin(),
+        skin = geminiSkin(),
         size = IntSize(500, 600)
     ) {
         Box(
