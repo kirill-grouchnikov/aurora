@@ -30,6 +30,8 @@
 package org.pushingpixels.aurora.demo
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -133,6 +135,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     sides = ButtonSides(straightSides = setOf(Side.RIGHT))
                 ) {
                     AuroraText("bold")
+                    Icons.Filled.Add
                 }
                 AuroraToggleButton(
                     enabled = enabled.value,
