@@ -675,24 +675,16 @@ class DecorationAreaType(val displayName: String) {
  * @author Kirill Grouchnikov
  */
 enum class Side {
-    /**
-     * Left side.
-     */
+    /** Left side */
     LEFT,
 
-    /**
-     * Right side.
-     */
+    /** Right side */
     RIGHT,
 
-    /**
-     * Top side.
-     */
+    /** Top side */
     TOP,
 
-    /**
-     * Bottom side.
-     */
+    /** Bottom side */
     BOTTOM
 }
 
@@ -701,5 +693,21 @@ data class ButtonSides(
     val openSides: Set<Side> = emptySet(),
     val straightSides: Set<Side> = emptySet()
 )
+
+/**
+ * Enumerates available button background types.
+ *
+ * @author Kirill Grouchnikov
+ */
+enum class ButtonBackgroundType {
+    /** The button never paints the background */
+    NEVER,
+
+    /** The button only paints the background in active (rollover, selected, pressed) state. */
+    FLAT,
+
+    /** The button always paints the background */
+    ALWAYS
+}
 
 

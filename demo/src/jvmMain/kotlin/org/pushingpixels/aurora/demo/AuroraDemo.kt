@@ -29,7 +29,6 @@
  */
 package org.pushingpixels.aurora.demo
 
-import androidx.compose.desktop.initCompose
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -98,16 +97,32 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                AuroraButton(
-                    enabled = enabled.value,
-                    onClick = { println("Clicked!") }) {
-                    AuroraText("sample button")
-                }
                 AuroraToggleButton(
                     enabled = enabled.value,
                     selected = selected,
                     onSelectedChange = { println("Selected toggle? $it") }) {
-                    AuroraText("sample toggle")
+                    AuroraText("toggle")
+                }
+                AuroraButton(
+                    enabled = enabled.value,
+                    onClick = { println("Clicked!") },
+                    backgroundType = ButtonBackgroundType.NEVER
+                ) {
+                    AuroraText("never")
+                }
+                AuroraButton(
+                    enabled = enabled.value,
+                    onClick = { println("Clicked!") },
+                    backgroundType = ButtonBackgroundType.FLAT
+                ) {
+                    AuroraText("flat")
+                }
+                AuroraButton(
+                    enabled = enabled.value,
+                    onClick = { println("Clicked!") },
+                    backgroundType = ButtonBackgroundType.ALWAYS
+                ) {
+                    AuroraText("always")
                 }
             }
             Row(modifier = Modifier.fillMaxWidth()) {
