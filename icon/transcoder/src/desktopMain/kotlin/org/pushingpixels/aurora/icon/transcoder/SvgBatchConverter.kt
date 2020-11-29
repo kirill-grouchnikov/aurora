@@ -34,7 +34,10 @@ import java.nio.file.NoSuchFileException
 import java.util.*
 import java.util.stream.Stream
 
-class SvgBatchConverter : SvgBatchBaseConverter() {
+class SvgBatchConverter : SvgBatchBaseConverter() {}
+
+object SvgBatchConverterMain {
+    @JvmStatic
     fun main(args: Array<String>) {
         if (args.size < 3) {
             println("=== Usage ===")
@@ -46,21 +49,21 @@ class SvgBatchConverter : SvgBatchBaseConverter() {
                 "  outputFolder=xyz - optional location of output files. If not specified, output files will be placed in the 'sourceFolder'",
                 "  outputClassNamePrefix=xyz - optional prefix for the class name of each transcoded class"
             ).forEach { x: String? -> println(x) }
-            println(CHECK_DOCUMENTATION)
+            println(SvgBatchBaseConverter.CHECK_DOCUMENTATION)
             System.exit(1)
         }
         val converter = SvgBatchConverter()
         val sourceFolderName: String? = converter.getInputArgument(args, "sourceFolder", null)
-        Objects.requireNonNull(sourceFolderName, "Missing source folder. " + CHECK_DOCUMENTATION)
+        Objects.requireNonNull(sourceFolderName, "Missing source folder. " + SvgBatchBaseConverter.CHECK_DOCUMENTATION)
         val outputPackageName: String? = converter.getInputArgument(args, "outputPackageName", null)
-        Objects.requireNonNull(outputPackageName, "Missing output package name. " + CHECK_DOCUMENTATION)
+        Objects.requireNonNull(outputPackageName, "Missing output package name. " + SvgBatchBaseConverter.CHECK_DOCUMENTATION)
         val templateFile: String? = converter.getInputArgument(args, "templateFile", null)
-        Objects.requireNonNull(templateFile, "Missing template file. " + CHECK_DOCUMENTATION)
+        Objects.requireNonNull(templateFile, "Missing template file. " + SvgBatchBaseConverter.CHECK_DOCUMENTATION)
         val languageRenderer: LanguageRenderer = KotlinLanguageRenderer()
         val outputFileNameExtension = ".kt"
         val outputClassNamePrefix: String? = converter.getInputArgument(args, "outputClassNamePrefix", "")
         val outputFolderName: String? = converter.getInputArgument(args, "outputFolder", sourceFolderName)
-        Objects.requireNonNull(outputFolderName, "Missing output folder. " + CHECK_DOCUMENTATION)
+        Objects.requireNonNull(outputFolderName, "Missing output folder. " + SvgBatchBaseConverter.CHECK_DOCUMENTATION)
         val inputFolder = File(sourceFolderName)
         if (!inputFolder.exists()) {
             throw NoSuchFileException(sourceFolderName)

@@ -55,11 +55,12 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
     /**
      * Listener.
      */
-    var listener: TranscoderListener? = null
-        set(value) {
-            listener = value
-            setPrintWriter(PrintWriter(value!!.writer))
-        }
+    var _listener: TranscoderListener? = null
+
+    fun setListener(listener: TranscoderListener) {
+        _listener = listener
+        setPrintWriter(PrintWriter(listener.writer))
+    }
 
     /**
      * Print writer that outputs the full class.
@@ -233,7 +234,7 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
         // + (int) Math.ceil(bounds.getHeight()));
         externalPrintWriter!!.println(templateString)
         externalPrintWriter!!.close()
-        if (listener != null) listener!!.finished()
+        if (_listener != null) _listener!!.finished()
     }
 
     /**
@@ -1337,7 +1338,7 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
      */
     @Throws(UnsupportedOperationException::class)
     private fun transcodeGraphicsNode(node: GraphicsNode?, comment: String) {
-        val composite = node!!.composite as AlphaComposite
+        val composite = node!!.composite as? AlphaComposite
         if (composite != null) {
             val rule = composite.rule
             val alpha = composite.alpha

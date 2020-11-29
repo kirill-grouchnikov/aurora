@@ -54,7 +54,7 @@ class SvgTranscoder(
      * @param templateStream Stream with the template content
      */
     fun transcode(templateStream: InputStream?): Document? {
-        if (listener == null) return null
+        if (_listener == null) return null
         val ua = UserAgentAdapter()
         val loader = DocumentLoader(ua)
         val batikBridgeContext = BridgeContext(ua, loader)

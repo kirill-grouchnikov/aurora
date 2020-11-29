@@ -15,7 +15,7 @@ kotlin {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation(project(":components"))
-                implementation(project(":icon:transcoder"))
+                implementation(project(":icon:icon"))
                 implementation(project(":skin"))
             }
         }

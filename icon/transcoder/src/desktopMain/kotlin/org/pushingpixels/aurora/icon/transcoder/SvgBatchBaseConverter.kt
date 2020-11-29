@@ -37,7 +37,7 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 abstract class SvgBatchBaseConverter {
-    protected fun getInputArgument(args: Array<String>, argumentName: String?, defaultValue: String?): String? {
+    internal fun getInputArgument(args: Array<String>, argumentName: String?, defaultValue: String?): String? {
         for (arg in args) {
             val split = arg.split("=").toTypedArray()
             if (split.size != 2) {
@@ -52,7 +52,7 @@ abstract class SvgBatchBaseConverter {
         return defaultValue
     }
 
-    protected fun transcodeAllFilesInFolder(
+    internal fun transcodeAllFilesInFolder(
         inputFolder: File, outputFolder: File,
         outputClassNamePrefix: String?, outputFileNameExtension: String,
         outputPackageName: String, languageRenderer: LanguageRenderer,
@@ -79,14 +79,14 @@ abstract class SvgBatchBaseConverter {
                         val uri = file.toURI().toURL().toString()
                         val transcoder = SvgTranscoder(uri, svgClassName, languageRenderer!!)
                         transcoder.setPackageName(outputPackageName)
-                        transcoder.listener = object : TranscoderListener {
+                        transcoder.setListener(object : TranscoderListener {
                             override val writer: Writer
                                 get() = writer
 
                             override fun finished() {
                                 latch.countDown()
                             }
-                        }
+                        })
                         transcoder.transcode(templateStream)
                         // Limit the processing to 10 seconds to prevent infinite hang
                         latch.await(10, TimeUnit.SECONDS)

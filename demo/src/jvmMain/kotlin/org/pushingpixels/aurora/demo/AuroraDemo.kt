@@ -30,8 +30,6 @@
 package org.pushingpixels.aurora.demo
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,6 +39,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.components.*
+import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.skin.geminiSkin
 
 fun main() {
@@ -110,6 +109,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     onClick = { println("Clicked!") },
                     backgroundType = ButtonBackgroundType.NEVER
                 ) {
+                    AuroraIcon(icon = keyboard_capslock_24px.of(10.dp, 10.dp))
                     AuroraText("never")
                 }
                 AuroraButton(
@@ -135,7 +135,6 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     sides = ButtonSides(straightSides = setOf(Side.RIGHT))
                 ) {
                     AuroraText("bold")
-                    Icons.Filled.Add
                 }
                 AuroraToggleButton(
                     enabled = enabled.value,
