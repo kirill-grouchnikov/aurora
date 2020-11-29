@@ -202,10 +202,9 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
             val paintingCode = String(currentPaintingCodeStream.toByteArray())
             val paintingCodeMethod = (languageRenderer.startMethod(
                 "_paint$i",
-                MethodArgument("g", "Graphics2D"),
-                MethodArgument("origAlpha", languageRenderer.getPrimitiveTypeFor(Float::class.javaPrimitiveType!!))
+                MethodArgument("drawScope", "DrawScope")
             )
-                    + "\n" + paintingCode + "\n" + languageRenderer.endMethod())
+                    + "\nwith(drawScope) {\n" + paintingCode + "\n}\n" + languageRenderer.endMethod())
             combinedPaintingCode.append(paintingCodeMethod)
             combinedPaintingCode.append("\n\n")
         }
@@ -214,7 +213,7 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
         for (i in 0 until streamCount) {
             combinedPaintingInvocations.append(
                 """
-    _paint$i(g, origAlpha)${languageRenderer.statementEnd}
+    _paint$i(drawScope)${languageRenderer.statementEnd}
     
     """.trimIndent()
             )
@@ -245,16 +244,9 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
     private fun transcodePathIterator(pathIterator: PathIterator, suffix: String) {
         val coords = FloatArray(6)
         printWriterManager!!.println("if (generalPath$suffix == null) {")
-        printWriterManager!!.println(
-            "   generalPath" + suffix + " = "
-                    + languageRenderer.getObjectCreationNoParams("GeneralPath")
-                    + languageRenderer.statementEnd
-        )
+        printWriterManager!!.println("   generalPath$suffix = Path()")
         printWriterManager!!.println("} else {")
-        printWriterManager!!.println(
-            "   " + languageRenderer.getObjectNoNull("generalPath$suffix")
-                    + ".reset()" + languageRenderer.statementEnd
-        )
+        printWriterManager!!.println(   "generalPath$suffix!!.reset()")
         printWriterManager!!.println("}")
         //        printWriterManager.println("shape" + suffix + " = "
 //                + languageRenderer.getObjectCreationNoParams("GeneralPath")
@@ -289,13 +281,13 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
                 )
                 PathIterator.SEG_CLOSE -> printWriterManager!!.println(
                     languageRenderer.getObjectNoNull("generalPath$suffix")
-                            + ".closePath()" + languageRenderer.statementEnd
+                            + ".close()" + languageRenderer.statementEnd
                 )
             }
             pathIterator.next()
         }
         printWriterManager!!.println(
-            "shape" + suffix + " = generalPath"
+            "shape" + suffix + " = Outline.Generic(generalPath!!)"
                     + languageRenderer.statementEnd
         )
     }
@@ -874,15 +866,10 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
         if (paint is Color) {
             val c = paint
             printWriterManager!!.println(
-                "paint = " + languageRenderer.getObjectCreation("Color") + "("
-                        + c.red + ", " + c.green + ", " + c.blue + ", " + c.alpha
-                        + ")" + languageRenderer.statementEnd
+                "brush = SolidColor(Color("
+                        + c.red + ", " + c.green + ", " + c.blue + ", " + c.alpha + "))"
             )
-            printWriterManager!!.println(
-                "g" + languageRenderer.startSetterAssignment("paint") + "paint"
-                        + languageRenderer.endSetterAssignment() + languageRenderer.statementEnd
-            )
-            printWriterManager!!.println("g.fill(shape)" + languageRenderer.statementEnd)
+            printWriterManager!!.println("drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)")
             return
         }
         if (paint == null) {
@@ -1340,30 +1327,23 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
     private fun transcodeGraphicsNode(node: GraphicsNode?, comment: String) {
         val composite = node!!.composite as? AlphaComposite
         if (composite != null) {
-            val rule = composite.rule
-            val alpha = composite.alpha
-            printWriterManager!!.println(
-                "g" + languageRenderer.startSetterAssignment("composite")
-                        + "AlphaComposite.getInstance(" + rule + ", " + alpha + "f * origAlpha)"
-                        + languageRenderer.endSetterAssignment() + languageRenderer.statementEnd
-            )
+            // TODO - throw on non-default rule?
+            printWriterManager!!.println("alpha *= " + composite.alpha + "f")
         }
         val transform = node.transform
-        printWriterManager!!.println(
-            "transformsStack.push(g"
-                    + languageRenderer.getGetter("transform") + ")"
-                    + languageRenderer.statementEnd
-        )
         if (transform != null) {
             val transfMatrix = DoubleArray(6)
             transform.getMatrix(transfMatrix)
-            printWriterManager!!
-                .println(
-                    "g.transform(" + languageRenderer.getObjectCreation("AffineTransform")
-                            + "(" + transfMatrix[0] + "f, " + transfMatrix[1] + "f, "
-                            + transfMatrix[2] + "f, " + transfMatrix[3] + "f, " + transfMatrix[4]
-                            + "f, " + transfMatrix[5] + "f))" + languageRenderer.statementEnd
-                )
+            printWriterManager!!.println("withTransform({")
+            printWriterManager!!.println("transform(")
+            printWriterManager!!.println("Matrix(values=floatArrayOf(")
+            printWriterManager!!.println("" + transfMatrix[0] + "f, " + transfMatrix[2] + "f, "
+                    + "0.0f, " + transfMatrix[4] + "f,")
+            printWriterManager!!.println("" + transfMatrix[1] + "f, " + transfMatrix[3] + "f, "
+                    + "0.0f, " + transfMatrix[5] + "f,")
+            printWriterManager!!.println("0.0f, 0.0f, 1.0f, 0.0f,")
+            printWriterManager!!.println("0.0f, 0.0f, 0.0f, 1.0f)")
+            printWriterManager!!.println("))}){")
         }
         try {
             if (node is ShapeNode) {
@@ -1384,11 +1364,9 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
             }
             throw UnsupportedOperationException(node.javaClass.canonicalName)
         } finally {
-            printWriterManager!!.println(
-                "g" + languageRenderer.startSetterAssignment("transform")
-                        + "transformsStack.pop()" + languageRenderer.endSetterAssignment()
-                        + languageRenderer.statementEnd
-            )
+            if (transform != null) {
+                printWriterManager!!.println("}")
+            }
         }
     }
 
