@@ -11,11 +11,10 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.unit.Dp
 import org.pushingpixels.aurora.icon.AuroraIcon
-import java.util.*
 
 /**
- * This class has been automatically generated using <a
- * href="https://github.com/kirill-grouchnikov/aurora">Aurora SVG transcoder</a>.
+ * This class has been automatically generated using
+ * <a href="https://github.com/kirill-grouchnikov/aurora">Aurora SVG transcoder</a>.
  */
 class keyboard_capslock_24px private constructor(var _width: Int, var _height: Int) : AuroraIcon {
     @Suppress("UNUSED_VARIABLE")
@@ -32,7 +31,6 @@ class keyboard_capslock_24px private constructor(var _width: Int, var _height: I
 
     @Suppress("UNUSED_VARIABLE")
     private var clip: Shape? = null
-    private val transformsStack = Stack<Matrix>()
 
 
     private fun _paint0(drawScope: DrawScope) {
@@ -119,43 +117,43 @@ class keyboard_capslock_24px private constructor(var _width: Int, var _height: I
         clip = null
     }
 
-    /**
-     * Returns the X of the bounding box of the original SVG image.
-     *
-     * @return The X of the bounding box of the original SVG image.
-     */
-    fun getOrigX(): Double {
-        return 6.0
-    }
-
-    /**
-     * Returns the Y of the bounding box of the original SVG image.
-     *
-     * @return The Y of the bounding box of the original SVG image.
-     */
-    fun getOrigY(): Double {
-        return 5.590000152587891
-    }
-
-    /**
-     * Returns the width of the bounding box of the original SVG image.
-     *
-     * @return The width of the bounding box of the original SVG image.
-     */
-    fun getOrigWidth(): Double {
-        return 12.0
-    }
-
-    /**
-     * Returns the height of the bounding box of the original SVG image.
-     *
-     * @return The height of the bounding box of the original SVG image.
-     */
-    fun getOrigHeight(): Double {
-        return 12.40999984741211
-    }
-
     companion object {
+        /**
+         * Returns the X of the bounding box of the original SVG image.
+         *
+         * @return The X of the bounding box of the original SVG image.
+         */
+        fun getOrigX(): Double {
+            return 6.0
+        }
+
+        /**
+         * Returns the Y of the bounding box of the original SVG image.
+         *
+         * @return The Y of the bounding box of the original SVG image.
+         */
+        fun getOrigY(): Double {
+            return 5.590000152587891
+        }
+
+        /**
+         * Returns the width of the bounding box of the original SVG image.
+         *
+         * @return The width of the bounding box of the original SVG image.
+         */
+        fun getOrigWidth(): Double {
+            return 12.0
+        }
+
+        /**
+         * Returns the height of the bounding box of the original SVG image.
+         *
+         * @return The height of the bounding box of the original SVG image.
+         */
+        fun getOrigHeight(): Double {
+            return 12.40999984741211
+        }
+
         /**
          * Returns a new instance of this icon with specified dimensions.
          *
@@ -170,17 +168,17 @@ class keyboard_capslock_24px private constructor(var _width: Int, var _height: I
                 _height = (height.value * AmbientDensity.current.density).toInt()
             )
         }
-    }
 
-    /**
-     * Returns a factory that returns instances of this icon on demand.
-     *
-     * @return Factory that returns instances of this icon on demand.
-     */
-    fun factory(): AuroraIcon.Factory {
-        return object : AuroraIcon.Factory {
-            override fun createNewIcon(): AuroraIcon {
-                return keyboard_capslock_24px(getOrigWidth().toInt(), getOrigHeight().toInt())
+        /**
+         * Returns a factory that returns instances of this icon on demand.
+         *
+         * @return Factory that returns instances of this icon on demand.
+         */
+        fun factory(): AuroraIcon.Factory {
+            return object : AuroraIcon.Factory {
+                override fun createNewIcon(): AuroraIcon {
+                    return keyboard_capslock_24px(getOrigWidth().toInt(), getOrigHeight().toInt())
+                }
             }
         }
     }
@@ -193,9 +191,10 @@ class keyboard_capslock_24px private constructor(var _width: Int, var _height: I
         return _height
     }
 
-    override fun setSize(size: Size) {
-        _width = size.width.toInt()
-        _height = size.height.toInt()
+    @Composable
+    override fun setSize(width: Dp, height: Dp) {
+        _width = (width.value * AmbientDensity.current.density).toInt()
+        _height = (height.value * AmbientDensity.current.density).toInt()
     }
 
     override fun paintIcon(drawScope: DrawScope) {

@@ -39,6 +39,7 @@ import androidx.compose.ui.draw.DrawModifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 interface AuroraIcon {
@@ -60,7 +61,8 @@ interface AuroraIcon {
     /**
      * Changes the size of this icon.
      */
-    fun setSize(size: Size)
+    @Composable
+    fun setSize(width: Dp, height: Dp)
 
     /**
      * Interface for creating new icons of this type.

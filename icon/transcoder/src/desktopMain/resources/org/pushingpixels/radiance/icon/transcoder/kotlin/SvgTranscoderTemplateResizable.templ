@@ -1,45 +1,33 @@
 TOKEN_PACKAGE
 
-import java.awt.*
-import java.awt.geom.*
-import java.awt.image.BufferedImage
-import java.io.*
-import java.lang.ref.WeakReference
-import java.util.Base64
-import java.util.Stack
-import javax.imageio.ImageIO
-import javax.swing.plaf.UIResource
-
-import org.pushingpixels.neon.api.icon.ResizableIcon
-import org.pushingpixels.neon.api.icon.ResizableIcon.Factory
-import org.pushingpixels.neon.api.icon.ResizableIconUIResource
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.platform.AmbientDensity
+import androidx.compose.ui.unit.Dp
+import org.pushingpixels.aurora.icon.AuroraIcon
 
 /**
- * This class has been automatically generated using <a
- * href="https://github.com/kirill-grouchnikov/aurora">Aurora SVG transcoder</a>.
+ * This class has been automatically generated using
+ * <a href="https://github.com/kirill-grouchnikov/aurora">Aurora SVG transcoder</a>.
  */
-class TOKEN_CLASSNAME private constructor(private var width: Int, private var height: Int)
-       : ResizableIcon {
+class TOKEN_CLASSNAME private constructor(var _width: Int, var _height: Int) : AuroraIcon {
     @Suppress("UNUSED_VARIABLE") private var shape: Shape? = null
-    @Suppress("UNUSED_VARIABLE") private var generalPath: GeneralPath? = null
+    @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var paint: Paint? = null
     @Suppress("UNUSED_VARIABLE") private var stroke: Stroke? = null
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
-    private val transformsStack = Stack<AffineTransform>()
 
     TOKEN_RASTER_CODE
 
 	TOKEN_PAINTING_CODE
 
-	private fun innerPaint(g : Graphics2D) {
-        var origAlpha = 1.0f
-        val origComposite = g.composite
-        if (origComposite is AlphaComposite) {
-            if (origComposite.rule == AlphaComposite.SRC_OVER) {
-                origAlpha = origComposite.alpha
-            }
-        }
-        
+    private fun innerPaint(drawScope: DrawScope) {
 	    TOKEN_PAINTING_INVOCATIONS
 
 	    shape = null
@@ -93,19 +81,12 @@ class TOKEN_CLASSNAME private constructor(private var width: Int, private var he
          * @param height Required height of the icon
          * @return A new instance of this icon with specified dimensions.
          */
-        fun of(width: Int, height: Int): ResizableIcon {
-            return TOKEN_CLASSNAME(width, height)
-        }
-
-        /**
-         * Returns a new [UIResource] instance of this icon with specified dimensions.
-         *
-         * @param width Required width of the icon
-         * @param height Required height of the icon
-         * @return A new [UIResource] instance of this icon with specified dimensions.
-         */
-        fun uiResourceOf(width: Int, height: Int): ResizableIconUIResource {
-            return ResizableIconUIResource(TOKEN_CLASSNAME(width, height))
+        @Composable
+        fun of(width: Dp, height: Dp): AuroraIcon {
+            return TOKEN_CLASSNAME(
+                _width = (width.value * AmbientDensity.current.density).toInt(),
+                _height = (height.value * AmbientDensity.current.density).toInt()
+            )
         }
 
         /**
@@ -113,50 +94,60 @@ class TOKEN_CLASSNAME private constructor(private var width: Int, private var he
          *
          * @return Factory that returns instances of this icon on demand.
          */
-        fun factory(): Factory {
-            return Factory { TOKEN_CLASSNAME(getOrigWidth().toInt(), getOrigHeight().toInt()) }
-        }
-    }
-
-    override fun getIconHeight(): Int {
-        return width
-    }
-
-    override fun getIconWidth(): Int {
-        return height
-    }
-
-    override @Synchronized fun setDimension(newDimension: Dimension) {
-        width = newDimension.width
-        height = newDimension.height
-    }
-
-    override @Synchronized fun paintIcon(c: Component?, g: Graphics, x: Int, y: Int) {
-        val g2d = g.create() as Graphics2D
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON)
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                RenderingHints.VALUE_INTERPOLATION_BICUBIC)
-        g2d.translate(x, y)
-
-        val coef1 = this.width.toDouble() / getOrigWidth()
-        val coef2 = this.height.toDouble() / getOrigHeight()
-        val coef = Math.min(coef1, coef2)
-        g2d.clipRect(0, 0, this.width, this.height)
-        g2d.scale(coef, coef)
-        g2d.translate(-getOrigX(), -getOrigY())
-        if (coef1 != coef2) {
-            if (coef1 < coef2) {
-                val extraDy = ((getOrigWidth() - getOrigHeight()) / 2.0).toInt()
-                g2d.translate(0, extraDy)
-            } else {
-                val extraDx = ((getOrigHeight() - getOrigWidth()) / 2.0).toInt()
-                g2d.translate(extraDx, 0)
+        fun factory(): AuroraIcon.Factory {
+            return object : AuroraIcon.Factory {
+                override fun createNewIcon(): AuroraIcon {
+                    return TOKEN_CLASSNAME(getOrigWidth().toInt(), getOrigHeight().toInt())
+                }
             }
         }
-        val g2ForInner = g2d.create() as Graphics2D
-        innerPaint(g2ForInner)
-        g2ForInner.dispose()
-        g2d.dispose()
+    }
+
+    override fun getWidth(): Int {
+        return _width
+    }
+
+    override fun getHeight(): Int {
+        return _height
+    }
+
+    @Composable
+    override fun setSize(width: Dp, height: Dp) {
+        _width = (width.value * AmbientDensity.current.density).toInt()
+        _height = (height.value * AmbientDensity.current.density).toInt()
+    }
+
+    override fun paintIcon(drawScope: DrawScope) {
+        with(drawScope) {
+            val coef1 = _width / getOrigWidth()
+            val coef2 = _height / getOrigHeight()
+            val coef = Math.min(coef1, coef2)
+
+            var translateX = -getOrigX().toFloat()
+            var translateY = -getOrigY().toFloat()
+            if (coef1 != coef2) {
+                if (coef1 < coef2) {
+                    val extraDy = ((getOrigWidth() - getOrigHeight()) / 2.0f).toInt().toFloat()
+                    translateY += extraDy
+                } else {
+                    val extraDx = ((getOrigHeight() - getOrigWidth()) / 2.0f).toInt().toFloat()
+                    translateX += extraDx
+                }
+            }
+
+            withTransform({
+                translate(left = translateX / coef.toFloat(), top = translateY / coef.toFloat())
+                scale(scaleX = coef.toFloat(), scaleY = coef.toFloat(), pivot = Offset(0.0f, 0.0f))
+                clipRect(
+                    left = 0.0f,
+                    top = 0.0f,
+                    right = _width.toFloat(),
+                    bottom = _height.toFloat(),
+                    clipOp = ClipOp.Intersect
+                )
+            }) {
+                innerPaint(this)
+            }
+        }
     }
 }
