@@ -39,42 +39,42 @@ class keyboard_capslock_24px private constructor(var _width: Int, var _height: I
         with(drawScope) {
             // _0
             withTransform({
-//                transform(
-//                    Matrix(
-//                        values = floatArrayOf(
-//                            1.0f, 0.0f, 0.0f, 0.0f,
-//                            0.0f, 1.0f, 0.0f, 0.0f,
-//                            0.0f, 0.0f, 1.0f, 0.0f,
-//                            0.0f, 0.0f, 0.0f, 1.0f,
-//                        )
-//                    )
-//                )
+                transform(
+                    Matrix(
+                        values = floatArrayOf(
+                            1.0f, 0.0f, 0.0f, 0.0f,
+                            0.0f, 1.0f, 0.0f, 0.0f,
+                            0.0f, 0.0f, 1.0f, 0.0f,
+                            0.0f, 0.0f, 0.0f, 1.0f,
+                        )
+                    )
+                )
             }) {
                 // _0_0
                 withTransform({
-//                    transform(
-//                        Matrix(
-//                            values = floatArrayOf(
-//                                1.0f, 0.0f, 0.0f, 0.0f,
-//                                0.0f, 1.0f, 0.0f, 0.0f,
-//                                0.0f, 0.0f, 1.0f, 0.0f,
-//                                0.0f, 0.0f, 0.0f, 1.0f,
-//                            )
-//                        )
-//                    )
+                    transform(
+                        Matrix(
+                            values = floatArrayOf(
+                                1.0f, 0.0f, 0.0f, 0.0f,
+                                0.0f, 1.0f, 0.0f, 0.0f,
+                                0.0f, 0.0f, 1.0f, 0.0f,
+                                0.0f, 0.0f, 0.0f, 1.0f,
+                            )
+                        )
+                    )
                 }) {
                     // _0_0_0
                     withTransform({
-//                        transform(
-//                            Matrix(
-//                                values = floatArrayOf(
-//                                    1.0f, 0.0f, 0.0f, 0.0f,
-//                                    0.0f, 1.0f, 0.0f, 0.0f,
-//                                    0.0f, 0.0f, 1.0f, 0.0f,
-//                                    0.0f, 0.0f, 0.0f, 1.0f,
-//                                )
-//                            )
-//                        )
+                        transform(
+                            Matrix(
+                                values = floatArrayOf(
+                                    1.0f, 0.0f, 0.0f, 0.0f,
+                                    0.0f, 1.0f, 0.0f, 0.0f,
+                                    0.0f, 0.0f, 1.0f, 0.0f,
+                                    0.0f, 0.0f, 0.0f, 1.0f,
+                                )
+                            )
+                        )
                     }) {
                         if (generalPath == null) {
                             generalPath = Path()
