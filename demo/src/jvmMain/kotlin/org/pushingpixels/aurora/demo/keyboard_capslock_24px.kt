@@ -2,7 +2,6 @@ package org.pushingpixels.aurora.demo
     
     import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
@@ -23,12 +22,14 @@ class keyboard_capslock_24px private constructor(var _width: Int, var _height: I
 @Suppress("UNUSED_VARIABLE") private var stroke: Stroke? = null
 @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
 private var alpha = 1.0f
+private var alphaStack = mutableListOf(1.0f)
     
     
     
     private fun _paint0(drawScope : DrawScope) {
 with(drawScope) {
 // 
+alphaStack.add(0, alpha)
 alpha *= 1.0f
 withTransform({
 transform(
@@ -39,6 +40,7 @@ Matrix(values=floatArrayOf(
 0.0f, 0.0f, 0.0f, 1.0f)
 ))}){
 // _0
+alphaStack.add(0, alpha)
 alpha *= 1.0f
 withTransform({
 transform(
@@ -50,6 +52,8 @@ Matrix(values=floatArrayOf(
 ))}){
 // _0_0
 }
+alpha = alphaStack.removeAt(0)
+alphaStack.add(0, alpha)
 alpha *= 1.0f
 withTransform({
 transform(
@@ -83,7 +87,9 @@ shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
+alpha = alphaStack.removeAt(0)
 }
+alpha = alphaStack.removeAt(0)
 
 }
 }

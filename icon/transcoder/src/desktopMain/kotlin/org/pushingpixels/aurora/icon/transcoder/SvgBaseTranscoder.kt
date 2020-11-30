@@ -864,10 +864,8 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
             return
         }
         if (paint is Color) {
-            val c = paint
             printWriterManager!!.println(
-                "brush = SolidColor(Color("
-                        + c.red + ", " + c.green + ", " + c.blue + ", " + c.alpha + "))"
+                "brush = SolidColor(Color(${paint.red}, ${paint.green}, ${paint.blue}, ${paint.alpha}))"
             )
             printWriterManager!!.println("drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)")
             return
@@ -1328,7 +1326,8 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
         val composite = node!!.composite as? AlphaComposite
         if (composite != null) {
             // TODO - throw on non-default rule?
-            printWriterManager!!.println("alpha *= " + composite.alpha + "f")
+            printWriterManager!!.println("alphaStack.add(0, alpha)")
+            printWriterManager!!.println("alpha *= ${composite.alpha}f")
         }
         val transform = node.transform
         if (transform != null) {
@@ -1366,6 +1365,7 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
         } finally {
             if (transform != null) {
                 printWriterManager!!.println("}")
+                printWriterManager!!.println("alpha = alphaStack.removeAt(0)")
             }
         }
     }
