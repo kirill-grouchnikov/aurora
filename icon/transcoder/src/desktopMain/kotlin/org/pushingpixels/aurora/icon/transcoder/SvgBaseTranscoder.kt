@@ -31,8 +31,6 @@ package org.pushingpixels.aurora.icon.transcoder
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Matrix
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.Path
 import org.apache.batik.bridge.SVGPatternElementBridge
 import org.apache.batik.bridge.TextNode
 import org.apache.batik.ext.awt.LinearGradientPaint
@@ -167,12 +165,7 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
         try {
             while (true) {
                 val line = templateReader.readLine() ?: break
-                templateBuffer.append(
-                    """
-    $line
-    
-    """.trimIndent()
-                )
+                templateBuffer.append("$line\n")
             }
             templateReader.close()
         } catch (ioe: IOException) {
