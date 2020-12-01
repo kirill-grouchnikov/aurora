@@ -97,6 +97,6 @@ fun AuroraIcon(
         modifier.preferredSize(
             width = icon.getWidth().dp,
             height = icon.getHeight().dp
-        ).background(Color.Red).auroraIconPaint(icon)
+        ).background(Color.Yellow).auroraIconPaint(icon)
     )
 }

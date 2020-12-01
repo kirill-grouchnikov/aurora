@@ -155,17 +155,17 @@ internal class RasterScanner(val printWriter: PrintWriter, val languageRenderer:
      * @param painter Marker shape painter.
      */
     private fun scanMarkerShapePainter(painter: MarkerShapePainter) {
-        val start: Marker = painter.getStartMarker()
+        val start = painter.startMarker
         if (start != null) {
-            scanGraphicsNode(start.getMarkerNode())
+            scanGraphicsNode(start.markerNode)
         }
-        val middle: Marker = painter.getMiddleMarker()
+        val middle = painter.middleMarker
         if (middle != null) {
-            scanGraphicsNode(middle.getMarkerNode())
+            scanGraphicsNode(middle.markerNode)
         }
-        val end: Marker = painter.getEndMarker()
+        val end = painter.endMarker
         if (end != null) {
-            scanGraphicsNode(end.getMarkerNode())
+            scanGraphicsNode(end.markerNode)
         }
     }
 

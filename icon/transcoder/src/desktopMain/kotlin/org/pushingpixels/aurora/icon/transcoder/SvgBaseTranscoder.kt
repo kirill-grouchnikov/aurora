@@ -31,6 +31,7 @@ package org.pushingpixels.aurora.icon.transcoder
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Matrix
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import org.apache.batik.bridge.SVGPatternElementBridge
 import org.apache.batik.bridge.TextNode
 import org.apache.batik.ext.awt.LinearGradientPaint
@@ -201,23 +202,16 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
         for (i in 0 until streamCount) {
             val currentPaintingCodeStream = paintingCodeStreams[i]
             val paintingCode = String(currentPaintingCodeStream.toByteArray())
-            val paintingCodeMethod = (languageRenderer.startMethod(
-                "_paint$i",
-                MethodArgument("drawScope", "DrawScope")
-            )
-                    + "\nwith(drawScope) {\n" + paintingCode + "\n}\n" + languageRenderer.endMethod())
+            val paintingCodeMethod =
+                "private fun _paint$i(drawScope : DrawScope) {" +
+                        "\nwith(drawScope) {\n" + paintingCode + "\n}\n}"
             combinedPaintingCode.append(paintingCodeMethod)
             combinedPaintingCode.append("\n\n")
         }
         templateString = templateString.replace(TOKEN_PAINTING_CODE.toRegex(), combinedPaintingCode.toString())
         val combinedPaintingInvocations = StringBuffer()
         for (i in 0 until streamCount) {
-            combinedPaintingInvocations.append(
-                """
-    _paint$i(drawScope)${languageRenderer.statementEnd}
-    
-    """.trimIndent()
-            )
+            combinedPaintingInvocations.append("_paint$i(drawScope)\n")
         }
         templateString = templateString.replace(
             TOKEN_PAINTING_INVOCATIONS.toRegex(),
@@ -225,16 +219,12 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
         )
         val bounds = gvtRoot.bounds
         templateString = templateString.replace(TOKEN_ORIG_X.toRegex(), "" + bounds.x)
-        // + (int) Math.ceil(bounds.getX()));
         templateString = templateString.replace(TOKEN_ORIG_Y.toRegex(), "" + bounds.y)
-        // + (int) Math.ceil(bounds.getY()));
         templateString = templateString.replace(TOKEN_ORIG_WIDTH.toRegex(), "" + bounds.width)
-        // + (int) Math.ceil(bounds.getWidth()));
         templateString = templateString.replace(TOKEN_ORIG_HEIGHT.toRegex(), "" + bounds.height)
-        // + (int) Math.ceil(bounds.getHeight()));
         externalPrintWriter!!.println(templateString)
         externalPrintWriter!!.close()
-        if (_listener != null) _listener!!.finished()
+        _listener?.finished()
     }
 
     /**
@@ -253,38 +243,20 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
             // Probably the resulting class will run into "error: too many constants" in any case ¯\_(ツ)_/¯
             printWriterManager!!.checkin()
             when (pathIterator.currentSegment(coords)) {
-                PathIterator.SEG_CUBICTO -> printWriterManager!!.println(
-                    languageRenderer.getObjectNoNull("generalPath$suffix")
-                            + ".cubicTo(" + coords[0] + "f, " + coords[1] + "f, " + coords[2] + "f, "
-                            + coords[3] + "f, " + coords[4] + "f, " + coords[5] + "f)"
-                            + languageRenderer.statementEnd
-                )
-                PathIterator.SEG_QUADTO -> printWriterManager!!.println(
-                    languageRenderer.getObjectNoNull("generalPath$suffix")
-                            + ".quadraticBezierTo(" + coords[0] + "f, " + coords[1] + "f, " + coords[2] + "f, "
-                            + coords[3] + "f)" + languageRenderer.statementEnd
-                )
-                PathIterator.SEG_MOVETO -> printWriterManager!!.println(
-                    languageRenderer.getObjectNoNull("generalPath$suffix")
-                            + ".moveTo(" + coords[0] + "f, " + coords[1] + "f)"
-                            + languageRenderer.statementEnd
-                )
-                PathIterator.SEG_LINETO -> printWriterManager!!.println(
-                    languageRenderer.getObjectNoNull("generalPath$suffix")
-                            + ".lineTo(" + coords[0] + "f, " + coords[1] + "f)"
-                            + languageRenderer.statementEnd
-                )
-                PathIterator.SEG_CLOSE -> printWriterManager!!.println(
-                    languageRenderer.getObjectNoNull("generalPath$suffix")
-                            + ".close()" + languageRenderer.statementEnd
-                )
+                PathIterator.SEG_CUBICTO -> printWriterManager?.println(
+                    "generalPath$suffix!!.cubicTo(${coords[0]}f, ${coords[1]}f, ${coords[2]}f, ${coords[3]}f, ${coords[4]}f, ${coords[5]}f)")
+                PathIterator.SEG_QUADTO -> printWriterManager?.println(
+                    "generalPath$suffix!!.quadraticBezierTo(${coords[0]}f, ${coords[1]}f, ${coords[2]}f, ${coords[3]}f)")
+                PathIterator.SEG_MOVETO -> printWriterManager?.println(
+                    "generalPath$suffix!!.moveTo(${coords[0]}f, ${coords[1]}f)")
+                PathIterator.SEG_LINETO -> printWriterManager?.println(
+                    "generalPath$suffix!!.lineTo(${coords[0]}f, ${coords[1]}f)")
+                PathIterator.SEG_CLOSE -> printWriterManager?.println(
+                    "generalPath$suffix!!.close()")
             }
             pathIterator.next()
         }
-        printWriterManager!!.println(
-            "shape" + suffix + " = Outline.Generic(generalPath!!)"
-                    + languageRenderer.statementEnd
-        )
+        printWriterManager!!.println("shape$suffix = Outline.Generic(generalPath!!)")
     }
 
     /**
@@ -969,17 +941,17 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
             val startMarker = painter.startMarker
             val dx = firstPoint.x - startMarker.ref.x
             val dy = firstPoint.y - startMarker.ref.y
-            printWriterManager!!.println(
-                "g.translate(" + dx + ", " + dy + ")"
-                        + languageRenderer.statementEnd
-            )
-            rotate(startMarker.orient)
+
+            printWriterManager!!.println("withTransform({")
+            printWriterManager!!.println("   translate(left=${dx}f, top=${dy}f)")
+            if (java.lang.Double.isFinite(startMarker.orient) && (startMarker.orient != 0.0)) {
+                printWriterManager!!.println("   rotate(degrees=${startMarker.orient}f, pivot = Offset(0.0f, 0.0f))")
+            }
+            printWriterManager!!.println("}) {")
+
             transcodeGraphicsNode(startMarker.markerNode, comment + "_" + "m0")
-            rotate(-startMarker.orient)
-            printWriterManager!!.println(
-                "g.translate(" + -dx + ", " + -dy + ")"
-                        + languageRenderer.statementEnd
-            )
+
+            printWriterManager!!.println("}")
         }
 
         // Transcode the middle marker if it's there. This only applies to the points between
@@ -991,17 +963,17 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
                     val middlePoint = pathPoints[i]
                     val dx = middlePoint.x - middleMarker.ref.x
                     val dy = middlePoint.y - middleMarker.ref.y
-                    printWriterManager!!.println(
-                        "g.translate(" + dx + ", " + dy + ")"
-                                + languageRenderer.statementEnd
-                    )
-                    rotate(middleMarker.orient)
+
+                    printWriterManager!!.println("withTransform({")
+                    printWriterManager!!.println("   translate(left=${dx}f, top=${dy}f)")
+                    if (java.lang.Double.isFinite(middleMarker.orient) && (middleMarker.orient != 0.0)) {
+                        printWriterManager!!.println("   rotate(degrees=${middleMarker.orient}f, pivot = Offset(0.0f, 0.0f))")
+                    }
+                    printWriterManager!!.println("}) {")
+
                     transcodeGraphicsNode(middleMarker.markerNode, comment + "_" + "m" + i)
-                    rotate(-middleMarker.orient)
-                    printWriterManager!!.println(
-                        "g.translate(" + -dx + ", " + -dy + ")"
-                                + languageRenderer.statementEnd
-                    )
+
+                    printWriterManager!!.println("}")
                 }
             }
         }
@@ -1012,20 +984,20 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
             val endMarker = painter.endMarker
             val dx = lastPoint.x - endMarker.ref.x
             val dy = lastPoint.y - endMarker.ref.y
-            printWriterManager!!.println(
-                "g.translate(" + dx + ", " + dy + ")"
-                        + languageRenderer.statementEnd
-            )
-            rotate(endMarker.orient)
+
+            printWriterManager!!.println("withTransform({")
+            printWriterManager!!.println("   translate(left=${dx}f, top=${dy}f)")
+            if (java.lang.Double.isFinite(endMarker.orient) && (endMarker.orient != 0.0)) {
+                printWriterManager!!.println("   rotate(degrees=${endMarker.orient}f, pivot = Offset(0.0f, 0.0f))")
+            }
+            printWriterManager!!.println("}) {")
+
             transcodeGraphicsNode(
                 endMarker.markerNode,
                 comment + "_" + "m" + (pathPointCount - 1)
             )
-            rotate(-endMarker.orient)
-            printWriterManager!!.println(
-                "g.translate(" + -dx + ", " + -dy + ")"
-                        + languageRenderer.statementEnd
-            )
+
+            printWriterManager!!.println("}")
         }
     }
 
@@ -1328,7 +1300,9 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
         } finally {
             if (transform != null) {
                 printWriterManager!!.println("}")
-                printWriterManager!!.println("alpha = alphaStack.removeAt(0)")
+                if (composite != null) {
+                    printWriterManager!!.println("alpha = alphaStack.removeAt(0)")
+                }
             }
         }
     }
