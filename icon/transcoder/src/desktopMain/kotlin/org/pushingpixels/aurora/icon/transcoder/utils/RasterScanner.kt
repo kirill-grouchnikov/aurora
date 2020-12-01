@@ -198,14 +198,15 @@ internal class RasterScanner(val printWriter: PrintWriter, val languageRenderer:
         }
 
         // Static WeakReference to the decoded image
-        printWriter.println("private static WeakReference<BufferedImage> image$md5;")
+        printWriter.println("private lateinit var image$md5: WeakReference<ImageBitmap>")
 
-        // Static method that returns a BufferedImage
-        printWriter.println("private static BufferedImage getImage$md5() {")
-        printWriter.println("    BufferedImage result = (image$md5 != null)")
-        printWriter.println("        ? image$md5.get() : null;")
-        printWriter.println("    if (result != null) {")
-        printWriter.println("        return result;")
+        // Static method that returns an ImageBitmap
+        printWriter.println("private fun getImage$md5(): ImageBitmap? {")
+        printWriter.println("    if (::image$md5.isInitialized) {")
+        printWriter.println("        val result = image$md5.get()")
+        printWriter.println("        if (result != null) {")
+        printWriter.println("            return result")
+        printWriter.println("        }")
         printWriter.println("    }")
 
         // Encode image content as a single base-64 string
@@ -232,13 +233,14 @@ internal class RasterScanner(val printWriter: PrintWriter, val languageRenderer:
         }
         printWriter.println("    try {")
         printWriter.println(
-            "        result = ImageIO.read(new ByteArrayInputStream(Base64.getDecoder().decode(imageData.toString())));"
+            "        val decoded = ImageIO.read(ByteArrayInputStream(Base64.getDecoder().decode(imageData.toString())))"
         )
-        printWriter.println("        image$md5 = new WeakReference<>(result);")
-        printWriter.println("        return result;")
-        printWriter.println("    } catch (IOException ioe) {")
+        printWriter.println("        val result = decoded.toComposeBitmap()")
+        printWriter.println("        image$md5 = WeakReference(result)")
+        printWriter.println("        return result")
+        printWriter.println("    } catch (ioe: IOException) {")
         printWriter.println("    }")
-        printWriter.println("    return null;")
+        printWriter.println("    return null")
         printWriter.println("}")
         processedMD5s.add(md5)
     }

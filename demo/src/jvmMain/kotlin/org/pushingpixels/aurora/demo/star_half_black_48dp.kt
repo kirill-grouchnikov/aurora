@@ -10,8 +10,13 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import org.jetbrains.skija.PathEffect
 import org.pushingpixels.aurora.icon.AuroraIcon
+import org.pushingpixels.aurora.icon.toComposeBitmap
+import java.io.ByteArrayInputStream
+import java.io.IOException
+import java.lang.ref.WeakReference
+import java.util.*
+import javax.imageio.ImageIO
 import kotlin.math.min
 
 /**
@@ -26,8 +31,6 @@ class star_half_black_48dp private constructor(var _width: Int, var _height: Int
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var alphaStack = mutableListOf(1.0f)
-
-    
 
 	private fun _paint0(drawScope : DrawScope) {
 with(drawScope) {
@@ -220,6 +223,8 @@ alpha = alphaStack.removeAt(0)
                 }
             }
         }
+
+        
     }
 
     override fun getWidth(): Int {

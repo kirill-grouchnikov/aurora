@@ -31,7 +31,6 @@ package org.pushingpixels.aurora.icon.transcoder
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Matrix
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import org.apache.batik.bridge.SVGPatternElementBridge
 import org.apache.batik.bridge.TextNode
 import org.apache.batik.ext.awt.LinearGradientPaint
@@ -39,7 +38,6 @@ import org.apache.batik.ext.awt.MultipleGradientPaint
 import org.apache.batik.ext.awt.RadialGradientPaint
 import org.apache.batik.ext.awt.geom.ExtendedGeneralPath
 import org.apache.batik.gvt.*
-import org.pushingpixels.aurora.icon.transcoder.LanguageRenderer.MethodArgument
 import org.pushingpixels.aurora.icon.transcoder.utils.McCrashyGraphics2D
 import org.pushingpixels.aurora.icon.transcoder.utils.RasterScanner
 import java.awt.*
@@ -1001,12 +999,6 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
         }
     }
 
-    private fun rotate(angle: Double) {
-        if (java.lang.Double.isFinite(angle) && angle != 0.0) {
-            printWriterManager!!.println("g.rotate(" + angle + ")" + languageRenderer.statementEnd)
-        }
-    }
-
     /**
      * Transcodes the specified shape node.
      *
@@ -1039,15 +1031,9 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
 
     private fun transcodeRenderedImage(image: RenderedImage?, graphicsName: String) {
         val md5: String = RasterScanner.getMD5(image)
-        printWriterManager!!.println(
-            languageRenderer.startVariableDefinition("BufferedImage")
-                    + "image" + md5 + "=getImage" + md5 + "()" + languageRenderer.statementEnd
-        )
+        printWriterManager!!.println("val image$md5 = getImage$md5()")
         printWriterManager!!.println("if (image$md5 != null) {")
-        printWriterManager!!.println(
-            "    " + graphicsName + ".drawImage(image" + md5 + ", 0, 0, null)"
-                    + languageRenderer.statementEnd
-        )
+        printWriterManager!!.println("    drawImage(image$md5)")
         printWriterManager!!.println("}")
     }
 

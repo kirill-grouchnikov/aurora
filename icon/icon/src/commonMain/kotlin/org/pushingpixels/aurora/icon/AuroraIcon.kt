@@ -100,3 +100,4 @@ fun AuroraIcon(
         ).background(Color.Yellow).auroraIconPaint(icon)
     )
 }
+

@@ -149,7 +149,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                         openSides = setOf(Side.LEFT, Side.RIGHT)
                     )
                 ) {
-                    AuroraIcon(icon = keyboard_capslock_24px.of(14.dp, 14.dp))
+                    AuroraIcon(icon = kirill.of(64.dp, 64.dp))
                     AuroraText("italic")
                 }
                 AuroraToggleButton(
