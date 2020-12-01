@@ -102,6 +102,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     enabled = enabled.value,
                     selected = selected,
                     onSelectedChange = { println("Selected toggle? $it") }) {
+                    AuroraIcon(icon = input_keyboard.of(16.dp, 16.dp))
                     AuroraText("toggle")
                 }
                 AuroraButton(
@@ -125,7 +126,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     onClick = { println("Clicked!") },
                     backgroundType = ButtonBackgroundType.ALWAYS
                 ) {
-                    AuroraIcon(icon = computer.of(32.dp, 32.dp))
+                    AuroraIcon(icon = Internet_group_chat.of(32.dp, 32.dp))
                     AuroraText("always")
                 }
             }

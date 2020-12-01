@@ -1,8 +1,7 @@
 TOKEN_PACKAGE
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.*
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
@@ -154,7 +153,7 @@ class TOKEN_CLASSNAME private constructor(var _width: Int, var _height: Int) : A
             withTransform({
                 scale(scaleX = coefDp, scaleY = coefDp, pivot = Offset(0.0f, 0.0f))
                 translate(translateXDp, translateYDp)
-                clipRect(left = 0.0f, top = 0.0f, right = _width.toFloat(), bottom = _height.toFloat(), clipOp = ClipOp.Intersect)
+                clipRect(left = 0.0f, top = 0.0f, right = fullOrigWidth.toFloat(), bottom = fullOrigHeight.toFloat(), clipOp = ClipOp.Intersect)
             }) {
                 innerPaint(this)
             }

@@ -31,6 +31,8 @@ package org.pushingpixels.aurora.icon.transcoder
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Matrix
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Path
 import org.apache.batik.bridge.SVGPatternElementBridge
 import org.apache.batik.bridge.TextNode
 import org.apache.batik.ext.awt.LinearGradientPaint
@@ -104,13 +106,15 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
         }
 
         fun checkin() {
-            if (lines >= ROTATION_THRESHOLD) {
-                currentWriter.close()
-                val paintingCodeStream = ByteArrayOutputStream()
-                streamList.add(paintingCodeStream)
-                currentWriter = PrintWriter(paintingCodeStream)
-                lines = 0
-            }
+            // TODO - figure out if the nested withTransform{} blocks
+            //  can somehow be broken on bigger inputs
+//            if (lines >= ROTATION_THRESHOLD) {
+//                currentWriter.close()
+//                val paintingCodeStream = ByteArrayOutputStream()
+//                streamList.add(paintingCodeStream)
+//                currentWriter = PrintWriter(paintingCodeStream)
+//                lines = 0
+//            }
         }
 
         fun close() {
@@ -264,7 +268,7 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
                 )
                 PathIterator.SEG_QUADTO -> printWriterManager!!.println(
                     languageRenderer.getObjectNoNull("generalPath$suffix")
-                            + ".quadTo(" + coords[0] + "f, " + coords[1] + "f, " + coords[2] + "f, "
+                            + ".quadraticBezierTo(" + coords[0] + "f, " + coords[1] + "f, " + coords[2] + "f, "
                             + coords[3] + "f)" + languageRenderer.statementEnd
                 )
                 PathIterator.SEG_MOVETO -> printWriterManager!!.println(
@@ -315,37 +319,26 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
             return
         }
         if (shape is RoundRectangle2D) {
-            val rRect = shape
             printWriterManager!!.println(
-                "shape" + suffix + " = " +
-                        languageRenderer.getObjectCreation("RoundRectangle2D.Double") + "("
-                        + rRect.x + ", " + rRect.y + ", " + rRect.width + ", "
-                        + rRect.height + ", " + rRect.arcWidth + ", "
-                        + rRect.arcHeight + ")" + languageRenderer.statementEnd
+                "shape$suffix = Outline.Rounded(roundRect = RoundRect(" +
+                        "left = ${shape.x}f, top = ${shape.y}f, " +
+                        "right = ${shape.x + shape.width}f, bottom = ${shape.y + shape.height}f," +
+                        "radiusX = ${shape.arcWidth}f, radiusY = ${shape.arcHeight}f))"
             )
             return
         }
         if (shape is Ellipse2D) {
-            val ell = shape
             printWriterManager!!.println(
-                "shape" + suffix + " = "
-                        + languageRenderer.getObjectCreation("Ellipse2D.Double")
-                        + "(" + ell.x + ", " + ell.y + ", " + ell.width + ", "
-                        + ell.height + ")" + languageRenderer.statementEnd
+                "shape$suffix = Outline.Generic(path = Path().also { it.addOval(oval=Rect(" +
+                        "left = ${shape.x}f, top = ${shape.y}f, " +
+                        "right = ${shape.x + shape.width}f, bottom = ${shape.y + shape.height}f))})"
             )
             return
         }
         if (shape is Line2D) {
-            val l2df = shape
-            printWriterManager!!.print(
-                "shape" + suffix + " = "
-                        + languageRenderer.getObjectCreation("Line2D.Float")
-            )
-            printWriterManager!!.format(
-                "(%ff,%ff,%ff,%ff)", l2df.x1.toFloat(), l2df.y1.toFloat(),
-                l2df.x2.toFloat(), l2df.y2.toFloat()
-            )
-            printWriterManager!!.println(languageRenderer.statementEnd)
+            printWriterManager!!.println("shape$suffix = Outline.Generic(path = Path().also {")
+            printWriterManager!!.println("   it.moveTo(x = ${shape.x1}f, y = ${shape.y1}f)")
+            printWriterManager!!.println("   it.lineTo(x = ${shape.x2}f, y = ${shape.y2}f)})")
             return
         }
         throw UnsupportedOperationException(shape.javaClass.canonicalName)
@@ -936,6 +929,8 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
                 "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f)"
             )
         } else {
+            // TODO - switch away from Skija API for creating PathEffect once the fix for
+            //  https://issuetracker.google.com/issues/171072166 is available
             printWriterManager!!.println(
                 "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f, " +
                         "pathEffect=PathEffect.makeDash($dashRep, ${dash_phase}f))"
@@ -943,7 +938,8 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
         }
         transcodeShape(shape, "")
         printWriterManager!!.println(
-            "drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)")
+            "drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)"
+        )
     }
 
     /**

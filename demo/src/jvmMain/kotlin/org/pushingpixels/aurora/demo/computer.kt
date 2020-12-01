@@ -1,8 +1,7 @@
 package org.pushingpixels.aurora.demo
     
     import androidx.compose.runtime.Composable
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.*
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
@@ -1109,7 +1108,7 @@ val translateYDp = translateY.toFloat().toDp().value
 withTransform({
 scale(scaleX = coefDp, scaleY = coefDp, pivot = Offset(0.0f, 0.0f))
 translate(translateXDp, translateYDp)
-clipRect(left = 0.0f, top = 0.0f, right = _width.toFloat(), bottom = _height.toFloat(), clipOp = ClipOp.Intersect)
+clipRect(left = 0.0f, top = 0.0f, right = fullOrigWidth.toFloat(), bottom = fullOrigHeight.toFloat(), clipOp = ClipOp.Intersect)
 }) {
 innerPaint(this)
 }

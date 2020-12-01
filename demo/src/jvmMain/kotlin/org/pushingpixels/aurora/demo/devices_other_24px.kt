@@ -18,7 +18,7 @@ import kotlin.math.min
 * This class has been automatically generated using
 * <a href="https://github.com/kirill-grouchnikov/aurora">Aurora SVG transcoder</a>.
 */
-class keyboard_capslock_24px private constructor(var _width: Int, var _height: Int) : AuroraIcon {
+class devices_other_24px private constructor(var _width: Int, var _height: Int) : AuroraIcon {
 @Suppress("UNUSED_VARIABLE") private var shape: Outline? = null
 @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
 @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
@@ -72,19 +72,51 @@ if (generalPath == null) {
 } else {
    generalPath!!.reset()
 }
-generalPath!!.moveTo(12.0f, 8.41f)
-generalPath!!.lineTo(16.59f, 13.0f)
-generalPath!!.lineTo(18.0f, 11.59f)
-generalPath!!.lineTo(12.0f, 5.59f)
-generalPath!!.lineTo(6.0f, 11.59f)
-generalPath!!.lineTo(7.41f, 13.0f)
-generalPath!!.lineTo(12.0f, 8.41f)
+generalPath!!.moveTo(3.0f, 6.0f)
+generalPath!!.lineTo(21.0f, 6.0f)
+generalPath!!.lineTo(21.0f, 4.0f)
+generalPath!!.lineTo(3.0f, 4.0f)
+generalPath!!.cubicTo(1.9f, 4.0f, 1.0f, 4.9f, 1.0f, 6.0f)
+generalPath!!.lineTo(1.0f, 18.0f)
+generalPath!!.cubicTo(1.0f, 19.1f, 1.9f, 20.0f, 3.0f, 20.0f)
+generalPath!!.lineTo(7.0f, 20.0f)
+generalPath!!.lineTo(7.0f, 18.0f)
+generalPath!!.lineTo(3.0f, 18.0f)
+generalPath!!.lineTo(3.0f, 6.0f)
 generalPath!!.close()
-generalPath!!.moveTo(6.0f, 18.0f)
-generalPath!!.lineTo(18.0f, 18.0f)
-generalPath!!.lineTo(18.0f, 16.0f)
-generalPath!!.lineTo(6.0f, 16.0f)
-generalPath!!.lineTo(6.0f, 18.0f)
+generalPath!!.moveTo(13.0f, 12.0f)
+generalPath!!.lineTo(9.0f, 12.0f)
+generalPath!!.lineTo(9.0f, 13.78f)
+generalPath!!.cubicTo(8.39f, 14.33f, 8.0f, 15.11f, 8.0f, 16.0f)
+generalPath!!.cubicTo(8.0f, 16.89f, 8.39f, 17.67f, 9.0f, 18.22f)
+generalPath!!.lineTo(9.0f, 20.0f)
+generalPath!!.lineTo(13.0f, 20.0f)
+generalPath!!.lineTo(13.0f, 18.22f)
+generalPath!!.cubicTo(13.61f, 17.67f, 14.0f, 16.88f, 14.0f, 15.999999f)
+generalPath!!.cubicTo(14.0f, 15.119999f, 13.61f, 14.329999f, 13.0f, 13.779999f)
+generalPath!!.lineTo(13.0f, 12.0f)
+generalPath!!.close()
+generalPath!!.moveTo(11.0f, 17.5f)
+generalPath!!.cubicTo(10.17f, 17.5f, 9.5f, 16.83f, 9.5f, 16.0f)
+generalPath!!.cubicTo(9.5f, 15.17f, 10.17f, 14.5f, 11.0f, 14.5f)
+generalPath!!.cubicTo(11.83f, 14.5f, 12.5f, 15.17f, 12.5f, 16.0f)
+generalPath!!.cubicTo(12.5f, 16.83f, 11.83f, 17.5f, 11.0f, 17.5f)
+generalPath!!.close()
+generalPath!!.moveTo(22.0f, 8.0f)
+generalPath!!.lineTo(16.0f, 8.0f)
+generalPath!!.cubicTo(15.5f, 8.0f, 15.0f, 8.5f, 15.0f, 9.0f)
+generalPath!!.lineTo(15.0f, 19.0f)
+generalPath!!.cubicTo(15.0f, 19.5f, 15.5f, 20.0f, 16.0f, 20.0f)
+generalPath!!.lineTo(22.0f, 20.0f)
+generalPath!!.cubicTo(22.5f, 20.0f, 23.0f, 19.5f, 23.0f, 19.0f)
+generalPath!!.lineTo(23.0f, 9.0f)
+generalPath!!.cubicTo(23.0f, 8.5f, 22.5f, 8.0f, 22.0f, 8.0f)
+generalPath!!.close()
+generalPath!!.moveTo(21.0f, 18.0f)
+generalPath!!.lineTo(17.0f, 18.0f)
+generalPath!!.lineTo(17.0f, 10.0f)
+generalPath!!.lineTo(21.0f, 10.0f)
+generalPath!!.lineTo(21.0f, 18.0f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
@@ -118,7 +150,7 @@ alpha = 1.0f
 * @return The X of the bounding box of the original SVG image.
 */
 fun getOrigX(): Double {
-return 6.0
+return 1.0
 }
     
     /**
@@ -127,7 +159,7 @@ return 6.0
 * @return The Y of the bounding box of the original SVG image.
 */
 fun getOrigY(): Double {
-return 5.590000152587891
+return 4.0
 }
     
     /**
@@ -136,7 +168,7 @@ return 5.590000152587891
 * @return The width of the bounding box of the original SVG image.
 */
 fun getOrigWidth(): Double {
-return 12.0
+return 22.0
 }
     
     /**
@@ -145,7 +177,7 @@ return 12.0
 * @return The height of the bounding box of the original SVG image.
 */
 fun getOrigHeight(): Double {
-return 12.40999984741211
+return 16.0
 }
     
     /**
@@ -157,7 +189,7 @@ return 12.40999984741211
 */
 @Composable
 fun of(width: Dp, height: Dp): AuroraIcon {
-return keyboard_capslock_24px(
+return devices_other_24px(
 _width = (width.value * AmbientDensity.current.density).toInt(),
 _height = (height.value * AmbientDensity.current.density).toInt()
 )
@@ -171,7 +203,7 @@ _height = (height.value * AmbientDensity.current.density).toInt()
 fun factory(): AuroraIcon.Factory {
 return object : AuroraIcon.Factory {
 override fun createNewIcon(): AuroraIcon {
-return keyboard_capslock_24px(getOrigWidth().toInt(), getOrigHeight().toInt())
+return devices_other_24px(getOrigWidth().toInt(), getOrigHeight().toInt())
 }
 }
 }
