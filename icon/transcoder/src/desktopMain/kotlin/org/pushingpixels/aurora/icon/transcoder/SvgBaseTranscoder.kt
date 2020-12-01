@@ -29,6 +29,8 @@
  */
 package org.pushingpixels.aurora.icon.transcoder
 
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Matrix
 import org.apache.batik.bridge.SVGPatternElementBridge
 import org.apache.batik.bridge.TextNode
 import org.apache.batik.ext.awt.LinearGradientPaint
@@ -45,6 +47,8 @@ import java.awt.image.ImageObserver
 import java.awt.image.RenderedImage
 import java.io.*
 import java.util.*
+import kotlin.math.abs
+import kotlin.math.sqrt
 
 /**
  * SVG to Java2D transcoder.
@@ -246,21 +250,15 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
         printWriterManager!!.println("if (generalPath$suffix == null) {")
         printWriterManager!!.println("   generalPath$suffix = Path()")
         printWriterManager!!.println("} else {")
-        printWriterManager!!.println(   "generalPath$suffix!!.reset()")
+        printWriterManager!!.println("   generalPath$suffix!!.reset()")
         printWriterManager!!.println("}")
-        //        printWriterManager.println("shape" + suffix + " = "
-//                + languageRenderer.getObjectCreationNoParams("GeneralPath")
-//                + languageRenderer.getStatementEnd());
         while (!pathIterator.isDone) {
-
-            // Check in - this is needed for extreme cases for paths that have thousands of segments.
             // Probably the resulting class will run into "error: too many constants" in any case ¯\_(ツ)_/¯
             printWriterManager!!.checkin()
-            val type = pathIterator.currentSegment(coords)
-            when (type) {
+            when (pathIterator.currentSegment(coords)) {
                 PathIterator.SEG_CUBICTO -> printWriterManager!!.println(
                     languageRenderer.getObjectNoNull("generalPath$suffix")
-                            + ".curveTo(" + coords[0] + "f, " + coords[1] + "f, " + coords[2] + "f, "
+                            + ".cubicTo(" + coords[0] + "f, " + coords[1] + "f, " + coords[2] + "f, "
                             + coords[3] + "f, " + coords[4] + "f, " + coords[5] + "f)"
                             + languageRenderer.statementEnd
                 )
@@ -309,12 +307,10 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
             return
         }
         if (shape is Rectangle2D) {
-            val rect = shape
             printWriterManager!!.println(
-                "shape" + suffix + " = "
-                        + languageRenderer.getObjectCreation("Rectangle2D.Double")
-                        + "(" + rect.x + ", " + rect.y + ", " + rect.width + ", "
-                        + rect.height + ")" + languageRenderer.statementEnd
+                "shape$suffix = Outline.Rectangle(rect = Rect(left = ${shape.x}f, " +
+                        "top = ${shape.y}f, right = ${shape.x + shape.width}f, " +
+                        "bottom = ${shape.y + shape.height}f))"
             )
             return
         }
@@ -368,79 +364,65 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
         val fractions = paint.fractions
         val colors = paint.colors
         val cycleMethod = paint.cycleMethod
-        val colorSpace = paint.colorSpace
         val transform = paint.transform
+
+        // Check validity of fractions
         var previousFraction = -1.0f
         for (currentFraction in fractions!!) {
             require(!(currentFraction < 0f || currentFraction > 1f)) { "Fraction values must be in the range 0 to 1: $currentFraction" }
             require(currentFraction >= previousFraction) { "Keyframe fractions must be non-decreasing: $currentFraction" }
             previousFraction = currentFraction
         }
-        val fractionsRep = StringBuffer()
-        if (fractions == null) {
-            fractionsRep.append("null")
-        } else {
-            var sep = ""
-            fractionsRep.append(languageRenderer.startPrimitiveArrayOf("float"))
-            previousFraction = -1.0f
-            for (currentFraction in fractions) {
-                fractionsRep.append(sep)
-                var fraction = currentFraction
-                if (fraction == previousFraction) fraction += 0.000000001f
-                fractionsRep.append(fraction.toString() + "f")
-                sep = ","
-                previousFraction = fraction
-            }
-            fractionsRep.append(languageRenderer.endArray())
+
+        // Correct fractions so that we don't have two consecutive identical
+        // fraction values (since that would not sit well with color stop
+        // handling in Compose)
+        val correctedFractions = mutableListOf<Float>()
+        previousFraction = -1.0f
+        for (currentFraction in fractions) {
+            var fraction = currentFraction
+            if (fraction == previousFraction) fraction += 0.000000001f
+            correctedFractions.add(fraction)
+            previousFraction = fraction
         }
-        val colorsRep = StringBuffer()
-        if (fractions == null) {
-            colorsRep.append("null")
-        } else {
-            var sep = ""
-            colorsRep.append(languageRenderer.startGenericArrayOf("Color"))
-            for (color in colors) {
-                colorsRep.append(sep)
-                colorsRep.append(
-                    languageRenderer.getObjectCreation("Color") + "(" + color.red
-                            + ", " + color.green + ", " + color.blue + ", " + color.alpha
-                            + ")"
-                )
-                sep = ","
-            }
-            colorsRep.append(languageRenderer.endArray())
-        }
-        var cycleMethodRep: String? = null
+
+        var tileModeRep: String? = null
         if (cycleMethod === MultipleGradientPaint.NO_CYCLE) {
-            cycleMethodRep = "MultipleGradientPaint.CycleMethod.NO_CYCLE"
+            tileModeRep = "TileMode.Clamp"
         }
         if (cycleMethod === MultipleGradientPaint.REFLECT) {
-            cycleMethodRep = "MultipleGradientPaint.CycleMethod.REFLECT"
+            tileModeRep = "TileMode.Mirror"
         }
         if (cycleMethod === MultipleGradientPaint.REPEAT) {
-            cycleMethodRep = "MultipleGradientPaint.CycleMethod.REPEAT"
+            tileModeRep = "TileMode.Repeated"
         }
-        var colorSpaceRep: String? = null
-        if (colorSpace === MultipleGradientPaint.SRGB) {
-            colorSpaceRep = "MultipleGradientPaint.ColorSpaceType.SRGB"
+
+        printWriterManager!!.print("brush = LinearGradient(")
+        val stopCount = correctedFractions.size
+        for (stop in 0 until stopCount) {
+            printWriterManager!!.print(
+                "${correctedFractions[stop]}f to Color(${colors[stop].red}, " +
+                        "${colors[stop].green}, ${colors[stop].blue}, ${colors[stop].alpha}), "
+            )
         }
-        if (colorSpace === MultipleGradientPaint.LINEAR_RGB) {
-            colorSpaceRep = "MultipleGradientPaint.ColorSpaceType.LINEAR_RGB"
-        }
+
+        // Apply the affine transform of the paint to start and end points
         val transfMatrix = DoubleArray(6)
         transform.getMatrix(transfMatrix)
-        printWriterManager!!.println(
-            "paint = " + languageRenderer.getObjectCreation("LinearGradientPaint")
-                    + "(" + languageRenderer.getObjectCreation("Point2D.Double") + "("
-                    + startPoint.x + ", " + startPoint.y + "), "
-                    + languageRenderer.getObjectCreation("Point2D.Double") + "("
-                    + endPoint.x + ", " + endPoint.y + "), " + fractionsRep.toString()
-                    + ", " + colorsRep.toString() + ", " + cycleMethodRep + ", " + colorSpaceRep
-                    + ", " + languageRenderer.getObjectCreation("AffineTransform") + "("
-                    + transfMatrix[0] + "f, " + transfMatrix[1] + "f, " + transfMatrix[2]
-                    + "f, " + transfMatrix[3] + "f, " + transfMatrix[4] + "f, "
-                    + transfMatrix[5] + "f))" + languageRenderer.statementEnd
+        val matrix = Matrix(
+            values = floatArrayOf(
+                transfMatrix[0].toFloat(), transfMatrix[2].toFloat(), 0.0f, transfMatrix[4].toFloat(),
+                transfMatrix[1].toFloat(), transfMatrix[3].toFloat(), 0.0f, transfMatrix[5].toFloat(),
+                0.0f, 0.0f, 1.0f, 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f
+            )
         )
+        val transformedStart = matrix.map(Offset(x = startPoint.x.toFloat(), y = startPoint.y.toFloat()))
+        val transformedEnd = matrix.map(Offset(x = endPoint.x.toFloat(), y = endPoint.y.toFloat()))
+
+        printWriterManager!!.print("startX = ${transformedStart.x}f, startY = ${transformedStart.y}f, ")
+        printWriterManager!!.print("endX = ${transformedEnd.x}f, endY = ${transformedEnd.y}f, ")
+        printWriterManager!!.println("tileMode = $tileModeRep)")
     }
 
     private fun transcodePatternPaint(paint: PatternPaint) {
@@ -721,80 +703,71 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
         val fractions = paint.fractions
         val colors = paint.colors
         val cycleMethod = paint.cycleMethod
-        val colorSpace = paint.colorSpace
         val transform = paint.transform
+
+        require((abs(focusPoint.x - centerPoint.x) < 0.00001f) && (abs(focusPoint.y - centerPoint.y) < 0.00001f)) {
+            "Focus point different from center point not supported"
+        }
+
+        // Check validity of fractions
         var previousFraction = -1.0f
         for (currentFraction in fractions!!) {
             require(!(currentFraction < 0f || currentFraction > 1f)) { "Fraction values must be in the range 0 to 1: $currentFraction" }
             require(currentFraction >= previousFraction) { "Keyframe fractions must be non-decreasing: $currentFraction" }
             previousFraction = currentFraction
         }
-        val fractionsRep = StringBuffer()
-        if (fractions == null) {
-            fractionsRep.append("null")
-        } else {
-            var sep = ""
-            fractionsRep.append(languageRenderer.startPrimitiveArrayOf("float"))
-            previousFraction = -1.0f
-            for (currentFraction in fractions) {
-                fractionsRep.append(sep)
-                var fraction = currentFraction
-                if (fraction == previousFraction) fraction += 0.000000001f
-                fractionsRep.append(fraction.toString() + "f")
-                sep = ","
-                previousFraction = fraction
-            }
-            fractionsRep.append(languageRenderer.endArray())
+        // Correct fractions so that we don't have two consecutive identical
+        // fraction values (since that would not sit well with color stop
+        // handling in Compose)
+        val correctedFractions = mutableListOf<Float>()
+        previousFraction = -1.0f
+        for (currentFraction in fractions) {
+            var fraction = currentFraction
+            if (fraction == previousFraction) fraction += 0.000000001f
+            correctedFractions.add(fraction)
+            previousFraction = fraction
         }
-        val colorsRep = StringBuffer()
-        if (fractions == null) {
-            colorsRep.append("null")
-        } else {
-            var sep = ""
-            colorsRep.append(languageRenderer.startGenericArrayOf("Color"))
-            for (color in colors) {
-                colorsRep.append(sep)
-                colorsRep.append(
-                    languageRenderer.getObjectCreation("Color") + "(" + color.red
-                            + ", " + color.green + ", " + color.blue + ", " + color.alpha
-                            + ")"
-                )
-                sep = ","
-            }
-            colorsRep.append(languageRenderer.endArray())
-        }
-        var cycleMethodRep: String? = null
+
+        var tileModeRep: String? = null
         if (cycleMethod === MultipleGradientPaint.NO_CYCLE) {
-            cycleMethodRep = "MultipleGradientPaint.CycleMethod.NO_CYCLE"
+            tileModeRep = "TileMode.Clamp"
         }
         if (cycleMethod === MultipleGradientPaint.REFLECT) {
-            cycleMethodRep = "MultipleGradientPaint.CycleMethod.REFLECT"
+            tileModeRep = "TileMode.Mirror"
         }
         if (cycleMethod === MultipleGradientPaint.REPEAT) {
-            cycleMethodRep = "MultipleGradientPaint.CycleMethod.REPEAT"
+            tileModeRep = "TileMode.Repeated"
         }
-        var colorSpaceRep: String? = null
-        if (colorSpace === MultipleGradientPaint.SRGB) {
-            colorSpaceRep = "MultipleGradientPaint.ColorSpaceType.SRGB"
+
+        printWriterManager!!.print("brush = RadialGradient(")
+        val stopCount = correctedFractions.size
+        for (stop in 0 until stopCount) {
+            printWriterManager!!.print(
+                "${correctedFractions[stop]}f to Color(${colors[stop].red}, " +
+                        "${colors[stop].green}, ${colors[stop].blue}, ${colors[stop].alpha}), "
+            )
         }
-        if (colorSpace === MultipleGradientPaint.LINEAR_RGB) {
-            colorSpaceRep = "MultipleGradientPaint.ColorSpaceType.LINEAR_RGB"
-        }
+
+        // Apply the affine transform of the paint to center point
         val transfMatrix = DoubleArray(6)
         transform.getMatrix(transfMatrix)
-        printWriterManager!!.println(
-            "paint = "
-                    + languageRenderer.getObjectCreation("RadialGradientPaint") + "("
-                    + languageRenderer.getObjectCreation("Point2D.Double") + "(" + centerPoint.x
-                    + ", " + centerPoint.y + "), " + radius + "f, "
-                    + languageRenderer.getObjectCreation("Point2D.Double") + "(" + focusPoint.x
-                    + ", " + focusPoint.y + "), " + fractionsRep.toString() + ", "
-                    + colorsRep.toString() + ", " + cycleMethodRep + ", " + colorSpaceRep + ", "
-                    + languageRenderer.getObjectCreation("AffineTransform") + "(" + transfMatrix[0]
-                    + "f, " + transfMatrix[1] + "f, " + transfMatrix[2] + "f, " + transfMatrix[3]
-                    + "f, " + transfMatrix[4] + "f, " + transfMatrix[5] + "f))"
-                    + languageRenderer.statementEnd
+        val matrix = Matrix(
+            values = floatArrayOf(
+                transfMatrix[0].toFloat(), transfMatrix[2].toFloat(), 0.0f, transfMatrix[4].toFloat(),
+                transfMatrix[1].toFloat(), transfMatrix[3].toFloat(), 0.0f, transfMatrix[5].toFloat(),
+                0.0f, 0.0f, 1.0f, 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f
+            )
         )
+        val transformedCenter = matrix.map(Offset(x = centerPoint.x.toFloat(), y = centerPoint.y.toFloat()))
+        val transformedEdge = matrix.map(Offset(x = (centerPoint.x + radius).toFloat(), y = centerPoint.y.toFloat()))
+        val dx = transformedEdge.x - transformedCenter.x
+        val dy = transformedEdge.y - transformedCenter.y
+        val transformedRadius = sqrt(dx * dx + dy * dy)
+
+        printWriterManager!!.print("centerX = ${transformedCenter.x}f, centerY = ${transformedCenter.y}f, ")
+        printWriterManager!!.print("radius = ${transformedRadius}f, ")
+        printWriterManager!!.println("tileMode = $tileModeRep)")
     }
 
     /**
@@ -818,12 +791,7 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
             return
         }
         if (paint is Color) {
-            val c = paint
-            printWriterManager!!.println(
-                "paint = " + languageRenderer.getObjectCreation("Color") + "("
-                        + c.red + ", " + c.green + ", " + c.blue + ", " + c.alpha
-                        + ")" + languageRenderer.statementEnd
-            )
+            printWriterManager!!.println("brush = SolidColor(Color(${paint.red}, ${paint.green}, ${paint.blue}, ${paint.alpha}))")
             return
         }
         if (paint == null) {
@@ -847,20 +815,12 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
         }
         if (paint is RadialGradientPaint) {
             transcodeRadialGradientPaint(paint)
-            printWriterManager!!.println(
-                "g" + languageRenderer.startSetterAssignment("paint") + "paint"
-                        + languageRenderer.endSetterAssignment() + languageRenderer.statementEnd
-            )
-            printWriterManager!!.println("g.fill(shape)" + languageRenderer.statementEnd)
+            printWriterManager!!.println("drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)")
             return
         }
         if (paint is LinearGradientPaint) {
             transcodeLinearGradientPaint(paint)
-            printWriterManager!!.println(
-                "g" + languageRenderer.startSetterAssignment("paint") + "paint"
-                        + languageRenderer.endSetterAssignment() + languageRenderer.statementEnd
-            )
-            printWriterManager!!.println("g.fill(shape)" + languageRenderer.statementEnd)
+            printWriterManager!!.println("drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)")
             return
         }
         if (paint is Color) {
@@ -959,21 +919,31 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
             }
             dashRep.append("}")
         }
-        printWriterManager!!.println(
-            "stroke = " + languageRenderer.getObjectCreation("BasicStroke")
-                    + "(" + width + "f," + cap + "," + join + "," + miterlimit + "f," + dashRep
-                    + "," + dash_phase + "f)" + languageRenderer.statementEnd
-        )
+        val strokeCap = when (cap) {
+            BasicStroke.CAP_BUTT -> "StrokeCap.Butt"
+            BasicStroke.CAP_ROUND -> "StrokeCap.Round"
+            BasicStroke.CAP_SQUARE -> "StrokeCap.Square"
+            else -> throw UnsupportedOperationException("Unsupported stroke cap $cap")
+        }
+        val strokeJoin = when (join) {
+            BasicStroke.JOIN_BEVEL -> "StrokeJoin.Bevel"
+            BasicStroke.JOIN_MITER -> "StrokeJoin.Miter"
+            BasicStroke.JOIN_ROUND -> "StrokeJoin.Round"
+            else -> throw UnsupportedOperationException("Unsupported stroke join $join")
+        }
+        if (dash == null) {
+            printWriterManager!!.println(
+                "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f)"
+            )
+        } else {
+            printWriterManager!!.println(
+                "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f, " +
+                        "pathEffect=PathEffect.makeDash($dashRep, ${dash_phase}f))"
+            )
+        }
         transcodeShape(shape, "")
         printWriterManager!!.println(
-            "g" + languageRenderer.startSetterAssignment("paint") + "paint"
-                    + languageRenderer.endSetterAssignment() + languageRenderer.statementEnd
-        )
-        printWriterManager!!.println(
-            "g" + languageRenderer.startSetterAssignment("stroke") + "stroke"
-                    + languageRenderer.endSetterAssignment() + languageRenderer.statementEnd
-        )
-        printWriterManager!!.println("g.draw(shape)" + languageRenderer.statementEnd)
+            "drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)")
     }
 
     /**
@@ -1336,10 +1306,14 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
             printWriterManager!!.println("withTransform({")
             printWriterManager!!.println("transform(")
             printWriterManager!!.println("Matrix(values=floatArrayOf(")
-            printWriterManager!!.println("" + transfMatrix[0] + "f, " + transfMatrix[2] + "f, "
-                    + "0.0f, " + transfMatrix[4] + "f,")
-            printWriterManager!!.println("" + transfMatrix[1] + "f, " + transfMatrix[3] + "f, "
-                    + "0.0f, " + transfMatrix[5] + "f,")
+            printWriterManager!!.println(
+                "" + transfMatrix[0] + "f, " + transfMatrix[2] + "f, "
+                        + "0.0f, " + transfMatrix[4] + "f,"
+            )
+            printWriterManager!!.println(
+                "" + transfMatrix[1] + "f, " + transfMatrix[3] + "f, "
+                        + "0.0f, " + transfMatrix[5] + "f,"
+            )
             printWriterManager!!.println("0.0f, 0.0f, 1.0f, 0.0f,")
             printWriterManager!!.println("0.0f, 0.0f, 0.0f, 1.0f)")
             printWriterManager!!.println("))}){")

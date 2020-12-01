@@ -2,6 +2,7 @@ package org.pushingpixels.aurora.demo
     
     import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
@@ -9,7 +10,10 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import org.jetbrains.skija.PathEffect
 import org.pushingpixels.aurora.icon.AuroraIcon
+import kotlin.math.min
     
     /**
 * This class has been automatically generated using
@@ -67,7 +71,7 @@ Matrix(values=floatArrayOf(
 if (generalPath == null) {
    generalPath = Path()
 } else {
-generalPath!!.reset()
+   generalPath!!.reset()
 }
 generalPath!!.moveTo(12.0f, 8.41f)
 generalPath!!.lineTo(16.59f, 13.0f)
@@ -190,32 +194,36 @@ _height = (height.value * AmbientDensity.current.density).toInt()
     
     override fun paintIcon(drawScope: DrawScope) {
 with(drawScope) {
-val coef1 = _width / getOrigWidth()
-val coef2 = _height / getOrigHeight()
-val coef = Math.min(coef1, coef2)
+// Use the original icon bounding box and the current icon dimension to compute
+// the scaling factor
+val fullOrigWidth = getOrigX() + getOrigWidth()
+val fullOrigHeight = getOrigY() + getOrigHeight()
+val coef1 = _width / fullOrigWidth
+val coef2 = _height / fullOrigHeight
+val coef = min(coef1, coef2).toFloat()
+val coefDp = coef.dp.toPx()
     
-    var translateX = -getOrigX().toFloat()
-var translateY = -getOrigY().toFloat()
+    // Use the original icon bounding box and the current icon dimension to compute
+// the offset pivot for the scaling
+var translateX = -getOrigX()
+var translateY = -getOrigY()
 if (coef1 != coef2) {
 if (coef1 < coef2) {
-val extraDy = ((getOrigWidth() - getOrigHeight()) / 2.0f).toInt().toFloat()
+val extraDy = ((fullOrigWidth - fullOrigHeight) / 2.0f).toFloat()
 translateY += extraDy
 } else {
-val extraDx = ((getOrigHeight() - getOrigWidth()) / 2.0f).toInt().toFloat()
+val extraDx = ((fullOrigHeight - fullOrigWidth) / 2.0f).toFloat()
 translateX += extraDx
 }
 }
+val translateXDp = translateX.toFloat().toDp().value
+val translateYDp = translateY.toFloat().toDp().value
     
-    withTransform({
-translate(left = translateX / coef.toFloat(), top = translateY / coef.toFloat())
-scale(scaleX = coef.toFloat(), scaleY = coef.toFloat(), pivot = Offset(0.0f, 0.0f))
-clipRect(
-left = 0.0f,
-top = 0.0f,
-right = _width.toFloat(),
-bottom = _height.toFloat(),
-clipOp = ClipOp.Intersect
-)
+    // Create a combined scale + translate + clip transform before calling the transcoded painting instructions
+withTransform({
+scale(scaleX = coefDp, scaleY = coefDp, pivot = Offset(0.0f, 0.0f))
+translate(translateXDp, translateYDp)
+clipRect(left = 0.0f, top = 0.0f, right = _width.toFloat(), bottom = _height.toFloat(), clipOp = ClipOp.Intersect)
 }) {
 innerPaint(this)
 }
