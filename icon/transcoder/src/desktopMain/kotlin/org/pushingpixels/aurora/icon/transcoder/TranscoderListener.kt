@@ -38,9 +38,9 @@ import java.io.Writer
  */
 interface TranscoderListener {
     /**
-     * Returns the writer for the Java2D contents.
+     * Returns the writer for the Compose contents.
      *
-     * @return Writer for the Java2D contents.
+     * @return Writer for the Compose contents.
      */
     val writer: Writer?
 

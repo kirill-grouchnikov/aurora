@@ -40,7 +40,7 @@ import java.util.logging.Level
 import java.util.logging.Logger
 
 /**
- * SVG to Java2D transcoder.
+ * SVG to Compose transcoder.
  *
  * @author Kirill Grouchnikov.
  */

@@ -158,7 +158,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     onSelectedChange = { println("Selected under? $it") },
                     sides = ButtonSides(straightSides = setOf(Side.LEFT))
                 ) {
-                    AuroraIcon(icon = marker.of(80.dp, 80.dp))
+                    AuroraIcon(icon = text.of(80.dp, 80.dp))
                     AuroraText("under")
                 }
             }

@@ -50,7 +50,7 @@ import kotlin.math.abs
 import kotlin.math.sqrt
 
 /**
- * SVG to Java2D transcoder.
+ * SVG to Compose transcoder.
  *
  * @author Kirill Grouchnikov.
  */
@@ -77,7 +77,7 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
     private var printWriterManager: PrintWriterManager? = null
 
     /**
-     * Package name for the generated Java2D code.
+     * Package name for the generated Compose code.
      */
     private var packageName: String? = null
 
@@ -152,7 +152,7 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
     }
 
     /**
-     * Transcodes the SVG image into Java2D code.
+     * Transcodes the SVG image into Compose code.
      *
      * @param gvtRoot        Graphics vector tree root.
      * @param templateStream Stream with the template content.
@@ -259,7 +259,7 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
             }
             pathIterator.next()
         }
-        printWriterManager!!.println("shape$suffix = Outline.Generic(generalPath!!)")
+        printWriterManager!!.println("shape$suffix = Outline.Generic(generalPath$suffix!!)")
     }
 
     /**
@@ -997,7 +997,7 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
      * Transcodes the specified shape node.
      *
      * @param node    Shape node.
-     * @param comment Comment (for associating the Java2D section with the corresponding SVG
+     * @param comment Comment (for associating the Compose section with the corresponding SVG
      * section).
      */
     private fun transcodeShapeNode(node: ShapeNode, comment: String) {
@@ -1010,15 +1010,13 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
      * Transcodes the specified composite graphics node.
      *
      * @param node    Composite graphics node.
-     * @param comment Comment (for associating the Java2D section with the corresponding SVG
+     * @param comment Comment (for associating the Compose section with the corresponding SVG
      * section).
      */
     private fun transcodeCompositeGraphicsNode(node: CompositeGraphicsNode, comment: String) {
         printWriterManager!!.println("// $comment")
-        var count = 0
-        for (obj in node.children) {
+        for ((count, obj) in node.children.withIndex()) {
             transcodeGraphicsNode(obj as GraphicsNode?, comment + "_" + count)
-            count++
         }
         printWriterManager!!.checkin()
     }
@@ -1039,35 +1037,15 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
 
     private fun transcodeTextNode(node: TextNode, comment: String) {
         printWriterManager!!.println("// $comment")
-        printWriterManager!!.println("{")
-        // Create a new Graphics2D object
-        printWriterManager!!.println(
-            "    " + languageRenderer.startVariableDefinition("Graphics2D")
-                    + "gText = " + languageRenderer.getObjectCast("g.create()", "Graphics2D")
-                    + languageRenderer.statementEnd
-        )
-        printWriterManager!!.println(
-            "            " + languageRenderer.startVariableDefinition("Shape")
-                    + "shapeText = null" + languageRenderer.statementEnd
-        )
-        printWriterManager!!.println(
-            "            " + languageRenderer.startVariableDefinition("GeneralPath")
-                    + "generalPathText = null" + languageRenderer.statementEnd
-        )
+
+        printWriterManager!!.println("            var shapeText: Outline? = null")
+        printWriterManager!!.println("            var generalPathText: Path? = null")
+        printWriterManager!!.println("            var alphaText = alpha")
+
         node.primitivePaint(object : McCrashyGraphics2D() {
             var _clip: Shape? = null
             private val _hints = RenderingHints(HashMap<RenderingHints.Key, Any?>())
 
-            //                double[] transfMatrix = new double[6];
-//                transform.getMatrix(transfMatrix);
-//                printWriter
-//                        .println("gTiled.setTransform(" + languageRenderer.getObjectCreation
-//                        ("AffineTransform")
-//                                + "(" + transfMatrix[0] + "f, " + transfMatrix[1] + "f, "
-//                                + transfMatrix[2] + "f, " + transfMatrix[3] + "f, " +
-//                                transfMatrix[4]
-//                                + "f, " + transfMatrix[5] + "f))" + languageRenderer
-//                                .getStatementEnd());
             private var _transform = AffineTransform()
             private var _composite: Composite? = null
             override fun create(): Graphics {
@@ -1077,38 +1055,30 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
             override fun dispose() {}
             override fun draw(shape: Shape) {
                 transcodeShape(shape, "Text")
-                printWriterManager!!.println("gText.draw(shapeText);")
+                printWriterManager!!.println("drawOutline(outline = shapeText!!, style = stroke!!, brush=brush!!, alpha = alphaText)")
             }
 
             override fun fill(shape: Shape) {
                 transcodeShape(shape, "Text")
-                printWriterManager!!.println("gText.fill(shapeText);")
+                printWriterManager!!.println("drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText)")
             }
 
             override fun setComposite(composite: Composite) {
                 this._composite = composite
                 val rule = (composite as AlphaComposite).rule
                 val alpha = composite.alpha
-                printWriterManager!!.println(
-                    "gText" + languageRenderer.startSetterAssignment("composite")
-                            + "AlphaComposite.getInstance(" + rule + ", " + alpha + "f * origAlpha)"
-                            + languageRenderer.endSetterAssignment() + languageRenderer.statementEnd
-                )
+                printWriterManager!!.println("alphaText = alpha * ${alpha}f")
             }
 
             override fun setPaint(paint: Paint) {
                 transcodePaint(paint)
-                printWriterManager!!.println(
-                    "gText" + languageRenderer.startSetterAssignment("paint") + "paint"
-                            + languageRenderer.endSetterAssignment() + languageRenderer.statementEnd
-                )
             }
 
             override fun setStroke(stroke: Stroke) {
-                val strokeWidth = (stroke as BasicStroke).lineWidth
-                val endCap = stroke.endCap
-                val lineJoin = stroke.lineJoin
-                val miterLimit = stroke.miterLimit
+                val width = (stroke as BasicStroke).lineWidth
+                val cap = stroke.endCap
+                val join = stroke.lineJoin
+                val miterlimit = stroke.miterLimit
                 val dash = stroke.dashArray
                 val dash_phase = stroke.dashPhase
                 val dashRep = StringBuffer()
@@ -1124,17 +1094,38 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
                     }
                     dashRep.append("}")
                 }
-                printWriterManager!!.println(
-                    "gText" + languageRenderer.startSetterAssignment("stroke")
-                            + languageRenderer.getObjectCreation("BasicStroke")
-                            + "(" + strokeWidth + "f," + endCap + "," + lineJoin + "," + miterLimit
-                            + "f," + dashRep + "," + dash_phase + "f)"
-                            + languageRenderer.endSetterAssignment() + languageRenderer.statementEnd
-                )
+                val strokeCap = when (cap) {
+                    BasicStroke.CAP_BUTT -> "StrokeCap.Butt"
+                    BasicStroke.CAP_ROUND -> "StrokeCap.Round"
+                    BasicStroke.CAP_SQUARE -> "StrokeCap.Square"
+                    else -> throw UnsupportedOperationException("Unsupported stroke cap $cap")
+                }
+                val strokeJoin = when (join) {
+                    BasicStroke.JOIN_BEVEL -> "StrokeJoin.Bevel"
+                    BasicStroke.JOIN_MITER -> "StrokeJoin.Miter"
+                    BasicStroke.JOIN_ROUND -> "StrokeJoin.Round"
+                    else -> throw UnsupportedOperationException("Unsupported stroke join $join")
+                }
+                if (dash == null) {
+                    printWriterManager!!.println(
+                        "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f)"
+                    )
+                } else {
+                    // TODO - switch away from Skija API for creating PathEffect once the fix for
+                    //  https://issuetracker.google.com/issues/171072166 is available
+                    printWriterManager!!.println(
+                        "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f, " +
+                                "pathEffect=PathEffect.makeDash($dashRep, ${dash_phase}f))"
+                    )
+                }
             }
 
             override fun setClip(x: Int, y: Int, width: Int, height: Int) {
                 _clip = Rectangle2D.Double(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
+            }
+
+            override fun getClip(): Shape? {
+                return _clip
             }
 
             override fun clip(s: Shape) {
@@ -1175,40 +1166,22 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
 
             override fun transform(Tx: AffineTransform) {
                 _transform.concatenate(Tx)
-                //                double[] transfMatrix = new double[6];
-//                transform.getMatrix(transfMatrix);
-//                printWriter
-//                        .println("gTiled.transform(" + languageRenderer.getObjectCreation
-//                        ("AffineTransform")
-//                                + "(" + transfMatrix[0] + "f, " + transfMatrix[1] + "f, "
-//                                + transfMatrix[2] + "f, " + transfMatrix[3] + "f, " +
-//                                transfMatrix[4]
-//                                + "f, " + transfMatrix[5] + "f))" + languageRenderer
-//                                .getStatementEnd());
             }
 
             override fun translate(x: Int, y: Int) {
                 _transform.translate(x.toDouble(), y.toDouble())
-                //                printWriterManager.println("gTiled.translate(" + x + ", " + y + ")"
-//                        + languageRenderer.getStatementEnd());
             }
 
             override fun translate(tx: Double, ty: Double) {
                 _transform.translate(tx, ty)
-                //                printWriterManager.println("gTiled.translate(" + tx + ", " + ty + ")"
-//                        + languageRenderer.getStatementEnd());
             }
 
             override fun rotate(theta: Double) {
                 _transform.rotate(theta)
-                //                printWriterManager.println("gTiled.rotate(" + theta + ")"
-//                        + languageRenderer.getStatementEnd());
             }
 
             override fun rotate(theta: Double, x: Double, y: Double) {
                 _transform.rotate(theta, x, y)
-                //                printWriterManager.println("gTiled.rotate(" + theta + ", " + x + ", " + y + ")"
-//                        + languageRenderer.getStatementEnd());
             }
 
             override fun getComposite(): Composite? {
@@ -1219,8 +1192,6 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
                 return null
             }
         })
-        printWriterManager!!.println("    gText.dispose()" + languageRenderer.statementEnd)
-        printWriterManager!!.println("}")
         printWriterManager!!.checkin()
     }
 
@@ -1228,7 +1199,7 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
      * Transcodes the specified graphics node.
      *
      * @param node    Graphics node.
-     * @param comment Comment (for associating the Java2D section with the corresponding SVG
+     * @param comment Comment (for associating the Compose section with the corresponding SVG
      * section).
      * @throws UnsupportedOperationException if the graphics node is unsupported.
      */
