@@ -126,7 +126,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     onClick = { println("Clicked!") },
                     backgroundType = ButtonBackgroundType.ALWAYS
                 ) {
-                    AuroraIcon(icon = Internet_group_chat.of(32.dp, 32.dp))
+                    AuroraIcon(icon = network_wired.of(32.dp, 32.dp))
                     AuroraText("always")
                 }
             }
@@ -137,7 +137,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     onSelectedChange = { println("Selected bold? $it") },
                     sides = ButtonSides(straightSides = setOf(Side.RIGHT))
                 ) {
-                    AuroraIcon(icon = keyboard_capslock_24px.of(12.dp, 12.dp))
+                    AuroraIcon(icon = pattern.of(40.dp, 40.dp))
                     AuroraText("bold")
                 }
                 AuroraToggleButton(

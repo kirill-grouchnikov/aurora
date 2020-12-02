@@ -66,7 +66,7 @@ internal open class McStableGraphics2D : Graphics2D() {
     override fun setComposite(comp: Composite) {}
     override fun setPaint(paint: Paint) {}
     override fun setStroke(s: Stroke) {}
-    override fun setRenderingHint(hintKey: RenderingHints.Key, hintValue: Any) {}
+    override fun setRenderingHint(hintKey: RenderingHints.Key, hintValue: Any?) {}
     override fun getRenderingHint(hintKey: RenderingHints.Key): Any? {
         return null
     }

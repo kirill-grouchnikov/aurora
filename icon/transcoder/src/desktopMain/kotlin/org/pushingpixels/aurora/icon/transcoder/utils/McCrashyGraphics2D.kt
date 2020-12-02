@@ -105,7 +105,7 @@ internal open class McCrashyGraphics2D : Graphics2D() {
         throw UnsupportedOperationException("This operation is not supported")
     }
 
-    override fun setRenderingHint(hintKey: RenderingHints.Key, hintValue: Any) {
+    override fun setRenderingHint(hintKey: RenderingHints.Key, hintValue: Any?) {
         throw UnsupportedOperationException("This operation is not supported")
     }
 
@@ -233,7 +233,7 @@ internal open class McCrashyGraphics2D : Graphics2D() {
         throw UnsupportedOperationException("This operation is not supported")
     }
 
-    override fun getClip(): Shape {
+    override fun getClip(): Shape? {
         throw UnsupportedOperationException("This operation is not supported")
     }
 

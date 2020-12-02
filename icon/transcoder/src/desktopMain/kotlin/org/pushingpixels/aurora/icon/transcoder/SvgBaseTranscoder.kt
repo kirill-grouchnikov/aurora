@@ -242,15 +242,20 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
             printWriterManager!!.checkin()
             when (pathIterator.currentSegment(coords)) {
                 PathIterator.SEG_CUBICTO -> printWriterManager?.println(
-                    "generalPath$suffix!!.cubicTo(${coords[0]}f, ${coords[1]}f, ${coords[2]}f, ${coords[3]}f, ${coords[4]}f, ${coords[5]}f)")
+                    "generalPath$suffix!!.cubicTo(${coords[0]}f, ${coords[1]}f, ${coords[2]}f, ${coords[3]}f, ${coords[4]}f, ${coords[5]}f)"
+                )
                 PathIterator.SEG_QUADTO -> printWriterManager?.println(
-                    "generalPath$suffix!!.quadraticBezierTo(${coords[0]}f, ${coords[1]}f, ${coords[2]}f, ${coords[3]}f)")
+                    "generalPath$suffix!!.quadraticBezierTo(${coords[0]}f, ${coords[1]}f, ${coords[2]}f, ${coords[3]}f)"
+                )
                 PathIterator.SEG_MOVETO -> printWriterManager?.println(
-                    "generalPath$suffix!!.moveTo(${coords[0]}f, ${coords[1]}f)")
+                    "generalPath$suffix!!.moveTo(${coords[0]}f, ${coords[1]}f)"
+                )
                 PathIterator.SEG_LINETO -> printWriterManager?.println(
-                    "generalPath$suffix!!.lineTo(${coords[0]}f, ${coords[1]}f)")
+                    "generalPath$suffix!!.lineTo(${coords[0]}f, ${coords[1]}f)"
+                )
                 PathIterator.SEG_CLOSE -> printWriterManager?.println(
-                    "generalPath$suffix!!.close()")
+                    "generalPath$suffix!!.close()"
+                )
             }
             pathIterator.next()
         }
@@ -386,74 +391,73 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
         transform.concatenate(paint.graphicsNode.transform)
 
         // Confine the tiling to the shape of the current node
-        printWriterManager!!.println(
-            "clip = g" + languageRenderer.getGetter("clip")
-                    + languageRenderer.statementEnd
-        )
-        printWriterManager!!.println("g.clip(shape)" + languageRenderer.statementEnd)
-        printWriterManager!!.println("{")
+        printWriterManager!!.println("withTransform({")
+        printWriterManager!!.println("    if (shape is Outline.Rectangle) {")
+        printWriterManager!!.println("        clipPath(Path().also { it.addRect((shape as Outline.Rectangle).rect) })")
+        printWriterManager!!.println("    }")
+        printWriterManager!!.println("    if (shape is Outline.Rounded) {")
+        printWriterManager!!.println("        clipPath(Path().also { it.addRoundRect((shape as Outline.Rounded).roundRect) })")
+        printWriterManager!!.println("    }")
+        printWriterManager!!.println("    if (shape is Outline.Generic) {")
+        printWriterManager!!.println("        clipPath(Path().also { it.addPath((shape as Outline.Generic).path) })")
+        printWriterManager!!.println("    }")
+        printWriterManager!!.println("}) {")
+
         // Get the pre-transformation bounding box of the pattern node
         val rect2D = paint.graphicsNode.bounds
         printWriterManager!!.println(
-            "    " + languageRenderer.startVariableDefinition("Rectangle2D")
-                    + "rect2D = " + languageRenderer.getObjectCreation("Rectangle2D.Double")
-                    + "(" + rect2D.x + ", " + rect2D.y + ", " + rect2D.width + ", "
-                    + rect2D.height + ")" + languageRenderer.statementEnd
-        )
-        // Create a new Graphics2D object
-        printWriterManager!!.println(
-            "    " + languageRenderer.startVariableDefinition("Graphics2D")
-                    + "gTiled = " + languageRenderer.getObjectCast("g.create()", "Graphics2D")
-                    + languageRenderer.statementEnd
+            "    val rect2D = Rect(left=${rect2D.x}f, top=${rect2D.y}f, " +
+                    "right=${rect2D.x + rect2D.width}f, bottom=${rect2D.y + rect2D.height}f)"
         )
         val transfMatrix = DoubleArray(6)
         transform.getMatrix(transfMatrix)
+
+        printWriterManager!!.println("    val tTiled = Matrix(values=floatArrayOf(")
+        printWriterManager!!.println(
+            "" + transfMatrix[0] + "f, " + transfMatrix[2] + "f, "
+                    + "0.0f, " + transfMatrix[4] + "f,"
+        )
+        printWriterManager!!.println(
+            "" + transfMatrix[1] + "f, " + transfMatrix[3] + "f, "
+                    + "0.0f, " + transfMatrix[5] + "f,"
+        )
+        printWriterManager!!.println("0.0f, 0.0f, 1.0f, 0.0f,")
+        printWriterManager!!.println("0.0f, 0.0f, 0.0f, 1.0f))")
+
         // Apply the transformation from the pattern node
-        printWriterManager!!.println(
-            "    " + languageRenderer.startVariableDefinition("AffineTransform")
-                    + "tTiled = " + languageRenderer.getObjectCreation(
-                "AffineTransform"
-            )
-                    + "(" + transfMatrix[0] + "f, " + transfMatrix[1] + "f, "
-                    + transfMatrix[2] + "f, " + transfMatrix[3] + "f, " + transfMatrix[4]
-                    + "f, " + transfMatrix[5] + "f)" + languageRenderer.statementEnd
-        )
-        printWriterManager!!.println("    gTiled.transform(tTiled)" + languageRenderer.statementEnd)
+        printWriterManager!!.println("withTransform({transform(tTiled)}){")
+
         // Point2D objects for tracking when the tiling ends (in both directions)
-        printWriterManager!!.println(
-            "    " + languageRenderer.startVariableDefinition("Point2D")
-                    + "src = " + languageRenderer.getObjectCreation("Point2D.Double")
-                    + "(0, 0)" + languageRenderer.statementEnd
-        )
-        printWriterManager!!.println(
-            "    " + languageRenderer.startVariableDefinition("Point2D")
-                    + "dst = " + languageRenderer.getObjectCreation("Point2D.Double")
-                    + "(0, 0)" + languageRenderer.statementEnd
-        )
+        printWriterManager!!.println("   var src = Offset(x = 0.0f, y = 0.0f)")
+        printWriterManager!!.println("   var dst = Offset(x = 0.0f, y = 0.0f)")
 
         // Start a nested loop that tiles the pattern (post-transformation) on the
-        // clipped Graphics2D.
-        printWriterManager!!.println(
-            "    " + languageRenderer.startVariableDefinition("double")
-                    + "startX = rect2D.getX()" + languageRenderer.statementEnd
-        )
-        printWriterManager!!.println("    while (true) {")
-        printWriterManager!!.println(
-            "        " + languageRenderer.startVariableDefinition("double")
-                    + "startY = rect2D.getY()" + languageRenderer.statementEnd
-        )
-        printWriterManager!!.println("        while (true) {")
-        printWriterManager!!.println(
-            "            gTiled.translate(startX, startY)" + languageRenderer.statementEnd
-        )
-        printWriterManager!!.println(
-            "            " + languageRenderer.startVariableDefinition("Shape")
-                    + "shapeTile = null" + languageRenderer.statementEnd
-        )
+        // clipped draw scope.
+        printWriterManager!!.println("    var startX = rect2D.left")
+        printWriterManager!!.println("    val maxX = when(shape) {")
+        printWriterManager!!.println("        is Outline.Rectangle -> (shape as Outline.Rectangle).rect.right")
+        printWriterManager!!.println("        is Outline.Rounded -> (shape as Outline.Rounded).roundRect.right")
+        printWriterManager!!.println("        is Outline.Generic -> (shape as Outline.Generic).path.getBounds().right")
+        printWriterManager!!.println("        else -> 0.0f")
+        printWriterManager!!.println("    }")
+        printWriterManager!!.println("    val maxY = when(shape) {")
+        printWriterManager!!.println("        is Outline.Rectangle -> (shape as Outline.Rectangle).rect.bottom")
+        printWriterManager!!.println("        is Outline.Rounded -> (shape as Outline.Rounded).roundRect.bottom")
+        printWriterManager!!.println("        is Outline.Generic -> (shape as Outline.Generic).path.getBounds().bottom")
+        printWriterManager!!.println("        else -> 0.0f")
+        printWriterManager!!.println("    }")
+
+        printWriterManager!!.println("    tileX@ while (true) {")
+        printWriterManager!!.println("        var startY = rect2D.top")
+        printWriterManager!!.println("        tileY@ while (true) {")
+
+        printWriterManager!!.println("             translate(left = startX, top = startY) {")
+        printWriterManager!!.println("             var shapeTile: Outline? = null")
+        printWriterManager!!.println("             var alphaTile = alpha")
 
         // Since PatternGraphicsNode does not (yet?) expose its content, we ask it to
         // paint itself to a custom extension of Graphics2D that tracks all relevant
-        // operations and converts them to the matching Java2D instructions that are
+        // operations and converts them to the matching DrawScope instructions that are
         // printed to our writer.
         val pgn = paint.graphicsNode as SVGPatternElementBridge.PatternGraphicsNode
         pgn.primitivePaint(object : McCrashyGraphics2D() {
@@ -469,44 +473,40 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
 
             override fun dispose() {}
             override fun drawImage(img: Image, x: Int, y: Int, observer: ImageObserver?): Boolean {
-                transcodeRenderedImage(img as RenderedImage, "gTiled")
+                transcodeRenderedImage(img as RenderedImage)
                 return false
             }
 
             override fun draw(shape: Shape) {
                 transcodeShape(shape, "Tile")
-                printWriterManager!!.println("gTiled.draw(shapeTile);")
+                printWriterManager!!.println("drawOutline(outline = shapeTile!!, style = stroke!!, brush=brush!!, alpha = alphaTile)")
             }
 
             override fun fill(shape: Shape) {
                 transcodeShape(shape, "Tile")
-                printWriterManager!!.println("gTiled.fill(shapeTile);")
+                printWriterManager!!.println("drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile)")
             }
 
             override fun setComposite(composite: Composite) {
                 this._composite = composite
                 val rule = (composite as AlphaComposite).rule
                 val alpha = composite.alpha
-                printWriterManager!!.println(
-                    "gTiled" + languageRenderer.startSetterAssignment("composite")
-                            + "AlphaComposite.getInstance(" + rule + ", " + alpha + "f * origAlpha)"
-                            + languageRenderer.endSetterAssignment() + languageRenderer.statementEnd
-                )
+                printWriterManager!!.println("alphaTile = alpha * ${alpha}f")
+            }
+
+            override fun getComposite(): Composite? {
+                return this._composite
             }
 
             override fun setPaint(paint: Paint) {
                 transcodePaint(paint)
-                printWriterManager!!.println(
-                    "gTiled" + languageRenderer.startSetterAssignment("paint") + "paint"
-                            + languageRenderer.endSetterAssignment() + languageRenderer.statementEnd
-                )
             }
 
             override fun setStroke(stroke: Stroke) {
-                val strokeWidth = (stroke as BasicStroke).lineWidth
-                val endCap = stroke.endCap
-                val lineJoin = stroke.lineJoin
-                val miterLimit = stroke.miterLimit
+                val width = (stroke as BasicStroke).lineWidth
+                val cap = stroke.endCap
+                val join = stroke.lineJoin
+                val miterlimit = stroke.miterLimit
                 val dash = stroke.dashArray
                 val dash_phase = stroke.dashPhase
                 val dashRep = StringBuffer()
@@ -522,17 +522,38 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
                     }
                     dashRep.append("}")
                 }
-                printWriterManager!!.println(
-                    "gTiled" + languageRenderer.startSetterAssignment("stroke")
-                            + languageRenderer.getObjectCreation("BasicStroke")
-                            + "(" + strokeWidth + "f," + endCap + "," + lineJoin + "," + miterLimit
-                            + "f," + dashRep + "," + dash_phase + "f)"
-                            + languageRenderer.endSetterAssignment() + languageRenderer.statementEnd
-                )
+                val strokeCap = when (cap) {
+                    BasicStroke.CAP_BUTT -> "StrokeCap.Butt"
+                    BasicStroke.CAP_ROUND -> "StrokeCap.Round"
+                    BasicStroke.CAP_SQUARE -> "StrokeCap.Square"
+                    else -> throw UnsupportedOperationException("Unsupported stroke cap $cap")
+                }
+                val strokeJoin = when (join) {
+                    BasicStroke.JOIN_BEVEL -> "StrokeJoin.Bevel"
+                    BasicStroke.JOIN_MITER -> "StrokeJoin.Miter"
+                    BasicStroke.JOIN_ROUND -> "StrokeJoin.Round"
+                    else -> throw UnsupportedOperationException("Unsupported stroke join $join")
+                }
+                if (dash == null) {
+                    printWriterManager!!.println(
+                        "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f)"
+                    )
+                } else {
+                    // TODO - switch away from Skija API for creating PathEffect once the fix for
+                    //  https://issuetracker.google.com/issues/171072166 is available
+                    printWriterManager!!.println(
+                        "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f, " +
+                                "pathEffect=PathEffect.makeDash($dashRep, ${dash_phase}f))"
+                    )
+                }
             }
 
             override fun setClip(x: Int, y: Int, width: Int, height: Int) {
                 _clip = Rectangle2D.Double(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
+            }
+
+            override fun getClip(): Shape? {
+                return _clip
             }
 
             override fun clip(s: Shape) {
@@ -554,7 +575,7 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
                 this._hints.putAll(hints!!)
             }
 
-            override fun setRenderingHint(hintKey: RenderingHints.Key, hintValue: Any) {
+            override fun setRenderingHint(hintKey: RenderingHints.Key, hintValue: Any?) {
                 _hints[hintKey] = hintValue
             }
 
@@ -569,80 +590,53 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
 
             override fun transform(Tx: AffineTransform) {
                 this._transform.concatenate(Tx)
-                //                double[] transfMatrix = new double[6];
-//                transform.getMatrix(transfMatrix);
-//                printWriter
-//                        .println("gTiled.transform(" + languageRenderer.getObjectCreation
-//                        ("AffineTransform")
-//                                + "(" + transfMatrix[0] + "f, " + transfMatrix[1] + "f, "
-//                                + transfMatrix[2] + "f, " + transfMatrix[3] + "f, " +
-//                                transfMatrix[4]
-//                                + "f, " + transfMatrix[5] + "f))" + languageRenderer
-//                                .getStatementEnd());
             }
 
             override fun translate(x: Int, y: Int) {
                 this._transform.translate(x.toDouble(), y.toDouble())
-                //                printWriterManager.println("gTiled.translate(" + x + ", " + y + ")"
-//                        + languageRenderer.getStatementEnd());
             }
 
             override fun translate(tx: Double, ty: Double) {
                 this._transform.translate(tx, ty)
-                //                printWriterManager.println("gTiled.translate(" + tx + ", " + ty + ")"
-//                        + languageRenderer.getStatementEnd());
             }
 
             override fun rotate(theta: Double) {
                 this._transform.rotate(theta)
-                //                printWriterManager.println("gTiled.rotate(" + theta + ")"
-//                        + languageRenderer.getStatementEnd());
             }
 
             override fun rotate(theta: Double, x: Double, y: Double) {
                 this._transform.rotate(theta, x, y)
-                //                printWriterManager.println("gTiled.rotate(" + theta + ", " + x + ", " + y + ")"
-//                        + languageRenderer.getStatementEnd());
+            }
+
+            override fun setTransform(transform: AffineTransform) {
+                this._transform = transform
+            }
+
+            override fun getTransform(): AffineTransform {
+                return this._transform
             }
 
             override fun getDeviceConfiguration(): GraphicsConfiguration? {
                 return null
             }
         })
-        printWriterManager!!.println(
-            "            gTiled.translate(-startX, -startY)" + languageRenderer.statementEnd
-        )
-        printWriterManager!!.println(
-            "            startY += rect2D.getHeight()" + languageRenderer.statementEnd
-        )
-        printWriterManager!!.println(
-            "            src.setLocation(startX, startY)" + languageRenderer.statementEnd
-        )
-        printWriterManager!!.println(
-            "            tTiled.transform(src, dst)" + languageRenderer.statementEnd
-        )
-        printWriterManager!!.println("            if (dst.getY() > shape.getBounds().getMaxY()) {")
-        printWriterManager!!.println("                break" + languageRenderer.statementEnd)
+        printWriterManager!!.println("            }")
+        printWriterManager!!.println("            startY += rect2D.height")
+        printWriterManager!!.println("            src = Offset(x = startX, y = startY)")
+        printWriterManager!!.println("            dst = tTiled.map(src)")
+        printWriterManager!!.println("            if (dst.y > maxY) {")
+        printWriterManager!!.println("                break@tileY")
         printWriterManager!!.println("            }")
         printWriterManager!!.println("        }")
-        printWriterManager!!.println(
-            "        startX += rect2D.getWidth()" + languageRenderer.statementEnd
-        )
-        printWriterManager!!.println(
-            "        src.setLocation(startX, startY)" + languageRenderer.statementEnd
-        )
-        printWriterManager!!.println(
-            "        tTiled.transform(src, dst)" + languageRenderer.statementEnd
-        )
-        printWriterManager!!.println("        if (dst.getX() > shape.getBounds().getMaxX()) {")
-        printWriterManager!!.println("            break" + languageRenderer.statementEnd)
+        printWriterManager!!.println("        startX += rect2D.width")
+        printWriterManager!!.println("        src = Offset(x = startX, y = startY)")
+        printWriterManager!!.println("        dst = tTiled.map(src)")
+        printWriterManager!!.println("        if (dst.x > maxX) {")
+        printWriterManager!!.println("            break@tileX")
         printWriterManager!!.println("        }")
         printWriterManager!!.println("    }")
-        printWriterManager!!.println("    gTiled.dispose()" + languageRenderer.statementEnd)
         printWriterManager!!.println("}")
-
-        // Restore the original (pre-pattern) clip
-        printWriterManager!!.println("g.setClip(clip)" + languageRenderer.statementEnd)
+        printWriterManager!!.println("}")
     }
 
     /**
@@ -1029,7 +1023,7 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
         printWriterManager!!.checkin()
     }
 
-    private fun transcodeRenderedImage(image: RenderedImage?, graphicsName: String) {
+    private fun transcodeRenderedImage(image: RenderedImage) {
         val md5: String = RasterScanner.getMD5(image)
         printWriterManager!!.println("val image$md5 = getImage$md5()")
         printWriterManager!!.println("if (image$md5 != null) {")
@@ -1040,7 +1034,7 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
     private fun transcodeRasterImageNode(node: RasterImageNode, comment: String) {
         printWriterManager!!.println("// $comment")
         val image = node.image.createDefaultRendering()
-        transcodeRenderedImage(image, "g")
+        transcodeRenderedImage(image)
     }
 
     private fun transcodeTextNode(node: TextNode, comment: String) {
@@ -1167,7 +1161,7 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
                 this._hints.putAll(hints!!)
             }
 
-            override fun setRenderingHint(hintKey: RenderingHints.Key, hintValue: Any) {
+            override fun setRenderingHint(hintKey: RenderingHints.Key, hintValue: Any?) {
                 _hints[hintKey] = hintValue
             }
 
