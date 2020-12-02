@@ -29,9 +29,6 @@
  */
 package org.pushingpixels.aurora.icon.transcoder
 
-import org.pushingpixels.aurora.icon.transcoder.KotlinLanguageRenderer
-import org.pushingpixels.aurora.icon.transcoder.LanguageRenderer
-import org.pushingpixels.aurora.icon.transcoder.SvgBatchBaseConverter
 import java.io.File
 import java.io.IOException
 import java.nio.file.NoSuchFileException
@@ -42,8 +39,7 @@ class SvgDeepBatchConverter : SvgBatchBaseConverter() {
     protected fun processFolder(
         inputFolder: File, outputFolder: File?,
         outputClassNamePrefix: String?, outputFileNameExtension: String?,
-        outputPackageName: String?, languageRenderer: LanguageRenderer?,
-        templateFile: String?
+        outputPackageName: String?, templateFile: String?
     ) {
         println(
             "******************************************************************************"
@@ -58,7 +54,7 @@ class SvgDeepBatchConverter : SvgBatchBaseConverter() {
         // Transcode all SVG files in this folder
         transcodeAllFilesInFolder(
             inputFolder, outputFolder!!, outputClassNamePrefix, outputFileNameExtension!!,
-            outputPackageName!!, languageRenderer!!, templateFile!!
+            outputPackageName!!, templateFile!!
         )
 
         // Now scan the folder for sub-folders
@@ -77,8 +73,7 @@ class SvgDeepBatchConverter : SvgBatchBaseConverter() {
             // And recursively process SVG content (and possible folders)
             processFolder(
                 inputSubfolder, outputSubfolder, outputClassNamePrefix, outputFileNameExtension,
-                "$outputPackageName.$subfolderName", languageRenderer,
-                templateFile
+                "$outputPackageName.$subfolderName", templateFile
             )
         }
         println()
@@ -108,7 +103,6 @@ class SvgDeepBatchConverter : SvgBatchBaseConverter() {
             Objects.requireNonNull(outputRootPackageName, "Missing output package name. " + CHECK_DOCUMENTATION)
             val templateFile = converter.getInputArgument(args, "templateFile", null)
             Objects.requireNonNull(templateFile, "Missing template file. " + CHECK_DOCUMENTATION)
-            val languageRenderer: LanguageRenderer = KotlinLanguageRenderer()
             val outputFileNameExtension = ".kt"
             val outputClassNamePrefix = converter.getInputArgument(args, "outputClassNamePrefix", "")
             val outputRootFolderName = converter.getInputArgument(args, "outputRootFolder", sourceRootFolderName)
@@ -132,7 +126,7 @@ class SvgDeepBatchConverter : SvgBatchBaseConverter() {
             println()
             converter.processFolder(
                 inputRootFolder, outputRootFolder, outputClassNamePrefix, outputFileNameExtension,
-                outputRootPackageName, languageRenderer, templateFile
+                outputRootPackageName, templateFile
             )
         }
     }

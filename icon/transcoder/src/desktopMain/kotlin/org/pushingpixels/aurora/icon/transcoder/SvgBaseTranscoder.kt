@@ -54,7 +54,7 @@ import kotlin.math.sqrt
  *
  * @author Kirill Grouchnikov.
  */
-abstract class SvgBaseTranscoder(private val classname: String, private val languageRenderer: LanguageRenderer) {
+abstract class SvgBaseTranscoder(private val classname: String) {
     /**
      * Listener.
      */
@@ -174,7 +174,7 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
         templateString = if (packageName != null) {
             templateString.replace(
                 TOKEN_PACKAGE.toRegex(),
-                "package " + packageName + languageRenderer.statementEnd
+                "package $packageName"
             )
         } else {
             templateString.replace(TOKEN_PACKAGE.toRegex(), "")
@@ -184,7 +184,7 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
         // Pass 1 - scan and transcode all raster images
         val rasterCodeStream = ByteArrayOutputStream()
         val rasterPrintWriter = PrintWriter(rasterCodeStream)
-        val rasterScanner = RasterScanner(rasterPrintWriter, languageRenderer)
+        val rasterScanner = RasterScanner(rasterPrintWriter)
         rasterScanner.scan(gvtRoot)
         rasterPrintWriter.close()
         val rasterCode = String(rasterCodeStream.toByteArray())
@@ -514,7 +514,7 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
                     dashRep.append("null")
                 } else {
                     var sep = ""
-                    dashRep.append(languageRenderer.startPrimitiveArrayOf("float"))
+                    dashRep.append("floatArrayOf")
                     for (_dash in dash) {
                         dashRep.append(sep)
                         dashRep.append(_dash.toString() + "f")
@@ -861,7 +861,7 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
             dashRep.append("null")
         } else {
             var sep = ""
-            dashRep.append(languageRenderer.startPrimitiveArrayOf("float"))
+            dashRep.append("floatArrayOf")
             for (_dash in dash) {
                 dashRep.append(sep)
                 dashRep.append(_dash.toString() + "f")
@@ -1086,7 +1086,7 @@ abstract class SvgBaseTranscoder(private val classname: String, private val lang
                     dashRep.append("null")
                 } else {
                     var sep = ""
-                    dashRep.append(languageRenderer.startPrimitiveArrayOf("float"))
+                    dashRep.append("floatArrayOf")
                     for (_dash in dash) {
                         dashRep.append(sep)
                         dashRep.append(_dash.toString() + "f")

@@ -55,11 +55,15 @@ abstract class SvgBatchBaseConverter {
     internal fun transcodeAllFilesInFolder(
         inputFolder: File, outputFolder: File,
         outputClassNamePrefix: String?, outputFileNameExtension: String,
-        outputPackageName: String, languageRenderer: LanguageRenderer,
+        outputPackageName: String,
         templateFile: String
     ) {
         val svgFiles = inputFolder.listFiles { directory: File?, name: String -> name.endsWith(".svg") }
             ?: return
+
+        var totalCount = 0
+        var successCount = 0
+
         for (file in svgFiles) {
             val filename = file.name
             val svgClassName = (outputClassNamePrefix + filename.substring(0, filename.length - 4))
@@ -67,17 +71,15 @@ abstract class SvgBatchBaseConverter {
                 .replace(' ', '_')
             val classFilename = outputFolder.absolutePath + File.separator +
                     svgClassName + outputFileNameExtension
-            println(
-                """Processing ${file.absolutePath}
-	to $classFilename"""
-            )
+            println("Processing ${file.absolutePath} to $classFilename")
+            totalCount++
             try {
                 PrintWriter(classFilename).use { writer ->
                     SvgBatchBaseConverter::class.java.getResourceAsStream(templateFile).use { templateStream ->
                         Objects.requireNonNull(templateStream, "Couldn't load $templateFile")
                         val latch = CountDownLatch(1)
                         val uri = file.toURI().toURL().toString()
-                        val transcoder = SvgTranscoder(uri, svgClassName, languageRenderer!!)
+                        val transcoder = SvgTranscoder(uri, svgClassName)
                         transcoder.setPackageName(outputPackageName)
                         transcoder.setListener(object : TranscoderListener {
                             override val writer: Writer
@@ -90,12 +92,15 @@ abstract class SvgBatchBaseConverter {
                         transcoder.transcode(templateStream)
                         // Limit the processing to 10 seconds to prevent infinite hang
                         latch.await(10, TimeUnit.SECONDS)
+                        successCount++
                     }
                 }
             } catch (t: Throwable) {
                 t.printStackTrace(System.err)
             }
         }
+        println()
+        println("Processed $successCount out of $totalCount SVG files")
         println()
     }
 

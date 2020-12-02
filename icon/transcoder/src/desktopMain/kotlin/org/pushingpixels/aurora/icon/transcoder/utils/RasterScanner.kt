@@ -31,7 +31,6 @@ package org.pushingpixels.aurora.icon.transcoder.utils
 
 import org.apache.batik.bridge.SVGPatternElementBridge
 import org.apache.batik.gvt.*
-import org.pushingpixels.aurora.icon.transcoder.LanguageRenderer
 import java.awt.Image
 import java.awt.Paint
 import java.awt.image.ImageObserver
@@ -46,7 +45,7 @@ import java.util.*
 import javax.imageio.ImageIO
 import kotlin.collections.HashSet
 
-internal class RasterScanner(val printWriter: PrintWriter, val languageRenderer: LanguageRenderer) {
+internal class RasterScanner(val printWriter: PrintWriter) {
     private val processedMD5s = HashSet<String>()
 
     /**
@@ -213,18 +212,14 @@ internal class RasterScanner(val printWriter: PrintWriter, val languageRenderer:
         val encoded = convertToBase64String(image)
         // Work around compile-time limitations on how long a String can be in the source file
         // by splitting the full base64 encoding into chunks of 1000 characters
-        printWriter.println(
-            "    " + languageRenderer.startVariableDefinition("StringBuilder")
-                .toString() + "imageData = " + languageRenderer.getObjectCreation("StringBuilder")
-                .toString() + "(" + encoded.length.toString() + ")" + languageRenderer.statementEnd
-        )
+        printWriter.println("    val imageData = StringBuilder(${encoded.length})")
         var imageDataStart = 0
         while (true) {
             val chunkLength: Int = Math.min(1000, encoded.length - imageDataStart)
             printWriter.println(
                 ("    imageData.append(\""
                         + encoded.substring(imageDataStart, imageDataStart + chunkLength)
-                        ) + "\")" + languageRenderer.statementEnd
+                        ) + "\")"
             )
             imageDataStart += 1000
             if (imageDataStart > encoded.length) {

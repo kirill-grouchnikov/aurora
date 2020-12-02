@@ -44,11 +44,9 @@ import java.util.logging.Logger
  *
  * @author Kirill Grouchnikov.
  */
-class SvgTranscoder(
-    val uri: String, classname: String, languageRenderer: LanguageRenderer
-) : SvgBaseTranscoder(classname, languageRenderer) {
+class SvgTranscoder(val uri: String, classname: String) : SvgBaseTranscoder(classname) {
     /**
-     * Transcodes the SVG image into Java2D code. Does nothing if the
+     * Transcodes the SVG image into Compose code. Does nothing if the
      * [.listener] is `null`.
      *
      * @param templateStream Stream with the template content

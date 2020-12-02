@@ -59,7 +59,6 @@ object SvgBatchConverterMain {
         Objects.requireNonNull(outputPackageName, "Missing output package name. " + SvgBatchBaseConverter.CHECK_DOCUMENTATION)
         val templateFile: String? = converter.getInputArgument(args, "templateFile", null)
         Objects.requireNonNull(templateFile, "Missing template file. " + SvgBatchBaseConverter.CHECK_DOCUMENTATION)
-        val languageRenderer: LanguageRenderer = KotlinLanguageRenderer()
         val outputFileNameExtension = ".kt"
         val outputClassNamePrefix: String? = converter.getInputArgument(args, "outputClassNamePrefix", "")
         val outputFolderName: String? = converter.getInputArgument(args, "outputFolder", sourceFolderName)
@@ -83,7 +82,7 @@ object SvgBatchConverterMain {
         )
         converter.transcodeAllFilesInFolder(
             inputFolder, outputFolder, outputClassNamePrefix, outputFileNameExtension,
-            outputPackageName!!, languageRenderer, templateFile!!
+            outputPackageName!!, templateFile!!
         )
     }
 }
