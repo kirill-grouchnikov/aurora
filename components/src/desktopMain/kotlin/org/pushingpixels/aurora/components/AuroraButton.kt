@@ -587,3 +587,7 @@ private fun AuroraButton(
         }
     }
 }
+
+fun Modifier.auroraButtonIconPadding() =
+    this.then(padding(end = 4.dp))
+

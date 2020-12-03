@@ -41,15 +41,13 @@ import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.components.*
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.icon.AuroraThemedIcon
-import org.pushingpixels.aurora.skin.autumnSkin
-import org.pushingpixels.aurora.skin.geminiSkin
 import org.pushingpixels.aurora.skin.marinerSkin
 
 fun main() {
     AuroraWindow(
         title = "Aurora Demo",
         skin = marinerSkin(),
-        size = IntSize(800, 800)
+        size = IntSize(600, 500)
     ) {
         Box(
             modifier = Modifier.auroraBackground(),
@@ -105,7 +103,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     enabled = enabled.value,
                     selected = selected,
                     onSelectedChange = { println("Selected toggle? $it") }) {
-                    AuroraIcon(icon = input_keyboard.of(16.dp, 16.dp))
+                    AuroraIcon(icon = computer.of(12.dp, 12.dp), modifier = Modifier.auroraButtonIconPadding())
                     AuroraText("toggle")
                 }
                 AuroraButton(
@@ -114,14 +112,16 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     backgroundType = ButtonBackgroundType.NEVER
                 ) {
                     AuroraText("never")
-                    AuroraIcon(icon = network_wired.of(32.dp, 32.dp))
                 }
                 AuroraButton(
                     enabled = enabled.value,
                     onClick = { println("Clicked!") },
                     backgroundType = ButtonBackgroundType.FLAT
                 ) {
-                    AuroraIcon(icon = drive_removable_media.of(32.dp, 32.dp))
+                    AuroraThemedIcon(
+                        icon = account_box_24px.of(12.dp, 12.dp),
+                        modifier = Modifier.auroraButtonIconPadding()
+                    )
                     AuroraText("flat")
                 }
                 AuroraButton(
@@ -129,7 +129,10 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     onClick = { println("Clicked!") },
                     backgroundType = ButtonBackgroundType.ALWAYS
                 ) {
-                    AuroraThemedIcon(icon = keyboard_capslock_24px.of(32.dp, 32.dp))
+                    AuroraThemedIcon(
+                        icon = keyboard_capslock_24px.of(12.dp, 12.dp),
+                        modifier = Modifier.auroraButtonIconPadding()
+                    )
                     AuroraText("always")
                 }
             }
@@ -140,7 +143,6 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     onSelectedChange = { println("Selected bold? $it") },
                     sides = ButtonSides(straightSides = setOf(Side.RIGHT))
                 ) {
-                    AuroraIcon(icon = pattern.of(40.dp, 40.dp))
                     AuroraText("bold")
                 }
                 AuroraToggleButton(
@@ -152,7 +154,6 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                         openSides = setOf(Side.LEFT, Side.RIGHT)
                     )
                 ) {
-                    AuroraIcon(icon = kirill.of(64.dp, 64.dp))
                     AuroraText("italic")
                 }
                 AuroraToggleButton(
@@ -161,7 +162,6 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     onSelectedChange = { println("Selected under? $it") },
                     sides = ButtonSides(straightSides = setOf(Side.LEFT))
                 ) {
-                    AuroraIcon(icon = text.of(80.dp, 80.dp))
                     AuroraText("under")
                 }
             }

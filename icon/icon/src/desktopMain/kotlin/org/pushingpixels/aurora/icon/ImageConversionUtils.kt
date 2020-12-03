@@ -33,6 +33,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.DrawModifier
 import androidx.compose.ui.geometry.Size
@@ -109,31 +110,29 @@ fun AuroraIcon.toBitmap(density: Float): ImageBitmap {
     return result
 }
 
-private fun Modifier.auroraThemedIconPaint(icon: AuroraIcon, textColor: Color, density: Float) =
-    this.then(AuroraThemedIconModifier(icon = icon, textColor = textColor, density = density))
+private fun Modifier.auroraThemedIconPaint(icon: ImageBitmap, textColor: Color) =
+    this.then(AuroraThemedIconModifier(icon = icon, textColor = textColor))
 
 private class AuroraThemedIconModifier(
-    val icon: AuroraIcon, val textColor: Color, val density: Float
+    val icon: ImageBitmap, val textColor: Color
 ) : DrawModifier {
     override fun ContentDrawScope.draw() {
-        val filtered = ColorBitmapFilter.getColorFilter(color = textColor).filter(icon.toBitmap(density))
+        val filtered = ColorBitmapFilter.getColorFilter(color = textColor).filter(icon)
         drawImage(filtered)
     }
 }
 
 @Composable
-fun AuroraThemedIcon(
-    icon: AuroraIcon,
-    modifier: Modifier = Modifier
-) {
-    // TODO - is it worth "remembering" the converted icon bitmap?
-    // TODO - is it worth caching filtered bitmap by color (for performance reasons)?
+fun AuroraThemedIcon(icon: AuroraIcon, modifier: Modifier = Modifier) {
     val textColor = AmbientTextColor.current
+    val density = AmbientDensity.current.density
+    val bitmap = remember { icon.toBitmap(density) }
+    // TODO - is it worth caching filtered bitmap by color (for performance reasons)?
     Box(
         modifier.preferredSize(
             width = icon.getWidth().dp,
             height = icon.getHeight().dp
-        ).background(Color.Green).auroraThemedIconPaint(icon, textColor, AmbientDensity.current.density)
+        ).auroraThemedIconPaint(bitmap, textColor)
     )
 }
 
