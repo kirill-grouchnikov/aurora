@@ -12,14 +12,11 @@ kotlin {
             dependencies {
                 api(compose.runtime)
                 api(compose.foundation)
-                implementation(project(":common"))
             }
         }
         named("desktopMain") {
             dependencies {
                 api(compose.desktop.common)
-                implementation(project(":bitmapfilter"))
-                implementation(project(":common"))
             }
         }
     }

@@ -40,13 +40,15 @@ import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.components.*
 import org.pushingpixels.aurora.icon.AuroraIcon
+import org.pushingpixels.aurora.icon.AuroraThemedIcon
 import org.pushingpixels.aurora.skin.autumnSkin
 import org.pushingpixels.aurora.skin.geminiSkin
+import org.pushingpixels.aurora.skin.marinerSkin
 
 fun main() {
     AuroraWindow(
         title = "Aurora Demo",
-        skin = autumnSkin(),
+        skin = marinerSkin(),
         size = IntSize(800, 800)
     ) {
         Box(
@@ -111,8 +113,8 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     onClick = { println("Clicked!") },
                     backgroundType = ButtonBackgroundType.NEVER
                 ) {
-                    AuroraIcon(icon = keyboard_capslock_24px.of(32.dp, 32.dp))
                     AuroraText("never")
+                    AuroraIcon(icon = network_wired.of(32.dp, 32.dp))
                 }
                 AuroraButton(
                     enabled = enabled.value,
@@ -127,7 +129,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     onClick = { println("Clicked!") },
                     backgroundType = ButtonBackgroundType.ALWAYS
                 ) {
-                    AuroraIcon(icon = network_wired.of(32.dp, 32.dp))
+                    AuroraThemedIcon(icon = keyboard_capslock_24px.of(32.dp, 32.dp))
                     AuroraText("always")
                 }
             }

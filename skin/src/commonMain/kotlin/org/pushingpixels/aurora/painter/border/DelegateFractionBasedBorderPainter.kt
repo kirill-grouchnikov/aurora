@@ -35,7 +35,7 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.utils.HashMapKey
+import org.pushingpixels.aurora.common.HashMapKey
 
 /**
  * Delegate border painter that allows tweaking the visual appearance of borders.

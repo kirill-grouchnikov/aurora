@@ -29,75 +29,39 @@
  */
 package org.pushingpixels.aurora.icon
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.DrawModifier
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.ContentDrawScope
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 
-interface AuroraIcon {
-    /**
-     * Draws the icon with the provided draw scope.
-     */
-    fun paintIcon(drawScope: DrawScope)
+class BitmapWrapperIcon(val bitmap: ImageBitmap): AuroraIcon {
+    var _width = bitmap.width
+    var _height = bitmap.height
 
-    /**
-     * Returns the current width of this icon.
-     */
-    fun getWidth(): Int
+    override fun getWidth(): Int {
+        return _width
+    }
 
-    /**
-     * Returns the current height of this icon.
-     */
-    fun getHeight(): Int
+    override fun getHeight(): Int {
+        return _height
+    }
 
-    /**
-     * Changes the size of this icon.
-     */
     @Composable
-    fun setSize(width: Dp, height: Dp)
+    override fun setSize(width: Dp, height: Dp) {
+        _width = (width.value * AmbientDensity.current.density).toInt()
+        _height = (height.value * AmbientDensity.current.density).toInt()
+    }
 
-    /**
-     * Interface for creating new icons of this type.
-     *
-     * @author Kirill Grouchnikov
-     */
-    interface Factory {
-        /**
-         * Returns a new instance of the icon managed by this factory.
-         *
-         * @return A new instance of the icon managed by this factory.
-         */
-        fun createNewIcon(): AuroraIcon
+    override fun paintIcon(drawScope: DrawScope) {
+        val scaleX = bitmap.width.toFloat() / _width
+        val scaleY = bitmap.height.toFloat() / _height
+        with (drawScope) {
+            scale(scaleX = scaleX, scaleY = scaleY, pivot = Offset(0.0f, 0.0f)) {
+                drawImage(bitmap)
+            }
+        }
     }
 }
-
-private fun Modifier.auroraIconPaint(icon: AuroraIcon) =
-    this.then(AuroraIconModifier(icon = icon))
-
-private class AuroraIconModifier(val icon: AuroraIcon) : DrawModifier {
-    override fun ContentDrawScope.draw() {
-        icon.paintIcon(this)
-    }
-}
-
-@Composable
-fun AuroraIcon(
-    icon: AuroraIcon,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier.preferredSize(
-            width = icon.getWidth().dp,
-            height = icon.getHeight().dp
-        ).background(Color.Yellow).auroraIconPaint(icon)
-    )
-}
-
