@@ -35,13 +35,9 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.clipPath
-import org.jetbrains.skija.ColorAlphaType
-import org.jetbrains.skija.ColorInfo
-import org.jetbrains.skija.ColorType
-import org.jetbrains.skija.ImageInfo
 import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.utils.colorizeBgra8888
+import org.pushingpixels.aurora.utils.ColorSchemeBitmapFilter
 
 /**
  * Implementation of [AuroraDecorationPainter] that uses an image source to paint on
@@ -57,7 +53,7 @@ abstract class ImageWrapperDecorationPainter(
      * The base decoration painter - the colorized image tiles are painted over the painting of this
      * painter. Can be `null`.
      */
-    protected var baseDecorationPainter: AuroraDecorationPainter? = null
+    private var baseDecorationPainter: AuroraDecorationPainter? = null
 
     /**
      * Map of colorized tiles.
@@ -157,40 +153,14 @@ abstract class ImageWrapperDecorationPainter(
     /**
      * Returns a colorized image tile.
      *
-     * @param scheme
-     * Color scheme for the colorization.
+     * @param scheme Color scheme for the colorization.
      * @return Colorized tile.
      */
-    protected fun getColorizedTile(scheme: AuroraColorScheme): ImageBitmap {
+    private fun getColorizedTile(scheme: AuroraColorScheme): ImageBitmap {
         var result = colorizedTileMap[scheme.displayName]
         if (result == null) {
-            val tileWidth = originalTile.width
-            val tileHeight = originalTile.height
-
-            // Get pixels from the original tile in BGRA_8888 format
-            val originalBitmap = originalTile.asDesktopBitmap()
-            val originalPixels = originalBitmap.readPixels(
-                ImageInfo(ColorInfo(ColorType.BGRA_8888, originalBitmap.alphaType, null), tileWidth, tileHeight),
-                tileWidth.toLong() * originalBitmap.bytesPerPixel, 0, 0
-            )
-
-            // Colorize the pixels
-            val colorizedPixels = colorizeBgra8888(
-                width = tileWidth,
-                height = tileHeight,
-                src = originalPixels!!,
-                scheme = scheme,
-                originalBrightnessFactor = 0.0f,
-                alpha = 1.0f
-            )
-
-            // And convert them to an ImageBitmap in the same BGRA_8888 format
-            result = ImageBitmap(width = tileWidth, height = tileHeight)
-            val skijaBitmap = result.asDesktopBitmap()
-            skijaBitmap.installPixels(
-                ImageInfo(ColorInfo(ColorType.BGRA_8888, ColorAlphaType.UNPREMUL, null), tileWidth, tileHeight),
-                colorizedPixels, 4L * tileWidth
-            )
+            result = ColorSchemeBitmapFilter(scheme = scheme, originalBrightnessFactor = 0.0f, alpha = 1.0f)
+                .filter(source = originalTile)
 
             // Cache the bitmap
             colorizedTileMap[scheme.displayName] = result

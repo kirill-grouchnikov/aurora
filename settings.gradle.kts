@@ -1,1 +1,1 @@
-include(":skin", ":icon:icon", ":icon:transcoder", ":components", ":demo")
+include(":bitmapfilter", ":skin", ":icon:icon", ":icon:transcoder", ":components", ":demo")

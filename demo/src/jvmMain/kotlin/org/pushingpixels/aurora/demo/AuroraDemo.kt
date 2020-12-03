@@ -40,12 +40,13 @@ import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.components.*
 import org.pushingpixels.aurora.icon.AuroraIcon
+import org.pushingpixels.aurora.skin.autumnSkin
 import org.pushingpixels.aurora.skin.geminiSkin
 
 fun main() {
     AuroraWindow(
         title = "Aurora Demo",
-        skin = geminiSkin(),
+        skin = autumnSkin(),
         size = IntSize(800, 800)
     ) {
         Box(
