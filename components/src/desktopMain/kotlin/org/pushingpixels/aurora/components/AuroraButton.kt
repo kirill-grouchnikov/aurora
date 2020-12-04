@@ -93,7 +93,7 @@ fun AuroraToggleButton(
     selected: Boolean = false,
     onSelectedChange: (Boolean) -> Unit = {},
     sides: ButtonSides = ButtonSides(),
-    backgroundType: ButtonBackgroundType = ButtonBackgroundType.ALWAYS,
+    backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS,
     content: @Composable RowScope.() -> Unit
 ) {
     AuroraToggleButton(
@@ -102,7 +102,7 @@ fun AuroraToggleButton(
         selected = selected,
         onSelectedChange = onSelectedChange,
         sides = sides,
-        backgroundType = backgroundType,
+        backgroundAppearanceStrategy = backgroundAppearanceStrategy,
         interactionState = remember { InteractionState() },
         stateTransitionFloat = AnimatedFloat(0.0f, AmbientAnimationClock.current.asDisposableClock()),
         content = content
@@ -116,7 +116,7 @@ private fun AuroraToggleButton(
     selected: Boolean,
     onSelectedChange: (Boolean) -> Unit,
     sides: ButtonSides,
-    backgroundType: ButtonBackgroundType,
+    backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     interactionState: InteractionState,
     stateTransitionFloat: AnimatedFloat,
     content: @Composable RowScope.() -> Unit
@@ -213,7 +213,7 @@ private fun AuroraToggleButton(
             isTextInFilledArea = true
         )
 
-        if (backgroundType != ButtonBackgroundType.NEVER) {
+        if (backgroundAppearanceStrategy != BackgroundAppearanceStrategy.NEVER) {
             // Populate the cached color scheme for filling the button container
             // based on the current model state info
             populateColorScheme(
@@ -249,7 +249,7 @@ private fun AuroraToggleButton(
             val buttonShaper = AuroraSkin.buttonShaper
 
             val alpha: Float
-            if (backgroundType == ButtonBackgroundType.FLAT) {
+            if (backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
                 // For flat buttons, compute the combined contribution of all
                 // non-disabled states - ignoring ComponentState.ENABLED
                 alpha = stateTransitionTracker.modelStateInfo.stateContributionMap
@@ -346,7 +346,7 @@ fun AuroraButton(
     enabled: Boolean = true,
     onClick: () -> Unit = {},
     sides: ButtonSides = ButtonSides(),
-    backgroundType: ButtonBackgroundType = ButtonBackgroundType.ALWAYS,
+    backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS,
     content: @Composable RowScope.() -> Unit
 ) {
     AuroraButton(
@@ -354,7 +354,7 @@ fun AuroraButton(
         enabled = enabled,
         onClick = onClick,
         sides = sides,
-        backgroundType = backgroundType,
+        backgroundAppearanceStrategy = backgroundAppearanceStrategy,
         interactionState = remember { InteractionState() },
         stateTransitionFloat = AnimatedFloat(0.0f, AmbientAnimationClock.current.asDisposableClock()),
         content = content
@@ -367,7 +367,7 @@ private fun AuroraButton(
     enabled: Boolean,
     onClick: () -> Unit,
     sides: ButtonSides,
-    backgroundType: ButtonBackgroundType,
+    backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     interactionState: InteractionState,
     stateTransitionFloat: AnimatedFloat,
     content: @Composable RowScope.() -> Unit
@@ -461,7 +461,7 @@ private fun AuroraButton(
             isTextInFilledArea = true
         )
 
-        if (backgroundType != ButtonBackgroundType.NEVER) {
+        if (backgroundAppearanceStrategy != BackgroundAppearanceStrategy.NEVER) {
             // Populate the cached color scheme for filling the button container
             // based on the current model state info
             populateColorScheme(
@@ -497,7 +497,7 @@ private fun AuroraButton(
             val buttonShaper = AuroraSkin.buttonShaper
 
             val alpha: Float
-            if (backgroundType == ButtonBackgroundType.FLAT) {
+            if (backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
                 // For flat buttons, compute the combined contribution of all
                 // non-disabled states - ignoring ComponentState.ENABLED
                 alpha = stateTransitionTracker.modelStateInfo.stateContributionMap

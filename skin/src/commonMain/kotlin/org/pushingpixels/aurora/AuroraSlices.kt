@@ -695,18 +695,18 @@ data class ButtonSides(
 )
 
 /**
- * Enumerates available button background types.
+ * Enumerates available background appearance strategies.
  *
  * @author Kirill Grouchnikov
  */
-enum class ButtonBackgroundType {
-    /** The button never paints the background */
+enum class BackgroundAppearanceStrategy {
+    /** The component never paints the background */
     NEVER,
 
-    /** The button only paints the background in active (rollover, selected, pressed) state. */
+    /** The component only paints the background in active (rollover, selected, pressed) state. */
     FLAT,
 
-    /** The button always paints the background */
+    /** The component always paints the background */
     ALWAYS
 }
 

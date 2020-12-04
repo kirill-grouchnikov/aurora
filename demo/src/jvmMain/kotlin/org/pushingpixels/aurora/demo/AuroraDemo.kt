@@ -47,7 +47,7 @@ fun main() {
     AuroraWindow(
         title = "Aurora Demo",
         skin = marinerSkin(),
-        size = IntSize(600, 500)
+        size = IntSize(600, 540)
     ) {
         Box(
             modifier = Modifier.auroraBackground(),
@@ -109,14 +109,14 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                 AuroraButton(
                     enabled = enabled.value,
                     onClick = { println("Clicked!") },
-                    backgroundType = ButtonBackgroundType.NEVER
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.NEVER
                 ) {
                     AuroraText("never")
                 }
                 AuroraButton(
                     enabled = enabled.value,
                     onClick = { println("Clicked!") },
-                    backgroundType = ButtonBackgroundType.FLAT
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT
                 ) {
                     AuroraThemedIcon(
                         icon = account_box_24px.of(12.dp, 12.dp),
@@ -127,7 +127,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                 AuroraButton(
                     enabled = enabled.value,
                     onClick = { println("Clicked!") },
-                    backgroundType = ButtonBackgroundType.ALWAYS
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
                 ) {
                     AuroraThemedIcon(
                         icon = keyboard_capslock_24px.of(12.dp, 12.dp),
