@@ -32,8 +32,10 @@ package org.pushingpixels.aurora.components.utils
 import androidx.compose.animation.core.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.ambientOf
 import androidx.compose.runtime.mutableStateOf
 import org.pushingpixels.aurora.ComponentState
+import org.pushingpixels.aurora.ModelStateInfoSnapshot
 
 internal class StateContributionInfo(var start: Float, var end: Float) {
     var contribution: Float
@@ -88,6 +90,16 @@ internal class ModelStateInfo(var currModelState: ComponentState) {
         }
         println("\tActive strength $activeStrength")
         println("######")
+    }
+
+    fun getSnapshot(): ModelStateInfoSnapshot {
+        return ModelStateInfoSnapshot(
+            currModelState = currModelState,
+            stateContributionMap = stateContributionMap.map { (key, value) ->
+                key to value.contribution
+            }.toMap(),
+            activeStrength = activeStrength
+        )
     }
 }
 
@@ -290,4 +302,5 @@ internal fun getEnabledTransitionDefinition(duration: Int): TransitionDefinition
         }
     }
 }
+
 

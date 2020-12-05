@@ -37,4 +37,4 @@ data class DecorationArea(
     val type: DecorationAreaType = DecorationAreaType.NONE
 )
 
-internal val AmbientDecorationArea = staticAmbientOf { DecorationArea() }
+val AmbientDecorationArea = staticAmbientOf { DecorationArea() }

@@ -42,9 +42,15 @@ class ColorBitmapFilter private constructor(val color: Color, val alpha: Float =
         val size = source.size / 4
         val result = ByteArray(source.size)
         for (pos in 0 until size) {
-            val sourceAlpha = (256 + source[4 * pos + 3].toInt()) / 255.0f
+            // Get the alpha byte from the Skija source
+            val alphaByte = source[4 * pos + 3].toInt()
+            // Convert it to the 0.0-1.0 range that compose operates in
+            val sourceAlpha = (if (alphaByte < 0) 256 + alphaByte else alphaByte) / 255.0f
 
-            // Multiply source alpha by the alpha in our target color
+            // We have three alphas that are combined into the final alpha for the current pixel:
+            // 1. The alpha of the current pixel in the source image
+            // 2. The alpha of the color used in our filter
+            // 3. The alpha of the filter itself
             val finalAlpha = (alpha * colorAlpha * sourceAlpha * 255.0f + 0.5f).toInt().toByte()
 
             // Put the byte values in BGRA order

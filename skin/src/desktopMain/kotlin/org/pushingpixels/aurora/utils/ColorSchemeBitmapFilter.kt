@@ -33,11 +33,11 @@ import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.bitmapfilter.BaseBitmapFilter
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 
-internal class ColorSchemeBitmapFilter(
+class ColorSchemeBitmapFilter(
     val scheme: AuroraColorScheme,
     private val originalBrightnessFactor: Float,
     val alpha: Float
-): BaseBitmapFilter() {
+) : BaseBitmapFilter() {
     private val interpolated = arrayOfNulls<Color>(MAPSTEPS)
 
     init {
@@ -125,11 +125,17 @@ internal class ColorSchemeBitmapFilter(
         val size = source.size / 4
         val result = ByteArray(source.size)
         for (pos in 0 until size) {
-            // Convert byte channel values to [0.0-1.0] floats for manipulation
-            val b = (256 + source[4 * pos].toInt()) / 255.0f
-            val g = (256 + source[4 * pos + 1].toInt()) / 255.0f
-            val r = (256 + source[4 * pos + 2].toInt()) / 255.0f
-            val a = (256 + source[4 * pos + 3].toInt()) / 255.0f
+            // Get the bytes from the Skija source
+            val blueByte = source[4 * pos].toInt()
+            val greenByte = source[4 * pos + 1].toInt()
+            val redByte = source[4 * pos + 2].toInt()
+            val alphaByte = source[4 * pos + 3].toInt()
+
+            // Convert them to the 0.0-1.0 range that Compose operates in
+            val b = (if (blueByte < 0) 256 + blueByte else blueByte) / 255.0f
+            val g = (if (greenByte < 0) 256 + greenByte else greenByte) / 255.0f
+            val r = (if (redByte < 0) 256 + redByte else redByte) / 255.0f
+            val a = (if (alphaByte < 0) 256 + alphaByte else alphaByte) / 255.0f
 
             val brightness = getColorBrightness(r, g, b)
             val hsb = RGBtoHSB(r, g, b)

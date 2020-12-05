@@ -29,30 +29,17 @@
  */
 package org.pushingpixels.aurora.icon
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.preferredSize
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.DrawModifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Canvas
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asDesktopBitmap
 import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
-import androidx.compose.ui.graphics.drawscope.ContentDrawScope
-import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 import org.jetbrains.skija.ColorAlphaType
 import org.jetbrains.skija.ColorInfo
 import org.jetbrains.skija.ColorType
 import org.jetbrains.skija.ImageInfo
-import org.pushingpixels.aurora.AmbientTextColor
-import org.pushingpixels.aurora.bitmapfilter.ColorBitmapFilter
 import java.awt.image.BufferedImage
 
 // Ideally every transcoded SVG image that has raster content would have this
@@ -108,32 +95,6 @@ fun AuroraIcon.toBitmap(density: Float): ImageBitmap {
         paintIcon(this)
     }
     return result
-}
-
-private fun Modifier.auroraThemedIconPaint(icon: ImageBitmap, textColor: Color) =
-    this.then(AuroraThemedIconModifier(icon = icon, textColor = textColor))
-
-private class AuroraThemedIconModifier(
-    val icon: ImageBitmap, val textColor: Color
-) : DrawModifier {
-    override fun ContentDrawScope.draw() {
-        val filtered = ColorBitmapFilter.getColorFilter(color = textColor).filter(icon)
-        drawImage(filtered)
-    }
-}
-
-@Composable
-fun AuroraThemedIcon(icon: AuroraIcon, modifier: Modifier = Modifier) {
-    val textColor = AmbientTextColor.current
-    val density = AmbientDensity.current.density
-    val bitmap = remember { icon.toBitmap(density) }
-    // TODO - is it worth caching filtered bitmap by color (for performance reasons)?
-    Box(
-        modifier.preferredSize(
-            width = icon.getWidth().dp,
-            height = icon.getHeight().dp
-        ).auroraThemedIconPaint(bitmap, textColor)
-    )
 }
 
 

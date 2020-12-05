@@ -323,9 +323,13 @@ private fun AuroraToggleButton(
             }
         }
 
-        // Pass our text color to the children
-        Providers(AmbientTextColor provides textColor) {
+        // Pass our text color and model state snapshot to the children
+        Providers(
+            AmbientTextColor provides textColor,
+            AmbientModelStateInfoSnapshot provides stateTransitionTracker.modelStateInfo.getSnapshot()
+        ) {
             Row(
+                // TODO - extract sizes and paddings into a centralized location
                 Modifier
                     .defaultMinSizeConstraints(
                         minWidth = 64.dp,
@@ -571,9 +575,13 @@ private fun AuroraButton(
             }
         }
 
-        // Pass our text color to the children
-        Providers(AmbientTextColor provides textColor) {
+        // Pass our text color and model state snapshot to the children
+        Providers(
+            AmbientTextColor provides textColor,
+            AmbientModelStateInfoSnapshot provides stateTransitionTracker.modelStateInfo.getSnapshot()
+        ) {
             Row(
+                // TODO - extract sizes and paddings into a centralized location
                 Modifier
                     .defaultMinSizeConstraints(
                         minWidth = 64.dp,
@@ -589,5 +597,5 @@ private fun AuroraButton(
 }
 
 fun Modifier.auroraButtonIconPadding() =
-    this.then(padding(end = 4.dp))
+    this.then(padding(end = 6.dp))
 

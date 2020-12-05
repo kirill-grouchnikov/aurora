@@ -49,10 +49,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.AmbientTextColor
-import org.pushingpixels.aurora.AuroraSkin
-import org.pushingpixels.aurora.ColorSchemeAssociationKind
-import org.pushingpixels.aurora.ComponentStateFacet
+import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.components.utils.*
 import org.pushingpixels.aurora.utils.getBaseOutline
 
@@ -174,8 +171,10 @@ private fun AuroraCheckBox(
     pressedTransitionState[PressedTransitionFraction]
     enabledTransitionState[EnabledTransitionFraction]
 
-    stateTransitionTracker.update(enabled, Interaction.Pressed in interactionState,
-        AuroraSkin.animationConfig.regular)
+    stateTransitionTracker.update(
+        enabled, Interaction.Pressed in interactionState,
+        AuroraSkin.animationConfig.regular
+    )
     // The toggleable modifier is set on the checkbox mark, as well as on the
     // content so that the whole thing is clickable to toggle the control.
     val decorationAreaType = AuroraSkin.decorationArea.type
@@ -336,13 +335,15 @@ private fun AuroraCheckBox(
                 )
             }
         }
-        Providers(AmbientTextColor provides textColor) {
+        // Pass our text color and model state snapshot to the children
+        Providers(
+            AmbientTextColor provides textColor,
+            AmbientModelStateInfoSnapshot provides stateTransitionTracker.modelStateInfo.getSnapshot()
+        ) {
             Row(
+                // TODO - extract paddings into a centralized location
                 Modifier
-                    .defaultMinSizeConstraints(
-                        minWidth = 0.dp,
-                        minHeight = CheckboxSize
-                    )
+                    .defaultMinSizeConstraints(minWidth = 0.dp, minHeight = CheckboxSize)
                     .padding(4.dp, 10.dp, 4.dp, 8.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,

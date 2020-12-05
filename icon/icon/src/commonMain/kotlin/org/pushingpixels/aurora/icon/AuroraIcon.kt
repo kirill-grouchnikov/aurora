@@ -79,10 +79,10 @@ interface AuroraIcon {
     }
 }
 
-private fun Modifier.auroraIconPaint(icon: AuroraIcon) =
+fun Modifier.auroraIconPaint(icon: AuroraIcon) =
     this.then(AuroraIconModifier(icon = icon))
 
-private class AuroraIconModifier(val icon: AuroraIcon) : DrawModifier {
+class AuroraIconModifier(val icon: AuroraIcon) : DrawModifier {
     override fun ContentDrawScope.draw() {
         icon.paintIcon(this)
     }

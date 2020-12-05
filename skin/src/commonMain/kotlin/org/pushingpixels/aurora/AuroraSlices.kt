@@ -710,4 +710,12 @@ enum class BackgroundAppearanceStrategy {
     ALWAYS
 }
 
+enum class IconFilterStrategy {
+    ORIGINAL,
+
+    THEMED_FOLLOW_TEXT,
+
+    THEMED_FOLLOW_COLOR_SCHEME
+}
+
 

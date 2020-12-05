@@ -32,5 +32,13 @@ package org.pushingpixels.aurora
 import androidx.compose.runtime.ambientOf
 import androidx.compose.ui.graphics.Color
 
+data class ModelStateInfoSnapshot(
+    val currModelState: ComponentState,
+    val stateContributionMap: Map<ComponentState, Float>,
+    val activeStrength: Float
+)
+
+val AmbientModelStateInfoSnapshot = ambientOf<ModelStateInfoSnapshot>()
+
 val AmbientTextColor = ambientOf<Color>()
 

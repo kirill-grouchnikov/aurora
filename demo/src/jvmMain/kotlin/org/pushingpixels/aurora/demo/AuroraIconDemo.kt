@@ -42,7 +42,7 @@ import org.pushingpixels.aurora.components.AuroraButton
 import org.pushingpixels.aurora.components.AuroraText
 import org.pushingpixels.aurora.components.auroraBackground
 import org.pushingpixels.aurora.icon.AuroraIcon
-import org.pushingpixels.aurora.icon.AuroraThemedIcon
+import org.pushingpixels.aurora.icon.AuroraThemedFollowTextIcon
 import org.pushingpixels.aurora.skin.marinerSkin
 
 fun main() {
@@ -92,19 +92,19 @@ fun IconDemoArea() {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             AuroraButton {
-                AuroraThemedIcon(icon = account_box_24px.of(16.dp, 16.dp))
+                AuroraThemedFollowTextIcon(icon = account_box_24px.of(16.dp, 16.dp))
                 AuroraText("themed 1")
             }
             AuroraButton {
-                AuroraThemedIcon(icon = battery_full_24px.of(16.dp, 16.dp))
+                AuroraThemedFollowTextIcon(icon = battery_full_24px.of(16.dp, 16.dp))
                 AuroraText("themed 2")
             }
             AuroraButton {
-                AuroraThemedIcon(icon = keyboard_capslock_24px.of(16.dp, 16.dp))
+                AuroraThemedFollowTextIcon(icon = keyboard_capslock_24px.of(16.dp, 16.dp))
                 AuroraText("themed 3")
             }
             AuroraButton {
-                AuroraThemedIcon(icon = devices_other_24px.of(16.dp, 16.dp))
+                AuroraThemedFollowTextIcon(icon = devices_other_24px.of(16.dp, 16.dp))
                 AuroraText("themed 4")
             }
         }

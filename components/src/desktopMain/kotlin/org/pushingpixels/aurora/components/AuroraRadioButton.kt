@@ -51,10 +51,7 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.AmbientTextColor
-import org.pushingpixels.aurora.AuroraSkin
-import org.pushingpixels.aurora.ColorSchemeAssociationKind
-import org.pushingpixels.aurora.ComponentStateFacet
+import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.components.utils.*
 
 // TODO - should this go into a SizeUtils class?
@@ -340,13 +337,15 @@ private fun AuroraRadioButton(
                 alpha = alpha
             )
         }
-        Providers(AmbientTextColor provides textColor) {
+        // Pass our text color and model state snapshot to the children
+        Providers(
+            AmbientTextColor provides textColor,
+            AmbientModelStateInfoSnapshot provides stateTransitionTracker.modelStateInfo.getSnapshot()
+        ) {
             Row(
+                // TODO - extract paddings into a centralized location
                 Modifier
-                    .defaultMinSizeConstraints(
-                        minWidth = 0.dp,
-                        minHeight = RadioButtonSize
-                    )
+                    .defaultMinSizeConstraints(minWidth = 0.dp, minHeight = RadioButtonSize)
                     .padding(4.dp, 10.dp, 4.dp, 8.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,

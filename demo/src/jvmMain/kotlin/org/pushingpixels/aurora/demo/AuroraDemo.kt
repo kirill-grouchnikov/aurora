@@ -39,8 +39,8 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.components.*
-import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.icon.AuroraThemedIcon
+import org.pushingpixels.aurora.icon.AuroraThemedFollowTextIcon
 import org.pushingpixels.aurora.skin.marinerSkin
 
 fun main() {
@@ -103,7 +103,13 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     enabled = enabled.value,
                     selected = selected,
                     onSelectedChange = { println("Selected toggle? $it") }) {
-                    AuroraIcon(icon = computer.of(12.dp, 12.dp), modifier = Modifier.auroraButtonIconPadding())
+                    // This is a full-color icon. Use original colors for enabled and active states,
+                    // and color scheme based filtering for disabled states
+                    AuroraThemedIcon(icon = computer.of(12.dp, 12.dp),
+                        disabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME,
+                        enabledFilterStrategy = IconFilterStrategy.ORIGINAL,
+                        activeFilterStrategy = IconFilterStrategy.ORIGINAL,
+                        modifier = Modifier.auroraButtonIconPadding())
                     AuroraText("toggle")
                 }
                 AuroraButton(
@@ -118,7 +124,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     onClick = { println("Clicked!") },
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT
                 ) {
-                    AuroraThemedIcon(
+                    AuroraThemedFollowTextIcon(
                         icon = account_box_24px.of(12.dp, 12.dp),
                         modifier = Modifier.auroraButtonIconPadding()
                     )
@@ -129,7 +135,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     onClick = { println("Clicked!") },
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
                 ) {
-                    AuroraThemedIcon(
+                    AuroraThemedFollowTextIcon(
                         icon = keyboard_capslock_24px.of(12.dp, 12.dp),
                         modifier = Modifier.auroraButtonIconPadding()
                     )
