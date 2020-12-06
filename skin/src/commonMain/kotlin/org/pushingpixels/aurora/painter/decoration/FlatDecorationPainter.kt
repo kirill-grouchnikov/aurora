@@ -52,6 +52,7 @@ class FlatDecorationPainter : AuroraDecorationPainter {
         decorationAreaType: DecorationAreaType,
         componentSize: Size,
         outline: Outline,
+        rootSize: Size,
         offsetFromRoot: Offset,
         colorScheme: AuroraColorScheme
     ) {

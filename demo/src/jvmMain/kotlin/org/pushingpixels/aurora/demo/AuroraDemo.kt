@@ -42,11 +42,14 @@ import org.pushingpixels.aurora.components.*
 import org.pushingpixels.aurora.icon.AuroraThemedIcon
 import org.pushingpixels.aurora.icon.AuroraThemedFollowTextIcon
 import org.pushingpixels.aurora.skin.marinerSkin
+import org.pushingpixels.aurora.skin.nebulaAmethystSkin
+import org.pushingpixels.aurora.skin.nebulaBrickWallSkin
+import org.pushingpixels.aurora.skin.nebulaSkin
 
 fun main() {
     AuroraWindow(
         title = "Aurora Demo",
-        skin = marinerSkin(),
+        skin = nebulaBrickWallSkin(),
         size = IntSize(600, 540)
     ) {
         Box(

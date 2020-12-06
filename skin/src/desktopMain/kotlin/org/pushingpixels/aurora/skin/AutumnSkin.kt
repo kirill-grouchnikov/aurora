@@ -127,7 +127,9 @@ fun autumnSkin(): AuroraSkinDefinition {
             DelegateBorderPainter(
                 "Autumn Inner", ClassicBorderPainter()
             ) { it.tint(0.8f) }),
-        decorationPainter = MarbleNoiseDecorationPainter()
+        decorationPainter = MarbleNoiseDecorationPainter(
+            textureAlpha = 0.7f
+        )
     )
     // add an overlay painter to paint a drop shadow along the top
     // edge of toolbars

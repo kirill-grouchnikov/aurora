@@ -39,11 +39,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.window.MenuBar
+import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.colorscheme.ColorSchemes
 import org.pushingpixels.aurora.shaper.AuroraButtonShaper
 import org.pushingpixels.aurora.utils.deriveByBrightness
 import org.pushingpixels.aurora.utils.getAlphaColor
+import org.pushingpixels.aurora.utils.getColorSchemes
 import java.awt.image.BufferedImage
+
 
 object AuroraSkin {
     @Composable
@@ -78,6 +82,80 @@ data class AuroraSkinDefinition(
     val buttonShaper: AuroraButtonShaper,
     val painters: Painters
 ) : AuroraTrait
+
+class AccentBuilder {
+    internal var windowChromeAccent: AuroraColorScheme? = null
+    internal var enabledControlsAccent: AuroraColorScheme? = null
+    internal var activeControlsAccent: AuroraColorScheme? = null
+    internal var highlightsAccent: AuroraColorScheme? = null
+    internal var backgroundAccent: AuroraColorScheme? = null
+    private var accentColorSchemes: ColorSchemes? = null
+
+    fun withAccentResource(colorSchemeResourceName: String): AccentBuilder {
+        accentColorSchemes = getColorSchemes(
+            AuroraSkin::class.java.getResourceAsStream(colorSchemeResourceName)
+        )
+        require(accentColorSchemes != null) {
+            "Could not load accent color schemes from $colorSchemeResourceName"
+        }
+        return this
+    }
+
+    fun withWindowChromeAccent(windowChromeAccentName: String): AccentBuilder {
+        checkNotNull(accentColorSchemes) { "Builder not configured with accent resource file" }
+        windowChromeAccent = accentColorSchemes!![windowChromeAccentName]
+        return this
+    }
+
+    fun withWindowChromeAccent(windowChromeAccent: AuroraColorScheme): AccentBuilder {
+        this.windowChromeAccent = windowChromeAccent
+        return this
+    }
+
+    fun withActiveControlsAccent(activeControlsAccentName: String): AccentBuilder {
+        checkNotNull(accentColorSchemes) { "Builder not configured with accent resource file" }
+        activeControlsAccent = this.accentColorSchemes!![activeControlsAccentName]
+        return this
+    }
+
+    fun withActiveControlsAccent(activeControlsAccent: AuroraColorScheme): AccentBuilder {
+        this.activeControlsAccent = activeControlsAccent
+        return this
+    }
+
+    fun withEnabledControlsAccent(enabledControlsAccentName: String): AccentBuilder {
+        checkNotNull(this.accentColorSchemes) { "Builder not configured with accent resource file" }
+        this.enabledControlsAccent = this.accentColorSchemes!![enabledControlsAccentName]
+        return this
+    }
+
+    fun withEnabledControlsAccent(enabledControlsAccent: AuroraColorScheme): AccentBuilder {
+        this.enabledControlsAccent = enabledControlsAccent
+        return this
+    }
+
+    fun withHighlightsAccent(highlightsAccentName: String): AccentBuilder {
+        checkNotNull(this.accentColorSchemes) { "Builder not configured with accent resource file" }
+        this.highlightsAccent = this.accentColorSchemes!![highlightsAccentName]
+        return this
+    }
+
+    fun withHighlightsAccent(highlightsAccent: AuroraColorScheme): AccentBuilder {
+        this.highlightsAccent = highlightsAccent
+        return this
+    }
+
+    fun withBackgroundAccent(backgroundAccentName: String): AccentBuilder {
+        checkNotNull(this.accentColorSchemes) { "Builder not configured with accent resource file" }
+        this.backgroundAccent = this.accentColorSchemes!![backgroundAccentName]
+        return this
+    }
+
+    fun withBackgroundAccent(backgroundAccent: AuroraColorScheme): AccentBuilder {
+        this.backgroundAccent = backgroundAccent
+        return this
+    }
+}
 
 fun AuroraWindow(
     title: String,

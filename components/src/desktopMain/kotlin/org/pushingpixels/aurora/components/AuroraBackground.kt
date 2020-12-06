@@ -29,12 +29,14 @@
  */
 package org.pushingpixels.aurora.components
 
+import androidx.compose.desktop.AppWindowAmbient
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ContentDrawScope
 import androidx.compose.ui.DrawModifier
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
@@ -49,6 +51,10 @@ import org.pushingpixels.aurora.painter.overlay.AuroraOverlayPainter
 @Composable
 fun Modifier.auroraBackground() = this.then(
     AuroraBackground(
+        rootSize = Size(
+            width = AppWindowAmbient.current!!.width.toFloat(),
+            height = AppWindowAmbient.current!!.height.toFloat()
+        ),
         decorationAreaType = AuroraSkin.decorationArea.type,
         colors = AuroraSkin.colors,
         decorationPainter = AuroraSkin.painters.decorationPainter,
@@ -57,6 +63,7 @@ fun Modifier.auroraBackground() = this.then(
 )
 
 private class AuroraBackground(
+    private val rootSize: Size,
     private val decorationAreaType: DecorationAreaType,
     private val colors: AuroraSkinColors,
     private val decorationPainter: AuroraDecorationPainter,
@@ -79,6 +86,7 @@ private class AuroraBackground(
                 decorationAreaType = decorationAreaType,
                 componentSize = size,
                 outline = Outline.Rectangle(Rect(Offset(0.0f, 0.0f), size)),
+                rootSize = rootSize,
                 offsetFromRoot = offset,
                 colorScheme = colors.getBackgroundColorScheme(decorationAreaType)
             )

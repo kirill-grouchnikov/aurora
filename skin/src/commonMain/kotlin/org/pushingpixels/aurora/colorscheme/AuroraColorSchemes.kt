@@ -40,3 +40,24 @@ class MetallicColorScheme : BaseLightColorScheme("Metallic") {
     override val darkColor = Color(80, 85, 90)
     override val ultraDarkColor = Color(32, 37, 42)
 }
+
+class OrangeColorScheme : BaseLightColorScheme("Orange") {
+    override val foregroundColor = Color.Black
+    override val ultraLightColor = Color(255, 250, 235)
+    override val extraLightColor = Color(255, 220, 180)
+    override val lightColor = Color(245, 200, 128)
+    override val midColor = Color(240, 170, 50)
+    override val darkColor = Color(229, 151, 0)
+    override val ultraDarkColor = Color(180, 100, 0)
+}
+
+class PurpleColorScheme : BaseLightColorScheme("Purple") {
+    override val foregroundColor = Color.Black
+    override val ultraLightColor = Color(240, 220, 245)
+    override val extraLightColor = Color(218, 209, 233)
+    override val lightColor = Color(203, 175, 237)
+    override val midColor = Color(201, 135, 226)
+    override val darkColor = Color(140, 72, 170)
+    override val ultraDarkColor = Color(94, 39, 114)
+}
+

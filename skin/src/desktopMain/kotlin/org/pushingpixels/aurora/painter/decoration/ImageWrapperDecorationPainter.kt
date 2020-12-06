@@ -47,17 +47,10 @@ import org.pushingpixels.aurora.utils.ColorSchemeBitmapFilter
  */
 abstract class ImageWrapperDecorationPainter(
     val originalTile: ImageBitmap,
-    val textureAlpha: Float = 0.2f
+    val textureAlpha: Float = 0.2f,
+    val baseDecorationPainter: AuroraDecorationPainter? = null
 ) : AuroraDecorationPainter {
-    /**
-     * The base decoration painter - the colorized image tiles are painted over the painting of this
-     * painter. Can be `null`.
-     */
-    private var baseDecorationPainter: AuroraDecorationPainter? = null
-
-    /**
-     * Map of colorized tiles.
-     */
+    /** Map of colorized tiles. */
     private var colorizedTileMap = LinkedHashMap<String, ImageBitmap>(10)
 
     override fun paintDecorationArea(
@@ -65,16 +58,18 @@ abstract class ImageWrapperDecorationPainter(
         decorationAreaType: DecorationAreaType,
         componentSize: Size,
         outline: Outline,
+        rootSize: Size,
         offsetFromRoot: Offset,
         colorScheme: AuroraColorScheme
     ) {
         with(drawScope) {
             if (baseDecorationPainter != null) {
-                baseDecorationPainter!!.paintDecorationArea(
+                baseDecorationPainter.paintDecorationArea(
                     drawScope = this,
                     decorationAreaType = decorationAreaType,
                     componentSize = componentSize,
                     outline = outline,
+                    rootSize = rootSize,
                     offsetFromRoot = offsetFromRoot,
                     colorScheme = colorScheme
                 )

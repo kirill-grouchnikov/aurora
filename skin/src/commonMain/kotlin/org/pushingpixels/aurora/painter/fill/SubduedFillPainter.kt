@@ -27,23 +27,25 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-package org.pushingpixels.aurora.painter.decoration
+package org.pushingpixels.aurora.painter.fill
 
-import org.pushingpixels.aurora.colorscheme.MetallicColorScheme
-import org.pushingpixels.aurora.utils.NoiseFactory
+import androidx.compose.ui.graphics.Color
+import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
+import org.pushingpixels.aurora.utils.getInterpolatedColor
 
 /**
- * Implementation of [AuroraDecorationPainter] that uses marble noise
- * painting on decoration areas.
+ * Fill painter that returns images with subdued gradient appearance.
  *
  * @author Kirill Grouchnikov
  */
-class MarbleNoiseDecorationPainter(textureAlpha: Float,
-                                   baseDecorationPainter: AuroraDecorationPainter? = null) :
-    ImageWrapperDecorationPainter(
-        originalTile = NoiseFactory.getNoiseImage(MetallicColorScheme(), 400, 400, 0.8, 0.8, false),
-        textureAlpha = textureAlpha,
-        baseDecorationPainter = baseDecorationPainter
-    ) {
-    override val displayName = "Marble Noise"
+class SubduedFillPainter : StandardFillPainter() {
+    override val displayName = "Subdued"
+
+    override fun getTopFillColor(fillScheme: AuroraColorScheme): Color {
+        return getInterpolatedColor(
+            color1 = super.getTopFillColor(fillScheme),
+            color2 = this.getMidFillColorTop(fillScheme),
+            color1Likeness = 0.3f
+        )
+    }
 }
