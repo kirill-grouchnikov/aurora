@@ -31,13 +31,13 @@ package org.pushingpixels.aurora.components
 
 import androidx.compose.desktop.AppWindowAmbient
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.ContentDrawScope
-import androidx.compose.ui.DrawModifier
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.DrawModifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import org.pushingpixels.aurora.AuroraSkin
