@@ -53,6 +53,7 @@ import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.components.utils.*
+import org.pushingpixels.aurora.utils.boundingRect
 
 
 // This will be initialized on first usage using the getSelectedTransitionDefinition
@@ -282,6 +283,11 @@ private fun AuroraToggleButton(
                         sides = sides,
                         drawScope = this
                     )
+
+                    val outlineBoundingRect = outline.boundingRect()
+                    if (outlineBoundingRect.isEmpty) {
+                        return@withTransform
+                    }
 
                     // Populate the cached color scheme for filling the button container
                     drawingCache.colorScheme.ultraLight = fillUltraLight
@@ -534,6 +540,11 @@ private fun AuroraButton(
                         sides = sides,
                         drawScope = this
                     )
+
+                    val outlineBoundingRect = outline.boundingRect()
+                    if (outlineBoundingRect.isEmpty) {
+                        return@withTransform
+                    }
 
                     // Populate the cached color scheme for filling the button container
                     drawingCache.colorScheme.ultraLight = fillUltraLight

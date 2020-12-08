@@ -158,8 +158,8 @@ class AccentBuilder {
 }
 
 fun AuroraWindow(
-    title: String,
     skin: AuroraSkinDefinition,
+    title: String,
     size: IntSize,
     location: IntOffset = IntOffset.Zero,
     centered: Boolean = true,

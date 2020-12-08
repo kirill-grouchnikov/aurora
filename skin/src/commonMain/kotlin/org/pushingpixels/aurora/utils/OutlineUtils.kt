@@ -29,10 +29,20 @@
  */
 package org.pushingpixels.aurora.utils
 
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.geometry.boundingRect
 import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.Path
 import org.pushingpixels.aurora.Side
+
+fun Outline.boundingRect(): Rect {
+    return when (this) {
+        is Outline.Rectangle -> this.rect
+        is Outline.Rounded -> this.roundRect.boundingRect
+        is Outline.Generic -> this.path.getBounds()
+    }
+}
 
 /**
  * Returns basic outline for the specified parameters. The basic outline is
@@ -57,97 +67,37 @@ fun getBaseOutline(
     var width = width
     var height = height
     val isTopLeftCorner = (straightSides != null
-            && (straightSides.contains(Side.LEFT) || straightSides
-        .contains(Side.TOP)))
+            && (straightSides.contains(Side.LEFT) || straightSides.contains(Side.TOP)))
     val isTopRightCorner = (straightSides != null
-            && (straightSides.contains(Side.RIGHT) || straightSides
-        .contains(Side.TOP)))
+            && (straightSides.contains(Side.RIGHT) || straightSides.contains(Side.TOP)))
     val isBottomRightCorner = (straightSides != null
-            && (straightSides.contains(Side.RIGHT) || straightSides
-        .contains(Side.BOTTOM)))
+            && (straightSides.contains(Side.RIGHT) || straightSides.contains(Side.BOTTOM)))
     val isBottomLeftCorner = (straightSides != null
-            && (straightSides.contains(Side.LEFT) || straightSides
-        .contains(Side.BOTTOM)))
+            && (straightSides.contains(Side.LEFT) || straightSides.contains(Side.BOTTOM)))
     width -= 2 * insets
     height -= 2 * insets
-    val result = Path()
-    if (isTopLeftCorner || radius <= 0.0f) {
-        result.moveTo(insets, insets)
-    } else {
-        result.moveTo(insets + radius, insets)
-    }
-    if (isTopRightCorner || radius <= 0.0f) {
-        result.lineTo(insets + width, insets)
-    } else {
-        if (isTopLeftCorner || insets + width - radius >= radius) {
-            result.lineTo(insets + width - radius, insets)
-        }
-        result.arcTo(
+
+    // If all the sides are straight, the result is a simple rectangle
+    if (isTopLeftCorner && isTopRightCorner && isBottomRightCorner && isBottomLeftCorner) {
+        // Rectangle
+        return Outline.Rectangle(
             rect = Rect(
-                left = insets + width - 2 * radius,
-                top = insets,
-                right = insets + width,
-                bottom = insets + 2 * radius
-            ),
-            startAngleDegrees = 270.0f,
-            sweepAngleDegrees = 90.0f,
-            forceMoveTo = false
+                left = insets, top = insets,
+                right = insets + width, bottom = insets + height
+            )
         )
     }
-    if (isBottomRightCorner || radius <= 0.0f) {
-        result.lineTo(insets + width, insets + height)
-    } else {
-        if (isTopRightCorner || insets + height - radius >= radius) {
-            result.lineTo(insets + width, insets + height - radius)
-        }
-        result.arcTo(
-            rect = Rect(
-                left = insets + width - 2 * radius,
-                top = insets + height - 2 * radius,
-                right = insets + width,
-                bottom = insets + height
-            ),
-            startAngleDegrees = 0.0f,
-            sweepAngleDegrees = 90.0f,
-            forceMoveTo = false
+
+    // Otherwise we have a rounded rectangle with potentially different corner radii
+    // based on which sides are straight
+    return Outline.Rounded(
+        roundRect = RoundRect(
+            left = insets, top = insets,
+            right = insets + width, bottom = insets + height,
+            topLeftCornerRadius = if (isTopLeftCorner) CornerRadius.Zero else CornerRadius(radius, radius),
+            topRightCornerRadius = if (isTopRightCorner) CornerRadius.Zero else CornerRadius(radius, radius),
+            bottomRightCornerRadius = if (isBottomRightCorner) CornerRadius.Zero else CornerRadius(radius, radius),
+            bottomLeftCornerRadius = if (isBottomLeftCorner) CornerRadius.Zero else CornerRadius(radius, radius)
         )
-    }
-    if (isBottomLeftCorner || radius <= 0.0f) {
-        result.lineTo(insets, insets + height)
-    } else {
-        if (isBottomRightCorner || insets + width - radius >= radius) {
-            result.lineTo(insets + radius, insets + height)
-        }
-        result.arcTo(
-            rect = Rect(
-                left = insets,
-                top = insets + height - 2 * radius,
-                right = insets + 2 * radius,
-                bottom = insets + height
-            ),
-            startAngleDegrees = 90.0f,
-            sweepAngleDegrees = 90.0f,
-            forceMoveTo = false
-        )
-    }
-    if (isTopLeftCorner || radius == 0.0f) {
-        result.lineTo(insets, insets)
-    } else {
-        if (isBottomLeftCorner || insets + height - radius >= radius) {
-            result.lineTo(insets, insets + radius)
-        }
-        result.arcTo(
-            rect = Rect(
-                left = insets,
-                top = insets,
-                right = insets + 2 * radius,
-                bottom = insets + 2 * radius
-            ),
-            startAngleDegrees = 180.0f,
-            sweepAngleDegrees = 90.0f,
-            forceMoveTo = false
-        )
-    }
-    result.close()
-    return Outline.Generic(result)
+    )
 }

@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
+import org.pushingpixels.aurora.utils.boundingRect
 
 /**
  * Implementation of [AuroraDecorationPainter] that uses "arc" painting on title panes and
@@ -74,11 +75,7 @@ class ArcDecorationPainter : AuroraDecorationPainter {
         offsetFromRoot: Offset,
         colorScheme: AuroraColorScheme
     ) {
-        val boundingRect = when (outline) {
-            is Outline.Rectangle -> outline.rect
-            is Outline.Rounded -> outline.roundRect.boundingRect
-            is Outline.Generic -> outline.path.getBounds()
-        }
+        val boundingRect = outline.boundingRect()
 
         with(drawScope) {
             withTransform({
