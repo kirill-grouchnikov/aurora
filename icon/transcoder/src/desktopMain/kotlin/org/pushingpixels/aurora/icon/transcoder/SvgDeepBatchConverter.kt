@@ -36,7 +36,7 @@ import java.util.*
 import java.util.stream.Stream
 
 class SvgDeepBatchConverter : SvgBatchBaseConverter() {
-    protected fun processFolder(
+    private fun processFolder(
         inputFolder: File, outputFolder: File?,
         outputClassNamePrefix: String?, outputFileNameExtension: String?,
         outputPackageName: String?, templateFile: String?
@@ -58,7 +58,7 @@ class SvgDeepBatchConverter : SvgBatchBaseConverter() {
         )
 
         // Now scan the folder for sub-folders
-        for (inputSubfolder in inputFolder.listFiles { directory: File?, name: String? ->
+        for (inputSubfolder in inputFolder.listFiles { directory, name ->
             File(directory, name).isDirectory
         }) {
             val subfolderName = inputSubfolder.name
@@ -98,11 +98,11 @@ class SvgDeepBatchConverter : SvgBatchBaseConverter() {
             }
             val converter = SvgDeepBatchConverter()
             val sourceRootFolderName = converter.getInputArgument(args, "sourceRootFolder", null)
-            Objects.requireNonNull(sourceRootFolderName, "Missing source folder. " + CHECK_DOCUMENTATION)
+            Objects.requireNonNull(sourceRootFolderName, "Missing source folder. $CHECK_DOCUMENTATION")
             val outputRootPackageName = converter.getInputArgument(args, "outputRootPackageName", null)
-            Objects.requireNonNull(outputRootPackageName, "Missing output package name. " + CHECK_DOCUMENTATION)
+            Objects.requireNonNull(outputRootPackageName, "Missing output package name. $CHECK_DOCUMENTATION")
             val templateFile = converter.getInputArgument(args, "templateFile", null)
-            Objects.requireNonNull(templateFile, "Missing template file. " + CHECK_DOCUMENTATION)
+            Objects.requireNonNull(templateFile, "Missing template file. $CHECK_DOCUMENTATION")
             val outputFileNameExtension = ".kt"
             val outputClassNamePrefix = converter.getInputArgument(args, "outputClassNamePrefix", "")
             val outputRootFolderName = converter.getInputArgument(args, "outputRootFolder", sourceRootFolderName)

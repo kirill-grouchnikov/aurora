@@ -121,9 +121,7 @@ internal class RasterScanner(val printWriter: PrintWriter) {
      * @param painter Composite shape painter.
      */
     private fun scanCompositeShapePainter(painter: CompositeShapePainter) {
-        // offset(offset);
-        // printWriter.println("CompositeShapePainter");
-        for (i in 0 until painter.getShapePainterCount()) {
+        for (i in 0 until painter.shapePainterCount) {
             scanShapePainter(painter.getShapePainter(i))
         }
     }
@@ -134,7 +132,7 @@ internal class RasterScanner(val printWriter: PrintWriter) {
      * @param painter Fill shape painter.
      */
     private fun scanFillShapePainter(painter: FillShapePainter) {
-        val paint: Paint = painter.getPaint() ?: return
+        val paint: Paint = painter.paint ?: return
         scanPaint(paint)
     }
 

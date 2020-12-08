@@ -236,9 +236,6 @@ class ComponentState(
                 }
             }
         }
-        // / System.out.println("Fit value is " + value + " for ");
-        // / System.out.println("\t" + this);
-        // System.out.println("\t" + state);
         return value
     }
 

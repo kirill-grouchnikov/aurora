@@ -94,14 +94,6 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             currentWriter.print(string)
         }
 
-        fun format(format: String?, vararg args: Any?) {
-            currentWriter.format(format, *args)
-        }
-
-        fun format(l: Locale?, format: String?, vararg args: Any?) {
-            currentWriter.format(l, format, *args)
-        }
-
         fun checkin() {
             // TODO - figure out if the nested withTransform{} blocks
             //  can somehow be broken on bigger inputs
@@ -133,21 +125,11 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         }
     }
 
-    fun setPackageName(packageName: String?) {
+    fun setPackageName(packageName: String) {
         this.packageName = packageName
     }
 
-    /**
-     * Sets the listener.
-     *
-     * @param listener Listener.
-     */
-//    fun setListener(listener: TranscoderListener) {
-//        this.listener = listener
-//        setPrintWriter(PrintWriter(listener.writer))
-//    }
-
-    fun setPrintWriter(printWriter: PrintWriter?) {
+    private fun setPrintWriter(printWriter: PrintWriter?) {
         externalPrintWriter = printWriter
     }
 
@@ -157,7 +139,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
      * @param gvtRoot        Graphics vector tree root.
      * @param templateStream Stream with the template content.
      */
-    fun transcode(gvtRoot: GraphicsNode, templateStream: InputStream?) {
+    fun transcode(gvtRoot: GraphicsNode, templateStream: InputStream) {
         // load the template
         val templateBuffer = StringBuffer()
         val templateReader = BufferedReader(InputStreamReader(templateStream))

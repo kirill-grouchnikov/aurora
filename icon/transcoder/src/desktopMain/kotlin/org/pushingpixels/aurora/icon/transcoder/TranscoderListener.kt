@@ -42,7 +42,7 @@ interface TranscoderListener {
      *
      * @return Writer for the Compose contents.
      */
-    val writer: Writer?
+    val writer: Writer
 
     /**
      * Called when the transcoding process is finished.

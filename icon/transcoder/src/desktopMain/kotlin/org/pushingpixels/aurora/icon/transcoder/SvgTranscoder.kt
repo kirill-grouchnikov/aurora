@@ -44,14 +44,14 @@ import java.util.logging.Logger
  *
  * @author Kirill Grouchnikov.
  */
-class SvgTranscoder(val uri: String, classname: String) : SvgBaseTranscoder(classname) {
+class SvgTranscoder(private val uri: String, classname: String) : SvgBaseTranscoder(classname) {
     /**
      * Transcodes the SVG image into Compose code. Does nothing if the
      * [.listener] is `null`.
      *
      * @param templateStream Stream with the template content
      */
-    fun transcode(templateStream: InputStream?): Document? {
+    fun transcode(templateStream: InputStream): Document? {
         if (_listener == null) return null
         val ua = UserAgentAdapter()
         val loader = DocumentLoader(ua)

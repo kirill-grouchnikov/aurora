@@ -31,10 +31,10 @@ package org.pushingpixels.aurora.icon.transcoder
 
 import java.io.File
 import java.io.PrintWriter
-import java.io.Writer
 import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import kotlin.system.exitProcess
 
 abstract class SvgBatchBaseConverter {
     internal fun getInputArgument(args: Array<String>, argumentName: String?, defaultValue: String?): String? {
@@ -43,7 +43,7 @@ abstract class SvgBatchBaseConverter {
             if (split.size != 2) {
                 println("Argument '$arg' unsupported")
                 println(CHECK_DOCUMENTATION)
-                System.exit(1)
+                exitProcess(1)
             }
             if (split[0].compareTo(argumentName!!) == 0) {
                 return split[1]
@@ -58,8 +58,7 @@ abstract class SvgBatchBaseConverter {
         outputPackageName: String,
         templateFile: String
     ) {
-        val svgFiles = inputFolder.listFiles { directory: File?, name: String -> name.endsWith(".svg") }
-            ?: return
+        val svgFiles = inputFolder.listFiles { _ , name -> name.endsWith(".svg") } ?: return
 
         var totalCount = 0
         var successCount = 0
@@ -82,8 +81,7 @@ abstract class SvgBatchBaseConverter {
                         val transcoder = SvgTranscoder(uri, svgClassName)
                         transcoder.setPackageName(outputPackageName)
                         transcoder.setListener(object : TranscoderListener {
-                            override val writer: Writer
-                                get() = writer
+                            override val writer = writer
 
                             override fun finished() {
                                 latch.countDown()

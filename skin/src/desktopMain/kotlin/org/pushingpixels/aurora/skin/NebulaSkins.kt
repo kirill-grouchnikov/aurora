@@ -169,7 +169,7 @@ private fun nebulaBasePainters(): Painters {
     painters.addOverlayPainter(
         TopShadowOverlayPainter.getInstance(60),
         DecorationAreaType.TOOLBAR
-    );
+    )
 
     // add an overlay painter to paint separator lines along the bottom
     // edges of title panes and menu bars
@@ -214,7 +214,7 @@ fun nebulaAmethystSkin(): AuroraSkinDefinition {
             // Clear the top shadow painter on the toolbars and add combined
             // separator + drop shadow along the toolbar bottom
             painters.clearOverlayPainters(DecorationAreaType.TOOLBAR)
-            painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.TOOLBAR);
+            painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.TOOLBAR)
             painters.addOverlayPainter(
                 BottomLineOverlayPainter(
                     composite({ it.darkColor }, ColorTransforms.alpha(0.625f))
