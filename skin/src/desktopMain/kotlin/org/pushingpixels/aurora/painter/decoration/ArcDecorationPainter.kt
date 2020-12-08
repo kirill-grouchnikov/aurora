@@ -29,7 +29,6 @@
  */
 package org.pushingpixels.aurora.painter.decoration
 
-import androidx.compose.desktop.AppWindowAmbient
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.LinearGradient
@@ -59,9 +58,7 @@ class ArcDecorationPainter : AuroraDecorationPainter {
         offsetFromRoot: Offset,
         colorScheme: AuroraColorScheme
     ) {
-        if (decorationAreaType === DecorationAreaType.PRIMARY_TITLE_PANE
-            || decorationAreaType === DecorationAreaType.SECONDARY_TITLE_PANE
-        ) {
+        if (decorationAreaType === DecorationAreaType.TITLE_PANE) {
             paintTitleBackground(drawScope, componentSize, outline, rootSize, offsetFromRoot, colorScheme)
         } else {
             paintExtraBackground(drawScope, componentSize, outline, rootSize, offsetFromRoot, colorScheme)

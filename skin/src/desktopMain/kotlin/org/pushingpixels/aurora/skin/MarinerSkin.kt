@@ -142,8 +142,7 @@ private fun marinerSkinColors(): AuroraSkinColors {
     )
     result.registerDecorationAreaSchemeBundle(
         headerSchemeBundle, headerColorScheme,
-        DecorationAreaType.PRIMARY_TITLE_PANE, DecorationAreaType.SECONDARY_TITLE_PANE,
-        DecorationAreaType.HEADER
+        DecorationAreaType.TITLE_PANE, DecorationAreaType.HEADER
     )
 
     // footer color scheme bundle

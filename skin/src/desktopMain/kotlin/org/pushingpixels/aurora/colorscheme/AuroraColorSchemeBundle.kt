@@ -473,8 +473,7 @@ class AuroraSkinColors {
         backgroundColorSchemeMap = HashMap()
 
         decoratedAreaSet = HashSet()
-        decoratedAreaSet.add(DecorationAreaType.PRIMARY_TITLE_PANE)
-        decoratedAreaSet.add(DecorationAreaType.SECONDARY_TITLE_PANE)
+        decoratedAreaSet.add(DecorationAreaType.TITLE_PANE)
 
         statesWithAlpha = HashSet()
     }

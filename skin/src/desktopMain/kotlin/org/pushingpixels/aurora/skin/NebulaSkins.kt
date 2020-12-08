@@ -149,11 +149,8 @@ private fun nebulaBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors
 
     result.registerAsDecorationArea(
         accentBuilder.windowChromeAccent!!,
-        DecorationAreaType.PRIMARY_TITLE_PANE,
-        DecorationAreaType.SECONDARY_TITLE_PANE,
-        DecorationAreaType.HEADER
-    );
-
+        DecorationAreaType.TITLE_PANE, DecorationAreaType.HEADER
+    )
 
     return result
 }
@@ -180,9 +177,7 @@ private fun nebulaBasePainters(): Painters {
         BottomLineOverlayPainter(
             composite({ it.darkColor }, ColorTransforms.alpha(0.625f))
         ),
-        DecorationAreaType.PRIMARY_TITLE_PANE,
-        DecorationAreaType.SECONDARY_TITLE_PANE,
-        DecorationAreaType.HEADER
+        DecorationAreaType.TITLE_PANE, DecorationAreaType.HEADER
     )
 
     return painters

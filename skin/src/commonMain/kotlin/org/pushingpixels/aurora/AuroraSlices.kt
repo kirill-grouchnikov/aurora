@@ -631,23 +631,18 @@ class DecorationAreaType(val displayName: String) {
 
     companion object {
         /**
-         * Title pane of primary, top-level windows (frames, dialogs).
+         * Title pane of top-level windows (frames, dialogs).
          */
-        val PRIMARY_TITLE_PANE = DecorationAreaType("Primary title pane")
+        val TITLE_PANE = DecorationAreaType("Title pane")
 
         /**
-         * Title pane of secondary, non top-level windows (internal frames, desktop icons).
-         */
-        val SECONDARY_TITLE_PANE = DecorationAreaType("Secondary title pane")
-
-        /**
-         * Tool bar.
+         * Toolsbar.
          */
         val TOOLBAR = DecorationAreaType("Toolbar")
 
         /**
          * Any area that can be placed in the top portion of its window. Menu bar is an example of a
-         * core Swing component.
+         * core Aurora component.
          */
         val HEADER = DecorationAreaType("Header")
 
@@ -657,7 +652,7 @@ class DecorationAreaType(val displayName: String) {
         val FOOTER = DecorationAreaType("Footer")
 
         /**
-         * Control pane area, such as sidebars / task panes or ribbon bands in Flamingo.
+         * Control pane area, such as sidebars / task panes or ribbon bands.
          */
         val CONTROL_PANE = DecorationAreaType("Control pane")
 

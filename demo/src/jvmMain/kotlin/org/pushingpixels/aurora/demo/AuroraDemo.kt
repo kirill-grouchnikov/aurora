@@ -49,7 +49,7 @@ import org.pushingpixels.aurora.skin.nebulaSkin
 fun main() {
     AuroraWindow(
         title = "Aurora Demo",
-        skin = marinerSkin(),
+        skin = nebulaAmethystSkin(),
         size = IntSize(600, 540)
     ) {
         Box(
@@ -181,6 +181,14 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
 @Composable
 fun DemoContent() {
     Column(modifier = Modifier.fillMaxHeight().fillMaxWidth()) {
+        DecorationArea(decorationAreaType = DecorationAreaType.TITLE_PANE) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(24.dp)
+                    .auroraBackground()
+            )
+        }
         DecorationArea(decorationAreaType = DecorationAreaType.HEADER) {
             DemoArea(selected = false)
         }

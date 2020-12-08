@@ -216,8 +216,7 @@ private fun geminiSkinColors(): AuroraSkinColors {
 
     result.registerDecorationAreaSchemeBundle(
         headerSchemeBundle, blackColorScheme,
-        DecorationAreaType.PRIMARY_TITLE_PANE, DecorationAreaType.SECONDARY_TITLE_PANE,
-        DecorationAreaType.HEADER
+        DecorationAreaType.TITLE_PANE, DecorationAreaType.HEADER
     )
 
     // toolbar color scheme bundle

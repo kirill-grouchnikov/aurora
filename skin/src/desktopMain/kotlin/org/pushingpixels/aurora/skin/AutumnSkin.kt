@@ -96,15 +96,14 @@ private fun autumnSkinColors(): AuroraSkinColors {
     result.registerDecorationAreaSchemeBundle(
         bundle = titlePaneSchemeBundle,
         backgroundColorScheme = activeScheme,
-        DecorationAreaType.PRIMARY_TITLE_PANE, DecorationAreaType.SECONDARY_TITLE_PANE
+        DecorationAreaType.TITLE_PANE
     )
 
     val backgroundScheme = schemes["Autumn Background"]
 
     result.registerAsDecorationArea(
         activeScheme,
-        DecorationAreaType.PRIMARY_TITLE_PANE,
-        DecorationAreaType.SECONDARY_TITLE_PANE,
+        DecorationAreaType.TITLE_PANE,
         DecorationAreaType.HEADER
     )
 
@@ -138,8 +137,7 @@ fun autumnSkin(): AuroraSkinDefinition {
     // edges of title panes and menu bars
     painters.addOverlayPainter(
         BottomLineOverlayPainter(colorSchemeQuery = { it.darkColor }),
-        DecorationAreaType.PRIMARY_TITLE_PANE,
-        DecorationAreaType.SECONDARY_TITLE_PANE,
+        DecorationAreaType.TITLE_PANE,
         DecorationAreaType.HEADER
     )
 
