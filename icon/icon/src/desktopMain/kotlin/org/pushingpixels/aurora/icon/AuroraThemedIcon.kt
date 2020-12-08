@@ -219,27 +219,23 @@ private fun getCombinedActiveStatesThemedByColorSchemeModifier(
     colors: AuroraSkinColors,
     decorationAreaType: DecorationAreaType,
 ): Modifier? {
-    var result: Modifier? = null
-    // TODO: Make it Kotlin-pretty
-    for ((state, contribution) in modelStateInfoSnapshot.stateContributionMap) {
-        if (contribution == 0.0f) {
-            continue
+    return modelStateInfoSnapshot.stateContributionMap
+        .filter { (state, contribution) ->
+            // For all active states that have non-zero contribution
+            state.isActive && contribution > 0.0f
+        }.map { (state, contribution) ->
+            // Create a matching modifier that would paint the themed version of the
+            // original icon based on that contribution
+            AuroraThemedByColorSchemeIconModifier(
+                icon = iconBitmap,
+                colorScheme = colors.getColorScheme(
+                    decorationAreaType = decorationAreaType,
+                    componentState = state
+                ),
+                alpha = contribution
+            )
+        }.fold<Modifier, Modifier?>(initial = null) { result, modifier ->
+            // And fold all the modifiers into one chain
+            result?.then(modifier) ?: modifier
         }
-        if (!state.isActive) {
-            continue
-        }
-
-        val currModifier = AuroraThemedByColorSchemeIconModifier(
-            icon = iconBitmap,
-            colorScheme = colors.getColorScheme(
-                decorationAreaType = decorationAreaType,
-                componentState = state
-            ),
-            alpha = contribution
-        )
-
-        result = result?.then(currModifier) ?: currModifier
-    }
-
-    return result
 }

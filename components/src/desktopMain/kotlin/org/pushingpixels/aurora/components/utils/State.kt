@@ -32,7 +32,6 @@ package org.pushingpixels.aurora.components.utils
 import androidx.compose.animation.core.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.ambientOf
 import androidx.compose.runtime.mutableStateOf
 import org.pushingpixels.aurora.ComponentState
 import org.pushingpixels.aurora.ModelStateInfoSnapshot
@@ -62,6 +61,12 @@ internal class ModelStateInfo(var currModelState: ComponentState) {
 
     fun sync() {
         activeStrength = 0.0f
+
+//        activeStrength = stateContributionMap
+//            .filter { (activeState, _) -> activeState.isActive }
+//            .map { (_, value) -> value.contribution }
+//            .fold(initial = 0.0f) { result, contribution -> result + contribution }
+
         for ((activeState, value) in stateContributionMap) {
             if (activeState.isActive) {
                 activeStrength += value.contribution

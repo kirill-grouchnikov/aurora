@@ -49,7 +49,7 @@ import org.pushingpixels.aurora.skin.nebulaSkin
 fun main() {
     AuroraWindow(
         title = "Aurora Demo",
-        skin = nebulaBrickWallSkin(),
+        skin = marinerSkin(),
         size = IntSize(600, 540)
     ) {
         Box(

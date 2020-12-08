@@ -5,6 +5,11 @@ import org.pushingpixels.aurora.ComponentState
 import org.pushingpixels.aurora.ComponentStateFacet
 import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.painter.decoration.AuroraDecorationPainter
+import java.util.*
+import kotlin.collections.HashSet
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.set
 
 
 /**
@@ -40,14 +45,14 @@ class AuroraColorSchemeBundle(
      * This map doesn't have to contain entries for all [ComponentState]
      * instances.
      */
-    private val stateAlphaMap: MutableMap<ComponentState, Float>
+    private var stateAlphaMap: MutableMap<ComponentState, Float>
 
     /**
      * Maps from component state to the alpha channel applied on highlight color
      * scheme. This map doesn't have to contain entries for all
      * [ComponentState] instances.
      */
-    private val stateHighlightSchemeAlphaMap: MutableMap<ComponentState, Float>
+    private var stateHighlightSchemeAlphaMap: MutableMap<ComponentState, Float>
 
     /**
      * If there is no explicitly registered color scheme for pressed component
@@ -385,6 +390,35 @@ class AuroraColorSchemeBundle(
     }
 
     /**
+     * Creates a new color scheme bundle that has the same settings as this
+     * color scheme bundle with the addition of applying the specified color
+     * scheme transformation on all the relevant color schemes
+     *
+     * @param transform Color scheme transformation.
+     * @return The new color scheme bundle.
+     */
+    fun transform(transform: (AuroraColorScheme) -> AuroraColorScheme): AuroraColorSchemeBundle {
+        // transform the basic schemes
+        val result = AuroraColorSchemeBundle(
+            transform.invoke(activeColorScheme),
+            transform.invoke(enabledColorScheme),
+            transform.invoke(disabledColorScheme)
+        )
+        for ((key, value) in colorSchemeMap) {
+            for ((subKey, subValue) in value) {
+                result.colorSchemeMap[key]!![subKey] = transform.invoke(subValue)
+            }
+        }
+
+        // alphas are the same
+        result.stateAlphaMap = HashMap(stateAlphaMap)
+
+        // highlight alphas are the same
+        result.stateHighlightSchemeAlphaMap = HashMap(stateHighlightSchemeAlphaMap)
+        return result
+    }
+
+    /**
      * Creates a new color scheme bundle.
      *
      * @param activeColorScheme   The active color scheme of this bundle.
@@ -597,6 +631,39 @@ class AuroraSkinColors {
             backgroundColorSchemeMap[areaType] = backgroundColorScheme
         }
     }
+
+    /**
+     * Registers the specified background color scheme and a color scheme bundle overlay to be used
+     * on controls in decoration areas.
+     *
+     * @param backgroundColorScheme     The color scheme to use for background of controls in
+     * decoration areas.
+     * @param noneTransformationOverlay Overlay to be applied to the [AuroraColorSchemeBundle]
+     * registered on the [DecorationAreaType.NONE], with the
+     * resulting color scheme bundle to be used on #areaTypes.
+     * @param areaTypes                 Enumerates the area types that are affected by the
+     * parameters.
+     */
+    fun registerAsDecorationArea(
+        backgroundColorScheme: AuroraColorScheme,
+        noneTransformationOverlay: (AuroraColorSchemeBundle) -> Unit,
+        vararg areaTypes: DecorationAreaType
+    ) {
+        val defaultBundle = colorSchemeBundleMap[DecorationAreaType.NONE]
+            ?: throw IllegalStateException("Cannot apply overlay without a registered NONE bundle")
+
+        // Apply a dummy "transformation" - effectively makes a deep copy of the default bundle
+        val noneCopy = defaultBundle.transform { scheme -> scheme }
+        // Apply the overlay
+        noneTransformationOverlay.invoke(noneCopy)
+        // And register the overlay transform on the requested decoration areas
+        this.registerDecorationAreaSchemeBundle(
+            bundle = noneCopy,
+            backgroundColorScheme = backgroundColorScheme,
+            areaTypes = areaTypes
+        )
+    }
+
 
     /**
      * Returns indication whether the specified decoration area type should have

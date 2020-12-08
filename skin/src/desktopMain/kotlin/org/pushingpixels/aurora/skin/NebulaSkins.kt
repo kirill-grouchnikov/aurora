@@ -41,7 +41,7 @@ import org.pushingpixels.aurora.painter.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.utils.getColorSchemes
 
-private fun nebulaSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
+private fun nebulaBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
     val result = AuroraSkinColors()
     val schemes = getColorSchemes(
         AuroraSkin::class.java.getResourceAsStream(
@@ -136,17 +136,16 @@ private fun nebulaSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
         defaultSchemeBundle, DecorationAreaType.NONE
     )
 
-    // TODO - add bundle overlay API
-//    registerAsDecorationArea(
-//        schemes["Nebula Decorations"],
-//        { bundle ->
-//            bundle.registerColorScheme(
-//                schemes["Nebula Decorations Separator"],
-//                ColorSchemeAssociationKind.SEPARATOR
-//            )
-//        },
-//        DecorationAreaType.FOOTER, DecorationAreaType.CONTROL_PANE
-//    )
+    result.registerAsDecorationArea(
+        backgroundColorScheme = schemes["Nebula Decorations"],
+        noneTransformationOverlay = { bundle ->
+            bundle.registerColorScheme(
+                schemes["Nebula Decorations Separator"],
+                ColorSchemeAssociationKind.SEPARATOR
+            )
+        },
+        areaTypes = arrayOf(DecorationAreaType.FOOTER, DecorationAreaType.CONTROL_PANE)
+    )
 
     result.registerAsDecorationArea(
         accentBuilder.windowChromeAccent!!,
@@ -159,7 +158,7 @@ private fun nebulaSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
     return result
 }
 
-fun nebulaPainters(): Painters {
+private fun nebulaBasePainters(): Painters {
     val painters = Painters(
         fillPainter = SubduedFillPainter(),
         borderPainter = FlatBorderPainter(),
@@ -192,12 +191,12 @@ fun nebulaPainters(): Painters {
 fun nebulaSkin(): AuroraSkinDefinition {
     return AuroraSkinDefinition(
         displayName = "Nebula",
-        colors = nebulaSkinColors(
+        colors = nebulaBaseSkinColors(
             AccentBuilder()
                 .withAccentResource("/org/pushingpixels/aurora/skins/nebula.colorschemes")
                 .withWindowChromeAccent("Nebula Decorations")
         ),
-        painters = nebulaPainters(),
+        painters = nebulaBasePainters(),
         buttonShaper = ClassicButtonShaper()
     )
 }
@@ -207,20 +206,23 @@ fun nebulaAmethystSkin(): AuroraSkinDefinition {
 
     return AuroraSkinDefinition(
         displayName = "Nebula Amethyst",
-        colors = nebulaSkinColors(
+        colors = nebulaBaseSkinColors(
             AccentBuilder().withWindowChromeAccent(PurpleColorScheme())
         ).also {
+            // Use the window chrome accent color scheme on toolbars
             it.registerAsDecorationArea(
                 accentBuilder.windowChromeAccent!!,
                 DecorationAreaType.TOOLBAR
             )
         },
-        painters = nebulaPainters().also {
-            it.clearOverlayPainters(DecorationAreaType.TOOLBAR)
-            it.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.TOOLBAR);
-            it.addOverlayPainter(
+        painters = nebulaBasePainters().also { painters ->
+            // Clear the top shadow painter on the toolbars and add combined
+            // separator + drop shadow along the toolbar bottom
+            painters.clearOverlayPainters(DecorationAreaType.TOOLBAR)
+            painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.TOOLBAR);
+            painters.addOverlayPainter(
                 BottomLineOverlayPainter(
-                    composite({ it -> it.darkColor }, ColorTransforms.alpha(0.625f))
+                    composite({ it.darkColor }, ColorTransforms.alpha(0.625f))
                 ), DecorationAreaType.TOOLBAR
             )
 
@@ -232,10 +234,10 @@ fun nebulaAmethystSkin(): AuroraSkinDefinition {
 fun nebulaBrickWallSkin(): AuroraSkinDefinition {
     return AuroraSkinDefinition(
         displayName = "Nebula Brick Wall",
-        colors = nebulaSkinColors(
+        colors = nebulaBaseSkinColors(
             AccentBuilder().withWindowChromeAccent(OrangeColorScheme())
         ),
-        painters = nebulaPainters(),
+        painters = nebulaBasePainters(),
         buttonShaper = ClassicButtonShaper()
     )
 }
