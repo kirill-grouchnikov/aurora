@@ -47,36 +47,36 @@ import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.utils.ColorSchemeBitmapFilter
 
-private fun Modifier.auroraThemedIconPaint(icon: ImageBitmap, textColor: Color, alpha: Float) =
-    this.then(AuroraThemedByTextIconModifier(icon = icon, textColor = textColor, alpha = alpha))
+private fun Modifier.auroraThemedIconPaint(iconBitmap: ImageBitmap, textColor: Color, alpha: Float) =
+    this.then(AuroraThemedByTextIconModifier(iconBitmap = iconBitmap, textColor = textColor, alpha = alpha))
 
-private fun Modifier.auroraThemedIconPaint(icon: ImageBitmap, colorScheme: AuroraColorScheme, alpha: Float) =
-    this.then(AuroraThemedByColorSchemeIconModifier(icon = icon, colorScheme = colorScheme, alpha = alpha))
+private fun Modifier.auroraThemedIconPaint(iconBitmap: ImageBitmap, colorScheme: AuroraColorScheme, alpha: Float) =
+    this.then(AuroraThemedByColorSchemeIconModifier(iconBitmap = iconBitmap, colorScheme = colorScheme, alpha = alpha))
 
 private class AuroraThemedByTextIconModifier(
-    val icon: ImageBitmap, val textColor: Color, val alpha: Float
+    val iconBitmap: ImageBitmap, val textColor: Color, val alpha: Float
 ) : DrawModifier {
     override fun ContentDrawScope.draw() {
-        val filtered = ColorBitmapFilter.getColorFilter(color = textColor, alpha = alpha).filter(icon)
+        val filtered = ColorBitmapFilter.getColorFilter(color = textColor, alpha = alpha).filter(iconBitmap)
         drawImage(filtered)
     }
 }
 
 private class AuroraThemedByColorSchemeIconModifier(
-    val icon: ImageBitmap, val colorScheme: AuroraColorScheme, val alpha: Float
+    val iconBitmap: ImageBitmap, val colorScheme: AuroraColorScheme, val alpha: Float
 ) : DrawModifier {
     override fun ContentDrawScope.draw() {
         // TODO - cache the filter instances
         val filtered = ColorSchemeBitmapFilter(
             scheme = colorScheme, originalBrightnessFactor = 0.5f, alpha = alpha
-        ).filter(icon)
+        ).filter(iconBitmap)
         drawImage(filtered)
     }
 }
 
-private class AlphaIconModifier(val icon: ImageBitmap, val alpha: Float) : DrawModifier {
+private class AlphaIconModifier(val iconBitmap: ImageBitmap, val alpha: Float) : DrawModifier {
     override fun ContentDrawScope.draw() {
-        drawImage(image = icon, alpha = alpha)
+        drawImage(image = iconBitmap, alpha = alpha)
     }
 }
 
@@ -107,7 +107,7 @@ fun AuroraThemedIcon(
     val colors = AmbientSkinColors.current
     val decorationAreaType = AmbientDecorationArea.current.type
 
-    val bitmap = remember { icon.toBitmap(density) }
+    val iconBitmap = remember { icon.toBitmap(density) }
     if (currModelState.isDisabled) {
         // TODO - do we need icon transitions from / to a disabled state?
         when (disabledFilterStrategy) {
@@ -125,7 +125,7 @@ fun AuroraThemedIcon(
                     modifier.preferredSize(
                         width = icon.getWidth().dp,
                         height = icon.getHeight().dp
-                    ).auroraThemedIconPaint(bitmap, textColor, 1.0f)
+                    ).auroraThemedIconPaint(iconBitmap, textColor, 1.0f)
                 )
             IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME ->
                 Box(
@@ -133,7 +133,7 @@ fun AuroraThemedIcon(
                         width = icon.getWidth().dp,
                         height = icon.getHeight().dp
                     ).auroraThemedIconPaint(
-                        bitmap, colors.getColorScheme(
+                        iconBitmap, colors.getColorScheme(
                             decorationAreaType = decorationAreaType,
                             componentState = currModelState
                         ), 1.0f
@@ -156,18 +156,18 @@ fun AuroraThemedIcon(
             val enabledIconModifier = when (enabledFilterStrategy) {
                 IconFilterStrategy.ORIGINAL ->
                     AlphaIconModifier(
-                        icon = bitmap,
+                        iconBitmap = iconBitmap,
                         alpha = 1.0f
                     )
                 IconFilterStrategy.THEMED_FOLLOW_TEXT ->
                     AuroraThemedByTextIconModifier(
-                        icon = bitmap,
+                        iconBitmap = iconBitmap,
                         textColor = textColor,
                         alpha = 1.0f
                     )
                 IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME ->
                     AuroraThemedByColorSchemeIconModifier(
-                        icon = bitmap,
+                        iconBitmap = iconBitmap,
                         colorScheme = colors.getColorScheme(
                             decorationAreaType = decorationAreaType,
                             componentState = currModelState
@@ -182,18 +182,18 @@ fun AuroraThemedIcon(
                 when (activeFilterStrategy) {
                     IconFilterStrategy.ORIGINAL ->
                         AlphaIconModifier(
-                            icon = bitmap,
+                            iconBitmap = iconBitmap,
                             alpha = modelStateInfoSnapshot.activeStrength
                         )
                     IconFilterStrategy.THEMED_FOLLOW_TEXT ->
                         AuroraThemedByTextIconModifier(
-                            icon = bitmap,
+                            iconBitmap = iconBitmap,
                             textColor = textColor,
                             alpha = modelStateInfoSnapshot.activeStrength
                         )
                     IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME ->
                         getCombinedActiveStatesThemedByColorSchemeModifier(
-                            iconBitmap = bitmap,
+                            iconBitmap = iconBitmap,
                             modelStateInfoSnapshot = modelStateInfoSnapshot,
                             colors = colors,
                             decorationAreaType = decorationAreaType
@@ -227,7 +227,7 @@ private fun getCombinedActiveStatesThemedByColorSchemeModifier(
             // Create a matching modifier that would paint the themed version of the
             // original icon based on that contribution
             AuroraThemedByColorSchemeIconModifier(
-                icon = iconBitmap,
+                iconBitmap = iconBitmap,
                 colorScheme = colors.getColorScheme(
                     decorationAreaType = decorationAreaType,
                     componentState = state
