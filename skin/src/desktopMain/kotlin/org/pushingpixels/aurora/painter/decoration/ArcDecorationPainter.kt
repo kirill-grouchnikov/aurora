@@ -31,12 +31,12 @@ package org.pushingpixels.aurora.painter.decoration
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.LinearGradient
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.geometry.boundingRect
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.withTransform
 import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 
@@ -73,7 +73,90 @@ class ArcDecorationPainter : AuroraDecorationPainter {
         offsetFromRoot: Offset,
         colorScheme: AuroraColorScheme
     ) {
-        // TODO - implement the arc visuals
+        val boundingRect = when (outline) {
+            is Outline.Rectangle -> outline.rect
+            is Outline.Rounded -> outline.roundRect.boundingRect
+            is Outline.Generic -> outline.path.getBounds()
+        }
+
+        with(drawScope) {
+            withTransform({
+                clipPath(path = Path().also { it.addOutline(outline) })
+                translate(left = boundingRect.left, top = boundingRect.top)
+            }) {
+
+                // Top part
+                val topPath = Path()
+                topPath.moveTo(0.0f, 0.0f)
+                topPath.lineTo(boundingRect.width, 0.0f)
+                topPath.lineTo(boundingRect.width, boundingRect.height / 2.0f)
+                topPath.quadraticBezierTo(
+                    boundingRect.width / 2, boundingRect.height / 4.0f,
+                    0.0f, boundingRect.height / 2.0f
+                )
+                topPath.close()
+
+                val topGradient = LinearGradient(
+                    0.0f to colorScheme.lightColor,
+                    0.5f to colorScheme.ultraLightColor,
+                    1.0f to colorScheme.lightColor,
+                    startX = 0.0f,
+                    startY = 0.0f,
+                    endX = boundingRect.width,
+                    endY = 0.0f,
+                    tileMode = TileMode.Repeated
+                )
+
+                drawPath(
+                    path = topPath,
+                    style = Fill,
+                    brush = topGradient
+                )
+
+                // Bottom part
+                val bottomPath = Path()
+                bottomPath.moveTo(0.0f, boundingRect.height)
+                bottomPath.lineTo(boundingRect.width, boundingRect.height)
+                bottomPath.lineTo(boundingRect.width, boundingRect.height / 2.0f)
+                bottomPath.quadraticBezierTo(
+                    boundingRect.width / 2, boundingRect.height / 4.0f,
+                    0.0f, boundingRect.height / 2.0f
+                )
+                bottomPath.close()
+
+                val bottomGradient = LinearGradient(
+                    0.0f to colorScheme.midColor,
+                    0.5f to colorScheme.lightColor,
+                    1.0f to colorScheme.midColor,
+                    startX = 0.0f,
+                    startY = 0.0f,
+                    endX = boundingRect.width,
+                    endY = 0.0f,
+                    tileMode = TileMode.Repeated
+                )
+
+                drawPath(
+                    path = bottomPath,
+                    style = Fill,
+                    brush = bottomGradient
+                )
+
+                // Middle part (connector between the two arc parts)
+                val middlePath = Path()
+                middlePath.moveTo(boundingRect.width, boundingRect.height / 2.0f)
+                middlePath.quadraticBezierTo(
+                    boundingRect.width / 2, boundingRect.height / 4.0f,
+                    0.0f, boundingRect.height / 2.0f
+                )
+                middlePath.close()
+
+                drawPath(
+                    path = middlePath,
+                    style = Stroke(width = 1.0f),
+                    brush = bottomGradient
+                )
+            }
+        }
     }
 
     private fun paintExtraBackground(

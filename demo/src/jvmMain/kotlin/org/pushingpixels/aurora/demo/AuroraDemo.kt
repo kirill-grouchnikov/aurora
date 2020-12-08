@@ -50,7 +50,8 @@ fun main() {
     AuroraWindow(
         title = "Aurora Demo",
         skin = nebulaAmethystSkin(),
-        size = IntSize(600, 540)
+        size = IntSize(600, 540),
+        undecorated = true
     ) {
         Box(
             modifier = Modifier.auroraBackground(),
