@@ -45,27 +45,21 @@ fun Outline.boundingRect(): Rect {
 }
 
 /**
- * Returns basic outline for the specified parameters. The basic outline is
+ * Returns base outline for the specified parameters. The base outline is
  * a rectangle with rounded corners. Some corners may not be rounded based
- * on the contents of `straightSide` parameter.
+ * on the contents of `straightSides` parameter.
  *
- * @param width
- * Width of some UI component.
- * @param height
- * Height of some UI component.
- * @param radius
- * Corner radius.
- * @param straightSides
- * Contains all sides which are straight.
- * @return The basic outline for the specified parameters.
+ * @param width Width of some UI component.
+ * @param height Height of some UI component.
+ * @param radius Corner radius.
+ * @param straightSides Contains all sides which are straight.
+ * @return The base outline for the specified parameters.
  */
 fun getBaseOutline(
     width: Float, height: Float,
     radius: Float, straightSides: Set<Side>? = null,
     insets: Float = 0.0f
 ): Outline {
-    var width = width
-    var height = height
     val isTopLeftCorner = (straightSides != null
             && (straightSides.contains(Side.LEFT) || straightSides.contains(Side.TOP)))
     val isTopRightCorner = (straightSides != null
@@ -74,8 +68,6 @@ fun getBaseOutline(
             && (straightSides.contains(Side.RIGHT) || straightSides.contains(Side.BOTTOM)))
     val isBottomLeftCorner = (straightSides != null
             && (straightSides.contains(Side.LEFT) || straightSides.contains(Side.BOTTOM)))
-    width -= 2 * insets
-    height -= 2 * insets
 
     // If all the sides are straight, the result is a simple rectangle
     if (isTopLeftCorner && isTopRightCorner && isBottomRightCorner && isBottomLeftCorner) {
@@ -83,7 +75,7 @@ fun getBaseOutline(
         return Outline.Rectangle(
             rect = Rect(
                 left = insets, top = insets,
-                right = insets + width, bottom = insets + height
+                right = width - insets, bottom = height - insets
             )
         )
     }
@@ -93,7 +85,7 @@ fun getBaseOutline(
     return Outline.Rounded(
         roundRect = RoundRect(
             left = insets, top = insets,
-            right = insets + width, bottom = insets + height,
+            right = width - insets, bottom = height - insets,
             topLeftCornerRadius = if (isTopLeftCorner) CornerRadius.Zero else CornerRadius(radius, radius),
             topRightCornerRadius = if (isTopRightCorner) CornerRadius.Zero else CornerRadius(radius, radius),
             bottomRightCornerRadius = if (isBottomRightCorner) CornerRadius.Zero else CornerRadius(radius, radius),
