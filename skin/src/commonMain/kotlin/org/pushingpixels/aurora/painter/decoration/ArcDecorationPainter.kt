@@ -30,6 +30,7 @@
 package org.pushingpixels.aurora.painter.decoration
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.boundingRect
 import androidx.compose.ui.graphics.*
@@ -42,7 +43,7 @@ import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 
 /**
  * Implementation of [AuroraDecorationPainter] that uses "arc" painting on title panes and
- * lighter gradient near the center of the application frame.
+ * lighter gradient near the horizontal center of the application frame.
  *
  * @author Kirill Grouchnikov
  */

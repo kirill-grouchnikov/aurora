@@ -41,11 +41,9 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.input.pointer.pointerMoveFilter
@@ -171,8 +169,10 @@ private fun AuroraRadioButton(
     pressedTransitionState[PressedTransitionFraction]
     enabledTransitionState[EnabledTransitionFraction]
 
-    stateTransitionTracker.update(enabled, Interaction.Pressed in interactionState,
-        AuroraSkin.animationConfig.regular)
+    stateTransitionTracker.update(
+        enabled, Interaction.Pressed in interactionState,
+        AuroraSkin.animationConfig.regular
+    )
 
     // The toggleable modifier is set on the checkbox mark, as well as on the
     // content so that the whole thing is clickable to toggle the control.
@@ -266,16 +266,13 @@ private fun AuroraRadioButton(
             val width = this.size.width
             val height = this.size.height
 
-            val outline = Outline.Generic(Path().also {
-                it.addOval(
-                    Rect(
-                        left = 0.5f,
-                        top = 0.5f,
-                        right = width - 1.0f,
-                        bottom = height - 1.0f
-                    )
+            val outline = Outline.Rounded(
+                roundRect = RoundRect(
+                    left = 0.5f, top = 0.5f,
+                    right = width - 0.5f, bottom = height - 0.5f,
+                    radiusX = (width - 1.0f) / 2.0f, radiusY = (height - 1.0f) / 2.0f
                 )
-            })
+            )
 
             // Populate the cached color scheme for filling the markbox
             drawingCache.colorScheme.ultraLight = fillUltraLight
@@ -300,16 +297,14 @@ private fun AuroraRadioButton(
             drawingCache.colorScheme.isDark = borderIsDark
             drawingCache.colorScheme.foreground = textColor
 
-            val outlineInner = if (borderPainter.isPaintingInnerOutline) Outline.Generic(Path().also {
-                it.addOval(
-                    Rect(
-                        left = 1.0f,
-                        top = 1.0f,
-                        right = width - 2.0f,
-                        bottom = height - 2.0f
+            val outlineInner = if (borderPainter.isPaintingInnerOutline)
+                Outline.Rounded(
+                    roundRect = RoundRect(
+                        left = 1.0f, top = 1.0f,
+                        right = width - 1.0f, bottom = height - 1.0f,
+                        radiusX = (width - 2.0f) / 2.0f, radiusY = (height - 2.0f) / 2.0f
                     )
-                )
-            }) else null
+                ) else null
 
             borderPainter.paintBorder(
                 this, this.size, outline, outlineInner, drawingCache.colorScheme, alpha
@@ -319,14 +314,13 @@ private fun AuroraRadioButton(
             // selection and potential transition
             val markCenter = this.size.width / 2.0f
             val markRadius = this.size.width / 4.5f
-            val outlineMark = Outline.Generic(Path().also {
-                it.addOval(
-                    Rect(
-                        center = Offset(markCenter, markCenter),
-                        radius = markRadius
-                    )
+            val outlineMark = Outline.Rounded(
+                roundRect = RoundRect(
+                    left = markCenter - markRadius, top = markCenter - markRadius,
+                    right = markCenter + markRadius, bottom = markCenter + markRadius,
+                    radiusX = markRadius, radiusY = markRadius
                 )
-            })
+            )
 
             // Note that we apply alpha twice - once for the selected / checked
             // state or transition, and the second time based on the enabled state
