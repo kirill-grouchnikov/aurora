@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.LinearGradient
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
@@ -65,22 +66,24 @@ class BottomShadowOverlayPainter private constructor(private val endAlpha: Float
 
         with(drawScope) {
             val shadowHeight = 4.0.dp.toPx()
-            drawRect(
-                topLeft = Offset(0.0f, 0.0f),
-                size = Size(width, shadowHeight),
-                style = Fill,
-                brush = LinearGradient(
-                    colors = listOf(
-                        getAlphaColor(shadowColor, 16.0f / 255.0f),
-                        getAlphaColor(shadowColor, endAlpha)
-                    ),
-                    startX = 0.0f,
-                    startY = size.height - shadowHeight,
-                    endX = 0.0f,
-                    endY = size.height,
-                    tileMode = TileMode.Clamp
+            translate(top = size.height - shadowHeight) {
+                drawRect(
+                    topLeft = Offset(0.0f, 0.0f),
+                    size = Size(width, shadowHeight),
+                    style = Fill,
+                    brush = LinearGradient(
+                        colors = listOf(
+                            getAlphaColor(shadowColor, 16.0f / 255.0f),
+                            getAlphaColor(shadowColor, endAlpha)
+                        ),
+                        startX = 0.0f,
+                        startY = 0.0f,
+                        endX = 0.0f,
+                        endY = shadowHeight,
+                        tileMode = TileMode.Clamp
+                    )
                 )
-            )
+            }
         }
     }
 

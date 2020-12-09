@@ -45,7 +45,7 @@ import org.pushingpixels.aurora.skin.*
 
 fun main() {
     AuroraWindow(
-        skin = businessBlueSteelSkin(),
+        skin = greenMagicSkin(),
         title = "Aurora Demo",
         size = IntSize(600, 600),
         undecorated = true
