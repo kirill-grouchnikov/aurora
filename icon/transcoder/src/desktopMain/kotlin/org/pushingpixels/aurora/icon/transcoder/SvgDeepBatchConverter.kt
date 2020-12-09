@@ -34,48 +34,48 @@ import java.io.IOException
 import java.nio.file.NoSuchFileException
 import java.util.*
 import java.util.stream.Stream
+import kotlin.system.exitProcess
 
 class SvgDeepBatchConverter : SvgBatchBaseConverter() {
     private fun processFolder(
-        inputFolder: File, outputFolder: File?,
-        outputClassNamePrefix: String?, outputFileNameExtension: String?,
-        outputPackageName: String?, templateFile: String?
+        inputFolder: File, outputFolder: File,
+        outputClassNamePrefix: String, outputFileNameExtension: String,
+        outputPackageName: String, templateFile: String
     ) {
-        println(
-            "******************************************************************************"
-        )
+        println("******************************************************************************")
         println("Processing")
         println("\tsource folder: " + inputFolder.absolutePath)
         println("\tpackage name: $outputPackageName")
-        println(
-            "******************************************************************************"
-        )
+        println("******************************************************************************")
 
         // Transcode all SVG files in this folder
         transcodeAllFilesInFolder(
-            inputFolder, outputFolder!!, outputClassNamePrefix, outputFileNameExtension!!,
-            outputPackageName!!, templateFile!!
+            inputFolder, outputFolder, outputClassNamePrefix, outputFileNameExtension,
+            outputPackageName, templateFile
         )
 
         // Now scan the folder for sub-folders
-        for (inputSubfolder in inputFolder.listFiles { directory, name ->
-            File(directory, name).isDirectory
-        }) {
-            val subfolderName = inputSubfolder.name
-            println("Going into sub-folder $subfolderName")
+        inputFolder
+            .walk(direction = FileWalkDirection.TOP_DOWN)
+            .maxDepth(1)
+            .filter { it.isDirectory && (it.absolutePath != inputFolder.absolutePath) }
+            .forEach { inputSubfolder ->
+                val subfolderName = inputSubfolder.name
+                println("Going into sub-folder $subfolderName")
 
-            // Mirror the input subfolder structure to the output
-            val outputSubfolder = File(outputFolder, subfolderName)
-            if (!outputSubfolder.exists()) {
-                outputSubfolder.mkdir()
+                // Mirror the input subfolder structure to the output
+                val outputSubfolder = File(outputFolder, subfolderName)
+                if (!outputSubfolder.exists()) {
+                    outputSubfolder.mkdir()
+                }
+
+                // And recursively process SVG content (and possible folders)
+                processFolder(
+                    inputSubfolder, outputSubfolder, outputClassNamePrefix, outputFileNameExtension,
+                    "$outputPackageName.$subfolderName", templateFile
+                )
             }
 
-            // And recursively process SVG content (and possible folders)
-            processFolder(
-                inputSubfolder, outputSubfolder, outputClassNamePrefix, outputFileNameExtension,
-                "$outputPackageName.$subfolderName", templateFile
-            )
-        }
         println()
     }
 
@@ -94,7 +94,7 @@ class SvgDeepBatchConverter : SvgBatchBaseConverter() {
                     "  outputClassNamePrefix=xyz - optional prefix for the class name of each transcoded class"
                 ).forEach { x: String? -> println(x) }
                 println(CHECK_DOCUMENTATION)
-                System.exit(1)
+                exitProcess(1)
             }
             val converter = SvgDeepBatchConverter()
             val sourceRootFolderName = converter.getInputArgument(args, "sourceRootFolder", null)
@@ -104,7 +104,7 @@ class SvgDeepBatchConverter : SvgBatchBaseConverter() {
             val templateFile = converter.getInputArgument(args, "templateFile", null)
             Objects.requireNonNull(templateFile, "Missing template file. $CHECK_DOCUMENTATION")
             val outputFileNameExtension = ".kt"
-            val outputClassNamePrefix = converter.getInputArgument(args, "outputClassNamePrefix", "")
+            val outputClassNamePrefix = converter.getInputArgument(args, "outputClassNamePrefix", "")!!
             val outputRootFolderName = converter.getInputArgument(args, "outputRootFolder", sourceRootFolderName)
             val inputRootFolder = File(sourceRootFolderName)
             if (!inputRootFolder.exists()) {
@@ -114,19 +114,15 @@ class SvgDeepBatchConverter : SvgBatchBaseConverter() {
             if (!outputRootFolder.exists()) {
                 throw NoSuchFileException(outputRootFolderName)
             }
-            println(
-                "******************************************************************************"
-            )
+            println("******************************************************************************")
             println("Processing")
             println("\tsource root folder: $sourceRootFolderName")
             println("\troot package name: $outputRootPackageName")
-            println(
-                "******************************************************************************"
-            )
+            println("******************************************************************************")
             println()
             converter.processFolder(
                 inputRootFolder, outputRootFolder, outputClassNamePrefix, outputFileNameExtension,
-                outputRootPackageName, templateFile
+                outputRootPackageName!!, templateFile!!
             )
         }
     }

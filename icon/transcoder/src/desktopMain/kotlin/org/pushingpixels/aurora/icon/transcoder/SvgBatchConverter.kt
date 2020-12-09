@@ -33,6 +33,7 @@ import java.io.File
 import java.nio.file.NoSuchFileException
 import java.util.*
 import java.util.stream.Stream
+import kotlin.system.exitProcess
 
 class SvgBatchConverter : SvgBatchBaseConverter() {}
 
@@ -50,7 +51,7 @@ object SvgBatchConverterMain {
                 "  outputClassNamePrefix=xyz - optional prefix for the class name of each transcoded class"
             ).forEach { x: String? -> println(x) }
             println(SvgBatchBaseConverter.CHECK_DOCUMENTATION)
-            System.exit(1)
+            exitProcess(1)
         }
         val converter = SvgBatchConverter()
         val sourceFolderName: String? = converter.getInputArgument(args, "sourceFolder", null)
@@ -60,7 +61,7 @@ object SvgBatchConverterMain {
         val templateFile: String? = converter.getInputArgument(args, "templateFile", null)
         Objects.requireNonNull(templateFile, "Missing template file. " + SvgBatchBaseConverter.CHECK_DOCUMENTATION)
         val outputFileNameExtension = ".kt"
-        val outputClassNamePrefix: String? = converter.getInputArgument(args, "outputClassNamePrefix", "")
+        val outputClassNamePrefix: String = converter.getInputArgument(args, "outputClassNamePrefix", "")!!
         val outputFolderName: String? = converter.getInputArgument(args, "outputFolder", sourceFolderName)
         Objects.requireNonNull(outputFolderName, "Missing output folder. " + SvgBatchBaseConverter.CHECK_DOCUMENTATION)
         val inputFolder = File(sourceFolderName)

@@ -54,49 +54,52 @@ abstract class SvgBatchBaseConverter {
 
     internal fun transcodeAllFilesInFolder(
         inputFolder: File, outputFolder: File,
-        outputClassNamePrefix: String?, outputFileNameExtension: String,
+        outputClassNamePrefix: String, outputFileNameExtension: String,
         outputPackageName: String,
         templateFile: String
     ) {
-        val svgFiles = inputFolder.listFiles { _ , name -> name.endsWith(".svg") } ?: return
 
         var totalCount = 0
         var successCount = 0
 
-        for (file in svgFiles) {
-            val filename = file.name
-            val svgClassName = (outputClassNamePrefix + filename.substring(0, filename.length - 4))
-                .replace('-', '_')
-                .replace(' ', '_')
-            val classFilename = outputFolder.absolutePath + File.separator +
-                    svgClassName + outputFileNameExtension
-            println("Processing ${file.absolutePath} to $classFilename")
-            totalCount++
-            try {
-                PrintWriter(classFilename).use { writer ->
-                    SvgBatchBaseConverter::class.java.getResourceAsStream(templateFile).use { templateStream ->
-                        Objects.requireNonNull(templateStream, "Couldn't load $templateFile")
-                        val latch = CountDownLatch(1)
-                        val uri = file.toURI().toURL().toString()
-                        val transcoder = SvgTranscoder(uri, svgClassName)
-                        transcoder.setPackageName(outputPackageName)
-                        transcoder.setListener(object : TranscoderListener {
-                            override val writer = writer
+        inputFolder
+            .walk(direction = FileWalkDirection.TOP_DOWN)
+            .maxDepth(1)
+            .filter { it.isFile && it.name.endsWith("svg") }
+            .forEach { file ->
+                val svgClassName = (outputClassNamePrefix + file.name.substring(0, file.name.length - 4))
+                    .replace('-', '_')
+                    .replace(' ', '_')
+                val classFilename = outputFolder.absolutePath + File.separator +
+                        svgClassName + outputFileNameExtension
+                println("Processing ${file.absolutePath} to $classFilename")
+                totalCount++
+                try {
+                    PrintWriter(classFilename).use { writer ->
+                        SvgBatchBaseConverter::class.java.getResourceAsStream(templateFile).use { templateStream ->
+                            Objects.requireNonNull(templateStream, "Couldn't load $templateFile")
+                            val latch = CountDownLatch(1)
+                            val uri = file.toURI().toURL().toString()
+                            val transcoder = SvgTranscoder(uri, svgClassName)
+                            transcoder.setPackageName(outputPackageName)
+                            transcoder.setListener(object : TranscoderListener {
+                                override val writer = writer
 
-                            override fun finished() {
-                                latch.countDown()
-                            }
-                        })
-                        transcoder.transcode(templateStream)
-                        // Limit the processing to 10 seconds to prevent infinite hang
-                        latch.await(10, TimeUnit.SECONDS)
-                        successCount++
+                                override fun finished() {
+                                    latch.countDown()
+                                }
+                            })
+                            transcoder.transcode(templateStream)
+                            // Limit the processing to 10 seconds to prevent infinite hang
+                            latch.await(10, TimeUnit.SECONDS)
+                            successCount++
+                        }
                     }
+                } catch (t: Throwable) {
+                    t.printStackTrace(System.err)
                 }
-            } catch (t: Throwable) {
-                t.printStackTrace(System.err)
+
             }
-        }
         println()
         println("Processed $successCount out of $totalCount SVG files")
         println()
