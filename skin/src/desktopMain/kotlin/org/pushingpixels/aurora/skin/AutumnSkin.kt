@@ -119,16 +119,15 @@ private fun autumnSkinColors(): AuroraSkinColors {
 fun autumnSkin(): AuroraSkinDefinition {
     val painters = Painters(
         fillPainter = MatteFillPainter(),
-        borderPainter = CompositeBorderPainter("Autumn",
-            DelegateBorderPainter(
-                "Autumn Outer", ClassicBorderPainter()
+        borderPainter = CompositeBorderPainter(
+            displayName = "Autumn",
+            outer = DelegateBorderPainter(
+                displayName = "Autumn Outer", delegate = ClassicBorderPainter()
             ) { it.shade(0.1f) },
-            DelegateBorderPainter(
-                "Autumn Inner", ClassicBorderPainter()
+            inner = DelegateBorderPainter(
+                displayName = "Autumn Inner", delegate = ClassicBorderPainter()
             ) { it.tint(0.8f) }),
-        decorationPainter = MarbleNoiseDecorationPainter(
-            textureAlpha = 0.7f
-        )
+        decorationPainter = MarbleNoiseDecorationPainter(textureAlpha = 0.7f)
     )
     // add an overlay painter to paint a drop shadow along the top
     // edge of toolbars
