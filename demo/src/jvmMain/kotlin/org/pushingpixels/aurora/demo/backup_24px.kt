@@ -12,7 +12,7 @@ import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.icon.AuroraIcon
-import org.pushingpixels.aurora.icon.toComposeBitmap
+import org.pushingpixels.aurora.utils.toComposeBitmap
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.lang.ref.WeakReference

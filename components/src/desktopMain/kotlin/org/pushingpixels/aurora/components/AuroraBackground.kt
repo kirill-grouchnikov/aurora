@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
+import androidx.compose.ui.platform.AmbientDensity
 import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.ColorSchemeAssociationKind
 import org.pushingpixels.aurora.ComponentState
@@ -52,8 +53,8 @@ import org.pushingpixels.aurora.painter.overlay.AuroraOverlayPainter
 fun Modifier.auroraBackground() = this.then(
     AuroraBackground(
         rootSize = Size(
-            width = AppWindowAmbient.current!!.width.toFloat(),
-            height = AppWindowAmbient.current!!.height.toFloat()
+            width = AppWindowAmbient.current!!.width * AmbientDensity.current.density,
+            height = AppWindowAmbient.current!!.height * AmbientDensity.current.density
         ),
         decorationAreaType = AuroraSkin.decorationArea.type,
         colors = AuroraSkin.colors,

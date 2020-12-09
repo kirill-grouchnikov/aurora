@@ -82,7 +82,6 @@ class ArcDecorationPainter : AuroraDecorationPainter {
                 clipPath(path = Path().also { it.addOutline(outline) })
                 translate(left = boundingRect.left, top = boundingRect.top)
             }) {
-
                 // Top part
                 val topPath = Path()
                 topPath.moveTo(0.0f, 0.0f)
