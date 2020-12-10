@@ -40,7 +40,7 @@ import java.io.InputStreamReader
 
 private fun decodeColor(value: String, colorMap: Map<String, Color>): Color {
     if (value.startsWith("@")) {
-        return colorMap[value.substring(1)]!!
+        return colorMap[value.substring(1)] ?: error("No color entry found for $value")
     }
     val decodedInt = Integer.decode(value)
     return Color(decodedInt shr 16 and 0xFF, decodedInt shr 8 and 0xFF, decodedInt and 0xFF)
