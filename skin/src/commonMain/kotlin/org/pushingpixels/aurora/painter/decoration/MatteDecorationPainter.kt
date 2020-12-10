@@ -31,10 +31,7 @@ package org.pushingpixels.aurora.painter.decoration
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.LinearGradient
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.unit.dp
@@ -67,7 +64,7 @@ class MatteDecorationPainter : AuroraDecorationPainter {
             val flexPoint = FLEX_POINT.dp.toPx()
             val gradientHeight = kotlin.math.max(
                 flexPoint,
-                componentSize.height + offsetFromRoot.y
+                componentSize.height - offsetFromRoot.y
             )
             // 0 - flex : light -> medium
             // flex - : medium fill
