@@ -49,11 +49,14 @@ import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerMoveFilter
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.AmbientAnimationClock
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.components.utils.*
 import org.pushingpixels.aurora.utils.boundingRect
+import kotlin.math.max
 
 
 // This will be initialized on first usage using the getSelectedTransitionDefinition
@@ -71,6 +74,15 @@ private lateinit var PressedTransitionDefinition: TransitionDefinition<Boolean>
 // This will be initialized on first usage using the getEnabledTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
 private lateinit var EnabledTransitionDefinition: TransitionDefinition<Boolean>
+
+data class ButtonInsets(val left: Dp, val top: Dp, val right: Dp, val bottom: Dp)
+
+object ButtonSizingConstants {
+    val DefaultButtonInsets = ButtonInsets(left = 8.dp, top = 4.dp, right = 8.dp, bottom = 4.dp)
+    val DefaultButtonIconTextPadding = 6.dp
+    val DefaultButtonWidth = 80.dp
+    val DefaultButtonHeight = 32.dp
+}
 
 @Immutable
 private class AuroraDrawingCache(
@@ -95,7 +107,7 @@ fun AuroraToggleButton(
     onSelectedChange: (Boolean) -> Unit = {},
     sides: ButtonSides = ButtonSides(),
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS,
-    content: @Composable RowScope.() -> Unit
+    content: @Composable() () -> Unit
 ) {
     AuroraToggleButton(
         modifier = modifier,
@@ -120,7 +132,7 @@ private fun AuroraToggleButton(
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     interactionState: InteractionState,
     stateTransitionFloat: AnimatedFloat,
-    content: @Composable RowScope.() -> Unit
+    content: @Composable() () -> Unit
 ) {
     val drawingCache = remember { AuroraDrawingCache() }
 
@@ -181,6 +193,7 @@ private fun AuroraToggleButton(
     )
 
     val decorationAreaType = AuroraSkin.decorationArea.type
+    val buttonShaper = AmbientButtonShaper.current
     Box(
         modifier = modifier
             .pointerMoveFilter(
@@ -334,18 +347,56 @@ private fun AuroraToggleButton(
             AmbientTextColor provides textColor,
             AmbientModelStateInfoSnapshot provides stateTransitionTracker.modelStateInfo.getSnapshot()
         ) {
-            Row(
-                // TODO - extract sizes and paddings into a centralized location
-                Modifier
-                    .defaultMinSizeConstraints(
-                        minWidth = 64.dp,
-                        minHeight = 36.dp
-                    )
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
+            Layout(
+                modifier = Modifier,
                 content = content
-            )
+            ) { measurables, constraints ->
+                // Measure each child so that we know how much space they need
+                val placeables = measurables.map { measurable ->
+                    // Measure each child
+                    measurable.measure(constraints)
+                }
+
+                val insetLeftPx = ButtonSizingConstants.DefaultButtonInsets.left.toIntPx()
+                val insetTopPx = ButtonSizingConstants.DefaultButtonInsets.top.toIntPx()
+                val insetRightPx = ButtonSizingConstants.DefaultButtonInsets.right.toIntPx()
+                val insetBottomPx = ButtonSizingConstants.DefaultButtonInsets.bottom.toIntPx()
+
+                // The children are laid out in a row
+                val contentTotalWidth = placeables.sumBy { it.width }
+                // And the height of the row is determined by the height of the tallest child
+                val contentMaxHeight = placeables.maxOf { it.height }
+
+                // Get the preferred size
+                var uiPreferredWidth = contentTotalWidth
+                var uiPreferredHeight = contentMaxHeight
+
+                // Account for the button insets
+                uiPreferredWidth += (insetLeftPx + insetRightPx)
+                uiPreferredHeight += (insetTopPx + insetBottomPx)
+
+                // Bump up to default minimums if necessary
+                uiPreferredWidth = max(uiPreferredWidth, ButtonSizingConstants.DefaultButtonWidth.toIntPx())
+                uiPreferredHeight = max(uiPreferredHeight, ButtonSizingConstants.DefaultButtonHeight.toIntPx())
+
+                // And ask the button shaper for the final sizing
+                val finalSize = buttonShaper.getPreferredSize(
+                    uiPreferredWidth.toFloat(), uiPreferredHeight.toFloat()
+                )
+
+                // Center children vertically within the vertical space
+                layout(width = finalSize.width.toInt(), height = finalSize.height.toInt()) {
+                    var xPosition = (finalSize.width.toInt() - contentTotalWidth) / 2
+
+                    placeables.forEach { placeable ->
+                        placeable.placeRelative(
+                            x = xPosition,
+                            y = (finalSize.height.toInt() - placeable.height) / 2
+                        )
+                        xPosition += placeable.width
+                    }
+                }
+            }
         }
     }
 }
@@ -357,7 +408,7 @@ fun AuroraButton(
     onClick: () -> Unit = {},
     sides: ButtonSides = ButtonSides(),
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS,
-    content: @Composable RowScope.() -> Unit
+    content: @Composable() () -> Unit
 ) {
     AuroraButton(
         modifier = modifier,
@@ -380,7 +431,7 @@ private fun AuroraButton(
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     interactionState: InteractionState,
     stateTransitionFloat: AnimatedFloat,
-    content: @Composable RowScope.() -> Unit
+    content: @Composable() () -> Unit
 ) {
     val drawingCache = remember { AuroraDrawingCache() }
 
@@ -441,6 +492,7 @@ private fun AuroraButton(
     )
 
     val decorationAreaType = AuroraSkin.decorationArea.type
+    val buttonShaper = AmbientButtonShaper.current
     Box(
         modifier = modifier
             .pointerMoveFilter(
@@ -591,22 +643,60 @@ private fun AuroraButton(
             AmbientTextColor provides textColor,
             AmbientModelStateInfoSnapshot provides stateTransitionTracker.modelStateInfo.getSnapshot()
         ) {
-            Row(
-                // TODO - extract sizes and paddings into a centralized location
-                Modifier
-                    .defaultMinSizeConstraints(
-                        minWidth = 64.dp,
-                        minHeight = 36.dp
-                    )
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
+            Layout(
+                modifier = Modifier,
                 content = content
-            )
+            ) { measurables, constraints ->
+                // Measure each child so that we know how much space they need
+                val placeables = measurables.map { measurable ->
+                    // Measure each child
+                    measurable.measure(constraints)
+                }
+
+                val insetLeftPx = ButtonSizingConstants.DefaultButtonInsets.left.toIntPx()
+                val insetTopPx = ButtonSizingConstants.DefaultButtonInsets.top.toIntPx()
+                val insetRightPx = ButtonSizingConstants.DefaultButtonInsets.right.toIntPx()
+                val insetBottomPx = ButtonSizingConstants.DefaultButtonInsets.bottom.toIntPx()
+
+                // The children are laid out in a row
+                val contentTotalWidth = placeables.sumBy { it.width }
+                // And the height of the row is determined by the height of the tallest child
+                val contentMaxHeight = placeables.maxOf { it.height }
+
+                // Get the preferred size
+                var uiPreferredWidth = contentTotalWidth
+                var uiPreferredHeight = contentMaxHeight
+
+                // Account for the button insets
+                uiPreferredWidth += (insetLeftPx + insetRightPx)
+                uiPreferredHeight += (insetTopPx + insetBottomPx)
+
+                // Bump up to default minimums if necessary
+                uiPreferredWidth = max(uiPreferredWidth, ButtonSizingConstants.DefaultButtonWidth.toIntPx())
+                uiPreferredHeight = max(uiPreferredHeight, ButtonSizingConstants.DefaultButtonHeight.toIntPx())
+
+                // And ask the button shaper for the final sizing
+                val finalSize = buttonShaper.getPreferredSize(
+                    uiPreferredWidth.toFloat(), uiPreferredHeight.toFloat()
+                )
+
+                // Center children vertically within the vertical space
+                layout(width = finalSize.width.toInt(), height = finalSize.height.toInt()) {
+                    var xPosition = (finalSize.width.toInt() - contentTotalWidth) / 2
+
+                    placeables.forEach { placeable ->
+                        placeable.placeRelative(
+                            x = xPosition,
+                            y = (finalSize.height.toInt() - placeable.height) / 2
+                        )
+                        xPosition += placeable.width
+                    }
+                }
+            }
         }
     }
 }
 
 fun Modifier.auroraButtonIconPadding() =
-    this.then(padding(end = 6.dp))
+    this.then(padding(end = ButtonSizingConstants.DefaultButtonIconTextPadding))
 

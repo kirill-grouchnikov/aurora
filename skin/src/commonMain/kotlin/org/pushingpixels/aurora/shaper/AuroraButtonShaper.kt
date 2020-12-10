@@ -29,6 +29,7 @@
  */
 package org.pushingpixels.aurora.shaper
 
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import org.pushingpixels.aurora.AuroraTrait
@@ -40,11 +41,22 @@ import org.pushingpixels.aurora.ButtonSides
  * @author Kirill Grouchnikov
  */
 interface AuroraButtonShaper : AuroraTrait {
-    /**
-     * Returns the outline path.
-     */
+    /** Returns the outline path. */
     fun getButtonOutline(
         width: Float, height: Float, extraInsets: Float,
         isInner: Boolean, sides: ButtonSides, drawScope: DrawScope
     ): Outline
+
+    /**
+     * Returns the preferred size for the specified button dimensions.
+     *
+     * @param uiPreferredWidth
+     *            Preferred width of the button under the regular conditions
+     *            (plain rectangular button).
+     * @param uiPreferredHeight
+     *            Preferred width of the button under the regular conditions
+     *            (plain rectangular button).
+     * @return The preferred size for the specified dimensions.
+     */
+    fun getPreferredSize(uiPreferredWidth: Float, uiPreferredHeight: Float): Size
 }

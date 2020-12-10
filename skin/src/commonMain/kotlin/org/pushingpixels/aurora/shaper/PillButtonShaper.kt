@@ -29,6 +29,7 @@
  */
 package org.pushingpixels.aurora.shaper
 
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import org.pushingpixels.aurora.ButtonSides
@@ -69,5 +70,11 @@ class PillButtonShaper : AuroraButtonShaper, RectangularButtonShaper {
         } else {
             (width - 2 * insets) / 2.0f
         }
+    }
+
+    override fun getPreferredSize(uiPreferredWidth: Float, uiPreferredHeight: Float): Size {
+        // Account for additional horizontal space needed for the pill shape -
+        // half the height on the left and half the height on the right
+        return Size(uiPreferredWidth + uiPreferredHeight, uiPreferredHeight)
     }
 }

@@ -29,6 +29,7 @@
  */
 package org.pushingpixels.aurora.shaper
 
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.dp
@@ -68,6 +69,10 @@ class ClassicButtonShaper : AuroraButtonShaper, RectangularButtonShaper {
         with(drawScope) {
             return 3.0f.dp.toPx()
         }
+    }
+
+    override fun getPreferredSize(uiPreferredWidth: Float, uiPreferredHeight: Float): Size {
+        return Size(uiPreferredWidth, uiPreferredHeight)
     }
 
     companion object {
