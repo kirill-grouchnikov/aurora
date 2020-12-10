@@ -39,9 +39,9 @@ import org.pushingpixels.aurora.utils.getBaseOutline
  *
  * @author Kirill Grouchnikov
  */
-class StandardButtonShaper : AuroraButtonShaper, RectangularButtonShaper {
+class PillButtonShaper : AuroraButtonShaper, RectangularButtonShaper {
     override val displayName: String
-        get() = "Standard"
+        get() = "Pill"
 
     override fun getButtonOutline(
         width: Float,

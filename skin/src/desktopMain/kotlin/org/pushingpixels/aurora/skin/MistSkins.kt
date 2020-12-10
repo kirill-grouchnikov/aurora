@@ -34,16 +34,10 @@ import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.colorscheme.AquaColorScheme
 import org.pushingpixels.aurora.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.colorscheme.composite
 import org.pushingpixels.aurora.painter.border.ClassicBorderPainter
-import org.pushingpixels.aurora.painter.border.CompositeBorderPainter
-import org.pushingpixels.aurora.painter.border.DelegateBorderPainter
 import org.pushingpixels.aurora.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.painter.fill.MatteFillPainter
-import org.pushingpixels.aurora.painter.overlay.BottomLineOverlayPainter
-import org.pushingpixels.aurora.painter.overlay.TopLineOverlayPainter
-import org.pushingpixels.aurora.shaper.ClassicButtonShaper
-import org.pushingpixels.aurora.shaper.StandardButtonShaper
+import org.pushingpixels.aurora.shaper.PillButtonShaper
 import org.pushingpixels.aurora.utils.getColorSchemes
 
 
@@ -124,7 +118,7 @@ fun mistSilverSkin(): AuroraSkinDefinition {
                 .withHighlightsAccent("Mist Silver Light Blue")
         ),
         painters = mistBasePainters(),
-        buttonShaper = StandardButtonShaper()
+        buttonShaper = PillButtonShaper()
     )
 }
 
@@ -137,7 +131,7 @@ fun mistAquaSkin(): AuroraSkinDefinition {
                 .withHighlightsAccent(AquaColorScheme())
         ),
         painters = mistBasePainters(),
-        buttonShaper = StandardButtonShaper()
+        buttonShaper = PillButtonShaper()
     )
 }
 
