@@ -45,7 +45,7 @@ import org.pushingpixels.aurora.skin.*
 
 fun main() {
     AuroraWindow(
-        skin = magellanSkin(),
+        skin = mistSilverSkin(),
         title = "Aurora Demo",
         size = IntSize(600, 600),
         undecorated = true

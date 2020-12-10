@@ -31,6 +31,16 @@ package org.pushingpixels.aurora.colorscheme
 
 import androidx.compose.ui.graphics.Color
 
+class AquaColorScheme : BaseLightColorScheme("Aqua") {
+    override val foregroundColor = Color.Black
+    override val ultraLightColor = Color(194, 224, 237)
+    override val extraLightColor = Color(164, 227, 243)
+    override val lightColor = Color(112, 206, 239)
+    override val midColor = Color(32, 180, 226)
+    override val darkColor = Color(44, 47, 140)
+    override val ultraDarkColor = Color(30, 40, 100)
+}
+
 class CremeColorScheme : BaseLightColorScheme("Creme") {
     override val foregroundColor = Color.Black
     override val ultraLightColor = Color(254, 254, 252)
