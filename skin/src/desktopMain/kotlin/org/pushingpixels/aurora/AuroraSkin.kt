@@ -48,7 +48,6 @@ import org.pushingpixels.aurora.utils.getAlphaColor
 import org.pushingpixels.aurora.utils.getColorSchemes
 import java.awt.image.BufferedImage
 
-
 object AuroraSkin {
     @Composable
     @ComposableContract(readonly = true)
