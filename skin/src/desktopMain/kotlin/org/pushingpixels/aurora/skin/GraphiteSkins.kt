@@ -32,11 +32,16 @@ package org.pushingpixels.aurora.skin
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.colorscheme.SunsetColorScheme
+import org.pushingpixels.aurora.colorscheme.composite
+import org.pushingpixels.aurora.painter.border.AuroraBorderPainter
 import org.pushingpixels.aurora.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.painter.border.CompositeBorderPainter
 import org.pushingpixels.aurora.painter.border.DelegateBorderPainter
 import org.pushingpixels.aurora.painter.decoration.FlatDecorationPainter
 import org.pushingpixels.aurora.painter.fill.FractionBasedFillPainter
+import org.pushingpixels.aurora.painter.overlay.BottomLineOverlayPainter
+import org.pushingpixels.aurora.painter.overlay.TopLineOverlayPainter
 import org.pushingpixels.aurora.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.utils.getColorSchemes
 
@@ -166,7 +171,7 @@ private fun graphiteBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColo
     return result
 }
 
-private fun graphiteBasePainters(): Painters {
+private fun graphiteBasePainters(borderPainter: AuroraBorderPainter? = null): Painters {
     return Painters(
         fillPainter = FractionBasedFillPainter(
             0.0f to { it.ultraLightColor },
@@ -174,7 +179,7 @@ private fun graphiteBasePainters(): Painters {
             1.0f to { it.lightColor },
             displayName = "Graphite"
         ),
-        borderPainter = CompositeBorderPainter(
+        borderPainter = borderPainter ?: CompositeBorderPainter(
             displayName = "Graphite",
             outer = DelegateBorderPainter(
                 displayName = "Graphite Outer",
@@ -194,6 +199,59 @@ private fun graphiteBasePainters(): Painters {
     )
 }
 
+private fun graphiteSkinColorsBaseExtensions(bundle: AuroraColorSchemeBundle) {
+    // Unlike other accented Graphite skins that use the same highlight appearance on
+    // checkboxes and radio buttons as on active renderers, this skin uses a more muted
+    // appearance for checkboxes and radio buttons.
+    // The following sections remove the accent from those controls and use darker, less
+    // vibrant appearance.
+    val schemes = getColorSchemes(
+        AuroraSkin::class.java.getResourceAsStream(
+            "/org/pushingpixels/aurora/skins/graphite.colorschemes"
+        )
+    )
+
+    bundle.registerAlpha(0.65f, ComponentState.DISABLED_SELECTED)
+    val highlightMarkScheme = schemes["Graphite Highlight Mark"]
+    bundle.registerColorScheme(
+        highlightMarkScheme,
+        ColorSchemeAssociationKind.HIGHLIGHT_MARK, *ComponentState.activeStates
+    )
+    bundle.registerColorScheme(
+        highlightMarkScheme,
+        ColorSchemeAssociationKind.MARK, ComponentState.ROLLOVER_SELECTED,
+        ComponentState.ROLLOVER_UNSELECTED
+    )
+
+    val selectedScheme = schemes["Graphite Selected"]
+    val borderScheme = schemes["Graphite Border"]
+    bundle.registerColorScheme(
+        selectedScheme, ColorSchemeAssociationKind.FILL,
+        ComponentState.SELECTED
+    )
+    bundle.registerColorScheme(
+        borderScheme, ColorSchemeAssociationKind.MARK,
+        ComponentState.SELECTED
+    )
+
+    val selectedDisabledScheme = schemes["Graphite Selected Disabled"]
+    val disabledScheme = schemes["Graphite Disabled"]
+    bundle.registerColorScheme(
+        disabledScheme,
+        ColorSchemeAssociationKind.FILL,
+        ComponentState.DISABLED_UNSELECTED
+    )
+    bundle.registerColorScheme(
+        selectedDisabledScheme,
+        ColorSchemeAssociationKind.FILL,
+        ComponentState.DISABLED_SELECTED
+    )
+    bundle.registerColorScheme(
+        disabledScheme, ColorSchemeAssociationKind.MARK,
+        ComponentState.DISABLED_UNSELECTED, ComponentState.DISABLED_SELECTED
+    )
+}
+
 fun graphiteSkin(): AuroraSkinDefinition {
     return AuroraSkinDefinition(
         displayName = "Graphite",
@@ -206,53 +264,7 @@ fun graphiteSkin(): AuroraSkinDefinition {
             it.registerAsDecorationArea(
                 backgroundColorScheme = it.getBackgroundColorScheme(DecorationAreaType.NONE),
                 noneTransformationOverlay = { bundle ->
-                    // Unlike other accented Graphite skins that use the same highlight appearance on
-                    // checkboxes and radio buttons as on active renderers, this skin uses a more muted
-                    // appearance for checkboxes and radio buttons.
-                    // The following sections remove the accent from those controls and use darker, less
-                    // vibrant appearance.
-
-                    bundle.registerAlpha(0.65f, ComponentState.DISABLED_SELECTED)
-                    val schemes = getColorSchemes(
-                        AuroraSkin::class.java.getResourceAsStream(
-                            "/org/pushingpixels/aurora/skins/graphite.colorschemes"
-                        )
-                    )
-                    val highlightMarkScheme = schemes["Graphite Highlight Mark"]
-                    bundle.registerColorScheme(
-                        highlightMarkScheme,
-                        ColorSchemeAssociationKind.HIGHLIGHT_MARK, *ComponentState.activeStates
-                    )
-                    bundle.registerColorScheme(
-                        highlightMarkScheme,
-                        ColorSchemeAssociationKind.MARK, ComponentState.ROLLOVER_SELECTED,
-                        ComponentState.ROLLOVER_UNSELECTED
-                    )
-
-                    val selectedScheme = schemes["Graphite Selected"]
-                    val borderScheme = schemes["Graphite Border"]
-                    bundle.registerColorScheme(
-                        selectedScheme, ColorSchemeAssociationKind.FILL,
-                        ComponentState.SELECTED
-                    )
-                    bundle.registerColorScheme(
-                        borderScheme, ColorSchemeAssociationKind.MARK,
-                        ComponentState.SELECTED
-                    )
-
-                    val selectedDisabledScheme = schemes["Graphite Selected Disabled"]
-                    val disabledScheme = schemes["Graphite Disabled"]
-                    bundle.registerColorScheme(disabledScheme,
-                        ColorSchemeAssociationKind.FILL,
-                        ComponentState.DISABLED_UNSELECTED)
-                    bundle.registerColorScheme(selectedDisabledScheme,
-                        ColorSchemeAssociationKind.FILL,
-                        ComponentState.DISABLED_SELECTED)
-                    bundle.registerColorScheme(
-                        disabledScheme, ColorSchemeAssociationKind.MARK,
-                        ComponentState.DISABLED_UNSELECTED, ComponentState.DISABLED_SELECTED
-                    )
-
+                    graphiteSkinColorsBaseExtensions(bundle)
                 },
                 areaTypes = arrayOf(DecorationAreaType.NONE)
             )
@@ -261,3 +273,221 @@ fun graphiteSkin(): AuroraSkinDefinition {
         buttonShaper = ClassicButtonShaper()
     )
 }
+
+fun graphiteAquaSkin(): AuroraSkinDefinition {
+    return AuroraSkinDefinition(
+        displayName = "Graphite Aqua",
+        colors = graphiteBaseSkinColors(
+            AccentBuilder()
+                .withAccentResource("/org/pushingpixels/aurora/skins/graphite.colorschemes")
+                .withActiveControlsAccent("Graphite Aqua")
+                .withHighlightsAccent("Graphite Aqua")
+        ).also {
+            it.registerAsDecorationArea(
+                backgroundColorScheme = it.getBackgroundColorScheme(DecorationAreaType.NONE),
+                noneTransformationOverlay = { bundle ->
+                    // Use disabled color scheme for marks of disabled selected checkboxes and radio buttons
+                    // for better contrast
+                    val schemes = getColorSchemes(
+                        AuroraSkin::class.java.getResourceAsStream(
+                            "/org/pushingpixels/aurora/skins/graphite.colorschemes"
+                        )
+                    )
+                    bundle.registerColorScheme(
+                        schemes["Graphite Disabled"],
+                        ColorSchemeAssociationKind.MARK, ComponentState.DISABLED_SELECTED
+                    )
+                },
+                areaTypes = arrayOf(DecorationAreaType.NONE)
+            )
+        },
+        painters = graphiteBasePainters(),
+        buttonShaper = ClassicButtonShaper()
+    )
+}
+
+fun graphiteChalkSkin(): AuroraSkinDefinition {
+    return AuroraSkinDefinition(
+        displayName = "Graphite Chalk",
+        colors = graphiteBaseSkinColors(
+            AccentBuilder()
+                .withAccentResource("/org/pushingpixels/aurora/skins/graphite.colorschemes")
+                .withActiveControlsAccent("Graphite Highlight")
+                .withHighlightsAccent("Graphite Highlight")
+        ).also {
+            it.registerAsDecorationArea(
+                backgroundColorScheme = it.getBackgroundColorScheme(DecorationAreaType.NONE),
+                noneTransformationOverlay = { bundle ->
+                    graphiteSkinColorsBaseExtensions(bundle)
+
+                    val schemes = getColorSchemes(
+                        AuroraSkin::class.java.getResourceAsStream(
+                            "/org/pushingpixels/aurora/skins/graphite.colorschemes"
+                        )
+                    )
+                    val chalkScheme = schemes["Chalk"]
+                    bundle.registerColorScheme(
+                        chalkScheme,
+                        ColorSchemeAssociationKind.TAB_BORDER,
+                        *ComponentState.activeStates
+                    )
+                    bundle.registerColorScheme(
+                        chalkScheme,
+                        ColorSchemeAssociationKind.BORDER,
+                        ComponentState.ENABLED
+                    )
+                    bundle.registerColorScheme(
+                        chalkScheme,
+                        ColorSchemeAssociationKind.BORDER,
+                        *ComponentState.activeStates
+                    )
+                    bundle.registerAlpha(
+                        0.5f,
+                        ComponentState.DISABLED_UNSELECTED, ComponentState.DISABLED_SELECTED
+                    )
+                    bundle.registerColorScheme(
+                        chalkScheme,
+                        ColorSchemeAssociationKind.BORDER,
+                        ComponentState.DISABLED_UNSELECTED, ComponentState.DISABLED_SELECTED
+                    )
+                    bundle.registerColorScheme(
+                        chalkScheme,
+                        ColorSchemeAssociationKind.HIGHLIGHT_BORDER,
+                        *ComponentState.activeStates
+                    )
+
+                    val markScheme = schemes["Graphite Mark"]
+                    bundle.registerColorScheme(markScheme, ColorSchemeAssociationKind.MARK)
+
+                    val separatorScheme = schemes["Chalk Separator"]
+                    bundle.registerColorScheme(
+                        separatorScheme,
+                        ColorSchemeAssociationKind.SEPARATOR, ComponentState.ENABLED
+                    )
+                },
+                areaTypes = arrayOf(DecorationAreaType.NONE)
+            )
+        },
+        painters = graphiteBasePainters(borderPainter = ClassicBorderPainter()),
+        buttonShaper = ClassicButtonShaper()
+    )
+}
+
+fun graphiteGlassSkin(): AuroraSkinDefinition {
+    return AuroraSkinDefinition(
+        displayName = "Graphite Glass",
+        colors = graphiteBaseSkinColors(
+            AccentBuilder()
+                .withAccentResource("/org/pushingpixels/aurora/skins/graphite.colorschemes")
+                .withActiveControlsAccent("Graphite Highlight")
+                .withHighlightsAccent("Graphite Highlight")
+        ).also {
+            val schemes = getColorSchemes(
+                AuroraSkin::class.java.getResourceAsStream(
+                    "/org/pushingpixels/aurora/skins/graphite.colorschemes"
+                )
+            )
+            val backgroundScheme = schemes["Graphite Background"]
+            it.registerAsDecorationArea(
+                backgroundScheme,
+                DecorationAreaType.TITLE_PANE, DecorationAreaType.HEADER
+            )
+        },
+        painters = graphiteBasePainters(borderPainter = ClassicBorderPainter()).also {
+            // add two overlay painters to create a bezel line between
+            // menu bar and toolbars
+            it.addOverlayPainter(
+                BottomLineOverlayPainter(colorSchemeQuery = { scheme -> scheme.midColor }),
+                DecorationAreaType.HEADER)
+            it.addOverlayPainter(TopLineOverlayPainter(
+                composite(
+                    { scheme -> scheme.foregroundColor },
+                    ColorTransforms.alpha(0.125f)
+                )
+            ), DecorationAreaType.TOOLBAR)
+
+        },
+        buttonShaper = ClassicButtonShaper()
+    )
+}
+
+fun graphiteElectricSkin(): AuroraSkinDefinition {
+    return AuroraSkinDefinition(
+        displayName = "Graphite Electric",
+        colors = graphiteBaseSkinColors(
+            AccentBuilder()
+                .withAccentResource("/org/pushingpixels/aurora/skins/graphite.colorschemes")
+                .withActiveControlsAccent("Graphite Electric")
+                .withHighlightsAccent("Graphite Electric")
+        ),
+        painters = graphiteBasePainters(),
+        buttonShaper = ClassicButtonShaper()
+    )
+}
+
+fun graphiteGoldSkin(): AuroraSkinDefinition {
+    return AuroraSkinDefinition(
+        displayName = "Graphite Gold",
+        colors = graphiteBaseSkinColors(
+            AccentBuilder()
+                .withAccentResource("/org/pushingpixels/aurora/skins/graphite.colorschemes")
+                .withActiveControlsAccent("Graphite Gold")
+                .withHighlightsAccent("Graphite Gold")
+        ),
+        painters = graphiteBasePainters(),
+        buttonShaper = ClassicButtonShaper()
+    )
+}
+
+fun graphiteSiennaSkin(): AuroraSkinDefinition {
+    return AuroraSkinDefinition(
+        displayName = "Graphite Sienna",
+        colors = graphiteBaseSkinColors(
+            AccentBuilder()
+                .withAccentResource("/org/pushingpixels/aurora/skins/graphite.colorschemes")
+                .withActiveControlsAccent("Graphite Sienna")
+                .withHighlightsAccent("Graphite Sienna")
+        ),
+        painters = graphiteBasePainters(),
+        buttonShaper = ClassicButtonShaper()
+    )
+}
+
+fun graphiteSunsetSkin(): AuroraSkinDefinition {
+    val accentScheme = SunsetColorScheme()
+
+    return AuroraSkinDefinition(
+        displayName = "Graphite Sunset",
+        colors = graphiteBaseSkinColors(
+            AccentBuilder()
+                .withActiveControlsAccent(accentScheme)
+                .withHighlightsAccent(accentScheme)
+        ).also {
+            it.registerAsDecorationArea(
+                backgroundColorScheme = it.getBackgroundColorScheme(DecorationAreaType.NONE),
+                noneTransformationOverlay = { bundle ->
+                    // Sunset needs tweaks for the enabled / disabled visuals of checkbox and radio button marks
+                    // for better contrast
+
+                    // Sunset needs tweaks for the enabled / disabled visuals of checkbox and radio button marks
+                    // for better contrast
+                    bundle.registerColorScheme(
+                        accentScheme,
+                        ColorSchemeAssociationKind.MARK,
+                        ComponentState.SELECTED
+                    )
+                    bundle.registerAlpha(0.7f, ComponentState.DISABLED_SELECTED)
+                    bundle.registerColorScheme(
+                        accentScheme.shade(0.4f),
+                        ColorSchemeAssociationKind.MARK,
+                        ComponentState.DISABLED_SELECTED
+                    )
+                },
+                areaTypes = arrayOf(DecorationAreaType.NONE)
+            )
+        },
+        painters = graphiteBasePainters(),
+        buttonShaper = ClassicButtonShaper()
+    )
+}
+
