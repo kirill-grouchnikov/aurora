@@ -29,16 +29,9 @@
  */
 package org.pushingpixels.aurora
 
-import androidx.compose.desktop.Window
-import androidx.compose.desktop.WindowEvents
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ComposableContract
-import androidx.compose.runtime.Providers
-import androidx.compose.runtime.emptyContent
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.window.MenuBar
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.colorscheme.ColorSchemes
@@ -46,7 +39,6 @@ import org.pushingpixels.aurora.shaper.AuroraButtonShaper
 import org.pushingpixels.aurora.utils.deriveByBrightness
 import org.pushingpixels.aurora.utils.getAlphaColor
 import org.pushingpixels.aurora.utils.getColorSchemes
-import java.awt.image.BufferedImage
 
 object AuroraSkin {
     @Composable
@@ -153,69 +145,6 @@ class AccentBuilder {
     fun withBackgroundAccent(backgroundAccent: AuroraColorScheme): AccentBuilder {
         this.backgroundAccent = backgroundAccent
         return this
-    }
-}
-
-fun AuroraWindow(
-    skin: AuroraSkinDefinition,
-    title: String,
-    size: IntSize,
-    location: IntOffset = IntOffset.Zero,
-    centered: Boolean = true,
-    icon: BufferedImage? = null,
-    menuBar: MenuBar? = null,
-    undecorated: Boolean = false,
-    events: WindowEvents = WindowEvents(),
-    onDismissRequest: (() -> Unit)? = null,
-    content: @Composable () -> Unit = emptyContent()
-) = Window(
-    title = title,
-    size = size,
-    location = location,
-    centered = centered,
-    icon = icon,
-    menuBar = menuBar,
-    undecorated = undecorated,
-    events = events,
-    onDismissRequest = onDismissRequest
-) {
-    AuroraSkin(
-        decorationArea = DecorationArea(DecorationAreaType.NONE),
-        colors = skin.colors,
-        buttonShaper = skin.buttonShaper,
-        painters = skin.painters,
-        animationConfig = AuroraSkin.animationConfig,
-        content = content
-    )
-}
-
-@Composable
-private fun AuroraSkin(
-    decorationArea: DecorationArea = AuroraSkin.decorationArea,
-    colors: AuroraSkinColors = AuroraSkin.colors,
-    buttonShaper: AuroraButtonShaper = AuroraSkin.buttonShaper,
-    painters: Painters = AuroraSkin.painters,
-    animationConfig: AnimationConfig = AuroraSkin.animationConfig,
-    content: @Composable () -> Unit
-) {
-    Providers(
-        AmbientDecorationArea provides decorationArea,
-        AmbientSkinColors provides colors,
-        AmbientButtonShaper provides buttonShaper,
-        AmbientPainters provides painters,
-        AmbientAnimationConfig provides animationConfig
-    ) {
-        content()
-    }
-}
-
-@Composable
-fun DecorationArea(
-    decorationAreaType: DecorationAreaType,
-    content: @Composable () -> Unit = emptyContent()
-) {
-    AuroraSkin(decorationArea = DecorationArea(decorationAreaType)) {
-        content()
     }
 }
 

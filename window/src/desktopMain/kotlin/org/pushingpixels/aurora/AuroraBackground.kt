@@ -27,7 +27,7 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.aurora.components
+package org.pushingpixels.aurora
 
 import androidx.compose.desktop.AppWindowAmbient
 import androidx.compose.runtime.Composable
@@ -41,10 +41,6 @@ import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.platform.AmbientDensity
-import org.pushingpixels.aurora.AuroraSkin
-import org.pushingpixels.aurora.ColorSchemeAssociationKind
-import org.pushingpixels.aurora.ComponentState
-import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.painter.decoration.AuroraDecorationPainter
 import org.pushingpixels.aurora.painter.overlay.AuroraOverlayPainter

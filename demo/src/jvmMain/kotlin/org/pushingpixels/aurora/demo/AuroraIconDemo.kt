@@ -31,19 +31,17 @@ package org.pushingpixels.aurora.demo
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.AuroraWindow
-import org.pushingpixels.aurora.DecorationArea
 import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.components.AuroraButton
 import org.pushingpixels.aurora.components.AuroraText
-import org.pushingpixels.aurora.components.auroraBackground
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.icon.AuroraThemedFollowTextIcon
 import org.pushingpixels.aurora.skin.marinerSkin
+import org.pushingpixels.aurora.window.AuroraDecorationArea
+import org.pushingpixels.aurora.window.AuroraWindow
 
 fun main() {
     AuroraWindow(
@@ -51,12 +49,7 @@ fun main() {
         skin = marinerSkin(),
         size = IntSize(800, 600)
     ) {
-        Box(
-            modifier = Modifier.auroraBackground(),
-            contentAlignment = Alignment.TopStart
-        ) {
-            IconDemoContent()
-        }
+        IconDemoContent()
     }
 }
 
@@ -140,7 +133,7 @@ fun IconDemoArea() {
 @Composable
 fun IconDemoContent() {
     Column(modifier = Modifier.fillMaxHeight().fillMaxWidth().padding(vertical = 12.dp)) {
-        DecorationArea(decorationAreaType = DecorationAreaType.HEADER) {
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.HEADER) {
             IconDemoArea()
         }
     }

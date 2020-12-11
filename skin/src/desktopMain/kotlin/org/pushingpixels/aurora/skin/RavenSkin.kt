@@ -54,8 +54,6 @@ private fun ravenSkinColors(): AuroraSkinColors {
     )
 
     // highlight fill scheme + custom alpha for rollover unselected state
-
-    // highlight fill scheme + custom alpha for rollover unselected state
     val highlightScheme = schemes["Graphite Highlight"]
     defaultSchemeBundle.registerHighlightAlpha(0.6f, ComponentState.ROLLOVER_UNSELECTED)
     defaultSchemeBundle.registerHighlightAlpha(0.8f, ComponentState.SELECTED)
@@ -70,8 +68,6 @@ private fun ravenSkinColors(): AuroraSkinColors {
         EbonyColorScheme(),
         ColorSchemeAssociationKind.HIGHLIGHT_BORDER, *ComponentState.activeStates
     )
-
-    // text highlight scheme
 
     // text highlight scheme
     val textHighlightScheme = schemes["Graphite Text Highlight"]

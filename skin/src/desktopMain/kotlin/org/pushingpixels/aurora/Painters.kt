@@ -29,7 +29,6 @@
  */
 package org.pushingpixels.aurora
 
-import androidx.compose.runtime.staticAmbientOf
 import org.pushingpixels.aurora.painter.border.AuroraBorderPainter
 import org.pushingpixels.aurora.painter.decoration.AuroraDecorationPainter
 import org.pushingpixels.aurora.painter.fill.AuroraFillPainter
@@ -115,4 +114,3 @@ data class Painters(
     }
 }
 
-internal val AmbientPainters = staticAmbientOf<Painters>()

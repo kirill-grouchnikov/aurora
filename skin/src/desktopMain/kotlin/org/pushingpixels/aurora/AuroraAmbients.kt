@@ -29,8 +29,12 @@
  */
 package org.pushingpixels.aurora
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ambientOf
+import androidx.compose.runtime.staticAmbientOf
 import androidx.compose.ui.graphics.Color
+import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.shaper.AuroraButtonShaper
 
 data class ModelStateInfoSnapshot(
     val currModelState: ComponentState,
@@ -41,4 +45,23 @@ data class ModelStateInfoSnapshot(
 val AmbientModelStateInfoSnapshot = ambientOf<ModelStateInfoSnapshot>()
 
 val AmbientTextColor = ambientOf<Color>()
+
+
+@Immutable
+data class AnimationConfig(
+    val short: Int = 150,
+    val regular: Int = 250
+)
+
+val AmbientAnimationConfig = staticAmbientOf { AnimationConfig() }
+val AmbientSkinColors = staticAmbientOf<AuroraSkinColors>()
+val AmbientButtonShaper  = staticAmbientOf<AuroraButtonShaper>()
+val AmbientPainters = staticAmbientOf<Painters>()
+
+@Immutable
+data class DecorationArea(
+    val type: DecorationAreaType = DecorationAreaType.NONE
+)
+
+val AmbientDecorationArea = staticAmbientOf { DecorationArea() }
 

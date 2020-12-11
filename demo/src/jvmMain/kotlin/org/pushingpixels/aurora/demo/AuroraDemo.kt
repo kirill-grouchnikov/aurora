@@ -39,9 +39,11 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.components.*
-import org.pushingpixels.aurora.icon.AuroraThemedIcon
 import org.pushingpixels.aurora.icon.AuroraThemedFollowTextIcon
-import org.pushingpixels.aurora.skin.*
+import org.pushingpixels.aurora.icon.AuroraThemedIcon
+import org.pushingpixels.aurora.skin.ravenSkin
+import org.pushingpixels.aurora.window.AuroraDecorationArea
+import org.pushingpixels.aurora.window.AuroraWindow
 
 fun main() {
     AuroraWindow(
@@ -50,12 +52,7 @@ fun main() {
         size = IntSize(600, 600),
         undecorated = true
     ) {
-        Box(
-            modifier = Modifier.auroraBackground(),
-            contentAlignment = Alignment.TopStart
-        ) {
-            DemoContent()
-        }
+        DemoContent()
     }
 }
 
@@ -106,11 +103,13 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     onSelectedChange = { println("Selected toggle? $it") }) {
                     // This is a full-color icon. Use original colors for enabled and active states,
                     // and color scheme based filtering for disabled states
-                    AuroraThemedIcon(icon = computer.of(12.dp, 12.dp),
+                    AuroraThemedIcon(
+                        icon = computer.of(12.dp, 12.dp),
                         disabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME,
                         enabledFilterStrategy = IconFilterStrategy.ORIGINAL,
                         activeFilterStrategy = IconFilterStrategy.ORIGINAL,
-                        modifier = Modifier.auroraButtonIconPadding())
+                        modifier = Modifier.auroraButtonIconPadding()
+                    )
                     AuroraText("toggle")
                 }
                 AuroraButton(
@@ -179,24 +178,16 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
 @Composable
 fun DemoContent() {
     Column(modifier = Modifier.fillMaxHeight().fillMaxWidth()) {
-        DecorationArea(decorationAreaType = DecorationAreaType.TITLE_PANE) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(24.dp)
-                    .auroraBackground()
-            )
-        }
-        DecorationArea(decorationAreaType = DecorationAreaType.HEADER) {
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.HEADER) {
             DemoArea(selected = false)
         }
-        DecorationArea(decorationAreaType = DecorationAreaType.TOOLBAR) {
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.TOOLBAR) {
             DemoArea(selected = true)
         }
-        DecorationArea(decorationAreaType = DecorationAreaType.NONE) {
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.NONE) {
             DemoArea(selected = true)
         }
-        DecorationArea(decorationAreaType = DecorationAreaType.FOOTER) {
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.FOOTER) {
             DemoArea(selected = false)
         }
     }

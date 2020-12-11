@@ -17,6 +17,7 @@ kotlin {
                 implementation(project(":components"))
                 implementation(project(":icon:icon"))
                 implementation(project(":skin"))
+                implementation(project(":window"))
             }
         }
     }
