@@ -325,7 +325,7 @@ internal fun encode(color: Color): String? {
  * @param rgb RGB value of a color.
  * @return The brightness of the specified color in [0.0-1.0] range
  */
-internal fun getColorBrightness(color: Color): Float {
+fun getColorBrightness(color: Color): Float {
     // Note that alpha is ignored
     return getColorBrightness(color.red, color.green, color.blue)
 }
@@ -352,6 +352,19 @@ internal fun getColorBrightness(r: Float, g: Float, b: Float): Float {
     // See https://en.wikipedia.org/wiki/Relative_luminance
     return (2126.0f * r + 7152.0f * g + 722.0f * b) / 10000.0f
 }
+
+fun getColorStrength(color: Color): Float {
+    return max(
+        getColorBrightness(color),
+        getColorBrightness(getNegativeColor(color))
+    ) / 255.0f
+}
+
+fun getNegativeColor(color: Color): Color {
+    return Color(red = 255 - color.red, green = 255 - color.green,
+        blue = 255 - color.blue, alpha = color.alpha)
+}
+
 
 
 

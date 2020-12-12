@@ -29,6 +29,7 @@
  */
 package org.pushingpixels.aurora.window
 
+import androidx.compose.desktop.AppManager
 import androidx.compose.desktop.Window
 import androidx.compose.desktop.WindowEvents
 import androidx.compose.foundation.layout.*
@@ -46,6 +47,9 @@ import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.WindowDraggableArea
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.colorscheme.SunfireRedColorScheme
+import org.pushingpixels.aurora.components.AuroraButton
+import org.pushingpixels.aurora.icon.AuroraThemedFollowTextIcon
 import org.pushingpixels.aurora.shaper.AuroraButtonShaper
 import java.awt.image.BufferedImage
 
@@ -63,13 +67,25 @@ private fun AuroraWindowContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(32.dp)
-                        .auroraBackground(),
+                        .auroraBackground()
+                        .padding(start = 24.dp, end = 24.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     WindowDraggableArea(
-                        modifier = Modifier.weight(1f).padding(start=24.dp, end=24.dp)
+                        modifier = Modifier.weight(1f)
                     ) {
                         Text(text = title, color = Color.White)
+                    }
+                    AuroraButton(
+                        modifier = Modifier.width(20.dp).height(20.dp),
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                        sizingStrategy = ButtonSizingStrategy.COMPACT,
+                        contentPadding = PaddingValues(all = 2.dp),
+                        onClick = {
+                            AppManager.focusedWindow?.close()
+                        }
+                    ) {
+                        AuroraThemedFollowTextIcon(icon = getCloseIcon(iSize = 36, scheme = SunfireRedColorScheme()))
                     }
                 }
             }

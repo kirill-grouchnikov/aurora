@@ -19,6 +19,8 @@ kotlin {
         named("desktopMain") {
             dependencies {
                 api(compose.desktop.common)
+                implementation(project(":bitmapfilter"))
+                implementation(project(":icon:icon"))
                 implementation(project(":components"))
                 implementation(project(":skin"))
             }
