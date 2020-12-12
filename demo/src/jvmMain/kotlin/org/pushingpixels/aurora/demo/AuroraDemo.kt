@@ -147,7 +147,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     enabled = enabled.value,
                     selected = false,
                     onSelectedChange = { println("Selected bold? $it") },
-                    sides = ButtonSides(straightSides = setOf(Side.RIGHT)),
+                    sides = ButtonSides(straightSides = setOf(Side.END)),
                     sizingStrategy = ButtonSizingStrategy.COMPACT,
                     contentPadding = PaddingValues(all = 10.dp)
                 ) {
@@ -158,8 +158,8 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     selected = true,
                     onSelectedChange = { println("Selected italic? $it") },
                     sides = ButtonSides(
-                        straightSides = setOf(Side.LEFT, Side.RIGHT),
-                        openSides = setOf(Side.LEFT, Side.RIGHT)
+                        straightSides = setOf(Side.START, Side.END),
+                        openSides = setOf(Side.START, Side.END)
                     ),
                     sizingStrategy = ButtonSizingStrategy.COMPACT,
                     contentPadding = PaddingValues(all = 10.dp)
@@ -170,7 +170,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     enabled = enabled.value,
                     selected = false,
                     onSelectedChange = { println("Selected under? $it") },
-                    sides = ButtonSides(straightSides = setOf(Side.LEFT)),
+                    sides = ButtonSides(straightSides = setOf(Side.START)),
                     sizingStrategy = ButtonSizingStrategy.COMPACT,
                     contentPadding = PaddingValues(all = 10.dp)
                 ) {

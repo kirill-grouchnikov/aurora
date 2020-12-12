@@ -283,8 +283,9 @@ private fun AuroraToggleButton(
                 val height = this.size.height
 
                 val openDelta = 3
-                val deltaLeft = if (sides.openSides.contains(Side.LEFT)) openDelta else 0
-                val deltaRight = if (sides.openSides.contains(Side.RIGHT)) openDelta else 0
+                // TODO - add RTL support
+                val deltaLeft = if (sides.openSides.contains(Side.START)) openDelta else 0
+                val deltaRight = if (sides.openSides.contains(Side.END)) openDelta else 0
                 val deltaTop = if (sides.openSides.contains(Side.TOP)) openDelta else 0
                 val deltaBottom = if (sides.openSides.contains(Side.BOTTOM)) openDelta else 0
 
@@ -383,6 +384,7 @@ private fun AuroraToggleButton(
 
                 // Center children vertically within the vertical space
                 layout(width = finalSize.width.toInt(), height = finalSize.height.toInt()) {
+                    // TODO - add RTL support
                     var xPosition = (finalSize.width.toInt() - contentTotalWidth) / 2
 
                     placeables.forEach { placeable ->
@@ -578,8 +580,9 @@ private fun AuroraButton(
                 val height = this.size.height
 
                 val openDelta = 3
-                val deltaLeft = if (sides.openSides.contains(Side.LEFT)) openDelta else 0
-                val deltaRight = if (sides.openSides.contains(Side.RIGHT)) openDelta else 0
+                // TODO - add RTL support
+                val deltaLeft = if (sides.openSides.contains(Side.START)) openDelta else 0
+                val deltaRight = if (sides.openSides.contains(Side.END)) openDelta else 0
                 val deltaTop = if (sides.openSides.contains(Side.TOP)) openDelta else 0
                 val deltaBottom = if (sides.openSides.contains(Side.BOTTOM)) openDelta else 0
 
@@ -678,6 +681,7 @@ private fun AuroraButton(
 
                 // Center children vertically within the vertical space
                 layout(width = finalSize.width.toInt(), height = finalSize.height.toInt()) {
+                    // TODO - add RTL support
                     var xPosition = (finalSize.width.toInt() - contentTotalWidth) / 2
 
                     placeables.forEach { placeable ->
