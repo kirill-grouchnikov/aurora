@@ -147,7 +147,9 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     enabled = enabled.value,
                     selected = false,
                     onSelectedChange = { println("Selected bold? $it") },
-                    sides = ButtonSides(straightSides = setOf(Side.RIGHT))
+                    sides = ButtonSides(straightSides = setOf(Side.RIGHT)),
+                    sizingStrategy = ButtonSizingStrategy.COMPACT,
+                    contentPadding = PaddingValues(all = 10.dp)
                 ) {
                     AuroraText("bold")
                 }
@@ -158,7 +160,9 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     sides = ButtonSides(
                         straightSides = setOf(Side.LEFT, Side.RIGHT),
                         openSides = setOf(Side.LEFT, Side.RIGHT)
-                    )
+                    ),
+                    sizingStrategy = ButtonSizingStrategy.COMPACT,
+                    contentPadding = PaddingValues(all = 10.dp)
                 ) {
                     AuroraText("italic")
                 }
@@ -166,9 +170,37 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     enabled = enabled.value,
                     selected = false,
                     onSelectedChange = { println("Selected under? $it") },
-                    sides = ButtonSides(straightSides = setOf(Side.LEFT))
+                    sides = ButtonSides(straightSides = setOf(Side.LEFT)),
+                    sizingStrategy = ButtonSizingStrategy.COMPACT,
+                    contentPadding = PaddingValues(all = 10.dp)
                 ) {
                     AuroraText("under")
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                AuroraToggleButton(
+                    enabled = enabled.value,
+                    selected = true,
+                    onSelectedChange = { println("Selected small? $it") },
+                    sides = ButtonSides(straightSides = Side.values().toSet()),
+                    sizingStrategy = ButtonSizingStrategy.COMPACT,
+                    contentPadding = PaddingValues(all = 2.dp)
+                ) {
+                    AuroraThemedFollowTextIcon(icon = star_black_48dp.of(12.dp, 12.dp))
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                AuroraToggleButton(
+                    enabled = enabled.value,
+                    selected = true,
+                    onSelectedChange = { println("Selected small? $it") },
+                    sides = ButtonSides(straightSides = Side.values().toSet()),
+                    sizingStrategy = ButtonSizingStrategy.COMPACT,
+                    contentPadding = PaddingValues(all = 6.dp)
+                ) {
+                    AuroraThemedFollowTextIcon(icon = star_black_48dp.of(12.dp, 12.dp))
                 }
             }
         }

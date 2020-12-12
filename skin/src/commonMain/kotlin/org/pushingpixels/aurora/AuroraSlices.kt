@@ -702,12 +702,33 @@ enum class BackgroundAppearanceStrategy {
     ALWAYS
 }
 
+/**
+ * Enumerates available icon filter strategies.
+ *
+ * @author Kirill Grouchnikov
+ */
 enum class IconFilterStrategy {
+    /** The icon is always painted in its original appearance. */
     ORIGINAL,
 
+    /** The icon is themed based on the current text color. */
     THEMED_FOLLOW_TEXT,
 
+    /** The icon is themed based on the color scheme that matches the current component state. */
     THEMED_FOLLOW_COLOR_SCHEME
+}
+
+/**
+ * Enumerates available button sizing strategies.
+ *
+ * @author Kirill Grouchnikov
+ */
+enum class ButtonSizingStrategy {
+    /** The button is sized to contain all its content with no additional padding. */
+    COMPACT,
+
+    /** The button is sized to contain all its content, bumping up to minimum width and height if necessary. */
+    EXTENDED
 }
 
 

@@ -67,7 +67,7 @@ private fun AuroraWindowContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     WindowDraggableArea(
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f).padding(start=24.dp, end=24.dp)
                     ) {
                         Text(text = title, color = Color.White)
                     }
