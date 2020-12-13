@@ -53,6 +53,7 @@ import org.pushingpixels.aurora.components.AuroraButton
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.shaper.AuroraButtonShaper
 import java.awt.image.BufferedImage
+import javax.swing.JFrame
 
 
 @Composable
@@ -80,6 +81,34 @@ private fun AuroraWindowContent(
                     ) {
                         Text(text = title, color = Color.White)
                     }
+                    AuroraButton(
+                        modifier = Modifier.width(20.dp).height(20.dp),
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                        sizingStrategy = ButtonSizingStrategy.COMPACT,
+                        contentPadding = PaddingValues(start = 1.dp, top = 1.dp, end = 2.dp, bottom = 2.dp),
+                        onClick = {
+                            AppManager.focusedWindow?.window?.extendedState = JFrame.ICONIFIED
+                        }
+                    ) {
+                        AuroraIcon(
+                            icon = TransitionAwareIcon(
+                                decorationAreaType = DecorationAreaType.TITLE_PANE,
+                                skinColors = AmbientSkinColors.current,
+                                buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                                stateTransitionTracker = AmbientStateTransitionTracker.current,
+                                delegate = { scheme ->
+                                    getMinimizeIcon(
+                                        iconSize = iconSize,
+                                        scheme = scheme,
+                                        density = density
+                                    )
+                                },
+                                colorSchemeAssociationKindDelegate = null,
+                                uniqueIconTypeId = "aurora.titlePane.minimizeIcon"
+                            )
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(4.dp))
                     AuroraButton(
                         modifier = Modifier.width(20.dp).height(20.dp),
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,

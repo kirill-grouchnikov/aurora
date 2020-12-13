@@ -30,14 +30,14 @@
 package org.pushingpixels.aurora.window
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.platform.AmbientDensity
-import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.bitmapfilter.ColorBitmapFilter
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.utils.getColorBrightness
 import org.pushingpixels.aurora.utils.getColorStrength
 import kotlin.math.abs
+
 
 private fun overlayEcho(image: ImageBitmap, echoAlpha: Float, echoColor: Color, density: Float): ImageBitmap {
     val offsetX = 0.0f
@@ -48,10 +48,26 @@ private fun overlayEcho(image: ImageBitmap, echoAlpha: Float, echoColor: Color, 
     val canvas = Canvas(result)
 
     val paint20 = Paint().also { it.alpha = 0.2f * echoAlpha }
-    canvas.drawImage(image = echo, topLeftOffset = Offset(x = offsetX - density, y = offsetY - density), paint = paint20)
-    canvas.drawImage(image = echo, topLeftOffset = Offset(x = offsetX + density, y = offsetY - density), paint = paint20)
-    canvas.drawImage(image = echo, topLeftOffset = Offset(x = offsetX - density, y = offsetY + density), paint = paint20)
-    canvas.drawImage(image = echo, topLeftOffset = Offset(x = offsetX + density, y = offsetY + density), paint = paint20)
+    canvas.drawImage(
+        image = echo,
+        topLeftOffset = Offset(x = offsetX - density, y = offsetY - density),
+        paint = paint20
+    )
+    canvas.drawImage(
+        image = echo,
+        topLeftOffset = Offset(x = offsetX + density, y = offsetY - density),
+        paint = paint20
+    )
+    canvas.drawImage(
+        image = echo,
+        topLeftOffset = Offset(x = offsetX - density, y = offsetY + density),
+        paint = paint20
+    )
+    canvas.drawImage(
+        image = echo,
+        topLeftOffset = Offset(x = offsetX + density, y = offsetY + density),
+        paint = paint20
+    )
 
     val paint70 = Paint().also { it.alpha = 0.7f * echoAlpha }
     canvas.drawImage(image = echo, topLeftOffset = Offset(x = offsetX, y = offsetY - density), paint = paint70)
@@ -93,6 +109,41 @@ internal fun getCloseIcon(iconSize: Int, scheme: AuroraColorScheme, density: Flo
         density = density
     )
 }
+
+fun getMinimizeIcon(iconSize: Int, scheme: AuroraColorScheme, density: Float): ImageBitmap {
+    val image = ImageBitmap(iconSize, iconSize)
+
+    val start = iconSize * 0.25f
+    val end = iconSize * 0.75f
+
+    val color = scheme.markColor
+    val paint = Paint().also {
+        it.color = color
+        it.style = PaintingStyle.Fill
+    }
+    val canvas = Canvas(image)
+
+    canvas.drawRect(
+        rect = Rect(
+            left = start,
+            top = end - 1.5f * density,
+            right = end,
+            bottom = end + density
+        ), paint = paint
+    )
+
+    val echoColor = scheme.echoColor
+    val fgStrength = getColorBrightness(color)
+    val echoStrength = getColorBrightness(echoColor)
+    val noEcho = abs(fgStrength - echoStrength) < 48
+    return overlayEcho(
+        image = image,
+        echoAlpha = if (noEcho) 0.0f else getColorStrength(color),
+        echoColor = echoColor,
+        density = density
+    )
+}
+
 
 
 

@@ -49,7 +49,7 @@ import org.pushingpixels.aurora.icon.AuroraIcon
  *
  * @author Kirill Grouchnikov
  */
-class TransitionAwareIcon(
+internal class TransitionAwareIcon(
     val decorationAreaType: DecorationAreaType,
     val skinColors: AuroraSkinColors,
     val buttonBackgroundAppearanceStrategy: BackgroundAppearanceStrategy,
@@ -175,6 +175,7 @@ class TransitionAwareIcon(
 
     @Composable
     override fun setSize(width: Dp, height: Dp) {
+        // This icon only "pretends" to be resizable
         throw UnsupportedOperationException("This operation is not supported")
     }
 
