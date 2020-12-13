@@ -357,12 +357,12 @@ fun getColorStrength(color: Color): Float {
     return max(
         getColorBrightness(color),
         getColorBrightness(getNegativeColor(color))
-    ) / 255.0f
+    )
 }
 
 fun getNegativeColor(color: Color): Color {
-    return Color(red = 255 - color.red, green = 255 - color.green,
-        blue = 255 - color.blue, alpha = color.alpha)
+    return Color(red = 1.0f - color.red, green = 1.0f - color.green,
+        blue = 1.0f - color.blue, alpha = color.alpha)
 }
 
 
