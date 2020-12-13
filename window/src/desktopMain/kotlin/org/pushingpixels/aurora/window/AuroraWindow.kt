@@ -40,6 +40,7 @@ import androidx.compose.runtime.emptyContent
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -47,11 +48,12 @@ import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.WindowDraggableArea
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.colorscheme.SunfireRedColorScheme
+import org.pushingpixels.aurora.components.AmbientStateTransitionTracker
 import org.pushingpixels.aurora.components.AuroraButton
-import org.pushingpixels.aurora.icon.AuroraThemedFollowTextIcon
+import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.shaper.AuroraButtonShaper
 import java.awt.image.BufferedImage
+
 
 @Composable
 private fun AuroraWindowContent(
@@ -60,6 +62,8 @@ private fun AuroraWindowContent(
     undecorated: Boolean,
     content: @Composable () -> Unit
 ) {
+    val density = AmbientDensity.current.density
+    val iconSize = (18 * density).toInt()
     Column(Modifier.fillMaxSize().auroraBackground()) {
         if (undecorated) {
             AuroraDecorationArea(decorationAreaType = DecorationAreaType.TITLE_PANE) {
@@ -68,7 +72,7 @@ private fun AuroraWindowContent(
                         .fillMaxWidth()
                         .height(32.dp)
                         .auroraBackground()
-                        .padding(start = 24.dp, end = 24.dp),
+                        .padding(start = 24.dp, end = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     WindowDraggableArea(
@@ -80,12 +84,28 @@ private fun AuroraWindowContent(
                         modifier = Modifier.width(20.dp).height(20.dp),
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
                         sizingStrategy = ButtonSizingStrategy.COMPACT,
-                        contentPadding = PaddingValues(all = 2.dp),
+                        contentPadding = PaddingValues(start = 1.dp, top = 1.dp, end = 2.dp, bottom = 2.dp),
                         onClick = {
                             AppManager.focusedWindow?.close()
                         }
                     ) {
-                        AuroraThemedFollowTextIcon(icon = getCloseIcon(iSize = 36, scheme = SunfireRedColorScheme()))
+                        AuroraIcon(
+                            icon = TransitionAwareIcon(
+                                decorationAreaType = DecorationAreaType.TITLE_PANE,
+                                skinColors = AmbientSkinColors.current,
+                                buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                                stateTransitionTracker = AmbientStateTransitionTracker.current,
+                                delegate = { scheme ->
+                                    getCloseIcon(
+                                        iconSize = iconSize,
+                                        scheme = scheme,
+                                        density = density
+                                    )
+                                },
+                                colorSchemeAssociationKindDelegate = null,
+                                uniqueIconTypeId = "aurora.titlePane.closeIcon"
+                            )
+                        )
                     }
                 }
             }

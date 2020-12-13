@@ -30,7 +30,10 @@
 package org.pushingpixels.aurora.skin
 
 import org.pushingpixels.aurora.*
-import org.pushingpixels.aurora.colorscheme.*
+import org.pushingpixels.aurora.colorscheme.AuroraColorSchemeBundle
+import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.colorscheme.DarkMetallicColorScheme
+import org.pushingpixels.aurora.colorscheme.EbonyColorScheme
 import org.pushingpixels.aurora.painter.border.GlassBorderPainter
 import org.pushingpixels.aurora.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.painter.fill.GlassFillPainter
@@ -76,6 +79,12 @@ private fun ravenSkinColors(): AuroraSkinColors {
         ColorSchemeAssociationKind.HIGHLIGHT_TEXT,
         ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED
     )
+
+    defaultSchemeBundle.registerColorScheme(
+        highlightScheme,
+        ColorSchemeAssociationKind.FILL,
+        ComponentState.ROLLOVER_UNSELECTED
+    );
 
     val highlightMarkScheme = schemes["Raven Highlight Mark"]
     defaultSchemeBundle.registerColorScheme(

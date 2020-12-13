@@ -36,7 +36,7 @@ import androidx.compose.runtime.mutableStateOf
 import org.pushingpixels.aurora.ComponentState
 import org.pushingpixels.aurora.ModelStateInfoSnapshot
 
-internal class StateContributionInfo(var start: Float, var end: Float) {
+class StateContributionInfo(var start: Float, var end: Float) {
     var contribution: Float
 
     fun updateContribution(timelinePosition: Float) {
@@ -48,7 +48,7 @@ internal class StateContributionInfo(var start: Float, var end: Float) {
     }
 }
 
-internal class ModelStateInfo(var currModelState: ComponentState) {
+class ModelStateInfo(var currModelState: ComponentState) {
     var stateContributionMap: MutableMap<ComponentState, StateContributionInfo>
     var activeStrength: Float
 
@@ -108,7 +108,7 @@ internal class ModelStateInfo(var currModelState: ComponentState) {
     }
 }
 
-internal class StateTransitionTracker(
+class StateTransitionTracker(
     enabled: Boolean,
     selected: Boolean,
     private val stateTransitionFloat: AnimatedFloat

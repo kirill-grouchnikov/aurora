@@ -31,15 +31,15 @@ package org.pushingpixels.aurora.window
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.AmbientDensity
+import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.bitmapfilter.ColorBitmapFilter
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.icon.BitmapWrapperIcon
 import org.pushingpixels.aurora.utils.getColorBrightness
 import org.pushingpixels.aurora.utils.getColorStrength
 import kotlin.math.abs
 
-private fun overlayEcho(image: ImageBitmap, echoAlpha: Float, echoColor: Color): ImageBitmap {
+private fun overlayEcho(image: ImageBitmap, echoAlpha: Float, echoColor: Color, density: Float): ImageBitmap {
     val offsetX = 0.0f
     val offsetY = 0.0f
 
@@ -47,33 +47,33 @@ private fun overlayEcho(image: ImageBitmap, echoAlpha: Float, echoColor: Color):
     val result = ImageBitmap(image.width, image.height)
     val canvas = Canvas(result)
 
-    val paint20 = Paint().also { it.alpha = 0.2f * echoAlpha * echoAlpha * echoAlpha }
-    canvas.drawImage(image = echo, topLeftOffset = Offset(x = offsetX - 1, y = offsetY - 1), paint = paint20)
-    canvas.drawImage(image = echo, topLeftOffset = Offset(x = offsetX + 1, y = offsetY - 1), paint = paint20)
-    canvas.drawImage(image = echo, topLeftOffset = Offset(x = offsetX - 1, y = offsetY + 1), paint = paint20)
-    canvas.drawImage(image = echo, topLeftOffset = Offset(x = offsetX + 1, y = offsetY + 1), paint = paint20)
+    val paint20 = Paint().also { it.alpha = 0.2f * echoAlpha }
+    canvas.drawImage(image = echo, topLeftOffset = Offset(x = offsetX - density, y = offsetY - density), paint = paint20)
+    canvas.drawImage(image = echo, topLeftOffset = Offset(x = offsetX + density, y = offsetY - density), paint = paint20)
+    canvas.drawImage(image = echo, topLeftOffset = Offset(x = offsetX - density, y = offsetY + density), paint = paint20)
+    canvas.drawImage(image = echo, topLeftOffset = Offset(x = offsetX + density, y = offsetY + density), paint = paint20)
 
-    val paint70 = Paint().also { it.alpha = 0.7f * echoAlpha * echoAlpha * echoAlpha }
-    canvas.drawImage(image = echo, topLeftOffset = Offset(x = offsetX, y = offsetY - 1), paint = paint70)
-    canvas.drawImage(image = echo, topLeftOffset = Offset(x = offsetX, y = offsetY - 1), paint = paint70)
-    canvas.drawImage(image = echo, topLeftOffset = Offset(x = offsetX - 1, y = offsetY), paint = paint70)
-    canvas.drawImage(image = echo, topLeftOffset = Offset(x = offsetX + 1, y = offsetY), paint = paint70)
+    val paint70 = Paint().also { it.alpha = 0.7f * echoAlpha }
+    canvas.drawImage(image = echo, topLeftOffset = Offset(x = offsetX, y = offsetY - density), paint = paint70)
+    canvas.drawImage(image = echo, topLeftOffset = Offset(x = offsetX, y = offsetY - density), paint = paint70)
+    canvas.drawImage(image = echo, topLeftOffset = Offset(x = offsetX - density, y = offsetY), paint = paint70)
+    canvas.drawImage(image = echo, topLeftOffset = Offset(x = offsetX + density, y = offsetY), paint = paint70)
 
-    canvas.drawImage(image = echo, topLeftOffset = Offset(x = offsetX, y = offsetY), paint = paint70)
+    canvas.drawImage(image = image, topLeftOffset = Offset(x = offsetX, y = offsetY), paint = Paint())
 
     return result
 }
 
-internal fun getCloseIcon(iSize: Int, scheme: AuroraColorScheme): BitmapWrapperIcon {
-    val image = ImageBitmap(iSize, iSize)
-    val start = iSize / 4.0f
-    val end = iSize - start
+internal fun getCloseIcon(iconSize: Int, scheme: AuroraColorScheme, density: Float): ImageBitmap {
+    val image = ImageBitmap(iconSize, iconSize)
+    val start = iconSize / 4.0f
+    val end = iconSize - start
 
     val color = scheme.markColor
     val paint = Paint().also {
         it.color = color
         it.style = PaintingStyle.Stroke
-        it.strokeWidth = 2.0f
+        it.strokeWidth = 1.5f * density
         it.strokeCap = StrokeCap.Round
         it.strokeJoin = StrokeJoin.Round
     }
@@ -81,20 +81,16 @@ internal fun getCloseIcon(iSize: Int, scheme: AuroraColorScheme): BitmapWrapperI
     val canvas = Canvas(image)
     canvas.drawLine(p1 = Offset(start, start), p2 = Offset(end, end), paint = paint)
     canvas.drawLine(p1 = Offset(start, end), p2 = Offset(end, start), paint = paint)
-    return BitmapWrapperIcon(
-        image
-    )
 
     val echoColor = scheme.echoColor
     val fgStrength = getColorBrightness(color)
     val echoStrength = getColorBrightness(echoColor)
     val noEcho = abs(fgStrength - echoStrength) < 48
-    return BitmapWrapperIcon(
-        overlayEcho(
-            image = image,
-            echoAlpha = if (noEcho) 0.0f else getColorStrength(color),
-            echoColor = echoColor
-        )
+    return overlayEcho(
+        image = image,
+        echoAlpha = if (noEcho) 0.0f else getColorStrength(color),
+        echoColor = echoColor,
+        density = density
     )
 }
 

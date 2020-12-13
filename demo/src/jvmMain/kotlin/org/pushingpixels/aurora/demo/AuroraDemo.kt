@@ -41,6 +41,7 @@ import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.components.*
 import org.pushingpixels.aurora.icon.AuroraThemedFollowTextIcon
 import org.pushingpixels.aurora.icon.AuroraThemedIcon
+import org.pushingpixels.aurora.skin.magellanSkin
 import org.pushingpixels.aurora.skin.ravenSkin
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow

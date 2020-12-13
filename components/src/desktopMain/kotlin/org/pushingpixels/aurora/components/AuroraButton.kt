@@ -39,10 +39,7 @@ import androidx.compose.foundation.InteractionState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Providers
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ClipOp
@@ -58,6 +55,8 @@ import org.pushingpixels.aurora.components.utils.*
 import org.pushingpixels.aurora.utils.boundingRect
 import kotlin.math.max
 
+// TODO - revisit this
+val AmbientStateTransitionTracker = ambientOf<StateTransitionTracker>()
 
 // This will be initialized on first usage using the getSelectedTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
@@ -350,6 +349,7 @@ private fun AuroraToggleButton(
         // Pass our text color and model state snapshot to the children
         Providers(
             AmbientTextColor provides textColor,
+            AmbientStateTransitionTracker provides stateTransitionTracker,
             AmbientModelStateInfoSnapshot provides stateTransitionTracker.modelStateInfo.getSnapshot()
         ) {
             Layout(
@@ -647,6 +647,7 @@ private fun AuroraButton(
         // Pass our text color and model state snapshot to the children
         Providers(
             AmbientTextColor provides textColor,
+            AmbientStateTransitionTracker provides stateTransitionTracker,
             AmbientModelStateInfoSnapshot provides stateTransitionTracker.modelStateInfo.getSnapshot()
         ) {
             Layout(
