@@ -37,8 +37,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.platform.AmbientDensity
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -65,7 +66,10 @@ private fun AuroraWindowContent(
     val iconSize = (18 * density).toInt()
 
     val extendedState = AppManager.focusedWindow?.window?.extendedState
-    val isMaximized = remember { mutableStateOf(((extendedState != null) && ((extendedState and Frame.MAXIMIZED_BOTH) !== 0))) }
+    val isMaximized =
+        remember { mutableStateOf(((extendedState != null) && ((extendedState and Frame.MAXIMIZED_BOTH) != 0))) }
+
+    val skinColors = AmbientSkinColors.current
 
     Column(Modifier.fillMaxSize().auroraBackground()) {
         if (undecorated) {
@@ -81,7 +85,16 @@ private fun AuroraWindowContent(
                     WindowDraggableArea(
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text(text = title, color = Color.White)
+                        val colorScheme = skinColors.getEnabledColorScheme(DecorationAreaType.TITLE_PANE)
+                        Text(
+                            text = title, style = TextStyle(
+                                color = colorScheme.foregroundColor,
+                                shadow = Shadow(
+                                    color = colorScheme.echoColor,
+                                    blurRadius = density
+                                )
+                            )
+                        )
                     }
                     AuroraButton(
                         modifier = Modifier.width(20.dp).height(20.dp),
@@ -163,7 +176,7 @@ private fun AuroraWindowContent(
                             )
                         )
                     }
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
                     AuroraButton(
                         modifier = Modifier.width(20.dp).height(20.dp),
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,

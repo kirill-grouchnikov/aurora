@@ -48,7 +48,6 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.AmbientAnimationClock
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.components.utils.*
@@ -77,8 +76,8 @@ private lateinit var EnabledTransitionDefinition: TransitionDefinition<Boolean>
 object ButtonSizingConstants {
     val DefaultButtonContentPadding = PaddingValues(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
     val DefaultButtonIconTextPadding = 6.dp
-    val DefaultButtonWidth = 80.dp
-    val DefaultButtonHeight = 32.dp
+    val DefaultButtonContentWidth = 60.dp
+    val DefaultButtonContentHeight = 16.dp
 }
 
 @Immutable
@@ -373,8 +372,8 @@ private fun AuroraToggleButton(
 
                 if (sizingStrategy == ButtonSizingStrategy.EXTENDED) {
                     // Bump up to default minimums if necessary
-                    uiPreferredWidth = max(uiPreferredWidth, ButtonSizingConstants.DefaultButtonWidth.toIntPx())
-                    uiPreferredHeight = max(uiPreferredHeight, ButtonSizingConstants.DefaultButtonHeight.toIntPx())
+                    uiPreferredWidth = max(uiPreferredWidth, ButtonSizingConstants.DefaultButtonContentWidth.toIntPx())
+                    uiPreferredHeight = max(uiPreferredHeight, ButtonSizingConstants.DefaultButtonContentHeight.toIntPx())
                 }
 
                 // And ask the button shaper for the final sizing
@@ -671,8 +670,8 @@ private fun AuroraButton(
 
                 if (sizingStrategy == ButtonSizingStrategy.EXTENDED) {
                     // Bump up to default minimums if necessary
-                    uiPreferredWidth = max(uiPreferredWidth, ButtonSizingConstants.DefaultButtonWidth.toIntPx())
-                    uiPreferredHeight = max(uiPreferredHeight, ButtonSizingConstants.DefaultButtonHeight.toIntPx())
+                    uiPreferredWidth = max(uiPreferredWidth, ButtonSizingConstants.DefaultButtonContentWidth.toIntPx())
+                    uiPreferredHeight = max(uiPreferredHeight, ButtonSizingConstants.DefaultButtonContentHeight.toIntPx())
                 }
 
                 // And ask the button shaper for the final sizing

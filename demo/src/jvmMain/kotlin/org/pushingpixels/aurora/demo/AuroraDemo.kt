@@ -105,7 +105,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     // This is a full-color icon. Use original colors for enabled and active states,
                     // and color scheme based filtering for disabled states
                     AuroraThemedIcon(
-                        icon = computer.of(12.dp, 12.dp),
+                        icon = computer.of(10.dp, 10.dp),
                         disabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME,
                         enabledFilterStrategy = IconFilterStrategy.ORIGINAL,
                         activeFilterStrategy = IconFilterStrategy.ORIGINAL,
@@ -126,7 +126,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT
                 ) {
                     AuroraThemedFollowTextIcon(
-                        icon = account_box_24px.of(12.dp, 12.dp),
+                        icon = account_box_24px.of(10.dp, 10.dp),
                         modifier = Modifier.auroraButtonIconPadding()
                     )
                     AuroraText("flat")
@@ -137,7 +137,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
                 ) {
                     AuroraThemedFollowTextIcon(
-                        icon = keyboard_capslock_24px.of(12.dp, 12.dp),
+                        icon = keyboard_capslock_24px.of(10.dp, 10.dp),
                         modifier = Modifier.auroraButtonIconPadding()
                     )
                     AuroraText("always")
@@ -150,9 +150,11 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     onSelectedChange = { println("Selected bold? $it") },
                     sides = ButtonSides(straightSides = setOf(Side.END)),
                     sizingStrategy = ButtonSizingStrategy.COMPACT,
-                    contentPadding = PaddingValues(all = 10.dp)
+                    contentPadding = PaddingValues(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
                 ) {
-                    AuroraText("bold")
+                    AuroraThemedFollowTextIcon(
+                        icon = format_bold_24px.of(10.dp, 10.dp),
+                    )
                 }
                 AuroraToggleButton(
                     enabled = enabled.value,
@@ -163,9 +165,11 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                         openSides = setOf(Side.START, Side.END)
                     ),
                     sizingStrategy = ButtonSizingStrategy.COMPACT,
-                    contentPadding = PaddingValues(all = 10.dp)
+                    contentPadding = PaddingValues(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
                 ) {
-                    AuroraText("italic")
+                    AuroraThemedFollowTextIcon(
+                        icon = format_italic_24px.of(10.dp, 10.dp),
+                    )
                 }
                 AuroraToggleButton(
                     enabled = enabled.value,
@@ -173,9 +177,11 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     onSelectedChange = { println("Selected under? $it") },
                     sides = ButtonSides(straightSides = setOf(Side.START)),
                     sizingStrategy = ButtonSizingStrategy.COMPACT,
-                    contentPadding = PaddingValues(all = 10.dp)
+                    contentPadding = PaddingValues(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
                 ) {
-                    AuroraText("under")
+                    AuroraThemedFollowTextIcon(
+                        icon = format_underlined_24px.of(10.dp, 10.dp),
+                    )
                 }
 
                 Spacer(modifier = Modifier.width(8.dp))
