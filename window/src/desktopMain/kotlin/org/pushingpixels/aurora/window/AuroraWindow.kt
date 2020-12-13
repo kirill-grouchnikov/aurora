@@ -34,9 +34,7 @@ import androidx.compose.desktop.Window
 import androidx.compose.desktop.WindowEvents
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Providers
-import androidx.compose.runtime.emptyContent
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,9 +50,9 @@ import org.pushingpixels.aurora.components.AmbientStateTransitionTracker
 import org.pushingpixels.aurora.components.AuroraButton
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.shaper.AuroraButtonShaper
+import java.awt.Frame
 import java.awt.image.BufferedImage
 import javax.swing.JFrame
-
 
 @Composable
 private fun AuroraWindowContent(
@@ -65,6 +63,10 @@ private fun AuroraWindowContent(
 ) {
     val density = AmbientDensity.current.density
     val iconSize = (18 * density).toInt()
+
+    val extendedState = AppManager.focusedWindow?.window?.extendedState
+    val isMaximized = remember { mutableStateOf(((extendedState != null) && ((extendedState and Frame.MAXIMIZED_BOTH) !== 0))) }
+
     Column(Modifier.fillMaxSize().auroraBackground()) {
         if (undecorated) {
             AuroraDecorationArea(decorationAreaType = DecorationAreaType.TITLE_PANE) {
@@ -105,6 +107,59 @@ private fun AuroraWindowContent(
                                 },
                                 colorSchemeAssociationKindDelegate = null,
                                 uniqueIconTypeId = "aurora.titlePane.minimizeIcon"
+                            )
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(4.dp))
+                    AuroraButton(
+                        modifier = Modifier.width(20.dp).height(20.dp),
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                        sizingStrategy = ButtonSizingStrategy.COMPACT,
+                        contentPadding = PaddingValues(start = 1.dp, top = 1.dp, end = 2.dp, bottom = 2.dp),
+                        onClick = {
+                            val current = AppManager.focusedWindow
+                            if (current != null) {
+                                if (current.window.extendedState == JFrame.MAXIMIZED_BOTH) {
+                                    current.window.extendedState = JFrame.NORMAL
+                                } else {
+                                    current.window.extendedState = JFrame.MAXIMIZED_BOTH
+                                }
+                                isMaximized.value = !isMaximized.value
+                            }
+                        }
+                    ) {
+                        if (isMaximized.value)
+                            AuroraIcon(
+                                icon = TransitionAwareIcon(
+                                    decorationAreaType = DecorationAreaType.TITLE_PANE,
+                                    skinColors = AmbientSkinColors.current,
+                                    buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                                    stateTransitionTracker = AmbientStateTransitionTracker.current,
+                                    delegate = { scheme ->
+                                        getRestoreIcon(
+                                            iconSize = iconSize,
+                                            scheme = scheme,
+                                            density = density
+                                        )
+                                    },
+                                    colorSchemeAssociationKindDelegate = null,
+                                    uniqueIconTypeId = "aurora.titlePane.restoreIcon"
+                                )
+                            ) else AuroraIcon(
+                            icon = TransitionAwareIcon(
+                                decorationAreaType = DecorationAreaType.TITLE_PANE,
+                                skinColors = AmbientSkinColors.current,
+                                buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                                stateTransitionTracker = AmbientStateTransitionTracker.current,
+                                delegate = { scheme ->
+                                    getMaximizeIcon(
+                                        iconSize = iconSize,
+                                        scheme = scheme,
+                                        density = density
+                                    )
+                                },
+                                colorSchemeAssociationKindDelegate = null,
+                                uniqueIconTypeId = "aurora.titlePane.maximizeIcon"
                             )
                         )
                     }

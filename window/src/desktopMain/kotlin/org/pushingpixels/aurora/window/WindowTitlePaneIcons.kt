@@ -144,6 +144,167 @@ fun getMinimizeIcon(iconSize: Int, scheme: AuroraColorScheme, density: Float): I
     )
 }
 
+fun getRestoreIcon(iconSize: Int, scheme: AuroraColorScheme, density: Float): ImageBitmap {
+    val image = ImageBitmap(iconSize, iconSize)
+
+    val start = iconSize / 4.0f - density
+    val end = iconSize - start
+    val smallSquareSize = end - start - 3.0f * density
+
+    val color = scheme.markColor
+    val paint = Paint().also {
+        it.color = color
+        it.style = PaintingStyle.Fill
+    }
+    val canvas = Canvas(image)
+
+    // "Main" rectangle
+    val mainStartX = start
+    val mainStartY = end - smallSquareSize
+
+    // top (thicker)
+    canvas.drawRect(
+        rect = Rect(
+            left = mainStartX,
+            top = mainStartY,
+            right = mainStartX + smallSquareSize,
+            bottom = mainStartY + 2.0f * density
+        ), paint = paint
+    )
+    // left
+    canvas.drawRect(
+        rect = Rect(
+            left = mainStartX,
+            top = mainStartY,
+            right = mainStartX + density,
+            bottom = mainStartY + smallSquareSize
+        ), paint = paint
+    )
+    // right
+    canvas.drawRect(
+        rect = Rect(
+            left = mainStartX + smallSquareSize - density,
+            top = mainStartY,
+            right = mainStartX + smallSquareSize,
+            bottom = mainStartY + smallSquareSize
+        ), paint = paint
+    )
+    // bottom
+    canvas.drawRect(
+        rect = Rect(
+            left = mainStartX,
+            top = mainStartY + smallSquareSize - density,
+            right = mainStartX + smallSquareSize,
+            bottom = mainStartY + smallSquareSize
+        ), paint = paint
+    )
+
+    // "Secondary rectangle"
+    val secondaryStartX = mainStartX + 3.0f * density
+    val secondaryStartY = mainStartY - 3.0f * density
+    // top (thicker)
+    canvas.drawRect(
+        rect = Rect(
+            left = secondaryStartX,
+            top = secondaryStartY,
+            right = secondaryStartX + smallSquareSize,
+            bottom = secondaryStartY + 2.0f * density
+        ), paint = paint
+    )
+    // right
+    canvas.drawRect(
+        rect = Rect(
+            left = secondaryStartX + smallSquareSize - density,
+            top = secondaryStartY,
+            right = secondaryStartX + smallSquareSize,
+            bottom = secondaryStartY + smallSquareSize
+        ), paint = paint
+    )
+    // bottom (partial)
+    canvas.drawRect(
+        rect = Rect(
+            left = mainStartX + smallSquareSize + density,
+            top = secondaryStartY + smallSquareSize - density,
+            right = mainStartX + smallSquareSize + 3.0f*density,
+            bottom = secondaryStartY + smallSquareSize
+        ), paint = paint
+    )
+
+    val echoColor = scheme.echoColor
+    val fgStrength = getColorBrightness(color)
+    val echoStrength = getColorBrightness(echoColor)
+    val noEcho = abs(fgStrength - echoStrength) < 48
+    return overlayEcho(
+        image = image,
+        echoAlpha = if (noEcho) 0.0f else getColorStrength(color),
+        echoColor = echoColor,
+        density = density
+    )
+}
+
+fun getMaximizeIcon(iconSize: Int, scheme: AuroraColorScheme, density: Float): ImageBitmap {
+    val image = ImageBitmap(iconSize, iconSize)
+
+    val start = iconSize / 4.0f - density
+    val end = iconSize - start
+
+    val color = scheme.markColor
+    val paint = Paint().also {
+        it.color = color
+        it.style = PaintingStyle.Fill
+    }
+    val canvas = Canvas(image)
+
+    // top (thicker)
+    canvas.drawRect(
+        rect = Rect(
+            left = start,
+            top = start,
+            right = end,
+            bottom = start + 2.0f * density
+        ), paint = paint
+    )
+    // left
+    canvas.drawRect(
+        rect = Rect(
+            left = start,
+            top = start,
+            right = start + density,
+            bottom = end
+        ), paint = paint
+    )
+    // right
+    canvas.drawRect(
+        rect = Rect(
+            left = end - density,
+            top = start,
+            right = end,
+            bottom = end
+        ), paint = paint
+    )
+    // bottom
+    canvas.drawRect(
+        rect = Rect(
+            left = start,
+            top = end - density,
+            right = end,
+            bottom = end
+        ), paint = paint
+    )
+
+    val echoColor = scheme.echoColor
+    val fgStrength = getColorBrightness(color)
+    val echoStrength = getColorBrightness(echoColor)
+    val noEcho = abs(fgStrength - echoStrength) < 48
+    return overlayEcho(
+        image = image,
+        echoAlpha = if (noEcho) 0.0f else getColorStrength(color),
+        echoColor = echoColor,
+        density = density
+    )
+}
+
+
 
 
 
