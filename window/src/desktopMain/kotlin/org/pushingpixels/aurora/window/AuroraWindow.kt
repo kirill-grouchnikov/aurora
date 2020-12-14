@@ -33,7 +33,6 @@ import androidx.compose.desktop.AppManager
 import androidx.compose.desktop.Window
 import androidx.compose.desktop.WindowEvents
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +48,7 @@ import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.component.AmbientStateTransitionTracker
 import org.pushingpixels.aurora.component.AuroraButton
+import org.pushingpixels.aurora.component.AuroraText
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.shaper.AuroraButtonShaper
 import java.awt.Frame
@@ -86,8 +86,9 @@ private fun AuroraWindowContent(
                         modifier = Modifier.weight(1f)
                     ) {
                         val colorScheme = skinColors.getEnabledColorScheme(DecorationAreaType.TITLE_PANE)
-                        Text(
-                            text = title, style = TextStyle(
+                        AuroraText(
+                            text = title,
+                            style = TextStyle(
                                 color = colorScheme.foregroundColor,
                                 shadow = Shadow(
                                     color = colorScheme.echoColor,
