@@ -40,7 +40,7 @@ import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.common.HashMapKey
-import org.pushingpixels.aurora.components.utils.StateTransitionTracker
+import org.pushingpixels.aurora.component.utils.StateTransitionTracker
 import org.pushingpixels.aurora.icon.AuroraIcon
 
 /**

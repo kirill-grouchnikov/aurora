@@ -47,8 +47,8 @@ import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.WindowDraggableArea
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.components.AmbientStateTransitionTracker
-import org.pushingpixels.aurora.components.AuroraButton
+import org.pushingpixels.aurora.component.AmbientStateTransitionTracker
+import org.pushingpixels.aurora.component.AuroraButton
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.shaper.AuroraButtonShaper
 import java.awt.Frame

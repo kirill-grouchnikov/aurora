@@ -35,8 +35,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.DecorationAreaType
-import org.pushingpixels.aurora.components.AuroraButton
-import org.pushingpixels.aurora.components.AuroraText
+import org.pushingpixels.aurora.component.AuroraButton
+import org.pushingpixels.aurora.component.AuroraText
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.icon.AuroraThemedFollowTextIcon
 import org.pushingpixels.aurora.skin.marinerSkin

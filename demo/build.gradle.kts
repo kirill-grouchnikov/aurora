@@ -14,7 +14,7 @@ kotlin {
         named("jvmMain") {
             dependencies {
                 implementation(compose.desktop.currentOs)
-                implementation(project(":components"))
+                implementation(project(":component"))
                 implementation(project(":icon:icon"))
                 implementation(project(":skin"))
                 implementation(project(":window"))

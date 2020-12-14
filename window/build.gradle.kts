@@ -12,7 +12,7 @@ kotlin {
             dependencies {
                 api(compose.runtime)
                 api(compose.foundation)
-                implementation(project(":components"))
+                implementation(project(":component"))
                 implementation(project(":skin"))
             }
         }
@@ -22,7 +22,7 @@ kotlin {
                 implementation(project(":common"))
                 implementation(project(":bitmapfilter"))
                 implementation(project(":icon:icon"))
-                implementation(project(":components"))
+                implementation(project(":component"))
                 implementation(project(":skin"))
             }
         }

@@ -27,7 +27,7 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.aurora.components
+package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.asDisposableClock
 import androidx.compose.animation.core.AnimatedFloat
@@ -50,7 +50,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
-import org.pushingpixels.aurora.components.utils.*
+import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.utils.boundingRect
 import kotlin.math.max
 
