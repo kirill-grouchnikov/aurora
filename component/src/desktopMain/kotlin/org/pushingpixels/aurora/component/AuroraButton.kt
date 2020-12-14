@@ -262,7 +262,6 @@ private fun AuroraToggleButton(
 
             val fillPainter = AuroraSkin.painters.fillPainter
             val borderPainter = AuroraSkin.painters.borderPainter
-            val buttonShaper = AuroraSkin.buttonShaper
 
             val alpha: Float
             if (backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
@@ -560,7 +559,6 @@ private fun AuroraButton(
 
             val fillPainter = AuroraSkin.painters.fillPainter
             val borderPainter = AuroraSkin.painters.borderPainter
-            val buttonShaper = AuroraSkin.buttonShaper
 
             val alpha: Float
             if (backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {

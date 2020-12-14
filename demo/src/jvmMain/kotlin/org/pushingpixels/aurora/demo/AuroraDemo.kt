@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.*
+import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.icon.AuroraThemedFollowTextIcon
 import org.pushingpixels.aurora.icon.AuroraThemedIcon
 import org.pushingpixels.aurora.skin.ravenSkin
@@ -85,6 +86,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                 ) {
                     AuroraText(text = "sample check")
                 }
+                Spacer(modifier = Modifier.width(8.dp))
                 AuroraRadioButton(
                     selected = selected,
                     onSelectedChange = { println("Selected radio? $it") },
@@ -151,8 +153,8 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     sizingStrategy = ButtonSizingStrategy.COMPACT,
                     contentPadding = PaddingValues(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
                 ) {
-                    AuroraThemedFollowTextIcon(
-                        icon = format_bold_24px.of(10.dp, 10.dp),
+                    AuroraIcon(
+                        icon = Format_text_bold.of(10.dp, 10.dp),
                     )
                 }
                 AuroraToggleButton(
@@ -166,20 +168,35 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     sizingStrategy = ButtonSizingStrategy.COMPACT,
                     contentPadding = PaddingValues(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
                 ) {
-                    AuroraThemedFollowTextIcon(
-                        icon = format_italic_24px.of(10.dp, 10.dp),
+                    AuroraIcon(
+                        icon = Format_text_italic.of(10.dp, 10.dp),
                     )
                 }
                 AuroraToggleButton(
                     enabled = enabled.value,
                     selected = false,
                     onSelectedChange = { println("Selected under? $it") },
+                    sides = ButtonSides(
+                        straightSides = setOf(Side.START, Side.END),
+                        openSides = setOf(Side.START, Side.END)
+                    ),
+                    sizingStrategy = ButtonSizingStrategy.COMPACT,
+                    contentPadding = PaddingValues(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
+                ) {
+                    AuroraIcon(
+                        icon = Format_text_underline.of(10.dp, 10.dp),
+                    )
+                }
+                AuroraToggleButton(
+                    enabled = enabled.value,
+                    selected = false,
+                    onSelectedChange = { println("Selected strike? $it") },
                     sides = ButtonSides(straightSides = setOf(Side.START)),
                     sizingStrategy = ButtonSizingStrategy.COMPACT,
                     contentPadding = PaddingValues(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
                 ) {
-                    AuroraThemedFollowTextIcon(
-                        icon = format_underlined_24px.of(10.dp, 10.dp),
+                    AuroraIcon(
+                        icon = Format_text_strikethrough.of(10.dp, 10.dp),
                     )
                 }
 

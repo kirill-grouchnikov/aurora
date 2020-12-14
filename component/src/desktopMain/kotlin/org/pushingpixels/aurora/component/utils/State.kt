@@ -131,7 +131,7 @@ class StateTransitionTracker(
     )
 
     fun update(isEnabled: Boolean, isPressed: Boolean, duration: Int, dump: Boolean = false) {
-        var duration = duration
+        var tweakedDuration = duration
         currentState = ComponentState.getState(
             isEnabled = isEnabled,
             isRollover = rolloverState.value,
@@ -150,7 +150,7 @@ class StateTransitionTracker(
                 //println("Already has new state")
                 // Going to a state that is already partially active
                 val transitionPosition = modelStateInfo.stateContributionMap[currentState]!!.contribution
-                duration = (duration * (1.0f - transitionPosition)).toInt()
+                tweakedDuration = (tweakedDuration * (1.0f - transitionPosition)).toInt()
                 stateTransitionFloat.setBounds(transitionPosition, 1.0f)
                 stateTransitionFloat.snapTo(transitionPosition)
             } else {
@@ -193,8 +193,8 @@ class StateTransitionTracker(
             //println("Animating over $duration from ${stateTransitionFloat.value} to 1.0f")
             stateTransitionFloat.animateTo(
                 targetValue = 1.0f,
-                anim = FloatTweenSpec(duration = duration),
-                onEnd = { endReason, endValue ->
+                anim = FloatTweenSpec(duration = tweakedDuration),
+                onEnd = { endReason, _ ->
                     //println("Ended with reason $endReason at $endValue / ${stateTransitionFloat.value}")
                     if (endReason == AnimationEndReason.TargetReached) {
                         modelStateInfo.updateActiveStates(1.0f)

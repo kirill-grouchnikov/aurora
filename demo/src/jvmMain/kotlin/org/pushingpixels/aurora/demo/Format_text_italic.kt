@@ -24,7 +24,7 @@ import kotlin.math.min
  * This class has been automatically generated using
  * <a href="https://github.com/kirill-grouchnikov/aurora">Aurora SVG transcoder</a>.
  */
-class pattern private constructor(var _width: Int, var _height: Int) : AuroraIcon {
+class Format_text_italic private constructor(var _width: Int, var _height: Int) : AuroraIcon {
     @Suppress("UNUSED_VARIABLE") private var shape: Outline? = null
     @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
@@ -58,81 +58,167 @@ Matrix(values=floatArrayOf(
 0.0f, 0.0f, 0.0f, 1.0f)
 ))}){
 // _0_0
-shape = Outline.Rectangle(rect = Rect(left = 0.0f, top = 0.0f, right = 200.0f, bottom = 200.0f))
+alphaStack.add(0, alpha)
+alpha *= 0.15f
 withTransform({
-    if (shape is Outline.Rectangle) {
-        clipPath(Path().also { it.addRect((shape as Outline.Rectangle).rect) })
-    }
-    if (shape is Outline.Rounded) {
-        clipPath(Path().also { it.addRoundRect((shape as Outline.Rounded).roundRect) })
-    }
-    if (shape is Outline.Generic) {
-        clipPath(Path().also { it.addPath((shape as Outline.Generic).path) })
-    }
-}) {
-    val rect2D = Rect(left=0.0f, top=0.0f, right=50.0f, bottom=50.0f)
-    val tTiled = Matrix(values=floatArrayOf(
+transform(
+Matrix(values=floatArrayOf(
+1.4701440334320068f, 0.0f, 0.0f, -12.76416015625f,
+0.0f, 0.5354740023612976f, 0.0f, 20.915340423583984f,
+0.0f, 0.0f, 1.0f, 0.0f,
+0.0f, 0.0f, 0.0f, 1.0f)
+))}){
+// _0_0_0
+if (generalPath == null) {
+   generalPath = Path()
+} else {
+   generalPath!!.reset()
+}
+generalPath!!.moveTo(40.48186f, 36.421127f)
+generalPath!!.cubicTo(40.50693f, 39.429993f, 37.530556f, 42.216076f, 32.67976f, 43.724407f)
+generalPath!!.cubicTo(27.828962f, 45.23274f, 21.845287f, 45.23274f, 16.99449f, 43.724407f)
+generalPath!!.cubicTo(12.143692f, 42.216076f, 9.167317f, 39.429993f, 9.192389f, 36.421127f)
+generalPath!!.cubicTo(9.167317f, 33.412262f, 12.143692f, 30.626177f, 16.99449f, 29.117847f)
+generalPath!!.cubicTo(21.845287f, 27.609516f, 27.828962f, 27.609516f, 32.67976f, 29.117847f)
+generalPath!!.cubicTo(37.530556f, 30.626177f, 40.50693f, 33.412262f, 40.48186f, 36.421127f)
+generalPath!!.close()
+shape = Outline.Generic(generalPath!!)
+brush = RadialGradient(0.0f to Color(0, 0, 0, 255), 1.0f to Color(0, 0, 0, 0), centerX = 24.837126f, centerY = 36.42112f, radius = 15.644739f, tileMode = TileMode.Clamp)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+}
+alpha = alphaStack.removeAt(0)
+}
+alpha = alphaStack.removeAt(0)
+alphaStack.add(0, alpha)
+alpha *= 1.0f
+withTransform({
+transform(
+Matrix(values=floatArrayOf(
 1.0f, 0.0f, 0.0f, 0.0f,
 0.0f, 1.0f, 0.0f, 0.0f,
 0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f))
-withTransform({transform(tTiled)}){
-   var src: Offset
-   var dst: Offset
-    var startX = rect2D.left
-    val maxX = when(shape) {
-        is Outline.Rectangle -> (shape as Outline.Rectangle).rect.right
-        is Outline.Rounded -> (shape as Outline.Rounded).roundRect.right
-        is Outline.Generic -> (shape as Outline.Generic).path.getBounds().right
-        else -> 0.0f
-    }
-    val maxY = when(shape) {
-        is Outline.Rectangle -> (shape as Outline.Rectangle).rect.bottom
-        is Outline.Rounded -> (shape as Outline.Rounded).roundRect.bottom
-        is Outline.Generic -> (shape as Outline.Generic).path.getBounds().bottom
-        else -> 0.0f
-    }
-    tileX@ while (true) {
-        var startY = rect2D.top
-        tileY@ while (true) {
-             translate(left = startX, top = startY) {
-             var shapeTile: Outline?
-             var alphaTile = alpha
-alphaTile = alpha * 1.0f
-brush = SolidColor(Color(135, 206, 235, 255))
-shapeTile = Outline.Rectangle(rect = Rect(left = 0.0f, top = 0.0f, right = 50.0f, bottom = 50.0f))
-drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile)
-alphaTile = alpha * 1.0f
-brush = LinearGradient(0.05f to Color(255, 0, 0, 255), 0.95f to Color(255, 165, 0, 255), startX = 0.0f, startY = 0.0f, endX = 0.0f, endY = 25.0f, tileMode = TileMode.Clamp)
-shapeTile = Outline.Rectangle(rect = Rect(left = 0.0f, top = 0.0f, right = 25.0f, bottom = 25.0f))
-drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile)
-alphaTile = alpha * 1.0f
-alphaTile = alpha * 1.0f
-brush = LinearGradient(0.05f to Color(255, 255, 255, 128), 0.95f to Color(0, 0, 255, 128), startX = 5.0f, startY = 5.0f, endX = 45.0f, endY = 5.0f, tileMode = TileMode.Clamp)
-shapeTile = Outline.Generic(path = Path().also { it.addOval(oval=Rect(left = 5.0f, top = 5.0f, right = 45.0f, bottom = 45.0f))})
-drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile)
-alphaTile = alpha * 1.0f
-            }
-            startY += rect2D.height
-            src = Offset(x = startX, y = startY)
-            dst = tTiled.map(src)
-            if (dst.y > maxY) {
-                break@tileY
-            }
-        }
-        startX += rect2D.width
-        src = Offset(x = startX, y = startY)
-        dst = tTiled.map(src)
-        if (dst.x > maxX) {
-            break@tileX
-        }
-    }
+0.0f, 0.0f, 0.0f, 1.0f)
+))}){
+// _0_1
+alphaStack.add(0, alpha)
+alpha *= 1.0f
+withTransform({
+transform(
+Matrix(values=floatArrayOf(
+1.0f, 0.0f, 0.0f, 0.0f,
+0.0f, 1.0f, 0.0f, 0.0f,
+0.0f, 0.0f, 1.0f, 0.0f,
+0.0f, 0.0f, 0.0f, 1.0f)
+))}){
+// _0_1_0
+if (generalPath == null) {
+   generalPath = Path()
+} else {
+   generalPath!!.reset()
 }
-}
-brush = SolidColor(Color(0, 0, 0, 255))
+generalPath!!.moveTo(34.0f, 4.5f)
+generalPath!!.lineTo(4.0f, 41.5f)
+generalPath!!.lineTo(10.500004f, 41.5f)
+generalPath!!.lineTo(16.990517f, 33.5f)
+generalPath!!.lineTo(36.5f, 33.5f)
+generalPath!!.lineTo(36.500004f, 41.5f)
+generalPath!!.lineTo(41.5f, 41.5f)
+generalPath!!.lineTo(41.5f, 4.5f)
+generalPath!!.lineTo(34.0f, 4.5f)
+generalPath!!.close()
+generalPath!!.moveTo(36.5f, 9.5f)
+generalPath!!.lineTo(36.5f, 28.5f)
+generalPath!!.lineTo(21.047087f, 28.5f)
+generalPath!!.lineTo(36.5f, 9.5f)
+generalPath!!.close()
+shape = Outline.Generic(generalPath!!)
+brush = LinearGradient(0.0f to Color(73, 127, 198, 255), 1.0f to Color(144, 179, 217, 255), startX = 35.033245f, startY = 37.44521f, endX = 20.333794f, endY = 10.459655f, tileMode = TileMode.Clamp)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+brush = LinearGradient(0.0f to Color(42, 83, 135, 255), 1.0f to Color(52, 101, 164, 255), startX = 28.125004f, startY = 38.96281f, endX = 28.125004f, endY = 10.25f, tileMode = TileMode.Clamp)
 stroke = Stroke(width=1.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
-shape = Outline.Rectangle(rect = Rect(left = 0.0f, top = 0.0f, right = 200.0f, bottom = 200.0f))
+if (generalPath == null) {
+   generalPath = Path()
+} else {
+   generalPath!!.reset()
+}
+generalPath!!.moveTo(34.0f, 4.5f)
+generalPath!!.lineTo(4.0f, 41.5f)
+generalPath!!.lineTo(10.500004f, 41.5f)
+generalPath!!.lineTo(16.990517f, 33.5f)
+generalPath!!.lineTo(36.5f, 33.5f)
+generalPath!!.lineTo(36.500004f, 41.5f)
+generalPath!!.lineTo(41.5f, 41.5f)
+generalPath!!.lineTo(41.5f, 4.5f)
+generalPath!!.lineTo(34.0f, 4.5f)
+generalPath!!.close()
+generalPath!!.moveTo(36.5f, 9.5f)
+generalPath!!.lineTo(36.5f, 28.5f)
+generalPath!!.lineTo(21.047087f, 28.5f)
+generalPath!!.lineTo(36.5f, 9.5f)
+generalPath!!.close()
+shape = Outline.Generic(generalPath!!)
 drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+}
+alpha = alphaStack.removeAt(0)
+alphaStack.add(0, alpha)
+alpha *= 0.7f
+withTransform({
+transform(
+Matrix(values=floatArrayOf(
+1.0f, 0.0f, 0.0f, 0.0f,
+0.0f, 1.0f, 0.0f, 0.0f,
+0.0f, 0.0f, 1.0f, 0.0f,
+0.0f, 0.0f, 0.0f, 1.0f)
+))}){
+// _0_1_1
+brush = LinearGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(179, 179, 179, 0), startX = 26.846668f, startY = 16.432575f, endX = 27.077467f, endY = 62.926037f, tileMode = TileMode.Clamp)
+stroke = Stroke(width=1.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
+if (generalPath == null) {
+   generalPath = Path()
+} else {
+   generalPath!!.reset()
+}
+generalPath!!.moveTo(6.1325827f, 40.5f)
+generalPath!!.lineTo(34.5f, 5.5f)
+generalPath!!.lineTo(40.5f, 5.5f)
+generalPath!!.lineTo(40.5f, 40.5f)
+generalPath!!.lineTo(37.38827f, 40.48699f)
+generalPath!!.lineTo(37.38827f, 32.490986f)
+generalPath!!.lineTo(16.793787f, 32.490986f)
+generalPath!!.lineTo(9.899495f, 40.5f)
+generalPath!!.lineTo(6.1325827f, 40.5f)
+generalPath!!.close()
+shape = Outline.Generic(generalPath!!)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+}
+alpha = alphaStack.removeAt(0)
+alphaStack.add(0, alpha)
+alpha *= 0.3846154f
+withTransform({
+transform(
+Matrix(values=floatArrayOf(
+1.0f, 0.0f, 0.0f, 0.0f,
+0.0f, 1.0f, 0.0f, 0.0f,
+0.0f, 0.0f, 1.0f, 0.0f,
+0.0f, 0.0f, 0.0f, 1.0f)
+))}){
+// _0_1_2
+brush = LinearGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(255, 255, 255, 0), startX = 35.123505f, startY = 29.5f, endX = 35.91601f, endY = 6.3994164f, tileMode = TileMode.Clamp)
+stroke = Stroke(width=1.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
+if (generalPath == null) {
+   generalPath = Path()
+} else {
+   generalPath!!.reset()
+}
+generalPath!!.moveTo(18.976889f, 29.411612f)
+generalPath!!.lineTo(37.47949f, 29.5f)
+generalPath!!.lineTo(37.38827f, 6.8994164f)
+generalPath!!.lineTo(18.976889f, 29.411612f)
+generalPath!!.close()
+shape = Outline.Generic(generalPath!!)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+}
+alpha = alphaStack.removeAt(0)
 }
 alpha = alphaStack.removeAt(0)
 }
@@ -162,7 +248,7 @@ alpha = alphaStack.removeAt(0)
          * @return The X of the bounding box of the original SVG image.
          */
         fun getOrigX(): Double {
-            return 0.0
+            return 0.7131168246269226
         }
 
         /**
@@ -171,7 +257,7 @@ alpha = alphaStack.removeAt(0)
          * @return The Y of the bounding box of the original SVG image.
          */
         fun getOrigY(): Double {
-            return 0.0
+            return 4.0
         }
 
         /**
@@ -180,7 +266,7 @@ alpha = alphaStack.removeAt(0)
          * @return The width of the bounding box of the original SVG image.
          */
         fun getOrigWidth(): Double {
-            return 200.0
+            return 46.07374954223633
         }
 
         /**
@@ -189,7 +275,7 @@ alpha = alphaStack.removeAt(0)
          * @return The height of the bounding box of the original SVG image.
          */
         fun getOrigHeight(): Double {
-            return 200.0
+            return 41.13629913330078
         }
 
         /**
@@ -201,7 +287,7 @@ alpha = alphaStack.removeAt(0)
          */
         @Composable
         fun of(width: Dp, height: Dp): AuroraIcon {
-            return pattern(
+            return Format_text_italic(
                 _width = (width.value * AmbientDensity.current.density).toInt(),
                 _height = (height.value * AmbientDensity.current.density).toInt()
             )
@@ -215,7 +301,7 @@ alpha = alphaStack.removeAt(0)
         fun factory(): AuroraIcon.Factory {
             return object : AuroraIcon.Factory {
                 override fun createNewIcon(): AuroraIcon {
-                    return pattern(getOrigWidth().toInt(), getOrigHeight().toInt())
+                    return Format_text_italic(getOrigWidth().toInt(), getOrigHeight().toInt())
                 }
             }
         }

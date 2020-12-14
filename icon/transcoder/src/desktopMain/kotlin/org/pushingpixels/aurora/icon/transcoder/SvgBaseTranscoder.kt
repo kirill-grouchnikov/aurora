@@ -410,8 +410,8 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         printWriterManager!!.println("withTransform({transform(tTiled)}){")
 
         // Point2D objects for tracking when the tiling ends (in both directions)
-        printWriterManager!!.println("   var src = Offset(x = 0.0f, y = 0.0f)")
-        printWriterManager!!.println("   var dst = Offset(x = 0.0f, y = 0.0f)")
+        printWriterManager!!.println("   var src: Offset")
+        printWriterManager!!.println("   var dst: Offset")
 
         // Start a nested loop that tiles the pattern (post-transformation) on the
         // clipped draw scope.
@@ -434,7 +434,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         printWriterManager!!.println("        tileY@ while (true) {")
 
         printWriterManager!!.println("             translate(left = startX, top = startY) {")
-        printWriterManager!!.println("             var shapeTile: Outline? = null")
+        printWriterManager!!.println("             var shapeTile: Outline?")
         printWriterManager!!.println("             var alphaTile = alpha")
 
         // Since PatternGraphicsNode does not (yet?) expose its content, we ask it to
@@ -1020,7 +1020,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
     private fun transcodeTextNode(node: TextNode, comment: String) {
         printWriterManager!!.println("// $comment")
 
-        printWriterManager!!.println("            var shapeText: Outline? = null")
+        printWriterManager!!.println("            var shapeText: Outline?")
         printWriterManager!!.println("            var generalPathText: Path? = null")
         printWriterManager!!.println("            var alphaText = alpha")
 

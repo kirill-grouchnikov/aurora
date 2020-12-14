@@ -39,10 +39,10 @@ class HashMapKey(vararg val keyFields: Any) {
         return keyFields.contentDeepHashCode()
     }
 
-    override fun equals(obj: Any?): Boolean {
-        if (obj !is HashMapKey) {
+    override fun equals(other: Any?): Boolean {
+        if (other !is HashMapKey) {
             return false
         }
-        return keyFields.contentDeepEquals(obj.keyFields)
+        return keyFields.contentDeepEquals(other.keyFields)
     }
 }

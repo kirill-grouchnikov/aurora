@@ -297,23 +297,20 @@ class ComponentState(
         }
     }
 
-    override fun equals(obj: Any?): Boolean {
-        if (obj !is ComponentState) {
+    override fun equals(other: Any?): Boolean {
+        if (other !is ComponentState) {
             return false
         }
-        val second = obj
-        if (facetsTurnedOn!!.size != second.facetsTurnedOn!!.size) {
+        if (facetsTurnedOn!!.size != other.facetsTurnedOn!!.size) {
             return false
         }
-        if (facetsTurnedOff!!.size != second.facetsTurnedOff!!.size) {
+        if (facetsTurnedOff!!.size != other.facetsTurnedOff!!.size) {
             return false
         }
-        if (!facetsTurnedOn.containsAll(second.facetsTurnedOn)) {
+        if (!facetsTurnedOn.containsAll(other.facetsTurnedOn)) {
             return false
         }
-        return if (!facetsTurnedOff.containsAll(second.facetsTurnedOff)) {
-            false
-        } else true
+        return facetsTurnedOff.containsAll(other.facetsTurnedOff)
     }
 
     companion object {

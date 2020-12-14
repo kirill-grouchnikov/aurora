@@ -58,7 +58,7 @@ Matrix(values=floatArrayOf(
 0.0f, 0.0f, 0.0f, 1.0f)
 ))}){
 // _0_0
-            var shapeText: Outline? = null
+            var shapeText: Outline?
             var generalPathText: Path? = null
             var alphaText = alpha
 alphaText = alpha * 1.0f
@@ -109,7 +109,7 @@ Matrix(values=floatArrayOf(
 0.0f, 0.0f, 0.0f, 1.0f)
 ))}){
 // _0_1
-            var shapeText: Outline? = null
+            var shapeText: Outline?
             var generalPathText: Path? = null
             var alphaText = alpha
 alphaText = alpha * 1.0f
@@ -197,7 +197,7 @@ Matrix(values=floatArrayOf(
 0.0f, 0.0f, 0.0f, 1.0f)
 ))}){
 // _0_2
-            var shapeText: Outline? = null
+            var shapeText: Outline?
             var generalPathText: Path? = null
             var alphaText = alpha
 alphaText = alpha * 1.0f
@@ -258,7 +258,7 @@ Matrix(values=floatArrayOf(
 0.0f, 0.0f, 0.0f, 1.0f)
 ))}){
 // _0_3
-            var shapeText: Outline? = null
+            var shapeText: Outline?
             var generalPathText: Path? = null
             var alphaText = alpha
 alphaText = alpha * 1.0f

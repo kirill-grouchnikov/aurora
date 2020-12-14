@@ -75,7 +75,7 @@ internal class TransitionAwareIcon(
      * @return Icon to paint.
      */
     private val iconToPaint: ImageBitmap
-        private get() {
+        get() {
             val modelStateInfo = stateTransitionTracker.modelStateInfo
             val activeStates = modelStateInfo.stateContributionMap
             var currState = modelStateInfo.currModelState
