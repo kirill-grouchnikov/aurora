@@ -34,10 +34,9 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.*
 import org.pushingpixels.aurora.bitmapfilter.ColorBitmapFilter
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.utils.getColorBrightness
-import org.pushingpixels.aurora.utils.getColorStrength
+import org.pushingpixels.aurora.common.colorBrightness
+import org.pushingpixels.aurora.common.colorStrength
 import kotlin.math.abs
-
 
 private fun overlayEcho(image: ImageBitmap, echoAlpha: Float, echoColor: Color, density: Float): ImageBitmap {
     val offsetX = 0.0f
@@ -99,12 +98,12 @@ internal fun getCloseIcon(iconSize: Int, scheme: AuroraColorScheme, density: Flo
     canvas.drawLine(p1 = Offset(start, end), p2 = Offset(end, start), paint = paint)
 
     val echoColor = scheme.echoColor
-    val fgStrength = getColorBrightness(color)
-    val echoStrength = getColorBrightness(echoColor)
+    val fgStrength = color.colorBrightness
+    val echoStrength = echoColor.colorBrightness
     val noEcho = abs(fgStrength - echoStrength) < 0.1875f
     return overlayEcho(
         image = image,
-        echoAlpha = if (noEcho) 0.0f else getColorStrength(color),
+        echoAlpha = if (noEcho) 0.0f else color.colorStrength,
         echoColor = echoColor,
         density = density
     )
@@ -133,12 +132,12 @@ fun getMinimizeIcon(iconSize: Int, scheme: AuroraColorScheme, density: Float): I
     )
 
     val echoColor = scheme.echoColor
-    val fgStrength = getColorBrightness(color)
-    val echoStrength = getColorBrightness(echoColor)
+    val fgStrength = color.colorBrightness
+    val echoStrength = echoColor.colorBrightness
     val noEcho = abs(fgStrength - echoStrength) < 0.1875f
     return overlayEcho(
         image = image,
-        echoAlpha = if (noEcho) 0.0f else getColorStrength(color),
+        echoAlpha = if (noEcho) 0.0f else color.colorStrength,
         echoColor = echoColor,
         density = density
     )
@@ -231,12 +230,12 @@ fun getRestoreIcon(iconSize: Int, scheme: AuroraColorScheme, density: Float): Im
     )
 
     val echoColor = scheme.echoColor
-    val fgStrength = getColorBrightness(color)
-    val echoStrength = getColorBrightness(echoColor)
+    val fgStrength = color.colorBrightness
+    val echoStrength = echoColor.colorBrightness
     val noEcho = abs(fgStrength - echoStrength) < 0.1875f
     return overlayEcho(
         image = image,
-        echoAlpha = if (noEcho) 0.0f else getColorStrength(color),
+        echoAlpha = if (noEcho) 0.0f else color.colorStrength,
         echoColor = echoColor,
         density = density
     )
@@ -293,12 +292,12 @@ fun getMaximizeIcon(iconSize: Int, scheme: AuroraColorScheme, density: Float): I
     )
 
     val echoColor = scheme.echoColor
-    val fgStrength = getColorBrightness(color)
-    val echoStrength = getColorBrightness(echoColor)
+    val fgStrength = color.colorBrightness
+    val echoStrength = echoColor.colorBrightness
     val noEcho = abs(fgStrength - echoStrength) < 0.1875f
     return overlayEcho(
         image = image,
-        echoAlpha = if (noEcho) 0.0f else getColorStrength(color),
+        echoAlpha = if (noEcho) 0.0f else color.colorStrength,
         echoColor = echoColor,
         density = density
     )

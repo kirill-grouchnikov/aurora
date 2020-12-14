@@ -29,7 +29,7 @@
  */
 package org.pushingpixels.aurora.colorscheme
 
-import org.pushingpixels.aurora.utils.invertColor
+import org.pushingpixels.aurora.common.inverted
 
 /**
  * Implementation of inverted color scheme. Inverted color scheme is based on
@@ -42,11 +42,11 @@ class InvertedColorScheme(origScheme: AuroraColorScheme) :
     BaseColorScheme(
         displayName = "Negated " + origScheme.displayName,
         isDark = origScheme.isDark,
-        ultraLight = invertColor(origScheme.ultraDarkColor),
-        extraLight = invertColor(origScheme.darkColor),
-        light = invertColor(origScheme.midColor),
-        mid = invertColor(origScheme.lightColor),
-        dark = invertColor(origScheme.extraLightColor),
-        ultraDark = invertColor(origScheme.ultraLightColor),
-        foreground = invertColor(origScheme.foregroundColor)
+        ultraLight = origScheme.ultraDarkColor.inverted(),
+        extraLight = origScheme.darkColor.inverted(),
+        light = origScheme.midColor.inverted(),
+        mid = origScheme.lightColor.inverted(),
+        dark = origScheme.extraLightColor.inverted(),
+        ultraDark = origScheme.ultraLightColor.inverted(),
+        foreground = origScheme.foregroundColor.inverted()
     )

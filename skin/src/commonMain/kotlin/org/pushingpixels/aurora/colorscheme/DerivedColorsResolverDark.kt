@@ -30,10 +30,7 @@
 package org.pushingpixels.aurora.colorscheme
 
 import androidx.compose.ui.graphics.Color
-import org.pushingpixels.aurora.utils.deriveByBrightness
-import org.pushingpixels.aurora.utils.getAlphaColor
-import org.pushingpixels.aurora.utils.getDarkerColor
-import org.pushingpixels.aurora.utils.getInterpolatedColor
+import org.pushingpixels.aurora.common.*
 
 /**
  * Resolver of derived colors for dark color schemes. This class is not
@@ -55,30 +52,26 @@ internal class DerivedColorsResolverDark(scheme: AuroraColorScheme) : SchemeDeri
     override val selectionForegroundColor: Color
         get() = scheme.foregroundColor
     override val selectionBackgroundColor: Color
-        get() = deriveByBrightness(scheme.ultraLightColor, 0.2f)
+        get() = scheme.ultraLightColor.withBrightness(0.2f)
     override  val backgroundFillColor: Color
         get() = scheme.midColor
     override val accentedBackgroundFillColor: Color
-        get() = getDarkerColor(scheme.midColor, 0.08f)
+        get() = scheme.midColor.darker(0.08f)
     override val focusRingColor: Color
-        get() = getAlphaColor(scheme.foregroundColor, 0.75f)
+        get() = scheme.foregroundColor.withAlpha(0.75f)
     override val textBackgroundFillColor: Color
-        get() = getInterpolatedColor(scheme.midColor, scheme.lightColor, 0.4f)
+        get() = scheme.midColor.interpolateTowards(scheme.lightColor, 0.4f)
     override val separatorPrimaryColor: Color
         get() = scheme.extraLightColor
     override val separatorSecondaryColor: Color
         get() = scheme.darkColor
     override val markColor: Color
-        get() = getInterpolatedColor(scheme.foregroundColor, scheme.ultraLightColor, 0.9f)
+        get() = scheme.foregroundColor.interpolateTowards(scheme.ultraLightColor, 0.9f)
     override val echoColor: Color
         get() = scheme.ultraDarkColor
 
     /**
-     * Creates the resolver of derived colors for the specified dark color
-     * scheme.
-     *
-     * @param scheme
-     * The original color scheme.
+     * Creates the resolver of derived colors for the specified dark color scheme.
      */
     init {
         require(scheme.isDark) { "The scheme must be dark: " + scheme.displayName }

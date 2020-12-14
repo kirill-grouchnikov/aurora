@@ -34,7 +34,7 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.utils.getInterpolatedColor
+import org.pushingpixels.aurora.common.interpolateTowards
 
 open class StandardBorderPainter : AuroraBorderPainter {
     override val displayName: String
@@ -72,8 +72,7 @@ open class StandardBorderPainter : AuroraBorderPainter {
     /**
      * Computes the color of the top portion of the border. Override to provide different visual.
      *
-     * @param borderScheme
-     * The border color scheme.
+     * @param borderScheme The border color scheme.
      * @return The color of the top portion of the border.
      */
     open fun getTopBorderColor(borderScheme: AuroraColorScheme): Color {
@@ -83,8 +82,7 @@ open class StandardBorderPainter : AuroraBorderPainter {
     /**
      * Computes the color of the middle portion of the border. Override to provide different visual.
      *
-     * @param borderScheme
-     * The border color scheme.
+     * @param borderScheme The border color scheme.
      * @return The color of the middle portion of the border.
      */
     open fun getMidBorderColor(borderScheme: AuroraColorScheme): Color {
@@ -94,11 +92,10 @@ open class StandardBorderPainter : AuroraBorderPainter {
     /**
      * Computes the color of the bottom portion of the border. Override to provide different visual.
      *
-     * @param borderScheme
-     * The border color scheme.
+     * @param borderScheme The border color scheme.
      * @return The color of the bottom portion of the border.
      */
     open fun getBottomBorderColor(borderScheme: AuroraColorScheme): Color {
-        return getInterpolatedColor(borderScheme.darkColor, borderScheme.midColor, 0.5f)
+        return borderScheme.darkColor.interpolateTowards(borderScheme.midColor, 0.5f)
     }
 }

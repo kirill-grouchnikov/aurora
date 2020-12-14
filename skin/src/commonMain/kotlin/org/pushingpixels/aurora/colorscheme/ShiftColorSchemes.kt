@@ -30,8 +30,8 @@
 package org.pushingpixels.aurora.colorscheme
 
 import androidx.compose.ui.graphics.Color
-import org.pushingpixels.aurora.utils.deriveByBrightness
-import org.pushingpixels.aurora.utils.getInterpolatedColor
+import org.pushingpixels.aurora.common.interpolateTowards
+import org.pushingpixels.aurora.common.withBrightness
 
 /**
  * Base class for shifted color schemes. A shifted color scheme is based on some
@@ -51,64 +51,36 @@ open class ShiftColorScheme(
             + (100 * backgroundShiftFactor).toInt() + "%, foregr [" + foregroundShiftColor.toString() + "]"
             + (100 * foregroundShiftFactor).toInt() + "%",
     isDark = origScheme.isDark,
-    ultraLight = getInterpolatedColor(
-        color1 = if (shiftByBrightness) deriveByBrightness(
-            backgroundShiftColor,
-            origScheme.ultraLightColor
-        ) else backgroundShiftColor,
-        color2 = origScheme.ultraLightColor,
-        color1Likeness = backgroundShiftFactor
+    ultraLight = (if (shiftByBrightness)
+        backgroundShiftColor.withBrightness(origScheme.ultraLightColor) else backgroundShiftColor).interpolateTowards(
+        origScheme.ultraLightColor, backgroundShiftFactor
     ),
-    extraLight = getInterpolatedColor(
-        color1 = if (shiftByBrightness) deriveByBrightness(
-            backgroundShiftColor,
-            origScheme.extraLightColor
-        ) else backgroundShiftColor,
-        color2 = origScheme.extraLightColor,
-        color1Likeness = backgroundShiftFactor
+    extraLight = (if (shiftByBrightness)
+        backgroundShiftColor.withBrightness(origScheme.extraLightColor) else backgroundShiftColor).interpolateTowards(
+        origScheme.extraLightColor, backgroundShiftFactor
     ),
-    light = getInterpolatedColor(
-        color1 = if (shiftByBrightness) deriveByBrightness(
-            backgroundShiftColor,
-            origScheme.lightColor
-        ) else backgroundShiftColor,
-        color2 = origScheme.lightColor,
-        color1Likeness = backgroundShiftFactor
+    light = (if (shiftByBrightness)
+        backgroundShiftColor.withBrightness(origScheme.lightColor) else backgroundShiftColor).interpolateTowards(
+        origScheme.lightColor, backgroundShiftFactor
     ),
-    mid = getInterpolatedColor(
-        color1 = if (shiftByBrightness) deriveByBrightness(
-            backgroundShiftColor,
-            origScheme.midColor
-        ) else backgroundShiftColor,
-        color2 = origScheme.midColor,
-        color1Likeness = backgroundShiftFactor
+    mid = (if (shiftByBrightness)
+        backgroundShiftColor.withBrightness(origScheme.midColor) else backgroundShiftColor).interpolateTowards(
+        origScheme.midColor, backgroundShiftFactor
     ),
-    dark = getInterpolatedColor(
-        color1 = if (shiftByBrightness) deriveByBrightness(
-            backgroundShiftColor,
-            origScheme.darkColor
-        ) else backgroundShiftColor,
-        color2 = origScheme.darkColor,
-        color1Likeness = backgroundShiftFactor
+    dark = (if (shiftByBrightness)
+        backgroundShiftColor.withBrightness(origScheme.darkColor) else backgroundShiftColor).interpolateTowards(
+        origScheme.darkColor, backgroundShiftFactor
     ),
-    ultraDark = getInterpolatedColor(
-        color1 = if (shiftByBrightness) deriveByBrightness(
-            backgroundShiftColor,
-            origScheme.ultraDarkColor
-        ) else backgroundShiftColor,
-        color2 = origScheme.ultraDarkColor,
-        color1Likeness = backgroundShiftFactor
+    ultraDark = (if (shiftByBrightness)
+        backgroundShiftColor.withBrightness(origScheme.ultraDarkColor) else backgroundShiftColor).interpolateTowards(
+        origScheme.ultraDarkColor, backgroundShiftFactor
     ),
-    foreground = getInterpolatedColor(
-        color1 = if (shiftByBrightness) deriveByBrightness(
-            foregroundShiftColor,
-            origScheme.foregroundColor
-        ) else foregroundShiftColor,
-        color2 = origScheme.foregroundColor,
-        color1Likeness = foregroundShiftFactor
+    foreground = (if (shiftByBrightness)
+        foregroundShiftColor.withBrightness(origScheme.foregroundColor) else foregroundShiftColor).interpolateTowards(
+        origScheme.foregroundColor, foregroundShiftFactor
     ),
 ) {
-    constructor (origScheme: AuroraColorScheme, shiftColor: Color, shiftFactor: Float) :
+    constructor(origScheme: AuroraColorScheme, shiftColor: Color, shiftFactor: Float) :
             this(origScheme, shiftColor, shiftFactor, shiftColor, shiftFactor / 2.0f, false)
 }
 

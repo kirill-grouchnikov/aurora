@@ -29,7 +29,7 @@
  */
 package org.pushingpixels.aurora.colorscheme
 
-import org.pushingpixels.aurora.utils.getSaturatedColor
+import org.pushingpixels.aurora.common.withSaturation
 
 /**
  * Saturated color scheme. A saturated color scheme is a color scheme that is
@@ -42,11 +42,11 @@ class SaturatedColorScheme(origScheme: AuroraColorScheme, saturationFactor: Floa
     displayName = "Saturated (" + (100 * saturationFactor).toInt() + "%) "
             + origScheme.displayName,
     isDark = origScheme.isDark,
-    ultraLight = getSaturatedColor(origScheme.ultraLightColor, saturationFactor),
-    extraLight = getSaturatedColor(origScheme.extraLightColor, saturationFactor),
-    light = getSaturatedColor(origScheme.lightColor, saturationFactor),
-    mid = getSaturatedColor(origScheme.midColor, saturationFactor),
-    dark = getSaturatedColor(origScheme.darkColor, saturationFactor),
-    ultraDark = getSaturatedColor(origScheme.ultraDarkColor, saturationFactor),
+    ultraLight = origScheme.ultraLightColor.withSaturation(saturationFactor),
+    extraLight = origScheme.extraLightColor.withSaturation(saturationFactor),
+    light = origScheme.lightColor.withSaturation(saturationFactor),
+    mid = origScheme.midColor.withSaturation(saturationFactor),
+    dark = origScheme.darkColor.withSaturation(saturationFactor),
+    ultraDark = origScheme.ultraDarkColor.withSaturation(saturationFactor),
     foreground = origScheme.foregroundColor
 )

@@ -29,7 +29,7 @@
  */
 package org.pushingpixels.aurora.colorscheme
 
-import org.pushingpixels.aurora.utils.getHueShiftedColor
+import org.pushingpixels.aurora.common.withHueShift
 
 /**
  * Hue-shifted color scheme. A hue-shifted color scheme is a color scheme that
@@ -45,11 +45,11 @@ class HueShiftColorScheme(
     "Hue-shift " + origScheme.displayName + " "
             + (100 * hueShiftFactor).toInt() + "%",
     isDark = origScheme.isDark,
-    ultraLight = getHueShiftedColor(origScheme.ultraLightColor, hueShiftFactor),
-    extraLight = getHueShiftedColor(origScheme.extraLightColor, hueShiftFactor),
-    light = getHueShiftedColor(origScheme.lightColor, hueShiftFactor),
-    mid = getHueShiftedColor(origScheme.midColor, hueShiftFactor),
-    dark = getHueShiftedColor(origScheme.darkColor, hueShiftFactor),
-    ultraDark = getHueShiftedColor(origScheme.ultraDarkColor, hueShiftFactor),
-    foreground = getHueShiftedColor(origScheme.foregroundColor, hueShiftFactor / 2.0f)
+    ultraLight = origScheme.ultraLightColor.withHueShift(hueShiftFactor),
+    extraLight = origScheme.extraLightColor.withHueShift(hueShiftFactor),
+    light = origScheme.lightColor.withHueShift(hueShiftFactor),
+    mid = origScheme.midColor.withHueShift(hueShiftFactor),
+    dark = origScheme.darkColor.withHueShift(hueShiftFactor),
+    ultraDark = origScheme.ultraDarkColor.withHueShift(hueShiftFactor),
+    foreground = origScheme.foregroundColor.withHueShift(hueShiftFactor / 2.0f)
 )

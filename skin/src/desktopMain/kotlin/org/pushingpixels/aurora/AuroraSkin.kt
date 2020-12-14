@@ -36,8 +36,8 @@ import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.colorscheme.ColorSchemes
 import org.pushingpixels.aurora.shaper.AuroraButtonShaper
-import org.pushingpixels.aurora.utils.deriveByBrightness
-import org.pushingpixels.aurora.utils.getAlphaColor
+import org.pushingpixels.aurora.common.withBrightness
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.utils.getColorSchemes
 
 object AuroraSkin {
@@ -150,10 +150,10 @@ class AccentBuilder {
 
 object ColorTransforms {
     fun alpha(alpha: Float): (Color) -> Color {
-        return { getAlphaColor(it, alpha) }
+        return { it.withAlpha(alpha) }
     }
 
     fun brightness(brightnessFactor: Float): (Color) -> Color {
-        return { deriveByBrightness(it, brightnessFactor) }
+        return { it.withBrightness(brightnessFactor) }
     }
 }

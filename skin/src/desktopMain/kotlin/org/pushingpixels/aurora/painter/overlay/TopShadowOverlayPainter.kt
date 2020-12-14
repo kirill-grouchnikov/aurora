@@ -38,8 +38,8 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.utils.deriveByBrightness
-import org.pushingpixels.aurora.utils.getAlphaColor
+import org.pushingpixels.aurora.common.withBrightness
+import org.pushingpixels.aurora.common.withAlpha
 
 /**
  * Overlay painter that paints a few pixel-high drop shadow at the top edge of
@@ -58,10 +58,9 @@ class TopShadowOverlayPainter private constructor(private val startAlpha: Float)
         height: Float,
         colors: AuroraSkinColors
     ) {
-        val shadowColor = deriveByBrightness(
-            original = colors.getBackgroundColorScheme(decorationAreaType).backgroundFillColor,
-            brightnessFactor = -0.4f
-        )
+        val shadowColor =
+            colors.getBackgroundColorScheme(decorationAreaType).backgroundFillColor
+                .withBrightness(brightnessFactor = -0.4f)
 
         with(drawScope) {
             val shadowHeight = 4.0.dp.toPx()
@@ -71,8 +70,8 @@ class TopShadowOverlayPainter private constructor(private val startAlpha: Float)
                 style = Fill,
                 brush = LinearGradient(
                     colors = listOf(
-                        getAlphaColor(shadowColor, startAlpha),
-                        getAlphaColor(shadowColor, 16.0f / 255.0f)
+                        shadowColor.withAlpha(startAlpha),
+                        shadowColor.withAlpha(0.0625f)
                     ),
                     startX = 0.0f,
                     startY = 0.0f,

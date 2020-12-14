@@ -34,7 +34,7 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.utils.getInterpolatedColor
+import org.pushingpixels.aurora.common.interpolateTowards
 
 /**
  * Fill painter that paints a subtle gradient appearance.
@@ -80,7 +80,7 @@ open class StandardFillPainter : AuroraFillPainter {
      * @return The color of the top portion of the fill.
      */
     open fun getTopFillColor(fillScheme: AuroraColorScheme): Color {
-        return getInterpolatedColor(fillScheme.darkColor, fillScheme.midColor, 0.4f)
+        return fillScheme.darkColor.interpolateTowards(fillScheme.midColor, 0.4f)
     }
 
     /**

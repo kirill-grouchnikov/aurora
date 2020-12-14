@@ -32,6 +32,7 @@ package org.pushingpixels.aurora.utils
 import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.bitmapfilter.BaseBitmapFilter
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
+import org.pushingpixels.aurora.common.*
 
 class ColorSchemeBitmapFilter(
     val scheme: AuroraColorScheme,
@@ -56,18 +57,18 @@ class ColorSchemeBitmapFilter(
         ) {
             // If the background colors are identical, create a lighter and a darker
             // version for brightness mapping
-            val lighter = deriveByBrightness(light, 0.2f)
-            val darker = deriveByBrightness(light, -0.2f)
-            schemeColorMapping[(getColorBrightness(lighter) * 255.0f).toInt()] = lighter
-            schemeColorMapping[(getColorBrightness(light) * 255.0f).toInt()] = light
-            schemeColorMapping[(getColorBrightness(darker) * 255.0f).toInt()] = darker
+            val lighter = light.withBrightness(0.2f)
+            val darker = light.withBrightness(-0.2f)
+            schemeColorMapping[(lighter.colorBrightness * 255.0f).toInt()] = lighter
+            schemeColorMapping[(light.colorBrightness * 255.0f).toInt()] = light
+            schemeColorMapping[(darker.colorBrightness * 255.0f).toInt()] = darker
         } else {
-            schemeColorMapping[(getColorBrightness(ultraLight) * 255.0f).toInt()] = ultraLight
-            schemeColorMapping[(getColorBrightness(extraLight) * 255.0f).toInt()] = extraLight
-            schemeColorMapping[(getColorBrightness(light) * 255.0f).toInt()] = light
-            schemeColorMapping[(getColorBrightness(mid) * 255.0f).toInt()] = mid
-            schemeColorMapping[(getColorBrightness(dark) * 255.0f).toInt()] = dark
-            schemeColorMapping[(getColorBrightness(ultraDark) * 255.0f).toInt()] = ultraDark
+            schemeColorMapping[(ultraLight.colorBrightness * 255.0f).toInt()] = ultraLight
+            schemeColorMapping[(extraLight.colorBrightness * 255.0f).toInt()] = extraLight
+            schemeColorMapping[(light.colorBrightness * 255.0f).toInt()] = light
+            schemeColorMapping[(mid.colorBrightness * 255.0f).toInt()] = mid
+            schemeColorMapping[(dark.colorBrightness * 255.0f).toInt()] = dark
+            schemeColorMapping[(ultraDark.colorBrightness * 255.0f).toInt()] = ultraDark
         }
 
         var schemeBrightness: List<Int> = ArrayList(schemeColorMapping.keys).sorted()
@@ -106,8 +107,8 @@ class ColorSchemeBitmapFilter(
                             // interpolate
                             val currStopColor = stretchedColorMapping[currStopValue]!!
                             val nextStopColor = stretchedColorMapping[nextStopValue]!!
-                            interpolated[i] = getInterpolatedColor(
-                                currStopColor, nextStopColor,
+                            interpolated[i] = currStopColor.interpolateTowards(
+                                nextStopColor,
                                 1.0f - (brightness - currStopValue).toFloat() / (nextStopValue - currStopValue).toFloat()
                             )
                             break

@@ -36,7 +36,7 @@ import org.pushingpixels.aurora.ColorSchemeAssociationKind
 import org.pushingpixels.aurora.ComponentState
 import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.colorscheme.*
-import org.pushingpixels.aurora.utils.getInterpolatedColor
+import org.pushingpixels.aurora.common.interpolateTowards
 
 internal data class MutableColorScheme(
     override val displayName: String,
@@ -184,27 +184,13 @@ internal fun populateColorScheme(
             componentState = contribution.key
         )
         // And interpolate the colors
-        ultraLight = getInterpolatedColor(
-            ultraLight, contributionScheme.ultraLightColor, 1.0f - amount
-        )
-        extraLight = getInterpolatedColor(
-            extraLight, contributionScheme.extraLightColor, 1.0f - amount
-        )
-        light = getInterpolatedColor(
-            light, contributionScheme.lightColor, 1.0f - amount
-        )
-        mid = getInterpolatedColor(
-            mid, contributionScheme.midColor, 1.0f - amount
-        )
-        dark = getInterpolatedColor(
-            dark, contributionScheme.darkColor, 1.0f - amount
-        )
-        ultraDark = getInterpolatedColor(
-            ultraDark, contributionScheme.ultraDarkColor, 1.0f - amount
-        )
-        foreground = getInterpolatedColor(
-            foreground, contributionScheme.foregroundColor, 1.0f - amount
-        )
+        ultraLight = ultraLight.interpolateTowards(contributionScheme.ultraLightColor, 1.0f - amount)
+        extraLight = extraLight.interpolateTowards(contributionScheme.extraLightColor, 1.0f - amount)
+        light = light.interpolateTowards(contributionScheme.lightColor, 1.0f - amount)
+        mid = mid.interpolateTowards(contributionScheme.midColor, 1.0f - amount)
+        dark = dark.interpolateTowards(contributionScheme.darkColor, 1.0f - amount)
+        ultraDark = ultraDark.interpolateTowards(contributionScheme.ultraDarkColor, 1.0f - amount)
+        foreground = foreground.interpolateTowards(contributionScheme.foregroundColor, 1.0f - amount)
 
         //println("\tcontribution of $amount from ${contribution.key} to $backgroundStart")
     }
@@ -258,7 +244,7 @@ internal fun getStateAwareColor(
         )
 
         // Interpolate the color based on the scheme and contribution amount
-        result = getInterpolatedColor(result, query.invoke(contributionScheme), 1.0f - amount)
+        result = result.interpolateTowards(query.invoke(contributionScheme), 1.0f - amount)
     }
 
     return result
@@ -312,7 +298,7 @@ internal fun getTextColor(
             if (currState.isDisabled) ComponentState.DISABLED_UNSELECTED else ComponentState.ENABLED
         )
         val bgFillColor = backgroundColorScheme.backgroundFillColor
-        foreground = getInterpolatedColor(foreground, bgFillColor, baseAlpha)
+        foreground = foreground.interpolateTowards(bgFillColor, baseAlpha)
     }
     return foreground
 }

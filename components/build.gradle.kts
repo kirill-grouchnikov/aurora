@@ -12,12 +12,14 @@ kotlin {
             dependencies {
                 api(compose.runtime)
                 api(compose.foundation)
+                implementation(project(":common"))
                 implementation(project(":skin"))
             }
         }
         named("desktopMain") {
             dependencies {
                 api(compose.desktop.common)
+                implementation(project(":common"))
                 implementation(project(":skin"))
             }
         }

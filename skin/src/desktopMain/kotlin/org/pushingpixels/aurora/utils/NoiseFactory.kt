@@ -37,6 +37,7 @@ import org.jetbrains.skija.ColorInfo
 import org.jetbrains.skija.ColorType
 import org.jetbrains.skija.ImageInfo
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
+import org.pushingpixels.aurora.common.interpolateTowardsAsRGB
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
@@ -79,7 +80,7 @@ internal object NoiseFactory {
                 val noise = 0.5f + 0.5f * PerlinNoiseGenerator.noise(tweakedColumn, tweakedRow, z)
                 val likeness = max(0.0f, min(1.0f, 2.0f * noise.toFloat()))
 
-                noiseBuffer[pos] = getInterpolatedRGB(c3, c1, likeness)
+                noiseBuffer[pos] = c3.interpolateTowardsAsRGB(c1, likeness)
 
                 // Go to the next pixel
                 pos++

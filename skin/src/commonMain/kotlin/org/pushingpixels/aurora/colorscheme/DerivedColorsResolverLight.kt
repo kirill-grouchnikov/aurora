@@ -30,9 +30,9 @@
 package org.pushingpixels.aurora.colorscheme
 
 import androidx.compose.ui.graphics.Color
-import org.pushingpixels.aurora.utils.getAlphaColor
-import org.pushingpixels.aurora.utils.getDarkerColor
-import org.pushingpixels.aurora.utils.getInterpolatedColor
+import org.pushingpixels.aurora.common.darker
+import org.pushingpixels.aurora.common.interpolateTowards
+import org.pushingpixels.aurora.common.withAlpha
 
 /**
  * Resolver of derived colors for light color schemes. This class is not
@@ -50,7 +50,7 @@ internal class DerivedColorsResolverLight(scheme: AuroraColorScheme) : SchemeDer
     }
 
     override val lineColor: Color
-        get() = getInterpolatedColor(scheme.midColor, scheme.darkColor, 0.7f)
+        get() = scheme.midColor.interpolateTowards(scheme.darkColor, 0.7f)
     override val selectionForegroundColor: Color
         get() = scheme.foregroundColor
     override val selectionBackgroundColor: Color
@@ -58,25 +58,22 @@ internal class DerivedColorsResolverLight(scheme: AuroraColorScheme) : SchemeDer
     override val backgroundFillColor: Color
         get() = scheme.extraLightColor
     override val accentedBackgroundFillColor: Color
-        get() = getDarkerColor(scheme.extraLightColor, 0.08f)
+        get() = scheme.extraLightColor.darker(0.08f)
     override val focusRingColor: Color
-        get() = getAlphaColor(scheme.foregroundColor, 0.75f)
+        get() = scheme.foregroundColor.withAlpha(0.75f)
     override val textBackgroundFillColor: Color
-        get() = getInterpolatedColor(scheme.ultraLightColor, scheme.extraLightColor, 0.8f)
+        get() = scheme.ultraLightColor.interpolateTowards(scheme.extraLightColor, 0.8f)
     override val separatorPrimaryColor: Color
-        get() = getInterpolatedColor(scheme.midColor, scheme.darkColor, 0.4f)
+        get() = scheme.midColor.interpolateTowards(scheme.darkColor, 0.4f)
     override val separatorSecondaryColor: Color
         get() = scheme.ultraLightColor
     override val markColor: Color
-        get() = getInterpolatedColor(scheme.foregroundColor, scheme.ultraDarkColor, 0.7f)
+        get() = scheme.foregroundColor.interpolateTowards(scheme.ultraDarkColor, 0.7f)
     override val echoColor: Color
         get() = scheme.ultraLightColor
 
     /**
      * Creates the resolver of derived colors for the specified light color scheme.
-     *
-     * @param scheme
-     * The original color scheme.
      */
     init {
         require(!scheme.isDark) { "The scheme must be light: " + scheme.displayName }

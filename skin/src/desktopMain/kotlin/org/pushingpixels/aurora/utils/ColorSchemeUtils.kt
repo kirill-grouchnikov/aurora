@@ -34,6 +34,8 @@ import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.colorscheme.BaseDarkColorScheme
 import org.pushingpixels.aurora.colorscheme.BaseLightColorScheme
 import org.pushingpixels.aurora.colorscheme.ColorSchemes
+import org.pushingpixels.aurora.common.getInterpolatedColor
+import org.pushingpixels.aurora.common.interpolateTowards
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -206,10 +208,10 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
                         val colorStart: Color = decodeColor(splitInner[0].trim { it <= ' ' }, colorMap)
                         val colorEnd: Color = decodeColor(splitInner[1].trim { it <= ' ' }, colorMap)
                         ultraLight = colorStart
-                        extraLight = getInterpolatedColor(colorStart, colorEnd, 0.9f)
-                        light = getInterpolatedColor(colorStart, colorEnd, 0.7f)
-                        mid = getInterpolatedColor(colorStart, colorEnd, 0.5f)
-                        dark = getInterpolatedColor(colorStart, colorEnd, 0.2f)
+                        extraLight = colorStart.interpolateTowards(colorEnd, 0.9f)
+                        light = colorStart.interpolateTowards(colorEnd, 0.7f)
+                        mid = colorStart.interpolateTowards(colorEnd, 0.5f)
+                        dark = colorStart.interpolateTowards(colorEnd, 0.2f)
                         ultraDark = colorEnd
                         continue
                     } else {

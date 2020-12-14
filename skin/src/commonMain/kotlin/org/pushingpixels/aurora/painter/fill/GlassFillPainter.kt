@@ -31,7 +31,7 @@ package org.pushingpixels.aurora.painter.fill
 
 import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.utils.getInterpolatedColor
+import org.pushingpixels.aurora.common.interpolateTowards
 
 /**
  * Fill painter that returns images with glass appearance.
@@ -43,15 +43,13 @@ class GlassFillPainter : ClassicFillPainter() {
         get() = "Glass"
 
     override fun getTopFillColor(fillScheme: AuroraColorScheme): Color {
-        return getInterpolatedColor(
-            super.getBottomFillColor(fillScheme),
+        return super.getBottomFillColor(fillScheme).interpolateTowards(
             super.getMidFillColorTop(fillScheme), 0.6f
         )
     }
 
     override fun getMidFillColorTop(fillScheme: AuroraColorScheme): Color {
-        return getInterpolatedColor(
-            this.getTopFillColor(fillScheme),
+        return this.getTopFillColor(fillScheme).interpolateTowards(
             super.getMidFillColorTop(fillScheme), 0.8f
         )
     }
@@ -61,8 +59,7 @@ class GlassFillPainter : ClassicFillPainter() {
     }
 
     override fun getBottomFillColor(fillScheme: AuroraColorScheme): Color {
-        return getInterpolatedColor(
-            this.getMidFillColorBottom(fillScheme),
+        return this.getMidFillColorBottom(fillScheme).interpolateTowards(
             super.getBottomFillColor(fillScheme), 0.7f
         )
     }

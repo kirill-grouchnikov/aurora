@@ -29,7 +29,7 @@
  */
 package org.pushingpixels.aurora.colorscheme
 
-import org.pushingpixels.aurora.utils.getInterpolatedColor
+import org.pushingpixels.aurora.common.interpolateTowards
 
 /**
  * Blended color scheme.
@@ -44,32 +44,25 @@ class BlendBiColorScheme(
     "Blended " + firstScheme.displayName + " & "
             + secondScheme.displayName + " " + firstSchemeLikeness,
     isDark = firstScheme.isDark,
-    ultraLight = getInterpolatedColor(
-        firstScheme.ultraLightColor,
+    ultraLight = firstScheme.ultraLightColor.interpolateTowards(
         secondScheme.ultraLightColor, firstSchemeLikeness
     ),
-    extraLight = getInterpolatedColor(
-        firstScheme.extraLightColor,
+    extraLight = firstScheme.extraLightColor.interpolateTowards(
         secondScheme.extraLightColor, firstSchemeLikeness
     ),
-    light = getInterpolatedColor(
-        firstScheme.lightColor,
+    light = firstScheme.lightColor.interpolateTowards(
         secondScheme.lightColor, firstSchemeLikeness
     ),
-    mid = getInterpolatedColor(
-        firstScheme.midColor,
+    mid = firstScheme.midColor.interpolateTowards(
         secondScheme.midColor, firstSchemeLikeness
     ),
-    dark = getInterpolatedColor(
-        firstScheme.darkColor,
+    dark = firstScheme.darkColor.interpolateTowards(
         secondScheme.darkColor, firstSchemeLikeness
     ),
-    ultraDark = getInterpolatedColor(
-        firstScheme.ultraDarkColor,
+    ultraDark = firstScheme.ultraDarkColor.interpolateTowards(
         secondScheme.ultraDarkColor, firstSchemeLikeness
     ),
-    foreground = getInterpolatedColor(
-        firstScheme.foregroundColor,
+    foreground = firstScheme.foregroundColor.interpolateTowards(
         secondScheme.foregroundColor, firstSchemeLikeness
     )
 )

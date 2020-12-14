@@ -31,7 +31,7 @@ package org.pushingpixels.aurora.painter.border
 
 import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.utils.getInterpolatedColor
+import org.pushingpixels.aurora.common.interpolateTowards
 
 /**
  * Border painter that returns images with classic appearance.
@@ -43,8 +43,7 @@ class ClassicBorderPainter : StandardBorderPainter() {
         get() = "Classic"
 
     override fun getTopBorderColor(borderScheme: AuroraColorScheme): Color {
-        return getInterpolatedColor(
-            super.getTopBorderColor(borderScheme),
+        return super.getTopBorderColor(borderScheme).interpolateTowards(
             super.getMidBorderColor(borderScheme), 0.0f
         )
     }

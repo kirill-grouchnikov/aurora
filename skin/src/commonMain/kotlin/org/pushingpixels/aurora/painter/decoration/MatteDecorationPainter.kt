@@ -31,13 +31,16 @@ package org.pushingpixels.aurora.painter.decoration
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.LinearGradient
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.utils.getInterpolatedColor
+import org.pushingpixels.aurora.common.interpolateTowards
 
 /**
  * Implementation of [AuroraDecorationPainter] that uses matte painting
@@ -60,7 +63,7 @@ class MatteDecorationPainter : AuroraDecorationPainter {
     ) {
         with(drawScope) {
             val startColor = colorScheme.lightColor
-            val endColor = getInterpolatedColor(startColor, colorScheme.midColor, 0.4f)
+            val endColor = startColor.interpolateTowards(colorScheme.midColor, 0.4f)
             val flexPoint = FLEX_POINT.dp.toPx()
             val gradientHeight = kotlin.math.max(
                 flexPoint,

@@ -27,48 +27,40 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.aurora.utils
+package org.pushingpixels.aurora.common
 
 import androidx.compose.ui.graphics.Color
 import kotlin.math.*
 
 /**
- * Interpolates color.
- *
- * @param color1         The first color
- * @param color2         The second color
- * @param color1Likeness The closer this value is to 0.0, the closer the resulting
- * color will be to `color2`.
- * @return Interpolated RGB value.
+ * Interpolates this color towards the `other` color. The closer `thisLikenss` is to 0.0,
+ * the closer the resulting color will be to `other` color.
  */
-fun getInterpolatedColor(color1: Color, color2: Color, color1Likeness: Float): Color {
-    require((color1Likeness >= 0.0f) && (color1Likeness <= 1.0f)) {
-        "Color likeness should be in 0.0-1.0 range [is $color1Likeness]"
+fun Color.interpolateTowards(other: Color, thisLikeness: Float): Color {
+    require((thisLikeness >= 0.0f) && (thisLikeness <= 1.0f)) {
+        "Color likeness should be in 0.0-1.0 range [is $thisLikeness]"
     }
-    val alpha1: Float = color1.alpha
-    val alpha2: Float = color2.alpha
-    val r = getInterpolatedChannelValue(color1.red, color2.red, color1Likeness)
-    val g = getInterpolatedChannelValue(color1.green, color2.green, color1Likeness)
-    val b = getInterpolatedChannelValue(color1.blue, color2.blue, color1Likeness)
+    val alpha1: Float = this.alpha
+    val alpha2: Float = other.alpha
+    val r = getInterpolatedChannelValue(this.red, other.red, thisLikeness)
+    val g = getInterpolatedChannelValue(this.green, other.green, thisLikeness)
+    val b = getInterpolatedChannelValue(this.blue, other.blue, thisLikeness)
     val a = if (alpha1 == alpha2) alpha1 else
-        round(color1Likeness * alpha1 + (1.0f - color1Likeness) * alpha2)
-    return Color(r, g, b, a, color1.colorSpace)
+        round(thisLikeness * alpha1 + (1.0f - thisLikeness) * alpha2)
+    return Color(r, g, b, a, this.colorSpace)
 }
 
-fun getInterpolatedRGB(
-    color1: Color, color2: Color,
-    color1Likeness: Float
-): Int {
-    require((color1Likeness >= 0.0f) && (color1Likeness <= 1.0f)) {
-        "Color likeness should be in 0.0-1.0 range [is $color1Likeness]"
+fun Color.interpolateTowardsAsRGB(other: Color, thisLikeness: Float): Int {
+    require((thisLikeness >= 0.0f) && (thisLikeness <= 1.0f)) {
+        "Color likeness should be in 0.0-1.0 range [is $thisLikeness]"
     }
-    val alpha1: Float = color1.alpha
-    val alpha2: Float = color2.alpha
-    val r = getInterpolatedChannelValue(color1.red, color2.red, color1Likeness)
-    val g = getInterpolatedChannelValue(color1.green, color2.green, color1Likeness)
-    val b = getInterpolatedChannelValue(color1.blue, color2.blue, color1Likeness)
+    val alpha1: Float = this.alpha
+    val alpha2: Float = other.alpha
+    val r = getInterpolatedChannelValue(this.red, other.red, thisLikeness)
+    val g = getInterpolatedChannelValue(this.green, other.green, thisLikeness)
+    val b = getInterpolatedChannelValue(this.blue, other.blue, thisLikeness)
     val a = if (alpha1 == alpha2) alpha1 else
-        round(color1Likeness * alpha1 + (1.0f - color1Likeness) * alpha2)
+        round(thisLikeness * alpha1 + (1.0f - thisLikeness) * alpha2)
 
     return ((a * 255.0f + 0.5f).toInt() shl 24) or
             ((r * 255.0f + 0.5f).toInt() shl 16) or
@@ -126,7 +118,7 @@ private fun EOCF_sRGB(srgb: Float): Float {
     return if (srgb <= 0.04045f) srgb / 12.92f else ((srgb + 0.055f) / 1.055f).pow(2.4f)
 }
 
-internal fun RGBtoHSB(fromArgb: Int): FloatArray {
+fun RGBtoHSB(fromArgb: Int): FloatArray {
     val r = fromArgb ushr 16 and 0xFF
     val g = fromArgb ushr 8 and 0xFF
     val b = fromArgb ushr 0 and 0xFF
@@ -134,12 +126,12 @@ internal fun RGBtoHSB(fromArgb: Int): FloatArray {
     return RGBtoHSB(r = r / 255.0f, g = g / 255.0f, b = b / 255.0f)
 }
 
-internal fun RGBtoHSB(from: Color): FloatArray {
+fun RGBtoHSB(from: Color): FloatArray {
     return RGBtoHSB(from.red, from.green, from.blue)
 }
 
 // See https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB
-internal fun RGBtoHSB(r: Float, g: Float, b: Float): FloatArray {
+fun RGBtoHSB(r: Float, g: Float, b: Float): FloatArray {
     val result = FloatArray(3)
 
     val xmax = max(max(r, g), b)
@@ -169,7 +161,7 @@ internal fun RGBtoHSB(r: Float, g: Float, b: Float): FloatArray {
 }
 
 // See https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_RGB
-internal fun HSBtoRGB(from: FloatArray): Color {
+fun HSBtoRGB(from: FloatArray): Color {
     val hue = from[0]
     val saturation = from[1]
     val brightness = from[2]
@@ -203,8 +195,8 @@ internal fun HSBtoRGB(from: FloatArray): Color {
     return Color(chroma + m, m, x + m)
 }
 
-internal fun deriveByBrightness(original: Color, brightnessSource: Color): Color {
-    val hsbvalsOrig = RGBtoHSB(original)
+fun Color.withBrightness(brightnessSource: Color): Color {
+    val hsbvalsOrig = RGBtoHSB(this)
     val hsbvalsBrightnessSrc = RGBtoHSB(brightnessSource)
     return HSBtoRGB(
         floatArrayOf(
@@ -214,8 +206,8 @@ internal fun deriveByBrightness(original: Color, brightnessSource: Color): Color
     )
 }
 
-internal fun deriveByBrightness(original: Color, brightnessFactor: Float): Color {
-    val hsbvalsOrig = RGBtoHSB(original)
+fun Color.withBrightness(brightnessFactor: Float): Color {
+    val hsbvalsOrig = RGBtoHSB(this)
 
     // Brightness factor is in -1.0...1.0 range. Negative values are treated as darkening
     // and positive values are treated as brightening - leaving the hue and saturation intact
@@ -226,44 +218,26 @@ internal fun deriveByBrightness(original: Color, brightnessFactor: Float): Color
     )
 }
 
-/**
- * Inverts the specified color.
- *
- * @param color The original color.
- * @return The inverted color.
- */
-internal fun invertColor(color: Color): Color {
-    return Color(1.0f - color.red, 1.0f - color.green, 1.0f - color.blue, color.alpha)
+/** Returns the inverted version of this color. */
+fun Color.inverted(): Color {
+    return Color(1.0f - this.red, 1.0f - this.green, 1.0f - this.blue, this.alpha)
 }
 
-/**
- * Returns a translucent of the specified color.
- *
- * @param color Color.
- * @param alpha Alpha channel value.
- * @return Translucent of the specified color that matches the requested
- * alpha channel value.
- */
-internal fun getAlphaColor(color: Color, alpha: Float): Color {
-    return Color(color.red, color.green, color.blue, alpha)
+/** Returns the version of this color based on the specified alpha. */
+fun Color.withAlpha(alpha: Float): Color {
+    return Color(this.red, this.green, this.blue, alpha)
 }
 
-/**
- * Returns saturated version of the specified color.
- *
- * @param color  Color.
- * @param factor Saturation factor.
- * @return Saturated color.
- */
-internal fun getSaturatedColor(color: Color, factor: Float): Color {
-    val red = color.red
-    val green = color.green
-    val blue = color.blue
+/** Returns saturated version of this color. */
+fun Color.withSaturation(factor: Float): Color {
+    val red = this.red
+    val green = this.green
+    val blue = this.blue
     if (red == green || green == blue) {
         // monochrome
-        return color
+        return this
     }
-    val hsbvals = RGBtoHSB(color)
+    val hsbvals = RGBtoHSB(this)
     var saturation = hsbvals[1]
     saturation = if (factor > 0.0) {
         saturation + factor * (1.0f - saturation)
@@ -273,15 +247,9 @@ internal fun getSaturatedColor(color: Color, factor: Float): Color {
     return HSBtoRGB(floatArrayOf(hsbvals[0], saturation, hsbvals[2]))
 }
 
-/**
- * Returns hue-shifted (in HSV space) version of the specified color.
- *
- * @param color    Color.
- * @param hueShift hue shift factor.
- * @return Hue-shifted (in HSV space) color.
- */
-internal fun getHueShiftedColor(color: Color, hueShift: Float): Color {
-    val hsbvals = RGBtoHSB(color)
+/** Returns hue-shifted (in HSB space) version of this color. */
+fun Color.withHueShift(hueShift: Float): Color {
+    val hsbvals = RGBtoHSB(this)
     var hue = hsbvals[0]
     hue += hueShift
     if (hue < 0.0) {
@@ -293,78 +261,35 @@ internal fun getHueShiftedColor(color: Color, hueShift: Float): Color {
     return HSBtoRGB(floatArrayOf(hue, hsbvals[1], hsbvals[2]))
 }
 
-/**
- * Returns darker version of the specified color.
- *
- * @param color Color.
- * @param diff  Difference factor (values closer to 1.0 will produce results
- * closer to black color).
- * @return Darker version of the specified color.
- */
-internal fun getDarkerColor(color: Color, diff: Float): Color {
-    return getInterpolatedColor(color, Color.Black, 1.0f - diff)
+/** Returns a darker version of this color. */
+fun Color.darker(diff: Float): Color {
+    return interpolateTowards(Color.Black, 1.0f - diff)
 }
 
-private fun encode(number: Float): String? {
-    require(!(number < 0 || number > 1.0f)) { "" + number }
-    val hex = "0123456789ABCDEF"
-    val asInt = (255.0f * number + 0.5f).toInt()
-    val c1 = hex[asInt / 16]
-    val c2 = hex[asInt % 16]
-    return c1.toString() + "" + c2
-}
+/** Returns the brightness of this color in [0.0-1.0] range ignoring the alpha. */
+val Color.colorBrightness: Float
+    get() = getColorBrightness(this.red, this.green, this.blue)
 
-internal fun encode(color: Color): String? {
-    return ("#" + encode(color.alpha) + encode(color.red) + encode(color.green)
-            + encode(color.blue))
-}
+val Color.colorStrength: Float
+    get() = max(this.colorBrightness, this.inverted().colorBrightness)
 
-/**
- * Returns the brightness of the specified color.
- *
- * @param rgb RGB value of a color.
- * @return The brightness of the specified color in [0.0-1.0] range
- */
-fun getColorBrightness(color: Color): Float {
-    // Note that alpha is ignored
-    return getColorBrightness(color.red, color.green, color.blue)
-}
-
-/**
- * Returns the brightness of the specified color.
- *
- * @param rgb RGB value of a color.
- * @return The brightness of the specified color in [0.0-1.0] range
- */
-internal fun getColorBrightness(argb: Int): Float {
-    // Note that alpha is ignored
-    val r = argb ushr 16 and 0xFF
-    val g = argb ushr 8 and 0xFF
-    val b = argb ushr 0 and 0xFF
-
-    return getColorBrightness(r / 255.0f, g / 255.0f, b / 255.0f)
-}
-
-/**
- * Returns the brightness of the specified color in [0.0-1.0] range
- */
-internal fun getColorBrightness(r: Float, g: Float, b: Float): Float {
+/** Returns the brightness of the specified color values in [0.0-1.0] range. */
+fun getColorBrightness(r: Float, g: Float, b: Float): Float {
     // See https://en.wikipedia.org/wiki/Relative_luminance
     return (2126.0f * r + 7152.0f * g + 722.0f * b) / 10000.0f
 }
 
-fun getColorStrength(color: Color): Float {
-    return max(
-        getColorBrightness(color),
-        getColorBrightness(getNegativeColor(color))
-    )
+private fun encodeChannel(number: Float): String {
+    require(!(number < 0 || number > 1.0f)) { "" + number }
+    val hex = "0123456789ABCDEF"
+    val asInt = (255.0f * number + 0.5f).toInt()
+    val hexaDigit1 = hex[asInt / 16]
+    val hexaDigit2 = hex[asInt % 16]
+    return hexaDigit1.toString() + "" + hexaDigit2
 }
 
-fun getNegativeColor(color: Color): Color {
-    return Color(red = 1.0f - color.red, green = 1.0f - color.green,
-        blue = 1.0f - color.blue, alpha = color.alpha)
-}
-
+val Color.hexadecimal: String
+    get() = ("#" + encodeChannel(this.alpha) + encodeChannel(this.red) + encodeChannel(this.green) + encodeChannel(this.blue))
 
 
 
