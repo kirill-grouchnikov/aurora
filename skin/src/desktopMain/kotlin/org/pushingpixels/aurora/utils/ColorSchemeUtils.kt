@@ -34,7 +34,6 @@ import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.colorscheme.BaseDarkColorScheme
 import org.pushingpixels.aurora.colorscheme.BaseLightColorScheme
 import org.pushingpixels.aurora.colorscheme.ColorSchemes
-import org.pushingpixels.aurora.common.getInterpolatedColor
 import org.pushingpixels.aurora.common.interpolateTowards
 import java.io.BufferedReader
 import java.io.InputStream
