@@ -32,17 +32,8 @@ package org.pushingpixels.aurora.utils
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
-import androidx.compose.ui.geometry.boundingRect
 import androidx.compose.ui.graphics.Outline
 import org.pushingpixels.aurora.Side
-
-fun Outline.boundingRect(): Rect {
-    return when (this) {
-        is Outline.Rectangle -> this.rect
-        is Outline.Rounded -> this.roundRect.boundingRect
-        is Outline.Generic -> this.path.getBounds()
-    }
-}
 
 /**
  * Returns base outline for the specified parameters. The base outline is

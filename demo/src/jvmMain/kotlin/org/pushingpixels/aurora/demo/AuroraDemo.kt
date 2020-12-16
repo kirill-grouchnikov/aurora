@@ -42,13 +42,15 @@ import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.icon.AuroraThemedFollowTextIcon
 import org.pushingpixels.aurora.icon.AuroraThemedIcon
+import org.pushingpixels.aurora.skin.businessSkin
+import org.pushingpixels.aurora.skin.marinerSkin
 import org.pushingpixels.aurora.skin.ravenSkin
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 
 fun main() {
     AuroraWindow(
-        skin = ravenSkin(),
+        skin = marinerSkin(),
         title = "Aurora Demo",
         size = IntSize(600, 600),
         undecorated = true

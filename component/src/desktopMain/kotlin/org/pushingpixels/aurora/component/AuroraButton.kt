@@ -51,7 +51,6 @@ import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.utils.boundingRect
 import kotlin.math.max
 
 // TODO - revisit this
@@ -299,7 +298,7 @@ private fun AuroraToggleButton(
                         drawScope = this
                     )
 
-                    val outlineBoundingRect = outline.boundingRect()
+                    val outlineBoundingRect = outline.bounds
                     if (outlineBoundingRect.isEmpty) {
                         return@withTransform
                     }
@@ -596,7 +595,7 @@ private fun AuroraButton(
                         drawScope = this
                     )
 
-                    val outlineBoundingRect = outline.boundingRect()
+                    val outlineBoundingRect = outline.bounds
                     if (outlineBoundingRect.isEmpty) {
                         return@withTransform
                     }
