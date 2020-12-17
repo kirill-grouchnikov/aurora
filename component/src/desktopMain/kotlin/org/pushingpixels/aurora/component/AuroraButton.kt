@@ -193,8 +193,8 @@ private fun AuroraToggleButton(
         AuroraSkin.animationConfig.regular
     )
 
-    val decorationAreaType = AuroraSkin.decorationArea.type
-    val buttonShaper = AmbientButtonShaper.current
+    val decorationAreaType = AuroraSkin.decorationAreaType
+    val buttonShaper = AuroraSkin.buttonShaper
     Box(
         modifier = modifier
             .pointerMoveFilter(
@@ -224,7 +224,7 @@ private fun AuroraToggleButton(
         val textColor = getTextColor(
             modelStateInfo = stateTransitionTracker.modelStateInfo,
             skinColors = AuroraSkin.colors,
-            decorationAreaType = AuroraSkin.decorationArea.type,
+            decorationAreaType = AuroraSkin.decorationAreaType,
             isTextInFilledArea = true
         )
 
@@ -493,8 +493,8 @@ private fun AuroraButton(
         AuroraSkin.animationConfig.regular
     )
 
-    val decorationAreaType = AuroraSkin.decorationArea.type
-    val buttonShaper = AmbientButtonShaper.current
+    val decorationAreaType = AuroraSkin.decorationAreaType
+    val buttonShaper = AuroraSkin.buttonShaper
     Box(
         modifier = modifier
             .pointerMoveFilter(
@@ -521,7 +521,7 @@ private fun AuroraButton(
         val textColor = getTextColor(
             modelStateInfo = stateTransitionTracker.modelStateInfo,
             skinColors = AuroraSkin.colors,
-            decorationAreaType = AuroraSkin.decorationArea.type,
+            decorationAreaType = AuroraSkin.decorationAreaType,
             isTextInFilledArea = true
         )
 

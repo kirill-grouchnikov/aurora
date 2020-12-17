@@ -43,8 +43,8 @@ import org.pushingpixels.aurora.utils.getColorSchemes
 object AuroraSkin {
     @Composable
     @ComposableContract(readonly = true)
-    val decorationArea: DecorationArea
-        get() = AmbientDecorationArea.current
+    val decorationAreaType: DecorationAreaType
+        get() = AmbientDecorationAreaType.current
 
     @Composable
     @ComposableContract(readonly = true)

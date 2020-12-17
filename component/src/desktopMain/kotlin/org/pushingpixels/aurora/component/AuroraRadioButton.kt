@@ -176,7 +176,7 @@ private fun AuroraRadioButton(
 
     // The toggleable modifier is set on the checkbox mark, as well as on the
     // content so that the whole thing is clickable to toggle the control.
-    val decorationAreaType = AuroraSkin.decorationArea.type
+    val decorationAreaType = AuroraSkin.decorationAreaType
     Row(
         modifier = modifier
             .pointerMoveFilter(

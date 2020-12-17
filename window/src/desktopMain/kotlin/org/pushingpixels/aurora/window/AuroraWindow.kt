@@ -69,7 +69,7 @@ private fun AuroraWindowContent(
     val isMaximized =
         remember { mutableStateOf(((extendedState != null) && ((extendedState and Frame.MAXIMIZED_BOTH) != 0))) }
 
-    val skinColors = AmbientSkinColors.current
+    val skinColors = AuroraSkin.colors
 
     Column(Modifier.fillMaxSize().auroraBackground()) {
         if (undecorated) {
@@ -109,7 +109,7 @@ private fun AuroraWindowContent(
                         AuroraIcon(
                             icon = TransitionAwareIcon(
                                 decorationAreaType = DecorationAreaType.TITLE_PANE,
-                                skinColors = AmbientSkinColors.current,
+                                skinColors = AuroraSkin.colors,
                                 buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
                                 stateTransitionTracker = AmbientStateTransitionTracker.current,
                                 delegate = { scheme ->
@@ -146,7 +146,7 @@ private fun AuroraWindowContent(
                             AuroraIcon(
                                 icon = TransitionAwareIcon(
                                     decorationAreaType = DecorationAreaType.TITLE_PANE,
-                                    skinColors = AmbientSkinColors.current,
+                                    skinColors = AuroraSkin.colors,
                                     buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
                                     stateTransitionTracker = AmbientStateTransitionTracker.current,
                                     delegate = { scheme ->
@@ -162,7 +162,7 @@ private fun AuroraWindowContent(
                             ) else AuroraIcon(
                             icon = TransitionAwareIcon(
                                 decorationAreaType = DecorationAreaType.TITLE_PANE,
-                                skinColors = AmbientSkinColors.current,
+                                skinColors = AuroraSkin.colors,
                                 buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
                                 stateTransitionTracker = AmbientStateTransitionTracker.current,
                                 delegate = { scheme ->
@@ -190,7 +190,7 @@ private fun AuroraWindowContent(
                         AuroraIcon(
                             icon = TransitionAwareIcon(
                                 decorationAreaType = DecorationAreaType.TITLE_PANE,
-                                skinColors = AmbientSkinColors.current,
+                                skinColors = AuroraSkin.colors,
                                 buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
                                 stateTransitionTracker = AmbientStateTransitionTracker.current,
                                 delegate = { scheme ->
@@ -223,7 +223,7 @@ fun AuroraWindow(
     undecorated: Boolean = false,
     events: WindowEvents = WindowEvents(),
     onDismissRequest: (() -> Unit)? = null,
-    content: @Composable () -> Unit = emptyContent()
+    content: @Composable () -> Unit
 ) = Window(
     title = title,
     size = size,
@@ -236,7 +236,7 @@ fun AuroraWindow(
     onDismissRequest = onDismissRequest
 ) {
     AuroraSkin(
-        decorationArea = DecorationArea(DecorationAreaType.NONE),
+        decorationAreaType = DecorationAreaType.NONE,
         colors = skin.colors,
         buttonShaper = skin.buttonShaper,
         painters = skin.painters,
@@ -247,8 +247,18 @@ fun AuroraWindow(
 }
 
 @Composable
+fun AuroraDecorationArea(
+    decorationAreaType: DecorationAreaType,
+    content: @Composable () -> Unit
+) {
+    AuroraSkin(decorationAreaType = decorationAreaType) {
+        content()
+    }
+}
+
+@Composable
 private fun AuroraSkin(
-    decorationArea: DecorationArea = AuroraSkin.decorationArea,
+    decorationAreaType: DecorationAreaType,
     colors: AuroraSkinColors = AuroraSkin.colors,
     buttonShaper: AuroraButtonShaper = AuroraSkin.buttonShaper,
     painters: Painters = AuroraSkin.painters,
@@ -256,22 +266,12 @@ private fun AuroraSkin(
     content: @Composable () -> Unit
 ) {
     Providers(
-        AmbientDecorationArea provides decorationArea,
+        AmbientDecorationAreaType provides decorationAreaType,
         AmbientSkinColors provides colors,
         AmbientButtonShaper provides buttonShaper,
         AmbientPainters provides painters,
         AmbientAnimationConfig provides animationConfig
     ) {
-        content()
-    }
-}
-
-@Composable
-fun AuroraDecorationArea(
-    decorationAreaType: DecorationAreaType,
-    content: @Composable () -> Unit = emptyContent()
-) {
-    AuroraSkin(decorationArea = DecorationArea(decorationAreaType)) {
         content()
     }
 }

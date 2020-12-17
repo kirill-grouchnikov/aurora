@@ -199,11 +199,10 @@ private fun AuroraComboBox(
         AuroraSkin.animationConfig.regular
     )
 
-    val decorationAreaType = AuroraSkin.decorationArea.type
+    val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
     val buttonShaper = AuroraSkin.buttonShaper
     val decorationPainter = AuroraSkin.painters.decorationPainter
-    val overlayPainters = AuroraSkin.painters.getOverlayPainters(decorationAreaType)
 
     val auroraOffset = AuroraOffset(0.0f, 0.0f)
     val density = AmbientDensity.current.density

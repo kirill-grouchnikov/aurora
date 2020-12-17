@@ -57,11 +57,5 @@ val AmbientAnimationConfig = staticAmbientOf { AnimationConfig() }
 val AmbientSkinColors = staticAmbientOf<AuroraSkinColors>()
 val AmbientButtonShaper  = staticAmbientOf<AuroraButtonShaper>()
 val AmbientPainters = staticAmbientOf<Painters>()
-
-@Immutable
-data class DecorationArea(
-    val type: DecorationAreaType = DecorationAreaType.NONE
-)
-
-val AmbientDecorationArea = staticAmbientOf { DecorationArea() }
+val AmbientDecorationAreaType = staticAmbientOf<DecorationAreaType>()
 

@@ -104,8 +104,8 @@ fun AuroraThemedIcon(
 
     val textColor = AmbientTextColor.current
     val density = AmbientDensity.current.density
-    val colors = AmbientSkinColors.current
-    val decorationAreaType = AmbientDecorationArea.current.type
+    val colors = AuroraSkin.colors
+    val decorationAreaType = AuroraSkin.decorationAreaType
 
     val iconBitmap = remember { icon.toBitmap(density) }
     if (currModelState.isDisabled) {

@@ -53,10 +53,10 @@ fun Modifier.auroraBackground() = this.then(
             width = AppWindowAmbient.current!!.width * AmbientDensity.current.density,
             height = AppWindowAmbient.current!!.height * AmbientDensity.current.density
         ),
-        decorationAreaType = AuroraSkin.decorationArea.type,
+        decorationAreaType = AuroraSkin.decorationAreaType,
         colors = AuroraSkin.colors,
         decorationPainter = AuroraSkin.painters.decorationPainter,
-        overlayPainters = AuroraSkin.painters.getOverlayPainters(AuroraSkin.decorationArea.type)
+        overlayPainters = AuroraSkin.painters.getOverlayPainters(AuroraSkin.decorationAreaType)
     )
 )
 
