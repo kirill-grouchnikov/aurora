@@ -80,7 +80,7 @@ object ButtonSizingConstants {
 }
 
 @Immutable
-private class AuroraDrawingCache(
+private class ButtonDrawingCache(
     val colorScheme: MutableColorScheme = MutableColorScheme(
         displayName = "Internal mutable",
         isDark = false,
@@ -135,7 +135,7 @@ private fun AuroraToggleButton(
     stateTransitionFloat: AnimatedFloat,
     content: @Composable() () -> Unit
 ) {
-    val drawingCache = remember { AuroraDrawingCache() }
+    val drawingCache = remember { ButtonDrawingCache() }
 
     val stateTransitionTracker =
         remember { StateTransitionTracker(enabled, selected, stateTransitionFloat) }
@@ -435,7 +435,7 @@ private fun AuroraButton(
     stateTransitionFloat: AnimatedFloat,
     content: @Composable() () -> Unit
 ) {
-    val drawingCache = remember { AuroraDrawingCache() }
+    val drawingCache = remember { ButtonDrawingCache() }
 
     val stateTransitionTracker =
         remember { StateTransitionTracker(enabled, false, stateTransitionFloat) }

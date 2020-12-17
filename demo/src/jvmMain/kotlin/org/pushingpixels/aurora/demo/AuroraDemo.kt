@@ -145,6 +145,13 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     )
                     AuroraText("always")
                 }
+                AuroraComboBox(
+                    enabled = enabled.value,
+                    strings = listOf("one", "two", "three"),
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                ) {
+                    AuroraText("combobox")
+                }
             }
             Row(modifier = Modifier.fillMaxWidth()) {
                 AuroraToggleButton(
