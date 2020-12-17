@@ -49,6 +49,7 @@ import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.unit.dp
@@ -58,13 +59,10 @@ import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.painter.decoration.AuroraDecorationPainter
 import org.pushingpixels.aurora.painter.overlay.AuroraOverlayPainter
 import java.awt.BorderLayout
+import java.awt.Rectangle
 import java.awt.Window
 import javax.swing.JWindow
-import javax.swing.SwingUtilities
 import kotlin.math.max
-import javax.swing.SwingUtilities.getRootPane
-
-
 
 
 // This will be initialized on first usage using the getSelectedTransitionDefinition
@@ -254,7 +252,6 @@ private fun AuroraComboBox(
                             decorationAreaType = decorationAreaType,
                             colors = skinColors,
                             decorationPainter = decorationPainter,
-                            overlayPainters = overlayPainters,
                             strings = strings
                         )
                     }
@@ -443,23 +440,27 @@ private fun ComboBoxPopupContent(
     window: JWindow, decorationAreaType: DecorationAreaType,
     colors: AuroraSkinColors,
     decorationPainter: AuroraDecorationPainter,
-    overlayPainters: List<AuroraOverlayPainter>,
     strings: List<String>
 ) {
+    val density = AmbientDensity.current.density
     Box(
         modifier = Modifier.auroraBackground(
             window = window,
             decorationAreaType = decorationAreaType,
             colors = colors,
             decorationPainter = decorationPainter,
-            overlayPainters = overlayPainters
-        )
+            overlayPainters = emptyList()
+        ).onGloballyPositioned {
+            // Get the size of the content and update the popup window bounds
+            window.bounds = Rectangle(window.x, window.y,
+                (it.size.width / density).toInt(),
+                (it.size.height / density).toInt())
+            window.invalidate()
+            window.validate()
+            window.pack()
+        }
     ) {
-        ScrollableColumn(
-            modifier = Modifier
-                .padding(vertical = 12.dp)
-                .fillMaxWidth()
-        ) {
+        ScrollableColumn(modifier = Modifier.fillMaxWidth()) {
             for (string in strings) {
                 Box(
                     modifier = Modifier.fillMaxWidth()
