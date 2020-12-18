@@ -57,7 +57,6 @@ import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.painter.decoration.AuroraDecorationPainter
-import org.pushingpixels.aurora.painter.overlay.AuroraOverlayPainter
 import java.awt.BorderLayout
 import java.awt.Rectangle
 import java.awt.Window
@@ -231,17 +230,22 @@ private fun AuroraComboBox(
                     jwindow.type = Window.Type.POPUP
                     jwindow.isAlwaysOnTop = true
 
+                    // TODO - hopefully temporary. Mark the popup window as fully transparent
+                    //  so that when it is globally positioned, we can size it to the actual
+                    //  content and make it fully opaque
+                    jwindow.opacity = 0.0f
+
                     val auroraWindow = AppManager.focusedWindow!!.window
                     val locationOnScreen = auroraWindow.locationOnScreen
 
                     // anchor the popup window to the bottom right corner of the component
                     // in screen coordinates
-                    // TODO - figure out the sizing
+                    // TODO - figure out the sizing (see above)
                     jwindow.setBounds(
                         (locationOnScreen.x + auroraOffset.x / density).toInt(),
                         (locationOnScreen.y + auroraOffset.y / density).toInt(),
-                        200,
-                        120
+                        1000,
+                        1000
                     )
 
                     val composePopupContent = ComposePanel()
@@ -454,15 +458,16 @@ private fun ComboBoxPopupContent(
             window.bounds = Rectangle(window.x, window.y,
                 (it.size.width / density).toInt(),
                 (it.size.height / density).toInt())
+            window.opacity = 1.0f
             window.invalidate()
             window.validate()
             window.pack()
         }
     ) {
-        ScrollableColumn(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.wrapContentSize()) {
             for (string in strings) {
                 Box(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.wrapContentSize()
                         .padding(horizontal = 12.dp, vertical = 8.dp),
                     contentAlignment = Alignment.CenterStart
                 ) {
