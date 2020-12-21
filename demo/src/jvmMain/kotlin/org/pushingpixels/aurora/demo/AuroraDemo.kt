@@ -52,7 +52,7 @@ fun main() {
     AuroraWindow(
         skin = marinerSkin(),
         title = "Aurora Demo",
-        size = IntSize(600, 600),
+        size = IntSize(660, 600),
         undecorated = true
     ) {
         DemoContent()

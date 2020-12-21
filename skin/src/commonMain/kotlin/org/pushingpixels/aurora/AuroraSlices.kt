@@ -728,4 +728,12 @@ enum class ButtonSizingStrategy {
     EXTENDED
 }
 
+enum class PopupPlacementStrategy {
+    STARTWARD,
+    ENDWARD,
+    UPWARD,
+    DOWNWARD,
+    CENTERED
+}
+
 

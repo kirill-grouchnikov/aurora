@@ -52,6 +52,7 @@ import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.platform.AmbientDensity
+import androidx.compose.ui.platform.AmbientLayoutDirection
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
@@ -63,6 +64,11 @@ import java.awt.Window
 import javax.swing.JWindow
 import kotlin.math.max
 
+object ComboBoxSizingConstants {
+    val DefaultComboBoxArrowWidth = 10.dp
+    val DefaultComboBoxArrowHeight = 7.dp
+    val DefaultComboBoxContentArrowGap = 6.dp
+}
 
 // This will be initialized on first usage using the getSelectedTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
@@ -205,6 +211,7 @@ private fun AuroraComboBox(
 
     val auroraOffset = AuroraOffset(0.0f, 0.0f)
     val density = AmbientDensity.current.density
+    val layoutDirection = AmbientLayoutDirection.current
 
     Box(
         modifier = modifier
@@ -277,6 +284,12 @@ private fun AuroraComboBox(
             decorationAreaType = decorationAreaType,
             isTextInFilledArea = true
         )
+        // And the arrow color
+        val arrowColor = getStateAwareColor(
+            stateTransitionTracker.modelStateInfo,
+            decorationAreaType, ColorSchemeAssociationKind.MARK
+        ) { it.markColor }
+
 
         if (backgroundAppearanceStrategy != BackgroundAppearanceStrategy.NEVER) {
             // Populate the cached color scheme for filling the button container
@@ -381,6 +394,23 @@ private fun AuroraComboBox(
                     borderPainter.paintBorder(
                         this, this.size, outline, innerOutline, drawingCache.colorScheme, alpha
                     )
+
+                    // TODO - this is temporary
+                    drawImage(
+                        image = getArrow(
+                            width = ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx(),
+                            height = ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx(),
+                            strokeWidth = 2.0.dp.toPx(),
+                            direction = PopupPlacementStrategy.DOWNWARD,
+                            layoutDirection = layoutDirection,
+                            color = arrowColor
+                        ),
+                        topLeft = Offset(
+                            x = width - ButtonSizingConstants.DefaultButtonContentPadding.end.toPx() -
+                                    ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx(),
+                            y = (height - ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()) / 2.0f
+                        )
+                    )
                 }
             }
         }
@@ -392,8 +422,17 @@ private fun AuroraComboBox(
             AmbientModelStateInfoSnapshot provides stateTransitionTracker.modelStateInfo.getSnapshot()
         ) {
             Layout(
-                // TODO - revisit this
-                modifier = Modifier.padding(ButtonSizingConstants.DefaultButtonContentPadding),
+                // TODO - revisit this maybe
+                modifier = Modifier.padding(
+                    PaddingValues(
+                        start = ButtonSizingConstants.DefaultButtonContentPadding.start,
+                        end = ButtonSizingConstants.DefaultButtonContentPadding.end +
+                                ComboBoxSizingConstants.DefaultComboBoxContentArrowGap +
+                                ComboBoxSizingConstants.DefaultComboBoxArrowWidth,
+                        top = ButtonSizingConstants.DefaultButtonContentPadding.top,
+                        bottom = ButtonSizingConstants.DefaultButtonContentPadding.bottom
+                    )
+                ),
                 content = content
             ) { measurables, constraints ->
                 // Measure each child so that we know how much space they need
@@ -455,9 +494,11 @@ private fun ComboBoxPopupContent(
             overlayPainters = emptyList()
         ).onGloballyPositioned {
             // Get the size of the content and update the popup window bounds
-            window.bounds = Rectangle(window.x, window.y,
+            window.bounds = Rectangle(
+                window.x, window.y,
                 (it.size.width / density).toInt(),
-                (it.size.height / density).toInt())
+                (it.size.height / density).toInt()
+            )
             window.opacity = 1.0f
             window.invalidate()
             window.validate()

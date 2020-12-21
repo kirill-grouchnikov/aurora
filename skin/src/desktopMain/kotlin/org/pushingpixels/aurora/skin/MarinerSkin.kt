@@ -140,6 +140,11 @@ private fun marinerSkinColors(): AuroraSkinColors {
         ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED,
         ComponentState.PRESSED_SELECTED
     )
+    // TODO - this is different from the original
+    headerSchemeBundle.registerColorScheme(
+        enabledMarkScheme.shade(0.7f), ColorSchemeAssociationKind.MARK,
+        ComponentState.ROLLOVER_UNSELECTED
+    )
     result.registerDecorationAreaSchemeBundle(
         headerSchemeBundle, headerColorScheme,
         DecorationAreaType.TITLE_PANE, DecorationAreaType.HEADER

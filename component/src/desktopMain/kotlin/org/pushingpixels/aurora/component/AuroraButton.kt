@@ -74,7 +74,7 @@ private lateinit var EnabledTransitionDefinition: TransitionDefinition<Boolean>
 
 object ButtonSizingConstants {
     val DefaultButtonContentPadding = PaddingValues(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
-    val DefaultButtonIconTextPadding = 6.dp
+    val DefaultButtonIconTextGap = 6.dp
     val DefaultButtonContentWidth = 60.dp
     val DefaultButtonContentHeight = 16.dp
 }
@@ -695,5 +695,5 @@ private fun AuroraButton(
 }
 
 fun Modifier.auroraButtonIconPadding() =
-    this.then(padding(end = ButtonSizingConstants.DefaultButtonIconTextPadding))
+    this.then(padding(end = ButtonSizingConstants.DefaultButtonIconTextGap))
 
