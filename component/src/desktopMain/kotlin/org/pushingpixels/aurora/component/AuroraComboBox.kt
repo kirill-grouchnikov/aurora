@@ -44,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.layout.Layout
@@ -395,22 +396,22 @@ private fun AuroraComboBox(
                         this, this.size, outline, innerOutline, drawingCache.colorScheme, alpha
                     )
 
-                    // TODO - this is temporary
-                    drawImage(
-                        image = getArrow(
+                    translate(
+                        left = width
+                                - ButtonSizingConstants.DefaultButtonContentPadding.end.toPx()
+                                - ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx(),
+                        top = (height - ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()) / 2.0f
+                    ) {
+                        drawArrow(
+                            drawScope = this,
                             width = ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx(),
                             height = ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx(),
                             strokeWidth = 2.0.dp.toPx(),
                             direction = PopupPlacementStrategy.DOWNWARD,
                             layoutDirection = layoutDirection,
                             color = arrowColor
-                        ),
-                        topLeft = Offset(
-                            x = width - ButtonSizingConstants.DefaultButtonContentPadding.end.toPx() -
-                                    ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx(),
-                            y = (height - ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()) / 2.0f
                         )
-                    )
+                    }
                 }
             }
         }

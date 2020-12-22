@@ -30,40 +30,49 @@
 
 package org.pushingpixels.aurora.component.utils
 
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.*
-import androidx.compose.ui.platform.AmbientLayoutDirection
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.PopupPlacementStrategy
-import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 
-internal fun getArrow(
+internal fun drawArrow(
+    drawScope: DrawScope,
     width: Float, height: Float, strokeWidth: Float,
     direction: PopupPlacementStrategy, layoutDirection: LayoutDirection,
     color: Color
-): ImageBitmap {
-    val isSideways = (direction == PopupPlacementStrategy.STARTWARD) ||
-            (direction == PopupPlacementStrategy.ENDWARD)
-
-    val arrowImage = ImageBitmap(width = if (isSideways) height.toInt() else width.toInt(),
-        height = if (isSideways) width.toInt() else height.toInt())
-
-    val canvas = Canvas(arrowImage)
-
+) {
     if (direction == PopupPlacementStrategy.CENTERED) {
-        val smallHeight = (height - strokeWidth) / 2
-        val top = getArrow(
-            width, smallHeight, strokeWidth, PopupPlacementStrategy.UPWARD,
-            layoutDirection, color
-        )
-        val bottom = getArrow(
-            width, smallHeight, strokeWidth, PopupPlacementStrategy.DOWNWARD,
-            layoutDirection, color
-        )
-        canvas.drawImage(image = top, topLeftOffset = Offset(0.0f, 0.0f), paint = Paint())
-        canvas.drawImage(image = bottom, topLeftOffset = Offset(0.0f, height / 2.0f), paint = Paint())
+        val smallHeight = height - strokeWidth / 2.0f
 
-        return arrowImage
+        drawScope.translate(left = 0.0f, top = -strokeWidth - 1.0f) {
+            drawArrow(
+                drawScope = this,
+                width = width,
+                height = smallHeight,
+                strokeWidth = strokeWidth,
+                direction = PopupPlacementStrategy.UPWARD,
+                layoutDirection = layoutDirection,
+                color = color
+            )
+        }
+
+        drawScope.translate(left = 0.0f, top = height / 2.0f + strokeWidth - 1.0f) {
+            drawArrow(
+                drawScope = this,
+                width = width,
+                height = smallHeight,
+                strokeWidth = strokeWidth,
+                direction = PopupPlacementStrategy.DOWNWARD,
+                layoutDirection = layoutDirection,
+                color = color
+            )
+        }
+        return
     }
 
     val cushion = strokeWidth / 2.0f
@@ -92,15 +101,12 @@ internal fun getArrow(
         }
     }
 
-    val paint = Paint().also {
-        it.color = color
-        it.style = PaintingStyle.Stroke
-        it.strokeWidth = strokeWidth
-        it.strokeCap = StrokeCap.Round
-        it.strokeJoin = StrokeJoin.Miter
+    with(drawScope) {
+        drawPath(
+            path = gp,
+            color = color,
+            style = Stroke(width = strokeWidth, cap = StrokeCap.Round, join = StrokeJoin.Miter)
+        )
     }
-    canvas.drawPath(gp, paint)
-
-    return arrowImage
 }
 
