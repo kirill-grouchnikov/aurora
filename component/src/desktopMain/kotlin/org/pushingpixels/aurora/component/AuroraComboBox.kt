@@ -54,12 +54,10 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.platform.AmbientLayoutDirection
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
-import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.painter.decoration.AuroraDecorationPainter
-import org.pushingpixels.aurora.shaper.AuroraButtonShaper
 import java.awt.BorderLayout
 import java.awt.Rectangle
 import java.awt.Window
@@ -120,35 +118,39 @@ private fun Modifier.comboBoxLocator(offset: AuroraOffset) = this.then(
 )
 
 @Composable
-fun AuroraComboBox(
+fun <E> AuroraComboBox(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS,
-    strings: List<String>,
-    content: @Composable() () -> Unit
+    items: List<E>,
+    displayConverter: (E) -> String,
+    onItemSelected: (E) -> Unit
 ) {
     AuroraComboBox(
         modifier = modifier,
         enabled = enabled,
         backgroundAppearanceStrategy = backgroundAppearanceStrategy,
-        strings = strings,
+        items = items,
+        displayConverter = displayConverter,
+        onItemSelected = onItemSelected,
         interactionState = remember { InteractionState() },
-        stateTransitionFloat = AnimatedFloat(0.0f, AmbientAnimationClock.current.asDisposableClock()),
-        content = content
+        stateTransitionFloat = AnimatedFloat(0.0f, AmbientAnimationClock.current.asDisposableClock())
     )
 }
 
 @Composable
-private fun AuroraComboBox(
+private fun <E> AuroraComboBox(
     modifier: Modifier,
     enabled: Boolean,
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
-    strings: List<String>,
+    items: List<E>,
+    displayConverter: (E) -> String,
+    onItemSelected: (E) -> Unit,
     interactionState: InteractionState,
-    stateTransitionFloat: AnimatedFloat,
-    content: @Composable() () -> Unit
+    stateTransitionFloat: AnimatedFloat
 ) {
     val drawingCache = remember { ComboBoxDrawingCache() }
+    val selectedItem = remember { mutableStateOf(displayConverter.invoke(items[0])) }
 
     val stateTransitionTracker =
         remember { StateTransitionTracker(enabled, false, stateTransitionFloat) }
@@ -268,7 +270,13 @@ private fun AuroraComboBox(
                         ) {
                             ComboBoxPopupContent(
                                 window = jwindow,
-                                strings = strings
+                                items = items,
+                                displayConverter = displayConverter,
+                                onItemSelected = {
+                                    selectedItem.value = displayConverter.invoke(it)
+                                    onItemSelected.invoke(it)
+                                    jwindow.dispose()
+                                }
                             )
                         }
                     }
@@ -441,7 +449,9 @@ private fun AuroraComboBox(
                         bottom = ButtonSizingConstants.DefaultButtonContentPadding.bottom
                     )
                 ),
-                content = content
+                content = {
+                    AuroraText("${selectedItem.value}")
+                }
             ) { measurables, constraints ->
                 // Measure each child so that we know how much space they need
                 val placeables = measurables.map { measurable ->
@@ -470,7 +480,7 @@ private fun AuroraComboBox(
                 // Center children vertically within the vertical space
                 layout(width = finalSize.width.toInt(), height = finalSize.height.toInt()) {
                     // TODO - add RTL support
-                    var xPosition = (finalSize.width.toInt() - contentTotalWidth) / 2
+                    var xPosition = 0
 
                     placeables.forEach { placeable ->
                         placeable.placeRelative(
@@ -486,9 +496,11 @@ private fun AuroraComboBox(
 }
 
 @Composable
-private fun ComboBoxPopupContent(
+private fun <E> ComboBoxPopupContent(
     window: JWindow,
-    strings: List<String>
+    items: List<E>,
+    displayConverter: (E) -> String,
+    onItemSelected: (E) -> Unit,
 ) {
     val density = AmbientDensity.current.density
     Box(
@@ -505,17 +517,46 @@ private fun ComboBoxPopupContent(
             window.pack()
         }
     ) {
-        Column(modifier = Modifier.wrapContentSize()) {
-            for (string in strings) {
+        ComboBoxPopupColumn {
+            for (item in items) {
+                // TODO - replace with the variant that uses highlights and start alignment
                 AuroraButton(
                     enabled = true,
-                    onClick = { println("$string clicked!") },
+                    onClick = { onItemSelected.invoke(item) },
                     sides = ButtonSides(straightSides = Side.values().toSet()),
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
                     sizingStrategy = ButtonSizingStrategy.EXTENDED,
                 ) {
-                    AuroraText(string)
+                    AuroraText(text = displayConverter.invoke(item), maxLines = 1)
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun ComboBoxPopupColumn(content: @Composable() () -> Unit) {
+    Layout(content = content) { measurables, constraints ->
+        // The column width is determined by the widest child
+        val contentTotalWidth = measurables.maxOf { it.maxIntrinsicWidth(Int.MAX_VALUE) }
+
+        val placeables = measurables.map { measurable ->
+            // Measure each child
+            measurable.measure(Constraints.fixedWidth(contentTotalWidth))
+        }
+
+        // The children are laid out in a column
+        val contentMaxHeight = placeables.sumBy { it.height }
+
+        layout(width = contentTotalWidth, height = contentMaxHeight) {
+            var yPosition = 0
+
+            placeables.forEach { placeable ->
+                placeable.placeRelative(
+                    x = 0,
+                    y = yPosition
+                )
+                yPosition += placeable.height
             }
         }
     }

@@ -42,9 +42,7 @@ import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.icon.AuroraThemedFollowTextIcon
 import org.pushingpixels.aurora.icon.AuroraThemedIcon
-import org.pushingpixels.aurora.skin.businessSkin
 import org.pushingpixels.aurora.skin.marinerSkin
-import org.pushingpixels.aurora.skin.ravenSkin
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 
@@ -58,6 +56,8 @@ fun main() {
         DemoContent()
     }
 }
+
+data class Person(val firstName: String, val lastName: String)
 
 @Composable
 fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
@@ -145,13 +145,6 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     )
                     AuroraText("always")
                 }
-                AuroraComboBox(
-                    enabled = enabled.value,
-                    strings = listOf("one", "two", "three"),
-                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
-                ) {
-                    AuroraText("combobox")
-                }
             }
             Row(modifier = Modifier.fillMaxWidth()) {
                 AuroraToggleButton(
@@ -234,6 +227,26 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                 ) {
                     AuroraThemedFollowTextIcon(icon = star_black_48dp.of(12.dp, 12.dp))
                 }
+
+                Spacer(modifier = Modifier.width(20.dp))
+
+                AuroraComboBox(
+                    enabled = enabled.value,
+                    items = listOf("one", "two", "three"),
+                    displayConverter = { it },
+                    onItemSelected = { println("$it selected!") },
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                AuroraComboBox(
+                    enabled = enabled.value,
+                    items = listOf(Person("Bob", "Loblaw"), Person("Paige", "Turner"), Person("Donaldson", "Duck")),
+                    displayConverter = { it.lastName + ", " + it.firstName },
+                    onItemSelected = { println("$it selected!") },
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                )
             }
         }
     }
