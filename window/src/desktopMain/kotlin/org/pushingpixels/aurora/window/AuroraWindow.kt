@@ -33,7 +33,10 @@ import androidx.compose.desktop.AppManager
 import androidx.compose.desktop.Window
 import androidx.compose.desktop.WindowEvents
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Providers
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shadow
@@ -48,12 +51,18 @@ import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.component.AmbientStateTransitionTracker
 import org.pushingpixels.aurora.component.AuroraButton
+import org.pushingpixels.aurora.component.AuroraPopupWindow
 import org.pushingpixels.aurora.component.AuroraText
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.shaper.AuroraButtonShaper
-import java.awt.Frame
+import java.awt.*
+import java.awt.event.AWTEventListener
+import java.awt.event.KeyEvent
+import java.awt.event.MouseEvent
 import java.awt.image.BufferedImage
 import javax.swing.JFrame
+import javax.swing.SwingUtilities
+
 
 @Composable
 private fun AuroraWindowContent(
@@ -210,6 +219,36 @@ private fun AuroraWindowContent(
         }
         content()
     }
+
+    val awtEventListener = AWTEventListener { event ->
+        val src = event.source
+        if (src !is Component) {
+            return@AWTEventListener
+        }
+        if ((event is KeyEvent) && (event.id == KeyEvent.KEY_RELEASED) && (event.keyCode == KeyEvent.VK_ESCAPE)) {
+            for (window in Window.getWindows()) {
+                if (window.isDisplayable && (window is AuroraPopupWindow)) {
+                    window.hide()
+                    window.dispose()
+                }
+            }
+        }
+        if ((event is MouseEvent) && (event.id == MouseEvent.MOUSE_PRESSED)) {
+            if (SwingUtilities.getAncestorOfClass(AuroraPopupWindow::class.java, src) == null) {
+                for (window in Window.getWindows()) {
+                    if (window.isDisplayable && (window is AuroraPopupWindow)) {
+                        window.hide()
+                        window.dispose()
+                    }
+                }
+            }
+        }
+    }
+    // TODO - remove listener on window dismissal
+    Toolkit.getDefaultToolkit().addAWTEventListener(
+        awtEventListener,
+        AWTEvent.KEY_EVENT_MASK or AWTEvent.MOUSE_EVENT_MASK or AWTEvent.MOUSE_WHEEL_EVENT_MASK
+    )
 }
 
 fun AuroraWindow(

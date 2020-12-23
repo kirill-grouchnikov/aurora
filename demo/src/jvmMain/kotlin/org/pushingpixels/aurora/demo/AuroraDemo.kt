@@ -235,7 +235,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     items = listOf("one", "two", "three"),
                     displayConverter = { it },
                     onItemSelected = { println("$it selected!") },
-                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))

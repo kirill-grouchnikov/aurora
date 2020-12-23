@@ -117,6 +117,8 @@ private fun Modifier.comboBoxLocator(offset: AuroraOffset) = this.then(
     ComboBoxLocator(offset)
 )
 
+class AuroraPopupWindow : JWindow()
+
 @Composable
 fun <E> AuroraComboBox(
     modifier: Modifier = Modifier,
@@ -236,7 +238,7 @@ private fun <E> AuroraComboBox(
                 onClick = {
                     // TODO - move off of JWindow when https://github.com/JetBrains/compose-jb/issues/195
                     //  is addressed
-                    val jwindow = JWindow()
+                    val jwindow = AuroraPopupWindow()
                     jwindow.focusableWindowState = false
                     jwindow.type = Window.Type.POPUP
                     jwindow.isAlwaysOnTop = true
@@ -519,7 +521,6 @@ private fun <E> ComboBoxPopupContent(
     ) {
         ComboBoxPopupColumn {
             for (item in items) {
-                // TODO - replace with the variant that uses highlights and start alignment
                 AuroraButton(
                     enabled = true,
                     onClick = { onItemSelected.invoke(item) },
@@ -535,13 +536,13 @@ private fun <E> ComboBoxPopupContent(
 }
 
 @Composable
-fun ComboBoxPopupColumn(content: @Composable() () -> Unit) {
+private fun ComboBoxPopupColumn(content: @Composable() () -> Unit) {
     Layout(content = content) { measurables, constraints ->
         // The column width is determined by the widest child
         val contentTotalWidth = measurables.maxOf { it.maxIntrinsicWidth(Int.MAX_VALUE) }
 
         val placeables = measurables.map { measurable ->
-            // Measure each child
+            // Measure each child with fixed (widest) width
             measurable.measure(Constraints.fixedWidth(contentTotalWidth))
         }
 
@@ -551,6 +552,7 @@ fun ComboBoxPopupColumn(content: @Composable() () -> Unit) {
         layout(width = contentTotalWidth, height = contentMaxHeight) {
             var yPosition = 0
 
+            // TODO - support RTL
             placeables.forEach { placeable ->
                 placeable.placeRelative(
                     x = 0,
