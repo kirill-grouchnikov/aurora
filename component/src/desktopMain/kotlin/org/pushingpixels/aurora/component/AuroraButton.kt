@@ -50,7 +50,9 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
+import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.component.utils.*
+import org.pushingpixels.aurora.shaper.AuroraButtonShaper
 import kotlin.math.max
 
 // TODO - revisit this
@@ -140,6 +142,11 @@ private fun AuroraToggleButton(
     val stateTransitionTracker =
         remember { StateTransitionTracker(enabled, selected, stateTransitionFloat) }
 
+    val skinColors = AuroraSkin.colors
+    val decorationAreaType = AuroraSkin.decorationAreaType
+    val painters = AuroraSkin.painters
+    val buttonShaper = AuroraSkin.buttonShaper
+
     // Transition for the selection state
     if (!::SelectedTransitionDefinition.isInitialized) {
         SelectedTransitionDefinition =
@@ -193,8 +200,6 @@ private fun AuroraToggleButton(
         AuroraSkin.animationConfig.regular
     )
 
-    val decorationAreaType = AuroraSkin.decorationAreaType
-    val buttonShaper = AuroraSkin.buttonShaper
     Box(
         modifier = modifier
             .pointerMoveFilter(
@@ -223,8 +228,8 @@ private fun AuroraToggleButton(
         // Compute the text color
         val textColor = getTextColor(
             modelStateInfo = stateTransitionTracker.modelStateInfo,
-            skinColors = AuroraSkin.colors,
-            decorationAreaType = AuroraSkin.decorationAreaType,
+            skinColors = skinColors,
+            decorationAreaType = decorationAreaType,
             isTextInFilledArea = true
         )
 
@@ -259,8 +264,8 @@ private fun AuroraToggleButton(
             val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
             val borderIsDark = drawingCache.colorScheme.isDark
 
-            val fillPainter = AuroraSkin.painters.fillPainter
-            val borderPainter = AuroraSkin.painters.borderPainter
+            val fillPainter = painters.fillPainter
+            val borderPainter = painters.borderPainter
 
             val alpha: Float
             if (backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
@@ -271,7 +276,7 @@ private fun AuroraToggleButton(
                     .values.sumByDouble { it.contribution.toDouble() }.toFloat()
             } else {
                 alpha = if (stateTransitionTracker.currentState.isDisabled)
-                    AuroraSkin.colors.getAlpha(decorationAreaType, stateTransitionTracker.currentState) else 1.0f
+                    skinColors.getAlpha(decorationAreaType, stateTransitionTracker.currentState) else 1.0f
             }
 
             Canvas(modifier.matchParentSize()) {
@@ -440,6 +445,11 @@ private fun AuroraButton(
     val stateTransitionTracker =
         remember { StateTransitionTracker(enabled, false, stateTransitionFloat) }
 
+    val skinColors = AuroraSkin.colors
+    val decorationAreaType = AuroraSkin.decorationAreaType
+    val painters = AuroraSkin.painters
+    val buttonShaper = AuroraSkin.buttonShaper
+
     // Transition for the selection state
     if (!::SelectedTransitionDefinition.isInitialized) {
         SelectedTransitionDefinition =
@@ -493,8 +503,6 @@ private fun AuroraButton(
         AuroraSkin.animationConfig.regular
     )
 
-    val decorationAreaType = AuroraSkin.decorationAreaType
-    val buttonShaper = AuroraSkin.buttonShaper
     Box(
         modifier = modifier
             .pointerMoveFilter(
@@ -520,8 +528,8 @@ private fun AuroraButton(
         // Compute the text color
         val textColor = getTextColor(
             modelStateInfo = stateTransitionTracker.modelStateInfo,
-            skinColors = AuroraSkin.colors,
-            decorationAreaType = AuroraSkin.decorationAreaType,
+            skinColors = skinColors,
+            decorationAreaType = decorationAreaType,
             isTextInFilledArea = true
         )
 
@@ -556,8 +564,8 @@ private fun AuroraButton(
             val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
             val borderIsDark = drawingCache.colorScheme.isDark
 
-            val fillPainter = AuroraSkin.painters.fillPainter
-            val borderPainter = AuroraSkin.painters.borderPainter
+            val fillPainter = painters.fillPainter
+            val borderPainter = painters.borderPainter
 
             val alpha: Float
             if (backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
@@ -568,7 +576,7 @@ private fun AuroraButton(
                     .values.sumByDouble { it.contribution.toDouble() }.toFloat()
             } else {
                 alpha = if (stateTransitionTracker.currentState.isDisabled)
-                    AuroraSkin.colors.getAlpha(decorationAreaType, stateTransitionTracker.currentState) else 1.0f
+                    skinColors.getAlpha(decorationAreaType, stateTransitionTracker.currentState) else 1.0f
             }
 
             Canvas(modifier.matchParentSize()) {

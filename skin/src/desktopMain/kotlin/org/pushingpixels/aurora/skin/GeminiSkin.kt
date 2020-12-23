@@ -201,7 +201,6 @@ private fun geminiSkinColors(): AuroraSkinColors {
         ComponentState.ROLLOVER_UNSELECTED
     )
     headerSchemeBundle.registerColorScheme(blackColorScheme, ColorSchemeAssociationKind.MARK)
-    // TODO - this is different from the original
     headerSchemeBundle.registerColorScheme(
         grayScheme, ColorSchemeAssociationKind.MARK,
         ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED
@@ -211,7 +210,6 @@ private fun geminiSkinColors(): AuroraSkinColors {
         ColorSchemeAssociationKind.BORDER
     )
     applyHighlightColorScheme(headerSchemeBundle, highlightScheme)
-    // TODO - this is different from the original
     applyHighlightAsFill(headerSchemeBundle, highlightScheme, highlightBorderScheme)
 
     result.registerDecorationAreaSchemeBundle(

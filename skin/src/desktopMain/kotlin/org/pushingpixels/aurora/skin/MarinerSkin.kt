@@ -124,7 +124,6 @@ private fun marinerSkinColors(): AuroraSkinColors {
         headerColorScheme, ColorSchemeAssociationKind.FILL,
         ComponentState.DISABLED_SELECTED, ComponentState.DISABLED_UNSELECTED
     )
-    // TODO - this is different from the original
     headerSchemeBundle.registerColorScheme(
         activeScheme, ColorSchemeAssociationKind.FILL,
         ComponentState.ROLLOVER_UNSELECTED, ComponentState.ROLLOVER_SELECTED
@@ -134,13 +133,11 @@ private fun marinerSkinColors(): AuroraSkinColors {
         headerBorderColorScheme,
         ColorSchemeAssociationKind.BORDER
     )
-    // TODO - this is different from the original
     headerSchemeBundle.registerColorScheme(
         enabledMarkScheme.shade(0.8f), ColorSchemeAssociationKind.MARK,
         ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED,
         ComponentState.PRESSED_SELECTED
     )
-    // TODO - this is different from the original
     headerSchemeBundle.registerColorScheme(
         enabledMarkScheme.shade(0.7f), ColorSchemeAssociationKind.MARK,
         ComponentState.ROLLOVER_UNSELECTED

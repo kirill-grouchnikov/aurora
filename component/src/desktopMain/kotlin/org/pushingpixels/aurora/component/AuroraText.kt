@@ -34,6 +34,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.graphics.useOrElse
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
@@ -65,7 +66,7 @@ fun AuroraText(
     onTextLayout: (TextLayoutResult) -> Unit = {},
     style: TextStyle = AmbientTextStyle.current
 ) {
-    val textColor = color.useOrElse { style.color.useOrElse { AmbientTextColor.current } }
+    val textColor = color.takeOrElse { style.color.takeOrElse { AmbientTextColor.current } }
     val mergedStyle = style.merge(
         TextStyle(
             color = textColor,

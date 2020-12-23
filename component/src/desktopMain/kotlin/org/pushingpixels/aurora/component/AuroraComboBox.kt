@@ -59,6 +59,7 @@ import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.painter.decoration.AuroraDecorationPainter
+import org.pushingpixels.aurora.shaper.AuroraButtonShaper
 import java.awt.BorderLayout
 import java.awt.Rectangle
 import java.awt.Window
@@ -208,7 +209,7 @@ private fun AuroraComboBox(
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
     val buttonShaper = AuroraSkin.buttonShaper
-    val decorationPainter = AuroraSkin.painters.decorationPainter
+    val painters = AuroraSkin.painters
 
     val auroraOffset = AuroraOffset(0.0f, 0.0f)
     val density = AmbientDensity.current.density
@@ -258,13 +259,22 @@ private fun AuroraComboBox(
 
                     val composePopupContent = ComposePanel()
                     composePopupContent.setContent {
-                        ComboBoxPopupContent(
-                            window = jwindow,
-                            decorationAreaType = decorationAreaType,
-                            colors = skinColors,
-                            decorationPainter = decorationPainter,
-                            strings = strings
-                        )
+                        Providers(
+                            AmbientDecorationAreaType provides decorationAreaType,
+                            AmbientSkinColors provides skinColors,
+                            AmbientButtonShaper provides buttonShaper,
+                            AmbientPainters provides painters,
+                            AmbientAnimationConfig provides AuroraSkin.animationConfig
+                        ) {
+                            ComboBoxPopupContent(
+                                window = jwindow,
+                                decorationAreaType = decorationAreaType,
+                                colors = skinColors,
+                                painters = painters,
+                                buttonShaper = buttonShaper,
+                                strings = strings
+                            )
+                        }
                     }
                     jwindow.contentPane.add(composePopupContent, BorderLayout.CENTER);
                     jwindow.invalidate()
@@ -396,6 +406,7 @@ private fun AuroraComboBox(
                         this, this.size, outline, innerOutline, drawingCache.colorScheme, alpha
                     )
 
+                    // TODO - support RTL
                     translate(
                         left = width
                                 - ButtonSizingConstants.DefaultButtonContentPadding.end.toPx()
@@ -482,7 +493,8 @@ private fun AuroraComboBox(
 private fun ComboBoxPopupContent(
     window: JWindow, decorationAreaType: DecorationAreaType,
     colors: AuroraSkinColors,
-    decorationPainter: AuroraDecorationPainter,
+    painters: Painters,
+    buttonShaper: AuroraButtonShaper,
     strings: List<String>
 ) {
     val density = AmbientDensity.current.density
@@ -491,7 +503,7 @@ private fun ComboBoxPopupContent(
             window = window,
             decorationAreaType = decorationAreaType,
             colors = colors,
-            decorationPainter = decorationPainter,
+            decorationPainter = painters.decorationPainter,
             overlayPainters = emptyList()
         ).onGloballyPositioned {
             // Get the size of the content and update the popup window bounds
@@ -508,14 +520,14 @@ private fun ComboBoxPopupContent(
     ) {
         Column(modifier = Modifier.wrapContentSize()) {
             for (string in strings) {
-                Box(
-                    modifier = Modifier.wrapContentSize()
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
-                    contentAlignment = Alignment.CenterStart
+                AuroraButton(
+                    enabled = true,
+                    onClick = { println("$string clicked!") },
+                    sides = ButtonSides(straightSides = Side.values().toSet()),
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                    sizingStrategy = ButtonSizingStrategy.EXTENDED,
                 ) {
-                    Providers(AmbientTextColor provides Color.Red) {
-                        AuroraText(string)
-                    }
+                    AuroraText(string)
                 }
             }
         }

@@ -31,12 +31,14 @@ package org.pushingpixels.aurora.component.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import org.pushingpixels.aurora.AuroraSkin
-import org.pushingpixels.aurora.ColorSchemeAssociationKind
-import org.pushingpixels.aurora.ComponentState
-import org.pushingpixels.aurora.DecorationAreaType
+import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.*
 import org.pushingpixels.aurora.common.interpolateTowards
+import org.pushingpixels.aurora.ComponentState
+
+
+
+
 
 internal data class MutableColorScheme(
     override val displayName: String,
@@ -278,6 +280,71 @@ internal fun getTextColor(
         for ((activeState, value) in activeStates) {
             val contribution = value.contribution
             val activeColorScheme = skinColors.getColorScheme(decorationAreaType, activeState)
+            val activeForeground = activeColorScheme.foregroundColor
+            aggrRed += contribution * activeForeground.red
+            aggrGreen += contribution * activeForeground.green
+            aggrBlue += contribution * activeForeground.blue
+        }
+        foreground = Color(red = aggrRed, blue = aggrBlue, green = aggrGreen, alpha = 1.0f)
+    }
+
+    val baseAlpha = skinColors.getAlpha(
+        decorationAreaType = decorationAreaType,
+        componentState = currState
+    )
+
+    if (baseAlpha < 1.0f) {
+        // Blend with the background fill
+        val backgroundColorScheme = skinColors.getColorScheme(
+            decorationAreaType,
+            if (currState.isDisabled) ComponentState.DISABLED_UNSELECTED else ComponentState.ENABLED
+        )
+        val bgFillColor = backgroundColorScheme.backgroundFillColor
+        foreground = foreground.interpolateTowards(bgFillColor, baseAlpha)
+    }
+    return foreground
+}
+
+internal fun getMenuTextColor(
+    modelStateInfo: ModelStateInfo,
+    skinColors: AuroraSkinColors,
+    decorationAreaType: DecorationAreaType
+): Color {
+    val currState = modelStateInfo.currModelState
+    val activeStates = modelStateInfo.stateContributionMap
+
+    var currAssocKind = ColorSchemeAssociationKind.FILL
+    // use HIGHLIGHT on active and non-rollover menu items
+    if (!currState.isDisabled && (currState !== ComponentState.ENABLED)
+        && !currState.isFacetActive(ComponentStateFacet.ROLLOVER)
+    ) currAssocKind = ColorSchemeAssociationKind.HIGHLIGHT
+
+    val colorScheme = skinColors.getColorScheme(
+        decorationAreaType = decorationAreaType,
+        associationKind = currAssocKind,
+        componentState = currState
+    )
+
+    var foreground: Color
+    if (currState.isDisabled || activeStates == null || activeStates.size == 1) {
+        // Disabled state or only one active state being tracked
+        foreground = colorScheme.foregroundColor
+    } else {
+        // Get the combined foreground color from all states
+        var aggrRed = 0f
+        var aggrGreen = 0f
+        var aggrBlue = 0f
+        for ((activeState, value) in activeStates) {
+            val contribution = value.contribution
+            var assocKind: ColorSchemeAssociationKind = ColorSchemeAssociationKind.FILL
+            // use HIGHLIGHT on active and non-rollover menu items
+            if (!activeState.isDisabled && (activeState !== ComponentState.ENABLED)
+                && !activeState.isFacetActive(ComponentStateFacet.ROLLOVER)
+            ) assocKind = ColorSchemeAssociationKind.HIGHLIGHT
+            val activeColorScheme = skinColors.getColorScheme(
+                decorationAreaType = decorationAreaType,
+                associationKind = assocKind,
+                componentState = activeState)
             val activeForeground = activeColorScheme.foregroundColor
             aggrRed += contribution * activeForeground.red
             aggrGreen += contribution * activeForeground.green
