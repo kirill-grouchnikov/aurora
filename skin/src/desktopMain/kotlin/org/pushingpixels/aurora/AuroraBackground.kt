@@ -61,22 +61,16 @@ fun Modifier.auroraBackground() = this.then(
 )
 
 @Composable
-fun Modifier.auroraBackground(
-    window: JWindow,
-    decorationAreaType: DecorationAreaType,
-    colors: AuroraSkinColors,
-    decorationPainter: AuroraDecorationPainter,
-    overlayPainters: List<AuroraOverlayPainter>
-) = this.then(
+fun Modifier.auroraBackground(window: JWindow) = this.then(
     AuroraBackground(
         rootSize = Size(
             width = window.width * AmbientDensity.current.density,
             height = window.height * AmbientDensity.current.density
         ),
-        decorationAreaType = decorationAreaType,
-        colors = colors,
-        decorationPainter = decorationPainter,
-        overlayPainters = overlayPainters
+        decorationAreaType = AuroraSkin.decorationAreaType,
+        colors = AuroraSkin.colors,
+        decorationPainter = AuroraSkin.painters.decorationPainter,
+        overlayPainters = emptyList()
     )
 )
 

@@ -268,10 +268,6 @@ private fun AuroraComboBox(
                         ) {
                             ComboBoxPopupContent(
                                 window = jwindow,
-                                decorationAreaType = decorationAreaType,
-                                colors = skinColors,
-                                painters = painters,
-                                buttonShaper = buttonShaper,
                                 strings = strings
                             )
                         }
@@ -491,21 +487,12 @@ private fun AuroraComboBox(
 
 @Composable
 private fun ComboBoxPopupContent(
-    window: JWindow, decorationAreaType: DecorationAreaType,
-    colors: AuroraSkinColors,
-    painters: Painters,
-    buttonShaper: AuroraButtonShaper,
+    window: JWindow,
     strings: List<String>
 ) {
     val density = AmbientDensity.current.density
     Box(
-        modifier = Modifier.auroraBackground(
-            window = window,
-            decorationAreaType = decorationAreaType,
-            colors = colors,
-            decorationPainter = painters.decorationPainter,
-            overlayPainters = emptyList()
-        ).onGloballyPositioned {
+        modifier = Modifier.auroraBackground(window = window).onGloballyPositioned {
             // Get the size of the content and update the popup window bounds
             window.bounds = Rectangle(
                 window.x, window.y,
