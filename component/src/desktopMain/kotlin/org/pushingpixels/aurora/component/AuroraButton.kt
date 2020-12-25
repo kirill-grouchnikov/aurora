@@ -50,9 +50,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
-import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.shaper.AuroraButtonShaper
 import kotlin.math.max
 
 // TODO - revisit this

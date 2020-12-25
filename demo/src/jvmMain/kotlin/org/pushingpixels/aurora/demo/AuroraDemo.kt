@@ -145,6 +145,10 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     )
                     AuroraText("always")
                 }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                AuroraCircularProgress(enabled = enabled.value)
             }
             Row(modifier = Modifier.fillMaxWidth()) {
                 AuroraToggleButton(

@@ -251,9 +251,10 @@ private fun <E> AuroraComboBox(
                     val auroraWindow = AppManager.focusedWindow!!.window
                     val locationOnScreen = auroraWindow.locationOnScreen
 
-                    // anchor the popup window to the bottom right corner of the component
+                    // anchor the popup window to the bottom left corner of the component
                     // in screen coordinates
                     // TODO - figure out the sizing (see above)
+                    // TODO - support popup placement strategies
                     jwindow.setBounds(
                         (locationOnScreen.x + auroraOffset.x / density).toInt(),
                         (locationOnScreen.y + auroraOffset.y / density).toInt(),
@@ -508,6 +509,7 @@ private fun <E> ComboBoxPopupContent(
     Box(
         modifier = Modifier.auroraBackground(window = window).onGloballyPositioned {
             // Get the size of the content and update the popup window bounds
+            // TODO - support popup placement strategies
             window.bounds = Rectangle(
                 window.x, window.y,
                 (it.size.width / density).toInt(),
