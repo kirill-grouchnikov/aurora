@@ -31,10 +31,7 @@ package org.pushingpixels.aurora.painter.decoration
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.LinearGradient
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.unit.dp
@@ -72,22 +69,18 @@ class MatteDecorationPainter : AuroraDecorationPainter {
             // 0 - flex : light -> medium
             // flex - : medium fill
             val paint = if (gradientHeight == flexPoint)
-                LinearGradient(
+                Brush.verticalGradient(
                     0.0f to startColor,
                     1.0f to endColor,
-                    startX = 0.0f,
                     startY = -offsetFromRoot.y,
-                    endX = 0.0f,
                     endY = gradientHeight - offsetFromRoot.y,
                     tileMode = TileMode.Clamp
                 )
-            else LinearGradient(
+            else Brush.verticalGradient(
                 0.0f to startColor,
                 flexPoint / gradientHeight to endColor,
                 1.0f to endColor,
-                startX = 0.0f,
                 startY = -offsetFromRoot.y,
-                endX = 0.0f,
                 endY = componentSize.height - offsetFromRoot.y,
                 tileMode = TileMode.Clamp
             )

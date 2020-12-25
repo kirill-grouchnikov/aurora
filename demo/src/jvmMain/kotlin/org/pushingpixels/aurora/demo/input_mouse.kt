@@ -83,7 +83,7 @@ generalPath!!.cubicTo(19.978865f, 17.502026f, 28.710491f, 17.502026f, 35.788975f
 generalPath!!.cubicTo(42.867462f, 22.58272f, 47.21071f, 27.27507f, 47.174126f, 32.342636f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = RadialGradient(0.0f to Color(0, 0, 0, 255), 1.0f to Color(0, 0, 0, 0), centerX = 24.344677f, centerY = 32.34263f, radius = 22.829449f, tileMode = TileMode.Clamp)
+brush = Brush.radialGradient(0.0f to Color(0, 0, 0, 255), 1.0f to Color(0, 0, 0, 0), center = Offset(24.344677f, 32.34263f), radius = 22.829449f, tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -98,7 +98,7 @@ Matrix(values=floatArrayOf(
 0.0f, 0.0f, 0.0f, 1.0f)
 ))}){
 // _0_0_1
-brush = LinearGradient(0.0f to Color(172, 172, 172, 255), 1.0f to Color(141, 141, 141, 0), startX = 34.213875f, startY = 4.375f, endX = 34.88611f, endY = -1.0f, tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to Color(172, 172, 172, 255), 1.0f to Color(141, 141, 141, 0), start = Offset(34.213875f, 4.375f), end = Offset(34.88611f, -1.0f), tileMode = TileMode.Clamp)
 stroke = Stroke(width=1.0000004f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -139,7 +139,7 @@ generalPath!!.cubicTo(14.301906f, 11.859589f, 13.836623f, 11.859587f, 13.371341f
 generalPath!!.lineTo(9.939883f, 27.131191f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = RadialGradient(0.0f to Color(255, 255, 255, 255), 0.37333333f to Color(217, 217, 217, 255), 0.6031111f to Color(197, 197, 197, 255), 1.0f to Color(144, 144, 144, 255), centerX = 21.434301f, centerY = 13.8242f, radius = 24.751009f, tileMode = TileMode.Clamp)
+brush = Brush.radialGradient(0.0f to Color(255, 255, 255, 255), 0.37333333f to Color(217, 217, 217, 255), 0.6031111f to Color(197, 197, 197, 255), 1.0f to Color(144, 144, 144, 255), center = Offset(21.434301f, 13.8242f), radius = 24.751009f, tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 brush = SolidColor(Color(79, 79, 79, 255))
 stroke = Stroke(width=1.0000007f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
@@ -249,7 +249,7 @@ generalPath!!.cubicTo(23.575792f, 6.34926f, 24.406454f, 6.34926f, 25.079851f, 7.
 generalPath!!.cubicTo(25.753246f, 8.054921f, 26.166431f, 9.63021f, 26.16295f, 11.331463f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = LinearGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(169, 169, 169, 255), startX = 23.991123f, startY = 12.830256f, endX = 23.991123f, endY = 7.1877394f, tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(169, 169, 169, 255), start = Offset(23.991123f, 12.830256f), end = Offset(23.991123f, 7.1877394f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -264,7 +264,7 @@ Matrix(values=floatArrayOf(
 0.0f, 0.0f, 0.0f, 1.0f)
 ))}){
 // _0_0_5
-brush = LinearGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(255, 255, 255, 0), startX = 14.185482f, startY = 3.4829133f, endX = 18.192976f, endY = 57.399807f, tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(255, 255, 255, 0), start = Offset(14.185482f, 3.4829133f), end = Offset(18.192976f, 57.399807f), tileMode = TileMode.Clamp)
 stroke = Stroke(width=1.0000002f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -309,7 +309,7 @@ generalPath!!.cubicTo(23.575792f, 6.34926f, 24.406454f, 6.34926f, 25.079851f, 7.
 generalPath!!.cubicTo(25.753246f, 8.054921f, 26.166431f, 9.63021f, 26.16295f, 11.331463f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = LinearGradient(0.0f to Color(177, 177, 177, 255), 0.2f to Color(223, 223, 223, 255), 1.0f to Color(86, 86, 86, 255), startX = 23.991123f, startY = 6.583746f, endX = 23.991123f, endY = 15.069027f, tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to Color(177, 177, 177, 255), 0.2f to Color(223, 223, 223, 255), 1.0f to Color(86, 86, 86, 255), start = Offset(23.991123f, 6.583746f), end = Offset(23.991123f, 15.069027f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 brush = SolidColor(Color(89, 89, 89, 255))
 stroke = Stroke(width=0.5453732f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)

@@ -54,13 +54,11 @@ open class StandardBorderPainter : AuroraBorderPainter {
             drawOutline(
                 outline = outline,
                 style = Stroke(width = 1.0f),
-                brush = LinearGradient(
+                brush = Brush.verticalGradient(
                     0.0f to getTopBorderColor(borderScheme),
                     0.5f to getMidBorderColor(borderScheme),
                     1.0f to getBottomBorderColor(borderScheme),
-                    startX = 0.0f,
                     startY = 0.0f,
-                    endX = 0.0f,
                     endY = size.height,
                     tileMode = TileMode.Repeated
                 ),

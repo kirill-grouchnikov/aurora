@@ -340,7 +340,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             tileModeRep = "TileMode.Repeated"
         }
 
-        printWriterManager!!.print("brush = LinearGradient(")
+        printWriterManager!!.print("brush = Brush.linearGradient(")
         val stopCount = correctedFractions.size
         for (stop in 0 until stopCount) {
             printWriterManager!!.print(
@@ -363,8 +363,8 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         val transformedStart = matrix.map(Offset(x = startPoint.x.toFloat(), y = startPoint.y.toFloat()))
         val transformedEnd = matrix.map(Offset(x = endPoint.x.toFloat(), y = endPoint.y.toFloat()))
 
-        printWriterManager!!.print("startX = ${transformedStart.x}f, startY = ${transformedStart.y}f, ")
-        printWriterManager!!.print("endX = ${transformedEnd.x}f, endY = ${transformedEnd.y}f, ")
+        printWriterManager!!.print("start = Offset(${transformedStart.x}f, ${transformedStart.y}f), ")
+        printWriterManager!!.print("end = Offset(${transformedEnd.x}f, ${transformedEnd.y}f), ")
         printWriterManager!!.println("tileMode = $tileModeRep)")
     }
 
@@ -671,7 +671,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             tileModeRep = "TileMode.Repeated"
         }
 
-        printWriterManager!!.print("brush = RadialGradient(")
+        printWriterManager!!.print("brush = Brush.radialGradient(")
         val stopCount = correctedFractions.size
         for (stop in 0 until stopCount) {
             printWriterManager!!.print(
@@ -697,7 +697,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         val dy = transformedEdge.y - transformedCenter.y
         val transformedRadius = sqrt(dx * dx + dy * dy)
 
-        printWriterManager!!.print("centerX = ${transformedCenter.x}f, centerY = ${transformedCenter.y}f, ")
+        printWriterManager!!.print("center = Offset(${transformedCenter.x}f, ${transformedCenter.y}f), ")
         printWriterManager!!.print("radius = ${transformedRadius}f, ")
         printWriterManager!!.println("tileMode = $tileModeRep)")
     }

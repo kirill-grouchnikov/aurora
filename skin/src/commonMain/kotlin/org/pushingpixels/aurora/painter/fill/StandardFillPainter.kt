@@ -56,14 +56,12 @@ open class StandardFillPainter : AuroraFillPainter {
             drawOutline(
                 outline = outline,
                 style = Fill,
-                brush = LinearGradient(
+                brush = Brush.verticalGradient(
                     0.0f to getTopFillColor(fillScheme),
                     0.4999999f to getMidFillColorTop(fillScheme),
                     0.5f to getMidFillColorBottom(fillScheme),
                     1.0f to getBottomFillColor(fillScheme),
-                    startX = 0.0f,
                     startY = 0.0f,
-                    endX = 0.0f,
                     endY = size.height,
                     tileMode = TileMode.Clamp
                 ),

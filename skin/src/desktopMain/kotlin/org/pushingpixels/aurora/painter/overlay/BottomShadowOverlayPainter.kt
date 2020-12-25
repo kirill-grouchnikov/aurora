@@ -31,7 +31,7 @@ package org.pushingpixels.aurora.painter.overlay
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.LinearGradient
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
@@ -39,8 +39,8 @@ import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.common.withBrightness
 import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.common.withBrightness
 
 /**
  * Overlay painter that paints a few pixel-high drop shadow at the bottom edge
@@ -70,14 +70,12 @@ class BottomShadowOverlayPainter private constructor(private val endAlpha: Float
                     topLeft = Offset(0.0f, 0.0f),
                     size = Size(width, shadowHeight),
                     style = Fill,
-                    brush = LinearGradient(
+                    brush = Brush.verticalGradient(
                         colors = listOf(
                             shadowColor.withAlpha(0.0625f),
                             shadowColor.withAlpha(endAlpha)
                         ),
-                        startX = 0.0f,
                         startY = 0.0f,
-                        endX = 0.0f,
                         endY = shadowHeight,
                         tileMode = TileMode.Clamp
                     )

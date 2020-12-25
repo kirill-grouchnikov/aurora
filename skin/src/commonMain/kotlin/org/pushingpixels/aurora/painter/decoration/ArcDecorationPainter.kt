@@ -90,14 +90,12 @@ class ArcDecorationPainter : AuroraDecorationPainter {
                 )
                 topPath.close()
 
-                val topGradient = LinearGradient(
+                val topGradient = Brush.horizontalGradient(
                     0.0f to colorScheme.lightColor,
                     0.5f to colorScheme.ultraLightColor,
                     1.0f to colorScheme.lightColor,
                     startX = 0.0f,
-                    startY = 0.0f,
                     endX = boundingRect.width,
-                    endY = 0.0f,
                     tileMode = TileMode.Repeated
                 )
 
@@ -118,14 +116,12 @@ class ArcDecorationPainter : AuroraDecorationPainter {
                 )
                 bottomPath.close()
 
-                val bottomGradient = LinearGradient(
+                val bottomGradient = Brush.horizontalGradient(
                     0.0f to colorScheme.midColor,
                     0.5f to colorScheme.lightColor,
                     1.0f to colorScheme.midColor,
                     startX = 0.0f,
-                    startY = 0.0f,
                     endX = boundingRect.width,
-                    endY = 0.0f,
                     tileMode = TileMode.Repeated
                 )
 
@@ -162,14 +158,12 @@ class ArcDecorationPainter : AuroraDecorationPainter {
         colorScheme: AuroraColorScheme
     ) {
         with(drawScope) {
-            val gradientBottom = LinearGradient(
+            val gradientBottom = Brush.horizontalGradient(
                 0.0f to colorScheme.midColor,
                 0.5f to colorScheme.lightColor,
                 1.0f to colorScheme.midColor,
                 startX = -offsetFromRoot.x,
-                startY = 0.0f,
                 endX = -offsetFromRoot.x + rootSize.width,
-                endY = 0.0f,
                 tileMode = TileMode.Repeated
             )
 
