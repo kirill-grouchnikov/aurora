@@ -48,20 +48,19 @@ import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.ComponentState
 import kotlin.math.min
 
-
-private val ArcSpanProp = FloatPropKey()
+private val CircularProgressArcSpanProp = FloatPropKey()
 
 private val CircularProgressTransition = transitionDefinition<Int> {
     state(0) {
-        this[ArcSpanProp] = 30f
+        this[CircularProgressArcSpanProp] = 30f
     }
 
     state(1) {
-        this[ArcSpanProp] = 300f
+        this[CircularProgressArcSpanProp] = 300f
     }
 
     transition(fromState = 0, toState = 1) {
-        ArcSpanProp using infiniteRepeatable(
+        CircularProgressArcSpanProp using infiniteRepeatable(
             animation = tween(
                 durationMillis = 1000,
                 easing = LinearEasing
@@ -85,7 +84,7 @@ fun AuroraCircularProgress(
     val arcStart = remember { mutableStateOf(0.0f) }
     val arcEnd = remember { mutableStateOf(0.0f) }
     // TODO - not ideal, but will do for now
-    val prevArcSpan = remember { mutableStateOf(state[ArcSpanProp]) }
+    val prevArcSpan = remember { mutableStateOf(state[CircularProgressArcSpanProp]) }
 
     val color = AuroraSkin.colors.getColorScheme(
         decorationAreaType = AuroraSkin.decorationAreaType,
@@ -101,7 +100,7 @@ fun AuroraCircularProgress(
             .progressSemantics()
             .preferredSize(10.dp)
     ) {
-        val arcSpan = state[ArcSpanProp]
+        val arcSpan = state[CircularProgressArcSpanProp]
         val isArcGrowing = (arcSpan > prevArcSpan.value)
         if (isArcGrowing) {
             arcStart.value = arcStart.value - 8.0f
