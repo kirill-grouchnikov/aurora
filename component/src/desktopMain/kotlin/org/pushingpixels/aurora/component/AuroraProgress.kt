@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.AuroraSkin
+import org.pushingpixels.aurora.ColorSchemeAssociationKind
 import org.pushingpixels.aurora.ComponentState
 import org.pushingpixels.aurora.ComponentStateFacet
 import org.pushingpixels.aurora.painter.fill.FractionBasedFillPainter
@@ -212,6 +213,11 @@ fun AuroraIndeterminateLinearProgress(
         decorationAreaType = AuroraSkin.decorationAreaType,
         componentState = componentState
     )
+    val borderColorScheme = AuroraSkin.colors.getColorScheme(
+        decorationAreaType = AuroraSkin.decorationAreaType,
+        associationKind = ColorSchemeAssociationKind.BORDER,
+        componentState = componentState
+    )
 
     Canvas(
         modifier
@@ -252,7 +258,7 @@ fun AuroraIndeterminateLinearProgress(
                     endY = size.height,
                     tileMode = TileMode.Clamp
                 ),
-                alpha = 1.0f
+                alpha = stateAlpha
             )
 
             val stripeCount = (size.width / size.height).toInt()
@@ -269,17 +275,18 @@ fun AuroraIndeterminateLinearProgress(
                         it.lineTo(stripePos + size.height, size.height - 1.0f)
                         it.close()
                     },
-                    color = colorScheme.ultraLightColor
+                    color = colorScheme.ultraLightColor,
+                    alpha = stateAlpha
                 )
             }
-            drawRoundRect(
-                color = colorScheme.darkColor,
-                topLeft = Offset.Zero,
-                size = size,
-                cornerRadius = CornerRadius(radius, radius),
-                style = Stroke(width = 1.0f, cap = StrokeCap.Square, join = StrokeJoin.Miter),
-                alpha = 0.6f
-            )
         }
+        drawRoundRect(
+            color = borderColorScheme.darkColor,
+            topLeft = Offset.Zero,
+            size = size,
+            cornerRadius = CornerRadius(radius, radius),
+            style = Stroke(width = 0.5f),
+            alpha = stateAlpha
+        )
     }
 }
