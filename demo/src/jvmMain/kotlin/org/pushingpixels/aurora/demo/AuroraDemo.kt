@@ -29,7 +29,7 @@
  */
 package org.pushingpixels.aurora.demo
 
-import androidx.compose.animation.animate
+import androidx.compose.animation.core.animateAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -61,9 +61,9 @@ data class Person(val firstName: String, val lastName: String)
 @Composable
 fun DemoProgress(enabled: Boolean) {
     var progress by remember { mutableStateOf(0.5f) }
-    val animatedProgress = animate(
-        target = progress,
-        animSpec = ProgressConstants.ProgressAnimationSpec
+    val animatedStateProgress = animateAsState(
+        targetValue = progress,
+        animationSpec = ProgressConstants.ProgressAnimationSpec
     )
 
     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -76,7 +76,7 @@ fun DemoProgress(enabled: Boolean) {
             AuroraThemedFollowTextIcon(icon = remove_circle_outline_24px.of(10.dp, 10.dp))
         }
 
-        AuroraDeterminateLinearProgress(progress = animatedProgress, enabled = enabled)
+        AuroraDeterminateLinearProgress(progress = animatedStateProgress.value, enabled = enabled)
 
         AuroraButton(
             enabled = (progress < 1.0f),
