@@ -73,9 +73,15 @@ private val CircularProgressTransition = transitionDefinition<Int> {
     }
 }
 
-object ProgressSizingConstants {
+object ProgressConstants {
     val DefaultWidth = 192.dp
     val DefaultHeight = 16.dp
+
+    val ProgressAnimationSpec = SpringSpec(
+        dampingRatio = Spring.DampingRatioNoBouncy,
+        stiffness = Spring.StiffnessVeryLow,
+        visibilityThreshold = 0.001f
+    )
 }
 
 @Composable
@@ -204,32 +210,32 @@ fun AuroraIndeterminateLinearProgress(
         toState = 1
     )
 
-    val componentState = if (enabled) INDETERMINATE_SELECTED else INDETERMINATE_SELECTED_DISABLED
+    val progressState = if (enabled) INDETERMINATE_SELECTED else INDETERMINATE_SELECTED_DISABLED
+    // install state-aware alpha channel (support for skins
+    // that use translucency on disabled states).
     val stateAlpha = AuroraSkin.colors.getAlpha(
         decorationAreaType = AuroraSkin.decorationAreaType,
-        componentState = componentState
+        componentState = progressState
     )
     val colorScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = AuroraSkin.decorationAreaType,
-        componentState = componentState
+        componentState = progressState
     )
     val borderColorScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = AuroraSkin.decorationAreaType,
         associationKind = ColorSchemeAssociationKind.BORDER,
-        componentState = componentState
+        componentState = progressState
     )
 
     Canvas(
         modifier
             .progressSemantics()
             .preferredSize(
-                width = ProgressSizingConstants.DefaultWidth,
-                height = ProgressSizingConstants.DefaultHeight
+                width = ProgressConstants.DefaultWidth,
+                height = ProgressConstants.DefaultHeight
             )
     ) {
         val valComplete = state[IndeterminateLinearProgressPositionProp] * (2 * size.height + 1)
-        // install state-aware alpha channel (support for skins
-        // that use translucency on disabled states).
         val radius = 1.5f.dp.toPx()
 
         withTransform({
@@ -276,6 +282,90 @@ fun AuroraIndeterminateLinearProgress(
                         it.close()
                     },
                     color = colorScheme.ultraLightColor,
+                    alpha = stateAlpha
+                )
+            }
+        }
+        drawRoundRect(
+            color = borderColorScheme.darkColor,
+            topLeft = Offset.Zero,
+            size = size,
+            cornerRadius = CornerRadius(radius, radius),
+            style = Stroke(width = 0.5f),
+            alpha = stateAlpha
+        )
+    }
+}
+
+@Composable
+fun AuroraDeterminateLinearProgress(
+    progress: Float,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
+) {
+    val progressState = if (enabled) DETERMINATE_SELECTED else DETERMINATE_SELECTED_DISABLED
+    val fillState = if (enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
+
+    // install state-aware alpha channel (support for skins
+    // that use translucency on disabled states).
+    val stateAlpha = AuroraSkin.colors.getAlpha(
+        decorationAreaType = AuroraSkin.decorationAreaType,
+        componentState = fillState
+    )
+    val fillScheme = AuroraSkin.colors.getColorScheme(
+        decorationAreaType = AuroraSkin.decorationAreaType,
+        componentState = fillState
+    )
+    val progressColorScheme = AuroraSkin.colors.getColorScheme(
+        decorationAreaType = AuroraSkin.decorationAreaType,
+        componentState = progressState
+    )
+    val borderColorScheme = AuroraSkin.colors.getColorScheme(
+        decorationAreaType = AuroraSkin.decorationAreaType,
+        associationKind = ColorSchemeAssociationKind.BORDER,
+        componentState = fillState
+    )
+    val fillPainter = AuroraSkin.painters.fillPainter
+
+    Canvas(
+        modifier
+            .progressSemantics()
+            .preferredSize(
+                width = ProgressConstants.DefaultWidth,
+                height = ProgressConstants.DefaultHeight
+            )
+    ) {
+        val radius = 1.5f.dp.toPx()
+
+        withTransform({
+            clipPath(Path().also {
+                it.addRoundRect(
+                    RoundRect(
+                        left = 0.0f,
+                        top = 0.0f,
+                        right = size.width,
+                        bottom = size.height,
+                        cornerRadius = CornerRadius(radius, radius)
+                    )
+                )
+            })
+        }) {
+            fillPainter.paintContourBackground(
+                drawScope = this,
+                size = this.size,
+                outline = Outline.Rectangle(Rect(offset = Offset.Zero, size = size)),
+                fillScheme = fillScheme,
+                alpha = stateAlpha
+            )
+
+            val progressWidth = size.width * progress
+            if (progressWidth > 0.0f) {
+                // TODO - support RTL
+                fillPainter.paintContourBackground(
+                    drawScope = this,
+                    size = this.size,
+                    outline = Outline.Rectangle(Rect(offset = Offset.Zero, size = Size(progressWidth, size.height))),
+                    fillScheme = progressColorScheme,
                     alpha = stateAlpha
                 )
             }

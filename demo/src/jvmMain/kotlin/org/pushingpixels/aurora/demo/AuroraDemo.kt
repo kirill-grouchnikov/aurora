@@ -29,10 +29,9 @@
  */
 package org.pushingpixels.aurora.demo
 
+import androidx.compose.animation.animate
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntSize
@@ -50,7 +49,7 @@ fun main() {
     AuroraWindow(
         skin = marinerSkin(),
         title = "Aurora Demo",
-        size = IntSize(660, 680),
+        size = IntSize(660, 700),
         undecorated = true
     ) {
         DemoContent()
@@ -58,6 +57,37 @@ fun main() {
 }
 
 data class Person(val firstName: String, val lastName: String)
+
+@Composable
+fun DemoProgress(enabled: Boolean) {
+    var progress by remember { mutableStateOf(0.5f) }
+    val animatedProgress = animate(
+        target = progress,
+        animSpec = ProgressConstants.ProgressAnimationSpec
+    )
+
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        AuroraButton(
+            enabled = (progress > 0.0f),
+            onClick = { progress -= 0.1f },
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.NEVER,
+            sizingStrategy = ButtonSizingStrategy.COMPACT
+        ) {
+            AuroraThemedFollowTextIcon(icon = remove_circle_outline_24px.of(10.dp, 10.dp))
+        }
+
+        AuroraDeterminateLinearProgress(progress = animatedProgress, enabled = enabled)
+
+        AuroraButton(
+            enabled = (progress < 1.0f),
+            onClick = { progress += 0.1f },
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.NEVER,
+            sizingStrategy = ButtonSizingStrategy.COMPACT
+        ) {
+            AuroraThemedFollowTextIcon(icon = add_circle_outline_24px.of(10.dp, 10.dp))
+        }
+    }
+}
 
 @Composable
 fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
@@ -256,10 +286,14 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
                 )
             }
-            Row(modifier = Modifier.fillMaxWidth()) {
+            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 AuroraIndeterminateLinearProgress(
                     enabled = enabled.value
                 )
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                DemoProgress(enabled = enabled.value)
             }
         }
     }
