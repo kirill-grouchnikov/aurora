@@ -81,10 +81,10 @@ private class AuroraBackground(
     private val decorationPainter: AuroraDecorationPainter,
     private val overlayPainters: List<AuroraOverlayPainter>
 ) : OnGloballyPositionedModifier, DrawModifier {
-    var offset = Offset(0.0f, 0.0f)
+    var offset = Offset.Zero
 
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
-        offset = coordinates.localToRoot(Offset(0.0f, 0.0f))
+        offset = coordinates.localToRoot(Offset.Zero)
     }
 
     override fun ContentDrawScope.draw() {
@@ -97,7 +97,7 @@ private class AuroraBackground(
                 drawScope = this,
                 decorationAreaType = decorationAreaType,
                 componentSize = size,
-                outline = Outline.Rectangle(Rect(Offset(0.0f, 0.0f), size)),
+                outline = Outline.Rectangle(Rect(Offset.Zero, size)),
                 rootSize = rootSize,
                 offsetFromRoot = offset,
                 colorScheme = colors.getBackgroundColorScheme(decorationAreaType)

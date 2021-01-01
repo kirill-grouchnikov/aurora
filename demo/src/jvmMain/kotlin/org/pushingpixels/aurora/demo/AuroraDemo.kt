@@ -188,7 +188,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     onSelectedChange = { println("Selected under? $it") },
                     sides = ButtonSides(
                         straightSides = setOf(Side.START, Side.END),
-                        openSides = setOf(Side.START, Side.END)
+                        openSides = setOf(Side.END)
                     ),
                     sizingStrategy = ButtonSizingStrategy.COMPACT,
                     contentPadding = PaddingValues(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)

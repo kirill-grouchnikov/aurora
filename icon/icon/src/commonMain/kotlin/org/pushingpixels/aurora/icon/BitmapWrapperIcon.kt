@@ -59,7 +59,7 @@ class BitmapWrapperIcon(val bitmap: ImageBitmap): AuroraIcon {
         val scaleX = bitmap.width.toFloat() / _width
         val scaleY = bitmap.height.toFloat() / _height
         with (drawScope) {
-            scale(scaleX = scaleX, scaleY = scaleY, pivot = Offset(0.0f, 0.0f)) {
+            scale(scaleX = scaleX, scaleY = scaleY, pivot = Offset.Zero) {
                 drawImage(bitmap)
             }
         }

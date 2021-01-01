@@ -65,7 +65,7 @@ class TopShadowOverlayPainter private constructor(private val startAlpha: Float)
         with(drawScope) {
             val shadowHeight = 4.0.dp.toPx()
             drawRect(
-                topLeft = Offset(0.0f, 0.0f),
+                topLeft = Offset.Zero,
                 size = Size(width, shadowHeight),
                 style = Fill,
                 brush = Brush.verticalGradient(

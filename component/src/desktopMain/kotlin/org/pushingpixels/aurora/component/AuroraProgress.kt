@@ -129,7 +129,7 @@ fun AuroraCircularProgress(
             startAngle = arcStart.value,
             sweepAngle = arcSpan,
             useCenter = false,
-            topLeft = Offset(0.0f, 0.0f),
+            topLeft = Offset.Zero,
             size = Size(2.0f * diameter, 2.0f * diameter),
             style = Stroke(width = 1.2f.dp.toPx(), cap = StrokeCap.Butt, join = StrokeJoin.Round),
             alpha = alpha

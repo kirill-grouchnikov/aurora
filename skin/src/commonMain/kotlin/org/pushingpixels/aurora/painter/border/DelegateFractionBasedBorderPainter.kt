@@ -83,7 +83,7 @@ class DelegateFractionBasedBorderPainter(
                 style = Stroke(width = 1.0f),
                 brush = ShaderBrush(
                     LinearGradientShader(
-                        from = Offset(0.0f, 0.0f),
+                        from = Offset.Zero,
                         to = Offset(0.0f, size.height),
                         colors = borderColors,
                         colorStops = fractions.toList(),

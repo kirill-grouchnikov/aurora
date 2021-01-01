@@ -56,7 +56,7 @@ class TopLineOverlayPainter(private val colorSchemeQuery: (AuroraColorScheme) ->
         with(drawScope) {
             drawLine(
                 color = colorSchemeQuery.invoke(backgroundColorScheme),
-                start = Offset(0.0f, 0.0f),
+                start = Offset.Zero,
                 end = Offset(width, 0.0f)
             )
         }

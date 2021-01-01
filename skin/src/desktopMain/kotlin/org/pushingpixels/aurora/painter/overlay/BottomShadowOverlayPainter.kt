@@ -67,7 +67,7 @@ class BottomShadowOverlayPainter private constructor(private val endAlpha: Float
             val shadowHeight = 4.0.dp.toPx()
             translate(top = size.height - shadowHeight) {
                 drawRect(
-                    topLeft = Offset(0.0f, 0.0f),
+                    topLeft = Offset.Zero,
                     size = Size(width, shadowHeight),
                     style = Fill,
                     brush = Brush.verticalGradient(

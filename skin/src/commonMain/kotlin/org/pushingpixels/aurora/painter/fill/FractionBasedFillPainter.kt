@@ -62,7 +62,7 @@ class FractionBasedFillPainter(
                 style = Fill,
                 brush = ShaderBrush(
                     LinearGradientShader(
-                        from = Offset(0.0f, 0.0f),
+                        from = Offset.Zero,
                         to = Offset(0.0f, size.height),
                         colors = getColorQueries().map { it.invoke(fillScheme) },
                         colorStops = getFractions().toList(),

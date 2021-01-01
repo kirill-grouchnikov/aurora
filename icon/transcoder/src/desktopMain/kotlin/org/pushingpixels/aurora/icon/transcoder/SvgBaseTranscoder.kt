@@ -919,7 +919,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             printWriterManager!!.println("withTransform({")
             printWriterManager!!.println("   translate(left=${dx}f, top=${dy}f)")
             if (java.lang.Double.isFinite(startMarker.orient) && (startMarker.orient != 0.0)) {
-                printWriterManager!!.println("   rotate(degrees=${startMarker.orient}f, pivot = Offset(0.0f, 0.0f))")
+                printWriterManager!!.println("   rotate(degrees=${startMarker.orient}f, pivot = Offset.Zero)")
             }
             printWriterManager!!.println("}) {")
 
@@ -941,7 +941,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                     printWriterManager!!.println("withTransform({")
                     printWriterManager!!.println("   translate(left=${dx}f, top=${dy}f)")
                     if (java.lang.Double.isFinite(middleMarker.orient) && (middleMarker.orient != 0.0)) {
-                        printWriterManager!!.println("   rotate(degrees=${middleMarker.orient}f, pivot = Offset(0.0f, 0.0f))")
+                        printWriterManager!!.println("   rotate(degrees=${middleMarker.orient}f, pivot = Offset.Zero)")
                     }
                     printWriterManager!!.println("}) {")
 
@@ -962,7 +962,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             printWriterManager!!.println("withTransform({")
             printWriterManager!!.println("   translate(left=${dx}f, top=${dy}f)")
             if (java.lang.Double.isFinite(endMarker.orient) && (endMarker.orient != 0.0)) {
-                printWriterManager!!.println("   rotate(degrees=${endMarker.orient}f, pivot = Offset(0.0f, 0.0f))")
+                printWriterManager!!.println("   rotate(degrees=${endMarker.orient}f, pivot = Offset.Zero)")
             }
             printWriterManager!!.println("}) {")
 

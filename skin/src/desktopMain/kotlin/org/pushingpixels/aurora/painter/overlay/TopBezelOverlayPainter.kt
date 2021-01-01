@@ -59,7 +59,7 @@ class TopBezelOverlayPainter(
         with(drawScope) {
             drawLine(
                 color = colorSchemeQueryTop.invoke(backgroundColorScheme),
-                start = Offset(0.0f, 0.0f),
+                start = Offset.Zero,
                 end = Offset(width, 0.0f)
             )
             drawLine(

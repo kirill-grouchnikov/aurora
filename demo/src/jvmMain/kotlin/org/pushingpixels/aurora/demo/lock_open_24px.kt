@@ -242,7 +242,7 @@ alpha = alphaStack.removeAt(0)
 
             // Create a combined scale + translate + clip transform before calling the transcoded painting instructions
             withTransform({
-                scale(scaleX = coefDp, scaleY = coefDp, pivot = Offset(0.0f, 0.0f))
+                scale(scaleX = coefDp, scaleY = coefDp, pivot = Offset.Zero)
                 translate(translateXDp, translateYDp)
                 clipRect(left = 0.0f, top = 0.0f, right = fullOrigWidth.toFloat(), bottom = fullOrigHeight.toFloat(), clipOp = ClipOp.Intersect)
             }) {
