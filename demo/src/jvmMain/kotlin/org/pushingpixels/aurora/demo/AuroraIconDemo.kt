@@ -39,14 +39,14 @@ import org.pushingpixels.aurora.component.AuroraButton
 import org.pushingpixels.aurora.component.AuroraText
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.icon.AuroraThemedFollowTextIcon
-import org.pushingpixels.aurora.skin.marinerSkin
+import org.pushingpixels.aurora.skin.businessSkin
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 
 fun main() {
     AuroraWindow(
         title = "Aurora Demo",
-        skin = marinerSkin(),
+        skin = businessSkin(),
         size = IntSize(800, 600)
     ) {
         IconDemoContent()
