@@ -211,6 +211,8 @@ fun AuroraIndeterminateLinearProgress(
     )
 
     val progressState = if (enabled) INDETERMINATE_SELECTED else INDETERMINATE_SELECTED_DISABLED
+    val borderState = if (enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
+
     // install state-aware alpha channel (support for skins
     // that use translucency on disabled states).
     val stateAlpha = AuroraSkin.colors.getAlpha(
@@ -224,7 +226,7 @@ fun AuroraIndeterminateLinearProgress(
     val borderColorScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = AuroraSkin.decorationAreaType,
         associationKind = ColorSchemeAssociationKind.BORDER,
-        componentState = progressState
+        componentState = borderState
     )
 
     Canvas(
@@ -277,8 +279,8 @@ fun AuroraIndeterminateLinearProgress(
                     path = Path().also {
                         it.moveTo(stripePos, 0.0f)
                         it.lineTo(stripePos + stripeWidth - 1.0f - size.height, 0.0f)
-                        it.lineTo(stripePos + stripeWidth - 1.0f, size.height - 1.0f)
-                        it.lineTo(stripePos + size.height, size.height - 1.0f)
+                        it.lineTo(stripePos + stripeWidth - 1.0f, size.height)
+                        it.lineTo(stripePos + size.height, size.height)
                         it.close()
                     },
                     color = colorScheme.ultraLightColor,
@@ -305,6 +307,7 @@ fun AuroraDeterminateLinearProgress(
 ) {
     val progressState = if (enabled) DETERMINATE_SELECTED else DETERMINATE_SELECTED_DISABLED
     val fillState = if (enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
+    val borderState = if (enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
 
     // install state-aware alpha channel (support for skins
     // that use translucency on disabled states).
@@ -323,7 +326,7 @@ fun AuroraDeterminateLinearProgress(
     val borderColorScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = AuroraSkin.decorationAreaType,
         associationKind = ColorSchemeAssociationKind.BORDER,
-        componentState = fillState
+        componentState = borderState
     )
     val fillPainter = AuroraSkin.painters.fillPainter
 
@@ -361,7 +364,7 @@ fun AuroraDeterminateLinearProgress(
             val progressWidth = size.width * progress
             if (progressWidth > 0.0f) {
                 // TODO - support RTL
-                fillPainter.paintContourBackground(
+                progressFillPainter.paintContourBackground(
                     drawScope = this,
                     size = this.size,
                     outline = Outline.Rectangle(Rect(offset = Offset.Zero, size = Size(progressWidth, size.height))),
