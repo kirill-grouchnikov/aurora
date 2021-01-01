@@ -50,7 +50,7 @@ fun main() {
     AuroraWindow(
         skin = marinerSkin(),
         title = "Aurora Demo",
-        size = IntSize(660, 600),
+        size = IntSize(660, 680),
         undecorated = true
     ) {
         DemoContent()
@@ -149,6 +149,10 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                 Spacer(modifier = Modifier.width(8.dp))
 
                 AuroraCircularProgress(enabled = enabled.value)
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                AuroraCircularProgress(modifier = Modifier.size(14.dp), enabled = enabled.value)
             }
             Row(modifier = Modifier.fillMaxWidth()) {
                 AuroraToggleButton(
@@ -250,6 +254,11 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     displayConverter = { it.lastName + ", " + it.firstName },
                     onItemSelected = { println("$it selected!") },
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                )
+            }
+            Row(modifier = Modifier.fillMaxWidth()) {
+                AuroraIndeterminateLinearProgress(
+                    enabled = enabled.value
                 )
             }
         }
