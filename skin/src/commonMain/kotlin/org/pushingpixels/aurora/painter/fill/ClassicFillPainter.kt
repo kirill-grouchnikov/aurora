@@ -53,4 +53,9 @@ open class ClassicFillPainter : StandardFillPainter() {
             super.getBottomFillColor(fillScheme), 0.7f
         )
     }
+
+    companion object {
+        /** Reusable instance of this painter. */
+        val INSTANCE = ClassicFillPainter()
+    }
 }
