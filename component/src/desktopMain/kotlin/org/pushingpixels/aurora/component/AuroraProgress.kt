@@ -49,6 +49,7 @@ import org.pushingpixels.aurora.ColorSchemeAssociationKind
 import org.pushingpixels.aurora.ComponentState
 import org.pushingpixels.aurora.ComponentStateFacet
 import org.pushingpixels.aurora.painter.fill.FractionBasedFillPainter
+import org.pushingpixels.aurora.utils.getBaseOutline
 import kotlin.math.min
 
 private val CircularProgressArcSpanProp = FloatPropKey()
@@ -288,12 +289,17 @@ fun AuroraIndeterminateLinearProgress(
                 )
             }
         }
-        drawRoundRect(
+        val outline = getBaseOutline(
+            width = size.width,
+            height = size.height,
+            radius = radius,
+            straightSides = emptySet(),
+            insets = 0.5f
+        )
+        drawOutline(
+            outline = outline,
+            style = Stroke(width = 1.0f),
             color = borderColorScheme.darkColor,
-            topLeft = Offset.Zero,
-            size = size,
-            cornerRadius = CornerRadius(radius, radius),
-            style = Stroke(width = 0.5f),
             alpha = stateAlpha
         )
     }
@@ -373,12 +379,17 @@ fun AuroraDeterminateLinearProgress(
                 )
             }
         }
-        drawRoundRect(
+        val outline = getBaseOutline(
+            width = size.width,
+            height = size.height,
+            radius = radius,
+            straightSides = emptySet(),
+            insets = 0.5f
+        )
+        drawOutline(
+            outline = outline,
+            style = Stroke(width = 1.0f),
             color = borderColorScheme.darkColor,
-            topLeft = Offset.Zero,
-            size = size,
-            cornerRadius = CornerRadius(radius, radius),
-            style = Stroke(width = 0.5f),
             alpha = stateAlpha
         )
     }
