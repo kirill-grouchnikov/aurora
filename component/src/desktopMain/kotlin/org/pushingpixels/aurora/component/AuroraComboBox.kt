@@ -100,8 +100,6 @@ private class ComboBoxDrawingCache(
     )
 )
 
-private data class AuroraOffset(var x: Float, var y: Float)
-
 private class ComboBoxLocator(val offset: AuroraOffset) : OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
         // Convert the bottom left corner of the component to the root coordinates

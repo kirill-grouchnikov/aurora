@@ -29,29 +29,74 @@
  */
 package org.pushingpixels.aurora.component
 
+import androidx.compose.animation.asDisposableClock
+import androidx.compose.animation.core.AnimatedFloat
+import androidx.compose.animation.core.TransitionDefinition
+import androidx.compose.animation.transition
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Interaction
+import androidx.compose.foundation.InteractionState
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.*
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.input.pointer.pointerMoveFilter
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.OnGloballyPositionedModifier
+import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.ColorSchemeAssociationKind
 import org.pushingpixels.aurora.ComponentState
 import org.pushingpixels.aurora.Side
+import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.utils.getBaseOutline
+
+// This will be initialized on first usage using the getSelectedTransitionDefinition
+// with duration animation coming from [AmbientAnimationConfig]
+private lateinit var SelectedTransitionDefinition: TransitionDefinition<Boolean>
+
+// This will be initialized on first usage using the getRolloverTransitionDefinition
+// with duration animation coming from [AmbientAnimationConfig]
+private lateinit var RolloverTransitionDefinition: TransitionDefinition<Boolean>
+
+// This will be initialized on first usage using the getPressedTransitionDefinition
+// with duration animation coming from [AmbientAnimationConfig]
+private lateinit var PressedTransitionDefinition: TransitionDefinition<Boolean>
+
+// This will be initialized on first usage using the getEnabledTransitionDefinition
+// with duration animation coming from [AmbientAnimationConfig]
+private lateinit var EnabledTransitionDefinition: TransitionDefinition<Boolean>
 
 object SliderConstants {
     val DefaultWidth = 240.dp
     val DefaultHeight = 20.dp
+    val ThumbWidth = 20.dp
+    val ThumbHeight = 12.dp
     val TrackHeight = 6.dp
 }
+
+private class SliderLocator(val size: AuroraSize) : OnGloballyPositionedModifier {
+    override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
+        size.width = coordinates.size.width
+        size.height = coordinates.size.height
+    }
+}
+
+@Composable
+private fun Modifier.sliderLocator(size: AuroraSize) = this.then(
+    SliderLocator(size)
+)
 
 @Composable
 fun AuroraSlider(
@@ -60,6 +105,100 @@ fun AuroraSlider(
     modifier: Modifier = Modifier,
     enabled: Boolean = true
 ) {
+    AuroraSlider(
+        value = value,
+        valueRange = valueRange,
+        modifier = modifier,
+        enabled = enabled,
+        interactionState = remember { InteractionState() },
+        stateTransitionFloat = AnimatedFloat(0.0f, AmbientAnimationClock.current.asDisposableClock()),
+    )
+}
+
+@Immutable
+private class SliderDrawingCache(
+    val trackRect: AuroraRect = AuroraRect(0.0f, 0.0f, 0.0f, 0.0f),
+    val thumbRect: AuroraRect = AuroraRect(0.0f, 0.0f, 0.0f, 0.0f),
+    val colorScheme: MutableColorScheme = MutableColorScheme(
+        displayName = "Internal mutable",
+        isDark = false,
+        ultraLight = Color.White,
+        extraLight = Color.White,
+        light = Color.White,
+        mid = Color.White,
+        dark = Color.White,
+        ultraDark = Color.White,
+        foreground = Color.Black
+    )
+)
+
+@Composable
+private fun AuroraSlider(
+    value: Float,
+    valueRange: ClosedFloatingPointRange<Float>,
+    modifier: Modifier,
+    enabled: Boolean,
+    interactionState: InteractionState,
+    stateTransitionFloat: AnimatedFloat,
+) {
+    val drawingCache = remember { SliderDrawingCache() }
+
+    val stateTransitionTracker =
+        remember { StateTransitionTracker(enabled, false, stateTransitionFloat) }
+
+    // Transition for the selection state
+    if (!::SelectedTransitionDefinition.isInitialized) {
+        SelectedTransitionDefinition =
+            getSelectedTransitionDefinition(AuroraSkin.animationConfig.regular)
+    }
+    val selectionTransitionState = transition(
+        definition = SelectedTransitionDefinition,
+        initState = stateTransitionTracker.selectedState.value,
+        toState = stateTransitionTracker.selectedState.value
+    )
+    // Transition for the rollover state
+    if (!::RolloverTransitionDefinition.isInitialized) {
+        RolloverTransitionDefinition =
+            getRolloverTransitionDefinition(AuroraSkin.animationConfig.regular)
+    }
+    val rolloverTransitionState = transition(
+        definition = RolloverTransitionDefinition,
+        initState = stateTransitionTracker.rolloverState.value,
+        toState = stateTransitionTracker.rolloverState.value
+    )
+    // Transition for the pressed state
+    if (!::PressedTransitionDefinition.isInitialized) {
+        PressedTransitionDefinition =
+            getPressedTransitionDefinition(AuroraSkin.animationConfig.regular)
+    }
+    val pressedTransitionState = transition(
+        definition = PressedTransitionDefinition,
+        initState = Interaction.Pressed in interactionState,
+        toState = Interaction.Pressed in interactionState
+    )
+    // Transition for the enabled state
+    if (!::EnabledTransitionDefinition.isInitialized) {
+        EnabledTransitionDefinition =
+            getEnabledTransitionDefinition(AuroraSkin.animationConfig.regular)
+    }
+    val enabledTransitionState = transition(
+        definition = EnabledTransitionDefinition,
+        initState = enabled,
+        toState = enabled
+    )
+
+    // TODO - how to trigger the state transition animation without these transitions
+    //  that track the changes in different states?
+    selectionTransitionState[SelectionTransitionFraction]
+    rolloverTransitionState[RolloverTransitionFraction]
+    pressedTransitionState[PressedTransitionFraction]
+    enabledTransitionState[EnabledTransitionFraction]
+
+    stateTransitionTracker.update(
+        enabled, Interaction.Pressed in interactionState,
+        AuroraSkin.animationConfig.regular
+    )
+
     val trackFillState = if (enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
     val trackSelectedState = if (enabled) ComponentState.SELECTED else ComponentState.DISABLED_SELECTED
 
@@ -89,87 +228,219 @@ fun AuroraSlider(
     )
     val fillPainter = ClassicFillPainter.INSTANCE
 
-    Canvas(
-        modifier
-            .preferredSize(
-                width = SliderConstants.DefaultWidth,
-                height = SliderConstants.DefaultHeight
-            )
+    val skinColors = AuroraSkin.colors
+    val decorationAreaType = AuroraSkin.decorationAreaType
+    val painters = AuroraSkin.painters
+
+    val auroraSize = AuroraSize(0, 0)
+
+    Box(
+        modifier = Modifier.pointerMoveFilter(
+            onEnter = {
+                false
+            },
+            onExit = {
+                false
+            },
+            onMove = { position ->
+                // Rollover is only "active" in the thumb rectangle
+                stateTransitionTracker.rolloverState.value =
+                    drawingCache.thumbRect.contains(position.x, position.y)
+                false
+            })
+            .sliderLocator(auroraSize)
     ) {
-        val radius = 1.5f.dp.toPx()
-
-        val trackHeight = SliderConstants.TrackHeight.toPx()
-        val trackY = (size.height - trackHeight) / 2.0f
-
-        // Fill track
-        fillPainter.paintContourBackground(
-            drawScope = this,
-            size = this.size,
-            outline = Outline.Rounded(
-                RoundRect(
-                    left = 0.0f,
-                    top = trackY,
-                    right = size.width,
-                    bottom = trackY + trackHeight,
-                    cornerRadius = CornerRadius(radius, radius)
-                )
-            ),
-            fillScheme = fillScheme,
-            alpha = stateAlpha
+        // Populate the cached color scheme for filling the thumb
+        // based on the current model state info
+        populateColorScheme(
+            drawingCache.colorScheme, stateTransitionTracker.modelStateInfo, decorationAreaType,
+            ColorSchemeAssociationKind.FILL
         )
 
-        // Border track
-        withTransform({ translate(left = 0.0f, top = trackY) }) {
-            val trackOutline = getBaseOutline(
-                width = size.width,
-                height = trackHeight,
-                radius = radius,
-                straightSides = emptySet(),
-                insets = 0.5f
-            )
-            drawOutline(
-                outline = trackOutline,
-                style = Stroke(width = 1.0f),
-                color = borderFillColorScheme.darkColor,
-                alpha = stateAlpha
-            )
-        }
+        // And retrieve the thumb fill colors
+        val thumbFillUltraLight = drawingCache.colorScheme.ultraLightColor
+        val thumbFillExtraLight = drawingCache.colorScheme.extraLightColor
+        val thumbFillLight = drawingCache.colorScheme.lightColor
+        val thumbFillMid = drawingCache.colorScheme.midColor
+        val thumbFillDark = drawingCache.colorScheme.darkColor
+        val thumbFillUltraDark = drawingCache.colorScheme.ultraDarkColor
+        val thumbFillIsDark = drawingCache.colorScheme.isDark
 
-        val selectionWidth = size.width * value / (valueRange.endInclusive - valueRange.start)
-        if (selectionWidth > 0.0f) {
-            // Fill selection
+        // Populate the cached color scheme for drawing the thumb border
+        // based on the current model state info
+        populateColorScheme(
+            drawingCache.colorScheme, stateTransitionTracker.modelStateInfo, decorationAreaType,
+            ColorSchemeAssociationKind.BORDER
+        )
+        // And retrieve the border colors
+        val thumbBorderUltraLight = drawingCache.colorScheme.ultraLightColor
+        val thumbBorderExtraLight = drawingCache.colorScheme.extraLightColor
+        val thumbBorderLight = drawingCache.colorScheme.lightColor
+        val thumbBorderMid = drawingCache.colorScheme.midColor
+        val thumbBorderDark = drawingCache.colorScheme.darkColor
+        val thumbBorderUltraDark = drawingCache.colorScheme.ultraDarkColor
+        val thumbBorderIsDark = drawingCache.colorScheme.isDark
 
-            // TODO - support RTL (corners) if necessary after we add the thumb
+        val thumbFillPainter = painters.fillPainter
+        val thumbBorderPainter = painters.borderPainter
+
+        val alpha = if (stateTransitionTracker.currentState.isDisabled)
+            skinColors.getAlpha(decorationAreaType, stateTransitionTracker.currentState) else 1.0f
+
+        // Compute the text color
+        val textColor = getTextColor(
+            modelStateInfo = stateTransitionTracker.modelStateInfo,
+            skinColors = skinColors,
+            decorationAreaType = decorationAreaType,
+            isTextInFilledArea = true
+        )
+
+        println("${stateTransitionTracker.currentState} ${stateTransitionTracker.modelStateInfo.activeStrength}")
+        Canvas(
+            modifier
+                .preferredSize(
+                    width = SliderConstants.DefaultWidth,
+                    height = SliderConstants.DefaultHeight
+                )
+        ) {
+            val radius = 1.5f.dp.toPx()
+
+            // Calculate the track rectangle
+            drawingCache.trackRect.x = SliderConstants.ThumbWidth.toPx() / 2.0f
+            drawingCache.trackRect.y = (size.height - SliderConstants.TrackHeight.toPx()) / 2.0f
+            drawingCache.trackRect.width = size.width - SliderConstants.ThumbWidth.toPx() / 2.0f
+            drawingCache.trackRect.height = SliderConstants.TrackHeight.toPx()
+
+            // Calculate the thumb rectangle
+            // TODO - support RTL
+            val selectionCenterX = size.width * value / (valueRange.endInclusive - valueRange.start)
+            drawingCache.thumbRect.x = selectionCenterX - SliderConstants.ThumbWidth.toPx() / 2.0f
+            drawingCache.thumbRect.y =
+                drawingCache.trackRect.y + drawingCache.trackRect.height / 2.0f - SliderConstants.ThumbHeight.toPx() / 2.0f
+            drawingCache.thumbRect.width = SliderConstants.ThumbWidth.toPx()
+            drawingCache.thumbRect.height = SliderConstants.ThumbHeight.toPx()
+
+            // Fill track
             fillPainter.paintContourBackground(
                 drawScope = this,
                 size = this.size,
                 outline = Outline.Rounded(
                     RoundRect(
                         left = 0.0f,
-                        top = trackY,
-                        right = selectionWidth,
-                        bottom = trackY + trackHeight,
+                        top = drawingCache.trackRect.y,
+                        right = size.width,
+                        bottom = drawingCache.trackRect.y + drawingCache.trackRect.height,
                         cornerRadius = CornerRadius(radius, radius)
                     )
                 ),
-                fillScheme = selectionColorScheme,
+                fillScheme = fillScheme,
                 alpha = stateAlpha
             )
 
-            // Border selection
-            withTransform({ translate(left = 0.0f, top = trackY) }) {
-                val selectionOutline = getBaseOutline(
-                    width = selectionWidth,
-                    height = trackHeight,
+            // Border track
+            withTransform({ translate(left = 0.0f, top = drawingCache.trackRect.y) }) {
+                val trackOutline = getBaseOutline(
+                    width = size.width,
+                    height = drawingCache.trackRect.height,
                     radius = radius,
-                    straightSides = setOf(Side.END),
+                    straightSides = emptySet(),
                     insets = 0.5f
                 )
                 drawOutline(
-                    outline = selectionOutline,
+                    outline = trackOutline,
                     style = Stroke(width = 1.0f),
-                    color = borderSelectionColorScheme.darkColor,
+                    color = borderFillColorScheme.darkColor,
                     alpha = stateAlpha
+                )
+            }
+
+            if (selectionCenterX > 0.0f) {
+                // Fill selection
+                fillPainter.paintContourBackground(
+                    drawScope = this,
+                    size = this.size,
+                    outline = Outline.Rounded(
+                        RoundRect(
+                            left = 0.0f,
+                            top = drawingCache.trackRect.y,
+                            right = selectionCenterX,
+                            bottom = drawingCache.trackRect.y + drawingCache.trackRect.height,
+                            cornerRadius = CornerRadius(radius, radius)
+                        )
+                    ),
+                    fillScheme = selectionColorScheme,
+                    alpha = stateAlpha
+                )
+
+                // Border selection
+                withTransform({ translate(left = 0.0f, top = drawingCache.trackRect.y) }) {
+                    val selectionOutline = getBaseOutline(
+                        width = selectionCenterX,
+                        height = drawingCache.trackRect.height,
+                        radius = radius,
+                        straightSides = setOf(Side.END),
+                        insets = 0.5f
+                    )
+                    drawOutline(
+                        outline = selectionOutline,
+                        style = Stroke(width = 1.0f),
+                        color = borderSelectionColorScheme.darkColor,
+                        alpha = stateAlpha
+                    )
+                }
+            }
+
+            val thumbOutline =
+                Outline.Rounded(
+                    roundRect = RoundRect(
+                        left = 0.5f, top = 0.5f,
+                        right = SliderConstants.ThumbHeight.toPx() - 0.5f,
+                        bottom = SliderConstants.ThumbHeight.toPx() - 0.5f,
+                        radiusX = (SliderConstants.ThumbHeight.toPx() - 1.0f) / 2.0f,
+                        radiusY = (SliderConstants.ThumbHeight.toPx() - 1.0f) / 2.0f
+                    )
+                )
+
+            withTransform({
+                translate(left = drawingCache.thumbRect.x, top = drawingCache.thumbRect.y)
+            }) {
+                // Populate the cached color scheme for filling the thumb
+                drawingCache.colorScheme.ultraLight = thumbFillUltraLight
+                drawingCache.colorScheme.extraLight = thumbFillExtraLight
+                drawingCache.colorScheme.light = thumbFillLight
+                drawingCache.colorScheme.mid = thumbFillMid
+                drawingCache.colorScheme.dark = thumbFillDark
+                drawingCache.colorScheme.ultraDark = thumbFillUltraDark
+                drawingCache.colorScheme.isDark = thumbFillIsDark
+                drawingCache.colorScheme.foreground = textColor
+
+                thumbFillPainter.paintContourBackground(
+                    this, this.size, thumbOutline, drawingCache.colorScheme, alpha
+                )
+
+                // Populate the cached color scheme for drawing the thumb border
+                drawingCache.colorScheme.ultraLight = thumbBorderUltraLight
+                drawingCache.colorScheme.extraLight = thumbBorderExtraLight
+                drawingCache.colorScheme.light = thumbBorderLight
+                drawingCache.colorScheme.mid = thumbBorderMid
+                drawingCache.colorScheme.dark = thumbBorderDark
+                drawingCache.colorScheme.ultraDark = thumbBorderUltraDark
+                drawingCache.colorScheme.isDark = thumbBorderIsDark
+                drawingCache.colorScheme.foreground = textColor
+
+                val innerThumbOutline = if (thumbBorderPainter.isPaintingInnerOutline)
+                    Outline.Rounded(
+                        roundRect = RoundRect(
+                            left = 1.0f, top = 1.0f,
+                            right = SliderConstants.ThumbHeight.toPx() - 1.0f,
+                            bottom = SliderConstants.ThumbHeight.toPx() - 1.0f,
+                            radiusX = (SliderConstants.ThumbHeight.toPx() - 2.0f) / 2.0f,
+                            radiusY = (SliderConstants.ThumbHeight.toPx() - 2.0f) / 2.0f
+                        )
+                    ) else null
+
+                thumbBorderPainter.paintBorder(
+                    this, this.size, thumbOutline, innerThumbOutline, drawingCache.colorScheme, alpha
                 )
             }
         }
