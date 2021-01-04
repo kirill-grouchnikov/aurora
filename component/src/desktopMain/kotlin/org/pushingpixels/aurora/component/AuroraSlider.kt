@@ -237,26 +237,38 @@ private fun AuroraSlider(
         interactionState = interactionState,
         startDragImmediately = true,
         onDragStarted = { pos ->
+            // Reset the drag start position and cumulative drag amount
             dragStartX.value = pos.x
             cumulativeDragAmount.value = 0.0f
 
-            // convert from coords to value
+            // Convert from pixels to value range
             val newValue = valueRange.start +
                     (pos.x - drawingCache.trackRect.x) * (valueRange.endInclusive - valueRange.start) / drawingCache.trackRect.width
             current.value = newValue.coerceIn(valueRange.start, valueRange.endInclusive)
+
+            // Update value change lambda
             onValueChange.invoke(current.value)
 
+            // And add pressed state to the interaction
             interactionState.addInteraction(Interaction.Pressed, pos)
         },
         onDrag = {
+            // Update the cumulative drag amount
             cumulativeDragAmount.value += it
+
+            // Convert from pixels to value range
             val newValue = valueRange.start +
                     (dragStartX.value + cumulativeDragAmount.value - drawingCache.trackRect.x) * (valueRange.endInclusive - valueRange.start) / drawingCache.trackRect.width
             current.value = newValue.coerceIn(valueRange.start, valueRange.endInclusive)
+
+            // Update value change lambda
             onValueChange.invoke(current.value)
         },
         onDragStopped = {
+            // Update value change end lambda
             onValueChangeEnd.invoke()
+
+            // And remove pressed state to the interaction
             interactionState.removeInteraction(Interaction.Pressed)
         }
     )
