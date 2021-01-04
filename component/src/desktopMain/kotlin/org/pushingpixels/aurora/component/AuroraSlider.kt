@@ -36,22 +36,26 @@ import androidx.compose.animation.transition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Interaction
 import androidx.compose.foundation.InteractionState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.gesture.pressIndicatorGestureFilter
+import androidx.compose.ui.gesture.scrollorientationlocking.Orientation
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerMoveFilter
-import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.AuroraSkin
@@ -85,28 +89,20 @@ object SliderConstants {
     val TrackHeight = 6.dp
 }
 
-private class SliderLocator(val size: AuroraSize) : OnGloballyPositionedModifier {
-    override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
-        size.width = coordinates.size.width
-        size.height = coordinates.size.height
-    }
-}
-
-@Composable
-private fun Modifier.sliderLocator(size: AuroraSize) = this.then(
-    SliderLocator(size)
-)
-
 @Composable
 fun AuroraSlider(
     value: Float,
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
+    onValueChange: (Float) -> Unit = {},
+    onValueChangeEnd: () -> Unit = {},
     modifier: Modifier = Modifier,
     enabled: Boolean = true
 ) {
     AuroraSlider(
         value = value,
         valueRange = valueRange,
+        onValueChange = onValueChange,
+        onValueChangeEnd = onValueChangeEnd,
         modifier = modifier,
         enabled = enabled,
         interactionState = remember { InteractionState() },
@@ -135,12 +131,15 @@ private class SliderDrawingCache(
 private fun AuroraSlider(
     value: Float,
     valueRange: ClosedFloatingPointRange<Float>,
+    onValueChange: (Float) -> Unit,
+    onValueChangeEnd: () -> Unit,
     modifier: Modifier,
     enabled: Boolean,
     interactionState: InteractionState,
     stateTransitionFloat: AnimatedFloat,
 ) {
     val drawingCache = remember { SliderDrawingCache() }
+    val current = remember { mutableStateOf(value) }
 
     val stateTransitionTracker =
         remember { StateTransitionTracker(enabled, false, stateTransitionFloat) }
@@ -231,7 +230,34 @@ private fun AuroraSlider(
     val decorationAreaType = AuroraSkin.decorationAreaType
     val painters = AuroraSkin.painters
 
-    val auroraSize = AuroraSize(0, 0)
+    val press = Modifier.pressIndicatorGestureFilter(
+        onStart = { pos ->
+            // convert from coords to value
+            // TODO - respect the value range
+            val newValue = (pos.x - drawingCache.trackRect.x) / drawingCache.trackRect.width
+            current.value = newValue.coerceIn(valueRange.start, valueRange.endInclusive)
+            onValueChange.invoke(current.value)
+
+            interactionState.addInteraction(Interaction.Pressed, pos)
+        },
+        onStop = {
+            onValueChangeEnd.invoke()
+            interactionState.removeInteraction(Interaction.Pressed)
+        },
+        onCancel = {
+            onValueChangeEnd.invoke()
+            interactionState.removeInteraction(Interaction.Pressed)
+        }
+    )
+
+    val drag = Modifier.draggable(
+        orientation = Orientation.Horizontal,
+        reverseDirection = false,
+        interactionState = interactionState,
+        startDragImmediately = false,
+        onDrag = { println("DRAG ${it}") },
+        onDragStopped = { onValueChangeEnd.invoke() }
+    )
 
     Box(
         modifier = Modifier.pointerMoveFilter(
@@ -239,6 +265,7 @@ private fun AuroraSlider(
                 false
             },
             onExit = {
+                // Reset rollover when mouse exits the component bounds
                 stateTransitionTracker.rolloverState.value = false
                 false
             },
@@ -247,8 +274,7 @@ private fun AuroraSlider(
                 stateTransitionTracker.rolloverState.value =
                     drawingCache.thumbRect.contains(position.x, position.y)
                 false
-            })
-            .sliderLocator(auroraSize)
+            }).then(press).then(drag)
     ) {
         // Populate the cached color scheme for filling the thumb
         // based on the current model state info
@@ -307,14 +333,15 @@ private fun AuroraSlider(
             // Calculate the track rectangle
             drawingCache.trackRect.x = SliderConstants.ThumbFullSize.toPx() / 2.0f
             drawingCache.trackRect.y = (size.height - SliderConstants.TrackHeight.toPx()) / 2.0f
-            drawingCache.trackRect.width = size.width - SliderConstants.ThumbFullSize.toPx() / 2.0f
+            drawingCache.trackRect.width = size.width - SliderConstants.ThumbFullSize.toPx()
             drawingCache.trackRect.height = SliderConstants.TrackHeight.toPx()
 
             // Calculate the thumb rectangle
             // TODO - support RTL
             val thumbSize = SliderConstants.ThumbFullSize.toPx() *
                     (2.0f + stateTransitionTracker.modelStateInfo.activeStrength) / 3.0f;
-            val selectionCenterX = size.width * value / (valueRange.endInclusive - valueRange.start)
+            val selectionCenterX = drawingCache.trackRect.x +
+                    drawingCache.trackRect.width * current.value / (valueRange.endInclusive - valueRange.start)
             drawingCache.thumbRect.x = selectionCenterX - thumbSize / 2.0f
             drawingCache.thumbRect.y =
                 drawingCache.trackRect.y + drawingCache.trackRect.height / 2.0f - thumbSize / 2.0f
@@ -327,9 +354,9 @@ private fun AuroraSlider(
                 size = this.size,
                 outline = Outline.Rounded(
                     RoundRect(
-                        left = 0.0f,
+                        left = drawingCache.trackRect.x,
                         top = drawingCache.trackRect.y,
-                        right = size.width,
+                        right = drawingCache.trackRect.x + drawingCache.trackRect.width,
                         bottom = drawingCache.trackRect.y + drawingCache.trackRect.height,
                         cornerRadius = CornerRadius(radius, radius)
                     )
@@ -339,9 +366,9 @@ private fun AuroraSlider(
             )
 
             // Border track
-            withTransform({ translate(left = 0.0f, top = drawingCache.trackRect.y) }) {
+            withTransform({ translate(left = drawingCache.trackRect.x, top = drawingCache.trackRect.y) }) {
                 val trackOutline = getBaseOutline(
-                    width = size.width,
+                    width = drawingCache.trackRect.width,
                     height = drawingCache.trackRect.height,
                     radius = radius,
                     straightSides = emptySet(),
@@ -359,10 +386,10 @@ private fun AuroraSlider(
                 // Fill selection
                 fillPainter.paintContourBackground(
                     drawScope = this,
-                    size = this.size,
+                    size = Size(selectionCenterX - drawingCache.trackRect.x, drawingCache.trackRect.height),
                     outline = Outline.Rounded(
                         RoundRect(
-                            left = 0.0f,
+                            left = drawingCache.trackRect.x,
                             top = drawingCache.trackRect.y,
                             right = selectionCenterX,
                             bottom = drawingCache.trackRect.y + drawingCache.trackRect.height,
@@ -374,9 +401,9 @@ private fun AuroraSlider(
                 )
 
                 // Border selection
-                withTransform({ translate(left = 0.0f, top = drawingCache.trackRect.y) }) {
+                withTransform({ translate(left = drawingCache.trackRect.x, top = drawingCache.trackRect.y) }) {
                     val selectionOutline = getBaseOutline(
-                        width = selectionCenterX,
+                        width = selectionCenterX - drawingCache.trackRect.x,
                         height = drawingCache.trackRect.height,
                         radius = radius,
                         straightSides = setOf(Side.END),

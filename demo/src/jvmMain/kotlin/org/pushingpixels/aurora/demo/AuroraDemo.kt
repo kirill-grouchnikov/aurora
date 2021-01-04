@@ -291,6 +291,8 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                 AuroraSlider(
                     value = 0.5f,
                     valueRange = 0.0f.rangeTo(1.0f),
+                    onValueChange = { println("Slider $it") },
+                    onValueChangeEnd = { println("Slider change done!") },
                     enabled = enabled.value
                 )
             }
