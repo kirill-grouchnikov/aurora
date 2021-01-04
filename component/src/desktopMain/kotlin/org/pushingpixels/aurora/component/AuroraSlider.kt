@@ -81,8 +81,7 @@ private lateinit var EnabledTransitionDefinition: TransitionDefinition<Boolean>
 object SliderConstants {
     val DefaultWidth = 240.dp
     val DefaultHeight = 20.dp
-    val ThumbWidth = 20.dp
-    val ThumbHeight = 12.dp
+    val ThumbFullSize = 18.dp
     val TrackHeight = 6.dp
 }
 
@@ -240,6 +239,7 @@ private fun AuroraSlider(
                 false
             },
             onExit = {
+                stateTransitionTracker.rolloverState.value = false
                 false
             },
             onMove = { position ->
@@ -295,7 +295,6 @@ private fun AuroraSlider(
             isTextInFilledArea = true
         )
 
-        println("${stateTransitionTracker.currentState} ${stateTransitionTracker.modelStateInfo.activeStrength}")
         Canvas(
             modifier
                 .preferredSize(
@@ -306,19 +305,21 @@ private fun AuroraSlider(
             val radius = 1.5f.dp.toPx()
 
             // Calculate the track rectangle
-            drawingCache.trackRect.x = SliderConstants.ThumbWidth.toPx() / 2.0f
+            drawingCache.trackRect.x = SliderConstants.ThumbFullSize.toPx() / 2.0f
             drawingCache.trackRect.y = (size.height - SliderConstants.TrackHeight.toPx()) / 2.0f
-            drawingCache.trackRect.width = size.width - SliderConstants.ThumbWidth.toPx() / 2.0f
+            drawingCache.trackRect.width = size.width - SliderConstants.ThumbFullSize.toPx() / 2.0f
             drawingCache.trackRect.height = SliderConstants.TrackHeight.toPx()
 
             // Calculate the thumb rectangle
             // TODO - support RTL
+            val thumbSize = SliderConstants.ThumbFullSize.toPx() *
+                    (2.0f + stateTransitionTracker.modelStateInfo.activeStrength) / 3.0f;
             val selectionCenterX = size.width * value / (valueRange.endInclusive - valueRange.start)
-            drawingCache.thumbRect.x = selectionCenterX - SliderConstants.ThumbWidth.toPx() / 2.0f
+            drawingCache.thumbRect.x = selectionCenterX - thumbSize / 2.0f
             drawingCache.thumbRect.y =
-                drawingCache.trackRect.y + drawingCache.trackRect.height / 2.0f - SliderConstants.ThumbHeight.toPx() / 2.0f
-            drawingCache.thumbRect.width = SliderConstants.ThumbWidth.toPx()
-            drawingCache.thumbRect.height = SliderConstants.ThumbHeight.toPx()
+                drawingCache.trackRect.y + drawingCache.trackRect.height / 2.0f - thumbSize / 2.0f
+            drawingCache.thumbRect.width = thumbSize
+            drawingCache.thumbRect.height = thumbSize
 
             // Fill track
             fillPainter.paintContourBackground(
@@ -394,10 +395,10 @@ private fun AuroraSlider(
                 Outline.Rounded(
                     roundRect = RoundRect(
                         left = 0.5f, top = 0.5f,
-                        right = SliderConstants.ThumbHeight.toPx() - 0.5f,
-                        bottom = SliderConstants.ThumbHeight.toPx() - 0.5f,
-                        radiusX = (SliderConstants.ThumbHeight.toPx() - 1.0f) / 2.0f,
-                        radiusY = (SliderConstants.ThumbHeight.toPx() - 1.0f) / 2.0f
+                        right = thumbSize - 0.5f,
+                        bottom = thumbSize - 0.5f,
+                        radiusX = (thumbSize - 1.0f) / 2.0f,
+                        radiusY = (thumbSize - 1.0f) / 2.0f
                     )
                 )
 
@@ -432,10 +433,10 @@ private fun AuroraSlider(
                     Outline.Rounded(
                         roundRect = RoundRect(
                             left = 1.0f, top = 1.0f,
-                            right = SliderConstants.ThumbHeight.toPx() - 1.0f,
-                            bottom = SliderConstants.ThumbHeight.toPx() - 1.0f,
-                            radiusX = (SliderConstants.ThumbHeight.toPx() - 2.0f) / 2.0f,
-                            radiusY = (SliderConstants.ThumbHeight.toPx() - 2.0f) / 2.0f
+                            right = thumbSize - 1.0f,
+                            bottom = thumbSize - 1.0f,
+                            radiusX = (thumbSize - 2.0f) / 2.0f,
+                            radiusY = (thumbSize - 2.0f) / 2.0f
                         )
                     ) else null
 
