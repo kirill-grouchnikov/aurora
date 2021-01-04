@@ -36,7 +36,6 @@ import androidx.compose.animation.transition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Interaction
 import androidx.compose.foundation.InteractionState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.preferredSize
@@ -48,7 +47,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.gesture.pressIndicatorGestureFilter
 import androidx.compose.ui.gesture.scrollorientationlocking.Orientation
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
@@ -230,33 +228,37 @@ private fun AuroraSlider(
     val decorationAreaType = AuroraSkin.decorationAreaType
     val painters = AuroraSkin.painters
 
-    val press = Modifier.pressIndicatorGestureFilter(
-        onStart = { pos ->
-            // convert from coords to value
-            // TODO - respect the value range
-            val newValue = (pos.x - drawingCache.trackRect.x) / drawingCache.trackRect.width
-            current.value = newValue.coerceIn(valueRange.start, valueRange.endInclusive)
-            onValueChange.invoke(current.value)
-
-            interactionState.addInteraction(Interaction.Pressed, pos)
-        },
-        onStop = {
-            onValueChangeEnd.invoke()
-            interactionState.removeInteraction(Interaction.Pressed)
-        },
-        onCancel = {
-            onValueChangeEnd.invoke()
-            interactionState.removeInteraction(Interaction.Pressed)
-        }
-    )
+    val dragStartX = remember { mutableStateOf(0.0f) }
+    val cumulativeDragAmount = remember { mutableStateOf(0.0f) }
 
     val drag = Modifier.draggable(
         orientation = Orientation.Horizontal,
         reverseDirection = false,
         interactionState = interactionState,
-        startDragImmediately = false,
-        onDrag = { println("DRAG ${it}") },
-        onDragStopped = { onValueChangeEnd.invoke() }
+        startDragImmediately = true,
+        onDragStarted = { pos ->
+            dragStartX.value = pos.x
+            cumulativeDragAmount.value = 0.0f
+
+            // convert from coords to value
+            val newValue = valueRange.start +
+                    (pos.x - drawingCache.trackRect.x) * (valueRange.endInclusive - valueRange.start) / drawingCache.trackRect.width
+            current.value = newValue.coerceIn(valueRange.start, valueRange.endInclusive)
+            onValueChange.invoke(current.value)
+
+            interactionState.addInteraction(Interaction.Pressed, pos)
+        },
+        onDrag = {
+            cumulativeDragAmount.value += it
+            val newValue = valueRange.start +
+                    (dragStartX.value + cumulativeDragAmount.value - drawingCache.trackRect.x) * (valueRange.endInclusive - valueRange.start) / drawingCache.trackRect.width
+            current.value = newValue.coerceIn(valueRange.start, valueRange.endInclusive)
+            onValueChange.invoke(current.value)
+        },
+        onDragStopped = {
+            onValueChangeEnd.invoke()
+            interactionState.removeInteraction(Interaction.Pressed)
+        }
     )
 
     Box(
@@ -274,7 +276,7 @@ private fun AuroraSlider(
                 stateTransitionTracker.rolloverState.value =
                     drawingCache.thumbRect.contains(position.x, position.y)
                 false
-            }).then(press).then(drag)
+            }).then(drag)
     ) {
         // Populate the cached color scheme for filling the thumb
         // based on the current model state info
