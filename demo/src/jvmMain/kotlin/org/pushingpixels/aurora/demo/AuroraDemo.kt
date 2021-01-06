@@ -41,15 +41,15 @@ import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.icon.AuroraThemedFollowTextIcon
 import org.pushingpixels.aurora.icon.AuroraThemedIcon
-import org.pushingpixels.aurora.skin.marinerSkin
+import org.pushingpixels.aurora.skin.nebulaBrickWallSkin
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 
 fun main() {
     AuroraWindow(
-        skin = marinerSkin(),
+        skin = nebulaBrickWallSkin(),
         title = "Aurora Demo",
-        size = IntSize(660, 700),
+        size = IntSize(660, 660),
         undecorated = true
     ) {
         DemoContent()
@@ -126,26 +126,6 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                 ) {
                     AuroraText(text = "sample radio")
                 }
-
-                Spacer(modifier = Modifier.width(20.dp))
-
-                AuroraComboBox(
-                    enabled = enabled.value,
-                    items = listOf("one", "two", "three"),
-                    displayConverter = { it },
-                    onItemSelected = { println("$it selected!") },
-                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                AuroraComboBox(
-                    enabled = enabled.value,
-                    items = listOf(Person("Bob", "Loblaw"), Person("Paige", "Turner"), Person("Donaldson", "Duck")),
-                    displayConverter = { it.lastName + ", " + it.firstName },
-                    onItemSelected = { println("$it selected!") },
-                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
-                )
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -286,14 +266,24 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     AuroraThemedFollowTextIcon(icon = star_black_48dp.of(12.dp, 12.dp))
                 }
 
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(20.dp))
 
-                AuroraSlider(
-                    value = 0.5f,
-                    valueRange = 0.0f.rangeTo(1.0f),
-                    onValueChange = { println("Slider $it") },
-                    onValueChangeEnd = { println("Slider change done!") },
-                    enabled = enabled.value
+                AuroraComboBox(
+                    enabled = enabled.value,
+                    items = listOf("one", "two", "three"),
+                    displayConverter = { it },
+                    onItemSelected = { println("$it selected!") },
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                AuroraComboBox(
+                    enabled = enabled.value,
+                    items = listOf(Person("Bob", "Loblaw"), Person("Paige", "Turner"), Person("Donaldson", "Duck")),
+                    displayConverter = { it.lastName + ", " + it.firstName },
+                    onItemSelected = { println("$it selected!") },
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
                 )
             }
 
@@ -305,6 +295,29 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                 Spacer(modifier = Modifier.width(16.dp))
 
                 DemoProgress(enabled = enabled.value)
+            }
+
+            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
+                AuroraSlider(
+                    value = 0.5f,
+                    valueRange = 0.0f.rangeTo(1.0f),
+                    onValueChange = { println("Slider $it") },
+                    onValueChangeEnd = { println("Slider change done!") },
+                    enabled = enabled.value
+                )
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                AuroraSlider(
+                    value = 50f,
+                    valueRange = 0.0f.rangeTo(100.0f),
+                    onValueChange = { println("Slider $it") },
+                    onValueChangeEnd = { println("Slider change done!") },
+                    enabled = enabled.value,
+                    tickSteps = 9,
+                    snapToTicks = true,
+                    drawTicks = true,
+                )
             }
         }
     }
@@ -321,9 +334,6 @@ fun DemoContent() {
         }
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.NONE) {
             DemoArea(selected = true)
-        }
-        AuroraDecorationArea(decorationAreaType = DecorationAreaType.FOOTER) {
-            DemoArea(selected = false)
         }
     }
 }

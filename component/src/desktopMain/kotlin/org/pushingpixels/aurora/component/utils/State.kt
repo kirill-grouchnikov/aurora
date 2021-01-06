@@ -34,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import org.pushingpixels.aurora.ComponentState
+import org.pushingpixels.aurora.ComponentStateFacet
 import org.pushingpixels.aurora.ModelStateInfoSnapshot
 
 class StateContributionInfo(var start: Float, var end: Float) {
@@ -72,6 +73,16 @@ class ModelStateInfo(var currModelState: ComponentState) {
                 activeStrength += value.contribution
             }
         }
+    }
+
+    fun strength(facet: ComponentStateFacet): Float {
+        var result = 0.0f
+        for ((activeState, value) in stateContributionMap) {
+            if (activeState.isFacetActive(facet)) {
+                result += value.contribution
+            }
+        }
+        return result
     }
 
     fun clear() {
