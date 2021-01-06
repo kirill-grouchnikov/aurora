@@ -38,6 +38,8 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.*
+import org.pushingpixels.aurora.demo.svg.material.*
+import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.icon.AuroraThemedFollowTextIcon
 import org.pushingpixels.aurora.icon.AuroraThemedIcon
@@ -194,7 +196,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     contentPadding = PaddingValues(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
                 ) {
                     AuroraIcon(
-                        icon = Format_text_bold.of(10.dp, 10.dp),
+                        icon = format_text_bold.of(10.dp, 10.dp),
                     )
                 }
                 AuroraToggleButton(
@@ -209,7 +211,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     contentPadding = PaddingValues(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
                 ) {
                     AuroraIcon(
-                        icon = Format_text_italic.of(10.dp, 10.dp),
+                        icon = format_text_italic.of(10.dp, 10.dp),
                     )
                 }
                 AuroraToggleButton(
@@ -224,7 +226,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     contentPadding = PaddingValues(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
                 ) {
                     AuroraIcon(
-                        icon = Format_text_underline.of(10.dp, 10.dp),
+                        icon = format_text_underline.of(10.dp, 10.dp),
                     )
                 }
                 AuroraToggleButton(
@@ -236,7 +238,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     contentPadding = PaddingValues(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
                 ) {
                     AuroraIcon(
-                        icon = Format_text_strikethrough.of(10.dp, 10.dp),
+                        icon = format_text_strikethrough.of(10.dp, 10.dp),
                     )
                 }
 

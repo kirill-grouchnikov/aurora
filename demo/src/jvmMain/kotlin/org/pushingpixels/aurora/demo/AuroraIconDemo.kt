@@ -37,6 +37,9 @@ import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.component.AuroraButton
 import org.pushingpixels.aurora.component.AuroraText
+import org.pushingpixels.aurora.demo.svg.material.*
+import org.pushingpixels.aurora.demo.svg.random.*
+import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.icon.AuroraThemedFollowTextIcon
 import org.pushingpixels.aurora.skin.businessSkin
@@ -64,19 +67,19 @@ fun IconDemoArea() {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             AuroraButton {
-                AuroraIcon(icon = input_keyboard.of(16.dp, 16.dp))
+                AuroraIcon(icon = media_floppy.of(16.dp, 16.dp))
                 AuroraText("icon 1")
             }
             AuroraButton {
-                AuroraIcon(icon = network_wired.of(16.dp, 16.dp))
+                AuroraIcon(icon = drive_harddisk.of(16.dp, 16.dp))
                 AuroraText("icon 2")
             }
             AuroraButton {
-                AuroraIcon(icon = camera_photo.of(16.dp, 16.dp))
+                AuroraIcon(icon = help_browser.of(16.dp, 16.dp))
                 AuroraText("icon 3")
             }
             AuroraButton {
-                AuroraIcon(icon = drive_removable_media.of(16.dp, 16.dp))
+                AuroraIcon(icon = system_search.of(16.dp, 16.dp))
                 AuroraText("icon 4")
             }
         }
