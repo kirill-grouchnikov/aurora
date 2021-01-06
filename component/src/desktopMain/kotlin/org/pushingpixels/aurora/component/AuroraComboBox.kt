@@ -203,8 +203,10 @@ private fun <E> AuroraComboBox(
     enabledTransitionState[EnabledTransitionFraction]
 
     stateTransitionTracker.update(
-        enabled, Interaction.Pressed in interactionState,
-        AuroraSkin.animationConfig.regular
+        isEnabled = enabled,
+        isPressed = Interaction.Pressed in interactionState,
+        isSelected = false,
+        duration = AuroraSkin.animationConfig.regular
     )
 
     val decorationAreaType = AuroraSkin.decorationAreaType

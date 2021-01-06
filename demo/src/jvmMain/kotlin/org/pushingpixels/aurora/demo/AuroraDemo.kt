@@ -46,6 +46,7 @@ import org.pushingpixels.aurora.icon.AuroraThemedIcon
 import org.pushingpixels.aurora.skin.nebulaBrickWallSkin
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
+import kotlin.system.exitProcess
 
 fun main() {
     AuroraWindow(
@@ -88,6 +89,198 @@ fun DemoProgress(enabled: Boolean) {
         ) {
             AuroraThemedFollowTextIcon(icon = add_circle_outline_24px.of(10.dp, 10.dp))
         }
+    }
+}
+
+private enum class DemoAlignment {
+    CENTER, LEFT, RIGHT, FILL
+}
+
+@Composable
+fun DemoToolbar(modifier: Modifier = Modifier) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .fillMaxWidth()
+            .auroraBackground()
+            .padding(8.dp)
+    ) {
+        AuroraButton(
+            onClick = { println("Cut!") },
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+            sizingStrategy = ButtonSizingStrategy.COMPACT
+        ) {
+            AuroraIcon(
+                icon = edit_cut.of(10.dp, 10.dp),
+                modifier = Modifier.auroraButtonIconPadding()
+            )
+            AuroraText("cut")
+        }
+        AuroraButton(
+            onClick = { println("Copy!") },
+            enabled = false,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+            sizingStrategy = ButtonSizingStrategy.COMPACT
+        ) {
+            AuroraIcon(
+                icon = edit_copy.of(10.dp, 10.dp),
+                modifier = Modifier.auroraButtonIconPadding()
+            )
+            AuroraText("copy")
+        }
+        AuroraButton(
+            onClick = { println("Paste!") },
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+            sizingStrategy = ButtonSizingStrategy.COMPACT,
+            contentPadding = ButtonSizingConstants.CompactButtonContentPadding
+        ) {
+            AuroraIcon(
+                icon = edit_paste.of(10.dp, 10.dp),
+            )
+        }
+        AuroraButton(
+            onClick = { println("Select all!") },
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+            sizingStrategy = ButtonSizingStrategy.COMPACT,
+            contentPadding = ButtonSizingConstants.CompactButtonContentPadding
+        ) {
+            AuroraIcon(
+                icon = edit_select_all.of(10.dp, 10.dp),
+            )
+        }
+        AuroraButton(
+            onClick = { println("Delete!") },
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+            sizingStrategy = ButtonSizingStrategy.COMPACT,
+            contentPadding = ButtonSizingConstants.CompactButtonContentPadding
+        ) {
+            AuroraIcon(
+                icon = edit_delete.of(10.dp, 10.dp),
+            )
+        }
+
+        Spacer(modifier = Modifier.width(4.dp))
+        AuroraVerticalSeparator(modifier = Modifier.preferredHeight(20.dp))
+        Spacer(modifier = Modifier.width(4.dp))
+
+        var alignment by remember { mutableStateOf(DemoAlignment.CENTER) }
+
+        AuroraToggleButton(
+            selected = (alignment == DemoAlignment.CENTER),
+            onSelectedChange = { if (it) alignment = DemoAlignment.CENTER },
+            sides = ButtonSides(straightSides = setOf(Side.END)),
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+            sizingStrategy = ButtonSizingStrategy.COMPACT,
+            contentPadding = ButtonSizingConstants.CompactButtonContentPadding
+        ) {
+            AuroraIcon(
+                icon = format_justify_center.of(10.dp, 10.dp),
+            )
+        }
+        AuroraToggleButton(
+            selected = (alignment == DemoAlignment.LEFT),
+            onSelectedChange = { if (it) alignment = DemoAlignment.LEFT },
+            sides = ButtonSides(straightSides = setOf(Side.START, Side.END)),
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+            sizingStrategy = ButtonSizingStrategy.COMPACT,
+            contentPadding = ButtonSizingConstants.CompactButtonContentPadding
+        ) {
+            AuroraIcon(
+                icon = format_justify_left.of(10.dp, 10.dp),
+            )
+        }
+        AuroraToggleButton(
+            selected = (alignment == DemoAlignment.RIGHT),
+            onSelectedChange = { if (it) alignment = DemoAlignment.RIGHT },
+            sides = ButtonSides(straightSides = setOf(Side.START, Side.END)),
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+            sizingStrategy = ButtonSizingStrategy.COMPACT,
+            contentPadding = ButtonSizingConstants.CompactButtonContentPadding
+        ) {
+            AuroraIcon(
+                icon = format_justify_right.of(10.dp, 10.dp),
+            )
+        }
+        AuroraToggleButton(
+            selected = (alignment == DemoAlignment.FILL),
+            onSelectedChange = { if (it) alignment = DemoAlignment.FILL },
+            sides = ButtonSides(straightSides = setOf(Side.START)),
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+            sizingStrategy = ButtonSizingStrategy.COMPACT,
+            contentPadding = ButtonSizingConstants.CompactButtonContentPadding
+        ) {
+            AuroraIcon(
+                icon = format_justify_fill.of(10.dp, 10.dp),
+            )
+        }
+
+        Spacer(modifier = Modifier.width(4.dp))
+        AuroraVerticalSeparator(modifier = Modifier.preferredHeight(20.dp))
+        Spacer(modifier = Modifier.width(4.dp))
+
+        AuroraToggleButton(
+            selected = false,
+            onSelectedChange = { println("Selected bold? $it") },
+            sides = ButtonSides(straightSides = setOf(Side.END)),
+            sizingStrategy = ButtonSizingStrategy.COMPACT,
+            contentPadding = ButtonSizingConstants.CompactButtonContentPadding
+        ) {
+            AuroraIcon(
+                icon = format_text_bold.of(10.dp, 10.dp),
+            )
+        }
+        AuroraToggleButton(
+            selected = true,
+            onSelectedChange = { println("Selected italic? $it") },
+            sides = ButtonSides(
+                straightSides = setOf(Side.START, Side.END),
+                openSides = setOf(Side.START, Side.END)
+            ),
+            sizingStrategy = ButtonSizingStrategy.COMPACT,
+            contentPadding = ButtonSizingConstants.CompactButtonContentPadding
+        ) {
+            AuroraIcon(
+                icon = format_text_italic.of(10.dp, 10.dp),
+            )
+        }
+        AuroraToggleButton(
+            selected = false,
+            onSelectedChange = { println("Selected under? $it") },
+            sides = ButtonSides(
+                straightSides = setOf(Side.START, Side.END),
+                openSides = setOf(Side.END)
+            ),
+            sizingStrategy = ButtonSizingStrategy.COMPACT,
+            contentPadding = ButtonSizingConstants.CompactButtonContentPadding
+        ) {
+            AuroraIcon(
+                icon = format_text_underline.of(10.dp, 10.dp),
+            )
+        }
+        AuroraToggleButton(
+            selected = false,
+            onSelectedChange = { println("Selected strike? $it") },
+            sides = ButtonSides(straightSides = setOf(Side.START)),
+            sizingStrategy = ButtonSizingStrategy.COMPACT,
+            contentPadding = ButtonSizingConstants.CompactButtonContentPadding
+        ) {
+            AuroraIcon(
+                icon = format_text_strikethrough.of(10.dp, 10.dp),
+            )
+        }
+
+        Spacer(modifier.weight(weight = 1.0f, fill = true))
+
+        AuroraButton(
+            onClick = { exitProcess(0) },
+            sizingStrategy = ButtonSizingStrategy.COMPACT,
+            contentPadding = ButtonSizingConstants.CompactButtonContentPadding
+        ) {
+            AuroraIcon(
+                icon = process_stop.of(10.dp, 10.dp),
+            )
+        }
+
     }
 }
 
@@ -193,7 +386,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     onSelectedChange = { println("Selected bold? $it") },
                     sides = ButtonSides(straightSides = setOf(Side.END)),
                     sizingStrategy = ButtonSizingStrategy.COMPACT,
-                    contentPadding = PaddingValues(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
+                    contentPadding = ButtonSizingConstants.CompactButtonContentPadding
                 ) {
                     AuroraIcon(
                         icon = format_text_bold.of(10.dp, 10.dp),
@@ -208,7 +401,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                         openSides = setOf(Side.START, Side.END)
                     ),
                     sizingStrategy = ButtonSizingStrategy.COMPACT,
-                    contentPadding = PaddingValues(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
+                    contentPadding = ButtonSizingConstants.CompactButtonContentPadding
                 ) {
                     AuroraIcon(
                         icon = format_text_italic.of(10.dp, 10.dp),
@@ -223,7 +416,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                         openSides = setOf(Side.END)
                     ),
                     sizingStrategy = ButtonSizingStrategy.COMPACT,
-                    contentPadding = PaddingValues(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
+                    contentPadding = ButtonSizingConstants.CompactButtonContentPadding
                 ) {
                     AuroraIcon(
                         icon = format_text_underline.of(10.dp, 10.dp),
@@ -235,7 +428,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     onSelectedChange = { println("Selected strike? $it") },
                     sides = ButtonSides(straightSides = setOf(Side.START)),
                     sizingStrategy = ButtonSizingStrategy.COMPACT,
-                    contentPadding = PaddingValues(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
+                    contentPadding = ButtonSizingConstants.CompactButtonContentPadding
                 ) {
                     AuroraIcon(
                         icon = format_text_strikethrough.of(10.dp, 10.dp),
@@ -332,7 +525,7 @@ fun DemoContent() {
             DemoArea(selected = false)
         }
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.TOOLBAR) {
-            DemoArea(selected = true)
+            DemoToolbar()
         }
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.NONE) {
             DemoArea(selected = true)

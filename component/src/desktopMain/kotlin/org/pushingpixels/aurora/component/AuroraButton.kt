@@ -74,6 +74,7 @@ private lateinit var EnabledTransitionDefinition: TransitionDefinition<Boolean>
 
 object ButtonSizingConstants {
     val DefaultButtonContentPadding = PaddingValues(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
+    val CompactButtonContentPadding = PaddingValues(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
     val DefaultButtonIconTextGap = 6.dp
     val DefaultButtonContentWidth = 60.dp
     val DefaultButtonContentHeight = 16.dp
@@ -194,8 +195,10 @@ private fun AuroraToggleButton(
     enabledTransitionState[EnabledTransitionFraction]
 
     stateTransitionTracker.update(
-        enabled, Interaction.Pressed in interactionState,
-        AuroraSkin.animationConfig.regular
+        isEnabled = enabled,
+        isPressed = Interaction.Pressed in interactionState,
+        isSelected = selected,
+        duration = AuroraSkin.animationConfig.regular
     )
 
     Box(
@@ -497,8 +500,10 @@ private fun AuroraButton(
     enabledTransitionState[EnabledTransitionFraction]
 
     stateTransitionTracker.update(
-        enabled, Interaction.Pressed in interactionState,
-        AuroraSkin.animationConfig.regular
+        isEnabled = enabled,
+        isPressed = Interaction.Pressed in interactionState,
+        isSelected = false,
+        duration = AuroraSkin.animationConfig.regular
     )
 
     Box(

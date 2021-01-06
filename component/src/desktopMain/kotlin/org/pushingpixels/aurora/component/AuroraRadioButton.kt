@@ -170,8 +170,10 @@ private fun AuroraRadioButton(
     enabledTransitionState[EnabledTransitionFraction]
 
     stateTransitionTracker.update(
-        enabled, Interaction.Pressed in interactionState,
-        AuroraSkin.animationConfig.regular
+        isEnabled = enabled,
+        isPressed = Interaction.Pressed in interactionState,
+        isSelected = selected,
+        duration = AuroraSkin.animationConfig.regular
     )
 
     // The toggleable modifier is set on the checkbox mark, as well as on the

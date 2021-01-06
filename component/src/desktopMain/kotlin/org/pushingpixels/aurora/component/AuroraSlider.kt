@@ -208,47 +208,49 @@ private fun AuroraSlider(
     enabledTransitionState[EnabledTransitionFraction]
 
     stateTransitionTracker.update(
-        enabled, Interaction.Pressed in interactionState,
-        AuroraSkin.animationConfig.regular
+        isEnabled = enabled,
+        isPressed = Interaction.Pressed in interactionState,
+        isSelected = false,
+        duration = AuroraSkin.animationConfig.regular
     )
 
     val trackFillState = if (enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
     val trackSelectedState = if (enabled) ComponentState.SELECTED else ComponentState.DISABLED_SELECTED
 
+    val skinColors = AuroraSkin.colors
+    val decorationAreaType = AuroraSkin.decorationAreaType
+    val painters = AuroraSkin.painters
+
     // install state-aware alpha channel (support for skins
     // that use translucency on disabled states).
-    val stateAlpha = AuroraSkin.colors.getAlpha(
-        decorationAreaType = AuroraSkin.decorationAreaType,
+    val stateAlpha = skinColors.getAlpha(
+        decorationAreaType = decorationAreaType,
         componentState = trackFillState
     )
-    val fillScheme = AuroraSkin.colors.getColorScheme(
-        decorationAreaType = AuroraSkin.decorationAreaType,
+    val fillScheme = skinColors.getColorScheme(
+        decorationAreaType = decorationAreaType,
         componentState = trackFillState
     )
-    val selectionColorScheme = AuroraSkin.colors.getColorScheme(
-        decorationAreaType = AuroraSkin.decorationAreaType,
+    val selectionColorScheme = skinColors.getColorScheme(
+        decorationAreaType = decorationAreaType,
         componentState = trackSelectedState
     )
-    val borderFillColorScheme = AuroraSkin.colors.getColorScheme(
-        decorationAreaType = AuroraSkin.decorationAreaType,
+    val borderFillColorScheme = skinColors.getColorScheme(
+        decorationAreaType = decorationAreaType,
         associationKind = ColorSchemeAssociationKind.BORDER,
         componentState = trackFillState
     )
-    val borderSelectionColorScheme = AuroraSkin.colors.getColorScheme(
-        decorationAreaType = AuroraSkin.decorationAreaType,
+    val borderSelectionColorScheme = skinColors.getColorScheme(
+        decorationAreaType = decorationAreaType,
         associationKind = ColorSchemeAssociationKind.BORDER,
         componentState = trackSelectedState
     )
-    val tickScheme = AuroraSkin.colors.getColorScheme(
-        decorationAreaType = AuroraSkin.decorationAreaType,
+    val tickScheme = skinColors.getColorScheme(
+        decorationAreaType = decorationAreaType,
         associationKind = ColorSchemeAssociationKind.SEPARATOR,
         componentState = trackFillState
     )
     val fillPainter = ClassicFillPainter.INSTANCE
-
-    val skinColors = AuroraSkin.colors
-    val decorationAreaType = AuroraSkin.decorationAreaType
-    val painters = AuroraSkin.painters
 
     val dragStartX = remember { mutableStateOf(0.0f) }
     val cumulativeDragAmount = remember { mutableStateOf(0.0f) }

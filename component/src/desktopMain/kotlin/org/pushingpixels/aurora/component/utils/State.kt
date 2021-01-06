@@ -141,14 +141,15 @@ class StateTransitionTracker(
         isPressed = false
     )
 
-    fun update(isEnabled: Boolean, isPressed: Boolean, duration: Int, dump: Boolean = false) {
+    fun update(isEnabled: Boolean, isPressed: Boolean, isSelected: Boolean, duration: Int, dump: Boolean = false) {
         var tweakedDuration = duration
         currentState = ComponentState.getState(
             isEnabled = isEnabled,
             isRollover = rolloverState.value,
-            isSelected = selectedState.value,
+            isSelected = isSelected,
             isPressed = isPressed
         )
+        selectedState.value = isSelected
 
         if (currentState != modelStateInfo.currModelState) {
             stateTransitionFloat.stop()
