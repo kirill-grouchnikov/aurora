@@ -43,6 +43,7 @@ import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.icon.AuroraThemedFollowTextIcon
 import org.pushingpixels.aurora.icon.AuroraThemedIcon
+import org.pushingpixels.aurora.skin.marinerSkin
 import org.pushingpixels.aurora.skin.nebulaBrickWallSkin
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
@@ -50,7 +51,7 @@ import kotlin.system.exitProcess
 
 fun main() {
     AuroraWindow(
-        skin = nebulaBrickWallSkin(),
+        skin = marinerSkin(),
         title = "Aurora Demo",
         size = IntSize(660, 660),
         undecorated = true
@@ -92,6 +93,53 @@ fun DemoProgress(enabled: Boolean) {
     }
 }
 
+@Composable
+fun DemoMenuBar(modifier: Modifier = Modifier) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .fillMaxWidth()
+            .auroraBackground()
+    ) {
+        AuroraButton(backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+            sizingStrategy = ButtonSizingStrategy.COMPACT,
+            contentPadding = ButtonSizingConstants.CompactButtonContentPadding,
+            sides = ButtonSides(straightSides = Side.values().toSet())) {
+            AuroraText("File")
+        }
+        AuroraButton(backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+            sizingStrategy = ButtonSizingStrategy.COMPACT,
+            contentPadding = ButtonSizingConstants.CompactButtonContentPadding,
+            sides = ButtonSides(straightSides = Side.values().toSet())) {
+            AuroraText("Edit")
+        }
+        AuroraButton(backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+            sizingStrategy = ButtonSizingStrategy.COMPACT,
+            contentPadding = ButtonSizingConstants.CompactButtonContentPadding,
+            sides = ButtonSides(straightSides = Side.values().toSet())) {
+            AuroraText("View")
+        }
+        AuroraButton(backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+            sizingStrategy = ButtonSizingStrategy.COMPACT,
+            contentPadding = ButtonSizingConstants.CompactButtonContentPadding,
+            sides = ButtonSides(straightSides = Side.values().toSet())) {
+            AuroraText("Tools")
+        }
+        AuroraButton(backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+            sizingStrategy = ButtonSizingStrategy.COMPACT,
+            contentPadding = ButtonSizingConstants.CompactButtonContentPadding,
+            sides = ButtonSides(straightSides = Side.values().toSet())) {
+            AuroraText("Window")
+        }
+        AuroraButton(backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+            sizingStrategy = ButtonSizingStrategy.COMPACT,
+            contentPadding = ButtonSizingConstants.CompactButtonContentPadding,
+            sides = ButtonSides(straightSides = Side.values().toSet())) {
+            AuroraText("Help")
+        }
+    }
+}
+
 private enum class DemoAlignment {
     CENTER, LEFT, RIGHT, FILL
 }
@@ -103,7 +151,7 @@ fun DemoToolbar(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .auroraBackground()
-            .padding(8.dp)
+            .padding(horizontal = 8.dp, vertical = 6.dp)
     ) {
         AuroraButton(
             onClick = { println("Cut!") },
@@ -281,6 +329,73 @@ fun DemoToolbar(modifier: Modifier = Modifier) {
             )
         }
 
+    }
+}
+
+
+@Composable
+fun DemoFooter(modifier: Modifier = Modifier) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .fillMaxWidth()
+            .auroraBackground()
+            .padding(horizontal = 8.dp, vertical = 6.dp)
+    ) {
+        Spacer(modifier.weight(weight = 1.0f, fill = true))
+
+        var alignment by remember { mutableStateOf(DemoAlignment.CENTER) }
+
+        AuroraToggleButton(
+            selected = (alignment == DemoAlignment.CENTER),
+            onSelectedChange = { if (it) alignment = DemoAlignment.CENTER },
+            sides = ButtonSides(straightSides = setOf(Side.END)),
+            sizingStrategy = ButtonSizingStrategy.COMPACT,
+            contentPadding = ButtonSizingConstants.CompactButtonContentPadding
+        ) {
+            AuroraIcon(
+                icon = format_justify_center.of(10.dp, 10.dp),
+            )
+        }
+        AuroraToggleButton(
+            selected = (alignment == DemoAlignment.LEFT),
+            onSelectedChange = { if (it) alignment = DemoAlignment.LEFT },
+            sides = ButtonSides(
+                straightSides = setOf(Side.START, Side.END),
+                openSides = setOf(Side.START, Side.END)
+            ),
+            sizingStrategy = ButtonSizingStrategy.COMPACT,
+            contentPadding = ButtonSizingConstants.CompactButtonContentPadding
+        ) {
+            AuroraIcon(
+                icon = format_justify_left.of(10.dp, 10.dp),
+            )
+        }
+        AuroraToggleButton(
+            selected = (alignment == DemoAlignment.RIGHT),
+            onSelectedChange = { if (it) alignment = DemoAlignment.RIGHT },
+            sides = ButtonSides(
+                straightSides = setOf(Side.START, Side.END),
+                openSides = setOf(Side.END)
+            ),
+            sizingStrategy = ButtonSizingStrategy.COMPACT,
+            contentPadding = ButtonSizingConstants.CompactButtonContentPadding
+        ) {
+            AuroraIcon(
+                icon = format_justify_right.of(10.dp, 10.dp),
+            )
+        }
+        AuroraToggleButton(
+            selected = (alignment == DemoAlignment.FILL),
+            onSelectedChange = { if (it) alignment = DemoAlignment.FILL },
+            sides = ButtonSides(straightSides = setOf(Side.START)),
+            sizingStrategy = ButtonSizingStrategy.COMPACT,
+            contentPadding = ButtonSizingConstants.CompactButtonContentPadding
+        ) {
+            AuroraIcon(
+                icon = format_justify_fill.of(10.dp, 10.dp),
+            )
+        }
     }
 }
 
@@ -522,13 +637,17 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
 fun DemoContent() {
     Column(modifier = Modifier.fillMaxHeight().fillMaxWidth()) {
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.HEADER) {
-            DemoArea(selected = false)
+            DemoMenuBar()
         }
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.TOOLBAR) {
             DemoToolbar()
         }
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.NONE) {
             DemoArea(selected = true)
+        }
+        Spacer(modifier = Modifier.weight(weight = 1.0f, fill = true))
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.FOOTER) {
+            DemoFooter()
         }
     }
 }
