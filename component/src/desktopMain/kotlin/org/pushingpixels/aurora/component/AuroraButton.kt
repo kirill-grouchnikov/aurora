@@ -105,7 +105,7 @@ fun AuroraToggleButton(
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS,
     sizingStrategy: ButtonSizingStrategy = ButtonSizingStrategy.EXTENDED,
     contentPadding: PaddingValues = ButtonSizingConstants.DefaultButtonContentPadding,
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) {
     AuroraToggleButton(
         modifier = modifier,
@@ -134,7 +134,7 @@ private fun AuroraToggleButton(
     contentPadding: PaddingValues,
     interactionState: InteractionState,
     stateTransitionFloat: AnimatedFloat,
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) {
     val drawingCache = remember { ButtonDrawingCache() }
 
@@ -412,7 +412,7 @@ fun AuroraButton(
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS,
     sizingStrategy: ButtonSizingStrategy = ButtonSizingStrategy.EXTENDED,
     contentPadding: PaddingValues = ButtonSizingConstants.DefaultButtonContentPadding,
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) {
     AuroraButton(
         modifier = modifier,
@@ -439,7 +439,7 @@ private fun AuroraButton(
     contentPadding: PaddingValues,
     interactionState: InteractionState,
     stateTransitionFloat: AnimatedFloat,
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) {
     val drawingCache = remember { ButtonDrawingCache() }
 

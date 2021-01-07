@@ -215,7 +215,7 @@ fun ceruleanSkin(): AuroraSkinDefinition {
 
     // Add an overlay painter to paint a drop shadow along the top
     // edge of toolbars
-    painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(100), DecorationAreaType.TOOLBAR);
+    painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(100), DecorationAreaType.TOOLBAR)
 
     return AuroraSkinDefinition(
         displayName = "Green Magic",

@@ -399,7 +399,7 @@ private fun AuroraSlider(
             // Calculate the thumb rectangle
             // TODO - support RTL
             val thumbSize = SliderConstants.ThumbFullSize.toPx() *
-                    (2.0f + stateTransitionTracker.modelStateInfo.activeStrength) / 3.0f;
+                    (2.0f + stateTransitionTracker.modelStateInfo.activeStrength) / 3.0f
             val selectionCenterX = drawingCache.trackRect.x +
                     drawingCache.trackRect.width * current.value / (valueRange.endInclusive - valueRange.start)
             drawingCache.thumbRect.x = selectionCenterX - thumbSize / 2.0f

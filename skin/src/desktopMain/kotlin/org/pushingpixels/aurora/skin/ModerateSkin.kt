@@ -58,7 +58,7 @@ private fun moderateSkinColors(): AuroraSkinColors {
     val defaultSchemeBundle = AuroraColorSchemeBundle(
         activeScheme, enabledScheme, kitchenSinkSchemes["Gray Disabled"]
     )
-    val highlightColorScheme = kitchenSinkSchemes.get("Moderate Highlight")
+    val highlightColorScheme = kitchenSinkSchemes["Moderate Highlight"]
     defaultSchemeBundle.registerHighlightColorScheme(highlightColorScheme)
 
     result.registerDecorationAreaSchemeBundle(defaultSchemeBundle, DecorationAreaType.NONE)

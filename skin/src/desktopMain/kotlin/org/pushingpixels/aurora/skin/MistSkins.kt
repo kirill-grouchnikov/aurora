@@ -49,8 +49,8 @@ private fun mistBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
         )
     )
 
-    val enabledScheme = schemes.get("Mist Enabled")
-    val disabledScheme = schemes.get("Mist Disabled")
+    val enabledScheme = schemes["Mist Enabled"]
+    val disabledScheme = schemes["Mist Disabled"]
 
     val defaultSchemeBundle = AuroraColorSchemeBundle(
         accentBuilder.activeControlsAccent!!, enabledScheme, disabledScheme
@@ -81,7 +81,7 @@ private fun mistBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
         DecorationAreaType.NONE
     )
 
-    val controlPaneBackgroundScheme = schemes.get("Mist Control Pane Background")
+    val controlPaneBackgroundScheme = schemes["Mist Control Pane Background"]
     result.registerDecorationAreaSchemeBundle(
         AuroraColorSchemeBundle(
             accentBuilder.activeControlsAccent!!, enabledScheme, disabledScheme

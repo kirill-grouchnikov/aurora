@@ -21,25 +21,10 @@ import kotlin.collections.set
  * @see AuroraSkin
  */
 class AuroraColorSchemeBundle(
-    activeColorScheme: AuroraColorScheme,
-    enabledColorScheme: AuroraColorScheme,
-    disabledColorScheme: AuroraColorScheme
-) {
-    /**
-     * The active color scheme of this bundle.
-     */
-    private val activeColorScheme: AuroraColorScheme
-
-    /**
-     * The enabled color scheme of this bundle.
-     */
-    private val enabledColorScheme: AuroraColorScheme
-
-    /**
-     * The disabled color scheme of this bundle.
-     */
+    private val activeColorScheme: AuroraColorScheme,
+    private val enabledColorScheme: AuroraColorScheme,
     private val disabledColorScheme: AuroraColorScheme
-
+) {
     /**
      * Maps from component state to the alpha channel applied on color scheme.
      * This map doesn't have to contain entries for all [ComponentState]
@@ -420,15 +405,8 @@ class AuroraColorSchemeBundle(
 
     /**
      * Creates a new color scheme bundle.
-     *
-     * @param activeColorScheme   The active color scheme of this bundle.
-     * @param enabledColorScheme  The enabled color scheme of this bundle.
-     * @param disabledColorScheme The disabled color scheme of this bundle.
      */
     init {
-        this.activeColorScheme = activeColorScheme
-        this.enabledColorScheme = enabledColorScheme
-        this.disabledColorScheme = disabledColorScheme
         stateAlphaMap = HashMap()
         stateHighlightSchemeAlphaMap = HashMap()
 

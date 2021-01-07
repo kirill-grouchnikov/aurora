@@ -114,7 +114,7 @@ internal object PerlinNoiseGenerator {
      * Value to fade.
      * @return faded value.
      */
-    fun fade(t: Double): Double {
+    private fun fade(t: Double): Double {
         return t * t * t * (t * (t * 6 - 15) + 10)
     }
 
@@ -129,7 +129,7 @@ internal object PerlinNoiseGenerator {
      * Ending interpolation value.
      * @return Interpolated value.
      */
-    fun lerp(t: Double, a: Double, b: Double): Double {
+    private fun lerp(t: Double, a: Double, b: Double): Double {
         return a + t * (b - a)
     }
 
@@ -151,12 +151,12 @@ internal object PerlinNoiseGenerator {
     /**
      * Permutations.
      */
-    val p = IntArray(512)
+    private val p = IntArray(512)
 
     /**
      * Permutations.
      */
-    val permutation = intArrayOf(
+    private val permutation = intArrayOf(
         151, 160, 137, 91, 90, 15, 131, 13, 201,
         95, 96, 53, 194, 233, 7, 225, 140, 36, 103, 30, 69, 142, 8, 99, 37,
         240, 21, 10, 23, 190, 6, 148, 247, 120, 234, 75, 0, 26, 197, 62,

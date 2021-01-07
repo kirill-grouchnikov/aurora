@@ -38,7 +38,7 @@ import androidx.compose.runtime.Immutable
 class ComponentStateFacet(var name: String, value: Int) {
     var value: Int
     override fun toString(): String {
-        return name + ":" + value
+        return "$name:$value"
     }
 
     companion object {
@@ -127,8 +127,7 @@ class ComponentState(
     constructor(
         name: String, facetsOn: Array<ComponentStateFacet>?,
         facetsOff: Array<ComponentStateFacet>?
-    ) : this(name, null, facetsOn, facetsOff) {
-    }
+    ) : this(name, null, facetsOn, facetsOff)
 
     override fun toString(): String {
         val sb = StringBuilder()

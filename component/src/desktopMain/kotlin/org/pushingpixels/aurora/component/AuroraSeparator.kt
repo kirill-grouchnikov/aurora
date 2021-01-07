@@ -30,9 +30,7 @@
 package org.pushingpixels.aurora.component
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.preferredWidth
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset

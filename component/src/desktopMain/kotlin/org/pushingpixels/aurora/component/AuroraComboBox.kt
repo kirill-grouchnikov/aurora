@@ -282,7 +282,7 @@ private fun <E> AuroraComboBox(
                             )
                         }
                     }
-                    jwindow.contentPane.add(composePopupContent, BorderLayout.CENTER);
+                    jwindow.contentPane.add(composePopupContent, BorderLayout.CENTER)
                     jwindow.invalidate()
                     jwindow.validate()
                     jwindow.isVisible = true
@@ -452,7 +452,7 @@ private fun <E> AuroraComboBox(
                     )
                 ),
                 content = {
-                    AuroraText("${selectedItem.value}")
+                    AuroraText(selectedItem.value)
                 }
             ) { measurables, constraints ->
                 // Measure each child so that we know how much space they need
@@ -537,8 +537,8 @@ private fun <E> ComboBoxPopupContent(
 }
 
 @Composable
-private fun ComboBoxPopupColumn(content: @Composable() () -> Unit) {
-    Layout(content = content) { measurables, constraints ->
+private fun ComboBoxPopupColumn(content: @Composable () -> Unit) {
+    Layout(content = content) { measurables, _ ->
         // The column width is determined by the widest child
         val contentTotalWidth = measurables.maxOf { it.maxIntrinsicWidth(Int.MAX_VALUE) }
 

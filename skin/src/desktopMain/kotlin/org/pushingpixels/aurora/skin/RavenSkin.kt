@@ -84,7 +84,7 @@ private fun ravenSkinColors(): AuroraSkinColors {
         highlightScheme,
         ColorSchemeAssociationKind.FILL,
         ComponentState.ROLLOVER_UNSELECTED
-    );
+    )
 
     val highlightMarkScheme = schemes["Raven Highlight Mark"]
     defaultSchemeBundle.registerColorScheme(

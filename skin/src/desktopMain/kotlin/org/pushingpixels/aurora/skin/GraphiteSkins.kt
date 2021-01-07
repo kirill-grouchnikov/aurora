@@ -53,13 +53,13 @@ private fun graphiteBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColo
         )
     )
 
-    val activeScheme = schemes.get("Graphite Active")
-    val selectedDisabledScheme = schemes.get("Graphite Selected Disabled")
-    val selectedScheme = schemes.get("Graphite Selected")
-    val disabledScheme = schemes.get("Graphite Disabled")
+    val activeScheme = schemes["Graphite Active"]
+    val selectedDisabledScheme = schemes["Graphite Selected Disabled"]
+    val selectedScheme = schemes["Graphite Selected"]
+    val disabledScheme = schemes["Graphite Disabled"]
 
-    val enabledScheme = schemes.get("Graphite Enabled")
-    val backgroundScheme = schemes.get("Graphite Background")
+    val enabledScheme = schemes["Graphite Enabled"]
+    val backgroundScheme = schemes["Graphite Background"]
 
     val defaultSchemeBundle = AuroraColorSchemeBundle(
         activeScheme, enabledScheme,
@@ -67,8 +67,8 @@ private fun graphiteBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColo
     )
 
     // border scheme
-    val borderScheme = schemes.get("Graphite Border")
-    val separatorScheme = schemes.get("Graphite Separator")
+    val borderScheme = schemes["Graphite Border"]
+    val separatorScheme = schemes["Graphite Separator"]
     defaultSchemeBundle.registerColorScheme(borderScheme, ColorSchemeAssociationKind.BORDER)
     defaultSchemeBundle.registerColorScheme(separatorScheme, ColorSchemeAssociationKind.SEPARATOR)
 

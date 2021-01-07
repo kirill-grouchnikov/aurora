@@ -89,7 +89,7 @@ fun greenMagicSkin(): AuroraSkinDefinition {
 
     // Add overlay painters to paint drop shadow and a dark line along the bottom
     // edges of headers
-    painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.HEADER);
+    painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.HEADER)
     painters.addOverlayPainter(
         BottomLineOverlayPainter(
             composite({ it.darkColor }, ColorTransforms.alpha(0.5f))

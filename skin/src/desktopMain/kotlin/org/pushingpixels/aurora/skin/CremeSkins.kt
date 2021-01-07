@@ -53,7 +53,7 @@ private fun cremeBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors 
     )
 
     val enabledScheme = CremeColorScheme()
-    val disabledScheme = kitchenSinkSchemes.get("Creme Disabled")
+    val disabledScheme = kitchenSinkSchemes["Creme Disabled"]
 
     val defaultSchemeBundle = AuroraColorSchemeBundle(
         accentBuilder.activeControlsAccent!!, enabledScheme, disabledScheme
