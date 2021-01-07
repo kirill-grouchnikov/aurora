@@ -37,7 +37,7 @@ import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.unit.Dp
 
-class BitmapWrapperIcon(val bitmap: ImageBitmap): AuroraIcon {
+class BitmapWrapperIcon(private val bitmap: ImageBitmap): AuroraIcon {
     var _width = bitmap.width
     var _height = bitmap.height
 

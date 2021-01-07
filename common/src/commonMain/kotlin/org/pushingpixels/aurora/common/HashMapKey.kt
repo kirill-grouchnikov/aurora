@@ -29,11 +29,6 @@
  */
 package org.pushingpixels.aurora.common
 
-/**
- * Implementation of a key for the [LazyResettableHashMap].
- *
- * @author Kirill Grouchnikov
- */
 class HashMapKey(vararg val keyFields: Any) {
     override fun hashCode(): Int {
         return keyFields.contentDeepHashCode()

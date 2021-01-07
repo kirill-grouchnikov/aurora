@@ -45,7 +45,7 @@ import java.util.*
 import javax.imageio.ImageIO
 import kotlin.collections.HashSet
 
-internal class RasterScanner(val printWriter: PrintWriter) {
+internal class RasterScanner(private val printWriter: PrintWriter) {
     private val processedMD5s = HashSet<String>()
 
     /**
@@ -63,7 +63,7 @@ internal class RasterScanner(val printWriter: PrintWriter) {
         // and transcodes the image to a base64-string + code that decodes that string back
         // to image content at runtime
         val pgn: SVGPatternElementBridge.PatternGraphicsNode =
-            paint.getGraphicsNode() as SVGPatternElementBridge.PatternGraphicsNode
+            paint.graphicsNode as SVGPatternElementBridge.PatternGraphicsNode
         pgn.primitivePaint(object : McStableGraphics2D() {
             override fun drawImage(img: Image, x: Int, y: Int, observer: ImageObserver): Boolean {
                 transcodeRenderedImage(img as RenderedImage?)
@@ -81,7 +81,7 @@ internal class RasterScanner(val printWriter: PrintWriter) {
     @Throws(UnsupportedOperationException::class)
     private fun scanPaint(paint: Paint) {
         if (paint is PatternPaint) {
-            scanPatternPaint(paint as PatternPaint)
+            scanPatternPaint(paint)
         }
     }
 
@@ -97,19 +97,19 @@ internal class RasterScanner(val printWriter: PrintWriter) {
             return
         }
         if (painter is CompositeShapePainter) {
-            scanCompositeShapePainter(painter as CompositeShapePainter)
+            scanCompositeShapePainter(painter)
             return
         }
         if (painter is FillShapePainter) {
-            scanFillShapePainter(painter as FillShapePainter)
+            scanFillShapePainter(painter)
             return
         }
         if (painter is StrokeShapePainter) {
-            scanStrokeShapePainter(painter as StrokeShapePainter)
+            scanStrokeShapePainter(painter)
             return
         }
         if (painter is MarkerShapePainter) {
-            scanMarkerShapePainter(painter as MarkerShapePainter)
+            scanMarkerShapePainter(painter)
             return
         }
         throw UnsupportedOperationException(painter::class.simpleName)
@@ -142,7 +142,7 @@ internal class RasterScanner(val printWriter: PrintWriter) {
      * @param painter Stroke shape painter.
      */
     private fun scanStrokeShapePainter(painter: StrokeShapePainter) {
-        val paint: Paint = painter.getPaint() ?: return
+        val paint: Paint = painter.paint ?: return
         scanPaint(paint)
     }
 
@@ -172,7 +172,7 @@ internal class RasterScanner(val printWriter: PrintWriter) {
      * @param node    Shape node.
      */
     private fun scanShapeNode(node: ShapeNode) {
-        val sPainter: ShapePainter = node.getShapePainter()
+        val sPainter: ShapePainter = node.shapePainter
         scanShapePainter(sPainter)
     }
 
@@ -182,7 +182,7 @@ internal class RasterScanner(val printWriter: PrintWriter) {
      * @param node    Composite graphics node.
      */
     private fun scanCompositeGraphicsNode(node: CompositeGraphicsNode) {
-        for (obj in node.getChildren()) {
+        for (obj in node.children) {
             scanGraphicsNode(obj as GraphicsNode)
         }
     }
@@ -213,7 +213,7 @@ internal class RasterScanner(val printWriter: PrintWriter) {
         printWriter.println("    val imageData = StringBuilder(${encoded.length})")
         var imageDataStart = 0
         while (true) {
-            val chunkLength: Int = Math.min(1000, encoded.length - imageDataStart)
+            val chunkLength: Int = 1000.coerceAtMost(encoded.length - imageDataStart)
             printWriter.println(
                 ("    imageData.append(\""
                         + encoded.substring(imageDataStart, imageDataStart + chunkLength)
@@ -239,7 +239,7 @@ internal class RasterScanner(val printWriter: PrintWriter) {
     }
 
     private fun scanRasterImageNode(node: RasterImageNode) {
-        val image: RenderedImage = node.getImage().createDefaultRendering()
+        val image: RenderedImage = node.image.createDefaultRendering()
         transcodeRenderedImage(image)
     }
 
@@ -252,15 +252,15 @@ internal class RasterScanner(val printWriter: PrintWriter) {
     @Throws(UnsupportedOperationException::class)
     private fun scanGraphicsNode(node: GraphicsNode) {
         if (node is ShapeNode) {
-            scanShapeNode(node as ShapeNode)
+            scanShapeNode(node)
             return
         }
         if (node is CompositeGraphicsNode) {
-            scanCompositeGraphicsNode(node as CompositeGraphicsNode)
+            scanCompositeGraphicsNode(node)
             return
         }
         if (node is RasterImageNode) {
-            scanRasterImageNode(node as RasterImageNode)
+            scanRasterImageNode(node)
             return
         }
     }

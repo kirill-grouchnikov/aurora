@@ -35,7 +35,7 @@ import java.util.*
 import java.util.stream.Stream
 import kotlin.system.exitProcess
 
-class SvgBatchConverter : SvgBatchBaseConverter() {}
+class SvgBatchConverter : SvgBatchBaseConverter()
 
 object SvgBatchConverterMain {
     @JvmStatic

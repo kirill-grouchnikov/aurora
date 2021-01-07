@@ -895,8 +895,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         val pathPoints: MutableList<Point2D> = ArrayList()
         val coords = FloatArray(6)
         while (!pathIterator.isDone) {
-            val type = pathIterator.currentSegment(coords)
-            when (type) {
+            when (pathIterator.currentSegment(coords)) {
                 PathIterator.SEG_CUBICTO -> pathPoints.add(Point2D.Float(coords[4], coords[5]))
                 PathIterator.SEG_QUADTO -> pathPoints.add(Point2D.Float(coords[2], coords[3]))
                 PathIterator.SEG_MOVETO, PathIterator.SEG_LINETO -> pathPoints.add(
