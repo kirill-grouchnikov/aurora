@@ -643,7 +643,7 @@ fun DemoArea(modifier: Modifier = Modifier, style: DemoStyle) {
                     items = simpleComboItems,
                     selectedItem = simpleComboSelectedItem.value,
                     displayConverter = { it },
-                    onItemSelected = {
+                    onTriggerItemSelectedChange = {
                         simpleComboSelectedItem.value = it
                         println("$it selected!")
                     },
@@ -660,7 +660,7 @@ fun DemoArea(modifier: Modifier = Modifier, style: DemoStyle) {
                     items = personComboItems,
                     selectedItem = personComboSelectedItem.value,
                     displayConverter = { it.lastName + ", " + it.firstName },
-                    onItemSelected = {
+                    onTriggerItemSelectedChange = {
                         personComboSelectedItem.value = it
                         println("$it selected!")
                     },

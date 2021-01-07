@@ -124,7 +124,7 @@ fun <E> AuroraComboBox(
     items: List<E>,
     selectedItem: E,
     displayConverter: (E) -> String,
-    onItemSelected: (E) -> Unit
+    onTriggerItemSelectedChange: (E) -> Unit
 ) {
     AuroraComboBox(
         modifier = modifier,
@@ -133,7 +133,7 @@ fun <E> AuroraComboBox(
         items = items,
         selectedItem = selectedItem,
         displayConverter = displayConverter,
-        onItemSelected = onItemSelected,
+        onTriggerItemSelectedChange = onTriggerItemSelectedChange,
         interactionState = remember { InteractionState() },
         stateTransitionFloat = AnimatedFloat(0.0f, AmbientAnimationClock.current.asDisposableClock())
     )
@@ -147,7 +147,7 @@ private fun <E> AuroraComboBox(
     items: List<E>,
     selectedItem: E,
     displayConverter: (E) -> String,
-    onItemSelected: (E) -> Unit,
+    onTriggerItemSelectedChange: (E) -> Unit,
     interactionState: InteractionState,
     stateTransitionFloat: AnimatedFloat
 ) {
@@ -302,7 +302,7 @@ private fun <E> AuroraComboBox(
                                 items = items,
                                 displayConverter = displayConverter,
                                 onItemSelected = {
-                                    onItemSelected.invoke(it)
+                                    onTriggerItemSelectedChange.invoke(it)
                                     jwindow.dispose()
                                 }
                             )
