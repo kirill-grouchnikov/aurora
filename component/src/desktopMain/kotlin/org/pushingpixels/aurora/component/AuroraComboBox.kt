@@ -122,6 +122,7 @@ fun <E> AuroraComboBox(
     enabled: Boolean = true,
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS,
     items: List<E>,
+    selectedItem: E,
     displayConverter: (E) -> String,
     onItemSelected: (E) -> Unit
 ) {
@@ -130,6 +131,7 @@ fun <E> AuroraComboBox(
         enabled = enabled,
         backgroundAppearanceStrategy = backgroundAppearanceStrategy,
         items = items,
+        selectedItem = selectedItem,
         displayConverter = displayConverter,
         onItemSelected = onItemSelected,
         interactionState = remember { InteractionState() },
@@ -143,13 +145,13 @@ private fun <E> AuroraComboBox(
     enabled: Boolean,
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     items: List<E>,
+    selectedItem: E,
     displayConverter: (E) -> String,
     onItemSelected: (E) -> Unit,
     interactionState: InteractionState,
     stateTransitionFloat: AnimatedFloat
 ) {
     val drawingCache = remember { ComboBoxDrawingCache() }
-    val selectedItem = remember { mutableStateOf(displayConverter.invoke(items[0])) }
 
     var rollover by remember { mutableStateOf(false) }
 
@@ -300,7 +302,6 @@ private fun <E> AuroraComboBox(
                                 items = items,
                                 displayConverter = displayConverter,
                                 onItemSelected = {
-                                    selectedItem.value = displayConverter.invoke(it)
                                     onItemSelected.invoke(it)
                                     jwindow.dispose()
                                 }
@@ -477,7 +478,7 @@ private fun <E> AuroraComboBox(
                     )
                 ),
                 content = {
-                    AuroraText(selectedItem.value)
+                    AuroraText(displayConverter.invoke(selectedItem))
                 }
             ) { measurables, constraints ->
                 // Measure each child so that we know how much space they need

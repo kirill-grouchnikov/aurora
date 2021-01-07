@@ -636,21 +636,34 @@ fun DemoArea(modifier: Modifier = Modifier, style: DemoStyle) {
 
                 Spacer(modifier = Modifier.width(20.dp))
 
+                val simpleComboItems = listOf("one", "two", "three")
+                val simpleComboSelectedItem = remember { mutableStateOf(simpleComboItems[1]) }
                 AuroraComboBox(
                     enabled = contentEnabled,
-                    items = listOf("one", "two", "three"),
+                    items = simpleComboItems,
+                    selectedItem = simpleComboSelectedItem.value,
                     displayConverter = { it },
-                    onItemSelected = { println("$it selected!") },
+                    onItemSelected = {
+                        simpleComboSelectedItem.value = it
+                        println("$it selected!")
+                    },
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
 
+                val personComboItems =
+                    listOf(Person("Bob", "Loblaw"), Person("Paige", "Turner"), Person("Donaldson", "Duck"))
+                val personComboSelectedItem = remember { mutableStateOf(personComboItems[0]) }
                 AuroraComboBox(
                     enabled = contentEnabled,
-                    items = listOf(Person("Bob", "Loblaw"), Person("Paige", "Turner"), Person("Donaldson", "Duck")),
+                    items = personComboItems,
+                    selectedItem = personComboSelectedItem.value,
                     displayConverter = { it.lastName + ", " + it.firstName },
-                    onItemSelected = { println("$it selected!") },
+                    onItemSelected = {
+                        personComboSelectedItem.value = it
+                        println("$it selected!")
+                    },
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
                 )
             }
