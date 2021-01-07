@@ -54,7 +54,7 @@ import org.pushingpixels.aurora.component.utils.*
 import kotlin.math.max
 
 // TODO - revisit this
-val AmbientStateTransitionTracker = ambientOf<StateTransitionTracker>()
+val AmbientModelStateInfo = ambientOf<ModelStateInfo>()
 
 // This will be initialized on first usage using the getSelectedTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
@@ -100,7 +100,7 @@ fun AuroraToggleButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     selected: Boolean = false,
-    onSelectedChange: (Boolean) -> Unit = {},
+    onTriggerSelectedChange: (Boolean) -> Unit = {},
     sides: ButtonSides = ButtonSides(),
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS,
     sizingStrategy: ButtonSizingStrategy = ButtonSizingStrategy.EXTENDED,
@@ -111,7 +111,7 @@ fun AuroraToggleButton(
         modifier = modifier,
         enabled = enabled,
         selected = selected,
-        onSelectedChange = onSelectedChange,
+        onTriggerSelectedChange = onTriggerSelectedChange,
         sides = sides,
         backgroundAppearanceStrategy = backgroundAppearanceStrategy,
         sizingStrategy = sizingStrategy,
@@ -127,7 +127,7 @@ private fun AuroraToggleButton(
     modifier: Modifier,
     enabled: Boolean,
     selected: Boolean,
-    onSelectedChange: (Boolean) -> Unit,
+    onTriggerSelectedChange: (Boolean) -> Unit,
     sides: ButtonSides,
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     sizingStrategy: ButtonSizingStrategy,
@@ -137,9 +137,40 @@ private fun AuroraToggleButton(
     content: @Composable () -> Unit
 ) {
     val drawingCache = remember { ButtonDrawingCache() }
+    var rollover by remember { mutableStateOf(false) }
 
-    val stateTransitionTracker =
-        remember { StateTransitionTracker(enabled, selected, stateTransitionFloat) }
+    val currentState = remember {
+        mutableStateOf(
+            ComponentState.getState(
+                isEnabled = enabled,
+                isRollover = rollover,
+                isSelected = selected,
+                isPressed = Interaction.Pressed in interactionState
+            )
+        )
+    }
+
+    val modelStateInfo = remember {
+        ModelStateInfo(
+            ComponentState.getState(
+                isEnabled = enabled,
+                isRollover = rollover,
+                isSelected = selected,
+                isPressed = Interaction.Pressed in interactionState
+            )
+        )
+    }
+
+    StateTransitionTracker(
+        modelStateInfo = modelStateInfo,
+        currentState = currentState,
+        enabled = enabled,
+        selected = selected,
+        rollover = rollover,
+        pressed = Interaction.Pressed in interactionState,
+        stateTransitionFloat = stateTransitionFloat,
+        duration = AuroraSkin.animationConfig.regular
+    )
 
     val skinColors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
@@ -153,8 +184,8 @@ private fun AuroraToggleButton(
     }
     val selectionTransitionState = transition(
         definition = SelectedTransitionDefinition,
-        initState = stateTransitionTracker.selectedState.value,
-        toState = stateTransitionTracker.selectedState.value
+        initState = selected,
+        toState = selected
     )
     // Transition for the rollover state
     if (!::RolloverTransitionDefinition.isInitialized) {
@@ -163,8 +194,8 @@ private fun AuroraToggleButton(
     }
     val rolloverTransitionState = transition(
         definition = RolloverTransitionDefinition,
-        initState = stateTransitionTracker.rolloverState.value,
-        toState = stateTransitionTracker.rolloverState.value
+        initState = rollover,
+        toState = rollover
     )
     // Transition for the pressed state
     if (!::PressedTransitionDefinition.isInitialized) {
@@ -194,41 +225,33 @@ private fun AuroraToggleButton(
     pressedTransitionState[PressedTransitionFraction]
     enabledTransitionState[EnabledTransitionFraction]
 
-    stateTransitionTracker.update(
-        isEnabled = enabled,
-        isPressed = Interaction.Pressed in interactionState,
-        isSelected = selected,
-        duration = AuroraSkin.animationConfig.regular
-    )
-
     Box(
         modifier = modifier
             .pointerMoveFilter(
                 onEnter = {
-                    stateTransitionTracker.rolloverState.value = true
+                    rollover = true
                     false
                 },
                 onExit = {
-                    stateTransitionTracker.rolloverState.value = false
+                    rollover = false
                     false
                 },
                 onMove = {
                     false
                 })
             .toggleable(
-                value = stateTransitionTracker.selectedState.value,
+                value = selected,
                 enabled = enabled,
                 interactionState = interactionState,
                 indication = null,
                 onValueChange = {
-                    stateTransitionTracker.selectedState.value = it
-                    onSelectedChange.invoke(it)
+                    onTriggerSelectedChange.invoke(it)
                 }),
         contentAlignment = Alignment.TopStart
     ) {
         // Compute the text color
         val textColor = getTextColor(
-            modelStateInfo = stateTransitionTracker.modelStateInfo,
+            modelStateInfo = modelStateInfo,
             skinColors = skinColors,
             decorationAreaType = decorationAreaType,
             isTextInFilledArea = true
@@ -238,7 +261,7 @@ private fun AuroraToggleButton(
             // Populate the cached color scheme for filling the button container
             // based on the current model state info
             populateColorScheme(
-                drawingCache.colorScheme, stateTransitionTracker.modelStateInfo, decorationAreaType,
+                drawingCache.colorScheme, modelStateInfo, decorationAreaType,
                 ColorSchemeAssociationKind.FILL
             )
             // And retrieve the container fill colors
@@ -253,7 +276,7 @@ private fun AuroraToggleButton(
             // Populate the cached color scheme for drawing the button border
             // based on the current model state info
             populateColorScheme(
-                drawingCache.colorScheme, stateTransitionTracker.modelStateInfo, decorationAreaType,
+                drawingCache.colorScheme, modelStateInfo, decorationAreaType,
                 ColorSchemeAssociationKind.BORDER
             )
             // And retrieve the border colors
@@ -272,12 +295,12 @@ private fun AuroraToggleButton(
             if (backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
                 // For flat buttons, compute the combined contribution of all
                 // non-disabled states - ignoring ComponentState.ENABLED
-                alpha = stateTransitionTracker.modelStateInfo.stateContributionMap
+                alpha = modelStateInfo.stateContributionMap
                     .filter { !it.key.isDisabled && (it.key != ComponentState.ENABLED) }
                     .values.sumByDouble { it.contribution.toDouble() }.toFloat()
             } else {
-                alpha = if (stateTransitionTracker.currentState.isDisabled)
-                    skinColors.getAlpha(decorationAreaType, stateTransitionTracker.currentState) else 1.0f
+                alpha = if (currentState.value.isDisabled)
+                    skinColors.getAlpha(decorationAreaType, currentState.value) else 1.0f
             }
 
             Canvas(modifier.matchParentSize()) {
@@ -352,8 +375,8 @@ private fun AuroraToggleButton(
         // Pass our text color and model state snapshot to the children
         Providers(
             AmbientTextColor provides textColor,
-            AmbientStateTransitionTracker provides stateTransitionTracker,
-            AmbientModelStateInfoSnapshot provides stateTransitionTracker.modelStateInfo.getSnapshot()
+            AmbientModelStateInfo provides modelStateInfo,
+            AmbientModelStateInfoSnapshot provides modelStateInfo.getSnapshot()
         ) {
             Layout(
                 modifier = Modifier.padding(contentPadding),
@@ -377,7 +400,8 @@ private fun AuroraToggleButton(
                 if (sizingStrategy == ButtonSizingStrategy.EXTENDED) {
                     // Bump up to default minimums if necessary
                     uiPreferredWidth = max(uiPreferredWidth, ButtonSizingConstants.DefaultButtonContentWidth.toIntPx())
-                    uiPreferredHeight = max(uiPreferredHeight, ButtonSizingConstants.DefaultButtonContentHeight.toIntPx())
+                    uiPreferredHeight =
+                        max(uiPreferredHeight, ButtonSizingConstants.DefaultButtonContentHeight.toIntPx())
                 }
 
                 // And ask the button shaper for the final sizing
@@ -443,8 +467,40 @@ private fun AuroraButton(
 ) {
     val drawingCache = remember { ButtonDrawingCache() }
 
-    val stateTransitionTracker =
-        remember { StateTransitionTracker(enabled, false, stateTransitionFloat) }
+    var rollover by remember { mutableStateOf(false) }
+
+    val currentState = remember {
+        mutableStateOf(
+            ComponentState.getState(
+                isEnabled = enabled,
+                isRollover = rollover,
+                isSelected = false,
+                isPressed = Interaction.Pressed in interactionState
+            )
+        )
+    }
+
+    val modelStateInfo = remember {
+        ModelStateInfo(
+            ComponentState.getState(
+                isEnabled = enabled,
+                isRollover = rollover,
+                isSelected = false,
+                isPressed = Interaction.Pressed in interactionState
+            )
+        )
+    }
+
+    StateTransitionTracker(
+        modelStateInfo = modelStateInfo,
+        currentState = currentState,
+        enabled = enabled,
+        selected = false,
+        rollover = rollover,
+        pressed = Interaction.Pressed in interactionState,
+        stateTransitionFloat = stateTransitionFloat,
+        duration = AuroraSkin.animationConfig.regular
+    )
 
     val skinColors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
@@ -458,8 +514,8 @@ private fun AuroraButton(
     }
     val selectionTransitionState = transition(
         definition = SelectedTransitionDefinition,
-        initState = stateTransitionTracker.selectedState.value,
-        toState = stateTransitionTracker.selectedState.value
+        initState = false,
+        toState = false
     )
     // Transition for the rollover state
     if (!::RolloverTransitionDefinition.isInitialized) {
@@ -468,8 +524,8 @@ private fun AuroraButton(
     }
     val rolloverTransitionState = transition(
         definition = RolloverTransitionDefinition,
-        initState = stateTransitionTracker.rolloverState.value,
-        toState = stateTransitionTracker.rolloverState.value
+        initState = rollover,
+        toState = rollover
     )
     // Transition for the pressed state
     if (!::PressedTransitionDefinition.isInitialized) {
@@ -499,22 +555,15 @@ private fun AuroraButton(
     pressedTransitionState[PressedTransitionFraction]
     enabledTransitionState[EnabledTransitionFraction]
 
-    stateTransitionTracker.update(
-        isEnabled = enabled,
-        isPressed = Interaction.Pressed in interactionState,
-        isSelected = false,
-        duration = AuroraSkin.animationConfig.regular
-    )
-
     Box(
         modifier = modifier
             .pointerMoveFilter(
                 onEnter = {
-                    stateTransitionTracker.rolloverState.value = true
+                    rollover = true
                     false
                 },
                 onExit = {
-                    stateTransitionTracker.rolloverState.value = false
+                    rollover = false
                     false
                 },
                 onMove = {
@@ -530,7 +579,7 @@ private fun AuroraButton(
     ) {
         // Compute the text color
         val textColor = getTextColor(
-            modelStateInfo = stateTransitionTracker.modelStateInfo,
+            modelStateInfo = modelStateInfo,
             skinColors = skinColors,
             decorationAreaType = decorationAreaType,
             isTextInFilledArea = true
@@ -540,7 +589,7 @@ private fun AuroraButton(
             // Populate the cached color scheme for filling the button container
             // based on the current model state info
             populateColorScheme(
-                drawingCache.colorScheme, stateTransitionTracker.modelStateInfo, decorationAreaType,
+                drawingCache.colorScheme, modelStateInfo, decorationAreaType,
                 ColorSchemeAssociationKind.FILL
             )
             // And retrieve the container fill colors
@@ -555,7 +604,7 @@ private fun AuroraButton(
             // Populate the cached color scheme for drawing the button border
             // based on the current model state info
             populateColorScheme(
-                drawingCache.colorScheme, stateTransitionTracker.modelStateInfo, decorationAreaType,
+                drawingCache.colorScheme, modelStateInfo, decorationAreaType,
                 ColorSchemeAssociationKind.BORDER
             )
             // And retrieve the border colors
@@ -574,12 +623,12 @@ private fun AuroraButton(
             if (backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
                 // For flat buttons, compute the combined contribution of all
                 // non-disabled states - ignoring ComponentState.ENABLED
-                alpha = stateTransitionTracker.modelStateInfo.stateContributionMap
+                alpha = modelStateInfo.stateContributionMap
                     .filter { !it.key.isDisabled && (it.key != ComponentState.ENABLED) }
                     .values.sumByDouble { it.contribution.toDouble() }.toFloat()
             } else {
-                alpha = if (stateTransitionTracker.currentState.isDisabled)
-                    skinColors.getAlpha(decorationAreaType, stateTransitionTracker.currentState) else 1.0f
+                alpha = if (currentState.value.isDisabled)
+                    skinColors.getAlpha(decorationAreaType, currentState.value) else 1.0f
             }
 
             Canvas(modifier.matchParentSize()) {
@@ -654,8 +703,8 @@ private fun AuroraButton(
         // Pass our text color and model state snapshot to the children
         Providers(
             AmbientTextColor provides textColor,
-            AmbientStateTransitionTracker provides stateTransitionTracker,
-            AmbientModelStateInfoSnapshot provides stateTransitionTracker.modelStateInfo.getSnapshot()
+            AmbientModelStateInfo provides modelStateInfo,
+            AmbientModelStateInfoSnapshot provides modelStateInfo.getSnapshot()
         ) {
             Layout(
                 modifier = Modifier.padding(contentPadding),
@@ -679,7 +728,8 @@ private fun AuroraButton(
                 if (sizingStrategy == ButtonSizingStrategy.EXTENDED) {
                     // Bump up to default minimums if necessary
                     uiPreferredWidth = max(uiPreferredWidth, ButtonSizingConstants.DefaultButtonContentWidth.toIntPx())
-                    uiPreferredHeight = max(uiPreferredHeight, ButtonSizingConstants.DefaultButtonContentHeight.toIntPx())
+                    uiPreferredHeight =
+                        max(uiPreferredHeight, ButtonSizingConstants.DefaultButtonContentHeight.toIntPx())
                 }
 
                 // And ask the button shaper for the final sizing

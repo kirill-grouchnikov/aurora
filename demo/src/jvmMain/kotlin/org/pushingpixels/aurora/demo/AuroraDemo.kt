@@ -44,7 +44,6 @@ import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.icon.AuroraThemedFollowTextIcon
 import org.pushingpixels.aurora.icon.AuroraThemedIcon
 import org.pushingpixels.aurora.skin.marinerSkin
-import org.pushingpixels.aurora.skin.nebulaBrickWallSkin
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 import kotlin.system.exitProcess
@@ -61,6 +60,16 @@ fun main() {
 }
 
 data class Person(val firstName: String, val lastName: String)
+enum class DemoAlignment {
+    CENTER, LEFT, RIGHT, FILL
+}
+
+class DemoStyle(
+    val bold: MutableState<Boolean>,
+    val italic: MutableState<Boolean>,
+    val underline: MutableState<Boolean>,
+    val strikethrough: MutableState<Boolean>
+)
 
 @Composable
 fun DemoProgress(enabled: Boolean) {
@@ -101,51 +110,63 @@ fun DemoMenuBar(modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .auroraBackground()
     ) {
-        AuroraButton(backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+        AuroraButton(
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
             sizingStrategy = ButtonSizingStrategy.COMPACT,
             contentPadding = ButtonSizingConstants.CompactButtonContentPadding,
-            sides = ButtonSides(straightSides = Side.values().toSet())) {
+            sides = ButtonSides(straightSides = Side.values().toSet())
+        ) {
             AuroraText("File")
         }
-        AuroraButton(backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+        AuroraButton(
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
             sizingStrategy = ButtonSizingStrategy.COMPACT,
             contentPadding = ButtonSizingConstants.CompactButtonContentPadding,
-            sides = ButtonSides(straightSides = Side.values().toSet())) {
+            sides = ButtonSides(straightSides = Side.values().toSet())
+        ) {
             AuroraText("Edit")
         }
-        AuroraButton(backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+        AuroraButton(
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
             sizingStrategy = ButtonSizingStrategy.COMPACT,
             contentPadding = ButtonSizingConstants.CompactButtonContentPadding,
-            sides = ButtonSides(straightSides = Side.values().toSet())) {
+            sides = ButtonSides(straightSides = Side.values().toSet())
+        ) {
             AuroraText("View")
         }
-        AuroraButton(backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+        AuroraButton(
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
             sizingStrategy = ButtonSizingStrategy.COMPACT,
             contentPadding = ButtonSizingConstants.CompactButtonContentPadding,
-            sides = ButtonSides(straightSides = Side.values().toSet())) {
+            sides = ButtonSides(straightSides = Side.values().toSet())
+        ) {
             AuroraText("Tools")
         }
-        AuroraButton(backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+        AuroraButton(
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
             sizingStrategy = ButtonSizingStrategy.COMPACT,
             contentPadding = ButtonSizingConstants.CompactButtonContentPadding,
-            sides = ButtonSides(straightSides = Side.values().toSet())) {
+            sides = ButtonSides(straightSides = Side.values().toSet())
+        ) {
             AuroraText("Window")
         }
-        AuroraButton(backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+        AuroraButton(
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
             sizingStrategy = ButtonSizingStrategy.COMPACT,
             contentPadding = ButtonSizingConstants.CompactButtonContentPadding,
-            sides = ButtonSides(straightSides = Side.values().toSet())) {
+            sides = ButtonSides(straightSides = Side.values().toSet())
+        ) {
             AuroraText("Help")
         }
     }
 }
 
-private enum class DemoAlignment {
-    CENTER, LEFT, RIGHT, FILL
-}
-
 @Composable
-fun DemoToolbar(modifier: Modifier = Modifier) {
+fun DemoToolbar(
+    modifier: Modifier = Modifier,
+    alignment: MutableState<DemoAlignment>,
+    style: DemoStyle
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -211,11 +232,9 @@ fun DemoToolbar(modifier: Modifier = Modifier) {
         AuroraVerticalSeparator(modifier = Modifier.preferredHeight(20.dp))
         Spacer(modifier = Modifier.width(4.dp))
 
-        var alignment by remember { mutableStateOf(DemoAlignment.CENTER) }
-
         AuroraToggleButton(
-            selected = (alignment == DemoAlignment.CENTER),
-            onSelectedChange = { if (it) alignment = DemoAlignment.CENTER },
+            selected = (alignment.value == DemoAlignment.CENTER),
+            onTriggerSelectedChange = { if (it) alignment.value = DemoAlignment.CENTER },
             sides = ButtonSides(straightSides = setOf(Side.END)),
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
             sizingStrategy = ButtonSizingStrategy.COMPACT,
@@ -226,8 +245,8 @@ fun DemoToolbar(modifier: Modifier = Modifier) {
             )
         }
         AuroraToggleButton(
-            selected = (alignment == DemoAlignment.LEFT),
-            onSelectedChange = { if (it) alignment = DemoAlignment.LEFT },
+            selected = (alignment.value == DemoAlignment.LEFT),
+            onTriggerSelectedChange = { if (it) alignment.value = DemoAlignment.LEFT },
             sides = ButtonSides(straightSides = setOf(Side.START, Side.END)),
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
             sizingStrategy = ButtonSizingStrategy.COMPACT,
@@ -238,8 +257,8 @@ fun DemoToolbar(modifier: Modifier = Modifier) {
             )
         }
         AuroraToggleButton(
-            selected = (alignment == DemoAlignment.RIGHT),
-            onSelectedChange = { if (it) alignment = DemoAlignment.RIGHT },
+            selected = (alignment.value == DemoAlignment.RIGHT),
+            onTriggerSelectedChange = { if (it) alignment.value = DemoAlignment.RIGHT },
             sides = ButtonSides(straightSides = setOf(Side.START, Side.END)),
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
             sizingStrategy = ButtonSizingStrategy.COMPACT,
@@ -250,8 +269,8 @@ fun DemoToolbar(modifier: Modifier = Modifier) {
             )
         }
         AuroraToggleButton(
-            selected = (alignment == DemoAlignment.FILL),
-            onSelectedChange = { if (it) alignment = DemoAlignment.FILL },
+            selected = (alignment.value == DemoAlignment.FILL),
+            onTriggerSelectedChange = { if (it) alignment.value = DemoAlignment.FILL },
             sides = ButtonSides(straightSides = setOf(Side.START)),
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
             sizingStrategy = ButtonSizingStrategy.COMPACT,
@@ -267,8 +286,11 @@ fun DemoToolbar(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.width(4.dp))
 
         AuroraToggleButton(
-            selected = false,
-            onSelectedChange = { println("Selected bold? $it") },
+            selected = style.bold.value,
+            onTriggerSelectedChange = {
+                style.bold.value = it
+                println("Selected bold? $it")
+            },
             sides = ButtonSides(straightSides = setOf(Side.END)),
             sizingStrategy = ButtonSizingStrategy.COMPACT,
             contentPadding = ButtonSizingConstants.CompactButtonContentPadding
@@ -278,8 +300,11 @@ fun DemoToolbar(modifier: Modifier = Modifier) {
             )
         }
         AuroraToggleButton(
-            selected = true,
-            onSelectedChange = { println("Selected italic? $it") },
+            selected = style.italic.value,
+            onTriggerSelectedChange = {
+                style.italic.value = it
+                println("Selected italic? $it")
+            },
             sides = ButtonSides(
                 straightSides = setOf(Side.START, Side.END),
                 openSides = setOf(Side.START, Side.END)
@@ -292,8 +317,11 @@ fun DemoToolbar(modifier: Modifier = Modifier) {
             )
         }
         AuroraToggleButton(
-            selected = false,
-            onSelectedChange = { println("Selected under? $it") },
+            selected = style.underline.value,
+            onTriggerSelectedChange = {
+                style.underline.value = it
+                println("Selected under? $it")
+            },
             sides = ButtonSides(
                 straightSides = setOf(Side.START, Side.END),
                 openSides = setOf(Side.END)
@@ -306,8 +334,11 @@ fun DemoToolbar(modifier: Modifier = Modifier) {
             )
         }
         AuroraToggleButton(
-            selected = false,
-            onSelectedChange = { println("Selected strike? $it") },
+            selected = style.strikethrough.value,
+            onTriggerSelectedChange = {
+                style.strikethrough.value = it
+                println("Selected strike? $it")
+            },
             sides = ButtonSides(straightSides = setOf(Side.START)),
             sizingStrategy = ButtonSizingStrategy.COMPACT,
             contentPadding = ButtonSizingConstants.CompactButtonContentPadding
@@ -334,7 +365,10 @@ fun DemoToolbar(modifier: Modifier = Modifier) {
 
 
 @Composable
-fun DemoFooter(modifier: Modifier = Modifier) {
+fun DemoFooter(
+    modifier: Modifier = Modifier,
+    alignment: MutableState<DemoAlignment>
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -344,11 +378,9 @@ fun DemoFooter(modifier: Modifier = Modifier) {
     ) {
         Spacer(modifier.weight(weight = 1.0f, fill = true))
 
-        var alignment by remember { mutableStateOf(DemoAlignment.CENTER) }
-
         AuroraToggleButton(
-            selected = (alignment == DemoAlignment.CENTER),
-            onSelectedChange = { if (it) alignment = DemoAlignment.CENTER },
+            selected = (alignment.value == DemoAlignment.CENTER),
+            onTriggerSelectedChange = { if (it) alignment.value = DemoAlignment.CENTER },
             sides = ButtonSides(straightSides = setOf(Side.END)),
             sizingStrategy = ButtonSizingStrategy.COMPACT,
             contentPadding = ButtonSizingConstants.CompactButtonContentPadding
@@ -358,8 +390,8 @@ fun DemoFooter(modifier: Modifier = Modifier) {
             )
         }
         AuroraToggleButton(
-            selected = (alignment == DemoAlignment.LEFT),
-            onSelectedChange = { if (it) alignment = DemoAlignment.LEFT },
+            selected = (alignment.value == DemoAlignment.LEFT),
+            onTriggerSelectedChange = { if (it) alignment.value = DemoAlignment.LEFT },
             sides = ButtonSides(
                 straightSides = setOf(Side.START, Side.END),
                 openSides = setOf(Side.START, Side.END)
@@ -372,8 +404,8 @@ fun DemoFooter(modifier: Modifier = Modifier) {
             )
         }
         AuroraToggleButton(
-            selected = (alignment == DemoAlignment.RIGHT),
-            onSelectedChange = { if (it) alignment = DemoAlignment.RIGHT },
+            selected = (alignment.value == DemoAlignment.RIGHT),
+            onTriggerSelectedChange = { if (it) alignment.value = DemoAlignment.RIGHT },
             sides = ButtonSides(
                 straightSides = setOf(Side.START, Side.END),
                 openSides = setOf(Side.END)
@@ -386,8 +418,8 @@ fun DemoFooter(modifier: Modifier = Modifier) {
             )
         }
         AuroraToggleButton(
-            selected = (alignment == DemoAlignment.FILL),
-            onSelectedChange = { if (it) alignment = DemoAlignment.FILL },
+            selected = (alignment.value == DemoAlignment.FILL),
+            onTriggerSelectedChange = { if (it) alignment.value = DemoAlignment.FILL },
             sides = ButtonSides(straightSides = setOf(Side.START)),
             sizingStrategy = ButtonSizingStrategy.COMPACT,
             contentPadding = ButtonSizingConstants.CompactButtonContentPadding
@@ -400,7 +432,7 @@ fun DemoFooter(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
+fun DemoArea(modifier: Modifier = Modifier, style: DemoStyle) {
     // TODO - convert this to use ConstraintLayout when that is available for desktop
     Row(
         verticalAlignment = Alignment.Top,
@@ -409,10 +441,10 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
             .auroraBackground()
             .padding(8.dp)
     ) {
-        val enabled = remember { mutableStateOf(true) }
+        var contentEnabled by remember { mutableStateOf(true) }
         AuroraCheckBox(
-            selected = true,
-            onSelectedChange = { enabled.value = !enabled.value }
+            selected = contentEnabled,
+            onTriggerSelectedChange = { contentEnabled = !contentEnabled }
         ) {
             AuroraText(text = "content enabled")
         }
@@ -421,18 +453,28 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Row(modifier = Modifier.fillMaxWidth()) {
+                var checkboxSelected by remember { mutableStateOf(true) }
                 AuroraCheckBox(
-                    selected = selected,
-                    onSelectedChange = { println("Selected checkbox? $it") },
-                    enabled = enabled.value
+                    selected = checkboxSelected,
+                    onTriggerSelectedChange = {
+                        println("Selected checkbox? $it")
+                        checkboxSelected = it
+                    },
+                    enabled = contentEnabled
                 ) {
                     AuroraText(text = "sample check")
                 }
+
                 Spacer(modifier = Modifier.width(8.dp))
+
+                var radioButtonSelected by remember { mutableStateOf(true) }
                 AuroraRadioButton(
-                    selected = selected,
-                    onSelectedChange = { println("Selected radio? $it") },
-                    enabled = enabled.value
+                    selected = radioButtonSelected,
+                    onTriggerSelectedChange = {
+                        println("Selected radio? $it")
+                        radioButtonSelected = it
+                    },
+                    enabled = contentEnabled
                 ) {
                     AuroraText(text = "sample radio")
                 }
@@ -441,10 +483,14 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                var toggleButtonSelected by remember { mutableStateOf(true) }
                 AuroraToggleButton(
-                    enabled = enabled.value,
-                    selected = selected,
-                    onSelectedChange = { println("Selected toggle? $it") }) {
+                    enabled = contentEnabled,
+                    selected = toggleButtonSelected,
+                    onTriggerSelectedChange = {
+                        println("Selected toggle? $it")
+                        toggleButtonSelected = it
+                    }) {
                     // This is a full-color icon. Use original colors for enabled and active states,
                     // and color scheme based filtering for disabled states
                     AuroraThemedIcon(
@@ -457,14 +503,14 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     AuroraText("toggle")
                 }
                 AuroraButton(
-                    enabled = enabled.value,
+                    enabled = contentEnabled,
                     onClick = { println("Clicked!") },
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.NEVER
                 ) {
                     AuroraText("never")
                 }
                 AuroraButton(
-                    enabled = enabled.value,
+                    enabled = contentEnabled,
                     onClick = { println("Clicked!") },
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT
                 ) {
@@ -475,7 +521,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     AuroraText("flat")
                 }
                 AuroraButton(
-                    enabled = enabled.value,
+                    enabled = contentEnabled,
                     onClick = { println("Clicked!") },
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
                 ) {
@@ -488,17 +534,20 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                AuroraCircularProgress(enabled = enabled.value)
+                AuroraCircularProgress(enabled = contentEnabled)
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                AuroraCircularProgress(modifier = Modifier.size(14.dp), enabled = enabled.value)
+                AuroraCircularProgress(modifier = Modifier.size(14.dp), enabled = contentEnabled)
             }
             Row(modifier = Modifier.fillMaxWidth()) {
                 AuroraToggleButton(
-                    enabled = enabled.value,
-                    selected = false,
-                    onSelectedChange = { println("Selected bold? $it") },
+                    enabled = contentEnabled,
+                    selected = style.bold.value,
+                    onTriggerSelectedChange = {
+                        style.bold.value = it
+                        println("Selected bold? $it")
+                    },
                     sides = ButtonSides(straightSides = setOf(Side.END)),
                     sizingStrategy = ButtonSizingStrategy.COMPACT,
                     contentPadding = ButtonSizingConstants.CompactButtonContentPadding
@@ -508,9 +557,12 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     )
                 }
                 AuroraToggleButton(
-                    enabled = enabled.value,
-                    selected = true,
-                    onSelectedChange = { println("Selected italic? $it") },
+                    enabled = contentEnabled,
+                    selected = style.italic.value,
+                    onTriggerSelectedChange = {
+                        style.italic.value = it
+                        println("Selected italic? $it")
+                    },
                     sides = ButtonSides(
                         straightSides = setOf(Side.START, Side.END),
                         openSides = setOf(Side.START, Side.END)
@@ -523,9 +575,12 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     )
                 }
                 AuroraToggleButton(
-                    enabled = enabled.value,
-                    selected = false,
-                    onSelectedChange = { println("Selected under? $it") },
+                    enabled = contentEnabled,
+                    selected = style.underline.value,
+                    onTriggerSelectedChange = {
+                        style.underline.value = it
+                        println("Selected under? $it")
+                    },
                     sides = ButtonSides(
                         straightSides = setOf(Side.START, Side.END),
                         openSides = setOf(Side.END)
@@ -538,9 +593,12 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     )
                 }
                 AuroraToggleButton(
-                    enabled = enabled.value,
-                    selected = false,
-                    onSelectedChange = { println("Selected strike? $it") },
+                    enabled = contentEnabled,
+                    selected = style.strikethrough.value,
+                    onTriggerSelectedChange = {
+                        style.strikethrough.value = it
+                        println("Selected strike? $it")
+                    },
                     sides = ButtonSides(straightSides = setOf(Side.START)),
                     sizingStrategy = ButtonSizingStrategy.COMPACT,
                     contentPadding = ButtonSizingConstants.CompactButtonContentPadding
@@ -553,9 +611,9 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                 Spacer(modifier = Modifier.width(8.dp))
 
                 AuroraToggleButton(
-                    enabled = enabled.value,
+                    enabled = contentEnabled,
                     selected = true,
-                    onSelectedChange = { println("Selected small? $it") },
+                    onTriggerSelectedChange = { println("Selected small? $it") },
                     sides = ButtonSides(straightSides = Side.values().toSet()),
                     sizingStrategy = ButtonSizingStrategy.COMPACT,
                     contentPadding = PaddingValues(all = 2.dp)
@@ -566,9 +624,9 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                 Spacer(modifier = Modifier.width(8.dp))
 
                 AuroraToggleButton(
-                    enabled = enabled.value,
+                    enabled = contentEnabled,
                     selected = true,
-                    onSelectedChange = { println("Selected small? $it") },
+                    onTriggerSelectedChange = { println("Selected small? $it") },
                     sides = ButtonSides(straightSides = Side.values().toSet()),
                     sizingStrategy = ButtonSizingStrategy.COMPACT,
                     contentPadding = PaddingValues(all = 6.dp)
@@ -579,7 +637,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                 Spacer(modifier = Modifier.width(20.dp))
 
                 AuroraComboBox(
-                    enabled = enabled.value,
+                    enabled = contentEnabled,
                     items = listOf("one", "two", "three"),
                     displayConverter = { it },
                     onItemSelected = { println("$it selected!") },
@@ -589,7 +647,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                 Spacer(modifier = Modifier.width(8.dp))
 
                 AuroraComboBox(
-                    enabled = enabled.value,
+                    enabled = contentEnabled,
                     items = listOf(Person("Bob", "Loblaw"), Person("Paige", "Turner"), Person("Donaldson", "Duck")),
                     displayConverter = { it.lastName + ", " + it.firstName },
                     onItemSelected = { println("$it selected!") },
@@ -599,12 +657,12 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
 
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 AuroraIndeterminateLinearProgress(
-                    enabled = enabled.value
+                    enabled = contentEnabled
                 )
 
                 Spacer(modifier = Modifier.width(16.dp))
 
-                DemoProgress(enabled = enabled.value)
+                DemoProgress(enabled = contentEnabled)
             }
 
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
@@ -613,7 +671,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     valueRange = 0.0f.rangeTo(1.0f),
                     onValueChange = { println("Slider $it") },
                     onValueChangeEnd = { println("Slider change done!") },
-                    enabled = enabled.value
+                    enabled = contentEnabled
                 )
 
                 Spacer(modifier = Modifier.width(16.dp))
@@ -623,7 +681,7 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
                     valueRange = 0.0f.rangeTo(100.0f),
                     onValueChange = { println("Slider $it") },
                     onValueChangeEnd = { println("Slider change done!") },
-                    enabled = enabled.value,
+                    enabled = contentEnabled,
                     tickSteps = 9,
                     snapToTicks = true,
                     drawTicks = true,
@@ -636,18 +694,27 @@ fun DemoArea(modifier: Modifier = Modifier, selected: Boolean = false) {
 @Composable
 fun DemoContent() {
     Column(modifier = Modifier.fillMaxHeight().fillMaxWidth()) {
+        val alignment = remember { mutableStateOf(DemoAlignment.CENTER) }
+
+        val style = DemoStyle(
+            bold = remember { mutableStateOf(false) },
+            italic = remember { mutableStateOf(true) },
+            underline = remember { mutableStateOf(false) },
+            strikethrough = remember { mutableStateOf(false) },
+        )
+
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.HEADER) {
             DemoMenuBar()
         }
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.TOOLBAR) {
-            DemoToolbar()
+            DemoToolbar(alignment = alignment, style = style)
         }
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.NONE) {
-            DemoArea(selected = true)
+            DemoArea(style = style)
         }
         Spacer(modifier = Modifier.weight(weight = 1.0f, fill = true))
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.FOOTER) {
-            DemoFooter()
+            DemoFooter(alignment = alignment)
         }
     }
 }

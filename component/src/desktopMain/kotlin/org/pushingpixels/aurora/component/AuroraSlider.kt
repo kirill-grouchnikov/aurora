@@ -40,10 +40,7 @@ import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.preferredSize
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -156,8 +153,40 @@ private fun AuroraSlider(
     val drawingCache = remember { SliderDrawingCache() }
     val current = remember { mutableStateOf(value) }
 
-    val stateTransitionTracker =
-        remember { StateTransitionTracker(enabled, false, stateTransitionFloat) }
+    var rollover by remember { mutableStateOf(false) }
+
+    val currentState = remember {
+        mutableStateOf(
+            ComponentState.getState(
+                isEnabled = enabled,
+                isRollover = rollover,
+                isSelected = false,
+                isPressed = Interaction.Pressed in interactionState
+            )
+        )
+    }
+
+    val modelStateInfo = remember {
+        ModelStateInfo(
+            ComponentState.getState(
+                isEnabled = enabled,
+                isRollover = rollover,
+                isSelected = false,
+                isPressed = Interaction.Pressed in interactionState
+            )
+        )
+    }
+
+    StateTransitionTracker(
+        modelStateInfo = modelStateInfo,
+        currentState = currentState,
+        enabled = enabled,
+        selected = false,
+        rollover = rollover,
+        pressed = Interaction.Pressed in interactionState,
+        stateTransitionFloat = stateTransitionFloat,
+        duration = AuroraSkin.animationConfig.regular
+    )
 
     // Transition for the selection state
     if (!::SelectedTransitionDefinition.isInitialized) {
@@ -166,8 +195,8 @@ private fun AuroraSlider(
     }
     val selectionTransitionState = transition(
         definition = SelectedTransitionDefinition,
-        initState = stateTransitionTracker.selectedState.value,
-        toState = stateTransitionTracker.selectedState.value
+        initState = false,
+        toState = false
     )
     // Transition for the rollover state
     if (!::RolloverTransitionDefinition.isInitialized) {
@@ -176,8 +205,8 @@ private fun AuroraSlider(
     }
     val rolloverTransitionState = transition(
         definition = RolloverTransitionDefinition,
-        initState = stateTransitionTracker.rolloverState.value,
-        toState = stateTransitionTracker.rolloverState.value
+        initState = rollover,
+        toState = rollover
     )
     // Transition for the pressed state
     if (!::PressedTransitionDefinition.isInitialized) {
@@ -206,13 +235,6 @@ private fun AuroraSlider(
     rolloverTransitionState[RolloverTransitionFraction]
     pressedTransitionState[PressedTransitionFraction]
     enabledTransitionState[EnabledTransitionFraction]
-
-    stateTransitionTracker.update(
-        isEnabled = enabled,
-        isPressed = Interaction.Pressed in interactionState,
-        isSelected = false,
-        duration = AuroraSkin.animationConfig.regular
-    )
 
     val trackFillState = if (enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
     val trackSelectedState = if (enabled) ComponentState.SELECTED else ComponentState.DISABLED_SELECTED
@@ -318,20 +340,19 @@ private fun AuroraSlider(
             },
             onExit = {
                 // Reset rollover when mouse exits the component bounds
-                stateTransitionTracker.rolloverState.value = false
+                rollover = false
                 false
             },
             onMove = { position ->
                 // Rollover is only "active" in the thumb rectangle
-                stateTransitionTracker.rolloverState.value =
-                    drawingCache.thumbRect.contains(position.x, position.y)
+                rollover = drawingCache.thumbRect.contains(position.x, position.y)
                 false
             }).then(drag)
     ) {
         // Populate the cached color scheme for filling the thumb
         // based on the current model state info
         populateColorScheme(
-            drawingCache.colorScheme, stateTransitionTracker.modelStateInfo, decorationAreaType,
+            drawingCache.colorScheme, modelStateInfo, decorationAreaType,
             ColorSchemeAssociationKind.FILL
         )
 
@@ -347,7 +368,7 @@ private fun AuroraSlider(
         // Populate the cached color scheme for drawing the thumb border
         // based on the current model state info
         populateColorScheme(
-            drawingCache.colorScheme, stateTransitionTracker.modelStateInfo, decorationAreaType,
+            drawingCache.colorScheme, modelStateInfo, decorationAreaType,
             ColorSchemeAssociationKind.BORDER
         )
         // And retrieve the border colors
@@ -362,12 +383,12 @@ private fun AuroraSlider(
         val thumbFillPainter = painters.fillPainter
         val thumbBorderPainter = painters.borderPainter
 
-        val alpha = if (stateTransitionTracker.currentState.isDisabled)
-            skinColors.getAlpha(decorationAreaType, stateTransitionTracker.currentState) else 1.0f
+        val alpha = if (currentState.value.isDisabled)
+            skinColors.getAlpha(decorationAreaType, currentState.value) else 1.0f
 
         // Compute the text color
         val textColor = getTextColor(
-            modelStateInfo = stateTransitionTracker.modelStateInfo,
+            modelStateInfo = modelStateInfo,
             skinColors = skinColors,
             decorationAreaType = decorationAreaType,
             isTextInFilledArea = true
@@ -399,7 +420,7 @@ private fun AuroraSlider(
             // Calculate the thumb rectangle
             // TODO - support RTL
             val thumbSize = SliderConstants.ThumbFullSize.toPx() *
-                    (2.0f + stateTransitionTracker.modelStateInfo.activeStrength) / 3.0f
+                    (2.0f + modelStateInfo.activeStrength) / 3.0f
             val selectionCenterX = drawingCache.trackRect.x +
                     drawingCache.trackRect.width * current.value / (valueRange.endInclusive - valueRange.start)
             drawingCache.thumbRect.x = selectionCenterX - thumbSize / 2.0f

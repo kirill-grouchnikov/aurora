@@ -151,8 +151,40 @@ private fun <E> AuroraComboBox(
     val drawingCache = remember { ComboBoxDrawingCache() }
     val selectedItem = remember { mutableStateOf(displayConverter.invoke(items[0])) }
 
-    val stateTransitionTracker =
-        remember { StateTransitionTracker(enabled, false, stateTransitionFloat) }
+    var rollover by remember { mutableStateOf(false) }
+
+    val currentState = remember {
+        mutableStateOf(
+            ComponentState.getState(
+                isEnabled = enabled,
+                isRollover = rollover,
+                isSelected = false,
+                isPressed = Interaction.Pressed in interactionState
+            )
+        )
+    }
+
+    val modelStateInfo = remember {
+        ModelStateInfo(
+            ComponentState.getState(
+                isEnabled = enabled,
+                isRollover = rollover,
+                isSelected = false,
+                isPressed = Interaction.Pressed in interactionState
+            )
+        )
+    }
+
+    StateTransitionTracker(
+        modelStateInfo = modelStateInfo,
+        currentState = currentState,
+        enabled = enabled,
+        selected = false,
+        rollover = rollover,
+        pressed = Interaction.Pressed in interactionState,
+        stateTransitionFloat = stateTransitionFloat,
+        duration = AuroraSkin.animationConfig.regular
+    )
 
     // Transition for the selection state
     if (!::SelectedTransitionDefinition.isInitialized) {
@@ -161,8 +193,8 @@ private fun <E> AuroraComboBox(
     }
     val selectionTransitionState = transition(
         definition = SelectedTransitionDefinition,
-        initState = stateTransitionTracker.selectedState.value,
-        toState = stateTransitionTracker.selectedState.value
+        initState = false,
+        toState = false
     )
     // Transition for the rollover state
     if (!::RolloverTransitionDefinition.isInitialized) {
@@ -171,8 +203,8 @@ private fun <E> AuroraComboBox(
     }
     val rolloverTransitionState = transition(
         definition = RolloverTransitionDefinition,
-        initState = stateTransitionTracker.rolloverState.value,
-        toState = stateTransitionTracker.rolloverState.value
+        initState = rollover,
+        toState = rollover
     )
     // Transition for the pressed state
     if (!::PressedTransitionDefinition.isInitialized) {
@@ -202,13 +234,6 @@ private fun <E> AuroraComboBox(
     pressedTransitionState[PressedTransitionFraction]
     enabledTransitionState[EnabledTransitionFraction]
 
-    stateTransitionTracker.update(
-        isEnabled = enabled,
-        isPressed = Interaction.Pressed in interactionState,
-        isSelected = false,
-        duration = AuroraSkin.animationConfig.regular
-    )
-
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
     val buttonShaper = AuroraSkin.buttonShaper
@@ -222,11 +247,11 @@ private fun <E> AuroraComboBox(
         modifier = modifier
             .pointerMoveFilter(
                 onEnter = {
-                    stateTransitionTracker.rolloverState.value = true
+                    rollover = true
                     false
                 },
                 onExit = {
-                    stateTransitionTracker.rolloverState.value = false
+                    rollover = false
                     false
                 },
                 onMove = {
@@ -296,14 +321,14 @@ private fun <E> AuroraComboBox(
     ) {
         // Compute the text color
         val textColor = getTextColor(
-            modelStateInfo = stateTransitionTracker.modelStateInfo,
+            modelStateInfo = modelStateInfo,
             skinColors = skinColors,
             decorationAreaType = decorationAreaType,
             isTextInFilledArea = true
         )
         // And the arrow color
         val arrowColor = getStateAwareColor(
-            stateTransitionTracker.modelStateInfo,
+            modelStateInfo,
             decorationAreaType, ColorSchemeAssociationKind.MARK
         ) { it.markColor }
 
@@ -312,7 +337,7 @@ private fun <E> AuroraComboBox(
             // Populate the cached color scheme for filling the button container
             // based on the current model state info
             populateColorScheme(
-                drawingCache.colorScheme, stateTransitionTracker.modelStateInfo, decorationAreaType,
+                drawingCache.colorScheme, modelStateInfo, decorationAreaType,
                 ColorSchemeAssociationKind.FILL
             )
             // And retrieve the container fill colors
@@ -327,7 +352,7 @@ private fun <E> AuroraComboBox(
             // Populate the cached color scheme for drawing the button border
             // based on the current model state info
             populateColorScheme(
-                drawingCache.colorScheme, stateTransitionTracker.modelStateInfo, decorationAreaType,
+                drawingCache.colorScheme, modelStateInfo, decorationAreaType,
                 ColorSchemeAssociationKind.BORDER
             )
             // And retrieve the border colors
@@ -346,12 +371,12 @@ private fun <E> AuroraComboBox(
             if (backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
                 // For flat buttons, compute the combined contribution of all
                 // non-disabled states - ignoring ComponentState.ENABLED
-                alpha = stateTransitionTracker.modelStateInfo.stateContributionMap
+                alpha = modelStateInfo.stateContributionMap
                     .filter { !it.key.isDisabled && (it.key != ComponentState.ENABLED) }
                     .values.sumByDouble { it.contribution.toDouble() }.toFloat()
             } else {
-                alpha = if (stateTransitionTracker.currentState.isDisabled)
-                    AuroraSkin.colors.getAlpha(decorationAreaType, stateTransitionTracker.currentState) else 1.0f
+                alpha = if (currentState.value.isDisabled)
+                    AuroraSkin.colors.getAlpha(decorationAreaType, currentState.value) else 1.0f
             }
 
             Canvas(modifier.matchParentSize()) {
@@ -436,8 +461,8 @@ private fun <E> AuroraComboBox(
         // Pass our text color and model state snapshot to the children
         Providers(
             AmbientTextColor provides textColor,
-            AmbientStateTransitionTracker provides stateTransitionTracker,
-            AmbientModelStateInfoSnapshot provides stateTransitionTracker.modelStateInfo.getSnapshot()
+            AmbientModelStateInfo provides modelStateInfo,
+            AmbientModelStateInfoSnapshot provides modelStateInfo.getSnapshot()
         ) {
             Layout(
                 // TODO - revisit this maybe

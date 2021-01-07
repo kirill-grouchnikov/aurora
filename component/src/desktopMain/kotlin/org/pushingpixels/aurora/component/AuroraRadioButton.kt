@@ -90,14 +90,14 @@ private class RadioButtonDrawingCache(
 fun AuroraRadioButton(
     modifier: Modifier = Modifier,
     selected: Boolean = false,
-    onSelectedChange: (Boolean) -> Unit,
+    onTriggerSelectedChange: (Boolean) -> Unit,
     enabled: Boolean = true,
     content: @Composable RowScope.() -> Unit
 ) {
     AuroraRadioButton(
         modifier = modifier,
         selected = selected,
-        onSelectedChange = onSelectedChange,
+        onTriggerSelectedChange = onTriggerSelectedChange,
         enabled = enabled,
         interactionState = remember { InteractionState() },
         stateTransitionFloat = AnimatedFloat(0.0f, AmbientAnimationClock.current.asDisposableClock()),
@@ -109,7 +109,7 @@ fun AuroraRadioButton(
 private fun AuroraRadioButton(
     modifier: Modifier = Modifier,
     selected: Boolean = false,
-    onSelectedChange: (Boolean) -> Unit,
+    onTriggerSelectedChange: (Boolean) -> Unit,
     enabled: Boolean,
     interactionState: InteractionState,
     stateTransitionFloat: AnimatedFloat,
@@ -117,8 +117,41 @@ private fun AuroraRadioButton(
 ) {
     val drawingCache = remember { RadioButtonDrawingCache() }
 
-    val stateTransitionTracker =
-        remember { StateTransitionTracker(enabled, selected, stateTransitionFloat) }
+    var rollover by remember { mutableStateOf(false) }
+
+    val currentState = remember {
+        mutableStateOf(
+            ComponentState.getState(
+                isEnabled = enabled,
+                isRollover = rollover,
+                isSelected = selected,
+                isPressed = Interaction.Pressed in interactionState
+            )
+        )
+    }
+
+    val modelStateInfo = remember {
+        ModelStateInfo(
+            ComponentState.getState(
+                isEnabled = enabled,
+                isRollover = rollover,
+                isSelected = selected,
+                isPressed = Interaction.Pressed in interactionState
+            )
+        )
+    }
+
+    StateTransitionTracker(
+        modelStateInfo = modelStateInfo,
+        currentState = currentState,
+        enabled = enabled,
+        selected = selected,
+        rollover = rollover,
+        pressed = Interaction.Pressed in interactionState,
+        stateTransitionFloat = stateTransitionFloat,
+        duration = AuroraSkin.animationConfig.regular
+    )
+
     val markAlpha = remember { mutableStateOf(if (selected) 1.0f else 0.0f) }
 
     // Transition for the selection state
@@ -128,8 +161,8 @@ private fun AuroraRadioButton(
     }
     val selectionTransitionState = transition(
         definition = RBSelectedTransitionDefinition,
-        initState = stateTransitionTracker.selectedState.value,
-        toState = stateTransitionTracker.selectedState.value
+        initState = selected,
+        toState = selected
     )
     // Transition for the rollover state
     if (!::RBRolloverTransitionDefinition.isInitialized) {
@@ -138,8 +171,8 @@ private fun AuroraRadioButton(
     }
     val rolloverTransitionState = transition(
         definition = RBRolloverTransitionDefinition,
-        initState = stateTransitionTracker.rolloverState.value,
-        toState = stateTransitionTracker.rolloverState.value
+        initState = rollover,
+        toState = rollover
     )
     // Transition for the pressed state
     if (!::RBPressedTransitionDefinition.isInitialized) {
@@ -169,13 +202,6 @@ private fun AuroraRadioButton(
     pressedTransitionState[PressedTransitionFraction]
     enabledTransitionState[EnabledTransitionFraction]
 
-    stateTransitionTracker.update(
-        isEnabled = enabled,
-        isPressed = Interaction.Pressed in interactionState,
-        isSelected = selected,
-        duration = AuroraSkin.animationConfig.regular
-    )
-
     // The toggleable modifier is set on the checkbox mark, as well as on the
     // content so that the whole thing is clickable to toggle the control.
     val decorationAreaType = AuroraSkin.decorationAreaType
@@ -183,21 +209,20 @@ private fun AuroraRadioButton(
         modifier = modifier
             .pointerMoveFilter(
                 onEnter = {
-                    stateTransitionTracker.rolloverState.value = true
+                    rollover = true
                     false
                 },
                 onExit = {
-                    stateTransitionTracker.rolloverState.value = false
+                    rollover = false
                     false
                 },
                 onMove = {
                     false
                 })
             .toggleable(
-                value = stateTransitionTracker.selectedState.value,
+                value = selected,
                 onValueChange = {
-                    stateTransitionTracker.selectedState.value = !stateTransitionTracker.selectedState.value
-                    onSelectedChange.invoke(stateTransitionTracker.selectedState.value)
+                    onTriggerSelectedChange.invoke(it)
                 },
                 enabled = enabled,
                 interactionState = interactionState,
@@ -208,7 +233,7 @@ private fun AuroraRadioButton(
         // Populate the cached color scheme for filling the mark box
         // based on the current model state info
         populateColorScheme(
-            drawingCache.colorScheme, stateTransitionTracker.modelStateInfo, decorationAreaType,
+            drawingCache.colorScheme, modelStateInfo, decorationAreaType,
             ColorSchemeAssociationKind.MARK_BOX
         )
         // And retrieve the mark box colors
@@ -223,7 +248,7 @@ private fun AuroraRadioButton(
         // Populate the cached color scheme for drawing the mark box border
         // based on the current model state info
         populateColorScheme(
-            drawingCache.colorScheme, stateTransitionTracker.modelStateInfo, decorationAreaType,
+            drawingCache.colorScheme, modelStateInfo, decorationAreaType,
             ColorSchemeAssociationKind.BORDER
         )
         // And retrieve the mark box border colors
@@ -237,14 +262,14 @@ private fun AuroraRadioButton(
 
         // Mark color
         val markColor = getStateAwareColor(
-            stateTransitionTracker.modelStateInfo,
+            modelStateInfo,
             decorationAreaType, ColorSchemeAssociationKind.MARK
         ) { it.markColor }
 
         // Checkmark alpha is the combined strength of all the
         // states that have the selection bit turned on
         markAlpha.value =
-            stateTransitionTracker.modelStateInfo.stateContributionMap
+            modelStateInfo.stateContributionMap
                 .filter { it.key.isFacetActive(ComponentStateFacet.SELECTION) }
                 .map { it.value }
                 .sumByDouble { it.contribution.toDouble() }
@@ -253,13 +278,13 @@ private fun AuroraRadioButton(
         // Text color. Note that the text doesn't "participate" in state changes that
         // involve rollover, selection or pressed bits
         val textColor = getTextColor(
-            modelStateInfo = stateTransitionTracker.modelStateInfo,
+            modelStateInfo = modelStateInfo,
             skinColors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
             isTextInFilledArea = false
         )
-        val alpha = if (stateTransitionTracker.currentState.isDisabled)
-            AuroraSkin.colors.getAlpha(decorationAreaType, stateTransitionTracker.currentState) else 1.0f
+        val alpha = if (currentState.value.isDisabled)
+            AuroraSkin.colors.getAlpha(decorationAreaType, currentState.value) else 1.0f
 
         val fillPainter = AuroraSkin.painters.fillPainter
         val borderPainter = AuroraSkin.painters.borderPainter
@@ -336,7 +361,8 @@ private fun AuroraRadioButton(
         // Pass our text color and model state snapshot to the children
         Providers(
             AmbientTextColor provides textColor,
-            AmbientModelStateInfoSnapshot provides stateTransitionTracker.modelStateInfo.getSnapshot()
+            AmbientModelStateInfo provides modelStateInfo,
+            AmbientModelStateInfoSnapshot provides modelStateInfo.getSnapshot()
         ) {
             Row(
                 // TODO - extract paddings into a centralized location

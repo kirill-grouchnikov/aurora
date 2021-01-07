@@ -49,10 +49,7 @@ import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.WindowDraggableArea
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.component.AmbientStateTransitionTracker
-import org.pushingpixels.aurora.component.AuroraButton
-import org.pushingpixels.aurora.component.AuroraPopupWindow
-import org.pushingpixels.aurora.component.AuroraText
+import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.shaper.AuroraButtonShaper
 import java.awt.*
@@ -120,7 +117,7 @@ private fun AuroraWindowContent(
                                 decorationAreaType = DecorationAreaType.TITLE_PANE,
                                 skinColors = AuroraSkin.colors,
                                 buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                stateTransitionTracker = AmbientStateTransitionTracker.current,
+                                modelStateInfo = AmbientModelStateInfo.current,
                                 delegate = { scheme ->
                                     getMinimizeIcon(
                                         iconSize = iconSize,
@@ -157,7 +154,7 @@ private fun AuroraWindowContent(
                                     decorationAreaType = DecorationAreaType.TITLE_PANE,
                                     skinColors = AuroraSkin.colors,
                                     buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                    stateTransitionTracker = AmbientStateTransitionTracker.current,
+                                    modelStateInfo = AmbientModelStateInfo.current,
                                     delegate = { scheme ->
                                         getRestoreIcon(
                                             iconSize = iconSize,
@@ -173,7 +170,7 @@ private fun AuroraWindowContent(
                                 decorationAreaType = DecorationAreaType.TITLE_PANE,
                                 skinColors = AuroraSkin.colors,
                                 buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                stateTransitionTracker = AmbientStateTransitionTracker.current,
+                                modelStateInfo = AmbientModelStateInfo.current,
                                 delegate = { scheme ->
                                     getMaximizeIcon(
                                         iconSize = iconSize,
@@ -201,7 +198,7 @@ private fun AuroraWindowContent(
                                 decorationAreaType = DecorationAreaType.TITLE_PANE,
                                 skinColors = AuroraSkin.colors,
                                 buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                stateTransitionTracker = AmbientStateTransitionTracker.current,
+                                modelStateInfo = AmbientModelStateInfo.current,
                                 delegate = { scheme ->
                                     getCloseIcon(
                                         iconSize = iconSize,

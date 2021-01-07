@@ -33,6 +33,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import org.pushingpixels.aurora.ComponentState
 import org.pushingpixels.aurora.ComponentStateFacet
 import org.pushingpixels.aurora.ModelStateInfoSnapshot
@@ -111,123 +112,106 @@ class ModelStateInfo(var currModelState: ComponentState) {
     fun getSnapshot(): ModelStateInfoSnapshot {
         return ModelStateInfoSnapshot(
             currModelState = currModelState,
-            stateContributionMap = stateContributionMap.map { (key, value) ->
-                key to value.contribution
-            }.toMap(),
+            stateContributionMap = stateContributionMap.map { (key, value) -> key to value.contribution }.toMap(),
             activeStrength = activeStrength
         )
     }
 }
 
-class StateTransitionTracker(
+@Composable
+fun StateTransitionTracker(
+    modelStateInfo: ModelStateInfo,
+    currentState: MutableState<ComponentState>,
     enabled: Boolean,
     selected: Boolean,
-    private val stateTransitionFloat: AnimatedFloat
+    rollover: Boolean,
+    pressed: Boolean,
+    stateTransitionFloat: AnimatedFloat,
+    duration: Int
 ) {
-    var selectedState: MutableState<Boolean> = mutableStateOf(selected)
-    var rolloverState: MutableState<Boolean> = mutableStateOf(false)
-    var modelStateInfo: ModelStateInfo =
-        ModelStateInfo(
-            ComponentState.getState(
-                isEnabled = enabled, isRollover = false,
-                isSelected = selected, isPressed = false
-            )
-        )
-
-    var currentState = ComponentState.getState(
+    var tweakedDuration = duration
+    currentState.value = ComponentState.getState(
         isEnabled = enabled,
-        isRollover = false,
+        isRollover = rollover,
         isSelected = selected,
-        isPressed = false
+        isPressed = pressed
     )
 
-    fun update(isEnabled: Boolean, isPressed: Boolean, isSelected: Boolean, duration: Int, dump: Boolean = false) {
-        var tweakedDuration = duration
-        currentState = ComponentState.getState(
-            isEnabled = isEnabled,
-            isRollover = rolloverState.value,
-            isSelected = isSelected,
-            isPressed = isPressed
+    if (currentState.value != modelStateInfo.currModelState) {
+        stateTransitionFloat.stop()
+//        if (dump) {
+//            println("******** Have new state to move to $currentState ********")
+//            modelStateInfo.dumpState(stateTransitionFloat.value)
+//        }
+        // Need to transition to the new state
+        if (modelStateInfo.stateContributionMap.containsKey(currentState)) {
+            //println("Already has new state")
+            // Going to a state that is already partially active
+            val transitionPosition = modelStateInfo.stateContributionMap[currentState]!!.contribution
+            tweakedDuration = (tweakedDuration * (1.0f - transitionPosition)).toInt()
+            stateTransitionFloat.setBounds(transitionPosition, 1.0f)
+            stateTransitionFloat.snapTo(transitionPosition)
+        } else {
+            //println("Does not have new state (curr state ${modelStateInfo.currModelState}) at ${stateTransitionFloat.value}")
+            stateTransitionFloat.setBounds(0.0f, 1.0f)
+            stateTransitionFloat.snapTo(0.0f)
+            //println("\tat ${stateTransitionFloat.value}")
+        }
+
+        // Create a new contribution map
+        val newContributionMap: MutableMap<ComponentState, StateContributionInfo> = HashMap()
+        if (modelStateInfo.stateContributionMap.containsKey(currentState)) {
+            // 1. the new state goes from current value to 1.0
+            // 2. the rest go from current value to 0.0
+            for ((contribState, currRange) in modelStateInfo.stateContributionMap.entries) {
+                val newEnd = if (contribState == currentState.value) 1.0f else 0.0f
+                newContributionMap[contribState] = StateContributionInfo(
+                    currRange.contribution, newEnd
+                )
+            }
+        } else {
+            // 1. all existing states go from current value to 0.0
+            // 2. the new state goes from 0.0 to 1.0
+            for ((contribState, currRange) in modelStateInfo.stateContributionMap.entries) {
+                newContributionMap[contribState] = StateContributionInfo(
+                    currRange.contribution, 0.0f
+                )
+            }
+            newContributionMap[currentState.value] = StateContributionInfo(0.0f, 1.0f)
+        }
+        modelStateInfo.stateContributionMap = newContributionMap
+        modelStateInfo.sync()
+
+        modelStateInfo.currModelState = currentState.value
+//        if (dump) {
+//            println("******** After moving to new state *****")
+//            modelStateInfo.dumpState(stateTransitionFloat.value)
+//        }
+
+        //println("Animating over $duration from ${stateTransitionFloat.value} to 1.0f")
+        stateTransitionFloat.animateTo(
+            targetValue = 1.0f,
+            anim = FloatTweenSpec(duration = tweakedDuration),
+            onEnd = { endReason, _ ->
+                //println("Ended with reason $endReason at $endValue / ${stateTransitionFloat.value}")
+                if (endReason == AnimationEndReason.TargetReached) {
+                    modelStateInfo.updateActiveStates(1.0f)
+                    modelStateInfo.clear()
+                    //println("******** After clear (target reached) ********")
+                    //modelStateInfo.dumpState(stateTransitionFloat.value)
+                }
+            }
         )
-        selectedState.value = isSelected
 
-        if (currentState != modelStateInfo.currModelState) {
-            stateTransitionFloat.stop()
-            if (dump) {
-                println("******** Have new state to move to $currentState ********")
-                modelStateInfo.dumpState(stateTransitionFloat.value)
-            }
-            // Need to transition to the new state
-            if (modelStateInfo.stateContributionMap.containsKey(currentState)) {
-                //println("Already has new state")
-                // Going to a state that is already partially active
-                val transitionPosition = modelStateInfo.stateContributionMap[currentState]!!.contribution
-                tweakedDuration = (tweakedDuration * (1.0f - transitionPosition)).toInt()
-                stateTransitionFloat.setBounds(transitionPosition, 1.0f)
-                stateTransitionFloat.snapTo(transitionPosition)
-            } else {
-                //println("Does not have new state (curr state ${modelStateInfo.currModelState}) at ${stateTransitionFloat.value}")
-                stateTransitionFloat.setBounds(0.0f, 1.0f)
-                stateTransitionFloat.snapTo(0.0f)
-                //println("\tat ${stateTransitionFloat.value}")
-            }
+        //println()
+    }
 
-            // Create a new contribution map
-            val newContributionMap: MutableMap<ComponentState, StateContributionInfo> = HashMap()
-            if (modelStateInfo.stateContributionMap.containsKey(currentState)) {
-                // 1. the new state goes from current value to 1.0
-                // 2. the rest go from current value to 0.0
-                for ((contribState, currRange) in modelStateInfo.stateContributionMap.entries) {
-                    val newEnd = if (contribState == currentState) 1.0f else 0.0f
-                    newContributionMap[contribState] = StateContributionInfo(
-                        currRange.contribution, newEnd
-                    )
-                }
-            } else {
-                // 1. all existing states go from current value to 0.0
-                // 2. the new state goes from 0.0 to 1.0
-                for ((contribState, currRange) in modelStateInfo.stateContributionMap.entries) {
-                    newContributionMap[contribState] = StateContributionInfo(
-                        currRange.contribution, 0.0f
-                    )
-                }
-                newContributionMap[currentState] = StateContributionInfo(0.0f, 1.0f)
-            }
-            modelStateInfo.stateContributionMap = newContributionMap
-            modelStateInfo.sync()
-
-            modelStateInfo.currModelState = currentState
-            if (dump) {
-                println("******** After moving to new state *****")
-                modelStateInfo.dumpState(stateTransitionFloat.value)
-            }
-
-            //println("Animating over $duration from ${stateTransitionFloat.value} to 1.0f")
-            stateTransitionFloat.animateTo(
-                targetValue = 1.0f,
-                anim = FloatTweenSpec(duration = tweakedDuration),
-                onEnd = { endReason, _ ->
-                    //println("Ended with reason $endReason at $endValue / ${stateTransitionFloat.value}")
-                    if (endReason == AnimationEndReason.TargetReached) {
-                        modelStateInfo.updateActiveStates(1.0f)
-                        modelStateInfo.clear()
-                        //println("******** After clear (target reached) ********")
-                        //modelStateInfo.dumpState(stateTransitionFloat.value)
-                    }
-                }
-            )
-
-            //println()
-        }
-
-        if (stateTransitionFloat.isRunning) {
-            modelStateInfo.updateActiveStates(stateTransitionFloat.value)
-            if (dump) {
-                println("********* During animation ${stateTransitionFloat.value} to ${stateTransitionFloat.targetValue} *******")
-                modelStateInfo.dumpState(stateTransitionFloat.value)
-            }
-        }
-
+    if (stateTransitionFloat.isRunning) {
+        modelStateInfo.updateActiveStates(stateTransitionFloat.value)
+//        if (dump) {
+//            println("********* During animation ${stateTransitionFloat.value} to ${stateTransitionFloat.targetValue} *******")
+//            modelStateInfo.dumpState(stateTransitionFloat.value)
+//        }
     }
 }
 

@@ -40,7 +40,7 @@ import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.common.HashMapKey
-import org.pushingpixels.aurora.component.utils.StateTransitionTracker
+import org.pushingpixels.aurora.component.utils.ModelStateInfo
 import org.pushingpixels.aurora.icon.AuroraIcon
 
 /**
@@ -53,7 +53,7 @@ internal class TransitionAwareIcon(
     val decorationAreaType: DecorationAreaType,
     val skinColors: AuroraSkinColors,
     val buttonBackgroundAppearanceStrategy: BackgroundAppearanceStrategy,
-    val stateTransitionTracker: StateTransitionTracker,
+    val modelStateInfo: ModelStateInfo,
     val delegate: (AuroraColorScheme) -> ImageBitmap,
     val colorSchemeAssociationKindDelegate: ((ComponentState) -> ColorSchemeAssociationKind)?,
     val uniqueIconTypeId: String
@@ -76,7 +76,6 @@ internal class TransitionAwareIcon(
      */
     private val iconToPaint: ImageBitmap
         get() {
-            val modelStateInfo = stateTransitionTracker.modelStateInfo
             val activeStates = modelStateInfo.stateContributionMap
             var currState = modelStateInfo.currModelState
             val buttonNeverPainted = (buttonBackgroundAppearanceStrategy == BackgroundAppearanceStrategy.NEVER)

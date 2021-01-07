@@ -30,6 +30,7 @@
 package org.pushingpixels.aurora.demo
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Checkbox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntSize
@@ -64,7 +65,7 @@ fun DemoToggleToolbarEnum() {
 
     AuroraToggleButton(
         selected = (alignment == ToggleAlignment.CENTER),
-        onSelectedChange = {
+        onTriggerSelectedChange = {
             if (it) alignment = ToggleAlignment.CENTER
         },
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
@@ -76,7 +77,7 @@ fun DemoToggleToolbarEnum() {
     }
     AuroraToggleButton(
         selected = (alignment == ToggleAlignment.LEFT),
-        onSelectedChange = {
+        onTriggerSelectedChange = {
             if (it) alignment = ToggleAlignment.LEFT
         },
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
@@ -95,7 +96,7 @@ fun DemoToggleToolbarBooleans() {
 
     AuroraToggleButton(
         selected = isCenter,
-        onSelectedChange = {
+        onTriggerSelectedChange = {
             isCenter = it
             isLeft = !it
         },
@@ -108,7 +109,7 @@ fun DemoToggleToolbarBooleans() {
     }
     AuroraToggleButton(
         selected = isLeft,
-        onSelectedChange = {
+        onTriggerSelectedChange = {
             isLeft = it
             isCenter = !it
         },
@@ -129,6 +130,19 @@ fun DemoToggleContent() {
         }
         Row(modifier = Modifier.wrapContentHeight().fillMaxWidth()) {
             DemoToggleToolbarBooleans()
+        }
+        Row(modifier = Modifier.wrapContentHeight().fillMaxWidth()) {
+            val checkedState = remember { mutableStateOf(true) }
+            Checkbox(
+                checked = checkedState.value,
+                onCheckedChange = { checkedState.value = it }
+            )
+        }
+        Row(modifier = Modifier.wrapContentHeight().fillMaxWidth()) {
+            Checkbox(
+                checked = true,
+                onCheckedChange = { println("New value $it") }
+            )
         }
     }
 }
