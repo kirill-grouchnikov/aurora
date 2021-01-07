@@ -679,20 +679,28 @@ fun DemoArea(modifier: Modifier = Modifier, style: DemoStyle) {
             }
 
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
+                var sliderValue1 by remember { mutableStateOf(0.5f) }
                 AuroraSlider(
-                    value = 0.5f,
+                    value = sliderValue1,
                     valueRange = 0.0f.rangeTo(1.0f),
-                    onValueChange = { println("Slider $it") },
+                    onTriggerValueChange = {
+                        sliderValue1 = it
+                        println("Slider $it")
+                    },
                     onValueChangeEnd = { println("Slider change done!") },
                     enabled = contentEnabled
                 )
 
                 Spacer(modifier = Modifier.width(16.dp))
 
+                var sliderValue2 by remember { mutableStateOf(50f) }
                 AuroraSlider(
-                    value = 50f,
+                    value = sliderValue2,
                     valueRange = 0.0f.rangeTo(100.0f),
-                    onValueChange = { println("Slider $it") },
+                    onTriggerValueChange = {
+                        sliderValue2 = it
+                        println("Slider $it")
+                    },
                     onValueChangeEnd = { println("Slider change done!") },
                     enabled = contentEnabled,
                     tickSteps = 9,

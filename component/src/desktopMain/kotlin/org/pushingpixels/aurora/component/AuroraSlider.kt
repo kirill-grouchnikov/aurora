@@ -89,7 +89,7 @@ object SliderConstants {
 fun AuroraSlider(
     value: Float,
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
-    onValueChange: (Float) -> Unit = {},
+    onTriggerValueChange: (Float) -> Unit,
     onValueChangeEnd: () -> Unit = {},
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -107,7 +107,7 @@ fun AuroraSlider(
     AuroraSlider(
         value = value,
         valueRange = valueRange,
-        onValueChange = onValueChange,
+        onTriggerValueChange = onTriggerValueChange,
         onValueChangeEnd = onValueChangeEnd,
         modifier = modifier,
         enabled = enabled,
@@ -140,7 +140,7 @@ private class SliderDrawingCache(
 private fun AuroraSlider(
     value: Float,
     valueRange: ClosedFloatingPointRange<Float>,
-    onValueChange: (Float) -> Unit,
+    onTriggerValueChange: (Float) -> Unit,
     onValueChangeEnd: () -> Unit,
     modifier: Modifier,
     enabled: Boolean,
@@ -151,8 +151,6 @@ private fun AuroraSlider(
     stateTransitionFloat: AnimatedFloat,
 ) {
     val drawingCache = remember { SliderDrawingCache() }
-    val current = remember { mutableStateOf(value) }
-
     var rollover by remember { mutableStateOf(false) }
 
     val currentState = remember {
@@ -288,19 +286,19 @@ private fun AuroraSlider(
             cumulativeDragAmount.value = 0.0f
 
             // Convert from pixels to value range
-            val newValue = valueRange.start +
+            var newValue = valueRange.start +
                     (pos.x - drawingCache.trackRect.x) * (valueRange.endInclusive - valueRange.start) / drawingCache.trackRect.width
-            current.value = newValue.coerceIn(valueRange.start, valueRange.endInclusive)
+            newValue = newValue.coerceIn(valueRange.start, valueRange.endInclusive)
 
             // Snap to the closest tick if needed
             if ((tickSteps > 0) && snapToTicks) {
                 val tickRange = (valueRange.endInclusive - valueRange.start) / (tickSteps + 1)
-                val tick = ((current.value - valueRange.start) / tickRange).roundToInt()
-                current.value = tick * tickRange
+                val tick = ((newValue - valueRange.start) / tickRange).roundToInt()
+                newValue = tick * tickRange
             }
 
             // Update value change lambda
-            onValueChange.invoke(current.value)
+            onTriggerValueChange.invoke(newValue)
 
             // And add pressed state to the interaction
             interactionState.addInteraction(Interaction.Pressed, pos)
@@ -310,19 +308,19 @@ private fun AuroraSlider(
             cumulativeDragAmount.value += it
 
             // Convert from pixels to value range
-            val newValue = valueRange.start +
+            var newValue = valueRange.start +
                     (dragStartX.value + cumulativeDragAmount.value - drawingCache.trackRect.x) * (valueRange.endInclusive - valueRange.start) / drawingCache.trackRect.width
-            current.value = newValue.coerceIn(valueRange.start, valueRange.endInclusive)
+            newValue = newValue.coerceIn(valueRange.start, valueRange.endInclusive)
 
             // Snap to the closest tick if needed
             if ((tickSteps > 0) && snapToTicks) {
                 val tickRange = (valueRange.endInclusive - valueRange.start) / (tickSteps + 1)
-                val tick = ((current.value - valueRange.start) / tickRange).roundToInt()
-                current.value = tick * tickRange
+                val tick = ((newValue - valueRange.start) / tickRange).roundToInt()
+                newValue = tick * tickRange
             }
 
             // Update value change lambda
-            onValueChange.invoke(current.value)
+            onTriggerValueChange.invoke(newValue)
         },
         onDragStopped = {
             // Update value change end lambda
@@ -422,7 +420,7 @@ private fun AuroraSlider(
             val thumbSize = SliderConstants.ThumbFullSize.toPx() *
                     (2.0f + modelStateInfo.activeStrength) / 3.0f
             val selectionCenterX = drawingCache.trackRect.x +
-                    drawingCache.trackRect.width * current.value / (valueRange.endInclusive - valueRange.start)
+                    drawingCache.trackRect.width * value / (valueRange.endInclusive - valueRange.start)
             drawingCache.thumbRect.x = selectionCenterX - thumbSize / 2.0f
             drawingCache.thumbRect.y =
                 drawingCache.trackRect.y + drawingCache.trackRect.height / 2.0f - thumbSize / 2.0f
