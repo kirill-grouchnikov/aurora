@@ -117,7 +117,7 @@ private fun AuroraWindowContent(
                                 decorationAreaType = DecorationAreaType.TITLE_PANE,
                                 skinColors = AuroraSkin.colors,
                                 buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                modelStateInfo = AmbientModelStateInfo.current,
+                                modelStateInfoSnapshot = AmbientModelStateInfoSnapshot.current,
                                 delegate = { scheme ->
                                     getMinimizeIcon(
                                         iconSize = iconSize,
@@ -154,7 +154,7 @@ private fun AuroraWindowContent(
                                     decorationAreaType = DecorationAreaType.TITLE_PANE,
                                     skinColors = AuroraSkin.colors,
                                     buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                    modelStateInfo = AmbientModelStateInfo.current,
+                                    modelStateInfoSnapshot = AmbientModelStateInfoSnapshot.current,
                                     delegate = { scheme ->
                                         getRestoreIcon(
                                             iconSize = iconSize,
@@ -170,7 +170,7 @@ private fun AuroraWindowContent(
                                 decorationAreaType = DecorationAreaType.TITLE_PANE,
                                 skinColors = AuroraSkin.colors,
                                 buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                modelStateInfo = AmbientModelStateInfo.current,
+                                modelStateInfoSnapshot = AmbientModelStateInfoSnapshot.current,
                                 delegate = { scheme ->
                                     getMaximizeIcon(
                                         iconSize = iconSize,
@@ -198,7 +198,7 @@ private fun AuroraWindowContent(
                                 decorationAreaType = DecorationAreaType.TITLE_PANE,
                                 skinColors = AuroraSkin.colors,
                                 buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                modelStateInfo = AmbientModelStateInfo.current,
+                                modelStateInfoSnapshot = AmbientModelStateInfoSnapshot.current,
                                 delegate = { scheme ->
                                     getCloseIcon(
                                         iconSize = iconSize,

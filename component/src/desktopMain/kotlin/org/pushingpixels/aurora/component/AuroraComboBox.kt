@@ -462,7 +462,6 @@ private fun <E> AuroraComboBox(
         // Pass our text color and model state snapshot to the children
         Providers(
             AmbientTextColor provides textColor,
-            AmbientModelStateInfo provides modelStateInfo,
             AmbientModelStateInfoSnapshot provides modelStateInfo.getSnapshot()
         ) {
             Layout(

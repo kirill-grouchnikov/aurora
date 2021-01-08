@@ -53,9 +53,6 @@ import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.utils.getBaseOutline
 
-// TODO - should this go into a SizeUtils class?
-private val CheckboxSize = 14.dp
-
 // This will be initialized on first usage using the getSelectedTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
 private lateinit var SelectedTransitionDefinition: TransitionDefinition<Boolean>
@@ -87,6 +84,10 @@ private class CheckBoxDrawingCache(
     ),
     val markPath: Path = Path()
 )
+
+object CheckBoxConstants {
+    val CheckboxSize = 14.dp
+}
 
 @Composable
 fun AuroraCheckBox(
@@ -290,7 +291,7 @@ private fun AuroraCheckBox(
         val fillPainter = AuroraSkin.painters.fillPainter
         val borderPainter = AuroraSkin.painters.borderPainter
 
-        Canvas(modifier.wrapContentSize(Alignment.Center).size(CheckboxSize)) {
+        Canvas(modifier.wrapContentSize(Alignment.Center).size(CheckBoxConstants.CheckboxSize)) {
             val width = this.size.width
             val height = this.size.height
 
@@ -364,13 +365,12 @@ private fun AuroraCheckBox(
         // Pass our text color and model state snapshot to the children
         Providers(
             AmbientTextColor provides textColor,
-            AmbientModelStateInfo provides modelStateInfo,
             AmbientModelStateInfoSnapshot provides modelStateInfo.getSnapshot()
         ) {
             Row(
                 // TODO - extract paddings into a centralized location
                 Modifier
-                    .defaultMinSizeConstraints(minWidth = 0.dp, minHeight = CheckboxSize)
+                    .defaultMinSizeConstraints(minWidth = 0.dp, minHeight = CheckBoxConstants.CheckboxSize)
                     .padding(4.dp, 10.dp, 4.dp, 8.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,

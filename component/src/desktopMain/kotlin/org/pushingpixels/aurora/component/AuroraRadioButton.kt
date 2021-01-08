@@ -52,9 +52,6 @@ import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.utils.*
 
-// TODO - should this go into a SizeUtils class?
-private val RadioButtonSize = 14.dp
-
 // This will be initialized on first usage using the getSelectedTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
 private lateinit var RBSelectedTransitionDefinition: TransitionDefinition<Boolean>
@@ -85,6 +82,10 @@ private class RadioButtonDrawingCache(
         foreground = Color.Black
     )
 )
+
+object RadioButtonConstants {
+    val RadioButtonSize = 14.dp
+}
 
 @Composable
 fun AuroraRadioButton(
@@ -289,7 +290,7 @@ private fun AuroraRadioButton(
         val fillPainter = AuroraSkin.painters.fillPainter
         val borderPainter = AuroraSkin.painters.borderPainter
 
-        Canvas(modifier.wrapContentSize(Alignment.Center).size(RadioButtonSize)) {
+        Canvas(modifier.wrapContentSize(Alignment.Center).size(RadioButtonConstants.RadioButtonSize)) {
             val width = this.size.width
             val height = this.size.height
 
@@ -361,13 +362,12 @@ private fun AuroraRadioButton(
         // Pass our text color and model state snapshot to the children
         Providers(
             AmbientTextColor provides textColor,
-            AmbientModelStateInfo provides modelStateInfo,
             AmbientModelStateInfoSnapshot provides modelStateInfo.getSnapshot()
         ) {
             Row(
                 // TODO - extract paddings into a centralized location
                 Modifier
-                    .defaultMinSizeConstraints(minWidth = 0.dp, minHeight = RadioButtonSize)
+                    .defaultMinSizeConstraints(minWidth = 0.dp, minHeight = RadioButtonConstants.RadioButtonSize)
                     .padding(4.dp, 10.dp, 4.dp, 8.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,

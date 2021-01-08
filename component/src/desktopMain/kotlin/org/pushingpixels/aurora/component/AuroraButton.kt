@@ -53,9 +53,6 @@ import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.utils.*
 import kotlin.math.max
 
-// TODO - revisit this
-val AmbientModelStateInfo = ambientOf<ModelStateInfo>()
-
 // This will be initialized on first usage using the getSelectedTransitionDefinition
 // with duration animation coming from [AmbientAnimationConfig]
 private lateinit var SelectedTransitionDefinition: TransitionDefinition<Boolean>
@@ -375,7 +372,6 @@ private fun AuroraToggleButton(
         // Pass our text color and model state snapshot to the children
         Providers(
             AmbientTextColor provides textColor,
-            AmbientModelStateInfo provides modelStateInfo,
             AmbientModelStateInfoSnapshot provides modelStateInfo.getSnapshot()
         ) {
             Layout(
@@ -703,7 +699,6 @@ private fun AuroraButton(
         // Pass our text color and model state snapshot to the children
         Providers(
             AmbientTextColor provides textColor,
-            AmbientModelStateInfo provides modelStateInfo,
             AmbientModelStateInfoSnapshot provides modelStateInfo.getSnapshot()
         ) {
             Layout(

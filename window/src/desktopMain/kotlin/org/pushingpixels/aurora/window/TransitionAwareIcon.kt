@@ -40,7 +40,6 @@ import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.common.HashMapKey
-import org.pushingpixels.aurora.component.utils.ModelStateInfo
 import org.pushingpixels.aurora.icon.AuroraIcon
 
 /**
@@ -53,7 +52,7 @@ internal class TransitionAwareIcon(
     val decorationAreaType: DecorationAreaType,
     val skinColors: AuroraSkinColors,
     val buttonBackgroundAppearanceStrategy: BackgroundAppearanceStrategy,
-    val modelStateInfo: ModelStateInfo,
+    val modelStateInfoSnapshot: ModelStateInfoSnapshot,
     val delegate: (AuroraColorScheme) -> ImageBitmap,
     val colorSchemeAssociationKindDelegate: ((ComponentState) -> ColorSchemeAssociationKind)?,
     val uniqueIconTypeId: String
@@ -66,8 +65,8 @@ internal class TransitionAwareIcon(
         )
     )
 
-    val iconWidth = markEnabledIcon.width
-    val iconHeight = markEnabledIcon.height
+    private val iconWidth = markEnabledIcon.width
+    private val iconHeight = markEnabledIcon.height
 
     /**
      * Returns the current icon to paint.
@@ -76,8 +75,8 @@ internal class TransitionAwareIcon(
      */
     private val iconToPaint: ImageBitmap
         get() {
-            val activeStates = modelStateInfo.stateContributionMap
-            var currState = modelStateInfo.currModelState
+            val activeStates = modelStateInfoSnapshot.stateContributionMap
+            var currState = modelStateInfoSnapshot.currModelState
             val buttonNeverPainted = (buttonBackgroundAppearanceStrategy == BackgroundAppearanceStrategy.NEVER)
             if (buttonNeverPainted) {
                 if (currState.isFacetActive(ComponentStateFacet.ENABLE)) currState = ComponentState.ENABLED
@@ -120,11 +119,10 @@ internal class TransitionAwareIcon(
             canvas.drawImage(image = layerBase, topLeftOffset = Offset(x = 0.0f, y = 0.0f), paint = Paint())
 
             // draw the other active layers
-            for ((activeState, value) in activeStates) {
+            for ((activeState, stateContribution) in activeStates) {
                 if (activeState === currState) {
                     continue
                 }
-                val stateContribution = value.contribution
                 if (stateContribution > 0.0f) {
                     val associationKind =
                         colorSchemeAssociationKindDelegate?.invoke(activeState) ?: ColorSchemeAssociationKind.MARK
