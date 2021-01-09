@@ -13,3 +13,58 @@ Aurora is currently in pre-alpha, active early development. Most of the ideas an
 The goal is to provide a collection of high-quality components for building modern desktop Compose applications. Aurora will bring the full power of the skinning layer from Radiance, including all the skins and complete support for state-based transitions for all the components. In addition, Aurora will provide a powerful painter API layer to create custom composable components with consistent visual appearance and state transitions.
 
 Going a bit further into 2021, Aurora will bring a fully-fledged ribbon container into the desktop Compose world.
+
+# Playing with SNAPSHOT builds
+
+Aurora snapshot builds are made available on Sonatype.
+
+Add the latest Kotlin and Compose Desktop dependencies:
+```kotlin
+plugins {
+    kotlin("jvm") version "1.4.21"
+    id("org.jetbrains.compose") version "0.3.0-build139"
+}
+```
+
+Add Aurora snapshot repository to your `repositories` block:
+```kotlin
+maven { url = uri("http://oss.sonatype.org/content/repositories/snapshots") }
+```
+
+Add Aurora dependencies:
+
+```
+dependencies {
+    api("org.pushing-pixels:aurora-skin:0.0.1-SNAPSHOT")
+    api("org.pushing-pixels:aurora-component:0.0.1-SNAPSHOT")
+    api("org.pushing-pixels:aurora-window:0.0.1-SNAPSHOT")
+    implementation(compose.desktop.currentOs)
+}
+```
+
+Now you are ready for your first Aurora demo:
+
+```kotlin
+fun main() = AuroraWindow(
+    skin = marinerSkin(),
+    title = "Aurora Demo",
+    size = IntSize(200, 150),
+    undecorated = true
+) {
+    var text by remember { mutableStateOf("Hello, World!") }
+
+    AuroraDecorationArea(decorationAreaType = DecorationAreaType.NONE) {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxSize().auroraBackground()
+        ) {
+            AuroraButton(onClick = {
+                text = "Hello, Desktop!"
+            }) {
+                AuroraText(text)
+            }
+        }
+    }
+}
+```
