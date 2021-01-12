@@ -556,7 +556,7 @@ private fun <E> ComboBoxPopupContent(
 
             // TODO - support RTL for startward and endward
             // TODO - figure out the extra factor
-            var popupRect = when (popupPlacementStrategy) {
+            val popupRect = when (popupPlacementStrategy) {
                 PopupPlacementStrategy.DOWNWARD -> Rectangle(
                     window.x,
                     window.y + (anchorSize.height / (2 * density)).toInt(),
@@ -587,6 +587,21 @@ private fun <E> ComboBoxPopupContent(
                     popupWidth,
                     popupHeight
                 )
+            }
+
+            // Make sure the popup stays in screen bounds
+            val screenBounds = window.graphicsConfiguration.bounds
+            if (popupRect.x < 0) {
+                popupRect.translate(-popupRect.x, 0)
+            }
+            if ((popupRect.x + popupRect.width) > screenBounds.width) {
+                popupRect.translate(screenBounds.width - popupRect.x - popupRect.width, 0)
+            }
+            if (popupRect.y < 0) {
+                popupRect.translate(0, -popupRect.y)
+            }
+            if ((popupRect.y + popupRect.height) > screenBounds.height) {
+                popupRect.translate(0, screenBounds.height - popupRect.y - popupRect.height)
             }
 
             window.bounds = popupRect
