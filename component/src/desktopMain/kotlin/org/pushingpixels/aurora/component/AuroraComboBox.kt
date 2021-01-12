@@ -100,18 +100,22 @@ private class ComboBoxDrawingCache(
     )
 )
 
-private class ComboBoxLocator(val offset: AuroraOffset) : OnGloballyPositionedModifier {
+private class ComboBoxLocator(val topLeftOffset: AuroraOffset, val size: AuroraSize) : OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
-        // Convert the bottom left corner of the component to the root coordinates
-        val converted = coordinates.localToRoot(Offset(0.0f, coordinates.size.height.toFloat()))
-        offset.x = converted.x
-        offset.y = converted.y
+        // Convert the top left corner of the component to the root coordinates
+        val converted = coordinates.localToRoot(Offset.Zero)
+        topLeftOffset.x = converted.x
+        topLeftOffset.y = converted.y
+
+        // And store the component size
+        size.width = coordinates.size.width
+        size.height = coordinates.size.height
     }
 }
 
 @Composable
-private fun Modifier.comboBoxLocator(offset: AuroraOffset) = this.then(
-    ComboBoxLocator(offset)
+private fun Modifier.comboBoxLocator(topLeftOffset: AuroraOffset, size: AuroraSize) = this.then(
+    ComboBoxLocator(topLeftOffset, size)
 )
 
 class AuroraPopupWindow : JWindow()
@@ -121,6 +125,7 @@ fun <E> AuroraComboBox(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS,
+    popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.DOWNWARD,
     items: List<E>,
     selectedItem: E,
     displayConverter: (E) -> String,
@@ -130,6 +135,7 @@ fun <E> AuroraComboBox(
         modifier = modifier,
         enabled = enabled,
         backgroundAppearanceStrategy = backgroundAppearanceStrategy,
+        popupPlacementStrategy = popupPlacementStrategy,
         items = items,
         selectedItem = selectedItem,
         displayConverter = displayConverter,
@@ -144,6 +150,7 @@ private fun <E> AuroraComboBox(
     modifier: Modifier,
     enabled: Boolean,
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
+    popupPlacementStrategy: PopupPlacementStrategy,
     items: List<E>,
     selectedItem: E,
     displayConverter: (E) -> String,
@@ -241,7 +248,8 @@ private fun <E> AuroraComboBox(
     val buttonShaper = AuroraSkin.buttonShaper
     val painters = AuroraSkin.painters
 
-    val auroraOffset = AuroraOffset(0.0f, 0.0f)
+    val auroraTopLeftOffset = AuroraOffset(0.0f, 0.0f)
+    val auroraSize = AuroraSize(0, 0)
     val density = AmbientDensity.current.density
     val layoutDirection = AmbientLayoutDirection.current
 
@@ -280,10 +288,9 @@ private fun <E> AuroraComboBox(
                     // anchor the popup window to the bottom left corner of the component
                     // in screen coordinates
                     // TODO - figure out the sizing (see above)
-                    // TODO - support popup placement strategies
                     jwindow.setBounds(
-                        (locationOnScreen.x + auroraOffset.x / density).toInt(),
-                        (locationOnScreen.y + auroraOffset.y / density).toInt(),
+                        (locationOnScreen.x + auroraTopLeftOffset.x / density).toInt(),
+                        (locationOnScreen.y + auroraTopLeftOffset.y / density).toInt(),
                         1000,
                         1000
                     )
@@ -299,6 +306,8 @@ private fun <E> AuroraComboBox(
                         ) {
                             ComboBoxPopupContent(
                                 window = jwindow,
+                                anchorSize = auroraSize,
+                                popupPlacementStrategy = popupPlacementStrategy,
                                 items = items,
                                 displayConverter = displayConverter,
                                 onItemSelected = {
@@ -317,7 +326,7 @@ private fun <E> AuroraComboBox(
                 interactionState = interactionState,
                 indication = null
             )
-            .comboBoxLocator(auroraOffset),
+            .comboBoxLocator(auroraTopLeftOffset, auroraSize),
         contentAlignment = Alignment.TopStart
     ) {
         // Compute the text color
@@ -438,19 +447,26 @@ private fun <E> AuroraComboBox(
                         this, this.size, outline, innerOutline, drawingCache.colorScheme, alpha
                     )
 
+                    val arrowWidth = if (popupPlacementStrategy.isHorizontal)
+                        ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx() else
+                        ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx()
+                    val arrowHeight =
+                        if (popupPlacementStrategy.isHorizontal)
+                            ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx() else
+                            ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()
                     // TODO - support RTL
                     translate(
                         left = width
                                 - ButtonSizingConstants.DefaultButtonContentPadding.end.toPx()
-                                - ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx(),
-                        top = (height - ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()) / 2.0f
+                                - arrowWidth,
+                        top = (height - arrowHeight) / 2.0f
                     ) {
                         drawArrow(
                             drawScope = this,
-                            width = ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx(),
-                            height = ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx(),
+                            width = arrowWidth,
+                            height = arrowHeight,
                             strokeWidth = 2.0.dp.toPx(),
-                            direction = PopupPlacementStrategy.DOWNWARD,
+                            direction = popupPlacementStrategy,
                             layoutDirection = layoutDirection,
                             color = arrowColor
                         )
@@ -525,6 +541,8 @@ private fun <E> AuroraComboBox(
 @Composable
 private fun <E> ComboBoxPopupContent(
     window: JWindow,
+    anchorSize: AuroraSize,
+    popupPlacementStrategy: PopupPlacementStrategy,
     items: List<E>,
     displayConverter: (E) -> String,
     onItemSelected: (E) -> Unit,
@@ -533,12 +551,45 @@ private fun <E> ComboBoxPopupContent(
     Box(
         modifier = Modifier.auroraBackground(window = window).onGloballyPositioned {
             // Get the size of the content and update the popup window bounds
-            // TODO - support popup placement strategies
-            window.bounds = Rectangle(
-                window.x, window.y,
-                (it.size.width / density).toInt(),
-                (it.size.height / density).toInt()
-            )
+            val popupWidth = (it.size.width / density).toInt()
+            val popupHeight = (it.size.height / density).toInt()
+
+            // TODO - support RTL for startward and endward
+            // TODO - figure out the extra factor
+            var popupRect = when (popupPlacementStrategy) {
+                PopupPlacementStrategy.DOWNWARD -> Rectangle(
+                    window.x,
+                    window.y + (anchorSize.height / (2 * density)).toInt(),
+                    popupWidth,
+                    popupHeight
+                )
+                PopupPlacementStrategy.UPWARD -> Rectangle(
+                    window.x,
+                    window.y - popupHeight / 2,
+                    popupWidth,
+                    popupHeight
+                )
+                PopupPlacementStrategy.STARTWARD -> Rectangle(
+                    window.x - popupWidth / 2,
+                    window.y,
+                    popupWidth,
+                    popupHeight
+                )
+                PopupPlacementStrategy.ENDWARD -> Rectangle(
+                    window.x + (anchorSize.width / (2 * density)).toInt(),
+                    window.y,
+                    popupWidth,
+                    popupHeight
+                )
+                PopupPlacementStrategy.CENTERED_VERTICALLY -> Rectangle(
+                    window.x,
+                    window.y + (anchorSize.height / (4 * density)).toInt() - popupHeight / 4,
+                    popupWidth,
+                    popupHeight
+                )
+            }
+
+            window.bounds = popupRect
             window.opacity = 1.0f
             window.invalidate()
             window.validate()

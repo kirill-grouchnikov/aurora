@@ -46,7 +46,7 @@ internal fun drawArrow(
     direction: PopupPlacementStrategy, layoutDirection: LayoutDirection,
     color: Color
 ) {
-    if (direction == PopupPlacementStrategy.CENTERED) {
+    if (direction == PopupPlacementStrategy.CENTERED_VERTICALLY) {
         val smallHeight = height - strokeWidth / 2.0f
 
         drawScope.translate(left = 0.0f, top = -strokeWidth - 1.0f) {

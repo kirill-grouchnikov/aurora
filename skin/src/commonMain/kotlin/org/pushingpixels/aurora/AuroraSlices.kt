@@ -727,12 +727,12 @@ enum class ButtonSizingStrategy {
     EXTENDED
 }
 
-enum class PopupPlacementStrategy {
-    STARTWARD,
-    ENDWARD,
-    UPWARD,
-    DOWNWARD,
-    CENTERED
+enum class PopupPlacementStrategy(val isHorizontal: Boolean) {
+    STARTWARD(true),
+    ENDWARD(true),
+    UPWARD(false),
+    DOWNWARD(false),
+    CENTERED_VERTICALLY(false)
 }
 
 

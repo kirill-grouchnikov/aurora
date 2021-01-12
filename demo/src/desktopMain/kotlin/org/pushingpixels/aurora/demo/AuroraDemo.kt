@@ -668,6 +668,80 @@ fun DemoArea(modifier: Modifier = Modifier, style: DemoStyle) {
                 )
             }
 
+            val snowComboItems =
+                listOf(Person("Jon", "Snow"), Person("Arya", "Stark"), Person("Mance", "Rayder"), Person("Jeor", "Mormont"))
+            val snowComboSelectedItem = remember { mutableStateOf(snowComboItems[1]) }
+
+            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                AuroraComboBox(
+                    enabled = contentEnabled,
+                    popupPlacementStrategy = PopupPlacementStrategy.STARTWARD,
+                    items = snowComboItems,
+                    selectedItem = snowComboSelectedItem.value,
+                    displayConverter = { it.lastName + ", " + it.firstName },
+                    onTriggerItemSelectedChange = {
+                        snowComboSelectedItem.value = it
+                    },
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                )
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                AuroraComboBox(
+                    enabled = contentEnabled,
+                    popupPlacementStrategy = PopupPlacementStrategy.ENDWARD,
+                    items = snowComboItems,
+                    selectedItem = snowComboSelectedItem.value,
+                    displayConverter = { it.lastName + ", " + it.firstName },
+                    onTriggerItemSelectedChange = {
+                        snowComboSelectedItem.value = it
+                    },
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                )
+            }
+
+            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                AuroraComboBox(
+                    enabled = contentEnabled,
+                    popupPlacementStrategy = PopupPlacementStrategy.UPWARD,
+                    items = snowComboItems,
+                    selectedItem = snowComboSelectedItem.value,
+                    displayConverter = { it.lastName + ", " + it.firstName },
+                    onTriggerItemSelectedChange = {
+                        snowComboSelectedItem.value = it
+                    },
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                )
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                AuroraComboBox(
+                    enabled = contentEnabled,
+                    popupPlacementStrategy = PopupPlacementStrategy.DOWNWARD,
+                    items = snowComboItems,
+                    selectedItem = snowComboSelectedItem.value,
+                    displayConverter = { it.lastName + ", " + it.firstName },
+                    onTriggerItemSelectedChange = {
+                        snowComboSelectedItem.value = it
+                    },
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                )
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                AuroraComboBox(
+                    enabled = contentEnabled,
+                    popupPlacementStrategy = PopupPlacementStrategy.CENTERED_VERTICALLY,
+                    items = snowComboItems,
+                    selectedItem = snowComboSelectedItem.value,
+                    displayConverter = { it.lastName + ", " + it.firstName },
+                    onTriggerItemSelectedChange = {
+                        snowComboSelectedItem.value = it
+                    },
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                )
+            }
+
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 AuroraIndeterminateLinearProgress(
                     enabled = contentEnabled
