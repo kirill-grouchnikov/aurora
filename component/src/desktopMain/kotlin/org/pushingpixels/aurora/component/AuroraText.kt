@@ -29,7 +29,6 @@
  */
 package org.pushingpixels.aurora.component
 
-import androidx.compose.foundation.AmbientTextStyle
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -45,6 +44,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import org.pushingpixels.aurora.AmbientTextColor
+import org.pushingpixels.aurora.AmbientTextStyle
 
 @Composable
 fun AuroraText(
