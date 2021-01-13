@@ -144,10 +144,10 @@ fun StateTransitionTracker(
 //            modelStateInfo.dumpState(stateTransitionFloat.value)
 //        }
         // Need to transition to the new state
-        if (modelStateInfo.stateContributionMap.containsKey(currentState)) {
+        if (modelStateInfo.stateContributionMap.containsKey(currentState.value)) {
             //println("Already has new state")
             // Going to a state that is already partially active
-            val transitionPosition = modelStateInfo.stateContributionMap[currentState]!!.contribution
+            val transitionPosition = modelStateInfo.stateContributionMap[currentState.value]!!.contribution
             tweakedDuration = (tweakedDuration * (1.0f - transitionPosition)).toInt()
             stateTransitionFloat.setBounds(transitionPosition, 1.0f)
             stateTransitionFloat.snapTo(transitionPosition)
@@ -160,7 +160,7 @@ fun StateTransitionTracker(
 
         // Create a new contribution map
         val newContributionMap: MutableMap<ComponentState, StateContributionInfo> = HashMap()
-        if (modelStateInfo.stateContributionMap.containsKey(currentState)) {
+        if (modelStateInfo.stateContributionMap.containsKey(currentState.value)) {
             // 1. the new state goes from current value to 1.0
             // 2. the rest go from current value to 0.0
             for ((contribState, currRange) in modelStateInfo.stateContributionMap.entries) {

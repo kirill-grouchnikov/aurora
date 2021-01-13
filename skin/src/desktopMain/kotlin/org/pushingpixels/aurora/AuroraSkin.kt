@@ -41,29 +41,29 @@ import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.utils.getColorSchemes
 
 object AuroraSkin {
-    @Composable
     @ComposableContract(readonly = true)
     val decorationAreaType: DecorationAreaType
+        @Composable
         get() = AmbientDecorationAreaType.current
 
-    @Composable
     @ComposableContract(readonly = true)
     val colors: AuroraSkinColors
+        @Composable
         get() = AmbientSkinColors.current
 
-    @Composable
     @ComposableContract(readonly = true)
     val buttonShaper: AuroraButtonShaper
+        @Composable
         get() = AmbientButtonShaper.current
 
-    @Composable
     @ComposableContract(readonly = true)
     val painters: Painters
+        @Composable
         get() = AmbientPainters.current
 
-    @Composable
     @ComposableContract(readonly = true)
     val animationConfig: AnimationConfig
+        @Composable
         get() = AmbientAnimationConfig.current
 }
 

@@ -326,7 +326,7 @@ internal fun getMenuTextColor(
     )
 
     var foreground: Color
-    if (currState.isDisabled || activeStates == null || activeStates.size == 1) {
+    if (currState.isDisabled || (activeStates.size == 1)) {
         // Disabled state or only one active state being tracked
         foreground = colorScheme.foregroundColor
     } else {
