@@ -30,7 +30,10 @@
 package org.pushingpixels.aurora.colorscheme
 
 import androidx.compose.ui.graphics.Color
-import org.pushingpixels.aurora.common.*
+import org.pushingpixels.aurora.common.darker
+import org.pushingpixels.aurora.common.interpolateTowards
+import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.common.withBrightness
 
 /**
  * Resolver of derived colors for dark color schemes. This class is not

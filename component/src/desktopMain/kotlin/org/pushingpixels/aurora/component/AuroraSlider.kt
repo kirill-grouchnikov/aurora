@@ -53,7 +53,10 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.*
+import org.pushingpixels.aurora.AuroraSkin
+import org.pushingpixels.aurora.ColorSchemeAssociationKind
+import org.pushingpixels.aurora.ComponentState
+import org.pushingpixels.aurora.Side
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.painter.fill.ClassicFillPainter

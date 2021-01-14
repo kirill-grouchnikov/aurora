@@ -30,7 +30,6 @@
 package org.pushingpixels.aurora.skin
 
 import org.pushingpixels.aurora.*
-import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.colorscheme.AquaColorScheme
 import org.pushingpixels.aurora.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors

@@ -39,7 +39,10 @@ import org.pushingpixels.aurora.painter.border.DelegateBorderPainter
 import org.pushingpixels.aurora.painter.border.FractionBasedBorderPainter
 import org.pushingpixels.aurora.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.painter.fill.FractionBasedFillPainter
-import org.pushingpixels.aurora.painter.overlay.*
+import org.pushingpixels.aurora.painter.overlay.BottomLineOverlayPainter
+import org.pushingpixels.aurora.painter.overlay.BottomShadowOverlayPainter
+import org.pushingpixels.aurora.painter.overlay.TopLineOverlayPainter
+import org.pushingpixels.aurora.painter.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.utils.getColorSchemes
 

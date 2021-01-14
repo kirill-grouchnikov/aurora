@@ -30,8 +30,8 @@
 package org.pushingpixels.aurora.skin
 
 import org.pushingpixels.aurora.*
-import org.pushingpixels.aurora.DecorationAreaType
-import org.pushingpixels.aurora.colorscheme.*
+import org.pushingpixels.aurora.colorscheme.AuroraColorSchemeBundle
+import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.painter.decoration.BrushedMetalDecorationPainter
 import org.pushingpixels.aurora.painter.fill.ClassicFillPainter

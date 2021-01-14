@@ -35,9 +35,9 @@ import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.colorscheme.ColorSchemes
-import org.pushingpixels.aurora.shaper.AuroraButtonShaper
-import org.pushingpixels.aurora.common.withBrightness
 import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.common.withBrightness
+import org.pushingpixels.aurora.shaper.AuroraButtonShaper
 import org.pushingpixels.aurora.utils.getColorSchemes
 
 object AuroraSkin {
