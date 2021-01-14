@@ -442,6 +442,33 @@ fun AuroraButton(
         backgroundAppearanceStrategy = backgroundAppearanceStrategy,
         sizingStrategy = sizingStrategy,
         contentPadding = contentPadding,
+        horizontalArrangement = Arrangement.Center,
+        interactionState = remember { InteractionState() },
+        stateTransitionFloat = AnimatedFloat(0.0f, AmbientAnimationClock.current.asDisposableClock()),
+        content = content
+    )
+}
+
+@Composable
+fun AuroraMenuButton(
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    onClick: () -> Unit = {},
+    sides: ButtonSides = ButtonSides(),
+    backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS,
+    sizingStrategy: ButtonSizingStrategy = ButtonSizingStrategy.EXTENDED,
+    contentPadding: PaddingValues = ButtonSizingConstants.DefaultButtonContentPadding,
+    content: @Composable () -> Unit
+) {
+    AuroraButton(
+        modifier = modifier,
+        enabled = enabled,
+        onClick = onClick,
+        sides = sides,
+        backgroundAppearanceStrategy = backgroundAppearanceStrategy,
+        sizingStrategy = sizingStrategy,
+        contentPadding = contentPadding,
+        horizontalArrangement = Arrangement.Start,
         interactionState = remember { InteractionState() },
         stateTransitionFloat = AnimatedFloat(0.0f, AmbientAnimationClock.current.asDisposableClock()),
         content = content
@@ -457,6 +484,7 @@ private fun AuroraButton(
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     sizingStrategy: ButtonSizingStrategy,
     contentPadding: PaddingValues,
+    horizontalArrangement: Arrangement.Horizontal,
     interactionState: InteractionState,
     stateTransitionFloat: AnimatedFloat,
     content: @Composable () -> Unit
@@ -735,7 +763,11 @@ private fun AuroraButton(
                 // Center children vertically within the vertical space
                 layout(width = finalSize.width.toInt(), height = finalSize.height.toInt()) {
                     // TODO - add RTL support
-                    var xPosition = (finalSize.width.toInt() - contentTotalWidth) / 2
+                    var xPosition = when (horizontalArrangement) {
+                        Arrangement.Start -> 0
+                        Arrangement.End -> finalSize.width.toInt() - contentTotalWidth
+                        else -> (finalSize.width.toInt() - contentTotalWidth) / 2
+                    }
 
                     placeables.forEach { placeable ->
                         placeable.placeRelative(

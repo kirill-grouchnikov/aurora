@@ -613,7 +613,7 @@ private fun <E> ComboBoxPopupContent(
     ) {
         ComboBoxPopupColumn {
             for (item in items) {
-                AuroraButton(
+                AuroraMenuButton(
                     enabled = true,
                     onClick = { onItemSelected.invoke(item) },
                     sides = ButtonSides(straightSides = Side.values().toSet()),
