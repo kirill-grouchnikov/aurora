@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.platform.AmbientAnimationClock
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.utils.*
@@ -120,6 +121,9 @@ private fun AuroraCheckBox(
 ) {
     val drawingCache = remember { CheckBoxDrawingCache() }
     var rollover by remember { mutableStateOf(false) }
+    // TODO - look at the correct pressed state once https://github.com/JetBrains/compose-jb/issues/295
+    //  is fixed
+    val isPressed = false//Interaction.Pressed in interactionState
 
     val currentState = remember {
         mutableStateOf(
@@ -127,21 +131,12 @@ private fun AuroraCheckBox(
                 isEnabled = enabled,
                 isRollover = rollover,
                 isSelected = selected,
-                isPressed = Interaction.Pressed in interactionState
+                isPressed = isPressed
             )
         )
     }
 
-    val modelStateInfo = remember {
-        ModelStateInfo(
-            ComponentState.getState(
-                isEnabled = enabled,
-                isRollover = rollover,
-                isSelected = selected,
-                isPressed = Interaction.Pressed in interactionState
-            )
-        )
-    }
+    val modelStateInfo = remember { ModelStateInfo(currentState.value) }
 
     StateTransitionTracker(
         modelStateInfo = modelStateInfo,
@@ -149,7 +144,7 @@ private fun AuroraCheckBox(
         enabled = enabled,
         selected = selected,
         rollover = rollover,
-        pressed = Interaction.Pressed in interactionState,
+        pressed = isPressed,
         stateTransitionFloat = stateTransitionFloat,
         duration = AuroraSkin.animationConfig.regular
     )
@@ -183,8 +178,8 @@ private fun AuroraCheckBox(
     }
     val pressedTransitionState = transition(
         definition = PressedTransitionDefinition,
-        initState = Interaction.Pressed in interactionState,
-        toState = Interaction.Pressed in interactionState
+        initState = isPressed,
+        toState = isPressed
     )
     // Transition for the enabled state
     if (!::EnabledTransitionDefinition.isInitialized) {
@@ -227,6 +222,7 @@ private fun AuroraCheckBox(
                     onTriggerSelectedChange.invoke(it)
                 },
                 enabled = enabled,
+                role = Role.Checkbox,
                 interactionState = interactionState,
                 indication = null
             ),

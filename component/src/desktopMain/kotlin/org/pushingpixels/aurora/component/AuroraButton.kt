@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.AmbientAnimationClock
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.utils.*
@@ -135,6 +136,9 @@ private fun AuroraToggleButton(
 ) {
     val drawingCache = remember { ButtonDrawingCache() }
     var rollover by remember { mutableStateOf(false) }
+    // TODO - look at the correct pressed state once https://github.com/JetBrains/compose-jb/issues/295
+    //  is fixed
+    val isPressed = false//Interaction.Pressed in interactionState
 
     val currentState = remember {
         mutableStateOf(
@@ -142,21 +146,12 @@ private fun AuroraToggleButton(
                 isEnabled = enabled,
                 isRollover = rollover,
                 isSelected = selected,
-                isPressed = Interaction.Pressed in interactionState
+                isPressed = isPressed
             )
         )
     }
 
-    val modelStateInfo = remember {
-        ModelStateInfo(
-            ComponentState.getState(
-                isEnabled = enabled,
-                isRollover = rollover,
-                isSelected = selected,
-                isPressed = Interaction.Pressed in interactionState
-            )
-        )
-    }
+    val modelStateInfo = remember { ModelStateInfo(currentState.value) }
 
     StateTransitionTracker(
         modelStateInfo = modelStateInfo,
@@ -164,7 +159,7 @@ private fun AuroraToggleButton(
         enabled = enabled,
         selected = selected,
         rollover = rollover,
-        pressed = Interaction.Pressed in interactionState,
+        pressed = isPressed,
         stateTransitionFloat = stateTransitionFloat,
         duration = AuroraSkin.animationConfig.regular
     )
@@ -201,8 +196,8 @@ private fun AuroraToggleButton(
     }
     val pressedTransitionState = transition(
         definition = PressedTransitionDefinition,
-        initState = Interaction.Pressed in interactionState,
-        toState = Interaction.Pressed in interactionState
+        initState = isPressed,
+        toState = isPressed
     )
     // Transition for the enabled state
     if (!::EnabledTransitionDefinition.isInitialized) {
@@ -239,9 +234,11 @@ private fun AuroraToggleButton(
             .toggleable(
                 value = selected,
                 enabled = enabled,
+                role = Role.Button,
                 interactionState = interactionState,
                 indication = null,
                 onValueChange = {
+                    println("Triggering change!")
                     onTriggerSelectedChange.invoke(it)
                 }),
         contentAlignment = Alignment.TopStart
@@ -492,6 +489,9 @@ private fun AuroraButton(
     val drawingCache = remember { ButtonDrawingCache() }
 
     var rollover by remember { mutableStateOf(false) }
+    // TODO - look at the correct pressed state once https://github.com/JetBrains/compose-jb/issues/295
+    //  is fixed
+    val isPressed = false//Interaction.Pressed in interactionState
 
     val currentState = remember {
         mutableStateOf(
@@ -499,21 +499,12 @@ private fun AuroraButton(
                 isEnabled = enabled,
                 isRollover = rollover,
                 isSelected = false,
-                isPressed = Interaction.Pressed in interactionState
+                isPressed = isPressed
             )
         )
     }
 
-    val modelStateInfo = remember {
-        ModelStateInfo(
-            ComponentState.getState(
-                isEnabled = enabled,
-                isRollover = rollover,
-                isSelected = false,
-                isPressed = Interaction.Pressed in interactionState
-            )
-        )
-    }
+    val modelStateInfo = remember { ModelStateInfo(currentState.value) }
 
     StateTransitionTracker(
         modelStateInfo = modelStateInfo,
@@ -521,7 +512,7 @@ private fun AuroraButton(
         enabled = enabled,
         selected = false,
         rollover = rollover,
-        pressed = Interaction.Pressed in interactionState,
+        pressed = isPressed,
         stateTransitionFloat = stateTransitionFloat,
         duration = AuroraSkin.animationConfig.regular
     )
@@ -558,8 +549,8 @@ private fun AuroraButton(
     }
     val pressedTransitionState = transition(
         definition = PressedTransitionDefinition,
-        initState = Interaction.Pressed in interactionState,
-        toState = Interaction.Pressed in interactionState
+        initState = isPressed,
+        toState = isPressed
     )
     // Transition for the enabled state
     if (!::EnabledTransitionDefinition.isInitialized) {

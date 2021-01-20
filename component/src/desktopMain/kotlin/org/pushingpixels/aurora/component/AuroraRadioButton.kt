@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.platform.AmbientAnimationClock
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.utils.*
@@ -119,6 +120,9 @@ private fun AuroraRadioButton(
     val drawingCache = remember { RadioButtonDrawingCache() }
 
     var rollover by remember { mutableStateOf(false) }
+    // TODO - look at the correct pressed state once https://github.com/JetBrains/compose-jb/issues/295
+    //  is fixed
+    val isPressed = false//Interaction.Pressed in interactionState
 
     val currentState = remember {
         mutableStateOf(
@@ -126,21 +130,12 @@ private fun AuroraRadioButton(
                 isEnabled = enabled,
                 isRollover = rollover,
                 isSelected = selected,
-                isPressed = Interaction.Pressed in interactionState
+                isPressed = isPressed
             )
         )
     }
 
-    val modelStateInfo = remember {
-        ModelStateInfo(
-            ComponentState.getState(
-                isEnabled = enabled,
-                isRollover = rollover,
-                isSelected = selected,
-                isPressed = Interaction.Pressed in interactionState
-            )
-        )
-    }
+    val modelStateInfo = remember { ModelStateInfo(currentState.value) }
 
     StateTransitionTracker(
         modelStateInfo = modelStateInfo,
@@ -148,7 +143,7 @@ private fun AuroraRadioButton(
         enabled = enabled,
         selected = selected,
         rollover = rollover,
-        pressed = Interaction.Pressed in interactionState,
+        pressed = isPressed,
         stateTransitionFloat = stateTransitionFloat,
         duration = AuroraSkin.animationConfig.regular
     )
@@ -182,8 +177,8 @@ private fun AuroraRadioButton(
     }
     val pressedTransitionState = transition(
         definition = RBPressedTransitionDefinition,
-        initState = Interaction.Pressed in interactionState,
-        toState = Interaction.Pressed in interactionState
+        initState = isPressed,
+        toState = isPressed
     )
     // Transition for the enabled state
     if (!::RBEnabledTransitionDefinition.isInitialized) {
@@ -226,6 +221,7 @@ private fun AuroraRadioButton(
                     onTriggerSelectedChange.invoke(it)
                 },
                 enabled = enabled,
+                role = Role.RadioButton,
                 interactionState = interactionState,
                 indication = null
             ),

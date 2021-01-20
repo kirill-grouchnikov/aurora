@@ -66,6 +66,7 @@ fun DemoToggleToolbarEnum() {
     AuroraToggleButton(
         selected = (alignment == ToggleAlignment.CENTER),
         onTriggerSelectedChange = {
+            println("Here in first $it")
             if (it) alignment = ToggleAlignment.CENTER
         },
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
@@ -78,6 +79,7 @@ fun DemoToggleToolbarEnum() {
     AuroraToggleButton(
         selected = (alignment == ToggleAlignment.LEFT),
         onTriggerSelectedChange = {
+            println("Here in second $it")
             if (it) alignment = ToggleAlignment.LEFT
         },
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
