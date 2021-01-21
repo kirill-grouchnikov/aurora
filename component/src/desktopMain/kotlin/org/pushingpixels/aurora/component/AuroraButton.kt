@@ -51,6 +51,8 @@ import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
+import org.pushingpixels.aurora.component.model.Command
+import org.pushingpixels.aurora.component.model.CommandActionPreview
 import org.pushingpixels.aurora.component.utils.*
 import kotlin.math.max
 
@@ -425,6 +427,7 @@ fun AuroraButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     onClick: () -> Unit = {},
+    rolloverTracker: CommandActionPreview? = null,
     sides: ButtonSides = ButtonSides(),
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS,
     sizingStrategy: ButtonSizingStrategy = ButtonSizingStrategy.EXTENDED,
@@ -436,6 +439,7 @@ fun AuroraButton(
         enabled = enabled,
         onClick = onClick,
         sides = sides,
+        rolloverTracker = rolloverTracker,
         backgroundAppearanceStrategy = backgroundAppearanceStrategy,
         sizingStrategy = sizingStrategy,
         contentPadding = contentPadding,
@@ -451,6 +455,7 @@ fun AuroraMenuButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     onClick: () -> Unit = {},
+    rolloverTracker: CommandActionPreview? = null,
     sides: ButtonSides = ButtonSides(),
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS,
     sizingStrategy: ButtonSizingStrategy = ButtonSizingStrategy.EXTENDED,
@@ -461,6 +466,7 @@ fun AuroraMenuButton(
         modifier = modifier,
         enabled = enabled,
         onClick = onClick,
+        rolloverTracker = rolloverTracker,
         sides = sides,
         backgroundAppearanceStrategy = backgroundAppearanceStrategy,
         sizingStrategy = sizingStrategy,
@@ -477,6 +483,7 @@ private fun AuroraButton(
     modifier: Modifier,
     enabled: Boolean,
     onClick: () -> Unit,
+    rolloverTracker: CommandActionPreview?,
     sides: ButtonSides,
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     sizingStrategy: ButtonSizingStrategy,
@@ -574,11 +581,19 @@ private fun AuroraButton(
         modifier = modifier
             .pointerMoveFilter(
                 onEnter = {
+                    val wasRollover = rollover
                     rollover = true
+                    if (!wasRollover) {
+                        rolloverTracker?.onCommandPreviewActivated(null)
+                    }
                     false
                 },
                 onExit = {
+                    val wasRollover = rollover
                     rollover = false
+                    if (wasRollover) {
+                        rolloverTracker?.onCommandPreviewCanceled(null)
+                    }
                     false
                 },
                 onMove = {
