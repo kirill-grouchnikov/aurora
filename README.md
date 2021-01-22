@@ -3,7 +3,7 @@
 Aurora is a collection of libraries for writing modern, elegant and fast desktop Compose applications.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/master/docs/images/logo/auroraicon-512.png" width="256" height="256" border=0>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/logo/auroraicon-512.png" width="256" height="256" border=0>
 </p>
 
 # Current status
