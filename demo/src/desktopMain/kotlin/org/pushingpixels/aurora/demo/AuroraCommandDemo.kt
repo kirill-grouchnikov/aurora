@@ -30,7 +30,9 @@
 package org.pushingpixels.aurora.demo
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -39,6 +41,7 @@ import org.pushingpixels.aurora.component.AuroraText
 import org.pushingpixels.aurora.component.model.AuroraCommandButton
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandActionPreview
+import org.pushingpixels.aurora.component.model.CommandPresentationModel
 import org.pushingpixels.aurora.demo.svg.tango.accessories_text_editor
 import org.pushingpixels.aurora.demo.svg.tango.computer
 import org.pushingpixels.aurora.skin.nebulaBrickWallSkin
@@ -64,7 +67,7 @@ fun DemoCommandContent() {
             iconFactory = accessories_text_editor.factory(),
             enabled = contentEnabled,
             action = { println("One activated!") },
-            actionPreview = object: CommandActionPreview {
+            actionPreview = object : CommandActionPreview {
                 override fun onCommandPreviewActivated(command: Command?) {
                     println("One preview activated!")
                 }
@@ -93,10 +96,10 @@ fun DemoCommandContent() {
         }
 
         Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(4.dp)) {
-            AuroraCommandButton(command = command1)
+            AuroraCommandButton(command = command1, presentationModel = CommandPresentationModel())
         }
         Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(4.dp)) {
-            AuroraCommandButton(command = command2)
+            AuroraCommandButton(command = command2, presentationModel = CommandPresentationModel())
         }
     }
 }

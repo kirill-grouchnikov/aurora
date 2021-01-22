@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.PopupPlacementStrategy
 import org.pushingpixels.aurora.component.AuroraButton
 import org.pushingpixels.aurora.component.AuroraText
 import org.pushingpixels.aurora.component.auroraButtonIconPadding
@@ -62,10 +63,35 @@ data class Command(
     val iconFactory: AuroraIcon.Factory?,
     var enabled: State<Boolean>?,
     val action: () -> Unit = {},
-    val actionPreview : CommandActionPreview? = null)
+    val actionPreview: CommandActionPreview? = null,
+    val secondaryContentModel: CommandMenuContentModel? = null
+)
+
+data class CommandGroup(
+    val title: String? = null,
+    val command: List<Command>
+)
+
+data class CommandMenuContentModel(
+    val commands: List<CommandGroup>
+) {
+    constructor(group: CommandGroup) : this(listOf(group))
+}
+
+enum class TextClick {
+    ACTION, POPUP
+}
+
+data class CommandPresentationModel(
+    val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.DOWNWARD,
+    val textClick: TextClick = TextClick.ACTION
+)
 
 @Composable
-fun AuroraCommandButton(command: Command) {
+fun AuroraCommandButton(
+    command: Command,
+    presentationModel: CommandPresentationModel
+) {
     AuroraButton(
         enabled = command.enabled?.value ?: true,
         onClick = command.action,
