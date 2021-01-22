@@ -38,9 +38,8 @@ import org.pushingpixels.aurora.component.AuroraText
 import org.pushingpixels.aurora.component.auroraButtonIconPadding
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.icon.AuroraThemedIcon
-import java.util.*
 
-interface CommandActionPreview : EventListener {
+interface CommandActionPreview {
     /**
      * Invoked when a command preview has been activated.
      *

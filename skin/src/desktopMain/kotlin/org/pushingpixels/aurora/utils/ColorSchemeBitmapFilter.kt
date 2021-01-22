@@ -141,7 +141,7 @@ class ColorSchemeBitmapFilter(
             val brightness = getColorBrightness(r, g, b)
             val hsb = RGBtoHSB(r, g, b)
 
-            val pixelColor = interpolated[(brightness * MAPSTEPS).toInt()]!!
+            val pixelColor = interpolated[(brightness * MAPSTEPS - 0.5f).toInt()]!!
             val hsbInterpolated = RGBtoHSB(pixelColor)
 
             // Preserve hue and value

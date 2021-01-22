@@ -583,7 +583,7 @@ private fun AuroraButton(
                 onEnter = {
                     val wasRollover = rollover
                     rollover = true
-                    if (!wasRollover) {
+                    if (enabled && !wasRollover) {
                         rolloverTracker?.onCommandPreviewActivated(null)
                     }
                     false
@@ -591,7 +591,7 @@ private fun AuroraButton(
                 onExit = {
                     val wasRollover = rollover
                     rollover = false
-                    if (wasRollover) {
+                    if (enabled && wasRollover) {
                         rolloverTracker?.onCommandPreviewCanceled(null)
                     }
                     false
