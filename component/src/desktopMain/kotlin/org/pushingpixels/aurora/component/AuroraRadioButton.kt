@@ -181,7 +181,7 @@ private fun AuroraRadioButton(
 
     val modelStateInfo = remember { ModelStateInfo(currentState.value) }
 
-    StateTransitionTracker2(
+    StateTransitionTracker(
         modelStateInfo = modelStateInfo,
         currentState = currentState,
         enabled = enabled,

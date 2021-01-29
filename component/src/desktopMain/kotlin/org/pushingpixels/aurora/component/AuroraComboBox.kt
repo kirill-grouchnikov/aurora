@@ -229,7 +229,7 @@ private fun <E> AuroraComboBox(
 
     val modelStateInfo = remember { ModelStateInfo(currentState.value) }
 
-    StateTransitionTracker2(
+    StateTransitionTracker(
         modelStateInfo = modelStateInfo,
         currentState = currentState,
         enabled = enabled,
