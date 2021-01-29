@@ -30,11 +30,11 @@
 package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.core.*
-import androidx.compose.animation.transition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.foundation.progressSemantics
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -52,28 +52,6 @@ import org.pushingpixels.aurora.painter.fill.FractionBasedFillPainter
 import org.pushingpixels.aurora.utils.getBaseOutline
 import kotlin.math.min
 
-private val CircularProgressArcSpanProp = FloatPropKey()
-
-private val CircularProgressTransition = transitionDefinition<Int> {
-    state(0) {
-        this[CircularProgressArcSpanProp] = 30f
-    }
-
-    state(1) {
-        this[CircularProgressArcSpanProp] = 300f
-    }
-
-    transition(fromState = 0, toState = 1) {
-        CircularProgressArcSpanProp using infiniteRepeatable(
-            animation = tween(
-                durationMillis = 1000,
-                easing = LinearEasing
-            ),
-            repeatMode = RepeatMode.Reverse
-        )
-    }
-}
-
 object ProgressConstants {
     val DefaultWidth = 192.dp
     val DefaultHeight = 16.dp
@@ -90,16 +68,22 @@ fun AuroraCircularProgress(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    val state = transition(
-        definition = CircularProgressTransition,
-        initState = 0,
-        toState = 1
+    val transition = rememberInfiniteTransition()
+    val arcSpan by transition.animateFloat(
+        initialValue = 30f,
+        targetValue = 300f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = 1000,
+                easing = LinearEasing
+            )
+        )
     )
 
     val arcStart = remember { mutableStateOf(0.0f) }
     val arcEnd = remember { mutableStateOf(0.0f) }
     // TODO - not ideal, but will do for now
-    val prevArcSpan = remember { mutableStateOf(state[CircularProgressArcSpanProp]) }
+    val prevArcSpan = remember { mutableStateOf(arcSpan) }
 
     val color = AuroraSkin.colors.getColorScheme(
         decorationAreaType = AuroraSkin.decorationAreaType,
@@ -115,7 +99,6 @@ fun AuroraCircularProgress(
             .progressSemantics()
             .preferredSize(10.dp)
     ) {
-        val arcSpan = state[CircularProgressArcSpanProp]
         val isArcGrowing = (arcSpan > prevArcSpan.value)
         if (isArcGrowing) {
             arcStart.value = arcStart.value - 8.0f
@@ -179,36 +162,21 @@ private val progressFillPainter = FractionBasedFillPainter(
     displayName = "Progress fill (internal)"
 )
 
-private val IndeterminateLinearProgressPositionProp = FloatPropKey()
-
-private val IndeterminateLinearProgressTransition = transitionDefinition<Int> {
-    state(0) {
-        this[IndeterminateLinearProgressPositionProp] = 0.0f
-    }
-
-    state(1) {
-        this[IndeterminateLinearProgressPositionProp] = 1.0f
-    }
-
-    transition(fromState = 0, toState = 1) {
-        IndeterminateLinearProgressPositionProp using infiniteRepeatable(
-            animation = tween(
-                durationMillis = 1000,
-                easing = LinearEasing
-            )
-        )
-    }
-}
-
 @Composable
 fun AuroraIndeterminateLinearProgress(
     modifier: Modifier = Modifier,
     enabled: Boolean = true
 ) {
-    val state = transition(
-        definition = IndeterminateLinearProgressTransition,
-        initState = 0,
-        toState = 1
+    val infiniteTransition = rememberInfiniteTransition()
+    val progress by infiniteTransition.animateFloat(
+        initialValue = 0.0f,
+        targetValue = 1.0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = 1000,
+                easing = LinearEasing
+            )
+        )
     )
 
     val progressState = if (enabled) INDETERMINATE_SELECTED else INDETERMINATE_SELECTED_DISABLED
@@ -238,7 +206,7 @@ fun AuroraIndeterminateLinearProgress(
                 height = ProgressConstants.DefaultHeight
             )
     ) {
-        val valComplete = state[IndeterminateLinearProgressPositionProp] * (2 * size.height + 1)
+        val valComplete = progress * (2 * size.height + 1)
         val radius = 1.5f.dp.toPx()
 
         withTransform({

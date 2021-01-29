@@ -29,7 +29,10 @@
  */
 package org.pushingpixels.aurora.component.utils
 
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.AnimatedFloat
+import androidx.compose.animation.core.AnimationClockObservable
+import androidx.compose.animation.core.AnimationEndReason
+import androidx.compose.animation.core.FloatTweenSpec
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import org.pushingpixels.aurora.ComponentState
@@ -117,14 +120,15 @@ class ModelStateInfo(var currModelState: ComponentState) {
 }
 
 @Composable
-fun StateTransitionTracker(
+fun StateTransitionTracker2(
     modelStateInfo: ModelStateInfo,
     currentState: MutableState<ComponentState>,
     enabled: Boolean,
     selected: Boolean,
     rollover: Boolean,
     pressed: Boolean,
-    stateTransitionFloat: AnimatedFloat,
+    stateTransitionFloat: MutableState<AnimatedFloat>,
+    clock: AnimationClockObservable,
     duration: Int
 ) {
     var tweakedDuration = duration
@@ -136,23 +140,23 @@ fun StateTransitionTracker(
     )
 
     if (currentState.value != modelStateInfo.currModelState) {
-        stateTransitionFloat.stop()
-//        if (dump) {
-//            println("******** Have new state to move to $currentState ********")
-//            modelStateInfo.dumpState(stateTransitionFloat.value)
-//        }
+        stateTransitionFloat.value = AnimatedFloat(0.0f, clock)
+////        if (dump) {
+//            println("******** Have new state to move to ${currentState.value} ********")
+//            modelStateInfo.dumpState(stateTransitionFloat.value.value)
+////        }
         // Need to transition to the new state
         if (modelStateInfo.stateContributionMap.containsKey(currentState.value)) {
             //println("Already has new state")
             // Going to a state that is already partially active
             val transitionPosition = modelStateInfo.stateContributionMap[currentState.value]!!.contribution
             tweakedDuration = (tweakedDuration * (1.0f - transitionPosition)).toInt()
-            stateTransitionFloat.setBounds(transitionPosition, 1.0f)
-            stateTransitionFloat.snapTo(transitionPosition)
+            stateTransitionFloat.value.setBounds(transitionPosition, 1.0f)
+            stateTransitionFloat.value.snapTo(transitionPosition)
         } else {
             //println("Does not have new state (curr state ${modelStateInfo.currModelState}) at ${stateTransitionFloat.value}")
-            stateTransitionFloat.setBounds(0.0f, 1.0f)
-            stateTransitionFloat.snapTo(0.0f)
+            stateTransitionFloat.value.setBounds(0.0f, 1.0f)
+            stateTransitionFloat.value.snapTo(0.0f)
             //println("\tat ${stateTransitionFloat.value}")
         }
 
@@ -186,12 +190,15 @@ fun StateTransitionTracker(
 //            modelStateInfo.dumpState(stateTransitionFloat.value)
 //        }
 
-        //println("Animating over $duration from ${stateTransitionFloat.value} to 1.0f")
-        stateTransitionFloat.animateTo(
+//        return TransitionInfo(from = stateTransitionFloat.value.value,
+//        to = 1.0f,
+//        duration = tweakedDuration)
+//        println("Animating over $tweakedDuration from ${stateTransitionFloat.value.value} to 1.0f [${stateTransitionFloat.value.isRunning}]")
+        stateTransitionFloat.value.animateTo(
             targetValue = 1.0f,
             anim = FloatTweenSpec(duration = tweakedDuration),
             onEnd = { endReason, _ ->
-                //println("Ended with reason $endReason at $endValue / ${stateTransitionFloat.value}")
+                //println("Ended with reason $endReason at ${stateTransitionFloat.value}")
                 if (endReason == AnimationEndReason.TargetReached) {
                     modelStateInfo.updateActiveStates(1.0f)
                     modelStateInfo.clear()
@@ -204,102 +211,13 @@ fun StateTransitionTracker(
         //println()
     }
 
-    if (stateTransitionFloat.isRunning) {
-        modelStateInfo.updateActiveStates(stateTransitionFloat.value)
+//    return null
+    if (stateTransitionFloat.value.isRunning) {
+        modelStateInfo.updateActiveStates(stateTransitionFloat.value.value)
 //        if (dump) {
-//            println("********* During animation ${stateTransitionFloat.value} to ${stateTransitionFloat.targetValue} *******")
-//            modelStateInfo.dumpState(stateTransitionFloat.value)
+        //println("********* [${System.currentTimeMillis()}] During animation ${stateTransitionFloat.value.value} to ${stateTransitionFloat.value.targetValue} *******")
+        //modelStateInfo.dumpState(stateTransitionFloat.value.value)
 //        }
     }
 }
-
-internal val SelectionTransitionFraction = FloatPropKey()
-internal val RolloverTransitionFraction = FloatPropKey()
-internal val PressedTransitionFraction = FloatPropKey()
-internal val EnabledTransitionFraction = FloatPropKey()
-
-@Composable
-internal fun getSelectedTransitionDefinition(duration: Int): TransitionDefinition<Boolean> {
-    return transitionDefinition {
-        state(false) {
-            this[SelectionTransitionFraction] = 0.0f
-        }
-
-        state(true) {
-            this[SelectionTransitionFraction] = 1.0f
-        }
-
-        transition(false to true) {
-            SelectionTransitionFraction using tween(durationMillis = duration)
-        }
-
-        transition(true to false) {
-            SelectionTransitionFraction using tween(durationMillis = duration)
-        }
-    }
-}
-
-@Composable
-internal fun getRolloverTransitionDefinition(duration: Int): TransitionDefinition<Boolean> {
-    return transitionDefinition {
-        state(false) {
-            this[RolloverTransitionFraction] = 0.0f
-        }
-
-        state(true) {
-            this[RolloverTransitionFraction] = 1.0f
-        }
-
-        transition(false to true) {
-            RolloverTransitionFraction using tween(durationMillis = duration)
-        }
-
-        transition(true to false) {
-            RolloverTransitionFraction using tween(durationMillis = duration)
-        }
-    }
-}
-
-@Composable
-internal fun getPressedTransitionDefinition(duration: Int): TransitionDefinition<Boolean> {
-    return transitionDefinition {
-        state(false) {
-            this[PressedTransitionFraction] = 0.0f
-        }
-
-        state(true) {
-            this[PressedTransitionFraction] = 1.0f
-        }
-
-        transition(false to true) {
-            PressedTransitionFraction using tween(durationMillis = duration)
-        }
-
-        transition(true to false) {
-            PressedTransitionFraction using tween(durationMillis = duration)
-        }
-    }
-}
-
-@Composable
-internal fun getEnabledTransitionDefinition(duration: Int): TransitionDefinition<Boolean> {
-    return transitionDefinition {
-        state(false) {
-            this[EnabledTransitionFraction] = 0.0f
-        }
-
-        state(true) {
-            this[EnabledTransitionFraction] = 1.0f
-        }
-
-        transition(false to true) {
-            EnabledTransitionFraction using tween(durationMillis = duration)
-        }
-
-        transition(true to false) {
-            EnabledTransitionFraction using tween(durationMillis = duration)
-        }
-    }
-}
-
 

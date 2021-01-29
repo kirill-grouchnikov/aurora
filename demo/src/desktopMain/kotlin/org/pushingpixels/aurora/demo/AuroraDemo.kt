@@ -29,7 +29,7 @@
  */
 package org.pushingpixels.aurora.demo
 
-import androidx.compose.animation.core.animateAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -74,7 +74,7 @@ class DemoStyle(
 @Composable
 fun DemoProgress(enabled: Boolean) {
     var progress by remember { mutableStateOf(0.5f) }
-    val animatedStateProgress = animateAsState(
+    val animatedStateProgress = animateFloatAsState(
         targetValue = progress,
         animationSpec = ProgressConstants.ProgressAnimationSpec
     )

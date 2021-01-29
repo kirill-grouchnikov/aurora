@@ -30,9 +30,7 @@
 package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.asDisposableClock
-import androidx.compose.animation.core.AnimatedFloat
-import androidx.compose.animation.core.TransitionDefinition
-import androidx.compose.animation.transition
+import androidx.compose.animation.core.*
 import androidx.compose.desktop.AppManager
 import androidx.compose.desktop.ComposePanel
 import androidx.compose.foundation.*
@@ -68,22 +66,6 @@ object ComboBoxSizingConstants {
     val DefaultComboBoxArrowHeight = 7.dp
     val DefaultComboBoxContentArrowGap = 6.dp
 }
-
-// This will be initialized on first usage using the getSelectedTransitionDefinition
-// with duration animation coming from [AmbientAnimationConfig]
-private lateinit var SelectedTransitionDefinition: TransitionDefinition<Boolean>
-
-// This will be initialized on first usage using the getRolloverTransitionDefinition
-// with duration animation coming from [AmbientAnimationConfig]
-private lateinit var RolloverTransitionDefinition: TransitionDefinition<Boolean>
-
-// This will be initialized on first usage using the getPressedTransitionDefinition
-// with duration animation coming from [AmbientAnimationConfig]
-private lateinit var PressedTransitionDefinition: TransitionDefinition<Boolean>
-
-// This will be initialized on first usage using the getEnabledTransitionDefinition
-// with duration animation coming from [AmbientAnimationConfig]
-private lateinit var EnabledTransitionDefinition: TransitionDefinition<Boolean>
 
 @Immutable
 private class ComboBoxDrawingCache(
@@ -131,6 +113,7 @@ fun <E> AuroraComboBox(
     displayConverter: (E) -> String,
     onTriggerItemSelectedChange: (E) -> Unit
 ) {
+    val clock = AmbientAnimationClock.current.asDisposableClock()
     AuroraComboBox(
         modifier = modifier,
         enabled = enabled,
@@ -141,7 +124,7 @@ fun <E> AuroraComboBox(
         displayConverter = displayConverter,
         onTriggerItemSelectedChange = onTriggerItemSelectedChange,
         interactionState = remember { InteractionState() },
-        stateTransitionFloat = AnimatedFloat(0.0f, AmbientAnimationClock.current.asDisposableClock())
+        stateTransitionFloat = remember { mutableStateOf(AnimatedFloat(0.0f, clock)) }
     )
 }
 
@@ -156,7 +139,7 @@ private fun <E> AuroraComboBox(
     displayConverter: (E) -> String,
     onTriggerItemSelectedChange: (E) -> Unit,
     interactionState: InteractionState,
-    stateTransitionFloat: AnimatedFloat
+    stateTransitionFloat: MutableState<AnimatedFloat>
 ) {
     val drawingCache = remember { ComboBoxDrawingCache() }
 
@@ -176,66 +159,6 @@ private fun <E> AuroraComboBox(
         )
     }
 
-    val modelStateInfo = remember { ModelStateInfo(currentState.value) }
-
-    StateTransitionTracker(
-        modelStateInfo = modelStateInfo,
-        currentState = currentState,
-        enabled = enabled,
-        selected = false,
-        rollover = rollover,
-        pressed = isPressed,
-        stateTransitionFloat = stateTransitionFloat,
-        duration = AuroraSkin.animationConfig.regular
-    )
-
-    // Transition for the selection state
-    if (!::SelectedTransitionDefinition.isInitialized) {
-        SelectedTransitionDefinition =
-            getSelectedTransitionDefinition(AuroraSkin.animationConfig.regular)
-    }
-    val selectionTransitionState = transition(
-        definition = SelectedTransitionDefinition,
-        initState = false,
-        toState = false
-    )
-    // Transition for the rollover state
-    if (!::RolloverTransitionDefinition.isInitialized) {
-        RolloverTransitionDefinition =
-            getRolloverTransitionDefinition(AuroraSkin.animationConfig.regular)
-    }
-    val rolloverTransitionState = transition(
-        definition = RolloverTransitionDefinition,
-        initState = rollover,
-        toState = rollover
-    )
-    // Transition for the pressed state
-    if (!::PressedTransitionDefinition.isInitialized) {
-        PressedTransitionDefinition =
-            getPressedTransitionDefinition(AuroraSkin.animationConfig.regular)
-    }
-    val pressedTransitionState = transition(
-        definition = PressedTransitionDefinition,
-        initState = isPressed,
-        toState = isPressed
-    )
-    // Transition for the enabled state
-    if (!::EnabledTransitionDefinition.isInitialized) {
-        EnabledTransitionDefinition =
-            getEnabledTransitionDefinition(AuroraSkin.animationConfig.regular)
-    }
-    val enabledTransitionState = transition(
-        definition = EnabledTransitionDefinition,
-        initState = enabled,
-        toState = enabled
-    )
-
-    // TODO - how to trigger the state transition animation without these transitions
-    //  that track the changes in different states?
-    selectionTransitionState[SelectionTransitionFraction]
-    rolloverTransitionState[RolloverTransitionFraction]
-    pressedTransitionState[PressedTransitionFraction]
-    enabledTransitionState[EnabledTransitionFraction]
 
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
@@ -246,6 +169,77 @@ private fun <E> AuroraComboBox(
     val auroraSize = AuroraSize(0, 0)
     val density = AmbientDensity.current.density
     val layoutDirection = AmbientLayoutDirection.current
+
+    // Transition for the selection state
+    val selectionTransition = updateTransition(false)
+    val selectedFraction by selectionTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.short)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // Transition for the rollover state
+    val rolloverTransition = updateTransition(rollover)
+    val rolloverFraction by rolloverTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // Transition for the pressed state
+    val pressedTransition = updateTransition(isPressed)
+    val pressedFraction by pressedTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // Transition for the enabled state
+    val enabledTransition = updateTransition(enabled)
+    val enabledFraction by enabledTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // TODO - figure out why the animations are not running without looking
+    //  at the result (and how it looks like in the new animation APIs)
+    val totalFraction = selectedFraction + rolloverFraction +
+            pressedFraction + enabledFraction
+
+    val modelStateInfo = remember { ModelStateInfo(currentState.value) }
+
+    StateTransitionTracker2(
+        modelStateInfo = modelStateInfo,
+        currentState = currentState,
+        enabled = enabled,
+        selected = false,
+        rollover = rollover,
+        pressed = isPressed,
+        stateTransitionFloat = stateTransitionFloat,
+        clock = AmbientAnimationClock.current.asDisposableClock(),
+        duration = AuroraSkin.animationConfig.regular
+    )
 
     Box(
         modifier = modifier

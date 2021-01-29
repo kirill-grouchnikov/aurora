@@ -31,10 +31,10 @@ package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.asDisposableClock
 import androidx.compose.animation.core.AnimatedFloat
-import androidx.compose.animation.core.TransitionDefinition
-import androidx.compose.animation.transition
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Interaction
 import androidx.compose.foundation.InteractionState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
@@ -53,22 +53,6 @@ import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.utils.getBaseOutline
-
-// This will be initialized on first usage using the getSelectedTransitionDefinition
-// with duration animation coming from [AmbientAnimationConfig]
-private lateinit var SelectedTransitionDefinition: TransitionDefinition<Boolean>
-
-// This will be initialized on first usage using the getRolloverTransitionDefinition
-// with duration animation coming from [AmbientAnimationConfig]
-private lateinit var RolloverTransitionDefinition: TransitionDefinition<Boolean>
-
-// This will be initialized on first usage using the getPressedTransitionDefinition
-// with duration animation coming from [AmbientAnimationConfig]
-private lateinit var PressedTransitionDefinition: TransitionDefinition<Boolean>
-
-// This will be initialized on first usage using the getEnabledTransitionDefinition
-// with duration animation coming from [AmbientAnimationConfig]
-private lateinit var EnabledTransitionDefinition: TransitionDefinition<Boolean>
 
 @Immutable
 private class CheckBoxDrawingCache(
@@ -98,13 +82,14 @@ fun AuroraCheckBox(
     enabled: Boolean = true,
     content: @Composable RowScope.() -> Unit
 ) {
+    val clock = AmbientAnimationClock.current.asDisposableClock()
     AuroraCheckBox(
         modifier = modifier,
         selected = selected,
         onTriggerSelectedChange = onTriggerSelectedChange,
         enabled = enabled,
         interactionState = remember { InteractionState() },
-        stateTransitionFloat = AnimatedFloat(0.0f, AmbientAnimationClock.current.asDisposableClock()),
+        stateTransitionFloat = remember { mutableStateOf(AnimatedFloat(0.0f, clock)) },
         content = content
     )
 }
@@ -116,7 +101,7 @@ private fun AuroraCheckBox(
     onTriggerSelectedChange: (Boolean) -> Unit,
     enabled: Boolean,
     interactionState: InteractionState,
-    stateTransitionFloat: AnimatedFloat,
+    stateTransitionFloat: MutableState<AnimatedFloat>,
     content: @Composable RowScope.() -> Unit
 ) {
     val drawingCache = remember { CheckBoxDrawingCache() }
@@ -136,9 +121,68 @@ private fun AuroraCheckBox(
         )
     }
 
+    val markAlpha = remember { mutableStateOf(if (selected) 1.0f else 0.0f) }
+
+    // Transition for the selection state
+    val selectionTransition = updateTransition(selected)
+    val selectedFraction by selectionTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.short)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // Transition for the rollover state
+    val rolloverTransition = updateTransition(rollover)
+    val rolloverFraction by rolloverTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // Transition for the pressed state
+    val pressedTransition = updateTransition(isPressed)
+    val pressedFraction by pressedTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // Transition for the enabled state
+    val enabledTransition = updateTransition(enabled)
+    val enabledFraction by enabledTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // TODO - figure out why the animations are not running without looking
+    //  at the result (and how it looks like in the new animation APIs)
+    val totalFraction = selectedFraction + rolloverFraction +
+            pressedFraction + enabledFraction
+
     val modelStateInfo = remember { ModelStateInfo(currentState.value) }
 
-    StateTransitionTracker(
+    StateTransitionTracker2(
         modelStateInfo = modelStateInfo,
         currentState = currentState,
         enabled = enabled,
@@ -146,58 +190,9 @@ private fun AuroraCheckBox(
         rollover = rollover,
         pressed = isPressed,
         stateTransitionFloat = stateTransitionFloat,
+        clock = AmbientAnimationClock.current.asDisposableClock(),
         duration = AuroraSkin.animationConfig.regular
     )
-
-    val markAlpha = remember { mutableStateOf(if (selected) 1.0f else 0.0f) }
-
-    // Transition for the selection state
-    if (!::SelectedTransitionDefinition.isInitialized) {
-        SelectedTransitionDefinition =
-            getSelectedTransitionDefinition(AuroraSkin.animationConfig.short)
-    }
-    val selectionTransitionState = transition(
-        definition = SelectedTransitionDefinition,
-        initState = selected,
-        toState = selected
-    )
-    // Transition for the rollover state
-    if (!::RolloverTransitionDefinition.isInitialized) {
-        RolloverTransitionDefinition =
-            getRolloverTransitionDefinition(AuroraSkin.animationConfig.regular)
-    }
-    val rolloverTransitionState = transition(
-        definition = RolloverTransitionDefinition,
-        initState = rollover,
-        toState = rollover
-    )
-    // Transition for the pressed state
-    if (!::PressedTransitionDefinition.isInitialized) {
-        PressedTransitionDefinition =
-            getPressedTransitionDefinition(AuroraSkin.animationConfig.regular)
-    }
-    val pressedTransitionState = transition(
-        definition = PressedTransitionDefinition,
-        initState = isPressed,
-        toState = isPressed
-    )
-    // Transition for the enabled state
-    if (!::EnabledTransitionDefinition.isInitialized) {
-        EnabledTransitionDefinition =
-            getEnabledTransitionDefinition(AuroraSkin.animationConfig.regular)
-    }
-    val enabledTransitionState = transition(
-        definition = EnabledTransitionDefinition,
-        initState = enabled,
-        toState = enabled
-    )
-
-    // TODO - how to trigger the state transition animation without these transitions
-    //  that track the changes in different states?
-    selectionTransitionState[SelectionTransitionFraction]
-    rolloverTransitionState[RolloverTransitionFraction]
-    pressedTransitionState[PressedTransitionFraction]
-    enabledTransitionState[EnabledTransitionFraction]
 
     // The toggleable modifier is set on the checkbox mark, as well as on the
     // content so that the whole thing is clickable to toggle the control.

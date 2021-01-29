@@ -31,8 +31,9 @@ package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.asDisposableClock
 import androidx.compose.animation.core.AnimatedFloat
-import androidx.compose.animation.core.TransitionDefinition
-import androidx.compose.animation.transition
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Interaction
 import androidx.compose.foundation.InteractionState
@@ -63,22 +64,6 @@ import org.pushingpixels.aurora.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.utils.getBaseOutline
 import kotlin.math.roundToInt
 
-// This will be initialized on first usage using the getSelectedTransitionDefinition
-// with duration animation coming from [AmbientAnimationConfig]
-private lateinit var SelectedTransitionDefinition: TransitionDefinition<Boolean>
-
-// This will be initialized on first usage using the getRolloverTransitionDefinition
-// with duration animation coming from [AmbientAnimationConfig]
-private lateinit var RolloverTransitionDefinition: TransitionDefinition<Boolean>
-
-// This will be initialized on first usage using the getPressedTransitionDefinition
-// with duration animation coming from [AmbientAnimationConfig]
-private lateinit var PressedTransitionDefinition: TransitionDefinition<Boolean>
-
-// This will be initialized on first usage using the getEnabledTransitionDefinition
-// with duration animation coming from [AmbientAnimationConfig]
-private lateinit var EnabledTransitionDefinition: TransitionDefinition<Boolean>
-
 object SliderConstants {
     val DefaultSliderContentPadding = PaddingValues(start = 0.dp, top = 8.dp, end = 0.dp, bottom = 8.dp)
     val DefaultWidth = 240.dp
@@ -107,6 +92,7 @@ fun AuroraSlider(
         "Cannot have negative tick steps"
     }
 
+    val clock = AmbientAnimationClock.current.asDisposableClock()
     AuroraSlider(
         value = value,
         valueRange = valueRange,
@@ -118,7 +104,7 @@ fun AuroraSlider(
         snapToTicks = snapToTicks,
         drawTicks = drawTicks,
         interactionState = remember { InteractionState() },
-        stateTransitionFloat = AnimatedFloat(0.0f, AmbientAnimationClock.current.asDisposableClock()),
+        stateTransitionFloat = remember { mutableStateOf(AnimatedFloat(0.0f, clock)) }
     )
 }
 
@@ -151,7 +137,7 @@ private fun AuroraSlider(
     snapToTicks: Boolean,
     drawTicks: Boolean,
     interactionState: InteractionState,
-    stateTransitionFloat: AnimatedFloat,
+    stateTransitionFloat: MutableState<AnimatedFloat>
 ) {
     val drawingCache = remember { SliderDrawingCache() }
     var rollover by remember { mutableStateOf(false) }
@@ -170,66 +156,6 @@ private fun AuroraSlider(
         )
     }
 
-    val modelStateInfo = remember { ModelStateInfo(currentState.value) }
-
-    StateTransitionTracker(
-        modelStateInfo = modelStateInfo,
-        currentState = currentState,
-        enabled = enabled,
-        selected = false,
-        rollover = rollover,
-        pressed = isPressed,
-        stateTransitionFloat = stateTransitionFloat,
-        duration = AuroraSkin.animationConfig.regular
-    )
-
-    // Transition for the selection state
-    if (!::SelectedTransitionDefinition.isInitialized) {
-        SelectedTransitionDefinition =
-            getSelectedTransitionDefinition(AuroraSkin.animationConfig.regular)
-    }
-    val selectionTransitionState = transition(
-        definition = SelectedTransitionDefinition,
-        initState = false,
-        toState = false
-    )
-    // Transition for the rollover state
-    if (!::RolloverTransitionDefinition.isInitialized) {
-        RolloverTransitionDefinition =
-            getRolloverTransitionDefinition(AuroraSkin.animationConfig.regular)
-    }
-    val rolloverTransitionState = transition(
-        definition = RolloverTransitionDefinition,
-        initState = rollover,
-        toState = rollover
-    )
-    // Transition for the pressed state
-    if (!::PressedTransitionDefinition.isInitialized) {
-        PressedTransitionDefinition =
-            getPressedTransitionDefinition(AuroraSkin.animationConfig.regular)
-    }
-    val pressedTransitionState = transition(
-        definition = PressedTransitionDefinition,
-        initState = isPressed,
-        toState = isPressed
-    )
-    // Transition for the enabled state
-    if (!::EnabledTransitionDefinition.isInitialized) {
-        EnabledTransitionDefinition =
-            getEnabledTransitionDefinition(AuroraSkin.animationConfig.regular)
-    }
-    val enabledTransitionState = transition(
-        definition = EnabledTransitionDefinition,
-        initState = enabled,
-        toState = enabled
-    )
-
-    // TODO - how to trigger the state transition animation without these transitions
-    //  that track the changes in different states?
-    selectionTransitionState[SelectionTransitionFraction]
-    rolloverTransitionState[RolloverTransitionFraction]
-    pressedTransitionState[PressedTransitionFraction]
-    enabledTransitionState[EnabledTransitionFraction]
 
     val trackFillState = if (enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
     val trackSelectedState = if (enabled) ComponentState.SELECTED else ComponentState.DISABLED_SELECTED
@@ -326,6 +252,77 @@ private fun AuroraSlider(
             // And remove pressed state to the interaction
             interactionState.removeInteraction(Interaction.Pressed)
         }
+    )
+
+    // Transition for the selection state
+    val selectionTransition = updateTransition(false)
+    val selectedFraction by selectionTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.short)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // Transition for the rollover state
+    val rolloverTransition = updateTransition(rollover)
+    val rolloverFraction by rolloverTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // Transition for the pressed state
+    val pressedTransition = updateTransition(isPressed)
+    val pressedFraction by pressedTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // Transition for the enabled state
+    val enabledTransition = updateTransition(enabled)
+    val enabledFraction by enabledTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // TODO - figure out why the animations are not running without looking
+    //  at the result (and how it looks like in the new animation APIs)
+    val totalFraction = selectedFraction + rolloverFraction +
+            pressedFraction + enabledFraction
+
+    val modelStateInfo = remember { ModelStateInfo(currentState.value) }
+
+    StateTransitionTracker2(
+        modelStateInfo = modelStateInfo,
+        currentState = currentState,
+        enabled = enabled,
+        selected = false,
+        rollover = rollover,
+        pressed = isPressed,
+        stateTransitionFloat = stateTransitionFloat,
+        clock = AmbientAnimationClock.current.asDisposableClock(),
+        duration = AuroraSkin.animationConfig.regular
     )
 
     Box(

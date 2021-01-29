@@ -44,12 +44,14 @@ import org.pushingpixels.aurora.component.model.CommandActionPreview
 import org.pushingpixels.aurora.component.model.CommandPresentationModel
 import org.pushingpixels.aurora.demo.svg.tango.accessories_text_editor
 import org.pushingpixels.aurora.demo.svg.tango.computer
+import org.pushingpixels.aurora.skin.graphiteSkin
+import org.pushingpixels.aurora.skin.magellanSkin
 import org.pushingpixels.aurora.skin.nebulaBrickWallSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 
 fun main() {
     AuroraWindow(
-        skin = nebulaBrickWallSkin(),
+        skin = graphiteSkin(),
         title = "Aurora Demo",
         size = IntSize(660, 200),
         undecorated = true
