@@ -198,7 +198,7 @@ private fun AuroraToggleButton(
 
     val modelStateInfo = remember { ModelStateInfo(currentState.value) }
 
-    StateTransitionTracker2(
+    StateTransitionTracker(
         modelStateInfo = modelStateInfo,
         currentState = currentState,
         enabled = enabled,
@@ -568,7 +568,7 @@ private fun AuroraButton(
 
     val modelStateInfo = remember { ModelStateInfo(currentState.value) }
 
-    StateTransitionTracker2(
+    StateTransitionTracker(
         modelStateInfo = modelStateInfo,
         currentState = currentState,
         enabled = enabled,

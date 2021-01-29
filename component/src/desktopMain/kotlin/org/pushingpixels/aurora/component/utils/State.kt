@@ -120,7 +120,7 @@ class ModelStateInfo(var currModelState: ComponentState) {
 }
 
 @Composable
-fun StateTransitionTracker2(
+fun StateTransitionTracker(
     modelStateInfo: ModelStateInfo,
     currentState: MutableState<ComponentState>,
     enabled: Boolean,
