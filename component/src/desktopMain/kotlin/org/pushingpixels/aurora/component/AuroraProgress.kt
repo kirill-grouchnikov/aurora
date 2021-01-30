@@ -76,7 +76,8 @@ fun AuroraCircularProgress(
             animation = tween(
                 durationMillis = 1000,
                 easing = LinearEasing
-            )
+            ),
+            repeatMode = RepeatMode.Reverse
         )
     )
 

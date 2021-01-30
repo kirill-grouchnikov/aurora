@@ -49,7 +49,7 @@ class StateContributionInfo(var start: Float, var end: Float) {
     }
 }
 
-class ModelStateInfo(val startModelState: ComponentState) {
+class ModelStateInfo(startModelState: ComponentState) {
     var stateContributionMap: MutableMap<ComponentState, StateContributionInfo>
     var activeStrength: Float
 
