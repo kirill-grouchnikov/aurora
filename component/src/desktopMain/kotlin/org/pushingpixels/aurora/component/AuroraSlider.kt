@@ -250,7 +250,7 @@ private fun AuroraSlider(
     val selectionTransition = updateTransition(false)
     val selectedFraction by selectionTransition.animateFloat(
         transitionSpec = {
-            tween(durationMillis = AuroraSkin.animationConfig.short)
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
         }
     ) {
         when (it) {

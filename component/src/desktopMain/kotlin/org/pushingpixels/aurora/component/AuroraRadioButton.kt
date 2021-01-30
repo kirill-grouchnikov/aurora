@@ -118,7 +118,7 @@ private fun AuroraRadioButton(
     val selectionTransition = updateTransition(selected)
     val selectedFraction by selectionTransition.animateFloat(
         transitionSpec = {
-            tween(durationMillis = AuroraSkin.animationConfig.short)
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
         }
     ) {
         when (it) {
