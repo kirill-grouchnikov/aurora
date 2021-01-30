@@ -29,7 +29,6 @@
  */
 package org.pushingpixels.aurora.component
 
-import androidx.compose.animation.asDisposableClock
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.InteractionState
@@ -44,7 +43,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
@@ -87,7 +85,6 @@ fun AuroraToggleButton(
     contentPadding: PaddingValues = ButtonSizingConstants.DefaultButtonContentPadding,
     content: @Composable () -> Unit
 ) {
-    val clock = AmbientAnimationClock.current.asDisposableClock()
     AuroraToggleButton(
         modifier = modifier,
         enabled = enabled,
@@ -98,7 +95,6 @@ fun AuroraToggleButton(
         sizingStrategy = sizingStrategy,
         contentPadding = contentPadding,
         interactionState = remember { InteractionState() },
-        stateTransitionFloat = remember { mutableStateOf(AnimatedFloat(0.0f, clock)) },
         content = content
     )
 }
@@ -114,7 +110,6 @@ private fun AuroraToggleButton(
     sizingStrategy: ButtonSizingStrategy,
     contentPadding: PaddingValues,
     interactionState: InteractionState,
-    stateTransitionFloat: MutableState<AnimatedFloat>,
     content: @Composable () -> Unit
 ) {
     val drawingCache = remember { ButtonDrawingCache() }
@@ -444,7 +439,6 @@ fun AuroraButton(
     contentPadding: PaddingValues = ButtonSizingConstants.DefaultButtonContentPadding,
     content: @Composable () -> Unit
 ) {
-    val clock = AmbientAnimationClock.current.asDisposableClock()
     AuroraButton(
         modifier = modifier,
         enabled = enabled,
@@ -456,7 +450,6 @@ fun AuroraButton(
         contentPadding = contentPadding,
         horizontalArrangement = Arrangement.Center,
         interactionState = remember { InteractionState() },
-        stateTransitionFloat = remember { mutableStateOf(AnimatedFloat(0.0f, clock)) },
         content = content
     )
 }
@@ -473,7 +466,6 @@ fun AuroraMenuButton(
     contentPadding: PaddingValues = ButtonSizingConstants.DefaultButtonContentPadding,
     content: @Composable () -> Unit
 ) {
-    val clock = AmbientAnimationClock.current.asDisposableClock()
     AuroraButton(
         modifier = modifier,
         enabled = enabled,
@@ -485,7 +477,6 @@ fun AuroraMenuButton(
         contentPadding = contentPadding,
         horizontalArrangement = Arrangement.Start,
         interactionState = remember { InteractionState() },
-        stateTransitionFloat = remember { mutableStateOf(AnimatedFloat(0.0f, clock)) },
         content = content
     )
 }
@@ -502,7 +493,6 @@ private fun AuroraButton(
     contentPadding: PaddingValues,
     horizontalArrangement: Arrangement.Horizontal,
     interactionState: InteractionState,
-    stateTransitionFloat: MutableState<AnimatedFloat>,
     content: @Composable () -> Unit
 ) {
     val drawingCache = remember { ButtonDrawingCache() }

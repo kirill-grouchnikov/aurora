@@ -29,7 +29,6 @@
  */
 package org.pushingpixels.aurora.component
 
-import androidx.compose.animation.asDisposableClock
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Interaction
@@ -49,7 +48,6 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerMoveFilter
-import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.ColorSchemeAssociationKind
@@ -89,7 +87,6 @@ fun AuroraSlider(
         "Cannot have negative tick steps"
     }
 
-    val clock = AmbientAnimationClock.current.asDisposableClock()
     AuroraSlider(
         sliderValue = value,
         sliderValueRange = valueRange,
@@ -101,7 +98,6 @@ fun AuroraSlider(
         snapToTicks = snapToTicks,
         drawTicks = drawTicks,
         interactionState = remember { InteractionState() },
-        stateTransitionFloat = remember { mutableStateOf(AnimatedFloat(0.0f, clock)) }
     )
 }
 
@@ -134,7 +130,6 @@ private fun AuroraSlider(
     snapToTicks: Boolean,
     drawTicks: Boolean,
     interactionState: InteractionState,
-    stateTransitionFloat: MutableState<AnimatedFloat>
 ) {
     val drawingCache = remember { SliderDrawingCache() }
     var rollover by remember { mutableStateOf(false) }

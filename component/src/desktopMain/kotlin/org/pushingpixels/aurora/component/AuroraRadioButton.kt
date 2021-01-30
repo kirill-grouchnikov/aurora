@@ -29,7 +29,6 @@
  */
 package org.pushingpixels.aurora.component
 
-import androidx.compose.animation.asDisposableClock
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.InteractionState
@@ -44,7 +43,6 @@ import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.input.pointer.pointerMoveFilter
-import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
@@ -77,14 +75,12 @@ fun AuroraRadioButton(
     enabled: Boolean = true,
     content: @Composable RowScope.() -> Unit
 ) {
-    val clock = AmbientAnimationClock.current.asDisposableClock()
     AuroraRadioButton(
         modifier = modifier,
         selected = selected,
         onTriggerSelectedChange = onTriggerSelectedChange,
         enabled = enabled,
         interactionState = remember { InteractionState() },
-        stateTransitionFloat = remember { mutableStateOf(AnimatedFloat(0.0f, clock)) },
         content = content
     )
 }
@@ -96,7 +92,6 @@ private fun AuroraRadioButton(
     onTriggerSelectedChange: (Boolean) -> Unit,
     enabled: Boolean,
     interactionState: InteractionState,
-    stateTransitionFloat: MutableState<AnimatedFloat>,
     content: @Composable RowScope.() -> Unit
 ) {
     val drawingCache = remember { RadioButtonDrawingCache() }

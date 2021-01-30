@@ -29,7 +29,6 @@
  */
 package org.pushingpixels.aurora.component
 
-import androidx.compose.animation.asDisposableClock
 import androidx.compose.animation.core.*
 import androidx.compose.desktop.AppManager
 import androidx.compose.desktop.ComposePanel
@@ -48,7 +47,6 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.AmbientAnimationClock
 import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.platform.AmbientLayoutDirection
 import androidx.compose.ui.unit.Constraints
@@ -113,7 +111,6 @@ fun <E> AuroraComboBox(
     displayConverter: (E) -> String,
     onTriggerItemSelectedChange: (E) -> Unit
 ) {
-    val clock = AmbientAnimationClock.current.asDisposableClock()
     AuroraComboBox(
         modifier = modifier,
         enabled = enabled,
@@ -124,7 +121,6 @@ fun <E> AuroraComboBox(
         displayConverter = displayConverter,
         onTriggerItemSelectedChange = onTriggerItemSelectedChange,
         interactionState = remember { InteractionState() },
-        stateTransitionFloat = remember { mutableStateOf(AnimatedFloat(0.0f, clock)) }
     )
 }
 
@@ -139,7 +135,6 @@ private fun <E> AuroraComboBox(
     displayConverter: (E) -> String,
     onTriggerItemSelectedChange: (E) -> Unit,
     interactionState: InteractionState,
-    stateTransitionFloat: MutableState<AnimatedFloat>
 ) {
     val drawingCache = remember { ComboBoxDrawingCache() }
 
