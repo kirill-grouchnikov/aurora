@@ -197,18 +197,35 @@ private fun AuroraToggleButton(
             pressedFraction + enabledFraction
 
     val modelStateInfo = remember { ModelStateInfo(currentState.value) }
+    val transitionInfo = remember { mutableStateOf<TransitionInfo?>(null) }
 
     StateTransitionTracker(
         modelStateInfo = modelStateInfo,
         currentState = currentState,
+        transitionInfo = transitionInfo,
         enabled = enabled,
         selected = selected,
         rollover = rollover,
         pressed = isPressed,
-        stateTransitionFloat = stateTransitionFloat,
-        clock = AmbientAnimationClock.current.asDisposableClock(),
         duration = AuroraSkin.animationConfig.regular
     )
+
+    if (transitionInfo.value != null) {
+        LaunchedEffect(currentState.value) {
+            val transitionFloat = Animatable(transitionInfo.value!!.from)
+            val result = transitionFloat.animateTo(
+                targetValue = transitionInfo.value!!.to,
+                animationSpec = tween(durationMillis = transitionInfo.value!!.duration)
+            ) {
+                modelStateInfo.updateActiveStates(value)
+            }
+
+            if (result.endReason == AnimationEndReason.Finished) {
+                modelStateInfo.updateActiveStates(1.0f)
+                modelStateInfo.clear(currentState.value)
+            }
+        }
+    }
 
     Box(
         modifier = modifier
@@ -239,6 +256,7 @@ private fun AuroraToggleButton(
         // Compute the text color
         val textColor = getTextColor(
             modelStateInfo = modelStateInfo,
+            currState = currentState.value,
             skinColors = skinColors,
             decorationAreaType = decorationAreaType,
             isTextInFilledArea = true
@@ -248,7 +266,8 @@ private fun AuroraToggleButton(
             // Populate the cached color scheme for filling the button container
             // based on the current model state info
             populateColorScheme(
-                drawingCache.colorScheme, modelStateInfo, decorationAreaType,
+                drawingCache.colorScheme,
+                modelStateInfo, currentState.value, decorationAreaType,
                 ColorSchemeAssociationKind.FILL
             )
             // And retrieve the container fill colors
@@ -263,7 +282,7 @@ private fun AuroraToggleButton(
             // Populate the cached color scheme for drawing the button border
             // based on the current model state info
             populateColorScheme(
-                drawingCache.colorScheme, modelStateInfo, decorationAreaType,
+                drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
                 ColorSchemeAssociationKind.BORDER
             )
             // And retrieve the border colors
@@ -362,7 +381,7 @@ private fun AuroraToggleButton(
         // Pass our text color and model state snapshot to the children
         Providers(
             AmbientTextColor provides textColor,
-            AmbientModelStateInfoSnapshot provides modelStateInfo.getSnapshot()
+            AmbientModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value)
         ) {
             Layout(
                 modifier = Modifier.padding(contentPadding),
@@ -567,18 +586,35 @@ private fun AuroraButton(
             pressedFraction + enabledFraction
 
     val modelStateInfo = remember { ModelStateInfo(currentState.value) }
+    val transitionInfo = remember { mutableStateOf<TransitionInfo?>(null) }
 
     StateTransitionTracker(
         modelStateInfo = modelStateInfo,
         currentState = currentState,
+        transitionInfo = transitionInfo,
         enabled = enabled,
         selected = false,
         rollover = rollover,
         pressed = isPressed,
-        stateTransitionFloat = stateTransitionFloat,
-        clock = AmbientAnimationClock.current.asDisposableClock(),
         duration = AuroraSkin.animationConfig.regular
     )
+
+    if (transitionInfo.value != null) {
+        LaunchedEffect(currentState.value) {
+            val transitionFloat = Animatable(transitionInfo.value!!.from)
+            val result = transitionFloat.animateTo(
+                targetValue = transitionInfo.value!!.to,
+                animationSpec = tween(durationMillis = transitionInfo.value!!.duration)
+            ) {
+                modelStateInfo.updateActiveStates(value)
+            }
+
+            if (result.endReason == AnimationEndReason.Finished) {
+                modelStateInfo.updateActiveStates(1.0f)
+                modelStateInfo.clear(currentState.value)
+            }
+        }
+    }
 
     Box(
         modifier = modifier
@@ -613,6 +649,7 @@ private fun AuroraButton(
         // Compute the text color
         val textColor = getTextColor(
             modelStateInfo = modelStateInfo,
+            currState = currentState.value,
             skinColors = skinColors,
             decorationAreaType = decorationAreaType,
             isTextInFilledArea = true
@@ -622,7 +659,7 @@ private fun AuroraButton(
             // Populate the cached color scheme for filling the button container
             // based on the current model state info
             populateColorScheme(
-                drawingCache.colorScheme, modelStateInfo, decorationAreaType,
+                drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
                 ColorSchemeAssociationKind.FILL
             )
             // And retrieve the container fill colors
@@ -637,7 +674,7 @@ private fun AuroraButton(
             // Populate the cached color scheme for drawing the button border
             // based on the current model state info
             populateColorScheme(
-                drawingCache.colorScheme, modelStateInfo, decorationAreaType,
+                drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
                 ColorSchemeAssociationKind.BORDER
             )
             // And retrieve the border colors
@@ -736,7 +773,7 @@ private fun AuroraButton(
         // Pass our text color and model state snapshot to the children
         Providers(
             AmbientTextColor provides textColor,
-            AmbientModelStateInfoSnapshot provides modelStateInfo.getSnapshot()
+            AmbientModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value)
         ) {
             Layout(
                 modifier = Modifier.padding(contentPadding),

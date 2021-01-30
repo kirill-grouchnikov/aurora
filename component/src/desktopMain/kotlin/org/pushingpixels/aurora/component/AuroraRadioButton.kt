@@ -30,10 +30,7 @@
 package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.asDisposableClock
-import androidx.compose.animation.core.AnimatedFloat
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.InteractionState
 import androidx.compose.foundation.layout.*
@@ -180,18 +177,35 @@ private fun AuroraRadioButton(
             pressedFraction + enabledFraction
 
     val modelStateInfo = remember { ModelStateInfo(currentState.value) }
+    val transitionInfo = remember { mutableStateOf<TransitionInfo?>(null) }
 
     StateTransitionTracker(
         modelStateInfo = modelStateInfo,
         currentState = currentState,
+        transitionInfo = transitionInfo,
         enabled = enabled,
         selected = selected,
         rollover = rollover,
         pressed = isPressed,
-        stateTransitionFloat = stateTransitionFloat,
-        clock = AmbientAnimationClock.current.asDisposableClock(),
         duration = AuroraSkin.animationConfig.regular
     )
+
+    if (transitionInfo.value != null) {
+        LaunchedEffect(currentState.value) {
+            val transitionFloat = Animatable(transitionInfo.value!!.from)
+            val result = transitionFloat.animateTo(
+                targetValue = transitionInfo.value!!.to,
+                animationSpec = tween(durationMillis = transitionInfo.value!!.duration)
+            ) {
+                modelStateInfo.updateActiveStates(value)
+            }
+
+            if (result.endReason == AnimationEndReason.Finished) {
+                modelStateInfo.updateActiveStates(1.0f)
+                modelStateInfo.clear(currentState.value)
+            }
+        }
+    }
 
     // The toggleable modifier is set on the checkbox mark, as well as on the
     // content so that the whole thing is clickable to toggle the control.
@@ -225,7 +239,7 @@ private fun AuroraRadioButton(
         // Populate the cached color scheme for filling the mark box
         // based on the current model state info
         populateColorScheme(
-            drawingCache.colorScheme, modelStateInfo, decorationAreaType,
+            drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
             ColorSchemeAssociationKind.MARK_BOX
         )
         // And retrieve the mark box colors
@@ -240,7 +254,7 @@ private fun AuroraRadioButton(
         // Populate the cached color scheme for drawing the mark box border
         // based on the current model state info
         populateColorScheme(
-            drawingCache.colorScheme, modelStateInfo, decorationAreaType,
+            drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
             ColorSchemeAssociationKind.BORDER
         )
         // And retrieve the mark box border colors
@@ -254,7 +268,7 @@ private fun AuroraRadioButton(
 
         // Mark color
         val markColor = getStateAwareColor(
-            modelStateInfo,
+            modelStateInfo, currentState.value,
             decorationAreaType, ColorSchemeAssociationKind.MARK
         ) { it.markColor }
 
@@ -271,6 +285,7 @@ private fun AuroraRadioButton(
         // involve rollover, selection or pressed bits
         val textColor = getTextColor(
             modelStateInfo = modelStateInfo,
+            currState = currentState.value,
             skinColors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
             isTextInFilledArea = false
@@ -353,7 +368,7 @@ private fun AuroraRadioButton(
         // Pass our text color and model state snapshot to the children
         Providers(
             AmbientTextColor provides textColor,
-            AmbientModelStateInfoSnapshot provides modelStateInfo.getSnapshot()
+            AmbientModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value)
         ) {
             Row(
                 // TODO - extract paddings into a centralized location

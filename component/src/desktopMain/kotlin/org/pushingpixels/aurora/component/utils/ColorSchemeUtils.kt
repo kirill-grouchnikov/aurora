@@ -145,10 +145,10 @@ internal data class MutableColorScheme(
 internal fun populateColorScheme(
     colorScheme: MutableColorScheme,
     modelStateInfo: ModelStateInfo,
+    currState: ComponentState,
     decorationAreaType: DecorationAreaType,
     associationKind: ColorSchemeAssociationKind
 ) {
-    val currState = modelStateInfo.currModelState
     val currStateScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = decorationAreaType,
         associationKind = associationKind,
@@ -206,11 +206,11 @@ internal fun populateColorScheme(
 @Composable
 internal fun getStateAwareColor(
     modelStateInfo: ModelStateInfo,
+    currState: ComponentState,
     decorationAreaType: DecorationAreaType,
     associationKind: ColorSchemeAssociationKind,
     query: (AuroraColorScheme) -> Color,
 ): Color {
-    val currState = modelStateInfo.currModelState
     val currStateScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = decorationAreaType,
         associationKind = associationKind,
@@ -250,22 +250,22 @@ internal fun getStateAwareColor(
 
 internal fun getTextColor(
     modelStateInfo: ModelStateInfo,
+    currState: ComponentState,
     skinColors: AuroraSkinColors,
     decorationAreaType: DecorationAreaType,
     isTextInFilledArea: Boolean
 ): Color {
-    var currState = modelStateInfo.currModelState
     var activeStates: Map<ComponentState, StateContributionInfo>? = modelStateInfo.stateContributionMap
-
+    var tweakedCurrState = currState
     // Special case for when text is not drawn in the filled area
     if (!isTextInFilledArea) {
-        currState = if (currState.isDisabled) ComponentState.DISABLED_UNSELECTED else ComponentState.ENABLED
+        tweakedCurrState = if (currState.isDisabled) ComponentState.DISABLED_UNSELECTED else ComponentState.ENABLED
         activeStates = null
     }
 
-    val colorScheme = skinColors.getColorScheme(decorationAreaType, currState)
+    val colorScheme = skinColors.getColorScheme(decorationAreaType, tweakedCurrState)
     var foreground: Color
-    if (currState.isDisabled || activeStates == null || activeStates.size == 1) {
+    if (tweakedCurrState.isDisabled || activeStates == null || activeStates.size == 1) {
         // Disabled state or only one active state being tracked
         foreground = colorScheme.foregroundColor
     } else {
@@ -286,14 +286,14 @@ internal fun getTextColor(
 
     val baseAlpha = skinColors.getAlpha(
         decorationAreaType = decorationAreaType,
-        componentState = currState
+        componentState = tweakedCurrState
     )
 
     if (baseAlpha < 1.0f) {
         // Blend with the background fill
         val backgroundColorScheme = skinColors.getColorScheme(
             decorationAreaType,
-            if (currState.isDisabled) ComponentState.DISABLED_UNSELECTED else ComponentState.ENABLED
+            if (tweakedCurrState.isDisabled) ComponentState.DISABLED_UNSELECTED else ComponentState.ENABLED
         )
         val bgFillColor = backgroundColorScheme.backgroundFillColor
         foreground = foreground.interpolateTowards(bgFillColor, baseAlpha)
@@ -303,10 +303,10 @@ internal fun getTextColor(
 
 internal fun getMenuTextColor(
     modelStateInfo: ModelStateInfo,
+    currState: ComponentState,
     skinColors: AuroraSkinColors,
     decorationAreaType: DecorationAreaType
 ): Color {
-    val currState = modelStateInfo.currModelState
     val activeStates = modelStateInfo.stateContributionMap
 
     var currAssocKind = ColorSchemeAssociationKind.FILL

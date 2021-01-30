@@ -29,11 +29,6 @@
  */
 package org.pushingpixels.aurora.component.utils
 
-import androidx.compose.animation.core.AnimatedFloat
-import androidx.compose.animation.core.AnimationClockObservable
-import androidx.compose.animation.core.AnimationEndReason
-import androidx.compose.animation.core.FloatTweenSpec
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import org.pushingpixels.aurora.ComponentState
 import org.pushingpixels.aurora.ComponentStateFacet
@@ -43,6 +38,9 @@ class StateContributionInfo(var start: Float, var end: Float) {
     var contribution: Float
 
     fun updateContribution(timelinePosition: Float) {
+        require((timelinePosition >= 0.0f) && (timelinePosition <= 1.0f)) {
+            "Timeline position should be in 0.0-1.0 range [is $timelinePosition]"
+        }
         contribution = start + timelinePosition * (end - start)
     }
 
@@ -51,14 +49,14 @@ class StateContributionInfo(var start: Float, var end: Float) {
     }
 }
 
-class ModelStateInfo(var currModelState: ComponentState) {
+class ModelStateInfo(val startModelState: ComponentState) {
     var stateContributionMap: MutableMap<ComponentState, StateContributionInfo>
     var activeStrength: Float
 
     init {
         activeStrength = 0.0f
         stateContributionMap = HashMap()
-        stateContributionMap[currModelState] = StateContributionInfo(1.0f, 1.0f)
+        stateContributionMap[startModelState] = StateContributionInfo(1.0f, 1.0f)
         sync()
     }
 
@@ -87,7 +85,7 @@ class ModelStateInfo(var currModelState: ComponentState) {
         return result
     }
 
-    fun clear() {
+    fun clear(currModelState: ComponentState) {
         stateContributionMap.clear()
         stateContributionMap[currModelState] = StateContributionInfo(1.0f, 1.0f)
         sync()
@@ -100,7 +98,7 @@ class ModelStateInfo(var currModelState: ComponentState) {
         sync()
     }
 
-    fun dumpState(stateTransitionPosition: Float) {
+    fun dumpState(currModelState: ComponentState, stateTransitionPosition: Float) {
         println("######")
         println("Curr state ${currModelState}, position $stateTransitionPosition")
         for ((state, currRange) in stateContributionMap) {
@@ -110,7 +108,7 @@ class ModelStateInfo(var currModelState: ComponentState) {
         println("######")
     }
 
-    fun getSnapshot(): ModelStateInfoSnapshot {
+    fun getSnapshot(currModelState: ComponentState): ModelStateInfoSnapshot {
         return ModelStateInfoSnapshot(
             currModelState = currModelState,
             stateContributionMap = stateContributionMap.map { (key, value) -> key to value.contribution }.toMap(),
@@ -119,19 +117,17 @@ class ModelStateInfo(var currModelState: ComponentState) {
     }
 }
 
-@Composable
 fun StateTransitionTracker(
     modelStateInfo: ModelStateInfo,
     currentState: MutableState<ComponentState>,
+    transitionInfo: MutableState<TransitionInfo?>,
     enabled: Boolean,
     selected: Boolean,
     rollover: Boolean,
     pressed: Boolean,
-    stateTransitionFloat: MutableState<AnimatedFloat>,
-    clock: AnimationClockObservable,
     duration: Int
 ) {
-    var tweakedDuration = duration
+    val oldState = currentState.value
     currentState.value = ComponentState.getState(
         isEnabled = enabled,
         isRollover = rollover,
@@ -139,24 +135,35 @@ fun StateTransitionTracker(
         isPressed = pressed
     )
 
-    if (currentState.value != modelStateInfo.currModelState) {
-        stateTransitionFloat.value = AnimatedFloat(0.0f, clock)
+    if (currentState.value != oldState) {
 ////        if (dump) {
 //            println("******** Have new state to move to ${currentState.value} ********")
 //            modelStateInfo.dumpState(stateTransitionFloat.value.value)
 ////        }
         // Need to transition to the new state
+//        if (stateTransitionFloat.value.isRunning) {
+//            println("Stopping a running animation!")
+//            stateTransitionFloat.value.stop()
+//        }
+        var tweakedDuration: Int
+        var tweakedStart : Float
+
         if (modelStateInfo.stateContributionMap.containsKey(currentState.value)) {
             //println("Already has new state")
             // Going to a state that is already partially active
             val transitionPosition = modelStateInfo.stateContributionMap[currentState.value]!!.contribution
-            tweakedDuration = (tweakedDuration * (1.0f - transitionPosition)).toInt()
-            stateTransitionFloat.value.setBounds(transitionPosition, 1.0f)
-            stateTransitionFloat.value.snapTo(transitionPosition)
+            tweakedDuration = (duration * (1.0f - transitionPosition)).toInt()
+            tweakedStart = transitionPosition
+            //stateTransitionFloat.updateBounds(transitionPosition, 1.0f)
+            //stateTransitionFloat.snapTo(transitionPosition)
+//            stateTransitionFloat.value = Animatable(transitionPosition)
         } else {
-            //println("Does not have new state (curr state ${modelStateInfo.currModelState}) at ${stateTransitionFloat.value}")
-            stateTransitionFloat.value.setBounds(0.0f, 1.0f)
-            stateTransitionFloat.value.snapTo(0.0f)
+            //println("Does not have new state (curr state ${currentState.value}) at ${stateTransitionFloat.value}")
+            tweakedStart = 0.0f
+            tweakedDuration = duration
+//            stateTransitionFloat.updateBounds(0.0f, 1.0f)
+//            stateTransitionFloat.snapTo(0.0f)
+  //          stateTransitionFloat.value = Animatable(0.0f)
             //println("\tat ${stateTransitionFloat.value}")
         }
 
@@ -183,41 +190,67 @@ fun StateTransitionTracker(
         }
         modelStateInfo.stateContributionMap = newContributionMap
         modelStateInfo.sync()
-
-        modelStateInfo.currModelState = currentState.value
-//        if (dump) {
-//            println("******** After moving to new state *****")
-//            modelStateInfo.dumpState(stateTransitionFloat.value)
-//        }
+////
+//        //modelStateInfo.currModelState = currentState.value
+//
+////        if (dump) {
+////            println("******** After moving to new state *****")
+//            modelStateInfo.dumpState(currentState.value, stateTransitionFloat.value.value)
+////        }
 
 //        return TransitionInfo(from = stateTransitionFloat.value.value,
 //        to = 1.0f,
 //        duration = tweakedDuration)
 //        println("Animating over $tweakedDuration from ${stateTransitionFloat.value.value} to 1.0f [${stateTransitionFloat.value.isRunning}]")
-        stateTransitionFloat.value.animateTo(
-            targetValue = 1.0f,
-            anim = FloatTweenSpec(duration = tweakedDuration),
-            onEnd = { endReason, _ ->
-                //println("Ended with reason $endReason at ${stateTransitionFloat.value}")
-                if (endReason == AnimationEndReason.TargetReached) {
-                    modelStateInfo.updateActiveStates(1.0f)
-                    modelStateInfo.clear()
-                    //println("******** After clear (target reached) ********")
-                    //modelStateInfo.dumpState(stateTransitionFloat.value)
-                }
-            }
-        )
+//        stateTransitionFloat.value.animateTo(
+//            targetValue = 1.0f,
+//            anim = FloatTweenSpec(duration = tweakedDuration),
+//            onEnd = { endReason, _ ->
+//                //println("Ended with reason $endReason at ${stateTransitionFloat.value}")
+//                if (endReason == AnimationEndReason.TargetReached) {
+//                    modelStateInfo.updateActiveStates(1.0f)
+//                    modelStateInfo.clear()
+//                    //println("******** After clear (target reached) ********")
+//                    //modelStateInfo.dumpState(stateTransitionFloat.value)
+//                }
+//            }
+//        )
+//        LaunchedEffect(stateTransitionFloat.value) {
+//            println("In launch effect!")
+//            stateTransitionFloat.value = Animatable(tweakedStart)
+//            println("******** Animating from ${stateTransitionFloat.value.value} to 1.0f over $tweakedDuration ********")
+//            println("******** Is running ${stateTransitionFloat.value.isRunning} ********")
+//            val result = stateTransitionFloat.value.animateTo(
+//                targetValue = 1.0f,
+//                animationSpec = tween(durationMillis = tweakedDuration)
+//            ) {
+//                println("During animation $value")
+//                modelStateInfo.updateActiveStates(value)
+//            }
+//
+//            println("&&&&&&& Ended with reason ${result.endReason} at ${stateTransitionFloat.value.value}")
+//            if (result.endReason == AnimationEndReason.Finished) {
+//                modelStateInfo.updateActiveStates(1.0f)
+//                modelStateInfo.clear(currentState.value)
+//                //println("******** After clear (target reached) ********")
+//                //modelStateInfo.dumpState(stateTransitionFloat.value)
+//            }
+//        }
+    transitionInfo.value = TransitionInfo(tweakedStart, 1.0f, tweakedDuration)
 
         //println()
     }
 
-//    return null
-    if (stateTransitionFloat.value.isRunning) {
-        modelStateInfo.updateActiveStates(stateTransitionFloat.value.value)
-//        if (dump) {
-        //println("********* [${System.currentTimeMillis()}] During animation ${stateTransitionFloat.value.value} to ${stateTransitionFloat.value.targetValue} *******")
-        //modelStateInfo.dumpState(stateTransitionFloat.value.value)
-//        }
-    }
+    //return null
+//    if (stateTransitionFloat.value.isRunning) {
+//        modelStateInfo.updateActiveStates(stateTransitionFloat.value.value)
+////        if (dump) {
+//        //println("********* [${System.currentTimeMillis()}] During animation ${stateTransitionFloat.value.value} to ${stateTransitionFloat.value.targetValue} *******")
+//        //modelStateInfo.dumpState(stateTransitionFloat.value.value)
+////        }
+//    }
 }
+
+data class TransitionInfo(val from:Float, val to: Float, val duration: Int)
+
 
