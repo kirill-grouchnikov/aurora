@@ -198,7 +198,7 @@ private fun AuroraCheckBox(
                 targetValue = transitionInfo.value!!.to,
                 animationSpec = tween(durationMillis = transitionInfo.value!!.duration)
             ) {
-//                println("During animation $value")
+//                println("During animation $value towards $targetValue")
                 modelStateInfo.updateActiveStates(value)
             }
 
