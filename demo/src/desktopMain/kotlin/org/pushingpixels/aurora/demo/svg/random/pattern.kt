@@ -108,7 +108,7 @@ shapeTile = Outline.Rectangle(rect = Rect(left = 0.0f, top = 0.0f, right = 25.0f
 drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile)
 alphaTile = alpha * 1.0f
 alphaTile = alpha * 1.0f
-brush = Brush.linearGradient(0.05f to Color(255, 255, 255, 128), 0.95f to Color(0, 0, 255, 128), start = Offset(5.0f, 5.0f), end = Offset(45.0f, 5.0f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.05f to Color(255, 255, 255, 128), 0.95f to Color(0, 0, 255, 128), start = Offset(0.0f, 0.0f), end = Offset(6.666667f, 0.0f), tileMode = TileMode.Clamp)
 shapeTile = Outline.Generic(path = Path().also { it.addOval(oval=Rect(left = 5.0f, top = 5.0f, right = 45.0f, bottom = 45.0f))})
 drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile)
 alphaTile = alpha * 1.0f
