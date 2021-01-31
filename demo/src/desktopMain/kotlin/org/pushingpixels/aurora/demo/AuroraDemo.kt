@@ -433,7 +433,7 @@ fun DemoFooter(
 
 @Composable
 fun DemoArea(modifier: Modifier = Modifier, style: DemoStyle) {
-    // TODO - convert this to use ConstraintLayout when that is available for desktop
+    // TODO - convert this to use ConstraintLayout when (if?) that is available for desktop
     Row(
         verticalAlignment = Alignment.Top,
         modifier = modifier

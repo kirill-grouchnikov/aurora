@@ -46,7 +46,7 @@ interface CommandActionPreview {
      *
      * @param command Command for which the preview has been activated.
      */
-    // TODO - remove nullability
+    // TODO - remove nullability when buttons are only created from commands
     fun onCommandPreviewActivated(command: Command?)
 
     /**
@@ -54,7 +54,7 @@ interface CommandActionPreview {
      *
      * @param command Command for which the preview has been canceled.
      */
-    // TODO - remove nullability
+    // TODO - remove nullability when buttons are only created from commands
     fun onCommandPreviewCanceled(command: Command?)
 }
 

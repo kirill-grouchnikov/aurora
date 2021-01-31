@@ -67,6 +67,7 @@ private class CheckBoxDrawingCache(
 
 object CheckBoxConstants {
     val CheckboxSize = 14.dp
+    val DefaultCheckBoxContentPadding = PaddingValues(start = 4.dp, top = 10.dp, end = 4.dp, bottom = 8.dp)
 }
 
 @Composable
@@ -378,10 +379,9 @@ private fun AuroraCheckBox(
             AmbientModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value)
         ) {
             Row(
-                // TODO - extract paddings into a centralized location
                 Modifier
                     .defaultMinSizeConstraints(minWidth = 0.dp, minHeight = CheckBoxConstants.CheckboxSize)
-                    .padding(4.dp, 10.dp, 4.dp, 8.dp),
+                    .padding(CheckBoxConstants.DefaultCheckBoxContentPadding),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
                 content = content

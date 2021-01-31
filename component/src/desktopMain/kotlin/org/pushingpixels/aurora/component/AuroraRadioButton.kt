@@ -65,6 +65,7 @@ private class RadioButtonDrawingCache(
 
 object RadioButtonConstants {
     val RadioButtonSize = 14.dp
+    val DefaultRadioButtonContentPadding = PaddingValues(start = 4.dp, top = 10.dp, end = 4.dp, bottom = 8.dp)
 }
 
 @Composable
@@ -366,10 +367,9 @@ private fun AuroraRadioButton(
             AmbientModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value)
         ) {
             Row(
-                // TODO - extract paddings into a centralized location
                 Modifier
                     .defaultMinSizeConstraints(minWidth = 0.dp, minHeight = RadioButtonConstants.RadioButtonSize)
-                    .padding(4.dp, 10.dp, 4.dp, 8.dp),
+                    .padding(RadioButtonConstants.DefaultRadioButtonContentPadding),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
                 content = content
