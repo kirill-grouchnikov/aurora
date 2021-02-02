@@ -139,9 +139,7 @@ private fun <E> AuroraComboBox(
     val drawingCache = remember { ComboBoxDrawingCache() }
 
     var rollover by remember { mutableStateOf(false) }
-    // TODO - look at the correct pressed state once https://github.com/JetBrains/compose-jb/issues/295
-    //  is fixed
-    val isPressed = false//Interaction.Pressed in interactionState
+    val isPressed = Interaction.Pressed in interactionState
 
     val currentState = remember {
         mutableStateOf(

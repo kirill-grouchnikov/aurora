@@ -31,6 +31,7 @@ package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Interaction
 import androidx.compose.foundation.InteractionState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -114,9 +115,7 @@ private fun AuroraToggleButton(
 ) {
     val drawingCache = remember { ButtonDrawingCache() }
     var rollover by remember { mutableStateOf(false) }
-    // TODO - look at the correct pressed state once https://github.com/JetBrains/compose-jb/issues/295
-    //  is fixed
-    val isPressed = false//Interaction.Pressed in interactionState
+    val isPressed = Interaction.Pressed in interactionState
 
     val currentState = remember {
         mutableStateOf(
@@ -498,9 +497,7 @@ private fun AuroraButton(
     val drawingCache = remember { ButtonDrawingCache() }
 
     var rollover by remember { mutableStateOf(false) }
-    // TODO - look at the correct pressed state once https://github.com/JetBrains/compose-jb/issues/295
-    //  is fixed
-    val isPressed = false//Interaction.Pressed in interactionState
+    val isPressed = Interaction.Pressed in interactionState
 
     val currentState = remember {
         mutableStateOf(
