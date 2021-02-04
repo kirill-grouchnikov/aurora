@@ -21,8 +21,8 @@ Aurora snapshot builds are made available on Sonatype.
 Add the latest Kotlin and Compose Desktop dependencies:
 ```kotlin
 plugins {
-    kotlin("jvm") version "1.4.21"
-    id("org.jetbrains.compose") version "0.3.0-build140"
+    kotlin("jvm") version "1.4.21-2"
+    id("org.jetbrains.compose") version "0.3.0-build148"
 }
 ```
 
@@ -35,9 +35,9 @@ Add Aurora dependencies:
 
 ```
 dependencies {
-    api("org.pushing-pixels:aurora-skin:0.0.2-SNAPSHOT")
-    api("org.pushing-pixels:aurora-component:0.0.2-SNAPSHOT")
-    api("org.pushing-pixels:aurora-window:0.0.2-SNAPSHOT")
+    api("org.pushing-pixels:aurora-skin:0.0.4-SNAPSHOT")
+    api("org.pushing-pixels:aurora-component:0.0.4-SNAPSHOT")
+    api("org.pushing-pixels:aurora-window:0.0.4-SNAPSHOT")
     implementation(compose.desktop.currentOs)
 }
 ```
