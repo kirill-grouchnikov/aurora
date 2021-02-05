@@ -34,7 +34,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.scale
-import androidx.compose.ui.platform.AmbientDensity
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 
 class BitmapWrapperIcon(private val bitmap: ImageBitmap): AuroraIcon {
@@ -51,8 +51,8 @@ class BitmapWrapperIcon(private val bitmap: ImageBitmap): AuroraIcon {
 
     @Composable
     override fun setSize(width: Dp, height: Dp) {
-        _width = (width.value * AmbientDensity.current.density).toInt()
-        _height = (height.value * AmbientDensity.current.density).toInt()
+        _width = (width.value * LocalDensity.current.density).toInt()
+        _height = (height.value * LocalDensity.current.density).toInt()
     }
 
     override fun paintIcon(drawScope: DrawScope) {

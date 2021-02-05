@@ -37,7 +37,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.platform.AmbientDensity
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -64,7 +64,7 @@ private fun AuroraWindowContent(
     undecorated: Boolean,
     content: @Composable () -> Unit
 ) {
-    val density = AmbientDensity.current.density
+    val density = LocalDensity.current.density
     val iconSize = (18 * density).toInt()
 
     val extendedState = AppManager.focusedWindow?.window?.extendedState
@@ -113,7 +113,7 @@ private fun AuroraWindowContent(
                                 decorationAreaType = DecorationAreaType.TITLE_PANE,
                                 skinColors = AuroraSkin.colors,
                                 buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                modelStateInfoSnapshot = AmbientModelStateInfoSnapshot.current,
+                                modelStateInfoSnapshot = LocalModelStateInfoSnapshot.current,
                                 delegate = { scheme ->
                                     getMinimizeIcon(
                                         iconSize = iconSize,
@@ -150,7 +150,7 @@ private fun AuroraWindowContent(
                                     decorationAreaType = DecorationAreaType.TITLE_PANE,
                                     skinColors = AuroraSkin.colors,
                                     buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                    modelStateInfoSnapshot = AmbientModelStateInfoSnapshot.current,
+                                    modelStateInfoSnapshot = LocalModelStateInfoSnapshot.current,
                                     delegate = { scheme ->
                                         getRestoreIcon(
                                             iconSize = iconSize,
@@ -166,7 +166,7 @@ private fun AuroraWindowContent(
                                 decorationAreaType = DecorationAreaType.TITLE_PANE,
                                 skinColors = AuroraSkin.colors,
                                 buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                modelStateInfoSnapshot = AmbientModelStateInfoSnapshot.current,
+                                modelStateInfoSnapshot = LocalModelStateInfoSnapshot.current,
                                 delegate = { scheme ->
                                     getMaximizeIcon(
                                         iconSize = iconSize,
@@ -194,7 +194,7 @@ private fun AuroraWindowContent(
                                 decorationAreaType = DecorationAreaType.TITLE_PANE,
                                 skinColors = AuroraSkin.colors,
                                 buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                modelStateInfoSnapshot = AmbientModelStateInfoSnapshot.current,
+                                modelStateInfoSnapshot = LocalModelStateInfoSnapshot.current,
                                 delegate = { scheme ->
                                     getCloseIcon(
                                         iconSize = iconSize,
@@ -308,11 +308,11 @@ private fun AuroraSkin(
     content: @Composable () -> Unit
 ) {
     Providers(
-        AmbientDecorationAreaType provides decorationAreaType,
-        AmbientSkinColors provides colors,
-        AmbientButtonShaper provides buttonShaper,
-        AmbientPainters provides painters,
-        AmbientAnimationConfig provides animationConfig
+        LocalDecorationAreaType provides decorationAreaType,
+        LocalSkinColors provides colors,
+        LocalButtonShaper provides buttonShaper,
+        LocalPainters provides painters,
+        LocalAnimationConfig provides animationConfig
     ) {
         content()
     }

@@ -31,6 +31,7 @@ package org.pushingpixels.aurora
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ComposableContract
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
@@ -41,30 +42,30 @@ import org.pushingpixels.aurora.shaper.AuroraButtonShaper
 import org.pushingpixels.aurora.utils.getColorSchemes
 
 object AuroraSkin {
-    @ComposableContract(readonly = true)
     val decorationAreaType: DecorationAreaType
         @Composable
-        get() = AmbientDecorationAreaType.current
+        @ReadOnlyComposable
+        get() = LocalDecorationAreaType.current
 
-    @ComposableContract(readonly = true)
     val colors: AuroraSkinColors
         @Composable
-        get() = AmbientSkinColors.current
+        @ReadOnlyComposable
+        get() = LocalSkinColors.current
 
-    @ComposableContract(readonly = true)
     val buttonShaper: AuroraButtonShaper
         @Composable
-        get() = AmbientButtonShaper.current
+        @ReadOnlyComposable
+        get() = LocalButtonShaper.current
 
-    @ComposableContract(readonly = true)
     val painters: Painters
         @Composable
-        get() = AmbientPainters.current
+        @ReadOnlyComposable
+        get() = LocalPainters.current
 
-    @ComposableContract(readonly = true)
     val animationConfig: AnimationConfig
         @Composable
-        get() = AmbientAnimationConfig.current
+        @ReadOnlyComposable
+        get() = LocalAnimationConfig.current
 }
 
 data class AuroraSkinDefinition(

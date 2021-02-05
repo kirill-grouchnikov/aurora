@@ -362,8 +362,8 @@ private fun AuroraRadioButton(
         }
         // Pass our text color and model state snapshot to the children
         Providers(
-            AmbientTextColor provides textColor,
-            AmbientModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value)
+            LocalTextColor provides textColor,
+            LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value)
         ) {
             Row(
                 Modifier

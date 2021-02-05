@@ -39,7 +39,7 @@ import androidx.compose.ui.draw.DrawModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
-import androidx.compose.ui.platform.AmbientDensity
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.bitmapfilter.ColorBitmapFilter
@@ -99,11 +99,11 @@ fun AuroraThemedIcon(
     activeFilterStrategy: IconFilterStrategy = IconFilterStrategy.ORIGINAL,
     modifier: Modifier = Modifier
 ) {
-    val modelStateInfoSnapshot = AmbientModelStateInfoSnapshot.current
+    val modelStateInfoSnapshot = LocalModelStateInfoSnapshot.current
     val currModelState = modelStateInfoSnapshot.currModelState
 
-    val textColor = AmbientTextColor.current
-    val density = AmbientDensity.current.density
+    val textColor = LocalTextColor.current
+    val density = LocalDensity.current.density
     val colors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
 

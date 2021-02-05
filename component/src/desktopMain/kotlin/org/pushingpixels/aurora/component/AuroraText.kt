@@ -43,8 +43,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
-import org.pushingpixels.aurora.AmbientTextColor
-import org.pushingpixels.aurora.AmbientTextStyle
+import org.pushingpixels.aurora.LocalTextColor
+import org.pushingpixels.aurora.LocalTextStyle
 
 @Composable
 fun AuroraText(
@@ -63,9 +63,9 @@ fun AuroraText(
     softWrap: Boolean = true,
     maxLines: Int = Int.MAX_VALUE,
     onTextLayout: (TextLayoutResult) -> Unit = {},
-    style: TextStyle = AmbientTextStyle.current
+    style: TextStyle = LocalTextStyle.current
 ) {
-    val textColor = color.takeOrElse { style.color.takeOrElse { AmbientTextColor.current } }
+    val textColor = color.takeOrElse { style.color.takeOrElse { LocalTextColor.current } }
     val mergedStyle = style.merge(
         TextStyle(
             color = textColor,

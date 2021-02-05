@@ -374,8 +374,8 @@ private fun AuroraToggleButton(
 
         // Pass our text color and model state snapshot to the children
         Providers(
-            AmbientTextColor provides textColor,
-            AmbientModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value)
+            LocalTextColor provides textColor,
+            LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value)
         ) {
             Layout(
                 modifier = Modifier.padding(contentPadding),
@@ -398,9 +398,9 @@ private fun AuroraToggleButton(
 
                 if (sizingStrategy == ButtonSizingStrategy.EXTENDED) {
                     // Bump up to default minimums if necessary
-                    uiPreferredWidth = max(uiPreferredWidth, ButtonSizingConstants.DefaultButtonContentWidth.toIntPx())
+                    uiPreferredWidth = max(uiPreferredWidth, ButtonSizingConstants.DefaultButtonContentWidth.roundToPx())
                     uiPreferredHeight =
-                        max(uiPreferredHeight, ButtonSizingConstants.DefaultButtonContentHeight.toIntPx())
+                        max(uiPreferredHeight, ButtonSizingConstants.DefaultButtonContentHeight.roundToPx())
                 }
 
                 // And ask the button shaper for the final sizing
@@ -759,8 +759,8 @@ private fun AuroraButton(
 
         // Pass our text color and model state snapshot to the children
         Providers(
-            AmbientTextColor provides textColor,
-            AmbientModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value)
+            LocalTextColor provides textColor,
+            LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value)
         ) {
             Layout(
                 modifier = Modifier.padding(contentPadding),
@@ -783,9 +783,9 @@ private fun AuroraButton(
 
                 if (sizingStrategy == ButtonSizingStrategy.EXTENDED) {
                     // Bump up to default minimums if necessary
-                    uiPreferredWidth = max(uiPreferredWidth, ButtonSizingConstants.DefaultButtonContentWidth.toIntPx())
+                    uiPreferredWidth = max(uiPreferredWidth, ButtonSizingConstants.DefaultButtonContentWidth.roundToPx())
                     uiPreferredHeight =
-                        max(uiPreferredHeight, ButtonSizingConstants.DefaultButtonContentHeight.toIntPx())
+                        max(uiPreferredHeight, ButtonSizingConstants.DefaultButtonContentHeight.roundToPx())
                 }
 
                 // And ask the button shaper for the final sizing

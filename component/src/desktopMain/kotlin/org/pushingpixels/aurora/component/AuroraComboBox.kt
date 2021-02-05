@@ -47,8 +47,8 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.AmbientDensity
-import androidx.compose.ui.platform.AmbientLayoutDirection
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
@@ -160,8 +160,8 @@ private fun <E> AuroraComboBox(
 
     val auroraTopLeftOffset = AuroraOffset(0.0f, 0.0f)
     val auroraSize = AuroraSize(0, 0)
-    val density = AmbientDensity.current.density
-    val layoutDirection = AmbientLayoutDirection.current
+    val density = LocalDensity.current.density
+    val layoutDirection = LocalLayoutDirection.current
 
     // Transition for the selection state
     val selectionTransition = updateTransition(false)
@@ -296,11 +296,11 @@ private fun <E> AuroraComboBox(
                     val composePopupContent = ComposePanel()
                     composePopupContent.setContent {
                         Providers(
-                            AmbientDecorationAreaType provides decorationAreaType,
-                            AmbientSkinColors provides skinColors,
-                            AmbientButtonShaper provides buttonShaper,
-                            AmbientPainters provides painters,
-                            AmbientAnimationConfig provides AuroraSkin.animationConfig
+                            LocalDecorationAreaType provides decorationAreaType,
+                            LocalSkinColors provides skinColors,
+                            LocalButtonShaper provides buttonShaper,
+                            LocalPainters provides painters,
+                            LocalAnimationConfig provides AuroraSkin.animationConfig
                         ) {
                             ComboBoxPopupContent(
                                 window = jwindow,
@@ -476,8 +476,8 @@ private fun <E> AuroraComboBox(
 
         // Pass our text color and model state snapshot to the children
         Providers(
-            AmbientTextColor provides textColor,
-            AmbientModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value)
+            LocalTextColor provides textColor,
+            LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value)
         ) {
             Layout(
                 // TODO - revisit this maybe
@@ -511,8 +511,8 @@ private fun <E> AuroraComboBox(
                 var uiPreferredHeight = contentMaxHeight
 
                 // Bump up to default minimums if necessary
-                uiPreferredWidth = max(uiPreferredWidth, ButtonSizingConstants.DefaultButtonContentWidth.toIntPx())
-                uiPreferredHeight = max(uiPreferredHeight, ButtonSizingConstants.DefaultButtonContentHeight.toIntPx())
+                uiPreferredWidth = max(uiPreferredWidth, ButtonSizingConstants.DefaultButtonContentWidth.roundToPx())
+                uiPreferredHeight = max(uiPreferredHeight, ButtonSizingConstants.DefaultButtonContentHeight.roundToPx())
 
                 // And ask the button shaper for the final sizing
                 val finalSize = buttonShaper.getPreferredSize(
@@ -546,7 +546,7 @@ private fun <E> ComboBoxPopupContent(
     displayConverter: (E) -> String,
     onItemSelected: (E) -> Unit,
 ) {
-    val density = AmbientDensity.current.density
+    val density = LocalDensity.current.density
     Box(
         modifier = Modifier.auroraBackground(window = window).onGloballyPositioned {
             // Get the size of the content and update the popup window bounds

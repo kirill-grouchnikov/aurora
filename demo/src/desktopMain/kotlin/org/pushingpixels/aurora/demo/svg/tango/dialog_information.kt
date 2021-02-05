@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.platform.AmbientDensity
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.icon.AuroraIcon
@@ -900,8 +900,8 @@ alpha = alphaStack.removeAt(0)
         @Composable
         fun of(width: Dp, height: Dp): AuroraIcon {
             return dialog_information(
-                _width = (width.value * AmbientDensity.current.density).toInt(),
-                _height = (height.value * AmbientDensity.current.density).toInt()
+                _width = (width.value * LocalDensity.current.density).toInt(),
+                _height = (height.value * LocalDensity.current.density).toInt()
             )
         }
 
@@ -931,8 +931,8 @@ alpha = alphaStack.removeAt(0)
 
     @Composable
     override fun setSize(width: Dp, height: Dp) {
-        _width = (width.value * AmbientDensity.current.density).toInt()
-        _height = (height.value * AmbientDensity.current.density).toInt()
+        _width = (width.value * LocalDensity.current.density).toInt()
+        _height = (height.value * LocalDensity.current.density).toInt()
     }
 
     override fun paintIcon(drawScope: DrawScope) {

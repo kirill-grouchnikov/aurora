@@ -29,9 +29,7 @@
  */
 package org.pushingpixels.aurora
 
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.ambientOf
-import androidx.compose.runtime.staticAmbientOf
+import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
@@ -43,10 +41,10 @@ data class ModelStateInfoSnapshot(
     val activeStrength: Float
 )
 
-val AmbientModelStateInfoSnapshot = ambientOf<ModelStateInfoSnapshot>()
+val LocalModelStateInfoSnapshot = staticCompositionLocalOf<ModelStateInfoSnapshot>()
 
-val AmbientTextColor = ambientOf<Color>()
-val AmbientTextStyle = ambientOf { TextStyle() }
+val LocalTextColor = staticCompositionLocalOf<Color>()
+val LocalTextStyle = compositionLocalOf(structuralEqualityPolicy()) { TextStyle() }
 
 @Immutable
 data class AnimationConfig(
@@ -54,9 +52,9 @@ data class AnimationConfig(
     val regular: Int = 250
 )
 
-val AmbientAnimationConfig = staticAmbientOf { AnimationConfig() }
-val AmbientSkinColors = staticAmbientOf<AuroraSkinColors>()
-val AmbientButtonShaper  = staticAmbientOf<AuroraButtonShaper>()
-val AmbientPainters = staticAmbientOf<Painters>()
-val AmbientDecorationAreaType = staticAmbientOf<DecorationAreaType>()
+val LocalAnimationConfig = staticCompositionLocalOf { AnimationConfig() }
+val LocalSkinColors = staticCompositionLocalOf<AuroraSkinColors>()
+val LocalButtonShaper  = staticCompositionLocalOf<AuroraButtonShaper>()
+val LocalPainters = staticCompositionLocalOf<Painters>()
+val LocalDecorationAreaType = staticCompositionLocalOf<DecorationAreaType>()
 
