@@ -29,7 +29,7 @@
  */
 package org.pushingpixels.aurora
 
-import androidx.compose.desktop.AppWindowAmbient
+import androidx.compose.desktop.LocalAppWindow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.DrawModifier
@@ -50,8 +50,8 @@ import javax.swing.JWindow
 fun Modifier.auroraBackground() = this.then(
     AuroraBackground(
         rootSize = Size(
-            width = AppWindowAmbient.current!!.width * LocalDensity.current.density,
-            height = AppWindowAmbient.current!!.height * LocalDensity.current.density
+            width = LocalAppWindow.current!!.width * LocalDensity.current.density,
+            height = LocalAppWindow.current!!.height * LocalDensity.current.density
         ),
         decorationAreaType = AuroraSkin.decorationAreaType,
         colors = AuroraSkin.colors,

@@ -455,8 +455,9 @@ private fun <E> AuroraComboBox(
                             ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()
                     // TODO - support RTL
                     translate(
-                        left = width
-                                - ButtonSizingConstants.DefaultButtonContentPadding.end.toPx()
+                        left = width - ButtonSizingConstants.DefaultButtonContentPadding.calculateRightPadding(
+                            layoutDirection
+                        ).toPx()
                                 - arrowWidth,
                         top = (height - arrowHeight) / 2.0f
                     ) {
@@ -483,12 +484,12 @@ private fun <E> AuroraComboBox(
                 // TODO - revisit this maybe
                 modifier = Modifier.padding(
                     PaddingValues(
-                        start = ButtonSizingConstants.DefaultButtonContentPadding.start,
-                        end = ButtonSizingConstants.DefaultButtonContentPadding.end +
+                        start = ButtonSizingConstants.DefaultButtonContentPadding.calculateStartPadding(layoutDirection),
+                        end = ButtonSizingConstants.DefaultButtonContentPadding.calculateEndPadding(layoutDirection) +
                                 ComboBoxSizingConstants.DefaultComboBoxContentArrowGap +
                                 ComboBoxSizingConstants.DefaultComboBoxArrowWidth,
-                        top = ButtonSizingConstants.DefaultButtonContentPadding.top,
-                        bottom = ButtonSizingConstants.DefaultButtonContentPadding.bottom
+                        top = ButtonSizingConstants.DefaultButtonContentPadding.calculateTopPadding(),
+                        bottom = ButtonSizingConstants.DefaultButtonContentPadding.calculateBottomPadding()
                     )
                 ),
                 content = {

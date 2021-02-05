@@ -30,7 +30,6 @@
 package org.pushingpixels.aurora
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ComposableContract
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme

@@ -394,13 +394,13 @@ private fun AuroraSlider(
             isTextInFilledArea = true
         )
 
-        var prefHeight = SliderConstants.DefaultSliderContentPadding.top
+        var prefHeight = SliderConstants.DefaultSliderContentPadding.calculateTopPadding()
         prefHeight += SliderConstants.TrackHeight
         if ((tickSteps >= 0) && drawTicks) {
             prefHeight += SliderConstants.TrackTickGap
             prefHeight += SliderConstants.TickHeight
         }
-        prefHeight += SliderConstants.DefaultSliderContentPadding.bottom
+        prefHeight += SliderConstants.DefaultSliderContentPadding.calculateBottomPadding()
 
         Canvas(
             modifier
@@ -413,7 +413,7 @@ private fun AuroraSlider(
 
             // Calculate the track rectangle
             drawingCache.trackRect.x = SliderConstants.ThumbFullSize.toPx() / 2.0f
-            drawingCache.trackRect.y = SliderConstants.DefaultSliderContentPadding.top.toPx()
+            drawingCache.trackRect.y = SliderConstants.DefaultSliderContentPadding.calculateTopPadding().toPx()
             drawingCache.trackRect.width = size.width - SliderConstants.ThumbFullSize.toPx()
             drawingCache.trackRect.height = SliderConstants.TrackHeight.toPx()
 
