@@ -50,8 +50,8 @@ import javax.swing.JWindow
 fun Modifier.auroraBackground() = this.then(
     AuroraBackground(
         rootSize = Size(
-            width = LocalAppWindow.current!!.width * LocalDensity.current.density,
-            height = LocalAppWindow.current!!.height * LocalDensity.current.density
+            width = LocalAppWindow.current.width * LocalDensity.current.density,
+            height = LocalAppWindow.current.height * LocalDensity.current.density
         ),
         decorationAreaType = AuroraSkin.decorationAreaType,
         colors = AuroraSkin.colors,
