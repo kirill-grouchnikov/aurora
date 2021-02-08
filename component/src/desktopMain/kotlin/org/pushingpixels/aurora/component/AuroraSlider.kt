@@ -34,6 +34,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Interaction
 import androidx.compose.foundation.InteractionState
 import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.preferredSize
@@ -189,6 +190,25 @@ private fun AuroraSlider(
     val cumulativeDragAmount = remember { mutableStateOf(0.0f) }
 
     val drag = Modifier.draggable(
+        state = rememberDraggableState {
+            // Update the cumulative drag amount
+            cumulativeDragAmount.value += it
+
+            // Convert from pixels to value range
+            var newValue = sliderValueRange.start +
+                    (dragStartX.value + cumulativeDragAmount.value - drawingCache.trackRect.x) * (sliderValueRange.endInclusive - sliderValueRange.start) / drawingCache.trackRect.width
+            newValue = newValue.coerceIn(sliderValueRange.start, sliderValueRange.endInclusive)
+
+            // Snap to the closest tick if needed
+            if ((tickSteps > 0) && snapToTicks) {
+                val tickRange = (sliderValueRange.endInclusive - sliderValueRange.start) / (tickSteps + 1)
+                val tick = ((newValue - sliderValueRange.start) / tickRange).roundToInt()
+                newValue = tick * tickRange
+            }
+
+            // Update value change lambda
+            onTriggerValueChange.invoke(newValue)
+        },
         orientation = Orientation.Horizontal,
         reverseDirection = false,
         interactionState = interactionState,
@@ -215,25 +235,6 @@ private fun AuroraSlider(
 
             // And add pressed state to the interaction
             interactionState.addInteraction(Interaction.Pressed, pos)
-        },
-        onDrag = {
-            // Update the cumulative drag amount
-            cumulativeDragAmount.value += it
-
-            // Convert from pixels to value range
-            var newValue = sliderValueRange.start +
-                    (dragStartX.value + cumulativeDragAmount.value - drawingCache.trackRect.x) * (sliderValueRange.endInclusive - sliderValueRange.start) / drawingCache.trackRect.width
-            newValue = newValue.coerceIn(sliderValueRange.start, sliderValueRange.endInclusive)
-
-            // Snap to the closest tick if needed
-            if ((tickSteps > 0) && snapToTicks) {
-                val tickRange = (sliderValueRange.endInclusive - sliderValueRange.start) / (tickSteps + 1)
-                val tick = ((newValue - sliderValueRange.start) / tickRange).roundToInt()
-                newValue = tick * tickRange
-            }
-
-            // Update value change lambda
-            onTriggerValueChange.invoke(newValue)
         },
         onDragStopped = {
             // Update value change end lambda

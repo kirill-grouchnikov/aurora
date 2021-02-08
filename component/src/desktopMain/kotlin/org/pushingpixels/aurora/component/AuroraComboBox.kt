@@ -295,7 +295,7 @@ private fun <E> AuroraComboBox(
 
                     val composePopupContent = ComposePanel()
                     composePopupContent.setContent {
-                        Providers(
+                        CompositionLocalProvider(
                             LocalDecorationAreaType provides decorationAreaType,
                             LocalSkinColors provides skinColors,
                             LocalButtonShaper provides buttonShaper,
@@ -476,7 +476,7 @@ private fun <E> AuroraComboBox(
         }
 
         // Pass our text color and model state snapshot to the children
-        Providers(
+        CompositionLocalProvider(
             LocalTextColor provides textColor,
             LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value)
         ) {

@@ -307,7 +307,7 @@ private fun AuroraSkin(
     animationConfig: AnimationConfig = AuroraSkin.animationConfig,
     content: @Composable () -> Unit
 ) {
-    Providers(
+    CompositionLocalProvider(
         LocalDecorationAreaType provides decorationAreaType,
         LocalSkinColors provides colors,
         LocalButtonShaper provides buttonShaper,

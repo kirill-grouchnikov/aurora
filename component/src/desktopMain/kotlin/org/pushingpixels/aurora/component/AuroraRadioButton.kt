@@ -361,7 +361,7 @@ private fun AuroraRadioButton(
             )
         }
         // Pass our text color and model state snapshot to the children
-        Providers(
+        CompositionLocalProvider(
             LocalTextColor provides textColor,
             LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value)
         ) {
