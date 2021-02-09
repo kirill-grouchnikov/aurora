@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.utils.*
 import java.awt.BorderLayout
+import java.awt.Dimension
 import java.awt.Rectangle
 import java.awt.Window
 import javax.swing.JWindow
@@ -548,11 +549,12 @@ private fun <E> ComboBoxPopupContent(
     onItemSelected: (E) -> Unit,
 ) {
     val density = LocalDensity.current.density
+    val contentSize = AuroraSize(0, 0)
     Box(
         modifier = Modifier.auroraBackground(window = window).onGloballyPositioned {
             // Get the size of the content and update the popup window bounds
-            val popupWidth = (it.size.width / density).toInt()
-            val popupHeight = (it.size.height / density).toInt()
+            val popupWidth = (contentSize.width / density).toInt()
+            val popupHeight = (contentSize.height / density).toInt()
 
             // TODO - support RTL for startward and endward
             // TODO - figure out the extra factor
@@ -606,12 +608,13 @@ private fun <E> ComboBoxPopupContent(
 
             window.bounds = popupRect
             window.opacity = 1.0f
+            window.preferredSize = Dimension(popupRect.width, popupRect.height)
+            window.size = Dimension(popupRect.width, popupRect.height)
             window.invalidate()
             window.validate()
-            window.pack()
         }
     ) {
-        ComboBoxPopupColumn {
+        ComboBoxPopupColumn(contentSize = contentSize) {
             for (item in items) {
                 AuroraMenuButton(
                     enabled = true,
@@ -628,7 +631,7 @@ private fun <E> ComboBoxPopupContent(
 }
 
 @Composable
-private fun ComboBoxPopupColumn(content: @Composable () -> Unit) {
+private fun ComboBoxPopupColumn(contentSize: AuroraSize, content: @Composable () -> Unit) {
     Layout(content = content) { measurables, _ ->
         // The column width is determined by the widest child
         val contentTotalWidth = measurables.maxOf { it.maxIntrinsicWidth(Int.MAX_VALUE) }
@@ -640,6 +643,8 @@ private fun ComboBoxPopupColumn(content: @Composable () -> Unit) {
 
         // The children are laid out in a column
         val contentMaxHeight = placeables.sumBy { it.height }
+        contentSize.width = contentTotalWidth
+        contentSize.height = contentMaxHeight
 
         layout(width = contentTotalWidth, height = contentMaxHeight) {
             var yPosition = 0
