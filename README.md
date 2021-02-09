@@ -22,7 +22,7 @@ Add the latest Kotlin and Compose Desktop dependencies:
 ```kotlin
 plugins {
     kotlin("jvm") version "1.4.30"
-    id("org.jetbrains.compose") version "0.3.0-build150"
+    id("org.jetbrains.compose") version "0.3.0-build152"
 }
 ```
 
@@ -35,9 +35,9 @@ Add Aurora dependencies:
 
 ```
 dependencies {
-    api("org.pushing-pixels:aurora-skin:0.0.5-SNAPSHOT")
-    api("org.pushing-pixels:aurora-component:0.0.5-SNAPSHOT")
-    api("org.pushing-pixels:aurora-window:0.0.5-SNAPSHOT")
+    api("org.pushing-pixels:aurora-skin:0.0.6-SNAPSHOT")
+    api("org.pushing-pixels:aurora-component:0.0.6-SNAPSHOT")
+    api("org.pushing-pixels:aurora-window:0.0.6-SNAPSHOT")
     implementation(compose.desktop.currentOs)
 }
 ```
