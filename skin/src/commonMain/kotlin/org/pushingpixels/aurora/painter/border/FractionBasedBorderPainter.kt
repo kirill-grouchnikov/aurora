@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
+import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.painter.ColorQueryStop
 import org.pushingpixels.aurora.painter.FractionBasedPainter
 
@@ -77,4 +78,28 @@ class FractionBasedBorderPainter(
 
     override val isPaintingInnerOutline: Boolean
         get() = false
+
+    override fun getRepresentativeColor(borderScheme: AuroraColorScheme): Color {
+        val fractions = getFractions()
+        val colorQueries = getColorQueries()
+        for (i in 0 until colorQueries.size - 1) {
+            val fractionLow = fractions[i]
+            val fractionHigh = fractions[i + 1]
+            if (fractionLow == 0.5f) {
+                return colorQueries[i].invoke(borderScheme)
+            }
+            if (fractionHigh == 0.5f) {
+                return colorQueries[i + 1].invoke(borderScheme)
+            }
+            if (fractionLow < 0.5f || fractionHigh > 0.5f) {
+                continue
+            }
+            // current range contains 0.5f
+            val colorLow: Color = colorQueries[i].invoke(borderScheme)
+            val colorHigh: Color = colorQueries[i + 1].invoke(borderScheme)
+            val colorLowLikeness = (0.5f - fractionLow) / (fractionHigh - fractionLow)
+            return colorLow.interpolateTowards(colorHigh, colorLowLikeness)
+        }
+        throw IllegalStateException("Could not find representative color")
+    }
 }

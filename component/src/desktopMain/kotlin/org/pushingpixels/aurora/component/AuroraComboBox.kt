@@ -38,8 +38,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.DrawStyle
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerMoveFilter
@@ -548,6 +553,12 @@ private fun <E> ComboBoxPopupContent(
     displayConverter: (E) -> String,
     onItemSelected: (E) -> Unit,
 ) {
+    val borderScheme = AuroraSkin.colors.getColorScheme(
+        decorationAreaType = DecorationAreaType.NONE,
+        associationKind = ColorSchemeAssociationKind.BORDER,
+        componentState = ComponentState.ENABLED
+    )
+    val popupBorderColor = AuroraSkin.painters.borderPainter.getRepresentativeColor(borderScheme)
     val density = LocalDensity.current.density
     val contentSize = AuroraSize(0, 0)
     Box(
@@ -614,6 +625,19 @@ private fun <E> ComboBoxPopupContent(
             window.validate()
         }
     ) {
+        Canvas(Modifier.matchParentSize()) {
+            val outline = Outline.Rectangle(
+                rect = Rect(
+                    left = 0.5f, top = 0.5f,
+                    right = size.width - 0.5f, bottom = size.height - 0.5f
+                )
+            )
+            drawOutline(
+                outline = outline,
+                color = popupBorderColor,
+                style = Stroke(width = 1.0f)
+            )
+        }
         ComboBoxPopupColumn(contentSize = contentSize) {
             for (item in items) {
                 AuroraMenuButton(

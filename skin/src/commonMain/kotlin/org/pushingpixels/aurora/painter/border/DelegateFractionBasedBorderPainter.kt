@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.common.HashMapKey
+import org.pushingpixels.aurora.common.interpolateTowards
 
 /**
  * Delegate border painter that allows tweaking the visual appearance of borders.
@@ -109,6 +110,75 @@ class DelegateFractionBasedBorderPainter(
             transformMap[key] = result
         }
         return result
+    }
+
+    override fun getRepresentativeColor(borderScheme: AuroraColorScheme): Color {
+        val fractions = delegate.getFractions()
+        val colorQueries = delegate.getColorQueries()
+
+        for (i in 0 until fractions.size - 1) {
+            val fractionLow = fractions[i]
+            val fractionHigh = fractions[i + 1]
+            if (fractionLow == 0.5f) {
+                // Get the matching color
+                val transformed = colorQueries[i].invoke(borderScheme)
+                // Transform to an ARGB integer
+                val transformedArgb = (
+                        ((transformed.alpha * 255.0f + 0.5f).toInt() shl 24) or
+                                ((transformed.red * 255.0f + 0.5f).toInt() shl 16) or
+                                ((transformed.green * 255.0f + 0.5f).toInt() shl 8) or
+                                (transformed.blue * 255.0f + 0.5f).toInt()
+                        )
+                // And apply the mask
+                return Color(value = (transformedArgb.toULong() and masks[i].toULong()) shl 32)
+            }
+            if (fractionHigh == 0.5f) {
+                // Get the matching color
+                val transformed = colorQueries[i + 1].invoke(borderScheme)
+                // Transform to an ARGB integer
+                val transformedArgb = (
+                        ((transformed.alpha * 255.0f + 0.5f).toInt() shl 24) or
+                                ((transformed.red * 255.0f + 0.5f).toInt() shl 16) or
+                                ((transformed.green * 255.0f + 0.5f).toInt() shl 8) or
+                                (transformed.blue * 255.0f + 0.5f).toInt()
+                        )
+                // And apply the mask
+                return Color(value = (transformedArgb.toULong() and masks[i + 1].toULong()) shl 32)
+            }
+            if (fractionLow < 0.5f || fractionHigh > 0.5f) {
+                continue
+            }
+            // current range contains 0.5f
+
+            // Get the matching low color
+            val transformedLow = colorQueries[i].invoke(borderScheme)
+            // Transform to an ARGB integer
+            val transformedLowArgb = (
+                    ((transformedLow.alpha * 255.0f + 0.5f).toInt() shl 24) or
+                            ((transformedLow.red * 255.0f + 0.5f).toInt() shl 16) or
+                            ((transformedLow.green * 255.0f + 0.5f).toInt() shl 8) or
+                            (transformedLow.blue * 255.0f + 0.5f).toInt()
+                    )
+            // And apply the mask
+            val colorLow = Color(value = (transformedLowArgb.toULong() and masks[i].toULong()) shl 32)
+
+            // Get the matching high color
+            val transformedHigh = colorQueries[i + 1].invoke(borderScheme)
+            // Transform to an ARGB integer
+            val transformedHighArgb = (
+                    ((transformedHigh.alpha * 255.0f + 0.5f).toInt() shl 24) or
+                            ((transformedHigh.red * 255.0f + 0.5f).toInt() shl 16) or
+                            ((transformedHigh.green * 255.0f + 0.5f).toInt() shl 8) or
+                            (transformedHigh.blue * 255.0f + 0.5f).toInt()
+                    )
+            // And apply the mask
+            val colorHigh = Color(value = (transformedHighArgb.toULong() and masks[i + 1].toULong()) shl 32)
+
+            val colorLowLikeness = (0.5f - fractionLow) / (fractionHigh - fractionLow)
+            return colorLow.interpolateTowards(colorHigh, colorLowLikeness)
+        }
+        throw IllegalStateException("Could not find representative color")
+
     }
 
     companion object {

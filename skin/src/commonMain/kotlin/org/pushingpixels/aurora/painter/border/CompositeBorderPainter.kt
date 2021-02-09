@@ -30,6 +30,7 @@
 package org.pushingpixels.aurora.painter.border
 
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
@@ -60,5 +61,9 @@ class CompositeBorderPainter(
             inner.paintBorder(drawScope, size, outlineInner, null, borderScheme, alpha)
         }
         outer.paintBorder(drawScope, size, outline, null, borderScheme, alpha)
+    }
+
+    override fun getRepresentativeColor(borderScheme: AuroraColorScheme): Color {
+        return outer.getRepresentativeColor(borderScheme)
     }
 }

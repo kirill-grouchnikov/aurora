@@ -101,4 +101,9 @@ class DelegateBorderPainter(
             transform.invoke(borderScheme), alpha
         )
     }
+
+    override fun getRepresentativeColor(borderScheme: AuroraColorScheme): Color {
+        // TODO: cache the transformed scheme
+        return super.getRepresentativeColor(transform.invoke(borderScheme))
+    }
 }

@@ -96,4 +96,8 @@ open class StandardBorderPainter : AuroraBorderPainter {
     open fun getBottomBorderColor(borderScheme: AuroraColorScheme): Color {
         return borderScheme.darkColor.interpolateTowards(borderScheme.midColor, 0.5f)
     }
+
+    override fun getRepresentativeColor(borderScheme: AuroraColorScheme): Color {
+        return this.getMidBorderColor(borderScheme)
+    }
 }

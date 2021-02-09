@@ -30,6 +30,7 @@
 package org.pushingpixels.aurora.painter.border
 
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import org.pushingpixels.aurora.AuroraTrait
@@ -46,4 +47,6 @@ interface AuroraBorderPainter: AuroraTrait {
     )
 
     val isPaintingInnerOutline: Boolean
+
+    fun getRepresentativeColor(borderScheme: AuroraColorScheme): Color
 }
