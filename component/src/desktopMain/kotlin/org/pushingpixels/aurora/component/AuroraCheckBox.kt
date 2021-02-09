@@ -379,7 +379,7 @@ private fun AuroraCheckBox(
         ) {
             Row(
                 Modifier
-                    .defaultMinSizeConstraints(minWidth = 0.dp, minHeight = CheckBoxConstants.CheckboxSize)
+                    .requiredSizeIn(minWidth = 0.dp, minHeight = CheckBoxConstants.CheckboxSize)
                     .padding(CheckBoxConstants.DefaultCheckBoxContentPadding),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,

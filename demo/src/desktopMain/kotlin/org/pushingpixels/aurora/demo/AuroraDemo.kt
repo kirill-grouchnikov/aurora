@@ -229,7 +229,7 @@ fun DemoToolbar(
         }
 
         Spacer(modifier = Modifier.width(4.dp))
-        AuroraVerticalSeparator(modifier = Modifier.preferredHeight(20.dp))
+        AuroraVerticalSeparator(modifier = Modifier.height(20.dp))
         Spacer(modifier = Modifier.width(4.dp))
 
         AuroraToggleButton(
@@ -282,7 +282,7 @@ fun DemoToolbar(
         }
 
         Spacer(modifier = Modifier.width(4.dp))
-        AuroraVerticalSeparator(modifier = Modifier.preferredHeight(20.dp))
+        AuroraVerticalSeparator(modifier = Modifier.height(20.dp))
         Spacer(modifier = Modifier.width(4.dp))
 
         AuroraToggleButton(

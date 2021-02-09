@@ -30,7 +30,7 @@
 package org.pushingpixels.aurora.icon
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.preferredSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.DrawModifier
@@ -91,7 +91,7 @@ fun AuroraIcon(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier.preferredSize(
+        modifier.size(
             width = icon.getWidth().dp,
             height = icon.getHeight().dp
         ).auroraIconPaint(icon)

@@ -30,7 +30,7 @@
 package org.pushingpixels.aurora.icon
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.preferredSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.CombinedModifier
@@ -113,7 +113,7 @@ fun AuroraThemedIcon(
         when (disabledFilterStrategy) {
             IconFilterStrategy.ORIGINAL ->
                 Box(
-                    modifier.preferredSize(
+                    modifier.size(
                         width = icon.getWidth().dp,
                         height = icon.getHeight().dp
                     ).auroraIconPaint(icon)
@@ -122,14 +122,14 @@ fun AuroraThemedIcon(
                 // For disabled states, the text color already accounts for the
                 // disabled state alpha under the current skin configuration
                 Box(
-                    modifier.preferredSize(
+                    modifier.size(
                         width = icon.getWidth().dp,
                         height = icon.getHeight().dp
                     ).auroraThemedIconPaint(iconBitmap, textColor, 1.0f)
                 )
             IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME ->
                 Box(
-                    modifier.preferredSize(
+                    modifier.size(
                         width = icon.getWidth().dp,
                         height = icon.getHeight().dp
                     ).auroraThemedIconPaint(
@@ -146,7 +146,7 @@ fun AuroraThemedIcon(
             (activeFilterStrategy == IconFilterStrategy.ORIGINAL)
         ) {
             Box(
-                modifier.preferredSize(
+                modifier.size(
                     width = icon.getWidth().dp,
                     height = icon.getHeight().dp
                 ).auroraIconPaint(icon)
@@ -204,7 +204,7 @@ fun AuroraThemedIcon(
                 CombinedModifier(enabledIconModifier, activeIconModifier)
 
             Box(
-                modifier.preferredSize(
+                modifier.size(
                     width = icon.getWidth().dp,
                     height = icon.getHeight().dp
                 ).then(iconModifier)

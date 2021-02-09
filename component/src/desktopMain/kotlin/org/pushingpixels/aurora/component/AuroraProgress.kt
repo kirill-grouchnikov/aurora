@@ -31,7 +31,7 @@ package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.preferredSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.progressSemantics
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -98,7 +98,7 @@ fun AuroraCircularProgress(
     Canvas(
         modifier
             .progressSemantics()
-            .preferredSize(10.dp)
+            .size(10.dp)
     ) {
         val isArcGrowing = (arcSpan > prevArcSpan.value)
         if (isArcGrowing) {
@@ -202,7 +202,7 @@ fun AuroraIndeterminateLinearProgress(
     Canvas(
         modifier
             .progressSemantics()
-            .preferredSize(
+            .size(
                 width = ProgressConstants.DefaultWidth,
                 height = ProgressConstants.DefaultHeight
             )
@@ -308,7 +308,7 @@ fun AuroraDeterminateLinearProgress(
     Canvas(
         modifier
             .progressSemantics()
-            .preferredSize(
+            .size(
                 width = ProgressConstants.DefaultWidth,
                 height = ProgressConstants.DefaultHeight
             )

@@ -367,7 +367,7 @@ private fun AuroraRadioButton(
         ) {
             Row(
                 Modifier
-                    .defaultMinSizeConstraints(minWidth = 0.dp, minHeight = RadioButtonConstants.RadioButtonSize)
+                    .requiredSizeIn(minWidth = 0.dp, minHeight = RadioButtonConstants.RadioButtonSize)
                     .padding(RadioButtonConstants.DefaultRadioButtonContentPadding),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,

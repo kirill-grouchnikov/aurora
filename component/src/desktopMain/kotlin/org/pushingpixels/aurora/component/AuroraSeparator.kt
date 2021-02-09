@@ -30,7 +30,7 @@
 package org.pushingpixels.aurora.component
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.preferredWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -53,7 +53,7 @@ fun AuroraVerticalSeparator(
         componentState = if (enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
     )
 
-    Canvas(modifier.preferredWidth(2.0f.dp)) {
+    Canvas(modifier.width(2.0f.dp)) {
         val height = size.height
 
         if (height > 0.0f) {
