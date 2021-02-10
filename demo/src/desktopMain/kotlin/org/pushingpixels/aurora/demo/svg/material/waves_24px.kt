@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalDensity
@@ -265,38 +266,40 @@ alpha = alphaStack.removeAt(0)
 
     override fun paintIcon(drawScope: DrawScope) {
         with(drawScope) {
-            // Use the original icon bounding box and the current icon dimension to compute
-            // the scaling factor
-            val fullOrigWidth = getOrigX() + getOrigWidth()
-            val fullOrigHeight = getOrigY() + getOrigHeight()
-            val coef1 = _width / fullOrigWidth
-            val coef2 = _height / fullOrigHeight
-            val coef = min(coef1, coef2).toFloat()
-            val coefDp = coef.dp.toPx()
+            clipRect {
+                // Use the original icon bounding box and the current icon dimension to compute
+                // the scaling factor
+                val fullOrigWidth = getOrigX() + getOrigWidth()
+                val fullOrigHeight = getOrigY() + getOrigHeight()
+                val coef1 = _width / fullOrigWidth
+                val coef2 = _height / fullOrigHeight
+                val coef = min(coef1, coef2).toFloat()
+                val coefDp = coef.dp.toPx()
 
-            // Use the original icon bounding box and the current icon dimension to compute
-            // the offset pivot for the scaling
-            var translateX = -getOrigX()
-            var translateY = -getOrigY()
-            if (coef1 != coef2) {
-                if (coef1 < coef2) {
-                    val extraDy = ((fullOrigWidth - fullOrigHeight) / 2.0f).toFloat()
-                    translateY += extraDy
-                } else {
-                    val extraDx = ((fullOrigHeight - fullOrigWidth) / 2.0f).toFloat()
-                    translateX += extraDx
+                // Use the original icon bounding box and the current icon dimension to compute
+                // the offset pivot for the scaling
+                var translateX = -getOrigX()
+                var translateY = -getOrigY()
+                if (coef1 != coef2) {
+                    if (coef1 < coef2) {
+                        val extraDy = ((fullOrigWidth - fullOrigHeight) / 2.0f).toFloat()
+                        translateY += extraDy
+                    } else {
+                        val extraDx = ((fullOrigHeight - fullOrigWidth) / 2.0f).toFloat()
+                        translateX += extraDx
+                    }
                 }
-            }
-            val translateXDp = translateX.toFloat().toDp().value
-            val translateYDp = translateY.toFloat().toDp().value
+                val translateXDp = translateX.toFloat().toDp().value
+                val translateYDp = translateY.toFloat().toDp().value
 
-            // Create a combined scale + translate + clip transform before calling the transcoded painting instructions
-            withTransform({
-                scale(scaleX = coefDp, scaleY = coefDp, pivot = Offset.Zero)
-                translate(translateXDp, translateYDp)
-                clipRect(left = 0.0f, top = 0.0f, right = fullOrigWidth.toFloat(), bottom = fullOrigHeight.toFloat(), clipOp = ClipOp.Intersect)
-            }) {
-                innerPaint(this)
+                // Create a combined scale + translate + clip transform before calling the transcoded painting instructions
+                withTransform({
+                    scale(scaleX = coefDp, scaleY = coefDp, pivot = Offset.Zero)
+                    translate(translateXDp, translateYDp)
+                    clipRect(left = 0.0f, top = 0.0f, right = fullOrigWidth.toFloat(), bottom = fullOrigHeight.toFloat(), clipOp = ClipOp.Intersect)
+                }) {
+                    innerPaint(this)
+                }
             }
         }
     }
