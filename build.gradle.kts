@@ -1,9 +1,10 @@
 buildscript {
     repositories {
         google()
-        jcenter()
         mavenCentral()
+        maven("https://plugins.gradle.org/m2/")
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev")
     }
 
     dependencies {
@@ -17,10 +18,12 @@ buildscript {
 
 allprojects {
     repositories {
-        mavenLocal()
         google()
-        jcenter()
+        mavenCentral()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev")
+        // TODO - this is still needed for org.jetbrains.kotlinx:kotlinx-collections-immutable
+        maven("https://kotlin.bintray.com/kotlinx")
     }
 
     tasks.withType<Jar>().configureEach {
