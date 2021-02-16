@@ -34,9 +34,9 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
-import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
@@ -51,7 +51,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.collect
 import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.ColorSchemeAssociationKind
 import org.pushingpixels.aurora.ComponentState
@@ -136,26 +135,7 @@ private fun AuroraSlider(
 ) {
     val drawingCache = remember { SliderDrawingCache() }
     var rollover by remember { mutableStateOf(false) }
-    val interactions = remember { mutableStateListOf<Interaction>() }
-    LaunchedEffect(interactionSource) {
-        interactionSource.interactions.collect { interaction ->
-            when (interaction) {
-                is PressInteraction.Press -> {
-                    interactions.add(interaction)
-                }
-                is PressInteraction.Release -> {
-                    interactions.remove(interaction.press)
-                }
-                is PressInteraction.Cancel -> {
-                    interactions.remove(interaction.press)
-                }
-            }
-        }
-    }
-    val isPressed = when (interactions.lastOrNull()) {
-        is PressInteraction.Press -> true
-        else -> false
-    }
+    val isPressed by interactionSource.collectIsPressedAsState()
 
     val currentState = remember {
         mutableStateOf(

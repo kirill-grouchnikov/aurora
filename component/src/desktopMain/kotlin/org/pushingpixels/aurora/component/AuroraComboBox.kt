@@ -33,9 +33,8 @@ import androidx.compose.animation.core.*
 import androidx.compose.desktop.AppManager
 import androidx.compose.desktop.ComposePanel
 import androidx.compose.foundation.*
-import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.PressInteraction
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -46,7 +45,6 @@ import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawOutline
-import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
@@ -59,7 +57,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.collect
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.utils.*
 import java.awt.BorderLayout
@@ -149,26 +146,7 @@ private fun <E> AuroraComboBox(
     val drawingCache = remember { ComboBoxDrawingCache() }
 
     var rollover by remember { mutableStateOf(false) }
-    val interactions = remember { mutableStateListOf<Interaction>() }
-    LaunchedEffect(interactionSource) {
-        interactionSource.interactions.collect { interaction ->
-            when (interaction) {
-                is PressInteraction.Press -> {
-                    interactions.add(interaction)
-                }
-                is PressInteraction.Release -> {
-                    interactions.remove(interaction.press)
-                }
-                is PressInteraction.Cancel -> {
-                    interactions.remove(interaction.press)
-                }
-            }
-        }
-    }
-    val isPressed = when (interactions.lastOrNull()) {
-        is PressInteraction.Press -> true
-        else -> false
-    }
+    val isPressed by interactionSource.collectIsPressedAsState()
 
     val currentState = remember {
         mutableStateOf(
