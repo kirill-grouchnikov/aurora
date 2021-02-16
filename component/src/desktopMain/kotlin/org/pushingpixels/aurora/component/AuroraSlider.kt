@@ -31,11 +31,12 @@ package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Interaction
-import androidx.compose.foundation.InteractionState
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.interaction.Interaction
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
@@ -50,6 +51,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.collect
 import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.ColorSchemeAssociationKind
 import org.pushingpixels.aurora.ComponentState
@@ -98,7 +100,7 @@ fun AuroraSlider(
         tickSteps = tickSteps,
         snapToTicks = snapToTicks,
         drawTicks = drawTicks,
-        interactionState = remember { InteractionState() },
+        interactionSource = remember { MutableInteractionSource() }
     )
 }
 
@@ -130,11 +132,30 @@ private fun AuroraSlider(
     tickSteps: Int,
     snapToTicks: Boolean,
     drawTicks: Boolean,
-    interactionState: InteractionState,
+    interactionSource: MutableInteractionSource
 ) {
     val drawingCache = remember { SliderDrawingCache() }
     var rollover by remember { mutableStateOf(false) }
-    val isPressed = Interaction.Pressed in interactionState
+    val interactions = remember { mutableStateListOf<Interaction>() }
+    LaunchedEffect(interactionSource) {
+        interactionSource.interactions.collect { interaction ->
+            when (interaction) {
+                is PressInteraction.Press -> {
+                    interactions.add(interaction)
+                }
+                is PressInteraction.Release -> {
+                    interactions.remove(interaction.press)
+                }
+                is PressInteraction.Cancel -> {
+                    interactions.remove(interaction.press)
+                }
+            }
+        }
+    }
+    val isPressed = when (interactions.lastOrNull()) {
+        is PressInteraction.Press -> true
+        else -> false
+    }
 
     val currentState = remember {
         mutableStateOf(
@@ -189,6 +210,7 @@ private fun AuroraSlider(
     val dragStartX = remember { mutableStateOf(0.0f) }
     val cumulativeDragAmount = remember { mutableStateOf(0.0f) }
 
+    var press = remember {  mutableStateOf<PressInteraction.Press?>(null) }
     val drag = Modifier.draggable(
         state = rememberDraggableState {
             // Update the cumulative drag amount
@@ -211,7 +233,7 @@ private fun AuroraSlider(
         },
         orientation = Orientation.Horizontal,
         reverseDirection = false,
-        interactionState = interactionState,
+        interactionSource = interactionSource,
         startDragImmediately = true,
         onDragStarted = { pos ->
             // Reset the drag start position and cumulative drag amount
@@ -234,14 +256,15 @@ private fun AuroraSlider(
             onTriggerValueChange.invoke(newValue)
 
             // And add pressed state to the interaction
-            interactionState.addInteraction(Interaction.Pressed, pos)
+            press.value = PressInteraction.Press(pos)
+            interactionSource.emit(press.value!!)
         },
         onDragStopped = {
             // Update value change end lambda
             onValueChangeEnd.invoke()
 
             // And remove pressed state to the interaction
-            interactionState.removeInteraction(Interaction.Pressed)
+            interactionSource.emit(PressInteraction.Release(press.value!!))
         }
     )
 

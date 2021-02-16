@@ -31,8 +31,9 @@ package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Interaction
-import androidx.compose.foundation.InteractionState
+import androidx.compose.foundation.interaction.Interaction
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
@@ -46,6 +47,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.collect
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.utils.getBaseOutline
@@ -84,7 +86,7 @@ fun AuroraCheckBox(
         selected = selected,
         onTriggerSelectedChange = onTriggerSelectedChange,
         enabled = enabled,
-        interactionState = remember { InteractionState() },
+        interactionSource = remember { MutableInteractionSource() },
         content = content
     )
 }
@@ -95,12 +97,31 @@ private fun AuroraCheckBox(
     selected: Boolean,
     onTriggerSelectedChange: (Boolean) -> Unit,
     enabled: Boolean,
-    interactionState: InteractionState,
+    interactionSource: MutableInteractionSource,
     content: @Composable RowScope.() -> Unit
 ) {
     val drawingCache = remember { CheckBoxDrawingCache() }
     var rollover by remember { mutableStateOf(false) }
-    val isPressed = Interaction.Pressed in interactionState
+    val interactions = remember { mutableStateListOf<Interaction>() }
+    LaunchedEffect(interactionSource) {
+        interactionSource.interactions.collect { interaction ->
+            when (interaction) {
+                is PressInteraction.Press -> {
+                    interactions.add(interaction)
+                }
+                is PressInteraction.Release -> {
+                    interactions.remove(interaction.press)
+                }
+                is PressInteraction.Cancel -> {
+                    interactions.remove(interaction.press)
+                }
+            }
+        }
+    }
+    val isPressed = when (interactions.lastOrNull()) {
+        is PressInteraction.Press -> true
+        else -> false
+    }
 
     val currentState = remember {
         mutableStateOf(
@@ -236,7 +257,7 @@ private fun AuroraCheckBox(
                 },
                 enabled = enabled,
                 role = Role.Checkbox,
-                interactionState = interactionState,
+                interactionSource = interactionSource,
                 indication = null
             ),
         verticalAlignment = Alignment.CenterVertically

@@ -33,6 +33,9 @@ import androidx.compose.animation.core.*
 import androidx.compose.desktop.AppManager
 import androidx.compose.desktop.ComposePanel
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.Interaction
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -56,6 +59,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.collect
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.utils.*
 import java.awt.BorderLayout
@@ -126,7 +130,7 @@ fun <E> AuroraComboBox(
         selectedItem = selectedItem,
         displayConverter = displayConverter,
         onTriggerItemSelectedChange = onTriggerItemSelectedChange,
-        interactionState = remember { InteractionState() },
+        interactionSource = remember { MutableInteractionSource() }
     )
 }
 
@@ -140,12 +144,31 @@ private fun <E> AuroraComboBox(
     selectedItem: E,
     displayConverter: (E) -> String,
     onTriggerItemSelectedChange: (E) -> Unit,
-    interactionState: InteractionState,
+    interactionSource: MutableInteractionSource
 ) {
     val drawingCache = remember { ComboBoxDrawingCache() }
 
     var rollover by remember { mutableStateOf(false) }
-    val isPressed = Interaction.Pressed in interactionState
+    val interactions = remember { mutableStateListOf<Interaction>() }
+    LaunchedEffect(interactionSource) {
+        interactionSource.interactions.collect { interaction ->
+            when (interaction) {
+                is PressInteraction.Press -> {
+                    interactions.add(interaction)
+                }
+                is PressInteraction.Release -> {
+                    interactions.remove(interaction.press)
+                }
+                is PressInteraction.Cancel -> {
+                    interactions.remove(interaction.press)
+                }
+            }
+        }
+    }
+    val isPressed = when (interactions.lastOrNull()) {
+        is PressInteraction.Press -> true
+        else -> false
+    }
 
     val currentState = remember {
         mutableStateOf(
@@ -157,7 +180,6 @@ private fun <E> AuroraComboBox(
             )
         )
     }
-
 
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
@@ -327,7 +349,7 @@ private fun <E> AuroraComboBox(
                     jwindow.isVisible = true
                     jwindow.pack()
                 },
-                interactionState = interactionState,
+                interactionSource = interactionSource,
                 indication = null
             )
             .comboBoxLocator(auroraTopLeftOffset, auroraSize),

@@ -41,9 +41,14 @@ data class ModelStateInfoSnapshot(
     val activeStrength: Float
 )
 
-val LocalModelStateInfoSnapshot = staticCompositionLocalOf<ModelStateInfoSnapshot>()
+val LocalModelStateInfoSnapshot = staticCompositionLocalOf<ModelStateInfoSnapshot> {
+    error("LocalModelStateInfoSnapshot not provided")
+}
 
-val LocalTextColor = staticCompositionLocalOf<Color>()
+val LocalTextColor = staticCompositionLocalOf<Color> {
+    error("LocalTextColor not provided")
+}
+
 val LocalTextStyle = compositionLocalOf(structuralEqualityPolicy()) { TextStyle() }
 
 @Immutable
@@ -53,8 +58,16 @@ data class AnimationConfig(
 )
 
 val LocalAnimationConfig = staticCompositionLocalOf { AnimationConfig() }
-val LocalSkinColors = staticCompositionLocalOf<AuroraSkinColors>()
-val LocalButtonShaper  = staticCompositionLocalOf<AuroraButtonShaper>()
-val LocalPainters = staticCompositionLocalOf<Painters>()
-val LocalDecorationAreaType = staticCompositionLocalOf<DecorationAreaType>()
+val LocalSkinColors = staticCompositionLocalOf<AuroraSkinColors> {
+    error("LocalSkinColors not provided")
+}
+val LocalButtonShaper  = staticCompositionLocalOf<AuroraButtonShaper> {
+    error("LocalButtonShaper not provided")
+}
+val LocalPainters = staticCompositionLocalOf<Painters> {
+    error("LocalPainters not provided")
+}
+val LocalDecorationAreaType = staticCompositionLocalOf<DecorationAreaType> {
+    error("LocalDecorationAreaType not provided")
+}
 

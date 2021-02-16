@@ -31,9 +31,10 @@ package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Interaction
-import androidx.compose.foundation.InteractionState
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.Interaction
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
@@ -46,6 +47,7 @@ import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.collect
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.model.CommandActionPreview
 import org.pushingpixels.aurora.component.utils.*
@@ -95,7 +97,7 @@ fun AuroraToggleButton(
         backgroundAppearanceStrategy = backgroundAppearanceStrategy,
         sizingStrategy = sizingStrategy,
         contentPadding = contentPadding,
-        interactionState = remember { InteractionState() },
+        interactionSource = remember { MutableInteractionSource() },
         content = content
     )
 }
@@ -110,12 +112,32 @@ private fun AuroraToggleButton(
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     sizingStrategy: ButtonSizingStrategy,
     contentPadding: PaddingValues,
-    interactionState: InteractionState,
+    interactionSource: MutableInteractionSource,
     content: @Composable () -> Unit
 ) {
     val drawingCache = remember { ButtonDrawingCache() }
     var rollover by remember { mutableStateOf(false) }
-    val isPressed = Interaction.Pressed in interactionState
+
+    val interactions = remember { mutableStateListOf<Interaction>() }
+    LaunchedEffect(interactionSource) {
+        interactionSource.interactions.collect { interaction ->
+            when (interaction) {
+                is PressInteraction.Press -> {
+                    interactions.add(interaction)
+                }
+                is PressInteraction.Release -> {
+                    interactions.remove(interaction.press)
+                }
+                is PressInteraction.Cancel -> {
+                    interactions.remove(interaction.press)
+                }
+            }
+        }
+    }
+    val isPressed = when (interactions.lastOrNull()) {
+        is PressInteraction.Press -> true
+        else -> false
+    }
 
     val currentState = remember {
         mutableStateOf(
@@ -239,7 +261,7 @@ private fun AuroraToggleButton(
                 value = selected,
                 enabled = enabled,
                 role = Role.Button,
-                interactionState = interactionState,
+                interactionSource = interactionSource,
                 indication = null,
                 onValueChange = {
                     println("Triggering change!")
@@ -448,7 +470,7 @@ fun AuroraButton(
         sizingStrategy = sizingStrategy,
         contentPadding = contentPadding,
         horizontalArrangement = Arrangement.Center,
-        interactionState = remember { InteractionState() },
+        interactionSource = remember { MutableInteractionSource() },
         content = content
     )
 }
@@ -475,7 +497,7 @@ fun AuroraMenuButton(
         sizingStrategy = sizingStrategy,
         contentPadding = contentPadding,
         horizontalArrangement = Arrangement.Start,
-        interactionState = remember { InteractionState() },
+        interactionSource = remember { MutableInteractionSource() },
         content = content
     )
 }
@@ -491,13 +513,32 @@ private fun AuroraButton(
     sizingStrategy: ButtonSizingStrategy,
     contentPadding: PaddingValues,
     horizontalArrangement: Arrangement.Horizontal,
-    interactionState: InteractionState,
+    interactionSource: MutableInteractionSource,
     content: @Composable () -> Unit
 ) {
     val drawingCache = remember { ButtonDrawingCache() }
 
     var rollover by remember { mutableStateOf(false) }
-    val isPressed = Interaction.Pressed in interactionState
+    val interactions = remember { mutableStateListOf<Interaction>() }
+    LaunchedEffect(interactionSource) {
+        interactionSource.interactions.collect { interaction ->
+            when (interaction) {
+                is PressInteraction.Press -> {
+                    interactions.add(interaction)
+                }
+                is PressInteraction.Release -> {
+                    interactions.remove(interaction.press)
+                }
+                is PressInteraction.Cancel -> {
+                    interactions.remove(interaction.press)
+                }
+            }
+        }
+    }
+    val isPressed = when (interactions.lastOrNull()) {
+        is PressInteraction.Press -> true
+        else -> false
+    }
 
     val currentState = remember {
         mutableStateOf(
@@ -628,7 +669,7 @@ private fun AuroraButton(
             .clickable(
                 enabled = enabled,
                 onClick = onClick,
-                interactionState = interactionState,
+                interactionSource = interactionSource,
                 indication = null
             ),
         contentAlignment = Alignment.TopStart
