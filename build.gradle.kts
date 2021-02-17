@@ -24,6 +24,8 @@ allprojects {
         maven("https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev")
         // TODO - this is still needed for org.jetbrains.kotlinx:kotlinx-collections-immutable
         maven("https://kotlin.bintray.com/kotlinx")
+        // TODO - this is still needed for org.jetbrains:markdown:0.1.45 which is for Dokka
+        jcenter()
     }
 
     tasks.withType<Jar>().configureEach {
