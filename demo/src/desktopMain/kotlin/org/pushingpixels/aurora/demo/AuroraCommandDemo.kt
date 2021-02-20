@@ -38,15 +38,10 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.component.AuroraCheckBox
 import org.pushingpixels.aurora.component.AuroraText
-import org.pushingpixels.aurora.component.model.AuroraCommandButton
-import org.pushingpixels.aurora.component.model.Command
-import org.pushingpixels.aurora.component.model.CommandActionPreview
-import org.pushingpixels.aurora.component.model.CommandPresentationModel
+import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.demo.svg.tango.accessories_text_editor
 import org.pushingpixels.aurora.demo.svg.tango.computer
 import org.pushingpixels.aurora.skin.graphiteSkin
-import org.pushingpixels.aurora.skin.magellanSkin
-import org.pushingpixels.aurora.skin.nebulaBrickWallSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 
 fun main() {
@@ -63,12 +58,13 @@ fun main() {
 @Composable
 fun DemoCommandContent() {
     val contentEnabled = remember { mutableStateOf(true) }
+    val popupEnabled = remember { mutableStateOf(true) }
     val command1 = remember {
         Command(
             text = "One",
             iconFactory = accessories_text_editor.factory(),
-            enabled = contentEnabled,
             action = { println("One activated!") },
+            isActionEnabled = contentEnabled,
             actionPreview = object : CommandActionPreview {
                 override fun onCommandPreviewActivated(command: Command?) {
                     println("One preview activated!")
@@ -84,8 +80,42 @@ fun DemoCommandContent() {
         Command(
             text = "Two",
             iconFactory = computer.factory(),
-            enabled = contentEnabled,
-            action = { println("Two activated!") }
+            action = { println("Two activated!") },
+            isActionEnabled = contentEnabled
+        )
+    }
+    val command3 = remember {
+        Command(
+            text = "Split",
+            iconFactory = computer.factory(),
+            action = { println("Split activated!") },
+            isActionEnabled = contentEnabled,
+            isSecondaryEnabled = popupEnabled,
+            secondaryContentModel = CommandMenuContentModel(
+                CommandGroup(
+                    title = "Group",
+                    command = listOf(
+                        Command(
+                            text = "popup1",
+                            iconFactory = computer.factory(),
+                            action = { println("popup1 activated!") },
+                            isActionEnabled = contentEnabled
+                        ),
+                        Command(
+                            text = "popup2",
+                            iconFactory = computer.factory(),
+                            action = { println("popup2 activated!") },
+                            isActionEnabled = contentEnabled
+                        ),
+                        Command(
+                            text = "popup3",
+                            iconFactory = computer.factory(),
+                            action = { println("popup3 activated!") },
+                            isActionEnabled = contentEnabled
+                        )
+                    )
+                )
+            )
         )
     }
 
@@ -102,6 +132,9 @@ fun DemoCommandContent() {
         }
         Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(4.dp)) {
             AuroraCommandButton(command = command2, presentationModel = CommandPresentationModel())
+        }
+        Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(4.dp)) {
+            AuroraSplitButton(command = command3, presentationModel = CommandPresentationModel())
         }
     }
 }
