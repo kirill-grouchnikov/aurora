@@ -29,26 +29,29 @@
  */
 package org.pushingpixels.aurora.component.model
 
+import androidx.compose.animation.core.*
 import androidx.compose.desktop.AppManager
 import androidx.compose.desktop.ComposePanel
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.State
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
@@ -59,8 +62,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.*
-import org.pushingpixels.aurora.component.utils.AuroraOffset
-import org.pushingpixels.aurora.component.utils.AuroraSize
+import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.icon.AuroraThemedIcon
 import java.awt.BorderLayout
@@ -96,6 +98,7 @@ data class Command(
     val actionPreview: CommandActionPreview? = null,
     var isActionEnabled: State<Boolean>,
     var isActionToggle: Boolean = false,
+    var isActionToggleSelected: Boolean = false,
     val secondaryContentModel: CommandMenuContentModel? = null,
     var isSecondaryEnabled: State<Boolean>? = null
 )
@@ -144,13 +147,58 @@ fun AuroraCommandButton(
     )
 }
 
+@Immutable
+private class SplitButtonDrawingCache(
+    val colorScheme: MutableColorScheme = MutableColorScheme(
+        displayName = "Internal mutable",
+        isDark = false,
+        ultraLight = Color.White,
+        extraLight = Color.White,
+        light = Color.White,
+        mid = Color.White,
+        dark = Color.White,
+        ultraDark = Color.White,
+        foreground = Color.Black
+    )
+)
+
 @Composable
 fun AuroraSplitButton(
     command: Command,
     presentationModel: CommandPresentationModel
 ) {
+    val drawingCache = remember { SplitButtonDrawingCache() }
+
     val actionInteractionSource = remember { MutableInteractionSource() }
     val popupInteractionSource = remember { MutableInteractionSource() }
+
+    var actionRollover by remember { mutableStateOf(false) }
+    var popupRollover by remember { mutableStateOf(false) }
+    var combinedRollover = derivedStateOf { actionRollover and popupRollover }
+
+    val isActionPressed by actionInteractionSource.collectIsPressedAsState()
+    val isPopupPressed by popupInteractionSource.collectIsPressedAsState()
+
+    val currentActionState = remember {
+        mutableStateOf(
+            ComponentState.getState(
+                isEnabled = command.isActionEnabled.value,
+                isRollover = actionRollover,
+                isSelected = command.isActionToggle and command.isActionToggleSelected,
+                isPressed = isActionPressed
+            )
+        )
+    }
+    val currentPopupState = remember {
+        mutableStateOf(
+            ComponentState.getState(
+                isEnabled = command.isSecondaryEnabled?.value ?: false,
+                isRollover = popupRollover,
+                isSelected = false,
+                isPressed = isPopupPressed
+            )
+        )
+    }
 
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
@@ -162,32 +210,336 @@ fun AuroraSplitButton(
     val density = LocalDensity.current.density
     val layoutDirection = LocalLayoutDirection.current
 
-    Layout(modifier = Modifier.background(Color.Green),
+    // Transition for the action selection state
+    val actionSelectionTransition = updateTransition(command.isActionToggle and command.isActionToggleSelected)
+    val actionSelectedFraction by actionSelectionTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // Transition for the action rollover state
+    val actionRolloverTransition = updateTransition(actionRollover)
+    val actionRolloverFraction by actionRolloverTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // Transition for the action pressed state
+    val actionPressedTransition = updateTransition(isActionPressed)
+    val actionPressedFraction by actionPressedTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // Transition for the action enabled state
+    val actionEnabledTransition = updateTransition(command.isActionEnabled.value)
+    val actionEnabledFraction by actionEnabledTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // TODO - figure out why the animations are not running without looking
+    //  at the result (and how it looks like in the new animation APIs)
+    val actionTotalFraction = actionSelectedFraction + actionRolloverFraction +
+            actionPressedFraction + actionEnabledFraction
+
+    val actionModelStateInfo = remember { ModelStateInfo(currentActionState.value) }
+    val actionTransitionInfo = remember { mutableStateOf<TransitionInfo?>(null) }
+
+    StateTransitionTracker(
+        modelStateInfo = actionModelStateInfo,
+        currentState = currentActionState,
+        transitionInfo = actionTransitionInfo,
+        enabled = command.isActionEnabled.value,
+        selected = command.isActionToggle and command.isActionToggleSelected,
+        rollover = actionRollover,
+        pressed = isActionPressed,
+        duration = AuroraSkin.animationConfig.regular
+    )
+
+    if (actionTransitionInfo.value != null) {
+        LaunchedEffect(currentActionState.value) {
+            val transitionFloat = Animatable(actionTransitionInfo.value!!.from)
+            val result = transitionFloat.animateTo(
+                targetValue = actionTransitionInfo.value!!.to,
+                animationSpec = tween(durationMillis = actionTransitionInfo.value!!.duration)
+            ) {
+                actionModelStateInfo.updateActiveStates(value)
+            }
+
+            if (result.endReason == AnimationEndReason.Finished) {
+                actionModelStateInfo.updateActiveStates(1.0f)
+                actionModelStateInfo.clear(currentActionState.value)
+            }
+        }
+    }
+
+    // Transition for the popup selection state
+    val popupSelectionTransition = updateTransition(false)
+    val popupSelectedFraction by popupSelectionTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // Transition for the popup rollover state
+    val popupRolloverTransition = updateTransition(popupRollover)
+    val popupRolloverFraction by popupRolloverTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // Transition for the popup pressed state
+    val popupPressedTransition = updateTransition(isPopupPressed)
+    val popupPressedFraction by popupPressedTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // Transition for the popup enabled state
+    val popupEnabledTransition = updateTransition(command.isSecondaryEnabled?.value ?: false)
+    val popupEnabledFraction by popupEnabledTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // TODO - figure out why the animations are not running without looking
+    //  at the result (and how it looks like in the new animation APIs)
+    val totalPopupFraction = popupSelectedFraction + popupRolloverFraction +
+            popupPressedFraction + popupEnabledFraction
+
+    val popupModelStateInfo = remember { ModelStateInfo(currentPopupState.value) }
+    val popupTransitionInfo = remember { mutableStateOf<TransitionInfo?>(null) }
+
+    StateTransitionTracker(
+        modelStateInfo = popupModelStateInfo,
+        currentState = currentPopupState,
+        transitionInfo = popupTransitionInfo,
+        enabled = command.isSecondaryEnabled?.value ?: false,
+        selected = false,
+        rollover = popupRollover,
+        pressed = isPopupPressed,
+        duration = AuroraSkin.animationConfig.regular
+    )
+
+    if (popupTransitionInfo.value != null) {
+        LaunchedEffect(currentPopupState.value) {
+            val transitionFloat = Animatable(popupTransitionInfo.value!!.from)
+            val result = transitionFloat.animateTo(
+                targetValue = popupTransitionInfo.value!!.to,
+                animationSpec = tween(durationMillis = popupTransitionInfo.value!!.duration)
+            ) {
+                popupModelStateInfo.updateActiveStates(value)
+            }
+
+            if (result.endReason == AnimationEndReason.Finished) {
+                popupModelStateInfo.updateActiveStates(1.0f)
+                popupModelStateInfo.clear(currentPopupState.value)
+            }
+        }
+    }
+
+    Layout(
         content = {
             Box(
                 modifier = Modifier
                     .size(width = 100.dp, height = 24.dp)
+                    // TODO - this needs to be toggleable for toggleable action
                     .clickable(
                         enabled = command.isActionEnabled.value,
                         onClick = command.action,
                         interactionSource = actionInteractionSource,
                         indication = null
                     )
+                    .pointerMoveFilter(
+                        onEnter = {
+                            actionRollover = true
+                            false
+                        },
+                        onExit = {
+                            actionRollover = false
+                            false
+                        },
+                        onMove = {
+                            false
+                        })
                     .splitButtonLocator(auroraTopLeftOffset, auroraSize)
             ) {
+                // Compute the action text color
+                // TODO - this can be in the popup area
+                val textColor = getTextColor(
+                    modelStateInfo = actionModelStateInfo,
+                    currState = currentActionState.value,
+                    skinColors = skinColors,
+                    decorationAreaType = decorationAreaType,
+                    isTextInFilledArea = true
+                )
+
+                // Populate the cached color scheme for filling the button container
+                // based on the current model state info
+                populateColorScheme(
+                    drawingCache.colorScheme,
+                    actionModelStateInfo, currentActionState.value, decorationAreaType,
+                    ColorSchemeAssociationKind.FILL
+                )
+                // And retrieve the container fill colors
+                val fillUltraLight = drawingCache.colorScheme.ultraLightColor
+                val fillExtraLight = drawingCache.colorScheme.extraLightColor
+                val fillLight = drawingCache.colorScheme.lightColor
+                val fillMid = drawingCache.colorScheme.midColor
+                val fillDark = drawingCache.colorScheme.darkColor
+                val fillUltraDark = drawingCache.colorScheme.ultraDarkColor
+                val fillIsDark = drawingCache.colorScheme.isDark
+
+                // Populate the cached color scheme for drawing the button border
+                // based on the current model state info
+                populateColorScheme(
+                    drawingCache.colorScheme, actionModelStateInfo, currentActionState.value, decorationAreaType,
+                    ColorSchemeAssociationKind.BORDER
+                )
+                // And retrieve the border colors
+                val borderUltraLight = drawingCache.colorScheme.ultraLightColor
+                val borderExtraLight = drawingCache.colorScheme.extraLightColor
+                val borderLight = drawingCache.colorScheme.lightColor
+                val borderMid = drawingCache.colorScheme.midColor
+                val borderDark = drawingCache.colorScheme.darkColor
+                val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
+                val borderIsDark = drawingCache.colorScheme.isDark
+
+                val fillPainter = painters.fillPainter
+                val borderPainter = painters.borderPainter
+
+                // TODO: handle action alpha
+                val alpha: Float = 1.0f
+
                 Canvas(modifier = Modifier.matchParentSize()) {
-                    drawOutline(
-                        outline = Outline.Rectangle(
-                            rect = Rect(
-                                left = 0.0f, top = 0.0f,
-                                right = size.width, bottom = size.height
-                            )
-                        ), color = Color.Red, style = Fill
-                    )
+//                    drawOutline(
+//                        outline = Outline.Rectangle(
+//                            rect = Rect(
+//                                left = 0.0f, top = 0.0f,
+//                                right = size.width, bottom = size.height
+//                            )
+//                        ), color = Color.Red, style = Fill
+//                    )
+                    val width = this.size.width
+                    val height = this.size.height
+                    // TODO - revisit this
+                    val sides = ButtonSides(openSides = setOf(Side.END),
+                        straightSides = setOf(Side.END))
+
+                    val openDelta = 3
+                    // TODO - add RTL support
+                    val deltaLeft = if (sides.openSides.contains(Side.START)) openDelta else 0
+                    val deltaRight = if (sides.openSides.contains(Side.END)) openDelta else 0
+                    val deltaTop = if (sides.openSides.contains(Side.TOP)) openDelta else 0
+                    val deltaBottom = if (sides.openSides.contains(Side.BOTTOM)) openDelta else 0
+
+                    withTransform({
+                        clipRect(left = 0.0f, top = 0.0f, right = width, bottom = height, clipOp = ClipOp.Intersect)
+                        translate(left = -deltaLeft.toFloat(), top = -deltaTop.toFloat())
+                    }) {
+                        val outline = buttonShaper.getButtonOutline(
+                            width = width + deltaLeft + deltaRight,
+                            height = height + deltaTop + deltaBottom,
+                            extraInsets = 0.5f,
+                            isInner = false,
+                            sides = sides,
+                            drawScope = this
+                        )
+
+                        val outlineBoundingRect = outline.bounds
+                        if (outlineBoundingRect.isEmpty) {
+                            return@withTransform
+                        }
+
+                        // Populate the cached color scheme for filling the button container
+                        drawingCache.colorScheme.ultraLight = fillUltraLight
+                        drawingCache.colorScheme.extraLight = fillExtraLight
+                        drawingCache.colorScheme.light = fillLight
+                        drawingCache.colorScheme.mid = fillMid
+                        drawingCache.colorScheme.dark = fillDark
+                        drawingCache.colorScheme.ultraDark = fillUltraDark
+                        drawingCache.colorScheme.isDark = fillIsDark
+                        drawingCache.colorScheme.foreground = textColor
+                        fillPainter.paintContourBackground(
+                            this, this.size, outline, drawingCache.colorScheme, alpha
+                        )
+
+                        // Populate the cached color scheme for drawing the button border
+                        drawingCache.colorScheme.ultraLight = borderUltraLight
+                        drawingCache.colorScheme.extraLight = borderExtraLight
+                        drawingCache.colorScheme.light = borderLight
+                        drawingCache.colorScheme.mid = borderMid
+                        drawingCache.colorScheme.dark = borderDark
+                        drawingCache.colorScheme.ultraDark = borderUltraDark
+                        drawingCache.colorScheme.isDark = borderIsDark
+                        drawingCache.colorScheme.foreground = textColor
+
+                        val innerOutline = if (borderPainter.isPaintingInnerOutline)
+                            buttonShaper.getButtonOutline(
+                                width = width + deltaLeft + deltaRight,
+                                height = height + deltaTop + deltaBottom,
+                                extraInsets = 1.0f,
+                                isInner = true,
+                                sides = sides,
+                                drawScope = this
+                            ) else null
+
+                        borderPainter.paintBorder(
+                            this, this.size, outline, innerOutline, drawingCache.colorScheme, alpha
+                        )
+                    }
                 }
                 // Pass our text color and model state snapshot to the children
                 CompositionLocalProvider(
-                    LocalTextColor provides Color.Black,
+                    LocalTextColor provides textColor,
                     LocalModelStateInfoSnapshot provides ModelStateInfoSnapshot(
                         currModelState = ComponentState.ENABLED,
                         stateContributionMap = emptyMap(),
@@ -198,70 +550,213 @@ fun AuroraSplitButton(
                 }
             }
             Box(
-                modifier = Modifier.clickable(
-                    enabled = command.isSecondaryEnabled?.value ?: false,
-                    onClick = {
-                        // TODO - move off of JWindow when https://github.com/JetBrains/compose-jb/issues/195
-                        //  is addressed
-                        val jwindow = AuroraPopupWindow()
-                        jwindow.focusableWindowState = false
-                        jwindow.type = Window.Type.POPUP
-                        jwindow.isAlwaysOnTop = true
+                modifier = Modifier
+                    .size(width = 20.dp, height = 24.dp)
+                    .clickable(
+                        enabled = command.isSecondaryEnabled?.value ?: false,
+                        onClick = {
+                            // TODO - move off of JWindow when https://github.com/JetBrains/compose-jb/issues/195
+                            //  is addressed
+                            val jwindow = AuroraPopupWindow()
+                            jwindow.focusableWindowState = false
+                            jwindow.type = Window.Type.POPUP
+                            jwindow.isAlwaysOnTop = true
 
-                        // TODO - hopefully temporary. Mark the popup window as fully transparent
-                        //  so that when it is globally positioned, we can size it to the actual
-                        //  content and make it fully opaque
-                        jwindow.opacity = 0.0f
+                            // TODO - hopefully temporary. Mark the popup window as fully transparent
+                            //  so that when it is globally positioned, we can size it to the actual
+                            //  content and make it fully opaque
+                            jwindow.opacity = 0.0f
 
-                        val auroraWindow = AppManager.focusedWindow!!.window
-                        val locationOnScreen = auroraWindow.locationOnScreen
+                            val auroraWindow = AppManager.focusedWindow!!.window
+                            val locationOnScreen = auroraWindow.locationOnScreen
 
-                        // anchor the popup window to the bottom left corner of the component
-                        // in screen coordinates
-                        // TODO - figure out the sizing (see above)
-                        jwindow.setBounds(
-                            (locationOnScreen.x + auroraTopLeftOffset.x / density).toInt(),
-                            (locationOnScreen.y + auroraTopLeftOffset.y / density).toInt(),
-                            1000,
-                            1000
+                            // anchor the popup window to the bottom left corner of the component
+                            // in screen coordinates
+                            // TODO - figure out the sizing (see above)
+                            jwindow.setBounds(
+                                (locationOnScreen.x + auroraTopLeftOffset.x / density).toInt(),
+                                (locationOnScreen.y + auroraTopLeftOffset.y / density).toInt(),
+                                1000,
+                                1000
+                            )
+
+                            val popupContent = ComposePanel()
+                            popupContent.setContent {
+                                CompositionLocalProvider(
+                                    LocalDecorationAreaType provides decorationAreaType,
+                                    LocalSkinColors provides skinColors,
+                                    LocalButtonShaper provides buttonShaper,
+                                    LocalPainters provides painters,
+                                    LocalAnimationConfig provides AuroraSkin.animationConfig
+                                ) {
+                                    SplitButtonPopupContent(
+                                        window = jwindow,
+                                        anchorSize = auroraSize,
+                                        command = command,
+                                        presentationModel = presentationModel
+                                    )
+                                }
+                            }
+                            jwindow.contentPane.add(popupContent, BorderLayout.CENTER)
+                            jwindow.invalidate()
+                            jwindow.validate()
+                            jwindow.isVisible = true
+                            jwindow.pack()
+                        },
+                        interactionSource = popupInteractionSource,
+                        indication = null
+                    )
+                    .pointerMoveFilter(
+                        onEnter = {
+                            popupRollover = true
+                            false
+                        },
+                        onExit = {
+                            popupRollover = false
+                            false
+                        },
+                        onMove = {
+                            false
+                        })
+            ) {
+                // Populate the cached color scheme for filling the button container
+                // based on the current model state info
+                populateColorScheme(
+                    drawingCache.colorScheme,
+                    popupModelStateInfo, currentPopupState.value, decorationAreaType,
+                    ColorSchemeAssociationKind.FILL
+                )
+                // And retrieve the container fill colors
+                val fillUltraLight = drawingCache.colorScheme.ultraLightColor
+                val fillExtraLight = drawingCache.colorScheme.extraLightColor
+                val fillLight = drawingCache.colorScheme.lightColor
+                val fillMid = drawingCache.colorScheme.midColor
+                val fillDark = drawingCache.colorScheme.darkColor
+                val fillUltraDark = drawingCache.colorScheme.ultraDarkColor
+                val fillIsDark = drawingCache.colorScheme.isDark
+
+                // Populate the cached color scheme for drawing the button border
+                // based on the current model state info
+                populateColorScheme(
+                    drawingCache.colorScheme, popupModelStateInfo, currentPopupState.value, decorationAreaType,
+                    ColorSchemeAssociationKind.BORDER
+                )
+                // And retrieve the border colors
+                val borderUltraLight = drawingCache.colorScheme.ultraLightColor
+                val borderExtraLight = drawingCache.colorScheme.extraLightColor
+                val borderLight = drawingCache.colorScheme.lightColor
+                val borderMid = drawingCache.colorScheme.midColor
+                val borderDark = drawingCache.colorScheme.darkColor
+                val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
+                val borderIsDark = drawingCache.colorScheme.isDark
+
+                val fillPainter = painters.fillPainter
+                val borderPainter = painters.borderPainter
+
+                // TODO: handle popup alpha
+                val alpha: Float = 1.0f
+
+                val arrowColor = getStateAwareColor(
+                    popupModelStateInfo, currentPopupState.value,
+                    decorationAreaType, ColorSchemeAssociationKind.MARK
+                ) { it.markColor }
+
+
+                Canvas(modifier = Modifier.matchParentSize()) {
+//                    drawOutline(
+//                        outline = Outline.Rectangle(
+//                            rect = Rect(
+//                                left = 0.0f, top = 0.0f,
+//                                right = size.width, bottom = size.height
+//                            )
+//                        ), color = Color.Blue, style = Fill
+//                    )
+                    val width = this.size.width
+                    val height = this.size.height
+                    // TODO - revisit this
+                    val sides = ButtonSides(openSides = setOf(Side.START),
+                        straightSides = setOf(Side.START))
+
+                    val openDelta = 3
+                    // TODO - add RTL support
+                    val deltaLeft = if (sides.openSides.contains(Side.START)) openDelta else 0
+                    val deltaRight = if (sides.openSides.contains(Side.END)) openDelta else 0
+                    val deltaTop = if (sides.openSides.contains(Side.TOP)) openDelta else 0
+                    val deltaBottom = if (sides.openSides.contains(Side.BOTTOM)) openDelta else 0
+
+                    withTransform({
+                        clipRect(left = 0.0f, top = 0.0f, right = width, bottom = height, clipOp = ClipOp.Intersect)
+                        translate(left = -deltaLeft.toFloat(), top = -deltaTop.toFloat())
+                    }) {
+                        val outline = buttonShaper.getButtonOutline(
+                            width = width + deltaLeft + deltaRight,
+                            height = height + deltaTop + deltaBottom,
+                            extraInsets = 0.5f,
+                            isInner = false,
+                            sides = sides,
+                            drawScope = this
                         )
 
-                        val popupContent = ComposePanel()
-                        popupContent.setContent {
-                            CompositionLocalProvider(
-                                LocalDecorationAreaType provides decorationAreaType,
-                                LocalSkinColors provides skinColors,
-                                LocalButtonShaper provides buttonShaper,
-                                LocalPainters provides painters,
-                                LocalAnimationConfig provides AuroraSkin.animationConfig
-                            ) {
-                                SplitButtonPopupContent(
-                                    window = jwindow,
-                                    anchorSize = auroraSize,
-                                    command = command,
-                                    presentationModel = presentationModel
-                                )
-                            }
+                        val outlineBoundingRect = outline.bounds
+                        if (outlineBoundingRect.isEmpty) {
+                            return@withTransform
                         }
-                        jwindow.contentPane.add(popupContent, BorderLayout.CENTER)
-                        jwindow.invalidate()
-                        jwindow.validate()
-                        jwindow.isVisible = true
-                        jwindow.pack()
-                    },
-                    interactionSource = popupInteractionSource,
-                    indication = null
-                ).size(width = 20.dp, height = 24.dp)
-            ) {
-                Canvas(modifier = Modifier.matchParentSize()) {
-                    drawOutline(
-                        outline = Outline.Rectangle(
-                            rect = Rect(
-                                left = 0.0f, top = 0.0f,
-                                right = size.width, bottom = size.height
-                            )
-                        ), color = Color.Blue, style = Fill
-                    )
+
+                        // Populate the cached color scheme for filling the button container
+                        drawingCache.colorScheme.ultraLight = fillUltraLight
+                        drawingCache.colorScheme.extraLight = fillExtraLight
+                        drawingCache.colorScheme.light = fillLight
+                        drawingCache.colorScheme.mid = fillMid
+                        drawingCache.colorScheme.dark = fillDark
+                        drawingCache.colorScheme.ultraDark = fillUltraDark
+                        drawingCache.colorScheme.isDark = fillIsDark
+                        drawingCache.colorScheme.foreground = Color.Black
+                        fillPainter.paintContourBackground(
+                            this, this.size, outline, drawingCache.colorScheme, alpha
+                        )
+
+                        // Populate the cached color scheme for drawing the button border
+                        drawingCache.colorScheme.ultraLight = borderUltraLight
+                        drawingCache.colorScheme.extraLight = borderExtraLight
+                        drawingCache.colorScheme.light = borderLight
+                        drawingCache.colorScheme.mid = borderMid
+                        drawingCache.colorScheme.dark = borderDark
+                        drawingCache.colorScheme.ultraDark = borderUltraDark
+                        drawingCache.colorScheme.isDark = borderIsDark
+                        drawingCache.colorScheme.foreground = Color.Black
+
+                        val innerOutline = if (borderPainter.isPaintingInnerOutline)
+                            buttonShaper.getButtonOutline(
+                                width = width + deltaLeft + deltaRight,
+                                height = height + deltaTop + deltaBottom,
+                                extraInsets = 1.0f,
+                                isInner = true,
+                                sides = sides,
+                                drawScope = this
+                            ) else null
+
+                        borderPainter.paintBorder(
+                            this, this.size, outline, innerOutline, drawingCache.colorScheme, alpha
+                        )
+                    }
+
+                    val arrowWidth = ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx()
+                    val arrowHeight = ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()
+                    // TODO - support RTL
+                    translate(
+                        left = (size.width - arrowWidth) / 2.0f,
+                        top = (size.height - arrowHeight) / 2.0f
+                    ) {
+                        drawArrow(
+                            drawScope = this,
+                            width = arrowWidth,
+                            height = arrowHeight,
+                            strokeWidth = 2.0.dp.toPx(),
+                            direction = PopupPlacementStrategy.DOWNWARD,
+                            layoutDirection = layoutDirection,
+                            color = arrowColor
+                        )
+                    }
                 }
             }
         }) { measurables, constraints ->
