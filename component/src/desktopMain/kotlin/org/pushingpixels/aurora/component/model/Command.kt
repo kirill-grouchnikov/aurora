@@ -33,31 +33,25 @@ import androidx.compose.animation.core.*
 import androidx.compose.desktop.AppManager
 import androidx.compose.desktop.ComposePanel
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawOutline
-import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerMoveFilter
-import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.OnGloballyPositionedModifier
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.layout.*
+import androidx.compose.ui.platform.*
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
@@ -70,6 +64,7 @@ import java.awt.Dimension
 import java.awt.Rectangle
 import java.awt.Window
 import javax.swing.JWindow
+import kotlin.math.max
 
 interface CommandActionPreview {
     /**
@@ -390,7 +385,6 @@ fun AuroraSplitButton(
         content = {
             Box(
                 modifier = Modifier
-                    .size(width = 100.dp, height = 24.dp)
                     // TODO - this needs to be toggleable for toggleable action
                     .clickable(
                         enabled = command.isActionEnabled.value,
@@ -460,14 +454,6 @@ fun AuroraSplitButton(
                 val alpha: Float = 1.0f
 
                 Canvas(modifier = Modifier.matchParentSize()) {
-//                    drawOutline(
-//                        outline = Outline.Rectangle(
-//                            rect = Rect(
-//                                left = 0.0f, top = 0.0f,
-//                                right = size.width, bottom = size.height
-//                            )
-//                        ), color = Color.Red, style = Fill
-//                    )
                     val width = this.size.width
                     val height = this.size.height
                     // TODO - revisit this
@@ -551,7 +537,6 @@ fun AuroraSplitButton(
             }
             Box(
                 modifier = Modifier
-                    .size(width = 20.dp, height = 24.dp)
                     .clickable(
                         enabled = command.isSecondaryEnabled?.value ?: false,
                         onClick = {
@@ -663,14 +648,6 @@ fun AuroraSplitButton(
 
 
                 Canvas(modifier = Modifier.matchParentSize()) {
-//                    drawOutline(
-//                        outline = Outline.Rectangle(
-//                            rect = Rect(
-//                                left = 0.0f, top = 0.0f,
-//                                right = size.width, bottom = size.height
-//                            )
-//                        ), color = Color.Blue, style = Fill
-//                    )
                     val width = this.size.width
                     val height = this.size.height
                     // TODO - revisit this
@@ -760,26 +737,21 @@ fun AuroraSplitButton(
                 }
             }
         }) { measurables, constraints ->
-        // Measure each child so that we know how much space they need
-        val placeables = measurables.map { measurable ->
-            // Measure each child
-            measurable.measure(constraints)
-        }
+        // TODO - extract this logic into command button layout managers
+        val actionMeasurable = measurables[0]
+        val actionPlaceable = actionMeasurable.measure(constraints)
+        val popupMeasurable = measurables[1]
+        val popupPlaceable = popupMeasurable.measure(
+            Constraints.fixed(width = 20.dp.roundToPx(), height = actionPlaceable.height))
 
         // The children are laid out in a row
-        val contentTotalWidth = placeables.sumBy { it.width }
+        val contentTotalWidth = actionPlaceable.width + popupPlaceable.width
         // And the height of the row is determined by the height of the tallest child
-        val contentMaxHeight = placeables.maxOf { it.height }
+        val contentMaxHeight = actionPlaceable.height
 
         layout(width = contentTotalWidth, height = contentMaxHeight) {
-            var xPosition = 0
-            placeables.forEach { placeable ->
-                placeable.placeRelative(
-                    x = xPosition,
-                    y = (contentMaxHeight - placeable.height) / 2
-                )
-                xPosition += placeable.width
-            }
+            actionPlaceable.placeRelative(x = 0, y = 0)
+            popupPlaceable.placeRelative(x = actionPlaceable.width, y = 0)
         }
     }
 }
@@ -790,6 +762,7 @@ private fun AuroraSplitButtonAction(
     presentationModel: CommandPresentationModel
 ) {
     Layout(
+        modifier = Modifier.padding(ButtonSizingConstants.DefaultButtonContentPadding),
         content = {
             // TODO - content layout will depend on the presentation state
             if (command.iconFactory != null) {
@@ -814,8 +787,23 @@ private fun AuroraSplitButtonAction(
         // And the height of the row is determined by the height of the tallest child
         val contentMaxHeight = placeables.maxOf { it.height }
 
+        // Get the preferred size
+        var uiPreferredWidth = contentTotalWidth
+        var uiPreferredHeight = contentMaxHeight
+
+        //if (sizingStrategy == ButtonSizingStrategy.EXTENDED) {
+            // Bump up to default minimums if necessary
+            uiPreferredWidth = max(uiPreferredWidth, ButtonSizingConstants.DefaultButtonContentWidth.roundToPx())
+            uiPreferredHeight =
+                max(uiPreferredHeight, ButtonSizingConstants.DefaultButtonContentHeight.roundToPx())
+        //}
+
+        // And ask the button shaper for the final sizing
+        // TODO - verify this logic
+        val finalSize = Size(uiPreferredWidth.toFloat(), uiPreferredHeight.toFloat())
+
         // Center children vertically within the vertical space
-        layout(width = contentTotalWidth, height = contentMaxHeight) {
+        layout(width = finalSize.width.toInt(), height = finalSize.height.toInt()) {
             // TODO - add RTL support
             var xPosition = 0
 
