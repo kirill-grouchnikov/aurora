@@ -28,6 +28,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "AuroraDemo"
+            packageVersion = "1.0.0"
             modules("jdk.crypto.ec")
         }
     }
