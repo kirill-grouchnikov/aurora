@@ -23,7 +23,7 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "org.pushingpixels.aurora.demo.AuroraCommandDemoKt"
+        mainClass = "org.pushingpixels.aurora.demo.AuroraDemoKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
