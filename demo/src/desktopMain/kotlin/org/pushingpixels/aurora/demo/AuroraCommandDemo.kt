@@ -127,12 +127,12 @@ fun DemoCommandContent() {
             AuroraText(text = "content enabled")
         }
 
-        Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(4.dp)) {
-            AuroraCommandButton(command = command1, presentationModel = CommandPresentationModel())
-        }
-        Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(4.dp)) {
-            AuroraCommandButton(command = command2, presentationModel = CommandPresentationModel())
-        }
+//        Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(4.dp)) {
+//            AuroraCommandButton(command = command1, presentationModel = CommandPresentationModel())
+//        }
+//        Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(4.dp)) {
+//            AuroraCommandButton(command = command2, presentationModel = CommandPresentationModel())
+//        }
         Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(4.dp)) {
             AuroraSplitButton(command = command3, presentationModel = CommandPresentationModel())
         }

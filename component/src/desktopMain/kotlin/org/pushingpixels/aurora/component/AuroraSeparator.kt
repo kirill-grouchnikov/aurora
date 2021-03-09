@@ -30,6 +30,7 @@
 package org.pushingpixels.aurora.component
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -42,6 +43,10 @@ import org.pushingpixels.aurora.ColorSchemeAssociationKind
 import org.pushingpixels.aurora.ComponentState
 import org.pushingpixels.aurora.common.withAlpha
 
+object SeparatorSizingConstants {
+    val Thickness = 2.dp
+}
+
 @Composable
 fun AuroraVerticalSeparator(
     modifier: Modifier = Modifier,
@@ -53,7 +58,7 @@ fun AuroraVerticalSeparator(
         componentState = if (enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
     )
 
-    Canvas(modifier.width(2.0f.dp)) {
+    Canvas(modifier.width(SeparatorSizingConstants.Thickness)) {
         val height = size.height
 
         if (height > 0.0f) {

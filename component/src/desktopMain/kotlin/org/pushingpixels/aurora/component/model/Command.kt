@@ -34,6 +34,7 @@ import androidx.compose.desktop.AppManager
 import androidx.compose.desktop.ComposePanel
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
@@ -49,7 +50,7 @@ import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.input.pointer.pointerMoveFilter
+import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.unit.Constraints
@@ -59,12 +60,11 @@ import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.icon.AuroraThemedIcon
-import java.awt.BorderLayout
-import java.awt.Dimension
-import java.awt.Rectangle
-import java.awt.Window
+import java.awt.*
 import javax.swing.JWindow
+import javax.swing.SwingUtilities
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 interface CommandActionPreview {
     /**
@@ -89,7 +89,7 @@ data class Command(
     val extraText: String? = null,
     val iconFactory: AuroraIcon.Factory?,
     val disabledIconFactory: AuroraIcon.Factory? = null,
-    val action: () -> Unit = {},
+    val action: (() -> Unit)? = null,
     val actionPreview: CommandActionPreview? = null,
     var isActionEnabled: State<Boolean>,
     var isActionToggle: Boolean = false,
@@ -115,32 +115,62 @@ enum class TextClick {
 
 data class CommandPresentationModel(
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.DOWNWARD,
-    val textClick: TextClick = TextClick.ACTION
+    val textClick: TextClick = TextClick.ACTION,
+    val horizontalGapScaleFactor: Float = 1.0f,
+    val verticalGapScaleFactor: Float = 1.0f
 )
 
-@Composable
-fun AuroraCommandButton(
-    command: Command,
-    presentationModel: CommandPresentationModel
-) {
-    AuroraButton(
-        enabled = command.isActionEnabled.value,
-        onClick = command.action,
-        rolloverTracker = command.actionPreview,
-        content = {
-            // TODO - content layout will depend on the presentation state
-            if (command.iconFactory != null) {
-                val icon = command.iconFactory.createNewIcon()
-                icon.setSize(10.dp, 10.dp)
-                AuroraThemedIcon(
-                    icon = icon,
-                    modifier = Modifier.auroraButtonIconPadding()
-                )
-            }
-            AuroraText(command.text)
-        }
-    )
+/**
+ * Enumerates the available command button kinds.
+ */
+enum class CommandButtonKind(val hasAction: Boolean, val hasPopup: Boolean) {
+    /**
+     * Command button that has only action area.
+     */
+    ACTION_ONLY(true, false),
+
+    /**
+     * Command button that has only popup area.
+     */
+    POPUP_ONLY(false, true),
+
+    /**
+     * Command button that has both action and popup areas, with the main
+     * text click activating the action.
+     */
+    ACTION_AND_POPUP_MAIN_ACTION(true, true),
+
+    /**
+     * Command button that has both action and popup areas, with the main
+     * text click activating the popup.
+     */
+    ACTION_AND_POPUP_MAIN_POPUP(true, true);
 }
+
+
+//@Composable
+//fun AuroraCommandButton(
+//    command: Command,
+//    presentationModel: CommandPresentationModel
+//) {
+//    AuroraButton(
+//        enabled = command.isActionEnabled.value,
+//        onClick = command.action,
+//        rolloverTracker = command.actionPreview,
+//        content = {
+//            // TODO - content layout will depend on the presentation state
+//            if (command.iconFactory != null) {
+//                val icon = command.iconFactory.createNewIcon()
+//                icon.setSize(10.dp, 10.dp)
+//                AuroraThemedIcon(
+//                    icon = icon,
+//                    modifier = Modifier.auroraButtonIconPadding()
+//                )
+//            }
+//            AuroraText(command.text)
+//        }
+//    )
+//}
 
 @Immutable
 private class SplitButtonDrawingCache(
@@ -156,6 +186,16 @@ private class SplitButtonDrawingCache(
         foreground = Color.Black
     )
 )
+
+private suspend fun AwaitPointerEventScope.awaitEventFirstDown(): PointerEvent {
+    var event: PointerEvent
+    do {
+        event = awaitPointerEvent()
+    } while (
+        !event.changes.all { it.changedToDown() }
+    )
+    return event
+}
 
 @Composable
 fun AuroraSplitButton(
@@ -200,10 +240,12 @@ fun AuroraSplitButton(
     val buttonShaper = AuroraSkin.buttonShaper
     val painters = AuroraSkin.painters
 
-    val auroraTopLeftOffset = AuroraOffset(0.0f, 0.0f)
+    val auroraTopLeftOffset = remember { AuroraOffset(0.0f, 0.0f) }
     val auroraSize = AuroraSize(0, 0)
-    val density = LocalDensity.current.density
+    val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
+    val textStyle = LocalTextStyle.current
+    val resourceLoader = LocalFontLoader.current
 
     // Transition for the action selection state
     val actionSelectionTransition = updateTransition(command.isActionToggle and command.isActionToggleSelected)
@@ -381,14 +423,42 @@ fun AuroraSplitButton(
         }
     }
 
+    val layoutManager = CommandButtonLayoutManagerMedium(
+        layoutDirection = layoutDirection,
+        _density = density,
+        textStyle = textStyle,
+        resourceLoader = resourceLoader
+    )
+
     Layout(
+        modifier = Modifier
+            .splitButtonLocator(auroraTopLeftOffset, auroraSize)
+            .pointerInput(Unit) {
+                forEachGesture {
+                    awaitPointerEventScope {
+                        val event = awaitEventFirstDown().also {
+                            it.changes.forEach { it.consumeDownChange() }
+                        }.mouseEvent
+                        val source = event?.source as? Component
+                        val location = event?.locationOnScreen
+                        if ((source != null) && (location != null)) {
+                            // Convert the event location from screen to the component
+                            // so that we know which part - action or popup - has been clicked
+                            SwingUtilities.convertPointFromScreen(location, source)
+                            location.x -= (auroraTopLeftOffset.x / density.density).toInt()
+                            location.y -= (auroraTopLeftOffset.y / density.density).toInt()
+                        }
+                    }
+                }
+            },
         content = {
             Box(
                 modifier = Modifier
                     // TODO - this needs to be toggleable for toggleable action
+                    // TODO - handle commands with no action (only secondary / popup content)
                     .clickable(
                         enabled = command.isActionEnabled.value,
-                        onClick = command.action,
+                        onClick = command.action!!,
                         interactionSource = actionInteractionSource,
                         indication = null
                     )
@@ -404,7 +474,6 @@ fun AuroraSplitButton(
                         onMove = {
                             false
                         })
-                    .splitButtonLocator(auroraTopLeftOffset, auroraSize)
             ) {
                 // Compute the action text color
                 // TODO - this can be in the popup area
@@ -457,8 +526,10 @@ fun AuroraSplitButton(
                     val width = this.size.width
                     val height = this.size.height
                     // TODO - revisit this
-                    val sides = ButtonSides(openSides = setOf(Side.END),
-                        straightSides = setOf(Side.END))
+                    val sides = ButtonSides(
+                        openSides = setOf(Side.END),
+                        straightSides = setOf(Side.END)
+                    )
 
                     val openDelta = 3
                     // TODO - add RTL support
@@ -559,8 +630,8 @@ fun AuroraSplitButton(
                             // in screen coordinates
                             // TODO - figure out the sizing (see above)
                             jwindow.setBounds(
-                                (locationOnScreen.x + auroraTopLeftOffset.x / density).toInt(),
-                                (locationOnScreen.y + auroraTopLeftOffset.y / density).toInt(),
+                                (locationOnScreen.x + auroraTopLeftOffset.x / density.density).toInt(),
+                                (locationOnScreen.y + auroraTopLeftOffset.y / density.density).toInt(),
                                 1000,
                                 1000
                             )
@@ -651,8 +722,10 @@ fun AuroraSplitButton(
                     val width = this.size.width
                     val height = this.size.height
                     // TODO - revisit this
-                    val sides = ButtonSides(openSides = setOf(Side.START),
-                        straightSides = setOf(Side.START))
+                    val sides = ButtonSides(
+                        openSides = setOf(Side.START),
+                        straightSides = setOf(Side.START)
+                    )
 
                     val openDelta = 3
                     // TODO - add RTL support
@@ -737,21 +810,42 @@ fun AuroraSplitButton(
                 }
             }
         }) { measurables, constraints ->
-        // TODO - extract this logic into command button layout managers
+        // TODO - cache layout info if command info, presentation info or incoming
+        //  constraints haven't changed
+        val layoutInfo = layoutManager.getLayoutInfo(
+            command = command,
+            presentationModel = presentationModel,
+            paddingValues = ButtonSizingConstants.DefaultButtonContentPadding
+        )
+
+        // Measure the action and popup boxes
         val actionMeasurable = measurables[0]
-        val actionPlaceable = actionMeasurable.measure(constraints)
+        val actionPlaceable = actionMeasurable.measure(
+            Constraints.fixed(
+                width = layoutInfo.actionClickArea.width.roundToInt(),
+                height = layoutInfo.actionClickArea.height.roundToInt()
+            )
+        )
         val popupMeasurable = measurables[1]
         val popupPlaceable = popupMeasurable.measure(
-            Constraints.fixed(width = 20.dp.roundToPx(), height = actionPlaceable.height))
+            Constraints.fixed(
+                width = layoutInfo.popupClickArea.width.roundToInt(),
+                height = layoutInfo.popupClickArea.height.roundToInt()
+            )
+        )
 
-        // The children are laid out in a row
-        val contentTotalWidth = actionPlaceable.width + popupPlaceable.width
-        // And the height of the row is determined by the height of the tallest child
-        val contentMaxHeight = actionPlaceable.height
-
-        layout(width = contentTotalWidth, height = contentMaxHeight) {
-            actionPlaceable.placeRelative(x = 0, y = 0)
-            popupPlaceable.placeRelative(x = actionPlaceable.width, y = 0)
+        layout(
+            width = layoutInfo.fullSize.width.toInt(),
+            height = layoutInfo.fullSize.height.toInt()
+        ) {
+            actionPlaceable.placeRelative(
+                x = layoutInfo.actionClickArea.left.roundToInt(),
+                y = layoutInfo.actionClickArea.top.roundToInt()
+            )
+            popupPlaceable.placeRelative(
+                x = layoutInfo.popupClickArea.left.roundToInt(),
+                y = layoutInfo.popupClickArea.top.roundToInt()
+            )
         }
     }
 }
@@ -792,10 +886,10 @@ private fun AuroraSplitButtonAction(
         var uiPreferredHeight = contentMaxHeight
 
         //if (sizingStrategy == ButtonSizingStrategy.EXTENDED) {
-            // Bump up to default minimums if necessary
-            uiPreferredWidth = max(uiPreferredWidth, ButtonSizingConstants.DefaultButtonContentWidth.roundToPx())
-            uiPreferredHeight =
-                max(uiPreferredHeight, ButtonSizingConstants.DefaultButtonContentHeight.roundToPx())
+        // Bump up to default minimums if necessary
+        uiPreferredWidth = max(uiPreferredWidth, ButtonSizingConstants.DefaultButtonContentWidth.roundToPx())
+        uiPreferredHeight =
+            max(uiPreferredHeight, ButtonSizingConstants.DefaultButtonContentHeight.roundToPx())
         //}
 
         // And ask the button shaper for the final sizing
@@ -887,8 +981,9 @@ private fun SplitButtonPopupContent(
                 AuroraMenuButton(
                     enabled = true,
                     onClick = {
+                        // TODO - support nested secondary content
                         window.dispose()
-                        item.action.invoke()
+                        item.action?.invoke()
                     },
                     sides = ButtonSides(straightSides = Side.values().toSet()),
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
