@@ -8,7 +8,7 @@ Aurora is a collection of libraries for writing modern, elegant and fast desktop
 
 # Current status
 
-Aurora is currently in pre-alpha, active early development. Most of the ideas and building blocks in Aurora come from [Radiance](https://github.com/kirill-grouchnikov/radiance). That project has been around since 2005, and it will take a bit more time to get to the more stable state which can be called `alpha01`. How much more time? Probably around February or March 2021.
+Aurora is currently in pre-alpha, active early development. Most of the ideas and building blocks in Aurora come from [Radiance](https://github.com/kirill-grouchnikov/radiance). That project has been around since 2005, and it will take a bit more time to get to the more stable state which can be called `alpha01`. How much more time? Probably around spring 2021.
 
 The goal is to provide a collection of high-quality components for building modern desktop Compose applications. Aurora will bring the full power of the skinning layer from Radiance, including all the skins and complete support for state-based transitions for all the components. In addition, Aurora will provide a powerful painter API layer to create custom composable components with consistent visual appearance and state transitions.
 
@@ -35,9 +35,9 @@ Add Aurora dependencies:
 
 ```
 dependencies {
-    api("org.pushing-pixels:aurora-skin:0.0.10-SNAPSHOT")
-    api("org.pushing-pixels:aurora-component:0.0.10-SNAPSHOT")
-    api("org.pushing-pixels:aurora-window:0.0.10-SNAPSHOT")
+    api("org.pushing-pixels:aurora-skin:0.0.11-SNAPSHOT")
+    api("org.pushing-pixels:aurora-component:0.0.11-SNAPSHOT")
+    api("org.pushing-pixels:aurora-window:0.0.11-SNAPSHOT")
     implementation(compose.desktop.currentOs)
 }
 ```
