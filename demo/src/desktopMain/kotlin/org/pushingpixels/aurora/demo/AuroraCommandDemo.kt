@@ -59,9 +59,9 @@ fun main() {
 fun DemoCommandContent() {
     val contentEnabled = remember { mutableStateOf(true) }
     val popupEnabled = remember { mutableStateOf(true) }
-    val command1 = remember {
+    val commandActionOnly = remember {
         Command(
-            text = "One",
+            text = "Action!",
             iconFactory = accessories_text_editor.factory(),
             action = { println("One activated!") },
             isActionEnabled = contentEnabled,
@@ -76,17 +76,41 @@ fun DemoCommandContent() {
             }
         )
     }
-    val command2 = remember {
+    val commandSecondaryOnly = remember {
         Command(
-            text = "Two",
+            text = "Popup",
             iconFactory = computer.factory(),
-            action = { println("Two activated!") },
-            isActionEnabled = contentEnabled
+            isSecondaryEnabled = popupEnabled,
+            secondaryContentModel = CommandMenuContentModel(
+                CommandGroup(
+                    title = "Group",
+                    command = listOf(
+                        Command(
+                            text = "popup1",
+                            iconFactory = computer.factory(),
+                            action = { println("popup1 activated!") },
+                            isActionEnabled = contentEnabled
+                        ),
+                        Command(
+                            text = "popup2",
+                            iconFactory = computer.factory(),
+                            action = { println("popup2 activated!") },
+                            isActionEnabled = contentEnabled
+                        ),
+                        Command(
+                            text = "popup3",
+                            iconFactory = computer.factory(),
+                            action = { println("popup3 activated!") },
+                            isActionEnabled = contentEnabled
+                        )
+                    )
+                )
+            )
         )
     }
-    val command3 = remember {
+    val commandActionAndSecondary = remember {
         Command(
-            text = "Split",
+            text = "Both",
             iconFactory = computer.factory(),
             action = { println("Split activated!") },
             isActionEnabled = contentEnabled,
@@ -127,18 +151,24 @@ fun DemoCommandContent() {
             AuroraText(text = "content enabled")
         }
 
-//        Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(4.dp)) {
-//            AuroraCommandButton(command = command1, presentationModel = CommandPresentationModel())
-//        }
-//        Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(4.dp)) {
-//            AuroraCommandButton(command = command2, presentationModel = CommandPresentationModel())
-//        }
-        Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(4.dp)) {
-            AuroraSplitButton(command = command3, presentationModel = CommandPresentationModel())
-        }
-        Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(4.dp)) {
+        Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
             AuroraSplitButton(
-                command = command3,
+                command = commandActionOnly,
+                presentationModel = CommandPresentationModel()
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            AuroraSplitButton(
+                command = commandSecondaryOnly,
+                presentationModel = CommandPresentationModel()
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            AuroraSplitButton(
+                command = commandActionAndSecondary,
+                presentationModel = CommandPresentationModel(textClick = TextClick.ACTION)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            AuroraSplitButton(
+                command = commandActionAndSecondary,
                 presentationModel = CommandPresentationModel(textClick = TextClick.POPUP)
             )
         }

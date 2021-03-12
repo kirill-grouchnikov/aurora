@@ -63,7 +63,7 @@ interface CommandButtonLayoutManager: MeasureScope {
      * @param text Text itself
      * @param textRect The text rectangle.
      */
-    data class TextLayoutInfo(val text: String, val textRect: Rect)
+    data class TextLayoutInfo(val text: String, var textRect: Rect)
 
     /**
      * Layout information on different visual parts of a single command button.

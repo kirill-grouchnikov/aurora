@@ -88,7 +88,7 @@ data class Command(
     val disabledIconFactory: AuroraIcon.Factory? = null,
     val action: (() -> Unit)? = null,
     val actionPreview: CommandActionPreview? = null,
-    var isActionEnabled: State<Boolean>,
+    var isActionEnabled: State<Boolean>? = null,
     var isActionToggle: Boolean = false,
     var isActionToggleSelected: Boolean = false,
     val secondaryContentModel: CommandMenuContentModel? = null,
@@ -179,7 +179,7 @@ fun AuroraSplitButton(
     val currentActionState = remember {
         mutableStateOf(
             ComponentState.getState(
-                isEnabled = command.isActionEnabled.value,
+                isEnabled = command.isActionEnabled?.value ?: false,
                 isRollover = actionRollover,
                 isSelected = command.isActionToggle and command.isActionToggleSelected,
                 isPressed = isActionPressed
@@ -244,7 +244,7 @@ fun AuroraSplitButton(
     }
 
     // Transition for the action enabled state
-    val actionEnabledTransition = updateTransition(command.isActionEnabled.value)
+    val actionEnabledTransition = updateTransition(command.isActionEnabled?.value ?: false)
     val actionEnabledFraction by actionEnabledTransition.animateFloat(transitionSpec = {
         tween(durationMillis = AuroraSkin.animationConfig.regular)
     }) {
@@ -266,7 +266,7 @@ fun AuroraSplitButton(
         modelStateInfo = actionModelStateInfo,
         currentState = currentActionState,
         transitionInfo = actionTransitionInfo,
-        enabled = command.isActionEnabled.value,
+        enabled = command.isActionEnabled?.value ?: false,
         selected = command.isActionToggle and command.isActionToggleSelected,
         rollover = actionRollover,
         pressed = isActionPressed,
@@ -392,8 +392,8 @@ fun AuroraSplitButton(
                     // TODO - this needs to be toggleable for toggleable action
                     // TODO - handle commands with no action (only secondary / popup content)
                     .clickable(
-                        enabled = command.isActionEnabled.value,
-                        onClick = command.action!!,
+                        enabled = command.isActionEnabled?.value ?: false,
+                        onClick = command.action ?: {},
                         interactionSource = actionInteractionSource,
                         indication = null
                     ).pointerMoveFilter(onEnter = {
@@ -452,9 +452,8 @@ fun AuroraSplitButton(
                     val width = this.size.width
                     val height = this.size.height
                     // TODO - revisit this
-                    val sides = ButtonSides(
-                        openSides = setOf(Side.END), straightSides = setOf(Side.END)
-                    )
+                    val sides = if (layoutInfo.popupClickArea.width == 0.0f) ButtonSides()
+                    else ButtonSides(openSides = setOf(Side.END), straightSides = setOf(Side.END))
 
                     val openDelta = 3
                     // TODO - add RTL support
@@ -633,8 +632,10 @@ fun AuroraSplitButton(
                     val width = this.size.width
                     val height = this.size.height
                     // TODO - revisit this
-                    val sides = ButtonSides(
-                        openSides = setOf(Side.START), straightSides = setOf(Side.START)
+                    val sides = if (layoutInfo.actionClickArea.width == 0.0f) ButtonSides()
+                    else ButtonSides(
+                        openSides = setOf(Side.START),
+                        straightSides = setOf(Side.START)
                     )
 
                     val openDelta = 3
@@ -719,7 +720,9 @@ fun AuroraSplitButton(
                 currStateForText
             )
             SplitButtonTextContent(command, modelStateInfoForText, currStateForText)
-            SplitButtonPopupIconContent(popupModelStateInfo, currentPopupState.value)
+            if (layoutInfo.popupActionRect.width > 0) {
+                SplitButtonPopupIconContent(popupModelStateInfo, currentPopupState.value)
+            }
         }) { measurables, _ ->
 
         // Measure the action and popup boxes
@@ -751,13 +754,16 @@ fun AuroraSplitButton(
                 height = layoutInfo.textLayoutInfoList[0].textRect.height.roundToInt()
             )
         )
-        val popupIconMeasurable = measurables[4]
-        val popupIconPlaceable = popupIconMeasurable.measure(
-            Constraints.fixed(
-                width = layoutInfo.popupActionRect.width.roundToInt(),
-                height = layoutInfo.popupActionRect.height.roundToInt()
+        var popupIconPlaceable: Placeable? = null
+        if (layoutInfo.popupActionRect.width > 0) {
+            val popupIconMeasurable = measurables[4]
+            popupIconPlaceable = popupIconMeasurable.measure(
+                Constraints.fixed(
+                    width = layoutInfo.popupActionRect.width.roundToInt(),
+                    height = layoutInfo.popupActionRect.height.roundToInt()
+                )
             )
-        )
+        }
 
         layout(
             width = layoutInfo.fullSize.width.toInt(), height = layoutInfo.fullSize.height.toInt()
@@ -774,11 +780,11 @@ fun AuroraSplitButton(
                 x = layoutInfo.iconRect.left.roundToInt(),
                 y = layoutInfo.iconRect.top.roundToInt()
             )
-            textPlaceable.placeRelative(
+            textPlaceable?.placeRelative(
                 x = layoutInfo.textLayoutInfoList[0].textRect.left.roundToInt(),
                 y = layoutInfo.textLayoutInfoList[0].textRect.top.roundToInt()
             )
-            popupIconPlaceable.placeRelative(
+            popupIconPlaceable?.placeRelative(
                 x = layoutInfo.popupActionRect.left.roundToInt(),
                 y = layoutInfo.popupActionRect.top.roundToInt()
             )
