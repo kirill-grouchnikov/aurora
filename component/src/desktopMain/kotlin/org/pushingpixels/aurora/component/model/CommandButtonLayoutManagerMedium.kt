@@ -258,7 +258,7 @@ internal class CommandButtonLayoutManagerMedium(
                     left = x,
                     right = x + 1 + popupIconSize,
                     top = (preferredSize.height - popupIconSize) / 2.0f - 1.0f,
-                    bottom = (preferredSize.height - popupIconSize) / 2.0f - popupIconSize + 1.0f
+                    bottom = (preferredSize.height - popupIconSize) / 2.0f + popupIconSize + 1.0f
                 )
             }
             var xBorderBetweenActionAndPopup = 0.0f
@@ -287,7 +287,7 @@ internal class CommandButtonLayoutManagerMedium(
                     // 2. no break (all popup) if button has no text and no icon
                     if (hasText || hasIcon) {
                         // shift popup action rectangle to the right to
-                        // accomodate the vertical separator
+                        // accommodate the vertical separator
                         popupActionRect = popupActionRect.translate(translateX = SeparatorSizingConstants.Thickness.toPx(), translateY = 0.0f)
                         xBorderBetweenActionAndPopup = popupActionRect.left - 2.0f * layoutHGap
 
@@ -323,7 +323,8 @@ internal class CommandButtonLayoutManagerMedium(
                         )
                         isTextInActionArea = false
                     }
-//                ACTION_AND_POPUP_MAIN_POPUP ->                     // 1. break after icon if button has icon
+//                ACTION_AND_POPUP_MAIN_POPUP ->
+//                    // 1. break after icon if button has icon
 //                    // 2. no break (all popup) if button has no icon
 //                    if (hasIcon) {
 //                        // shift text rectangle and popup action rectangle to the

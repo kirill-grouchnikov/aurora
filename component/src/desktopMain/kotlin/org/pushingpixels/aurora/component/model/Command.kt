@@ -144,31 +144,6 @@ enum class CommandButtonKind(val hasAction: Boolean, val hasPopup: Boolean) {
     ACTION_AND_POPUP_MAIN_POPUP(true, true);
 }
 
-
-//@Composable
-//fun AuroraCommandButton(
-//    command: Command,
-//    presentationModel: CommandPresentationModel
-//) {
-//    AuroraButton(
-//        enabled = command.isActionEnabled.value,
-//        onClick = command.action,
-//        rolloverTracker = command.actionPreview,
-//        content = {
-//            // TODO - content layout will depend on the presentation state
-//            if (command.iconFactory != null) {
-//                val icon = command.iconFactory.createNewIcon()
-//                icon.setSize(10.dp, 10.dp)
-//                AuroraThemedIcon(
-//                    icon = icon,
-//                    modifier = Modifier.auroraButtonIconPadding()
-//                )
-//            }
-//            AuroraText(command.text)
-//        }
-//    )
-//}
-
 @Immutable
 private class SplitButtonDrawingCache(
     val colorScheme: MutableColorScheme = MutableColorScheme(
@@ -654,14 +629,6 @@ fun AuroraSplitButton(
                 // TODO: handle popup alpha
                 val alpha: Float = 1.0f
 
-                val arrowColor = getStateAwareColor(
-                    popupModelStateInfo,
-                    currentPopupState.value,
-                    decorationAreaType,
-                    ColorSchemeAssociationKind.MARK
-                ) { it.markColor }
-
-
                 Canvas(modifier = Modifier.matchParentSize()) {
                     val width = this.size.width
                     val height = this.size.height
@@ -738,24 +705,6 @@ fun AuroraSplitButton(
                             this, this.size, outline, innerOutline, drawingCache.colorScheme, alpha
                         )
                     }
-
-                    val arrowWidth = ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx()
-                    val arrowHeight = ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()
-                    // TODO - support RTL
-                    translate(
-                        left = (size.width - arrowWidth) / 2.0f,
-                        top = (size.height - arrowHeight) / 2.0f
-                    ) {
-                        drawArrow(
-                            drawScope = this,
-                            width = arrowWidth,
-                            height = arrowHeight,
-                            strokeWidth = 2.0.dp.toPx(),
-                            direction = PopupPlacementStrategy.DOWNWARD,
-                            layoutDirection = layoutDirection,
-                            color = arrowColor
-                        )
-                    }
                 }
             }
             // Text content can be in action or popup area
@@ -763,13 +712,14 @@ fun AuroraSplitButton(
                 if (layoutInfo.isTextInActionArea) actionModelStateInfo else popupModelStateInfo
             val currStateForText =
                 if (layoutInfo.isTextInActionArea) currentActionState.value else currentPopupState.value
-            AuroraSplitButtonIconContent(
+            SplitButtonIconContent(
                 command,
                 layoutManager.getPreferredIconSize(),
                 modelStateInfoForText,
                 currStateForText
             )
-            AuroraSplitButtonTextContent(command, modelStateInfoForText, currStateForText)
+            SplitButtonTextContent(command, modelStateInfoForText, currStateForText)
+            SplitButtonPopupIconContent(popupModelStateInfo, currentPopupState.value)
         }) { measurables, _ ->
 
         // Measure the action and popup boxes
@@ -801,6 +751,13 @@ fun AuroraSplitButton(
                 height = layoutInfo.textLayoutInfoList[0].textRect.height.roundToInt()
             )
         )
+        val popupIconMeasurable = measurables[4]
+        val popupIconPlaceable = popupIconMeasurable.measure(
+            Constraints.fixed(
+                width = layoutInfo.popupActionRect.width.roundToInt(),
+                height = layoutInfo.popupActionRect.height.roundToInt()
+            )
+        )
 
         layout(
             width = layoutInfo.fullSize.width.toInt(), height = layoutInfo.fullSize.height.toInt()
@@ -814,103 +771,23 @@ fun AuroraSplitButton(
                 y = layoutInfo.popupClickArea.top.roundToInt()
             )
             iconPlaceable.placeRelative(
-                x = layoutInfo.iconRect.left.roundToInt(), y = layoutInfo.iconRect.top.roundToInt()
+                x = layoutInfo.iconRect.left.roundToInt(),
+                y = layoutInfo.iconRect.top.roundToInt()
             )
             textPlaceable.placeRelative(
                 x = layoutInfo.textLayoutInfoList[0].textRect.left.roundToInt(),
                 y = layoutInfo.textLayoutInfoList[0].textRect.top.roundToInt()
             )
+            popupIconPlaceable.placeRelative(
+                x = layoutInfo.popupActionRect.left.roundToInt(),
+                y = layoutInfo.popupActionRect.top.roundToInt()
+            )
         }
     }
 }
 
-//@Composable
-//private fun AuroraSplitButtonTextContent(
-//        command: Command,
-//        modelStateInfo: ModelStateInfo,
-//        currState: ComponentState
-//) {
-//    val decorationAreaType = AuroraSkin.decorationAreaType
-//    val skinColors = AuroraSkin.colors
-//
-//    // Compute the text color based on the passed model state (which can be action
-//    // or popup)
-//    val textColor = getTextColor(
-//            modelStateInfo = modelStateInfo,
-//            currState = currState,
-//            skinColors = skinColors,
-//            decorationAreaType = decorationAreaType,
-//            isTextInFilledArea = true
-//    )
-//
-//    // Pass our text color and model state snapshot to the children
-//    CompositionLocalProvider(
-//            LocalTextColor provides textColor,
-//            LocalModelStateInfoSnapshot provides ModelStateInfoSnapshot(
-//                    currModelState = ComponentState.ENABLED,
-//                    stateContributionMap = emptyMap(),
-//                    activeStrength = 1.0f
-//            )
-//    ) {
-//        Layout(
-//                modifier = Modifier.padding(ButtonSizingConstants.DefaultButtonContentPadding),
-//                content = {
-//                    // TODO - content layout will depend on the presentation state
-//                    if (command.iconFactory != null) {
-//                        val icon = command.iconFactory.createNewIcon()
-//                        icon.setSize(10.dp, 10.dp)
-//                        AuroraThemedIcon(
-//                                icon = icon,
-//                                modifier = Modifier.auroraButtonIconPadding()
-//                        )
-//                    }
-//                    AuroraText(command.text)
-//                }
-//        ) { measurables, constraints ->
-//            // Measure each child so that we know how much space they need
-//            val placeables = measurables.map { measurable ->
-//                // Measure each child
-//                measurable.measure(constraints)
-//            }
-//
-//            // The children are laid out in a row
-//            val contentTotalWidth = placeables.sumBy { it.width }
-//            // And the height of the row is determined by the height of the tallest child
-//            val contentMaxHeight = placeables.maxOf { it.height }
-//
-//            // Get the preferred size
-//            var uiPreferredWidth = contentTotalWidth
-//            var uiPreferredHeight = contentMaxHeight
-//
-//            //if (sizingStrategy == ButtonSizingStrategy.EXTENDED) {
-//            // Bump up to default minimums if necessary
-//            uiPreferredWidth = max(uiPreferredWidth, ButtonSizingConstants.DefaultButtonContentWidth.roundToPx())
-//            uiPreferredHeight =
-//                    max(uiPreferredHeight, ButtonSizingConstants.DefaultButtonContentHeight.roundToPx())
-//            //}
-//
-//            // And ask the button shaper for the final sizing
-//            // TODO - verify this logic
-//            val finalSize = Size(uiPreferredWidth.toFloat(), uiPreferredHeight.toFloat())
-//
-//            // Center children vertically within the vertical space
-//            layout(width = finalSize.width.toInt(), height = finalSize.height.toInt()) {
-//                // TODO - add RTL support
-//                var xPosition = 0
-//
-//                placeables.forEach { placeable ->
-//                    placeable.placeRelative(
-//                            x = xPosition,
-//                            y = (contentMaxHeight - placeable.height) / 2
-//                    )
-//                    xPosition += placeable.width
-//                }
-//            }
-//        }
-//    }
-//}
 @Composable
-private fun AuroraSplitButtonTextContent(
+private fun SplitButtonTextContent(
     command: Command, modelStateInfo: ModelStateInfo, currState: ComponentState
 ) {
     val decorationAreaType = AuroraSkin.decorationAreaType
@@ -941,7 +818,7 @@ private fun AuroraSplitButtonTextContent(
 }
 
 @Composable
-private fun AuroraSplitButtonIconContent(
+private fun SplitButtonIconContent(
     command: Command, iconSize: Dp, modelStateInfo: ModelStateInfo, currState: ComponentState
 ) {
     if (command.iconFactory != null) {
@@ -976,6 +853,41 @@ private fun AuroraSplitButtonIconContent(
             )
         ) {
             AuroraThemedIcon(icon = icon)
+        }
+    }
+}
+
+@Composable
+private fun SplitButtonPopupIconContent(
+    modelStateInfo: ModelStateInfo, currState: ComponentState
+) {
+    val decorationAreaType = AuroraSkin.decorationAreaType
+
+    val arrowColor = getStateAwareColor(
+        modelStateInfo,
+        currState,
+        decorationAreaType,
+        ColorSchemeAssociationKind.MARK
+    ) { it.markColor }
+
+    Box {
+        Canvas(modifier = Modifier.matchParentSize()) {
+            val arrowWidth = ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx()
+            val arrowHeight = ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()
+            translate(
+                left = (size.width - arrowWidth) / 2.0f,
+                top = (size.height - arrowHeight) / 2.0f
+            ) {
+                drawArrow(
+                    drawScope = this,
+                    width = arrowWidth,
+                    height = arrowHeight,
+                    strokeWidth = 2.0.dp.toPx(),
+                    direction = PopupPlacementStrategy.DOWNWARD,
+                    layoutDirection = layoutDirection,
+                    color = arrowColor
+                )
+            }
         }
     }
 }
