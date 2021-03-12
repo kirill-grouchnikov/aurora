@@ -136,6 +136,12 @@ fun DemoCommandContent() {
         Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(4.dp)) {
             AuroraSplitButton(command = command3, presentationModel = CommandPresentationModel())
         }
+        Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(4.dp)) {
+            AuroraSplitButton(
+                command = command3,
+                presentationModel = CommandPresentationModel(textClick = TextClick.POPUP)
+            )
+        }
     }
 }
 
