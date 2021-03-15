@@ -306,6 +306,7 @@ fun AuroraCommandButton(
         paddingValues = ButtonSizingConstants.DefaultButtonContentPadding
     )
 
+    val isActionEnabled = command.isActionEnabled?.value ?: false
     Layout(
         modifier = Modifier.commandButtonLocator(auroraTopLeftOffset, auroraSize),
         content = {
@@ -314,15 +315,23 @@ fun AuroraCommandButton(
                     // TODO - this needs to be toggleable for toggleable action
                     // TODO - handle commands with no action (only secondary / popup content)
                     .clickable(
-                        enabled = command.isActionEnabled?.value ?: false,
+                        enabled = isActionEnabled,
                         onClick = command.action ?: {},
                         interactionSource = actionInteractionSource,
                         indication = null
                     ).pointerMoveFilter(onEnter = {
+                        val wasRollover = actionRollover
                         actionRollover = true
+                        if (isActionEnabled && !wasRollover) {
+                            command.actionPreview?.onCommandPreviewActivated(command)
+                        }
                         false
                     }, onExit = {
+                        val wasRollover = actionRollover
                         actionRollover = false
+                        if (isActionEnabled && wasRollover) {
+                            command.actionPreview?.onCommandPreviewCanceled(command)
+                        }
                         false
                     }, onMove = {
                         false

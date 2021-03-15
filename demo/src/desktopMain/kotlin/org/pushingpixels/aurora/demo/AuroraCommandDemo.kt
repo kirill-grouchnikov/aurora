@@ -63,15 +63,15 @@ fun DemoCommandContent() {
         Command(
             text = "Action!",
             iconFactory = accessories_text_editor.factory(),
-            action = { println("One activated!") },
+            action = { println("Action activated!") },
             isActionEnabled = actionEnabled,
             actionPreview = object : CommandActionPreview {
-                override fun onCommandPreviewActivated(command: Command?) {
-                    println("One preview activated!")
+                override fun onCommandPreviewActivated(command: Command) {
+                    println("Action preview activated!")
                 }
 
-                override fun onCommandPreviewCanceled(command: Command?) {
-                    println("One preview canceled!")
+                override fun onCommandPreviewCanceled(command: Command) {
+                    println("Action preview canceled!")
                 }
             }
         )
