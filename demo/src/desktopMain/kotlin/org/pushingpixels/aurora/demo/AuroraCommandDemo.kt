@@ -36,8 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.component.AuroraCheckBox
-import org.pushingpixels.aurora.component.AuroraText
+import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.demo.svg.tango.accessories_text_editor
 import org.pushingpixels.aurora.demo.svg.tango.computer
@@ -57,14 +56,15 @@ fun main() {
 
 @Composable
 fun DemoCommandContent() {
-    val contentEnabled = remember { mutableStateOf(true) }
+    val actionEnabled = remember { mutableStateOf(true) }
     val popupEnabled = remember { mutableStateOf(true) }
+
     val commandActionOnly = remember {
         Command(
             text = "Action!",
             iconFactory = accessories_text_editor.factory(),
             action = { println("One activated!") },
-            isActionEnabled = contentEnabled,
+            isActionEnabled = actionEnabled,
             actionPreview = object : CommandActionPreview {
                 override fun onCommandPreviewActivated(command: Command?) {
                     println("One preview activated!")
@@ -89,19 +89,19 @@ fun DemoCommandContent() {
                             text = "popup1",
                             iconFactory = computer.factory(),
                             action = { println("popup1 activated!") },
-                            isActionEnabled = contentEnabled
+                            isActionEnabled = actionEnabled
                         ),
                         Command(
                             text = "popup2",
                             iconFactory = computer.factory(),
                             action = { println("popup2 activated!") },
-                            isActionEnabled = contentEnabled
+                            isActionEnabled = actionEnabled
                         ),
                         Command(
                             text = "popup3",
                             iconFactory = computer.factory(),
                             action = { println("popup3 activated!") },
-                            isActionEnabled = contentEnabled
+                            isActionEnabled = actionEnabled
                         )
                     )
                 )
@@ -113,7 +113,7 @@ fun DemoCommandContent() {
             text = "Both",
             iconFactory = computer.factory(),
             action = { println("Split activated!") },
-            isActionEnabled = contentEnabled,
+            isActionEnabled = actionEnabled,
             isSecondaryEnabled = popupEnabled,
             secondaryContentModel = CommandMenuContentModel(
                 CommandGroup(
@@ -123,19 +123,19 @@ fun DemoCommandContent() {
                             text = "popup1",
                             iconFactory = computer.factory(),
                             action = { println("popup1 activated!") },
-                            isActionEnabled = contentEnabled
+                            isActionEnabled = actionEnabled
                         ),
                         Command(
                             text = "popup2",
                             iconFactory = computer.factory(),
                             action = { println("popup2 activated!") },
-                            isActionEnabled = contentEnabled
+                            isActionEnabled = actionEnabled
                         ),
                         Command(
                             text = "popup3",
                             iconFactory = computer.factory(),
                             action = { println("popup3 activated!") },
-                            isActionEnabled = contentEnabled
+                            isActionEnabled = actionEnabled
                         )
                     )
                 )
@@ -144,30 +144,39 @@ fun DemoCommandContent() {
     }
 
     Column(modifier = Modifier.fillMaxHeight().fillMaxWidth().padding(4.dp)) {
-        AuroraCheckBox(
-            selected = contentEnabled.value,
-            onTriggerSelectedChange = { contentEnabled.value = !contentEnabled.value }
-        ) {
-            AuroraText(text = "content enabled")
+        Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
+            AuroraCheckBox(
+                selected = actionEnabled.value,
+                onTriggerSelectedChange = { actionEnabled.value = !actionEnabled.value }
+            ) {
+                AuroraText(text = "action enabled")
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            AuroraCheckBox(
+                selected = popupEnabled.value,
+                onTriggerSelectedChange = { popupEnabled.value = !popupEnabled.value }
+            ) {
+                AuroraText(text = "popup enabled")
+            }
         }
 
         Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
-            AuroraSplitButton(
+            AuroraCommandButton(
                 command = commandActionOnly,
                 presentationModel = CommandPresentationModel()
             )
             Spacer(modifier = Modifier.width(8.dp))
-            AuroraSplitButton(
+            AuroraCommandButton(
                 command = commandSecondaryOnly,
                 presentationModel = CommandPresentationModel()
             )
             Spacer(modifier = Modifier.width(8.dp))
-            AuroraSplitButton(
+            AuroraCommandButton(
                 command = commandActionAndSecondary,
                 presentationModel = CommandPresentationModel(textClick = TextClick.ACTION)
             )
             Spacer(modifier = Modifier.width(8.dp))
-            AuroraSplitButton(
+            AuroraCommandButton(
                 command = commandActionAndSecondary,
                 presentationModel = CommandPresentationModel(textClick = TextClick.POPUP)
             )
