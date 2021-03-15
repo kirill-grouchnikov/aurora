@@ -113,6 +113,15 @@ fun DemoCommandContent() {
             text = "Both",
             iconFactory = computer.factory(),
             action = { println("Split activated!") },
+            actionPreview = object : CommandActionPreview {
+                override fun onCommandPreviewActivated(command: Command) {
+                    println("Both preview activated!")
+                }
+
+                override fun onCommandPreviewCanceled(command: Command) {
+                    println("Both preview canceled!")
+                }
+            },
             isActionEnabled = actionEnabled,
             isSecondaryEnabled = popupEnabled,
             secondaryContentModel = CommandMenuContentModel(

@@ -646,6 +646,7 @@ fun AuroraCommandButton(
                 if (layoutInfo.isTextInActionArea) currentActionState.value else currentPopupState.value
             CommandButtonIconContent(
                 command,
+                presentationModel,
                 layoutManager.getPreferredIconSize(),
                 modelStateInfoForText,
                 currStateForText
@@ -741,14 +742,9 @@ private fun CommandButtonTextContent(
     )
 
     // Pass our text color and model state snapshot to the children
-    // TODO - pass the right model state info snapshot
     CompositionLocalProvider(
         LocalTextColor provides textColor,
-        LocalModelStateInfoSnapshot provides ModelStateInfoSnapshot(
-            currModelState = ComponentState.ENABLED,
-            stateContributionMap = emptyMap(),
-            activeStrength = 1.0f
-        )
+        LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currState)
     ) {
         AuroraText(command.text)
     }
@@ -756,11 +752,11 @@ private fun CommandButtonTextContent(
 
 @Composable
 private fun CommandButtonIconContent(
-    command: Command, iconSize: Dp, modelStateInfo: ModelStateInfo, currState: ComponentState
+    command: Command, presentationModel: CommandPresentationModel,
+    iconSize: Dp, modelStateInfo: ModelStateInfo, currState: ComponentState
 ) {
     if (command.iconFactory != null) {
-        // TODO - remember based on the icon size
-        val icon = remember { command.iconFactory.createNewIcon() }
+        val icon = remember(iconSize) { command.iconFactory.createNewIcon() }
         // TODO - why does this need to be divided by density?
         icon.setSize(
             iconSize / LocalDensity.current.density,
@@ -780,16 +776,16 @@ private fun CommandButtonIconContent(
         )
 
         // Pass our text color and model state snapshot to the children
-        // TODO - pass the right model state info snapshot
         CompositionLocalProvider(
             LocalTextColor provides textColor,
-            LocalModelStateInfoSnapshot provides ModelStateInfoSnapshot(
-                currModelState = ComponentState.ENABLED,
-                stateContributionMap = emptyMap(),
-                activeStrength = 1.0f
-            )
+            LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currState)
         ) {
-            AuroraThemedIcon(icon = icon)
+            AuroraThemedIcon(
+                icon = icon,
+                disabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
+                enabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
+                activeFilterStrategy = presentationModel.iconActiveFilterStrategy
+            )
         }
     }
 }
