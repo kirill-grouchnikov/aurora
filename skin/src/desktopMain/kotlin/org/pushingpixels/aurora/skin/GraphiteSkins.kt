@@ -250,6 +250,19 @@ private fun graphiteSkinColorsBaseExtensions(bundle: AuroraColorSchemeBundle) {
         disabledScheme, ColorSchemeAssociationKind.MARK,
         ComponentState.DISABLED_UNSELECTED, ComponentState.DISABLED_SELECTED
     )
+
+    val pressedSelectedScheme = schemes["Graphite Pressed Selected"]
+    val pressedUnselectedScheme = schemes["Graphite Pressed Unselected"]
+    bundle.registerColorScheme(
+        pressedSelectedScheme,
+        ColorSchemeAssociationKind.FILL,
+        ComponentState.PRESSED_SELECTED
+    )
+    bundle.registerColorScheme(
+        pressedUnselectedScheme,
+        ColorSchemeAssociationKind.FILL,
+        ComponentState.PRESSED_UNSELECTED
+    )
 }
 
 fun graphiteSkin(): AuroraSkinDefinition {
