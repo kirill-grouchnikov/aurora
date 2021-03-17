@@ -292,14 +292,17 @@ private fun <E> AuroraComboBox(
                     // anchor the popup window to the bottom left corner of the component
                     // in screen coordinates
                     // TODO - figure out the sizing (see above)
+                    val initialWidth = 1000
+                    val initialHeight = 1000
                     jwindow.setBounds(
                         (locationOnScreen.x + auroraTopLeftOffset.x / density).toInt(),
                         (locationOnScreen.y + auroraTopLeftOffset.y / density).toInt(),
-                        1000,
-                        1000
+                        initialWidth,
+                        initialHeight
                     )
 
                     val composePopupContent = ComposePanel()
+                    composePopupContent.preferredSize = Dimension(initialWidth, initialHeight)
                     composePopupContent.setContent {
                         CompositionLocalProvider(
                             LocalDecorationAreaType provides decorationAreaType,
@@ -321,6 +324,7 @@ private fun <E> AuroraComboBox(
                             )
                         }
                     }
+                    jwindow.contentPane.layout = BorderLayout()
                     jwindow.contentPane.add(composePopupContent, BorderLayout.CENTER)
                     jwindow.invalidate()
                     jwindow.validate()
@@ -623,6 +627,7 @@ private fun <E> ComboBoxPopupContent(
             window.size = Dimension(popupRect.width, popupRect.height)
             window.invalidate()
             window.validate()
+            window.contentPane.revalidate()
         }
     ) {
         Canvas(Modifier.matchParentSize()) {

@@ -477,14 +477,17 @@ fun AuroraCommandButton(
                         // anchor the popup window to the bottom left corner of the component
                         // in screen coordinates
                         // TODO - figure out the sizing (see above)
+                        val initialWidth = 1000
+                        val initialHeight = 1000
                         jwindow.setBounds(
                             (locationOnScreen.x + auroraTopLeftOffset.x / density.density).toInt(),
                             (locationOnScreen.y + auroraTopLeftOffset.y / density.density).toInt(),
-                            1000,
-                            1000
+                            initialWidth,
+                            initialHeight
                         )
 
                         val popupContent = ComposePanel()
+                        popupContent.preferredSize = Dimension(initialWidth, initialHeight)
                         popupContent.setContent {
                             CompositionLocalProvider(
                                 LocalDecorationAreaType provides decorationAreaType,
@@ -501,6 +504,7 @@ fun AuroraCommandButton(
                                 )
                             }
                         }
+                        jwindow.contentPane.layout = BorderLayout()
                         jwindow.contentPane.add(popupContent, BorderLayout.CENTER)
                         jwindow.invalidate()
                         jwindow.validate()
@@ -712,7 +716,7 @@ fun AuroraCommandButton(
                 x = layoutInfo.iconRect.left.roundToInt(),
                 y = layoutInfo.iconRect.top.roundToInt()
             )
-            textPlaceable?.placeRelative(
+            textPlaceable.placeRelative(
                 x = layoutInfo.textLayoutInfoList[0].textRect.left.roundToInt(),
                 y = layoutInfo.textLayoutInfoList[0].textRect.top.roundToInt()
             )
@@ -873,6 +877,7 @@ private fun CommandButtonPopupContent(
         window.size = Dimension(popupRect.width, popupRect.height)
         window.invalidate()
         window.validate()
+        window.contentPane.revalidate()
     }) {
         Canvas(Modifier.matchParentSize()) {
             val outline = Outline.Rectangle(
