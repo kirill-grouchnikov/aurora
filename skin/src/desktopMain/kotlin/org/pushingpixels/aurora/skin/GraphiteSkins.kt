@@ -259,8 +259,18 @@ private fun graphiteSkinColorsBaseExtensions(bundle: AuroraColorSchemeBundle) {
         ComponentState.PRESSED_SELECTED
     )
     bundle.registerColorScheme(
+        pressedSelectedScheme,
+        ColorSchemeAssociationKind.MARK,
+        ComponentState.PRESSED_SELECTED
+    )
+    bundle.registerColorScheme(
         pressedUnselectedScheme,
         ColorSchemeAssociationKind.FILL,
+        ComponentState.PRESSED_UNSELECTED
+    )
+    bundle.registerColorScheme(
+        pressedUnselectedScheme,
+        ColorSchemeAssociationKind.MARK,
         ComponentState.PRESSED_UNSELECTED
     )
 }
