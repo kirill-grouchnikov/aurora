@@ -78,9 +78,23 @@ private class CommandButtonDrawingCache(
     )
 )
 
+
 @Composable
 fun AuroraCommandButton(
     command: Command,
+    presentationModel: CommandButtonPresentationModel
+) {
+    AuroraCommandButton(
+        command = command,
+        extraAction = null,
+        presentationModel = presentationModel
+    )
+}
+
+@Composable
+private fun AuroraCommandButton(
+    command: Command,
+    extraAction: (() -> Unit)? = null,
     presentationModel: CommandButtonPresentationModel
 ) {
     val drawingCache = remember { CommandButtonDrawingCache() }
@@ -316,7 +330,10 @@ fun AuroraCommandButton(
                     // TODO - handle commands with no action (only secondary / popup content)
                     .clickable(
                         enabled = isActionEnabled,
-                        onClick = command.action ?: {},
+                        onClick = {
+                            command.action?.invoke()
+                            extraAction?.invoke()
+                        },
                         interactionSource = actionInteractionSource,
                         indication = null
                     ).pointerMoveFilter(onEnter = {
@@ -377,16 +394,20 @@ fun AuroraCommandButton(
                     val fillPainter = painters.fillPainter
                     val borderPainter = painters.borderPainter
 
-                    val alpha = if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
-                        // For flat buttons, compute the combined contribution of all
-                        // non-disabled states - ignoring ComponentState.ENABLED
-                        actionModelStateInfo.stateContributionMap
-                            .filter { !it.key.isDisabled && (it.key != ComponentState.ENABLED) }
-                            .values.sumByDouble { it.contribution.toDouble() }.toFloat()
-                    } else {
-                        if (currentActionState.value.isDisabled)
-                            skinColors.getAlpha(decorationAreaType, currentActionState.value) else 1.0f
-                    }
+                    val alpha =
+                        if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
+                            // For flat buttons, compute the combined contribution of all
+                            // non-disabled states - ignoring ComponentState.ENABLED
+                            actionModelStateInfo.stateContributionMap
+                                .filter { !it.key.isDisabled && (it.key != ComponentState.ENABLED) }
+                                .values.sumByDouble { it.contribution.toDouble() }.toFloat()
+                        } else {
+                            if (currentActionState.value.isDisabled)
+                                skinColors.getAlpha(
+                                    decorationAreaType,
+                                    currentActionState.value
+                                ) else 1.0f
+                        }
 
                     Canvas(modifier = Modifier.matchParentSize()) {
                         val width = this.size.width
@@ -592,16 +613,20 @@ fun AuroraCommandButton(
                     val fillPainter = painters.fillPainter
                     val borderPainter = painters.borderPainter
 
-                    val alpha = if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
-                        // For flat buttons, compute the combined contribution of all
-                        // non-disabled states - ignoring ComponentState.ENABLED
-                        popupModelStateInfo.stateContributionMap
-                            .filter { !it.key.isDisabled && (it.key != ComponentState.ENABLED) }
-                            .values.sumByDouble { it.contribution.toDouble() }.toFloat()
-                    } else {
-                        if (currentPopupState.value.isDisabled)
-                            skinColors.getAlpha(decorationAreaType, currentPopupState.value) else 1.0f
-                    }
+                    val alpha =
+                        if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
+                            // For flat buttons, compute the combined contribution of all
+                            // non-disabled states - ignoring ComponentState.ENABLED
+                            popupModelStateInfo.stateContributionMap
+                                .filter { !it.key.isDisabled && (it.key != ComponentState.ENABLED) }
+                                .values.sumByDouble { it.contribution.toDouble() }.toFloat()
+                        } else {
+                            if (currentPopupState.value.isDisabled)
+                                skinColors.getAlpha(
+                                    decorationAreaType,
+                                    currentPopupState.value
+                                ) else 1.0f
+                        }
 
                     Canvas(modifier = Modifier.matchParentSize()) {
                         val width = this.size.width
@@ -904,7 +929,7 @@ private fun CommandButtonPopupContent(
     command: Command,
     presentationModel: CommandButtonPresentationModel
 ) {
-    assert(command.secondaryContentModel != null) { "Secondary content model cannot be null here "}
+    assert(command.secondaryContentModel != null) { "Secondary content model cannot be null here " }
 
     val borderScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = DecorationAreaType.NONE,
@@ -968,15 +993,13 @@ private fun CommandButtonPopupContent(
                 isMenu = true
             )
 
-            // TODO - support multiple command groups in secondary content, with
-            //  horizontal separators between them
             for ((commandGroupIndex, commandGroup) in command.secondaryContentModel!!.groups.withIndex()) {
                 for (secondaryCommand in commandGroup.commands) {
-                    // TODO - when this command is activated, dispose the popup window as well
                     // TODO - support nested secondary content
                     // TODO - support highlighted command (with bold text)
                     AuroraCommandButton(
                         command = secondaryCommand,
+                        extraAction = { window.dispose() },
                         presentationModel = presentation
                     )
                 }
