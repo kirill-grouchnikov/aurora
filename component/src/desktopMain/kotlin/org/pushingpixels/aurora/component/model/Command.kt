@@ -34,6 +34,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
+import org.pushingpixels.aurora.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.IconFilterStrategy
 import org.pushingpixels.aurora.PopupPlacementStrategy
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
@@ -72,11 +73,11 @@ data class Command(
 
 data class CommandGroup(
     val title: String? = null,
-    val command: List<Command>
+    val commands: List<Command>
 )
 
 data class CommandMenuContentModel(
-    val commands: List<CommandGroup>
+    val groups: List<CommandGroup>
 ) {
     constructor(group: CommandGroup) : this(listOf(group))
 }
@@ -85,8 +86,9 @@ enum class TextClick {
     ACTION, POPUP
 }
 
-data class CommandPresentationModel(
+data class CommandButtonPresentationModel(
     val presentationState: CommandButtonPresentationState = CommandButtonPresentationState.MEDIUM,
+    val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS,
     val iconDimension: Int? = null,
     val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ORIGINAL,
@@ -94,7 +96,8 @@ data class CommandPresentationModel(
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.DOWNWARD,
     val textClick: TextClick = TextClick.ACTION,
     val horizontalGapScaleFactor: Float = 1.0f,
-    val verticalGapScaleFactor: Float = 1.0f
+    val verticalGapScaleFactor: Float = 1.0f,
+    val isMenu: Boolean = false
 )
 
 /**

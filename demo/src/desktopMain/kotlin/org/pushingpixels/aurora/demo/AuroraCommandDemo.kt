@@ -36,7 +36,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.component.*
+import org.pushingpixels.aurora.component.AuroraCheckBox
+import org.pushingpixels.aurora.component.AuroraCommandButton
+import org.pushingpixels.aurora.component.AuroraText
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.demo.svg.tango.accessories_text_editor
 import org.pushingpixels.aurora.demo.svg.tango.computer
@@ -84,7 +86,7 @@ fun DemoCommandContent() {
             secondaryContentModel = CommandMenuContentModel(
                 CommandGroup(
                     title = "Group",
-                    command = listOf(
+                    commands = listOf(
                         Command(
                             text = "popup1",
                             iconFactory = computer.factory(),
@@ -125,26 +127,45 @@ fun DemoCommandContent() {
             isActionEnabled = actionEnabled,
             isSecondaryEnabled = popupEnabled,
             secondaryContentModel = CommandMenuContentModel(
-                CommandGroup(
-                    title = "Group",
-                    command = listOf(
-                        Command(
-                            text = "popup1",
-                            iconFactory = computer.factory(),
-                            action = { println("popup1 activated!") },
-                            isActionEnabled = actionEnabled
-                        ),
-                        Command(
-                            text = "popup2",
-                            iconFactory = computer.factory(),
-                            action = { println("popup2 activated!") },
-                            isActionEnabled = actionEnabled
-                        ),
-                        Command(
-                            text = "popup3",
-                            iconFactory = computer.factory(),
-                            action = { println("popup3 activated!") },
-                            isActionEnabled = actionEnabled
+                groups = listOf(
+                    CommandGroup(
+                        title = "Group 1",
+                        commands = listOf(
+                            Command(
+                                text = "popup1",
+                                iconFactory = computer.factory(),
+                                action = { println("popup1 activated!") },
+                                isActionEnabled = actionEnabled
+                            ),
+                            Command(
+                                text = "popup2",
+                                iconFactory = computer.factory(),
+                                action = { println("popup2 activated!") },
+                                isActionEnabled = actionEnabled
+                            ),
+                            Command(
+                                text = "popup3",
+                                iconFactory = computer.factory(),
+                                action = { println("popup3 activated!") },
+                                isActionEnabled = actionEnabled
+                            )
+                        )
+                    ),
+                    CommandGroup(
+                        title = "Group 2",
+                        commands = listOf(
+                            Command(
+                                text = "popup4",
+                                iconFactory = computer.factory(),
+                                action = { println("popup4 activated!") },
+                                isActionEnabled = actionEnabled
+                            ),
+                            Command(
+                                text = "popup5",
+                                iconFactory = computer.factory(),
+                                action = { println("popup5 activated!") },
+                                isActionEnabled = actionEnabled
+                            )
                         )
                     )
                 )
@@ -172,22 +193,22 @@ fun DemoCommandContent() {
         Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
             AuroraCommandButton(
                 command = commandActionOnly,
-                presentationModel = CommandPresentationModel()
+                presentationModel = CommandButtonPresentationModel()
             )
             Spacer(modifier = Modifier.width(8.dp))
             AuroraCommandButton(
                 command = commandSecondaryOnly,
-                presentationModel = CommandPresentationModel()
+                presentationModel = CommandButtonPresentationModel()
             )
             Spacer(modifier = Modifier.width(8.dp))
             AuroraCommandButton(
                 command = commandActionAndSecondary,
-                presentationModel = CommandPresentationModel(textClick = TextClick.ACTION)
+                presentationModel = CommandButtonPresentationModel(textClick = TextClick.ACTION)
             )
             Spacer(modifier = Modifier.width(8.dp))
             AuroraCommandButton(
                 command = commandActionAndSecondary,
-                presentationModel = CommandPresentationModel(textClick = TextClick.POPUP)
+                presentationModel = CommandButtonPresentationModel(textClick = TextClick.POPUP)
             )
         }
     }

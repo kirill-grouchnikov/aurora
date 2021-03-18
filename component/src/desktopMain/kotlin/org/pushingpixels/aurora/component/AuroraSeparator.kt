@@ -31,6 +31,7 @@ package org.pushingpixels.aurora.component
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -91,6 +92,56 @@ fun AuroraVerticalSeparator(
                 brush = secondaryBrush,
                 start = Offset(1.5f, 0.0f),
                 end = Offset(1.5f, height),
+                strokeWidth = 1.0f
+            )
+        }
+    }
+}
+
+@Composable
+fun AuroraHorizontalSeparator(
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
+) {
+    val separatorScheme = AuroraSkin.colors.getColorScheme(
+        decorationAreaType = AuroraSkin.decorationAreaType,
+        associationKind = ColorSchemeAssociationKind.SEPARATOR,
+        componentState = if (enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
+    )
+
+    Canvas(modifier.height(SeparatorSizingConstants.Thickness)) {
+        val width = size.width
+
+        if (width > 0.0f) {
+            val primaryBrush = Brush.horizontalGradient(
+                0.0f to separatorScheme.separatorPrimaryColor.withAlpha(0.0f),
+                2.0f / width to separatorScheme.separatorPrimaryColor,
+                (width - 2.0f) / width to separatorScheme.separatorPrimaryColor,
+                1.0f to separatorScheme.separatorPrimaryColor.withAlpha(0.0f),
+                startX = 0.0f,
+                endX = width,
+                tileMode = TileMode.Repeated
+            )
+            val secondaryBrush = Brush.horizontalGradient(
+                0.0f to separatorScheme.separatorSecondaryColor.withAlpha(0.0f),
+                2.0f / width to separatorScheme.separatorSecondaryColor,
+                (width - 2.0f) / width to separatorScheme.separatorSecondaryColor,
+                1.0f to separatorScheme.separatorSecondaryColor.withAlpha(0.0f),
+                startX = 0.0f,
+                endX = width,
+                tileMode = TileMode.Repeated
+            )
+
+            drawLine(
+                brush = primaryBrush,
+                start = Offset(0.0f, 0.5f),
+                end = Offset(width, 0.5f),
+                strokeWidth = 1.0f
+            )
+            drawLine(
+                brush = secondaryBrush,
+                start = Offset(0.0f, 1.5f),
+                end = Offset(width, 1.5f),
                 strokeWidth = 1.0f
             )
         }

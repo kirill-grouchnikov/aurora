@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.component.SeparatorSizingConstants
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonKind
-import org.pushingpixels.aurora.component.model.CommandPresentationModel
+import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.model.TextClick
 import kotlin.math.max
 
@@ -38,7 +38,7 @@ internal class CommandButtonLayoutManagerMedium(
 
     private fun getPreferredSize(
         command: Command,
-        presentationModel: CommandPresentationModel,
+        presentationModel: CommandButtonPresentationModel,
         paddingValues: PaddingValues
     ): Size {
         val by =
@@ -124,7 +124,7 @@ internal class CommandButtonLayoutManagerMedium(
 
     override fun getLayoutInfo(
         command: Command,
-        presentationModel: CommandPresentationModel,
+        presentationModel: CommandButtonPresentationModel,
         paddingValues: PaddingValues
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
         val preferredSize = getPreferredSize(command, presentationModel, paddingValues)

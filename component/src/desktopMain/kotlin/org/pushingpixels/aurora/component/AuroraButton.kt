@@ -291,15 +291,14 @@ private fun AuroraToggleButton(
             val fillPainter = painters.fillPainter
             val borderPainter = painters.borderPainter
 
-            val alpha: Float
-            if (backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
+            val alpha = if (backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
                 // For flat buttons, compute the combined contribution of all
                 // non-disabled states - ignoring ComponentState.ENABLED
-                alpha = modelStateInfo.stateContributionMap
+                modelStateInfo.stateContributionMap
                     .filter { !it.key.isDisabled && (it.key != ComponentState.ENABLED) }
                     .values.sumByDouble { it.contribution.toDouble() }.toFloat()
             } else {
-                alpha = if (currentState.value.isDisabled)
+                if (currentState.value.isDisabled)
                     skinColors.getAlpha(decorationAreaType, currentState.value) else 1.0f
             }
 
@@ -663,15 +662,14 @@ private fun AuroraButton(
             val fillPainter = painters.fillPainter
             val borderPainter = painters.borderPainter
 
-            val alpha: Float
-            if (backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
+            val alpha = if (backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
                 // For flat buttons, compute the combined contribution of all
                 // non-disabled states - ignoring ComponentState.ENABLED
-                alpha = modelStateInfo.stateContributionMap
+                modelStateInfo.stateContributionMap
                     .filter { !it.key.isDisabled && (it.key != ComponentState.ENABLED) }
                     .values.sumByDouble { it.contribution.toDouble() }.toFloat()
             } else {
-                alpha = if (currentState.value.isDisabled)
+                if (currentState.value.isDisabled)
                     skinColors.getAlpha(decorationAreaType, currentState.value) else 1.0f
             }
 

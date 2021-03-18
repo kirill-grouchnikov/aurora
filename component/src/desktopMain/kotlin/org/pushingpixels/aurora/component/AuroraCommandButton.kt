@@ -81,7 +81,7 @@ private class CommandButtonDrawingCache(
 @Composable
 fun AuroraCommandButton(
     command: Command,
-    presentationModel: CommandPresentationModel
+    presentationModel: CommandButtonPresentationModel
 ) {
     val drawingCache = remember { CommandButtonDrawingCache() }
 
@@ -337,122 +337,153 @@ fun AuroraCommandButton(
                         false
                     })
             ) {
-                // Populate the cached color scheme for filling the button container
-                // based on the current model state info
-                populateColorScheme(
-                    drawingCache.colorScheme,
-                    actionModelStateInfo,
-                    currentActionState.value,
-                    decorationAreaType,
-                    ColorSchemeAssociationKind.FILL
-                )
-                // And retrieve the container fill colors
-                val fillUltraLight = drawingCache.colorScheme.ultraLightColor
-                val fillExtraLight = drawingCache.colorScheme.extraLightColor
-                val fillLight = drawingCache.colorScheme.lightColor
-                val fillMid = drawingCache.colorScheme.midColor
-                val fillDark = drawingCache.colorScheme.darkColor
-                val fillUltraDark = drawingCache.colorScheme.ultraDarkColor
-                val fillIsDark = drawingCache.colorScheme.isDark
+                if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.NEVER) {
+                    // Populate the cached color scheme for filling the button container
+                    // based on the current model state info
+                    populateColorScheme(
+                        drawingCache.colorScheme,
+                        actionModelStateInfo,
+                        currentActionState.value,
+                        decorationAreaType,
+                        ColorSchemeAssociationKind.FILL
+                    )
+                    // And retrieve the container fill colors
+                    val fillUltraLight = drawingCache.colorScheme.ultraLightColor
+                    val fillExtraLight = drawingCache.colorScheme.extraLightColor
+                    val fillLight = drawingCache.colorScheme.lightColor
+                    val fillMid = drawingCache.colorScheme.midColor
+                    val fillDark = drawingCache.colorScheme.darkColor
+                    val fillUltraDark = drawingCache.colorScheme.ultraDarkColor
+                    val fillIsDark = drawingCache.colorScheme.isDark
 
-                // Populate the cached color scheme for drawing the button border
-                // based on the current model state info
-                populateColorScheme(
-                    drawingCache.colorScheme,
-                    actionModelStateInfo,
-                    currentActionState.value,
-                    decorationAreaType,
-                    ColorSchemeAssociationKind.BORDER
-                )
-                // And retrieve the border colors
-                val borderUltraLight = drawingCache.colorScheme.ultraLightColor
-                val borderExtraLight = drawingCache.colorScheme.extraLightColor
-                val borderLight = drawingCache.colorScheme.lightColor
-                val borderMid = drawingCache.colorScheme.midColor
-                val borderDark = drawingCache.colorScheme.darkColor
-                val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
-                val borderIsDark = drawingCache.colorScheme.isDark
+                    // Populate the cached color scheme for drawing the button border
+                    // based on the current model state info
+                    populateColorScheme(
+                        drawingCache.colorScheme,
+                        actionModelStateInfo,
+                        currentActionState.value,
+                        decorationAreaType,
+                        ColorSchemeAssociationKind.BORDER
+                    )
+                    // And retrieve the border colors
+                    val borderUltraLight = drawingCache.colorScheme.ultraLightColor
+                    val borderExtraLight = drawingCache.colorScheme.extraLightColor
+                    val borderLight = drawingCache.colorScheme.lightColor
+                    val borderMid = drawingCache.colorScheme.midColor
+                    val borderDark = drawingCache.colorScheme.darkColor
+                    val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
+                    val borderIsDark = drawingCache.colorScheme.isDark
 
-                val fillPainter = painters.fillPainter
-                val borderPainter = painters.borderPainter
+                    val fillPainter = painters.fillPainter
+                    val borderPainter = painters.borderPainter
 
-                // TODO: handle action alpha
-                val alpha = 1.0f
+                    val alpha = if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
+                        // For flat buttons, compute the combined contribution of all
+                        // non-disabled states - ignoring ComponentState.ENABLED
+                        actionModelStateInfo.stateContributionMap
+                            .filter { !it.key.isDisabled && (it.key != ComponentState.ENABLED) }
+                            .values.sumByDouble { it.contribution.toDouble() }.toFloat()
+                    } else {
+                        if (currentActionState.value.isDisabled)
+                            skinColors.getAlpha(decorationAreaType, currentActionState.value) else 1.0f
+                    }
 
-                Canvas(modifier = Modifier.matchParentSize()) {
-                    val width = this.size.width
-                    val height = this.size.height
-                    // TODO - revisit this
-                    val sides = if (layoutInfo.popupClickArea.width == 0.0f) ButtonSides()
-                    else ButtonSides(openSides = setOf(Side.END), straightSides = setOf(Side.END))
-
-                    val openDelta = 3
-                    // TODO - add RTL support
-                    val deltaLeft = if (sides.openSides.contains(Side.START)) openDelta else 0
-                    val deltaRight = if (sides.openSides.contains(Side.END)) openDelta else 0
-                    val deltaTop = if (sides.openSides.contains(Side.TOP)) openDelta else 0
-                    val deltaBottom = if (sides.openSides.contains(Side.BOTTOM)) openDelta else 0
-
-                    withTransform({
-                        clipRect(
-                            left = 0.0f,
-                            top = 0.0f,
-                            right = width,
-                            bottom = height,
-                            clipOp = ClipOp.Intersect
-                        )
-                        translate(left = -deltaLeft.toFloat(), top = -deltaTop.toFloat())
-                    }) {
-                        val outline = buttonShaper.getButtonOutline(
-                            width = width + deltaLeft + deltaRight,
-                            height = height + deltaTop + deltaBottom,
-                            extraInsets = 0.5f,
-                            isInner = false,
-                            sides = sides,
-                            drawScope = this
-                        )
-
-                        val outlineBoundingRect = outline.bounds
-                        if (outlineBoundingRect.isEmpty) {
-                            return@withTransform
+                    Canvas(modifier = Modifier.matchParentSize()) {
+                        val width = this.size.width
+                        val height = this.size.height
+                        // TODO - revisit this
+                        val sides = when {
+                            presentationModel.isMenu -> {
+                                ButtonSides(
+                                    openSides = Side.values().toSet(),
+                                    straightSides = Side.values().toSet()
+                                )
+                            }
+                            layoutInfo.popupClickArea.width == 0.0f -> {
+                                ButtonSides()
+                            }
+                            else -> {
+                                ButtonSides(
+                                    openSides = setOf(Side.END),
+                                    straightSides = setOf(Side.END)
+                                )
+                            }
                         }
 
-                        // Populate the cached color scheme for filling the button container
-                        drawingCache.colorScheme.ultraLight = fillUltraLight
-                        drawingCache.colorScheme.extraLight = fillExtraLight
-                        drawingCache.colorScheme.light = fillLight
-                        drawingCache.colorScheme.mid = fillMid
-                        drawingCache.colorScheme.dark = fillDark
-                        drawingCache.colorScheme.ultraDark = fillUltraDark
-                        drawingCache.colorScheme.isDark = fillIsDark
-                        drawingCache.colorScheme.foreground = Color.Black
-                        fillPainter.paintContourBackground(
-                            this, this.size, outline, drawingCache.colorScheme, alpha
-                        )
+                        val openDelta = 3
+                        // TODO - add RTL support
+                        val deltaLeft = if (sides.openSides.contains(Side.START)) openDelta else 0
+                        val deltaRight = if (sides.openSides.contains(Side.END)) openDelta else 0
+                        val deltaTop = if (sides.openSides.contains(Side.TOP)) openDelta else 0
+                        val deltaBottom =
+                            if (sides.openSides.contains(Side.BOTTOM)) openDelta else 0
 
-                        // Populate the cached color scheme for drawing the button border
-                        drawingCache.colorScheme.ultraLight = borderUltraLight
-                        drawingCache.colorScheme.extraLight = borderExtraLight
-                        drawingCache.colorScheme.light = borderLight
-                        drawingCache.colorScheme.mid = borderMid
-                        drawingCache.colorScheme.dark = borderDark
-                        drawingCache.colorScheme.ultraDark = borderUltraDark
-                        drawingCache.colorScheme.isDark = borderIsDark
-                        drawingCache.colorScheme.foreground = Color.Black
-
-                        val innerOutline =
-                            if (borderPainter.isPaintingInnerOutline) buttonShaper.getButtonOutline(
+                        withTransform({
+                            clipRect(
+                                left = 0.0f,
+                                top = 0.0f,
+                                right = width,
+                                bottom = height,
+                                clipOp = ClipOp.Intersect
+                            )
+                            translate(left = -deltaLeft.toFloat(), top = -deltaTop.toFloat())
+                        }) {
+                            val outline = buttonShaper.getButtonOutline(
                                 width = width + deltaLeft + deltaRight,
                                 height = height + deltaTop + deltaBottom,
-                                extraInsets = 1.0f,
-                                isInner = true,
+                                extraInsets = 0.5f,
+                                isInner = false,
                                 sides = sides,
                                 drawScope = this
-                            ) else null
+                            )
 
-                        borderPainter.paintBorder(
-                            this, this.size, outline, innerOutline, drawingCache.colorScheme, alpha
-                        )
+                            val outlineBoundingRect = outline.bounds
+                            if (outlineBoundingRect.isEmpty) {
+                                return@withTransform
+                            }
+
+                            // Populate the cached color scheme for filling the button container
+                            drawingCache.colorScheme.ultraLight = fillUltraLight
+                            drawingCache.colorScheme.extraLight = fillExtraLight
+                            drawingCache.colorScheme.light = fillLight
+                            drawingCache.colorScheme.mid = fillMid
+                            drawingCache.colorScheme.dark = fillDark
+                            drawingCache.colorScheme.ultraDark = fillUltraDark
+                            drawingCache.colorScheme.isDark = fillIsDark
+                            drawingCache.colorScheme.foreground = Color.Black
+                            fillPainter.paintContourBackground(
+                                this, this.size, outline, drawingCache.colorScheme, alpha
+                            )
+
+                            // Populate the cached color scheme for drawing the button border
+                            drawingCache.colorScheme.ultraLight = borderUltraLight
+                            drawingCache.colorScheme.extraLight = borderExtraLight
+                            drawingCache.colorScheme.light = borderLight
+                            drawingCache.colorScheme.mid = borderMid
+                            drawingCache.colorScheme.dark = borderDark
+                            drawingCache.colorScheme.ultraDark = borderUltraDark
+                            drawingCache.colorScheme.isDark = borderIsDark
+                            drawingCache.colorScheme.foreground = Color.Black
+
+                            val innerOutline =
+                                if (borderPainter.isPaintingInnerOutline) buttonShaper.getButtonOutline(
+                                    width = width + deltaLeft + deltaRight,
+                                    height = height + deltaTop + deltaBottom,
+                                    extraInsets = 1.0f,
+                                    isInner = true,
+                                    sides = sides,
+                                    drawScope = this
+                                ) else null
+
+                            borderPainter.paintBorder(
+                                this,
+                                this.size,
+                                outline,
+                                innerOutline,
+                                drawingCache.colorScheme,
+                                alpha
+                            )
+                        }
                     }
                 }
             }
@@ -521,125 +552,153 @@ fun AuroraCommandButton(
                     false
                 })
             ) {
-                // Populate the cached color scheme for filling the button container
-                // based on the current model state info
-                populateColorScheme(
-                    drawingCache.colorScheme,
-                    popupModelStateInfo,
-                    currentPopupState.value,
-                    decorationAreaType,
-                    ColorSchemeAssociationKind.FILL
-                )
-                // And retrieve the container fill colors
-                val fillUltraLight = drawingCache.colorScheme.ultraLightColor
-                val fillExtraLight = drawingCache.colorScheme.extraLightColor
-                val fillLight = drawingCache.colorScheme.lightColor
-                val fillMid = drawingCache.colorScheme.midColor
-                val fillDark = drawingCache.colorScheme.darkColor
-                val fillUltraDark = drawingCache.colorScheme.ultraDarkColor
-                val fillIsDark = drawingCache.colorScheme.isDark
-
-                // Populate the cached color scheme for drawing the button border
-                // based on the current model state info
-                populateColorScheme(
-                    drawingCache.colorScheme,
-                    popupModelStateInfo,
-                    currentPopupState.value,
-                    decorationAreaType,
-                    ColorSchemeAssociationKind.BORDER
-                )
-                // And retrieve the border colors
-                val borderUltraLight = drawingCache.colorScheme.ultraLightColor
-                val borderExtraLight = drawingCache.colorScheme.extraLightColor
-                val borderLight = drawingCache.colorScheme.lightColor
-                val borderMid = drawingCache.colorScheme.midColor
-                val borderDark = drawingCache.colorScheme.darkColor
-                val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
-                val borderIsDark = drawingCache.colorScheme.isDark
-
-                val fillPainter = painters.fillPainter
-                val borderPainter = painters.borderPainter
-
-                // TODO: handle popup alpha
-                val alpha = 1.0f
-
-                Canvas(modifier = Modifier.matchParentSize()) {
-                    val width = this.size.width
-                    val height = this.size.height
-                    // TODO - revisit this
-                    val sides = if (layoutInfo.actionClickArea.width == 0.0f) ButtonSides()
-                    else ButtonSides(
-                        openSides = setOf(Side.START),
-                        straightSides = setOf(Side.START)
+                if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.NEVER) {
+                    // Populate the cached color scheme for filling the button container
+                    // based on the current model state info
+                    populateColorScheme(
+                        drawingCache.colorScheme,
+                        popupModelStateInfo,
+                        currentPopupState.value,
+                        decorationAreaType,
+                        ColorSchemeAssociationKind.FILL
                     )
+                    // And retrieve the container fill colors
+                    val fillUltraLight = drawingCache.colorScheme.ultraLightColor
+                    val fillExtraLight = drawingCache.colorScheme.extraLightColor
+                    val fillLight = drawingCache.colorScheme.lightColor
+                    val fillMid = drawingCache.colorScheme.midColor
+                    val fillDark = drawingCache.colorScheme.darkColor
+                    val fillUltraDark = drawingCache.colorScheme.ultraDarkColor
+                    val fillIsDark = drawingCache.colorScheme.isDark
 
-                    val openDelta = 3
-                    // TODO - add RTL support
-                    val deltaLeft = if (sides.openSides.contains(Side.START)) openDelta else 0
-                    val deltaRight = if (sides.openSides.contains(Side.END)) openDelta else 0
-                    val deltaTop = if (sides.openSides.contains(Side.TOP)) openDelta else 0
-                    val deltaBottom = if (sides.openSides.contains(Side.BOTTOM)) openDelta else 0
+                    // Populate the cached color scheme for drawing the button border
+                    // based on the current model state info
+                    populateColorScheme(
+                        drawingCache.colorScheme,
+                        popupModelStateInfo,
+                        currentPopupState.value,
+                        decorationAreaType,
+                        ColorSchemeAssociationKind.BORDER
+                    )
+                    // And retrieve the border colors
+                    val borderUltraLight = drawingCache.colorScheme.ultraLightColor
+                    val borderExtraLight = drawingCache.colorScheme.extraLightColor
+                    val borderLight = drawingCache.colorScheme.lightColor
+                    val borderMid = drawingCache.colorScheme.midColor
+                    val borderDark = drawingCache.colorScheme.darkColor
+                    val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
+                    val borderIsDark = drawingCache.colorScheme.isDark
 
-                    withTransform({
-                        clipRect(
-                            left = 0.0f,
-                            top = 0.0f,
-                            right = width,
-                            bottom = height,
-                            clipOp = ClipOp.Intersect
-                        )
-                        translate(left = -deltaLeft.toFloat(), top = -deltaTop.toFloat())
-                    }) {
-                        val outline = buttonShaper.getButtonOutline(
-                            width = width + deltaLeft + deltaRight,
-                            height = height + deltaTop + deltaBottom,
-                            extraInsets = 0.5f,
-                            isInner = false,
-                            sides = sides,
-                            drawScope = this
-                        )
+                    val fillPainter = painters.fillPainter
+                    val borderPainter = painters.borderPainter
 
-                        val outlineBoundingRect = outline.bounds
-                        if (outlineBoundingRect.isEmpty) {
-                            return@withTransform
+                    val alpha = if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
+                        // For flat buttons, compute the combined contribution of all
+                        // non-disabled states - ignoring ComponentState.ENABLED
+                        popupModelStateInfo.stateContributionMap
+                            .filter { !it.key.isDisabled && (it.key != ComponentState.ENABLED) }
+                            .values.sumByDouble { it.contribution.toDouble() }.toFloat()
+                    } else {
+                        if (currentPopupState.value.isDisabled)
+                            skinColors.getAlpha(decorationAreaType, currentPopupState.value) else 1.0f
+                    }
+
+                    Canvas(modifier = Modifier.matchParentSize()) {
+                        val width = this.size.width
+                        val height = this.size.height
+                        // TODO - revisit this
+                        val sides = when {
+                            presentationModel.isMenu -> {
+                                ButtonSides(
+                                    openSides = Side.values().toSet(),
+                                    straightSides = Side.values().toSet()
+                                )
+                            }
+                            layoutInfo.actionClickArea.width == 0.0f -> {
+                                ButtonSides()
+                            }
+                            else -> {
+                                ButtonSides(
+                                    openSides = setOf(Side.START),
+                                    straightSides = setOf(Side.START)
+                                )
+                            }
                         }
 
-                        // Populate the cached color scheme for filling the button container
-                        drawingCache.colorScheme.ultraLight = fillUltraLight
-                        drawingCache.colorScheme.extraLight = fillExtraLight
-                        drawingCache.colorScheme.light = fillLight
-                        drawingCache.colorScheme.mid = fillMid
-                        drawingCache.colorScheme.dark = fillDark
-                        drawingCache.colorScheme.ultraDark = fillUltraDark
-                        drawingCache.colorScheme.isDark = fillIsDark
-                        drawingCache.colorScheme.foreground = Color.Black
-                        fillPainter.paintContourBackground(
-                            this, this.size, outline, drawingCache.colorScheme, alpha
-                        )
+                        val openDelta = 3
+                        // TODO - add RTL support
+                        val deltaLeft = if (sides.openSides.contains(Side.START)) openDelta else 0
+                        val deltaRight = if (sides.openSides.contains(Side.END)) openDelta else 0
+                        val deltaTop = if (sides.openSides.contains(Side.TOP)) openDelta else 0
+                        val deltaBottom =
+                            if (sides.openSides.contains(Side.BOTTOM)) openDelta else 0
 
-                        // Populate the cached color scheme for drawing the button border
-                        drawingCache.colorScheme.ultraLight = borderUltraLight
-                        drawingCache.colorScheme.extraLight = borderExtraLight
-                        drawingCache.colorScheme.light = borderLight
-                        drawingCache.colorScheme.mid = borderMid
-                        drawingCache.colorScheme.dark = borderDark
-                        drawingCache.colorScheme.ultraDark = borderUltraDark
-                        drawingCache.colorScheme.isDark = borderIsDark
-                        drawingCache.colorScheme.foreground = Color.Black
-
-                        val innerOutline =
-                            if (borderPainter.isPaintingInnerOutline) buttonShaper.getButtonOutline(
+                        withTransform({
+                            clipRect(
+                                left = 0.0f,
+                                top = 0.0f,
+                                right = width,
+                                bottom = height,
+                                clipOp = ClipOp.Intersect
+                            )
+                            translate(left = -deltaLeft.toFloat(), top = -deltaTop.toFloat())
+                        }) {
+                            val outline = buttonShaper.getButtonOutline(
                                 width = width + deltaLeft + deltaRight,
                                 height = height + deltaTop + deltaBottom,
-                                extraInsets = 1.0f,
-                                isInner = true,
+                                extraInsets = 0.5f,
+                                isInner = false,
                                 sides = sides,
                                 drawScope = this
-                            ) else null
+                            )
 
-                        borderPainter.paintBorder(
-                            this, this.size, outline, innerOutline, drawingCache.colorScheme, alpha
-                        )
+                            val outlineBoundingRect = outline.bounds
+                            if (outlineBoundingRect.isEmpty) {
+                                return@withTransform
+                            }
+
+                            // Populate the cached color scheme for filling the button container
+                            drawingCache.colorScheme.ultraLight = fillUltraLight
+                            drawingCache.colorScheme.extraLight = fillExtraLight
+                            drawingCache.colorScheme.light = fillLight
+                            drawingCache.colorScheme.mid = fillMid
+                            drawingCache.colorScheme.dark = fillDark
+                            drawingCache.colorScheme.ultraDark = fillUltraDark
+                            drawingCache.colorScheme.isDark = fillIsDark
+                            drawingCache.colorScheme.foreground = Color.Black
+                            fillPainter.paintContourBackground(
+                                this, this.size, outline, drawingCache.colorScheme, alpha
+                            )
+
+                            // Populate the cached color scheme for drawing the button border
+                            drawingCache.colorScheme.ultraLight = borderUltraLight
+                            drawingCache.colorScheme.extraLight = borderExtraLight
+                            drawingCache.colorScheme.light = borderLight
+                            drawingCache.colorScheme.mid = borderMid
+                            drawingCache.colorScheme.dark = borderDark
+                            drawingCache.colorScheme.ultraDark = borderUltraDark
+                            drawingCache.colorScheme.isDark = borderIsDark
+                            drawingCache.colorScheme.foreground = Color.Black
+
+                            val innerOutline =
+                                if (borderPainter.isPaintingInnerOutline) buttonShaper.getButtonOutline(
+                                    width = width + deltaLeft + deltaRight,
+                                    height = height + deltaTop + deltaBottom,
+                                    extraInsets = 1.0f,
+                                    isInner = true,
+                                    sides = sides,
+                                    drawScope = this
+                                ) else null
+
+                            borderPainter.paintBorder(
+                                this,
+                                this.size,
+                                outline,
+                                innerOutline,
+                                drawingCache.colorScheme,
+                                alpha
+                            )
+                        }
                     }
                 }
             }
@@ -765,7 +824,7 @@ private fun CommandButtonTextContent(
 
 @Composable
 private fun CommandButtonIconContent(
-    command: Command, presentationModel: CommandPresentationModel,
+    command: Command, presentationModel: CommandButtonPresentationModel,
     iconSize: Dp, modelStateInfo: ModelStateInfo, currState: ComponentState
 ) {
     if (command.iconFactory != null) {
@@ -843,8 +902,10 @@ private fun CommandButtonPopupContent(
     window: JWindow,
     anchorSize: AuroraSize,
     command: Command,
-    presentationModel: CommandPresentationModel
+    presentationModel: CommandButtonPresentationModel
 ) {
+    assert(command.secondaryContentModel != null) { "Secondary content model cannot be null here "}
+
     val borderScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = DecorationAreaType.NONE,
         associationKind = ColorSchemeAssociationKind.BORDER,
@@ -899,19 +960,28 @@ private fun CommandButtonPopupContent(
             )
         }
         CommandButtonPopupColumn(contentSize = contentSize) {
-            for (item in command.secondaryContentModel!!.commands[0].command) {
-                AuroraMenuButton(
-                    enabled = true,
-                    onClick = {
-                        // TODO - support nested secondary content
-                        window.dispose()
-                        item.action?.invoke()
-                    },
-                    sides = ButtonSides(straightSides = Side.values().toSet()),
-                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                    sizingStrategy = ButtonSizingStrategy.EXTENDED,
-                ) {
-                    AuroraText(text = item.text, maxLines = 1)
+            // Command presentation for menu content
+            val presentation = CommandButtonPresentationModel(
+                presentationState = CommandButtonPresentationState.MEDIUM,
+                popupPlacementStrategy = PopupPlacementStrategy.ENDWARD,
+                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                isMenu = true
+            )
+
+            // TODO - support multiple command groups in secondary content, with
+            //  horizontal separators between them
+            for ((commandGroupIndex, commandGroup) in command.secondaryContentModel!!.groups.withIndex()) {
+                for (secondaryCommand in commandGroup.commands) {
+                    // TODO - when this command is activated, dispose the popup window as well
+                    // TODO - support nested secondary content
+                    // TODO - support highlighted command (with bold text)
+                    AuroraCommandButton(
+                        command = secondaryCommand,
+                        presentationModel = presentation
+                    )
+                }
+                if (commandGroupIndex < (command.secondaryContentModel.groups.size - 1)) {
+                    AuroraHorizontalSeparator()
                 }
             }
         }
