@@ -643,19 +643,28 @@ fun AuroraCommandButton(
                     }
                 }
             }
+
+            // Icon can be in action or popup area
+            val modelStateInfoForIcon =
+                if (layoutInfo.actionClickArea.width > 0) actionModelStateInfo else popupModelStateInfo
+            val currStateForIcon =
+                if (layoutInfo.actionClickArea.width > 0) currentActionState.value else currentPopupState.value
+            CommandButtonIconContent(
+                command,
+                presentationModel,
+                layoutManager.getPreferredIconSize(),
+                modelStateInfoForIcon,
+                currStateForIcon
+            )
+
             // Text content can be in action or popup area
             val modelStateInfoForText =
                 if (layoutInfo.isTextInActionArea) actionModelStateInfo else popupModelStateInfo
             val currStateForText =
                 if (layoutInfo.isTextInActionArea) currentActionState.value else currentPopupState.value
-            CommandButtonIconContent(
-                command,
-                presentationModel,
-                layoutManager.getPreferredIconSize(),
-                modelStateInfoForText,
-                currStateForText
-            )
             CommandButtonTextContent(command, modelStateInfoForText, currStateForText)
+
+            // Popup action (arrow) if we need one
             if (layoutInfo.popupActionRect.width > 0) {
                 CommandButtonPopupIconContent(popupModelStateInfo, currentPopupState.value)
             }
