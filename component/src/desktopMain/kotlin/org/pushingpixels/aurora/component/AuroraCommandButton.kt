@@ -322,7 +322,6 @@ private fun AuroraCommandButton(
             Box(
                 modifier = Modifier
                     // TODO - this needs to be toggleable for toggleable action
-                    // TODO - handle commands with no action (only secondary / popup content)
                     .clickable(
                         enabled = isActionEnabled,
                         onClick = {
@@ -427,7 +426,6 @@ private fun AuroraCommandButton(
                         }
 
                         val openDelta = 3
-                        // TODO - add RTL support
                         val deltaLeft = if (sides.openSides.contains(Side.START)) openDelta else 0
                         val deltaRight = if (sides.openSides.contains(Side.END)) openDelta else 0
                         val deltaTop = if (sides.openSides.contains(Side.TOP)) openDelta else 0
@@ -646,7 +644,6 @@ private fun AuroraCommandButton(
                         }
 
                         val openDelta = 3
-                        // TODO - add RTL support
                         val deltaLeft = if (sides.openSides.contains(Side.START)) openDelta else 0
                         val deltaRight = if (sides.openSides.contains(Side.END)) openDelta else 0
                         val deltaTop = if (sides.openSides.contains(Side.TOP)) openDelta else 0
@@ -736,7 +733,8 @@ private fun AuroraCommandButton(
                 currStateForIcon
             )
 
-            // Text content can be in action or popup area
+            // Text content can be in action or popup area. Use the matching model
+            // to determine the text color
             val modelStateInfoForText =
                 if (isTextInActionArea) actionModelStateInfo else popupModelStateInfo
             val currStateForText =
@@ -749,6 +747,9 @@ private fun AuroraCommandButton(
             }
         }) { measurables, constraints ->
 
+        // Pass the constraints from the parent (which may or may not use fixed width
+        // or height) so that the layout manager can decide what to do with available
+        // space
         val layoutInfo = layoutManager.getLayoutInfo(
             constraints = constraints,
             command = command,
