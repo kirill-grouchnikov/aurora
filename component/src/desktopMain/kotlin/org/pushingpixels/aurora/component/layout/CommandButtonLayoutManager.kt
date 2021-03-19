@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.MeasureScope
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
@@ -87,6 +88,7 @@ interface CommandButtonLayoutManager: MeasureScope {
      * @return The layout information for the specified command button.
      */
     fun getLayoutInfo(
+        constraints: Constraints,
         command: Command,
         presentationModel: CommandButtonPresentationModel,
         paddingValues: PaddingValues

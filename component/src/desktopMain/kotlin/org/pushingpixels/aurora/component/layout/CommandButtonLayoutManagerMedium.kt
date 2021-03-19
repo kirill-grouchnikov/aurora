@@ -8,15 +8,9 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.Paragraph
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.component.SeparatorSizingConstants
-import org.pushingpixels.aurora.component.model.Command
-import org.pushingpixels.aurora.component.model.CommandButtonKind
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
-import org.pushingpixels.aurora.component.model.TextClick
+import org.pushingpixels.aurora.component.model.*
 import kotlin.math.max
 
 internal class CommandButtonLayoutManagerMedium(
@@ -123,6 +117,7 @@ internal class CommandButtonLayoutManagerMedium(
     }
 
     override fun getLayoutInfo(
+        constraints: Constraints,
         command: Command,
         presentationModel: CommandButtonPresentationModel,
         paddingValues: PaddingValues
@@ -137,7 +132,6 @@ internal class CommandButtonLayoutManagerMedium(
         val hasPopup = (command.secondaryContentModel != null)
         val iconSize = (if (hasIcon) getPreferredIconSize() else 0.dp).toPx()
         //val prefWidth = preferredSize.width
-        var shiftX = 0
 
         val ltr = (layoutDirection == LayoutDirection.Ltr)
 
@@ -149,39 +143,43 @@ internal class CommandButtonLayoutManagerMedium(
             CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL
         var isTextInActionArea = true
 
-//        if (width > prefWidth) {
-//            // We have more horizontal space than needed to display the content.
-//            // Consult the horizontal alignment attribute of the command button to see
-//            // how we should shift the content horizontally.
-//            when (commandButton.getHorizontalAlignment()) {
-//                SwingConstants.LEADING -> if (!ltr) {
-//                    // shift everything to the right
-//                    shiftX = width - prefWidth
-//                }
-//                SwingConstants.CENTER ->                     // shift everything to be centered horizontally
-//                    shiftX = (width - prefWidth) / 2
-//                SwingConstants.TRAILING -> if (ltr) {
-//                    // shift everything to the right
-//                    shiftX = width - prefWidth
-//                }
-//            }
-//        }
+        var shiftX = 0.0f
+        var finalWidth = preferredSize.width
+        var finalHeight = preferredSize.height
+        if (constraints.hasFixedWidth) {
+            finalWidth = constraints.maxWidth.toFloat()
+            if (finalWidth > preferredSize.width) {
+                // We have more horizontal space than needed to display the content.
+                // Consult the horizontal alignment attribute of the command button to see
+                // how we should shift the content horizontally.
+                when (presentationModel.horizontalAlignment) {
+                    HorizontalAlignment.LEADING -> if (!ltr) {
+                        // shift everything to the right
+                        shiftX = finalWidth - preferredSize.width
+                    }
+                    HorizontalAlignment.CENTER ->
+                        // shift everything to be centered horizontally
+                        shiftX = (finalWidth - preferredSize.width) / 2
+                    HorizontalAlignment.TRAILING -> if (ltr) {
+                        // shift everything to the right
+                        shiftX = finalWidth - preferredSize.width
+                    }
+                }
+            }
+        }
+        if (constraints.hasFixedHeight) {
+            finalHeight = constraints.maxHeight.toFloat()
+        }
 
-        val commandButtonKind: CommandButtonKind
-        if (hasAction && hasPopup) {
-            commandButtonKind = if (presentationModel.textClick == TextClick.ACTION)
+        val commandButtonKind = if (hasAction && hasPopup) {
+            if (presentationModel.textClick == TextClick.ACTION)
                 CommandButtonKind.ACTION_AND_POPUP_MAIN_ACTION else
                 CommandButtonKind.ACTION_AND_POPUP_MAIN_POPUP
         } else if (hasPopup) {
-            commandButtonKind = CommandButtonKind.POPUP_ONLY
+            CommandButtonKind.POPUP_ONLY
         } else {
-            commandButtonKind = CommandButtonKind.ACTION_ONLY
+            CommandButtonKind.ACTION_ONLY
         }
-
-//        val fm: FontMetrics = SubstanceMetricsUtilities.getFontMetrics(commandButton.getFont())
-//        val labelHeight = fm.ascent + fm.descent
-//        val layoutHGap: Int = FlamingoUtilities.getHLayoutGap(commandButton)
-//        if (ltr) {
 
         // TODO - support RTL
         var x = paddingValues.calculateStartPadding(layoutDirection).toPx() + shiftX - layoutHGap
@@ -192,8 +190,8 @@ internal class CommandButtonLayoutManagerMedium(
             iconRect = Rect(
                 left = x,
                 right = x + iconSize,
-                top = (preferredSize.height - iconSize) / 2,
-                bottom = (preferredSize.height - iconSize) / 2 + iconSize
+                top = (finalHeight - iconSize) / 2,
+                bottom = (finalHeight - iconSize) / 2 + iconSize
             )
             x += iconSize + layoutHGap
         }
@@ -218,8 +216,8 @@ internal class CommandButtonLayoutManagerMedium(
                 textRect = Rect(
                     left = x,
                     right = x + paragraph.maxIntrinsicWidth,
-                    top = (preferredSize.height - textHeight) / 2.0f,
-                    bottom = (preferredSize.height - textHeight) / 2.0f + textHeight
+                    top = (finalHeight - textHeight) / 2.0f,
+                    bottom = (finalHeight - textHeight) / 2.0f + textHeight
                 )
             )
             textLayoutInfoList.add(lineLayoutInfo)
@@ -234,28 +232,26 @@ internal class CommandButtonLayoutManagerMedium(
             val popupIconSize = if (textHeight > 0) textHeight else getPreferredIconSize().toPx()
             if (!hasText && !hasIcon) {
                 // horizontally center the popup icon
-                x += (preferredSize.width - 2 * layoutHGap - 1 - popupIconSize / 2.0f) / 2.0f
+                x += (finalWidth - 2 * layoutHGap - 1 - popupIconSize / 2.0f) / 2.0f
             }
             popupActionRect = Rect(
                 left = x,
                 right = x + 4 + popupIconSize / 2.0f,
-                top = (preferredSize.height - popupIconSize) / 2.0f - 1.0f,
-                bottom = (preferredSize.height - popupIconSize) / 2.0f + popupIconSize + 1.0f
+                top = (finalHeight - popupIconSize) / 2.0f - 1.0f,
+                bottom = (finalHeight - popupIconSize) / 2.0f + popupIconSize + 1.0f
             )
         }
         var xBorderBetweenActionAndPopup = 0.0f
         var actionClickArea = Rect.Zero
         var popupClickArea = Rect.Zero
         var separatorArea = Rect.Zero
-//            val verticalSeparatorWidth: Int = JSeparator(JSeparator.VERTICAL)
-//                .getPreferredSize().width
         when (commandButtonKind) {
             CommandButtonKind.ACTION_ONLY -> {
                 actionClickArea = Rect(
                     left = 0.0f,
                     top = 0.0f,
-                    right = preferredSize.width,
-                    bottom = preferredSize.height
+                    right = finalWidth,
+                    bottom = finalHeight
                 )
                 isTextInActionArea = true
             }
@@ -263,8 +259,8 @@ internal class CommandButtonLayoutManagerMedium(
                 popupClickArea = Rect(
                     left = 0.0f,
                     top = 0.0f,
-                    right = preferredSize.width,
-                    bottom = preferredSize.height
+                    right = finalWidth,
+                    bottom = finalHeight
                 )
                 isTextInActionArea = false
             }
@@ -284,14 +280,14 @@ internal class CommandButtonLayoutManagerMedium(
                         left = 0.0f,
                         top = 0.0f,
                         right = xBorderBetweenActionAndPopup,
-                        bottom = preferredSize.height
+                        bottom = finalHeight
                     )
 
                     popupClickArea = Rect(
                         left = xBorderBetweenActionAndPopup,
                         top = 0.0f,
-                        right = preferredSize.width,
-                        bottom = preferredSize.height
+                        right = finalWidth,
+                        bottom = finalHeight
                     )
 
                     separatorOrientation =
@@ -301,15 +297,15 @@ internal class CommandButtonLayoutManagerMedium(
                         left = xBorderBetweenActionAndPopup,
                         right = xBorderBetweenActionAndPopup + SeparatorSizingConstants.Thickness.toPx(),
                         top = 0.0f,
-                        bottom = preferredSize.height
+                        bottom = finalHeight
                     )
                     isTextInActionArea = true
                 } else {
                     popupClickArea = Rect(
                         left = 0.0f,
                         top = 0.0f,
-                        right = preferredSize.width,
-                        bottom = preferredSize.height
+                        right = finalWidth,
+                        bottom = finalHeight
                     )
                     isTextInActionArea = false
                 }
@@ -334,14 +330,14 @@ internal class CommandButtonLayoutManagerMedium(
                         left = 0.0f,
                         top = 0.0f,
                         right = xBorderBetweenActionAndPopup,
-                        bottom = preferredSize.height
+                        bottom = finalHeight
                     )
 
                     popupClickArea = Rect(
                         left = xBorderBetweenActionAndPopup,
                         top = 0.0f,
-                        right = preferredSize.width,
-                        bottom = preferredSize.height
+                        right = finalWidth,
+                        bottom = finalHeight
                     )
 
                     separatorOrientation =
@@ -351,15 +347,15 @@ internal class CommandButtonLayoutManagerMedium(
                         left = xBorderBetweenActionAndPopup,
                         right = xBorderBetweenActionAndPopup + SeparatorSizingConstants.Thickness.toPx(),
                         top = 0.0f,
-                        bottom = preferredSize.height
+                        bottom = finalHeight
                     )
                     isTextInActionArea = false
                 } else {
                     popupClickArea = Rect(
                         left = 0.0f,
                         top = 0.0f,
-                        right = preferredSize.width,
-                        bottom = preferredSize.height
+                        right = finalWidth,
+                        bottom = finalHeight
                     )
                     isTextInActionArea = true
                 }
@@ -499,7 +495,7 @@ internal class CommandButtonLayoutManagerMedium(
 //        return result
 
         return CommandButtonLayoutManager.CommandButtonLayoutInfo(
-            fullSize = preferredSize,
+            fullSize = Size(finalWidth, finalHeight),
             actionClickArea = actionClickArea,
             popupClickArea = popupClickArea,
             separatorArea = separatorArea,

@@ -312,15 +312,10 @@ private fun AuroraCommandButton(
         )
     }
 
-    // TODO - cache layout info if command info, presentation info or incoming
-    //  constraints haven't changed
-    val layoutInfo = layoutManager.getLayoutInfo(
-        command = command,
-        presentationModel = presentationModel,
-        paddingValues = ButtonSizingConstants.DefaultButtonContentPadding
-    )
-
+    val hasAction = (command.action != null)
     val isActionEnabled = command.isActionEnabled?.value ?: false
+    val hasPopup = (command.secondaryContentModel != null)
+    val isTextInActionArea = hasAction && (presentationModel.textClick == TextClick.ACTION)
     Layout(
         modifier = Modifier.commandButtonLocator(auroraTopLeftOffset, auroraSize),
         content = {
@@ -420,7 +415,7 @@ private fun AuroraCommandButton(
                                     straightSides = Side.values().toSet()
                                 )
                             }
-                            layoutInfo.popupClickArea.width == 0.0f -> {
+                            !hasPopup -> {
                                 ButtonSides()
                             }
                             else -> {
@@ -639,7 +634,7 @@ private fun AuroraCommandButton(
                                     straightSides = Side.values().toSet()
                                 )
                             }
-                            layoutInfo.actionClickArea.width == 0.0f -> {
+                            !hasAction -> {
                                 ButtonSides()
                             }
                             else -> {
@@ -730,9 +725,9 @@ private fun AuroraCommandButton(
 
             // Icon can be in action or popup area
             val modelStateInfoForIcon =
-                if (layoutInfo.actionClickArea.width > 0) actionModelStateInfo else popupModelStateInfo
+                if (hasAction) actionModelStateInfo else popupModelStateInfo
             val currStateForIcon =
-                if (layoutInfo.actionClickArea.width > 0) currentActionState.value else currentPopupState.value
+                if (hasAction) currentActionState.value else currentPopupState.value
             CommandButtonIconContent(
                 command,
                 presentationModel,
@@ -743,16 +738,23 @@ private fun AuroraCommandButton(
 
             // Text content can be in action or popup area
             val modelStateInfoForText =
-                if (layoutInfo.isTextInActionArea) actionModelStateInfo else popupModelStateInfo
+                if (isTextInActionArea) actionModelStateInfo else popupModelStateInfo
             val currStateForText =
-                if (layoutInfo.isTextInActionArea) currentActionState.value else currentPopupState.value
+                if (isTextInActionArea) currentActionState.value else currentPopupState.value
             CommandButtonTextContent(command, modelStateInfoForText, currStateForText)
 
             // Popup action (arrow) if we need one
-            if (layoutInfo.popupActionRect.width > 0) {
-                CommandButtonPopupIconContent(popupModelStateInfo, currentPopupState.value)
+            if (hasPopup) {
+                CommandButtonPopupIconContent(presentationModel, popupModelStateInfo, currentPopupState.value)
             }
-        }) { measurables, _ ->
+        }) { measurables, constraints ->
+
+        val layoutInfo = layoutManager.getLayoutInfo(
+            constraints = constraints,
+            command = command,
+            presentationModel = presentationModel,
+            paddingValues = ButtonSizingConstants.DefaultButtonContentPadding
+        )
 
         // Measure the action and popup boxes
         val actionMeasurable = measurables[0]
@@ -889,6 +891,7 @@ private fun CommandButtonIconContent(
 
 @Composable
 private fun CommandButtonPopupIconContent(
+    presentationModel: CommandButtonPresentationModel,
     modelStateInfo: ModelStateInfo, currState: ComponentState
 ) {
     val decorationAreaType = AuroraSkin.decorationAreaType
@@ -902,8 +905,13 @@ private fun CommandButtonPopupIconContent(
 
     Box {
         Canvas(modifier = Modifier.matchParentSize()) {
-            val arrowWidth = ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx()
-            val arrowHeight = ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()
+            val arrowWidth = if (presentationModel.popupPlacementStrategy.isHorizontal)
+                ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx() else
+                ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx()
+            val arrowHeight =
+                if (presentationModel.popupPlacementStrategy.isHorizontal)
+                    ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx() else
+                    ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()
             translate(
                 left = (size.width - arrowWidth) / 2.0f,
                 top = (size.height - arrowHeight) / 2.0f
@@ -913,7 +921,7 @@ private fun CommandButtonPopupIconContent(
                     width = arrowWidth,
                     height = arrowHeight,
                     strokeWidth = 2.0.dp.toPx(),
-                    direction = PopupPlacementStrategy.DOWNWARD,
+                    direction = presentationModel.popupPlacementStrategy,
                     layoutDirection = layoutDirection,
                     color = arrowColor
                 )
@@ -986,10 +994,12 @@ private fun CommandButtonPopupContent(
         }
         CommandButtonPopupColumn(contentSize = contentSize) {
             // Command presentation for menu content
+            // TODO - some of this should come from the popup presentation model
             val presentation = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.MEDIUM,
                 popupPlacementStrategy = PopupPlacementStrategy.ENDWARD,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                horizontalAlignment = HorizontalAlignment.LEADING,
                 isMenu = true
             )
 

@@ -89,6 +89,7 @@ enum class TextClick {
 data class CommandButtonPresentationModel(
     val presentationState: CommandButtonPresentationState = CommandButtonPresentationState.MEDIUM,
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS,
+    val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.CENTER,
     val iconDimension: Int? = null,
     val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ORIGINAL,
@@ -99,6 +100,10 @@ data class CommandButtonPresentationModel(
     val verticalGapScaleFactor: Float = 1.0f,
     val isMenu: Boolean = false
 )
+
+enum class HorizontalAlignment {
+    LEADING, CENTER, TRAILING
+}
 
 /**
  * Enumerates the available command button kinds.

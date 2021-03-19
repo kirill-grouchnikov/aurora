@@ -164,7 +164,33 @@ fun DemoCommandContent() {
                                 text = "popup5",
                                 iconFactory = computer.factory(),
                                 action = { println("popup5 activated!") },
-                                isActionEnabled = actionEnabled
+                                isActionEnabled = actionEnabled,
+                                secondaryContentModel = CommandMenuContentModel(
+                                    group = CommandGroup(
+                                        title = "Sub group",
+                                        commands = listOf(
+                                            Command(
+                                                text = "popup11",
+                                                iconFactory = computer.factory(),
+                                                action = { println("popup11 activated!") },
+                                                isActionEnabled = actionEnabled
+                                            ),
+                                            Command(
+                                                text = "popup12",
+                                                iconFactory = computer.factory(),
+                                                action = { println("popup12 activated!") },
+                                                isActionEnabled = actionEnabled
+                                            ),
+                                            Command(
+                                                text = "popup13",
+                                                iconFactory = computer.factory(),
+                                                action = { println("popup13 activated!") },
+                                                isActionEnabled = actionEnabled
+                                            )
+                                        )
+                                    )
+                                ),
+                                isSecondaryEnabled = popupEnabled,
                             )
                         )
                     )
