@@ -86,6 +86,7 @@ fun AuroraCommandButton(
 ) {
     AuroraCommandButton(
         command = command,
+        parentWindow = null,
         extraAction = null,
         presentationModel = presentationModel
     )
@@ -94,6 +95,7 @@ fun AuroraCommandButton(
 @Composable
 private fun AuroraCommandButton(
     command: Command,
+    parentWindow: JWindow? = null,
     extraAction: (() -> Unit)? = null,
     presentationModel: CommandButtonPresentationModel
 ) {
@@ -506,25 +508,25 @@ private fun AuroraCommandButton(
                     enabled = command.isSecondaryEnabled?.value ?: false, onClick = {
                         // TODO - move off of JWindow when https://github.com/JetBrains/compose-jb/issues/195
                         //  is addressed
-                        val jwindow = AuroraPopupWindow()
-                        jwindow.focusableWindowState = false
-                        jwindow.type = Window.Type.POPUP
-                        jwindow.isAlwaysOnTop = true
+                        val popupContentWindow = AuroraPopupWindow()
+                        popupContentWindow.focusableWindowState = false
+                        popupContentWindow.type = Window.Type.POPUP
+                        popupContentWindow.isAlwaysOnTop = true
 
                         // TODO - hopefully temporary. Mark the popup window as fully transparent
                         //  so that when it is globally positioned, we can size it to the actual
                         //  content and make it fully opaque
-                        jwindow.opacity = 0.0f
+                        popupContentWindow.opacity = 0.0f
 
-                        val auroraWindow = AppManager.focusedWindow!!.window
-                        val locationOnScreen = auroraWindow.locationOnScreen
+                        val locationOnScreen =
+                            (parentWindow ?: AppManager.focusedWindow!!.window).locationOnScreen
 
                         // anchor the popup window to the bottom left corner of the component
                         // in screen coordinates
                         // TODO - figure out the sizing (see above)
                         val initialWidth = 1000
                         val initialHeight = 1000
-                        jwindow.setBounds(
+                        popupContentWindow.setBounds(
                             (locationOnScreen.x + auroraTopLeftOffset.x / density.density).toInt(),
                             (locationOnScreen.y + auroraTopLeftOffset.y / density.density).toInt(),
                             initialWidth,
@@ -542,19 +544,19 @@ private fun AuroraCommandButton(
                                 LocalAnimationConfig provides AuroraSkin.animationConfig
                             ) {
                                 CommandButtonPopupContent(
-                                    window = jwindow,
+                                    window = popupContentWindow,
                                     anchorSize = auroraSize,
                                     command = command,
                                     presentationModel = presentationModel
                                 )
                             }
                         }
-                        jwindow.contentPane.layout = BorderLayout()
-                        jwindow.contentPane.add(popupContent, BorderLayout.CENTER)
-                        jwindow.invalidate()
-                        jwindow.validate()
-                        jwindow.isVisible = true
-                        jwindow.pack()
+                        popupContentWindow.contentPane.layout = BorderLayout()
+                        popupContentWindow.contentPane.add(popupContent, BorderLayout.CENTER)
+                        popupContentWindow.invalidate()
+                        popupContentWindow.validate()
+                        popupContentWindow.isVisible = true
+                        popupContentWindow.pack()
                     }, interactionSource = popupInteractionSource, indication = null
                 ).pointerMoveFilter(onEnter = {
                     popupRollover = true
@@ -743,7 +745,11 @@ private fun AuroraCommandButton(
 
             // Popup action (arrow) if we need one
             if (hasPopup) {
-                CommandButtonPopupIconContent(presentationModel, popupModelStateInfo, currentPopupState.value)
+                CommandButtonPopupIconContent(
+                    presentationModel,
+                    popupModelStateInfo,
+                    currentPopupState.value
+                )
             }
         }) { measurables, constraints ->
 
@@ -953,12 +959,40 @@ private fun CommandButtonPopupContent(
         val popupWidth = (contentSize.width / density).toInt()
         val popupHeight = (contentSize.height / density).toInt()
 
-        val popupRect = Rectangle(
-            window.x,
-            window.y + (anchorSize.height / (2 * density)).toInt(),
-            popupWidth,
-            popupHeight
-        )
+        // TODO - support RTL for startward and endward
+        // TODO - figure out the extra factor
+        val popupRect = when (presentationModel.popupPlacementStrategy) {
+            PopupPlacementStrategy.DOWNWARD -> Rectangle(
+                window.x,
+                window.y + (anchorSize.height / (2 * density)).toInt(),
+                popupWidth,
+                popupHeight
+            )
+            PopupPlacementStrategy.UPWARD -> Rectangle(
+                window.x,
+                window.y - popupHeight / 2,
+                popupWidth,
+                popupHeight
+            )
+            PopupPlacementStrategy.STARTWARD -> Rectangle(
+                window.x - popupWidth / 2,
+                window.y,
+                popupWidth,
+                popupHeight
+            )
+            PopupPlacementStrategy.ENDWARD -> Rectangle(
+                window.x + (anchorSize.width / (2 * density)).toInt(),
+                window.y,
+                popupWidth,
+                popupHeight
+            )
+            PopupPlacementStrategy.CENTERED_VERTICALLY -> Rectangle(
+                window.x,
+                window.y + (anchorSize.height / (4 * density)).toInt() - popupHeight / 4,
+                popupWidth,
+                popupHeight
+            )
+        }
 
         // Make sure the popup stays in screen bounds
         val screenBounds = window.graphicsConfiguration.bounds
@@ -1010,6 +1044,7 @@ private fun CommandButtonPopupContent(
                     // TODO - support highlighted command (with bold text)
                     AuroraCommandButton(
                         command = secondaryCommand,
+                        parentWindow = window,
                         extraAction = { window.dispose() },
                         presentationModel = presentation
                     )
