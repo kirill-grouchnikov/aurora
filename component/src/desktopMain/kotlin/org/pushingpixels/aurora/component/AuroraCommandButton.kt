@@ -1045,7 +1045,14 @@ private fun CommandButtonPopupContent(
                     AuroraCommandButton(
                         command = secondaryCommand,
                         parentWindow = window,
-                        extraAction = { window.dispose() },
+                        extraAction = {
+                            // TODO - this needs to be revisited for multi-selection popups
+                            for (window in Window.getWindows()) {
+                                if (window.isDisplayable && window is AuroraPopupWindow) {
+                                    window.dispose()
+                                }
+                            }
+                        },
                         presentationModel = presentation
                     )
                 }
