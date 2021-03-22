@@ -61,6 +61,7 @@ import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.icon.AuroraThemedIcon
 import java.awt.*
 import javax.swing.JWindow
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 @Immutable
@@ -106,7 +107,7 @@ private fun AuroraCommandButton(
 
     var actionRollover by remember { mutableStateOf(false) }
     var popupRollover by remember { mutableStateOf(false) }
-    var combinedRollover = derivedStateOf { actionRollover and popupRollover }
+    val combinedRollover = actionRollover or popupRollover
 
     val isActionPressed by actionInteractionSource.collectIsPressedAsState()
     val isPopupPressed by popupInteractionSource.collectIsPressedAsState()
@@ -193,6 +194,17 @@ private fun AuroraCommandButton(
     //  at the result (and how it looks like in the new animation APIs)
     val actionTotalFraction =
         actionSelectedFraction + actionRolloverFraction + actionPressedFraction + actionEnabledFraction
+
+    // Transition for the combined rollover state
+    val combinedRolloverTransition = updateTransition(combinedRollover)
+    val combinedRolloverFraction by combinedRolloverTransition.animateFloat(transitionSpec = {
+        tween(durationMillis = AuroraSkin.animationConfig.regular)
+    }) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
 
     val actionModelStateInfo = remember { ModelStateInfo(currentActionState.value) }
     val actionTransitionInfo = remember { mutableStateOf<TransitionInfo?>(null) }
@@ -390,7 +402,7 @@ private fun AuroraCommandButton(
                     val fillPainter = painters.fillPainter
                     val borderPainter = painters.borderPainter
 
-                    val alpha =
+                    val actionAlpha = max(combinedRolloverFraction,
                         if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
                             // For flat buttons, compute the combined contribution of all
                             // non-disabled states - ignoring ComponentState.ENABLED
@@ -404,6 +416,7 @@ private fun AuroraCommandButton(
                                     currentActionState.value
                                 ) else 1.0f
                         }
+                    )
 
                     Canvas(modifier = Modifier.matchParentSize()) {
                         val width = this.size.width
@@ -468,7 +481,7 @@ private fun AuroraCommandButton(
                             drawingCache.colorScheme.isDark = fillIsDark
                             drawingCache.colorScheme.foreground = Color.Black
                             fillPainter.paintContourBackground(
-                                this, this.size, outline, drawingCache.colorScheme, alpha
+                                this, this.size, outline, drawingCache.colorScheme, actionAlpha
                             )
 
                             // Populate the cached color scheme for drawing the button border
@@ -497,7 +510,7 @@ private fun AuroraCommandButton(
                                 outline,
                                 innerOutline,
                                 drawingCache.colorScheme,
-                                alpha
+                                actionAlpha
                             )
                         }
                     }
@@ -544,7 +557,7 @@ private fun AuroraCommandButton(
                                 LocalAnimationConfig provides AuroraSkin.animationConfig
                             ) {
                                 CommandButtonPopupContent(
-                                    window = popupContentWindow,
+                                    popupContentWindow = popupContentWindow,
                                     anchorSize = auroraSize,
                                     command = command,
                                     presentationModel = presentationModel
@@ -608,7 +621,7 @@ private fun AuroraCommandButton(
                     val fillPainter = painters.fillPainter
                     val borderPainter = painters.borderPainter
 
-                    val alpha =
+                    val popupAlpha = max(combinedRolloverFraction,
                         if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
                             // For flat buttons, compute the combined contribution of all
                             // non-disabled states - ignoring ComponentState.ENABLED
@@ -622,6 +635,7 @@ private fun AuroraCommandButton(
                                     currentPopupState.value
                                 ) else 1.0f
                         }
+                    )
 
                     Canvas(modifier = Modifier.matchParentSize()) {
                         val width = this.size.width
@@ -686,7 +700,7 @@ private fun AuroraCommandButton(
                             drawingCache.colorScheme.isDark = fillIsDark
                             drawingCache.colorScheme.foreground = Color.Black
                             fillPainter.paintContourBackground(
-                                this, this.size, outline, drawingCache.colorScheme, alpha
+                                this, this.size, outline, drawingCache.colorScheme, popupAlpha
                             )
 
                             // Populate the cached color scheme for drawing the button border
@@ -715,7 +729,7 @@ private fun AuroraCommandButton(
                                 outline,
                                 innerOutline,
                                 drawingCache.colorScheme,
-                                alpha
+                                popupAlpha
                             )
                         }
                     }
@@ -939,7 +953,7 @@ private fun CommandButtonPopupIconContent(
 
 @Composable
 private fun CommandButtonPopupContent(
-    window: JWindow,
+    popupContentWindow: JWindow,
     anchorSize: AuroraSize,
     command: Command,
     presentationModel: CommandButtonPresentationModel
@@ -954,7 +968,7 @@ private fun CommandButtonPopupContent(
     val popupBorderColor = AuroraSkin.painters.borderPainter.getRepresentativeColor(borderScheme)
     val density = LocalDensity.current.density
     val contentSize = AuroraSize(0, 0)
-    Box(modifier = Modifier.auroraBackground(window = window).onGloballyPositioned {
+    Box(modifier = Modifier.auroraBackground(window = popupContentWindow).onGloballyPositioned {
         // Get the size of the content and update the popup window bounds
         val popupWidth = (contentSize.width / density).toInt()
         val popupHeight = (contentSize.height / density).toInt()
@@ -963,39 +977,39 @@ private fun CommandButtonPopupContent(
         // TODO - figure out the extra factor
         val popupRect = when (presentationModel.popupPlacementStrategy) {
             PopupPlacementStrategy.DOWNWARD -> Rectangle(
-                window.x,
-                window.y + (anchorSize.height / (2 * density)).toInt(),
+                popupContentWindow.x,
+                popupContentWindow.y + (anchorSize.height / (2 * density)).toInt(),
                 popupWidth,
                 popupHeight
             )
             PopupPlacementStrategy.UPWARD -> Rectangle(
-                window.x,
-                window.y - popupHeight / 2,
+                popupContentWindow.x,
+                popupContentWindow.y - popupHeight / 2,
                 popupWidth,
                 popupHeight
             )
             PopupPlacementStrategy.STARTWARD -> Rectangle(
-                window.x - popupWidth / 2,
-                window.y,
+                popupContentWindow.x - popupWidth / 2,
+                popupContentWindow.y,
                 popupWidth,
                 popupHeight
             )
             PopupPlacementStrategy.ENDWARD -> Rectangle(
-                window.x + (anchorSize.width / (2 * density)).toInt(),
-                window.y,
+                popupContentWindow.x + (anchorSize.width / (2 * density)).toInt(),
+                popupContentWindow.y,
                 popupWidth,
                 popupHeight
             )
             PopupPlacementStrategy.CENTERED_VERTICALLY -> Rectangle(
-                window.x,
-                window.y + (anchorSize.height / (4 * density)).toInt() - popupHeight / 4,
+                popupContentWindow.x,
+                popupContentWindow.y + (anchorSize.height / (4 * density)).toInt() - popupHeight / 4,
                 popupWidth,
                 popupHeight
             )
         }
 
         // Make sure the popup stays in screen bounds
-        val screenBounds = window.graphicsConfiguration.bounds
+        val screenBounds = popupContentWindow.graphicsConfiguration.bounds
         if (popupRect.x < 0) {
             popupRect.translate(-popupRect.x, 0)
         }
@@ -1009,13 +1023,13 @@ private fun CommandButtonPopupContent(
             popupRect.translate(0, screenBounds.height - popupRect.y - popupRect.height)
         }
 
-        window.bounds = popupRect
-        window.opacity = 1.0f
-        window.preferredSize = Dimension(popupRect.width, popupRect.height)
-        window.size = Dimension(popupRect.width, popupRect.height)
-        window.invalidate()
-        window.validate()
-        window.contentPane.revalidate()
+        popupContentWindow.bounds = popupRect
+        popupContentWindow.opacity = 1.0f
+        popupContentWindow.preferredSize = Dimension(popupRect.width, popupRect.height)
+        popupContentWindow.size = Dimension(popupRect.width, popupRect.height)
+        popupContentWindow.invalidate()
+        popupContentWindow.validate()
+        popupContentWindow.contentPane.revalidate()
     }) {
         Canvas(Modifier.matchParentSize()) {
             val outline = Outline.Rectangle(
@@ -1040,11 +1054,10 @@ private fun CommandButtonPopupContent(
 
             for ((commandGroupIndex, commandGroup) in command.secondaryContentModel!!.groups.withIndex()) {
                 for (secondaryCommand in commandGroup.commands) {
-                    // TODO - support nested secondary content
                     // TODO - support highlighted command (with bold text)
                     AuroraCommandButton(
                         command = secondaryCommand,
-                        parentWindow = window,
+                        parentWindow = popupContentWindow,
                         extraAction = {
                             // TODO - this needs to be revisited for multi-selection popups
                             for (window in Window.getWindows()) {
