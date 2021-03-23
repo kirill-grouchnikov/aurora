@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.ColorSchemeAssociationKind
@@ -46,12 +47,15 @@ import org.pushingpixels.aurora.common.withAlpha
 
 object SeparatorSizingConstants {
     val Thickness = 2.dp
+    val DefaultGradientAmount = 2.dp
 }
 
 @Composable
 fun AuroraVerticalSeparator(
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    startGradientAmount: Dp = SeparatorSizingConstants.DefaultGradientAmount,
+    endGradientAmount: Dp = SeparatorSizingConstants.DefaultGradientAmount
 ) {
     val separatorScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = AuroraSkin.decorationAreaType,
@@ -65,8 +69,8 @@ fun AuroraVerticalSeparator(
         if (height > 0.0f) {
             val primaryBrush = Brush.verticalGradient(
                 0.0f to separatorScheme.separatorPrimaryColor.withAlpha(0.0f),
-                2.0f / height to separatorScheme.separatorPrimaryColor,
-                (height - 2.0f) / height to separatorScheme.separatorPrimaryColor,
+                startGradientAmount.toPx() / height to separatorScheme.separatorPrimaryColor,
+                (height - endGradientAmount.toPx()) / height to separatorScheme.separatorPrimaryColor,
                 1.0f to separatorScheme.separatorPrimaryColor.withAlpha(0.0f),
                 startY = 0.0f,
                 endY = height,
@@ -74,8 +78,8 @@ fun AuroraVerticalSeparator(
             )
             val secondaryBrush = Brush.verticalGradient(
                 0.0f to separatorScheme.separatorSecondaryColor.withAlpha(0.0f),
-                2.0f / height to separatorScheme.separatorSecondaryColor,
-                (height - 2.0f) / height to separatorScheme.separatorSecondaryColor,
+                startGradientAmount.toPx() / height to separatorScheme.separatorSecondaryColor,
+                (height - endGradientAmount.toPx()) / height to separatorScheme.separatorSecondaryColor,
                 1.0f to separatorScheme.separatorSecondaryColor.withAlpha(0.0f),
                 startY = 0.0f,
                 endY = height,
@@ -101,7 +105,9 @@ fun AuroraVerticalSeparator(
 @Composable
 fun AuroraHorizontalSeparator(
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    startGradientAmount: Dp = SeparatorSizingConstants.DefaultGradientAmount,
+    endGradientAmount: Dp = SeparatorSizingConstants.DefaultGradientAmount
 ) {
     val separatorScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = AuroraSkin.decorationAreaType,
@@ -115,8 +121,8 @@ fun AuroraHorizontalSeparator(
         if (width > 0.0f) {
             val primaryBrush = Brush.horizontalGradient(
                 0.0f to separatorScheme.separatorPrimaryColor.withAlpha(0.0f),
-                2.0f / width to separatorScheme.separatorPrimaryColor,
-                (width - 2.0f) / width to separatorScheme.separatorPrimaryColor,
+                startGradientAmount.toPx() / width to separatorScheme.separatorPrimaryColor,
+                (width - endGradientAmount.toPx()) / width to separatorScheme.separatorPrimaryColor,
                 1.0f to separatorScheme.separatorPrimaryColor.withAlpha(0.0f),
                 startX = 0.0f,
                 endX = width,
@@ -124,8 +130,8 @@ fun AuroraHorizontalSeparator(
             )
             val secondaryBrush = Brush.horizontalGradient(
                 0.0f to separatorScheme.separatorSecondaryColor.withAlpha(0.0f),
-                2.0f / width to separatorScheme.separatorSecondaryColor,
-                (width - 2.0f) / width to separatorScheme.separatorSecondaryColor,
+                startGradientAmount.toPx() / width to separatorScheme.separatorSecondaryColor,
+                (width - endGradientAmount.toPx()) / width to separatorScheme.separatorSecondaryColor,
                 1.0f to separatorScheme.separatorSecondaryColor.withAlpha(0.0f),
                 startX = 0.0f,
                 endX = width,

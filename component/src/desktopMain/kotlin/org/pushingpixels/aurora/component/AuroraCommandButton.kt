@@ -39,6 +39,7 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.ClipOp
@@ -56,6 +57,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.*
+import org.pushingpixels.aurora.component.layout.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.icon.AuroraThemedIcon
@@ -78,7 +80,6 @@ private class CommandButtonDrawingCache(
         foreground = Color.Black
     )
 )
-
 
 @Composable
 fun AuroraCommandButton(
@@ -421,24 +422,10 @@ private fun AuroraCommandButton(
                     Canvas(modifier = Modifier.matchParentSize()) {
                         val width = this.size.width
                         val height = this.size.height
-                        // TODO - revisit this
-                        val sides = when {
-                            presentationModel.isMenu -> {
-                                ButtonSides(
-                                    openSides = Side.values().toSet(),
-                                    straightSides = Side.values().toSet()
-                                )
-                            }
-                            !hasPopup -> {
-                                ButtonSides()
-                            }
-                            else -> {
-                                ButtonSides(
-                                    openSides = setOf(Side.END),
-                                    straightSides = setOf(Side.END)
-                                )
-                            }
-                        }
+
+                        val openSides: Set<Side> = if (hasPopup) setOf(Side.END) else emptySet()
+                        val straightSides = if (presentationModel.isMenu) Side.values().toSet() else openSides
+                        val sides = ButtonSides(openSides = openSides, straightSides = straightSides)
 
                         val openDelta = 3
                         val deltaLeft = if (sides.openSides.contains(Side.START)) openDelta else 0
@@ -640,24 +627,10 @@ private fun AuroraCommandButton(
                     Canvas(modifier = Modifier.matchParentSize()) {
                         val width = this.size.width
                         val height = this.size.height
-                        // TODO - revisit this
-                        val sides = when {
-                            presentationModel.isMenu -> {
-                                ButtonSides(
-                                    openSides = Side.values().toSet(),
-                                    straightSides = Side.values().toSet()
-                                )
-                            }
-                            !hasAction -> {
-                                ButtonSides()
-                            }
-                            else -> {
-                                ButtonSides(
-                                    openSides = setOf(Side.START),
-                                    straightSides = setOf(Side.START)
-                                )
-                            }
-                        }
+
+                        val openSides: Set<Side> = if (hasAction) setOf(Side.START) else emptySet()
+                        val straightSides = if (presentationModel.isMenu) Side.values().toSet() else openSides
+                        val sides = ButtonSides(openSides = openSides, straightSides = straightSides)
 
                         val openDelta = 3
                         val deltaLeft = if (sides.openSides.contains(Side.START)) openDelta else 0
@@ -765,6 +738,24 @@ private fun AuroraCommandButton(
                     currentPopupState.value
                 )
             }
+
+            // Separator between action and popup areas if we have both
+            if (hasAction and hasPopup) {
+                when (layoutManager.getSeparatorOrientation()) {
+                    CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL ->
+                        AuroraVerticalSeparator(
+                            modifier = Modifier.alpha(combinedRolloverFraction),
+                            startGradientAmount = 4.dp,
+                            endGradientAmount = 4.dp
+                        )
+                    CommandButtonLayoutManager.CommandButtonSeparatorOrientation.HORIZONTAL ->
+                        AuroraHorizontalSeparator(
+                            modifier = Modifier.alpha(combinedRolloverFraction),
+                            startGradientAmount = 4.dp,
+                            endGradientAmount = 4.dp
+                        )
+                }
+            }
         }) { measurables, constraints ->
 
         // Pass the constraints from the parent (which may or may not use fixed width
@@ -778,28 +769,29 @@ private fun AuroraCommandButton(
         )
 
         // Measure the action and popup boxes
-        val actionMeasurable = measurables[0]
+        var childIndex = 0
+        val actionMeasurable = measurables[childIndex++]
         val actionPlaceable = actionMeasurable.measure(
             Constraints.fixed(
                 width = layoutInfo.actionClickArea.width.roundToInt(),
                 height = layoutInfo.actionClickArea.height.roundToInt()
             )
         )
-        val popupMeasurable = measurables[1]
+        val popupMeasurable = measurables[childIndex++]
         val popupPlaceable = popupMeasurable.measure(
             Constraints.fixed(
                 width = layoutInfo.popupClickArea.width.roundToInt(),
                 height = layoutInfo.popupClickArea.height.roundToInt()
             )
         )
-        val iconMeasurable = measurables[2]
+        val iconMeasurable = measurables[childIndex++]
         val iconPlaceable = iconMeasurable.measure(
             Constraints.fixed(
                 width = layoutInfo.iconRect.width.roundToInt(),
                 height = layoutInfo.iconRect.height.roundToInt()
             )
         )
-        val textMeasurable = measurables[3]
+        val textMeasurable = measurables[childIndex++]
         val textPlaceable = textMeasurable.measure(
             Constraints.fixed(
                 width = layoutInfo.textLayoutInfoList[0].textRect.width.roundToInt(),
@@ -807,12 +799,22 @@ private fun AuroraCommandButton(
             )
         )
         var popupIconPlaceable: Placeable? = null
-        if (layoutInfo.popupActionRect.width > 0) {
-            val popupIconMeasurable = measurables[4]
+        if (hasPopup) {
+            val popupIconMeasurable = measurables[childIndex++]
             popupIconPlaceable = popupIconMeasurable.measure(
                 Constraints.fixed(
                     width = layoutInfo.popupActionRect.width.roundToInt(),
                     height = layoutInfo.popupActionRect.height.roundToInt()
+                )
+            )
+        }
+        var separatorPlaceable: Placeable? = null
+        if (hasAction && hasPopup) {
+            val separatorMeasurable = measurables[childIndex++]
+            separatorPlaceable = separatorMeasurable.measure(
+                Constraints.fixed(
+                    width = layoutInfo.separatorArea!!.width.roundToInt(),
+                    height = layoutInfo.separatorArea!!.height.roundToInt()
                 )
             )
         }
@@ -839,6 +841,10 @@ private fun AuroraCommandButton(
             popupIconPlaceable?.placeRelative(
                 x = layoutInfo.popupActionRect.left.roundToInt(),
                 y = layoutInfo.popupActionRect.top.roundToInt()
+            )
+            separatorPlaceable?.placeRelative(
+                x = layoutInfo.separatorArea!!.left.roundToInt(),
+                y = layoutInfo.separatorArea!!.top.roundToInt()
             )
         }
     }

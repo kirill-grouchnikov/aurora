@@ -93,4 +93,6 @@ interface CommandButtonLayoutManager: MeasureScope {
         presentationModel: CommandButtonPresentationModel,
         paddingValues: PaddingValues
     ): CommandButtonLayoutInfo
+
+    fun getSeparatorOrientation() : CommandButtonSeparatorOrientation
 }

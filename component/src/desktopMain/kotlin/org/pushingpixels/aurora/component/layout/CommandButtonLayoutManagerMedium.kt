@@ -507,4 +507,8 @@ internal class CommandButtonLayoutManagerMedium(
             isTextInActionArea = isTextInActionArea
         )
     }
+
+    override fun getSeparatorOrientation(): CommandButtonLayoutManager.CommandButtonSeparatorOrientation {
+        return CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL
+    }
 }
