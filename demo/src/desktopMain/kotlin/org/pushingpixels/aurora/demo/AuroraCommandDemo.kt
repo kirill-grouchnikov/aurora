@@ -79,6 +79,22 @@ fun DemoCommandContent() {
             }
         )
     }
+    val commandActionOnlyNoIcon = remember {
+        Command(
+            text = "Action 2!",
+            action = { println("Action 2 activated!") },
+            isActionEnabled = actionEnabled,
+            actionPreview = object : CommandActionPreview {
+                override fun onCommandPreviewActivated(command: Command) {
+                    println("Action 2 preview activated!")
+                }
+
+                override fun onCommandPreviewCanceled(command: Command) {
+                    println("Action 2 preview canceled!")
+                }
+            }
+        )
+    }
     val commandSecondaryOnly = remember {
         Command(
             text = "Popup",
@@ -220,6 +236,11 @@ fun DemoCommandContent() {
         Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
             AuroraCommandButton(
                 command = commandActionOnly,
+                presentationModel = CommandButtonPresentationModel()
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            AuroraCommandButton(
+                command = commandActionOnlyNoIcon,
                 presentationModel = CommandButtonPresentationModel()
             )
             Spacer(modifier = Modifier.width(8.dp))

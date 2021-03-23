@@ -33,6 +33,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.desktop.AppManager
 import androidx.compose.desktop.ComposePanel
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -52,6 +53,8 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.*
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -145,6 +148,8 @@ private fun AuroraCommandButton(
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
     val resourceLoader = LocalFontLoader.current
+
+    val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
 
     // Transition for the action selection state
     val actionSelectionTransition =
@@ -322,11 +327,12 @@ private fun AuroraCommandButton(
         presentationModel.presentationState.createLayoutManager(
             layoutDirection = layoutDirection,
             density = density,
-            textStyle = textStyle,
+            textStyle = resolvedTextStyle,
             resourceLoader = resourceLoader
         )
     }
 
+    val hasIcon = (command.iconFactory != null)
     val hasAction = (command.action != null)
     val isActionEnabled = command.isActionEnabled?.value ?: false
     val hasPopup = (command.secondaryContentModel != null)
@@ -424,8 +430,10 @@ private fun AuroraCommandButton(
                         val height = this.size.height
 
                         val openSides: Set<Side> = if (hasPopup) setOf(Side.END) else emptySet()
-                        val straightSides = if (presentationModel.isMenu) Side.values().toSet() else openSides
-                        val sides = ButtonSides(openSides = openSides, straightSides = straightSides)
+                        val straightSides =
+                            if (presentationModel.isMenu) Side.values().toSet() else openSides
+                        val sides =
+                            ButtonSides(openSides = openSides, straightSides = straightSides)
 
                         val openDelta = 3
                         val deltaLeft = if (sides.openSides.contains(Side.START)) openDelta else 0
@@ -629,8 +637,10 @@ private fun AuroraCommandButton(
                         val height = this.size.height
 
                         val openSides: Set<Side> = if (hasAction) setOf(Side.START) else emptySet()
-                        val straightSides = if (presentationModel.isMenu) Side.values().toSet() else openSides
-                        val sides = ButtonSides(openSides = openSides, straightSides = straightSides)
+                        val straightSides =
+                            if (presentationModel.isMenu) Side.values().toSet() else openSides
+                        val sides =
+                            ButtonSides(openSides = openSides, straightSides = straightSides)
 
                         val openDelta = 3
                         val deltaLeft = if (sides.openSides.contains(Side.START)) openDelta else 0
@@ -709,18 +719,20 @@ private fun AuroraCommandButton(
                 }
             }
 
-            // Icon can be in action or popup area
-            val modelStateInfoForIcon =
-                if (hasAction) actionModelStateInfo else popupModelStateInfo
-            val currStateForIcon =
-                if (hasAction) currentActionState.value else currentPopupState.value
-            CommandButtonIconContent(
-                command,
-                presentationModel,
-                layoutManager.getPreferredIconSize(),
-                modelStateInfoForIcon,
-                currStateForIcon
-            )
+            if (hasIcon) {
+                // Icon can be in action or popup area
+                val modelStateInfoForIcon =
+                    if (hasAction) actionModelStateInfo else popupModelStateInfo
+                val currStateForIcon =
+                    if (hasAction) currentActionState.value else currentPopupState.value
+                CommandButtonIconContent(
+                    command,
+                    presentationModel,
+                    layoutManager.getPreferredIconSize(),
+                    modelStateInfoForIcon,
+                    currStateForIcon
+                )
+            }
 
             // Text content can be in action or popup area. Use the matching model
             // to determine the text color
@@ -728,7 +740,8 @@ private fun AuroraCommandButton(
                 if (isTextInActionArea) actionModelStateInfo else popupModelStateInfo
             val currStateForText =
                 if (isTextInActionArea) currentActionState.value else currentPopupState.value
-            CommandButtonTextContent(command, modelStateInfoForText, currStateForText)
+            CommandButtonTextContent(command, modelStateInfoForText, currStateForText,
+                resolvedTextStyle)
 
             // Popup action (arrow) if we need one
             if (hasPopup) {
@@ -784,13 +797,16 @@ private fun AuroraCommandButton(
                 height = layoutInfo.popupClickArea.height.roundToInt()
             )
         )
-        val iconMeasurable = measurables[childIndex++]
-        val iconPlaceable = iconMeasurable.measure(
-            Constraints.fixed(
-                width = layoutInfo.iconRect.width.roundToInt(),
-                height = layoutInfo.iconRect.height.roundToInt()
+        var iconPlaceable: Placeable? = null
+        if (hasIcon) {
+            val iconMeasurable = measurables[childIndex++]
+            iconPlaceable = iconMeasurable.measure(
+                Constraints.fixed(
+                    width = layoutInfo.iconRect.width.roundToInt(),
+                    height = layoutInfo.iconRect.height.roundToInt()
+                )
             )
-        )
+        }
         val textMeasurable = measurables[childIndex++]
         val textPlaceable = textMeasurable.measure(
             Constraints.fixed(
@@ -830,7 +846,7 @@ private fun AuroraCommandButton(
                 x = layoutInfo.popupClickArea.left.roundToInt(),
                 y = layoutInfo.popupClickArea.top.roundToInt()
             )
-            iconPlaceable.placeRelative(
+            iconPlaceable?.placeRelative(
                 x = layoutInfo.iconRect.left.roundToInt(),
                 y = layoutInfo.iconRect.top.roundToInt()
             )
@@ -852,7 +868,8 @@ private fun AuroraCommandButton(
 
 @Composable
 private fun CommandButtonTextContent(
-    command: Command, modelStateInfo: ModelStateInfo, currState: ComponentState
+    command: Command, modelStateInfo: ModelStateInfo, currState: ComponentState,
+    style: TextStyle
 ) {
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
@@ -872,7 +889,7 @@ private fun CommandButtonTextContent(
         LocalTextColor provides textColor,
         LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currState)
     ) {
-        AuroraText(command.text)
+        AuroraText(text = command.text, style = style)
     }
 }
 

@@ -42,7 +42,7 @@ internal class CommandButtonLayoutManagerMedium(
         val hasIcon = (command.iconFactory != null)
         val hasText = (buttonText != null)
         val hasPopupIcon = (command.secondaryContentModel != null)
-        val prefIconSize = (if (hasIcon) getPreferredIconSize() else 0.dp).toPx()
+        val prefIconSize = getPreferredIconSize().toPx()
 
         // start with the left insets
         var width = paddingValues.calculateStartPadding(layoutDirection).toPx()
@@ -130,14 +130,14 @@ internal class CommandButtonLayoutManagerMedium(
         val hasText = (buttonText != null)
         val hasAction = (command.action != null)
         val hasPopup = (command.secondaryContentModel != null)
-        val iconSize = (if (hasIcon) getPreferredIconSize() else 0.dp).toPx()
+        val iconSize = getPreferredIconSize().toPx()
         //val prefWidth = preferredSize.width
 
         val ltr = (layoutDirection == LayoutDirection.Ltr)
 
         var iconRect = Rect.Zero
         var popupActionRect = Rect.Zero
-        var textLayoutInfoList: MutableList<CommandButtonLayoutManager.TextLayoutInfo> =
+        val textLayoutInfoList: MutableList<CommandButtonLayoutManager.TextLayoutInfo> =
             arrayListOf()
         var separatorOrientation =
             CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL

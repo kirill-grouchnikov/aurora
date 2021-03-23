@@ -60,7 +60,7 @@ interface CommandActionPreview {
 data class Command(
     val text: String,
     val extraText: String? = null,
-    val iconFactory: AuroraIcon.Factory?,
+    val iconFactory: AuroraIcon.Factory? = null,
     val disabledIconFactory: AuroraIcon.Factory? = null,
     val action: (() -> Unit)? = null,
     val actionPreview: CommandActionPreview? = null,
@@ -76,9 +76,7 @@ data class CommandGroup(
     val commands: List<Command>
 )
 
-data class CommandMenuContentModel(
-    val groups: List<CommandGroup>
-) {
+data class CommandMenuContentModel(val groups: List<CommandGroup>) {
     constructor(group: CommandGroup) : this(listOf(group))
 }
 
