@@ -1,3 +1,4 @@
+
 # Aurora libraries
 
 Aurora is a collection of libraries for writing modern, elegant and fast desktop Compose applications.
@@ -36,6 +37,7 @@ Add Aurora dependencies:
 ```
 dependencies {
     implementation("org.pushing-pixels:aurora-skin:0.0.16-SNAPSHOT")
+    implementation("org.pushing-pixels:aurora-icon-icon:0.0.16-SNAPSHOT")
     implementation("org.pushing-pixels:aurora-component:0.0.16-SNAPSHOT")
     implementation("org.pushing-pixels:aurora-window:0.0.16-SNAPSHOT")
     implementation(compose.desktop.currentOs)
@@ -59,11 +61,15 @@ fun main() = AuroraWindow(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxSize().auroraBackground()
         ) {
-            AuroraButton(onClick = {
-                text = "Hello, Desktop!"
-            }) {
-                AuroraText(text)
-            }
+            AuroraCommandButton(
+                command = Command(
+                    text = text,
+                    action = { text = "Hello, Desktop!" }
+                ),
+                presentationModel = CommandButtonPresentationModel(
+                    presentationState = CommandButtonPresentationState.MEDIUM
+                )
+            )
         }
     }
 }
