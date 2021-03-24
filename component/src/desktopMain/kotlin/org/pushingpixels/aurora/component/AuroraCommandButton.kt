@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
+import org.pushingpixels.aurora.common.hexadecimal
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.layout.*
 import org.pushingpixels.aurora.component.model.*
@@ -892,7 +893,9 @@ private fun CommandButtonTextContent(
         LocalTextColor provides textColor,
         LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currState)
     ) {
-        AuroraText(text = command.text, style = style)
+        // Since we're passing the resolved style that has the default color,
+        // also explicitly pass our text color to override the one set in the style
+        AuroraText(text = command.text, color = textColor, style = style)
     }
 }
 
