@@ -119,7 +119,7 @@ private fun AuroraCommandButton(
     val currentActionState = remember {
         mutableStateOf(
             ComponentState.getState(
-                isEnabled = command.isActionEnabled?.value ?: false,
+                isEnabled = command.isActionEnabled,
                 isRollover = actionRollover,
                 isSelected = command.isActionToggle and command.isActionToggleSelected,
                 isPressed = isActionPressed
@@ -129,7 +129,7 @@ private fun AuroraCommandButton(
     val currentPopupState = remember {
         mutableStateOf(
             ComponentState.getState(
-                isEnabled = command.isSecondaryEnabled?.value ?: false,
+                isEnabled = command.isSecondaryEnabled,
                 isRollover = popupRollover,
                 isSelected = false,
                 isPressed = isPopupPressed
@@ -186,7 +186,7 @@ private fun AuroraCommandButton(
     }
 
     // Transition for the action enabled state
-    val actionEnabledTransition = updateTransition(command.isActionEnabled?.value ?: false)
+    val actionEnabledTransition = updateTransition(command.isActionEnabled)
     val actionEnabledFraction by actionEnabledTransition.animateFloat(transitionSpec = {
         tween(durationMillis = AuroraSkin.animationConfig.regular)
     }) {
@@ -219,7 +219,7 @@ private fun AuroraCommandButton(
         modelStateInfo = actionModelStateInfo,
         currentState = currentActionState,
         transitionInfo = actionTransitionInfo,
-        enabled = command.isActionEnabled?.value ?: false,
+        enabled = command.isActionEnabled,
         selected = command.isActionToggle and command.isActionToggleSelected,
         rollover = actionRollover,
         pressed = isActionPressed,
@@ -277,7 +277,7 @@ private fun AuroraCommandButton(
     }
 
     // Transition for the popup enabled state
-    val popupEnabledTransition = updateTransition(command.isSecondaryEnabled?.value ?: false)
+    val popupEnabledTransition = updateTransition(command.isSecondaryEnabled)
     val popupEnabledFraction by popupEnabledTransition.animateFloat(transitionSpec = {
         tween(durationMillis = AuroraSkin.animationConfig.regular)
     }) {
@@ -299,7 +299,7 @@ private fun AuroraCommandButton(
         modelStateInfo = popupModelStateInfo,
         currentState = currentPopupState,
         transitionInfo = popupTransitionInfo,
-        enabled = command.isSecondaryEnabled?.value ?: false,
+        enabled = command.isSecondaryEnabled,
         selected = false,
         rollover = popupRollover,
         pressed = isPopupPressed,
@@ -334,7 +334,7 @@ private fun AuroraCommandButton(
 
     val hasIcon = (command.iconFactory != null)
     val hasAction = (command.action != null)
-    val isActionEnabled = command.isActionEnabled?.value ?: false
+    val isActionEnabled = command.isActionEnabled
     val hasPopup = (command.secondaryContentModel != null)
     val isTextInActionArea = hasAction && (presentationModel.textClick == TextClick.ACTION)
     Layout(
@@ -513,7 +513,8 @@ private fun AuroraCommandButton(
             }
             Box(
                 modifier = Modifier.clickable(
-                    enabled = command.isSecondaryEnabled?.value ?: false, onClick = {
+                    enabled = command.isSecondaryEnabled,
+                    onClick = {
                         // TODO - move off of JWindow when https://github.com/JetBrains/compose-jb/issues/195
                         //  is addressed
                         val popupContentWindow = AuroraPopupWindow()
@@ -565,7 +566,9 @@ private fun AuroraCommandButton(
                         popupContentWindow.validate()
                         popupContentWindow.isVisible = true
                         popupContentWindow.pack()
-                    }, interactionSource = popupInteractionSource, indication = null
+                    },
+                    interactionSource = popupInteractionSource,
+                    indication = null
                 ).pointerMoveFilter(onEnter = {
                     popupRollover = true
                     false

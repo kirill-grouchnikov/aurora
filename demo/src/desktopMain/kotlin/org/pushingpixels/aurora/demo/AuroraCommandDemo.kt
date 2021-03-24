@@ -30,9 +30,7 @@
 package org.pushingpixels.aurora.demo
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -42,7 +40,6 @@ import org.pushingpixels.aurora.component.AuroraText
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.demo.svg.tango.accessories_text_editor
 import org.pushingpixels.aurora.demo.svg.tango.computer
-import org.pushingpixels.aurora.skin.graphiteSkin
 import org.pushingpixels.aurora.skin.marinerSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 
@@ -59,10 +56,10 @@ fun main() {
 
 @Composable
 fun DemoCommandContent() {
-    val actionEnabled = remember { mutableStateOf(true) }
-    val popupEnabled = remember { mutableStateOf(true) }
+    var actionEnabled by remember { mutableStateOf(true) }
+    var popupEnabled by remember { mutableStateOf(true) }
 
-    val commandActionOnly = remember {
+    val commandActionOnly =
         Command(
             text = "Action!",
             iconFactory = accessories_text_editor.factory(),
@@ -78,8 +75,8 @@ fun DemoCommandContent() {
                 }
             }
         )
-    }
-    val commandActionOnlyNoIcon = remember {
+
+    val commandActionOnlyNoIcon =
         Command(
             text = "Action 2!",
             action = { println("Action 2 activated!") },
@@ -94,8 +91,8 @@ fun DemoCommandContent() {
                 }
             }
         )
-    }
-    val commandSecondaryOnly = remember {
+
+    val commandSecondaryOnly =
         Command(
             text = "Popup",
             iconFactory = computer.factory(),
@@ -126,8 +123,8 @@ fun DemoCommandContent() {
                 )
             )
         )
-    }
-    val commandActionAndSecondary = remember {
+
+    val commandActionAndSecondary =
         Command(
             text = "Both",
             iconFactory = computer.factory(),
@@ -214,20 +211,20 @@ fun DemoCommandContent() {
                 )
             )
         )
-    }
+
 
     Column(modifier = Modifier.fillMaxHeight().fillMaxWidth().padding(4.dp)) {
         Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
             AuroraCheckBox(
-                selected = actionEnabled.value,
-                onTriggerSelectedChange = { actionEnabled.value = !actionEnabled.value }
+                selected = actionEnabled,
+                onTriggerSelectedChange = { actionEnabled = !actionEnabled }
             ) {
                 AuroraText(text = "action enabled")
             }
             Spacer(modifier = Modifier.width(8.dp))
             AuroraCheckBox(
-                selected = popupEnabled.value,
-                onTriggerSelectedChange = { popupEnabled.value = !popupEnabled.value }
+                selected = popupEnabled,
+                onTriggerSelectedChange = { popupEnabled = !popupEnabled }
             ) {
                 AuroraText(text = "popup enabled")
             }

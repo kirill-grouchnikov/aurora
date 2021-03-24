@@ -64,11 +64,11 @@ data class Command(
     val disabledIconFactory: AuroraIcon.Factory? = null,
     val action: (() -> Unit)? = null,
     val actionPreview: CommandActionPreview? = null,
-    var isActionEnabled: State<Boolean>? = null,
-    var isActionToggle: Boolean = false,
-    var isActionToggleSelected: Boolean = false,
+    val isActionEnabled: Boolean = true,
+    val isActionToggle: Boolean = false,
+    val isActionToggleSelected: Boolean = false,
     val secondaryContentModel: CommandMenuContentModel? = null,
-    var isSecondaryEnabled: State<Boolean>? = null
+    val isSecondaryEnabled: Boolean = true
 )
 
 data class CommandGroup(
