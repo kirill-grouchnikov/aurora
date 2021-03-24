@@ -336,6 +336,7 @@ private fun AuroraCommandButton(
     val hasIcon = (command.iconFactory != null)
     val hasAction = (command.action != null)
     val isActionEnabled = command.isActionEnabled
+    val isPopupEnabled = command.isSecondaryEnabled
     val hasPopup = (command.secondaryContentModel != null)
     val isTextInActionArea = hasAction && (presentationModel.textClick == TextClick.ACTION)
     Layout(
@@ -514,7 +515,7 @@ private fun AuroraCommandButton(
             }
             Box(
                 modifier = Modifier.clickable(
-                    enabled = command.isSecondaryEnabled,
+                    enabled = isPopupEnabled,
                     onClick = {
                         // TODO - move off of JWindow when https://github.com/JetBrains/compose-jb/issues/195
                         //  is addressed
@@ -757,7 +758,7 @@ private fun AuroraCommandButton(
             }
 
             // Separator between action and popup areas if we have both
-            if (hasAction and hasPopup) {
+            if (hasAction and hasPopup and isActionEnabled and isPopupEnabled) {
                 when (layoutManager.getSeparatorOrientation()) {
                     CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL ->
                         AuroraVerticalSeparator(
@@ -829,12 +830,12 @@ private fun AuroraCommandButton(
             )
         }
         var separatorPlaceable: Placeable? = null
-        if (hasAction && hasPopup) {
+        if (hasAction and hasPopup and isActionEnabled and isPopupEnabled) {
             val separatorMeasurable = measurables[childIndex++]
             separatorPlaceable = separatorMeasurable.measure(
                 Constraints.fixed(
                     width = layoutInfo.separatorArea!!.width.roundToInt(),
-                    height = layoutInfo.separatorArea!!.height.roundToInt()
+                    height = layoutInfo.separatorArea.height.roundToInt()
                 )
             )
         }
