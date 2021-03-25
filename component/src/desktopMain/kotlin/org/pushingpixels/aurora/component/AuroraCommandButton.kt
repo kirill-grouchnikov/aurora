@@ -33,12 +33,13 @@ import androidx.compose.animation.core.*
 import androidx.compose.desktop.AppManager
 import androidx.compose.desktop.ComposePanel
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
+import androidx.compose.ui.CombinedModifier
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
@@ -53,13 +54,13 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.*
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
-import org.pushingpixels.aurora.common.hexadecimal
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.layout.*
 import org.pushingpixels.aurora.component.model.*
@@ -337,23 +338,36 @@ private fun AuroraCommandButton(
     val hasAction = (command.action != null)
     val isActionEnabled = command.isActionEnabled
     val isPopupEnabled = command.isSecondaryEnabled
+    val isToggle = command.isActionToggle
     val hasPopup = (command.secondaryContentModel != null)
-    val isTextInActionArea = hasAction && (presentationModel.textClick == TextClick.ACTION)
+    val isTextInActionArea = (hasAction or isToggle) && (presentationModel.textClick == TextClick.ACTION)
     Layout(
         modifier = Modifier.commandButtonLocator(auroraTopLeftOffset, auroraSize),
         content = {
+            val modifierAction: Modifier
+            if (isToggle) {
+                modifierAction = Modifier.toggleable(
+                    value = command.isActionToggleSelected,
+                    enabled = isActionEnabled,
+                    role = Role.Button,
+                    interactionSource = actionInteractionSource,
+                    indication = null,
+                    onValueChange = {
+                        command.onTriggerActionToggleSelectedChange?.invoke(it)
+                    })
+            } else {
+                modifierAction = Modifier.clickable(
+                    enabled = isActionEnabled,
+                    onClick = {
+                        command.action?.invoke()
+                        extraAction?.invoke()
+                    },
+                    interactionSource = actionInteractionSource,
+                    indication = null
+                )
+            }
             Box(
-                modifier = Modifier
-                    // TODO - this needs to be toggleable for toggleable action
-                    .clickable(
-                        enabled = isActionEnabled,
-                        onClick = {
-                            command.action?.invoke()
-                            extraAction?.invoke()
-                        },
-                        interactionSource = actionInteractionSource,
-                        indication = null
-                    ).pointerMoveFilter(onEnter = {
+                modifier = modifierAction.pointerMoveFilter(onEnter = {
                         val wasRollover = actionRollover
                         actionRollover = true
                         if (isActionEnabled && !wasRollover) {
@@ -727,9 +741,9 @@ private fun AuroraCommandButton(
             if (hasIcon) {
                 // Icon can be in action or popup area
                 val modelStateInfoForIcon =
-                    if (hasAction) actionModelStateInfo else popupModelStateInfo
+                    if (hasAction or isToggle) actionModelStateInfo else popupModelStateInfo
                 val currStateForIcon =
-                    if (hasAction) currentActionState.value else currentPopupState.value
+                    if (hasAction or isToggle) currentActionState.value else currentPopupState.value
                 CommandButtonIconContent(
                     command,
                     presentationModel,
@@ -745,8 +759,10 @@ private fun AuroraCommandButton(
                 if (isTextInActionArea) actionModelStateInfo else popupModelStateInfo
             val currStateForText =
                 if (isTextInActionArea) currentActionState.value else currentPopupState.value
-            CommandButtonTextContent(command, modelStateInfoForText, currStateForText,
-                resolvedTextStyle)
+            CommandButtonTextContent(
+                command, modelStateInfoForText, currStateForText,
+                resolvedTextStyle
+            )
 
             // Popup action (arrow) if we need one
             if (hasPopup) {
@@ -1126,11 +1142,8 @@ private fun CommandButtonPopupColumn(contentSize: AuroraSize, content: @Composab
         layout(width = contentTotalWidth, height = contentMaxHeight) {
             var yPosition = 0
 
-            // TODO - support RTL
             placeables.forEach { placeable ->
-                placeable.placeRelative(
-                    x = 0, y = yPosition
-                )
+                placeable.placeRelative(x = 0, y = yPosition)
                 yPosition += placeable.height
             }
         }

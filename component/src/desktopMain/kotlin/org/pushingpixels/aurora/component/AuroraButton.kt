@@ -242,7 +242,6 @@ private fun AuroraToggleButton(
                 interactionSource = interactionSource,
                 indication = null,
                 onValueChange = {
-                    println("Triggering change!")
                     onTriggerSelectedChange.invoke(it)
                 }),
         contentAlignment = Alignment.TopStart

@@ -56,6 +56,7 @@ fun main() {
 
 @Composable
 fun DemoCommandContent() {
+    var selected by remember { mutableStateOf(false) }
     var actionEnabled by remember { mutableStateOf(true) }
     var popupEnabled by remember { mutableStateOf(true) }
 
@@ -89,6 +90,19 @@ fun DemoCommandContent() {
                 override fun onCommandPreviewCanceled(command: Command) {
                     println("Action 2 preview canceled!")
                 }
+            }
+        )
+
+    val commandActionToggle =
+        Command(
+            text = "Toggle",
+            iconFactory = computer.factory(),
+            isActionEnabled = actionEnabled,
+            isActionToggle = true,
+            isActionToggleSelected = selected,
+            onTriggerActionToggleSelectedChange = {
+                selected = it
+                println("Toggle selected? $selected")
             }
         )
 
@@ -232,12 +246,19 @@ fun DemoCommandContent() {
 
         Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
             AuroraCommandButton(
-                command = commandActionOnly,
+                command = commandActionOnlyNoIcon,
                 presentationModel = CommandButtonPresentationModel()
             )
             Spacer(modifier = Modifier.width(8.dp))
             AuroraCommandButton(
-                command = commandActionOnlyNoIcon,
+                command = commandActionToggle,
+                presentationModel = CommandButtonPresentationModel()
+            )
+        }
+
+        Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
+            AuroraCommandButton(
+                command = commandActionOnly,
                 presentationModel = CommandButtonPresentationModel()
             )
             Spacer(modifier = Modifier.width(8.dp))

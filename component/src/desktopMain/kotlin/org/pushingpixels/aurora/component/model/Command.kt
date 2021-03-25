@@ -67,6 +67,7 @@ data class Command(
     val isActionEnabled: Boolean = true,
     val isActionToggle: Boolean = false,
     val isActionToggleSelected: Boolean = false,
+    val onTriggerActionToggleSelectedChange: ((Boolean) -> Unit)? = null,
     val secondaryContentModel: CommandMenuContentModel? = null,
     val isSecondaryEnabled: Boolean = true
 )
