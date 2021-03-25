@@ -39,7 +39,6 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
-import androidx.compose.ui.CombinedModifier
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
@@ -89,7 +88,7 @@ private class CommandButtonDrawingCache(
 @Composable
 fun AuroraCommandButton(
     command: Command,
-    presentationModel: CommandButtonPresentationModel
+    presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel()
 ) {
     AuroraCommandButton(
         command = command,
@@ -881,7 +880,7 @@ private fun AuroraCommandButton(
             )
             separatorPlaceable?.placeRelative(
                 x = layoutInfo.separatorArea!!.left.roundToInt(),
-                y = layoutInfo.separatorArea!!.top.roundToInt()
+                y = layoutInfo.separatorArea.top.roundToInt()
             )
         }
     }

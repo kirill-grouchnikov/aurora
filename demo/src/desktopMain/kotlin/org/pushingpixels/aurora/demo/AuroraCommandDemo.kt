@@ -55,6 +55,48 @@ fun main() {
 }
 
 @Composable
+fun DemoCommandRow(
+    commandActionOnly: Command,
+    commandSecondaryOnly: Command,
+    commandActionAndSecondary: Command,
+    presentationState: CommandButtonPresentationState
+) {
+    Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
+        AuroraCommandButton(
+            command = commandActionOnly,
+            presentationModel = CommandButtonPresentationModel(presentationState = presentationState)
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        AuroraCommandButton(
+            command = commandSecondaryOnly,
+            presentationModel = CommandButtonPresentationModel(presentationState = presentationState)
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        AuroraCommandButton(
+            command = commandActionAndSecondary,
+            presentationModel = CommandButtonPresentationModel(
+                presentationState = presentationState,
+                textClick = TextClick.ACTION
+            )
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        AuroraCommandButton(
+            command = commandActionAndSecondary,
+            presentationModel = CommandButtonPresentationModel(
+                presentationState = presentationState,
+                textClick = TextClick.POPUP
+            )
+        )
+    }
+}
+
+@Composable
 fun DemoCommandContent() {
     var selected by remember { mutableStateOf(false) }
     var actionEnabled by remember { mutableStateOf(true) }
@@ -245,38 +287,17 @@ fun DemoCommandContent() {
         }
 
         Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
-            AuroraCommandButton(
-                command = commandActionOnlyNoIcon,
-                presentationModel = CommandButtonPresentationModel()
-            )
+            AuroraCommandButton(command = commandActionOnlyNoIcon)
             Spacer(modifier = Modifier.width(8.dp))
-            AuroraCommandButton(
-                command = commandActionToggle,
-                presentationModel = CommandButtonPresentationModel()
-            )
+            AuroraCommandButton(command = commandActionToggle)
         }
 
-        Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
-            AuroraCommandButton(
-                command = commandActionOnly,
-                presentationModel = CommandButtonPresentationModel()
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            AuroraCommandButton(
-                command = commandSecondaryOnly,
-                presentationModel = CommandButtonPresentationModel()
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            AuroraCommandButton(
-                command = commandActionAndSecondary,
-                presentationModel = CommandButtonPresentationModel(textClick = TextClick.ACTION)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            AuroraCommandButton(
-                command = commandActionAndSecondary,
-                presentationModel = CommandButtonPresentationModel(textClick = TextClick.POPUP)
-            )
-        }
+        DemoCommandRow(
+            commandActionOnly,
+            commandSecondaryOnly,
+            commandActionAndSecondary,
+            CommandButtonPresentationState.MEDIUM
+        )
     }
 }
 
