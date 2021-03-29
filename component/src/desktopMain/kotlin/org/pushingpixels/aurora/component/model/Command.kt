@@ -38,6 +38,7 @@ import org.pushingpixels.aurora.IconFilterStrategy
 import org.pushingpixels.aurora.PopupPlacementStrategy
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManagerMedium
+import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManagerTile
 import org.pushingpixels.aurora.icon.AuroraIcon
 
 interface CommandActionPreview {
@@ -132,11 +133,11 @@ enum class CommandButtonKind(val hasAction: Boolean, val hasPopup: Boolean) {
 
 /**
  * Presentation state for command buttons. This class provides a number of core
- * presentation states, and it is possible to create additional custom states by
- * using the constructor and implementing the relevant abstract
+ * companion presentation states. In addition, it also allows creating additional
+ * custom states by using the constructor and implementing the relevant abstract
  * methods.
  */
-abstract class CommandButtonPresentationState(val displayName: String, val preferredIconSize: Int) {
+abstract class CommandButtonPresentationState(val displayName: String) {
     abstract fun createLayoutManager(
         layoutDirection: LayoutDirection,
         density: Density,
@@ -149,26 +150,41 @@ abstract class CommandButtonPresentationState(val displayName: String, val prefe
     }
 
     companion object {
-        /**
-         * Medium state.
-         */
-        val MEDIUM: CommandButtonPresentationState = object : CommandButtonPresentationState(
-            "Medium", 16
-        ) {
-            override fun createLayoutManager(
-                layoutDirection: LayoutDirection,
-                density: Density,
-                textStyle: TextStyle,
-                resourceLoader: Font.ResourceLoader
-            ): CommandButtonLayoutManager {
-                return CommandButtonLayoutManagerMedium(
-                    layoutDirection,
-                    density,
-                    textStyle,
-                    resourceLoader
-                )
+        /** Medium state */
+        val MEDIUM: CommandButtonPresentationState =
+            object : CommandButtonPresentationState("Medium") {
+                override fun createLayoutManager(
+                    layoutDirection: LayoutDirection,
+                    density: Density,
+                    textStyle: TextStyle,
+                    resourceLoader: Font.ResourceLoader
+                ): CommandButtonLayoutManager {
+                    return CommandButtonLayoutManagerMedium(
+                        layoutDirection,
+                        density,
+                        textStyle,
+                        resourceLoader
+                    )
+                }
             }
-        }
+
+        /** Tile state */
+        val TILE: CommandButtonPresentationState =
+            object : CommandButtonPresentationState("Tile") {
+                override fun createLayoutManager(
+                    layoutDirection: LayoutDirection,
+                    density: Density,
+                    textStyle: TextStyle,
+                    resourceLoader: Font.ResourceLoader
+                ): CommandButtonLayoutManager {
+                    return CommandButtonLayoutManagerTile(
+                        layoutDirection,
+                        density,
+                        textStyle,
+                        resourceLoader
+                    )
+                }
+            }
     }
 }
 

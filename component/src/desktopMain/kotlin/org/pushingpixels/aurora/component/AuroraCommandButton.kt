@@ -60,6 +60,8 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
+import org.pushingpixels.aurora.common.hexadecimal
+import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.layout.*
 import org.pushingpixels.aurora.component.model.*
@@ -759,9 +761,15 @@ private fun AuroraCommandButton(
             val currStateForText =
                 if (isTextInActionArea) currentActionState.value else currentPopupState.value
             CommandButtonTextContent(
-                command, modelStateInfoForText, currStateForText,
+                command.text, modelStateInfoForText, currStateForText,
                 resolvedTextStyle
             )
+            if (layoutManager.isShowingExtraText() && (command.extraText != null)) {
+                CommandButtonExtraTextContent(
+                    command.extraText, modelStateInfoForText, currStateForText,
+                    resolvedTextStyle
+                )
+            }
 
             // Popup action (arrow) if we need one
             if (hasPopup) {
@@ -828,12 +836,24 @@ private fun AuroraCommandButton(
             )
         }
         val textMeasurable = measurables[childIndex++]
+        // TODO - figure out the multiple entries in the list
         val textPlaceable = textMeasurable.measure(
             Constraints.fixed(
                 width = layoutInfo.textLayoutInfoList[0].textRect.width.roundToInt(),
                 height = layoutInfo.textLayoutInfoList[0].textRect.height.roundToInt()
             )
         )
+        var extraTextPlaceable: Placeable? = null
+        if (layoutManager.isShowingExtraText() && (command.extraText != null)) {
+            val extraTextMeasurable = measurables[childIndex++]
+            // TODO - figure out the multiple entries in the list
+            extraTextPlaceable = extraTextMeasurable.measure(
+                Constraints.fixed(
+                    width = layoutInfo.extraTextLayoutInfoList!![0]!!.textRect.width.roundToInt(),
+                    height = layoutInfo.extraTextLayoutInfoList[0].textRect.height.roundToInt()
+                )
+            )
+        }
         var popupIconPlaceable: Placeable? = null
         if (hasPopup) {
             val popupIconMeasurable = measurables[childIndex++]
@@ -874,6 +894,10 @@ private fun AuroraCommandButton(
                 x = layoutInfo.textLayoutInfoList[0].textRect.left.roundToInt(),
                 y = layoutInfo.textLayoutInfoList[0].textRect.top.roundToInt()
             )
+            extraTextPlaceable?.placeRelative(
+                x = layoutInfo.extraTextLayoutInfoList!![0].textRect.left.roundToInt(),
+                y = layoutInfo.extraTextLayoutInfoList[0].textRect.top.roundToInt()
+            )
             popupIconPlaceable?.placeRelative(
                 x = layoutInfo.popupActionRect.left.roundToInt(),
                 y = layoutInfo.popupActionRect.top.roundToInt()
@@ -888,7 +912,7 @@ private fun AuroraCommandButton(
 
 @Composable
 private fun CommandButtonTextContent(
-    command: Command, modelStateInfo: ModelStateInfo, currState: ComponentState,
+    text: String, modelStateInfo: ModelStateInfo, currState: ComponentState,
     style: TextStyle
 ) {
     val decorationAreaType = AuroraSkin.decorationAreaType
@@ -911,7 +935,55 @@ private fun CommandButtonTextContent(
     ) {
         // Since we're passing the resolved style that has the default color,
         // also explicitly pass our text color to override the one set in the style
-        AuroraText(text = command.text, color = textColor, style = style)
+        AuroraText(text = text, color = textColor, style = style)
+    }
+}
+
+@Composable
+private fun CommandButtonExtraTextContent(
+    text: String, modelStateInfo: ModelStateInfo, currState: ComponentState,
+    style: TextStyle
+) {
+    val decorationAreaType = AuroraSkin.decorationAreaType
+    val skinColors = AuroraSkin.colors
+
+    // Compute the regular text color based on the passed model state (which can be action
+    // or popup)
+    val textColor = getTextColor(
+        modelStateInfo = modelStateInfo,
+        currState = currState,
+        skinColors = skinColors,
+        decorationAreaType = decorationAreaType,
+        isTextInFilledArea = true
+    )
+
+    // "Move" the regular text color towards the disabled state for more muted visuals
+    // of the extra text
+    val disabledColorScheme = skinColors.getColorScheme(
+        decorationAreaType, ComponentState.DISABLED_UNSELECTED
+    )
+    var disabledFgColor = disabledColorScheme.foregroundColor
+    val buttonAlpha = skinColors.getAlpha(decorationAreaType, currState)
+
+    val backgroundColorScheme = skinColors.getColorScheme(decorationAreaType, currState)
+    val bgFillColor = backgroundColorScheme.backgroundFillColor
+    if (buttonAlpha < 1.0f) {
+        // Blend with the background fill
+        disabledFgColor = disabledFgColor.interpolateTowards(bgFillColor, buttonAlpha)
+    }
+    if (currState.isDisabled) {
+        disabledFgColor = disabledFgColor.interpolateTowards(bgFillColor, 0.5f)
+    }
+    disabledFgColor = disabledFgColor.interpolateTowards(textColor, 0.5f)
+
+    // Pass our text color and model state snapshot to the children
+    CompositionLocalProvider(
+        LocalTextColor provides disabledFgColor,
+        LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currState)
+    ) {
+        // Since we're passing the resolved style that has the default color,
+        // also explicitly pass our text color to override the one set in the style
+        AuroraText(text = text, color = disabledFgColor, style = style)
     }
 }
 

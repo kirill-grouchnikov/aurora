@@ -47,7 +47,7 @@ fun main() {
     AuroraWindow(
         skin = marinerSkin(),
         title = "Aurora Demo",
-        size = IntSize(660, 200),
+        size = IntSize(660, 400),
         undecorated = true
     ) {
         DemoCommandContent()
@@ -105,6 +105,7 @@ fun DemoCommandContent() {
     val commandActionOnly =
         Command(
             text = "Action!",
+            extraText = "Extra action",
             iconFactory = accessories_text_editor.factory(),
             action = { println("Action activated!") },
             isActionEnabled = actionEnabled,
@@ -122,6 +123,7 @@ fun DemoCommandContent() {
     val commandActionOnlyNoIcon =
         Command(
             text = "Action 2!",
+            extraText = "Extra action 2",
             action = { println("Action 2 activated!") },
             isActionEnabled = actionEnabled,
             actionPreview = object : CommandActionPreview {
@@ -138,6 +140,7 @@ fun DemoCommandContent() {
     val commandActionToggle =
         Command(
             text = "Toggle",
+            extraText = "Extra toggle",
             iconFactory = computer.factory(),
             isActionEnabled = actionEnabled,
             isActionToggle = true,
@@ -151,6 +154,7 @@ fun DemoCommandContent() {
     val commandSecondaryOnly =
         Command(
             text = "Popup",
+            extraText = "Extra popup",
             iconFactory = computer.factory(),
             isSecondaryEnabled = popupEnabled,
             secondaryContentModel = CommandMenuContentModel(
@@ -183,6 +187,7 @@ fun DemoCommandContent() {
     val commandActionAndSecondary =
         Command(
             text = "Both",
+            extraText = "Extra both",
             iconFactory = computer.factory(),
             action = { println("Split activated!") },
             actionPreview = object : CommandActionPreview {
@@ -297,6 +302,13 @@ fun DemoCommandContent() {
             commandSecondaryOnly,
             commandActionAndSecondary,
             CommandButtonPresentationState.MEDIUM
+        )
+
+        DemoCommandRow(
+            commandActionOnly,
+            commandSecondaryOnly,
+            commandActionAndSecondary,
+            CommandButtonPresentationState.TILE
         )
     }
 }
