@@ -58,6 +58,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.common.interpolateTowards
@@ -373,6 +374,13 @@ private fun AuroraCommandButton(
                     indication = null
                 )
             }
+            // These two track the offset of action and popup area relative in
+            // the overall bounding box of the command button. To paint continuous
+            // visuals of the command button across two separate Box composables,
+            // we paint each as full-size area, along with clipping to the specific
+            // area (action or popup) and offsetting during the Canvas paint pass.
+            var actionAreaOffset = remember { Offset.Zero }
+            var popupAreaOffset = remember { Offset.Zero }
             Box(
                 modifier = modifierAction.pointerMoveFilter(onEnter = {
                     val wasRollover = actionRollover
@@ -390,7 +398,16 @@ private fun AuroraCommandButton(
                     false
                 }, onMove = {
                     false
-                })
+                }).onGloballyPositioned {
+                    if (it.parentCoordinates != null) {
+                        val selfToRoot = it.localToRoot(Offset.Zero)
+                        val parentToRoot = it.parentCoordinates!!.localToRoot(Offset.Zero)
+                        actionAreaOffset = Offset(
+                            x = selfToRoot.x - parentToRoot.x,
+                            y = selfToRoot.y - parentToRoot.y
+                        )
+                    }
+                }
             ) {
                 if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.NEVER) {
                     // Populate the cached color scheme for filling the button container
@@ -449,37 +466,27 @@ private fun AuroraCommandButton(
                     )
 
                     Canvas(modifier = Modifier.matchParentSize()) {
-                        val width = this.size.width
-                        val height = this.size.height
+                        val width = auroraSize.width.toFloat()
+                        val height = auroraSize.height.toFloat()
 
-                        val openSides: Set<Side> = if (!hasPopup) emptySet() else
-                            (if (preLayoutInfo.separatorOrientation == CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL)
-                                setOf(Side.END) else setOf(Side.BOTTOM))
                         val straightSides =
-                            if (presentationModel.isMenu) Side.values().toSet() else openSides
+                            if (presentationModel.isMenu) Side.values().toSet() else emptySet()
                         val sides =
-                            ButtonSides(openSides = openSides, straightSides = straightSides)
-
-                        val openDelta = 3
-                        val deltaLeft = if (sides.openSides.contains(Side.START)) openDelta else 0
-                        val deltaRight = if (sides.openSides.contains(Side.END)) openDelta else 0
-                        val deltaTop = if (sides.openSides.contains(Side.TOP)) openDelta else 0
-                        val deltaBottom =
-                            if (sides.openSides.contains(Side.BOTTOM)) openDelta else 0
+                            ButtonSides(openSides = emptySet(), straightSides = straightSides)
 
                         withTransform({
                             clipRect(
                                 left = 0.0f,
                                 top = 0.0f,
-                                right = width,
-                                bottom = height,
+                                right = size.width,
+                                bottom = size.height,
                                 clipOp = ClipOp.Intersect
                             )
-                            translate(left = -deltaLeft.toFloat(), top = -deltaTop.toFloat())
+                            translate(left = -actionAreaOffset.x, top = -actionAreaOffset.y)
                         }) {
                             val outline = buttonShaper.getButtonOutline(
-                                width = width + deltaLeft + deltaRight,
-                                height = height + deltaTop + deltaBottom,
+                                width = width,
+                                height = height,
                                 extraInsets = 0.5f,
                                 isInner = false,
                                 sides = sides,
@@ -501,7 +508,7 @@ private fun AuroraCommandButton(
                             drawingCache.colorScheme.isDark = fillIsDark
                             drawingCache.colorScheme.foreground = Color.Black
                             fillPainter.paintContourBackground(
-                                this, this.size, outline, drawingCache.colorScheme, actionAlpha
+                                this, auroraSize.asSize, outline, drawingCache.colorScheme, actionAlpha
                             )
 
                             // Populate the cached color scheme for drawing the button border
@@ -516,8 +523,8 @@ private fun AuroraCommandButton(
 
                             val innerOutline =
                                 if (borderPainter.isPaintingInnerOutline) buttonShaper.getButtonOutline(
-                                    width = width + deltaLeft + deltaRight,
-                                    height = height + deltaTop + deltaBottom,
+                                    width = width,
+                                    height = height,
                                     extraInsets = 1.0f,
                                     isInner = true,
                                     sides = sides,
@@ -526,7 +533,7 @@ private fun AuroraCommandButton(
 
                             borderPainter.paintBorder(
                                 this,
-                                this.size,
+                                auroraSize.asSize,
                                 outline,
                                 innerOutline,
                                 drawingCache.colorScheme,
@@ -602,7 +609,16 @@ private fun AuroraCommandButton(
                     false
                 }, onMove = {
                     false
-                })
+                }).onGloballyPositioned {
+                    if (it.parentCoordinates != null) {
+                        val selfToRoot = it.localToRoot(Offset.Zero)
+                        val parentToRoot = it.parentCoordinates!!.localToRoot(Offset.Zero)
+                        popupAreaOffset = Offset(
+                            x = selfToRoot.x - parentToRoot.x,
+                            y = selfToRoot.y - parentToRoot.y
+                        )
+                    }
+                }
             ) {
                 if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.NEVER) {
                     // Populate the cached color scheme for filling the button container
@@ -661,37 +677,27 @@ private fun AuroraCommandButton(
                     )
 
                     Canvas(modifier = Modifier.matchParentSize()) {
-                        val width = this.size.width
-                        val height = this.size.height
+                        val width = auroraSize.width.toFloat()
+                        val height = auroraSize.height.toFloat()
 
-                        val openSides: Set<Side> = if (!hasAction) emptySet() else
-                            (if (preLayoutInfo.separatorOrientation == CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL)
-                                setOf(Side.START) else setOf(Side.TOP))
                         val straightSides =
-                            if (presentationModel.isMenu) Side.values().toSet() else openSides
+                            if (presentationModel.isMenu) Side.values().toSet() else emptySet()
                         val sides =
-                            ButtonSides(openSides = openSides, straightSides = straightSides)
-
-                        val openDelta = 3
-                        val deltaLeft = if (sides.openSides.contains(Side.START)) openDelta else 0
-                        val deltaRight = if (sides.openSides.contains(Side.END)) openDelta else 0
-                        val deltaTop = if (sides.openSides.contains(Side.TOP)) openDelta else 0
-                        val deltaBottom =
-                            if (sides.openSides.contains(Side.BOTTOM)) openDelta else 0
+                            ButtonSides(openSides = emptySet(), straightSides = straightSides)
 
                         withTransform({
                             clipRect(
                                 left = 0.0f,
                                 top = 0.0f,
-                                right = width,
-                                bottom = height,
+                                right = size.width,
+                                bottom = size.height,
                                 clipOp = ClipOp.Intersect
                             )
-                            translate(left = -deltaLeft.toFloat(), top = -deltaTop.toFloat())
+                            translate(left = -popupAreaOffset.x, top = -popupAreaOffset.y)
                         }) {
                             val outline = buttonShaper.getButtonOutline(
-                                width = width + deltaLeft + deltaRight,
-                                height = height + deltaTop + deltaBottom,
+                                width = width,
+                                height = height,
                                 extraInsets = 0.5f,
                                 isInner = false,
                                 sides = sides,
@@ -713,7 +719,7 @@ private fun AuroraCommandButton(
                             drawingCache.colorScheme.isDark = fillIsDark
                             drawingCache.colorScheme.foreground = Color.Black
                             fillPainter.paintContourBackground(
-                                this, this.size, outline, drawingCache.colorScheme, popupAlpha
+                                this, auroraSize.asSize, outline, drawingCache.colorScheme, popupAlpha
                             )
 
                             // Populate the cached color scheme for drawing the button border
@@ -728,8 +734,8 @@ private fun AuroraCommandButton(
 
                             val innerOutline =
                                 if (borderPainter.isPaintingInnerOutline) buttonShaper.getButtonOutline(
-                                    width = width + deltaLeft + deltaRight,
-                                    height = height + deltaTop + deltaBottom,
+                                    width = width,
+                                    height = height,
                                     extraInsets = 1.0f,
                                     isInner = true,
                                     sides = sides,
@@ -738,7 +744,7 @@ private fun AuroraCommandButton(
 
                             borderPainter.paintBorder(
                                 this,
-                                this.size,
+                                auroraSize.asSize,
                                 outline,
                                 innerOutline,
                                 drawingCache.colorScheme,

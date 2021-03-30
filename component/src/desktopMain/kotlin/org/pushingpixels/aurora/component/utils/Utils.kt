@@ -29,6 +29,8 @@
  */
 package org.pushingpixels.aurora.component.utils
 
+import androidx.compose.ui.geometry.Size
+
 internal data class AuroraOffset(var x: Float, var y: Float)
 internal data class AuroraSize(var width: Int, var height: Int)
 internal data class AuroraRect(var x: Float, var y: Float, var width: Float, var height: Float)
@@ -37,3 +39,6 @@ internal fun AuroraRect.contains(x: Float, y: Float): Boolean {
     return (x >= this.x) && (x < (this.x + this.width)) && (y >= this.y) &&
             (y < (this.y + this.height))
 }
+
+internal val AuroraSize.asSize: Size
+    get() = Size(width.toFloat(), height.toFloat())
