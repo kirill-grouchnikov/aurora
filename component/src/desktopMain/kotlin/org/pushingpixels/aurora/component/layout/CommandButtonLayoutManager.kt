@@ -34,12 +34,16 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonKind
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
+
+object CommandButtonSizingConstants {
+    val PopupIconWidth = 6.0.dp
+    val PopupIconHeight = 4.0.dp
+}
 
 /**
  * Definition of a layout manager for command buttons.
@@ -86,7 +90,6 @@ interface CommandButtonLayoutManager : MeasureScope {
         val extraTexts: List<String>,
         val isTextInActionArea: Boolean,
         val separatorOrientation: CommandButtonSeparatorOrientation?,
-
     )
 
     /**
@@ -97,8 +100,7 @@ interface CommandButtonLayoutManager : MeasureScope {
      * @param popupClickArea The popup area. A mouse click in this area will show the popup content
      * associated with the command button.
      * @param separatorArea The separator area. If it's not empty, the command button will show a
-     * separator between [.actionClickArea] and
-     * [.popupClickArea] on mouse rollover.
+     * separator between [.actionClickArea] and [.popupClickArea] on mouse rollover.
      * @param iconRect Rectangle for the command button icon.
      * @param textLayoutInfoList Layout information for the command button text (that can span
      * multiple lines).
@@ -106,8 +108,6 @@ interface CommandButtonLayoutManager : MeasureScope {
      * (that can span multiple lines).
      * @param popupActionRect Rectangle for the icon associated with the [.popupClickArea].
      * This icon is an arrow indicating that the command button has a popup area.
-     * @param isTextInActionArea Indication whether the command button text (rectangles in
-     * [.textLayoutInfoList]) belongs in the action area.
      */
     data class CommandButtonLayoutInfo(
         val fullSize: Size,
@@ -120,30 +120,25 @@ interface CommandButtonLayoutManager : MeasureScope {
         val popupActionRect: Rect,
     )
 
-    fun getPopupIconSize(density: Density): Size {
-        with(density) {
-            return Size(6.0.dp.toPx(), 4.0.dp.toPx())
-        }
-    }
-
     /**
      * Returns the preferred icon size of the specified command button when it uses
      * this layout manager.
      *
-     * @param commandButton Command button.
      * @return The preferred icon size of the specified command button when it uses
      * this layout manager.
      */
     fun getPreferredIconSize(): Dp
 
-    fun getPreLayoutInfo(command: Command, presentationModel: CommandButtonPresentationModel)
-            : CommandButtonPreLayoutInfo
+    /**
+     * Returns the pre-layout information for the specified parameters.
+     */
+    fun getPreLayoutInfo(
+        command: Command,
+        presentationModel: CommandButtonPresentationModel
+    ): CommandButtonPreLayoutInfo
 
     /**
-     * Returns the layout information for the specified command button.
-     *
-     * @param commandButton Command button.
-     * @return The layout information for the specified command button.
+     * Returns the layout information for the specified parameters.
      */
     fun getLayoutInfo(
         constraints: Constraints,
