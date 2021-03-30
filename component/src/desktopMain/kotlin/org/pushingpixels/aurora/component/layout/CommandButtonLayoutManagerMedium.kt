@@ -111,7 +111,7 @@ internal class CommandButtonLayoutManagerMedium(
                 width += 2 * layoutHGap
             }
             // icon width
-            width += 1 + (getPreferredIconSize().toPx() / 2.0f)
+            width += 1 + getPopupIconSize(_density).width
             // padding after the popup icon
             width += 2 * layoutHGap
         }
@@ -155,6 +155,7 @@ internal class CommandButtonLayoutManagerMedium(
         constraints: Constraints,
         command: Command,
         presentationModel: CommandButtonPresentationModel,
+        preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
         paddingValues: PaddingValues
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
         val preferredSize = getPreferredSize(command, presentationModel, paddingValues)
@@ -200,16 +201,6 @@ internal class CommandButtonLayoutManagerMedium(
         }
         if (constraints.hasFixedHeight) {
             finalHeight = constraints.maxHeight.toFloat()
-        }
-
-        val commandButtonKind = if (hasAction && hasPopup) {
-            if (presentationModel.textClick == TextClick.ACTION)
-                CommandButtonKind.ACTION_AND_POPUP_MAIN_ACTION else
-                CommandButtonKind.ACTION_AND_POPUP_MAIN_POPUP
-        } else if (hasPopup) {
-            CommandButtonKind.POPUP_ONLY
-        } else {
-            CommandButtonKind.ACTION_ONLY
         }
 
         // TODO - support RTL
@@ -260,23 +251,23 @@ internal class CommandButtonLayoutManagerMedium(
             if (hasText && hasIcon) {
                 x += 2 * layoutHGap
             }
-            val popupIconSize = if (textHeight > 0) textHeight else getPreferredIconSize().toPx()
+            val popupIconSize = getPopupIconSize(_density)
             if (!hasText && !hasIcon) {
                 // horizontally center the popup icon
-                x += (finalWidth - 2 * layoutHGap - 1 - popupIconSize / 2.0f) / 2.0f
+                x += (finalWidth - 2 * layoutHGap - 1 - popupIconSize.width) / 2.0f
             }
             popupActionRect = Rect(
                 left = x,
-                right = x + 4 + popupIconSize / 2.0f,
-                top = (finalHeight - popupIconSize) / 2.0f - 1.0f,
-                bottom = (finalHeight - popupIconSize) / 2.0f + popupIconSize + 1.0f
+                right = x + 4 + popupIconSize.width,
+                top = (finalHeight - popupIconSize.height) / 2.0f - 1.0f,
+                bottom = (finalHeight - popupIconSize.height) / 2.0f + popupIconSize.height + 1.0f
             )
         }
         var xBorderBetweenActionAndPopup = 0.0f
         var actionClickArea = Rect.Zero
         var popupClickArea = Rect.Zero
         var separatorArea = Rect.Zero
-        when (commandButtonKind) {
+        when (preLayoutInfo.commandButtonKind) {
             CommandButtonKind.ACTION_ONLY -> {
                 actionClickArea = Rect(
                     left = 0.0f,

@@ -452,7 +452,9 @@ private fun AuroraCommandButton(
                         val width = this.size.width
                         val height = this.size.height
 
-                        val openSides: Set<Side> = if (hasPopup) setOf(Side.END) else emptySet()
+                        val openSides: Set<Side> = if (!hasPopup) emptySet() else
+                            (if (preLayoutInfo.separatorOrientation == CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL)
+                                setOf(Side.END) else setOf(Side.BOTTOM))
                         val straightSides =
                             if (presentationModel.isMenu) Side.values().toSet() else openSides
                         val sides =
@@ -662,7 +664,9 @@ private fun AuroraCommandButton(
                         val width = this.size.width
                         val height = this.size.height
 
-                        val openSides: Set<Side> = if (hasAction) setOf(Side.START) else emptySet()
+                        val openSides: Set<Side> = if (!hasAction) emptySet() else
+                            (if (preLayoutInfo.separatorOrientation == CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL)
+                                setOf(Side.START) else setOf(Side.TOP))
                         val straightSides =
                             if (presentationModel.isMenu) Side.values().toSet() else openSides
                         val sides =
@@ -769,7 +773,7 @@ private fun AuroraCommandButton(
 
             for (text in preLayoutInfo.texts) {
                 CommandButtonTextContent(
-                    command.text, modelStateInfoForText, currStateForText, resolvedTextStyle
+                    text, modelStateInfoForText, currStateForText, resolvedTextStyle
                 )
             }
             for (extraText in preLayoutInfo.extraTexts) {
@@ -813,6 +817,7 @@ private fun AuroraCommandButton(
             constraints = constraints,
             command = command,
             presentationModel = presentationModel,
+            preLayoutInfo = preLayoutInfo,
             paddingValues = ButtonSizingConstants.DefaultButtonContentPadding
         )
 

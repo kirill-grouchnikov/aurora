@@ -37,6 +37,7 @@ import org.pushingpixels.aurora.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.IconFilterStrategy
 import org.pushingpixels.aurora.PopupPlacementStrategy
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
+import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManagerBig
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManagerMedium
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManagerTile
 import org.pushingpixels.aurora.icon.AuroraIcon
@@ -150,6 +151,24 @@ abstract class CommandButtonPresentationState(val displayName: String) {
     }
 
     companion object {
+        /** Big state */
+        val BIG: CommandButtonPresentationState =
+            object : CommandButtonPresentationState("Big") {
+                override fun createLayoutManager(
+                    layoutDirection: LayoutDirection,
+                    density: Density,
+                    textStyle: TextStyle,
+                    resourceLoader: Font.ResourceLoader
+                ): CommandButtonLayoutManager {
+                    return CommandButtonLayoutManagerBig(
+                        layoutDirection,
+                        density,
+                        textStyle,
+                        resourceLoader
+                    )
+                }
+            }
+
         /** Medium state */
         val MEDIUM: CommandButtonPresentationState =
             object : CommandButtonPresentationState("Medium") {

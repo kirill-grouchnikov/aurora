@@ -186,7 +186,7 @@ fun DemoCommandContent() {
 
     val commandActionAndSecondary =
         Command(
-            text = "Both",
+            text = "Both parts",
             extraText = "Extra both",
             iconFactory = computer.factory(),
             action = { println("Split activated!") },
@@ -309,6 +309,13 @@ fun DemoCommandContent() {
             commandSecondaryOnly,
             commandActionAndSecondary,
             CommandButtonPresentationState.TILE
+        )
+
+        DemoCommandRow(
+            commandActionOnly,
+            commandSecondaryOnly,
+            commandActionAndSecondary,
+            CommandButtonPresentationState.BIG
         )
     }
 }

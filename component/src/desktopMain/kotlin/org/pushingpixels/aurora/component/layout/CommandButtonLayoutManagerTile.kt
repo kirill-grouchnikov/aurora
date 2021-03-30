@@ -114,6 +114,7 @@ internal class CommandButtonLayoutManagerTile(
             // padding before the popup icon
             width += 2 * layoutHGap
             // text width
+            // TODO: Use getPopupIconSize
             width += 1 + (getPreferredIconSize().toPx() / 4.0f)
             // padding after the popup icon
             width += 2 * layoutHGap
@@ -158,6 +159,7 @@ internal class CommandButtonLayoutManagerTile(
         constraints: Constraints,
         command: Command,
         presentationModel: CommandButtonPresentationModel,
+        preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
         paddingValues: PaddingValues
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
         val preferredSize = getPreferredSize(command, presentationModel, paddingValues)
@@ -208,115 +210,146 @@ internal class CommandButtonLayoutManagerTile(
             finalHeight = constraints.maxHeight.toFloat()
         }
 
-        val commandButtonKind = if (hasAction && hasPopup) {
-            if (presentationModel.textClick == TextClick.ACTION)
-                CommandButtonKind.ACTION_AND_POPUP_MAIN_ACTION else
-                CommandButtonKind.ACTION_AND_POPUP_MAIN_POPUP
-        } else if (hasPopup) {
-            CommandButtonKind.POPUP_ONLY
-        } else {
-            CommandButtonKind.ACTION_ONLY
-        }
-
         // TODO - support RTL
 
 //        if (ltr) {
         var x = paddingValues.calculateStartPadding(layoutDirection).toPx() + shiftX - layoutHGap
 
-            // icon
-            if (hasIcon) {
-                x += layoutHGap
-                iconRect = Rect(
-                    left = x,
-                    right = x + iconSize,
-                    top = (finalHeight - iconSize) / 2,
-                    bottom = (finalHeight - iconSize) / 2 + iconSize
-                )
-                x += iconSize + layoutHGap
-            }
+        // icon
+        if (hasIcon) {
+            x += layoutHGap
+            iconRect = Rect(
+                left = x,
+                right = x + iconSize,
+                top = (finalHeight - iconSize) / 2,
+                bottom = (finalHeight - iconSize) / 2 + iconSize
+            )
+            x += iconSize + layoutHGap
+        }
 
-            // text
+        // text
         var textHeight = 0.0f
-            if (hasText) {
-                x += layoutHGap
-                val hasExtraText = (buttonExtraText != null)
+        if (hasText) {
+            x += layoutHGap
+            val hasExtraText = (buttonExtraText != null)
 
-                val paragraph = Paragraph(
-                    text = command.text, style = textStyle, width = Float.POSITIVE_INFINITY,
-                    density = _density, maxLines = 1, resourceLoader = resourceLoader
+            val paragraph = Paragraph(
+                text = command.text, style = textStyle, width = Float.POSITIVE_INFINITY,
+                density = _density, maxLines = 1, resourceLoader = resourceLoader
+            )
+
+            textHeight = paragraph.height
+            val lineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
+                text = command.text,
+                textRect = Rect(
+                    left = x,
+                    right = x + paragraph.maxIntrinsicWidth,
+                    top = (finalHeight - (if (hasExtraText) 2 else 1) * textHeight) / 2.0f,
+                    bottom = (finalHeight - (if (hasExtraText) 2 else 1) * textHeight) / 2.0f + textHeight
+                )
+            )
+            textLayoutInfoList.add(lineLayoutInfo)
+
+            if (command.extraText != null) {
+                val extraParagraph = Paragraph(
+                    text = command.extraText,
+                    style = textStyle,
+                    width = Float.POSITIVE_INFINITY,
+                    density = _density,
+                    maxLines = 1,
+                    resourceLoader = resourceLoader
                 )
 
-                textHeight = paragraph.height
-                val lineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
-                    text = command.text,
+                val extraLineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
+                    text = command.extraText,
                     textRect = Rect(
                         left = x,
-                        right = x + paragraph.maxIntrinsicWidth,
-                        top = (finalHeight - (if (hasExtraText) 2 else 1) * textHeight) / 2.0f,
-                        bottom = (finalHeight - (if (hasExtraText) 2 else 1) * textHeight) / 2.0f + textHeight
+                        right = x + extraParagraph.maxIntrinsicWidth,
+                        top = lineLayoutInfo.textRect.bottom,
+                        bottom = lineLayoutInfo.textRect.bottom + textHeight
                     )
                 )
-                textLayoutInfoList.add(lineLayoutInfo)
 
-                if (command.extraText != null) {
-                    val extraParagraph = Paragraph(
-                        text = command.extraText,
-                        style = textStyle,
-                        width = Float.POSITIVE_INFINITY,
-                        density = _density,
-                        maxLines = 1,
-                        resourceLoader = resourceLoader
-                    )
+                extraTextLayoutInfoList.add(extraLineLayoutInfo)
 
-                    val extraLineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
-                        text = command.extraText,
-                        textRect = Rect(
-                            left = x,
-                            right = x + extraParagraph.maxIntrinsicWidth,
-                            top = lineLayoutInfo.textRect.bottom,
-                            bottom = lineLayoutInfo.textRect.bottom + textHeight
-                        )
-                    )
-
-                    extraTextLayoutInfoList.add(extraLineLayoutInfo)
-
-                    x += max(
-                        lineLayoutInfo.textRect.width,
-                        extraLineLayoutInfo.textRect.width
-                    )
-                } else {
-                    x += lineLayoutInfo.textRect.width
-                }
-
-                x += layoutHGap
-            }
-            if (hasPopup) {
-                if (hasText && hasIcon) {
-                    x += 2 * layoutHGap
-                }
-                val popupIconSize = if (textHeight > 0) textHeight else getPreferredIconSize().toPx()
-
-                popupActionRect = Rect(
-                    left = x,
-                    right = x + 4 + popupIconSize / 2.0f,
-                    top = (finalHeight - popupIconSize) / 2.0f - 1.0f,
-                    bottom = (finalHeight - popupIconSize) / 2.0f + popupIconSize + 1.0f
+                x += max(
+                    lineLayoutInfo.textRect.width,
+                    extraLineLayoutInfo.textRect.width
                 )
+            } else {
+                x += lineLayoutInfo.textRect.width
             }
-            var xBorderBetweenActionAndPopup = 0.0f
+
+            x += layoutHGap
+        }
+        if (hasPopup) {
+            if (hasText && hasIcon) {
+                x += 2 * layoutHGap
+            }
+            // TODO: use getIconPopupSize
+            val popupIconSize = if (textHeight > 0) textHeight else getPreferredIconSize().toPx()
+
+            popupActionRect = Rect(
+                left = x,
+                right = x + 4 + popupIconSize / 2.0f,
+                top = (finalHeight - popupIconSize) / 2.0f - 1.0f,
+                bottom = (finalHeight - popupIconSize) / 2.0f + popupIconSize + 1.0f
+            )
+        }
+        var xBorderBetweenActionAndPopup = 0.0f
         var actionClickArea = Rect.Zero
         var popupClickArea = Rect.Zero
         var separatorArea = Rect.Zero
-            when (commandButtonKind) {
-                CommandButtonKind.ACTION_ONLY -> {
+        when (preLayoutInfo.commandButtonKind) {
+            CommandButtonKind.ACTION_ONLY -> {
+                actionClickArea = Rect(
+                    left = 0.0f,
+                    top = 0.0f,
+                    right = finalWidth,
+                    bottom = finalHeight
+                )
+            }
+            CommandButtonKind.POPUP_ONLY -> {
+                popupClickArea = Rect(
+                    left = 0.0f,
+                    top = 0.0f,
+                    right = finalWidth,
+                    bottom = finalHeight
+                )
+            }
+            CommandButtonKind.ACTION_AND_POPUP_MAIN_ACTION -> {
+                // 1. break before popup icon if button has text or icon
+                // 2. no break (all popup) if button has no text and no icon
+                if (hasText || hasIcon) {
+                    // shift popup action rectangle to the right to
+                    // accommodate the vertical separator
+                    popupActionRect = popupActionRect.translate(
+                        translateX = SeparatorSizingConstants.Thickness.toPx(),
+                        translateY = 0.0f
+                    )
+                    xBorderBetweenActionAndPopup = popupActionRect.left - 2.0f * layoutHGap
+
                     actionClickArea = Rect(
                         left = 0.0f,
+                        top = 0.0f,
+                        right = xBorderBetweenActionAndPopup,
+                        bottom = finalHeight
+                    )
+
+                    popupClickArea = Rect(
+                        left = xBorderBetweenActionAndPopup,
                         top = 0.0f,
                         right = finalWidth,
                         bottom = finalHeight
                     )
-                }
-                CommandButtonKind.POPUP_ONLY -> {
+
+                    separatorArea = Rect(
+                        left = xBorderBetweenActionAndPopup,
+                        right = xBorderBetweenActionAndPopup + SeparatorSizingConstants.Thickness.toPx(),
+                        top = 0.0f,
+                        bottom = finalHeight
+                    )
+                } else {
                     popupClickArea = Rect(
                         left = 0.0f,
                         top = 0.0f,
@@ -324,100 +357,60 @@ internal class CommandButtonLayoutManagerTile(
                         bottom = finalHeight
                     )
                 }
-                CommandButtonKind.ACTION_AND_POPUP_MAIN_ACTION -> {
-                    // 1. break before popup icon if button has text or icon
-                    // 2. no break (all popup) if button has no text and no icon
-                    if (hasText || hasIcon) {
-                        // shift popup action rectangle to the right to
-                        // accommodate the vertical separator
-                        popupActionRect = popupActionRect.translate(
+            }
+            CommandButtonKind.ACTION_AND_POPUP_MAIN_POPUP -> {
+                // 1. break after icon if button has icon
+                // 2. no break (all popup) if button has no icon
+                if (hasIcon) {
+                    // shift text rectangle and popup action rectangle to the
+                    // right to accommodate the vertical separator
+                    for (textLayoutInfo in textLayoutInfoList) {
+                        textLayoutInfo.textRect = textLayoutInfo.textRect.translate(
                             translateX = SeparatorSizingConstants.Thickness.toPx(),
                             translateY = 0.0f
                         )
-                        xBorderBetweenActionAndPopup = popupActionRect.left - 2.0f * layoutHGap
-
-                        actionClickArea = Rect(
-                            left = 0.0f,
-                            top = 0.0f,
-                            right = xBorderBetweenActionAndPopup,
-                            bottom = finalHeight
-                        )
-
-                        popupClickArea = Rect(
-                            left = xBorderBetweenActionAndPopup,
-                            top = 0.0f,
-                            right = finalWidth,
-                            bottom = finalHeight
-                        )
-
-                        separatorArea = Rect(
-                            left = xBorderBetweenActionAndPopup,
-                            right = xBorderBetweenActionAndPopup + SeparatorSizingConstants.Thickness.toPx(),
-                            top = 0.0f,
-                            bottom = finalHeight
-                        )
-                    } else {
-                        popupClickArea = Rect(
-                            left = 0.0f,
-                            top = 0.0f,
-                            right = finalWidth,
-                            bottom = finalHeight
-                        )
                     }
-                }
-                CommandButtonKind.ACTION_AND_POPUP_MAIN_POPUP -> {
-                    // 1. break after icon if button has icon
-                    // 2. no break (all popup) if button has no icon
-                    if (hasIcon) {
-                        // shift text rectangle and popup action rectangle to the
-                        // right to accommodate the vertical separator
-                        for (textLayoutInfo in textLayoutInfoList) {
-                            textLayoutInfo.textRect = textLayoutInfo.textRect.translate(
-                                translateX = SeparatorSizingConstants.Thickness.toPx(),
-                                translateY = 0.0f
-                            )
-                        }
-                        for (extraTextLayoutInfo in extraTextLayoutInfoList) {
-                            extraTextLayoutInfo.textRect = extraTextLayoutInfo.textRect.translate(
-                                translateX = SeparatorSizingConstants.Thickness.toPx(),
-                                translateY = 0.0f
-                            )
-                        }
-                        popupActionRect = popupActionRect.translate(
+                    for (extraTextLayoutInfo in extraTextLayoutInfoList) {
+                        extraTextLayoutInfo.textRect = extraTextLayoutInfo.textRect.translate(
                             translateX = SeparatorSizingConstants.Thickness.toPx(),
                             translateY = 0.0f
                         )
-                        xBorderBetweenActionAndPopup = (iconRect.left + iconRect.width + layoutHGap)
-                        actionClickArea = Rect(
-                            left = 0.0f,
-                            top = 0.0f,
-                            right = xBorderBetweenActionAndPopup,
-                            bottom = finalHeight
-                        )
-
-                        popupClickArea = Rect(
-                            left = xBorderBetweenActionAndPopup,
-                            top = 0.0f,
-                            right = finalWidth,
-                            bottom = finalHeight
-                        )
-
-                        separatorArea = Rect(
-                            left = xBorderBetweenActionAndPopup,
-                            right = xBorderBetweenActionAndPopup + SeparatorSizingConstants.Thickness.toPx(),
-                            top = 0.0f,
-                            bottom = finalHeight
-                        )
-                    } else {
-                        popupClickArea = Rect(
-                            left = 0.0f,
-                            top = 0.0f,
-                            right = finalWidth,
-                            bottom = finalHeight
-                        )
                     }
+                    popupActionRect = popupActionRect.translate(
+                        translateX = SeparatorSizingConstants.Thickness.toPx(),
+                        translateY = 0.0f
+                    )
+                    xBorderBetweenActionAndPopup = (iconRect.left + iconRect.width + layoutHGap)
+                    actionClickArea = Rect(
+                        left = 0.0f,
+                        top = 0.0f,
+                        right = xBorderBetweenActionAndPopup,
+                        bottom = finalHeight
+                    )
+
+                    popupClickArea = Rect(
+                        left = xBorderBetweenActionAndPopup,
+                        top = 0.0f,
+                        right = finalWidth,
+                        bottom = finalHeight
+                    )
+
+                    separatorArea = Rect(
+                        left = xBorderBetweenActionAndPopup,
+                        right = xBorderBetweenActionAndPopup + SeparatorSizingConstants.Thickness.toPx(),
+                        top = 0.0f,
+                        bottom = finalHeight
+                    )
+                } else {
+                    popupClickArea = Rect(
+                        left = 0.0f,
+                        top = 0.0f,
+                        right = finalWidth,
+                        bottom = finalHeight
+                    )
                 }
             }
+        }
 //        } else {
 //            var x: Int = width - ins.right - shiftX + layoutHGap
 //
