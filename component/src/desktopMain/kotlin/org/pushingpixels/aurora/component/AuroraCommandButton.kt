@@ -60,7 +60,6 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
-import org.pushingpixels.aurora.common.hexadecimal
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.layout.*
@@ -341,7 +340,14 @@ private fun AuroraCommandButton(
     val isPopupEnabled = command.isSecondaryEnabled
     val isToggle = command.isActionToggle
     val hasPopup = (command.secondaryContentModel != null)
-    val isTextInActionArea = (hasAction or isToggle) && (presentationModel.textClick == TextClick.ACTION)
+    val isTextInActionArea =
+        (hasAction or isToggle) && (presentationModel.textClick == TextClick.ACTION)
+
+    // TODO - do we need more keys? Probably from the presentation model
+    val preLayoutInfo = remember(command.text, command.extraText) {
+        layoutManager.getPreLayoutInfo(command, presentationModel)
+    }
+
     Layout(
         modifier = Modifier.commandButtonLocator(auroraTopLeftOffset, auroraSize),
         content = {
@@ -369,22 +375,22 @@ private fun AuroraCommandButton(
             }
             Box(
                 modifier = modifierAction.pointerMoveFilter(onEnter = {
-                        val wasRollover = actionRollover
-                        actionRollover = true
-                        if (isActionEnabled && !wasRollover) {
-                            command.actionPreview?.onCommandPreviewActivated(command)
-                        }
-                        false
-                    }, onExit = {
-                        val wasRollover = actionRollover
-                        actionRollover = false
-                        if (isActionEnabled && wasRollover) {
-                            command.actionPreview?.onCommandPreviewCanceled(command)
-                        }
-                        false
-                    }, onMove = {
-                        false
-                    })
+                    val wasRollover = actionRollover
+                    actionRollover = true
+                    if (isActionEnabled && !wasRollover) {
+                        command.actionPreview?.onCommandPreviewActivated(command)
+                    }
+                    false
+                }, onExit = {
+                    val wasRollover = actionRollover
+                    actionRollover = false
+                    if (isActionEnabled && wasRollover) {
+                        command.actionPreview?.onCommandPreviewCanceled(command)
+                    }
+                    false
+                }, onMove = {
+                    false
+                })
             ) {
                 if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.NEVER) {
                     // Populate the cached color scheme for filling the button container
@@ -760,14 +766,15 @@ private fun AuroraCommandButton(
                 if (isTextInActionArea) actionModelStateInfo else popupModelStateInfo
             val currStateForText =
                 if (isTextInActionArea) currentActionState.value else currentPopupState.value
-            CommandButtonTextContent(
-                command.text, modelStateInfoForText, currStateForText,
-                resolvedTextStyle
-            )
-            if (layoutManager.isShowingExtraText() && (command.extraText != null)) {
+
+            for (text in preLayoutInfo.texts) {
+                CommandButtonTextContent(
+                    command.text, modelStateInfoForText, currStateForText, resolvedTextStyle
+                )
+            }
+            for (extraText in preLayoutInfo.extraTexts) {
                 CommandButtonExtraTextContent(
-                    command.extraText, modelStateInfoForText, currStateForText,
-                    resolvedTextStyle
+                    extraText, modelStateInfoForText, currStateForText, resolvedTextStyle
                 )
             }
 
@@ -782,7 +789,7 @@ private fun AuroraCommandButton(
 
             // Separator between action and popup areas if we have both
             if (hasAction and hasPopup and isActionEnabled and isPopupEnabled) {
-                when (layoutManager.getSeparatorOrientation()) {
+                when (preLayoutInfo.separatorOrientation) {
                     CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL ->
                         AuroraVerticalSeparator(
                             modifier = Modifier.alpha(combinedRolloverFraction),
@@ -835,25 +842,32 @@ private fun AuroraCommandButton(
                 )
             )
         }
-        val textMeasurable = measurables[childIndex++]
-        // TODO - figure out the multiple entries in the list
-        val textPlaceable = textMeasurable.measure(
-            Constraints.fixed(
-                width = layoutInfo.textLayoutInfoList[0].textRect.width.roundToInt(),
-                height = layoutInfo.textLayoutInfoList[0].textRect.height.roundToInt()
-            )
-        )
-        var extraTextPlaceable: Placeable? = null
-        if (layoutManager.isShowingExtraText() && (command.extraText != null)) {
-            val extraTextMeasurable = measurables[childIndex++]
-            // TODO - figure out the multiple entries in the list
-            extraTextPlaceable = extraTextMeasurable.measure(
-                Constraints.fixed(
-                    width = layoutInfo.extraTextLayoutInfoList!![0]!!.textRect.width.roundToInt(),
-                    height = layoutInfo.extraTextLayoutInfoList[0].textRect.height.roundToInt()
+
+        val textPlaceables = arrayListOf<Placeable>()
+        for (index in preLayoutInfo.texts.indices) {
+            // Measure each text part
+            textPlaceables.add(
+                measurables[childIndex++].measure(
+                    Constraints.fixed(
+                        width = layoutInfo.textLayoutInfoList[index].textRect.width.roundToInt(),
+                        height = layoutInfo.textLayoutInfoList[index].textRect.height.roundToInt()
+                    )
                 )
             )
         }
+        val extraTextPlaceables = arrayListOf<Placeable>()
+        for (index in preLayoutInfo.extraTexts.indices) {
+            // Measure each extra text part
+            extraTextPlaceables.add(
+                measurables[childIndex++].measure(
+                    Constraints.fixed(
+                        width = layoutInfo.extraTextLayoutInfoList!![index].textRect.width.roundToInt(),
+                        height = layoutInfo.extraTextLayoutInfoList[index].textRect.height.roundToInt()
+                    )
+                )
+            )
+        }
+
         var popupIconPlaceable: Placeable? = null
         if (hasPopup) {
             val popupIconMeasurable = measurables[childIndex++]
@@ -890,14 +904,18 @@ private fun AuroraCommandButton(
                 x = layoutInfo.iconRect.left.roundToInt(),
                 y = layoutInfo.iconRect.top.roundToInt()
             )
-            textPlaceable.placeRelative(
-                x = layoutInfo.textLayoutInfoList[0].textRect.left.roundToInt(),
-                y = layoutInfo.textLayoutInfoList[0].textRect.top.roundToInt()
-            )
-            extraTextPlaceable?.placeRelative(
-                x = layoutInfo.extraTextLayoutInfoList!![0].textRect.left.roundToInt(),
-                y = layoutInfo.extraTextLayoutInfoList[0].textRect.top.roundToInt()
-            )
+            for ((index, textPlaceable) in textPlaceables.withIndex()) {
+                textPlaceable.placeRelative(
+                    x = layoutInfo.textLayoutInfoList[index].textRect.left.roundToInt(),
+                    y = layoutInfo.textLayoutInfoList[index].textRect.top.roundToInt()
+                )
+            }
+            for ((index, extraTextPlaceable) in extraTextPlaceables.withIndex()) {
+                extraTextPlaceable.placeRelative(
+                    x = layoutInfo.extraTextLayoutInfoList!![index].textRect.left.roundToInt(),
+                    y = layoutInfo.extraTextLayoutInfoList[index].textRect.top.roundToInt()
+                )
+            }
             popupIconPlaceable?.placeRelative(
                 x = layoutInfo.popupActionRect.left.roundToInt(),
                 y = layoutInfo.popupActionRect.top.roundToInt()

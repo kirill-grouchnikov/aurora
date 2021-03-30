@@ -124,6 +124,33 @@ internal class CommandButtonLayoutManagerMedium(
         return Size(width, by + max(prefIconSize, textHeight))
     }
 
+    override fun getPreLayoutInfo(
+        command: Command,
+        presentationModel: CommandButtonPresentationModel
+    ): CommandButtonLayoutManager.CommandButtonPreLayoutInfo {
+        val hasAction = (command.action != null)
+        val hasPopup = (command.secondaryContentModel != null)
+
+        val commandButtonKind = if (hasAction && hasPopup) {
+            if (presentationModel.textClick == TextClick.ACTION)
+                CommandButtonKind.ACTION_AND_POPUP_MAIN_ACTION else
+                CommandButtonKind.ACTION_AND_POPUP_MAIN_POPUP
+        } else if (hasPopup) {
+            CommandButtonKind.POPUP_ONLY
+        } else {
+            CommandButtonKind.ACTION_ONLY
+        }
+
+        return CommandButtonLayoutManager.CommandButtonPreLayoutInfo(
+            commandButtonKind = commandButtonKind,
+            texts = listOf(command.text),
+            extraTexts = emptyList(),
+            isTextInActionArea = (hasAction or command.isActionToggle) &&
+                    (presentationModel.textClick == TextClick.ACTION),
+            separatorOrientation = CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL
+        )
+    }
+
     override fun getLayoutInfo(
         constraints: Constraints,
         command: Command,
@@ -146,9 +173,6 @@ internal class CommandButtonLayoutManagerMedium(
         var popupActionRect = Rect.Zero
         val textLayoutInfoList: MutableList<CommandButtonLayoutManager.TextLayoutInfo> =
             arrayListOf()
-        var separatorOrientation =
-            CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL
-        var isTextInActionArea = true
 
         var shiftX = 0.0f
         var finalWidth = preferredSize.width
@@ -260,7 +284,6 @@ internal class CommandButtonLayoutManagerMedium(
                     right = finalWidth,
                     bottom = finalHeight
                 )
-                isTextInActionArea = true
             }
             CommandButtonKind.POPUP_ONLY -> {
                 popupClickArea = Rect(
@@ -269,7 +292,6 @@ internal class CommandButtonLayoutManagerMedium(
                     right = finalWidth,
                     bottom = finalHeight
                 )
-                isTextInActionArea = false
             }
             CommandButtonKind.ACTION_AND_POPUP_MAIN_ACTION ->
                 // 1. break before popup icon if button has text or icon
@@ -297,16 +319,12 @@ internal class CommandButtonLayoutManagerMedium(
                         bottom = finalHeight
                     )
 
-                    separatorOrientation =
-                        CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL
-
                     separatorArea = Rect(
                         left = xBorderBetweenActionAndPopup,
                         right = xBorderBetweenActionAndPopup + SeparatorSizingConstants.Thickness.toPx(),
                         top = 0.0f,
                         bottom = finalHeight
                     )
-                    isTextInActionArea = true
                 } else {
                     popupClickArea = Rect(
                         left = 0.0f,
@@ -314,7 +332,6 @@ internal class CommandButtonLayoutManagerMedium(
                         right = finalWidth,
                         bottom = finalHeight
                     )
-                    isTextInActionArea = false
                 }
             CommandButtonKind.ACTION_AND_POPUP_MAIN_POPUP ->
                 // 1. break after icon if button has icon
@@ -347,16 +364,12 @@ internal class CommandButtonLayoutManagerMedium(
                         bottom = finalHeight
                     )
 
-                    separatorOrientation =
-                        CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL
-
                     separatorArea = Rect(
                         left = xBorderBetweenActionAndPopup,
                         right = xBorderBetweenActionAndPopup + SeparatorSizingConstants.Thickness.toPx(),
                         top = 0.0f,
                         bottom = finalHeight
                     )
-                    isTextInActionArea = false
                 } else {
                     popupClickArea = Rect(
                         left = 0.0f,
@@ -364,7 +377,6 @@ internal class CommandButtonLayoutManagerMedium(
                         right = finalWidth,
                         bottom = finalHeight
                     )
-                    isTextInActionArea = true
                 }
         }
 //        } else {
@@ -506,20 +518,10 @@ internal class CommandButtonLayoutManagerMedium(
             actionClickArea = actionClickArea,
             popupClickArea = popupClickArea,
             separatorArea = separatorArea,
-            separatorOrientation = separatorOrientation,
             iconRect = iconRect,
             textLayoutInfoList = textLayoutInfoList,
             extraTextLayoutInfoList = null,
-            popupActionRect = popupActionRect,
-            isTextInActionArea = isTextInActionArea
+            popupActionRect = popupActionRect
         )
-    }
-
-    override fun getSeparatorOrientation(): CommandButtonLayoutManager.CommandButtonSeparatorOrientation {
-        return CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL
-    }
-
-    override fun isShowingExtraText(): Boolean {
-        return false
     }
 }

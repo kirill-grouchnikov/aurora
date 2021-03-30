@@ -36,6 +36,7 @@ import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import org.pushingpixels.aurora.component.model.Command
+import org.pushingpixels.aurora.component.model.CommandButtonKind
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 
 /**
@@ -43,7 +44,7 @@ import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
  *
  * @author Kirill Grouchnikov
  */
-interface CommandButtonLayoutManager: MeasureScope {
+interface CommandButtonLayoutManager : MeasureScope {
     /**
      * Enumerates the available values for separator orientations.
      */
@@ -66,6 +67,24 @@ interface CommandButtonLayoutManager: MeasureScope {
      * @param textRect The text rectangle.
      */
     data class TextLayoutInfo(val text: String, var textRect: Rect)
+
+    /**
+     * Pre-layout information on different visual parts of a single command button.
+     *
+     * @param commandButtonKind Layout kind
+     * @param textLayoutInfoList Command button texts (one per each line)
+     * @param extraTextLayoutInfoList Command button extra texts (one per each line)
+     * @param isTextInActionArea Indication whether the command button text (texts in
+     * [.textLayoutInfoList]) belongs in the action area.
+     * @param separatorOrientation Separator orientation
+     */
+    data class CommandButtonPreLayoutInfo(
+        val commandButtonKind: CommandButtonKind,
+        val texts: List<String>,
+        val extraTexts: List<String>,
+        val isTextInActionArea: Boolean,
+        val separatorOrientation: CommandButtonSeparatorOrientation?
+    )
 
     /**
      * Layout information on different visual parts of a single command button.
@@ -92,12 +111,10 @@ interface CommandButtonLayoutManager: MeasureScope {
         val actionClickArea: Rect,
         val popupClickArea: Rect,
         val separatorArea: Rect?,
-        val separatorOrientation: CommandButtonSeparatorOrientation?,
         val iconRect: Rect,
         val textLayoutInfoList: List<TextLayoutInfo>,
         val extraTextLayoutInfoList: List<TextLayoutInfo>?,
         val popupActionRect: Rect,
-        val isTextInActionArea: Boolean
     )
 
     /**
@@ -109,6 +126,9 @@ interface CommandButtonLayoutManager: MeasureScope {
      * this layout manager.
      */
     fun getPreferredIconSize(): Dp
+
+    fun getPreLayoutInfo(command: Command, presentationModel: CommandButtonPresentationModel)
+            : CommandButtonPreLayoutInfo
 
     /**
      * Returns the layout information for the specified command button.
@@ -122,8 +142,4 @@ interface CommandButtonLayoutManager: MeasureScope {
         presentationModel: CommandButtonPresentationModel,
         paddingValues: PaddingValues
     ): CommandButtonLayoutInfo
-
-    fun getSeparatorOrientation() : CommandButtonSeparatorOrientation
-
-    fun isShowingExtraText(): Boolean
 }
