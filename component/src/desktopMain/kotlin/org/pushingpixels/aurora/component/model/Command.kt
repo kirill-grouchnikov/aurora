@@ -33,10 +33,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
-import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
-import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManagerBig
-import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManagerMedium
-import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManagerTile
+import org.pushingpixels.aurora.component.layout.*
 import org.pushingpixels.aurora.icon.AuroraIcon
 
 interface CommandActionPreview {
@@ -161,6 +158,24 @@ abstract class CommandButtonPresentationState(val displayName: String) {
                     resourceLoader: Font.ResourceLoader
                 ): CommandButtonLayoutManager {
                     return CommandButtonLayoutManagerMedium(
+                        layoutDirection,
+                        density,
+                        textStyle,
+                        resourceLoader
+                    )
+                }
+            }
+
+        /** Small state */
+        val SMALL: CommandButtonPresentationState =
+            object : CommandButtonPresentationState("Small") {
+                override fun createLayoutManager(
+                    layoutDirection: LayoutDirection,
+                    density: Density,
+                    textStyle: TextStyle,
+                    resourceLoader: Font.ResourceLoader
+                ): CommandButtonLayoutManager {
+                    return CommandButtonLayoutManagerSmall(
                         layoutDirection,
                         density,
                         textStyle,

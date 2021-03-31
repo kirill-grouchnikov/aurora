@@ -46,7 +46,7 @@ import org.pushingpixels.aurora.component.model.TextClick
 import java.util.*
 import kotlin.math.max
 
-class CommandButtonLayoutManagerBig(
+internal class CommandButtonLayoutManagerBig(
     override val layoutDirection: LayoutDirection,
     private val _density: Density,
     private val textStyle: TextStyle,

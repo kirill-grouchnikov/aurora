@@ -159,9 +159,6 @@ fun CommandDemoToggleStrip(
                 commandAlignRight,
                 commandAlignFill
             )
-        ),
-        presentationModel = CommandStripPresentationModel(
-            commandPresentationState = CommandButtonPresentationState.MEDIUM
         )
     )
 }
@@ -369,6 +366,13 @@ fun DemoCommandContent() {
             Spacer(modifier = Modifier.width(8.dp))
             CommandDemoToggleStrip(enabled = actionEnabled, alignment = alignment)
         }
+
+        DemoCommandRow(
+            commandActionOnly,
+            commandSecondaryOnly,
+            commandActionAndSecondary,
+            CommandButtonPresentationState.SMALL
+        )
 
         DemoCommandRow(
             commandActionOnly,

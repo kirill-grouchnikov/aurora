@@ -47,7 +47,7 @@ enum class StripOrientation {
 
 data class CommandStripPresentationModel(
     val orientation: StripOrientation = StripOrientation.HORIZONTAL,
-    val commandPresentationState: CommandButtonPresentationState = CommandButtonPresentationState.MEDIUM,
+    val commandPresentationState: CommandButtonPresentationState = CommandButtonPresentationState.SMALL,
     val horizontalGapScaleFactor: Float =
         if (orientation == StripOrientation.HORIZONTAL) DEFAULT_GAP_SCALE_FACTOR_PRIMARY_AXIS
         else DEFAULT_GAP_SCALE_FACTOR_SECONDARY_AXIS,
