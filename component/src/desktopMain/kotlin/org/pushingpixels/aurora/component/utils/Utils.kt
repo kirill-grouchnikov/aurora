@@ -42,3 +42,6 @@ internal fun AuroraRect.contains(x: Float, y: Float): Boolean {
 
 internal val AuroraSize.asSize: Size
     get() = Size(width.toFloat(), height.toFloat())
+
+internal fun AuroraSize.asSize(extraWidth: Int, extraHeight: Int) =
+    Size((width + extraWidth).toFloat(), (height + extraHeight).toFloat())

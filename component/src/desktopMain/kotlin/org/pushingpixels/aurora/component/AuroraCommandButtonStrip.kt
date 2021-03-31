@@ -29,11 +29,49 @@
  */
 package org.pushingpixels.aurora.component
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
-import org.pushingpixels.aurora.component.model.Command
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
-import org.pushingpixels.aurora.component.model.CommandGroup
-import org.pushingpixels.aurora.component.model.CommandStripPresentationModel
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
+import org.pushingpixels.aurora.ButtonSides
+import org.pushingpixels.aurora.Side
+import org.pushingpixels.aurora.component.model.*
+
+@Composable
+private fun CommandButtonStripContent(
+    commandGroup: CommandGroup,
+    presentationModel: CommandStripPresentationModel,
+    commandButtonPresentationModel: CommandButtonPresentationModel,
+    overlays: Map<Command, CommandButtonPresentationModel.Overlay> = mapOf()
+) {
+    val commandCount = commandGroup.commands.size
+    val isHorizontal = (presentationModel.orientation == StripOrientation.HORIZONTAL)
+    val leadingSide = if (isHorizontal) Side.START else Side.TOP
+    val trailingSide = if (isHorizontal) Side.END else Side.BOTTOM
+    for ((index, command) in commandGroup.commands.withIndex()) {
+        val straightSides = when {
+            (commandCount <= 1) -> emptySet()
+            (index == 0) -> setOf(trailingSide)
+            (index == (commandCount - 1)) -> setOf(leadingSide)
+            else -> setOf(leadingSide, trailingSide)
+        }
+        val openSides = when {
+            (commandCount <= 1) -> emptySet()
+            (index == 0) -> emptySet()
+            else -> setOf(leadingSide)
+        }
+        AuroraCommandButton(
+            command = command,
+            parentWindow = null,
+            extraAction = null,
+            presentationModel = if (overlays.containsKey(command))
+                commandButtonPresentationModel.overlayWith(overlay = overlays[command]!!)
+            else commandButtonPresentationModel,
+            buttonSides = ButtonSides(openSides = openSides, straightSides = straightSides)
+        )
+    }
+}
 
 @Composable
 fun AuroraCommandButtonStrip(
@@ -54,13 +92,20 @@ fun AuroraCommandButtonStrip(
         verticalGapScaleFactor = presentationModel.verticalGapScaleFactor,
         isMenu = presentationModel.isMenu
     )
-    for (command in commandGroup.commands) {
-        AuroraCommandButton(
-            command = command,
-            presentationModel = if (overlays.containsKey(command))
-                commandButtonPresentationModel.overlayWith(overlay = overlays[command]!!)
-            else commandButtonPresentationModel
-        )
+    if (presentationModel.orientation == StripOrientation.HORIZONTAL) {
+        Row {
+            CommandButtonStripContent(
+                commandGroup, presentationModel,
+                commandButtonPresentationModel, overlays
+            )
+        }
+    } else {
+        Column {
+            CommandButtonStripContent(
+                commandGroup, presentationModel,
+                commandButtonPresentationModel, overlays
+            )
+        }
     }
 }
 

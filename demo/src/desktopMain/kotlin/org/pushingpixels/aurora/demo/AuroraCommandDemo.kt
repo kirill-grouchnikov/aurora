@@ -104,6 +104,7 @@ enum class CommandDemoAlignment {
 @Composable
 fun CommandDemoToggleStrip(
     enabled: Boolean,
+    orientation: StripOrientation,
     alignment: MutableState<CommandDemoAlignment>,
 ) {
     val commandAlignCenter =
@@ -159,7 +160,8 @@ fun CommandDemoToggleStrip(
                 commandAlignRight,
                 commandAlignFill
             )
-        )
+        ),
+        presentationModel = CommandStripPresentationModel(orientation = orientation)
     )
 }
 
@@ -340,60 +342,74 @@ fun DemoCommandContent() {
             )
         )
 
+    val alignment = remember { mutableStateOf(CommandDemoAlignment.CENTER) }
 
-    Column(modifier = Modifier.fillMaxHeight().fillMaxWidth().padding(4.dp)) {
-        Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
-            AuroraCheckBox(
-                selected = actionEnabled,
-                onTriggerSelectedChange = { actionEnabled = !actionEnabled }
-            ) {
-                AuroraText(text = "action enabled")
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            AuroraCheckBox(
-                selected = popupEnabled,
-                onTriggerSelectedChange = { popupEnabled = !popupEnabled }
-            ) {
-                AuroraText(text = "popup enabled")
-            }
+    Row(modifier = Modifier.fillMaxHeight().fillMaxWidth().padding(4.dp)) {
+        Box(modifier = Modifier.padding(8.dp)) {
+            CommandDemoToggleStrip(
+                enabled = actionEnabled,
+                orientation = StripOrientation.VERTICAL,
+                alignment = alignment
+            )
         }
 
-        val alignment = remember { mutableStateOf(CommandDemoAlignment.CENTER) }
-        Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
-            AuroraCommandButton(command = commandActionOnlyNoIcon)
-            Spacer(modifier = Modifier.width(8.dp))
-            AuroraCommandButton(command = commandActionToggle)
-            Spacer(modifier = Modifier.width(8.dp))
-            CommandDemoToggleStrip(enabled = actionEnabled, alignment = alignment)
+        Column(modifier = Modifier.fillMaxHeight().fillMaxWidth()) {
+            Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
+                AuroraCheckBox(
+                    selected = actionEnabled,
+                    onTriggerSelectedChange = { actionEnabled = !actionEnabled }
+                ) {
+                    AuroraText(text = "action enabled")
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                AuroraCheckBox(
+                    selected = popupEnabled,
+                    onTriggerSelectedChange = { popupEnabled = !popupEnabled }
+                ) {
+                    AuroraText(text = "popup enabled")
+                }
+            }
+
+            Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
+                AuroraCommandButton(command = commandActionOnlyNoIcon)
+                Spacer(modifier = Modifier.width(8.dp))
+                AuroraCommandButton(command = commandActionToggle)
+                Spacer(modifier = Modifier.width(8.dp))
+                CommandDemoToggleStrip(
+                    enabled = actionEnabled,
+                    orientation = StripOrientation.HORIZONTAL,
+                    alignment = alignment
+                )
+            }
+
+            DemoCommandRow(
+                commandActionOnly,
+                commandSecondaryOnly,
+                commandActionAndSecondary,
+                CommandButtonPresentationState.SMALL
+            )
+
+            DemoCommandRow(
+                commandActionOnly,
+                commandSecondaryOnly,
+                commandActionAndSecondary,
+                CommandButtonPresentationState.MEDIUM
+            )
+
+            DemoCommandRow(
+                commandActionOnly,
+                commandSecondaryOnly,
+                commandActionAndSecondary,
+                CommandButtonPresentationState.TILE
+            )
+
+            DemoCommandRow(
+                commandActionOnly,
+                commandSecondaryOnly,
+                commandActionAndSecondary,
+                CommandButtonPresentationState.BIG
+            )
         }
-
-        DemoCommandRow(
-            commandActionOnly,
-            commandSecondaryOnly,
-            commandActionAndSecondary,
-            CommandButtonPresentationState.SMALL
-        )
-
-        DemoCommandRow(
-            commandActionOnly,
-            commandSecondaryOnly,
-            commandActionAndSecondary,
-            CommandButtonPresentationState.MEDIUM
-        )
-
-        DemoCommandRow(
-            commandActionOnly,
-            commandSecondaryOnly,
-            commandActionAndSecondary,
-            CommandButtonPresentationState.TILE
-        )
-
-        DemoCommandRow(
-            commandActionOnly,
-            commandSecondaryOnly,
-            commandActionAndSecondary,
-            CommandButtonPresentationState.BIG
-        )
     }
 }
 
