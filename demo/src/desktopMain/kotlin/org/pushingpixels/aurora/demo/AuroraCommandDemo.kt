@@ -36,10 +36,10 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.component.AuroraCheckBox
 import org.pushingpixels.aurora.component.AuroraCommandButton
+import org.pushingpixels.aurora.component.AuroraCommandButtonStrip
 import org.pushingpixels.aurora.component.AuroraText
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.demo.svg.tango.accessories_text_editor
-import org.pushingpixels.aurora.demo.svg.tango.computer
+import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.skin.marinerSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 
@@ -94,6 +94,76 @@ fun DemoCommandRow(
             )
         )
     }
+}
+
+enum class CommandDemoAlignment {
+    CENTER, LEFT, RIGHT, FILL
+}
+
+
+@Composable
+fun CommandDemoToggleStrip(
+    enabled: Boolean,
+    alignment: MutableState<CommandDemoAlignment>,
+) {
+    val commandAlignCenter =
+        Command(
+            text = "Center",
+            iconFactory = format_justify_center.factory(),
+            isActionEnabled = enabled,
+            isActionToggle = true,
+            isActionToggleSelected = (alignment.value == CommandDemoAlignment.CENTER),
+            onTriggerActionToggleSelectedChange = {
+                if (it) alignment.value = CommandDemoAlignment.CENTER
+            }
+        )
+    val commandAlignLeft =
+        Command(
+            text = "Left",
+            iconFactory = format_justify_left.factory(),
+            isActionEnabled = enabled,
+            isActionToggle = true,
+            isActionToggleSelected = (alignment.value == CommandDemoAlignment.LEFT),
+            onTriggerActionToggleSelectedChange = {
+                if (it) alignment.value = CommandDemoAlignment.LEFT
+            }
+        )
+    val commandAlignRight =
+        Command(
+            text = "Right",
+            iconFactory = format_justify_right.factory(),
+            isActionEnabled = enabled,
+            isActionToggle = true,
+            isActionToggleSelected = (alignment.value == CommandDemoAlignment.RIGHT),
+            onTriggerActionToggleSelectedChange = {
+                if (it) alignment.value = CommandDemoAlignment.RIGHT
+            }
+        )
+    val commandAlignFill =
+        Command(
+            text = "Fill",
+            iconFactory = format_justify_fill.factory(),
+            isActionEnabled = enabled,
+            isActionToggle = true,
+            isActionToggleSelected = (alignment.value == CommandDemoAlignment.FILL),
+            onTriggerActionToggleSelectedChange = {
+                if (it) alignment.value = CommandDemoAlignment.FILL
+            }
+        )
+
+    AuroraCommandButtonStrip(
+        commandGroup = CommandGroup(
+            commands = listOf(
+                commandAlignCenter,
+                commandAlignLeft,
+                commandAlignRight,
+                commandAlignFill
+            )
+        ),
+        presentationModel = CommandStripPresentationModel(
+            commandPresentationState = CommandButtonPresentationState.MEDIUM
+        )
+    )
 }
 
 @Composable
@@ -291,10 +361,13 @@ fun DemoCommandContent() {
             }
         }
 
+        val alignment = remember { mutableStateOf(CommandDemoAlignment.CENTER) }
         Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
             AuroraCommandButton(command = commandActionOnlyNoIcon)
             Spacer(modifier = Modifier.width(8.dp))
             AuroraCommandButton(command = commandActionToggle)
+            Spacer(modifier = Modifier.width(8.dp))
+            CommandDemoToggleStrip(enabled = actionEnabled, alignment = alignment)
         }
 
         DemoCommandRow(
