@@ -47,6 +47,10 @@ import androidx.compose.ui.window.WindowDraggableArea
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.component.*
+import org.pushingpixels.aurora.component.model.Command
+import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
+import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
+import org.pushingpixels.aurora.component.utils.TransitionAwareIcon
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.shaper.AuroraButtonShaper
 import java.awt.*
@@ -87,7 +91,8 @@ private fun AuroraWindowContent(
                     WindowDraggableArea(
                         modifier = Modifier.weight(1f)
                     ) {
-                        val colorScheme = skinColors.getEnabledColorScheme(DecorationAreaType.TITLE_PANE)
+                        val colorScheme =
+                            skinColors.getEnabledColorScheme(DecorationAreaType.TITLE_PANE)
                         AuroraText(
                             text = title,
                             style = TextStyle(
@@ -99,114 +104,143 @@ private fun AuroraWindowContent(
                             )
                         )
                     }
-                    AuroraButton(
-                        modifier = Modifier.width(20.dp).height(20.dp),
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                        sizingStrategy = ButtonSizingStrategy.COMPACT,
-                        contentPadding = PaddingValues(start = 1.dp, top = 1.dp, end = 2.dp, bottom = 2.dp),
-                        onClick = {
-                            AppManager.focusedWindow?.window?.extendedState = JFrame.ICONIFIED
-                        }
-                    ) {
-                        AuroraIcon(
-                            icon = TransitionAwareIcon(
-                                decorationAreaType = DecorationAreaType.TITLE_PANE,
-                                skinColors = AuroraSkin.colors,
-                                buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                modelStateInfoSnapshot = LocalModelStateInfoSnapshot.current,
-                                delegate = { scheme ->
-                                    getMinimizeIcon(
-                                        iconSize = iconSize,
-                                        scheme = scheme,
-                                        density = density
+
+                    val colors = AuroraSkin.colors
+
+                    // Minimize button
+                    AuroraCommandButton(
+                        command = Command(
+                            text = "",
+                            action = {
+                                AppManager.focusedWindow?.window?.extendedState = JFrame.ICONIFIED
+                            },
+                            iconFactory = object : TransitionAwareIcon.TransitionAwareIconFactory() {
+                                override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
+                                    return TransitionAwareIcon(
+                                        decorationAreaType = DecorationAreaType.TITLE_PANE,
+                                        skinColors = colors,
+                                        buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                                        modelStateInfoSnapshot = modelStateInfoSnapshot,
+                                        delegate = { scheme ->
+                                            getMinimizeIcon(
+                                                iconSize = iconSize,
+                                                scheme = scheme,
+                                                density = density
+                                            )
+                                        },
+                                        colorSchemeAssociationKindDelegate = null,
+                                        uniqueIconTypeId = "aurora.titlePane.minimizeIcon"
                                     )
-                                },
-                                colorSchemeAssociationKindDelegate = null,
-                                uniqueIconTypeId = "aurora.titlePane.minimizeIcon"
-                            )
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(4.dp))
-                    AuroraButton(
-                        modifier = Modifier.width(20.dp).height(20.dp),
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                        sizingStrategy = ButtonSizingStrategy.COMPACT,
-                        contentPadding = PaddingValues(start = 1.dp, top = 1.dp, end = 2.dp, bottom = 2.dp),
-                        onClick = {
-                            val current = AppManager.focusedWindow
-                            if (current != null) {
-                                if (current.window.extendedState == JFrame.MAXIMIZED_BOTH) {
-                                    current.window.extendedState = JFrame.NORMAL
-                                } else {
-                                    current.window.extendedState = JFrame.MAXIMIZED_BOTH
                                 }
-                                isMaximized.value = !isMaximized.value
                             }
-                        }
-                    ) {
-                        if (isMaximized.value)
-                            AuroraIcon(
-                                icon = TransitionAwareIcon(
-                                    decorationAreaType = DecorationAreaType.TITLE_PANE,
-                                    skinColors = AuroraSkin.colors,
-                                    buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                    modelStateInfoSnapshot = LocalModelStateInfoSnapshot.current,
-                                    delegate = { scheme ->
-                                        getRestoreIcon(
-                                            iconSize = iconSize,
-                                            scheme = scheme,
-                                            density = density
+                        ),
+                        presentationModel = CommandButtonPresentationModel(
+                            presentationState = CommandButtonPresentationState.SMALL,
+                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                            horizontalGapScaleFactor = 0.2f,
+                            verticalGapScaleFactor = 0.4f
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.width(4.dp))
+
+                    // Maximize / Unmaximize button
+                    AuroraCommandButton(
+                        command = Command(
+                            text = "",
+                            action = {
+                                val current = AppManager.focusedWindow
+                                if (current != null) {
+                                    if (current.window.extendedState == JFrame.MAXIMIZED_BOTH) {
+                                        current.window.extendedState = JFrame.NORMAL
+                                    } else {
+                                        current.window.extendedState = JFrame.MAXIMIZED_BOTH
+                                    }
+                                    isMaximized.value = !isMaximized.value
+                                }
+                            },
+                            iconFactory = object : TransitionAwareIcon.TransitionAwareIconFactory() {
+                                override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
+                                    return if (isMaximized.value) {
+                                        TransitionAwareIcon(
+                                            decorationAreaType = DecorationAreaType.TITLE_PANE,
+                                            skinColors = colors,
+                                            buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                                            modelStateInfoSnapshot = modelStateInfoSnapshot,
+                                            delegate = { scheme ->
+                                                getRestoreIcon(
+                                                    iconSize = iconSize,
+                                                    scheme = scheme,
+                                                    density = density
+                                                )
+                                            },
+                                            colorSchemeAssociationKindDelegate = null,
+                                            uniqueIconTypeId = "aurora.titlePane.restoreIcon"
                                         )
-                                    },
-                                    colorSchemeAssociationKindDelegate = null,
-                                    uniqueIconTypeId = "aurora.titlePane.restoreIcon"
-                                )
-                            ) else AuroraIcon(
-                            icon = TransitionAwareIcon(
-                                decorationAreaType = DecorationAreaType.TITLE_PANE,
-                                skinColors = AuroraSkin.colors,
-                                buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                modelStateInfoSnapshot = LocalModelStateInfoSnapshot.current,
-                                delegate = { scheme ->
-                                    getMaximizeIcon(
-                                        iconSize = iconSize,
-                                        scheme = scheme,
-                                        density = density
-                                    )
-                                },
-                                colorSchemeAssociationKindDelegate = null,
-                                uniqueIconTypeId = "aurora.titlePane.maximizeIcon"
-                            )
+                                    } else {
+                                        TransitionAwareIcon(
+                                            decorationAreaType = DecorationAreaType.TITLE_PANE,
+                                            skinColors = colors,
+                                            buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                                            modelStateInfoSnapshot = modelStateInfoSnapshot,
+                                            delegate = { scheme ->
+                                                getMaximizeIcon(
+                                                    iconSize = iconSize,
+                                                    scheme = scheme,
+                                                    density = density
+                                                )
+                                            },
+                                            colorSchemeAssociationKindDelegate = null,
+                                            uniqueIconTypeId = "aurora.titlePane.maximizeIcon"
+                                        )
+                                    }
+                                }
+                            }
+                        ),
+                        presentationModel = CommandButtonPresentationModel(
+                            presentationState = CommandButtonPresentationState.SMALL,
+                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                            horizontalGapScaleFactor = 0.2f,
+                            verticalGapScaleFactor = 0.4f
                         )
-                    }
+                    )
+
                     Spacer(modifier = Modifier.width(8.dp))
-                    AuroraButton(
-                        modifier = Modifier.width(20.dp).height(20.dp),
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                        sizingStrategy = ButtonSizingStrategy.COMPACT,
-                        contentPadding = PaddingValues(start = 1.dp, top = 1.dp, end = 2.dp, bottom = 2.dp),
-                        onClick = {
-                            AppManager.focusedWindow?.close()
-                        }
-                    ) {
-                        AuroraIcon(
-                            icon = TransitionAwareIcon(
-                                decorationAreaType = DecorationAreaType.TITLE_PANE,
-                                skinColors = AuroraSkin.colors,
-                                buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                modelStateInfoSnapshot = LocalModelStateInfoSnapshot.current,
-                                delegate = { scheme ->
-                                    getCloseIcon(
-                                        iconSize = iconSize,
-                                        scheme = scheme,
-                                        density = density
+
+                    // Close button
+                    AuroraCommandButton(
+                        command = Command(
+                            text = "",
+                            action = {
+                                AppManager.focusedWindow?.close()
+                            },
+                            iconFactory = object : TransitionAwareIcon.TransitionAwareIconFactory() {
+                                override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
+                                    return TransitionAwareIcon(
+                                        decorationAreaType = DecorationAreaType.TITLE_PANE,
+                                        skinColors = colors,
+                                        buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                                        modelStateInfoSnapshot = modelStateInfoSnapshot,
+                                        delegate = { scheme ->
+                                            getCloseIcon(
+                                                iconSize = iconSize,
+                                                scheme = scheme,
+                                                density = density
+                                            )
+                                        },
+                                        colorSchemeAssociationKindDelegate = null,
+                                        uniqueIconTypeId = "aurora.titlePane.closeIcon"
                                     )
-                                },
-                                colorSchemeAssociationKindDelegate = null,
-                                uniqueIconTypeId = "aurora.titlePane.closeIcon"
-                            )
+                                }
+                            }
+                        ),
+                        presentationModel = CommandButtonPresentationModel(
+                            presentationState = CommandButtonPresentationState.SMALL,
+                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                            horizontalGapScaleFactor = 0.2f,
+                            verticalGapScaleFactor = 0.4f
                         )
-                    }
+                    )
                 }
             }
         }
@@ -284,7 +318,12 @@ fun AuroraWindow(
         painters = skin.painters,
         animationConfig = AuroraSkin.animationConfig
     ) {
-        AuroraWindowContent(title = title, icon = icon, undecorated = undecorated, content = content)
+        AuroraWindowContent(
+            title = title,
+            icon = icon,
+            undecorated = undecorated,
+            content = content
+        )
     }
 }
 

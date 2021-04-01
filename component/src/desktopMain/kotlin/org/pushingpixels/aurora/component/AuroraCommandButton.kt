@@ -797,7 +797,7 @@ internal fun AuroraCommandButton(
                 CommandButtonIconContent(
                     command,
                     presentationModel,
-                    layoutManager.getPreferredIconSize(),
+                    layoutManager.getPreferredIconSize(command, presentationModel),
                     modelStateInfoForIcon,
                     currStateForIcon
                 )
@@ -1055,7 +1055,10 @@ private fun CommandButtonIconContent(
     iconSize: Dp, modelStateInfo: ModelStateInfo, currState: ComponentState
 ) {
     if (command.iconFactory != null) {
-        val icon = remember(iconSize) { command.iconFactory.createNewIcon() }
+        val icon = if (command.iconFactory is TransitionAwareIcon.TransitionAwareIconFactory)
+            command.iconFactory.createNewIcon(modelStateInfo.getSnapshot(currState))
+        else
+            remember(iconSize) { command.iconFactory.createNewIcon() }
         // TODO - why does this need to be divided by density?
         icon.setSize(
             iconSize / LocalDensity.current.density,

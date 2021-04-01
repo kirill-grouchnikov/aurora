@@ -58,6 +58,10 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
+import org.pushingpixels.aurora.component.model.Command
+import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
+import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
+import org.pushingpixels.aurora.component.model.HorizontalAlignment
 import org.pushingpixels.aurora.component.utils.*
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -645,15 +649,28 @@ private fun <E> ComboBoxPopupContent(
         }
         ComboBoxPopupColumn(contentSize = contentSize) {
             for (item in items) {
-                AuroraMenuButton(
-                    enabled = true,
-                    onClick = { onItemSelected.invoke(item) },
-                    sides = ButtonSides(straightSides = Side.values().toSet()),
-                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                    sizingStrategy = ButtonSizingStrategy.EXTENDED,
-                ) {
-                    AuroraText(text = displayConverter.invoke(item), maxLines = 1)
-                }
+                AuroraCommandButton(
+                    command = Command(
+                        text = displayConverter.invoke(item),
+                        isActionEnabled = true,
+                        action = { onItemSelected.invoke(item) }
+                    ),
+                    presentationModel = CommandButtonPresentationModel(
+                        presentationState = CommandButtonPresentationState.MEDIUM,
+                        isMenu = true,
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                        horizontalAlignment = HorizontalAlignment.LEADING
+                    )
+                )
+//                AuroraMenuButton(
+//                    enabled = true,
+//                    onClick = { onItemSelected.invoke(item) },
+//                    sides = ButtonSides(straightSides = Side.values().toSet()),
+//                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+//                    sizingStrategy = ButtonSizingStrategy.EXTENDED,
+//                ) {
+//                    AuroraText(text = displayConverter.invoke(item), maxLines = 1)
+//                }
             }
         }
     }

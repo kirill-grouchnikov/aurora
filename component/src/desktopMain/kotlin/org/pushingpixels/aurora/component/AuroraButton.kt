@@ -73,6 +73,7 @@ private class ButtonDrawingCache(
     )
 )
 
+@Deprecated("Use AuroraCommandButton")
 @Composable
 fun AuroraToggleButton(
     modifier: Modifier = Modifier,
@@ -423,6 +424,7 @@ private fun AuroraToggleButton(
     }
 }
 
+@Deprecated("Use AuroraCommandButton")
 @Composable
 fun AuroraButton(
     modifier: Modifier = Modifier,
@@ -448,6 +450,7 @@ fun AuroraButton(
     )
 }
 
+@Deprecated("Use AuroraCommandButton")
 @Composable
 fun AuroraMenuButton(
     modifier: Modifier = Modifier,

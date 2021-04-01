@@ -1,33 +1,4 @@
-/*
- * Copyright (c) 2020-2021 Aurora, Kirill Grouchnikov. All Rights Reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *  o Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- *
- *  o Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- *  o Neither the name of the copyright holder nor the names of
- *    its contributors may be used to endorse or promote products derived
- *    from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
- * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-package org.pushingpixels.aurora.window
+package org.pushingpixels.aurora.component.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Offset
@@ -48,7 +19,7 @@ import org.pushingpixels.aurora.icon.AuroraIcon
  *
  * @author Kirill Grouchnikov
  */
-internal class TransitionAwareIcon(
+class TransitionAwareIcon(
     val decorationAreaType: DecorationAreaType,
     val skinColors: AuroraSkinColors,
     val buttonBackgroundAppearanceStrategy: BackgroundAppearanceStrategy,
@@ -58,7 +29,16 @@ internal class TransitionAwareIcon(
     val uniqueIconTypeId: String
 ) : AuroraIcon {
 
+    abstract class TransitionAwareIconFactory: AuroraIcon.Factory {
+        override fun createNewIcon(): AuroraIcon {
+            throw UnsupportedOperationException()
+        }
+
+        abstract fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon
+    }
+
     private val markEnabledIcon = this.delegate.invoke(
+        //ModelStateInfoSnapshot(ComponentState.ENABLED, emptyMap(), 1.0f),
         skinColors.getColorScheme(
             decorationAreaType,
             ColorSchemeAssociationKind.MARK, ComponentState.ENABLED
@@ -77,13 +57,17 @@ internal class TransitionAwareIcon(
         get() {
             val activeStates = modelStateInfoSnapshot.stateContributionMap
             var currState = modelStateInfoSnapshot.currModelState
-            val buttonNeverPainted = (buttonBackgroundAppearanceStrategy == BackgroundAppearanceStrategy.NEVER)
+            val buttonNeverPainted =
+                (buttonBackgroundAppearanceStrategy == BackgroundAppearanceStrategy.NEVER)
             if (buttonNeverPainted) {
-                if (currState.isFacetActive(ComponentStateFacet.ENABLE)) currState = ComponentState.ENABLED
+                if (currState.isFacetActive(ComponentStateFacet.ENABLE)) currState =
+                    ComponentState.ENABLED
             }
             val baseAssociationKind =
-                colorSchemeAssociationKindDelegate?.invoke(currState) ?: ColorSchemeAssociationKind.MARK
-            val baseScheme = skinColors.getColorScheme(decorationAreaType, baseAssociationKind, currState)
+                colorSchemeAssociationKindDelegate?.invoke(currState)
+                    ?: ColorSchemeAssociationKind.MARK
+            val baseScheme =
+                skinColors.getColorScheme(decorationAreaType, baseAssociationKind, currState)
             val baseAlpha: Float = skinColors.getAlpha(decorationAreaType, currState)
             val keyBase = HashMapKey(uniqueIconTypeId, baseScheme.displayName, baseAlpha)
             var layerBase = iconMap[keyBase]
@@ -116,7 +100,11 @@ internal class TransitionAwareIcon(
             val canvas = Canvas(result)
 
             // draw the base layer
-            canvas.drawImage(image = layerBase, topLeftOffset = Offset(x = 0.0f, y = 0.0f), paint = Paint())
+            canvas.drawImage(
+                image = layerBase,
+                topLeftOffset = Offset(x = 0.0f, y = 0.0f),
+                paint = Paint()
+            )
 
             // draw the other active layers
             for ((activeState, stateContribution) in activeStates) {
@@ -125,8 +113,10 @@ internal class TransitionAwareIcon(
                 }
                 if (stateContribution > 0.0f) {
                     val associationKind =
-                        colorSchemeAssociationKindDelegate?.invoke(activeState) ?: ColorSchemeAssociationKind.MARK
-                    val scheme = skinColors.getColorScheme(decorationAreaType, associationKind, activeState)
+                        colorSchemeAssociationKindDelegate?.invoke(activeState)
+                            ?: ColorSchemeAssociationKind.MARK
+                    val scheme =
+                        skinColors.getColorScheme(decorationAreaType, associationKind, activeState)
                     val alpha = skinColors.getAlpha(decorationAreaType, activeState)
                     val key = HashMapKey(uniqueIconTypeId, scheme.displayName, alpha)
                     var layer = iconMap.get(key)
@@ -152,7 +142,7 @@ internal class TransitionAwareIcon(
                     canvas.drawImage(
                         image = layer,
                         topLeftOffset = Offset(x = 0.0f, y = 0.0f),
-                        paint = Paint().also { it.alpha = stateContribution})
+                        paint = Paint().also { it.alpha = stateContribution })
                 }
             }
             return result
@@ -173,7 +163,6 @@ internal class TransitionAwareIcon(
     @Composable
     override fun setSize(width: Dp, height: Dp) {
         // This icon only "pretends" to be resizable
-        throw UnsupportedOperationException("This operation is not supported")
     }
 
     companion object {

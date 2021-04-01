@@ -30,18 +30,21 @@
 package org.pushingpixels.aurora.demo
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.DecorationAreaType
-import org.pushingpixels.aurora.component.AuroraButton
-import org.pushingpixels.aurora.component.AuroraText
-import org.pushingpixels.aurora.demo.svg.material.*
-import org.pushingpixels.aurora.demo.svg.random.*
-import org.pushingpixels.aurora.demo.svg.tango.*
+import org.pushingpixels.aurora.demo.svg.random.kirill
+import org.pushingpixels.aurora.demo.svg.random.marker
+import org.pushingpixels.aurora.demo.svg.random.pattern
+import org.pushingpixels.aurora.demo.svg.random.text
+import org.pushingpixels.aurora.demo.svg.tango.drive_harddisk
+import org.pushingpixels.aurora.demo.svg.tango.help_browser
+import org.pushingpixels.aurora.demo.svg.tango.media_floppy
+import org.pushingpixels.aurora.demo.svg.tango.system_search
 import org.pushingpixels.aurora.icon.AuroraIcon
-import org.pushingpixels.aurora.icon.AuroraThemedFollowTextIcon
 import org.pushingpixels.aurora.skin.businessSkin
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
@@ -66,68 +69,47 @@ fun IconDemoArea() {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            AuroraButton {
+            Column(modifier = Modifier.wrapContentHeight()) {
                 AuroraIcon(icon = media_floppy.of(16.dp, 16.dp))
-                AuroraText("icon 1")
+                BasicText("icon 1")
             }
-            AuroraButton {
+            Column(modifier = Modifier.wrapContentHeight()) {
                 AuroraIcon(icon = drive_harddisk.of(16.dp, 16.dp))
-                AuroraText("icon 2")
+                BasicText("icon 2")
             }
-            AuroraButton {
+            Column(modifier = Modifier.wrapContentHeight()) {
                 AuroraIcon(icon = help_browser.of(16.dp, 16.dp))
-                AuroraText("icon 3")
+                BasicText("icon 3")
             }
-            AuroraButton {
+            Column(modifier = Modifier.wrapContentHeight()) {
                 AuroraIcon(icon = system_search.of(16.dp, 16.dp))
-                AuroraText("icon 4")
+                BasicText("icon 4")
             }
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            AuroraButton {
-                AuroraThemedFollowTextIcon(icon = account_box_24px.of(16.dp, 16.dp))
-                AuroraText("themed 1")
-            }
-            AuroraButton {
-                AuroraThemedFollowTextIcon(icon = battery_full_24px.of(16.dp, 16.dp))
-                AuroraText("themed 2")
-            }
-            AuroraButton {
-                AuroraThemedFollowTextIcon(icon = keyboard_capslock_24px.of(16.dp, 16.dp))
-                AuroraText("themed 3")
-            }
-            AuroraButton {
-                AuroraThemedFollowTextIcon(icon = devices_other_24px.of(16.dp, 16.dp))
-                AuroraText("themed 4")
-            }
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            AuroraButton {
+            Column(modifier = Modifier.wrapContentHeight()) {
                 AuroraIcon(icon = pattern.of(64.dp, 64.dp))
-                AuroraText("pattern")
+                BasicText("pattern")
             }
-            AuroraButton {
+            Column(modifier = Modifier.wrapContentHeight()) {
                 AuroraIcon(icon = text.of(64.dp, 64.dp))
-                AuroraText("text")
+                BasicText("text")
             }
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            AuroraButton {
+            Column(modifier = Modifier.wrapContentHeight()) {
                 AuroraIcon(icon = marker.of(64.dp, 64.dp))
-                AuroraText("themed 3")
+                BasicText("themed 3")
             }
-            AuroraButton {
+            Column(modifier = Modifier.wrapContentHeight()) {
                 AuroraIcon(icon = kirill.of(64.dp, 64.dp))
-                AuroraText("raster")
+                BasicText("raster")
             }
         }
     }

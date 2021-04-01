@@ -49,8 +49,11 @@ internal class CommandButtonLayoutManagerSmall(
     override val density = _density.density
     override val fontScale = _density.fontScale
 
-    override fun getPreferredIconSize(): Dp {
-        return 16.dp
+    override fun getPreferredIconSize(
+        command: Command,
+        presentationModel: CommandButtonPresentationModel
+    ): Dp {
+        return presentationModel.iconDimension ?: 16.dp
     }
 
     private fun getPreferredSize(
@@ -58,16 +61,16 @@ internal class CommandButtonLayoutManagerSmall(
         presentationModel: CommandButtonPresentationModel,
         paddingValues: PaddingValues
     ): Size {
-        val by =
+        val by = presentationModel.verticalGapScaleFactor *
             (paddingValues.calculateTopPadding() + paddingValues.calculateBottomPadding()).toPx()
-        val buttonText = command.text
         val layoutHGap = (2.dp * presentationModel.horizontalGapScaleFactor).toPx()
         val hasIcon = (command.iconFactory != null)
         val hasPopupIcon = (command.secondaryContentModel != null)
-        val prefIconSize = getPreferredIconSize().toPx()
+        val prefIconSize = getPreferredIconSize(command, presentationModel).toPx()
 
         // start with the left insets
-        var width = paddingValues.calculateStartPadding(layoutDirection).toPx()
+        var width = presentationModel.horizontalGapScaleFactor *
+                paddingValues.calculateStartPadding(layoutDirection).toPx()
         // icon?
         if (hasIcon) {
             // padding before the icon
@@ -91,7 +94,8 @@ internal class CommandButtonLayoutManagerSmall(
         width += SeparatorSizingConstants.Thickness.toPx()
 
         // right insets
-        width += paddingValues.calculateEndPadding(layoutDirection).toPx()
+        width += presentationModel.horizontalGapScaleFactor *
+                paddingValues.calculateEndPadding(layoutDirection).toPx()
 
         // and remove the padding before the first and after the last elements
         width -= 2 * layoutHGap
@@ -137,9 +141,8 @@ internal class CommandButtonLayoutManagerSmall(
         val buttonText = command.text
         val layoutHGap = (2.dp * presentationModel.horizontalGapScaleFactor).toPx()
         val hasIcon = (command.iconFactory != null)
-        val hasText = (buttonText != null)
         val hasPopup = (command.secondaryContentModel != null)
-        val iconSize = getPreferredIconSize().toPx()
+        val iconSize = getPreferredIconSize(command, presentationModel).toPx()
 
         val ltr = (layoutDirection == LayoutDirection.Ltr)
 
@@ -175,7 +178,8 @@ internal class CommandButtonLayoutManagerSmall(
         }
 
         // TODO - RTL
-        var x = paddingValues.calculateStartPadding(layoutDirection).toPx() + shiftX - layoutHGap
+        var x = presentationModel.horizontalGapScaleFactor *
+                paddingValues.calculateStartPadding(layoutDirection).toPx() + shiftX - layoutHGap
 
         // icon
         if (hasIcon) {

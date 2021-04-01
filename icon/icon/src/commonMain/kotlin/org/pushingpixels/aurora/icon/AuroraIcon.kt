@@ -90,6 +90,7 @@ fun AuroraIcon(
     icon: AuroraIcon,
     modifier: Modifier = Modifier
 ) {
+    // TODO - convert all sizing to dp units
     Box(
         modifier.size(
             width = icon.getWidth().dp,

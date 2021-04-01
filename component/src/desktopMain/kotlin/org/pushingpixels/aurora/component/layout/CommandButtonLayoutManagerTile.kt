@@ -51,7 +51,10 @@ internal class CommandButtonLayoutManagerTile(
     override val density = _density.density
     override val fontScale = _density.fontScale
 
-    override fun getPreferredIconSize(): Dp {
+    override fun getPreferredIconSize(
+        command: Command,
+        presentationModel: CommandButtonPresentationModel
+    ): Dp {
         return 32.dp
     }
 
@@ -68,7 +71,7 @@ internal class CommandButtonLayoutManagerTile(
         val hasIcon = (command.iconFactory != null)
         val hasText = (buttonText != null) or (extraText != null)
         val hasPopupIcon = (command.secondaryContentModel != null)
-        val prefIconSize = getPreferredIconSize().toPx()
+        val prefIconSize = getPreferredIconSize(command, presentationModel).toPx()
 
         // start with the left insets
         var width = paddingValues.calculateStartPadding(layoutDirection).toPx()
@@ -169,7 +172,7 @@ internal class CommandButtonLayoutManagerTile(
         val hasIcon = (command.iconFactory != null)
         val hasText = (buttonText != null) or (buttonExtraText != null)
         val hasPopup = (command.secondaryContentModel != null)
-        val iconSize = getPreferredIconSize().toPx()
+        val iconSize = getPreferredIconSize(command, presentationModel).toPx()
 
         val ltr = (layoutDirection == LayoutDirection.Ltr)
 

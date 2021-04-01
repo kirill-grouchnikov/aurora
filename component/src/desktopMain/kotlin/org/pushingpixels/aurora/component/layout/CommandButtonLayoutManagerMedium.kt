@@ -42,7 +42,7 @@ import org.pushingpixels.aurora.component.SeparatorSizingConstants
 import org.pushingpixels.aurora.component.model.*
 import kotlin.math.max
 
-internal class CommandButtonLayoutManagerMedium(
+internal open class CommandButtonLayoutManagerMedium(
     override val layoutDirection: LayoutDirection,
     private val _density: Density,
     private val textStyle: TextStyle,
@@ -51,13 +51,15 @@ internal class CommandButtonLayoutManagerMedium(
     override val density = _density.density
     override val fontScale = _density.fontScale
 
-    override fun getPreferredIconSize(): Dp {
-        return 16.dp
-    }
-
     protected val iconTextGapFactor: Float
         protected get() = 1.0f
 
+    override fun getPreferredIconSize(
+        command: Command,
+        presentationModel: CommandButtonPresentationModel
+    ): Dp {
+        return presentationModel.iconDimension ?: 16.dp
+    }
 
     private fun getPreferredSize(
         command: Command,
@@ -71,7 +73,7 @@ internal class CommandButtonLayoutManagerMedium(
         val hasIcon = (command.iconFactory != null)
         val hasText = (buttonText != null)
         val hasPopupIcon = (command.secondaryContentModel != null)
-        val prefIconSize = getPreferredIconSize().toPx()
+        val prefIconSize = getPreferredIconSize(command, presentationModel).toPx()
 
         // start with the left insets
         var width = paddingValues.calculateStartPadding(layoutDirection).toPx()
@@ -168,7 +170,7 @@ internal class CommandButtonLayoutManagerMedium(
         val hasIcon = (command.iconFactory != null)
         val hasText = (buttonText != null)
         val hasPopup = (command.secondaryContentModel != null)
-        val iconSize = getPreferredIconSize().toPx()
+        val iconSize = getPreferredIconSize(command, presentationModel).toPx()
 
         val ltr = (layoutDirection == LayoutDirection.Ltr)
 

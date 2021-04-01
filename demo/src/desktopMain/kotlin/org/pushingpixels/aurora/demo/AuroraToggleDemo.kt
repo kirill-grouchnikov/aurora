@@ -34,13 +34,13 @@ import androidx.compose.material.Checkbox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.BackgroundAppearanceStrategy
-import org.pushingpixels.aurora.ButtonSizingStrategy
-import org.pushingpixels.aurora.component.AuroraToggleButton
+import org.pushingpixels.aurora.component.AuroraCommandButton
+import org.pushingpixels.aurora.component.model.Command
+import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
+import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
 import org.pushingpixels.aurora.demo.svg.tango.format_justify_center
 import org.pushingpixels.aurora.demo.svg.tango.format_justify_left
-import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.skin.nebulaBrickWallSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 
@@ -63,32 +63,39 @@ private enum class ToggleAlignment {
 fun DemoToggleToolbarEnum() {
     var alignment by remember { mutableStateOf(ToggleAlignment.CENTER) }
 
-    AuroraToggleButton(
-        selected = (alignment == ToggleAlignment.CENTER),
-        onTriggerSelectedChange = {
-            println("Here in first $it")
-            if (it) alignment = ToggleAlignment.CENTER
-        },
-        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-        sizingStrategy = ButtonSizingStrategy.COMPACT
-    ) {
-        AuroraIcon(
-            icon = format_justify_center.of(10.dp, 10.dp),
+    AuroraCommandButton(
+        command = Command(
+            text = "",
+            iconFactory = format_justify_center.factory(),
+            isActionToggle = true,
+            isActionToggleSelected = (alignment == ToggleAlignment.CENTER),
+            onTriggerActionToggleSelectedChange = {
+                println("Here in first $it")
+                if (it) alignment = ToggleAlignment.CENTER
+            },
+        ),
+        presentationModel = CommandButtonPresentationModel(
+            presentationState = CommandButtonPresentationState.SMALL,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT
         )
-    }
-    AuroraToggleButton(
-        selected = (alignment == ToggleAlignment.LEFT),
-        onTriggerSelectedChange = {
-            println("Here in second $it")
-            if (it) alignment = ToggleAlignment.LEFT
-        },
-        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-        sizingStrategy = ButtonSizingStrategy.COMPACT
-    ) {
-        AuroraIcon(
-            icon = format_justify_left.of(10.dp, 10.dp),
+    )
+
+    AuroraCommandButton(
+        command = Command(
+            text = "",
+            iconFactory = format_justify_left.factory(),
+            isActionToggle = true,
+            isActionToggleSelected = (alignment == ToggleAlignment.LEFT),
+            onTriggerActionToggleSelectedChange = {
+                println("Here in second $it")
+                if (it) alignment = ToggleAlignment.LEFT
+            }
+        ),
+        presentationModel = CommandButtonPresentationModel(
+            presentationState = CommandButtonPresentationState.SMALL,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT
         )
-    }
+    )
 }
 
 @Composable
@@ -96,32 +103,38 @@ fun DemoToggleToolbarBooleans() {
     var isCenter by remember { mutableStateOf(true) }
     var isLeft by remember { mutableStateOf(false) }
 
-    AuroraToggleButton(
-        selected = isCenter,
-        onTriggerSelectedChange = {
-            isCenter = it
-            isLeft = !it
-        },
-        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-        sizingStrategy = ButtonSizingStrategy.COMPACT
-    ) {
-        AuroraIcon(
-            icon = format_justify_center.of(10.dp, 10.dp),
+    AuroraCommandButton(
+        command = Command(
+            text = "",
+            iconFactory = format_justify_center.factory(),
+            isActionToggle = true,
+            isActionToggleSelected = isCenter,
+            onTriggerActionToggleSelectedChange = {
+                isCenter = it
+                isLeft = !it
+            }
+        ),
+        presentationModel = CommandButtonPresentationModel(
+            presentationState = CommandButtonPresentationState.SMALL,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT
         )
-    }
-    AuroraToggleButton(
-        selected = isLeft,
-        onTriggerSelectedChange = {
-            isLeft = it
-            isCenter = !it
-        },
-        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-        sizingStrategy = ButtonSizingStrategy.COMPACT
-    ) {
-        AuroraIcon(
-            icon = format_justify_left.of(10.dp, 10.dp),
+    )
+    AuroraCommandButton(
+        command = Command(
+            text = "",
+            iconFactory = format_justify_left.factory(),
+            isActionToggle = true,
+            isActionToggleSelected = isLeft,
+            onTriggerActionToggleSelectedChange = {
+                isLeft = it
+                isCenter = !it
+            }
+        ),
+        presentationModel = CommandButtonPresentationModel(
+            presentationState = CommandButtonPresentationState.SMALL,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT
         )
-    }
+    )
 }
 
 @Composable

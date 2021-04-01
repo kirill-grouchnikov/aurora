@@ -29,6 +29,7 @@
  */
 package org.pushingpixels.aurora.component.model
 
+import androidx.compose.ui.unit.Dp
 import org.pushingpixels.aurora.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.IconFilterStrategy
 import org.pushingpixels.aurora.PopupPlacementStrategy
@@ -56,7 +57,7 @@ data class CommandStripPresentationModel(
         else DEFAULT_GAP_SCALE_FACTOR_SECONDARY_AXIS,
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS,
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.CENTER,
-    val iconDimension: Int? = null,
+    val iconDimension: Dp? = null,
     val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ORIGINAL,
     val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.ORIGINAL,

@@ -55,7 +55,10 @@ internal class CommandButtonLayoutManagerBig(
     override val density = _density.density
     override val fontScale = _density.fontScale
 
-    override fun getPreferredIconSize(): Dp {
+    override fun getPreferredIconSize(
+        command: Command,
+        presentationModel: CommandButtonPresentationModel
+    ): Dp {
         return 32.dp
     }
 
@@ -123,7 +126,7 @@ internal class CommandButtonLayoutManagerBig(
         val hasIcon = (command.iconFactory != null)
         val hasText = (buttonText != null)
         val hasPopupIcon = (command.secondaryContentModel != null)
-        val prefIconSize = getPreferredIconSize().toPx()
+        val prefIconSize = getPreferredIconSize(command, presentationModel).toPx()
 
         val title1Line = Paragraph(
             text = preLayoutInfo.texts[0], style = textStyle, width = Float.POSITIVE_INFINITY,
@@ -233,9 +236,8 @@ internal class CommandButtonLayoutManagerBig(
         val layoutHGap = (2.dp * presentationModel.horizontalGapScaleFactor).toPx()
         val layoutVGap = (2.dp * presentationModel.verticalGapScaleFactor).toPx()
         val hasIcon = (command.iconFactory != null)
-        val hasText = (buttonText != null)
         val hasPopupIcon = (command.secondaryContentModel != null)
-        val iconSize = getPreferredIconSize().toPx()
+        val iconSize = getPreferredIconSize(command, presentationModel).toPx()
 
         var iconRect = Rect.Zero
         var separatorArea = Rect.Zero

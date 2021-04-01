@@ -121,13 +121,13 @@ interface CommandButtonLayoutManager : MeasureScope {
     )
 
     /**
-     * Returns the preferred icon size of the specified command button when it uses
-     * this layout manager.
-     *
-     * @return The preferred icon size of the specified command button when it uses
-     * this layout manager.
+     * Returns the preferred icon size under this layout manager. Note that some layout managers
+     * may use fixed icon size, while some may respect the icon size set in [.presentationModel]
      */
-    fun getPreferredIconSize(): Dp
+    fun getPreferredIconSize(
+        command: Command,
+        presentationModel: CommandButtonPresentationModel
+    ): Dp
 
     /**
      * Returns the pre-layout information for the specified parameters.

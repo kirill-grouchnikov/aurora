@@ -29,6 +29,7 @@
  */
 package org.pushingpixels.aurora.component.model
 
+import androidx.compose.ui.unit.Dp
 import org.pushingpixels.aurora.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.IconFilterStrategy
 import org.pushingpixels.aurora.PopupPlacementStrategy
@@ -37,7 +38,7 @@ data class CommandButtonPresentationModel(
     val presentationState: CommandButtonPresentationState = CommandButtonPresentationState.MEDIUM,
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS,
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.CENTER,
-    val iconDimension: Int? = null,
+    val iconDimension: Dp? = null,
     val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ORIGINAL,
     val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.ORIGINAL,
@@ -51,7 +52,7 @@ data class CommandButtonPresentationModel(
         val presentationState: CommandButtonPresentationState? = null,
         val backgroundAppearanceStrategy: BackgroundAppearanceStrategy? = null,
         val horizontalAlignment: HorizontalAlignment? = null,
-        val iconDimension: Int? = null,
+        val iconDimension: Dp? = null,
         val iconDisabledFilterStrategy: IconFilterStrategy? = null,
         val iconEnabledFilterStrategy: IconFilterStrategy? = null,
         val iconActiveFilterStrategy: IconFilterStrategy? = null,
