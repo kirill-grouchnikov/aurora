@@ -1306,5 +1306,3 @@ private fun Modifier.commandButtonLocator(topLeftOffset: AuroraOffset, size: Aur
     this.then(
         CommandButtonBoxLocator(topLeftOffset, size)
     )
-
-

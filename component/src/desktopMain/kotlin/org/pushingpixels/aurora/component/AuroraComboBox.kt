@@ -74,6 +74,11 @@ object ComboBoxSizingConstants {
     val DefaultComboBoxArrowWidth = 10.dp
     val DefaultComboBoxArrowHeight = 7.dp
     val DefaultComboBoxContentArrowGap = 6.dp
+    val DefaultComboBoxContentPadding =
+        PaddingValues(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
+    val DefaultComboBoxIconTextGap = 6.dp
+    val DefaultComboBoxContentWidth = 60.dp
+    val DefaultComboBoxContentHeight = 16.dp
 }
 
 @Immutable
@@ -91,7 +96,8 @@ private class ComboBoxDrawingCache(
     )
 )
 
-private class ComboBoxLocator(val topLeftOffset: AuroraOffset, val size: AuroraSize) : OnGloballyPositionedModifier {
+private class ComboBoxLocator(val topLeftOffset: AuroraOffset, val size: AuroraSize) :
+    OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
         // Convert the top left corner of the component to the root coordinates
         val converted = coordinates.localToRoot(Offset.Zero)
@@ -407,7 +413,13 @@ private fun <E> AuroraComboBox(
                 val height = this.size.height
 
                 withTransform({
-                    clipRect(left = 0.0f, top = 0.0f, right = width, bottom = height, clipOp = ClipOp.Intersect)
+                    clipRect(
+                        left = 0.0f,
+                        top = 0.0f,
+                        right = width,
+                        bottom = height,
+                        clipOp = ClipOp.Intersect
+                    )
                 }) {
                     val outline = buttonShaper.getButtonOutline(
                         width = width,
@@ -469,10 +481,9 @@ private fun <E> AuroraComboBox(
                             ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()
                     // TODO - support RTL
                     translate(
-                        left = width - ButtonSizingConstants.DefaultButtonContentPadding.calculateRightPadding(
+                        left = width - ComboBoxSizingConstants.DefaultComboBoxContentPadding.calculateRightPadding(
                             layoutDirection
-                        ).toPx()
-                                - arrowWidth,
+                        ).toPx() - arrowWidth,
                         top = (height - arrowHeight) / 2.0f
                     ) {
                         drawArrow(
@@ -498,12 +509,15 @@ private fun <E> AuroraComboBox(
                 // TODO - revisit this maybe
                 modifier = Modifier.padding(
                     PaddingValues(
-                        start = ButtonSizingConstants.DefaultButtonContentPadding.calculateStartPadding(layoutDirection),
-                        end = ButtonSizingConstants.DefaultButtonContentPadding.calculateEndPadding(layoutDirection) +
-                                ComboBoxSizingConstants.DefaultComboBoxContentArrowGap +
-                                ComboBoxSizingConstants.DefaultComboBoxArrowWidth,
-                        top = ButtonSizingConstants.DefaultButtonContentPadding.calculateTopPadding(),
-                        bottom = ButtonSizingConstants.DefaultButtonContentPadding.calculateBottomPadding()
+                        start = ComboBoxSizingConstants.DefaultComboBoxContentPadding.calculateStartPadding(
+                            layoutDirection
+                        ),
+                        end = ComboBoxSizingConstants.DefaultComboBoxContentPadding.calculateEndPadding(
+                            layoutDirection
+                        ) + ComboBoxSizingConstants.DefaultComboBoxContentArrowGap
+                                + ComboBoxSizingConstants.DefaultComboBoxArrowWidth,
+                        top = ComboBoxSizingConstants.DefaultComboBoxContentPadding.calculateTopPadding(),
+                        bottom = ComboBoxSizingConstants.DefaultComboBoxContentPadding.calculateBottomPadding()
                     )
                 ),
                 content = {
@@ -526,8 +540,14 @@ private fun <E> AuroraComboBox(
                 var uiPreferredHeight = contentMaxHeight
 
                 // Bump up to default minimums if necessary
-                uiPreferredWidth = max(uiPreferredWidth, ButtonSizingConstants.DefaultButtonContentWidth.roundToPx())
-                uiPreferredHeight = max(uiPreferredHeight, ButtonSizingConstants.DefaultButtonContentHeight.roundToPx())
+                uiPreferredWidth = max(
+                    uiPreferredWidth,
+                    ComboBoxSizingConstants.DefaultComboBoxContentWidth.roundToPx()
+                )
+                uiPreferredHeight = max(
+                    uiPreferredHeight,
+                    ComboBoxSizingConstants.DefaultComboBoxContentHeight.roundToPx()
+                )
 
                 // And ask the button shaper for the final sizing
                 val finalSize = buttonShaper.getPreferredSize(
