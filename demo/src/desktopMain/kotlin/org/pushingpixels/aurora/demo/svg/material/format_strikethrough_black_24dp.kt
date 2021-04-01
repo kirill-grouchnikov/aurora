@@ -25,7 +25,7 @@ import kotlin.math.min
  * This class has been automatically generated using
  * <a href="https://github.com/kirill-grouchnikov/aurora">Aurora SVG transcoder</a>.
  */
-class format_italic_24px private constructor(var _width: Int, var _height: Int) : AuroraIcon {
+class format_strikethrough_black_24dp private constructor(var _width: Int, var _height: Int) : AuroraIcon {
     @Suppress("UNUSED_VARIABLE") private var shape: Outline? = null
     @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
@@ -77,18 +77,27 @@ if (generalPath == null) {
 } else {
    generalPath!!.reset()
 }
-generalPath!!.moveTo(10.0f, 4.0f)
+generalPath!!.moveTo(10.0f, 19.0f)
+generalPath!!.lineTo(14.0f, 19.0f)
+generalPath!!.lineTo(14.0f, 16.0f)
+generalPath!!.lineTo(10.0f, 16.0f)
+generalPath!!.lineTo(10.0f, 19.0f)
+generalPath!!.close()
+generalPath!!.moveTo(5.0f, 4.0f)
+generalPath!!.lineTo(5.0f, 7.0f)
 generalPath!!.lineTo(10.0f, 7.0f)
-generalPath!!.lineTo(12.21f, 7.0f)
-generalPath!!.lineTo(8.79f, 15.0f)
-generalPath!!.lineTo(6.0f, 15.0f)
-generalPath!!.lineTo(6.0f, 18.0f)
-generalPath!!.lineTo(14.0f, 18.0f)
-generalPath!!.lineTo(14.0f, 15.0f)
-generalPath!!.lineTo(11.79f, 15.0f)
-generalPath!!.lineTo(15.21f, 7.0f)
-generalPath!!.lineTo(18.0f, 7.0f)
-generalPath!!.lineTo(18.0f, 4.0f)
+generalPath!!.lineTo(10.0f, 10.0f)
+generalPath!!.lineTo(14.0f, 10.0f)
+generalPath!!.lineTo(14.0f, 7.0f)
+generalPath!!.lineTo(19.0f, 7.0f)
+generalPath!!.lineTo(19.0f, 4.0f)
+generalPath!!.lineTo(5.0f, 4.0f)
+generalPath!!.close()
+generalPath!!.moveTo(3.0f, 14.0f)
+generalPath!!.lineTo(21.0f, 14.0f)
+generalPath!!.lineTo(21.0f, 12.0f)
+generalPath!!.lineTo(3.0f, 12.0f)
+generalPath!!.lineTo(3.0f, 14.0f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
@@ -122,7 +131,7 @@ alpha = alphaStack.removeAt(0)
          * @return The X of the bounding box of the original SVG image.
          */
         fun getOrigX(): Double {
-            return 6.0
+            return 3.0
         }
 
         /**
@@ -140,7 +149,7 @@ alpha = alphaStack.removeAt(0)
          * @return The width of the bounding box of the original SVG image.
          */
         fun getOrigWidth(): Double {
-            return 12.0
+            return 18.0
         }
 
         /**
@@ -149,7 +158,7 @@ alpha = alphaStack.removeAt(0)
          * @return The height of the bounding box of the original SVG image.
          */
         fun getOrigHeight(): Double {
-            return 14.0
+            return 15.0
         }
 
         /**
@@ -161,7 +170,7 @@ alpha = alphaStack.removeAt(0)
          */
         @Composable
         fun of(width: Dp, height: Dp): AuroraIcon {
-            return format_italic_24px(
+            return format_strikethrough_black_24dp(
                 _width = (width.value * LocalDensity.current.density).toInt(),
                 _height = (height.value * LocalDensity.current.density).toInt()
             )
@@ -175,7 +184,7 @@ alpha = alphaStack.removeAt(0)
         fun factory(): AuroraIcon.Factory {
             return object : AuroraIcon.Factory {
                 override fun createNewIcon(): AuroraIcon {
-                    return format_italic_24px(getOrigWidth().toInt(), getOrigHeight().toInt())
+                    return format_strikethrough_black_24dp(getOrigWidth().toInt(), getOrigHeight().toInt())
                 }
             }
         }

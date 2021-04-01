@@ -25,7 +25,7 @@ import kotlin.math.min
  * This class has been automatically generated using
  * <a href="https://github.com/kirill-grouchnikov/aurora">Aurora SVG transcoder</a>.
  */
-class format_bold_24px private constructor(var _width: Int, var _height: Int) : AuroraIcon {
+class format_bold_black_24dp private constructor(var _width: Int, var _height: Int) : AuroraIcon {
     @Suppress("UNUSED_VARIABLE") private var shape: Outline? = null
     @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
@@ -171,7 +171,7 @@ alpha = alphaStack.removeAt(0)
          */
         @Composable
         fun of(width: Dp, height: Dp): AuroraIcon {
-            return format_bold_24px(
+            return format_bold_black_24dp(
                 _width = (width.value * LocalDensity.current.density).toInt(),
                 _height = (height.value * LocalDensity.current.density).toInt()
             )
@@ -185,7 +185,7 @@ alpha = alphaStack.removeAt(0)
         fun factory(): AuroraIcon.Factory {
             return object : AuroraIcon.Factory {
                 override fun createNewIcon(): AuroraIcon {
-                    return format_bold_24px(getOrigWidth().toInt(), getOrigHeight().toInt())
+                    return format_bold_black_24dp(getOrigWidth().toInt(), getOrigHeight().toInt())
                 }
             }
         }

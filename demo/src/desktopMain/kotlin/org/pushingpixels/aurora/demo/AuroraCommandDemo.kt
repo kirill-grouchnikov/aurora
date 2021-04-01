@@ -39,6 +39,10 @@ import org.pushingpixels.aurora.component.AuroraCommandButton
 import org.pushingpixels.aurora.component.AuroraCommandButtonStrip
 import org.pushingpixels.aurora.component.AuroraText
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.demo.svg.material.format_bold_black_24dp
+import org.pushingpixels.aurora.demo.svg.material.format_italic_black_24dp
+import org.pushingpixels.aurora.demo.svg.material.format_strikethrough_black_24dp
+import org.pushingpixels.aurora.demo.svg.material.format_underlined_black_24dp
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.skin.marinerSkin
 import org.pushingpixels.aurora.window.AuroraWindow
@@ -100,12 +104,18 @@ enum class CommandDemoAlignment {
     CENTER, LEFT, RIGHT, FILL
 }
 
+class CommandDemoStyle(
+    val bold: MutableState<Boolean>,
+    val italic: MutableState<Boolean>,
+    val underline: MutableState<Boolean>,
+    val strikethrough: MutableState<Boolean>
+)
 
 @Composable
-fun CommandDemoToggleStrip(
+fun CommandDemoJustifyStrip(
     enabled: Boolean,
     orientation: StripOrientation,
-    alignment: MutableState<CommandDemoAlignment>,
+    alignment: MutableState<CommandDemoAlignment>
 ) {
     val commandAlignCenter =
         Command(
@@ -159,6 +169,74 @@ fun CommandDemoToggleStrip(
                 commandAlignLeft,
                 commandAlignRight,
                 commandAlignFill
+            )
+        ),
+        presentationModel = CommandStripPresentationModel(orientation = orientation)
+    )
+}
+
+@Composable
+fun CommandDemoStyleStrip(
+    enabled: Boolean,
+    orientation: StripOrientation,
+    style: CommandDemoStyle
+) {
+    val commandBold =
+        Command(
+            text = "Bold",
+            iconFactory = format_bold_black_24dp.factory(),
+            isActionEnabled = enabled,
+            isActionToggle = true,
+            isActionToggleSelected = style.bold.value,
+            onTriggerActionToggleSelectedChange = {
+                style.bold.value = it
+                println("Selected bold? $it")
+            }
+        )
+    val commandItalic =
+        Command(
+            text = "Italic",
+            iconFactory = format_italic_black_24dp.factory(),
+            isActionEnabled = enabled,
+            isActionToggle = true,
+            isActionToggleSelected = style.italic.value,
+            onTriggerActionToggleSelectedChange = {
+                style.italic.value = it
+                println("Selected italic? $it")
+            }
+        )
+    val commandUnderline =
+        Command(
+            text = "Underline",
+            iconFactory = format_underlined_black_24dp.factory(),
+            isActionEnabled = enabled,
+            isActionToggle = true,
+            isActionToggleSelected = style.underline.value,
+            onTriggerActionToggleSelectedChange = {
+                style.underline.value = it
+                println("Selected underline? $it")
+            }
+        )
+    val commandStrikethrough =
+        Command(
+            text = "Strikethrough",
+            iconFactory = format_strikethrough_black_24dp.factory(),
+            isActionEnabled = enabled,
+            isActionToggle = true,
+            isActionToggleSelected = style.strikethrough.value,
+            onTriggerActionToggleSelectedChange = {
+                style.strikethrough.value = it
+                println("Selected strikethrough? $it")
+            }
+        )
+
+    AuroraCommandButtonStrip(
+        commandGroup = CommandGroup(
+            commands = listOf(
+                commandBold,
+                commandItalic,
+                commandUnderline,
+                commandStrikethrough
             )
         ),
         presentationModel = CommandStripPresentationModel(orientation = orientation)
@@ -343,13 +421,26 @@ fun DemoCommandContent() {
         )
 
     val alignment = remember { mutableStateOf(CommandDemoAlignment.CENTER) }
+    val style = CommandDemoStyle(
+        bold = remember { mutableStateOf(false) },
+        italic = remember { mutableStateOf(true) },
+        underline = remember { mutableStateOf(false) },
+        strikethrough = remember { mutableStateOf(false) },
+    )
 
     Row(modifier = Modifier.fillMaxHeight().fillMaxWidth().padding(4.dp)) {
         Box(modifier = Modifier.padding(8.dp)) {
-            CommandDemoToggleStrip(
+            CommandDemoJustifyStrip(
                 enabled = actionEnabled,
                 orientation = StripOrientation.VERTICAL,
                 alignment = alignment
+            )
+        }
+        Box(modifier = Modifier.padding(8.dp)) {
+            CommandDemoStyleStrip(
+                enabled = actionEnabled,
+                orientation = StripOrientation.VERTICAL,
+                style = style
             )
         }
 
@@ -375,10 +466,16 @@ fun DemoCommandContent() {
                 Spacer(modifier = Modifier.width(8.dp))
                 AuroraCommandButton(command = commandActionToggle)
                 Spacer(modifier = Modifier.width(8.dp))
-                CommandDemoToggleStrip(
+                CommandDemoJustifyStrip(
                     enabled = actionEnabled,
                     orientation = StripOrientation.HORIZONTAL,
                     alignment = alignment
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                CommandDemoStyleStrip(
+                    enabled = actionEnabled,
+                    orientation = StripOrientation.HORIZONTAL,
+                    style = style
                 )
             }
 
