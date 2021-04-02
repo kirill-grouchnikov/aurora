@@ -42,7 +42,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.WindowDraggableArea
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
@@ -109,6 +108,19 @@ private fun AuroraWindowContent(
 
                     val colors = AuroraSkin.colors
 
+                    val titlePaneButtonPresentationModel = CommandButtonPresentationModel(
+                        presentationState = CommandButtonPresentationState.SMALL,
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                        contentPadding = PaddingValues(
+                            start = 1.dp,
+                            end = 2.dp,
+                            top = 1.dp,
+                            bottom = 2.dp
+                        ),
+                        horizontalGapScaleFactor = 1.0f,
+                        verticalGapScaleFactor = 1.0f
+                    )
+
                     // Minimize button
                     AuroraCommandButton(
                         command = Command(
@@ -116,7 +128,8 @@ private fun AuroraWindowContent(
                             action = {
                                 AppManager.focusedWindow?.window?.extendedState = JFrame.ICONIFIED
                             },
-                            iconFactory = object : TransitionAwareIcon.TransitionAwareIconFactory() {
+                            iconFactory = object :
+                                TransitionAwareIcon.TransitionAwareIconFactory() {
                                 override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
                                     return TransitionAwareIcon(
                                         decorationAreaType = DecorationAreaType.TITLE_PANE,
@@ -136,12 +149,7 @@ private fun AuroraWindowContent(
                                 }
                             }
                         ),
-                        presentationModel = CommandButtonPresentationModel(
-                            presentationState = CommandButtonPresentationState.SMALL,
-                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                            horizontalGapScaleFactor = 0.2f,
-                            verticalGapScaleFactor = 0.4f
-                        )
+                        presentationModel = titlePaneButtonPresentationModel
                     )
 
                     Spacer(modifier = Modifier.width(4.dp))
@@ -161,7 +169,8 @@ private fun AuroraWindowContent(
                                     isMaximized.value = !isMaximized.value
                                 }
                             },
-                            iconFactory = object : TransitionAwareIcon.TransitionAwareIconFactory() {
+                            iconFactory = object :
+                                TransitionAwareIcon.TransitionAwareIconFactory() {
                                 override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
                                     return if (isMaximized.value) {
                                         TransitionAwareIcon(
@@ -199,12 +208,7 @@ private fun AuroraWindowContent(
                                 }
                             }
                         ),
-                        presentationModel = CommandButtonPresentationModel(
-                            presentationState = CommandButtonPresentationState.SMALL,
-                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                            horizontalGapScaleFactor = 0.2f,
-                            verticalGapScaleFactor = 0.4f
-                        )
+                        presentationModel = titlePaneButtonPresentationModel
                     )
 
                     Spacer(modifier = Modifier.width(8.dp))
@@ -216,7 +220,8 @@ private fun AuroraWindowContent(
                             action = {
                                 AppManager.focusedWindow?.close()
                             },
-                            iconFactory = object : TransitionAwareIcon.TransitionAwareIconFactory() {
+                            iconFactory = object :
+                                TransitionAwareIcon.TransitionAwareIconFactory() {
                                 override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
                                     return TransitionAwareIcon(
                                         decorationAreaType = DecorationAreaType.TITLE_PANE,
@@ -236,12 +241,7 @@ private fun AuroraWindowContent(
                                 }
                             }
                         ),
-                        presentationModel = CommandButtonPresentationModel(
-                            presentationState = CommandButtonPresentationState.SMALL,
-                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                            horizontalGapScaleFactor = 0.2f,
-                            verticalGapScaleFactor = 0.4f
-                        )
+                        presentationModel = titlePaneButtonPresentationModel
                     )
                 }
             }

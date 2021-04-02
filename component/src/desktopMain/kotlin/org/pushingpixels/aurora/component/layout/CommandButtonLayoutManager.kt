@@ -145,7 +145,6 @@ interface CommandButtonLayoutManager : MeasureScope {
         constraints: Constraints,
         command: Command,
         presentationModel: CommandButtonPresentationModel,
-        preLayoutInfo: CommandButtonPreLayoutInfo,
-        paddingValues: PaddingValues
+        preLayoutInfo: CommandButtonPreLayoutInfo
     ): CommandButtonLayoutInfo
 }

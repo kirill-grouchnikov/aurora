@@ -86,10 +86,6 @@ private class CommandButtonDrawingCache(
     )
 )
 
-internal object CommandButtonSizingConstants {
-    val ButtonContentPadding = PaddingValues(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
-}
-
 @Composable
 fun AuroraCommandButton(
     command: Command,
@@ -856,8 +852,7 @@ internal fun AuroraCommandButton(
             constraints = constraints,
             command = command,
             presentationModel = presentationModel,
-            preLayoutInfo = preLayoutInfo,
-            paddingValues = CommandButtonSizingConstants.ButtonContentPadding
+            preLayoutInfo = preLayoutInfo
         )
 
         // Measure the action and popup boxes

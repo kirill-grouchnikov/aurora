@@ -34,15 +34,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.IconFilterStrategy
 import org.pushingpixels.aurora.component.AuroraCheckBox
 import org.pushingpixels.aurora.component.AuroraCommandButton
 import org.pushingpixels.aurora.component.AuroraCommandButtonStrip
 import org.pushingpixels.aurora.component.AuroraText
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.demo.svg.material.format_bold_black_24dp
-import org.pushingpixels.aurora.demo.svg.material.format_italic_black_24dp
-import org.pushingpixels.aurora.demo.svg.material.format_strikethrough_black_24dp
-import org.pushingpixels.aurora.demo.svg.material.format_underlined_black_24dp
+import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.skin.marinerSkin
 import org.pushingpixels.aurora.window.AuroraWindow
@@ -180,6 +178,71 @@ fun CommandDemoJustifyStrip(
 }
 
 @Composable
+fun CommandDemoEditStrip(
+    actionEnabled: Boolean,
+    popupEnabled: Boolean,
+    orientation: StripOrientation,
+    horizontalGapScaleFactor: Float
+) {
+    val commandCut =
+        Command(
+            text = "Cut",
+            iconFactory = content_cut_black_24dp.factory(),
+            isActionEnabled = actionEnabled,
+            action = { println("Cut!") }
+
+        )
+    val commandCopy =
+        Command(
+            text = "Copy",
+            iconFactory = content_copy_black_24dp.factory(),
+            isActionEnabled = actionEnabled,
+            action = { println("Copy!") }
+
+        )
+    val commandPaste =
+        Command(
+            text = "Paste",
+            iconFactory = content_paste_black_24dp.factory(),
+            isActionEnabled = actionEnabled,
+            action = { println("Paste!") },
+            secondaryContentModel = CommandMenuContentModel(
+                group = CommandGroup(
+                    commands = listOf(
+                        Command(
+                            text = "Keep Formatting",
+                            action = { println("Paste with keep formatting") }),
+                        Command(
+                            text = "Merge Formatting",
+                            action = { println("Paste with merge formatting") }),
+                        Command(
+                            text = "Text only",
+                            action = { println("Paste text only") })
+                    )
+                )
+            ),
+            isSecondaryEnabled = popupEnabled
+        )
+
+    AuroraCommandButtonStrip(
+        commandGroup = CommandGroup(
+            commands = listOf(
+                commandCopy,
+                commandCut,
+                commandPaste
+            )
+        ),
+        presentationModel = CommandStripPresentationModel(
+            orientation = orientation,
+            horizontalGapScaleFactor = horizontalGapScaleFactor,
+            iconEnabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
+            iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
+            iconActiveFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT
+        )
+    )
+}
+
+@Composable
 fun CommandDemoStyleStrip(
     enabled: Boolean,
     orientation: StripOrientation,
@@ -246,7 +309,10 @@ fun CommandDemoStyleStrip(
         ),
         presentationModel = CommandStripPresentationModel(
             orientation = orientation,
-            horizontalGapScaleFactor = horizontalGapScaleFactor
+            horizontalGapScaleFactor = horizontalGapScaleFactor,
+            iconEnabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
+            iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
+            iconActiveFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT
         )
     )
 }
@@ -487,6 +553,13 @@ fun DemoCommandContent() {
                     enabled = actionEnabled,
                     orientation = StripOrientation.HORIZONTAL,
                     style = style,
+                    horizontalGapScaleFactor = CommandStripPresentationModel.DEFAULT_GAP_SCALE_FACTOR_PRIMARY_AXIS
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                CommandDemoEditStrip(
+                    actionEnabled = actionEnabled,
+                    popupEnabled = popupEnabled,
+                    orientation = StripOrientation.HORIZONTAL,
                     horizontalGapScaleFactor = CommandStripPresentationModel.DEFAULT_GAP_SCALE_FACTOR_PRIMARY_AXIS
                 )
             }

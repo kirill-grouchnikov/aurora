@@ -114,9 +114,9 @@ internal class CommandButtonLayoutManagerBig(
     private fun getPreferredSize(
         command: Command,
         presentationModel: CommandButtonPresentationModel,
-        preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
-        paddingValues: PaddingValues
+        preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): Size {
+        val paddingValues = presentationModel.contentPadding
         val bx = presentationModel.horizontalGapScaleFactor *
             (paddingValues.calculateStartPadding(layoutDirection) +
                     paddingValues.calculateEndPadding(layoutDirection)).toPx()
@@ -225,14 +225,11 @@ internal class CommandButtonLayoutManagerBig(
         constraints: Constraints,
         command: Command,
         presentationModel: CommandButtonPresentationModel,
-        preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
-        paddingValues: PaddingValues
+        preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
-        val preferredSize = getPreferredSize(
-            command, presentationModel,
-            preLayoutInfo, paddingValues
-        )
+        val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo)
 
+        val paddingValues = presentationModel.contentPadding
         val startInset = presentationModel.horizontalGapScaleFactor *
                 paddingValues.calculateStartPadding(layoutDirection).toPx()
         val endInset = presentationModel.horizontalGapScaleFactor *

@@ -29,7 +29,6 @@
  */
 package org.pushingpixels.aurora.component.layout
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.ui.geometry.Rect
@@ -64,15 +63,16 @@ internal open class CommandButtonLayoutManagerMedium(
     private fun getPreferredSize(
         command: Command,
         presentationModel: CommandButtonPresentationModel,
-        paddingValues: PaddingValues
+        preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): Size {
+        val paddingValues = presentationModel.contentPadding
         val by = presentationModel.verticalGapScaleFactor *
                 (paddingValues.calculateTopPadding() + paddingValues.calculateBottomPadding()).toPx()
         val buttonText = command.text
         val layoutHGap = (2.dp * presentationModel.horizontalGapScaleFactor).toPx()
         val hasIcon = (command.iconFactory != null)
         val hasText = (buttonText != null)
-        val hasPopupIcon = (command.secondaryContentModel != null)
+        val hasPopup = (command.secondaryContentModel != null)
         val prefIconSize = getPreferredIconSize(command, presentationModel).toPx()
 
         // start with the left insets
@@ -108,7 +108,7 @@ internal open class CommandButtonLayoutManagerMedium(
             width += layoutHGap
         }
         // popup icon?
-        if (hasPopupIcon) {
+        if (hasPopup) {
             // padding before the popup icon
             if (hasText && hasIcon) {
                 width += 2 * layoutHGap
@@ -119,8 +119,10 @@ internal open class CommandButtonLayoutManagerMedium(
             width += 2 * layoutHGap
         }
 
-        // space for a vertical separator
-        width += SeparatorSizingConstants.Thickness.toPx()
+        if (preLayoutInfo.commandButtonKind.hasAction and preLayoutInfo.commandButtonKind.hasPopup) {
+            // space for a vertical separator
+            width += SeparatorSizingConstants.Thickness.toPx()
+        }
 
         // right insets
         width += presentationModel.horizontalGapScaleFactor *
@@ -163,10 +165,9 @@ internal open class CommandButtonLayoutManagerMedium(
         constraints: Constraints,
         command: Command,
         presentationModel: CommandButtonPresentationModel,
-        preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
-        paddingValues: PaddingValues
+        preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
-        val preferredSize = getPreferredSize(command, presentationModel, paddingValues)
+        val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo)
 
         val buttonText = command.text
         val layoutHGap = (2.dp * presentationModel.horizontalGapScaleFactor).toPx()
@@ -211,6 +212,7 @@ internal open class CommandButtonLayoutManagerMedium(
         }
 
         // TODO - support RTL
+        val paddingValues = presentationModel.contentPadding
         var x = presentationModel.horizontalGapScaleFactor *
                 paddingValues.calculateStartPadding(layoutDirection).toPx() + shiftX - layoutHGap
 

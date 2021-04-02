@@ -61,8 +61,9 @@ internal class CommandButtonLayoutManagerTile(
     private fun getPreferredSize(
         command: Command,
         presentationModel: CommandButtonPresentationModel,
-        paddingValues: PaddingValues
+        preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): Size {
+        val paddingValues = presentationModel.contentPadding
         val by = presentationModel.verticalGapScaleFactor *
             (paddingValues.calculateTopPadding() + paddingValues.calculateBottomPadding()).toPx()
         val buttonText = command.text
@@ -123,6 +124,11 @@ internal class CommandButtonLayoutManagerTile(
             width += 2 * layoutHGap
         }
 
+        if (preLayoutInfo.commandButtonKind.hasAction and preLayoutInfo.commandButtonKind.hasPopup) {
+            // space for a vertical separator
+            width += SeparatorSizingConstants.Thickness.toPx()
+        }
+
         // right insets
         width += presentationModel.horizontalGapScaleFactor *
                 paddingValues.calculateEndPadding(layoutDirection).toPx()
@@ -164,10 +170,9 @@ internal class CommandButtonLayoutManagerTile(
         constraints: Constraints,
         command: Command,
         presentationModel: CommandButtonPresentationModel,
-        preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
-        paddingValues: PaddingValues
+        preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
-        val preferredSize = getPreferredSize(command, presentationModel, paddingValues)
+        val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo)
 
         val buttonText = command.text
         val buttonExtraText = command.extraText
@@ -217,6 +222,7 @@ internal class CommandButtonLayoutManagerTile(
         // TODO - support RTL
 
 //        if (ltr) {
+        val paddingValues = presentationModel.contentPadding
         var x = presentationModel.horizontalGapScaleFactor *
                 paddingValues.calculateStartPadding(layoutDirection).toPx() + shiftX - layoutHGap
 

@@ -292,6 +292,7 @@ fun DemoArea(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Row(modifier = Modifier.fillMaxWidth()) {
+                // Example of a checkbox backed by a mutable boolean
                 var checkboxSelected by remember { mutableStateOf(true) }
                 AuroraCheckBox(
                     selected = checkboxSelected,
@@ -306,6 +307,7 @@ fun DemoArea(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
+                // Example of a radio button backed by a mutable boolean
                 var radioButtonSelected by remember { mutableStateOf(true) }
                 AuroraRadioButton(
                     selected = radioButtonSelected,
@@ -322,6 +324,7 @@ fun DemoArea(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                // Example of a toggle command button backed by a mutable boolean
                 var toggleButtonSelected by remember { mutableStateOf(true) }
                 AuroraCommandButton(
                     command = Command(
@@ -344,6 +347,7 @@ fun DemoArea(
                         iconActiveFilterStrategy = IconFilterStrategy.ORIGINAL,
                     )
                 )
+                // Example of a command button that never displays background
                 AuroraCommandButton(
                     command = Command(
                         text = "never",
@@ -354,6 +358,8 @@ fun DemoArea(
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.NEVER
                     )
                 )
+                // Example of a flat command button with displays background when it's
+                // active (rollover, pressed, etc)
                 AuroraCommandButton(
                     command = Command(
                         text = "flat",
@@ -366,6 +372,7 @@ fun DemoArea(
                         iconDimension = 20.dp
                     )
                 )
+                // Example of a  command button that always displays background
                 AuroraCommandButton(
                     command = Command(
                         text = "always",
@@ -381,16 +388,19 @@ fun DemoArea(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
+                // Example of a circular progress indicator
                 AuroraCircularProgress(enabled = contentEnabled.value)
 
                 Spacer(modifier = Modifier.width(8.dp))
 
+                // Example of a larger circular progress indicator
                 AuroraCircularProgress(
                     modifier = Modifier.size(14.dp),
                     enabled = contentEnabled.value
                 )
             }
             Row(modifier = Modifier.fillMaxWidth()) {
+                // Example of a command button strip
                 AuroraCommandButtonStrip(
                     commandGroup = styleCommands,
                     presentationModel = CommandStripPresentationModel(
@@ -401,6 +411,7 @@ fun DemoArea(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
+                // Example of an icon-only button with smaller content padding around the icon
                 AuroraCommandButton(
                     command = Command(
                         text = "always",
@@ -420,6 +431,7 @@ fun DemoArea(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
+                // Example of an icon-only button with larger content padding around the icon
                 AuroraCommandButton(
                     command = Command(
                         text = "always",
@@ -432,13 +444,13 @@ fun DemoArea(
                     presentationModel = CommandButtonPresentationModel(
                         presentationState = CommandButtonPresentationState.SMALL,
                         iconDimension = 24.dp,
-                        horizontalGapScaleFactor = 1.25f,
-                        verticalGapScaleFactor = 1.25f
+                        contentPadding = PaddingValues(8.dp)
                     )
                 )
 
                 Spacer(modifier = Modifier.width(20.dp))
 
+                // Example of a simple combobox
                 val simpleComboItems = listOf("one", "two", "three")
                 val simpleComboSelectedItem = remember { mutableStateOf(simpleComboItems[1]) }
                 AuroraComboBox(
@@ -455,6 +467,7 @@ fun DemoArea(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
+                // Example of a combobox with display converter for more complex data
                 val personComboItems =
                     listOf(
                         Person("Bob", "Loblaw"),
@@ -475,6 +488,8 @@ fun DemoArea(
                 )
             }
 
+            // Example of comboboxes with different popup placements, all updating and being
+            // updated by the same mutable selection tracker
             val snowComboItems =
                 listOf(
                     Person("Jon", "Snow"),
@@ -564,16 +579,19 @@ fun DemoArea(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // Example of an indeterminate linear progress bar
                 AuroraIndeterminateLinearProgress(
                     enabled = contentEnabled.value
                 )
 
                 Spacer(modifier = Modifier.width(16.dp))
 
+                // Example of an determinate linear progress bar
                 DemoProgress(enabled = contentEnabled.value)
             }
 
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
+                // Example of a continuous slider
                 var sliderValue1 by remember { mutableStateOf(0.5f) }
                 AuroraSlider(
                     value = sliderValue1,
@@ -588,6 +606,7 @@ fun DemoArea(
 
                 Spacer(modifier = Modifier.width(16.dp))
 
+                // Example of a discrete slider
                 var sliderValue2 by remember { mutableStateOf(50f) }
                 AuroraSlider(
                     value = sliderValue2,

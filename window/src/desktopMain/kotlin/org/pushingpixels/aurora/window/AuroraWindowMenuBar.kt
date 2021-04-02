@@ -66,9 +66,9 @@ private object WindowMenuBarLayout {
 
         private fun getPreferredSize(
             command: Command,
-            presentationModel: CommandButtonPresentationModel,
-            paddingValues: PaddingValues
+            presentationModel: CommandButtonPresentationModel
         ): Size {
+            val paddingValues = presentationModel.contentPadding
             val by = presentationModel.verticalGapScaleFactor *
                     (paddingValues.calculateTopPadding() + paddingValues.calculateBottomPadding()).toPx()
             val bx = presentationModel.horizontalGapScaleFactor *
@@ -116,11 +116,11 @@ private object WindowMenuBarLayout {
             constraints: Constraints,
             command: Command,
             presentationModel: CommandButtonPresentationModel,
-            preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
-            paddingValues: PaddingValues
+            preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
         ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
-            val preferredSize = getPreferredSize(command, presentationModel, paddingValues)
+            val preferredSize = getPreferredSize(command, presentationModel)
 
+            val paddingValues = presentationModel.contentPadding
             val top = presentationModel.verticalGapScaleFactor *
                     paddingValues.calculateTopPadding().toPx()
             val left = presentationModel.horizontalGapScaleFactor *
@@ -208,6 +208,7 @@ internal fun AuroraWindowMenuBar(menuCommands: CommandGroup) {
                     presentationModel = CommandButtonPresentationModel(
                         presentationState = WindowMenuBarLayout.MENU_BAR,
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                        contentPadding = CommandButtonSizingConstants.WideButtonContentPadding,
                         isMenu = true
                     )
                 )

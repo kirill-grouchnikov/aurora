@@ -29,10 +29,17 @@
  */
 package org.pushingpixels.aurora.component.model
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.IconFilterStrategy
 import org.pushingpixels.aurora.PopupPlacementStrategy
+
+object CommandButtonSizingConstants {
+    val WideButtonContentPadding = PaddingValues(start = 10.dp, top = 4.dp, end = 10.dp, bottom = 4.dp)
+    val CompactButtonContentPadding = PaddingValues(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
+}
 
 data class CommandButtonPresentationModel(
     val presentationState: CommandButtonPresentationState = CommandButtonPresentationState.MEDIUM,
@@ -44,6 +51,7 @@ data class CommandButtonPresentationModel(
     val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.ORIGINAL,
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.DOWNWARD,
     val textClick: TextClick = TextClick.ACTION,
+    val contentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
     val horizontalGapScaleFactor: Float = 1.0f,
     val verticalGapScaleFactor: Float = 1.0f,
     val isMenu: Boolean = false
@@ -58,6 +66,7 @@ data class CommandButtonPresentationModel(
         val iconActiveFilterStrategy: IconFilterStrategy? = null,
         val popupPlacementStrategy: PopupPlacementStrategy? = null,
         val textClick: TextClick? = null,
+        val contentPadding: PaddingValues? = null,
         val horizontalGapScaleFactor: Float? = null,
         val verticalGapScaleFactor: Float? = null,
         val isMenu: Boolean? = null,
@@ -75,6 +84,7 @@ data class CommandButtonPresentationModel(
             iconActiveFilterStrategy = overlay.iconActiveFilterStrategy ?: this.iconActiveFilterStrategy,
             popupPlacementStrategy = overlay.popupPlacementStrategy ?: this.popupPlacementStrategy,
             textClick = overlay.textClick ?: this.textClick,
+            contentPadding = overlay.contentPadding ?: this.contentPadding,
             horizontalGapScaleFactor = overlay.horizontalGapScaleFactor ?: this.horizontalGapScaleFactor,
             verticalGapScaleFactor = overlay.verticalGapScaleFactor ?: this.verticalGapScaleFactor,
             isMenu = overlay.isMenu ?: this.isMenu
