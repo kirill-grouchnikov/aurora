@@ -115,7 +115,8 @@ class CommandDemoStyle(
 fun CommandDemoJustifyStrip(
     enabled: Boolean,
     orientation: StripOrientation,
-    alignment: MutableState<CommandDemoAlignment>
+    alignment: MutableState<CommandDemoAlignment>,
+    horizontalGapScaleFactor: Float
 ) {
     val commandAlignCenter =
         Command(
@@ -171,7 +172,10 @@ fun CommandDemoJustifyStrip(
                 commandAlignFill
             )
         ),
-        presentationModel = CommandStripPresentationModel(orientation = orientation)
+        presentationModel = CommandStripPresentationModel(
+            orientation = orientation,
+            horizontalGapScaleFactor = horizontalGapScaleFactor
+        )
     )
 }
 
@@ -179,7 +183,8 @@ fun CommandDemoJustifyStrip(
 fun CommandDemoStyleStrip(
     enabled: Boolean,
     orientation: StripOrientation,
-    style: CommandDemoStyle
+    style: CommandDemoStyle,
+    horizontalGapScaleFactor: Float
 ) {
     val commandBold =
         Command(
@@ -239,7 +244,10 @@ fun CommandDemoStyleStrip(
                 commandStrikethrough
             )
         ),
-        presentationModel = CommandStripPresentationModel(orientation = orientation)
+        presentationModel = CommandStripPresentationModel(
+            orientation = orientation,
+            horizontalGapScaleFactor = horizontalGapScaleFactor
+        )
     )
 }
 
@@ -428,23 +436,25 @@ fun DemoCommandContent() {
         strikethrough = remember { mutableStateOf(false) },
     )
 
-    Row(modifier = Modifier.fillMaxHeight().fillMaxWidth().padding(4.dp)) {
+    Row(modifier = Modifier.fillMaxSize().padding(4.dp)) {
         Box(modifier = Modifier.padding(8.dp)) {
             CommandDemoJustifyStrip(
                 enabled = actionEnabled,
                 orientation = StripOrientation.VERTICAL,
-                alignment = alignment
+                alignment = alignment,
+                horizontalGapScaleFactor = 0.7f
             )
         }
         Box(modifier = Modifier.padding(8.dp)) {
             CommandDemoStyleStrip(
                 enabled = actionEnabled,
                 orientation = StripOrientation.VERTICAL,
-                style = style
+                style = style,
+                horizontalGapScaleFactor = 0.7f
             )
         }
 
-        Column(modifier = Modifier.fillMaxHeight().fillMaxWidth()) {
+        Column(modifier = Modifier.fillMaxSize()) {
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
                 AuroraCheckBox(
                     selected = actionEnabled,
@@ -469,13 +479,15 @@ fun DemoCommandContent() {
                 CommandDemoJustifyStrip(
                     enabled = actionEnabled,
                     orientation = StripOrientation.HORIZONTAL,
-                    alignment = alignment
+                    alignment = alignment,
+                    horizontalGapScaleFactor = CommandStripPresentationModel.DEFAULT_GAP_SCALE_FACTOR_PRIMARY_AXIS
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 CommandDemoStyleStrip(
                     enabled = actionEnabled,
                     orientation = StripOrientation.HORIZONTAL,
-                    style = style
+                    style = style,
+                    horizontalGapScaleFactor = CommandStripPresentationModel.DEFAULT_GAP_SCALE_FACTOR_PRIMARY_AXIS
                 )
             }
 

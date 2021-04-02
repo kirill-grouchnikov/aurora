@@ -609,7 +609,7 @@ fun DemoArea(
 
 @Composable
 fun DemoContent() {
-    var contentEnabled = remember { mutableStateOf(true) }
+    val contentEnabled = remember { mutableStateOf(true) }
     val alignment = remember { mutableStateOf(DemoAlignment.CENTER) }
 
     val style = DemoStyle(
@@ -713,7 +713,7 @@ fun DemoContent() {
         )
     )
 
-    Column(modifier = Modifier.fillMaxHeight().fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxSize()) {
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.TOOLBAR) {
             DemoToolbar(alignmentCommands = alignmentCommands, styleCommands = styleCommands)
         }

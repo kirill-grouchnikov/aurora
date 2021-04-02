@@ -63,7 +63,7 @@ internal class CommandButtonLayoutManagerTile(
         presentationModel: CommandButtonPresentationModel,
         paddingValues: PaddingValues
     ): Size {
-        val by =
+        val by = presentationModel.verticalGapScaleFactor *
             (paddingValues.calculateTopPadding() + paddingValues.calculateBottomPadding()).toPx()
         val buttonText = command.text
         val extraText = command.extraText
@@ -74,7 +74,8 @@ internal class CommandButtonLayoutManagerTile(
         val prefIconSize = getPreferredIconSize(command, presentationModel).toPx()
 
         // start with the left insets
-        var width = paddingValues.calculateStartPadding(layoutDirection).toPx()
+        var width = presentationModel.horizontalGapScaleFactor *
+                paddingValues.calculateStartPadding(layoutDirection).toPx()
         // icon?
         if (hasIcon) {
             // padding before the icon
@@ -123,7 +124,8 @@ internal class CommandButtonLayoutManagerTile(
         }
 
         // right insets
-        width += paddingValues.calculateEndPadding(layoutDirection).toPx()
+        width += presentationModel.horizontalGapScaleFactor *
+                paddingValues.calculateEndPadding(layoutDirection).toPx()
 
         // and remove the padding before the first and after the last elements
         width -= 2 * layoutHGap
@@ -215,7 +217,8 @@ internal class CommandButtonLayoutManagerTile(
         // TODO - support RTL
 
 //        if (ltr) {
-        var x = paddingValues.calculateStartPadding(layoutDirection).toPx() + shiftX - layoutHGap
+        var x = presentationModel.horizontalGapScaleFactor *
+                paddingValues.calculateStartPadding(layoutDirection).toPx() + shiftX - layoutHGap
 
         // icon
         if (hasIcon) {

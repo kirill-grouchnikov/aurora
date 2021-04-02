@@ -52,7 +52,7 @@ internal open class CommandButtonLayoutManagerMedium(
     override val fontScale = _density.fontScale
 
     protected val iconTextGapFactor: Float
-        protected get() = 1.0f
+        get() = 1.0f
 
     override fun getPreferredIconSize(
         command: Command,
@@ -66,8 +66,8 @@ internal open class CommandButtonLayoutManagerMedium(
         presentationModel: CommandButtonPresentationModel,
         paddingValues: PaddingValues
     ): Size {
-        val by =
-            (paddingValues.calculateTopPadding() + paddingValues.calculateBottomPadding()).toPx()
+        val by = presentationModel.verticalGapScaleFactor *
+                (paddingValues.calculateTopPadding() + paddingValues.calculateBottomPadding()).toPx()
         val buttonText = command.text
         val layoutHGap = (2.dp * presentationModel.horizontalGapScaleFactor).toPx()
         val hasIcon = (command.iconFactory != null)
@@ -76,7 +76,8 @@ internal open class CommandButtonLayoutManagerMedium(
         val prefIconSize = getPreferredIconSize(command, presentationModel).toPx()
 
         // start with the left insets
-        var width = paddingValues.calculateStartPadding(layoutDirection).toPx()
+        var width = presentationModel.horizontalGapScaleFactor *
+                paddingValues.calculateStartPadding(layoutDirection).toPx()
         // icon?
         if (hasIcon) {
             // padding before the icon
@@ -122,7 +123,8 @@ internal open class CommandButtonLayoutManagerMedium(
         width += SeparatorSizingConstants.Thickness.toPx()
 
         // right insets
-        width += paddingValues.calculateEndPadding(layoutDirection).toPx()
+        width += presentationModel.horizontalGapScaleFactor *
+                paddingValues.calculateEndPadding(layoutDirection).toPx()
 
         // and remove the padding before the first and after the last elements
         width -= 2 * layoutHGap
@@ -209,7 +211,8 @@ internal open class CommandButtonLayoutManagerMedium(
         }
 
         // TODO - support RTL
-        var x = paddingValues.calculateStartPadding(layoutDirection).toPx() + shiftX - layoutHGap
+        var x = presentationModel.horizontalGapScaleFactor *
+                paddingValues.calculateStartPadding(layoutDirection).toPx() + shiftX - layoutHGap
 
         // icon
         if (hasIcon) {

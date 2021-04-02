@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2021 Radiance Kirill Grouchnikov. All Rights Reserved.
+ * Copyright (c) 2020-2021 Aurora, Kirill Grouchnikov. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -117,7 +117,7 @@ internal class CommandButtonLayoutManagerBig(
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
         paddingValues: PaddingValues
     ): Size {
-        val bx =
+        val bx = presentationModel.horizontalGapScaleFactor *
             (paddingValues.calculateStartPadding(layoutDirection) +
                     paddingValues.calculateEndPadding(layoutDirection)).toPx()
         val buttonText = command.text
@@ -147,7 +147,8 @@ internal class CommandButtonLayoutManagerBig(
         val width = max(prefIconSize, titleWidth)
 
         // start height with the top inset
-        var height = paddingValues.calculateTopPadding().toPx()
+        var height = presentationModel.verticalGapScaleFactor *
+                paddingValues.calculateTopPadding().toPx()
         // icon?
         if (hasIcon) {
             // padding above the icon
@@ -182,7 +183,8 @@ internal class CommandButtonLayoutManagerBig(
         height += SeparatorSizingConstants.Thickness.toPx()
 
         // bottom insets
-        height += paddingValues.calculateBottomPadding().toPx()
+        height += presentationModel.verticalGapScaleFactor *
+                paddingValues.calculateBottomPadding().toPx()
 
         // and remove the padding above the first and below the last elements
         height -= 2 * layoutVGap
@@ -231,9 +233,10 @@ internal class CommandButtonLayoutManagerBig(
             preLayoutInfo, paddingValues
         )
 
-        val startInset = paddingValues.calculateStartPadding(layoutDirection).toPx()
-        val endInset = paddingValues.calculateEndPadding(layoutDirection).toPx()
-        val buttonText = command.text
+        val startInset = presentationModel.horizontalGapScaleFactor *
+                paddingValues.calculateStartPadding(layoutDirection).toPx()
+        val endInset = presentationModel.horizontalGapScaleFactor *
+                paddingValues.calculateEndPadding(layoutDirection).toPx()
         val layoutHGap = (2.dp * presentationModel.horizontalGapScaleFactor).toPx()
         val layoutVGap = (2.dp * presentationModel.verticalGapScaleFactor).toPx()
         val hasIcon = (command.iconFactory != null)
@@ -262,7 +265,8 @@ internal class CommandButtonLayoutManagerBig(
             finalWidth = constraints.maxWidth.toFloat()
         }
 
-        var y = paddingValues.calculateTopPadding().toPx() + shiftY - layoutVGap
+        var y = presentationModel.verticalGapScaleFactor *
+                paddingValues.calculateTopPadding().toPx() + shiftY - layoutVGap
 
         // icon
         if (hasIcon) {
@@ -293,8 +297,6 @@ internal class CommandButtonLayoutManagerBig(
         y += SeparatorSizingConstants.Thickness.toPx()
 
         var lastTextLineWidth = 0.0f
-        // text
-        //if (hasText) {
         y += layoutVGap
 
         val title1Line = Paragraph(

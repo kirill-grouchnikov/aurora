@@ -139,7 +139,6 @@ internal class CommandButtonLayoutManagerSmall(
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
         val preferredSize = getPreferredSize(command, presentationModel, paddingValues)
 
-        val buttonText = command.text
         val layoutHGap = (2.dp * presentationModel.horizontalGapScaleFactor).toPx()
         val hasIcon = (command.iconFactory != null)
         val hasPopup = (command.secondaryContentModel != null)
