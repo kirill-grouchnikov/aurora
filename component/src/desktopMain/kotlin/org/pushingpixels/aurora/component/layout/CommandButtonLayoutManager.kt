@@ -90,6 +90,7 @@ interface CommandButtonLayoutManager : MeasureScope {
         val extraTexts: List<String>,
         val isTextInActionArea: Boolean,
         val separatorOrientation: CommandButtonSeparatorOrientation?,
+        val showPopupIcon: Boolean
     )
 
     /**

@@ -41,7 +41,6 @@ import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.tango.*
-import org.pushingpixels.aurora.icon.AuroraThemedFollowTextIcon
 import org.pushingpixels.aurora.skin.marinerSkin
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
@@ -52,7 +51,28 @@ fun main() {
         skin = marinerSkin(),
         title = "Aurora Demo",
         size = IntSize(660, 660),
-        undecorated = true
+        undecorated = true,
+        menuCommands = CommandGroup(
+            commands = listOf(
+                Command(
+                    text = "File",
+                    secondaryContentModel = CommandMenuContentModel(
+                        CommandGroup(
+                            commands = listOf(
+                                Command(text = "New", action = { println("New file!") }),
+                                Command(text = "Open", action = { println("Open file!") }),
+                                Command(text = "Save", action = { println("Save file!") })
+                            )
+                        )
+                    )
+                ),
+                Command(text = "Edit", action = { println("Edit activated!") }),
+                Command(text = "View", action = { println("View activated!") }),
+                Command(text = "Tools", action = { println("Tools activated!") }),
+                Command(text = "Window", action = { println("Window activated!") }),
+                Command(text = "Help", action = { println("Help activated!") })
+            )
+        )
     ) {
         DemoContent()
     }
@@ -108,65 +128,6 @@ fun DemoProgress(enabled: Boolean) {
                 iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
                 iconEnabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
                 iconActiveFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT
-            )
-        )
-    }
-}
-
-@Composable
-fun DemoMenuBar(modifier: Modifier = Modifier) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .fillMaxWidth()
-            .auroraBackground()
-    ) {
-        AuroraCommandButton(
-            command = Command(text = "File"),
-            presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.MEDIUM,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                isMenu = true
-            )
-        )
-        AuroraCommandButton(
-            command = Command(text = "Edit"),
-            presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.MEDIUM,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                isMenu = true
-            )
-        )
-        AuroraCommandButton(
-            command = Command(text = "View"),
-            presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.MEDIUM,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                isMenu = true
-            )
-        )
-        AuroraCommandButton(
-            command = Command(text = "Tools"),
-            presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.MEDIUM,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                isMenu = true
-            )
-        )
-        AuroraCommandButton(
-            command = Command(text = "Window"),
-            presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.MEDIUM,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                isMenu = true
-            )
-        )
-        AuroraCommandButton(
-            command = Command(text = "Help"),
-            presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.MEDIUM,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                isMenu = true
             )
         )
     }
@@ -753,10 +714,6 @@ fun DemoContent() {
     )
 
     Column(modifier = Modifier.fillMaxHeight().fillMaxWidth()) {
-
-        AuroraDecorationArea(decorationAreaType = DecorationAreaType.HEADER) {
-            DemoMenuBar()
-        }
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.TOOLBAR) {
             DemoToolbar(alignmentCommands = alignmentCommands, styleCommands = styleCommands)
         }

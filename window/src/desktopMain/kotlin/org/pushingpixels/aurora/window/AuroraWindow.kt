@@ -50,6 +50,7 @@ import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
+import org.pushingpixels.aurora.component.model.CommandGroup
 import org.pushingpixels.aurora.component.utils.TransitionAwareIcon
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.shaper.AuroraButtonShaper
@@ -66,6 +67,7 @@ private fun AuroraWindowContent(
     title: String,
     icon: BufferedImage?,
     undecorated: Boolean,
+    menuCommands: CommandGroup? = null,
     content: @Composable () -> Unit
 ) {
     val density = LocalDensity.current.density
@@ -244,6 +246,9 @@ private fun AuroraWindowContent(
                 }
             }
         }
+        if (menuCommands != null) {
+            AuroraWindowMenuBar(menuCommands)
+        }
         content()
     }
 
@@ -293,7 +298,7 @@ fun AuroraWindow(
     location: IntOffset = IntOffset.Zero,
     centered: Boolean = true,
     icon: BufferedImage? = null,
-    menuBar: MenuBar? = null,
+    menuCommands: CommandGroup? = null,
     undecorated: Boolean = false,
     resizable: Boolean = true,
     events: WindowEvents = WindowEvents(),
@@ -305,7 +310,7 @@ fun AuroraWindow(
     location = location,
     centered = centered,
     icon = icon,
-    menuBar = menuBar,
+    menuBar = null,
     undecorated = undecorated,
     resizable = resizable,
     events = events,
@@ -322,6 +327,7 @@ fun AuroraWindow(
             title = title,
             icon = icon,
             undecorated = undecorated,
+            menuCommands = menuCommands,
             content = content
         )
     }

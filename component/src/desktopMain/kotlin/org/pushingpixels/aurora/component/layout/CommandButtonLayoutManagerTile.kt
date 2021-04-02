@@ -153,7 +153,8 @@ internal class CommandButtonLayoutManagerTile(
             extraTexts = if (command.extraText != null) listOf(command.extraText) else emptyList(),
             isTextInActionArea = (hasAction or command.isActionToggle) &&
                     (presentationModel.textClick == TextClick.ACTION),
-            separatorOrientation = CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL
+            separatorOrientation = CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL,
+            showPopupIcon = commandButtonKind.hasPopup
         )
     }
 

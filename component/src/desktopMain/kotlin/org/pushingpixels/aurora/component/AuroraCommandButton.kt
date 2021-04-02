@@ -822,7 +822,7 @@ internal fun AuroraCommandButton(
             }
 
             // Popup action (arrow) if we need one
-            if (hasPopup) {
+            if (preLayoutInfo.showPopupIcon) {
                 CommandButtonPopupIconContent(
                     presentationModel,
                     popupModelStateInfo,
@@ -913,7 +913,7 @@ internal fun AuroraCommandButton(
         }
 
         var popupIconPlaceable: Placeable? = null
-        if (hasPopup) {
+        if (preLayoutInfo.showPopupIcon) {
             val popupIconMeasurable = measurables[childIndex++]
             popupIconPlaceable = popupIconMeasurable.measure(
                 Constraints.fixed(

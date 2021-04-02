@@ -125,7 +125,8 @@ internal class CommandButtonLayoutManagerSmall(
             extraTexts = emptyList(),
             isTextInActionArea = (hasAction or command.isActionToggle) &&
                     (presentationModel.textClick == TextClick.ACTION),
-            separatorOrientation = CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL
+            separatorOrientation = CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL,
+            showPopupIcon = commandButtonKind.hasPopup
         )
     }
 
