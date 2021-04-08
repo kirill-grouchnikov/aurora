@@ -102,7 +102,7 @@ fun DemoProgress(enabled: Boolean) {
         AuroraCommandButton(
             command = Command(text = "",
                 iconFactory = remove_circle_outline_24px.factory(),
-                isActionEnabled = (progress > 0.0f),
+                isActionEnabled = enabled and (progress > 0.0f),
                 action = { progress -= 0.1f }),
             presentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.SMALL,
@@ -119,7 +119,7 @@ fun DemoProgress(enabled: Boolean) {
         AuroraCommandButton(
             command = Command(text = "",
                 iconFactory = add_circle_outline_24px.factory(),
-                isActionEnabled = (progress < 1.0f),
+                isActionEnabled = enabled and (progress < 1.0f),
                 action = { progress += 0.1f }),
             presentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.SMALL,
@@ -281,12 +281,11 @@ fun DemoArea(
             .auroraBackground()
             .padding(8.dp)
     ) {
-        AuroraCheckBox(
+        AuroraCheckBox(contentModel = CheckBoxContentModel(
+            text = "content enabled",
             selected = contentEnabled.value,
             onTriggerSelectedChange = { contentEnabled.value = !contentEnabled.value }
-        ) {
-            AuroraText(text = "content enabled")
-        }
+        ))
         Column(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -294,16 +293,15 @@ fun DemoArea(
             Row(modifier = Modifier.fillMaxWidth()) {
                 // Example of a checkbox backed by a mutable boolean
                 var checkboxSelected by remember { mutableStateOf(true) }
-                AuroraCheckBox(
+                AuroraCheckBox(contentModel = CheckBoxContentModel(
+                    text = "sample check",
+                    enabled = contentEnabled.value,
                     selected = checkboxSelected,
                     onTriggerSelectedChange = {
                         println("Selected checkbox? $it")
                         checkboxSelected = it
-                    },
-                    enabled = contentEnabled.value
-                ) {
-                    AuroraText(text = "sample check")
-                }
+                    }
+                ))
 
                 Spacer(modifier = Modifier.width(8.dp))
 

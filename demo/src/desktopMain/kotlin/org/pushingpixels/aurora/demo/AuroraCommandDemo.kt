@@ -522,19 +522,17 @@ fun DemoCommandContent() {
 
         Column(modifier = Modifier.fillMaxSize()) {
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
-                AuroraCheckBox(
+                AuroraCheckBox(contentModel = CheckBoxContentModel(
+                    text = "action enabled",
                     selected = actionEnabled,
                     onTriggerSelectedChange = { actionEnabled = !actionEnabled }
-                ) {
-                    AuroraText(text = "action enabled")
-                }
+                ))
                 Spacer(modifier = Modifier.width(8.dp))
-                AuroraCheckBox(
+                AuroraCheckBox(contentModel = CheckBoxContentModel(
+                    text = "popup enabled",
                     selected = popupEnabled,
                     onTriggerSelectedChange = { popupEnabled = !popupEnabled }
-                ) {
-                    AuroraText(text = "popup enabled")
-                }
+                ))
             }
 
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {

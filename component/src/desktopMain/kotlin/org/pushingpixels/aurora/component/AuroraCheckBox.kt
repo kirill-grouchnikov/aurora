@@ -47,6 +47,10 @@ import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
+import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.component.model.CheckBoxContentModel
+import org.pushingpixels.aurora.component.model.CheckBoxPresentationModel
+import org.pushingpixels.aurora.component.model.CheckBoxSizingConstants
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.utils.getBaseOutline
 
@@ -66,38 +70,12 @@ private class CheckBoxDrawingCache(
     val markPath: Path = Path()
 )
 
-object CheckBoxConstants {
-    val CheckboxSize = 14.dp
-    val DefaultCheckBoxContentPadding = PaddingValues(start = 4.dp, top = 10.dp, end = 4.dp, bottom = 8.dp)
-}
-
 @Composable
 fun AuroraCheckBox(
-    modifier: Modifier = Modifier,
-    selected: Boolean = false,
-    onTriggerSelectedChange: (Boolean) -> Unit,
-    enabled: Boolean = true,
-    content: @Composable RowScope.() -> Unit
+    contentModel: CheckBoxContentModel,
+    presentationModel: CheckBoxPresentationModel = CheckBoxPresentationModel()
 ) {
-    AuroraCheckBox(
-        modifier = modifier,
-        selected = selected,
-        onTriggerSelectedChange = onTriggerSelectedChange,
-        enabled = enabled,
-        interactionSource = remember { MutableInteractionSource() },
-        content = content
-    )
-}
-
-@Composable
-private fun AuroraCheckBox(
-    modifier: Modifier = Modifier,
-    selected: Boolean,
-    onTriggerSelectedChange: (Boolean) -> Unit,
-    enabled: Boolean,
-    interactionSource: MutableInteractionSource,
-    content: @Composable RowScope.() -> Unit
-) {
+    val interactionSource = remember { MutableInteractionSource() }
     val drawingCache = remember { CheckBoxDrawingCache() }
     var rollover by remember { mutableStateOf(false) }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -105,18 +83,18 @@ private fun AuroraCheckBox(
     val currentState = remember {
         mutableStateOf(
             ComponentState.getState(
-                isEnabled = enabled,
+                isEnabled = contentModel.enabled,
                 isRollover = rollover,
-                isSelected = selected,
+                isSelected = contentModel.selected,
                 isPressed = isPressed
             )
         )
     }
 
-    val markAlpha = remember { mutableStateOf(if (selected) 1.0f else 0.0f) }
+    val markAlpha = remember { mutableStateOf(if (contentModel.selected) 1.0f else 0.0f) }
 
     // Transition for the selection state
-    val selectionTransition = updateTransition(selected)
+    val selectionTransition = updateTransition(contentModel.selected)
     val selectedFraction by selectionTransition.animateFloat(
         transitionSpec = {
             tween(durationMillis = AuroraSkin.animationConfig.regular)
@@ -155,7 +133,7 @@ private fun AuroraCheckBox(
     }
 
     // Transition for the enabled state
-    val enabledTransition = updateTransition(enabled)
+    val enabledTransition = updateTransition(contentModel.enabled)
     val enabledFraction by enabledTransition.animateFloat(
         transitionSpec = {
             tween(durationMillis = AuroraSkin.animationConfig.regular)
@@ -179,8 +157,8 @@ private fun AuroraCheckBox(
         modelStateInfo = modelStateInfo,
         currentState = currentState,
         transitionInfo = transitionInfo,
-        enabled = enabled,
-        selected = selected,
+        enabled = contentModel.enabled,
+        selected = contentModel.selected,
         rollover = rollover,
         pressed = isPressed,
         duration = AuroraSkin.animationConfig.regular
@@ -216,7 +194,8 @@ private fun AuroraCheckBox(
     // content so that the whole thing is clickable to toggle the control.
     val decorationAreaType = AuroraSkin.decorationAreaType
     Row(
-        modifier = modifier
+        modifier = Modifier
+            .padding(presentationModel.contentPadding)
             .pointerMoveFilter(
                 onEnter = {
                     rollover = true
@@ -230,16 +209,17 @@ private fun AuroraCheckBox(
                     false
                 })
             .toggleable(
-                value = selected,
+                value = contentModel.selected,
                 onValueChange = {
-                    onTriggerSelectedChange.invoke(it)
+                    contentModel.onTriggerSelectedChange.invoke(it)
                 },
-                enabled = enabled,
+                enabled = contentModel.enabled,
                 role = Role.Checkbox,
                 interactionSource = interactionSource,
                 indication = null
             ),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = presentationModel.horizontalAlignment.arrangement
     ) {
         // Populate the cached color scheme for filling the mark box
         // based on the current model state info
@@ -301,7 +281,7 @@ private fun AuroraCheckBox(
         val fillPainter = AuroraSkin.painters.fillPainter
         val borderPainter = AuroraSkin.painters.borderPainter
 
-        Canvas(modifier.wrapContentSize(Alignment.Center).size(CheckBoxConstants.CheckboxSize)) {
+        Canvas(Modifier.wrapContentSize(Alignment.Center).size(presentationModel.checkBoxSize)) {
             val width = this.size.width
             val height = this.size.height
 
@@ -362,7 +342,7 @@ private fun AuroraCheckBox(
                 // state or transition, and the second time based on the enabled state
                 drawPath(
                     path = markPath,
-                    color = markColor.copy(alpha = markAlpha.value),
+                    color = markColor.withAlpha(markAlpha.value),
                     style = Stroke(
                         width = markStroke,
                         cap = StrokeCap.Round,
@@ -372,19 +352,21 @@ private fun AuroraCheckBox(
                 )
             }
         }
+        Spacer(modifier = Modifier.width(CheckBoxSizingConstants.CheckMarkTextGap *
+                presentationModel.horizontalGapScaleFactor))
         // Pass our text color and model state snapshot to the children
         CompositionLocalProvider(
             LocalTextColor provides textColor,
             LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value)
         ) {
-            Row(
-                Modifier
-                    .requiredSizeIn(minWidth = 0.dp, minHeight = CheckBoxConstants.CheckboxSize)
-                    .padding(CheckBoxConstants.DefaultCheckBoxContentPadding),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-                content = content
-            )
+            Box(
+                modifier = Modifier.requiredSizeIn(
+                    minWidth = 0.dp,
+                    minHeight = presentationModel.checkBoxSize
+                )
+            ) {
+                AuroraText(text = contentModel.text)
+            }
         }
     }
 }

@@ -225,7 +225,7 @@ fun Color.inverted(): Color {
 
 /** Returns the version of this color based on the specified alpha. */
 fun Color.withAlpha(alpha: Float): Color {
-    return Color(this.red, this.green, this.blue, alpha)
+    return Color(this.red, this.green, this.blue, alpha, this.colorSpace)
 }
 
 /** Returns saturated version of this color. */

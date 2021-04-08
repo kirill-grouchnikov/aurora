@@ -47,6 +47,7 @@ import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.utils.*
 
 @Immutable
@@ -355,7 +356,7 @@ private fun AuroraRadioButton(
             // state or transition, and the second time based on the enabled state
             drawOutline(
                 outline = outlineMark,
-                color = markColor.copy(alpha = markAlpha.value),
+                color = markColor.withAlpha(markAlpha.value),
                 style = Fill,
                 alpha = alpha
             )

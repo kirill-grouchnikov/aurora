@@ -29,6 +29,7 @@
  */
 package org.pushingpixels.aurora.component.model
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.unit.Density
@@ -80,8 +81,8 @@ enum class TextClick {
     ACTION, POPUP
 }
 
-enum class HorizontalAlignment {
-    LEADING, CENTER, TRAILING
+enum class HorizontalAlignment(var arrangement: Arrangement.Horizontal) {
+    LEADING(Arrangement.Start), CENTER(Arrangement.Center), TRAILING(Arrangement.End)
 }
 
 /**
