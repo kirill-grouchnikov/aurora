@@ -48,25 +48,15 @@ import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.ColorSchemeAssociationKind
 import org.pushingpixels.aurora.ComponentState
 import org.pushingpixels.aurora.ComponentStateFacet
+import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.painter.fill.FractionBasedFillPainter
 import org.pushingpixels.aurora.utils.getBaseOutline
 import kotlin.math.min
 
-object ProgressConstants {
-    val DefaultWidth = 192.dp
-    val DefaultHeight = 16.dp
-
-    val ProgressAnimationSpec = SpringSpec(
-        dampingRatio = Spring.DampingRatioNoBouncy,
-        stiffness = Spring.StiffnessVeryLow,
-        visibilityThreshold = 0.001f
-    )
-}
-
 @Composable
 fun AuroraCircularProgress(
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
+    contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
+    presentationModel: ProgressCircularPresentationModel = ProgressCircularPresentationModel()
 ) {
     val transition = rememberInfiniteTransition()
     val arcSpan by transition.animateFloat(
@@ -88,17 +78,17 @@ fun AuroraCircularProgress(
 
     val color = AuroraSkin.colors.getColorScheme(
         decorationAreaType = AuroraSkin.decorationAreaType,
-        componentState = if (enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
+        componentState = if (contentModel.enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
     ).foregroundColor
     val alpha = AuroraSkin.colors.getAlpha(
         decorationAreaType = AuroraSkin.decorationAreaType,
-        componentState = if (enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
+        componentState = if (contentModel.enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
     )
 
     Canvas(
-        modifier
+        Modifier
             .progressSemantics()
-            .size(10.dp)
+            .size(presentationModel.size)
     ) {
         val isArcGrowing = (arcSpan > prevArcSpan.value)
         if (isArcGrowing) {
@@ -165,8 +155,8 @@ private val progressFillPainter = FractionBasedFillPainter(
 
 @Composable
 fun AuroraIndeterminateLinearProgress(
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
+    presentationModel: ProgressLinearPresentationModel = ProgressLinearPresentationModel()
 ) {
     val infiniteTransition = rememberInfiniteTransition()
     val progress by infiniteTransition.animateFloat(
@@ -180,8 +170,8 @@ fun AuroraIndeterminateLinearProgress(
         )
     )
 
-    val progressState = if (enabled) INDETERMINATE_SELECTED else INDETERMINATE_SELECTED_DISABLED
-    val borderState = if (enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
+    val progressState = if (contentModel.enabled) INDETERMINATE_SELECTED else INDETERMINATE_SELECTED_DISABLED
+    val borderState = if (contentModel.enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
 
     // install state-aware alpha channel (support for skins
     // that use translucency on disabled states).
@@ -200,11 +190,11 @@ fun AuroraIndeterminateLinearProgress(
     )
 
     Canvas(
-        modifier
+        Modifier
             .progressSemantics()
             .size(
-                width = ProgressConstants.DefaultWidth,
-                height = ProgressConstants.DefaultHeight
+                width = presentationModel.primarySize,
+                height = presentationModel.secondarySize
             )
     ) {
         val valComplete = progress * (2 * size.height + 1)
@@ -276,13 +266,12 @@ fun AuroraIndeterminateLinearProgress(
 
 @Composable
 fun AuroraDeterminateLinearProgress(
-    progress: Float,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    contentModel: ProgressDeterminateContentModel,
+    presentationModel: ProgressLinearPresentationModel = ProgressLinearPresentationModel()
 ) {
-    val progressState = if (enabled) DETERMINATE_SELECTED else DETERMINATE_SELECTED_DISABLED
-    val fillState = if (enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
-    val borderState = if (enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
+    val progressState = if (contentModel.enabled) DETERMINATE_SELECTED else DETERMINATE_SELECTED_DISABLED
+    val fillState = if (contentModel.enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
+    val borderState = if (contentModel.enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
 
     // install state-aware alpha channel (support for skins
     // that use translucency on disabled states).
@@ -306,11 +295,11 @@ fun AuroraDeterminateLinearProgress(
     val fillPainter = AuroraSkin.painters.fillPainter
 
     Canvas(
-        modifier
+        Modifier
             .progressSemantics()
             .size(
-                width = ProgressConstants.DefaultWidth,
-                height = ProgressConstants.DefaultHeight
+                width = presentationModel.primarySize,
+                height = presentationModel.secondarySize
             )
     ) {
         val radius = 1.5f.dp.toPx()
@@ -336,7 +325,7 @@ fun AuroraDeterminateLinearProgress(
                 alpha = stateAlpha
             )
 
-            val progressWidth = size.width * progress
+            val progressWidth = size.width * contentModel.progress
             if (progressWidth > 0.0f) {
                 // TODO - support RTL
                 progressFillPainter.paintContourBackground(

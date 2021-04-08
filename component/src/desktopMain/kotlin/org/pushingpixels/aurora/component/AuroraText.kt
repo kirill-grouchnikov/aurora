@@ -47,7 +47,7 @@ import org.pushingpixels.aurora.LocalTextColor
 import org.pushingpixels.aurora.LocalTextStyle
 
 @Composable
-fun AuroraText(
+internal fun AuroraText(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,

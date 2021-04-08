@@ -33,6 +33,7 @@ import androidx.compose.desktop.AppManager
 import androidx.compose.desktop.Window
 import androidx.compose.desktop.WindowEvents
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -94,7 +95,7 @@ private fun AuroraWindowContent(
                     ) {
                         val colorScheme =
                             skinColors.getEnabledColorScheme(DecorationAreaType.TITLE_PANE)
-                        AuroraText(
+                        BasicText(
                             text = title,
                             style = TextStyle(
                                 color = colorScheme.foregroundColor,

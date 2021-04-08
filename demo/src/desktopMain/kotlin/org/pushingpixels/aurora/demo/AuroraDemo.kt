@@ -114,7 +114,12 @@ fun DemoProgress(enabled: Boolean) {
             )
         )
 
-        AuroraDeterminateLinearProgress(progress = animatedStateProgress.value, enabled = enabled)
+        AuroraDeterminateLinearProgress(
+            contentModel = ProgressDeterminateContentModel(
+                enabled = enabled,
+                progress = animatedStateProgress.value
+            )
+        )
 
         AuroraCommandButton(
             command = Command(text = "",
@@ -386,14 +391,16 @@ fun DemoArea(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 // Example of a circular progress indicator
-                AuroraCircularProgress(enabled = contentEnabled.value)
+                AuroraCircularProgress(
+                    contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled.value)
+                )
 
                 Spacer(modifier = Modifier.width(8.dp))
 
                 // Example of a larger circular progress indicator
                 AuroraCircularProgress(
-                    modifier = Modifier.size(14.dp),
-                    enabled = contentEnabled.value
+                    contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled.value),
+                    presentationModel = ProgressCircularPresentationModel(size = 14.dp)
                 )
             }
             Row(modifier = Modifier.fillMaxWidth()) {
@@ -606,7 +613,7 @@ fun DemoArea(
             ) {
                 // Example of an indeterminate linear progress bar
                 AuroraIndeterminateLinearProgress(
-                    enabled = contentEnabled.value
+                    contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled.value),
                 )
 
                 Spacer(modifier = Modifier.width(16.dp))
