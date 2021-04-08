@@ -32,6 +32,7 @@ package org.pushingpixels.aurora.component
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.ButtonSides
@@ -75,6 +76,7 @@ private fun CommandButtonStripContent(
 
 @Composable
 fun AuroraCommandButtonStrip(
+    modifier: Modifier = Modifier,
     commandGroup: CommandGroup,
     presentationModel: CommandStripPresentationModel = CommandStripPresentationModel(),
     overlays: Map<Command, CommandButtonPresentationModel.Overlay> = mapOf()
@@ -93,14 +95,14 @@ fun AuroraCommandButtonStrip(
         isMenu = presentationModel.isMenu
     )
     if (presentationModel.orientation == StripOrientation.HORIZONTAL) {
-        Row {
+        Row(modifier = modifier) {
             CommandButtonStripContent(
                 commandGroup, presentationModel,
                 commandButtonPresentationModel, overlays
             )
         }
     } else {
-        Column {
+        Column(modifier = modifier) {
             CommandButtonStripContent(
                 commandGroup, presentationModel,
                 commandButtonPresentationModel, overlays

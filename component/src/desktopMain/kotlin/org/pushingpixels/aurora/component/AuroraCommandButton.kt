@@ -88,10 +88,12 @@ private class CommandButtonDrawingCache(
 
 @Composable
 fun AuroraCommandButton(
+    modifier: Modifier = Modifier,
     command: Command,
     presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel()
 ) {
     AuroraCommandButton(
+        modifier = modifier,
         command = command,
         parentWindow = null,
         extraAction = null,
@@ -104,6 +106,7 @@ fun AuroraCommandButton(
 
 @Composable
 internal fun AuroraCommandButton(
+    modifier: Modifier = Modifier,
     command: Command,
     parentWindow: JWindow? = null,
     extraAction: (() -> Unit)? = null,
@@ -353,7 +356,7 @@ internal fun AuroraCommandButton(
     }
 
     Layout(
-        modifier = Modifier.commandButtonLocator(auroraTopLeftOffset, auroraSize),
+        modifier = modifier.commandButtonLocator(auroraTopLeftOffset, auroraSize),
         content = {
             val modifierAction: Modifier
             if (isToggle) {

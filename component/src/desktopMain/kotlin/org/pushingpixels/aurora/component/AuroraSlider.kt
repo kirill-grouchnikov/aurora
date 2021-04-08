@@ -82,6 +82,7 @@ private class SliderDrawingCache(
 
 @Composable
 fun AuroraSlider(
+    modifier: Modifier = Modifier,
     contentModel: SliderContentModel,
     presentationModel: SliderPresentationModel = SliderPresentationModel()
 ) {
@@ -309,7 +310,7 @@ fun AuroraSlider(
     }
 
     Box(
-        modifier = Modifier.pointerMoveFilter(
+        modifier = modifier.pointerMoveFilter(
             onEnter = {
                 false
             },

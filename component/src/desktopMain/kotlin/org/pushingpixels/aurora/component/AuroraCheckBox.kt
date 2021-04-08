@@ -72,6 +72,7 @@ private class CheckBoxDrawingCache(
 
 @Composable
 fun AuroraCheckBox(
+    modifier: Modifier = Modifier,
     contentModel: SelectorContentModel,
     presentationModel: SelectorPresentationModel = SelectorPresentationModel()
 ) {
@@ -194,7 +195,7 @@ fun AuroraCheckBox(
     // content so that the whole thing is clickable to toggle the control.
     val decorationAreaType = AuroraSkin.decorationAreaType
     Row(
-        modifier = Modifier
+        modifier = modifier
             .padding(presentationModel.contentPadding)
             .pointerMoveFilter(
                 onEnter = {

@@ -105,6 +105,7 @@ class AuroraPopupWindow : JWindow()
 
 @Composable
 fun <E> AuroraComboBox(
+    modifier: Modifier = Modifier,
     contentModel: ComboBoxContentModel<E>,
     presentationModel: ComboBoxPresentationModel<E>
 ) {
@@ -223,7 +224,7 @@ fun <E> AuroraComboBox(
     }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .pointerMoveFilter(
                 onEnter = {
                     rollover = true

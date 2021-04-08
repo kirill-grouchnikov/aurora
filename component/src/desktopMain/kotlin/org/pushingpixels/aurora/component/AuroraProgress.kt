@@ -55,6 +55,7 @@ import kotlin.math.min
 
 @Composable
 fun AuroraCircularProgress(
+    modifier: Modifier = Modifier,
     contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
     presentationModel: ProgressCircularPresentationModel = ProgressCircularPresentationModel()
 ) {
@@ -86,7 +87,7 @@ fun AuroraCircularProgress(
     )
 
     Canvas(
-        Modifier
+        modifier
             .progressSemantics()
             .size(presentationModel.size)
     ) {
@@ -155,6 +156,7 @@ private val progressFillPainter = FractionBasedFillPainter(
 
 @Composable
 fun AuroraIndeterminateLinearProgress(
+    modifier: Modifier = Modifier,
     contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
     presentationModel: ProgressLinearPresentationModel = ProgressLinearPresentationModel()
 ) {
@@ -190,7 +192,7 @@ fun AuroraIndeterminateLinearProgress(
     )
 
     Canvas(
-        Modifier
+        modifier
             .progressSemantics()
             .size(
                 width = presentationModel.primarySize,
@@ -266,6 +268,7 @@ fun AuroraIndeterminateLinearProgress(
 
 @Composable
 fun AuroraDeterminateLinearProgress(
+    modifier: Modifier = Modifier,
     contentModel: ProgressDeterminateContentModel,
     presentationModel: ProgressLinearPresentationModel = ProgressLinearPresentationModel()
 ) {
@@ -295,7 +298,7 @@ fun AuroraDeterminateLinearProgress(
     val fillPainter = AuroraSkin.painters.fillPainter
 
     Canvas(
-        Modifier
+        modifier
             .progressSemantics()
             .size(
                 width = presentationModel.primarySize,
