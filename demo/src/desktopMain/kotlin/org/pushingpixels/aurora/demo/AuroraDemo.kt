@@ -307,16 +307,15 @@ fun DemoArea(
 
                 // Example of a radio button backed by a mutable boolean
                 var radioButtonSelected by remember { mutableStateOf(true) }
-                AuroraRadioButton(
+                AuroraRadioButton(contentModel = SelectorContentModel(
+                    text = "sample radio",
+                    enabled = contentEnabled.value,
                     selected = radioButtonSelected,
                     onTriggerSelectedChange = {
                         println("Selected radio? $it")
                         radioButtonSelected = it
-                    },
-                    enabled = contentEnabled.value
-                ) {
-                    AuroraText(text = "sample radio")
-                }
+                    }
+                ))
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),

@@ -48,6 +48,9 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.component.model.SelectorContentModel
+import org.pushingpixels.aurora.component.model.SelectorPresentationModel
+import org.pushingpixels.aurora.component.model.SelectorSizingConstants
 import org.pushingpixels.aurora.component.utils.*
 
 @Immutable
@@ -65,58 +68,31 @@ private class RadioButtonDrawingCache(
     )
 )
 
-object RadioButtonConstants {
-    val RadioButtonSize = 14.dp
-    val DefaultRadioButtonContentPadding = PaddingValues(start = 4.dp, top = 10.dp, end = 4.dp, bottom = 8.dp)
-}
-
 @Composable
 fun AuroraRadioButton(
-    modifier: Modifier = Modifier,
-    selected: Boolean = false,
-    onTriggerSelectedChange: (Boolean) -> Unit,
-    enabled: Boolean = true,
-    content: @Composable RowScope.() -> Unit
+    contentModel: SelectorContentModel,
+    presentationModel: SelectorPresentationModel = SelectorPresentationModel()
 ) {
-    AuroraRadioButton(
-        modifier = modifier,
-        selected = selected,
-        onTriggerSelectedChange = onTriggerSelectedChange,
-        enabled = enabled,
-        interactionSource = remember { MutableInteractionSource() },
-        content = content
-    )
-}
-
-@Composable
-private fun AuroraRadioButton(
-    modifier: Modifier = Modifier,
-    selected: Boolean = false,
-    onTriggerSelectedChange: (Boolean) -> Unit,
-    enabled: Boolean,
-    interactionSource: MutableInteractionSource,
-    content: @Composable RowScope.() -> Unit
-) {
+    val interactionSource = remember { MutableInteractionSource() }
     val drawingCache = remember { RadioButtonDrawingCache() }
-
     var rollover by remember { mutableStateOf(false) }
     val isPressed by interactionSource.collectIsPressedAsState()
 
     val currentState = remember {
         mutableStateOf(
             ComponentState.getState(
-                isEnabled = enabled,
+                isEnabled = contentModel.enabled,
                 isRollover = rollover,
-                isSelected = selected,
+                isSelected = contentModel.selected,
                 isPressed = isPressed
             )
         )
     }
 
-    val markAlpha = remember { mutableStateOf(if (selected) 1.0f else 0.0f) }
+    val markAlpha = remember { mutableStateOf(if (contentModel.selected) 1.0f else 0.0f) }
 
     // Transition for the selection state
-    val selectionTransition = updateTransition(selected)
+    val selectionTransition = updateTransition(contentModel.selected)
     val selectedFraction by selectionTransition.animateFloat(
         transitionSpec = {
             tween(durationMillis = AuroraSkin.animationConfig.regular)
@@ -155,7 +131,7 @@ private fun AuroraRadioButton(
     }
 
     // Transition for the enabled state
-    val enabledTransition = updateTransition(enabled)
+    val enabledTransition = updateTransition(contentModel.enabled)
     val enabledFraction by enabledTransition.animateFloat(
         transitionSpec = {
             tween(durationMillis = AuroraSkin.animationConfig.regular)
@@ -179,8 +155,8 @@ private fun AuroraRadioButton(
         modelStateInfo = modelStateInfo,
         currentState = currentState,
         transitionInfo = transitionInfo,
-        enabled = enabled,
-        selected = selected,
+        enabled = contentModel.enabled,
+        selected = contentModel.selected,
         rollover = rollover,
         pressed = isPressed,
         duration = AuroraSkin.animationConfig.regular
@@ -207,7 +183,8 @@ private fun AuroraRadioButton(
     // content so that the whole thing is clickable to toggle the control.
     val decorationAreaType = AuroraSkin.decorationAreaType
     Row(
-        modifier = modifier
+        modifier = Modifier
+            .padding(presentationModel.contentPadding)
             .pointerMoveFilter(
                 onEnter = {
                     rollover = true
@@ -221,11 +198,11 @@ private fun AuroraRadioButton(
                     false
                 })
             .toggleable(
-                value = selected,
+                value = contentModel.selected,
                 onValueChange = {
-                    onTriggerSelectedChange.invoke(it)
+                    contentModel.onTriggerSelectedChange.invoke(it)
                 },
-                enabled = enabled,
+                enabled = contentModel.enabled,
                 role = Role.RadioButton,
                 interactionSource = interactionSource,
                 indication = null
@@ -292,7 +269,9 @@ private fun AuroraRadioButton(
         val fillPainter = AuroraSkin.painters.fillPainter
         val borderPainter = AuroraSkin.painters.borderPainter
 
-        Canvas(modifier.wrapContentSize(Alignment.Center).size(RadioButtonConstants.RadioButtonSize)) {
+        Canvas(
+            Modifier.wrapContentSize(Alignment.Center).size(presentationModel.markSize)
+        ) {
             val width = this.size.width
             val height = this.size.height
 
@@ -361,19 +340,21 @@ private fun AuroraRadioButton(
                 alpha = alpha
             )
         }
+        Spacer(modifier = Modifier.width(SelectorSizingConstants.SelectorMarkTextGap *
+                presentationModel.horizontalGapScaleFactor))
         // Pass our text color and model state snapshot to the children
         CompositionLocalProvider(
             LocalTextColor provides textColor,
             LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value)
         ) {
-            Row(
-                Modifier
-                    .requiredSizeIn(minWidth = 0.dp, minHeight = RadioButtonConstants.RadioButtonSize)
-                    .padding(RadioButtonConstants.DefaultRadioButtonContentPadding),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-                content = content
-            )
+            Box(
+                modifier = Modifier.requiredSizeIn(
+                    minWidth = 0.dp,
+                    minHeight = presentationModel.markSize
+                )
+            ) {
+                AuroraText(text = contentModel.text)
+            }
         }
     }
 }
