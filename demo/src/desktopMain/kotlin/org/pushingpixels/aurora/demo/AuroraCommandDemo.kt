@@ -38,7 +38,6 @@ import org.pushingpixels.aurora.IconFilterStrategy
 import org.pushingpixels.aurora.component.AuroraCheckBox
 import org.pushingpixels.aurora.component.AuroraCommandButton
 import org.pushingpixels.aurora.component.AuroraCommandButtonStrip
-import org.pushingpixels.aurora.component.AuroraText
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.tango.*
@@ -522,13 +521,13 @@ fun DemoCommandContent() {
 
         Column(modifier = Modifier.fillMaxSize()) {
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
-                AuroraCheckBox(contentModel = CheckBoxContentModel(
+                AuroraCheckBox(contentModel = SelectorContentModel(
                     text = "action enabled",
                     selected = actionEnabled,
                     onTriggerSelectedChange = { actionEnabled = !actionEnabled }
                 ))
                 Spacer(modifier = Modifier.width(8.dp))
-                AuroraCheckBox(contentModel = CheckBoxContentModel(
+                AuroraCheckBox(contentModel = SelectorContentModel(
                     text = "popup enabled",
                     selected = popupEnabled,
                     onTriggerSelectedChange = { popupEnabled = !popupEnabled }

@@ -281,7 +281,7 @@ fun DemoArea(
             .auroraBackground()
             .padding(8.dp)
     ) {
-        AuroraCheckBox(contentModel = CheckBoxContentModel(
+        AuroraCheckBox(contentModel = SelectorContentModel(
             text = "content enabled",
             selected = contentEnabled.value,
             onTriggerSelectedChange = { contentEnabled.value = !contentEnabled.value }
@@ -293,7 +293,7 @@ fun DemoArea(
             Row(modifier = Modifier.fillMaxWidth()) {
                 // Example of a checkbox backed by a mutable boolean
                 var checkboxSelected by remember { mutableStateOf(true) }
-                AuroraCheckBox(contentModel = CheckBoxContentModel(
+                AuroraCheckBox(contentModel = SelectorContentModel(
                     text = "sample check",
                     enabled = contentEnabled.value,
                     selected = checkboxSelected,

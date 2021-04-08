@@ -33,22 +33,22 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-data class CheckBoxContentModel(
+data class SelectorContentModel(
     val text: String,
     val enabled: Boolean = true,
     val selected: Boolean = false,
     val onTriggerSelectedChange: (Boolean) -> Unit
 )
 
-object CheckBoxSizingConstants {
-    val CheckboxSize = 14.dp
-    val CheckMarkTextGap = 4.dp
-    val DefaultCheckBoxContentPadding = PaddingValues(start = 4.dp, top = 10.dp, end = 4.dp, bottom = 8.dp)
+object SelectorSizingConstants {
+    val SelectorMarkSize = 14.dp
+    val SelectorMarkTextGap = 4.dp
+    val DefaultSelectorContentPadding = PaddingValues(start = 4.dp, top = 10.dp, end = 4.dp, bottom = 8.dp)
 }
 
-data class CheckBoxPresentationModel(
+data class SelectorPresentationModel(
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.LEADING,
-    val checkBoxSize: Dp = CheckBoxSizingConstants.CheckboxSize,
-    val contentPadding: PaddingValues = CheckBoxSizingConstants.DefaultCheckBoxContentPadding,
+    val markSize: Dp = SelectorSizingConstants.SelectorMarkSize,
+    val contentPadding: PaddingValues = SelectorSizingConstants.DefaultSelectorContentPadding,
     val horizontalGapScaleFactor: Float = 1.0f
 )

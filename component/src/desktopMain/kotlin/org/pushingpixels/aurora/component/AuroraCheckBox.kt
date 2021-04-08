@@ -48,9 +48,9 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.component.model.CheckBoxContentModel
-import org.pushingpixels.aurora.component.model.CheckBoxPresentationModel
-import org.pushingpixels.aurora.component.model.CheckBoxSizingConstants
+import org.pushingpixels.aurora.component.model.SelectorContentModel
+import org.pushingpixels.aurora.component.model.SelectorPresentationModel
+import org.pushingpixels.aurora.component.model.SelectorSizingConstants
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.utils.getBaseOutline
 
@@ -72,8 +72,8 @@ private class CheckBoxDrawingCache(
 
 @Composable
 fun AuroraCheckBox(
-    contentModel: CheckBoxContentModel,
-    presentationModel: CheckBoxPresentationModel = CheckBoxPresentationModel()
+    contentModel: SelectorContentModel,
+    presentationModel: SelectorPresentationModel = SelectorPresentationModel()
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val drawingCache = remember { CheckBoxDrawingCache() }
@@ -281,7 +281,7 @@ fun AuroraCheckBox(
         val fillPainter = AuroraSkin.painters.fillPainter
         val borderPainter = AuroraSkin.painters.borderPainter
 
-        Canvas(Modifier.wrapContentSize(Alignment.Center).size(presentationModel.checkBoxSize)) {
+        Canvas(Modifier.wrapContentSize(Alignment.Center).size(presentationModel.markSize)) {
             val width = this.size.width
             val height = this.size.height
 
@@ -352,7 +352,7 @@ fun AuroraCheckBox(
                 )
             }
         }
-        Spacer(modifier = Modifier.width(CheckBoxSizingConstants.CheckMarkTextGap *
+        Spacer(modifier = Modifier.width(SelectorSizingConstants.SelectorMarkTextGap *
                 presentationModel.horizontalGapScaleFactor))
         // Pass our text color and model state snapshot to the children
         CompositionLocalProvider(
@@ -362,7 +362,7 @@ fun AuroraCheckBox(
             Box(
                 modifier = Modifier.requiredSizeIn(
                     minWidth = 0.dp,
-                    minHeight = presentationModel.checkBoxSize
+                    minHeight = presentationModel.markSize
                 )
             ) {
                 AuroraText(text = contentModel.text)
