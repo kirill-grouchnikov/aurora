@@ -451,15 +451,19 @@ fun DemoArea(
                 val simpleComboItems = listOf("one", "two", "three")
                 val simpleComboSelectedItem = remember { mutableStateOf(simpleComboItems[1]) }
                 AuroraComboBox(
-                    enabled = contentEnabled.value,
-                    items = simpleComboItems,
-                    selectedItem = simpleComboSelectedItem.value,
-                    displayConverter = { it },
-                    onTriggerItemSelectedChange = {
-                        simpleComboSelectedItem.value = it
-                        println("$it selected!")
-                    },
-                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                    contentModel = ComboBoxContentModel(
+                        enabled = contentEnabled.value,
+                        items = simpleComboItems,
+                        selectedItem = simpleComboSelectedItem.value,
+                        onTriggerItemSelectedChange = {
+                            simpleComboSelectedItem.value = it
+                            println("$it selected!")
+                        }
+                    ),
+                    presentationModel = ComboBoxPresentationModel(
+                        displayConverter = { it },
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                    )
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -473,15 +477,19 @@ fun DemoArea(
                     )
                 val personComboSelectedItem = remember { mutableStateOf(personComboItems[0]) }
                 AuroraComboBox(
-                    enabled = contentEnabled.value,
-                    items = personComboItems,
-                    selectedItem = personComboSelectedItem.value,
-                    displayConverter = { it.lastName + ", " + it.firstName },
-                    onTriggerItemSelectedChange = {
-                        personComboSelectedItem.value = it
-                        println("$it selected!")
-                    },
-                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                    contentModel = ComboBoxContentModel(
+                        enabled = contentEnabled.value,
+                        items = personComboItems,
+                        selectedItem = personComboSelectedItem.value,
+                        onTriggerItemSelectedChange = {
+                            personComboSelectedItem.value = it
+                            println("$it selected!")
+                        }
+                    ),
+                    presentationModel = ComboBoxPresentationModel(
+                        displayConverter = { it.lastName + ", " + it.firstName },
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                    )
                 )
             }
 
@@ -501,29 +509,37 @@ fun DemoArea(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AuroraComboBox(
-                    enabled = contentEnabled.value,
-                    popupPlacementStrategy = PopupPlacementStrategy.STARTWARD,
-                    items = snowComboItems,
-                    selectedItem = snowComboSelectedItem.value,
-                    displayConverter = { it.lastName + ", " + it.firstName },
-                    onTriggerItemSelectedChange = {
-                        snowComboSelectedItem.value = it
-                    },
-                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                    contentModel = ComboBoxContentModel(
+                        enabled = contentEnabled.value,
+                        items = snowComboItems,
+                        selectedItem = snowComboSelectedItem.value,
+                        onTriggerItemSelectedChange = {
+                            snowComboSelectedItem.value = it
+                        }
+                    ),
+                    presentationModel = ComboBoxPresentationModel(
+                        popupPlacementStrategy = PopupPlacementStrategy.STARTWARD,
+                        displayConverter = { it.lastName + ", " + it.firstName },
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                    )
                 )
 
                 Spacer(modifier = Modifier.width(16.dp))
 
                 AuroraComboBox(
-                    enabled = contentEnabled.value,
-                    popupPlacementStrategy = PopupPlacementStrategy.ENDWARD,
-                    items = snowComboItems,
-                    selectedItem = snowComboSelectedItem.value,
-                    displayConverter = { it.lastName + ", " + it.firstName },
-                    onTriggerItemSelectedChange = {
-                        snowComboSelectedItem.value = it
-                    },
-                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                    contentModel = ComboBoxContentModel(
+                        enabled = contentEnabled.value,
+                        items = snowComboItems,
+                        selectedItem = snowComboSelectedItem.value,
+                        onTriggerItemSelectedChange = {
+                            snowComboSelectedItem.value = it
+                        }
+                    ),
+                    presentationModel = ComboBoxPresentationModel(
+                        popupPlacementStrategy = PopupPlacementStrategy.ENDWARD,
+                        displayConverter = { it.lastName + ", " + it.firstName },
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                    )
                 )
             }
 
@@ -532,43 +548,55 @@ fun DemoArea(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AuroraComboBox(
-                    enabled = contentEnabled.value,
-                    popupPlacementStrategy = PopupPlacementStrategy.UPWARD,
-                    items = snowComboItems,
-                    selectedItem = snowComboSelectedItem.value,
-                    displayConverter = { it.lastName + ", " + it.firstName },
-                    onTriggerItemSelectedChange = {
-                        snowComboSelectedItem.value = it
-                    },
-                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                    contentModel = ComboBoxContentModel(
+                        enabled = contentEnabled.value,
+                        items = snowComboItems,
+                        selectedItem = snowComboSelectedItem.value,
+                        onTriggerItemSelectedChange = {
+                            snowComboSelectedItem.value = it
+                        }
+                    ),
+                    presentationModel = ComboBoxPresentationModel(
+                        popupPlacementStrategy = PopupPlacementStrategy.UPWARD,
+                        displayConverter = { it.lastName + ", " + it.firstName },
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                    )
                 )
 
                 Spacer(modifier = Modifier.width(16.dp))
 
                 AuroraComboBox(
-                    enabled = contentEnabled.value,
-                    popupPlacementStrategy = PopupPlacementStrategy.DOWNWARD,
-                    items = snowComboItems,
-                    selectedItem = snowComboSelectedItem.value,
-                    displayConverter = { it.lastName + ", " + it.firstName },
-                    onTriggerItemSelectedChange = {
-                        snowComboSelectedItem.value = it
-                    },
-                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                    contentModel = ComboBoxContentModel(
+                        enabled = contentEnabled.value,
+                        items = snowComboItems,
+                        selectedItem = snowComboSelectedItem.value,
+                        onTriggerItemSelectedChange = {
+                            snowComboSelectedItem.value = it
+                        }
+                    ),
+                    presentationModel = ComboBoxPresentationModel(
+                        popupPlacementStrategy = PopupPlacementStrategy.DOWNWARD,
+                        displayConverter = { it.lastName + ", " + it.firstName },
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                    )
                 )
 
                 Spacer(modifier = Modifier.width(16.dp))
 
                 AuroraComboBox(
-                    enabled = contentEnabled.value,
-                    popupPlacementStrategy = PopupPlacementStrategy.CENTERED_VERTICALLY,
-                    items = snowComboItems,
-                    selectedItem = snowComboSelectedItem.value,
-                    displayConverter = { it.lastName + ", " + it.firstName },
-                    onTriggerItemSelectedChange = {
-                        snowComboSelectedItem.value = it
-                    },
-                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                    contentModel = ComboBoxContentModel(
+                        enabled = contentEnabled.value,
+                        items = snowComboItems,
+                        selectedItem = snowComboSelectedItem.value,
+                        onTriggerItemSelectedChange = {
+                            snowComboSelectedItem.value = it
+                        }
+                    ),
+                    presentationModel = ComboBoxPresentationModel(
+                        popupPlacementStrategy = PopupPlacementStrategy.CENTERED_VERTICALLY,
+                        displayConverter = { it.lastName + ", " + it.firstName },
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                    )
                 )
             }
 
@@ -591,32 +619,38 @@ fun DemoArea(
                 // Example of a continuous slider
                 var sliderValue1 by remember { mutableStateOf(0.5f) }
                 AuroraSlider(
-                    value = sliderValue1,
-                    valueRange = 0.0f.rangeTo(1.0f),
-                    onTriggerValueChange = {
-                        sliderValue1 = it
-                        println("Slider $it")
-                    },
-                    onValueChangeEnd = { println("Slider change done!") },
-                    enabled = contentEnabled.value
+                    contentModel = SliderContentModel(
+                        value = sliderValue1,
+                        valueRange = 0.0f.rangeTo(1.0f),
+                        onTriggerValueChange = {
+                            sliderValue1 = it
+                            println("Slider $it")
+                        },
+                        onValueChangeEnd = { println("Slider change done!") },
+                        enabled = contentEnabled.value
+                    )
                 )
 
                 Spacer(modifier = Modifier.width(16.dp))
 
-                // Example of a discrete slider
+                // Example of a discrete slider that draws ticks
                 var sliderValue2 by remember { mutableStateOf(50f) }
                 AuroraSlider(
-                    value = sliderValue2,
-                    valueRange = 0.0f.rangeTo(100.0f),
-                    onTriggerValueChange = {
-                        sliderValue2 = it
-                        println("Slider $it")
-                    },
-                    onValueChangeEnd = { println("Slider change done!") },
-                    enabled = contentEnabled.value,
-                    tickSteps = 9,
-                    snapToTicks = true,
-                    drawTicks = true,
+                    contentModel = SliderContentModel(
+                        value = sliderValue2,
+                        valueRange = 0.0f.rangeTo(100.0f),
+                        onTriggerValueChange = {
+                            sliderValue2 = it
+                            println("Slider $it")
+                        },
+                        onValueChangeEnd = { println("Slider change done!") },
+                        enabled = contentEnabled.value
+                    ),
+                    presentationModel = SliderPresentationModel(
+                        tickSteps = 9,
+                        snapToTicks = true,
+                        drawTicks = true
+                    )
                 )
             }
         }

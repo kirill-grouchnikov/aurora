@@ -30,25 +30,32 @@
 package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.PopupPlacementStrategy
 
-data class SelectorContentModel(
-    val text: String,
+data class ComboBoxContentModel<E>(
+    val items: List<E>,
+    val selectedItem: E,
     val enabled: Boolean = true,
-    val selected: Boolean = false,
-    val onTriggerSelectedChange: (Boolean) -> Unit
+    val onTriggerItemSelectedChange: (E) -> Unit
 )
 
-object SelectorSizingConstants {
-    val SelectorMarkSize = 14.dp
-    val SelectorMarkTextGap = 4.dp
-    val DefaultSelectorContentPadding = PaddingValues(start = 4.dp, top = 10.dp, end = 4.dp, bottom = 8.dp)
+object ComboBoxSizingConstants {
+    val DefaultComboBoxArrowWidth = 10.dp
+    val DefaultComboBoxArrowHeight = 7.dp
+    val DefaultComboBoxContentArrowGap = 6.dp
+    val DefaultComboBoxContentPadding =
+        PaddingValues(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
+    val DefaultComboBoxContentWidth = 60.dp
+    val DefaultComboBoxContentHeight = 16.dp
 }
 
-data class SelectorPresentationModel(
+data class ComboBoxPresentationModel<E>(
+    val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS,
+    val displayConverter: (E) -> String,
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.LEADING,
-    val markSize: Dp = SelectorSizingConstants.SelectorMarkSize,
+    val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.DOWNWARD,
     val contentPadding: PaddingValues = SelectorSizingConstants.DefaultSelectorContentPadding,
     val horizontalGapScaleFactor: Float = 1.0f
 )

@@ -38,7 +38,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -56,52 +55,13 @@ import org.pushingpixels.aurora.ColorSchemeAssociationKind
 import org.pushingpixels.aurora.ComponentState
 import org.pushingpixels.aurora.Side
 import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.component.model.SliderContentModel
+import org.pushingpixels.aurora.component.model.SliderPresentationModel
+import org.pushingpixels.aurora.component.model.SliderSizingConstants
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.utils.getBaseOutline
 import kotlin.math.roundToInt
-
-object SliderConstants {
-    val DefaultSliderContentPadding = PaddingValues(start = 0.dp, top = 8.dp, end = 0.dp, bottom = 8.dp)
-    val DefaultWidth = 240.dp
-    val ThumbFullSize = 18.dp
-    val TrackHeight = 6.dp
-    val TrackTickGap = 4.dp
-    val TickHeight = 8.dp
-}
-
-@Composable
-fun AuroraSlider(
-    value: Float,
-    valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
-    onTriggerValueChange: (Float) -> Unit,
-    onValueChangeEnd: () -> Unit = {},
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    tickSteps: Int = 0, // Zero means continuous slider value range
-    snapToTicks: Boolean = false,
-    drawTicks: Boolean = false
-) {
-    require((value >= valueRange.start) && (value <= valueRange.endInclusive)) {
-        "Value $value not in range ${valueRange.start}..${valueRange.endInclusive}"
-    }
-    require(tickSteps >= 0) {
-        "Cannot have negative tick steps"
-    }
-
-    AuroraSlider(
-        sliderValue = value,
-        sliderValueRange = valueRange,
-        onTriggerValueChange = onTriggerValueChange,
-        onValueChangeEnd = onValueChangeEnd,
-        modifier = modifier,
-        enabled = enabled,
-        tickSteps = tickSteps,
-        snapToTicks = snapToTicks,
-        drawTicks = drawTicks,
-        interactionSource = remember { MutableInteractionSource() }
-    )
-}
 
 @Immutable
 private class SliderDrawingCache(
@@ -121,18 +81,21 @@ private class SliderDrawingCache(
 )
 
 @Composable
-private fun AuroraSlider(
-    sliderValue: Float,
-    sliderValueRange: ClosedFloatingPointRange<Float>,
-    onTriggerValueChange: (Float) -> Unit,
-    onValueChangeEnd: () -> Unit,
-    modifier: Modifier,
-    enabled: Boolean,
-    tickSteps: Int,
-    snapToTicks: Boolean,
-    drawTicks: Boolean,
-    interactionSource: MutableInteractionSource
+fun AuroraSlider(
+    contentModel: SliderContentModel,
+    presentationModel: SliderPresentationModel = SliderPresentationModel()
 ) {
+    require(
+        (contentModel.value >= contentModel.valueRange.start) and
+                (contentModel.value <= contentModel.valueRange.endInclusive)
+    ) {
+        "Value ${contentModel.value} not in range ${contentModel.valueRange.start}..${contentModel.valueRange.endInclusive}"
+    }
+    require(presentationModel.tickSteps >= 0) {
+        "Cannot have negative tick steps"
+    }
+
+    val interactionSource = remember { MutableInteractionSource() }
     val drawingCache = remember { SliderDrawingCache() }
     var rollover by remember { mutableStateOf(false) }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -140,7 +103,7 @@ private fun AuroraSlider(
     val currentState = remember {
         mutableStateOf(
             ComponentState.getState(
-                isEnabled = enabled,
+                isEnabled = contentModel.enabled,
                 isRollover = rollover,
                 isSelected = false,
                 isPressed = isPressed
@@ -149,8 +112,10 @@ private fun AuroraSlider(
     }
 
 
-    val trackFillState = if (enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
-    val trackSelectedState = if (enabled) ComponentState.SELECTED else ComponentState.DISABLED_SELECTED
+    val trackFillState =
+        if (contentModel.enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
+    val trackSelectedState =
+        if (contentModel.enabled) ComponentState.SELECTED else ComponentState.DISABLED_SELECTED
 
     val skinColors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
@@ -190,26 +155,31 @@ private fun AuroraSlider(
     val dragStartX = remember { mutableStateOf(0.0f) }
     val cumulativeDragAmount = remember { mutableStateOf(0.0f) }
 
-    var press = remember {  mutableStateOf<PressInteraction.Press?>(null) }
+    var press = remember { mutableStateOf<PressInteraction.Press?>(null) }
     val drag = Modifier.draggable(
         state = rememberDraggableState {
             // Update the cumulative drag amount
             cumulativeDragAmount.value += it
 
             // Convert from pixels to value range
-            var newValue = sliderValueRange.start +
-                    (dragStartX.value + cumulativeDragAmount.value - drawingCache.trackRect.x) * (sliderValueRange.endInclusive - sliderValueRange.start) / drawingCache.trackRect.width
-            newValue = newValue.coerceIn(sliderValueRange.start, sliderValueRange.endInclusive)
+            var newValue = contentModel.valueRange.start +
+                    (dragStartX.value + cumulativeDragAmount.value - drawingCache.trackRect.x) *
+                    (contentModel.valueRange.endInclusive - contentModel.valueRange.start) / drawingCache.trackRect.width
+            newValue = newValue.coerceIn(
+                contentModel.valueRange.start,
+                contentModel.valueRange.endInclusive
+            )
 
             // Snap to the closest tick if needed
-            if ((tickSteps > 0) && snapToTicks) {
-                val tickRange = (sliderValueRange.endInclusive - sliderValueRange.start) / (tickSteps + 1)
-                val tick = ((newValue - sliderValueRange.start) / tickRange).roundToInt()
+            if ((presentationModel.tickSteps > 0) && presentationModel.snapToTicks) {
+                val tickRange =
+                    (contentModel.valueRange.endInclusive - contentModel.valueRange.start) / (presentationModel.tickSteps + 1)
+                val tick = ((newValue - contentModel.valueRange.start) / tickRange).roundToInt()
                 newValue = tick * tickRange
             }
 
             // Update value change lambda
-            onTriggerValueChange.invoke(newValue)
+            contentModel.onTriggerValueChange.invoke(newValue)
         },
         orientation = Orientation.Horizontal,
         reverseDirection = false,
@@ -221,19 +191,21 @@ private fun AuroraSlider(
             cumulativeDragAmount.value = 0.0f
 
             // Convert from pixels to value range
-            var newValue = sliderValueRange.start +
-                    (pos.x - drawingCache.trackRect.x) * (sliderValueRange.endInclusive - sliderValueRange.start) / drawingCache.trackRect.width
-            newValue = newValue.coerceIn(sliderValueRange.start, sliderValueRange.endInclusive)
+            var newValue = contentModel.valueRange.start +
+                    (pos.x - drawingCache.trackRect.x) *
+                    (contentModel.valueRange.endInclusive - contentModel.valueRange.start) / drawingCache.trackRect.width
+            newValue = newValue.coerceIn(contentModel.valueRange.start, contentModel.valueRange.endInclusive)
 
             // Snap to the closest tick if needed
-            if ((tickSteps > 0) && snapToTicks) {
-                val tickRange = (sliderValueRange.endInclusive - sliderValueRange.start) / (tickSteps + 1)
-                val tick = ((newValue - sliderValueRange.start) / tickRange).roundToInt()
+            if ((presentationModel.tickSteps > 0) && presentationModel.snapToTicks) {
+                val tickRange =
+                    (contentModel.valueRange.endInclusive - contentModel.valueRange.start) / (presentationModel.tickSteps + 1)
+                val tick = ((newValue - contentModel.valueRange.start) / tickRange).roundToInt()
                 newValue = tick * tickRange
             }
 
             // Update value change lambda
-            onTriggerValueChange.invoke(newValue)
+            contentModel.onTriggerValueChange.invoke(newValue)
 
             // And add pressed state to the interaction
             press.value = PressInteraction.Press(pos)
@@ -241,7 +213,7 @@ private fun AuroraSlider(
         },
         onDragStopped = {
             // Update value change end lambda
-            onValueChangeEnd.invoke()
+            contentModel.onValueChangeEnd.invoke()
 
             // And remove pressed state to the interaction
             interactionSource.emit(PressInteraction.Release(press.value!!))
@@ -288,7 +260,7 @@ private fun AuroraSlider(
     }
 
     // Transition for the enabled state
-    val enabledTransition = updateTransition(enabled)
+    val enabledTransition = updateTransition(contentModel.enabled)
     val enabledFraction by enabledTransition.animateFloat(
         transitionSpec = {
             tween(durationMillis = AuroraSkin.animationConfig.regular)
@@ -312,7 +284,7 @@ private fun AuroraSlider(
         modelStateInfo = modelStateInfo,
         currentState = currentState,
         transitionInfo = transitionInfo,
-        enabled = enabled,
+        enabled = contentModel.enabled,
         selected = false,
         rollover = rollover,
         pressed = isPressed,
@@ -398,31 +370,32 @@ private fun AuroraSlider(
             isTextInFilledArea = true
         )
 
-        var prefHeight = SliderConstants.DefaultSliderContentPadding.calculateTopPadding()
-        prefHeight += SliderConstants.TrackHeight
-        if ((tickSteps >= 0) && drawTicks) {
-            prefHeight += SliderConstants.TrackTickGap
-            prefHeight += SliderConstants.TickHeight
+        var prefHeight = SliderSizingConstants.DefaultSliderContentPadding.calculateTopPadding()
+        prefHeight += SliderSizingConstants.TrackHeight
+        if ((presentationModel.tickSteps >= 0) && presentationModel.drawTicks) {
+            prefHeight += SliderSizingConstants.TrackTickGap
+            prefHeight += SliderSizingConstants.TickHeight
         }
-        prefHeight += SliderConstants.DefaultSliderContentPadding.calculateBottomPadding()
+        prefHeight += SliderSizingConstants.DefaultSliderContentPadding.calculateBottomPadding()
 
         Canvas(
-            modifier.size(width = SliderConstants.DefaultWidth, height = prefHeight)
+            Modifier.size(width = SliderSizingConstants.DefaultWidth, height = prefHeight)
         ) {
             val radius = 1.5f.dp.toPx()
 
             // Calculate the track rectangle
-            drawingCache.trackRect.x = SliderConstants.ThumbFullSize.toPx() / 2.0f
-            drawingCache.trackRect.y = SliderConstants.DefaultSliderContentPadding.calculateTopPadding().toPx()
-            drawingCache.trackRect.width = size.width - SliderConstants.ThumbFullSize.toPx()
-            drawingCache.trackRect.height = SliderConstants.TrackHeight.toPx()
+            drawingCache.trackRect.x = SliderSizingConstants.ThumbFullSize.toPx() / 2.0f
+            drawingCache.trackRect.y =
+                SliderSizingConstants.DefaultSliderContentPadding.calculateTopPadding().toPx()
+            drawingCache.trackRect.width = size.width - SliderSizingConstants.ThumbFullSize.toPx()
+            drawingCache.trackRect.height = SliderSizingConstants.TrackHeight.toPx()
 
             // Calculate the thumb rectangle
             // TODO - support RTL
-            val thumbSize = SliderConstants.ThumbFullSize.toPx() *
+            val thumbSize = SliderSizingConstants.ThumbFullSize.toPx() *
                     (2.0f + modelStateInfo.activeStrength) / 3.0f
             val selectionCenterX = drawingCache.trackRect.x +
-                    drawingCache.trackRect.width * sliderValue / (sliderValueRange.endInclusive - sliderValueRange.start)
+                    drawingCache.trackRect.width * contentModel.value / (contentModel.valueRange.endInclusive - contentModel.valueRange.start)
             drawingCache.thumbRect.x = selectionCenterX - thumbSize / 2.0f
             drawingCache.thumbRect.y =
                 drawingCache.trackRect.y + drawingCache.trackRect.height / 2.0f - thumbSize / 2.0f
@@ -447,7 +420,12 @@ private fun AuroraSlider(
             )
 
             // Border track
-            withTransform({ translate(left = drawingCache.trackRect.x, top = drawingCache.trackRect.y) }) {
+            withTransform({
+                translate(
+                    left = drawingCache.trackRect.x,
+                    top = drawingCache.trackRect.y
+                )
+            }) {
                 val trackOutline = getBaseOutline(
                     width = drawingCache.trackRect.width,
                     height = drawingCache.trackRect.height,
@@ -467,7 +445,10 @@ private fun AuroraSlider(
                 // Fill selection
                 fillPainter.paintContourBackground(
                     drawScope = this,
-                    size = Size(selectionCenterX - drawingCache.trackRect.x, drawingCache.trackRect.height),
+                    size = Size(
+                        selectionCenterX - drawingCache.trackRect.x,
+                        drawingCache.trackRect.height
+                    ),
                     outline = Outline.Rounded(
                         RoundRect(
                             left = drawingCache.trackRect.x,
@@ -482,7 +463,12 @@ private fun AuroraSlider(
                 )
 
                 // Border selection
-                withTransform({ translate(left = drawingCache.trackRect.x, top = drawingCache.trackRect.y) }) {
+                withTransform({
+                    translate(
+                        left = drawingCache.trackRect.x,
+                        top = drawingCache.trackRect.y
+                    )
+                }) {
                     val selectionOutline = getBaseOutline(
                         width = selectionCenterX - drawingCache.trackRect.x,
                         height = drawingCache.trackRect.height,
@@ -500,8 +486,8 @@ private fun AuroraSlider(
             }
 
             // Draw the ticks
-            if ((tickSteps > 0) && drawTicks) {
-                val tickHeight = SliderConstants.TickHeight.toPx()
+            if ((presentationModel.tickSteps > 0) && presentationModel.drawTicks) {
+                val tickHeight = SliderSizingConstants.TickHeight.toPx()
                 val tickPrimaryBrush = Brush.verticalGradient(
                     0.0f to tickScheme.separatorPrimaryColor,
                     0.75f to tickScheme.separatorPrimaryColor,
@@ -520,13 +506,13 @@ private fun AuroraSlider(
                 )
 
                 val tickTop = drawingCache.trackRect.x + drawingCache.trackRect.height +
-                        SliderConstants.TrackTickGap.toPx()
+                        SliderSizingConstants.TrackTickGap.toPx()
                 withTransform({
                     translate(left = 0.0f, top = tickTop)
                 }) {
-                    for (tick in 0 until tickSteps) {
+                    for (tick in 0 until presentationModel.tickSteps) {
                         val tickX = (drawingCache.trackRect.x +
-                                drawingCache.trackRect.width * (tick + 1) / (tickSteps + 1)).toInt()
+                                drawingCache.trackRect.width * (tick + 1) / (presentationModel.tickSteps + 1)).toInt()
 
                         drawLine(
                             brush = tickPrimaryBrush,
@@ -595,7 +581,12 @@ private fun AuroraSlider(
                     ) else null
 
                 thumbBorderPainter.paintBorder(
-                    this, this.size, thumbOutline, innerThumbOutline, drawingCache.colorScheme, alpha
+                    this,
+                    this.size,
+                    thumbOutline,
+                    innerThumbOutline,
+                    drawingCache.colorScheme,
+                    alpha
                 )
             }
         }

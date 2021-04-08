@@ -58,10 +58,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
-import org.pushingpixels.aurora.component.model.Command
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
-import org.pushingpixels.aurora.component.model.HorizontalAlignment
+import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -69,17 +66,6 @@ import java.awt.Rectangle
 import java.awt.Window
 import javax.swing.JWindow
 import kotlin.math.max
-
-object ComboBoxSizingConstants {
-    val DefaultComboBoxArrowWidth = 10.dp
-    val DefaultComboBoxArrowHeight = 7.dp
-    val DefaultComboBoxContentArrowGap = 6.dp
-    val DefaultComboBoxContentPadding =
-        PaddingValues(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
-    val DefaultComboBoxIconTextGap = 6.dp
-    val DefaultComboBoxContentWidth = 60.dp
-    val DefaultComboBoxContentHeight = 16.dp
-}
 
 @Immutable
 private class ComboBoxDrawingCache(
@@ -119,49 +105,18 @@ class AuroraPopupWindow : JWindow()
 
 @Composable
 fun <E> AuroraComboBox(
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS,
-    popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.DOWNWARD,
-    items: List<E>,
-    selectedItem: E,
-    displayConverter: (E) -> String,
-    onTriggerItemSelectedChange: (E) -> Unit
+    contentModel: ComboBoxContentModel<E>,
+    presentationModel: ComboBoxPresentationModel<E>
 ) {
-    AuroraComboBox(
-        modifier = modifier,
-        enabled = enabled,
-        backgroundAppearanceStrategy = backgroundAppearanceStrategy,
-        popupPlacementStrategy = popupPlacementStrategy,
-        items = items,
-        selectedItem = selectedItem,
-        displayConverter = displayConverter,
-        onTriggerItemSelectedChange = onTriggerItemSelectedChange,
-        interactionSource = remember { MutableInteractionSource() }
-    )
-}
-
-@Composable
-private fun <E> AuroraComboBox(
-    modifier: Modifier,
-    enabled: Boolean,
-    backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
-    popupPlacementStrategy: PopupPlacementStrategy,
-    items: List<E>,
-    selectedItem: E,
-    displayConverter: (E) -> String,
-    onTriggerItemSelectedChange: (E) -> Unit,
-    interactionSource: MutableInteractionSource
-) {
+    val interactionSource = remember { MutableInteractionSource() }
     val drawingCache = remember { ComboBoxDrawingCache() }
-
     var rollover by remember { mutableStateOf(false) }
     val isPressed by interactionSource.collectIsPressedAsState()
 
     val currentState = remember {
         mutableStateOf(
             ComponentState.getState(
-                isEnabled = enabled,
+                isEnabled = contentModel.enabled,
                 isRollover = rollover,
                 isSelected = false,
                 isPressed = isPressed
@@ -219,7 +174,7 @@ private fun <E> AuroraComboBox(
     }
 
     // Transition for the enabled state
-    val enabledTransition = updateTransition(enabled)
+    val enabledTransition = updateTransition(contentModel.enabled)
     val enabledFraction by enabledTransition.animateFloat(
         transitionSpec = {
             tween(durationMillis = AuroraSkin.animationConfig.regular)
@@ -243,7 +198,7 @@ private fun <E> AuroraComboBox(
         modelStateInfo = modelStateInfo,
         currentState = currentState,
         transitionInfo = transitionInfo,
-        enabled = enabled,
+        enabled = contentModel.enabled,
         selected = false,
         rollover = rollover,
         pressed = isPressed,
@@ -268,7 +223,7 @@ private fun <E> AuroraComboBox(
     }
 
     Box(
-        modifier = modifier
+        modifier = Modifier
             .pointerMoveFilter(
                 onEnter = {
                     rollover = true
@@ -282,7 +237,7 @@ private fun <E> AuroraComboBox(
                     false
                 })
             .clickable(
-                enabled = enabled,
+                enabled = contentModel.enabled,
                 onClick = {
                     // TODO - move off of JWindow when https://github.com/JetBrains/compose-jb/issues/195
                     //  is addressed
@@ -324,11 +279,11 @@ private fun <E> AuroraComboBox(
                             ComboBoxPopupContent(
                                 window = jwindow,
                                 anchorSize = auroraSize,
-                                popupPlacementStrategy = popupPlacementStrategy,
-                                items = items,
-                                displayConverter = displayConverter,
+                                popupPlacementStrategy = presentationModel.popupPlacementStrategy,
+                                items = contentModel.items,
+                                displayConverter = presentationModel.displayConverter,
                                 onItemSelected = {
-                                    onTriggerItemSelectedChange.invoke(it)
+                                    contentModel.onTriggerItemSelectedChange.invoke(it)
                                     jwindow.dispose()
                                 }
                             )
@@ -362,7 +317,7 @@ private fun <E> AuroraComboBox(
         ) { it.markColor }
 
 
-        if (backgroundAppearanceStrategy != BackgroundAppearanceStrategy.NEVER) {
+        if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.NEVER) {
             // Populate the cached color scheme for filling the button container
             // based on the current model state info
             populateColorScheme(
@@ -397,7 +352,7 @@ private fun <E> AuroraComboBox(
             val borderPainter = AuroraSkin.painters.borderPainter
 
             val alpha: Float
-            if (backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
+            if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
                 // For flat buttons, compute the combined contribution of all
                 // non-disabled states - ignoring ComponentState.ENABLED
                 alpha = modelStateInfo.stateContributionMap
@@ -408,7 +363,7 @@ private fun <E> AuroraComboBox(
                     AuroraSkin.colors.getAlpha(decorationAreaType, currentState.value) else 1.0f
             }
 
-            Canvas(modifier.matchParentSize()) {
+            Canvas(Modifier.matchParentSize()) {
                 val width = this.size.width
                 val height = this.size.height
 
@@ -472,11 +427,11 @@ private fun <E> AuroraComboBox(
                         this, this.size, outline, innerOutline, drawingCache.colorScheme, alpha
                     )
 
-                    val arrowWidth = if (popupPlacementStrategy.isHorizontal)
+                    val arrowWidth = if (presentationModel.popupPlacementStrategy.isHorizontal)
                         ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx() else
                         ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx()
                     val arrowHeight =
-                        if (popupPlacementStrategy.isHorizontal)
+                        if (presentationModel.popupPlacementStrategy.isHorizontal)
                             ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx() else
                             ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()
                     // TODO - support RTL
@@ -491,7 +446,7 @@ private fun <E> AuroraComboBox(
                             width = arrowWidth,
                             height = arrowHeight,
                             strokeWidth = 2.0.dp.toPx(),
-                            direction = popupPlacementStrategy,
+                            direction = presentationModel.popupPlacementStrategy,
                             layoutDirection = layoutDirection,
                             color = arrowColor
                         )
@@ -521,7 +476,7 @@ private fun <E> AuroraComboBox(
                     )
                 ),
                 content = {
-                    AuroraText(displayConverter.invoke(selectedItem))
+                    AuroraText(presentationModel.displayConverter.invoke(contentModel.selectedItem))
                 }
             ) { measurables, constraints ->
                 // Measure each child so that we know how much space they need

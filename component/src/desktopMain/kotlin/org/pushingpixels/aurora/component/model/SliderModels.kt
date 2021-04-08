@@ -30,25 +30,27 @@
 package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-data class SelectorContentModel(
-    val text: String,
+data class SliderContentModel(
+    val value: Float,
+    val valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
+    val onTriggerValueChange: (Float) -> Unit,
+    val onValueChangeEnd: () -> Unit = {},
     val enabled: Boolean = true,
-    val selected: Boolean = false,
-    val onTriggerSelectedChange: (Boolean) -> Unit
 )
 
-object SelectorSizingConstants {
-    val SelectorMarkSize = 14.dp
-    val SelectorMarkTextGap = 4.dp
-    val DefaultSelectorContentPadding = PaddingValues(start = 4.dp, top = 10.dp, end = 4.dp, bottom = 8.dp)
+object SliderSizingConstants {
+    val DefaultSliderContentPadding = PaddingValues(start = 0.dp, top = 8.dp, end = 0.dp, bottom = 8.dp)
+    val DefaultWidth = 240.dp
+    val ThumbFullSize = 18.dp
+    val TrackHeight = 6.dp
+    val TrackTickGap = 4.dp
+    val TickHeight = 8.dp
 }
 
-data class SelectorPresentationModel(
-    val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.LEADING,
-    val markSize: Dp = SelectorSizingConstants.SelectorMarkSize,
-    val contentPadding: PaddingValues = SelectorSizingConstants.DefaultSelectorContentPadding,
-    val horizontalGapScaleFactor: Float = 1.0f
+data class SliderPresentationModel(
+    val tickSteps: Int = 0, // Zero means continuous slider value range
+    val snapToTicks: Boolean = false,
+    val drawTicks: Boolean = false
 )
