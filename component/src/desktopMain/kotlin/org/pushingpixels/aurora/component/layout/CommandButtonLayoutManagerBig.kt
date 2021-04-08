@@ -38,11 +38,7 @@ import androidx.compose.ui.text.Paragraph
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.unit.*
-import org.pushingpixels.aurora.component.SeparatorSizingConstants
-import org.pushingpixels.aurora.component.model.Command
-import org.pushingpixels.aurora.component.model.CommandButtonKind
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
-import org.pushingpixels.aurora.component.model.TextClick
+import org.pushingpixels.aurora.component.model.*
 import java.util.*
 import kotlin.math.max
 

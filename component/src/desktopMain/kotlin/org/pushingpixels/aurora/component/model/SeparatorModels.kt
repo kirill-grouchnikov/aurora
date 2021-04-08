@@ -29,28 +29,19 @@
  */
 package org.pushingpixels.aurora.component.model
 
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-data class SliderContentModel(
-    val value: Float,
-    val valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
-    val onTriggerValueChange: (Float) -> Unit,
-    val onValueChangeEnd: () -> Unit = {},
+data class SeparatorContentModel(
     val enabled: Boolean = true
 )
 
-object SliderSizingConstants {
-    val DefaultSliderContentPadding = PaddingValues(start = 0.dp, top = 8.dp, end = 0.dp, bottom = 8.dp)
-    val DefaultWidth = 240.dp
-    val ThumbFullSize = 18.dp
-    val TrackHeight = 6.dp
-    val TrackTickGap = 4.dp
-    val TickHeight = 8.dp
+object SeparatorSizingConstants {
+    val Thickness = 2.dp
+    val DefaultGradientAmount = 2.dp
 }
 
-data class SliderPresentationModel(
-    val tickSteps: Int = 0, // Zero means continuous slider value range
-    val snapToTicks: Boolean = false,
-    val drawTicks: Boolean = false
+data class SeparatorPresentationModel(
+    val startGradientAmount: Dp = SeparatorSizingConstants.DefaultGradientAmount,
+    val endGradientAmount: Dp = SeparatorSizingConstants.DefaultGradientAmount
 )

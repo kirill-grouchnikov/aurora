@@ -835,14 +835,18 @@ internal fun AuroraCommandButton(
                     CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL ->
                         AuroraVerticalSeparator(
                             modifier = Modifier.alpha(combinedRolloverFraction),
-                            startGradientAmount = 4.dp,
-                            endGradientAmount = 4.dp
+                            presentationModel = SeparatorPresentationModel(
+                                startGradientAmount = 4.dp,
+                                endGradientAmount = 4.dp
+                            )
                         )
                     CommandButtonLayoutManager.CommandButtonSeparatorOrientation.HORIZONTAL ->
                         AuroraHorizontalSeparator(
                             modifier = Modifier.alpha(combinedRolloverFraction),
-                            startGradientAmount = 4.dp,
-                            endGradientAmount = 4.dp
+                            presentationModel = SeparatorPresentationModel(
+                                startGradientAmount = 4.dp,
+                                endGradientAmount = 4.dp
+                            )
                         )
                 }
             }

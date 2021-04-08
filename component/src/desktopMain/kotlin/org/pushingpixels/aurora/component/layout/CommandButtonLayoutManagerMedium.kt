@@ -37,7 +37,6 @@ import androidx.compose.ui.text.Paragraph
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.unit.*
-import org.pushingpixels.aurora.component.SeparatorSizingConstants
 import org.pushingpixels.aurora.component.model.*
 import kotlin.math.max
 

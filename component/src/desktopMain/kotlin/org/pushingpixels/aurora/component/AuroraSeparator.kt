@@ -30,7 +30,6 @@
 package org.pushingpixels.aurora.component
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
@@ -38,29 +37,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.ColorSchemeAssociationKind
 import org.pushingpixels.aurora.ComponentState
 import org.pushingpixels.aurora.common.withAlpha
-
-object SeparatorSizingConstants {
-    val Thickness = 2.dp
-    val DefaultGradientAmount = 2.dp
-}
+import org.pushingpixels.aurora.component.model.SeparatorContentModel
+import org.pushingpixels.aurora.component.model.SeparatorPresentationModel
+import org.pushingpixels.aurora.component.model.SeparatorSizingConstants
 
 @Composable
 fun AuroraVerticalSeparator(
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    startGradientAmount: Dp = SeparatorSizingConstants.DefaultGradientAmount,
-    endGradientAmount: Dp = SeparatorSizingConstants.DefaultGradientAmount
+    contentModel: SeparatorContentModel = SeparatorContentModel(),
+    presentationModel: SeparatorPresentationModel = SeparatorPresentationModel()
 ) {
     val separatorScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = AuroraSkin.decorationAreaType,
         associationKind = ColorSchemeAssociationKind.SEPARATOR,
-        componentState = if (enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
+        componentState = if (contentModel.enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
     )
 
     Canvas(modifier.width(SeparatorSizingConstants.Thickness)) {
@@ -69,8 +63,8 @@ fun AuroraVerticalSeparator(
         if (height > 0.0f) {
             val primaryBrush = Brush.verticalGradient(
                 0.0f to separatorScheme.separatorPrimaryColor.withAlpha(0.0f),
-                startGradientAmount.toPx() / height to separatorScheme.separatorPrimaryColor,
-                (height - endGradientAmount.toPx()) / height to separatorScheme.separatorPrimaryColor,
+                presentationModel.startGradientAmount.toPx() / height to separatorScheme.separatorPrimaryColor,
+                (height - presentationModel.endGradientAmount.toPx()) / height to separatorScheme.separatorPrimaryColor,
                 1.0f to separatorScheme.separatorPrimaryColor.withAlpha(0.0f),
                 startY = 0.0f,
                 endY = height,
@@ -78,8 +72,8 @@ fun AuroraVerticalSeparator(
             )
             val secondaryBrush = Brush.verticalGradient(
                 0.0f to separatorScheme.separatorSecondaryColor.withAlpha(0.0f),
-                startGradientAmount.toPx() / height to separatorScheme.separatorSecondaryColor,
-                (height - endGradientAmount.toPx()) / height to separatorScheme.separatorSecondaryColor,
+                presentationModel.startGradientAmount.toPx() / height to separatorScheme.separatorSecondaryColor,
+                (height - presentationModel.endGradientAmount.toPx()) / height to separatorScheme.separatorSecondaryColor,
                 1.0f to separatorScheme.separatorSecondaryColor.withAlpha(0.0f),
                 startY = 0.0f,
                 endY = height,
@@ -105,14 +99,13 @@ fun AuroraVerticalSeparator(
 @Composable
 fun AuroraHorizontalSeparator(
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    startGradientAmount: Dp = SeparatorSizingConstants.DefaultGradientAmount,
-    endGradientAmount: Dp = SeparatorSizingConstants.DefaultGradientAmount
+    contentModel: SeparatorContentModel = SeparatorContentModel(),
+    presentationModel: SeparatorPresentationModel = SeparatorPresentationModel()
 ) {
     val separatorScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = AuroraSkin.decorationAreaType,
         associationKind = ColorSchemeAssociationKind.SEPARATOR,
-        componentState = if (enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
+        componentState = if (contentModel.enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
     )
 
     Canvas(modifier.height(SeparatorSizingConstants.Thickness)) {
@@ -121,8 +114,8 @@ fun AuroraHorizontalSeparator(
         if (width > 0.0f) {
             val primaryBrush = Brush.horizontalGradient(
                 0.0f to separatorScheme.separatorPrimaryColor.withAlpha(0.0f),
-                startGradientAmount.toPx() / width to separatorScheme.separatorPrimaryColor,
-                (width - endGradientAmount.toPx()) / width to separatorScheme.separatorPrimaryColor,
+                presentationModel.startGradientAmount.toPx() / width to separatorScheme.separatorPrimaryColor,
+                (width - presentationModel.endGradientAmount.toPx()) / width to separatorScheme.separatorPrimaryColor,
                 1.0f to separatorScheme.separatorPrimaryColor.withAlpha(0.0f),
                 startX = 0.0f,
                 endX = width,
@@ -130,8 +123,8 @@ fun AuroraHorizontalSeparator(
             )
             val secondaryBrush = Brush.horizontalGradient(
                 0.0f to separatorScheme.separatorSecondaryColor.withAlpha(0.0f),
-                startGradientAmount.toPx() / width to separatorScheme.separatorSecondaryColor,
-                (width - endGradientAmount.toPx()) / width to separatorScheme.separatorSecondaryColor,
+                presentationModel.startGradientAmount.toPx() / width to separatorScheme.separatorSecondaryColor,
+                (width - presentationModel.endGradientAmount.toPx()) / width to separatorScheme.separatorSecondaryColor,
                 1.0f to separatorScheme.separatorSecondaryColor.withAlpha(0.0f),
                 startX = 0.0f,
                 endX = width,

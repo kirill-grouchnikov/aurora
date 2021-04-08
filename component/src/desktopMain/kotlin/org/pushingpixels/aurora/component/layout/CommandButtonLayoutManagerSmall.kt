@@ -36,7 +36,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.unit.*
-import org.pushingpixels.aurora.component.SeparatorSizingConstants
 import org.pushingpixels.aurora.component.model.*
 
 internal class CommandButtonLayoutManagerSmall(
