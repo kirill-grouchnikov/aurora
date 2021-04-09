@@ -70,19 +70,19 @@ fun IconDemoArea() {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = media_floppy.of(16.dp, 16.dp))
+                AuroraIcon(icon = media_floppy.of(20.dp, 20.dp))
                 BasicText("icon 1")
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = drive_harddisk.of(16.dp, 16.dp))
+                AuroraIcon(icon = drive_harddisk.of(20.dp, 20.dp))
                 BasicText("icon 2")
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = help_browser.of(16.dp, 16.dp))
+                AuroraIcon(icon = help_browser.of(20.dp, 20.dp))
                 BasicText("icon 3")
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = system_search.of(16.dp, 16.dp))
+                AuroraIcon(icon = system_search.of(20.dp, 20.dp))
                 BasicText("icon 4")
             }
         }
