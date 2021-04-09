@@ -1,4 +1,4 @@
-package org.pushingpixels.aurora.demo.svg.material
+TOKEN_PACKAGE
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.*
@@ -25,7 +25,7 @@ import kotlin.math.min
  * This class has been automatically generated using
  * <a href="https://github.com/kirill-grouchnikov/aurora">Aurora SVG transcoder</a>.
  */
-class content_copy_black_24dp private constructor(var _width: Dp, var _height: Dp) : AuroraIcon {
+class TOKEN_CLASSNAME private constructor(var _width: Int, var _height: Int) : AuroraIcon {
     @Suppress("UNUSED_VARIABLE") private var shape: Outline? = null
     @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
@@ -34,90 +34,10 @@ class content_copy_black_24dp private constructor(var _width: Dp, var _height: D
     private var alpha = 1.0f
     private var alphaStack = mutableListOf(1.0f)
 
-	private fun _paint0(drawScope : DrawScope) {
-with(drawScope) {
-// 
-alphaStack.add(0, alpha)
-alpha *= 1.0f
-withTransform({
-transform(
-Matrix(values=floatArrayOf(
-1.0f, 0.0f, 0.0f, -0.0f,
-0.0f, 1.0f, 0.0f, -0.0f,
-0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
-))}){
-// _0
-alphaStack.add(0, alpha)
-alpha *= 1.0f
-withTransform({
-transform(
-Matrix(values=floatArrayOf(
-1.0f, 0.0f, 0.0f, 0.0f,
-0.0f, 1.0f, 0.0f, 0.0f,
-0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
-))}){
-// _0_0
-}
-alpha = alphaStack.removeAt(0)
-alphaStack.add(0, alpha)
-alpha *= 1.0f
-withTransform({
-transform(
-Matrix(values=floatArrayOf(
-1.0f, 0.0f, 0.0f, 0.0f,
-0.0f, 1.0f, 0.0f, 0.0f,
-0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
-))}){
-// _0_1
-if (generalPath == null) {
-   generalPath = Path()
-} else {
-   generalPath!!.reset()
-}
-generalPath!!.moveTo(16.0f, 1.0f)
-generalPath!!.lineTo(4.0f, 1.0f)
-generalPath!!.cubicTo(2.9f, 1.0f, 2.0f, 1.9f, 2.0f, 3.0f)
-generalPath!!.lineTo(2.0f, 17.0f)
-generalPath!!.lineTo(4.0f, 17.0f)
-generalPath!!.lineTo(4.0f, 3.0f)
-generalPath!!.lineTo(16.0f, 3.0f)
-generalPath!!.lineTo(16.0f, 1.0f)
-generalPath!!.close()
-generalPath!!.moveTo(19.0f, 5.0f)
-generalPath!!.lineTo(8.0f, 5.0f)
-generalPath!!.cubicTo(6.9f, 5.0f, 6.0f, 5.9f, 6.0f, 7.0f)
-generalPath!!.lineTo(6.0f, 21.0f)
-generalPath!!.cubicTo(6.0f, 22.1f, 6.9f, 23.0f, 8.0f, 23.0f)
-generalPath!!.lineTo(19.0f, 23.0f)
-generalPath!!.cubicTo(20.1f, 23.0f, 21.0f, 22.1f, 21.0f, 21.0f)
-generalPath!!.lineTo(21.0f, 7.0f)
-generalPath!!.cubicTo(21.0f, 5.9f, 20.1f, 5.0f, 19.0f, 5.0f)
-generalPath!!.close()
-generalPath!!.moveTo(19.0f, 21.0f)
-generalPath!!.lineTo(8.0f, 21.0f)
-generalPath!!.lineTo(8.0f, 7.0f)
-generalPath!!.lineTo(19.0f, 7.0f)
-generalPath!!.lineTo(19.0f, 21.0f)
-generalPath!!.close()
-shape = Outline.Generic(generalPath!!)
-brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
-}
-alpha = alphaStack.removeAt(0)
-}
-alpha = alphaStack.removeAt(0)
-
-}
-}
-
-
+	TOKEN_PAINTING_CODE
 
     private fun innerPaint(drawScope: DrawScope) {
-	    _paint0(drawScope)
-
+	    TOKEN_PAINTING_INVOCATIONS
 
 	    shape = null
 	    generalPath = null
@@ -134,7 +54,7 @@ alpha = alphaStack.removeAt(0)
          * @return The X of the bounding box of the original SVG image.
          */
         fun getOrigX(): Double {
-            return 2.0
+            return TOKEN_ORIG_X
         }
 
         /**
@@ -143,7 +63,7 @@ alpha = alphaStack.removeAt(0)
          * @return The Y of the bounding box of the original SVG image.
          */
         fun getOrigY(): Double {
-            return 1.0
+            return TOKEN_ORIG_Y
         }
 
         /**
@@ -152,7 +72,7 @@ alpha = alphaStack.removeAt(0)
          * @return The width of the bounding box of the original SVG image.
          */
         fun getOrigWidth(): Double {
-            return 19.0
+            return TOKEN_ORIG_WIDTH
         }
 
         /**
@@ -161,7 +81,7 @@ alpha = alphaStack.removeAt(0)
          * @return The height of the bounding box of the original SVG image.
          */
         fun getOrigHeight(): Double {
-            return 22.0
+            return TOKEN_ORIG_HEIGHT
         }
 
         /**
@@ -173,7 +93,10 @@ alpha = alphaStack.removeAt(0)
          */
         @Composable
         fun of(width: Dp, height: Dp): AuroraIcon {
-            return content_copy_black_24dp(_width = width, _height = height)
+            return TOKEN_CLASSNAME(
+                _width = (width.value * LocalDensity.current.density).toInt(),
+                _height = (height.value * LocalDensity.current.density).toInt()
+            )
         }
 
         /**
@@ -184,26 +107,26 @@ alpha = alphaStack.removeAt(0)
         fun factory(): AuroraIcon.Factory {
             return object : AuroraIcon.Factory {
                 override fun createNewIcon(): AuroraIcon {
-                    return content_copy_black_24dp(getOrigWidth().dp, getOrigHeight().dp)
+                    return TOKEN_CLASSNAME(getOrigWidth().toInt(), getOrigHeight().toInt())
                 }
             }
         }
 
-        
+        TOKEN_RASTER_CODE
     }
 
-    override fun getWidth(): Dp {
+    override fun getWidth(): Int {
         return _width
     }
 
-    override fun getHeight(): Dp {
+    override fun getHeight(): Int {
         return _height
     }
 
     @Composable
     override fun setSize(width: Dp, height: Dp) {
-        _width = width
-        _height = height
+        _width = (width.value * LocalDensity.current.density).toInt()
+        _height = (height.value * LocalDensity.current.density).toInt()
     }
 
     override fun paintIcon(drawScope: DrawScope) {
@@ -213,9 +136,10 @@ alpha = alphaStack.removeAt(0)
                 // the scaling factor
                 val fullOrigWidth = getOrigX() + getOrigWidth()
                 val fullOrigHeight = getOrigY() + getOrigHeight()
-                val coef1 = _width.toPx() / fullOrigWidth
-                val coef2 = _height.toPx() / fullOrigHeight
+                val coef1 = _width / fullOrigWidth
+                val coef2 = _height / fullOrigHeight
                 val coef = min(coef1, coef2).toFloat()
+                val coefDp = coef.dp.toPx()
 
                 // Use the original icon bounding box and the current icon dimension to compute
                 // the offset pivot for the scaling
@@ -235,7 +159,7 @@ alpha = alphaStack.removeAt(0)
 
                 // Create a combined scale + translate + clip transform before calling the transcoded painting instructions
                 withTransform({
-                    scale(scaleX = coef, scaleY = coef, pivot = Offset.Zero)
+                    scale(scaleX = coefDp, scaleY = coefDp, pivot = Offset.Zero)
                     translate(translateXDp, translateYDp)
                     clipRect(left = 0.0f, top = 0.0f, right = fullOrigWidth.toFloat(), bottom = fullOrigHeight.toFloat(), clipOp = ClipOp.Intersect)
                 }) {
@@ -245,4 +169,3 @@ alpha = alphaStack.removeAt(0)
         }
     }
 }
-

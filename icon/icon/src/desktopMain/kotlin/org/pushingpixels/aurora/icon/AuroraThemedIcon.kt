@@ -40,7 +40,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.bitmapfilter.ColorBitmapFilter
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
@@ -114,8 +113,8 @@ fun AuroraThemedIcon(
             IconFilterStrategy.ORIGINAL ->
                 Box(
                     modifier.size(
-                        width = icon.getWidth().dp,
-                        height = icon.getHeight().dp
+                        width = icon.getWidth(),
+                        height = icon.getHeight()
                     ).auroraIconPaint(icon)
                 )
             IconFilterStrategy.THEMED_FOLLOW_TEXT ->
@@ -123,15 +122,15 @@ fun AuroraThemedIcon(
                 // disabled state alpha under the current skin configuration
                 Box(
                     modifier.size(
-                        width = icon.getWidth().dp,
-                        height = icon.getHeight().dp
+                        width = icon.getWidth(),
+                        height = icon.getHeight()
                     ).auroraThemedIconPaint(iconBitmap, textColor, 1.0f)
                 )
             IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME ->
                 Box(
                     modifier.size(
-                        width = icon.getWidth().dp,
-                        height = icon.getHeight().dp
+                        width = icon.getWidth(),
+                        height = icon.getHeight()
                     ).auroraThemedIconPaint(
                         iconBitmap, colors.getColorScheme(
                             decorationAreaType = decorationAreaType,
@@ -147,8 +146,8 @@ fun AuroraThemedIcon(
         ) {
             Box(
                 modifier.size(
-                    width = icon.getWidth().dp,
-                    height = icon.getHeight().dp
+                    width = icon.getWidth(),
+                    height = icon.getHeight()
                 ).auroraIconPaint(icon)
             )
         } else {
@@ -205,8 +204,8 @@ fun AuroraThemedIcon(
 
             Box(
                 modifier.size(
-                    width = icon.getWidth().dp,
-                    height = icon.getHeight().dp
+                    width = icon.getWidth(),
+                    height = icon.getHeight()
                 ).then(iconModifier)
             )
         }

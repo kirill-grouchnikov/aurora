@@ -37,7 +37,6 @@ import androidx.compose.ui.draw.DrawModifier
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 
 interface AuroraIcon {
     /**
@@ -48,12 +47,12 @@ interface AuroraIcon {
     /**
      * Returns the current width of this icon.
      */
-    fun getWidth(): Int
+    fun getWidth(): Dp
 
     /**
      * Returns the current height of this icon.
      */
-    fun getHeight(): Int
+    fun getHeight(): Dp
 
     /**
      * Changes the size of this icon.
@@ -90,11 +89,10 @@ fun AuroraIcon(
     icon: AuroraIcon,
     modifier: Modifier = Modifier
 ) {
-    // TODO - convert all sizing to dp units
     Box(
         modifier.size(
-            width = icon.getWidth().dp,
-            height = icon.getHeight().dp
+            width = icon.getWidth(),
+            height = icon.getHeight()
         ).auroraIconPaint(icon)
     )
 }

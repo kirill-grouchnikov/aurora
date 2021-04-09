@@ -1061,11 +1061,8 @@ private fun CommandButtonIconContent(
             command.iconFactory.createNewIcon(modelStateInfo.getSnapshot(currState))
         else
             remember(iconSize) { command.iconFactory.createNewIcon() }
-        // TODO - why does this need to be divided by density?
-        icon.setSize(
-            iconSize / LocalDensity.current.density,
-            iconSize / LocalDensity.current.density
-        )
+        icon.setSize(width = iconSize, height = iconSize)
+
         val decorationAreaType = AuroraSkin.decorationAreaType
         val skinColors = AuroraSkin.colors
 

@@ -37,7 +37,8 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 
 fun AuroraIcon.toBitmap(density: Float): ImageBitmap {
-    val result = ImageBitmap((this.getWidth() * density).toInt(), (this.getHeight() * density).toInt())
+    val result = ImageBitmap((this.getWidth().value * density).toInt(),
+        (this.getHeight().value * density).toInt())
     val canvas = Canvas(result)
     CanvasDrawScope().draw(
         density = Density(density),

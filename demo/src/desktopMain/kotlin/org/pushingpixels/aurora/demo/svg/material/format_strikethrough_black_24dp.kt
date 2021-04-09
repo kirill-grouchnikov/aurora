@@ -25,7 +25,7 @@ import kotlin.math.min
  * This class has been automatically generated using
  * <a href="https://github.com/kirill-grouchnikov/aurora">Aurora SVG transcoder</a>.
  */
-class format_strikethrough_black_24dp private constructor(var _width: Int, var _height: Int) : AuroraIcon {
+class format_strikethrough_black_24dp private constructor(var _width: Dp, var _height: Dp) : AuroraIcon {
     @Suppress("UNUSED_VARIABLE") private var shape: Outline? = null
     @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
@@ -170,10 +170,7 @@ alpha = alphaStack.removeAt(0)
          */
         @Composable
         fun of(width: Dp, height: Dp): AuroraIcon {
-            return format_strikethrough_black_24dp(
-                _width = (width.value * LocalDensity.current.density).toInt(),
-                _height = (height.value * LocalDensity.current.density).toInt()
-            )
+            return format_strikethrough_black_24dp(_width = width, _height = height)
         }
 
         /**
@@ -184,7 +181,7 @@ alpha = alphaStack.removeAt(0)
         fun factory(): AuroraIcon.Factory {
             return object : AuroraIcon.Factory {
                 override fun createNewIcon(): AuroraIcon {
-                    return format_strikethrough_black_24dp(getOrigWidth().toInt(), getOrigHeight().toInt())
+                    return format_strikethrough_black_24dp(getOrigWidth().dp, getOrigHeight().dp)
                 }
             }
         }
@@ -192,18 +189,18 @@ alpha = alphaStack.removeAt(0)
         
     }
 
-    override fun getWidth(): Int {
+    override fun getWidth(): Dp {
         return _width
     }
 
-    override fun getHeight(): Int {
+    override fun getHeight(): Dp {
         return _height
     }
 
     @Composable
     override fun setSize(width: Dp, height: Dp) {
-        _width = (width.value * LocalDensity.current.density).toInt()
-        _height = (height.value * LocalDensity.current.density).toInt()
+        _width = width
+        _height = height
     }
 
     override fun paintIcon(drawScope: DrawScope) {
@@ -213,10 +210,9 @@ alpha = alphaStack.removeAt(0)
                 // the scaling factor
                 val fullOrigWidth = getOrigX() + getOrigWidth()
                 val fullOrigHeight = getOrigY() + getOrigHeight()
-                val coef1 = _width / fullOrigWidth
-                val coef2 = _height / fullOrigHeight
+                val coef1 = _width.toPx() / fullOrigWidth
+                val coef2 = _height.toPx() / fullOrigHeight
                 val coef = min(coef1, coef2).toFloat()
-                val coefDp = coef.dp.toPx()
 
                 // Use the original icon bounding box and the current icon dimension to compute
                 // the offset pivot for the scaling
@@ -236,7 +232,7 @@ alpha = alphaStack.removeAt(0)
 
                 // Create a combined scale + translate + clip transform before calling the transcoded painting instructions
                 withTransform({
-                    scale(scaleX = coefDp, scaleY = coefDp, pivot = Offset.Zero)
+                    scale(scaleX = coef, scaleY = coef, pivot = Offset.Zero)
                     translate(translateXDp, translateYDp)
                     clipRect(left = 0.0f, top = 0.0f, right = fullOrigWidth.toFloat(), bottom = fullOrigHeight.toFloat(), clipOp = ClipOp.Intersect)
                 }) {

@@ -34,31 +34,31 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.scale
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
-class BitmapWrapperIcon(private val bitmap: ImageBitmap): AuroraIcon {
-    var _width = bitmap.width
-    var _height = bitmap.height
+class BitmapWrapperIcon(private val bitmap: ImageBitmap, density: Float): AuroraIcon {
+    var _width = (bitmap.width / density).dp
+    var _height = (bitmap.height / density).dp
 
-    override fun getWidth(): Int {
+    override fun getWidth(): Dp {
         return _width
     }
 
-    override fun getHeight(): Int {
+    override fun getHeight(): Dp {
         return _height
     }
 
     @Composable
     override fun setSize(width: Dp, height: Dp) {
-        _width = (width.value * LocalDensity.current.density).toInt()
-        _height = (height.value * LocalDensity.current.density).toInt()
+        _width = width
+        _height = height
     }
 
     override fun paintIcon(drawScope: DrawScope) {
-        val scaleX = bitmap.width.toFloat() / _width
-        val scaleY = bitmap.height.toFloat() / _height
         with (drawScope) {
+            val scaleX = bitmap.width.toFloat() / (_width.value * density)
+            val scaleY = bitmap.height.toFloat() / (_height.value * density)
             scale(scaleX = scaleX, scaleY = scaleY, pivot = Offset.Zero) {
                 drawImage(bitmap)
             }

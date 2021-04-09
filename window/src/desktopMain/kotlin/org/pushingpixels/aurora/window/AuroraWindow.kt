@@ -70,8 +70,8 @@ private fun AuroraWindowContent(
     menuCommands: CommandGroup? = null,
     content: @Composable () -> Unit
 ) {
-    val density = LocalDensity.current.density
-    val iconSize = (18 * density).toInt()
+    val density = LocalDensity.current
+    val iconSize = (18 * density.density).toInt()
 
     val extendedState = AppManager.focusedWindow?.window?.extendedState
     val isMaximized =
@@ -101,7 +101,7 @@ private fun AuroraWindowContent(
                                 color = colorScheme.foregroundColor,
                                 shadow = Shadow(
                                     color = colorScheme.echoColor,
-                                    blurRadius = density
+                                    blurRadius = density.density
                                 )
                             )
                         )
@@ -141,9 +141,10 @@ private fun AuroraWindowContent(
                                             getMinimizeIcon(
                                                 iconSize = iconSize,
                                                 scheme = scheme,
-                                                density = density
+                                                density = density.density
                                             )
                                         },
+                                        density = density,
                                         colorSchemeAssociationKindDelegate = null,
                                         uniqueIconTypeId = "aurora.titlePane.minimizeIcon"
                                     )
@@ -183,9 +184,10 @@ private fun AuroraWindowContent(
                                                 getRestoreIcon(
                                                     iconSize = iconSize,
                                                     scheme = scheme,
-                                                    density = density
+                                                    density = density.density
                                                 )
                                             },
+                                            density = density,
                                             colorSchemeAssociationKindDelegate = null,
                                             uniqueIconTypeId = "aurora.titlePane.restoreIcon"
                                         )
@@ -199,9 +201,10 @@ private fun AuroraWindowContent(
                                                 getMaximizeIcon(
                                                     iconSize = iconSize,
                                                     scheme = scheme,
-                                                    density = density
+                                                    density = density.density
                                                 )
                                             },
+                                            density = density,
                                             colorSchemeAssociationKindDelegate = null,
                                             uniqueIconTypeId = "aurora.titlePane.maximizeIcon"
                                         )
@@ -233,9 +236,10 @@ private fun AuroraWindowContent(
                                             getCloseIcon(
                                                 iconSize = iconSize,
                                                 scheme = scheme,
-                                                density = density
+                                                density = density.density
                                             )
                                         },
+                                        density = density,
                                         colorSchemeAssociationKindDelegate = null,
                                         uniqueIconTypeId = "aurora.titlePane.closeIcon"
                                     )

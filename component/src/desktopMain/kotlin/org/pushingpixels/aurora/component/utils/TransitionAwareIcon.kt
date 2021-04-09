@@ -6,7 +6,9 @@ import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
@@ -26,6 +28,7 @@ class TransitionAwareIcon(
     val modelStateInfoSnapshot: ModelStateInfoSnapshot,
     val delegate: (AuroraColorScheme) -> ImageBitmap,
     val colorSchemeAssociationKindDelegate: ((ComponentState) -> ColorSchemeAssociationKind)?,
+    val density: Density,
     val uniqueIconTypeId: String
 ) : AuroraIcon {
 
@@ -45,8 +48,8 @@ class TransitionAwareIcon(
         )
     )
 
-    private val iconWidth = markEnabledIcon.width
-    private val iconHeight = markEnabledIcon.height
+    private val iconWidth = (markEnabledIcon.width / density.density).dp
+    private val iconHeight = (markEnabledIcon.height / density.density).dp
 
     /**
      * Returns the current icon to paint.
@@ -152,11 +155,11 @@ class TransitionAwareIcon(
         drawScope.drawImage(iconToPaint)
     }
 
-    override fun getWidth(): Int {
+    override fun getWidth(): Dp {
         return iconWidth
     }
 
-    override fun getHeight(): Int {
+    override fun getHeight(): Dp {
         return iconHeight
     }
 
