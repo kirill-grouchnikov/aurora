@@ -415,6 +415,7 @@ fun DemoArea(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
+                var toggleStarButtonSelected by remember { mutableStateOf(true) }
                 // Example of an icon-only button with smaller content padding around the icon
                 AuroraCommandButton(
                     command = Command(
@@ -422,8 +423,11 @@ fun DemoArea(
                         iconFactory = star_black_48dp.factory(),
                         isActionEnabled = contentEnabled.value,
                         isActionToggle = true,
-                        isActionToggleSelected = true,
-                        onTriggerActionToggleSelectedChange = { println("Selected small? $it") }
+                        isActionToggleSelected = toggleStarButtonSelected,
+                        onTriggerActionToggleSelectedChange = {
+                            println("Selected small? $it")
+                            toggleStarButtonSelected = it
+                        }
                     ),
                     presentationModel = CommandButtonPresentationModel(
                         presentationState = CommandButtonPresentationState.SMALL,
@@ -442,8 +446,11 @@ fun DemoArea(
                         iconFactory = star_black_48dp.factory(),
                         isActionEnabled = contentEnabled.value,
                         isActionToggle = true,
-                        isActionToggleSelected = true,
-                        onTriggerActionToggleSelectedChange = { println("Selected small? $it") }
+                        isActionToggleSelected = toggleStarButtonSelected,
+                        onTriggerActionToggleSelectedChange = {
+                            println("Selected small? $it")
+                            toggleStarButtonSelected = it
+                        }
                     ),
                     presentationModel = CommandButtonPresentationModel(
                         presentationState = CommandButtonPresentationState.SMALL,
