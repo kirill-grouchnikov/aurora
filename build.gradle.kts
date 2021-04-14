@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jetbrains.compose:compose-gradle-plugin:0.4.0-build180")
+        classpath("org.jetbrains.compose:compose-gradle-plugin:0.4.0-build182")
         classpath(kotlin("gradle-plugin", version = "1.4.32"))
         classpath("com.github.ben-manes:gradle-versions-plugin:0.38.0")
         classpath("com.vanniktech:gradle-maven-publish-plugin:0.14.2")
@@ -22,10 +22,6 @@ allprojects {
         mavenCentral()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         maven("https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev")
-        // TODO - this is still needed for org.jetbrains.kotlinx:kotlinx-collections-immutable
-        maven("https://kotlin.bintray.com/kotlinx")
-        // TODO - this is still needed for org.jetbrains:markdown:0.1.45 which is for Dokka
-        jcenter()
     }
 
     tasks.withType<Jar>().configureEach {
