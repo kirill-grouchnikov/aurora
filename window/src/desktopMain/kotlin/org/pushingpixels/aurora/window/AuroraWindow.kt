@@ -37,7 +37,12 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.IntOffset
@@ -62,13 +67,14 @@ import java.awt.image.BufferedImage
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
 
+object WindowSizingConstants {
+    val DecoratedBorderThickness = 4.dp
+}
+
 @Composable
-private fun AuroraWindowContent(
+private fun WindowTitlePane(
     title: String,
     icon: BufferedImage?,
-    undecorated: Boolean,
-    menuCommands: CommandGroup? = null,
-    content: @Composable () -> Unit
 ) {
     val density = LocalDensity.current
     val iconSize = (18 * density.density).toInt()
@@ -76,185 +82,288 @@ private fun AuroraWindowContent(
     val extendedState = AppManager.focusedWindow?.window?.extendedState
     val isMaximized =
         remember { mutableStateOf(((extendedState != null) && ((extendedState and Frame.MAXIMIZED_BOTH) != 0))) }
-
     val skinColors = AuroraSkin.colors
 
+    AuroraDecorationArea(decorationAreaType = DecorationAreaType.TITLE_PANE) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(32.dp)
+                .auroraBackground()
+                .padding(start = 24.dp, end = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            WindowDraggableArea(
+                modifier = Modifier.weight(1f)
+            ) {
+                val colorScheme =
+                    skinColors.getEnabledColorScheme(DecorationAreaType.TITLE_PANE)
+                BasicText(
+                    text = title,
+                    style = TextStyle(
+                        color = colorScheme.foregroundColor,
+                        shadow = Shadow(
+                            color = colorScheme.echoColor,
+                            blurRadius = density.density
+                        )
+                    )
+                )
+            }
+
+            val colors = AuroraSkin.colors
+
+            val titlePaneButtonPresentationModel = CommandButtonPresentationModel(
+                presentationState = CommandButtonPresentationState.SMALL,
+                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                contentPadding = PaddingValues(
+                    start = 1.dp,
+                    end = 2.dp,
+                    top = 1.dp,
+                    bottom = 2.dp
+                ),
+                horizontalGapScaleFactor = 1.0f,
+                verticalGapScaleFactor = 1.0f
+            )
+
+            // Minimize button
+            AuroraCommandButton(
+                command = Command(
+                    text = "",
+                    action = {
+                        AppManager.focusedWindow?.window?.extendedState =
+                            JFrame.ICONIFIED
+                    },
+                    iconFactory = object :
+                        TransitionAwareIcon.TransitionAwareIconFactory() {
+                        override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
+                            return TransitionAwareIcon(
+                                decorationAreaType = DecorationAreaType.TITLE_PANE,
+                                skinColors = colors,
+                                buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                                modelStateInfoSnapshot = modelStateInfoSnapshot,
+                                delegate = { scheme ->
+                                    getMinimizeIcon(
+                                        iconSize = iconSize,
+                                        scheme = scheme,
+                                        density = density.density
+                                    )
+                                },
+                                density = density,
+                                colorSchemeAssociationKindDelegate = null,
+                                uniqueIconTypeId = "aurora.titlePane.minimizeIcon"
+                            )
+                        }
+                    }
+                ),
+                presentationModel = titlePaneButtonPresentationModel
+            )
+
+            Spacer(modifier = Modifier.width(4.dp))
+
+            // Maximize / Unmaximize button
+            AuroraCommandButton(
+                command = Command(
+                    text = "",
+                    action = {
+                        val current = AppManager.focusedWindow
+                        if (current != null) {
+                            if (current.window.extendedState == JFrame.MAXIMIZED_BOTH) {
+                                current.window.extendedState = JFrame.NORMAL
+                            } else {
+                                current.window.extendedState = JFrame.MAXIMIZED_BOTH
+                            }
+                            isMaximized.value = !isMaximized.value
+                        }
+                    },
+                    iconFactory = object :
+                        TransitionAwareIcon.TransitionAwareIconFactory() {
+                        override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
+                            return if (isMaximized.value) {
+                                TransitionAwareIcon(
+                                    decorationAreaType = DecorationAreaType.TITLE_PANE,
+                                    skinColors = colors,
+                                    buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                                    modelStateInfoSnapshot = modelStateInfoSnapshot,
+                                    delegate = { scheme ->
+                                        getRestoreIcon(
+                                            iconSize = iconSize,
+                                            scheme = scheme,
+                                            density = density.density
+                                        )
+                                    },
+                                    density = density,
+                                    colorSchemeAssociationKindDelegate = null,
+                                    uniqueIconTypeId = "aurora.titlePane.restoreIcon"
+                                )
+                            } else {
+                                TransitionAwareIcon(
+                                    decorationAreaType = DecorationAreaType.TITLE_PANE,
+                                    skinColors = colors,
+                                    buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                                    modelStateInfoSnapshot = modelStateInfoSnapshot,
+                                    delegate = { scheme ->
+                                        getMaximizeIcon(
+                                            iconSize = iconSize,
+                                            scheme = scheme,
+                                            density = density.density
+                                        )
+                                    },
+                                    density = density,
+                                    colorSchemeAssociationKindDelegate = null,
+                                    uniqueIconTypeId = "aurora.titlePane.maximizeIcon"
+                                )
+                            }
+                        }
+                    }
+                ),
+                presentationModel = titlePaneButtonPresentationModel
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            // Close button
+            AuroraCommandButton(
+                command = Command(
+                    text = "",
+                    action = {
+                        AppManager.focusedWindow?.close()
+                    },
+                    iconFactory = object :
+                        TransitionAwareIcon.TransitionAwareIconFactory() {
+                        override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
+                            return TransitionAwareIcon(
+                                decorationAreaType = DecorationAreaType.TITLE_PANE,
+                                skinColors = colors,
+                                buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                                modelStateInfoSnapshot = modelStateInfoSnapshot,
+                                delegate = { scheme ->
+                                    getCloseIcon(
+                                        iconSize = iconSize,
+                                        scheme = scheme,
+                                        density = density.density
+                                    )
+                                },
+                                density = density,
+                                colorSchemeAssociationKindDelegate = null,
+                                uniqueIconTypeId = "aurora.titlePane.closeIcon"
+                            )
+                        }
+                    }
+                ),
+                presentationModel = titlePaneButtonPresentationModel
+            )
+        }
+    }
+}
+
+@Composable
+private fun WindowInnerContent(
+    title: String,
+    icon: BufferedImage?,
+    undecorated: Boolean,
+    menuCommands: CommandGroup? = null,
+    content: @Composable () -> Unit
+) {
     Column(Modifier.fillMaxSize().auroraBackground()) {
         if (undecorated) {
-            AuroraDecorationArea(decorationAreaType = DecorationAreaType.TITLE_PANE) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(32.dp)
-                        .auroraBackground()
-                        .padding(start = 24.dp, end = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    WindowDraggableArea(
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        val colorScheme =
-                            skinColors.getEnabledColorScheme(DecorationAreaType.TITLE_PANE)
-                        BasicText(
-                            text = title,
-                            style = TextStyle(
-                                color = colorScheme.foregroundColor,
-                                shadow = Shadow(
-                                    color = colorScheme.echoColor,
-                                    blurRadius = density.density
-                                )
-                            )
-                        )
-                    }
-
-                    val colors = AuroraSkin.colors
-
-                    val titlePaneButtonPresentationModel = CommandButtonPresentationModel(
-                        presentationState = CommandButtonPresentationState.SMALL,
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                        contentPadding = PaddingValues(
-                            start = 1.dp,
-                            end = 2.dp,
-                            top = 1.dp,
-                            bottom = 2.dp
-                        ),
-                        horizontalGapScaleFactor = 1.0f,
-                        verticalGapScaleFactor = 1.0f
-                    )
-
-                    // Minimize button
-                    AuroraCommandButton(
-                        command = Command(
-                            text = "",
-                            action = {
-                                AppManager.focusedWindow?.window?.extendedState = JFrame.ICONIFIED
-                            },
-                            iconFactory = object :
-                                TransitionAwareIcon.TransitionAwareIconFactory() {
-                                override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
-                                    return TransitionAwareIcon(
-                                        decorationAreaType = DecorationAreaType.TITLE_PANE,
-                                        skinColors = colors,
-                                        buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                        modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                        delegate = { scheme ->
-                                            getMinimizeIcon(
-                                                iconSize = iconSize,
-                                                scheme = scheme,
-                                                density = density.density
-                                            )
-                                        },
-                                        density = density,
-                                        colorSchemeAssociationKindDelegate = null,
-                                        uniqueIconTypeId = "aurora.titlePane.minimizeIcon"
-                                    )
-                                }
-                            }
-                        ),
-                        presentationModel = titlePaneButtonPresentationModel
-                    )
-
-                    Spacer(modifier = Modifier.width(4.dp))
-
-                    // Maximize / Unmaximize button
-                    AuroraCommandButton(
-                        command = Command(
-                            text = "",
-                            action = {
-                                val current = AppManager.focusedWindow
-                                if (current != null) {
-                                    if (current.window.extendedState == JFrame.MAXIMIZED_BOTH) {
-                                        current.window.extendedState = JFrame.NORMAL
-                                    } else {
-                                        current.window.extendedState = JFrame.MAXIMIZED_BOTH
-                                    }
-                                    isMaximized.value = !isMaximized.value
-                                }
-                            },
-                            iconFactory = object :
-                                TransitionAwareIcon.TransitionAwareIconFactory() {
-                                override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
-                                    return if (isMaximized.value) {
-                                        TransitionAwareIcon(
-                                            decorationAreaType = DecorationAreaType.TITLE_PANE,
-                                            skinColors = colors,
-                                            buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                            modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                            delegate = { scheme ->
-                                                getRestoreIcon(
-                                                    iconSize = iconSize,
-                                                    scheme = scheme,
-                                                    density = density.density
-                                                )
-                                            },
-                                            density = density,
-                                            colorSchemeAssociationKindDelegate = null,
-                                            uniqueIconTypeId = "aurora.titlePane.restoreIcon"
-                                        )
-                                    } else {
-                                        TransitionAwareIcon(
-                                            decorationAreaType = DecorationAreaType.TITLE_PANE,
-                                            skinColors = colors,
-                                            buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                            modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                            delegate = { scheme ->
-                                                getMaximizeIcon(
-                                                    iconSize = iconSize,
-                                                    scheme = scheme,
-                                                    density = density.density
-                                                )
-                                            },
-                                            density = density,
-                                            colorSchemeAssociationKindDelegate = null,
-                                            uniqueIconTypeId = "aurora.titlePane.maximizeIcon"
-                                        )
-                                    }
-                                }
-                            }
-                        ),
-                        presentationModel = titlePaneButtonPresentationModel
-                    )
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    // Close button
-                    AuroraCommandButton(
-                        command = Command(
-                            text = "",
-                            action = {
-                                AppManager.focusedWindow?.close()
-                            },
-                            iconFactory = object :
-                                TransitionAwareIcon.TransitionAwareIconFactory() {
-                                override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
-                                    return TransitionAwareIcon(
-                                        decorationAreaType = DecorationAreaType.TITLE_PANE,
-                                        skinColors = colors,
-                                        buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                        modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                        delegate = { scheme ->
-                                            getCloseIcon(
-                                                iconSize = iconSize,
-                                                scheme = scheme,
-                                                density = density.density
-                                            )
-                                        },
-                                        density = density,
-                                        colorSchemeAssociationKindDelegate = null,
-                                        uniqueIconTypeId = "aurora.titlePane.closeIcon"
-                                    )
-                                }
-                            }
-                        ),
-                        presentationModel = titlePaneButtonPresentationModel
-                    )
-                }
-            }
+            WindowTitlePane(title, icon)
         }
         if (menuCommands != null) {
             AuroraWindowMenuBar(menuCommands)
         }
         content()
+    }
+}
+
+@Composable
+private fun WindowContent(
+    title: String,
+    icon: BufferedImage?,
+    undecorated: Boolean,
+    menuCommands: CommandGroup? = null,
+    content: @Composable () -> Unit
+) {
+
+    val skinColors = AuroraSkin.colors
+    val backgroundColorScheme = skinColors.getBackgroundColorScheme(DecorationAreaType.TITLE_PANE)
+    val borderColorScheme = skinColors.getColorScheme(
+        DecorationAreaType.TITLE_PANE, ColorSchemeAssociationKind.BORDER, ComponentState.ENABLED
+    )
+
+    if (undecorated) {
+        Box(Modifier.fillMaxSize().drawBehind {
+            val width: Float = size.width
+            val height: Float = size.height
+            val thickness = WindowSizingConstants.DecoratedBorderThickness.toPx()
+            drawRect(
+                color = backgroundColorScheme.lightColor,
+                topLeft = Offset(thickness / 2.0f, thickness / 2.0f),
+                size = Size(width - thickness, height - thickness),
+                style = androidx.compose.ui.graphics.drawscope.Stroke(width = thickness)
+            )
+
+            val quarterThickness = thickness / 4.0f
+            // bottom and right in border ultra dark
+            drawLine(color = borderColorScheme.ultraDarkColor,
+                start = Offset(x = 0f, y = height - quarterThickness / 2.0f),
+                end = Offset(x = width, y = height - quarterThickness / 2.0f),
+                strokeWidth = quarterThickness,
+                cap = StrokeCap.Butt
+            )
+            drawLine(color = borderColorScheme.ultraDarkColor,
+                start = Offset(x = width - quarterThickness / 2.0f, y = 0f),
+                end = Offset(x = width - quarterThickness / 2.0f, y = height),
+                strokeWidth = quarterThickness,
+                cap = StrokeCap.Butt
+            )
+            // top and left in border dark
+            drawLine(color = borderColorScheme.darkColor,
+                start = Offset(x = 0f, y = quarterThickness / 2.0f),
+                end = Offset(x = width, y = quarterThickness / 2.0f),
+                strokeWidth = quarterThickness,
+                cap = StrokeCap.Butt
+            )
+            drawLine(color = borderColorScheme.darkColor,
+                start = Offset(x = quarterThickness / 2.0f, y = 0f),
+                end = Offset(x = quarterThickness / 2.0f, y = height),
+                strokeWidth = quarterThickness,
+                cap = StrokeCap.Butt
+            )
+            // inner bottom and right in background mid
+            drawLine(color = borderColorScheme.midColor,
+                start = Offset(x = quarterThickness,
+                    y = height - 1.5f * quarterThickness),
+                end = Offset(x = width - quarterThickness,
+                    y = height - 1.5f * quarterThickness),
+                strokeWidth = quarterThickness,
+                cap = StrokeCap.Butt
+            )
+            drawLine(color = borderColorScheme.midColor,
+                start = Offset(x = width - 1.5f * quarterThickness,
+                    y = quarterThickness),
+                end = Offset(x = width - 1.5f * quarterThickness,
+                    y = height - quarterThickness),
+                strokeWidth = quarterThickness,
+                cap = StrokeCap.Butt
+            )
+            // inner top and left in background mid
+            drawLine(color = borderColorScheme.midColor,
+                start = Offset(x = quarterThickness, y = 1.5f * quarterThickness),
+                end = Offset(x = width - quarterThickness, y = 1.5f * quarterThickness),
+                strokeWidth = quarterThickness,
+                cap = StrokeCap.Butt
+            )
+            drawLine(color = borderColorScheme.midColor,
+                start = Offset(x = 1.5f * quarterThickness, y = quarterThickness),
+                end = Offset(x = 1.5f * quarterThickness, y = height - quarterThickness),
+                strokeWidth = quarterThickness,
+                cap = StrokeCap.Butt
+            )
+        }.padding(WindowSizingConstants.DecoratedBorderThickness)) {
+            WindowInnerContent(title, icon, undecorated, menuCommands, content)
+        }
+    } else {
+        WindowInnerContent(title, icon, undecorated, menuCommands, content)
     }
 
     val awtEventListener = remember {
@@ -272,7 +381,11 @@ private fun AuroraWindowContent(
                 }
             }
             if ((event is MouseEvent) && (event.id == MouseEvent.MOUSE_PRESSED)) {
-                if (SwingUtilities.getAncestorOfClass(AuroraPopupWindow::class.java, src) == null) {
+                if (SwingUtilities.getAncestorOfClass(
+                        AuroraPopupWindow::class.java,
+                        src
+                    ) == null
+                ) {
                     for (window in Window.getWindows()) {
                         if (window.isDisplayable && (window is AuroraPopupWindow)) {
                             window.hide()
@@ -328,7 +441,7 @@ fun AuroraWindow(
         painters = skin.painters,
         animationConfig = AuroraSkin.animationConfig
     ) {
-        AuroraWindowContent(
+        WindowContent(
             title = title,
             icon = icon,
             undecorated = undecorated,

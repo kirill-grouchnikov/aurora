@@ -638,15 +638,6 @@ private fun <E> ComboBoxPopupContent(
                         horizontalAlignment = HorizontalAlignment.LEADING
                     )
                 )
-//                AuroraMenuButton(
-//                    enabled = true,
-//                    onClick = { onItemSelected.invoke(item) },
-//                    sides = ButtonSides(straightSides = Side.values().toSet()),
-//                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-//                    sizingStrategy = ButtonSizingStrategy.EXTENDED,
-//                ) {
-//                    AuroraText(text = displayConverter.invoke(item), maxLines = 1)
-//                }
             }
         }
     }
