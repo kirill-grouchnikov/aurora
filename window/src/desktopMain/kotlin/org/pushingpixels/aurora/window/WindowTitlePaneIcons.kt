@@ -109,7 +109,7 @@ internal fun getCloseIcon(iconSize: Int, scheme: AuroraColorScheme, density: Flo
     )
 }
 
-fun getMinimizeIcon(iconSize: Int, scheme: AuroraColorScheme, density: Float): ImageBitmap {
+internal fun getMinimizeIcon(iconSize: Int, scheme: AuroraColorScheme, density: Float): ImageBitmap {
     val image = ImageBitmap(iconSize, iconSize)
 
     val start = iconSize * 0.25f
@@ -143,7 +143,7 @@ fun getMinimizeIcon(iconSize: Int, scheme: AuroraColorScheme, density: Float): I
     )
 }
 
-fun getRestoreIcon(iconSize: Int, scheme: AuroraColorScheme, density: Float): ImageBitmap {
+internal fun getRestoreIcon(iconSize: Int, scheme: AuroraColorScheme, density: Float): ImageBitmap {
     val image = ImageBitmap(iconSize, iconSize)
 
     val start = iconSize / 4.0f - density
@@ -241,7 +241,7 @@ fun getRestoreIcon(iconSize: Int, scheme: AuroraColorScheme, density: Float): Im
     )
 }
 
-fun getMaximizeIcon(iconSize: Int, scheme: AuroraColorScheme, density: Float): ImageBitmap {
+internal fun getMaximizeIcon(iconSize: Int, scheme: AuroraColorScheme, density: Float): ImageBitmap {
     val image = ImageBitmap(iconSize, iconSize)
 
     val start = iconSize / 4.0f - density
