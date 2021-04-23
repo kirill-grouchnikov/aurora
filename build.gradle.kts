@@ -13,7 +13,7 @@ buildscript {
         classpath(kotlin("gradle-plugin", version = "1.4.32"))
         classpath("com.github.ben-manes:gradle-versions-plugin:0.38.0")
         classpath("com.vanniktech:gradle-maven-publish-plugin:0.14.2")
-        classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.4.32-dev-92")
+        classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.4.32")
     }
 }
 
