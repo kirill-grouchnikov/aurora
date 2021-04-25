@@ -30,7 +30,7 @@
 package org.pushingpixels.aurora.window
 
 import androidx.compose.desktop.AppManager
-import androidx.compose.desktop.Window
+import androidx.compose.desktop.AppWindow
 import androidx.compose.desktop.WindowEvents
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicText
@@ -39,11 +39,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -69,6 +71,12 @@ import javax.swing.SwingUtilities
 
 object WindowSizingConstants {
     val DecoratedBorderThickness = 4.dp
+
+    // The amount of space that the cursor is changed on.
+    val CornerDragWidth = 16.dp
+
+    // Region from edges that dragging is active from.
+    val BorderDragThickness = 5.dp
 }
 
 @Composable
@@ -451,34 +459,62 @@ fun AuroraWindow(
     events: WindowEvents = WindowEvents(),
     onDismissRequest: (() -> Unit)? = null,
     content: @Composable () -> Unit
-) = Window(
-    title = title,
-    size = size,
-    location = location,
-    centered = centered,
-    icon = icon,
-    menuBar = null,
-    undecorated = undecorated,
-    resizable = resizable,
-    events = events,
-    onDismissRequest = onDismissRequest
-) {
-    AuroraSkin(
-        decorationAreaType = DecorationAreaType.NONE,
-        colors = skin.colors,
-        buttonShaper = skin.buttonShaper,
-        painters = skin.painters,
-        animationConfig = AuroraSkin.animationConfig
-    ) {
-        WindowContent(
+) =
+    SwingUtilities.invokeLater {
+        val appWindow = AppWindow(
             title = title,
+            size = size,
+            location = location,
+            centered = centered,
             icon = icon,
+            menuBar = null,
             undecorated = undecorated,
-            menuCommands = menuCommands,
-            content = content
+            resizable = resizable,
+            events = events,
+            onDismissRequest = onDismissRequest
         )
+
+        // Initialize with defaults
+        val density = mutableStateOf(Density(1.0f, 1.0f))
+        appWindow.show {
+            AuroraSkin(
+                decorationAreaType = DecorationAreaType.NONE,
+                colors = skin.colors,
+                buttonShaper = skin.buttonShaper,
+                painters = skin.painters,
+                animationConfig = AuroraSkin.animationConfig
+            ) {
+                density.value = LocalDensity.current
+                WindowContent(
+                    title = title,
+                    icon = icon,
+                    undecorated = undecorated,
+                    menuCommands = menuCommands,
+                    content = content
+                )
+            }
+        }
+
+        if (undecorated) {
+            // This is the underlying Swing JFrame
+            val composeWindow = appWindow.window
+
+            val lastCursor = mutableStateOf(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR))
+            val titlePaneBounds = mutableStateOf(Rect.Zero)
+            val awtInputHandler = AWTInputHandler(
+                density = density.value,
+                window = composeWindow,
+                rootPane = composeWindow.rootPane,
+                lastCursor = lastCursor,
+                titlePaneBounds = titlePaneBounds
+            )
+
+            Toolkit.getDefaultToolkit().addAWTEventListener(
+                awtInputHandler,
+                AWTEvent.MOUSE_EVENT_MASK or AWTEvent.MOUSE_MOTION_EVENT_MASK
+            )
+        }
     }
-}
 
 @Composable
 fun AuroraDecorationArea(
