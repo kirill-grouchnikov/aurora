@@ -122,12 +122,20 @@ internal class AWTInputHandler(
             }
         }
     }
+    
+    fun getEventWindow(ev: MouseEvent) : Window {
+        val source = ev.source
+        if (source is Window) {
+            return source
+        }
+        return SwingUtilities.getWindowAncestor(source as Component)
+    }
 
     fun mousePressed(ev: MouseEvent) {
         println("mousePressed!")
         isMousePressed = true
         val dragWindowOffset: Point = ev.point
-        val w: Window = SwingUtilities.getWindowAncestor(ev.source as Component)
+        val w: Window = getEventWindow(ev)
         if (w != null) {
             w.toFront()
         }
@@ -179,11 +187,11 @@ internal class AWTInputHandler(
     }
 
     fun mouseMoved(ev: MouseEvent) {
-        println("mouseMoved ${ev.x}x${ev.y}! ${rootPane.windowDecorationStyle}")
-        if (rootPane.windowDecorationStyle == JRootPane.NONE) {
-            return
-        }
-        val w: Window = SwingUtilities.getWindowAncestor(ev.source as Component)
+        println("mouseMoved ${ev.x}x${ev.y} / ${ev.source}! ${rootPane.windowDecorationStyle}")
+//        if (rootPane.windowDecorationStyle == JRootPane.NONE) {
+//            return
+//        }
+        val w: Window = getEventWindow(ev)
         var f: Frame? = null
         var d: Dialog? = null
         if (w is Frame) {
@@ -249,7 +257,7 @@ internal class AWTInputHandler(
 
     fun mouseDragged(ev: MouseEvent) {
         println("mouseDragged!")
-        val w: Window = SwingUtilities.getWindowAncestor(ev.source as Component)
+        val w: Window = getEventWindow(ev)
         val pt: Point = ev.point
         if (isMovingWindow) {
             val windowPt: Point
@@ -320,7 +328,7 @@ internal class AWTInputHandler(
         if (isMousePressed) {
             return
         }
-        val w: Window = SwingUtilities.getWindowAncestor(ev.source as Component)
+        val w: Window = getEventWindow(ev)
         if ((lastCursor.value == null)
             && (cursorState !== CursorState.ENTERED)
         ) {
@@ -336,14 +344,14 @@ internal class AWTInputHandler(
         if (isMousePressed) {
             return
         }
-        val w: Window = SwingUtilities.getWindowAncestor(ev.source as Component)
+        val w: Window = getEventWindow(ev)
         w.cursor = lastCursor.value
         lastCursor.value = null
         cursorState = CursorState.EXITED
     }
 
     fun mouseClicked(ev: MouseEvent) {
-        val w: Window = SwingUtilities.getWindowAncestor(ev.source as Component)
+        val w: Window = getEventWindow(ev)
         var f: Frame? = null
         f = if (w is Frame) {
             w as Frame
