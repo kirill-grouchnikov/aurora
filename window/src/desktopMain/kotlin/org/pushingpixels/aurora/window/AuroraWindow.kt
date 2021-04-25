@@ -43,6 +43,9 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Density
@@ -83,6 +86,7 @@ object WindowSizingConstants {
 private fun WindowTitlePane(
     title: String,
     icon: BufferedImage?,
+    titlePaneBounds: MutableState<Rect>
 ) {
     val density = LocalDensity.current
     val iconSize = (18 * density.density).toInt()
@@ -97,6 +101,12 @@ private fun WindowTitlePane(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(32.dp)
+                .onGloballyPositioned {
+                    titlePaneBounds.value = Rect(
+                        offset = it.positionInWindow(),
+                        size = Size(it.size.width.toFloat(), it.size.height.toFloat())
+                    )
+                }
                 .auroraBackground()
                 .padding(start = 24.dp, end = 8.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -269,12 +279,13 @@ private fun WindowInnerContent(
     title: String,
     icon: BufferedImage?,
     undecorated: Boolean,
+    titlePaneBounds: MutableState<Rect>,
     menuCommands: CommandGroup? = null,
     content: @Composable () -> Unit
 ) {
     Column(Modifier.fillMaxSize().auroraBackground()) {
         if (undecorated) {
-            WindowTitlePane(title, icon)
+            WindowTitlePane(title, icon, titlePaneBounds)
         }
         if (menuCommands != null) {
             AuroraWindowMenuBar(menuCommands)
@@ -376,6 +387,7 @@ private fun Modifier.drawUndecoratedWindowBorder(
 private fun WindowContent(
     title: String,
     icon: BufferedImage?,
+    titlePaneBounds: MutableState<Rect>,
     undecorated: Boolean,
     menuCommands: CommandGroup? = null,
     content: @Composable () -> Unit
@@ -397,10 +409,10 @@ private fun WindowContent(
                 )
                 .padding(WindowSizingConstants.DecoratedBorderThickness)
         ) {
-            WindowInnerContent(title, icon, undecorated, menuCommands, content)
+            WindowInnerContent(title, icon, undecorated, titlePaneBounds, menuCommands, content)
         }
     } else {
-        WindowInnerContent(title, icon, undecorated, menuCommands, content)
+        WindowInnerContent(title, icon, undecorated, titlePaneBounds, menuCommands, content)
     }
 
     val awtEventListener = remember {
@@ -474,6 +486,8 @@ fun AuroraWindow(
             onDismissRequest = onDismissRequest
         )
 
+        val titlePaneBounds = mutableStateOf(Rect.Zero)
+
         // Initialize with defaults
         val density = mutableStateOf(Density(1.0f, 1.0f))
         appWindow.show {
@@ -488,6 +502,7 @@ fun AuroraWindow(
                 WindowContent(
                     title = title,
                     icon = icon,
+                    titlePaneBounds = titlePaneBounds,
                     undecorated = undecorated,
                     menuCommands = menuCommands,
                     content = content
@@ -500,7 +515,6 @@ fun AuroraWindow(
             val composeWindow = appWindow.window
 
             val lastCursor = mutableStateOf(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR))
-            val titlePaneBounds = mutableStateOf(Rect.Zero)
             val awtInputHandler = AWTInputHandler(
                 density = density.value,
                 window = composeWindow,
