@@ -44,7 +44,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
@@ -290,7 +289,11 @@ private fun WindowInnerContent(
         if (menuCommands != null) {
             AuroraWindowMenuBar(menuCommands)
         }
-        content()
+        // Wrap the entire content in NONE decoration area. App code can set its
+        // own decoration area types on specific parts.
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.NONE) {
+            content()
+        }
     }
 }
 
