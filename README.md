@@ -1,7 +1,7 @@
 
 # Aurora libraries
 
-Aurora is a collection of libraries for writing modern, elegant and fast desktop Compose applications.
+Aurora is a collection of libraries for writing modern, elegant and fast [desktop Compose](https://github.com/JetBrains/compose-jb) applications.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/logo/auroraicon-512.png" width="256" height="256" border=0>
@@ -55,19 +55,17 @@ fun main() = AuroraWindow(
 ) {
     var text by remember { mutableStateOf("Hello, World!") }
 
-    AuroraDecorationArea(decorationAreaType = DecorationAreaType.NONE) {
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxSize().auroraBackground()
-        ) {
-            AuroraCommandButton(
-                command = Command(
-                    text = text,
-                    action = { text = "Hello, Desktop!" }
-                )
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxSize().auroraBackground()
+    ) {
+        AuroraCommandButton(
+            command = Command(
+                text = text,
+                action = { text = "Hello, Desktop!" }
             )
-        }
+        )
     }
 }
 ```
