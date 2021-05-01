@@ -29,7 +29,11 @@
  */
 package org.pushingpixels.aurora.component
 
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
@@ -40,29 +44,47 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
-import org.pushingpixels.aurora.AuroraSkin
-import org.pushingpixels.aurora.LocalTextStyle
-import org.pushingpixels.aurora.Side
+import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.colorscheme.SunfireRedColorScheme
 import org.pushingpixels.aurora.component.model.TextFieldPresentationModel
 import org.pushingpixels.aurora.component.model.TextFieldSizingConstants
 import org.pushingpixels.aurora.component.model.TextFieldStringContentModel
 import org.pushingpixels.aurora.component.model.TextFieldValueContentModel
+import org.pushingpixels.aurora.component.utils.*
+import org.pushingpixels.aurora.component.utils.MutableColorScheme
 import org.pushingpixels.aurora.painter.border.AuroraBorderPainter
 import org.pushingpixels.aurora.utils.getBaseOutline
 import kotlin.math.max
 import kotlin.math.roundToInt
 
+@Immutable
+private class TextFieldDrawingCache(
+    val colorScheme: MutableColorScheme = MutableColorScheme(
+        displayName = "Internal mutable",
+        isDark = false,
+        ultraLight = Color.White,
+        extraLight = Color.White,
+        light = Color.White,
+        mid = Color.White,
+        dark = Color.White,
+        ultraDark = Color.White,
+        foreground = Color.Black
+    )
+)
+
 @Composable
 fun AuroraTextField(
     modifier: Modifier = Modifier,
     contentModel: TextFieldStringContentModel,
-    presentationModel: TextFieldPresentationModel = TextFieldPresentationModel()) {
+    presentationModel: TextFieldPresentationModel = TextFieldPresentationModel()
+) {
 
     var textFieldValueState by remember { mutableStateOf(TextFieldValue(text = contentModel.value)) }
     val textFieldValue = textFieldValueState.copy(text = contentModel.value)
@@ -94,9 +116,6 @@ fun AuroraTextField(
     val textColor = Color.Black
     val mergedTextStyle = LocalTextStyle.current.merge(TextStyle(color = textColor))
 
-    // TODO - provide correct border color scheme
-    val borderScheme = SunfireRedColorScheme()
-
     // TODO - provide correct cursor color
     val cursorColor = Color.Blue
 
@@ -113,7 +132,6 @@ fun AuroraTextField(
             presentationModel = presentationModel,
             textStyle = mergedTextStyle,
             interactionSource = remember { MutableInteractionSource() },
-            borderScheme = borderScheme,
             cursorColor = cursorColor
         )
     }
@@ -126,35 +144,223 @@ internal fun AuroraTextFieldLayout(
     presentationModel: TextFieldPresentationModel,
     textStyle: TextStyle,
     interactionSource: MutableInteractionSource,
-    borderScheme: AuroraColorScheme,
     cursorColor: Color
 ) {
-    val borderPainter = AuroraSkin.painters.borderPainter
-    BasicTextField(
-        value = contentModel.value,
-        modifier = modifier
-            .defaultMinSize(
-                minWidth = TextFieldSizingConstants.MinWidth,
-                minHeight = TextFieldSizingConstants.MinHeight,
+    val drawingCache = remember { TextFieldDrawingCache() }
+    var rollover by remember { mutableStateOf(false) }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    // Treat focused as selected
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val currentState = remember {
+        mutableStateOf(
+            ComponentState.getState(
+                isEnabled = contentModel.enabled,
+                isRollover = rollover,
+                isSelected = isFocused,
+                isPressed = isPressed
             )
-            .drawTextFieldBorder(borderPainter, borderScheme),
-        onValueChange = contentModel.onValueChange,
+        )
+    }
+
+    // Transition for the selection state
+    val selectionTransition = updateTransition(isFocused)
+    val selectedFraction by selectionTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // Transition for the rollover state
+    val rolloverTransition = updateTransition(rollover)
+    val rolloverFraction by rolloverTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // Transition for the pressed state
+    val pressedTransition = updateTransition(isPressed)
+    val pressedFraction by pressedTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // Transition for the enabled state
+    val enabledTransition = updateTransition(contentModel.enabled)
+    val enabledFraction by enabledTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // TODO - figure out why the animations are not running without looking
+    //  at the result (and how it looks like in the new animation APIs)
+    val totalFraction = selectedFraction + rolloverFraction +
+            pressedFraction + enabledFraction
+
+    val modelStateInfo = remember { ModelStateInfo(currentState.value) }
+    val transitionInfo = remember { mutableStateOf<TransitionInfo?>(null) }
+
+    StateTransitionTracker(
+        modelStateInfo = modelStateInfo,
+        currentState = currentState,
+        transitionInfo = transitionInfo,
         enabled = contentModel.enabled,
-        readOnly = contentModel.readOnly,
-        textStyle = textStyle,
-        cursorBrush = SolidColor(cursorColor),
-        visualTransformation = presentationModel.visualTransformation,
-        keyboardOptions = presentationModel.keyboardOptions,
-        keyboardActions = presentationModel.keyboardActions,
-        interactionSource = interactionSource,
-        singleLine = presentationModel.singleLine,
-        maxLines = presentationModel.maxLines,
-        decorationBox = @Composable { coreTextField ->
-            TextFieldContentLayout(
-                textField = coreTextField
+        selected = isFocused,
+        rollover = rollover,
+        pressed = isPressed,
+        duration = AuroraSkin.animationConfig.regular
+    )
+
+    if (transitionInfo.value != null) {
+        //val tweakedDuration = AuroraSkin.animationConfig.regular
+        LaunchedEffect(currentState.value) {
+            //println("In launch effect!")
+            val transitionFloat = Animatable(transitionInfo.value!!.from)
+//            stateTransitionFloat.value = Animatable(transitionInfo.from)
+//            println("******** Animating at ${currentState.value} from ${transitionInfo.value!!.from} to 1.0f over ${transitionInfo.value!!.duration} ********")
+//            println("******** Is running ${transitionFloat.isRunning} ********")
+            val result = transitionFloat.animateTo(
+                targetValue = transitionInfo.value!!.to,
+                animationSpec = tween(durationMillis = transitionInfo.value!!.duration)
+            ) {
+//                println("During animation $value towards $targetValue")
+                modelStateInfo.updateActiveStates(value)
+            }
+
+            //println("&&&&&&& Ended with reason ${result.endReason} at ${transitionFloat.value}")
+            if (result.endReason == AnimationEndReason.Finished) {
+                modelStateInfo.updateActiveStates(1.0f)
+                modelStateInfo.clear(currentState.value)
+//                println("******** After clear (target reached) ********")
+//                modelStateInfo.dumpState(stateTransitionFloat.value)
+            }
+        }
+    }
+
+    val decorationAreaType = AuroraSkin.decorationAreaType
+    val borderPainter = AuroraSkin.painters.borderPainter
+
+    // Populate the cached color scheme for drawing the button border
+    // based on the current model state info
+    populateColorScheme(
+        drawingCache.colorScheme,
+        modelStateInfo,
+        currentState.value,
+        decorationAreaType,
+        ColorSchemeAssociationKind.BORDER
+    )
+    // And retrieve the border colors
+    val borderUltraLight = drawingCache.colorScheme.ultraLightColor
+    val borderExtraLight = drawingCache.colorScheme.extraLightColor
+    val borderLight = drawingCache.colorScheme.lightColor
+    val borderMid = drawingCache.colorScheme.midColor
+    val borderDark = drawingCache.colorScheme.darkColor
+    val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
+    val borderIsDark = drawingCache.colorScheme.isDark
+
+    val alpha = if (currentState.value.isDisabled)
+        AuroraSkin.colors.getAlpha(decorationAreaType, currentState.value) else 1.0f
+
+    Box {
+        Canvas(modifier = Modifier.matchParentSize()) {
+            val outline = getBaseOutline(
+                width = size.width,
+                height = size.height,
+                radius = 0.0f,
+                straightSides = Side.values().toSet(),
+                insets = TextFieldSizingConstants.BorderWidth.value * density
+            )
+
+            val outlineBoundingRect = outline.bounds
+            if (outlineBoundingRect.isEmpty) {
+                return@Canvas
+            }
+
+            // Populate the cached color scheme for drawing the button border
+            drawingCache.colorScheme.ultraLight = borderUltraLight
+            drawingCache.colorScheme.extraLight = borderExtraLight
+            drawingCache.colorScheme.light = borderLight
+            drawingCache.colorScheme.mid = borderMid
+            drawingCache.colorScheme.dark = borderDark
+            drawingCache.colorScheme.ultraDark = borderUltraDark
+            drawingCache.colorScheme.isDark = borderIsDark
+            drawingCache.colorScheme.foreground = Color.Black
+
+            borderPainter.paintBorder(
+                drawScope = this,
+                size = size,
+                outline = getBaseOutline(
+                    width = size.width,
+                    height = size.height,
+                    radius = 0.0f,
+                    straightSides = Side.values().toSet(),
+                    insets = TextFieldSizingConstants.BorderWidth.value * density
+                ),
+                outlineInner = null,
+                borderScheme = drawingCache.colorScheme,
+                alpha = alpha
             )
         }
-    )
+        BasicTextField(
+            value = contentModel.value,
+            modifier = modifier
+                .defaultMinSize(
+                    minWidth = TextFieldSizingConstants.MinWidth,
+                    minHeight = TextFieldSizingConstants.MinHeight,
+                )
+                .pointerMoveFilter(
+                    onEnter = {
+                        rollover = true
+                        false
+                    },
+                    onExit = {
+                        rollover = false
+                        false
+                    },
+                    onMove = {
+                        false
+                    }),
+            onValueChange = contentModel.onValueChange,
+            enabled = contentModel.enabled,
+            readOnly = contentModel.readOnly,
+            textStyle = textStyle,
+            cursorBrush = SolidColor(cursorColor),
+            visualTransformation = presentationModel.visualTransformation,
+            keyboardOptions = presentationModel.keyboardOptions,
+            keyboardActions = presentationModel.keyboardActions,
+            interactionSource = interactionSource,
+            singleLine = presentationModel.singleLine,
+            maxLines = presentationModel.maxLines,
+            decorationBox = @Composable { coreTextField ->
+                TextFieldContentLayout(
+                    textField = coreTextField
+                )
+            }
+        )
+    }
 }
 
 @Composable
@@ -182,24 +388,4 @@ private fun TextFieldContentLayout(
             textFieldPlaceable.placeRelative(0, textVerticalPosition)
         }
     }
-}
-
-private fun Modifier.drawTextFieldBorder(
-    borderPainter: AuroraBorderPainter,
-    borderScheme: AuroraColorScheme
-): Modifier = drawBehind {
-    borderPainter.paintBorder(
-        drawScope = this,
-        size = size,
-        outline = getBaseOutline(
-            width = size.width,
-            height = size.height,
-            radius = 0.0f,
-            straightSides = Side.values().toSet(),
-            insets = TextFieldSizingConstants.BorderWidth.value * density
-        ),
-        outlineInner = null,
-        borderScheme = borderScheme,
-        alpha = 1.0f
-    )
 }
