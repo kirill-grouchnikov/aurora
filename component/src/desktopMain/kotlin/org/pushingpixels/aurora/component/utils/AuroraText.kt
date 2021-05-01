@@ -27,7 +27,7 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.pushingpixels.aurora.component
+package org.pushingpixels.aurora.component.utils
 
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
