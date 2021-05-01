@@ -34,8 +34,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.runtime.*
@@ -46,13 +44,15 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.input.VisualTransformation
 import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.LocalTextStyle
 import org.pushingpixels.aurora.Side
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.colorscheme.SunfireRedColorScheme
-import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.model.TextFieldPresentationModel
+import org.pushingpixels.aurora.component.model.TextFieldSizingConstants
+import org.pushingpixels.aurora.component.model.TextFieldStringContentModel
+import org.pushingpixels.aurora.component.model.TextFieldValueContentModel
 import org.pushingpixels.aurora.painter.border.AuroraBorderPainter
 import org.pushingpixels.aurora.utils.getBaseOutline
 import kotlin.math.max
