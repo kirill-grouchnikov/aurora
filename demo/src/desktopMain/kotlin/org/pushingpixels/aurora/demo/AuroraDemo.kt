@@ -32,6 +32,7 @@ package org.pushingpixels.aurora.demo
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntSize
@@ -666,6 +667,27 @@ fun DemoArea(
                         drawTicks = true
                     )
                 )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Example of a multi-line text field
+                var text1 by rememberSaveable { mutableStateOf("Sample text area") }
+                AuroraTextField(
+                    contentModel = TextFieldStringContentModel(
+                        value = text1,
+                        onValueChange = { text1 = it }
+                    ))
+                // Example of a single-line text field
+                var text2 by rememberSaveable { mutableStateOf("Sample text field") }
+                AuroraTextField(
+                    contentModel = TextFieldStringContentModel(
+                        value = text2,
+                        onValueChange = { text2 = it }
+                    ),
+                    presentationModel = TextFieldPresentationModel(singleLine = true))
             }
         }
     }
