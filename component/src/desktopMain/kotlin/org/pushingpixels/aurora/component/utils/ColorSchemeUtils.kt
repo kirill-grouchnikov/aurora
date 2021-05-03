@@ -135,7 +135,10 @@ internal data class MutableColorScheme(
         return HueShiftColorScheme(this, hueShiftFactor)
     }
 
-    override fun blendWith(otherScheme: AuroraColorScheme, likenessToThisScheme: Float): AuroraColorScheme {
+    override fun blendWith(
+        otherScheme: AuroraColorScheme,
+        likenessToThisScheme: Float
+    ): AuroraColorScheme {
         // TODO - what are the performance implications?
         return BlendBiColorScheme(this, otherScheme, likenessToThisScheme)
     }
@@ -182,13 +185,16 @@ internal fun populateColorScheme(
             componentState = contribution.key
         )
         // And interpolate the colors
-        ultraLight = ultraLight.interpolateTowards(contributionScheme.ultraLightColor, 1.0f - amount)
-        extraLight = extraLight.interpolateTowards(contributionScheme.extraLightColor, 1.0f - amount)
+        ultraLight =
+            ultraLight.interpolateTowards(contributionScheme.ultraLightColor, 1.0f - amount)
+        extraLight =
+            extraLight.interpolateTowards(contributionScheme.extraLightColor, 1.0f - amount)
         light = light.interpolateTowards(contributionScheme.lightColor, 1.0f - amount)
         mid = mid.interpolateTowards(contributionScheme.midColor, 1.0f - amount)
         dark = dark.interpolateTowards(contributionScheme.darkColor, 1.0f - amount)
         ultraDark = ultraDark.interpolateTowards(contributionScheme.ultraDarkColor, 1.0f - amount)
-        foreground = foreground.interpolateTowards(contributionScheme.foregroundColor, 1.0f - amount)
+        foreground =
+            foreground.interpolateTowards(contributionScheme.foregroundColor, 1.0f - amount)
 
         //println("\tcontribution of $amount from ${contribution.key} to $backgroundStart")
     }
@@ -255,11 +261,13 @@ internal fun getTextColor(
     decorationAreaType: DecorationAreaType,
     isTextInFilledArea: Boolean
 ): Color {
-    var activeStates: Map<ComponentState, StateContributionInfo>? = modelStateInfo.stateContributionMap
+    var activeStates: Map<ComponentState, StateContributionInfo>? =
+        modelStateInfo.stateContributionMap
     var tweakedCurrState = currState
     // Special case for when text is not drawn in the filled area
     if (!isTextInFilledArea) {
-        tweakedCurrState = if (currState.isDisabled) ComponentState.DISABLED_UNSELECTED else ComponentState.ENABLED
+        tweakedCurrState =
+            if (currState.isDisabled) ComponentState.DISABLED_UNSELECTED else ComponentState.ENABLED
         activeStates = null
     }
 
@@ -340,7 +348,8 @@ internal fun getMenuTextColor(
             val activeColorScheme = skinColors.getColorScheme(
                 decorationAreaType = decorationAreaType,
                 associationKind = assocKind,
-                componentState = activeState)
+                componentState = activeState
+            )
             val activeForeground = activeColorScheme.foregroundColor
             aggrRed += contribution * activeForeground.red
             aggrGreen += contribution * activeForeground.green
@@ -364,5 +373,50 @@ internal fun getMenuTextColor(
         foreground = foreground.interpolateTowards(bgFillColor, baseAlpha)
     }
     return foreground
+}
+
+
+internal fun getTextSelectionBackground(
+    modelStateInfo: ModelStateInfo,
+    currState: ComponentState,
+    skinColors: AuroraSkinColors,
+    decorationAreaType: DecorationAreaType
+): Color {
+    val activeStates = modelStateInfo.stateContributionMap
+
+    var tweakedCurrState = currState
+    if (currState == ComponentState.ENABLED) {
+        // Treat ENABLED state as SELECTED (since we are talking about selections)
+        tweakedCurrState = ComponentState.SELECTED
+    }
+
+    var result =
+        skinColors.getColorScheme(decorationAreaType, tweakedCurrState).textBackgroundFillColor
+    if (!tweakedCurrState.isDisabled && (activeStates.size > 1)) {
+        // If we have more than one active state, compute the composite color from all
+        // the contributions
+        for (activeEntry in activeStates.entries) {
+            var activeState = activeEntry.key
+            if (activeState === tweakedCurrState) {
+                continue
+            }
+            if (activeState === ComponentState.ENABLED) {
+                // Treat ENABLED state as SELECTED (since we are talking about selections)
+                activeState = ComponentState.SELECTED
+            }
+            val contribution: Float = activeEntry.value.contribution
+            if (contribution == 0.0f) {
+                continue
+            }
+            val alpha: Float = skinColors.getAlpha(decorationAreaType, activeState)
+            if (alpha == 0.0f) {
+                continue
+            }
+            val active =
+                skinColors.getColorScheme(decorationAreaType, activeState).textBackgroundFillColor
+            result = result.interpolateTowards(active, 1.0f - contribution * alpha)
+        }
+    }
+    return result
 }
 

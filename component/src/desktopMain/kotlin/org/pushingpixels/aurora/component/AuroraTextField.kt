@@ -42,24 +42,18 @@ import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import org.pushingpixels.aurora.*
-import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.colorscheme.SunfireRedColorScheme
 import org.pushingpixels.aurora.component.model.TextFieldPresentationModel
 import org.pushingpixels.aurora.component.model.TextFieldSizingConstants
 import org.pushingpixels.aurora.component.model.TextFieldStringContentModel
 import org.pushingpixels.aurora.component.model.TextFieldValueContentModel
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.component.utils.MutableColorScheme
-import org.pushingpixels.aurora.painter.border.AuroraBorderPainter
 import org.pushingpixels.aurora.utils.getBaseOutline
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -119,22 +113,14 @@ fun AuroraTextField(
     // TODO - provide correct cursor color
     val cursorColor = Color.Blue
 
-    // TODO - provide correct text selection colors
-    CompositionLocalProvider(
-        LocalTextSelectionColors provides TextSelectionColors(
-            handleColor = Color.Green,
-            backgroundColor = Color.Green.copy(alpha = 0.4f)
-        )
-    ) {
-        AuroraTextFieldLayout(
-            modifier = modifier,
-            contentModel = contentModel,
-            presentationModel = presentationModel,
-            textStyle = mergedTextStyle,
-            interactionSource = remember { MutableInteractionSource() },
-            cursorColor = cursorColor
-        )
-    }
+    AuroraTextFieldLayout(
+        modifier = modifier,
+        contentModel = contentModel,
+        presentationModel = presentationModel,
+        textStyle = mergedTextStyle,
+        interactionSource = remember { MutableInteractionSource() },
+        cursorColor = cursorColor
+    )
 }
 
 @Composable
@@ -260,6 +246,7 @@ internal fun AuroraTextFieldLayout(
         }
     }
 
+    val skinColors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
     val borderPainter = AuroraSkin.painters.borderPainter
 
@@ -324,42 +311,58 @@ internal fun AuroraTextFieldLayout(
                 alpha = alpha
             )
         }
-        BasicTextField(
-            value = contentModel.value,
-            modifier = modifier
-                .defaultMinSize(
-                    minWidth = TextFieldSizingConstants.MinWidth,
-                    minHeight = TextFieldSizingConstants.MinHeight,
-                )
-                .pointerMoveFilter(
-                    onEnter = {
-                        rollover = true
-                        false
-                    },
-                    onExit = {
-                        rollover = false
-                        false
-                    },
-                    onMove = {
-                        false
-                    }),
-            onValueChange = contentModel.onValueChange,
-            enabled = contentModel.enabled,
-            readOnly = contentModel.readOnly,
-            textStyle = textStyle,
-            cursorBrush = SolidColor(cursorColor),
-            visualTransformation = presentationModel.visualTransformation,
-            keyboardOptions = presentationModel.keyboardOptions,
-            keyboardActions = presentationModel.keyboardActions,
-            interactionSource = interactionSource,
-            singleLine = presentationModel.singleLine,
-            maxLines = presentationModel.maxLines,
-            decorationBox = @Composable { coreTextField ->
-                TextFieldContentLayout(
-                    textField = coreTextField
-                )
-            }
+
+        // TODO - Compose does not support specifying foreground color for selected text
+        val textSelectionBackgroundColor = getTextSelectionBackground(
+            modelStateInfo = modelStateInfo,
+            currState = currentState.value,
+            skinColors = skinColors,
+            decorationAreaType = decorationAreaType
+
         )
+        CompositionLocalProvider(
+            LocalTextSelectionColors provides TextSelectionColors(
+                handleColor = textSelectionBackgroundColor,
+                backgroundColor = textSelectionBackgroundColor
+            )
+        ) {
+            BasicTextField(
+                value = contentModel.value,
+                modifier = modifier
+                    .defaultMinSize(
+                        minWidth = TextFieldSizingConstants.MinWidth,
+                        minHeight = TextFieldSizingConstants.MinHeight,
+                    )
+                    .pointerMoveFilter(
+                        onEnter = {
+                            rollover = true
+                            false
+                        },
+                        onExit = {
+                            rollover = false
+                            false
+                        },
+                        onMove = {
+                            false
+                        }),
+                onValueChange = contentModel.onValueChange,
+                enabled = contentModel.enabled,
+                readOnly = contentModel.readOnly,
+                textStyle = textStyle,
+                cursorBrush = SolidColor(cursorColor),
+                visualTransformation = presentationModel.visualTransformation,
+                keyboardOptions = presentationModel.keyboardOptions,
+                keyboardActions = presentationModel.keyboardActions,
+                interactionSource = interactionSource,
+                singleLine = presentationModel.singleLine,
+                maxLines = presentationModel.maxLines,
+                decorationBox = @Composable { coreTextField ->
+                    TextFieldContentLayout(
+                        textField = coreTextField
+                    )
+                }
+            )
+        }
     }
 }
 
