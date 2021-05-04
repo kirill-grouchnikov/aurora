@@ -682,6 +682,9 @@ fun DemoArea(
                         enabled = contentEnabled.value
                     )
                 )
+
+                Spacer(modifier = Modifier.width(16.dp))
+
                 // Example of a single-line text field
                 var text2 by rememberSaveable { mutableStateOf("Sample text field") }
                 AuroraTextField(

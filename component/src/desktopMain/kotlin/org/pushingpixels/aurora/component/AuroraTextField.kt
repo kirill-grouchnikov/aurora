@@ -44,13 +44,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
+import org.pushingpixels.aurora.common.interpolateTowards
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.TextFieldPresentationModel
 import org.pushingpixels.aurora.component.model.TextFieldSizingConstants
 import org.pushingpixels.aurora.component.model.TextFieldStringContentModel
@@ -261,8 +264,10 @@ fun AuroraTextField(
 
     Box {
         Canvas(modifier = Modifier.matchParentSize()) {
-            val borderStrokeWidth = TextFieldSizingConstants.BorderWidth.value * density
+            val borderStrokeWidth = 1.0f
 
+            // Read-only text fields use the regular background fill. Editable text fields
+            // use text background fill (with rollover and focused transitions)
             val backgroundFillColor = if (contentModel.readOnly)
                 skinColors.getColorScheme(
                     decorationAreaType = decorationAreaType,
@@ -313,12 +318,71 @@ fun AuroraTextField(
                     height = size.height,
                     radius = 0.0f,
                     straightSides = Side.values().toSet(),
-                    insets = TextFieldSizingConstants.BorderWidth.value * density
+                    insets = 1.0f
                 ),
                 outlineInner = null,
                 borderScheme = drawingCache.colorScheme,
                 alpha = alpha
             )
+
+            if (!contentModel.readOnly) {
+                // Get the base border color
+                val baseBorderScheme = skinColors.getColorScheme(
+                    decorationAreaType = decorationAreaType,
+                    associationKind = ColorSchemeAssociationKind.BORDER,
+                    componentState = currentState.value
+                )
+                var borderColor = borderPainter.getRepresentativeColor(baseBorderScheme)
+
+                if (!currentState.value.isDisabled && (modelStateInfo.stateContributionMap.size > 1)) {
+                    // If we have more than one active state, compute the composite color from all
+                    // the contributions
+                    for (activeEntry in modelStateInfo.stateContributionMap.entries) {
+                        val activeState = activeEntry.key
+                        if (activeState === currentState.value) {
+                            continue
+                        }
+                        val contribution = activeEntry.value.contribution
+                        if (contribution == 0.0f) {
+                            continue
+                        }
+                        val activeStateAlpha = skinColors.getAlpha(decorationAreaType, activeState)
+                        if (activeStateAlpha == 0.0f) {
+                            continue
+                        }
+                        val activeBorderScheme =
+                            skinColors.getColorScheme(
+                                decorationAreaType = decorationAreaType,
+                                associationKind = ColorSchemeAssociationKind.BORDER,
+                                componentState = activeState
+                            )
+                        val activeBorderColor =
+                            borderPainter.getRepresentativeColor(activeBorderScheme)
+                        borderColor = borderColor.interpolateTowards(
+                            activeBorderColor,
+                            1.0f - contribution * activeStateAlpha
+                        )
+                    }
+                }
+
+                // Paint a translucent drop shadow along the top edge of this editable text field
+                val shadowHeight = 6.dp
+                val topAlpha = if (currentState.value.isDisabled) 16 else 32
+                drawRect(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            borderColor.withAlpha(topAlpha / 256.0f),
+                            borderColor.withAlpha(0.0f)
+                        ),
+                        startY = 0.0f,
+                        endY = shadowHeight.toPx(),
+                        tileMode = TileMode.Clamp
+                    ),
+                    topLeft = Offset(borderStrokeWidth, borderStrokeWidth),
+                    size = Size(size.width - 2 * borderStrokeWidth, shadowHeight.toPx()),
+                    style = Fill
+                )
+            }
         }
 
         // TODO - Compose does not support specifying foreground color for selected text
