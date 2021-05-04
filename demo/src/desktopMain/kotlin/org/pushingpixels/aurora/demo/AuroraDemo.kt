@@ -42,14 +42,17 @@ import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.tango.*
+import org.pushingpixels.aurora.skin.getAuroraSkins
 import org.pushingpixels.aurora.skin.marinerSkin
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 import kotlin.system.exitProcess
 
 fun main() {
+    val skin = mutableStateOf(marinerSkin())
+
     AuroraWindow(
-        skin = marinerSkin(),
+        skin = skin,
         title = "Aurora Demo",
         size = IntSize(660, 660),
         undecorated = true,
@@ -75,7 +78,7 @@ fun main() {
             )
         )
     ) {
-        DemoContent()
+        DemoContent(skin)
     }
 }
 
@@ -276,7 +279,9 @@ fun DemoFooter(
 
 @Composable
 fun DemoArea(
-    modifier: Modifier = Modifier, contentEnabled: MutableState<Boolean>,
+    modifier: Modifier = Modifier,
+    contentEnabled: MutableState<Boolean>,
+    auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
     styleCommands: CommandGroup
 ) {
     // TODO - convert this to use ConstraintLayout when (if?) that is available for desktop
@@ -287,11 +292,35 @@ fun DemoArea(
             .auroraBackground()
             .padding(8.dp)
     ) {
-        AuroraCheckBox(contentModel = SelectorContentModel(
-            text = "content enabled",
-            selected = contentEnabled.value,
-            onTriggerSelectedChange = { contentEnabled.value = !contentEnabled.value }
-        ))
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            AuroraCheckBox(contentModel = SelectorContentModel(
+                text = "content enabled",
+                selected = contentEnabled.value,
+                onTriggerSelectedChange = { contentEnabled.value = !contentEnabled.value }
+            ))
+
+            val auroraSkins = getAuroraSkins()
+            val currentSkinDisplayName = AuroraSkin.displayName
+            val auroraSelectedSkin =
+                remember { mutableStateOf(auroraSkins.find { it.first == currentSkinDisplayName })}
+
+            AuroraComboBox(
+                contentModel = ComboBoxContentModel(
+                    items = auroraSkins,
+                    selectedItem = auroraSelectedSkin.value,
+                    onTriggerItemSelectedChange = {
+                        auroraSelectedSkin.value = it
+                        auroraSkinDefinition.value = it!!.second.invoke()
+                    }
+                ),
+                presentationModel = ComboBoxPresentationModel(
+                    displayConverter = { it!!.first },
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                )
+            )
+        }
         Column(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -701,7 +730,7 @@ fun DemoArea(
 }
 
 @Composable
-fun DemoContent() {
+fun DemoContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
     val contentEnabled = remember { mutableStateOf(true) }
     val alignment = remember { mutableStateOf(DemoAlignment.CENTER) }
 
@@ -811,7 +840,10 @@ fun DemoContent() {
             DemoToolbar(alignmentCommands = alignmentCommands, styleCommands = styleCommands)
         }
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.NONE) {
-            DemoArea(styleCommands = styleCommands, contentEnabled = contentEnabled)
+            DemoArea(
+                styleCommands = styleCommands, auroraSkinDefinition = auroraSkinDefinition,
+                contentEnabled = contentEnabled
+            )
         }
         Spacer(modifier = Modifier.weight(weight = 1.0f, fill = true))
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.FOOTER) {

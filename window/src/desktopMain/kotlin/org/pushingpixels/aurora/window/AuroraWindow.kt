@@ -495,10 +495,86 @@ fun AuroraWindow(
         val density = mutableStateOf(Density(1.0f, 1.0f))
         appWindow.show {
             AuroraSkin(
+                displayName = skin.displayName,
                 decorationAreaType = DecorationAreaType.NONE,
                 colors = skin.colors,
                 buttonShaper = skin.buttonShaper,
                 painters = skin.painters,
+                animationConfig = AuroraSkin.animationConfig
+            ) {
+                println("Showing window content ${skin.displayName}")
+                density.value = LocalDensity.current
+                WindowContent(
+                    title = title,
+                    icon = icon,
+                    titlePaneBounds = titlePaneBounds,
+                    undecorated = undecorated,
+                    menuCommands = menuCommands,
+                    content = content
+                )
+            }
+        }
+
+        if (undecorated) {
+            // This is the underlying Swing JFrame
+            val composeWindow = appWindow.window
+
+            val lastCursor = mutableStateOf(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR))
+            val awtInputHandler = AWTInputHandler(
+                density = density.value,
+                window = composeWindow,
+                rootPane = composeWindow.rootPane,
+                lastCursor = lastCursor,
+                titlePaneBounds = titlePaneBounds
+            )
+
+            Toolkit.getDefaultToolkit().addAWTEventListener(
+                awtInputHandler,
+                AWTEvent.MOUSE_EVENT_MASK or AWTEvent.MOUSE_MOTION_EVENT_MASK
+            )
+        }
+    }
+
+
+fun AuroraWindow(
+    skin: MutableState<AuroraSkinDefinition>,
+    title: String,
+    size: IntSize,
+    location: IntOffset = IntOffset.Zero,
+    centered: Boolean = true,
+    icon: BufferedImage? = null,
+    menuCommands: CommandGroup? = null,
+    undecorated: Boolean = false,
+    resizable: Boolean = true,
+    events: WindowEvents = WindowEvents(),
+    onDismissRequest: (() -> Unit)? = null,
+    content: @Composable () -> Unit
+) =
+    SwingUtilities.invokeLater {
+        val appWindow = AppWindow(
+            title = title,
+            size = size,
+            location = location,
+            centered = centered,
+            icon = icon,
+            menuBar = null,
+            undecorated = undecorated,
+            resizable = resizable,
+            events = events,
+            onDismissRequest = onDismissRequest
+        )
+
+        val titlePaneBounds = mutableStateOf(Rect.Zero)
+
+        // Initialize with defaults
+        val density = mutableStateOf(Density(1.0f, 1.0f))
+        appWindow.show {
+            AuroraSkin(
+                displayName = skin.value.displayName,
+                decorationAreaType = DecorationAreaType.NONE,
+                colors = skin.value.colors,
+                buttonShaper = skin.value.buttonShaper,
+                painters = skin.value.painters,
                 animationConfig = AuroraSkin.animationConfig
             ) {
                 density.value = LocalDensity.current
@@ -545,6 +621,7 @@ fun AuroraDecorationArea(
 
 @Composable
 private fun AuroraSkin(
+    displayName: String = AuroraSkin.displayName,
     decorationAreaType: DecorationAreaType,
     colors: AuroraSkinColors = AuroraSkin.colors,
     buttonShaper: AuroraButtonShaper = AuroraSkin.buttonShaper,
@@ -553,6 +630,7 @@ private fun AuroraSkin(
     content: @Composable () -> Unit
 ) {
     CompositionLocalProvider(
+        LocalDisplayName provides displayName,
         LocalDecorationAreaType provides decorationAreaType,
         LocalSkinColors provides colors,
         LocalButtonShaper provides buttonShaper,

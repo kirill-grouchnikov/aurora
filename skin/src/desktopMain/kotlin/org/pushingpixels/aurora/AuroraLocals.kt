@@ -70,4 +70,7 @@ val LocalPainters = staticCompositionLocalOf<Painters> {
 val LocalDecorationAreaType = staticCompositionLocalOf<DecorationAreaType> {
     error("LocalDecorationAreaType not provided")
 }
+val LocalDisplayName = staticCompositionLocalOf<String> {
+    error("LocalDisplayName not provided")
+}
 

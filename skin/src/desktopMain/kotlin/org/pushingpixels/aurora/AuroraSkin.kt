@@ -41,6 +41,11 @@ import org.pushingpixels.aurora.shaper.AuroraButtonShaper
 import org.pushingpixels.aurora.utils.getColorSchemes
 
 object AuroraSkin {
+    val displayName: String
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDisplayName.current
+
     val decorationAreaType: DecorationAreaType
         @Composable
         @ReadOnlyComposable
