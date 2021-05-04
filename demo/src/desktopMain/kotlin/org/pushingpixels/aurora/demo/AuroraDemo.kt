@@ -678,16 +678,20 @@ fun DemoArea(
                 AuroraTextField(
                     contentModel = TextFieldStringContentModel(
                         value = text1,
-                        onValueChange = { text1 = it }
-                    ))
+                        onValueChange = { text1 = it },
+                        enabled = contentEnabled.value
+                    )
+                )
                 // Example of a single-line text field
                 var text2 by rememberSaveable { mutableStateOf("Sample text field") }
                 AuroraTextField(
                     contentModel = TextFieldStringContentModel(
                         value = text2,
-                        onValueChange = { text2 = it }
+                        onValueChange = { text2 = it },
+                        enabled = contentEnabled.value
                     ),
-                    presentationModel = TextFieldPresentationModel(singleLine = true))
+                    presentationModel = TextFieldPresentationModel(singleLine = true)
+                )
             }
         }
     }

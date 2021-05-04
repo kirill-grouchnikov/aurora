@@ -42,6 +42,8 @@ import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.pointerMoveFilter
@@ -106,32 +108,7 @@ fun AuroraTextField(
     contentModel: TextFieldValueContentModel,
     presentationModel: TextFieldPresentationModel = TextFieldPresentationModel()
 ) {
-    // TODO - provide correct text color
-    val textColor = Color.Black
-    val mergedTextStyle = LocalTextStyle.current.merge(TextStyle(color = textColor))
-
-    // TODO - provide correct cursor color
-    val cursorColor = Color.Blue
-
-    AuroraTextFieldLayout(
-        modifier = modifier,
-        contentModel = contentModel,
-        presentationModel = presentationModel,
-        textStyle = mergedTextStyle,
-        interactionSource = remember { MutableInteractionSource() },
-        cursorColor = cursorColor
-    )
-}
-
-@Composable
-internal fun AuroraTextFieldLayout(
-    modifier: Modifier,
-    contentModel: TextFieldValueContentModel,
-    presentationModel: TextFieldPresentationModel,
-    textStyle: TextStyle,
-    interactionSource: MutableInteractionSource,
-    cursorColor: Color
-) {
+    val interactionSource = remember { MutableInteractionSource() }
     val drawingCache = remember { TextFieldDrawingCache() }
     var rollover by remember { mutableStateOf(false) }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -271,14 +248,46 @@ internal fun AuroraTextFieldLayout(
     val alpha = if (currentState.value.isDisabled)
         AuroraSkin.colors.getAlpha(decorationAreaType, currentState.value) else 1.0f
 
+    val textColor = getTextColor(
+        modelStateInfo = modelStateInfo,
+        currState = currentState.value,
+        skinColors = AuroraSkin.colors,
+        decorationAreaType = decorationAreaType,
+        isTextInFilledArea = false
+    )
+    val textStyle = LocalTextStyle.current.merge(TextStyle(color = textColor))
+
+    val cursorColor = textColor
+
     Box {
         Canvas(modifier = Modifier.matchParentSize()) {
+            val borderStrokeWidth = TextFieldSizingConstants.BorderWidth.value * density
+
+            val backgroundFillColor = if (contentModel.readOnly)
+                skinColors.getColorScheme(
+                    decorationAreaType = decorationAreaType,
+                    associationKind = ColorSchemeAssociationKind.FILL,
+                    componentState = currentState.value
+                ).backgroundFillColor
+            else getTextFillBackground(
+                modelStateInfo = modelStateInfo,
+                currState = currentState.value,
+                skinColors = skinColors,
+                decorationAreaType = decorationAreaType
+            )
+
+            drawRect(
+                color = backgroundFillColor,
+                topLeft = Offset(borderStrokeWidth / 2.0f, borderStrokeWidth / 2.0f),
+                size = Size(size.width - borderStrokeWidth, size.height - borderStrokeWidth)
+            )
+
             val outline = getBaseOutline(
                 width = size.width,
                 height = size.height,
                 radius = 0.0f,
                 straightSides = Side.values().toSet(),
-                insets = TextFieldSizingConstants.BorderWidth.value * density
+                insets = borderStrokeWidth
             )
 
             val outlineBoundingRect = outline.bounds

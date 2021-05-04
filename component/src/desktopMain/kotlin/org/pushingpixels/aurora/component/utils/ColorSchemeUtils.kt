@@ -34,6 +34,8 @@ import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.*
 import org.pushingpixels.aurora.common.interpolateTowards
+import org.pushingpixels.aurora.common.lighter
+import kotlin.math.max
 
 
 internal data class MutableColorScheme(
@@ -375,7 +377,6 @@ internal fun getMenuTextColor(
     return foreground
 }
 
-
 internal fun getTextSelectionBackground(
     modelStateInfo: ModelStateInfo,
     currState: ComponentState,
@@ -418,5 +419,31 @@ internal fun getTextSelectionBackground(
         }
     }
     return result
+}
+
+internal fun getTextFillBackground(
+    modelStateInfo: ModelStateInfo,
+    currState: ComponentState,
+    skinColors: AuroraSkinColors,
+    decorationAreaType: DecorationAreaType
+): Color {
+    val stateForQuery = if (currState.isDisabled) ComponentState.DISABLED_UNSELECTED else ComponentState.ENABLED
+    val fillColorScheme = skinColors.getColorScheme(
+        decorationAreaType = decorationAreaType,
+        associationKind = ColorSchemeAssociationKind.FILL,
+        componentState = stateForQuery
+    )
+    var textBackgroundFillColor = fillColorScheme.textBackgroundFillColor
+
+    val lightnessFactor = if (fillColorScheme.isDark) 0.1f else 0.4f
+    var lighterFill = textBackgroundFillColor.lighter(lightnessFactor)
+    lighterFill = lighterFill.interpolateTowards(textBackgroundFillColor, 0.6f)
+    val selectionStrength = modelStateInfo.strength(ComponentStateFacet.SELECTION)
+    val rolloverStrength = modelStateInfo.strength(ComponentStateFacet.ROLLOVER)
+    val activeStrength = max(selectionStrength, rolloverStrength) / 4.0f
+    textBackgroundFillColor = lighterFill.interpolateTowards(
+        textBackgroundFillColor, activeStrength
+    )
+    return textBackgroundFillColor
 }
 

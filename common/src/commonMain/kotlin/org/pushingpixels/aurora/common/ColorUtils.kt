@@ -261,6 +261,11 @@ fun Color.withHueShift(hueShift: Float): Color {
     return HSBtoRGB(floatArrayOf(hue, hsbvals[1], hsbvals[2]))
 }
 
+/** Returns a lighter version of this color. */
+fun Color.lighter(diff: Float): Color {
+    return interpolateTowards(Color.White, 1.0f - diff)
+}
+
 /** Returns a darker version of this color. */
 fun Color.darker(diff: Float): Color {
     return interpolateTowards(Color.Black, 1.0f - diff)
