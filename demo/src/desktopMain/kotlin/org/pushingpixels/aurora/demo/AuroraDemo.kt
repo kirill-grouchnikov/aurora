@@ -355,7 +355,7 @@ fun DemoArea(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Example of a toggle command button backed by a mutable boolean
+                // A toggle command button backed by a mutable boolean
                 var toggleButtonSelected by remember { mutableStateOf(true) }
                 AuroraCommandButton(
                     command = Command(
@@ -378,18 +378,22 @@ fun DemoArea(
                         iconActiveFilterStrategy = IconFilterStrategy.ORIGINAL,
                     )
                 )
-                // Example of a command button that never displays background
+                // A command button with icon using THEMED_FOLLOW_TEXT filter strategy
                 AuroraCommandButton(
                     command = Command(
-                        text = "never",
+                        text = "icon / text",
+                        iconFactory = keyboard_capslock_24px.factory(),
                         isActionEnabled = contentEnabled.value,
-                        action = { println("Clicked!") }
+                        action = {}
                     ),
                     presentationModel = CommandButtonPresentationModel(
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.NEVER
+                        iconDimension = 20.dp,
+                        iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
+                        iconEnabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
+                        iconActiveFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
                     )
                 )
-                // Example of a flat command button with displays background when it's
+                // A flat command button with displays background when it's
                 // active (rollover, pressed, etc)
                 AuroraCommandButton(
                     command = Command(
@@ -400,19 +404,6 @@ fun DemoArea(
                     ),
                     presentationModel = CommandButtonPresentationModel(
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                        iconDimension = 20.dp
-                    )
-                )
-                // Example of a  command button that always displays background
-                AuroraCommandButton(
-                    command = Command(
-                        text = "always",
-                        iconFactory = keyboard_capslock_24px.factory(),
-                        isActionEnabled = contentEnabled.value,
-                        action = { println("Clicked!") }
-                    ),
-                    presentationModel = CommandButtonPresentationModel(
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS,
                         iconDimension = 20.dp
                     )
                 )
@@ -430,59 +421,6 @@ fun DemoArea(
                 AuroraCircularProgress(
                     contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled.value),
                     presentationModel = ProgressCircularPresentationModel(size = 14.dp)
-                )
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                // Command button with icon using ORIGINAL filter strategy
-                AuroraCommandButton(
-                    command = Command(
-                        text = "icon / original",
-                        iconFactory = computer.factory(),
-                        isActionEnabled = contentEnabled.value,
-                        action = {}
-                    ),
-                    presentationModel = CommandButtonPresentationModel(
-                        iconDimension = 20.dp,
-                        // This is a full-color icon. Use original colors for enabled and active states,
-                        // and color scheme based filtering for disabled states
-                        iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME,
-                        iconEnabledFilterStrategy = IconFilterStrategy.ORIGINAL,
-                        iconActiveFilterStrategy = IconFilterStrategy.ORIGINAL,
-                    )
-                )
-                // Command button with icon using THEMED_FOLLOW_TEXT filter strategy
-                AuroraCommandButton(
-                    command = Command(
-                        text = "icon / text",
-                        iconFactory = keyboard_capslock_24px.factory(),
-                        isActionEnabled = contentEnabled.value,
-                        action = {}
-                    ),
-                    presentationModel = CommandButtonPresentationModel(
-                        iconDimension = 20.dp,
-                        iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
-                        iconEnabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
-                        iconActiveFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
-                    )
-                )
-                // Command button with icon using THEMED_FOLLOW_COLOR_SCHEME filter strategy
-                AuroraCommandButton(
-                    command = Command(
-                        text = "icon / scheme",
-                        iconFactory = info_24px.factory(),
-                        isActionEnabled = contentEnabled.value,
-                        action = {}
-                    ),
-                    presentationModel = CommandButtonPresentationModel(
-                        iconDimension = 20.dp,
-                        iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME,
-                        iconEnabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME,
-                        iconActiveFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME,
-                    )
                 )
             }
 
