@@ -29,36 +29,33 @@
  */
 package org.pushingpixels.aurora.component.model
 
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.SpringSpec
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.IconFilterStrategy
+import org.pushingpixels.aurora.icon.AuroraIcon
 
-data class ProgressIndeterminateContentModel(
+data class LabelContentModel(
+    val text: String,
     val enabled: Boolean = true,
+    val iconFactory: AuroraIcon.Factory? = null,
+    val disabledIconFactory: AuroraIcon.Factory? = null
 )
 
-data class ProgressDeterminateContentModel(
-    val enabled: Boolean = true,
-    val progress: Float
-)
-
-object ProgressConstants {
-    val DefaultWidth = 192.dp
-    val DefaultHeight = 16.dp
-
-    val ProgressAnimationSpec = SpringSpec(
-        dampingRatio = Spring.DampingRatioNoBouncy,
-        stiffness = Spring.StiffnessVeryLow,
-        visibilityThreshold = 0.001f
-    )
+object LabelSizingConstants {
+    val DefaultLabelContentPadding = PaddingValues(start = 5.dp, top = 4.dp, end = 5.dp, bottom = 4.dp)
+    val DefaultLabelIconSize = 16.dp
 }
 
-data class ProgressCircularPresentationModel(
-    val size: Dp = 10.dp
-)
-
-data class ProgressLinearPresentationModel(
-    val primarySize : Dp = ProgressConstants.DefaultWidth,
-    val secondarySize : Dp = ProgressConstants.DefaultHeight
+data class LabelPresentationModel(
+    val contentPadding: PaddingValues = LabelSizingConstants.DefaultLabelContentPadding,
+    val iconDimension: Dp = LabelSizingConstants.DefaultLabelIconSize,
+    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME,
+    val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ORIGINAL,
+    val textOverflow: TextOverflow = TextOverflow.Clip,
+    val textSoftWrap: Boolean = true,
+    val textMaxLines: Int = Int.MAX_VALUE,
+    val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.CENTER,
+    val horizontalGapScaleFactor: Float = 1.0f
 )

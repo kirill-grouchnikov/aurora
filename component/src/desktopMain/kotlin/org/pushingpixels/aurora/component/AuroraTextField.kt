@@ -446,7 +446,7 @@ private fun TextFieldContentLayout(
     Layout(
         content = {
             Box(
-                modifier = Modifier.padding(TextFieldSizingConstants.ContentPadding),
+                modifier = Modifier.padding(TextFieldSizingConstants.DefaultTextFieldContentPadding),
                 propagateMinConstraints = true
             ) {
                 textField()
@@ -460,7 +460,7 @@ private fun TextFieldContentLayout(
 
         layout(width, height) {
             val textVerticalPosition =
-                (TextFieldSizingConstants.ContentPadding.calculateTopPadding().value * density).roundToInt()
+                (TextFieldSizingConstants.DefaultTextFieldContentPadding.calculateTopPadding().value * density).roundToInt()
             textFieldPlaceable.placeRelative(0, textVerticalPosition)
         }
     }

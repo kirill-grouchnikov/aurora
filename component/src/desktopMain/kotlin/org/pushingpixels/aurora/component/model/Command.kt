@@ -81,6 +81,7 @@ enum class TextClick {
     ACTION, POPUP
 }
 
+// TODO - remove in favor of using Arrangement.Horizontal
 enum class HorizontalAlignment(var arrangement: Arrangement.Horizontal) {
     LEADING(Arrangement.Start), CENTER(Arrangement.Center), TRAILING(Arrangement.End)
 }

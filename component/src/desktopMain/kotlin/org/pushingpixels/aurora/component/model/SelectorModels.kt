@@ -47,8 +47,8 @@ object SelectorSizingConstants {
 }
 
 data class SelectorPresentationModel(
-    val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.LEADING,
-    val markSize: Dp = SelectorSizingConstants.SelectorMarkSize,
     val contentPadding: PaddingValues = SelectorSizingConstants.DefaultSelectorContentPadding,
+    val markSize: Dp = SelectorSizingConstants.SelectorMarkSize,
+    val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.LEADING,
     val horizontalGapScaleFactor: Float = 1.0f
 )

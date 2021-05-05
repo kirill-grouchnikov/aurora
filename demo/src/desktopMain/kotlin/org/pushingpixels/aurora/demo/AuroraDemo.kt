@@ -42,6 +42,8 @@ import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.tango.*
+import org.pushingpixels.aurora.demo.svg.vaadin.*
+import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.skin.getAuroraSkins
 import org.pushingpixels.aurora.skin.marinerSkin
 import org.pushingpixels.aurora.window.AuroraDecorationArea
@@ -278,6 +280,32 @@ fun DemoFooter(
 }
 
 @Composable
+fun DemoHeader(
+    text: String,
+    iconFactory: AuroraIcon.Factory,
+    contentEnabled: MutableState<Boolean>
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AuroraLabel(
+            contentModel = LabelContentModel(
+                text = text,
+                enabled = contentEnabled.value,
+                iconFactory = iconFactory,
+            ),
+            presentationModel = LabelPresentationModel(
+                iconDimension = 12.dp,
+                iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
+                iconEnabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT
+            )
+        )
+        AuroraHorizontalSeparator(modifier = Modifier.weight(1.0f, fill = true))
+    }
+}
+
+@Composable
 fun DemoArea(
     modifier: Modifier = Modifier,
     contentEnabled: MutableState<Boolean>,
@@ -324,33 +352,8 @@ fun DemoArea(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                // Example of a checkbox backed by a mutable boolean
-                var checkboxSelected by remember { mutableStateOf(true) }
-                AuroraCheckBox(contentModel = SelectorContentModel(
-                    text = "sample check",
-                    enabled = contentEnabled.value,
-                    selected = checkboxSelected,
-                    onTriggerSelectedChange = {
-                        println("Selected checkbox? $it")
-                        checkboxSelected = it
-                    }
-                ))
 
-                Spacer(modifier = Modifier.width(8.dp))
-
-                // Example of a radio button backed by a mutable boolean
-                var radioButtonSelected by remember { mutableStateOf(true) }
-                AuroraRadioButton(contentModel = SelectorContentModel(
-                    text = "sample radio",
-                    enabled = contentEnabled.value,
-                    selected = radioButtonSelected,
-                    onTriggerSelectedChange = {
-                        println("Selected radio? $it")
-                        radioButtonSelected = it
-                    }
-                ))
-            }
+            DemoHeader("Buttons", button.factory(), contentEnabled)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -528,6 +531,37 @@ fun DemoArea(
                 )
             }
 
+            DemoHeader("Selectors", check_square_o.factory(), contentEnabled)
+            Row(modifier = Modifier.fillMaxWidth()) {
+                // Example of a checkbox backed by a mutable boolean
+                var checkboxSelected by remember { mutableStateOf(true) }
+                AuroraCheckBox(contentModel = SelectorContentModel(
+                    text = "sample check",
+                    enabled = contentEnabled.value,
+                    selected = checkboxSelected,
+                    onTriggerSelectedChange = {
+                        println("Selected checkbox? $it")
+                        checkboxSelected = it
+                    }
+                ))
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                // Example of a radio button backed by a mutable boolean
+                var radioButtonSelected by remember { mutableStateOf(true) }
+                AuroraRadioButton(contentModel = SelectorContentModel(
+                    text = "sample radio",
+                    enabled = contentEnabled.value,
+                    selected = radioButtonSelected,
+                    onTriggerSelectedChange = {
+                        println("Selected radio? $it")
+                        radioButtonSelected = it
+                    }
+                ))
+            }
+
+            DemoHeader("Combo boxes", combobox.factory(), contentEnabled)
+
             // Example of comboboxes with different popup placements, all updating and being
             // updated by the same mutable selection tracker
             val snowComboItems =
@@ -635,6 +669,8 @@ fun DemoArea(
                 )
             }
 
+            DemoHeader("Progress bars", progressbar.factory(), contentEnabled)
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -648,6 +684,20 @@ fun DemoArea(
 
                 // Example of an determinate linear progress bar
                 DemoProgress(enabled = contentEnabled.value)
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AuroraLabel(
+                    contentModel = LabelContentModel(
+                        text = "Sliders",
+                        enabled = contentEnabled.value,
+                        iconFactory = slider.factory()
+                    )
+                )
+                AuroraHorizontalSeparator(modifier = Modifier.weight(1.0f, fill = true))
             }
 
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
@@ -688,6 +738,8 @@ fun DemoArea(
                     )
                 )
             }
+
+            DemoHeader("Text fields", text_input.factory(), contentEnabled)
 
             Row(
                 modifier = Modifier.fillMaxWidth(),

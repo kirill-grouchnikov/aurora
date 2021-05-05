@@ -53,7 +53,7 @@ data class TextFieldStringContentModel(
 object TextFieldSizingConstants {
     val MinWidth = 200.dp
     val MinHeight = 28.dp
-    val ContentPadding = PaddingValues(start = 5.dp, top = 4.dp, end = 5.dp, bottom = 4.dp)
+    val DefaultTextFieldContentPadding = PaddingValues(start = 5.dp, top = 4.dp, end = 5.dp, bottom = 4.dp)
 }
 
 data class TextFieldPresentationModel(
