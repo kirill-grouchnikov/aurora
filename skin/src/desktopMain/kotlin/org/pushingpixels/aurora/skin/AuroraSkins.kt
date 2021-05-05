@@ -30,7 +30,6 @@
 package org.pushingpixels.aurora.skin
 
 import org.pushingpixels.aurora.AuroraSkinDefinition
-import org.pushingpixels.aurora.LocalSkinColors
 
 fun getAuroraSkins(): List<Pair<String, () -> AuroraSkinDefinition>> {
     return listOf(

@@ -301,23 +301,22 @@ fun DemoArea(
                 onTriggerSelectedChange = { contentEnabled.value = !contentEnabled.value }
             ))
 
-            val auroraSkins = getAuroraSkins()
             val currentSkinDisplayName = AuroraSkin.displayName
-            val auroraSelectedSkin =
-                remember { mutableStateOf(auroraSkins.find { it.first == currentSkinDisplayName })}
+            val auroraSkins = getAuroraSkins()
+            val selectedSkinItem =
+                remember { mutableStateOf(auroraSkins.first { it.first == currentSkinDisplayName }) }
 
             AuroraComboBox(
                 contentModel = ComboBoxContentModel(
                     items = auroraSkins,
-                    selectedItem = auroraSelectedSkin.value,
+                    selectedItem = selectedSkinItem.value,
                     onTriggerItemSelectedChange = {
-                        auroraSelectedSkin.value = it
-                        auroraSkinDefinition.value = it!!.second.invoke()
+                        selectedSkinItem.value = it
+                        auroraSkinDefinition.value = it.second.invoke()
                     }
                 ),
                 presentationModel = ComboBoxPresentationModel(
-                    displayConverter = { it!!.first },
-                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                    displayConverter = { it.first }
                 )
             )
         }
@@ -433,6 +432,60 @@ fun DemoArea(
                     presentationModel = ProgressCircularPresentationModel(size = 14.dp)
                 )
             }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // Command button with icon using ORIGINAL filter strategy
+                AuroraCommandButton(
+                    command = Command(
+                        text = "icon / original",
+                        iconFactory = computer.factory(),
+                        isActionEnabled = contentEnabled.value,
+                        action = {}
+                    ),
+                    presentationModel = CommandButtonPresentationModel(
+                        iconDimension = 20.dp,
+                        // This is a full-color icon. Use original colors for enabled and active states,
+                        // and color scheme based filtering for disabled states
+                        iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME,
+                        iconEnabledFilterStrategy = IconFilterStrategy.ORIGINAL,
+                        iconActiveFilterStrategy = IconFilterStrategy.ORIGINAL,
+                    )
+                )
+                // Command button with icon using THEMED_FOLLOW_TEXT filter strategy
+                AuroraCommandButton(
+                    command = Command(
+                        text = "icon / text",
+                        iconFactory = keyboard_capslock_24px.factory(),
+                        isActionEnabled = contentEnabled.value,
+                        action = {}
+                    ),
+                    presentationModel = CommandButtonPresentationModel(
+                        iconDimension = 20.dp,
+                        iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
+                        iconEnabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
+                        iconActiveFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
+                    )
+                )
+                // Command button with icon using THEMED_FOLLOW_COLOR_SCHEME filter strategy
+                AuroraCommandButton(
+                    command = Command(
+                        text = "icon / scheme",
+                        iconFactory = info_24px.factory(),
+                        isActionEnabled = contentEnabled.value,
+                        action = {}
+                    ),
+                    presentationModel = CommandButtonPresentationModel(
+                        iconDimension = 20.dp,
+                        iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME,
+                        iconEnabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME,
+                        iconActiveFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME,
+                    )
+                )
+            }
+
             Row(modifier = Modifier.fillMaxWidth()) {
                 // Example of a command button strip
                 AuroraCommandButtonStrip(
