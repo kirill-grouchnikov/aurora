@@ -216,7 +216,7 @@ fun AuroraTextField(
     val decorationAreaType = AuroraSkin.decorationAreaType
     val borderPainter = AuroraSkin.painters.borderPainter
 
-    // Populate the cached color scheme for drawing the button border
+    // Populate the cached color scheme for drawing the text field border
     // based on the current model state info
     populateColorScheme(
         drawingCache.colorScheme,

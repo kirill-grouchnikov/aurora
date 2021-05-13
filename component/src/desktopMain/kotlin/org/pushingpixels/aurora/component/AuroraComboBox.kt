@@ -305,7 +305,7 @@ fun <E> AuroraComboBox(
 
 
         if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.NEVER) {
-            // Populate the cached color scheme for filling the button container
+            // Populate the cached color scheme for filling the combobox
             // based on the current model state info
             populateColorScheme(
                 drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
@@ -320,7 +320,7 @@ fun <E> AuroraComboBox(
             val fillUltraDark = drawingCache.colorScheme.ultraDarkColor
             val fillIsDark = drawingCache.colorScheme.isDark
 
-            // Populate the cached color scheme for drawing the button border
+            // Populate the cached color scheme for drawing the border
             // based on the current model state info
             populateColorScheme(
                 drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
@@ -377,7 +377,7 @@ fun <E> AuroraComboBox(
                         return@withTransform
                     }
 
-                    // Populate the cached color scheme for filling the button container
+                    // Populate the cached color scheme for filling the combobox
                     drawingCache.colorScheme.ultraLight = fillUltraLight
                     drawingCache.colorScheme.extraLight = fillExtraLight
                     drawingCache.colorScheme.light = fillLight
@@ -390,7 +390,7 @@ fun <E> AuroraComboBox(
                         this, this.size, outline, drawingCache.colorScheme, alpha
                     )
 
-                    // Populate the cached color scheme for drawing the button border
+                    // Populate the cached color scheme for drawing the border
                     drawingCache.colorScheme.ultraLight = borderUltraLight
                     drawingCache.colorScheme.extraLight = borderExtraLight
                     drawingCache.colorScheme.light = borderLight

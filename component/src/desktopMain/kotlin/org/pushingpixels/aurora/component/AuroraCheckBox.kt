@@ -208,7 +208,7 @@ fun AuroraCheckBox(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = presentationModel.horizontalAlignment.arrangement
     ) {
-        // Populate the cached color scheme for filling the mark box
+        // Populate the cached color scheme for filling the markbox
         // based on the current model state info
         populateColorScheme(
             drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
@@ -224,7 +224,7 @@ fun AuroraCheckBox(
         val fillUltraDark = drawingCache.colorScheme.ultraDarkColor
         val fillIsDark = drawingCache.colorScheme.isDark
 
-        // Populate the cached color scheme for drawing the mark box border
+        // Populate the cached color scheme for drawing the markbox border
         // based on the current model state info
         populateColorScheme(
             drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
