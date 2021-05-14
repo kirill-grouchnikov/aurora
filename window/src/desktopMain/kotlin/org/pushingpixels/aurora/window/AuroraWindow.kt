@@ -20,7 +20,6 @@ import androidx.compose.desktop.AppManager
 import androidx.compose.desktop.AppWindow
 import androidx.compose.desktop.WindowEvents
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,10 +42,7 @@ import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.component.*
-import org.pushingpixels.aurora.component.model.Command
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
-import org.pushingpixels.aurora.component.model.CommandGroup
+import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.TransitionAwareIcon
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.shaper.AuroraButtonShaper
@@ -106,15 +102,16 @@ private fun WindowTitlePane(
                 ) {
                     val colorScheme =
                         skinColors.getEnabledColorScheme(DecorationAreaType.TITLE_PANE)
-                    BasicText(
-                        text = title,
-                        style = TextStyle(
-                            color = colorScheme.foregroundColor,
-                            shadow = Shadow(
-                                color = colorScheme.echoColor,
-                                blurRadius = density.density
-                            )
+                    val titleTextStyle = TextStyle(
+                        color = colorScheme.foregroundColor,
+                        shadow = Shadow(
+                            color = colorScheme.echoColor,
+                            blurRadius = density.density
                         )
+                    )
+                    AuroraLabel(
+                        contentModel = LabelContentModel(text = title),
+                        presentationModel = LabelPresentationModel(textStyle = titleTextStyle)
                     )
                 }
 

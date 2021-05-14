@@ -15,14 +15,16 @@
  */
 package org.pushingpixels.aurora.component
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
@@ -40,11 +42,6 @@ fun AuroraLabel(
     val state =
         if (contentModel.enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
 
-    val layoutDirection = LocalLayoutDirection.current
-    val textStyle = LocalTextStyle.current
-
-    val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
-
     Row(
         modifier = modifier.padding(presentationModel.contentPadding),
         horizontalArrangement = presentationModel.horizontalAlignment.arrangement,
@@ -54,7 +51,7 @@ fun AuroraLabel(
             LabelIconContent(contentModel, presentationModel, state)
             Spacer(modifier = Modifier.requiredWidth(4.dp * presentationModel.horizontalGapScaleFactor))
         }
-        LabelTextContent(contentModel, presentationModel, state, resolvedTextStyle)
+        LabelTextContent(contentModel, presentationModel, state)
     }
 }
 
@@ -62,13 +59,21 @@ fun AuroraLabel(
 private fun LabelTextContent(
     contentModel: LabelContentModel,
     presentationModel: LabelPresentationModel,
-    state: ComponentState,
-    style: TextStyle
+    state: ComponentState
 ) {
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
+    val layoutDirection = LocalLayoutDirection.current
 
-    val textColor = skinColors.getColorScheme(decorationAreaType, state).foregroundColor
+    // If the presentation model specifies a text style with a color, use that. Otherwise
+    // use the foreground color that matches the decoration area type of this label
+    val textColor = presentationModel.textStyle?.color ?: skinColors.getColorScheme(
+        decorationAreaType,
+        state
+    ).foregroundColor
+
+    val textStyle = presentationModel.textStyle ?: LocalTextStyle.current
+    val resolvedTextStyle = resolveDefaults(textStyle, layoutDirection)
 
     // Pass our text color and synthesized model state snapshot to the children
     CompositionLocalProvider(
@@ -84,7 +89,7 @@ private fun LabelTextContent(
         AuroraText(
             text = contentModel.text,
             color = textColor,
-            style = style,
+            style = resolvedTextStyle,
             overflow = presentationModel.textOverflow,
             softWrap = presentationModel.textSoftWrap,
             maxLines = presentationModel.textMaxLines

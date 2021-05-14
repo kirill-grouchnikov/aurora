@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -39,6 +40,7 @@ data class LabelPresentationModel(
     val iconDimension: Dp = LabelSizingConstants.DefaultLabelIconSize,
     val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ORIGINAL,
+    val textStyle: TextStyle? = null,
     val textOverflow: TextOverflow = TextOverflow.Clip,
     val textSoftWrap: Boolean = true,
     val textMaxLines: Int = Int.MAX_VALUE,

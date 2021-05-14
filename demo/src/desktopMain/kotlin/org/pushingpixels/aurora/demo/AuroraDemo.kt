@@ -21,7 +21,13 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.*
@@ -35,14 +41,16 @@ import org.pushingpixels.aurora.skin.marinerSkin
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 import kotlin.system.exitProcess
+import org.pushingpixels.aurora.common.hexadecimal
 
+@ExperimentalComposeApi
 fun main() {
     val skin = mutableStateOf(marinerSkin())
 
     AuroraWindow(
         skin = skin,
         title = "Aurora Demo",
-        size = IntSize(660, 660),
+        size = IntSize(720, 660),
         undecorated = true,
         menuCommands = CommandGroup(
             commands = listOf(
@@ -265,24 +273,42 @@ fun DemoFooter(
     }
 }
 
+@ExperimentalComposeApi
 @Composable
 fun DemoHeader(
     text: String,
     iconFactory: AuroraIcon.Factory,
     contentEnabled: MutableState<Boolean>
 ) {
+    val decorationAreaType = AuroraSkin.decorationAreaType
+    val skinColors = AuroraSkin.colors
+
+    val resolvedTextStyle = resolveDefaults(LocalTextStyle.current, LocalLayoutDirection.current)
+    val fontSize = resolvedTextStyle.fontSize
+    val smallerFontSize = TextUnit(fontSize.value - 4.0f, fontSize.type)
+    val textStyle = TextStyle(
+        color = skinColors.getColorScheme(
+            decorationAreaType,
+            if (contentEnabled.value) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
+        ).foregroundColor,
+        fontSize = smallerFontSize,
+        fontWeight = FontWeight.Bold
+    )
+
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        AuroraHorizontalSeparator(modifier = Modifier.weight(1.0f, fill = true))
         AuroraLabel(
             contentModel = LabelContentModel(
-                text = text,
+                text = text.toUpperCase(),
                 enabled = contentEnabled.value,
                 iconFactory = iconFactory,
             ),
             presentationModel = LabelPresentationModel(
-                iconDimension = 12.dp,
+                textStyle = textStyle,
+                iconDimension = 10.dp,
                 iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
                 iconEnabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT
             )
@@ -291,6 +317,7 @@ fun DemoHeader(
     }
 }
 
+@ExperimentalComposeApi
 @Composable
 fun DemoArea(
     modifier: Modifier = Modifier,
@@ -395,21 +422,6 @@ fun DemoArea(
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
                         iconDimension = 20.dp
                     )
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                // Example of a circular progress indicator
-                AuroraCircularProgress(
-                    contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled.value)
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                // Example of a larger circular progress indicator
-                AuroraCircularProgress(
-                    contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled.value),
-                    presentationModel = ProgressCircularPresentationModel(size = 14.dp)
                 )
             }
 
@@ -670,21 +682,24 @@ fun DemoArea(
 
                 // Example of an determinate linear progress bar
                 DemoProgress(enabled = contentEnabled.value)
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                // Example of a circular progress indicator
+                AuroraCircularProgress(
+                    contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled.value)
+                )
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                // Example of a larger circular progress indicator
+                AuroraCircularProgress(
+                    contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled.value),
+                    presentationModel = ProgressCircularPresentationModel(size = 14.dp)
+                )
             }
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                AuroraLabel(
-                    contentModel = LabelContentModel(
-                        text = "Sliders",
-                        enabled = contentEnabled.value,
-                        iconFactory = slider.factory()
-                    )
-                )
-                AuroraHorizontalSeparator(modifier = Modifier.weight(1.0f, fill = true))
-            }
+            DemoHeader("Sliders", slider.factory(), contentEnabled)
 
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
                 // Example of a continuous slider
@@ -758,6 +773,7 @@ fun DemoArea(
     }
 }
 
+@ExperimentalComposeApi
 @Composable
 fun DemoContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
     val contentEnabled = remember { mutableStateOf(true) }
