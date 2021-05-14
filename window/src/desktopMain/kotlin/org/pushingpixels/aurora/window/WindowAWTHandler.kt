@@ -64,7 +64,7 @@ internal class AWTInputHandler(
     private var isMousePressed = false
 
     /**
-     * Used to determine the corner the resize is occuring from.
+     * Used to determine the corner the resize is occurring from.
      */
     private var dragCursor = 0
 
@@ -100,7 +100,6 @@ internal class AWTInputHandler(
             when (event.id) {
                 MouseEvent.MOUSE_ENTERED -> mouseEntered(event)
                 MouseEvent.MOUSE_EXITED -> mouseExited(event)
-                MouseEvent.MOUSE_CLICKED -> mouseClicked(event)
                 MouseEvent.MOUSE_PRESSED -> mousePressed(event)
                 MouseEvent.MOUSE_RELEASED -> mouseReleased(event)
                 MouseEvent.MOUSE_DRAGGED -> mouseDragged(event)
@@ -109,7 +108,7 @@ internal class AWTInputHandler(
         }
     }
     
-    fun getEventWindow(ev: MouseEvent) : Window {
+    private fun getEventWindow(ev: MouseEvent) : Window {
         val source = ev.source
         if (source is Window) {
             return source
@@ -128,24 +127,12 @@ internal class AWTInputHandler(
         var f: Frame? = null
         var d: Dialog? = null
         if (w is Frame) {
-            f = w as Frame
+            f = w
         } else if (w is Dialog) {
-            d = w as Dialog
+            d = w
         }
         val frameState = f?.extendedState ?: 0
-        if (isMouseEventInExtendedTitlePane(ev, titlePaneBounds.value)) {
-            val borderDragThicknessPx = WindowSizingConstants.BorderDragThickness.value *
-                    density.density
-            if ((((f != null) and ((frameState and Frame.MAXIMIZED_BOTH) == 0)) or (d != null))
-                && (dragWindowOffset.y >= borderDragThicknessPx)
-                && (dragWindowOffset.x >= borderDragThicknessPx)
-                && (dragWindowOffset.x < w.width - borderDragThicknessPx)
-            ) {
-                isMovingWindow = true
-                dragOffsetX = dragWindowOffset.x
-                dragOffsetY = dragWindowOffset.y
-            }
-        } else if ((f != null && f.isResizable
+        if ((f != null && f.isResizable
                     && ((frameState and Frame.MAXIMIZED_BOTH) == 0))
             || d != null && d.isResizable
         ) {
@@ -181,9 +168,9 @@ internal class AWTInputHandler(
         var f: Frame? = null
         var d: Dialog? = null
         if (w is Frame) {
-            f = w as Frame
+            f = w
         } else if (w is Dialog) {
-            d = w as Dialog
+            d = w
         }
 
         // Update the cursor
@@ -336,29 +323,6 @@ internal class AWTInputHandler(
         cursorState = CursorState.EXITED
     }
 
-    private fun mouseClicked(ev: MouseEvent) {
-        val w: Window = getEventWindow(ev)
-        var f: Frame? = null
-        f = if (w is Frame) {
-            w as Frame
-        } else {
-            return
-        }
-
-        val state: Int = f.extendedState
-        if (isMouseEventInExtendedTitlePane(ev, titlePaneBounds.value)) {
-            if ((ev.clickCount % 2 == 0) && (ev.button == MouseEvent.BUTTON1)) {
-                if (f.isResizable) {
-                    if ((state and Frame.MAXIMIZED_BOTH) != 0) {
-                        f.extendedState = state and Frame.MAXIMIZED_BOTH.inv()
-                    } else {
-                        f.extendedState = state or Frame.MAXIMIZED_BOTH
-                    }
-                }
-            }
-        }
-    }
-
     /**
      * Returns the corner that contains the point `x`, `y`, or -1 if the
      * position doesn't match a corner.
@@ -397,7 +361,7 @@ internal class AWTInputHandler(
     private fun getCursor(corner: Int): Int {
         return if (corner == -1) {
             0
-        } else cursorMapping.get(corner)
+        } else cursorMapping[corner]
     }
 
     /**
@@ -430,18 +394,4 @@ internal class AWTInputHandler(
             3
         } else 2
     }
-}
-
-private fun isMouseEventInExtendedTitlePane(ev: MouseEvent, titlePaneBounds: Rect): Boolean {
-    val point = ev.point
-    val source = ev.source as Component
-    val pointInRootPaneCoords = SwingUtilities.convertPoint(
-        source,
-        point,
-        SwingUtilities.getRootPane(source)
-    )
-    // TODO - account for title pane offset in root pane
-    return titlePaneBounds.contains(
-        Offset(pointInRootPaneCoords.x.toFloat(), pointInRootPaneCoords.y.toFloat())
-    )
 }

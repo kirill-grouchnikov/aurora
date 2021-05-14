@@ -35,7 +35,8 @@ fun main() {
     AuroraWindow(
         title = "Aurora Scrollbars",
         skin = businessSkin(),
-        size = IntSize(250, 400)
+        size = IntSize(250, 400),
+        undecorated = true
     ) {
         Box(
             modifier = Modifier.fillMaxSize()

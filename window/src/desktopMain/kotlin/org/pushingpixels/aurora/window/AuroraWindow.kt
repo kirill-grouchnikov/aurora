@@ -50,6 +50,7 @@ import org.pushingpixels.aurora.component.model.CommandGroup
 import org.pushingpixels.aurora.component.utils.TransitionAwareIcon
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.shaper.AuroraButtonShaper
+import org.pushingpixels.aurora.shaper.ClassicButtonShaper
 import java.awt.*
 import java.awt.event.AWTEventListener
 import java.awt.event.KeyEvent
@@ -82,180 +83,184 @@ private fun WindowTitlePane(
         remember { mutableStateOf(((extendedState != null) && ((extendedState and Frame.MAXIMIZED_BOTH) != 0))) }
     val skinColors = AuroraSkin.colors
 
-    AuroraDecorationArea(decorationAreaType = DecorationAreaType.TITLE_PANE) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(32.dp)
-                .onGloballyPositioned {
-                    titlePaneBounds.value = Rect(
-                        offset = it.positionInWindow(),
-                        size = Size(it.size.width.toFloat(), it.size.height.toFloat())
-                    )
-                }
-                .auroraBackground()
-                .padding(start = 24.dp, end = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            WindowDraggableArea(
-                modifier = Modifier.weight(1f)
+    CompositionLocalProvider(
+        LocalButtonShaper provides ClassicButtonShaper(),
+    ) {
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.TITLE_PANE) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(32.dp)
+                    .onGloballyPositioned {
+                        titlePaneBounds.value = Rect(
+                            offset = it.positionInWindow(),
+                            size = Size(it.size.width.toFloat(), it.size.height.toFloat())
+                        )
+                    }
+                    .auroraBackground()
+                    .padding(start = 24.dp, end = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                val colorScheme =
-                    skinColors.getEnabledColorScheme(DecorationAreaType.TITLE_PANE)
-                BasicText(
-                    text = title,
-                    style = TextStyle(
-                        color = colorScheme.foregroundColor,
-                        shadow = Shadow(
-                            color = colorScheme.echoColor,
-                            blurRadius = density.density
+                WindowDraggableArea(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    val colorScheme =
+                        skinColors.getEnabledColorScheme(DecorationAreaType.TITLE_PANE)
+                    BasicText(
+                        text = title,
+                        style = TextStyle(
+                            color = colorScheme.foregroundColor,
+                            shadow = Shadow(
+                                color = colorScheme.echoColor,
+                                blurRadius = density.density
+                            )
                         )
                     )
+                }
+
+                val colors = AuroraSkin.colors
+
+                val titlePaneButtonPresentationModel = CommandButtonPresentationModel(
+                    presentationState = CommandButtonPresentationState.SMALL,
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                    contentPadding = PaddingValues(
+                        start = 1.dp,
+                        end = 2.dp,
+                        top = 1.dp,
+                        bottom = 2.dp
+                    ),
+                    horizontalGapScaleFactor = 1.0f,
+                    verticalGapScaleFactor = 1.0f
+                )
+
+                // Minimize button
+                AuroraCommandButton(
+                    command = Command(
+                        text = "",
+                        action = {
+                            AppManager.focusedWindow?.window?.extendedState =
+                                JFrame.ICONIFIED
+                        },
+                        iconFactory = object :
+                            TransitionAwareIcon.TransitionAwareIconFactory() {
+                            override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
+                                return TransitionAwareIcon(
+                                    decorationAreaType = DecorationAreaType.TITLE_PANE,
+                                    skinColors = colors,
+                                    buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                                    modelStateInfoSnapshot = modelStateInfoSnapshot,
+                                    delegate = { scheme ->
+                                        getMinimizeIcon(
+                                            iconSize = iconSize,
+                                            scheme = scheme,
+                                            density = density.density
+                                        )
+                                    },
+                                    density = density,
+                                    colorSchemeAssociationKindDelegate = null,
+                                    uniqueIconTypeId = "aurora.titlePane.minimizeIcon"
+                                )
+                            }
+                        }
+                    ),
+                    presentationModel = titlePaneButtonPresentationModel
+                )
+
+                Spacer(modifier = Modifier.width(4.dp))
+
+                // Maximize / Unmaximize button
+                AuroraCommandButton(
+                    command = Command(
+                        text = "",
+                        action = {
+                            val current = AppManager.focusedWindow
+                            if (current != null) {
+                                if (current.window.extendedState == JFrame.MAXIMIZED_BOTH) {
+                                    current.window.extendedState = JFrame.NORMAL
+                                } else {
+                                    current.window.extendedState = JFrame.MAXIMIZED_BOTH
+                                }
+                                isMaximized.value = !isMaximized.value
+                            }
+                        },
+                        iconFactory = object :
+                            TransitionAwareIcon.TransitionAwareIconFactory() {
+                            override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
+                                return if (isMaximized.value) {
+                                    TransitionAwareIcon(
+                                        decorationAreaType = DecorationAreaType.TITLE_PANE,
+                                        skinColors = colors,
+                                        buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                                        modelStateInfoSnapshot = modelStateInfoSnapshot,
+                                        delegate = { scheme ->
+                                            getRestoreIcon(
+                                                iconSize = iconSize,
+                                                scheme = scheme,
+                                                density = density.density
+                                            )
+                                        },
+                                        density = density,
+                                        colorSchemeAssociationKindDelegate = null,
+                                        uniqueIconTypeId = "aurora.titlePane.restoreIcon"
+                                    )
+                                } else {
+                                    TransitionAwareIcon(
+                                        decorationAreaType = DecorationAreaType.TITLE_PANE,
+                                        skinColors = colors,
+                                        buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                                        modelStateInfoSnapshot = modelStateInfoSnapshot,
+                                        delegate = { scheme ->
+                                            getMaximizeIcon(
+                                                iconSize = iconSize,
+                                                scheme = scheme,
+                                                density = density.density
+                                            )
+                                        },
+                                        density = density,
+                                        colorSchemeAssociationKindDelegate = null,
+                                        uniqueIconTypeId = "aurora.titlePane.maximizeIcon"
+                                    )
+                                }
+                            }
+                        }
+                    ),
+                    presentationModel = titlePaneButtonPresentationModel
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                // Close button
+                AuroraCommandButton(
+                    command = Command(
+                        text = "",
+                        action = {
+                            AppManager.focusedWindow?.close()
+                        },
+                        iconFactory = object :
+                            TransitionAwareIcon.TransitionAwareIconFactory() {
+                            override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
+                                return TransitionAwareIcon(
+                                    decorationAreaType = DecorationAreaType.TITLE_PANE,
+                                    skinColors = colors,
+                                    buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                                    modelStateInfoSnapshot = modelStateInfoSnapshot,
+                                    delegate = { scheme ->
+                                        getCloseIcon(
+                                            iconSize = iconSize,
+                                            scheme = scheme,
+                                            density = density.density
+                                        )
+                                    },
+                                    density = density,
+                                    colorSchemeAssociationKindDelegate = null,
+                                    uniqueIconTypeId = "aurora.titlePane.closeIcon"
+                                )
+                            }
+                        }
+                    ),
+                    presentationModel = titlePaneButtonPresentationModel
                 )
             }
-
-            val colors = AuroraSkin.colors
-
-            val titlePaneButtonPresentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.SMALL,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                contentPadding = PaddingValues(
-                    start = 1.dp,
-                    end = 2.dp,
-                    top = 1.dp,
-                    bottom = 2.dp
-                ),
-                horizontalGapScaleFactor = 1.0f,
-                verticalGapScaleFactor = 1.0f
-            )
-
-            // Minimize button
-            AuroraCommandButton(
-                command = Command(
-                    text = "",
-                    action = {
-                        AppManager.focusedWindow?.window?.extendedState =
-                            JFrame.ICONIFIED
-                    },
-                    iconFactory = object :
-                        TransitionAwareIcon.TransitionAwareIconFactory() {
-                        override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
-                            return TransitionAwareIcon(
-                                decorationAreaType = DecorationAreaType.TITLE_PANE,
-                                skinColors = colors,
-                                buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                delegate = { scheme ->
-                                    getMinimizeIcon(
-                                        iconSize = iconSize,
-                                        scheme = scheme,
-                                        density = density.density
-                                    )
-                                },
-                                density = density,
-                                colorSchemeAssociationKindDelegate = null,
-                                uniqueIconTypeId = "aurora.titlePane.minimizeIcon"
-                            )
-                        }
-                    }
-                ),
-                presentationModel = titlePaneButtonPresentationModel
-            )
-
-            Spacer(modifier = Modifier.width(4.dp))
-
-            // Maximize / Unmaximize button
-            AuroraCommandButton(
-                command = Command(
-                    text = "",
-                    action = {
-                        val current = AppManager.focusedWindow
-                        if (current != null) {
-                            if (current.window.extendedState == JFrame.MAXIMIZED_BOTH) {
-                                current.window.extendedState = JFrame.NORMAL
-                            } else {
-                                current.window.extendedState = JFrame.MAXIMIZED_BOTH
-                            }
-                            isMaximized.value = !isMaximized.value
-                        }
-                    },
-                    iconFactory = object :
-                        TransitionAwareIcon.TransitionAwareIconFactory() {
-                        override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
-                            return if (isMaximized.value) {
-                                TransitionAwareIcon(
-                                    decorationAreaType = DecorationAreaType.TITLE_PANE,
-                                    skinColors = colors,
-                                    buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                    modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                    delegate = { scheme ->
-                                        getRestoreIcon(
-                                            iconSize = iconSize,
-                                            scheme = scheme,
-                                            density = density.density
-                                        )
-                                    },
-                                    density = density,
-                                    colorSchemeAssociationKindDelegate = null,
-                                    uniqueIconTypeId = "aurora.titlePane.restoreIcon"
-                                )
-                            } else {
-                                TransitionAwareIcon(
-                                    decorationAreaType = DecorationAreaType.TITLE_PANE,
-                                    skinColors = colors,
-                                    buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                    modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                    delegate = { scheme ->
-                                        getMaximizeIcon(
-                                            iconSize = iconSize,
-                                            scheme = scheme,
-                                            density = density.density
-                                        )
-                                    },
-                                    density = density,
-                                    colorSchemeAssociationKindDelegate = null,
-                                    uniqueIconTypeId = "aurora.titlePane.maximizeIcon"
-                                )
-                            }
-                        }
-                    }
-                ),
-                presentationModel = titlePaneButtonPresentationModel
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            // Close button
-            AuroraCommandButton(
-                command = Command(
-                    text = "",
-                    action = {
-                        AppManager.focusedWindow?.close()
-                    },
-                    iconFactory = object :
-                        TransitionAwareIcon.TransitionAwareIconFactory() {
-                        override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
-                            return TransitionAwareIcon(
-                                decorationAreaType = DecorationAreaType.TITLE_PANE,
-                                skinColors = colors,
-                                buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                                modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                delegate = { scheme ->
-                                    getCloseIcon(
-                                        iconSize = iconSize,
-                                        scheme = scheme,
-                                        density = density.density
-                                    )
-                                },
-                                density = density,
-                                colorSchemeAssociationKindDelegate = null,
-                                uniqueIconTypeId = "aurora.titlePane.closeIcon"
-                            )
-                        }
-                    }
-                ),
-                presentationModel = titlePaneButtonPresentationModel
-            )
         }
     }
 }
