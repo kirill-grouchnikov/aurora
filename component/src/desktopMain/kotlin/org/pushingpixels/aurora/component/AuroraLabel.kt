@@ -24,6 +24,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.isSpecified
+import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.dp
@@ -67,7 +69,9 @@ private fun LabelTextContent(
 
     // If the presentation model specifies a text style with a color, use that. Otherwise
     // use the foreground color that matches the decoration area type of this label
-    val textColor = presentationModel.textStyle?.color ?: skinColors.getColorScheme(
+    val presentationStyleHasColor = presentationModel.textStyle?.color?.isSpecified ?: false
+    val textColor = if (presentationStyleHasColor) presentationModel.textStyle!!.color else
+        skinColors.getColorScheme(
         decorationAreaType,
         state
     ).foregroundColor

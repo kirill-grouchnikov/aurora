@@ -280,17 +280,13 @@ fun DemoHeader(
     iconFactory: AuroraIcon.Factory,
     contentEnabled: MutableState<Boolean>
 ) {
-    val decorationAreaType = AuroraSkin.decorationAreaType
-    val skinColors = AuroraSkin.colors
-
+    // Resolve the default text style to get the default font size
     val resolvedTextStyle = resolveDefaults(LocalTextStyle.current, LocalLayoutDirection.current)
     val fontSize = resolvedTextStyle.fontSize
+    // Compute a smaller font size
     val smallerFontSize = TextUnit(fontSize.value - 4.0f, fontSize.type)
+    // And create our own text style with smaller font size and bold weight
     val textStyle = TextStyle(
-        color = skinColors.getColorScheme(
-            decorationAreaType,
-            if (contentEnabled.value) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
-        ).foregroundColor,
         fontSize = smallerFontSize,
         fontWeight = FontWeight.Bold
     )
