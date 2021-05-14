@@ -41,7 +41,6 @@ import org.pushingpixels.aurora.skin.marinerSkin
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 import kotlin.system.exitProcess
-import org.pushingpixels.aurora.common.hexadecimal
 
 @ExperimentalComposeApi
 fun main() {
