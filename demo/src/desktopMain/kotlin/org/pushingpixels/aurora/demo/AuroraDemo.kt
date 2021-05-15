@@ -21,7 +21,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -415,7 +414,10 @@ fun DemoArea(
                     ),
                     presentationModel = CommandButtonPresentationModel(
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                        iconDimension = 20.dp
+                        iconDimension = 20.dp,
+                        iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
+                        iconEnabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
+                        iconActiveFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
                     )
                 )
             }
@@ -449,6 +451,9 @@ fun DemoArea(
                     presentationModel = CommandButtonPresentationModel(
                         presentationState = CommandButtonPresentationState.SMALL,
                         iconDimension = 24.dp,
+                        iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
+                        iconEnabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
+                        iconActiveFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
                         horizontalGapScaleFactor = 0.25f,
                         verticalGapScaleFactor = 0.25f
                     )
@@ -472,6 +477,9 @@ fun DemoArea(
                     presentationModel = CommandButtonPresentationModel(
                         presentationState = CommandButtonPresentationState.SMALL,
                         iconDimension = 24.dp,
+                        iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
+                        iconEnabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
+                        iconActiveFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
                         contentPadding = PaddingValues(8.dp)
                     )
                 )
