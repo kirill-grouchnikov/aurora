@@ -64,12 +64,12 @@ data class CommandMenuContentModel(val groups: List<CommandGroup>) {
 }
 
 enum class TextClick {
-    ACTION, POPUP
+    Action, Popup
 }
 
 // TODO - remove in favor of using Arrangement.Horizontal
 enum class HorizontalAlignment(var arrangement: Arrangement.Horizontal) {
-    LEADING(Arrangement.Start), CENTER(Arrangement.Center), TRAILING(Arrangement.End)
+    Leading(Arrangement.Start), Center(Arrangement.Center), Trailing(Arrangement.End)
 }
 
 /**
@@ -79,24 +79,24 @@ enum class CommandButtonKind(val hasAction: Boolean, val hasPopup: Boolean) {
     /**
      * Command button that has only action area.
      */
-    ACTION_ONLY(true, false),
+    ActionOnly(true, false),
 
     /**
      * Command button that has only popup area.
      */
-    POPUP_ONLY(false, true),
+    PopupOnly(false, true),
 
     /**
      * Command button that has both action and popup areas, with the main
      * text click activating the action.
      */
-    ACTION_AND_POPUP_MAIN_ACTION(true, true),
+    ActionAndPopupMainAction(true, true),
 
     /**
      * Command button that has both action and popup areas, with the main
      * text click activating the popup.
      */
-    ACTION_AND_POPUP_MAIN_POPUP(true, true);
+    ActionAndPopupMainPopup(true, true);
 }
 
 /**

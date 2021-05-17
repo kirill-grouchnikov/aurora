@@ -650,16 +650,16 @@ class DecorationAreaType(val displayName: String) {
  */
 enum class Side {
     /** Start side */
-    START,
+    Start,
 
     /** End side */
-    END,
+    End,
 
     /** Top side */
-    TOP,
+    Top,
 
     /** Bottom side */
-    BOTTOM
+    Bottom
 }
 
 @Immutable
@@ -674,14 +674,14 @@ data class ButtonSides(
  * @author Kirill Grouchnikov
  */
 enum class BackgroundAppearanceStrategy {
-    /** The component never paints the background */
-    NEVER,
+    /** The component never paints its background */
+    Never,
 
-    /** The component only paints the background in active (rollover, selected, pressed) state. */
-    FLAT,
+    /** The component only paints its background in active (rollover, selected, pressed) states. */
+    Flat,
 
-    /** The component always paints the background */
-    ALWAYS
+    /** The component always paints its background */
+    Always
 }
 
 /**
@@ -691,34 +691,21 @@ enum class BackgroundAppearanceStrategy {
  */
 enum class IconFilterStrategy {
     /** The icon is always painted in its original appearance. */
-    ORIGINAL,
+    Original,
 
     /** The icon is themed based on the current text color. */
-    THEMED_FOLLOW_TEXT,
+    ThemedFollowText,
 
     /** The icon is themed based on the color scheme that matches the current component state. */
-    THEMED_FOLLOW_COLOR_SCHEME
-}
-
-/**
- * Enumerates available button sizing strategies.
- *
- * @author Kirill Grouchnikov
- */
-enum class ButtonSizingStrategy {
-    /** The button is sized to contain all its content with no additional padding. */
-    COMPACT,
-
-    /** The button is sized to contain all its content, bumping up to minimum width and height if necessary. */
-    EXTENDED
+    ThemedFollowColorScheme
 }
 
 enum class PopupPlacementStrategy(val isHorizontal: Boolean) {
-    STARTWARD(true),
-    ENDWARD(true),
-    UPWARD(false),
-    DOWNWARD(false),
-    CENTERED_VERTICALLY(false)
+    Startward(true),
+    Endward(true),
+    Upward(false),
+    Downward(false),
+    CenteredVertically(false)
 }
 
 

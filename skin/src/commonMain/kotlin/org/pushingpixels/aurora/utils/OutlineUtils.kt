@@ -39,13 +39,13 @@ fun getBaseOutline(
 ): Outline {
     // TODO - add RTL support
     val isTopLeftCorner = (straightSides != null
-            && (straightSides.contains(Side.START) || straightSides.contains(Side.TOP)))
+            && (straightSides.contains(Side.Start) || straightSides.contains(Side.Top)))
     val isTopRightCorner = (straightSides != null
-            && (straightSides.contains(Side.END) || straightSides.contains(Side.TOP)))
+            && (straightSides.contains(Side.End) || straightSides.contains(Side.Top)))
     val isBottomRightCorner = (straightSides != null
-            && (straightSides.contains(Side.END) || straightSides.contains(Side.BOTTOM)))
+            && (straightSides.contains(Side.End) || straightSides.contains(Side.Bottom)))
     val isBottomLeftCorner = (straightSides != null
-            && (straightSides.contains(Side.START) || straightSides.contains(Side.BOTTOM)))
+            && (straightSides.contains(Side.Start) || straightSides.contains(Side.Bottom)))
 
     // If all the sides are straight, the result is a simple rectangle
     if (isTopLeftCorner && isTopRightCorner && isBottomRightCorner && isBottomLeftCorner) {

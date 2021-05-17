@@ -44,12 +44,12 @@ interface CommandButtonLayoutManager : MeasureScope {
         /**
          * Vertical separator orientation.
          */
-        VERTICAL,
+        Vertical,
 
         /**
          * Horizontal separator orientation.
          */
-        HORIZONTAL
+        Horizontal
     }
 
     /**

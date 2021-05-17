@@ -69,9 +69,9 @@ private class AlphaIconModifier(val iconBitmap: ImageBitmap, val alpha: Float) :
 fun AuroraThemedFollowTextIcon(icon: AuroraIcon, modifier: Modifier = Modifier) {
     AuroraThemedIcon(
         icon = icon,
-        disabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
-        enabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
-        activeFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
+        disabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+        enabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+        activeFilterStrategy = IconFilterStrategy.ThemedFollowText,
         modifier = modifier
     )
 }
@@ -79,9 +79,9 @@ fun AuroraThemedFollowTextIcon(icon: AuroraIcon, modifier: Modifier = Modifier) 
 @Composable
 fun AuroraThemedIcon(
     icon: AuroraIcon,
-    disabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME,
-    enabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ORIGINAL,
-    activeFilterStrategy: IconFilterStrategy = IconFilterStrategy.ORIGINAL,
+    disabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    enabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    activeFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     modifier: Modifier = Modifier
 ) {
     val modelStateInfoSnapshot = LocalModelStateInfoSnapshot.current
@@ -96,14 +96,14 @@ fun AuroraThemedIcon(
     if (currModelState.isDisabled) {
         // TODO - do we need icon transitions from / to a disabled state?
         when (disabledFilterStrategy) {
-            IconFilterStrategy.ORIGINAL ->
+            IconFilterStrategy.Original ->
                 Box(
                     modifier.size(
                         width = icon.getWidth(),
                         height = icon.getHeight()
                     ).auroraIconPaint(icon)
                 )
-            IconFilterStrategy.THEMED_FOLLOW_TEXT ->
+            IconFilterStrategy.ThemedFollowText ->
                 // For disabled states, the text color already accounts for the
                 // disabled state alpha under the current skin configuration
                 Box(
@@ -112,7 +112,7 @@ fun AuroraThemedIcon(
                         height = icon.getHeight()
                     ).auroraThemedIconPaint(iconBitmap, textColor, 1.0f)
                 )
-            IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME ->
+            IconFilterStrategy.ThemedFollowColorScheme ->
                 Box(
                     modifier.size(
                         width = icon.getWidth(),
@@ -127,8 +127,8 @@ fun AuroraThemedIcon(
         }
     } else {
         // Simple case - both enabled and active filter strategy are ORIGINAL
-        if ((enabledFilterStrategy == IconFilterStrategy.ORIGINAL) &&
-            (activeFilterStrategy == IconFilterStrategy.ORIGINAL)
+        if ((enabledFilterStrategy == IconFilterStrategy.Original) &&
+            (activeFilterStrategy == IconFilterStrategy.Original)
         ) {
             Box(
                 modifier.size(
@@ -139,18 +139,18 @@ fun AuroraThemedIcon(
         } else {
             // We start with the enabled state filter strategy
             val enabledIconModifier = when (enabledFilterStrategy) {
-                IconFilterStrategy.ORIGINAL ->
+                IconFilterStrategy.Original ->
                     AlphaIconModifier(
                         iconBitmap = iconBitmap,
                         alpha = 1.0f
                     )
-                IconFilterStrategy.THEMED_FOLLOW_TEXT ->
+                IconFilterStrategy.ThemedFollowText ->
                     AuroraThemedByTextIconModifier(
                         iconBitmap = iconBitmap,
                         textColor = textColor,
                         alpha = 1.0f
                     )
-                IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME ->
+                IconFilterStrategy.ThemedFollowColorScheme ->
                     AuroraThemedByColorSchemeIconModifier(
                         iconBitmap = iconBitmap,
                         colorScheme = colors.getColorScheme(
@@ -165,18 +165,18 @@ fun AuroraThemedIcon(
             // in the model state snapshot
             val activeIconModifier = if (modelStateInfoSnapshot.activeStrength > 0.0f)
                 when (activeFilterStrategy) {
-                    IconFilterStrategy.ORIGINAL ->
+                    IconFilterStrategy.Original ->
                         AlphaIconModifier(
                             iconBitmap = iconBitmap,
                             alpha = modelStateInfoSnapshot.activeStrength
                         )
-                    IconFilterStrategy.THEMED_FOLLOW_TEXT ->
+                    IconFilterStrategy.ThemedFollowText ->
                         AuroraThemedByTextIconModifier(
                             iconBitmap = iconBitmap,
                             textColor = textColor,
                             alpha = modelStateInfoSnapshot.activeStrength
                         )
-                    IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME ->
+                    IconFilterStrategy.ThemedFollowColorScheme ->
                         getCombinedActiveStatesThemedByColorSchemeModifier(
                             iconBitmap = iconBitmap,
                             modelStateInfoSnapshot = modelStateInfoSnapshot,

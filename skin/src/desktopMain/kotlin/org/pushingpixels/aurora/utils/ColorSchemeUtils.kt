@@ -34,7 +34,7 @@ private fun decodeColor(value: String, colorMap: Map<String, Color>): Color {
 }
 
 private enum class ColorSchemeKind {
-    LIGHT, DARK
+    Light, Dark
 }
 
 fun getColorSchemes(inputStream: InputStream): ColorSchemes {
@@ -98,7 +98,7 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
                         background!!, background!!, background!!, background!!, background!!, background!!,
                         foreground!!
                     ) else arrayOf(ultraLight!!, extraLight!!, light!!, mid!!, dark!!, ultraDark!!, foreground!!)
-                    if (kind === ColorSchemeKind.LIGHT) {
+                    if (kind === ColorSchemeKind.Light) {
                         schemes.add(getLightColorScheme(name!!, colors, HashMap(additionalColors)))
                     } else {
                         schemes.add(getDarkColorScheme(name!!, colors, HashMap(additionalColors)))
@@ -127,11 +127,11 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
                 if ("kind" == key) {
                     if (kind == null) {
                         if ("Light" == value) {
-                            kind = ColorSchemeKind.LIGHT
+                            kind = ColorSchemeKind.Light
                             continue
                         }
                         if ("Dark" == value) {
-                            kind = ColorSchemeKind.DARK
+                            kind = ColorSchemeKind.Dark
                             continue
                         }
                         throw IllegalArgumentException("Unsupported format in line $line [$lineNumber]")

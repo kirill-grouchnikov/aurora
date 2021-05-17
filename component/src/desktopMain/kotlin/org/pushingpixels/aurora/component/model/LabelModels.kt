@@ -38,12 +38,12 @@ object LabelSizingConstants {
 data class LabelPresentationModel(
     val contentPadding: PaddingValues = LabelSizingConstants.DefaultLabelContentPadding,
     val iconDimension: Dp = LabelSizingConstants.DefaultLabelIconSize,
-    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME,
-    val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ORIGINAL,
+    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val textStyle: TextStyle? = null,
     val textOverflow: TextOverflow = TextOverflow.Clip,
     val textSoftWrap: Boolean = true,
     val textMaxLines: Int = Int.MAX_VALUE,
-    val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.CENTER,
+    val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
     val horizontalGapScaleFactor: Float = 1.0f
 )

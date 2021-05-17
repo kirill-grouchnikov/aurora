@@ -24,35 +24,35 @@ enum class StripOrientation {
     /**
      * Horizontal strip orientation.
      */
-    HORIZONTAL,
+    Horizontal,
 
     /**
      * Vertical strip orientation.
      */
-    VERTICAL
+    Vertical
+}
+
+object CommandStripSizingConstants {
+    const val DefaultGapScaleFactorPrimaryAxis = 0.75f
+    const val DefaultGapScaleFactorSecondaryAxis = 1.0f
 }
 
 data class CommandStripPresentationModel(
-    val orientation: StripOrientation = StripOrientation.HORIZONTAL,
+    val orientation: StripOrientation = StripOrientation.Horizontal,
     val commandPresentationState: CommandButtonPresentationState = CommandButtonPresentationState.SMALL,
-    val horizontalGapScaleFactor: Float =
-        if (orientation == StripOrientation.HORIZONTAL) DEFAULT_GAP_SCALE_FACTOR_PRIMARY_AXIS
-        else DEFAULT_GAP_SCALE_FACTOR_SECONDARY_AXIS,
-    val verticalGapScaleFactor: Float =
-        if (orientation == StripOrientation.VERTICAL) DEFAULT_GAP_SCALE_FACTOR_PRIMARY_AXIS
-        else DEFAULT_GAP_SCALE_FACTOR_SECONDARY_AXIS,
-    val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS,
-    val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.CENTER,
+    val horizontalGapScaleFactor: Float = if (orientation == StripOrientation.Horizontal)
+        CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis
+    else CommandStripSizingConstants.DefaultGapScaleFactorSecondaryAxis,
+    val verticalGapScaleFactor: Float = if (orientation == StripOrientation.Vertical)
+        CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis
+        else CommandStripSizingConstants.DefaultGapScaleFactorSecondaryAxis,
+    val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+    val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
     val iconDimension: Dp? = null,
-    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME,
-    val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ORIGINAL,
-    val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.ORIGINAL,
-    val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.DOWNWARD,
-    val textClick: TextClick = TextClick.ACTION,
+    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward,
+    val textClick: TextClick = TextClick.Action,
     val isMenu: Boolean = false
-) {
-    companion object {
-        const val DEFAULT_GAP_SCALE_FACTOR_PRIMARY_AXIS = 0.75f
-        const val DEFAULT_GAP_SCALE_FACTOR_SECONDARY_AXIS = 1.0f
-    }
-}
+)

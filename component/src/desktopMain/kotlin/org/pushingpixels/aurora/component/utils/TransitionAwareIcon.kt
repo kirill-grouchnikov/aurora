@@ -61,7 +61,7 @@ class TransitionAwareIcon(
             val activeStates = modelStateInfoSnapshot.stateContributionMap
             var currState = modelStateInfoSnapshot.currModelState
             val buttonNeverPainted =
-                (buttonBackgroundAppearanceStrategy == BackgroundAppearanceStrategy.NEVER)
+                (buttonBackgroundAppearanceStrategy == BackgroundAppearanceStrategy.Never)
             if (buttonNeverPainted) {
                 if (currState.isFacetActive(ComponentStateFacet.ENABLE)) currState =
                     ComponentState.ENABLED

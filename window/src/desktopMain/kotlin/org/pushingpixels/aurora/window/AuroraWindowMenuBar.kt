@@ -82,9 +82,9 @@ private object WindowMenuBarLayout {
             val commandButtonKind = if (!(hasAction xor hasPopup)) {
                 throw IllegalArgumentException("Menu command ${command.text} needs to have either action or secondary content")
             } else if (hasPopup) {
-                CommandButtonKind.POPUP_ONLY
+                CommandButtonKind.PopupOnly
             } else {
-                CommandButtonKind.ACTION_ONLY
+                CommandButtonKind.ActionOnly
             }
 
             return CommandButtonLayoutManager.CommandButtonPreLayoutInfo(
@@ -92,7 +92,7 @@ private object WindowMenuBarLayout {
                 texts = listOf(command.text),
                 extraTexts = emptyList(),
                 isTextInActionArea = (hasAction or command.isActionToggle) &&
-                        (presentationModel.textClick == TextClick.ACTION),
+                        (presentationModel.textClick == TextClick.Action),
                 separatorOrientation = null,
                 showPopupIcon = false
             )
@@ -193,7 +193,7 @@ internal fun AuroraWindowMenuBar(menuCommands: CommandGroup) {
                     command = menuCommand,
                     presentationModel = CommandButtonPresentationModel(
                         presentationState = WindowMenuBarLayout.MENU_BAR,
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                         contentPadding = CommandButtonSizingConstants.WideButtonContentPadding,
                         isMenu = true
                     )

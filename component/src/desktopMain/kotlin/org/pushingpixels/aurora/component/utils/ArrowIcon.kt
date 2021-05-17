@@ -32,7 +32,7 @@ internal fun drawArrow(
     direction: PopupPlacementStrategy, layoutDirection: LayoutDirection,
     color: Color
 ) {
-    if (direction == PopupPlacementStrategy.CENTERED_VERTICALLY) {
+    if (direction == PopupPlacementStrategy.CenteredVertically) {
         val smallHeight = height - strokeWidth / 2.0f
 
         drawScope.translate(left = 0.0f, top = -strokeWidth - 1.0f) {
@@ -41,7 +41,7 @@ internal fun drawArrow(
                 width = width,
                 height = smallHeight,
                 strokeWidth = strokeWidth,
-                direction = PopupPlacementStrategy.UPWARD,
+                direction = PopupPlacementStrategy.Upward,
                 layoutDirection = layoutDirection,
                 color = color
             )
@@ -53,7 +53,7 @@ internal fun drawArrow(
                 width = width,
                 height = smallHeight,
                 strokeWidth = strokeWidth,
-                direction = PopupPlacementStrategy.DOWNWARD,
+                direction = PopupPlacementStrategy.Downward,
                 layoutDirection = layoutDirection,
                 color = color
             )
@@ -64,18 +64,18 @@ internal fun drawArrow(
     val cushion = strokeWidth / 2.0f
     val gp = Path()
 
-    if (direction == PopupPlacementStrategy.DOWNWARD) {
+    if (direction == PopupPlacementStrategy.Downward) {
         gp.moveTo(cushion, cushion)
         gp.lineTo(0.5f * width, height - cushion - 1)
         gp.lineTo(width - cushion, cushion)
-    } else if (direction == PopupPlacementStrategy.UPWARD) {
+    } else if (direction == PopupPlacementStrategy.Upward) {
         gp.moveTo(cushion, height - cushion - 1)
         gp.lineTo(0.5f * width, cushion)
         gp.lineTo(width - cushion, height - cushion - 1)
     } else {
         val leftward =
-            ((direction == PopupPlacementStrategy.STARTWARD) && (layoutDirection == LayoutDirection.Ltr)) ||
-                    ((direction == PopupPlacementStrategy.ENDWARD) && (layoutDirection == LayoutDirection.Rtl))
+            ((direction == PopupPlacementStrategy.Startward) && (layoutDirection == LayoutDirection.Ltr)) ||
+                    ((direction == PopupPlacementStrategy.Endward) && (layoutDirection == LayoutDirection.Rtl))
         if (leftward) {
             gp.moveTo(width - 1 - cushion, cushion)
             gp.lineTo(cushion, 0.5f * height)

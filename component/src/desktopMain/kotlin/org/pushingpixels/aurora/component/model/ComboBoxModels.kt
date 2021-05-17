@@ -38,10 +38,10 @@ object ComboBoxSizingConstants {
 }
 
 data class ComboBoxPresentationModel<E>(
-    val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS,
+    val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
     val displayConverter: (E) -> String,
     val contentPadding: PaddingValues = ComboBoxSizingConstants.DefaultComboBoxContentPadding,
-    val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.LEADING,
+    val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Leading,
     val horizontalGapScaleFactor: Float = 1.0f,
-    val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.DOWNWARD,
+    val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward,
 )

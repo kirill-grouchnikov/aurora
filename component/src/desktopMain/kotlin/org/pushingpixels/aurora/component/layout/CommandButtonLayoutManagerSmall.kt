@@ -97,13 +97,13 @@ internal class CommandButtonLayoutManagerSmall(
         val hasPopup = (command.secondaryContentModel != null)
 
         val commandButtonKind = if (hasAction && hasPopup) {
-            if (presentationModel.textClick == TextClick.ACTION)
-                CommandButtonKind.ACTION_AND_POPUP_MAIN_ACTION else
-                CommandButtonKind.ACTION_AND_POPUP_MAIN_POPUP
+            if (presentationModel.textClick == TextClick.Action)
+                CommandButtonKind.ActionAndPopupMainAction else
+                CommandButtonKind.ActionAndPopupMainPopup
         } else if (hasPopup) {
-            CommandButtonKind.POPUP_ONLY
+            CommandButtonKind.PopupOnly
         } else {
-            CommandButtonKind.ACTION_ONLY
+            CommandButtonKind.ActionOnly
         }
 
         return CommandButtonLayoutManager.CommandButtonPreLayoutInfo(
@@ -111,8 +111,8 @@ internal class CommandButtonLayoutManagerSmall(
             texts = emptyList(),
             extraTexts = emptyList(),
             isTextInActionArea = (hasAction or command.isActionToggle) &&
-                    (presentationModel.textClick == TextClick.ACTION),
-            separatorOrientation = CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL,
+                    (presentationModel.textClick == TextClick.Action),
+            separatorOrientation = CommandButtonLayoutManager.CommandButtonSeparatorOrientation.Vertical,
             showPopupIcon = commandButtonKind.hasPopup
         )
     }
@@ -145,14 +145,14 @@ internal class CommandButtonLayoutManagerSmall(
                 // Consult the horizontal alignment attribute of the command button to see
                 // how we should shift the content horizontally.
                 when (presentationModel.horizontalAlignment) {
-                    HorizontalAlignment.LEADING -> if (!ltr) {
+                    HorizontalAlignment.Leading -> if (!ltr) {
                         // shift everything to the right
                         shiftX = finalWidth - preferredSize.width
                     }
-                    HorizontalAlignment.CENTER ->
+                    HorizontalAlignment.Center ->
                         // shift everything to be centered horizontally
                         shiftX = (finalWidth - preferredSize.width) / 2
-                    HorizontalAlignment.TRAILING -> if (ltr) {
+                    HorizontalAlignment.Trailing -> if (ltr) {
                         // shift everything to the right
                         shiftX = finalWidth - preferredSize.width
                     }
@@ -199,7 +199,7 @@ internal class CommandButtonLayoutManagerSmall(
         var popupClickArea = Rect.Zero
         var separatorArea = Rect.Zero
         when (preLayoutInfo.commandButtonKind) {
-            CommandButtonKind.ACTION_ONLY -> {
+            CommandButtonKind.ActionOnly -> {
                 actionClickArea = Rect(
                     left = 0.0f,
                     top = 0.0f,
@@ -207,7 +207,7 @@ internal class CommandButtonLayoutManagerSmall(
                     bottom = finalHeight
                 )
             }
-            CommandButtonKind.POPUP_ONLY -> {
+            CommandButtonKind.PopupOnly -> {
                 popupClickArea = Rect(
                     left = 0.0f,
                     top = 0.0f,
@@ -215,8 +215,8 @@ internal class CommandButtonLayoutManagerSmall(
                     bottom = finalHeight
                 )
             }
-            CommandButtonKind.ACTION_AND_POPUP_MAIN_ACTION,
-            CommandButtonKind.ACTION_AND_POPUP_MAIN_POPUP ->
+            CommandButtonKind.ActionAndPopupMainAction,
+            CommandButtonKind.ActionAndPopupMainPopup ->
                 // no break (all popup) if button has no text and no icon
                 if (hasIcon) {
                     // shift popup action rectangle to the right

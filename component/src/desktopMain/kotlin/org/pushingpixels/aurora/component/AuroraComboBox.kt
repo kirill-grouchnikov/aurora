@@ -304,7 +304,7 @@ fun <E> AuroraComboBox(
         ) { it.markColor }
 
 
-        if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.NEVER) {
+        if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.Never) {
             // Populate the cached color scheme for filling the combobox
             // based on the current model state info
             populateColorScheme(
@@ -339,7 +339,7 @@ fun <E> AuroraComboBox(
             val borderPainter = AuroraSkin.painters.borderPainter
 
             val alpha: Float
-            if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
+            if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat) {
                 // For flat buttons, compute the combined contribution of all
                 // non-disabled states - ignoring ComponentState.ENABLED
                 alpha = modelStateInfo.stateContributionMap
@@ -540,31 +540,31 @@ private fun <E> ComboBoxPopupContent(
             // TODO - support RTL for startward and endward
             // TODO - figure out the extra factor
             val popupRect = when (popupPlacementStrategy) {
-                PopupPlacementStrategy.DOWNWARD -> Rectangle(
+                PopupPlacementStrategy.Downward -> Rectangle(
                     window.x,
                     window.y + (anchorSize.height / (2 * density)).toInt(),
                     popupWidth,
                     popupHeight
                 )
-                PopupPlacementStrategy.UPWARD -> Rectangle(
+                PopupPlacementStrategy.Upward -> Rectangle(
                     window.x,
                     window.y - popupHeight / 2,
                     popupWidth,
                     popupHeight
                 )
-                PopupPlacementStrategy.STARTWARD -> Rectangle(
+                PopupPlacementStrategy.Startward -> Rectangle(
                     window.x - popupWidth / 2,
                     window.y,
                     popupWidth,
                     popupHeight
                 )
-                PopupPlacementStrategy.ENDWARD -> Rectangle(
+                PopupPlacementStrategy.Endward -> Rectangle(
                     window.x + (anchorSize.width / (2 * density)).toInt(),
                     window.y,
                     popupWidth,
                     popupHeight
                 )
-                PopupPlacementStrategy.CENTERED_VERTICALLY -> Rectangle(
+                PopupPlacementStrategy.CenteredVertically -> Rectangle(
                     window.x,
                     window.y + (anchorSize.height / (4 * density)).toInt() - popupHeight / 4,
                     popupWidth,
@@ -620,8 +620,8 @@ private fun <E> ComboBoxPopupContent(
                     presentationModel = CommandButtonPresentationModel(
                         presentationState = CommandButtonPresentationState.MEDIUM,
                         isMenu = true,
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                        horizontalAlignment = HorizontalAlignment.LEADING
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                        horizontalAlignment = HorizontalAlignment.Leading
                     )
                 )
             }

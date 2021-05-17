@@ -334,7 +334,7 @@ internal fun AuroraCommandButton(
     val isToggle = command.isActionToggle
     val hasPopup = (command.secondaryContentModel != null)
     val isTextInActionArea =
-        (hasAction or isToggle) && (presentationModel.textClick == TextClick.ACTION)
+        (hasAction or isToggle) && (presentationModel.textClick == TextClick.Action)
 
     // TODO - do we need more keys? Probably from the presentation model
     val preLayoutInfo = remember(command.text, command.extraText) {
@@ -401,7 +401,7 @@ internal fun AuroraCommandButton(
                     }
                 }
             ) {
-                if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.NEVER) {
+                if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.Never) {
                     // Populate the cached color scheme for filling the button container
                     // based on the current model state info
                     populateColorScheme(
@@ -442,7 +442,7 @@ internal fun AuroraCommandButton(
                     val borderPainter = painters.borderPainter
 
                     val actionAlpha = max(combinedRolloverFraction,
-                        if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
+                        if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat) {
                             // For flat buttons, compute the combined contribution of all
                             // non-disabled states - ignoring ComponentState.ENABLED
                             actionModelStateInfo.stateContributionMap
@@ -464,13 +464,13 @@ internal fun AuroraCommandButton(
                         val openDelta = 3
                         // TODO - add RTL support
                         val deltaLeft =
-                            if (buttonSides.openSides.contains(Side.START)) openDelta else 0
+                            if (buttonSides.openSides.contains(Side.Start)) openDelta else 0
                         val deltaRight =
-                            if (buttonSides.openSides.contains(Side.END)) openDelta else 0
+                            if (buttonSides.openSides.contains(Side.End)) openDelta else 0
                         val deltaTop =
-                            if (buttonSides.openSides.contains(Side.TOP)) openDelta else 0
+                            if (buttonSides.openSides.contains(Side.Top)) openDelta else 0
                         val deltaBottom =
-                            if (buttonSides.openSides.contains(Side.BOTTOM)) openDelta else 0
+                            if (buttonSides.openSides.contains(Side.Bottom)) openDelta else 0
 
                         withTransform({
                             clipRect(
@@ -625,7 +625,7 @@ internal fun AuroraCommandButton(
                     }
                 }
             ) {
-                if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.NEVER) {
+                if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.Never) {
                     // Populate the cached color scheme for filling the button container
                     // based on the current model state info
                     populateColorScheme(
@@ -666,7 +666,7 @@ internal fun AuroraCommandButton(
                     val borderPainter = painters.borderPainter
 
                     val popupAlpha = max(combinedRolloverFraction,
-                        if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.FLAT) {
+                        if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat) {
                             // For flat buttons, compute the combined contribution of all
                             // non-disabled states - ignoring ComponentState.ENABLED
                             popupModelStateInfo.stateContributionMap
@@ -688,13 +688,13 @@ internal fun AuroraCommandButton(
                         val openDelta = 3
                         // TODO - add RTL support
                         val deltaLeft =
-                            if (buttonSides.openSides.contains(Side.START)) openDelta else 0
+                            if (buttonSides.openSides.contains(Side.Start)) openDelta else 0
                         val deltaRight =
-                            if (buttonSides.openSides.contains(Side.END)) openDelta else 0
+                            if (buttonSides.openSides.contains(Side.End)) openDelta else 0
                         val deltaTop =
-                            if (buttonSides.openSides.contains(Side.TOP)) openDelta else 0
+                            if (buttonSides.openSides.contains(Side.Top)) openDelta else 0
                         val deltaBottom =
-                            if (buttonSides.openSides.contains(Side.BOTTOM)) openDelta else 0
+                            if (buttonSides.openSides.contains(Side.Bottom)) openDelta else 0
 
                         withTransform({
                             clipRect(
@@ -818,7 +818,7 @@ internal fun AuroraCommandButton(
             // Separator between action and popup areas if we have both
             if (hasAction and hasPopup and isActionEnabled and isPopupEnabled) {
                 when (preLayoutInfo.separatorOrientation) {
-                    CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL ->
+                    CommandButtonLayoutManager.CommandButtonSeparatorOrientation.Vertical ->
                         AuroraVerticalSeparator(
                             modifier = Modifier.alpha(combinedRolloverFraction),
                             presentationModel = SeparatorPresentationModel(
@@ -826,7 +826,7 @@ internal fun AuroraCommandButton(
                                 endGradientAmount = 4.dp
                             )
                         )
-                    CommandButtonLayoutManager.CommandButtonSeparatorOrientation.HORIZONTAL ->
+                    CommandButtonLayoutManager.CommandButtonSeparatorOrientation.Horizontal ->
                         AuroraHorizontalSeparator(
                             modifier = Modifier.alpha(combinedRolloverFraction),
                             presentationModel = SeparatorPresentationModel(
@@ -1143,31 +1143,31 @@ private fun CommandButtonPopupContent(
         // TODO - support RTL for startward and endward
         // TODO - figure out the extra factor
         val popupRect = when (presentationModel.popupPlacementStrategy) {
-            PopupPlacementStrategy.DOWNWARD -> Rectangle(
+            PopupPlacementStrategy.Downward -> Rectangle(
                 popupContentWindow.x,
                 popupContentWindow.y + (anchorSize.height / (2 * density)).toInt(),
                 popupWidth,
                 popupHeight
             )
-            PopupPlacementStrategy.UPWARD -> Rectangle(
+            PopupPlacementStrategy.Upward -> Rectangle(
                 popupContentWindow.x,
                 popupContentWindow.y - popupHeight / 2,
                 popupWidth,
                 popupHeight
             )
-            PopupPlacementStrategy.STARTWARD -> Rectangle(
+            PopupPlacementStrategy.Startward -> Rectangle(
                 popupContentWindow.x - popupWidth / 2,
                 popupContentWindow.y,
                 popupWidth,
                 popupHeight
             )
-            PopupPlacementStrategy.ENDWARD -> Rectangle(
+            PopupPlacementStrategy.Endward -> Rectangle(
                 popupContentWindow.x + (anchorSize.width / (2 * density)).toInt(),
                 popupContentWindow.y,
                 popupWidth,
                 popupHeight
             )
-            PopupPlacementStrategy.CENTERED_VERTICALLY -> Rectangle(
+            PopupPlacementStrategy.CenteredVertically -> Rectangle(
                 popupContentWindow.x,
                 popupContentWindow.y + (anchorSize.height / (4 * density)).toInt() - popupHeight / 4,
                 popupWidth,
@@ -1213,9 +1213,9 @@ private fun CommandButtonPopupContent(
             // TODO - some of this should come from the popup presentation model
             val presentation = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.MEDIUM,
-                popupPlacementStrategy = PopupPlacementStrategy.ENDWARD,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
-                horizontalAlignment = HorizontalAlignment.LEADING,
+                popupPlacementStrategy = PopupPlacementStrategy.Endward,
+                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                horizontalAlignment = HorizontalAlignment.Leading,
                 isMenu = true
             )
 

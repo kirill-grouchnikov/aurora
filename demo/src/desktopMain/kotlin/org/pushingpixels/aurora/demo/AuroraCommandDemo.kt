@@ -67,7 +67,7 @@ fun DemoCommandRow(
             command = commandActionAndSecondary,
             presentationModel = CommandButtonPresentationModel(
                 presentationState = presentationState,
-                textClick = TextClick.ACTION
+                textClick = TextClick.Action
             )
         )
 
@@ -77,14 +77,14 @@ fun DemoCommandRow(
             command = commandActionAndSecondary,
             presentationModel = CommandButtonPresentationModel(
                 presentationState = presentationState,
-                textClick = TextClick.POPUP
+                textClick = TextClick.Popup
             )
         )
     }
 }
 
 enum class CommandDemoAlignment {
-    CENTER, LEFT, RIGHT, FILL
+    Center, Left, Right, Fill
 }
 
 class CommandDemoStyle(
@@ -107,9 +107,9 @@ fun CommandDemoJustifyStrip(
             iconFactory = format_justify_center.factory(),
             isActionEnabled = enabled,
             isActionToggle = true,
-            isActionToggleSelected = (alignment.value == CommandDemoAlignment.CENTER),
+            isActionToggleSelected = (alignment.value == CommandDemoAlignment.Center),
             onTriggerActionToggleSelectedChange = {
-                if (it) alignment.value = CommandDemoAlignment.CENTER
+                if (it) alignment.value = CommandDemoAlignment.Center
             }
         )
     val commandAlignLeft =
@@ -118,9 +118,9 @@ fun CommandDemoJustifyStrip(
             iconFactory = format_justify_left.factory(),
             isActionEnabled = enabled,
             isActionToggle = true,
-            isActionToggleSelected = (alignment.value == CommandDemoAlignment.LEFT),
+            isActionToggleSelected = (alignment.value == CommandDemoAlignment.Left),
             onTriggerActionToggleSelectedChange = {
-                if (it) alignment.value = CommandDemoAlignment.LEFT
+                if (it) alignment.value = CommandDemoAlignment.Left
             }
         )
     val commandAlignRight =
@@ -129,9 +129,9 @@ fun CommandDemoJustifyStrip(
             iconFactory = format_justify_right.factory(),
             isActionEnabled = enabled,
             isActionToggle = true,
-            isActionToggleSelected = (alignment.value == CommandDemoAlignment.RIGHT),
+            isActionToggleSelected = (alignment.value == CommandDemoAlignment.Right),
             onTriggerActionToggleSelectedChange = {
-                if (it) alignment.value = CommandDemoAlignment.RIGHT
+                if (it) alignment.value = CommandDemoAlignment.Right
             }
         )
     val commandAlignFill =
@@ -140,9 +140,9 @@ fun CommandDemoJustifyStrip(
             iconFactory = format_justify_fill.factory(),
             isActionEnabled = enabled,
             isActionToggle = true,
-            isActionToggleSelected = (alignment.value == CommandDemoAlignment.FILL),
+            isActionToggleSelected = (alignment.value == CommandDemoAlignment.Fill),
             onTriggerActionToggleSelectedChange = {
-                if (it) alignment.value = CommandDemoAlignment.FILL
+                if (it) alignment.value = CommandDemoAlignment.Fill
             }
         )
 
@@ -220,9 +220,9 @@ fun CommandDemoEditStrip(
         presentationModel = CommandStripPresentationModel(
             orientation = orientation,
             horizontalGapScaleFactor = horizontalGapScaleFactor,
-            iconEnabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
-            iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
-            iconActiveFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT
+            iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+            iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+            iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText
         )
     )
 }
@@ -295,9 +295,9 @@ fun CommandDemoStyleStrip(
         presentationModel = CommandStripPresentationModel(
             orientation = orientation,
             horizontalGapScaleFactor = horizontalGapScaleFactor,
-            iconEnabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
-            iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
-            iconActiveFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT
+            iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+            iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+            iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText
         )
     )
 }
@@ -479,7 +479,7 @@ fun DemoCommandContent() {
             )
         )
 
-    val alignment = remember { mutableStateOf(CommandDemoAlignment.CENTER) }
+    val alignment = remember { mutableStateOf(CommandDemoAlignment.Center) }
     val style = CommandDemoStyle(
         bold = remember { mutableStateOf(false) },
         italic = remember { mutableStateOf(true) },
@@ -491,7 +491,7 @@ fun DemoCommandContent() {
         Box(modifier = Modifier.padding(8.dp)) {
             CommandDemoJustifyStrip(
                 enabled = actionEnabled,
-                orientation = StripOrientation.VERTICAL,
+                orientation = StripOrientation.Vertical,
                 alignment = alignment,
                 horizontalGapScaleFactor = 0.7f
             )
@@ -499,7 +499,7 @@ fun DemoCommandContent() {
         Box(modifier = Modifier.padding(8.dp)) {
             CommandDemoStyleStrip(
                 enabled = actionEnabled,
-                orientation = StripOrientation.VERTICAL,
+                orientation = StripOrientation.Vertical,
                 style = style,
                 horizontalGapScaleFactor = 0.7f
             )
@@ -527,23 +527,23 @@ fun DemoCommandContent() {
                 Spacer(modifier = Modifier.width(8.dp))
                 CommandDemoJustifyStrip(
                     enabled = actionEnabled,
-                    orientation = StripOrientation.HORIZONTAL,
+                    orientation = StripOrientation.Horizontal,
                     alignment = alignment,
-                    horizontalGapScaleFactor = CommandStripPresentationModel.DEFAULT_GAP_SCALE_FACTOR_PRIMARY_AXIS
+                    horizontalGapScaleFactor = CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 CommandDemoStyleStrip(
                     enabled = actionEnabled,
-                    orientation = StripOrientation.HORIZONTAL,
+                    orientation = StripOrientation.Horizontal,
                     style = style,
-                    horizontalGapScaleFactor = CommandStripPresentationModel.DEFAULT_GAP_SCALE_FACTOR_PRIMARY_AXIS
+                    horizontalGapScaleFactor = CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 CommandDemoEditStrip(
                     actionEnabled = actionEnabled,
                     popupEnabled = popupEnabled,
-                    orientation = StripOrientation.HORIZONTAL,
-                    horizontalGapScaleFactor = CommandStripPresentationModel.DEFAULT_GAP_SCALE_FACTOR_PRIMARY_AXIS
+                    orientation = StripOrientation.Horizontal,
+                    horizontalGapScaleFactor = CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis
                 )
             }
 

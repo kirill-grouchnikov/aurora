@@ -119,7 +119,7 @@ private fun WindowTitlePane(
 
                 val titlePaneButtonPresentationModel = CommandButtonPresentationModel(
                     presentationState = CommandButtonPresentationState.SMALL,
-                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                     contentPadding = PaddingValues(
                         start = 1.dp,
                         end = 2.dp,
@@ -144,7 +144,7 @@ private fun WindowTitlePane(
                                 return TransitionAwareIcon(
                                     decorationAreaType = DecorationAreaType.TITLE_PANE,
                                     skinColors = colors,
-                                    buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                                    buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                                     delegate = { scheme ->
                                         getMinimizeIcon(
@@ -187,7 +187,7 @@ private fun WindowTitlePane(
                                     TransitionAwareIcon(
                                         decorationAreaType = DecorationAreaType.TITLE_PANE,
                                         skinColors = colors,
-                                        buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                                        buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                         modelStateInfoSnapshot = modelStateInfoSnapshot,
                                         delegate = { scheme ->
                                             getRestoreIcon(
@@ -204,7 +204,7 @@ private fun WindowTitlePane(
                                     TransitionAwareIcon(
                                         decorationAreaType = DecorationAreaType.TITLE_PANE,
                                         skinColors = colors,
-                                        buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                                        buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                         modelStateInfoSnapshot = modelStateInfoSnapshot,
                                         delegate = { scheme ->
                                             getMaximizeIcon(
@@ -239,7 +239,7 @@ private fun WindowTitlePane(
                                 return TransitionAwareIcon(
                                     decorationAreaType = DecorationAreaType.TITLE_PANE,
                                     skinColors = colors,
-                                    buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                                    buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                                     delegate = { scheme ->
                                         getCloseIcon(

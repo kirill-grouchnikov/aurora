@@ -16,7 +16,6 @@
 package org.pushingpixels.aurora.window
 
 import androidx.compose.runtime.MutableState
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.Density
 import java.awt.*
@@ -43,7 +42,7 @@ private val cursorMapping = intArrayOf(
 )
 
 private enum class CursorState {
-    EXITED, ENTERED, NIL
+    Exited, Entered, Nil
 }
 
 /**
@@ -295,7 +294,7 @@ internal class AWTInputHandler(
         }
     }
 
-    private var cursorState: CursorState = CursorState.NIL
+    private var cursorState: CursorState = CursorState.Nil
     private fun mouseEntered(ev: MouseEvent) {
         //println("mouseEntered!")
         if (isMousePressed) {
@@ -303,12 +302,12 @@ internal class AWTInputHandler(
         }
         val w: Window = getEventWindow(ev)
         if ((lastCursor.value == null)
-            && (cursorState !== CursorState.ENTERED)
+            && (cursorState !== CursorState.Entered)
         ) {
             // fix for defect 107
             lastCursor.value = w.cursor
         }
-        cursorState = CursorState.ENTERED
+        cursorState = CursorState.Entered
         mouseMoved(ev)
     }
 
@@ -320,7 +319,7 @@ internal class AWTInputHandler(
         val w: Window = getEventWindow(ev)
         w.cursor = lastCursor.value
         lastCursor.value = null
-        cursorState = CursorState.EXITED
+        cursorState = CursorState.Exited
     }
 
     /**

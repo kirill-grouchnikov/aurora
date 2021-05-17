@@ -78,7 +78,7 @@ fun main() {
 
 data class Person(val firstName: String, val lastName: String)
 enum class DemoAlignment {
-    CENTER, LEFT, RIGHT, FILL
+    Center, Left, Right, Fill
 }
 
 class DemoStyle(
@@ -105,10 +105,10 @@ fun DemoProgress(enabled: Boolean) {
             presentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.SMALL,
                 iconDimension = 14.dp,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.NEVER,
-                iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
-                iconEnabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
-                iconActiveFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT
+                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
+                iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText
             )
         )
 
@@ -127,10 +127,10 @@ fun DemoProgress(enabled: Boolean) {
             presentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.SMALL,
                 iconDimension = 14.dp,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.NEVER,
-                iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
-                iconEnabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
-                iconActiveFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT
+                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
+                iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText
             )
         )
     }
@@ -156,7 +156,7 @@ fun DemoToolbar(
                 action = { println("Cut!") }
             ),
             presentationModel = CommandButtonPresentationModel(
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 iconDimension = 20.dp
             )
         )
@@ -168,7 +168,7 @@ fun DemoToolbar(
                 action = { println("Copy!") }
             ),
             presentationModel = CommandButtonPresentationModel(
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 iconDimension = 20.dp
             )
         )
@@ -180,7 +180,7 @@ fun DemoToolbar(
             ),
             presentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.SMALL,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 iconDimension = 20.dp
             )
         )
@@ -192,7 +192,7 @@ fun DemoToolbar(
             ),
             presentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.SMALL,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 iconDimension = 20.dp
             )
         )
@@ -204,7 +204,7 @@ fun DemoToolbar(
             ),
             presentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.SMALL,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 iconDimension = 20.dp
             )
         )
@@ -216,7 +216,7 @@ fun DemoToolbar(
         AuroraCommandButtonStrip(
             commandGroup = alignmentCommands,
             presentationModel = CommandStripPresentationModel(
-                orientation = StripOrientation.HORIZONTAL,
+                orientation = StripOrientation.Horizontal,
                 iconDimension = 20.dp
             )
         )
@@ -228,7 +228,7 @@ fun DemoToolbar(
         AuroraCommandButtonStrip(
             commandGroup = styleCommands,
             presentationModel = CommandStripPresentationModel(
-                orientation = StripOrientation.HORIZONTAL,
+                orientation = StripOrientation.Horizontal,
                 iconDimension = 20.dp
             )
         )
@@ -264,7 +264,7 @@ fun DemoFooter(
         AuroraCommandButtonStrip(
             commandGroup = alignmentCommands,
             presentationModel = CommandStripPresentationModel(
-                orientation = StripOrientation.HORIZONTAL,
+                orientation = StripOrientation.Horizontal,
                 iconDimension = 14.dp
             )
         )
@@ -303,8 +303,8 @@ fun DemoHeader(
             presentationModel = LabelPresentationModel(
                 textStyle = textStyle,
                 iconDimension = 10.dp,
-                iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
-                iconEnabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT
+                iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
             )
         )
         AuroraHorizontalSeparator(modifier = Modifier.weight(1.0f, fill = true))
@@ -383,9 +383,9 @@ fun DemoArea(
                         iconDimension = 20.dp,
                         // This is a full-color icon. Use original colors for enabled and active states,
                         // and color scheme based filtering for disabled states
-                        iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_COLOR_SCHEME,
-                        iconEnabledFilterStrategy = IconFilterStrategy.ORIGINAL,
-                        iconActiveFilterStrategy = IconFilterStrategy.ORIGINAL,
+                        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+                        iconEnabledFilterStrategy = IconFilterStrategy.Original,
+                        iconActiveFilterStrategy = IconFilterStrategy.Original,
                     )
                 )
                 // A command button with icon using THEMED_FOLLOW_TEXT filter strategy
@@ -398,9 +398,9 @@ fun DemoArea(
                     ),
                     presentationModel = CommandButtonPresentationModel(
                         iconDimension = 20.dp,
-                        iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
-                        iconEnabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
-                        iconActiveFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
+                        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                     )
                 )
                 // A flat command button with displays background when it's
@@ -413,11 +413,11 @@ fun DemoArea(
                         action = { println("Clicked!") }
                     ),
                     presentationModel = CommandButtonPresentationModel(
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.FLAT,
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                         iconDimension = 20.dp,
-                        iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
-                        iconEnabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
-                        iconActiveFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
+                        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                     )
                 )
             }
@@ -427,7 +427,7 @@ fun DemoArea(
                 AuroraCommandButtonStrip(
                     commandGroup = styleCommands,
                     presentationModel = CommandStripPresentationModel(
-                        orientation = StripOrientation.HORIZONTAL,
+                        orientation = StripOrientation.Horizontal,
                         iconDimension = 20.dp
                     )
                 )
@@ -451,9 +451,9 @@ fun DemoArea(
                     presentationModel = CommandButtonPresentationModel(
                         presentationState = CommandButtonPresentationState.SMALL,
                         iconDimension = 24.dp,
-                        iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
-                        iconEnabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
-                        iconActiveFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
+                        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         horizontalGapScaleFactor = 0.25f,
                         verticalGapScaleFactor = 0.25f
                     )
@@ -477,9 +477,9 @@ fun DemoArea(
                     presentationModel = CommandButtonPresentationModel(
                         presentationState = CommandButtonPresentationState.SMALL,
                         iconDimension = 24.dp,
-                        iconDisabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
-                        iconEnabledFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
-                        iconActiveFilterStrategy = IconFilterStrategy.THEMED_FOLLOW_TEXT,
+                        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         contentPadding = PaddingValues(8.dp)
                     )
                 )
@@ -501,7 +501,7 @@ fun DemoArea(
                     ),
                     presentationModel = ComboBoxPresentationModel(
                         displayConverter = { it },
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )
                 )
 
@@ -527,7 +527,7 @@ fun DemoArea(
                     ),
                     presentationModel = ComboBoxPresentationModel(
                         displayConverter = { it.lastName + ", " + it.firstName },
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )
                 )
             }
@@ -588,9 +588,9 @@ fun DemoArea(
                         }
                     ),
                     presentationModel = ComboBoxPresentationModel(
-                        popupPlacementStrategy = PopupPlacementStrategy.STARTWARD,
+                        popupPlacementStrategy = PopupPlacementStrategy.Startward,
                         displayConverter = { it.lastName + ", " + it.firstName },
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )
                 )
 
@@ -606,9 +606,9 @@ fun DemoArea(
                         }
                     ),
                     presentationModel = ComboBoxPresentationModel(
-                        popupPlacementStrategy = PopupPlacementStrategy.ENDWARD,
+                        popupPlacementStrategy = PopupPlacementStrategy.Endward,
                         displayConverter = { it.lastName + ", " + it.firstName },
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )
                 )
             }
@@ -627,9 +627,9 @@ fun DemoArea(
                         }
                     ),
                     presentationModel = ComboBoxPresentationModel(
-                        popupPlacementStrategy = PopupPlacementStrategy.UPWARD,
+                        popupPlacementStrategy = PopupPlacementStrategy.Upward,
                         displayConverter = { it.lastName + ", " + it.firstName },
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )
                 )
 
@@ -645,9 +645,9 @@ fun DemoArea(
                         }
                     ),
                     presentationModel = ComboBoxPresentationModel(
-                        popupPlacementStrategy = PopupPlacementStrategy.DOWNWARD,
+                        popupPlacementStrategy = PopupPlacementStrategy.Downward,
                         displayConverter = { it.lastName + ", " + it.firstName },
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )
                 )
 
@@ -663,9 +663,9 @@ fun DemoArea(
                         }
                     ),
                     presentationModel = ComboBoxPresentationModel(
-                        popupPlacementStrategy = PopupPlacementStrategy.CENTERED_VERTICALLY,
+                        popupPlacementStrategy = PopupPlacementStrategy.CenteredVertically,
                         displayConverter = { it.lastName + ", " + it.firstName },
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.ALWAYS
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )
                 )
             }
@@ -780,7 +780,7 @@ fun DemoArea(
 @Composable
 fun DemoContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
     val contentEnabled = remember { mutableStateOf(true) }
-    val alignment = remember { mutableStateOf(DemoAlignment.CENTER) }
+    val alignment = remember { mutableStateOf(DemoAlignment.Center) }
 
     val style = DemoStyle(
         bold = remember { mutableStateOf(false) },
@@ -796,9 +796,9 @@ fun DemoContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
                 iconFactory = format_justify_center.factory(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
-                isActionToggleSelected = (alignment.value == DemoAlignment.CENTER),
+                isActionToggleSelected = (alignment.value == DemoAlignment.Center),
                 onTriggerActionToggleSelectedChange = {
-                    if (it) alignment.value = DemoAlignment.CENTER
+                    if (it) alignment.value = DemoAlignment.Center
                 }
             ),
             Command(
@@ -806,9 +806,9 @@ fun DemoContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
                 iconFactory = format_justify_left.factory(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
-                isActionToggleSelected = (alignment.value == DemoAlignment.LEFT),
+                isActionToggleSelected = (alignment.value == DemoAlignment.Left),
                 onTriggerActionToggleSelectedChange = {
-                    if (it) alignment.value = DemoAlignment.LEFT
+                    if (it) alignment.value = DemoAlignment.Left
                 }
             ),
             Command(
@@ -816,9 +816,9 @@ fun DemoContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
                 iconFactory = format_justify_right.factory(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
-                isActionToggleSelected = (alignment.value == DemoAlignment.RIGHT),
+                isActionToggleSelected = (alignment.value == DemoAlignment.Right),
                 onTriggerActionToggleSelectedChange = {
-                    if (it) alignment.value = DemoAlignment.RIGHT
+                    if (it) alignment.value = DemoAlignment.Right
                 }
             ),
             Command(
@@ -826,9 +826,9 @@ fun DemoContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
                 iconFactory = format_justify_fill.factory(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
-                isActionToggleSelected = (alignment.value == DemoAlignment.FILL),
+                isActionToggleSelected = (alignment.value == DemoAlignment.Fill),
                 onTriggerActionToggleSelectedChange = {
-                    if (it) alignment.value = DemoAlignment.FILL
+                    if (it) alignment.value = DemoAlignment.Fill
                 }
             )
         )

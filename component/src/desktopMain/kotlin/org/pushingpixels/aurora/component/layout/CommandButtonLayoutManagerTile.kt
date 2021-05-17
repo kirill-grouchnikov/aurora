@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.component.layout
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.ui.geometry.Rect
@@ -131,13 +130,13 @@ internal class CommandButtonLayoutManagerTile(
         val hasPopup = (command.secondaryContentModel != null)
 
         val commandButtonKind = if (hasAction && hasPopup) {
-            if (presentationModel.textClick == TextClick.ACTION)
-                CommandButtonKind.ACTION_AND_POPUP_MAIN_ACTION else
-                CommandButtonKind.ACTION_AND_POPUP_MAIN_POPUP
+            if (presentationModel.textClick == TextClick.Action)
+                CommandButtonKind.ActionAndPopupMainAction else
+                CommandButtonKind.ActionAndPopupMainPopup
         } else if (hasPopup) {
-            CommandButtonKind.POPUP_ONLY
+            CommandButtonKind.PopupOnly
         } else {
-            CommandButtonKind.ACTION_ONLY
+            CommandButtonKind.ActionOnly
         }
 
         return CommandButtonLayoutManager.CommandButtonPreLayoutInfo(
@@ -145,8 +144,8 @@ internal class CommandButtonLayoutManagerTile(
             texts = listOf(command.text),
             extraTexts = if (command.extraText != null) listOf(command.extraText) else emptyList(),
             isTextInActionArea = (hasAction or command.isActionToggle) &&
-                    (presentationModel.textClick == TextClick.ACTION),
-            separatorOrientation = CommandButtonLayoutManager.CommandButtonSeparatorOrientation.VERTICAL,
+                    (presentationModel.textClick == TextClick.Action),
+            separatorOrientation = CommandButtonLayoutManager.CommandButtonSeparatorOrientation.Vertical,
             showPopupIcon = commandButtonKind.hasPopup
         )
     }
@@ -186,14 +185,14 @@ internal class CommandButtonLayoutManagerTile(
                 // Consult the horizontal alignment attribute of the command button to see
                 // how we should shift the content horizontally.
                 when (presentationModel.horizontalAlignment) {
-                    HorizontalAlignment.LEADING -> if (!ltr) {
+                    HorizontalAlignment.Leading -> if (!ltr) {
                         // shift everything to the right
                         shiftX = finalWidth - preferredSize.width
                     }
-                    HorizontalAlignment.CENTER ->
+                    HorizontalAlignment.Center ->
                         // shift everything to be centered horizontally
                         shiftX = (finalWidth - preferredSize.width) / 2
-                    HorizontalAlignment.TRAILING -> if (ltr) {
+                    HorizontalAlignment.Trailing -> if (ltr) {
                         // shift everything to the right
                         shiftX = finalWidth - preferredSize.width
                     }
@@ -296,7 +295,7 @@ internal class CommandButtonLayoutManagerTile(
         var popupClickArea = Rect.Zero
         var separatorArea = Rect.Zero
         when (preLayoutInfo.commandButtonKind) {
-            CommandButtonKind.ACTION_ONLY -> {
+            CommandButtonKind.ActionOnly -> {
                 actionClickArea = Rect(
                     left = 0.0f,
                     top = 0.0f,
@@ -304,7 +303,7 @@ internal class CommandButtonLayoutManagerTile(
                     bottom = finalHeight
                 )
             }
-            CommandButtonKind.POPUP_ONLY -> {
+            CommandButtonKind.PopupOnly -> {
                 popupClickArea = Rect(
                     left = 0.0f,
                     top = 0.0f,
@@ -312,7 +311,7 @@ internal class CommandButtonLayoutManagerTile(
                     bottom = finalHeight
                 )
             }
-            CommandButtonKind.ACTION_AND_POPUP_MAIN_ACTION -> {
+            CommandButtonKind.ActionAndPopupMainAction -> {
                 // 1. break before popup icon if button has text or icon
                 // 2. no break (all popup) if button has no text and no icon
                 if (hasText || hasIcon) {
@@ -353,7 +352,7 @@ internal class CommandButtonLayoutManagerTile(
                     )
                 }
             }
-            CommandButtonKind.ACTION_AND_POPUP_MAIN_POPUP -> {
+            CommandButtonKind.ActionAndPopupMainPopup -> {
                 // 1. break after icon if button has icon
                 // 2. no break (all popup) if button has no icon
                 if (hasIcon) {
