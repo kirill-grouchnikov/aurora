@@ -28,6 +28,8 @@ import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 object CommandButtonSizingConstants {
     val PopupIconWidth = 6.0.dp
     val PopupIconHeight = 4.0.dp
+    val DefaultHorizontalContentLayoutGap = 2.0.dp
+    val DefaultVerticalContentLayoutGap = 2.0.dp
 }
 
 /**

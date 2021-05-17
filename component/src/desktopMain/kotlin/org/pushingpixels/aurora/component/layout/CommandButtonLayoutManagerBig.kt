@@ -67,7 +67,9 @@ internal class CommandButtonLayoutManagerBig(
 
             var currMaxLength = singleLineParagraph.maxIntrinsicWidth
             val actionIconWidth = if (command.secondaryContentModel == null) 0.0f else
-                (2.dp * presentationModel.horizontalGapScaleFactor).toPx() * 2 + singleLineParagraph.height / 2.0f
+                (CommandButtonSizingConstants.DefaultHorizontalContentLayoutGap *
+                        presentationModel.horizontalGapScaleFactor).toPx() * 2 +
+                        singleLineParagraph.height / 2.0f
             val currLeading = StringBuilder()
             while (tokenizer.hasMoreTokens()) {
                 currLeading.append(tokenizer.nextToken())
@@ -102,8 +104,10 @@ internal class CommandButtonLayoutManagerBig(
             (paddingValues.calculateStartPadding(layoutDirection) +
                     paddingValues.calculateEndPadding(layoutDirection)).toPx()
         val buttonText = command.text
-        val layoutHGap = (2.dp * presentationModel.horizontalGapScaleFactor).toPx()
-        val layoutVGap = (2.dp * presentationModel.verticalGapScaleFactor).toPx()
+        val layoutHGap = (CommandButtonSizingConstants.DefaultHorizontalContentLayoutGap *
+                presentationModel.horizontalGapScaleFactor).toPx()
+        val layoutVGap = (CommandButtonSizingConstants.DefaultVerticalContentLayoutGap *
+                presentationModel.verticalGapScaleFactor).toPx()
         val hasIcon = (command.iconFactory != null)
         val hasText = (buttonText != null)
         val hasPopupIcon = (command.secondaryContentModel != null)
@@ -215,8 +219,10 @@ internal class CommandButtonLayoutManagerBig(
                 paddingValues.calculateStartPadding(layoutDirection).toPx()
         val endInset = presentationModel.horizontalGapScaleFactor *
                 paddingValues.calculateEndPadding(layoutDirection).toPx()
-        val layoutHGap = (2.dp * presentationModel.horizontalGapScaleFactor).toPx()
-        val layoutVGap = (2.dp * presentationModel.verticalGapScaleFactor).toPx()
+        val layoutHGap = (CommandButtonSizingConstants.DefaultHorizontalContentLayoutGap *
+                presentationModel.horizontalGapScaleFactor).toPx()
+        val layoutVGap = (CommandButtonSizingConstants.DefaultVerticalContentLayoutGap *
+                presentationModel.verticalGapScaleFactor).toPx()
         val hasIcon = (command.iconFactory != null)
         val hasPopupIcon = (command.secondaryContentModel != null)
         val iconSize = getPreferredIconSize(command, presentationModel).toPx()

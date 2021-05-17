@@ -52,7 +52,8 @@ internal class CommandButtonLayoutManagerTile(
             (paddingValues.calculateTopPadding() + paddingValues.calculateBottomPadding()).toPx()
         val buttonText = command.text
         val extraText = command.extraText
-        val layoutHGap = (2.dp * presentationModel.horizontalGapScaleFactor).toPx()
+        val layoutHGap = (CommandButtonSizingConstants.DefaultHorizontalContentLayoutGap *
+                presentationModel.horizontalGapScaleFactor).toPx()
         val hasIcon = (command.iconFactory != null)
         val hasText = (buttonText != null) or (extraText != null)
         val hasPopupIcon = (command.secondaryContentModel != null)
@@ -160,7 +161,8 @@ internal class CommandButtonLayoutManagerTile(
 
         val buttonText = command.text
         val buttonExtraText = command.extraText
-        val layoutHGap = (2.dp * presentationModel.horizontalGapScaleFactor).toPx()
+        val layoutHGap = (CommandButtonSizingConstants.DefaultHorizontalContentLayoutGap *
+                presentationModel.horizontalGapScaleFactor).toPx()
         val hasIcon = (command.iconFactory != null)
         val hasText = (buttonText != null) or (buttonExtraText != null)
         val hasPopup = (command.secondaryContentModel != null)
