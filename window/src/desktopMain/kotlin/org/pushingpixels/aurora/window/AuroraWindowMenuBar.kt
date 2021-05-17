@@ -142,7 +142,7 @@ private object WindowMenuBarLayout {
                         )
                     )
                 ),
-                extraTextLayoutInfoList = null,
+                extraTextLayoutInfoList = emptyList(),
                 popupActionRect = Rect.Zero
             )
         }

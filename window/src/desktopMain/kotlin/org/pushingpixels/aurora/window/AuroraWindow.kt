@@ -491,7 +491,6 @@ fun AuroraWindow(
                 painters = skin.painters,
                 animationConfig = AuroraSkin.animationConfig
             ) {
-                println("Showing window content ${skin.displayName}")
                 density.value = LocalDensity.current
                 WindowContent(
                     title = title,

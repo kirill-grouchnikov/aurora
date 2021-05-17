@@ -893,7 +893,7 @@ internal fun AuroraCommandButton(
             extraTextPlaceables.add(
                 measurables[childIndex++].measure(
                     Constraints.fixed(
-                        width = layoutInfo.extraTextLayoutInfoList!![index].textRect.width.roundToInt(),
+                        width = layoutInfo.extraTextLayoutInfoList[index].textRect.width.roundToInt(),
                         height = layoutInfo.extraTextLayoutInfoList[index].textRect.height.roundToInt()
                     )
                 )
@@ -944,7 +944,7 @@ internal fun AuroraCommandButton(
             }
             for ((index, extraTextPlaceable) in extraTextPlaceables.withIndex()) {
                 extraTextPlaceable.placeRelative(
-                    x = layoutInfo.extraTextLayoutInfoList!![index].textRect.left.roundToInt(),
+                    x = layoutInfo.extraTextLayoutInfoList[index].textRect.left.roundToInt(),
                     y = layoutInfo.extraTextLayoutInfoList[index].textRect.top.roundToInt()
                 )
             }

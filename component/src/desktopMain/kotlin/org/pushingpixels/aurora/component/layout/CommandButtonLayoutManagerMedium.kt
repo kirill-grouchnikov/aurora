@@ -507,7 +507,7 @@ internal open class CommandButtonLayoutManagerMedium(
             separatorArea = separatorArea,
             iconRect = iconRect,
             textLayoutInfoList = textLayoutInfoList,
-            extraTextLayoutInfoList = null,
+            extraTextLayoutInfoList = emptyList(),
             popupActionRect = popupActionRect
         )
     }

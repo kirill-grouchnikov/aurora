@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.component.layout
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.MeasureScope
@@ -64,11 +63,12 @@ interface CommandButtonLayoutManager : MeasureScope {
      * Pre-layout information on different visual parts of a single command button.
      *
      * @param commandButtonKind Layout kind
-     * @param textLayoutInfoList Command button texts (one per each line)
-     * @param extraTextLayoutInfoList Command button extra texts (one per each line)
+     * @param texts Command button texts (one per each line)
+     * @param extraTexts Command button extra texts (one per each line)
      * @param isTextInActionArea Indication whether the command button text (texts in
-     * [.textLayoutInfoList]) belongs in the action area.
+     * [.texts]) belongs in the action area.
      * @param separatorOrientation Separator orientation
+     * @param showPopupIcon Indicates whether this button shows the popup icon
      */
     data class CommandButtonPreLayoutInfo(
         val commandButtonKind: CommandButtonKind,
@@ -103,7 +103,7 @@ interface CommandButtonLayoutManager : MeasureScope {
         val separatorArea: Rect?,
         val iconRect: Rect,
         val textLayoutInfoList: List<TextLayoutInfo>,
-        val extraTextLayoutInfoList: List<TextLayoutInfo>?,
+        val extraTextLayoutInfoList: List<TextLayoutInfo>,
         val popupActionRect: Rect,
     )
 

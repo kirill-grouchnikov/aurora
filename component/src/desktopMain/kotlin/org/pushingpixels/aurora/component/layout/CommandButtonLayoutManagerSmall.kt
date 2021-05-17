@@ -337,7 +337,7 @@ internal class CommandButtonLayoutManagerSmall(
             separatorArea = separatorArea,
             iconRect = iconRect,
             textLayoutInfoList = emptyList(),
-            extraTextLayoutInfoList = null,
+            extraTextLayoutInfoList = emptyList(),
             popupActionRect = popupActionRect
         )
     }
