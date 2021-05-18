@@ -47,7 +47,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.common.interpolateTowards
-import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.layout.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
