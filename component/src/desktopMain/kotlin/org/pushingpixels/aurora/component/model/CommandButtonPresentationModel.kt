@@ -28,7 +28,7 @@ object CommandButtonSizingConstants {
 }
 
 data class CommandButtonPresentationModel(
-    val presentationState: CommandButtonPresentationState = CommandButtonPresentationState.MEDIUM,
+    val presentationState: CommandButtonPresentationState = CommandButtonPresentationState.Medium,
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
     val iconDimension: Dp? = null,

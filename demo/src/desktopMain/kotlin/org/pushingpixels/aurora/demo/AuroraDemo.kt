@@ -103,7 +103,7 @@ fun DemoProgress(enabled: Boolean) {
                 isActionEnabled = enabled and (progress > 0.0f),
                 action = { progress -= 0.1f }),
             presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.SMALL,
+                presentationState = CommandButtonPresentationState.Small,
                 iconDimension = 14.dp,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
                 iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -125,7 +125,7 @@ fun DemoProgress(enabled: Boolean) {
                 isActionEnabled = enabled and (progress < 1.0f),
                 action = { progress += 0.1f }),
             presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.SMALL,
+                presentationState = CommandButtonPresentationState.Small,
                 iconDimension = 14.dp,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
                 iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -179,7 +179,7 @@ fun DemoToolbar(
                 action = { println("Paste!") }
             ),
             presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.SMALL,
+                presentationState = CommandButtonPresentationState.Small,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 iconDimension = 20.dp
             )
@@ -191,7 +191,7 @@ fun DemoToolbar(
                 action = { println("Select all!") }
             ),
             presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.SMALL,
+                presentationState = CommandButtonPresentationState.Small,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 iconDimension = 20.dp
             )
@@ -203,7 +203,7 @@ fun DemoToolbar(
                 action = { println("Delete!") }
             ),
             presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.SMALL,
+                presentationState = CommandButtonPresentationState.Small,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 iconDimension = 20.dp
             )
@@ -240,7 +240,7 @@ fun DemoToolbar(
                 iconFactory = process_stop.factory(),
                 action = { exitProcess(0) }),
             presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.SMALL,
+                presentationState = CommandButtonPresentationState.Small,
                 iconDimension = 20.dp
             )
         )
@@ -449,7 +449,7 @@ fun DemoArea(
                         }
                     ),
                     presentationModel = CommandButtonPresentationModel(
-                        presentationState = CommandButtonPresentationState.SMALL,
+                        presentationState = CommandButtonPresentationState.Small,
                         iconDimension = 24.dp,
                         iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -475,7 +475,7 @@ fun DemoArea(
                         }
                     ),
                     presentationModel = CommandButtonPresentationModel(
-                        presentationState = CommandButtonPresentationState.SMALL,
+                        presentationState = CommandButtonPresentationState.Small,
                         iconDimension = 24.dp,
                         iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,

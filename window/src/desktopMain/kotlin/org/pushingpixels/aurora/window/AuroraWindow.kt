@@ -118,7 +118,7 @@ private fun WindowTitlePane(
                 val colors = AuroraSkin.colors
 
                 val titlePaneButtonPresentationModel = CommandButtonPresentationModel(
-                    presentationState = CommandButtonPresentationState.SMALL,
+                    presentationState = CommandButtonPresentationState.Small,
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                     contentPadding = PaddingValues(
                         start = 1.dp,

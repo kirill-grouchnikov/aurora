@@ -618,7 +618,7 @@ private fun <E> ComboBoxPopupContent(
                         action = { onItemSelected.invoke(item) }
                     ),
                     presentationModel = CommandButtonPresentationModel(
-                        presentationState = CommandButtonPresentationState.MEDIUM,
+                        presentationState = CommandButtonPresentationState.Medium,
                         isMenu = true,
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                         horizontalAlignment = HorizontalAlignment.Leading

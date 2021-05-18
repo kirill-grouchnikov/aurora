@@ -148,7 +148,7 @@ private object WindowMenuBarLayout {
         }
     }
 
-    val MENU_BAR: CommandButtonPresentationState =
+    val MenuBar: CommandButtonPresentationState =
         object : CommandButtonPresentationState("Menu Bar") {
             override fun createLayoutManager(
                 layoutDirection: LayoutDirection,
@@ -192,7 +192,7 @@ internal fun AuroraWindowMenuBar(menuCommands: CommandGroup) {
                 AuroraCommandButton(
                     command = menuCommand,
                     presentationModel = CommandButtonPresentationModel(
-                        presentationState = WindowMenuBarLayout.MENU_BAR,
+                        presentationState = WindowMenuBarLayout.MenuBar,
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                         contentPadding = CommandButtonSizingConstants.WideButtonContentPadding,
                         isMenu = true

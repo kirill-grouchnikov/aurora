@@ -39,7 +39,7 @@ object CommandStripSizingConstants {
 
 data class CommandStripPresentationModel(
     val orientation: StripOrientation = StripOrientation.Horizontal,
-    val commandPresentationState: CommandButtonPresentationState = CommandButtonPresentationState.SMALL,
+    val commandPresentationState: CommandButtonPresentationState = CommandButtonPresentationState.Small,
     val horizontalGapScaleFactor: Float = if (orientation == StripOrientation.Horizontal)
         CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis
     else CommandStripSizingConstants.DefaultGapScaleFactorSecondaryAxis,

@@ -551,28 +551,28 @@ fun DemoCommandContent() {
                 commandActionOnly,
                 commandSecondaryOnly,
                 commandActionAndSecondary,
-                CommandButtonPresentationState.SMALL
+                CommandButtonPresentationState.Small
             )
 
             DemoCommandRow(
                 commandActionOnly,
                 commandSecondaryOnly,
                 commandActionAndSecondary,
-                CommandButtonPresentationState.MEDIUM
+                CommandButtonPresentationState.Medium
             )
 
             DemoCommandRow(
                 commandActionOnly,
                 commandSecondaryOnly,
                 commandActionAndSecondary,
-                CommandButtonPresentationState.TILE
+                CommandButtonPresentationState.Tile
             )
 
             DemoCommandRow(
                 commandActionOnly,
                 commandSecondaryOnly,
                 commandActionAndSecondary,
-                CommandButtonPresentationState.BIG
+                CommandButtonPresentationState.Big
             )
         }
     }

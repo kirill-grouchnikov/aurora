@@ -1212,7 +1212,7 @@ private fun CommandButtonPopupContent(
             // Command presentation for menu content
             // TODO - some of this should come from the popup presentation model
             val presentation = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.MEDIUM,
+                presentationState = CommandButtonPresentationState.Medium,
                 popupPlacementStrategy = PopupPlacementStrategy.Endward,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 horizontalAlignment = HorizontalAlignment.Leading,

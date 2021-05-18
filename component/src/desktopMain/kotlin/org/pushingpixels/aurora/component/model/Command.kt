@@ -118,7 +118,7 @@ abstract class CommandButtonPresentationState(val displayName: String) {
 
     companion object {
         /** Big state */
-        val BIG: CommandButtonPresentationState =
+        val Big: CommandButtonPresentationState =
             object : CommandButtonPresentationState("Big") {
                 override fun createLayoutManager(
                     layoutDirection: LayoutDirection,
@@ -136,7 +136,7 @@ abstract class CommandButtonPresentationState(val displayName: String) {
             }
 
         /** Medium state */
-        val MEDIUM: CommandButtonPresentationState =
+        val Medium: CommandButtonPresentationState =
             object : CommandButtonPresentationState("Medium") {
                 override fun createLayoutManager(
                     layoutDirection: LayoutDirection,
@@ -154,7 +154,7 @@ abstract class CommandButtonPresentationState(val displayName: String) {
             }
 
         /** Small state */
-        val SMALL: CommandButtonPresentationState =
+        val Small: CommandButtonPresentationState =
             object : CommandButtonPresentationState("Small") {
                 override fun createLayoutManager(
                     layoutDirection: LayoutDirection,
@@ -172,7 +172,7 @@ abstract class CommandButtonPresentationState(val displayName: String) {
             }
 
         /** Tile state */
-        val TILE: CommandButtonPresentationState =
+        val Tile: CommandButtonPresentationState =
             object : CommandButtonPresentationState("Tile") {
                 override fun createLayoutManager(
                     layoutDirection: LayoutDirection,
