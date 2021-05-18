@@ -914,7 +914,7 @@ internal fun AuroraCommandButton(
             val separatorMeasurable = measurables[childIndex++]
             separatorPlaceable = separatorMeasurable.measure(
                 Constraints.fixed(
-                    width = layoutInfo.separatorArea!!.width.roundToInt(),
+                    width = layoutInfo.separatorArea.width.roundToInt(),
                     height = layoutInfo.separatorArea.height.roundToInt()
                 )
             )
@@ -952,7 +952,7 @@ internal fun AuroraCommandButton(
                 y = layoutInfo.popupActionRect.top.roundToInt()
             )
             separatorPlaceable?.placeRelative(
-                x = layoutInfo.separatorArea!!.left.roundToInt(),
+                x = layoutInfo.separatorArea.left.roundToInt(),
                 y = layoutInfo.separatorArea.top.roundToInt()
             )
         }

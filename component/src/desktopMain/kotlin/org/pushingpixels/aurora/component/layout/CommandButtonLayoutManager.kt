@@ -102,7 +102,7 @@ interface CommandButtonLayoutManager : MeasureScope {
         val fullSize: Size,
         val actionClickArea: Rect,
         val popupClickArea: Rect,
-        val separatorArea: Rect?,
+        val separatorArea: Rect,
         val iconRect: Rect,
         val textLayoutInfoList: List<TextLayoutInfo>,
         val extraTextLayoutInfoList: List<TextLayoutInfo>,

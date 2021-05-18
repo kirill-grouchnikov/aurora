@@ -20,24 +20,29 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.AuroraSkin
+import org.pushingpixels.aurora.AuroraSkinDefinition
 import org.pushingpixels.aurora.IconFilterStrategy
 import org.pushingpixels.aurora.component.AuroraCheckBox
+import org.pushingpixels.aurora.component.AuroraComboBox
 import org.pushingpixels.aurora.component.AuroraCommandButton
 import org.pushingpixels.aurora.component.AuroraCommandButtonStrip
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.tango.*
+import org.pushingpixels.aurora.skin.getAuroraSkins
 import org.pushingpixels.aurora.skin.marinerSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 
 fun main() {
+    val skin = mutableStateOf(marinerSkin())
     AuroraWindow(
-        skin = marinerSkin(),
+        skin = skin,
         title = "Aurora Demo",
         size = IntSize(660, 400),
         undecorated = true
     ) {
-        DemoCommandContent()
+        DemoCommandContent(skin)
     }
 }
 
@@ -48,7 +53,7 @@ fun DemoCommandRow(
     commandActionAndSecondary: Command,
     presentationState: CommandButtonPresentationState
 ) {
-    Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
+    Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
         AuroraCommandButton(
             command = commandActionOnly,
             presentationModel = CommandButtonPresentationModel(presentationState = presentationState)
@@ -303,7 +308,7 @@ fun CommandDemoStyleStrip(
 }
 
 @Composable
-fun DemoCommandContent() {
+fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
     var selected by remember { mutableStateOf(false) }
     var actionEnabled by remember { mutableStateOf(true) }
     var popupEnabled by remember { mutableStateOf(true) }
@@ -505,8 +510,27 @@ fun DemoCommandContent() {
             )
         }
 
-        Column(modifier = Modifier.fillMaxSize()) {
-            Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
+        Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
+            val currentSkinDisplayName = AuroraSkin.displayName
+            val auroraSkins = getAuroraSkins()
+            val selectedSkinItem =
+                remember { mutableStateOf(auroraSkins.first { it.first == currentSkinDisplayName }) }
+
+            AuroraComboBox(
+                contentModel = ComboBoxContentModel(
+                    items = auroraSkins,
+                    selectedItem = selectedSkinItem.value,
+                    onTriggerItemSelectedChange = {
+                        selectedSkinItem.value = it
+                        auroraSkinDefinition.value = it.second.invoke()
+                    }
+                ),
+                presentationModel = ComboBoxPresentationModel(
+                    displayConverter = { it.first }
+                )
+            )
+
+            Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
                 AuroraCheckBox(contentModel = SelectorContentModel(
                     text = "action enabled",
                     selected = actionEnabled,
@@ -520,7 +544,7 @@ fun DemoCommandContent() {
                 ))
             }
 
-            Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
+            Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
                 AuroraCommandButton(command = commandActionOnlyNoIcon)
                 Spacer(modifier = Modifier.width(8.dp))
                 AuroraCommandButton(command = commandActionToggle)
