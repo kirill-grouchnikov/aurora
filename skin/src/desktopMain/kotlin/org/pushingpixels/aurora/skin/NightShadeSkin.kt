@@ -173,7 +173,7 @@ private fun nightShadeSkinColors(): AuroraSkinColors {
 }
 
 fun nightShadeSkin(): AuroraSkinDefinition {
-    val painters = Painters(
+    val painters = AuroraPainters(
         fillPainter = FractionBasedFillPainter(
             0.0f to { it.ultraLightColor },
             0.5f to { it.lightColor },

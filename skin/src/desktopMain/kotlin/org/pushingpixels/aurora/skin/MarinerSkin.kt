@@ -197,7 +197,7 @@ private fun marinerSkinColors(): AuroraSkinColors {
 }
 
 fun marinerSkin(): AuroraSkinDefinition {
-    val painters = Painters(
+    val painters = AuroraPainters(
         fillPainter = FractionBasedFillPainter(
             0.0f to { it.extraLightColor },
             0.5f to { it.lightColor },

@@ -194,7 +194,7 @@ private fun sentinelSkinColors(): AuroraSkinColors {
 }
 
 fun sentinelSkin(): AuroraSkinDefinition {
-    val painters = Painters(
+    val painters = AuroraPainters(
         fillPainter = ClassicFillPainter(),
         borderPainter = ClassicBorderPainter(),
         decorationPainter = MatteDecorationPainter()

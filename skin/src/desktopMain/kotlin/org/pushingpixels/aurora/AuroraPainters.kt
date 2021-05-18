@@ -21,7 +21,7 @@ import org.pushingpixels.aurora.painter.fill.AuroraFillPainter
 import org.pushingpixels.aurora.painter.overlay.AuroraOverlayPainter
 import java.util.*
 
-data class Painters(
+data class AuroraPainters(
     val fillPainter: AuroraFillPainter,
     val borderPainter: AuroraBorderPainter,
     val decorationPainter: AuroraDecorationPainter,

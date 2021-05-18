@@ -60,8 +60,8 @@ private fun cremeBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors 
     return result
 }
 
-private fun cremeBasePainters(): Painters {
-    val painters = Painters(
+private fun cremeBasePainters(): AuroraPainters {
+    val painters = AuroraPainters(
         fillPainter = MatteFillPainter(),
         borderPainter = CompositeBorderPainter(
             displayName = "Creme",

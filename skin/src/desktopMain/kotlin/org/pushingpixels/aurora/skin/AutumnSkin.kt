@@ -103,7 +103,7 @@ private fun autumnSkinColors(): AuroraSkinColors {
 }
 
 fun autumnSkin(): AuroraSkinDefinition {
-    val painters = Painters(
+    val painters = AuroraPainters(
         fillPainter = MatteFillPainter(),
         borderPainter = CompositeBorderPainter(
             displayName = "Autumn",

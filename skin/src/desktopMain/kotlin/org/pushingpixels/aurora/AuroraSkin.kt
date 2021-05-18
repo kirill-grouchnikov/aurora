@@ -47,7 +47,7 @@ object AuroraSkin {
         @ReadOnlyComposable
         get() = LocalButtonShaper.current
 
-    val painters: Painters
+    val painters: AuroraPainters
         @Composable
         @ReadOnlyComposable
         get() = LocalPainters.current
@@ -62,7 +62,7 @@ data class AuroraSkinDefinition(
     override val displayName: String,
     val colors: AuroraSkinColors,
     val buttonShaper: AuroraButtonShaper,
-    val painters: Painters
+    val painters: AuroraPainters
 ) : AuroraTrait
 
 class AccentBuilder {

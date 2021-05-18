@@ -18,7 +18,7 @@ package org.pushingpixels.aurora.skin
 import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.AuroraSkinDefinition
 import org.pushingpixels.aurora.DecorationAreaType
-import org.pushingpixels.aurora.Painters
+import org.pushingpixels.aurora.AuroraPainters
 import org.pushingpixels.aurora.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.colorscheme.MetallicColorScheme
@@ -66,7 +66,7 @@ private fun moderateSkinColors(): AuroraSkinColors {
 }
 
 fun moderateSkin(): AuroraSkinDefinition {
-    val painters = Painters(
+    val painters = AuroraPainters(
         fillPainter = GlassFillPainter(),
         borderPainter = ClassicBorderPainter(),
         decorationPainter = MatteDecorationPainter()

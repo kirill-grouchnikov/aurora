@@ -255,7 +255,7 @@ fun geminiSkin(): AuroraSkinDefinition {
         displayName = "Gemini Outer"
     )
 
-    val painters = Painters(
+    val painters = AuroraPainters(
         fillPainter = FractionBasedFillPainter(
             0.0f to { it.extraLightColor },
             0.5f to { it.lightColor },

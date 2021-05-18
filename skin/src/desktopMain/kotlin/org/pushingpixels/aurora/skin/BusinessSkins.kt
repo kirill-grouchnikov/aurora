@@ -86,8 +86,8 @@ private fun businessBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColo
     return result
 }
 
-private fun businessBasePainters(): Painters {
-    val painters = Painters(
+private fun businessBasePainters(): AuroraPainters {
+    val painters = AuroraPainters(
         fillPainter = ClassicFillPainter(),
         borderPainter = ClassicBorderPainter(),
         decorationPainter = BrushedMetalDecorationPainter()

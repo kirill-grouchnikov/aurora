@@ -148,8 +148,8 @@ private fun dustBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
     return result
 }
 
-private fun dustBasePainters(): Painters {
-    val painters = Painters(
+private fun dustBasePainters(): AuroraPainters {
+    val painters = AuroraPainters(
         fillPainter = MatteFillPainter(),
         borderPainter = CompositeBorderPainter(
             displayName = "Dust",

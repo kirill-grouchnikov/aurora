@@ -157,8 +157,8 @@ private fun graphiteBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColo
     return result
 }
 
-private fun graphiteBasePainters(borderPainter: AuroraBorderPainter? = null): Painters {
-    return Painters(
+private fun graphiteBasePainters(borderPainter: AuroraBorderPainter? = null): AuroraPainters {
+    return AuroraPainters(
         fillPainter = FractionBasedFillPainter(
             0.0f to { it.ultraLightColor },
             0.5f to { it.lightColor },

@@ -85,8 +85,8 @@ private fun mistBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
     return result
 }
 
-private fun mistBasePainters(): Painters {
-    return Painters(
+private fun mistBasePainters(): AuroraPainters {
+    return AuroraPainters(
         fillPainter = MatteFillPainter(),
         borderPainter = ClassicBorderPainter(),
         decorationPainter = MatteDecorationPainter()

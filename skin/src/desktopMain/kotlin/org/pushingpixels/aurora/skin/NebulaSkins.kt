@@ -141,8 +141,8 @@ private fun nebulaBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors
     return result
 }
 
-private fun nebulaBasePainters(): Painters {
-    val painters = Painters(
+private fun nebulaBasePainters(): AuroraPainters {
+    val painters = AuroraPainters(
         fillPainter = SubduedFillPainter(),
         borderPainter = FlatBorderPainter(),
         decorationPainter = MarbleNoiseDecorationPainter(

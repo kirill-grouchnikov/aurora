@@ -193,7 +193,7 @@ private fun ceruleanSkinColors(): AuroraSkinColors {
 }
 
 fun ceruleanSkin(): AuroraSkinDefinition {
-    val painters = Painters(
+    val painters = AuroraPainters(
         fillPainter = ClassicFillPainter(),
         borderPainter = GlassBorderPainter(),
         decorationPainter = ArcDecorationPainter()

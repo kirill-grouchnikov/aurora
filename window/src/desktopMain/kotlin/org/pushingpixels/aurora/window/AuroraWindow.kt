@@ -613,7 +613,7 @@ private fun AuroraSkin(
     decorationAreaType: DecorationAreaType,
     colors: AuroraSkinColors = AuroraSkin.colors,
     buttonShaper: AuroraButtonShaper = AuroraSkin.buttonShaper,
-    painters: Painters = AuroraSkin.painters,
+    painters: AuroraPainters = AuroraSkin.painters,
     animationConfig: AnimationConfig = AuroraSkin.animationConfig,
     content: @Composable () -> Unit
 ) {

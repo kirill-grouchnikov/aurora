@@ -145,7 +145,7 @@ fun ravenSkin(): AuroraSkinDefinition {
     return AuroraSkinDefinition(
         displayName = "Raven",
         colors = ravenSkinColors(),
-        painters = Painters(
+        painters = AuroraPainters(
             fillPainter = GlassFillPainter(),
             borderPainter = GlassBorderPainter(),
             decorationPainter = ArcDecorationPainter()

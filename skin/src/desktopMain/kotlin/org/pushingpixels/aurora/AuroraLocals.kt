@@ -50,7 +50,7 @@ val LocalSkinColors = staticCompositionLocalOf<AuroraSkinColors> {
 val LocalButtonShaper  = staticCompositionLocalOf<AuroraButtonShaper> {
     error("LocalButtonShaper not provided")
 }
-val LocalPainters = staticCompositionLocalOf<Painters> {
+val LocalPainters = staticCompositionLocalOf<AuroraPainters> {
     error("LocalPainters not provided")
 }
 val LocalDecorationAreaType = staticCompositionLocalOf<DecorationAreaType> {
