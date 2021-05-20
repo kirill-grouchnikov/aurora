@@ -31,6 +31,12 @@ allprojects {
         isReproducibleFileOrder = true
         archiveBaseName.set("${rootProject.name}-${project.name}")
     }
+
+    configurations {
+        all {
+            exclude(group="org.jetbrains.compose.material", module="material")
+        }
+    }
 }
 
 
