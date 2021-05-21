@@ -41,6 +41,7 @@ import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
@@ -85,6 +86,7 @@ fun AuroraCommandButton(
         extraAction = null,
         presentationModel = presentationModel,
         overlays = overlays,
+        textStyle = null,
         buttonSides = ButtonSides(
             straightSides = if (presentationModel.isMenu) Side.values().toSet() else emptySet()
         )
@@ -99,6 +101,7 @@ internal fun AuroraCommandButton(
     extraAction: (() -> Unit)? = null,
     presentationModel: CommandButtonPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
+    textStyle: TextStyle? = null,
     buttonSides: ButtonSides
 ) {
     val drawingCache = remember { CommandButtonDrawingCache() }
@@ -143,10 +146,10 @@ internal fun AuroraCommandButton(
     val auroraSize = AuroraSize(0, 0)
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
-    val textStyle = LocalTextStyle.current
+    val mergedTextStyle = LocalTextStyle.current.merge(textStyle)
     val resourceLoader = LocalFontLoader.current
 
-    val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
+    val resolvedTextStyle = remember { resolveDefaults(mergedTextStyle, layoutDirection) }
 
     // Transition for the action selection state
     val actionSelectionTransition =
@@ -1225,8 +1228,6 @@ private fun CommandButtonPopupContent(
 
             for ((commandGroupIndex, commandGroup) in command.secondaryContentModel!!.groups.withIndex()) {
                 for (secondaryCommand in commandGroup.commands) {
-                    // TODO - support highlighted command (with bold text)
-
                     // Check if we have a presentation overlay for this secondary command
                     val hasOverlay = overlays.containsKey(secondaryCommand)
                     val currSecondaryPresentationModel = if (hasOverlay)
@@ -1234,13 +1235,15 @@ private fun CommandButtonPopupContent(
                     else menuButtonPresentationModel
 
                     // Create a command button for each secondary command, passing the same
-                    // overlays into it
+                    // overlays into it. If our secondary content model has a highlighted command,
+                    // pass bold font weight to the text style of the matching command button.
                     AuroraCommandButton(
                         command = secondaryCommand,
                         parentWindow = popupContentWindow,
                         extraAction = {
                             if (presentationModel.toDismissPopupsOnActivation and
-                                currSecondaryPresentationModel.toDismissPopupsOnActivation) {
+                                currSecondaryPresentationModel.toDismissPopupsOnActivation
+                            ) {
                                 for (window in Window.getWindows()) {
                                     if (window.isDisplayable && window is AuroraPopupWindow) {
                                         window.dispose()
@@ -1250,6 +1253,8 @@ private fun CommandButtonPopupContent(
                         },
                         presentationModel = currSecondaryPresentationModel,
                         overlays = overlays,
+                        textStyle = if (secondaryCommand == command.secondaryContentModel.highlightedCommand)
+                            TextStyle(fontWeight = FontWeight.Bold) else null,
                         buttonSides = ButtonSides(straightSides = Side.values().toSet())
                     )
                 }

@@ -59,8 +59,14 @@ data class CommandGroup(
     val commands: List<Command>
 )
 
-data class CommandMenuContentModel(val groups: List<CommandGroup>) {
-    constructor(group: CommandGroup) : this(listOf(group))
+data class CommandMenuContentModel(
+    val groups: List<CommandGroup>,
+    val highlightedCommand: Command? = null
+) {
+    constructor(group: CommandGroup, highlightedCommand: Command? = null) : this(
+        groups = listOf(group),
+        highlightedCommand = highlightedCommand
+    )
 }
 
 enum class TextClick {
