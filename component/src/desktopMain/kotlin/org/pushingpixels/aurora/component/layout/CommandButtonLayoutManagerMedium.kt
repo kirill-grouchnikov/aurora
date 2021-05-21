@@ -35,7 +35,7 @@ internal open class CommandButtonLayoutManagerMedium(
     override val density = _density.density
     override val fontScale = _density.fontScale
 
-    protected val iconTextGapFactor: Float
+    protected open val iconTextGapFactor: Float
         get() = 1.0f
 
     override fun getPreferredIconSize(

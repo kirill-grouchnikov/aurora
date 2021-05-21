@@ -51,7 +51,8 @@ fun DemoCommandRow(
     commandActionOnly: Command,
     commandSecondaryOnly: Command,
     commandActionAndSecondary: Command,
-    presentationState: CommandButtonPresentationState
+    presentationState: CommandButtonPresentationState,
+    overlays: Map<Command, CommandButtonPresentationModel.Overlay>
 ) {
     Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
         AuroraCommandButton(
@@ -83,7 +84,8 @@ fun DemoCommandRow(
             presentationModel = CommandButtonPresentationModel(
                 presentationState = presentationState,
                 textClick = TextClick.Popup
-            )
+            ),
+            overlays = overlays
         )
     }
 }
@@ -395,6 +397,67 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
             )
         )
 
+    val secondaryCommand1 = Command(
+        text = "secondary 1",
+        iconFactory = computer.factory(),
+        action = { println("secondary 1 activated!") },
+        isActionEnabled = actionEnabled
+    )
+    val secondaryCommand2 = Command(
+        text = "secondary 2",
+        iconFactory = computer.factory(),
+        action = { println("secondary 2 activated!") },
+        isActionEnabled = actionEnabled
+    )
+    val secondaryCommand3 = Command(
+        text = "secondary 3",
+        iconFactory = computer.factory(),
+        action = { println("secondary 3 activated!") },
+        isActionEnabled = actionEnabled
+    )
+    val secondaryCommand4 = Command(
+        text = "secondary 4",
+        iconFactory = computer.factory(),
+        action = { println("secondary 4 activated!") },
+        isActionEnabled = actionEnabled
+    )
+
+    val secondaryCommand5 = Command(
+        text = "secondary 5",
+        iconFactory = computer.factory(),
+        action = { println("secondary 5 activated!") },
+        isActionEnabled = actionEnabled,
+        secondaryContentModel = CommandMenuContentModel(
+            group = CommandGroup(
+                title = "Sub group",
+                commands = listOf(
+                    Command(
+                        text = "secondary 5/1",
+                        extraText = "extra text for 5/1",
+                        iconFactory = computer.factory(),
+                        action = { println("secondary 5/1 activated!") },
+                        isActionEnabled = actionEnabled
+                    ),
+                    Command(
+                        text = "secondary 5/2",
+                        extraText = "extra text for 5/2",
+                        iconFactory = computer.factory(),
+                        action = { println("secondary 5/2 activated!") },
+                        isActionEnabled = actionEnabled
+                    ),
+                    Command(
+                        text = "secondary 5/3",
+                        extraText = "extra text for 5/3",
+                        iconFactory = computer.factory(),
+                        action = { println("secondary 5/3 activated!") },
+                        isActionEnabled = actionEnabled
+                    )
+                )
+            )
+        ),
+        isSecondaryEnabled = popupEnabled,
+    )
+
     val commandActionAndSecondary =
         Command(
             text = "Both parts",
@@ -416,73 +479,24 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
                 groups = listOf(
                     CommandGroup(
                         title = "Group 1",
-                        commands = listOf(
-                            Command(
-                                text = "popup1",
-                                iconFactory = computer.factory(),
-                                action = { println("popup1 activated!") },
-                                isActionEnabled = actionEnabled
-                            ),
-                            Command(
-                                text = "popup2",
-                                iconFactory = computer.factory(),
-                                action = { println("popup2 activated!") },
-                                isActionEnabled = actionEnabled
-                            ),
-                            Command(
-                                text = "popup3",
-                                iconFactory = computer.factory(),
-                                action = { println("popup3 activated!") },
-                                isActionEnabled = actionEnabled
-                            )
-                        )
+                        commands = listOf(secondaryCommand1, secondaryCommand2, secondaryCommand3)
                     ),
                     CommandGroup(
                         title = "Group 2",
-                        commands = listOf(
-                            Command(
-                                text = "popup4",
-                                iconFactory = computer.factory(),
-                                action = { println("popup4 activated!") },
-                                isActionEnabled = actionEnabled
-                            ),
-                            Command(
-                                text = "popup5",
-                                iconFactory = computer.factory(),
-                                action = { println("popup5 activated!") },
-                                isActionEnabled = actionEnabled,
-                                secondaryContentModel = CommandMenuContentModel(
-                                    group = CommandGroup(
-                                        title = "Sub group",
-                                        commands = listOf(
-                                            Command(
-                                                text = "popup11",
-                                                iconFactory = computer.factory(),
-                                                action = { println("popup11 activated!") },
-                                                isActionEnabled = actionEnabled
-                                            ),
-                                            Command(
-                                                text = "popup12",
-                                                iconFactory = computer.factory(),
-                                                action = { println("popup12 activated!") },
-                                                isActionEnabled = actionEnabled
-                                            ),
-                                            Command(
-                                                text = "popup13",
-                                                iconFactory = computer.factory(),
-                                                action = { println("popup13 activated!") },
-                                                isActionEnabled = actionEnabled
-                                            )
-                                        )
-                                    )
-                                ),
-                                isSecondaryEnabled = popupEnabled,
-                            )
-                        )
+                        commands = listOf(secondaryCommand4, secondaryCommand5)
                     )
                 )
             )
         )
+
+    val overlays = hashMapOf<Command, CommandButtonPresentationModel.Overlay>()
+    // Configure one of our secondary commands to use a different presentation state
+    // for its popup menu content
+    overlays[secondaryCommand5] = CommandButtonPresentationModel.Overlay(
+        popupMenuPresentationModel = CommandPopupMenuPresentationModel(
+            menuPresentationState = CommandButtonPresentationState.Tile
+        )
+    )
 
     val alignment = remember { mutableStateOf(CommandDemoAlignment.Center) }
     val style = CommandDemoStyle(
@@ -575,28 +589,32 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
                 commandActionOnly,
                 commandSecondaryOnly,
                 commandActionAndSecondary,
-                CommandButtonPresentationState.Small
+                CommandButtonPresentationState.Small,
+                overlays
             )
 
             DemoCommandRow(
                 commandActionOnly,
                 commandSecondaryOnly,
                 commandActionAndSecondary,
-                CommandButtonPresentationState.Medium
+                CommandButtonPresentationState.Medium,
+                overlays
             )
 
             DemoCommandRow(
                 commandActionOnly,
                 commandSecondaryOnly,
                 commandActionAndSecondary,
-                CommandButtonPresentationState.Tile
+                CommandButtonPresentationState.Tile,
+                overlays
             )
 
             DemoCommandRow(
                 commandActionOnly,
                 commandSecondaryOnly,
                 commandActionAndSecondary,
-                CommandButtonPresentationState.Big
+                CommandButtonPresentationState.Big,
+                overlays
             )
         }
     }

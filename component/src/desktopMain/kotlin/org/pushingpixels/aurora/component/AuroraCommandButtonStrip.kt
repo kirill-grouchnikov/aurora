@@ -53,6 +53,7 @@ private fun CommandButtonStripContent(
             presentationModel = if (overlays.containsKey(command))
                 commandButtonPresentationModel.overlayWith(overlay = overlays[command]!!)
             else commandButtonPresentationModel,
+            overlays = overlays,
             buttonSides = ButtonSides(openSides = openSides, straightSides = straightSides)
         )
     }

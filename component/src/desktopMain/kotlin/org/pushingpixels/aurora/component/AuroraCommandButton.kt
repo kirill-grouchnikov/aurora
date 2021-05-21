@@ -75,7 +75,8 @@ private class CommandButtonDrawingCache(
 fun AuroraCommandButton(
     modifier: Modifier = Modifier,
     command: Command,
-    presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel()
+    presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel(),
+    overlays: Map<Command, CommandButtonPresentationModel.Overlay> = mapOf()
 ) {
     AuroraCommandButton(
         modifier = modifier,
@@ -83,6 +84,7 @@ fun AuroraCommandButton(
         parentWindow = null,
         extraAction = null,
         presentationModel = presentationModel,
+        overlays = overlays,
         buttonSides = ButtonSides(
             straightSides = if (presentationModel.isMenu) Side.values().toSet() else emptySet()
         )
@@ -96,6 +98,7 @@ internal fun AuroraCommandButton(
     parentWindow: JWindow? = null,
     extraAction: (() -> Unit)? = null,
     presentationModel: CommandButtonPresentationModel,
+    overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
     buttonSides: ButtonSides
 ) {
     val drawingCache = remember { CommandButtonDrawingCache() }
@@ -592,7 +595,8 @@ internal fun AuroraCommandButton(
                                     popupContentWindow = popupContentWindow,
                                     anchorSize = auroraSize,
                                     command = command,
-                                    presentationModel = presentationModel
+                                    presentationModel = presentationModel,
+                                    overlays = overlays
                                 )
                             }
                         }
@@ -1122,7 +1126,8 @@ private fun CommandButtonPopupContent(
     popupContentWindow: JWindow,
     anchorSize: AuroraSize,
     command: Command,
-    presentationModel: CommandButtonPresentationModel
+    presentationModel: CommandButtonPresentationModel,
+    overlays: Map<Command, CommandButtonPresentationModel.Overlay>
 ) {
     assert(command.secondaryContentModel != null) { "Secondary content model cannot be null here " }
 
@@ -1208,11 +1213,11 @@ private fun CommandButtonPopupContent(
             )
         }
         CommandButtonPopupColumn(contentSize = contentSize) {
-            // Command presentation for menu content
-            // TODO - some of this should come from the popup presentation model
-            val presentation = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.Medium,
-                popupPlacementStrategy = PopupPlacementStrategy.Endward,
+            // Command presentation for menu content, taking some of the values from
+            // the popup menu presentation model configured on the top-level presentation model
+            val menuButtonPresentationModel = CommandButtonPresentationModel(
+                presentationState = presentationModel.popupMenuPresentationModel.menuPresentationState,
+                popupPlacementStrategy = presentationModel.popupMenuPresentationModel.popupPlacementStrategy,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 horizontalAlignment = HorizontalAlignment.Leading,
                 isMenu = true
@@ -1221,18 +1226,30 @@ private fun CommandButtonPopupContent(
             for ((commandGroupIndex, commandGroup) in command.secondaryContentModel!!.groups.withIndex()) {
                 for (secondaryCommand in commandGroup.commands) {
                     // TODO - support highlighted command (with bold text)
+
+                    // Check if we have a presentation overlay for this secondary command
+                    val hasOverlay = overlays.containsKey(secondaryCommand)
+                    val currSecondaryPresentationModel = if (hasOverlay)
+                        menuButtonPresentationModel.overlayWith(overlays[secondaryCommand]!!)
+                    else menuButtonPresentationModel
+
+                    // Create a command button for each secondary command, passing the same
+                    // overlays into it
                     AuroraCommandButton(
                         command = secondaryCommand,
                         parentWindow = popupContentWindow,
                         extraAction = {
-                            // TODO - this needs to be revisited for multi-selection popups
-                            for (window in Window.getWindows()) {
-                                if (window.isDisplayable && window is AuroraPopupWindow) {
-                                    window.dispose()
+                            if (presentationModel.toDismissPopupsOnActivation and
+                                currSecondaryPresentationModel.toDismissPopupsOnActivation) {
+                                for (window in Window.getWindows()) {
+                                    if (window.isDisplayable && window is AuroraPopupWindow) {
+                                        window.dispose()
+                                    }
                                 }
                             }
                         },
-                        presentationModel = presentation,
+                        presentationModel = currSecondaryPresentationModel,
+                        overlays = overlays,
                         buttonSides = ButtonSides(straightSides = Side.values().toSet())
                     )
                 }
