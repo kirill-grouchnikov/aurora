@@ -97,12 +97,12 @@ fun DemoProgress(enabled: Boolean) {
     )
 
     Row(verticalAlignment = Alignment.CenterVertically) {
-        AuroraCommandButton(
+        CommandButtonProjection(
             command = Command(text = "",
                 iconFactory = remove_circle_outline_24px.factory(),
                 isActionEnabled = enabled and (progress > 0.0f),
                 action = { progress -= 0.1f }),
-            presentationModel = CommandButtonPresentationModel(
+            commandButtonPresentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.Small,
                 iconDimension = 14.dp,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
@@ -110,7 +110,7 @@ fun DemoProgress(enabled: Boolean) {
                 iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                 iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText
             )
-        )
+        ).project()
 
         AuroraDeterminateLinearProgress(
             contentModel = ProgressDeterminateContentModel(
@@ -119,12 +119,12 @@ fun DemoProgress(enabled: Boolean) {
             )
         )
 
-        AuroraCommandButton(
+        CommandButtonProjection(
             command = Command(text = "",
                 iconFactory = add_circle_outline_24px.factory(),
                 isActionEnabled = enabled and (progress < 1.0f),
                 action = { progress += 0.1f }),
-            presentationModel = CommandButtonPresentationModel(
+            commandButtonPresentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.Small,
                 iconDimension = 14.dp,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
@@ -132,7 +132,7 @@ fun DemoProgress(enabled: Boolean) {
                 iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                 iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText
             )
-        )
+        ).project()
     }
 }
 
@@ -149,101 +149,101 @@ fun DemoToolbar(
             .auroraBackground()
             .padding(horizontal = 8.dp, vertical = 6.dp)
     ) {
-        AuroraCommandButton(
+        CommandButtonProjection(
             command = Command(
                 text = "cut",
                 iconFactory = edit_cut.factory(),
                 action = { println("Cut!") }
             ),
-            presentationModel = CommandButtonPresentationModel(
+            commandButtonPresentationModel = CommandButtonPresentationModel(
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 iconDimension = 20.dp
             )
-        )
-        AuroraCommandButton(
+        ).project()
+        CommandButtonProjection(
             command = Command(
                 text = "copy",
                 iconFactory = edit_copy.factory(),
                 isActionEnabled = false,
                 action = { println("Copy!") }
             ),
-            presentationModel = CommandButtonPresentationModel(
+            commandButtonPresentationModel = CommandButtonPresentationModel(
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 iconDimension = 20.dp
             )
-        )
-        AuroraCommandButton(
+        ).project()
+        CommandButtonProjection(
             command = Command(
                 text = "paste",
                 iconFactory = edit_paste.factory(),
                 action = { println("Paste!") }
             ),
-            presentationModel = CommandButtonPresentationModel(
+            commandButtonPresentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.Small,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 iconDimension = 20.dp
             )
-        )
-        AuroraCommandButton(
+        ).project()
+        CommandButtonProjection(
             command = Command(
                 text = "select all",
                 iconFactory = edit_select_all.factory(),
                 action = { println("Select all!") }
             ),
-            presentationModel = CommandButtonPresentationModel(
+            commandButtonPresentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.Small,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 iconDimension = 20.dp
             )
-        )
-        AuroraCommandButton(
+        ).project()
+        CommandButtonProjection(
             command = Command(
                 text = "delete",
                 iconFactory = edit_delete.factory(),
                 action = { println("Delete!") }
             ),
-            presentationModel = CommandButtonPresentationModel(
+            commandButtonPresentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.Small,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 iconDimension = 20.dp
             )
-        )
+        ).project()
 
         Spacer(modifier = Modifier.width(4.dp))
         AuroraVerticalSeparator(modifier = Modifier.height(20.dp))
         Spacer(modifier = Modifier.width(4.dp))
 
-        AuroraCommandButtonStrip(
+        CommandButtonStripProjection(
             commandGroup = alignmentCommands,
-            presentationModel = CommandStripPresentationModel(
+            commandStripPresentationModel = CommandStripPresentationModel(
                 orientation = StripOrientation.Horizontal,
                 iconDimension = 20.dp
             )
-        )
+        ).project()
 
         Spacer(modifier = Modifier.width(4.dp))
         AuroraVerticalSeparator(modifier = Modifier.height(20.dp))
         Spacer(modifier = Modifier.width(4.dp))
 
-        AuroraCommandButtonStrip(
+        CommandButtonStripProjection(
             commandGroup = styleCommands,
-            presentationModel = CommandStripPresentationModel(
+            commandStripPresentationModel = CommandStripPresentationModel(
                 orientation = StripOrientation.Horizontal,
                 iconDimension = 20.dp
             )
-        )
+        ).project()
 
         Spacer(modifier.weight(weight = 1.0f, fill = true))
 
-        AuroraCommandButton(
+        CommandButtonProjection(
             command = Command(text = "exit",
                 iconFactory = process_stop.factory(),
                 action = { exitProcess(0) }),
-            presentationModel = CommandButtonPresentationModel(
+            commandButtonPresentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.Small,
                 iconDimension = 20.dp
             )
-        )
+        ).project()
     }
 }
 
@@ -261,13 +261,13 @@ fun DemoFooter(
     ) {
         Spacer(modifier.weight(weight = 1.0f, fill = true))
 
-        AuroraCommandButtonStrip(
+        CommandButtonStripProjection(
             commandGroup = alignmentCommands,
-            presentationModel = CommandStripPresentationModel(
+            commandStripPresentationModel = CommandStripPresentationModel(
                 orientation = StripOrientation.Horizontal,
                 iconDimension = 14.dp
             )
-        )
+        ).project()
     }
 }
 
@@ -341,7 +341,7 @@ fun DemoArea(
             val selectedSkinItem =
                 remember { mutableStateOf(auroraSkins.first { it.first == currentSkinDisplayName }) }
 
-            AuroraComboBox(
+            ComboBoxProjection(
                 contentModel = ComboBoxContentModel(
                     items = auroraSkins,
                     selectedItem = selectedSkinItem.value,
@@ -353,7 +353,7 @@ fun DemoArea(
                 presentationModel = ComboBoxPresentationModel(
                     displayConverter = { it.first }
                 )
-            )
+            ).project()
         }
         Column(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
@@ -424,13 +424,13 @@ fun DemoArea(
 
             Row(modifier = Modifier.fillMaxWidth()) {
                 // Example of a command button strip
-                AuroraCommandButtonStrip(
+                CommandButtonStripProjection(
                     commandGroup = styleCommands,
-                    presentationModel = CommandStripPresentationModel(
+                    commandStripPresentationModel = CommandStripPresentationModel(
                         orientation = StripOrientation.Horizontal,
                         iconDimension = 20.dp
                     )
-                )
+                ).project()
 
                 Spacer(modifier = Modifier.width(8.dp))
 
@@ -489,7 +489,7 @@ fun DemoArea(
                 // Example of a simple combobox
                 val simpleComboItems = listOf("one", "two", "three")
                 val simpleComboSelectedItem = remember { mutableStateOf(simpleComboItems[1]) }
-                AuroraComboBox(
+                ComboBoxProjection(
                     contentModel = ComboBoxContentModel(
                         enabled = contentEnabled.value,
                         items = simpleComboItems,
@@ -503,7 +503,7 @@ fun DemoArea(
                         displayConverter = { it },
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )
-                )
+                ).project()
 
                 Spacer(modifier = Modifier.width(8.dp))
 
@@ -515,7 +515,7 @@ fun DemoArea(
                         Person("Donaldson", "Duck")
                     )
                 val personComboSelectedItem = remember { mutableStateOf(personComboItems[0]) }
-                AuroraComboBox(
+                ComboBoxProjection(
                     contentModel = ComboBoxContentModel(
                         enabled = contentEnabled.value,
                         items = personComboItems,
@@ -529,7 +529,7 @@ fun DemoArea(
                         displayConverter = { it.lastName + ", " + it.firstName },
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )
-                )
+                ).project()
             }
 
             DemoHeader("Selectors", check_square_o.factory(), contentEnabled)
@@ -578,7 +578,7 @@ fun DemoArea(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                AuroraComboBox(
+                ComboBoxProjection(
                     contentModel = ComboBoxContentModel(
                         enabled = contentEnabled.value,
                         items = snowComboItems,
@@ -592,11 +592,11 @@ fun DemoArea(
                         displayConverter = { it.lastName + ", " + it.firstName },
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )
-                )
+                ).project()
 
                 Spacer(modifier = Modifier.width(16.dp))
 
-                AuroraComboBox(
+                ComboBoxProjection(
                     contentModel = ComboBoxContentModel(
                         enabled = contentEnabled.value,
                         items = snowComboItems,
@@ -610,14 +610,14 @@ fun DemoArea(
                         displayConverter = { it.lastName + ", " + it.firstName },
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )
-                )
+                ).project()
             }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                AuroraComboBox(
+                ComboBoxProjection(
                     contentModel = ComboBoxContentModel(
                         enabled = contentEnabled.value,
                         items = snowComboItems,
@@ -631,11 +631,11 @@ fun DemoArea(
                         displayConverter = { it.lastName + ", " + it.firstName },
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )
-                )
+                ).project()
 
                 Spacer(modifier = Modifier.width(16.dp))
 
-                AuroraComboBox(
+                ComboBoxProjection(
                     contentModel = ComboBoxContentModel(
                         enabled = contentEnabled.value,
                         items = snowComboItems,
@@ -649,11 +649,11 @@ fun DemoArea(
                         displayConverter = { it.lastName + ", " + it.firstName },
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )
-                )
+                ).project()
 
                 Spacer(modifier = Modifier.width(16.dp))
 
-                AuroraComboBox(
+                ComboBoxProjection(
                     contentModel = ComboBoxContentModel(
                         enabled = contentEnabled.value,
                         items = snowComboItems,
@@ -667,7 +667,7 @@ fun DemoArea(
                         displayConverter = { it.lastName + ", " + it.firstName },
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )
-                )
+                ).project()
             }
 
             DemoHeader("Progress bars", progressbar.factory(), contentEnabled)

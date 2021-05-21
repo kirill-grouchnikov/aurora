@@ -60,7 +60,7 @@ private fun CommandButtonStripContent(
 }
 
 @Composable
-fun AuroraCommandButtonStrip(
+internal fun AuroraCommandButtonStrip(
     modifier: Modifier = Modifier,
     commandGroup: CommandGroup,
     presentationModel: CommandStripPresentationModel = CommandStripPresentationModel(),

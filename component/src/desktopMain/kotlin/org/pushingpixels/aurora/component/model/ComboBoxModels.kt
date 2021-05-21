@@ -25,7 +25,7 @@ data class ComboBoxContentModel<E>(
     val selectedItem: E,
     val enabled: Boolean = true,
     val onTriggerItemSelectedChange: (E) -> Unit
-)
+): ContentModel
 
 object ComboBoxSizingConstants {
     val DefaultComboBoxArrowWidth = 10.dp
@@ -44,4 +44,4 @@ data class ComboBoxPresentationModel<E>(
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Leading,
     val horizontalGapScaleFactor: Float = 1.0f,
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward,
-)
+): PresentationModel

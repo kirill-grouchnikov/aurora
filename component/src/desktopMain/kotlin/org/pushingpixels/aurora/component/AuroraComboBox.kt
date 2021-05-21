@@ -90,7 +90,7 @@ private fun Modifier.comboBoxLocator(topLeftOffset: AuroraOffset, size: AuroraSi
 class AuroraPopupWindow : JWindow()
 
 @Composable
-fun <E> AuroraComboBox(
+internal fun <E> AuroraComboBox(
     modifier: Modifier = Modifier,
     contentModel: ComboBoxContentModel<E>,
     presentationModel: ComboBoxPresentationModel<E>

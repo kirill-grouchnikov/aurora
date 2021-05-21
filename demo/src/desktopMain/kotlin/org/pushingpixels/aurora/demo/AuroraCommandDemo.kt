@@ -24,9 +24,7 @@ import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.AuroraSkinDefinition
 import org.pushingpixels.aurora.IconFilterStrategy
 import org.pushingpixels.aurora.component.AuroraCheckBox
-import org.pushingpixels.aurora.component.AuroraComboBox
 import org.pushingpixels.aurora.component.AuroraCommandButton
-import org.pushingpixels.aurora.component.AuroraCommandButtonStrip
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.tango.*
@@ -153,7 +151,7 @@ fun CommandDemoJustifyStrip(
             }
         )
 
-    AuroraCommandButtonStrip(
+    CommandButtonStripProjection(
         commandGroup = CommandGroup(
             commands = listOf(
                 commandAlignCenter,
@@ -162,11 +160,11 @@ fun CommandDemoJustifyStrip(
                 commandAlignFill
             )
         ),
-        presentationModel = CommandStripPresentationModel(
+        commandStripPresentationModel = CommandStripPresentationModel(
             orientation = orientation,
             horizontalGapScaleFactor = horizontalGapScaleFactor
         )
-    )
+    ).project()
 }
 
 @Composable
@@ -216,7 +214,7 @@ fun CommandDemoEditStrip(
             isSecondaryEnabled = popupEnabled
         )
 
-    AuroraCommandButtonStrip(
+    CommandButtonStripProjection(
         commandGroup = CommandGroup(
             commands = listOf(
                 commandCopy,
@@ -224,14 +222,14 @@ fun CommandDemoEditStrip(
                 commandPaste
             )
         ),
-        presentationModel = CommandStripPresentationModel(
+        commandStripPresentationModel = CommandStripPresentationModel(
             orientation = orientation,
             horizontalGapScaleFactor = horizontalGapScaleFactor,
             iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
             iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
             iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText
         )
-    )
+    ).project()
 }
 
 @Composable
@@ -290,7 +288,7 @@ fun CommandDemoStyleStrip(
             }
         )
 
-    AuroraCommandButtonStrip(
+    CommandButtonStripProjection(
         commandGroup = CommandGroup(
             commands = listOf(
                 commandBold,
@@ -299,14 +297,14 @@ fun CommandDemoStyleStrip(
                 commandStrikethrough
             )
         ),
-        presentationModel = CommandStripPresentationModel(
+        commandStripPresentationModel = CommandStripPresentationModel(
             orientation = orientation,
             horizontalGapScaleFactor = horizontalGapScaleFactor,
             iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
             iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
             iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText
         )
-    )
+    ).project()
 }
 
 @Composable
@@ -530,7 +528,7 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
             val selectedSkinItem =
                 remember { mutableStateOf(auroraSkins.first { it.first == currentSkinDisplayName }) }
 
-            AuroraComboBox(
+            ComboBoxProjection(
                 contentModel = ComboBoxContentModel(
                     items = auroraSkins,
                     selectedItem = selectedSkinItem.value,
@@ -542,7 +540,7 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
                 presentationModel = ComboBoxPresentationModel(
                     displayConverter = { it.first }
                 )
-            )
+            ).project()
 
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
                 AuroraCheckBox(contentModel = SelectorContentModel(

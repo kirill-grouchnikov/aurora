@@ -43,7 +43,7 @@ data class CommandButtonPresentationModel(
     val horizontalGapScaleFactor: Float = 1.0f,
     val verticalGapScaleFactor: Float = 1.0f,
     val isMenu: Boolean = false
-) {
+): PresentationModel {
     data class Overlay(
         val presentationState: CommandButtonPresentationState? = null,
         val backgroundAppearanceStrategy: BackgroundAppearanceStrategy? = null,

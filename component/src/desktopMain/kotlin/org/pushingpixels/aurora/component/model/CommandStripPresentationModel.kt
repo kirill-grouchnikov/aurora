@@ -55,4 +55,4 @@ data class CommandStripPresentationModel(
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward,
     val textClick: TextClick = TextClick.Action,
     val isMenu: Boolean = false
-)
+): PresentationModel

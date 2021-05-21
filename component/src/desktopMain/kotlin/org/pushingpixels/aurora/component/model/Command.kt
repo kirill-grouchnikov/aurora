@@ -52,12 +52,12 @@ data class Command(
     val onTriggerActionToggleSelectedChange: ((Boolean) -> Unit)? = null,
     val secondaryContentModel: CommandMenuContentModel? = null,
     val isSecondaryEnabled: Boolean = true
-)
+): ContentModel
 
 data class CommandGroup(
     val title: String? = null,
     val commands: List<Command>
-)
+): ContentModel
 
 data class CommandMenuContentModel(
     val groups: List<CommandGroup>,
@@ -196,4 +196,3 @@ abstract class CommandButtonPresentationState(val displayName: String) {
             }
     }
 }
-
