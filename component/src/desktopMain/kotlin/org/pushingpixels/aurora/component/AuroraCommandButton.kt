@@ -341,8 +341,11 @@ internal fun AuroraCommandButton(
     val isTextInActionArea =
         (hasAction or isToggle) && (presentationModel.textClick == TextClick.Action)
 
-    // TODO - do we need more keys? Probably from the presentation model
-    val preLayoutInfo = remember(command.text, command.extraText) {
+    // TODO - do we need more keys? Maybe from the presentation model
+    val preLayoutInfo = remember(
+        command.text, command.extraText,
+        command.action == null, command.secondaryContentModel == null
+    ) {
         layoutManager.getPreLayoutInfo(command, presentationModel)
     }
 
