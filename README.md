@@ -36,10 +36,10 @@ Add Aurora dependencies:
 
 ```
 dependencies {
-    implementation("org.pushing-pixels:aurora-skin:0.0.35-SNAPSHOT")
-    implementation("org.pushing-pixels:aurora-icon-icon:0.0.35-SNAPSHOT")
-    implementation("org.pushing-pixels:aurora-component:0.0.35-SNAPSHOT")
-    implementation("org.pushing-pixels:aurora-window:0.0.35-SNAPSHOT")
+    implementation("org.pushing-pixels:aurora-skin:0.0.36-SNAPSHOT")
+    implementation("org.pushing-pixels:aurora-icon-icon:0.0.36-SNAPSHOT")
+    implementation("org.pushing-pixels:aurora-component:0.0.36-SNAPSHOT")
+    implementation("org.pushing-pixels:aurora-window:0.0.36-SNAPSHOT")
     implementation(compose.desktop.currentOs)
 }
 ```
@@ -60,12 +60,12 @@ fun main() = AuroraWindow(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxSize().auroraBackground()
     ) {
-        AuroraCommandButton(
-            command = Command(
+        CommandButtonProjection(
+            contentModel = Command(
                 text = text,
                 action = { text = "Hello, Desktop!" }
             )
-        )
+        ).project()
     }
 }
 ```
