@@ -28,7 +28,7 @@ data class LabelContentModel(
     val enabled: Boolean = true,
     val iconFactory: AuroraIcon.Factory? = null,
     val disabledIconFactory: AuroraIcon.Factory? = null
-)
+): ContentModel
 
 object LabelSizingConstants {
     val DefaultLabelContentPadding = PaddingValues(start = 5.dp, top = 4.dp, end = 5.dp, bottom = 4.dp)
@@ -46,4 +46,4 @@ data class LabelPresentationModel(
     val textMaxLines: Int = Int.MAX_VALUE,
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
     val horizontalGapScaleFactor: Float = 1.0f
-)
+): PresentationModel

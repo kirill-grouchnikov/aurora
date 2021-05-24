@@ -24,7 +24,7 @@ data class SelectorContentModel(
     val enabled: Boolean = true,
     val selected: Boolean = false,
     val onTriggerSelectedChange: (Boolean) -> Unit
-)
+): ContentModel
 
 object SelectorSizingConstants {
     val SelectorMarkSize = 14.dp
@@ -37,4 +37,4 @@ data class SelectorPresentationModel(
     val markSize: Dp = SelectorSizingConstants.SelectorMarkSize,
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Leading,
     val horizontalGapScaleFactor: Float = 1.0f
-)
+): PresentationModel

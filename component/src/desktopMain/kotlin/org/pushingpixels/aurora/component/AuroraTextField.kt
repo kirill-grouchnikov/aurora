@@ -65,7 +65,7 @@ private class TextFieldDrawingCache(
 )
 
 @Composable
-fun AuroraTextField(
+internal fun AuroraTextField(
     modifier: Modifier = Modifier,
     contentModel: TextFieldStringContentModel,
     presentationModel: TextFieldPresentationModel = TextFieldPresentationModel()
@@ -92,7 +92,7 @@ fun AuroraTextField(
 }
 
 @Composable
-fun AuroraTextField(
+internal fun AuroraTextField(
     modifier: Modifier = Modifier,
     contentModel: TextFieldValueContentModel,
     presentationModel: TextFieldPresentationModel = TextFieldPresentationModel()

@@ -16,7 +16,10 @@
 
 package org.pushingpixels.aurora.window
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +32,6 @@ import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.auroraBackground
-import org.pushingpixels.aurora.component.AuroraCommandButton
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 
@@ -189,15 +191,15 @@ internal fun AuroraWindowMenuBar(menuCommands: CommandGroup) {
             modifier = Modifier.fillMaxWidth().auroraBackground()
         ) {
             for (menuCommand in menuCommands.commands) {
-                AuroraCommandButton(
-                    command = menuCommand,
+                CommandButtonProjection(
+                    contentModel = menuCommand,
                     presentationModel = CommandButtonPresentationModel(
                         presentationState = WindowMenuBarLayout.MenuBar,
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                         contentPadding = CommandButtonSizingConstants.WideButtonContentPadding,
                         isMenu = true
                     )
-                )
+                ).project()
             }
         }
     }

@@ -57,7 +57,7 @@ private class CheckBoxDrawingCache(
 )
 
 @Composable
-fun AuroraCheckBox(
+internal fun AuroraCheckBox(
     modifier: Modifier = Modifier,
     contentModel: SelectorContentModel,
     presentationModel: SelectorPresentationModel = SelectorPresentationModel()

@@ -98,11 +98,11 @@ fun DemoProgress(enabled: Boolean) {
 
     Row(verticalAlignment = Alignment.CenterVertically) {
         CommandButtonProjection(
-            command = Command(text = "",
+            contentModel = Command(text = "",
                 iconFactory = remove_circle_outline_24px.factory(),
                 isActionEnabled = enabled and (progress > 0.0f),
                 action = { progress -= 0.1f }),
-            commandButtonPresentationModel = CommandButtonPresentationModel(
+            presentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.Small,
                 iconDimension = 14.dp,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
@@ -112,19 +112,19 @@ fun DemoProgress(enabled: Boolean) {
             )
         ).project()
 
-        AuroraDeterminateLinearProgress(
+        DeterminateLinearProgressProjection(
             contentModel = ProgressDeterminateContentModel(
                 enabled = enabled,
                 progress = animatedStateProgress.value
             )
-        )
+        ).project()
 
         CommandButtonProjection(
-            command = Command(text = "",
+            contentModel = Command(text = "",
                 iconFactory = add_circle_outline_24px.factory(),
                 isActionEnabled = enabled and (progress < 1.0f),
                 action = { progress += 0.1f }),
-            commandButtonPresentationModel = CommandButtonPresentationModel(
+            presentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.Small,
                 iconDimension = 14.dp,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
@@ -150,59 +150,59 @@ fun DemoToolbar(
             .padding(horizontal = 8.dp, vertical = 6.dp)
     ) {
         CommandButtonProjection(
-            command = Command(
+            contentModel = Command(
                 text = "cut",
                 iconFactory = edit_cut.factory(),
                 action = { println("Cut!") }
             ),
-            commandButtonPresentationModel = CommandButtonPresentationModel(
+            presentationModel = CommandButtonPresentationModel(
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 iconDimension = 20.dp
             )
         ).project()
         CommandButtonProjection(
-            command = Command(
+            contentModel = Command(
                 text = "copy",
                 iconFactory = edit_copy.factory(),
                 isActionEnabled = false,
                 action = { println("Copy!") }
             ),
-            commandButtonPresentationModel = CommandButtonPresentationModel(
+            presentationModel = CommandButtonPresentationModel(
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 iconDimension = 20.dp
             )
         ).project()
         CommandButtonProjection(
-            command = Command(
+            contentModel = Command(
                 text = "paste",
                 iconFactory = edit_paste.factory(),
                 action = { println("Paste!") }
             ),
-            commandButtonPresentationModel = CommandButtonPresentationModel(
+            presentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.Small,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 iconDimension = 20.dp
             )
         ).project()
         CommandButtonProjection(
-            command = Command(
+            contentModel = Command(
                 text = "select all",
                 iconFactory = edit_select_all.factory(),
                 action = { println("Select all!") }
             ),
-            commandButtonPresentationModel = CommandButtonPresentationModel(
+            presentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.Small,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 iconDimension = 20.dp
             )
         ).project()
         CommandButtonProjection(
-            command = Command(
+            contentModel = Command(
                 text = "delete",
                 iconFactory = edit_delete.factory(),
                 action = { println("Delete!") }
             ),
-            commandButtonPresentationModel = CommandButtonPresentationModel(
+            presentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.Small,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 iconDimension = 20.dp
@@ -214,8 +214,8 @@ fun DemoToolbar(
         Spacer(modifier = Modifier.width(4.dp))
 
         CommandButtonStripProjection(
-            commandGroup = alignmentCommands,
-            commandStripPresentationModel = CommandStripPresentationModel(
+            contentModel = alignmentCommands,
+            presentationModel = CommandStripPresentationModel(
                 orientation = StripOrientation.Horizontal,
                 iconDimension = 20.dp
             )
@@ -226,8 +226,8 @@ fun DemoToolbar(
         Spacer(modifier = Modifier.width(4.dp))
 
         CommandButtonStripProjection(
-            commandGroup = styleCommands,
-            commandStripPresentationModel = CommandStripPresentationModel(
+            contentModel = styleCommands,
+            presentationModel = CommandStripPresentationModel(
                 orientation = StripOrientation.Horizontal,
                 iconDimension = 20.dp
             )
@@ -236,10 +236,10 @@ fun DemoToolbar(
         Spacer(modifier.weight(weight = 1.0f, fill = true))
 
         CommandButtonProjection(
-            command = Command(text = "exit",
+            contentModel = Command(text = "exit",
                 iconFactory = process_stop.factory(),
                 action = { exitProcess(0) }),
-            commandButtonPresentationModel = CommandButtonPresentationModel(
+            presentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.Small,
                 iconDimension = 20.dp
             )
@@ -262,8 +262,8 @@ fun DemoFooter(
         Spacer(modifier.weight(weight = 1.0f, fill = true))
 
         CommandButtonStripProjection(
-            commandGroup = alignmentCommands,
-            commandStripPresentationModel = CommandStripPresentationModel(
+            contentModel = alignmentCommands,
+            presentationModel = CommandStripPresentationModel(
                 orientation = StripOrientation.Horizontal,
                 iconDimension = 14.dp
             )
@@ -294,7 +294,7 @@ fun DemoHeader(
         verticalAlignment = Alignment.CenterVertically
     ) {
         AuroraHorizontalSeparator(modifier = Modifier.weight(1.0f, fill = true))
-        AuroraLabel(
+        LabelProjection(
             contentModel = LabelContentModel(
                 text = text.toUpperCase(),
                 enabled = contentEnabled.value,
@@ -306,7 +306,7 @@ fun DemoHeader(
                 iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                 iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
             )
-        )
+        ).project()
         AuroraHorizontalSeparator(modifier = Modifier.weight(1.0f, fill = true))
     }
 }
@@ -330,11 +330,11 @@ fun DemoArea(
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            AuroraCheckBox(contentModel = SelectorContentModel(
+            CheckBoxProjection(contentModel = SelectorContentModel(
                 text = "content enabled",
                 selected = contentEnabled.value,
                 onTriggerSelectedChange = { contentEnabled.value = !contentEnabled.value }
-            ))
+            )).project()
 
             val currentSkinDisplayName = AuroraSkin.displayName
             val auroraSkins = getAuroraSkins()
@@ -367,8 +367,8 @@ fun DemoArea(
             ) {
                 // A toggle command button backed by a mutable boolean
                 var toggleButtonSelected by remember { mutableStateOf(true) }
-                AuroraCommandButton(
-                    command = Command(
+                CommandButtonProjection(
+                    contentModel = Command(
                         text = "toggle",
                         iconFactory = computer.factory(),
                         isActionEnabled = contentEnabled.value,
@@ -387,10 +387,10 @@ fun DemoArea(
                         iconEnabledFilterStrategy = IconFilterStrategy.Original,
                         iconActiveFilterStrategy = IconFilterStrategy.Original,
                     )
-                )
+                ).project()
                 // A command button with icon using THEMED_FOLLOW_TEXT filter strategy
-                AuroraCommandButton(
-                    command = Command(
+                CommandButtonProjection(
+                    contentModel = Command(
                         text = "icon / text",
                         iconFactory = keyboard_capslock_24px.factory(),
                         isActionEnabled = contentEnabled.value,
@@ -402,11 +402,11 @@ fun DemoArea(
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                     )
-                )
+                ).project()
                 // A flat command button with displays background when it's
                 // active (rollover, pressed, etc)
-                AuroraCommandButton(
-                    command = Command(
+                CommandButtonProjection(
+                    contentModel = Command(
                         text = "flat",
                         iconFactory = account_box_24px.factory(),
                         isActionEnabled = contentEnabled.value,
@@ -419,14 +419,14 @@ fun DemoArea(
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                     )
-                )
+                ).project()
             }
 
             Row(modifier = Modifier.fillMaxWidth()) {
                 // Example of a command button strip
                 CommandButtonStripProjection(
-                    commandGroup = styleCommands,
-                    commandStripPresentationModel = CommandStripPresentationModel(
+                    contentModel = styleCommands,
+                    presentationModel = CommandStripPresentationModel(
                         orientation = StripOrientation.Horizontal,
                         iconDimension = 20.dp
                     )
@@ -436,8 +436,8 @@ fun DemoArea(
 
                 var toggleStarButtonSelected by remember { mutableStateOf(true) }
                 // Example of an icon-only button with smaller content padding around the icon
-                AuroraCommandButton(
-                    command = Command(
+                CommandButtonProjection(
+                    contentModel = Command(
                         text = "always",
                         iconFactory = star_black_48dp.factory(),
                         isActionEnabled = contentEnabled.value,
@@ -457,13 +457,13 @@ fun DemoArea(
                         horizontalGapScaleFactor = 0.25f,
                         verticalGapScaleFactor = 0.25f
                     )
-                )
+                ).project()
 
                 Spacer(modifier = Modifier.width(8.dp))
 
                 // Example of an icon-only button with larger content padding around the icon
-                AuroraCommandButton(
-                    command = Command(
+                CommandButtonProjection(
+                    contentModel = Command(
                         text = "always",
                         iconFactory = star_black_48dp.factory(),
                         isActionEnabled = contentEnabled.value,
@@ -482,7 +482,7 @@ fun DemoArea(
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         contentPadding = PaddingValues(8.dp)
                     )
-                )
+                ).project()
 
                 Spacer(modifier = Modifier.width(20.dp))
 
@@ -536,7 +536,7 @@ fun DemoArea(
             Row(modifier = Modifier.fillMaxWidth()) {
                 // Example of a checkbox backed by a mutable boolean
                 var checkboxSelected by remember { mutableStateOf(true) }
-                AuroraCheckBox(contentModel = SelectorContentModel(
+                CheckBoxProjection(contentModel = SelectorContentModel(
                     text = "sample check",
                     enabled = contentEnabled.value,
                     selected = checkboxSelected,
@@ -544,21 +544,22 @@ fun DemoArea(
                         println("Selected checkbox? $it")
                         checkboxSelected = it
                     }
-                ))
+                )).project()
 
                 Spacer(modifier = Modifier.width(8.dp))
 
                 // Example of a radio button backed by a mutable boolean
                 var radioButtonSelected by remember { mutableStateOf(true) }
-                AuroraRadioButton(contentModel = SelectorContentModel(
-                    text = "sample radio",
-                    enabled = contentEnabled.value,
-                    selected = radioButtonSelected,
-                    onTriggerSelectedChange = {
-                        println("Selected radio? $it")
-                        radioButtonSelected = it
-                    }
-                ))
+                RadioButtonProjection(
+                    contentModel = SelectorContentModel(
+                        text = "sample radio",
+                        enabled = contentEnabled.value,
+                        selected = radioButtonSelected,
+                        onTriggerSelectedChange = {
+                            println("Selected radio? $it")
+                            radioButtonSelected = it
+                        }
+                    )).project()
             }
 
             DemoHeader("Combo boxes", combobox.factory(), contentEnabled)
@@ -677,9 +678,9 @@ fun DemoArea(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Example of an indeterminate linear progress bar
-                AuroraIndeterminateLinearProgress(
+                IndeterminateLinearProgressProjection(
                     contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled.value),
-                )
+                ).project()
 
                 Spacer(modifier = Modifier.width(16.dp))
 
@@ -689,17 +690,17 @@ fun DemoArea(
                 Spacer(modifier = Modifier.width(16.dp))
 
                 // Example of a circular progress indicator
-                AuroraCircularProgress(
+                CircularProgressProjection(
                     contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled.value)
-                )
+                ).project()
 
                 Spacer(modifier = Modifier.width(16.dp))
 
                 // Example of a larger circular progress indicator
-                AuroraCircularProgress(
+                CircularProgressProjection(
                     contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled.value),
                     presentationModel = ProgressCircularPresentationModel(size = 14.dp)
-                )
+                ).project()
             }
 
             DemoHeader("Sliders", slider.factory(), contentEnabled)
@@ -707,7 +708,7 @@ fun DemoArea(
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
                 // Example of a continuous slider
                 var sliderValue1 by remember { mutableStateOf(0.5f) }
-                AuroraSlider(
+                SliderProjection(
                     contentModel = SliderContentModel(
                         value = sliderValue1,
                         valueRange = 0.0f.rangeTo(1.0f),
@@ -718,13 +719,13 @@ fun DemoArea(
                         onValueChangeEnd = { println("Slider change done!") },
                         enabled = contentEnabled.value
                     )
-                )
+                ).project()
 
                 Spacer(modifier = Modifier.width(16.dp))
 
                 // Example of a discrete slider that draws ticks
                 var sliderValue2 by remember { mutableStateOf(50f) }
-                AuroraSlider(
+                SliderProjection(
                     contentModel = SliderContentModel(
                         value = sliderValue2,
                         valueRange = 0.0f.rangeTo(100.0f),
@@ -740,7 +741,7 @@ fun DemoArea(
                         snapToTicks = true,
                         drawTicks = true
                     )
-                )
+                ).project()
             }
 
             DemoHeader("Text fields", text_input.factory(), contentEnabled)
@@ -751,26 +752,26 @@ fun DemoArea(
             ) {
                 // Example of a multi-line text field
                 var text1 by rememberSaveable { mutableStateOf("Sample text area") }
-                AuroraTextField(
+                TextFieldStringProjection(
                     contentModel = TextFieldStringContentModel(
                         value = text1,
                         onValueChange = { text1 = it },
                         enabled = contentEnabled.value
                     )
-                )
+                ).project()
 
                 Spacer(modifier = Modifier.width(16.dp))
 
                 // Example of a single-line text field
                 var text2 by rememberSaveable { mutableStateOf("Sample text field") }
-                AuroraTextField(
+                TextFieldStringProjection(
                     contentModel = TextFieldStringContentModel(
                         value = text2,
                         onValueChange = { text2 = it },
                         enabled = contentEnabled.value
                     ),
                     presentationModel = TextFieldPresentationModel(singleLine = true)
-                )
+                ).project()
             }
         }
     }

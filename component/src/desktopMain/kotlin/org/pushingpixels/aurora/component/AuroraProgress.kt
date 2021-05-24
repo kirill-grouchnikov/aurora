@@ -40,7 +40,7 @@ import org.pushingpixels.aurora.utils.getBaseOutline
 import kotlin.math.min
 
 @Composable
-fun AuroraCircularProgress(
+internal fun AuroraCircularProgress(
     modifier: Modifier = Modifier,
     contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
     presentationModel: ProgressCircularPresentationModel = ProgressCircularPresentationModel()
@@ -141,7 +141,7 @@ private val progressFillPainter = FractionBasedFillPainter(
 )
 
 @Composable
-fun AuroraIndeterminateLinearProgress(
+internal fun AuroraIndeterminateLinearProgress(
     modifier: Modifier = Modifier,
     contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
     presentationModel: ProgressLinearPresentationModel = ProgressLinearPresentationModel()
@@ -253,7 +253,7 @@ fun AuroraIndeterminateLinearProgress(
 }
 
 @Composable
-fun AuroraDeterminateLinearProgress(
+internal fun AuroraDeterminateLinearProgress(
     modifier: Modifier = Modifier,
     contentModel: ProgressDeterminateContentModel,
     presentationModel: ProgressLinearPresentationModel = ProgressLinearPresentationModel()

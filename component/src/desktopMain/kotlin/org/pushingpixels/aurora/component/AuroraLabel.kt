@@ -25,7 +25,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.isSpecified
-import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.dp
@@ -36,7 +35,7 @@ import org.pushingpixels.aurora.component.utils.AuroraText
 import org.pushingpixels.aurora.icon.AuroraThemedIcon
 
 @Composable
-fun AuroraLabel(
+internal fun AuroraLabel(
     modifier: Modifier = Modifier,
     contentModel: LabelContentModel,
     presentationModel: LabelPresentationModel = LabelPresentationModel()

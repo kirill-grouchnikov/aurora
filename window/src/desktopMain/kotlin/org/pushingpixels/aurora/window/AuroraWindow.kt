@@ -109,10 +109,10 @@ private fun WindowTitlePane(
                             blurRadius = density.density
                         )
                     )
-                    AuroraLabel(
+                    LabelProjection(
                         contentModel = LabelContentModel(text = title),
                         presentationModel = LabelPresentationModel(textStyle = titleTextStyle)
-                    )
+                    ).project()
                 }
 
                 val colors = AuroraSkin.colors
@@ -131,8 +131,8 @@ private fun WindowTitlePane(
                 )
 
                 // Minimize button
-                AuroraCommandButton(
-                    command = Command(
+                CommandButtonProjection(
+                    contentModel = Command(
                         text = "",
                         action = {
                             AppManager.focusedWindow?.window?.extendedState =
@@ -161,13 +161,13 @@ private fun WindowTitlePane(
                         }
                     ),
                     presentationModel = titlePaneButtonPresentationModel
-                )
+                ).project()
 
                 Spacer(modifier = Modifier.width(4.dp))
 
                 // Maximize / Unmaximize button
-                AuroraCommandButton(
-                    command = Command(
+                CommandButtonProjection(
+                    contentModel = Command(
                         text = "",
                         action = {
                             val current = AppManager.focusedWindow
@@ -222,13 +222,13 @@ private fun WindowTitlePane(
                         }
                     ),
                     presentationModel = titlePaneButtonPresentationModel
-                )
+                ).project()
 
                 Spacer(modifier = Modifier.width(8.dp))
 
                 // Close button
-                AuroraCommandButton(
-                    command = Command(
+                CommandButtonProjection(
+                    contentModel = Command(
                         text = "",
                         action = {
                             AppManager.focusedWindow?.close()
@@ -256,7 +256,7 @@ private fun WindowTitlePane(
                         }
                     ),
                     presentationModel = titlePaneButtonPresentationModel
-                )
+                ).project()
             }
         }
     }

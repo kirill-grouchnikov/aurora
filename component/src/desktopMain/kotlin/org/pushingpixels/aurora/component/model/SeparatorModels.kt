@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 
 data class SeparatorContentModel(
     val enabled: Boolean = true
-)
+): ContentModel
 
 object SeparatorSizingConstants {
     val Thickness = 2.dp
@@ -30,4 +30,4 @@ object SeparatorSizingConstants {
 data class SeparatorPresentationModel(
     val startGradientAmount: Dp = SeparatorSizingConstants.DefaultGradientAmount,
     val endGradientAmount: Dp = SeparatorSizingConstants.DefaultGradientAmount
-)
+): PresentationModel

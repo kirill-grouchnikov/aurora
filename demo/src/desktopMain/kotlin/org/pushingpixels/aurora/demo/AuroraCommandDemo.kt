@@ -23,8 +23,6 @@ import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.AuroraSkinDefinition
 import org.pushingpixels.aurora.IconFilterStrategy
-import org.pushingpixels.aurora.component.AuroraCheckBox
-import org.pushingpixels.aurora.component.AuroraCommandButton
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.tango.*
@@ -53,38 +51,38 @@ fun DemoCommandRow(
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>
 ) {
     Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
-        AuroraCommandButton(
-            command = commandActionOnly,
+        CommandButtonProjection(
+            contentModel = commandActionOnly,
             presentationModel = CommandButtonPresentationModel(presentationState = presentationState)
-        )
+        ).project()
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        AuroraCommandButton(
-            command = commandSecondaryOnly,
+        CommandButtonProjection(
+            contentModel = commandSecondaryOnly,
             presentationModel = CommandButtonPresentationModel(presentationState = presentationState)
-        )
+        ).project()
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        AuroraCommandButton(
-            command = commandActionAndSecondary,
+        CommandButtonProjection(
+            contentModel = commandActionAndSecondary,
             presentationModel = CommandButtonPresentationModel(
                 presentationState = presentationState,
                 textClick = TextClick.Action
             )
-        )
+        ).project()
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        AuroraCommandButton(
-            command = commandActionAndSecondary,
+        CommandButtonProjection(
+            contentModel = commandActionAndSecondary,
             presentationModel = CommandButtonPresentationModel(
                 presentationState = presentationState,
                 textClick = TextClick.Popup
             ),
             overlays = overlays
-        )
+        ).project()
     }
 }
 
@@ -152,7 +150,7 @@ fun CommandDemoJustifyStrip(
         )
 
     CommandButtonStripProjection(
-        commandGroup = CommandGroup(
+        contentModel = CommandGroup(
             commands = listOf(
                 commandAlignCenter,
                 commandAlignLeft,
@@ -160,7 +158,7 @@ fun CommandDemoJustifyStrip(
                 commandAlignFill
             )
         ),
-        commandStripPresentationModel = CommandStripPresentationModel(
+        presentationModel = CommandStripPresentationModel(
             orientation = orientation,
             horizontalGapScaleFactor = horizontalGapScaleFactor
         )
@@ -215,14 +213,14 @@ fun CommandDemoEditStrip(
         )
 
     CommandButtonStripProjection(
-        commandGroup = CommandGroup(
+        contentModel = CommandGroup(
             commands = listOf(
                 commandCopy,
                 commandCut,
                 commandPaste
             )
         ),
-        commandStripPresentationModel = CommandStripPresentationModel(
+        presentationModel = CommandStripPresentationModel(
             orientation = orientation,
             horizontalGapScaleFactor = horizontalGapScaleFactor,
             iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -289,7 +287,7 @@ fun CommandDemoStyleStrip(
         )
 
     CommandButtonStripProjection(
-        commandGroup = CommandGroup(
+        contentModel = CommandGroup(
             commands = listOf(
                 commandBold,
                 commandItalic,
@@ -297,7 +295,7 @@ fun CommandDemoStyleStrip(
                 commandStrikethrough
             )
         ),
-        commandStripPresentationModel = CommandStripPresentationModel(
+        presentationModel = CommandStripPresentationModel(
             orientation = orientation,
             horizontalGapScaleFactor = horizontalGapScaleFactor,
             iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -543,23 +541,23 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
             ).project()
 
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
-                AuroraCheckBox(contentModel = SelectorContentModel(
+                CheckBoxProjection(contentModel = SelectorContentModel(
                     text = "action enabled",
                     selected = actionEnabled,
                     onTriggerSelectedChange = { actionEnabled = !actionEnabled }
-                ))
+                )).project()
                 Spacer(modifier = Modifier.width(8.dp))
-                AuroraCheckBox(contentModel = SelectorContentModel(
+                CheckBoxProjection(contentModel = SelectorContentModel(
                     text = "popup enabled",
                     selected = popupEnabled,
                     onTriggerSelectedChange = { popupEnabled = !popupEnabled }
-                ))
+                )).project()
             }
 
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
-                AuroraCommandButton(command = commandActionOnlyNoIcon)
+                CommandButtonProjection(contentModel = commandActionOnlyNoIcon).project()
                 Spacer(modifier = Modifier.width(8.dp))
-                AuroraCommandButton(command = commandActionToggle)
+                CommandButtonProjection(contentModel = commandActionToggle).project()
                 Spacer(modifier = Modifier.width(8.dp))
                 CommandDemoJustifyStrip(
                     enabled = actionEnabled,

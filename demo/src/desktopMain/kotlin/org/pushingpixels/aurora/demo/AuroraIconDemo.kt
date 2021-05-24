@@ -21,8 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.DecorationAreaType
-import org.pushingpixels.aurora.component.AuroraLabel
 import org.pushingpixels.aurora.component.model.LabelContentModel
+import org.pushingpixels.aurora.component.model.LabelProjection
 import org.pushingpixels.aurora.demo.svg.random.kirill
 import org.pushingpixels.aurora.demo.svg.random.marker
 import org.pushingpixels.aurora.demo.svg.random.pattern
@@ -58,19 +58,19 @@ fun IconDemoArea() {
         ) {
             Column(modifier = Modifier.wrapContentHeight()) {
                 AuroraIcon(icon = media_floppy.of(20.dp, 20.dp))
-                AuroraLabel(contentModel = LabelContentModel(text = "icon 1"))
+                LabelProjection(contentModel = LabelContentModel(text = "icon 1")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
                 AuroraIcon(icon = drive_harddisk.of(20.dp, 20.dp))
-                AuroraLabel(contentModel = LabelContentModel(text = "icon 2"))
+                LabelProjection(contentModel = LabelContentModel(text = "icon 2")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
                 AuroraIcon(icon = help_browser.of(20.dp, 20.dp))
-                AuroraLabel(contentModel = LabelContentModel(text = "icon 3"))
+                LabelProjection(contentModel = LabelContentModel(text = "icon 3")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
                 AuroraIcon(icon = system_search.of(20.dp, 20.dp))
-                AuroraLabel(contentModel = LabelContentModel(text = "icon 4"))
+                LabelProjection(contentModel = LabelContentModel(text = "icon 4")).project()
             }
         }
         Row(
@@ -79,11 +79,11 @@ fun IconDemoArea() {
         ) {
             Column(modifier = Modifier.wrapContentHeight()) {
                 AuroraIcon(icon = pattern.of(64.dp, 64.dp))
-                AuroraLabel(contentModel = LabelContentModel(text = "pattern"))
+                LabelProjection(contentModel = LabelContentModel(text = "pattern")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
                 AuroraIcon(icon = text.of(64.dp, 64.dp))
-                AuroraLabel(contentModel = LabelContentModel(text = "text"))
+                LabelProjection(contentModel = LabelContentModel(text = "text")).project()
             }
         }
         Row(
@@ -92,11 +92,11 @@ fun IconDemoArea() {
         ) {
             Column(modifier = Modifier.wrapContentHeight()) {
                 AuroraIcon(icon = marker.of(64.dp, 64.dp))
-                AuroraLabel(contentModel = LabelContentModel(text = "themed 3"))
+                LabelProjection(contentModel = LabelContentModel(text = "themed 3")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
                 AuroraIcon(icon = kirill.of(64.dp, 64.dp))
-                AuroraLabel(contentModel = LabelContentModel(text = "raster"))
+                LabelProjection(contentModel = LabelContentModel(text = "raster")).project()
             }
         }
     }

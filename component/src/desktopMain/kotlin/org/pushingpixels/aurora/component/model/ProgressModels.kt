@@ -22,12 +22,12 @@ import androidx.compose.ui.unit.dp
 
 data class ProgressIndeterminateContentModel(
     val enabled: Boolean = true,
-)
+): ContentModel
 
 data class ProgressDeterminateContentModel(
     val enabled: Boolean = true,
     val progress: Float
-)
+): ContentModel
 
 object ProgressConstants {
     val DefaultWidth = 192.dp
@@ -42,9 +42,9 @@ object ProgressConstants {
 
 data class ProgressCircularPresentationModel(
     val size: Dp = 10.dp
-)
+): PresentationModel
 
 data class ProgressLinearPresentationModel(
     val primarySize : Dp = ProgressConstants.DefaultWidth,
     val secondarySize : Dp = ProgressConstants.DefaultHeight
-)
+): PresentationModel

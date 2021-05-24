@@ -24,10 +24,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.component.AuroraLabel
 import org.pushingpixels.aurora.component.AuroraHorizontalScrollbar
 import org.pushingpixels.aurora.component.AuroraVerticalScrollbar
 import org.pushingpixels.aurora.component.model.LabelContentModel
+import org.pushingpixels.aurora.component.model.LabelProjection
 import org.pushingpixels.aurora.skin.businessSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 
@@ -89,6 +89,6 @@ fun TextBox(text: String = "Item") {
             .padding(start = 10.dp),
         contentAlignment = Alignment.CenterStart
     ) {
-        AuroraLabel(contentModel = LabelContentModel(text = text))
+        LabelProjection(contentModel = LabelContentModel(text = text)).project()
     }
 }

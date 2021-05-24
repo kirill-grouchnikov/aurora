@@ -73,7 +73,7 @@ private class CommandButtonDrawingCache(
 )
 
 @Composable
-fun AuroraCommandButton(
+internal fun AuroraCommandButton(
     modifier: Modifier = Modifier,
     command: Command,
     presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel(),

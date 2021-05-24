@@ -55,7 +55,7 @@ private class RadioButtonDrawingCache(
 )
 
 @Composable
-fun AuroraRadioButton(
+internal fun AuroraRadioButton(
     modifier: Modifier = Modifier,
     contentModel: SelectorContentModel,
     presentationModel: SelectorPresentationModel = SelectorPresentationModel()

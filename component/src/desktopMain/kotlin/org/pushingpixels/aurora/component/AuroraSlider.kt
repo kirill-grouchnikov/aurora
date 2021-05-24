@@ -67,7 +67,7 @@ private class SliderDrawingCache(
 )
 
 @Composable
-fun AuroraSlider(
+internal fun AuroraSlider(
     modifier: Modifier = Modifier,
     contentModel: SliderContentModel,
     presentationModel: SliderPresentationModel = SliderPresentationModel()

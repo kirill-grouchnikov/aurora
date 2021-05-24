@@ -24,7 +24,7 @@ data class SliderContentModel(
     val onTriggerValueChange: (Float) -> Unit,
     val onValueChangeEnd: () -> Unit = {},
     val enabled: Boolean = true
-)
+): ContentModel
 
 object SliderSizingConstants {
     val DefaultSliderContentPadding = PaddingValues(start = 0.dp, top = 8.dp, end = 0.dp, bottom = 8.dp)
@@ -39,4 +39,4 @@ data class SliderPresentationModel(
     val tickSteps: Int = 0, // Zero means continuous slider value range
     val snapToTicks: Boolean = false,
     val drawTicks: Boolean = false
-)
+): PresentationModel

@@ -611,8 +611,8 @@ private fun <E> ComboBoxPopupContent(
         }
         ComboBoxPopupColumn(contentSize = contentSize) {
             for (item in items) {
-                AuroraCommandButton(
-                    command = Command(
+                CommandButtonProjection(
+                    contentModel = Command(
                         text = displayConverter.invoke(item),
                         isActionEnabled = true,
                         action = { onItemSelected.invoke(item) }
@@ -623,7 +623,7 @@ private fun <E> ComboBoxPopupContent(
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                         horizontalAlignment = HorizontalAlignment.Leading
                     )
-                )
+                ).project()
             }
         }
     }

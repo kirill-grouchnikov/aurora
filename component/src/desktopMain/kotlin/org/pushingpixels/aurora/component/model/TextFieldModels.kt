@@ -27,14 +27,14 @@ data class TextFieldValueContentModel(
     val enabled: Boolean = true,
     val readOnly: Boolean = false,
     val onValueChange: (TextFieldValue) -> Unit
-)
+): ContentModel
 
 data class TextFieldStringContentModel(
     val value: String,
     val enabled: Boolean = true,
     val readOnly: Boolean = false,
     val onValueChange: (String) -> Unit
-)
+): ContentModel
 
 object TextFieldSizingConstants {
     val MinWidth = 200.dp
@@ -48,4 +48,4 @@ data class TextFieldPresentationModel(
     val singleLine: Boolean = false,
     val maxLines: Int = Int.MAX_VALUE,
     val visualTransformation: VisualTransformation = VisualTransformation.None
-)
+): PresentationModel
