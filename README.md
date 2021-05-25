@@ -22,8 +22,8 @@ Aurora snapshot builds are made available on Sonatype.
 Add the latest Kotlin and Compose Desktop dependencies:
 ```kotlin
 plugins {
-    kotlin("jvm") version "1.4.32"
-    id("org.jetbrains.compose") version "0.4.0-build185"
+    kotlin("jvm") version "1.5.10"
+    id("org.jetbrains.compose") version "0.4.0-build211"
 }
 ```
 
