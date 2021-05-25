@@ -50,7 +50,7 @@ Now you are ready for your first Aurora demo:
 fun main() = AuroraWindow(
     skin = marinerSkin(),
     title = "Aurora Demo",
-    size = IntSize(200, 150),
+    size = IntSize(220, 150),
     undecorated = true
 ) {
     var text by remember { mutableStateOf("Hello, World!") }
