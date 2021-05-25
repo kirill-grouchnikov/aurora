@@ -24,6 +24,10 @@ import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.AuroraSkinDefinition
 import org.pushingpixels.aurora.IconFilterStrategy
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.CheckBoxProjection
+import org.pushingpixels.aurora.component.projection.ComboBoxProjection
+import org.pushingpixels.aurora.component.projection.CommandButtonProjection
+import org.pushingpixels.aurora.component.projection.CommandButtonStripProjection
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.skin.getAuroraSkins

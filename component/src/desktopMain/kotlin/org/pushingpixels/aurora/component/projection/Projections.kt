@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.pushingpixels.aurora.component.model
+package org.pushingpixels.aurora.component.projection
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.pushingpixels.aurora.ButtonSides
 import org.pushingpixels.aurora.Side
 import org.pushingpixels.aurora.component.*
-import org.pushingpixels.aurora.component.projection.BaseProjection
-import org.pushingpixels.aurora.component.projection.CommandBasedProjection
+import org.pushingpixels.aurora.component.model.*
 
 class CommandButtonProjection(
     contentModel: Command,

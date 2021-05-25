@@ -43,6 +43,7 @@ import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.component.utils.TransitionAwareIcon
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.shaper.AuroraButtonShaper

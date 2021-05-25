@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.component.utils.*
 import java.awt.BorderLayout
 import java.awt.Dimension

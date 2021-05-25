@@ -30,8 +30,10 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
-import org.pushingpixels.aurora.component.*
+import org.pushingpixels.aurora.component.AuroraHorizontalSeparator
+import org.pushingpixels.aurora.component.AuroraVerticalSeparator
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.demo.svg.vaadin.*

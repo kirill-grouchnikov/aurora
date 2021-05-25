@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.component.AuroraHorizontalScrollbar
 import org.pushingpixels.aurora.component.AuroraVerticalScrollbar
 import org.pushingpixels.aurora.component.model.LabelContentModel
-import org.pushingpixels.aurora.component.model.LabelProjection
+import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.skin.businessSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 

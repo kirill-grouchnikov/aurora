@@ -34,6 +34,7 @@ import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.auroraBackground
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 
 private object WindowMenuBarLayout {
     private class CommandButtonLayoutManagerMenuBar(
