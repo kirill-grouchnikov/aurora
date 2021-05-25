@@ -93,10 +93,12 @@ private class ScrollBarDrawingCache(
 @Composable
 fun AuroraVerticalScrollbar(
     adapter: ScrollbarAdapter,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    reverseLayout: Boolean = false
 ) = Scrollbar(
     adapter,
     modifier,
+    reverseLayout,
     isVertical = true
 )
 
@@ -126,10 +128,12 @@ fun AuroraVerticalScrollbar(
 @Composable
 fun AuroraHorizontalScrollbar(
     adapter: ScrollbarAdapter,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    reverseLayout: Boolean = false
 ) = Scrollbar(
     adapter,
     modifier,
+    reverseLayout,
     isVertical = false
 )
 
@@ -137,6 +141,7 @@ fun AuroraHorizontalScrollbar(
 private fun Scrollbar(
     adapter: ScrollbarAdapter,
     modifier: Modifier = Modifier,
+    reverseLayout: Boolean,
     isVertical: Boolean
 ) = with(LocalDensity.current) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -259,8 +264,8 @@ private fun Scrollbar(
     var containerSize by remember { mutableStateOf(0) }
 
     val minimalHeight = ScrollBarSizingConstants.DefaultScrollBarMinimumHeight.toPx()
-    val sliderAdapter = remember(adapter, containerSize, minimalHeight) {
-        SliderAdapter(adapter, containerSize, minimalHeight)
+    val sliderAdapter = remember(adapter, containerSize, minimalHeight, reverseLayout) {
+        SliderAdapter(adapter, containerSize, minimalHeight, reverseLayout)
     }
 
     val scrollThickness = ScrollBarSizingConstants.DefaultScrollBarThickness.roundToPx()
@@ -473,7 +478,8 @@ private fun Modifier.scrollOnPressOutsideSlider(
 private class SliderAdapter(
     val adapter: ScrollbarAdapter,
     val containerSize: Int,
-    val minHeight: Float
+    val minHeight: Float,
+    val reverseLayout: Boolean
 ) {
     private val contentSize get() = adapter.maxScrollOffset(containerSize) + containerSize
     private val visiblePart get() = containerSize.toFloat() / contentSize
@@ -490,11 +496,21 @@ private class SliderAdapter(
             return if (extraContentSpace == 0f) 1f else extraScrollbarSpace / extraContentSpace
         }
 
-    var position: Float
+    private var rawPosition: Float
         get() = scrollScale * adapter.scrollOffset
         set(value) {
             runBlocking {
                 adapter.scrollTo(containerSize, value / scrollScale)
+            }
+        }
+
+    var position: Float
+        get() = if (reverseLayout) containerSize - size - rawPosition else rawPosition
+        set(value) {
+            rawPosition = if (reverseLayout) {
+                containerSize - size - value
+            } else {
+                value
             }
         }
 
