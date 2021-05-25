@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.resolveDefaults
+import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -41,7 +42,7 @@ import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 import kotlin.system.exitProcess
 
-@ExperimentalComposeApi
+@ExperimentalUnitApi
 fun main() {
     val skin = mutableStateOf(marinerSkin())
 
@@ -271,7 +272,7 @@ fun DemoFooter(
     }
 }
 
-@ExperimentalComposeApi
+@ExperimentalUnitApi
 @Composable
 fun DemoHeader(
     text: String,
@@ -311,7 +312,7 @@ fun DemoHeader(
     }
 }
 
-@ExperimentalComposeApi
+@ExperimentalUnitApi
 @Composable
 fun DemoArea(
     modifier: Modifier = Modifier,
@@ -777,7 +778,7 @@ fun DemoArea(
     }
 }
 
-@ExperimentalComposeApi
+@ExperimentalUnitApi
 @Composable
 fun DemoContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
     val contentEnabled = remember { mutableStateOf(true) }
