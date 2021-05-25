@@ -69,3 +69,7 @@ fun main() = AuroraWindow(
     }
 }
 ```
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/helloworld.png" width="266" height="196" border=0>
+</p>
