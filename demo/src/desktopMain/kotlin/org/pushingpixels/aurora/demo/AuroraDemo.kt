@@ -299,7 +299,7 @@ fun DemoHeader(
         AuroraHorizontalSeparator(modifier = Modifier.weight(1.0f, fill = true))
         LabelProjection(
             contentModel = LabelContentModel(
-                text = text.toUpperCase(),
+                text = text.uppercase(),
                 enabled = contentEnabled.value,
                 iconFactory = iconFactory,
             ),

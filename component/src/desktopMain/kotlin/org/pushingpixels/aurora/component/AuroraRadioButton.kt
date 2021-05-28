@@ -238,7 +238,7 @@ internal fun AuroraRadioButton(
             modelStateInfo.stateContributionMap
                 .filter { it.key.isFacetActive(ComponentStateFacet.SELECTION) }
                 .map { it.value }
-                .sumByDouble { it.contribution.toDouble() }
+                .sumOf { it.contribution.toDouble() }
                 .toFloat()
 
         // Text color. Note that the text doesn't "participate" in state changes that

@@ -455,7 +455,7 @@ internal fun AuroraCommandButton(
                             // non-disabled states - ignoring ComponentState.ENABLED
                             actionModelStateInfo.stateContributionMap
                                 .filter { !it.key.isDisabled && (it.key != ComponentState.ENABLED) }
-                                .values.sumByDouble { it.contribution.toDouble() }.toFloat()
+                                .values.sumOf { it.contribution.toDouble() }.toFloat()
                         } else {
                             if (currentActionState.value.isDisabled)
                                 skinColors.getAlpha(
@@ -680,7 +680,7 @@ internal fun AuroraCommandButton(
                             // non-disabled states - ignoring ComponentState.ENABLED
                             popupModelStateInfo.stateContributionMap
                                 .filter { !it.key.isDisabled && (it.key != ComponentState.ENABLED) }
-                                .values.sumByDouble { it.contribution.toDouble() }.toFloat()
+                                .values.sumOf { it.contribution.toDouble() }.toFloat()
                         } else {
                             if (currentPopupState.value.isDisabled)
                                 skinColors.getAlpha(
@@ -1281,7 +1281,7 @@ private fun CommandButtonPopupColumn(contentSize: AuroraSize, content: @Composab
         }
 
         // The children are laid out in a column
-        val contentMaxHeight = placeables.sumBy { it.height }
+        val contentMaxHeight = placeables.sumOf { it.height }
         contentSize.width = contentTotalWidth
         contentSize.height = contentMaxHeight
 

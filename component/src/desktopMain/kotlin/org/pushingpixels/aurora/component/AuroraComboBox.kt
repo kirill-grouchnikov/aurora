@@ -345,7 +345,7 @@ internal fun <E> AuroraComboBox(
                 // non-disabled states - ignoring ComponentState.ENABLED
                 alpha = modelStateInfo.stateContributionMap
                     .filter { !it.key.isDisabled && (it.key != ComponentState.ENABLED) }
-                    .values.sumByDouble { it.contribution.toDouble() }.toFloat()
+                    .values.sumOf { it.contribution.toDouble() }.toFloat()
             } else {
                 alpha = if (currentState.value.isDisabled)
                     AuroraSkin.colors.getAlpha(decorationAreaType, currentState.value) else 1.0f
@@ -474,7 +474,7 @@ internal fun <E> AuroraComboBox(
                 }
 
                 // The children are laid out in a row
-                val contentTotalWidth = placeables.sumBy { it.width }
+                val contentTotalWidth = placeables.sumOf { it.width }
                 // And the height of the row is determined by the height of the tallest child
                 val contentMaxHeight = placeables.maxOf { it.height }
 
@@ -642,7 +642,7 @@ private fun ComboBoxPopupColumn(contentSize: AuroraSize, content: @Composable ()
         }
 
         // The children are laid out in a column
-        val contentMaxHeight = placeables.sumBy { it.height }
+        val contentMaxHeight = placeables.sumOf { it.height }
         contentSize.width = contentTotalWidth
         contentSize.height = contentMaxHeight
 
