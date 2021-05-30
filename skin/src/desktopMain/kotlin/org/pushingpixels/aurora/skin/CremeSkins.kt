@@ -29,7 +29,6 @@ import org.pushingpixels.aurora.painter.overlay.BottomShadowOverlayPainter
 import org.pushingpixels.aurora.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.utils.getColorSchemes
 
-
 private fun cremeBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
     val result = AuroraSkinColors()
     val kitchenSinkSchemes = getColorSchemes(

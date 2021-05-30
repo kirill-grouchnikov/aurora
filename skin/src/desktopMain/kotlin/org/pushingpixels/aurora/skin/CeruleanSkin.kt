@@ -25,7 +25,6 @@ import org.pushingpixels.aurora.painter.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.utils.getColorSchemes
 
-
 private fun ceruleanSkinColors(): AuroraSkinColors {
     val result = AuroraSkinColors()
     val schemes = getColorSchemes(

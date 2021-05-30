@@ -26,7 +26,6 @@ import org.pushingpixels.aurora.painter.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.utils.getColorSchemes
 
-
 private fun businessBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
     val result = AuroraSkinColors()
     val businessSchemes = getColorSchemes(

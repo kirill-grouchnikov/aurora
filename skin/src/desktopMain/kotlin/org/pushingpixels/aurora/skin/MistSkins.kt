@@ -25,7 +25,6 @@ import org.pushingpixels.aurora.painter.fill.MatteFillPainter
 import org.pushingpixels.aurora.shaper.PillButtonShaper
 import org.pushingpixels.aurora.utils.getColorSchemes
 
-
 private fun mistBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
     val result = AuroraSkinColors()
     val schemes = getColorSchemes(

@@ -29,7 +29,6 @@ import org.pushingpixels.aurora.painter.overlay.TopLineOverlayPainter
 import org.pushingpixels.aurora.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.utils.getColorSchemes
 
-
 private fun dustBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
     val result = AuroraSkinColors()
     val schemes = getColorSchemes(

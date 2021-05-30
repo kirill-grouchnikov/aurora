@@ -27,7 +27,6 @@ import org.pushingpixels.aurora.painter.overlay.BottomShadowOverlayPainter
 import org.pushingpixels.aurora.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.utils.getColorSchemes
 
-
 private fun greenMagicSkinColors(): AuroraSkinColors {
     val result = AuroraSkinColors()
     val schemes = getColorSchemes(

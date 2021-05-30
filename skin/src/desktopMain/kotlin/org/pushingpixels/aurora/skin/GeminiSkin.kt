@@ -32,7 +32,6 @@ import org.pushingpixels.aurora.painter.overlay.TopLineOverlayPainter
 import org.pushingpixels.aurora.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.utils.getColorSchemes
 
-
 /**
  * Applies the specified highlight schemes on the relevant parts of the
  * specified scheme bundle.
