@@ -87,7 +87,7 @@ internal fun AuroraCommandButton(
         presentationModel = presentationModel,
         overlays = overlays,
         textStyle = null,
-        buttonSides = ButtonSides(
+        buttonSides = Sides(
             straightSides = if (presentationModel.isMenu) Side.values().toSet() else emptySet()
         )
     )
@@ -102,7 +102,7 @@ internal fun AuroraCommandButton(
     presentationModel: CommandButtonPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
     textStyle: TextStyle? = null,
-    buttonSides: ButtonSides
+    buttonSides: Sides
 ) {
     val drawingCache = remember { CommandButtonDrawingCache() }
 
@@ -984,6 +984,7 @@ private fun CommandButtonTextContent(
         currState = currState,
         skinColors = skinColors,
         decorationAreaType = decorationAreaType,
+        colorSchemeAssociationKind = ColorSchemeAssociationKind.FILL,
         isTextInFilledArea = true
     )
 
@@ -1013,6 +1014,7 @@ private fun CommandButtonExtraTextContent(
         currState = currState,
         skinColors = skinColors,
         decorationAreaType = decorationAreaType,
+        colorSchemeAssociationKind = ColorSchemeAssociationKind.FILL,
         isTextInFilledArea = true
     )
 
@@ -1068,6 +1070,7 @@ private fun CommandButtonIconContent(
             currState = currState,
             skinColors = skinColors,
             decorationAreaType = decorationAreaType,
+            colorSchemeAssociationKind = ColorSchemeAssociationKind.FILL,
             isTextInFilledArea = true
         )
 
@@ -1258,7 +1261,7 @@ private fun CommandButtonPopupContent(
                         overlays = overlays,
                         textStyle = if (secondaryCommand == command.secondaryContentModel.highlightedCommand)
                             TextStyle(fontWeight = FontWeight.Bold) else null,
-                        buttonSides = ButtonSides(straightSides = Side.values().toSet())
+                        buttonSides = Sides(straightSides = Side.values().toSet())
                     )
                 }
                 if (commandGroupIndex < (command.secondaryContentModel.groups.size - 1)) {

@@ -247,6 +247,7 @@ internal fun getTextColor(
     currState: ComponentState,
     skinColors: AuroraSkinColors,
     decorationAreaType: DecorationAreaType,
+    colorSchemeAssociationKind: ColorSchemeAssociationKind,
     isTextInFilledArea: Boolean
 ): Color {
     var activeStates: Map<ComponentState, StateContributionInfo>? =
@@ -259,7 +260,11 @@ internal fun getTextColor(
         activeStates = null
     }
 
-    val colorScheme = skinColors.getColorScheme(decorationAreaType, tweakedCurrState)
+    val colorScheme = skinColors.getColorScheme(
+        decorationAreaType = decorationAreaType,
+        associationKind = colorSchemeAssociationKind,
+        componentState = tweakedCurrState
+    )
     var foreground: Color
     if (tweakedCurrState.isDisabled || activeStates == null || activeStates.size == 1) {
         // Disabled state or only one active state being tracked
@@ -271,7 +276,10 @@ internal fun getTextColor(
         var aggrBlue = 0f
         for ((activeState, value) in activeStates) {
             val contribution = value.contribution
-            val activeColorScheme = skinColors.getColorScheme(decorationAreaType, activeState)
+            val activeColorScheme = skinColors.getColorScheme(
+                decorationAreaType = decorationAreaType,
+                associationKind = colorSchemeAssociationKind,
+                componentState = activeState)
             val activeForeground = activeColorScheme.foregroundColor
             aggrRed += contribution * activeForeground.red
             aggrGreen += contribution * activeForeground.green
@@ -413,7 +421,8 @@ internal fun getTextFillBackground(
     skinColors: AuroraSkinColors,
     decorationAreaType: DecorationAreaType
 ): Color {
-    val stateForQuery = if (currState.isDisabled) ComponentState.DISABLED_UNSELECTED else ComponentState.ENABLED
+    val stateForQuery =
+        if (currState.isDisabled) ComponentState.DISABLED_UNSELECTED else ComponentState.ENABLED
     val fillColorScheme = skinColors.getColorScheme(
         decorationAreaType = decorationAreaType,
         associationKind = ColorSchemeAssociationKind.FILL,

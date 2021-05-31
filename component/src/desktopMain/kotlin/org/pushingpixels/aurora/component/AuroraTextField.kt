@@ -242,6 +242,7 @@ internal fun AuroraTextField(
         currState = currentState.value,
         skinColors = AuroraSkin.colors,
         decorationAreaType = decorationAreaType,
+        colorSchemeAssociationKind = ColorSchemeAssociationKind.FILL,
         isTextInFilledArea = false
     )
     val textStyle = LocalTextStyle.current.merge(TextStyle(color = textColor))

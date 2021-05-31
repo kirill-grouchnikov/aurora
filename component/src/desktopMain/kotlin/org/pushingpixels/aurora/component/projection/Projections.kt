@@ -17,7 +17,7 @@ package org.pushingpixels.aurora.component.projection
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import org.pushingpixels.aurora.ButtonSides
+import org.pushingpixels.aurora.Sides
 import org.pushingpixels.aurora.Side
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
@@ -42,7 +42,7 @@ class CommandButtonProjection(
             presentationModel = this.presentationModel,
             overlays = this.overlays ?: mapOf(),
             textStyle = null,
-            buttonSides = ButtonSides(
+            buttonSides = Sides(
                 straightSides = if (presentationModel.isMenu) Side.values().toSet() else emptySet()
             )
         )

@@ -19,7 +19,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import org.pushingpixels.aurora.AuroraTrait
-import org.pushingpixels.aurora.ButtonSides
+import org.pushingpixels.aurora.Sides
 
 /**
  * Button shaper interface.
@@ -30,7 +30,7 @@ interface AuroraButtonShaper : AuroraTrait {
     /** Returns the outline path. */
     fun getButtonOutline(
         width: Float, height: Float, extraInsets: Float,
-        isInner: Boolean, sides: ButtonSides, drawScope: DrawScope
+        isInner: Boolean, sides: Sides, drawScope: DrawScope
     ): Outline
 
     /**

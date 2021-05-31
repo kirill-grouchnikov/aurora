@@ -296,6 +296,7 @@ internal fun <E> AuroraComboBox(
             currState = currentState.value,
             skinColors = skinColors,
             decorationAreaType = decorationAreaType,
+            colorSchemeAssociationKind = ColorSchemeAssociationKind.FILL,
             isTextInFilledArea = true
         )
         // And the arrow color
@@ -369,7 +370,7 @@ internal fun <E> AuroraComboBox(
                         height = height,
                         extraInsets = 0.5f,
                         isInner = false,
-                        sides = ButtonSides(),
+                        sides = Sides(),
                         drawScope = this
                     )
 
@@ -407,7 +408,7 @@ internal fun <E> AuroraComboBox(
                             height = height,
                             extraInsets = 1.0f,
                             isInner = true,
-                            sides = ButtonSides(),
+                            sides = Sides(),
                             drawScope = this
                         ) else null
 

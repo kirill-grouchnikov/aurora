@@ -248,6 +248,7 @@ internal fun AuroraRadioButton(
             currState = currentState.value,
             skinColors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
+            colorSchemeAssociationKind = ColorSchemeAssociationKind.FILL,
             isTextInFilledArea = false
         )
         val alpha = if (currentState.value.isDisabled)

@@ -663,7 +663,7 @@ enum class Side {
 }
 
 @Immutable
-data class ButtonSides(
+data class Sides(
     val openSides: Set<Side> = emptySet(),
     val straightSides: Set<Side> = emptySet()
 )

@@ -20,20 +20,19 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.ColorSchemeAssociationKind
-import org.pushingpixels.aurora.ComponentState
+import org.pushingpixels.aurora.Side
+import org.pushingpixels.aurora.Sides
 import org.pushingpixels.aurora.component.AuroraHorizontalScrollbar
 import org.pushingpixels.aurora.component.AuroraVerticalScrollbar
 import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.model.LabelPresentationModel
 import org.pushingpixels.aurora.component.projection.LabelProjection
-import org.pushingpixels.aurora.component.renderer.AuroraListRowRenderer
+import org.pushingpixels.aurora.component.renderer.AuroraRenderer
 import org.pushingpixels.aurora.skin.marinerSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 
@@ -64,8 +63,7 @@ fun main() {
             ).project()
 
             Box(
-                modifier = Modifier.fillMaxSize()
-                    .padding(10.dp)
+                modifier = Modifier.fillMaxSize().padding(10.dp)
             ) {
                 val stateVertical = rememberScrollState(0)
                 val stateHorizontal = rememberScrollState(0)
@@ -79,8 +77,12 @@ fun main() {
                 ) {
                     Column {
                         for (item in 0..30) {
-                            AuroraListRowRenderer(
+                            AuroraRenderer(
                                 modifier = Modifier.size(width = 400.dp, height = 32.dp),
+                                fillAssociationKind = ColorSchemeAssociationKind.HIGHLIGHT,
+                                borderAssociationKind = ColorSchemeAssociationKind.HIGHLIGHT_BORDER,
+                                sides = Sides(straightSides = Side.values().toSet()),
+                                selected = (stateSelection.value == item),
                                 onSelect = { stateSelection.value = item },
                                 content = {
                                     LabelProjection(

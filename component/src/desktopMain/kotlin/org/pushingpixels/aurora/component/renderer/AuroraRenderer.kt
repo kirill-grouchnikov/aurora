@@ -13,35 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.pushingpixels.aurora.component
+package org.pushingpixels.aurora.component.renderer
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerMoveFilter
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
-import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.component.model.SelectorContentModel
-import org.pushingpixels.aurora.component.model.SelectorPresentationModel
-import org.pushingpixels.aurora.component.model.SelectorSizingConstants
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.utils.getBaseOutline
 
 @Immutable
-private class CheckBoxDrawingCache(
+private class RendererDrawingCache(
     val colorScheme: MutableColorScheme = MutableColorScheme(
         displayName = "Internal mutable",
         isDark = false,
@@ -52,36 +45,42 @@ private class CheckBoxDrawingCache(
         dark = Color.White,
         ultraDark = Color.White,
         foreground = Color.Black
-    ),
-    val markPath: Path = Path()
+    )
 )
 
 @Composable
-internal fun AuroraCheckBox(
+fun AuroraRenderer(
     modifier: Modifier = Modifier,
-    contentModel: SelectorContentModel,
-    presentationModel: SelectorPresentationModel = SelectorPresentationModel()
+    selected: Boolean = false,
+    fillAssociationKind: ColorSchemeAssociationKind = ColorSchemeAssociationKind.FILL,
+    borderAssociationKind: ColorSchemeAssociationKind = ColorSchemeAssociationKind.BORDER,
+    sides: Sides = Sides(),
+    onSelect: () -> Unit,
+    content: @Composable () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    val drawingCache = remember { CheckBoxDrawingCache() }
+    val drawingCache = remember { RendererDrawingCache() }
     var rollover by remember { mutableStateOf(false) }
     val isPressed by interactionSource.collectIsPressedAsState()
 
     val currentState = remember {
         mutableStateOf(
             ComponentState.getState(
-                isEnabled = contentModel.enabled,
+                isEnabled = true,
                 isRollover = rollover,
-                isSelected = contentModel.selected,
+                isSelected = selected,
                 isPressed = isPressed
             )
         )
     }
 
-    val markAlpha = remember { mutableStateOf(if (contentModel.selected) 1.0f else 0.0f) }
+    val decorationAreaType = AuroraSkin.decorationAreaType
+    val skinColors = AuroraSkin.colors
+    val buttonShaper = AuroraSkin.buttonShaper
+    val painters = AuroraSkin.painters
 
     // Transition for the selection state
-    val selectionTransition = updateTransition(contentModel.selected)
+    val selectionTransition = updateTransition(selected)
     val selectedFraction by selectionTransition.animateFloat(
         transitionSpec = {
             tween(durationMillis = AuroraSkin.animationConfig.regular)
@@ -120,7 +119,7 @@ internal fun AuroraCheckBox(
     }
 
     // Transition for the enabled state
-    val enabledTransition = updateTransition(contentModel.enabled)
+    val enabledTransition = updateTransition(true)
     val enabledFraction by enabledTransition.animateFloat(
         transitionSpec = {
             tween(durationMillis = AuroraSkin.animationConfig.regular)
@@ -144,8 +143,8 @@ internal fun AuroraCheckBox(
         modelStateInfo = modelStateInfo,
         currentState = currentState,
         transitionInfo = transitionInfo,
-        enabled = contentModel.enabled,
-        selected = contentModel.selected,
+        enabled = true,
+        selected = selected,
         rollover = rollover,
         pressed = isPressed,
         duration = AuroraSkin.animationConfig.regular
@@ -177,12 +176,13 @@ internal fun AuroraCheckBox(
         }
     }
 
-    // The toggleable modifier is set on the checkbox mark, as well as on the
-    // content so that the whole thing is clickable to toggle the control.
-    val decorationAreaType = AuroraSkin.decorationAreaType
-    Row(
+    Box(
         modifier = modifier
-            .padding(presentationModel.contentPadding)
+            .clickable(
+                onClick = onSelect,
+                interactionSource = interactionSource,
+                indication = null
+            )
             .pointerMoveFilter(
                 onEnter = {
                     rollover = true
@@ -195,27 +195,26 @@ internal fun AuroraCheckBox(
                 onMove = {
                     false
                 })
-            .toggleable(
-                value = contentModel.selected,
-                onValueChange = {
-                    contentModel.onTriggerSelectedChange.invoke(it)
-                },
-                enabled = contentModel.enabled,
-                role = Role.Checkbox,
-                interactionSource = interactionSource,
-                indication = null
-            ),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = presentationModel.horizontalAlignment.arrangement
+            .padding(start = 10.dp),
+        contentAlignment = Alignment.CenterStart
     ) {
-        // Populate the cached color scheme for filling the markbox
+        // Compute the text color
+        val textColor = getTextColor(
+            modelStateInfo = modelStateInfo,
+            currState = currentState.value,
+            skinColors = skinColors,
+            decorationAreaType = decorationAreaType,
+            colorSchemeAssociationKind = fillAssociationKind,
+            isTextInFilledArea = true
+        )
+
+        // Populate the cached color scheme for filling the combobox
         // based on the current model state info
         populateColorScheme(
             drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-            ColorSchemeAssociationKind.MARK_BOX
+            fillAssociationKind
         )
-
-        // And retrieve the mark box colors
+        // And retrieve the container fill colors
         val fillUltraLight = drawingCache.colorScheme.ultraLightColor
         val fillExtraLight = drawingCache.colorScheme.extraLightColor
         val fillLight = drawingCache.colorScheme.lightColor
@@ -224,13 +223,13 @@ internal fun AuroraCheckBox(
         val fillUltraDark = drawingCache.colorScheme.ultraDarkColor
         val fillIsDark = drawingCache.colorScheme.isDark
 
-        // Populate the cached color scheme for drawing the markbox border
+        // Populate the cached color scheme for drawing the border
         // based on the current model state info
         populateColorScheme(
             drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-            ColorSchemeAssociationKind.BORDER
+            borderAssociationKind
         )
-        // And retrieve the mark box border colors
+        // And retrieve the border colors
         val borderUltraLight = drawingCache.colorScheme.ultraLightColor
         val borderExtraLight = drawingCache.colorScheme.extraLightColor
         val borderLight = drawingCache.colorScheme.lightColor
@@ -239,122 +238,87 @@ internal fun AuroraCheckBox(
         val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
         val borderIsDark = drawingCache.colorScheme.isDark
 
-        // Mark color
-        val markColor = getStateAwareColor(
-            modelStateInfo, currentState.value,
-            decorationAreaType, ColorSchemeAssociationKind.MARK
-        ) { it.markColor }
-
-        // Checkmark alpha is the combined strength of all the
-        // states that have the selection bit turned on
-        markAlpha.value = modelStateInfo.stateContributionMap
-            .filter { it.key.isFacetActive(ComponentStateFacet.SELECTION) }
-            .map { it.value }
-            .sumOf { it.contribution.toDouble() }
-            .toFloat()
-
-        // Text color. Note that the text doesn't "participate" in state changes that
-        // involve rollover, selection or pressed bits
-        val textColor = getTextColor(
-            modelStateInfo = modelStateInfo,
-            currState = currentState.value,
-            skinColors = AuroraSkin.colors,
-            decorationAreaType = decorationAreaType,
-            colorSchemeAssociationKind = ColorSchemeAssociationKind.FILL,
-            isTextInFilledArea = false
-        )
-        val alpha = if (currentState.value.isDisabled)
-            AuroraSkin.colors.getAlpha(decorationAreaType, currentState.value) else 1.0f
-
         val fillPainter = AuroraSkin.painters.fillPainter
         val borderPainter = AuroraSkin.painters.borderPainter
 
-        Canvas(Modifier.wrapContentSize(Alignment.Center).size(presentationModel.markSize)) {
+        // Compute the combined contribution of all non-disabled states -
+        // ignoring ComponentState.ENABLED
+        val alpha = modelStateInfo.stateContributionMap
+            .filter { !it.key.isDisabled && (it.key != ComponentState.ENABLED) }
+            .values.sumOf { it.contribution.toDouble() }.toFloat()
+
+        Canvas(Modifier.matchParentSize()) {
             val width = this.size.width
             val height = this.size.height
 
-            val outline = getBaseOutline(
-                width = this.size.width,
-                height = this.size.height,
-                radius = 3.0f.dp.toPx(),
-                straightSides = null,
-                insets = 0.5f
-            )
+            withTransform({
+                clipRect(
+                    left = 0.0f,
+                    top = 0.0f,
+                    right = width,
+                    bottom = height,
+                    clipOp = ClipOp.Intersect
+                )
+            }) {
+                val outline = buttonShaper.getButtonOutline(
+                    width = width,
+                    height = height,
+                    extraInsets = 0.5f,
+                    isInner = false,
+                    sides = sides,
+                    drawScope = this
+                )
 
-            // Populate the cached color scheme for filling the markbox
-            drawingCache.colorScheme.ultraLight = fillUltraLight
-            drawingCache.colorScheme.extraLight = fillExtraLight
-            drawingCache.colorScheme.light = fillLight
-            drawingCache.colorScheme.mid = fillMid
-            drawingCache.colorScheme.dark = fillDark
-            drawingCache.colorScheme.ultraDark = fillUltraDark
-            drawingCache.colorScheme.isDark = fillIsDark
-            drawingCache.colorScheme.foreground = textColor
-            fillPainter.paintContourBackground(
-                this, this.size, outline, drawingCache.colorScheme, alpha
-            )
+                val outlineBoundingRect = outline.bounds
+                if (outlineBoundingRect.isEmpty) {
+                    return@withTransform
+                }
 
-            // Populate the cached color scheme for drawing the markbox border
-            drawingCache.colorScheme.ultraLight = borderUltraLight
-            drawingCache.colorScheme.extraLight = borderExtraLight
-            drawingCache.colorScheme.light = borderLight
-            drawingCache.colorScheme.mid = borderMid
-            drawingCache.colorScheme.dark = borderDark
-            drawingCache.colorScheme.ultraDark = borderUltraDark
-            drawingCache.colorScheme.isDark = borderIsDark
-            drawingCache.colorScheme.foreground = textColor
+                // Populate the cached color scheme for filling the combobox
+                drawingCache.colorScheme.ultraLight = fillUltraLight
+                drawingCache.colorScheme.extraLight = fillExtraLight
+                drawingCache.colorScheme.light = fillLight
+                drawingCache.colorScheme.mid = fillMid
+                drawingCache.colorScheme.dark = fillDark
+                drawingCache.colorScheme.ultraDark = fillUltraDark
+                drawingCache.colorScheme.isDark = fillIsDark
+                drawingCache.colorScheme.foreground = textColor
+                fillPainter.paintContourBackground(
+                    this, this.size, outline, drawingCache.colorScheme, alpha
+                )
 
-            val outlineInner = if (borderPainter.isPaintingInnerOutline) getBaseOutline(
-                width = this.size.width,
-                height = this.size.height,
-                radius = 3.0f.dp.toPx() - 1,
-                straightSides = null,
-                insets = 2.0f
-            ) else null
+                // Populate the cached color scheme for drawing the border
+                drawingCache.colorScheme.ultraLight = borderUltraLight
+                drawingCache.colorScheme.extraLight = borderExtraLight
+                drawingCache.colorScheme.light = borderLight
+                drawingCache.colorScheme.mid = borderMid
+                drawingCache.colorScheme.dark = borderDark
+                drawingCache.colorScheme.ultraDark = borderUltraDark
+                drawingCache.colorScheme.isDark = borderIsDark
+                drawingCache.colorScheme.foreground = textColor
 
-            borderPainter.paintBorder(
-                this, this.size, outline, outlineInner, drawingCache.colorScheme, alpha
-            )
+                val innerOutline = if (borderPainter.isPaintingInnerOutline)
+                    buttonShaper.getButtonOutline(
+                        width = width,
+                        height = height,
+                        extraInsets = 1.0f,
+                        isInner = true,
+                        sides = sides,
+                        drawScope = this
+                    ) else null
 
-            // Draw the checkbox mark with the alpha that corresponds to the current
-            // selection and potential transition
-            val markStroke = 0.12f * width
-
-            with(drawingCache) {
-                markPath.reset()
-                markPath.moveTo(0.25f * width, 0.48f * height)
-                markPath.lineTo(0.48f * width, 0.73f * height)
-                markPath.lineTo(0.76f * width, 0.28f * height)
-
-                // Note that we apply alpha twice - once for the selected / checked
-                // state or transition, and the second time based on the enabled state
-                drawPath(
-                    path = markPath,
-                    color = markColor.withAlpha(markAlpha.value),
-                    style = Stroke(
-                        width = markStroke,
-                        cap = StrokeCap.Round,
-                        join = StrokeJoin.Round
-                    ),
-                    alpha = alpha
+                borderPainter.paintBorder(
+                    this, this.size, outline, innerOutline, drawingCache.colorScheme, alpha
                 )
             }
         }
-        Spacer(modifier = Modifier.width(SelectorSizingConstants.SelectorMarkTextGap *
-                presentationModel.horizontalGapScaleFactor))
+
         // Pass our text color and model state snapshot to the children
         CompositionLocalProvider(
             LocalTextColor provides textColor,
             LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value)
         ) {
-            Box(
-                modifier = Modifier.requiredSizeIn(
-                    minWidth = 0.dp,
-                    minHeight = presentationModel.markSize
-                )
-            ) {
-                AuroraText(text = contentModel.text)
-            }
+            content()
         }
     }
 }

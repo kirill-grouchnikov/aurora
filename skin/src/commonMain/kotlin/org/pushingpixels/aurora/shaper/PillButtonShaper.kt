@@ -18,7 +18,7 @@ package org.pushingpixels.aurora.shaper
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import org.pushingpixels.aurora.ButtonSides
+import org.pushingpixels.aurora.Sides
 import org.pushingpixels.aurora.utils.getBaseOutline
 
 /**
@@ -35,7 +35,7 @@ class PillButtonShaper : AuroraButtonShaper, RectangularButtonShaper {
         height: Float,
         extraInsets: Float,
         isInner: Boolean,
-        sides: ButtonSides,
+        sides: Sides,
         drawScope: DrawScope
     ): Outline {
         var radius = getCornerRadius(width, height, extraInsets, drawScope)

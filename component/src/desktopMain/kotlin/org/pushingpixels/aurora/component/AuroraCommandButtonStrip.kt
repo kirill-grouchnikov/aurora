@@ -19,7 +19,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import org.pushingpixels.aurora.ButtonSides
+import org.pushingpixels.aurora.Sides
 import org.pushingpixels.aurora.Side
 import org.pushingpixels.aurora.component.model.*
 
@@ -54,7 +54,7 @@ private fun CommandButtonStripContent(
                 commandButtonPresentationModel.overlayWith(overlay = overlays[command]!!)
             else commandButtonPresentationModel,
             overlays = overlays,
-            buttonSides = ButtonSides(openSides = openSides, straightSides = straightSides)
+            buttonSides = Sides(openSides = openSides, straightSides = straightSides)
         )
     }
 }

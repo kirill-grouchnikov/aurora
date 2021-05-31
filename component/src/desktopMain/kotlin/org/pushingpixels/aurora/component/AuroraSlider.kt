@@ -354,6 +354,7 @@ internal fun AuroraSlider(
             currState = currentState.value,
             skinColors = skinColors,
             decorationAreaType = decorationAreaType,
+            colorSchemeAssociationKind = ColorSchemeAssociationKind.FILL,
             isTextInFilledArea = true
         )
 
