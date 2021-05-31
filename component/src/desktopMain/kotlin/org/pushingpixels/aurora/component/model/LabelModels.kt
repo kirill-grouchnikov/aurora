@@ -40,6 +40,7 @@ data class LabelPresentationModel(
     val iconDimension: Dp = LabelSizingConstants.DefaultLabelIconSize,
     val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    val inheritStateFromParent: Boolean = false,
     val textStyle: TextStyle? = null,
     val textOverflow: TextOverflow = TextOverflow.Clip,
     val textSoftWrap: Boolean = true,

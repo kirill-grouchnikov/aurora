@@ -508,10 +508,11 @@ class AuroraSkinColors {
         }
         val isRollover = componentState.isFacetActive(ComponentStateFacet.ROLLOVER)
         val isSelected = componentState.isFacetActive(ComponentStateFacet.SELECTION)
+        val isPressed = componentState.isFacetActive(ComponentStateFacet.PRESS)
         if (isRollover && isSelected) {
             return 0.9f
         }
-        if (isSelected) {
+        if (isSelected || isPressed) {
             return 0.7f
         }
         return if (isRollover) {

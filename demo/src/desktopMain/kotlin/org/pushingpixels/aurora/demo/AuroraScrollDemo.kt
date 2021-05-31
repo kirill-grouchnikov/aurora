@@ -15,16 +15,19 @@
  */
 package org.pushingpixels.aurora.demo
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.ScrollbarAdapter
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.ColorSchemeAssociationKind
 import org.pushingpixels.aurora.Side
 import org.pushingpixels.aurora.Sides
 import org.pushingpixels.aurora.component.AuroraHorizontalScrollbar
@@ -33,13 +36,14 @@ import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.model.LabelPresentationModel
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.renderer.AuroraRenderer
-import org.pushingpixels.aurora.skin.marinerSkin
+import org.pushingpixels.aurora.component.renderer.RendererBackgroundType
+import org.pushingpixels.aurora.skin.magellanSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 
 fun main() {
     AuroraWindow(
         title = "Aurora Scrollbars",
-        skin = marinerSkin(),
+        skin = magellanSkin(),
         size = IntSize(250, 400),
         undecorated = true
     ) {
@@ -81,12 +85,14 @@ fun main() {
                                 modifier = Modifier.size(width = 400.dp, height = 32.dp),
                                 selected = (stateSelection.value == item),
                                 onSelect = { stateSelection.value = item },
-                                fillAssociationKind = ColorSchemeAssociationKind.HIGHLIGHT,
-                                borderAssociationKind = ColorSchemeAssociationKind.HIGHLIGHT_BORDER,
+                                backgroundType = RendererBackgroundType.Highlight,
                                 sides = Sides(straightSides = Side.values().toSet()),
                                 content = {
                                     LabelProjection(
                                         contentModel = LabelContentModel(text = "Item #$item"),
+                                        presentationModel = LabelPresentationModel(
+                                            inheritStateFromParent = true
+                                        )
                                     ).project()
                                     if (item < 30) {
                                         Spacer(modifier = Modifier.height(5.dp))

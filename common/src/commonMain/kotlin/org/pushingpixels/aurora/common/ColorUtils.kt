@@ -19,8 +19,8 @@ import androidx.compose.ui.graphics.Color
 import kotlin.math.*
 
 /**
- * Interpolates this color towards the `other` color. The closer `thisLikenss` is to 0.0,
- * the closer the resulting color will be to `other` color.
+ * Interpolates this color towards the `other` color. The closer `thisLikeness` is to 0.0,
+ * the closer the resulting color will be to the `other` color.
  */
 fun Color.interpolateTowards(other: Color, thisLikeness: Float): Color {
     require((thisLikeness >= 0.0f) && (thisLikeness <= 1.0f)) {
@@ -31,8 +31,10 @@ fun Color.interpolateTowards(other: Color, thisLikeness: Float): Color {
     val r = getInterpolatedChannelValue(this.red, other.red, thisLikeness)
     val g = getInterpolatedChannelValue(this.green, other.green, thisLikeness)
     val b = getInterpolatedChannelValue(this.blue, other.blue, thisLikeness)
-    val a = if (alpha1 == alpha2) alpha1 else
-        round(thisLikeness * alpha1 + (1.0f - thisLikeness) * alpha2)
+    var a = if (alpha1 == alpha2) alpha1 else
+        thisLikeness * alpha1 + (1.0f - thisLikeness) * alpha2
+    a = min(a, 1.0f)
+    a = max(a, 0.0f)
     return Color(r, g, b, a, this.colorSpace)
 }
 
@@ -45,8 +47,10 @@ fun Color.interpolateTowardsAsRGB(other: Color, thisLikeness: Float): Int {
     val r = getInterpolatedChannelValue(this.red, other.red, thisLikeness)
     val g = getInterpolatedChannelValue(this.green, other.green, thisLikeness)
     val b = getInterpolatedChannelValue(this.blue, other.blue, thisLikeness)
-    val a = if (alpha1 == alpha2) alpha1 else
-        round(thisLikeness * alpha1 + (1.0f - thisLikeness) * alpha2)
+    var a = if (alpha1 == alpha2) alpha1 else
+        thisLikeness * alpha1 + (1.0f - thisLikeness) * alpha2
+    a = min(a, 1.0f)
+    a = max(a, 0.0f)
 
     return ((a * 255.0f + 0.5f).toInt() shl 24) or
             ((r * 255.0f + 0.5f).toInt() shl 16) or
@@ -189,7 +193,7 @@ fun Color.withBrightness(brightnessSource: Color): Color {
             hsbvalsOrig[0], hsbvalsOrig[1],
             (hsbvalsBrightnessSrc[2] + hsbvalsOrig[2]) / 2.0f
         )
-    )
+    ).byAlpha(this.alpha)
 }
 
 fun Color.withBrightness(brightnessFactor: Float): Color {
@@ -201,7 +205,7 @@ fun Color.withBrightness(brightnessFactor: Float): Color {
         if (brightnessFactor > 0.0f) hsbvalsOrig[2] + (1.0f - hsbvalsOrig[2]) * brightnessFactor else hsbvalsOrig[2] + hsbvalsOrig[2] * brightnessFactor
     return HSBtoRGB(
         floatArrayOf(hsbvalsOrig[0], hsbvalsOrig[1], newBrightness)
-    )
+    ).byAlpha(this.alpha)
 }
 
 /** Returns the inverted version of this color. */
@@ -212,6 +216,11 @@ fun Color.inverted(): Color {
 /** Returns the version of this color based on the specified alpha. */
 fun Color.withAlpha(alpha: Float): Color {
     return Color(this.red, this.green, this.blue, alpha, this.colorSpace)
+}
+
+/** Returns the version of this color based on the specified alpha. */
+fun Color.byAlpha(alpha: Float): Color {
+    return Color(this.red, this.green, this.blue, this.alpha * alpha, this.colorSpace)
 }
 
 /** Returns saturated version of this color. */
@@ -230,7 +239,7 @@ fun Color.withSaturation(factor: Float): Color {
     } else {
         saturation + factor * saturation
     }
-    return HSBtoRGB(floatArrayOf(hsbvals[0], saturation, hsbvals[2]))
+    return HSBtoRGB(floatArrayOf(hsbvals[0], saturation, hsbvals[2])).byAlpha(this.alpha)
 }
 
 /** Returns hue-shifted (in HSB space) version of this color. */
@@ -244,7 +253,7 @@ fun Color.withHueShift(hueShift: Float): Color {
     if (hue > 1.0) {
         hue -= 1.0f
     }
-    return HSBtoRGB(floatArrayOf(hue, hsbvals[1], hsbvals[2]))
+    return HSBtoRGB(floatArrayOf(hue, hsbvals[1], hsbvals[2])).byAlpha(this.alpha)
 }
 
 /** Returns a lighter version of this color. */

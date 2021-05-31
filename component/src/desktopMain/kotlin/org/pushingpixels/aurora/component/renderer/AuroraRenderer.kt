@@ -21,7 +21,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,8 +28,9 @@ import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerMoveFilter
-import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
+import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.common.hexadecimal
 import org.pushingpixels.aurora.component.utils.*
 
 @Immutable
@@ -48,14 +48,56 @@ private class RendererDrawingCache(
     )
 )
 
+enum class RendererBackgroundType(
+    val fillAssociationKind: ColorSchemeAssociationKind,
+    val borderAssociationKind: ColorSchemeAssociationKind
+) {
+    Fill(ColorSchemeAssociationKind.FILL, ColorSchemeAssociationKind.BORDER) {
+        @Composable
+        override fun populateMutableColorScheme(
+            colorScheme: MutableColorScheme,
+            modelStateInfo: ModelStateInfo,
+            currState: ComponentState,
+            decorationAreaType: DecorationAreaType,
+            associationKind: ColorSchemeAssociationKind
+        ) {
+            populateColorScheme(
+                colorScheme, modelStateInfo, currState, decorationAreaType, associationKind
+            )
+        }
+    },
+    Highlight(ColorSchemeAssociationKind.HIGHLIGHT, ColorSchemeAssociationKind.HIGHLIGHT_BORDER) {
+        @Composable
+        override fun populateMutableColorScheme(
+            colorScheme: MutableColorScheme,
+            modelStateInfo: ModelStateInfo,
+            currState: ComponentState,
+            decorationAreaType: DecorationAreaType,
+            associationKind: ColorSchemeAssociationKind
+        ) {
+            populateColorSchemeWithHighlightAlpha(
+                colorScheme, modelStateInfo, currState, decorationAreaType, associationKind
+            )
+        }
+    };
+
+    @Composable
+    internal abstract fun populateMutableColorScheme(
+        colorScheme: MutableColorScheme,
+        modelStateInfo: ModelStateInfo,
+        currState: ComponentState,
+        decorationAreaType: DecorationAreaType,
+        associationKind: ColorSchemeAssociationKind
+    )
+}
+
 @Composable
 fun AuroraRenderer(
     modifier: Modifier = Modifier,
     selected: Boolean = false,
-    fillAssociationKind: ColorSchemeAssociationKind = ColorSchemeAssociationKind.FILL,
-    borderAssociationKind: ColorSchemeAssociationKind = ColorSchemeAssociationKind.BORDER,
+    onSelect: (() -> Unit)? = null,
+    backgroundType: RendererBackgroundType = RendererBackgroundType.Highlight,
     sides: Sides = Sides(),
-    onSelect: () -> Unit,
     content: @Composable () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -175,25 +217,28 @@ fun AuroraRenderer(
         }
     }
 
+    var boxModifier = modifier
+    if (onSelect != null) {
+        boxModifier = boxModifier.clickable(
+            onClick = onSelect,
+            interactionSource = interactionSource,
+            indication = null
+        )
+    }
+    boxModifier = boxModifier.pointerMoveFilter(
+        onEnter = {
+            rollover = true
+            false
+        },
+        onExit = {
+            rollover = false
+            false
+        },
+        onMove = {
+            false
+        })
     Box(
-        modifier = modifier
-            .clickable(
-                onClick = onSelect,
-                interactionSource = interactionSource,
-                indication = null
-            )
-            .pointerMoveFilter(
-                onEnter = {
-                    rollover = true
-                    false
-                },
-                onExit = {
-                    rollover = false
-                    false
-                },
-                onMove = {
-                    false
-                }),
+        modifier = boxModifier,
         contentAlignment = Alignment.CenterStart
     ) {
         // Compute the text color
@@ -202,15 +247,15 @@ fun AuroraRenderer(
             currState = currentState.value,
             skinColors = skinColors,
             decorationAreaType = decorationAreaType,
-            colorSchemeAssociationKind = fillAssociationKind,
+            colorSchemeAssociationKind = backgroundType.fillAssociationKind,
             isTextInFilledArea = true
         )
 
         // Populate the cached color scheme for filling the combobox
         // based on the current model state info
-        populateColorScheme(
+        backgroundType.populateMutableColorScheme(
             drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-            fillAssociationKind
+            backgroundType.fillAssociationKind
         )
         // And retrieve the container fill colors
         val fillUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -223,9 +268,9 @@ fun AuroraRenderer(
 
         // Populate the cached color scheme for drawing the border
         // based on the current model state info
-        populateColorScheme(
+        backgroundType.populateMutableColorScheme(
             drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-            borderAssociationKind
+            backgroundType.borderAssociationKind
         )
         // And retrieve the border colors
         val borderUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -239,11 +284,7 @@ fun AuroraRenderer(
         val fillPainter = AuroraSkin.painters.fillPainter
         val borderPainter = AuroraSkin.painters.borderPainter
 
-        // Compute the combined contribution of all non-disabled states -
-        // ignoring ComponentState.ENABLED
-        val alpha = modelStateInfo.stateContributionMap
-            .filter { !it.key.isDisabled && (it.key != ComponentState.ENABLED) }
-            .values.sumOf { it.contribution.toDouble() }.toFloat()
+        val alpha = 1.0f
 
         Canvas(Modifier.matchParentSize()) {
             val width = this.size.width

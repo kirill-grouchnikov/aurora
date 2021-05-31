@@ -62,41 +62,50 @@ private fun LabelTextContent(
     presentationModel: LabelPresentationModel,
     state: ComponentState
 ) {
-    val decorationAreaType = AuroraSkin.decorationAreaType
-    val skinColors = AuroraSkin.colors
-    val layoutDirection = LocalLayoutDirection.current
-
-    // If the presentation model specifies a text style with a color, use that. Otherwise
-    // use the foreground color that matches the decoration area type of this label
-    val presentationStyleHasColor = presentationModel.textStyle?.color?.isSpecified ?: false
-    val textColor = if (presentationStyleHasColor) presentationModel.textStyle!!.color else
-        skinColors.getColorScheme(
-        decorationAreaType,
-        state
-    ).foregroundColor
-
-    val textStyle = presentationModel.textStyle ?: LocalTextStyle.current
-    val resolvedTextStyle = resolveDefaults(textStyle, layoutDirection)
-
-    // Pass our text color and synthesized model state snapshot to the children
-    CompositionLocalProvider(
-        LocalTextColor provides textColor,
-        LocalModelStateInfoSnapshot provides ModelStateInfoSnapshot(
-            currModelState = state,
-            stateContributionMap = mapOf(state to 1.0f),
-            activeStrength = 1.0f
-        )
-    ) {
-        // Since we're passing the resolved style that has the default color,
-        // also explicitly pass our text color to override the one set in the style
+    if (presentationModel.inheritStateFromParent) {
         AuroraText(
             text = contentModel.text,
-            color = textColor,
-            style = resolvedTextStyle,
             overflow = presentationModel.textOverflow,
             softWrap = presentationModel.textSoftWrap,
             maxLines = presentationModel.textMaxLines
         )
+    } else {
+        val decorationAreaType = AuroraSkin.decorationAreaType
+        val skinColors = AuroraSkin.colors
+        val layoutDirection = LocalLayoutDirection.current
+
+        // If the presentation model specifies a text style with a color, use that. Otherwise
+        // use the foreground color that matches the decoration area type of this label
+        val presentationStyleHasColor = presentationModel.textStyle?.color?.isSpecified ?: false
+        val textColor = if (presentationStyleHasColor) presentationModel.textStyle!!.color else
+            skinColors.getColorScheme(
+                decorationAreaType,
+                state
+            ).foregroundColor
+
+        val textStyle = presentationModel.textStyle ?: LocalTextStyle.current
+        val resolvedTextStyle = resolveDefaults(textStyle, layoutDirection)
+
+        // Pass our text color and synthesized model state snapshot to the children
+        CompositionLocalProvider(
+            LocalTextColor provides textColor,
+            LocalModelStateInfoSnapshot provides ModelStateInfoSnapshot(
+                currModelState = state,
+                stateContributionMap = mapOf(state to 1.0f),
+                activeStrength = 1.0f
+            )
+        ) {
+            // Since we're passing the resolved style that has the default color,
+            // also explicitly pass our text color to override the one set in the style
+            AuroraText(
+                text = contentModel.text,
+                color = textColor,
+                style = resolvedTextStyle,
+                overflow = presentationModel.textOverflow,
+                softWrap = presentationModel.textSoftWrap,
+                maxLines = presentationModel.textMaxLines
+            )
+        }
     }
 }
 
@@ -105,11 +114,22 @@ private fun LabelIconContent(
     contentModel: LabelContentModel, presentationModel: LabelPresentationModel,
     currState: ComponentState
 ) {
-    if (contentModel.iconFactory != null) {
-        val iconSize = presentationModel.iconDimension
-        val icon = remember(iconSize) { contentModel.iconFactory.createNewIcon() }
-        icon.setSize(width = iconSize, height = iconSize)
+    if (contentModel.iconFactory == null) {
+        return
+    }
 
+    val iconSize = presentationModel.iconDimension
+    val icon = remember(iconSize) { contentModel.iconFactory.createNewIcon() }
+    icon.setSize(width = iconSize, height = iconSize)
+
+    if (presentationModel.inheritStateFromParent) {
+        AuroraThemedIcon(
+            icon = icon,
+            disabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
+            enabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
+            activeFilterStrategy = presentationModel.iconEnabledFilterStrategy
+        )
+    } else {
         val decorationAreaType = AuroraSkin.decorationAreaType
         val skinColors = AuroraSkin.colors
 

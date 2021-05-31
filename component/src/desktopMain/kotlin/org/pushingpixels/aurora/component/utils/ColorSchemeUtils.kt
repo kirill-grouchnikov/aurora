@@ -19,6 +19,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.*
+import org.pushingpixels.aurora.common.byAlpha
+import org.pushingpixels.aurora.common.hexadecimal
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.lighter
 import kotlin.math.max
@@ -198,6 +200,93 @@ internal fun populateColorScheme(
 }
 
 @Composable
+internal fun populateColorSchemeWithHighlightAlpha(
+    colorScheme: MutableColorScheme,
+    modelStateInfo: ModelStateInfo,
+    currState: ComponentState,
+    decorationAreaType: DecorationAreaType,
+    associationKind: ColorSchemeAssociationKind
+) {
+    val skinColors = AuroraSkin.colors
+    val currStateScheme = skinColors.getColorScheme(
+        decorationAreaType = decorationAreaType,
+        associationKind = associationKind,
+        componentState = currState
+    )
+    val currHighlightAlpha = skinColors.getHighlightAlpha(
+        decorationAreaType = decorationAreaType,
+        componentState = currState
+    )
+    val currHighlightAmount = currHighlightAlpha * modelStateInfo.stateContributionMap.entries
+        .find { it.key == currState }!!.value.contribution
+
+    var ultraLight = currStateScheme.ultraLightColor.byAlpha(currHighlightAmount)
+    var extraLight = currStateScheme.extraLightColor.byAlpha(currHighlightAmount)
+    var light = currStateScheme.lightColor.byAlpha(currHighlightAmount)
+    var mid = currStateScheme.midColor.byAlpha(currHighlightAmount)
+    var dark = currStateScheme.darkColor.byAlpha(currHighlightAmount)
+    var ultraDark = currStateScheme.ultraDarkColor.byAlpha(currHighlightAmount)
+    var foreground = currStateScheme.foregroundColor.byAlpha(currHighlightAmount)
+
+    for (contribution in modelStateInfo.stateContributionMap) {
+        if (contribution.key == currState) {
+            // Already accounted for the currently active state
+            continue
+        }
+        val alpha = skinColors.getHighlightAlpha(
+            decorationAreaType = decorationAreaType,
+            componentState = contribution.key
+        )
+        val amount = alpha * contribution.value.contribution
+        if (amount == 0.0f) {
+            // Skip a zero-amount contribution
+            continue
+        }
+        // Get the color scheme that matches the contribution state
+        val contributionScheme = skinColors.getColorScheme(
+            decorationAreaType = decorationAreaType,
+            associationKind = associationKind,
+            componentState = contribution.key
+        )
+        // And interpolate the colors
+        ultraLight =
+            ultraLight.interpolateTowards(
+                contributionScheme.ultraLightColor.byAlpha(amount),
+                1.0f - amount
+            )
+        extraLight =
+            extraLight.interpolateTowards(
+                contributionScheme.extraLightColor.byAlpha(amount),
+                1.0f - amount
+            )
+        light =
+            light.interpolateTowards(contributionScheme.lightColor.byAlpha(amount), 1.0f - amount)
+        mid = mid.interpolateTowards(contributionScheme.midColor.byAlpha(amount), 1.0f - amount)
+        dark = dark.interpolateTowards(contributionScheme.darkColor.byAlpha(amount), 1.0f - amount)
+        ultraDark = ultraDark.interpolateTowards(
+            contributionScheme.ultraDarkColor.byAlpha(amount),
+            1.0f - amount
+        )
+        foreground =
+            foreground.interpolateTowards(
+                contributionScheme.foregroundColor.byAlpha(amount),
+                1.0f - amount
+            )
+
+        //println("\tcontribution of $amount from ${contribution.key} to $backgroundStart")
+    }
+
+    // Update the mutable color scheme with the interpolated colors
+    colorScheme.ultraLight = ultraLight
+    colorScheme.extraLight = extraLight
+    colorScheme.light = light
+    colorScheme.mid = mid
+    colorScheme.dark = dark
+    colorScheme.ultraDark = ultraDark
+    colorScheme.foreground = foreground
+}
+
+@Composable
 internal fun getStateAwareColor(
     modelStateInfo: ModelStateInfo,
     currState: ComponentState,
@@ -279,7 +368,8 @@ internal fun getTextColor(
             val activeColorScheme = skinColors.getColorScheme(
                 decorationAreaType = decorationAreaType,
                 associationKind = colorSchemeAssociationKind,
-                componentState = activeState)
+                componentState = activeState
+            )
             val activeForeground = activeColorScheme.foregroundColor
             aggrRed += contribution * activeForeground.red
             aggrGreen += contribution * activeForeground.green

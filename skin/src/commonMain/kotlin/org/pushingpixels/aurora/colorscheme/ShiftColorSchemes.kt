@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.colorscheme
 
 import androidx.compose.ui.graphics.Color
+import org.pushingpixels.aurora.common.byAlpha
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.withBrightness
 
@@ -40,31 +41,31 @@ open class ShiftColorScheme(
     ultraLight = (if (shiftByBrightness)
         backgroundShiftColor.withBrightness(origScheme.ultraLightColor) else backgroundShiftColor).interpolateTowards(
         origScheme.ultraLightColor, backgroundShiftFactor
-    ),
+    ).byAlpha(origScheme.ultraLightColor.alpha),
     extraLight = (if (shiftByBrightness)
         backgroundShiftColor.withBrightness(origScheme.extraLightColor) else backgroundShiftColor).interpolateTowards(
         origScheme.extraLightColor, backgroundShiftFactor
-    ),
+    ).byAlpha(origScheme.extraLightColor.alpha),
     light = (if (shiftByBrightness)
         backgroundShiftColor.withBrightness(origScheme.lightColor) else backgroundShiftColor).interpolateTowards(
         origScheme.lightColor, backgroundShiftFactor
-    ),
+    ).byAlpha(origScheme.lightColor.alpha),
     mid = (if (shiftByBrightness)
         backgroundShiftColor.withBrightness(origScheme.midColor) else backgroundShiftColor).interpolateTowards(
         origScheme.midColor, backgroundShiftFactor
-    ),
+    ).byAlpha(origScheme.midColor.alpha),
     dark = (if (shiftByBrightness)
         backgroundShiftColor.withBrightness(origScheme.darkColor) else backgroundShiftColor).interpolateTowards(
         origScheme.darkColor, backgroundShiftFactor
-    ),
+    ).byAlpha(origScheme.darkColor.alpha),
     ultraDark = (if (shiftByBrightness)
         backgroundShiftColor.withBrightness(origScheme.ultraDarkColor) else backgroundShiftColor).interpolateTowards(
         origScheme.ultraDarkColor, backgroundShiftFactor
-    ),
+    ).byAlpha(origScheme.ultraDarkColor.alpha),
     foreground = (if (shiftByBrightness)
         foregroundShiftColor.withBrightness(origScheme.foregroundColor) else foregroundShiftColor).interpolateTowards(
         origScheme.foregroundColor, foregroundShiftFactor
-    ),
+    ).byAlpha(origScheme.foregroundColor.alpha),
 ) {
     constructor(origScheme: AuroraColorScheme, shiftColor: Color, shiftFactor: Float) :
             this(origScheme, shiftColor, shiftFactor, shiftColor, shiftFactor / 2.0f, false)
