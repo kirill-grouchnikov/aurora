@@ -77,7 +77,6 @@ fun AuroraRenderer(
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
     val buttonShaper = AuroraSkin.buttonShaper
-    val painters = AuroraSkin.painters
 
     // Transition for the selection state
     val selectionTransition = updateTransition(selected)
@@ -194,8 +193,7 @@ fun AuroraRenderer(
                 },
                 onMove = {
                     false
-                })
-            .padding(start = 10.dp),
+                }),
         contentAlignment = Alignment.CenterStart
     ) {
         // Compute the text color

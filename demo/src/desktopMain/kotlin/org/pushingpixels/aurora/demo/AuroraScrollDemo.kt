@@ -79,11 +79,11 @@ fun main() {
                         for (item in 0..30) {
                             AuroraRenderer(
                                 modifier = Modifier.size(width = 400.dp, height = 32.dp),
+                                selected = (stateSelection.value == item),
+                                onSelect = { stateSelection.value = item },
                                 fillAssociationKind = ColorSchemeAssociationKind.HIGHLIGHT,
                                 borderAssociationKind = ColorSchemeAssociationKind.HIGHLIGHT_BORDER,
                                 sides = Sides(straightSides = Side.values().toSet()),
-                                selected = (stateSelection.value == item),
-                                onSelect = { stateSelection.value = item },
                                 content = {
                                     LabelProjection(
                                         contentModel = LabelContentModel(text = "Item #$item"),
