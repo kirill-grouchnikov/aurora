@@ -141,7 +141,7 @@ fun main() {
                             AuroraBoxWithHighlights(
                                 modifier = Modifier.size(width = 400.dp, height = 32.dp),
                                 selected = (stateSelection.value == item),
-                                onSelect = { stateSelection.value = item },
+                                onClick = { stateSelection.value = item },
                                 sides = Sides(straightSides = Side.values().toSet()),
                                 content = {
                                     LabelProjection(
