@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.pushingpixels.aurora.component.renderer
+package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,7 +31,7 @@ import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.utils.*
 
 @Immutable
-private class RendererDrawingCache(
+private class BoxWithHighlightsDrawingCache(
     val colorScheme: MutableColorScheme = MutableColorScheme(
         displayName = "Internal mutable",
         isDark = false,
@@ -46,70 +45,35 @@ private class RendererDrawingCache(
     )
 )
 
-enum class RendererBackgroundType(
-    val fillAssociationKind: ColorSchemeAssociationKind,
-    val borderAssociationKind: ColorSchemeAssociationKind
-) {
-    Fill(ColorSchemeAssociationKind.FILL, ColorSchemeAssociationKind.BORDER) {
-        @Composable
-        override fun populateMutableColorScheme(
-            colorScheme: MutableColorScheme,
-            modelStateInfo: ModelStateInfo,
-            currState: ComponentState,
-            decorationAreaType: DecorationAreaType,
-            associationKind: ColorSchemeAssociationKind
-        ) {
-            populateColorScheme(
-                colorScheme, modelStateInfo, currState, decorationAreaType, associationKind
-            )
-        }
-    },
-    Highlight(ColorSchemeAssociationKind.HIGHLIGHT, ColorSchemeAssociationKind.HIGHLIGHT_BORDER) {
-        @Composable
-        override fun populateMutableColorScheme(
-            colorScheme: MutableColorScheme,
-            modelStateInfo: ModelStateInfo,
-            currState: ComponentState,
-            decorationAreaType: DecorationAreaType,
-            associationKind: ColorSchemeAssociationKind
-        ) {
-            populateColorSchemeWithHighlightAlpha(
-                colorScheme, modelStateInfo, currState, decorationAreaType, associationKind
-            )
-        }
-    };
-
-    @Composable
-    internal abstract fun populateMutableColorScheme(
-        colorScheme: MutableColorScheme,
-        modelStateInfo: ModelStateInfo,
-        currState: ComponentState,
-        decorationAreaType: DecorationAreaType,
-        associationKind: ColorSchemeAssociationKind
-    )
-}
-
+/**
+ * A composable that wraps its content with top-level highlights. Notes:
+ *
+ * <ul>
+ *     <li>[LabelProjection] content should have [LabelPresentationModel.inheritStateFromParent]
+ *     set to true.</li>
+ *     <li>By design, this box does not support [ComponentStateFacet.PRESSED] transitions.</li>
+ * </ul>
+ */
 @Composable
-fun AuroraRenderer(
+fun AuroraBoxWithHighlights(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     selected: Boolean = false,
     onSelect: (() -> Unit)? = null,
-    backgroundType: RendererBackgroundType = RendererBackgroundType.Highlight,
     sides: Sides = Sides(),
     content: @Composable () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    val drawingCache = remember { RendererDrawingCache() }
+    val drawingCache = remember { BoxWithHighlightsDrawingCache() }
     var rollover by remember { mutableStateOf(false) }
-    val isPressed by interactionSource.collectIsPressedAsState()
 
     val currentState = remember {
         mutableStateOf(
             ComponentState.getState(
-                isEnabled = true,
+                isEnabled = enabled,
                 isRollover = rollover,
                 isSelected = selected,
-                isPressed = isPressed
+                isPressed = false
             )
         )
     }
@@ -145,7 +109,7 @@ fun AuroraRenderer(
     }
 
     // Transition for the pressed state
-    val pressedTransition = updateTransition(isPressed)
+    val pressedTransition = updateTransition(false)
     val pressedFraction by pressedTransition.animateFloat(
         transitionSpec = {
             tween(durationMillis = AuroraSkin.animationConfig.regular)
@@ -158,7 +122,7 @@ fun AuroraRenderer(
     }
 
     // Transition for the enabled state
-    val enabledTransition = updateTransition(true)
+    val enabledTransition = updateTransition(enabled)
     val enabledFraction by enabledTransition.animateFloat(
         transitionSpec = {
             tween(durationMillis = AuroraSkin.animationConfig.regular)
@@ -182,10 +146,10 @@ fun AuroraRenderer(
         modelStateInfo = modelStateInfo,
         currentState = currentState,
         transitionInfo = transitionInfo,
-        enabled = true,
+        enabled = enabled,
         selected = selected,
         rollover = rollover,
-        pressed = isPressed,
+        pressed = false,
         duration = AuroraSkin.animationConfig.regular
     )
 
@@ -216,7 +180,7 @@ fun AuroraRenderer(
     }
 
     var boxModifier = modifier
-    if (onSelect != null) {
+    if (enabled && (onSelect != null)) {
         boxModifier = boxModifier.clickable(
             onClick = onSelect,
             interactionSource = interactionSource,
@@ -245,15 +209,15 @@ fun AuroraRenderer(
             currState = currentState.value,
             skinColors = skinColors,
             decorationAreaType = decorationAreaType,
-            colorSchemeAssociationKind = backgroundType.fillAssociationKind,
+            colorSchemeAssociationKind = ColorSchemeAssociationKind.HIGHLIGHT,
             isTextInFilledArea = true
         )
 
         // Populate the cached color scheme for filling the combobox
         // based on the current model state info
-        backgroundType.populateMutableColorScheme(
+        populateColorSchemeWithHighlightAlpha(
             drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-            backgroundType.fillAssociationKind
+            ColorSchemeAssociationKind.HIGHLIGHT
         )
         // And retrieve the container fill colors
         val fillUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -266,9 +230,9 @@ fun AuroraRenderer(
 
         // Populate the cached color scheme for drawing the border
         // based on the current model state info
-        backgroundType.populateMutableColorScheme(
+        populateColorSchemeWithHighlightAlpha(
             drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-            backgroundType.borderAssociationKind
+            ColorSchemeAssociationKind.HIGHLIGHT_BORDER
         )
         // And retrieve the border colors
         val borderUltraLight = drawingCache.colorScheme.ultraLightColor

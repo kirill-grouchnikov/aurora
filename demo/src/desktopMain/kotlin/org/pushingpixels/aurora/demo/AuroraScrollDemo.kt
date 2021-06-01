@@ -32,6 +32,7 @@ import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.IconFilterStrategy
 import org.pushingpixels.aurora.Side
 import org.pushingpixels.aurora.Sides
+import org.pushingpixels.aurora.component.AuroraBoxWithHighlights
 import org.pushingpixels.aurora.component.AuroraHorizontalScrollbar
 import org.pushingpixels.aurora.component.AuroraVerticalScrollbar
 import org.pushingpixels.aurora.component.model.ComboBoxContentModel
@@ -40,8 +41,6 @@ import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.model.LabelPresentationModel
 import org.pushingpixels.aurora.component.projection.ComboBoxProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
-import org.pushingpixels.aurora.component.renderer.AuroraRenderer
-import org.pushingpixels.aurora.component.renderer.RendererBackgroundType
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.skin.getAuroraSkins
 import org.pushingpixels.aurora.skin.graphiteElectricSkin
@@ -123,11 +122,10 @@ fun main() {
                 ) {
                     Column {
                         for (item in 0..30) {
-                            AuroraRenderer(
+                            AuroraBoxWithHighlights(
                                 modifier = Modifier.size(width = 400.dp, height = 32.dp),
                                 selected = (stateSelection.value == item),
                                 onSelect = { stateSelection.value = item },
-                                backgroundType = RendererBackgroundType.Highlight,
                                 sides = Sides(straightSides = Side.values().toSet()),
                                 content = {
                                     LabelProjection(
