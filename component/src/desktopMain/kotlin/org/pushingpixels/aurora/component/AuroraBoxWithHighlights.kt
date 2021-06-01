@@ -59,7 +59,7 @@ fun AuroraBoxWithHighlights(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     selected: Boolean = false,
-    onSelect: (() -> Unit)? = null,
+    onClick: (() -> Unit)? = null,
     sides: Sides = Sides(),
     content: @Composable () -> Unit
 ) {
@@ -180,9 +180,9 @@ fun AuroraBoxWithHighlights(
     }
 
     var boxModifier = modifier
-    if (enabled && (onSelect != null)) {
+    if (enabled && (onClick != null)) {
         boxModifier = boxModifier.clickable(
-            onClick = onSelect,
+            onClick = onClick,
             interactionSource = interactionSource,
             indication = null
         )
