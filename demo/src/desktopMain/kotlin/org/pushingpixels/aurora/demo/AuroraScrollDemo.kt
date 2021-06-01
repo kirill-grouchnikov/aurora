@@ -24,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
@@ -43,7 +44,7 @@ import org.pushingpixels.aurora.component.projection.ComboBoxProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.skin.getAuroraSkins
-import org.pushingpixels.aurora.skin.graphiteElectricSkin
+import org.pushingpixels.aurora.skin.graphiteAquaSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 
 fun main() {
@@ -61,17 +62,32 @@ fun main() {
         visibility_24px.factory(),
         waves_24px.factory()
     )
-    val currentAuroraSkin = mutableStateOf(graphiteElectricSkin())
+    val currentAuroraSkin = mutableStateOf(graphiteAquaSkin())
+    val stateSelection = mutableStateOf(-1)
+    val itemCount = 30
 
     AuroraWindow(
         title = "Aurora Scrollbars",
         skin = currentAuroraSkin,
         size = IntSize(250, 400),
-        undecorated = true
+        undecorated = true,
+        keyboardShortcuts = mapOf(
+            Key.DirectionDown to {
+                if (stateSelection.value < 0) {
+                    stateSelection.value = 0
+                } else if (stateSelection.value < (itemCount - 1)) {
+                    stateSelection.value++
+                }
+            },
+            Key.DirectionUp to {
+                if (stateSelection.value < 0) {
+                    stateSelection.value = itemCount - 1
+                } else if (stateSelection.value > 0) {
+                    stateSelection.value--
+                }
+            })
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            val stateSelection = remember { mutableStateOf(-1) }
-
             val currentSkinDisplayName = AuroraSkin.displayName
             val auroraSkins = getAuroraSkins()
             val selectedSkinItem =
@@ -121,7 +137,7 @@ fun main() {
                         .horizontalScroll(stateHorizontal)
                 ) {
                     Column {
-                        for (item in 0..30) {
+                        for (item in 0..itemCount) {
                             AuroraBoxWithHighlights(
                                 modifier = Modifier.size(width = 400.dp, height = 32.dp),
                                 selected = (stateSelection.value == item),

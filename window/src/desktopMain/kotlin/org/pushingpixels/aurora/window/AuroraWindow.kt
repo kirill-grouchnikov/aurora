@@ -29,6 +29,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
@@ -463,6 +464,7 @@ fun AuroraWindow(
     resizable: Boolean = true,
     events: WindowEvents = WindowEvents(),
     onDismissRequest: (() -> Unit)? = null,
+    keyboardShortcuts: Map<Key, () -> Unit>? = null,
     content: @Composable () -> Unit
 ) =
     SwingUtilities.invokeLater {
@@ -478,6 +480,12 @@ fun AuroraWindow(
             events = events,
             onDismissRequest = onDismissRequest
         )
+
+        if (keyboardShortcuts != null) {
+            for (keyboardShortcut in keyboardShortcuts) {
+                appWindow.keyboard.setShortcut(keyboardShortcut.key, keyboardShortcut.value)
+            }
+        }
 
         val titlePaneBounds = mutableStateOf(Rect.Zero)
 
@@ -537,6 +545,7 @@ fun AuroraWindow(
     resizable: Boolean = true,
     events: WindowEvents = WindowEvents(),
     onDismissRequest: (() -> Unit)? = null,
+    keyboardShortcuts: Map<Key, () -> Unit>? = null,
     content: @Composable () -> Unit
 ) =
     SwingUtilities.invokeLater {
@@ -552,6 +561,12 @@ fun AuroraWindow(
             events = events,
             onDismissRequest = onDismissRequest
         )
+
+        if (keyboardShortcuts != null) {
+            for (keyboardShortcut in keyboardShortcuts) {
+                appWindow.keyboard.setShortcut(keyboardShortcut.key, keyboardShortcut.value)
+            }
+        }
 
         val titlePaneBounds = mutableStateOf(Rect.Zero)
 
