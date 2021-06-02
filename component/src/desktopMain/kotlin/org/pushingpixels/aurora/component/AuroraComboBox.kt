@@ -575,35 +575,34 @@ private fun <E> ComboBoxPopupContent(
                 val popupHeight = (contentSize.height / density).toInt()
 
                 // TODO - support RTL for startward and endward
-                // TODO - figure out the extra factor
                 val popupRect = when (presentationModel.popupPlacementStrategy) {
                     PopupPlacementStrategy.Downward -> Rectangle(
                         initialAnchor.x,
-                        initialAnchor.y + (anchorSize.height / (2 * density)).toInt(),
+                        initialAnchor.y + (anchorSize.height / density).toInt(),
                         popupWidth,
                         popupHeight
                     )
                     PopupPlacementStrategy.Upward -> Rectangle(
                         initialAnchor.x,
-                        initialAnchor.y - popupHeight / 2,
+                        initialAnchor.y - popupHeight,
                         popupWidth,
                         popupHeight
                     )
                     PopupPlacementStrategy.Startward -> Rectangle(
-                        initialAnchor.x - popupWidth / 2,
+                        initialAnchor.x - popupWidth,
                         initialAnchor.y,
                         popupWidth,
                         popupHeight
                     )
                     PopupPlacementStrategy.Endward -> Rectangle(
-                        initialAnchor.x + (anchorSize.width / (2 * density)).toInt(),
+                        initialAnchor.x + (anchorSize.width / density).toInt(),
                         initialAnchor.y,
                         popupWidth,
                         popupHeight
                     )
                     PopupPlacementStrategy.CenteredVertically -> Rectangle(
                         initialAnchor.x,
-                        initialAnchor.y + (anchorSize.height / (4 * density)).toInt() - popupHeight / 4,
+                        initialAnchor.y + (anchorSize.height / (2 * density)).toInt() - popupHeight / 2,
                         popupWidth,
                         popupHeight
                     )
