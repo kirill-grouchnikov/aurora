@@ -15,11 +15,11 @@
  */
 package org.pushingpixels.aurora.demo
 
-import androidx.compose.foundation.ScrollbarAdapter
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -34,7 +34,6 @@ import org.pushingpixels.aurora.IconFilterStrategy
 import org.pushingpixels.aurora.Side
 import org.pushingpixels.aurora.Sides
 import org.pushingpixels.aurora.component.AuroraBoxWithHighlights
-import org.pushingpixels.aurora.component.AuroraHorizontalScrollbar
 import org.pushingpixels.aurora.component.AuroraVerticalScrollbar
 import org.pushingpixels.aurora.component.ScrollBarSizingConstants
 import org.pushingpixels.aurora.component.model.ComboBoxContentModel
@@ -124,63 +123,42 @@ fun main() {
                 )
             ).project()
 
-            Box(
-                modifier = Modifier.fillMaxSize().padding(6.dp)
-            ) {
-                val stateVertical = rememberScrollState(0)
-                val stateHorizontal = rememberScrollState(0)
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(
-                            end = ScrollBarSizingConstants.DefaultScrollBarThickness,
-                            bottom = ScrollBarSizingConstants.DefaultScrollBarThickness
-                        )
-                        .verticalScroll(stateVertical)
-                        .horizontalScroll(stateHorizontal)
+            Box(modifier = Modifier.fillMaxSize().padding(6.dp)) {
+                val itemsList = (0..itemCount).toList()
+                val state = rememberLazyListState()
+                LazyColumn(
+                    Modifier.fillMaxSize()
+                        .padding(end = ScrollBarSizingConstants.DefaultScrollBarThickness),
+                    state
                 ) {
-                    Column {
-                        for (item in 0..itemCount) {
-                            AuroraBoxWithHighlights(
-                                modifier = Modifier.size(width = 400.dp, height = 32.dp),
-                                selected = (stateSelection.value == item),
-                                onClick = { stateSelection.value = item },
-                                sides = Sides(straightSides = Side.values().toSet()),
-                                content = {
-                                    LabelProjection(
-                                        contentModel = LabelContentModel(
-                                            text = "Item #$item",
-                                            iconFactory = icons[item % icons.size]
-                                        ),
-                                        presentationModel = LabelPresentationModel(
-                                            inheritStateFromParent = true,
-                                            iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
-                                            horizontalGapScaleFactor = 2.0f
-                                        )
-                                    ).project()
-                                    if (item < 30) {
-                                        Spacer(modifier = Modifier.height(5.dp))
-                                    }
-                                }
-                            )
-                        }
+                    items(itemsList) { item ->
+                        AuroraBoxWithHighlights(
+                            modifier = Modifier.fillMaxWidth().height(32.dp),
+                            selected = (stateSelection.value == item),
+                            onClick = { stateSelection.value = item },
+                            sides = Sides(straightSides = Side.values().toSet()),
+                            content = {
+                                LabelProjection(
+                                    contentModel = LabelContentModel(
+                                        text = "Item #$item",
+                                        iconFactory = icons[item % icons.size]
+                                    ),
+                                    presentationModel = LabelPresentationModel(
+                                        inheritStateFromParent = true,
+                                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                                        horizontalGapScaleFactor = 2.0f
+                                    )
+                                ).project()
+                            }
+                        )
                     }
                 }
                 AuroraVerticalScrollbar(
                     modifier = Modifier.align(Alignment.CenterEnd)
                         .fillMaxHeight(),
-                    adapter = remember(stateVertical) {
-                        ScrollbarAdapter(stateVertical)
-                    }
-                )
-                AuroraHorizontalScrollbar(
-                    modifier = Modifier.align(Alignment.BottomStart)
-                        .fillMaxWidth()
-                        .padding(end = ScrollBarSizingConstants.DefaultScrollBarThickness),
-                    adapter = remember(stateHorizontal) {
-                        ScrollbarAdapter(stateHorizontal)
-                    }
+                    adapter = rememberScrollbarAdapter(
+                        scrollState = state
+                    )
                 )
             }
         }
