@@ -94,7 +94,7 @@ internal class CommandButtonLayoutManagerBig(
         }
     }
 
-    private fun getPreferredSize(
+    override fun getPreferredSize(
         command: Command,
         presentationModel: CommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo

@@ -127,6 +127,15 @@ interface CommandButtonLayoutManager : MeasureScope {
     ): CommandButtonPreLayoutInfo
 
     /**
+     * Returns the preferred size of a projected button for the specified parameters.
+     */
+    fun getPreferredSize(
+        command: Command,
+        presentationModel: CommandButtonPresentationModel,
+        preLayoutInfo: CommandButtonPreLayoutInfo
+    ): Size
+
+    /**
      * Returns the layout information for the specified parameters.
      */
     fun getLayoutInfo(

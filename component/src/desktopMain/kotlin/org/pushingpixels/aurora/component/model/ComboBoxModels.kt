@@ -44,4 +44,5 @@ data class ComboBoxPresentationModel<E>(
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Leading,
     val horizontalGapScaleFactor: Float = 1.0f,
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward,
+    val popupMaxVisibleItems: Int = 8
 ): PresentationModel

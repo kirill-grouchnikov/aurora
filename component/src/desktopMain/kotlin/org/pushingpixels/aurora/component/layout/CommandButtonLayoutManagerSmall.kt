@@ -40,7 +40,7 @@ internal class CommandButtonLayoutManagerSmall(
         return presentationModel.iconDimension ?: 16.dp
     }
 
-    private fun getPreferredSize(
+    override fun getPreferredSize(
         command: Command,
         presentationModel: CommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo

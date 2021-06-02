@@ -53,9 +53,10 @@ private object WindowMenuBarLayout {
             return 0.dp
         }
 
-        private fun getPreferredSize(
+        override fun getPreferredSize(
             command: Command,
-            presentationModel: CommandButtonPresentationModel
+            presentationModel: CommandButtonPresentationModel,
+            preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
         ): Size {
             val paddingValues = presentationModel.contentPadding
             val by = presentationModel.verticalGapScaleFactor *
@@ -107,7 +108,7 @@ private object WindowMenuBarLayout {
             presentationModel: CommandButtonPresentationModel,
             preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
         ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
-            val preferredSize = getPreferredSize(command, presentationModel)
+            val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo)
 
             val paddingValues = presentationModel.contentPadding
             val top = presentationModel.verticalGapScaleFactor *

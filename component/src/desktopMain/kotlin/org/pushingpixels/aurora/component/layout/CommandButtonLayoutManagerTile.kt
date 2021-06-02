@@ -42,7 +42,7 @@ internal class CommandButtonLayoutManagerTile(
         return 32.dp
     }
 
-    private fun getPreferredSize(
+    override fun getPreferredSize(
         command: Command,
         presentationModel: CommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
