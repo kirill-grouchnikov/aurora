@@ -48,6 +48,7 @@ import kotlin.math.sign
 object ScrollBarSizingConstants {
     val DefaultScrollBarMinimumHeight = 16.dp
     val DefaultScrollBarThickness = 8.dp
+    val DefaultScrollBarMargin = 2.dp
 }
 
 @Immutable

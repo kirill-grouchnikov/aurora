@@ -36,6 +36,7 @@ import org.pushingpixels.aurora.Sides
 import org.pushingpixels.aurora.component.AuroraBoxWithHighlights
 import org.pushingpixels.aurora.component.AuroraHorizontalScrollbar
 import org.pushingpixels.aurora.component.AuroraVerticalScrollbar
+import org.pushingpixels.aurora.component.ScrollBarSizingConstants
 import org.pushingpixels.aurora.component.model.ComboBoxContentModel
 import org.pushingpixels.aurora.component.model.ComboBoxPresentationModel
 import org.pushingpixels.aurora.component.model.LabelContentModel
@@ -124,7 +125,7 @@ fun main() {
             ).project()
 
             Box(
-                modifier = Modifier.fillMaxSize().padding(10.dp)
+                modifier = Modifier.fillMaxSize().padding(6.dp)
             ) {
                 val stateVertical = rememberScrollState(0)
                 val stateHorizontal = rememberScrollState(0)
@@ -132,7 +133,10 @@ fun main() {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(end = 12.dp, bottom = 12.dp)
+                        .padding(
+                            end = ScrollBarSizingConstants.DefaultScrollBarThickness,
+                            bottom = ScrollBarSizingConstants.DefaultScrollBarThickness
+                        )
                         .verticalScroll(stateVertical)
                         .horizontalScroll(stateHorizontal)
                 ) {
@@ -173,7 +177,7 @@ fun main() {
                 AuroraHorizontalScrollbar(
                     modifier = Modifier.align(Alignment.BottomStart)
                         .fillMaxWidth()
-                        .padding(end = 12.dp),
+                        .padding(end = ScrollBarSizingConstants.DefaultScrollBarThickness),
                     adapter = remember(stateHorizontal) {
                         ScrollbarAdapter(stateHorizontal)
                     }

@@ -35,10 +35,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerMoveFilter
-import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.OnGloballyPositionedModifier
-import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -668,11 +665,13 @@ private fun <E> ComboBoxPopupContent(
                 ).project()
             }
         }
-        AuroraVerticalScrollbar(
-            adapter = remember(stateVertical) {
-                ScrollbarAdapter(stateVertical)
-            }
-        )
+        if (presentationModel.popupMaxVisibleItems < contentModel.items.size) {
+            AuroraVerticalScrollbar(
+                adapter = remember(stateVertical) {
+                    ScrollbarAdapter(stateVertical)
+                }
+            )
+        }
     }
 }
 
@@ -686,9 +685,13 @@ private fun <E> ComboBoxPopupLayout(
     content: @Composable () -> Unit
 ) {
     Layout(modifier = modifier, content = content) { measurables, constraints ->
+        val showingVerticalPopupContentScrollBar =
+            (presentationModel.popupMaxVisibleItems < contentModel.items.size)
+
         val canvasMeasurable = measurables[0]
         val popupColumnMeasurable = measurables[1]
-        val verticalScrollBarMeasurable = measurables[2]
+        val verticalScrollBarMeasurable =
+            if (showingVerticalPopupContentScrollBar) measurables[2] else null
 
         val popupColumnHeight = (representativePopupItemHeight *
                 min(presentationModel.popupMaxVisibleItems, contentModel.items.size)).roundToInt()
@@ -702,30 +705,40 @@ private fun <E> ComboBoxPopupLayout(
             )
         val popupColumnWidth = popupColumnPlaceable.width
 
-        val verticalScrollBarPlaceable =
-            verticalScrollBarMeasurable.measure(
-                Constraints.fixed(
-                    width = ScrollBarSizingConstants.DefaultScrollBarThickness.roundToPx(),
-                    height = popupColumnHeight
+        var fullWidth = popupColumnWidth
+        var verticalScrollBarPlaceable: Placeable? = null
+        val scrollBarMarginPx = ScrollBarSizingConstants.DefaultScrollBarMargin.roundToPx()
+        if (verticalScrollBarMeasurable != null) {
+            // account for top and bottom margins for height
+            verticalScrollBarPlaceable =
+                verticalScrollBarMeasurable.measure(
+                    Constraints.fixed(
+                        width = ScrollBarSizingConstants.DefaultScrollBarThickness.roundToPx(),
+                        height = popupColumnHeight - 2 * scrollBarMarginPx
+                    )
                 )
-            )
-        val scrollBarWidth = verticalScrollBarPlaceable.width
+            // also add margins on left and right
+            fullWidth += (scrollBarMarginPx + verticalScrollBarPlaceable.width + scrollBarMarginPx)
+        }
 
         val canvasPlaceable = canvasMeasurable.measure(
             Constraints.fixed(
-                width = popupColumnWidth + scrollBarWidth,
+                width = fullWidth,
                 height = popupColumnHeight
             )
         )
 
-        popupSize.width = popupColumnWidth + scrollBarWidth
+        popupSize.width = fullWidth
         popupSize.height = popupColumnHeight
 
-        layout(width = popupColumnWidth + scrollBarWidth, height = popupColumnHeight) {
+        layout(width = fullWidth, height = popupColumnHeight) {
             canvasPlaceable.place(x = 0, y = 0)
             // TODO - support RTL
             popupColumnPlaceable.place(x = 0, y = 0)
-            verticalScrollBarPlaceable.place(x = popupColumnWidth, y = 0)
+            verticalScrollBarPlaceable?.place(
+                x = popupColumnWidth + scrollBarMarginPx,
+                y = scrollBarMarginPx
+            )
         }
     }
 }
