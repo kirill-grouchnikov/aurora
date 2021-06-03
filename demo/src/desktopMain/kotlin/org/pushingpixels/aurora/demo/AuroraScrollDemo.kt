@@ -59,15 +59,17 @@ fun LazyListState.isItemFullyVisible(index: Int) : Boolean {
     // Is it in visible items?
     val visibleItemInfo = visibleItemsInfo.find { it.index == index } ?: return false
 
-    val visibleTop = visibleItemInfo.offset
+    val visibleStart = visibleItemInfo.offset
     val visibleSize = visibleItemInfo.size
-    val viewportTop = layoutInfo.viewportStartOffset
-    val viewportBottom = layoutInfo.viewportEndOffset
+    val viewportStart = layoutInfo.viewportStartOffset
+    val viewportEnd = layoutInfo.viewportEndOffset
 
-    if (visibleTop < viewportTop) {
+    // Is the top / start of the item visible in the viewport?
+    if (visibleStart < viewportStart) {
         return false
     }
-    if ((visibleTop + visibleSize) > viewportBottom) {
+    // Is the bottom / end of the item visible in the viewport?
+    if ((visibleStart + visibleSize) > viewportEnd) {
         return false
     }
 
@@ -167,9 +169,9 @@ fun main() {
                 Box(modifier = Modifier.fillMaxSize().padding(6.dp)) {
                     val itemsList = (0 until itemCount).toList()
                     LazyColumn(
-                        Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize()
                             .padding(end = ScrollBarSizingConstants.DefaultScrollBarThickness),
-                        lazyListState
+                        state = lazyListState
                     ) {
                         items(itemsList) { item ->
                             AuroraBoxWithHighlights(
