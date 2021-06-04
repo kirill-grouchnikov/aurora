@@ -193,5 +193,23 @@ abstract class CommandButtonPresentationState(val displayName: String) {
                     )
                 }
             }
+
+        /** Fit-to-icon state */
+        val FitToIcon: CommandButtonPresentationState =
+            object : CommandButtonPresentationState("Fit to icon") {
+                override fun createLayoutManager(
+                    layoutDirection: LayoutDirection,
+                    density: Density,
+                    textStyle: TextStyle,
+                    resourceLoader: Font.ResourceLoader
+                ): CommandButtonLayoutManager {
+                    return CommandButtonLayoutManagerFitToIcon(
+                        layoutDirection,
+                        density,
+                        textStyle,
+                        resourceLoader
+                    )
+                }
+            }
     }
 }

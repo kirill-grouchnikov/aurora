@@ -27,7 +27,7 @@ import org.pushingpixels.aurora.component.model.*
 import java.util.*
 import kotlin.math.max
 
-internal class CommandButtonLayoutManagerBig(
+internal open class CommandButtonLayoutManagerBig(
     override val layoutDirection: LayoutDirection,
     private val _density: Density,
     private val textStyle: TextStyle,
@@ -41,6 +41,22 @@ internal class CommandButtonLayoutManagerBig(
         presentationModel: CommandButtonPresentationModel
     ): Dp {
         return 32.dp
+    }
+
+    protected open fun getCurrentIconWidth(
+        command: Command,
+        presentationModel: CommandButtonPresentationModel
+    ): Dp {
+        return if (command.iconFactory != null)
+            getPreferredIconSize(command, presentationModel) else 0.dp
+    }
+
+    protected open fun getCurrentIconHeight(
+        command: Command,
+        presentationModel: CommandButtonPresentationModel
+    ): Dp {
+        return if (command.iconFactory != null)
+            getPreferredIconSize(command, presentationModel) else 0.dp
     }
 
     private fun getTitleStrings(
@@ -101,8 +117,8 @@ internal class CommandButtonLayoutManagerBig(
     ): Size {
         val paddingValues = presentationModel.contentPadding
         val bx = presentationModel.horizontalGapScaleFactor *
-            (paddingValues.calculateStartPadding(layoutDirection) +
-                    paddingValues.calculateEndPadding(layoutDirection)).toPx()
+                (paddingValues.calculateStartPadding(layoutDirection) +
+                        paddingValues.calculateEndPadding(layoutDirection)).toPx()
         val buttonText = command.text
         val layoutHGap = (CommandButtonSizingConstants.DefaultHorizontalContentLayoutGap *
                 presentationModel.horizontalGapScaleFactor).toPx()
@@ -111,7 +127,6 @@ internal class CommandButtonLayoutManagerBig(
         val hasIcon = (command.iconFactory != null)
         val hasText = (buttonText != null)
         val hasPopupIcon = (command.secondaryContentModel != null)
-        val prefIconSize = getPreferredIconSize(command, presentationModel).toPx()
 
         val title1Line = Paragraph(
             text = preLayoutInfo.texts[0], style = textStyle, width = Float.POSITIVE_INFINITY,
@@ -129,7 +144,7 @@ internal class CommandButtonLayoutManagerBig(
             title2Width + (if (hasPopupIcon) 4 * layoutHGap +
                     CommandButtonSizingConstants.PopupIconWidth.toPx() else 0).toInt()
         )
-        val width = max(prefIconSize, titleWidth)
+        val width = max(getCurrentIconWidth(command, presentationModel).toPx(), titleWidth)
 
         // start height with the top inset
         var height = presentationModel.verticalGapScaleFactor *
@@ -139,7 +154,7 @@ internal class CommandButtonLayoutManagerBig(
             // padding above the icon
             height += layoutVGap
             // icon height
-            height += prefIconSize
+            height += getCurrentIconHeight(command, presentationModel).toPx()
             // padding below the icon
             height += layoutVGap
         }
@@ -225,7 +240,6 @@ internal class CommandButtonLayoutManagerBig(
                 presentationModel.verticalGapScaleFactor).toPx()
         val hasIcon = (command.iconFactory != null)
         val hasPopupIcon = (command.secondaryContentModel != null)
-        val iconSize = getPreferredIconSize(command, presentationModel).toPx()
 
         var iconRect = Rect.Zero
         var separatorArea = Rect.Zero
@@ -256,14 +270,16 @@ internal class CommandButtonLayoutManagerBig(
         if (hasIcon) {
             y += layoutVGap
 
+            val iconWidth = getCurrentIconWidth(command, presentationModel).toPx()
+            val iconHeight = getCurrentIconHeight(command, presentationModel).toPx()
             iconRect = Rect(
-                left = (finalWidth - iconSize) / 2,
-                right = (finalWidth - iconSize) / 2 + iconSize,
+                left = (finalWidth - iconWidth) / 2,
+                right = (finalWidth - iconWidth) / 2 + iconWidth,
                 top = y,
-                bottom = y + iconSize
+                bottom = y + iconHeight
             )
 
-            y += (iconSize + layoutVGap)
+            y += (iconHeight + layoutVGap)
         }
 
         // always account for a separator for consistent visuals across
