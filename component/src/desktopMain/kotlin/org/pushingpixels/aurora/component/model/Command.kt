@@ -52,12 +52,12 @@ data class Command(
     val onTriggerActionToggleSelectedChange: ((Boolean) -> Unit)? = null,
     val secondaryContentModel: CommandMenuContentModel? = null,
     val isSecondaryEnabled: Boolean = true
-): ContentModel
+) : ContentModel
 
 data class CommandGroup(
     val title: String? = null,
     val commands: List<Command>
-): ContentModel
+) : ContentModel
 
 data class CommandMenuContentModel(
     val groups: List<CommandGroup>,
@@ -70,7 +70,10 @@ data class CommandMenuContentModel(
 }
 
 enum class TextClick {
-    Action, Popup
+    /** Clicking command text will activate the command action. */
+    Action,
+    /** Clicking command text will activate the secondary content of the command. */
+    Popup
 }
 
 enum class HorizontalAlignment(var arrangement: Arrangement.Horizontal) {
@@ -81,14 +84,10 @@ enum class HorizontalAlignment(var arrangement: Arrangement.Horizontal) {
  * Enumerates the available command button kinds.
  */
 enum class CommandButtonKind(val hasAction: Boolean, val hasPopup: Boolean) {
-    /**
-     * Command button that has only action area.
-     */
+    /** Command button that has only action area. */
     ActionOnly(true, false),
 
-    /**
-     * Command button that has only popup area.
-     */
+    /** Command button that has only popup area. */
     PopupOnly(false, true),
 
     /**
