@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.component.model
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.IconFilterStrategy
 import org.pushingpixels.aurora.PopupPlacementStrategy
 
 data class CommandPanelContentModel(
@@ -34,16 +35,20 @@ enum class PanelLayoutFill {
 }
 
 object CommandPanelSizingConstants {
+    val DefaultGap = 4.dp
 }
 
 data class CommandPanelPresentationModel(
     val layoutFill: PanelLayoutFill = PanelLayoutFill.RowFill,
-    val maxColumns: Int = -1, /** only relevant when layout fill is RowFill */
-    val maxRows: Int = -1, /** only relevant when layout fill is ColumnFill */
+    val maxColumns: Int = -1,/** only relevant when layout fill is RowFill */
+    val maxRows: Int = -1,/** only relevant when layout fill is ColumnFill */
     val showGroupLabels: Boolean = true,
     val commandPresentationState: CommandButtonPresentationState,
     val commandIconSize: Dp = 0.dp,
     val commandHorizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
+    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward,
     val isMenu: Boolean = false
 ): PresentationModel

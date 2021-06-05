@@ -70,6 +70,27 @@ class CommandButtonStripProjection(
     }
 }
 
+class CommandButtonPanelProjection(
+    contentModel: CommandPanelContentModel,
+    presentationModel: CommandPanelPresentationModel,
+    overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
+) : CommandBasedProjection<CommandPanelContentModel, CommandPanelPresentationModel>(
+    contentModel = contentModel,
+    presentationModel = presentationModel,
+    overlays = overlays
+) {
+    @Composable
+    override fun project() {
+        // TODO - pass the app-side modifier
+        AuroraCommandButtonPanel(
+            modifier = Modifier,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel,
+            overlays = this.overlays ?: mapOf()
+        )
+    }
+}
+
 class ComboBoxProjection<E>(
     contentModel: ComboBoxContentModel<E>,
     presentationModel: ComboBoxPresentationModel<E>

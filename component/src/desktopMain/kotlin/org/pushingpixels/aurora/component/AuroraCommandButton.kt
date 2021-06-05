@@ -76,29 +76,9 @@ private class CommandButtonDrawingCache(
 internal fun AuroraCommandButton(
     modifier: Modifier = Modifier,
     command: Command,
-    presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel(),
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay> = mapOf()
-) {
-    AuroraCommandButton(
-        modifier = modifier,
-        command = command,
-        parentWindow = null,
-        extraAction = null,
-        presentationModel = presentationModel,
-        overlays = overlays,
-        textStyle = null,
-        buttonSides = Sides(
-            straightSides = if (presentationModel.isMenu) Side.values().toSet() else emptySet()
-        )
-    )
-}
-
-@Composable
-internal fun AuroraCommandButton(
-    modifier: Modifier = Modifier,
-    command: Command,
     parentWindow: JWindow? = null,
     extraAction: (() -> Unit)? = null,
+    extraActionPreview: CommandActionPreview? = null,
     presentationModel: CommandButtonPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
     textStyle: TextStyle? = null,
@@ -387,6 +367,7 @@ internal fun AuroraCommandButton(
                     actionRollover = true
                     if (isActionEnabled && !wasRollover) {
                         command.actionPreview?.onCommandPreviewActivated(command)
+                        extraActionPreview?.onCommandPreviewActivated(command)
                     }
                     false
                 }, onExit = {
@@ -394,6 +375,7 @@ internal fun AuroraCommandButton(
                     actionRollover = false
                     if (isActionEnabled && wasRollover) {
                         command.actionPreview?.onCommandPreviewCanceled(command)
+                        extraActionPreview?.onCommandPreviewCanceled(command)
                     }
                     false
                 }, onMove = {

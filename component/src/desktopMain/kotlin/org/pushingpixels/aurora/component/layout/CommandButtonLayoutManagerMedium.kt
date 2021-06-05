@@ -42,7 +42,7 @@ internal open class CommandButtonLayoutManagerMedium(
         command: Command,
         presentationModel: CommandButtonPresentationModel
     ): Dp {
-        return presentationModel.iconDimension ?: 16.dp
+        return 16.dp
     }
 
     override fun getPreferredSize(
