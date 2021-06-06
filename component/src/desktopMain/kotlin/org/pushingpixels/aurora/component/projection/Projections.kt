@@ -81,6 +81,10 @@ class CommandButtonPanelProjection(
 ) {
     @Composable
     override fun project() {
+        require(!presentationModel.showGroupLabels ||
+                (presentationModel.layoutFillMode == PanelLayoutFillMode.RowFill)) {
+            "Column fill layout is not supported when group labels are shown"
+        }
         // TODO - pass the app-side modifier
         AuroraCommandButtonPanel(
             modifier = Modifier,

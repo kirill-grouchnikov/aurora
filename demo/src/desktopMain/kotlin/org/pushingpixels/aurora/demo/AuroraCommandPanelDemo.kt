@@ -15,22 +15,24 @@
  */
 package org.pushingpixels.aurora.demo
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.application
 import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.IconFilterStrategy
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.ComboBoxProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonPanelProjection
 import org.pushingpixels.aurora.demo.svg.material.*
+import org.pushingpixels.aurora.skin.businessSkin
 import org.pushingpixels.aurora.skin.getAuroraSkins
-import org.pushingpixels.aurora.skin.twilightSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 
 fun getCommandPanelContentModel(): CommandPanelContentModel {
@@ -92,12 +94,12 @@ fun getCommandPanelContentModel(): CommandPanelContentModel {
 @ExperimentalComposeUiApi
 fun main() {
     application {
-        val currentAuroraSkin = mutableStateOf(twilightSkin())
+        val currentAuroraSkin = mutableStateOf(businessSkin())
 
         AuroraWindow(
             title = "Aurora Command Panel",
             skin = currentAuroraSkin,
-            size = IntSize(400, 400),
+            size = IntSize(1000, 400),
             undecorated = true
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
@@ -122,19 +124,40 @@ fun main() {
 
                 val commandPanelContentModel = remember { getCommandPanelContentModel() }
 
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    CommandButtonPanelProjection(
-                        contentModel = commandPanelContentModel,
-                        presentationModel = CommandPanelPresentationModel(
-                            layoutFill = PanelLayoutFill.RowFill,
-                            maxColumns = 5,
-                            maxRows = 200,
-                            showGroupLabels = true,
-                            commandPresentationState = CommandButtonPresentationState.Medium,
-                            iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
-                            iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
-                        )
-                    ).project()
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Box(
+                        modifier = Modifier.background(color = Color.Red.withAlpha(0.5f))
+                            .fillMaxWidth(fraction = 0.5f)
+                    ) {
+                        CommandButtonPanelProjection(
+                            contentModel = commandPanelContentModel,
+                            presentationModel = CommandPanelPresentationModel(
+                                layoutFillMode = PanelLayoutFillMode.RowFill,
+                                maxColumns = 5,
+                                showGroupLabels = true,
+                                commandPresentationState = CommandButtonPresentationState.Medium,
+                                iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                                iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                            )
+                        ).project()
+                    }
+
+                    Box(
+                        modifier = Modifier.background(color = Color.Blue.withAlpha(0.5f))
+                            .fillMaxWidth()
+                    ) {
+                        CommandButtonPanelProjection(
+                            contentModel = commandPanelContentModel,
+                            presentationModel = CommandPanelPresentationModel(
+                                layoutFillMode = PanelLayoutFillMode.ColumnFill,
+                                maxRows = 6,
+                                showGroupLabels = false,
+                                commandPresentationState = CommandButtonPresentationState.Big,
+                                iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                                iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                            )
+                        ).project()
+                    }
                 }
             }
         }

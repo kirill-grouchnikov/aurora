@@ -34,6 +34,72 @@ import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 
+/**
+ * Panel composable that hosts command buttons. Provides support for button groups,
+ * same icon state / dimension and column-fill / row-fill layout. Under [RowFill]
+ * layout mode, the buttons are laid out in rows, never exceeding the available
+ * horizontal space. A vertical scroll bar will kick in once there is not enough
+ * vertical space to show all the buttons. The schematic below shows a row-fill command
+ * button panel:
+ * </p>
+ *
+ * <pre>
+ * +-----------------------------+-+
+ * |                             |o|
+ * | +----+ +----+ +----+ +----+ |o|
+ * | | 01 | | 02 | | 03 | | 04 | |o|
+ * | +----+ +----+ +----+ +----+ |o|
+ * |                             | |
+ * | +----+ +----+ +----+ +----+ | |
+ * | | 05 | | 06 | | 07 | | 07 | | |
+ * | +----+ +----+ +----+ +----+ | |
+ * |                             | |
+ * | +----+ +----+ +----+ +----+ | |
+ * | | 09 | | 10 | | 11 | | 12 | | |
+ * | +----+ +----+ +----+ +----+ | |
+ * |                             | |
+ * | +----+ +----+ +----+ +----+ | |
+ * | | 13 | | 14 | | 15 | | 16 | | |
+ * +-----------------------------+-+
+ * </pre>
+ *
+ * <p>
+ * Each row hosts four buttons, and the vertical scroll bar allows scrolling the
+ * content up and down.
+ * </p>
+ *
+ * <p>
+ * Under the [ColumnFill] layout mode, the buttons are laid
+ * out in columns, never exceeding the available vertical space. A horizontal scroll
+ * bar will kick in once there is not enough horizontal space to show all the
+ * buttons. The schematic below shows a column-fill command button panel:
+ * </p>
+ *
+ * <pre>
+ * +---------------------------------+
+ * |                                 |
+ * | +----+ +----+ +----+ +----+ +---|
+ * | | 01 | | 04 | | 07 | | 10 | | 13|
+ * | +----+ +----+ +----+ +----+ +---|
+ * |                                 |
+ * | +----+ +----+ +----+ +----+ +---|
+ * | | 02 | | 05 | | 08 | | 11 | | 14|
+ * | +----+ +----+ +----+ +----+ +---|
+ * |                                 |
+ * | +----+ +----+ +----+ +----+ +---|
+ * | | 03 | | 06 | | 09 | | 12 | | 15|
+ * | +----+ +----+ +----+ +----+ +---|
+ * |                                 |
+ * +---------------------------------+
+ * |oooo                             |
+ * +---------------------------------+
+ * </pre>
+ *
+ * <p>
+ * Each column hosts three buttons, and the horizontal scroll bar allows
+ * scrolling the content left and right.
+ * </p>
+ */
 @Composable
 internal fun AuroraCommandButtonPanel(
     modifier: Modifier = Modifier,
@@ -107,7 +173,12 @@ internal fun AuroraCommandButtonPanel(
                 }
             }
         },
-        measurePolicy = getRowFillMeasurePolicy(contentModel, presentationModel, preferredSizes)
+        measurePolicy = when (presentationModel.layoutFillMode) {
+            PanelLayoutFillMode.RowFill ->
+                getRowFillMeasurePolicy(contentModel, presentationModel, preferredSizes)
+            PanelLayoutFillMode.ColumnFill ->
+                getColumnFillMeasurePolicy(contentModel, presentationModel, preferredSizes)
+        }
     )
 }
 
@@ -176,6 +247,7 @@ private fun getRowFillMeasurePolicy(
             }
         }
 
+        println("Row $panelWidth x $panelHeight")
         layout(width = panelWidth, height = panelHeight) {
             var currPlaceableIndex = 0
             var currX = 0
@@ -189,7 +261,7 @@ private fun getRowFillMeasurePolicy(
                     currTitlePlaceable.place(currX, currY)
                     currY += currTitlePlaceable.height
                 }
-                // And also measure all the buttons
+                // And place all the buttons
                 for ((index, _) in groupModel.commands.withIndex()) {
                     val commandButtonPlaceable = placeables[currPlaceableIndex++]
                     commandButtonPlaceable.place(currX, currY)
@@ -206,6 +278,96 @@ private fun getRowFillMeasurePolicy(
                         if (index == (groupModel.commands.size - 1)) {
                             // Partially filled last row
                             currY += maxButtonHeight
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+private fun getColumnFillMeasurePolicy(
+    contentModel: CommandPanelContentModel,
+    presentationModel: CommandPanelPresentationModel,
+    preferredSizes: Map<Command, Size>
+): MeasurePolicy {
+    return MeasurePolicy { measurables, constraints ->
+        // Our grid is uniform. The buttons will have the same width and height. Start
+        // by computing the max preferred width / height across all the buttons.
+        var maxButtonWidth = 0
+        var maxButtonHeight = 0
+        for (groupModel in contentModel.commandGroups) {
+            for (command in groupModel.commands) {
+                val preferredSize = preferredSizes[command]!!
+                maxButtonWidth = max(maxButtonWidth, preferredSize.width.toInt())
+                maxButtonHeight = max(maxButtonHeight, preferredSize.height.toInt())
+            }
+        }
+
+        val gap = CommandPanelSizingConstants.DefaultGap.roundToPx()
+        val panelHeight = if (constraints.hasFixedWidth || constraints.hasBoundedWidth) {
+            constraints.maxHeight
+        } else {
+            maxButtonHeight * presentationModel.maxRows +
+                    gap * (presentationModel.maxRows - 1)
+        }
+
+        var actualRowCount = min(
+            (panelHeight + gap) / (maxButtonHeight + gap),
+            presentationModel.maxRows
+        )
+        if (actualRowCount == 0) {
+            actualRowCount = 1
+        }
+
+        val actualButtonHeight = (panelHeight - gap * (actualRowCount - 1)) / actualRowCount
+
+        var panelWidth = 0
+        val placeables = arrayListOf<Placeable>()
+        // Go over all the placeables and combine their heights
+        var currMeasurableIndex = 0
+        for (groupModel in contentModel.commandGroups) {
+            // How many button columns does this command group need?
+            val buttonColumns =
+                ceil((groupModel.commands.size.toFloat()) / actualRowCount).toInt()
+            // Add to overall panel width, including gaps between the columns
+            panelWidth += buttonColumns * maxButtonWidth + (buttonColumns - 1) * gap
+            // And also measure all the buttons
+            for (command in groupModel.commands) {
+                val commandButtonPlaceable = measurables[currMeasurableIndex++].measure(
+                    Constraints.fixed(
+                        width = maxButtonWidth, height = actualButtonHeight
+                    )
+                )
+                placeables.add(commandButtonPlaceable)
+            }
+        }
+
+        println("Column $panelWidth x $panelHeight")
+        layout(width = panelWidth, height = panelHeight) {
+            var currPlaceableIndex = 0
+            var currX = 0
+            var currY = 0
+            // TODO - support RTL
+            for (groupModel in contentModel.commandGroups) {
+                currY = 0
+                // And place all the buttons
+                for ((index, _) in groupModel.commands.withIndex()) {
+                    val commandButtonPlaceable = placeables[currPlaceableIndex++]
+                    commandButtonPlaceable.place(currX, currY)
+                    currY += (actualButtonHeight + gap)
+                    if (currY >= panelHeight) {
+                        // No more vertical space in this column
+                        currY = 0
+                        currX += maxButtonWidth
+                        if (index < (groupModel.commands.size - 1)) {
+                            // This is not the last column
+                            currX += gap
+                        }
+                    } else {
+                        if (index == (groupModel.commands.size - 1)) {
+                            // Partially filled last column
+                            currX += (maxButtonWidth + gap)
                         }
                     }
                 }

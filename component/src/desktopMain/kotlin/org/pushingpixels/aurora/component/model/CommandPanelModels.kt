@@ -24,10 +24,10 @@ import org.pushingpixels.aurora.PopupPlacementStrategy
 data class CommandPanelContentModel(
     val commandGroups: List<CommandGroup>,
     val commandActionPreview: CommandActionPreview? = null
-): ContentModel
+) : ContentModel
 
 
-enum class PanelLayoutFill {
+enum class PanelLayoutFillMode {
     /** The buttons are laid out in rows respecting the available width. */
     RowFill,
 
@@ -42,9 +42,9 @@ object CommandPanelSizingConstants {
 
 data class CommandPanelPresentationModel(
     val contentPadding: PaddingValues = CommandPanelSizingConstants.DefaultContentPadding,
-    val layoutFill: PanelLayoutFill = PanelLayoutFill.RowFill,
-    val maxColumns: Int = -1,/** only relevant when layout fill is RowFill */
-    val maxRows: Int = -1,/** only relevant when layout fill is ColumnFill */
+    val layoutFillMode: PanelLayoutFillMode = PanelLayoutFillMode.RowFill,
+    val maxColumns: Int = -1,  // only relevant when layoutFillMode is RowFill
+    val maxRows: Int = -1,     // only relevant when layoutFillMode is ColumnFill
     val showGroupLabels: Boolean = true,
     val commandPresentationState: CommandButtonPresentationState,
     val commandIconSize: Dp = 0.dp,
@@ -54,4 +54,4 @@ data class CommandPanelPresentationModel(
     val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward,
     val isMenu: Boolean = false
-): PresentationModel
+) : PresentationModel
