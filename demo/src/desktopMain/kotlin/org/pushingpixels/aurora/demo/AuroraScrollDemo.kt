@@ -15,10 +15,11 @@
  */
 package org.pushingpixels.aurora.demo
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.runtime.mutableStateOf
@@ -52,7 +53,7 @@ import org.pushingpixels.aurora.skin.getAuroraSkins
 import org.pushingpixels.aurora.skin.twilightSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 
-fun LazyListState.isItemFullyVisible(index: Int) : Boolean {
+fun LazyListState.isItemFullyVisible(index: Int): Boolean {
     val layoutInfo = this.layoutInfo
     val visibleItemsInfo = layoutInfo.visibleItemsInfo
 
@@ -168,14 +169,21 @@ fun main() {
 
                 Box(modifier = Modifier.fillMaxSize().padding(6.dp)) {
                     val itemsList = (0 until itemCount).toList()
+                    val colors = AuroraSkin.colors
+                    val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
+                        decorationAreaType = AuroraSkin.decorationAreaType
+                    )
+                    val backgroundEvenRows = backgroundColorScheme.backgroundFillColor
+                    val backgroundOddRows = backgroundColorScheme.accentedBackgroundFillColor
                     LazyColumn(
                         modifier = Modifier.fillMaxSize()
                             .padding(end = ScrollBarSizingConstants.DefaultScrollBarThickness),
                         state = lazyListState
                     ) {
-                        items(itemsList) { item ->
+                        itemsIndexed(itemsList) { index, item ->
                             AuroraBoxWithHighlights(
-                                modifier = Modifier.fillMaxWidth().height(32.dp),
+                                modifier = Modifier.fillMaxWidth().height(32.dp)
+                                    .background(if (index % 2 == 0) backgroundEvenRows else backgroundOddRows),
                                 selected = (stateSelection.value == item),
                                 onClick = { stateSelection.value = item },
                                 sides = Sides(straightSides = Side.values().toSet()),

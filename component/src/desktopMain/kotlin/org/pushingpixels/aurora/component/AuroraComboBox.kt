@@ -650,6 +650,9 @@ private fun <E> ComboBoxPopupContent(
         }
         ComboBoxPopupColumn(modifier = Modifier.verticalScroll(stateVertical)) {
             for (item in contentModel.items) {
+                // TODO - pass background modifier with even-odd background striping
+                //  using [AuroraColorScheme.backgroundFillColor] and
+                //  [AuroraColorScheme.accentedBackgroundFillColor]
                 CommandButtonProjection(
                     contentModel = Command(
                         text = presentationModel.displayConverter.invoke(item),
