@@ -122,7 +122,7 @@ fun main() {
 
                 val commandPanelContentModel = remember { getCommandPanelContentModel() }
 
-                Box(modifier = Modifier.fillMaxWidth().padding(6.dp)) {
+                Box(modifier = Modifier.fillMaxWidth()) {
                     CommandButtonPanelProjection(
                         contentModel = commandPanelContentModel,
                         presentationModel = CommandPanelPresentationModel(

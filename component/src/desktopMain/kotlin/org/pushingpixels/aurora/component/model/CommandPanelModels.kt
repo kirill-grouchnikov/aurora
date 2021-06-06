@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.component.model
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.IconFilterStrategy
@@ -35,10 +36,12 @@ enum class PanelLayoutFill {
 }
 
 object CommandPanelSizingConstants {
+    val DefaultContentPadding = PaddingValues(6.dp)
     val DefaultGap = 4.dp
 }
 
 data class CommandPanelPresentationModel(
+    val contentPadding: PaddingValues = CommandPanelSizingConstants.DefaultContentPadding,
     val layoutFill: PanelLayoutFill = PanelLayoutFill.RowFill,
     val maxColumns: Int = -1,/** only relevant when layout fill is RowFill */
     val maxRows: Int = -1,/** only relevant when layout fill is ColumnFill */

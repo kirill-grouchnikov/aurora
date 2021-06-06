@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.component
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
@@ -70,48 +71,49 @@ internal fun AuroraCommandButtonPanel(
     val preLayoutInfos =
         mutableMapOf<Command, CommandButtonLayoutManager.CommandButtonPreLayoutInfo>()
     val preferredSizes = mutableMapOf<Command, Size>()
-    Layout(content = {
-        val commandPreviewListener = contentModel.commandActionPreview
-        for (groupModel in contentModel.commandGroups) {
-            if (presentationModel.showGroupLabels && (groupModel.title != null)) {
-                // The title of the current command group
-                LabelProjection(contentModel = LabelContentModel(text = groupModel.title)).project()
+    Layout(modifier = Modifier.padding(presentationModel.contentPadding),
+        content = {
+            val commandPreviewListener = contentModel.commandActionPreview
+            for (groupModel in contentModel.commandGroups) {
+                if (presentationModel.showGroupLabels && (groupModel.title != null)) {
+                    // The title of the current command group
+                    LabelProjection(contentModel = LabelContentModel(text = groupModel.title)).project()
+                }
+
+                for (command in groupModel.commands) {
+                    // Apply overlay if we have one registered for the current command
+                    val commandPresentation = if (overlays.containsKey(command))
+                        baseCommandButtonPresentationModel.overlayWith(overlays[command]!!)
+                    else
+                        baseCommandButtonPresentationModel
+
+                    // Propagate command overlays so that key tips are properly displayed
+                    // on secondary content of the current command's projection
+                    AuroraCommandButton(
+                        command = command,
+                        parentWindow = null,
+                        extraActionPreview = commandPreviewListener,
+                        presentationModel = commandPresentation,
+                        overlays = overlays,
+                        buttonSides = Sides()
+                    )
+
+                    // Cache the combined presentation model
+                    commandPresentationModels[command] = commandPresentation
+
+                    // Cache pre-layout info
+                    preLayoutInfos[command] =
+                        layoutManager.getPreLayoutInfo(command, commandPresentation)
+
+                    // Cache preferred size
+                    preferredSizes[command] = layoutManager.getPreferredSize(
+                        command,
+                        commandPresentation,
+                        preLayoutInfos[command]!!
+                    )
+                }
             }
-
-            for (command in groupModel.commands) {
-                // Apply overlay if we have one registered for the current command
-                val commandPresentation = if (overlays.containsKey(command))
-                    baseCommandButtonPresentationModel.overlayWith(overlays[command]!!)
-                else
-                    baseCommandButtonPresentationModel
-
-                // Propagate command overlays so that key tips are properly displayed
-                // on secondary content of the current command's projection
-                AuroraCommandButton(
-                    command = command,
-                    parentWindow = null,
-                    extraActionPreview = commandPreviewListener,
-                    presentationModel = commandPresentation,
-                    overlays = overlays,
-                    buttonSides = Sides()
-                )
-
-                // Cache the combined presentation model
-                commandPresentationModels[command] = commandPresentation
-
-                // Cache pre-layout info
-                preLayoutInfos[command] =
-                    layoutManager.getPreLayoutInfo(command, commandPresentation)
-
-                // Cache preferred size
-                preferredSizes[command] = layoutManager.getPreferredSize(
-                    command,
-                    commandPresentation,
-                    preLayoutInfos[command]!!
-                )
-            }
-        }
-    }) { measurables, constraints ->
+        }) { measurables, constraints ->
         // Our grid is uniform. The buttons will have the same width and height. Start
         // by computing the max preferred width / height across all the buttons.
         var maxButtonWidth = 0
@@ -132,8 +134,10 @@ internal fun AuroraCommandButtonPanel(
                     gap * (presentationModel.maxColumns - 1)
         }
 
-        var actualColumnCount = min((panelWidth + gap) / (maxButtonWidth + gap),
-            presentationModel.maxColumns)
+        var actualColumnCount = min(
+            (panelWidth + gap) / (maxButtonWidth + gap),
+            presentationModel.maxColumns
+        )
         if (actualColumnCount == 0) {
             actualColumnCount = 1
         }
