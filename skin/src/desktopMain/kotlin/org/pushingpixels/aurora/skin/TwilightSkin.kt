@@ -31,7 +31,7 @@ import org.pushingpixels.aurora.painter.overlay.TopLineOverlayPainter
 import org.pushingpixels.aurora.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.utils.getColorSchemes
 
-private fun sentinelSkinColors(): AuroraSkinColors {
+private fun twilightSkinColors(): AuroraSkinColors {
     val result = AuroraSkinColors()
     val schemes = getColorSchemes(
         AuroraSkin::class.java.getResourceAsStream(
@@ -244,8 +244,8 @@ fun twilightSkin(): AuroraSkinDefinition {
     )
 
     return AuroraSkinDefinition(
-        displayName = "Sentinel",
-        colors = sentinelSkinColors(),
+        displayName = "Twilight",
+        colors = twilightSkinColors(),
         painters = painters,
         buttonShaper = ClassicButtonShaper()
     )
