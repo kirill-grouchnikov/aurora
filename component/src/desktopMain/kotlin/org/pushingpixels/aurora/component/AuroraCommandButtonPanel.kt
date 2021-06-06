@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontLoader
@@ -27,7 +28,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Constraints
 import org.pushingpixels.aurora.LocalTextStyle
 import org.pushingpixels.aurora.Sides
-import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import kotlin.math.ceil
@@ -65,13 +65,9 @@ internal fun AuroraCommandButtonPanel(
             iconDisabledFilterStrategy = presentationModel.iconDisabledFilterStrategy
         )
 
-    // Compute pre-layout info for each command button
-    val commandPresentationModels =
-        mutableMapOf<Command, CommandButtonPresentationModel>()
-    val preLayoutInfos =
-        mutableMapOf<Command, CommandButtonLayoutManager.CommandButtonPreLayoutInfo>()
     val preferredSizes = mutableMapOf<Command, Size>()
-    Layout(modifier = Modifier.padding(presentationModel.contentPadding),
+    Layout(
+        modifier = Modifier.padding(presentationModel.contentPadding),
         content = {
             val commandPreviewListener = contentModel.commandActionPreview
             for (groupModel in contentModel.commandGroups) {
@@ -98,22 +94,29 @@ internal fun AuroraCommandButtonPanel(
                         buttonSides = Sides()
                     )
 
-                    // Cache the combined presentation model
-                    commandPresentationModels[command] = commandPresentation
-
                     // Cache pre-layout info
-                    preLayoutInfos[command] =
+                    val preLayoutInfo =
                         layoutManager.getPreLayoutInfo(command, commandPresentation)
 
                     // Cache preferred size
                     preferredSizes[command] = layoutManager.getPreferredSize(
-                        command,
-                        commandPresentation,
-                        preLayoutInfos[command]!!
+                        command = command,
+                        presentationModel = commandPresentation,
+                        preLayoutInfo = preLayoutInfo
                     )
                 }
             }
-        }) { measurables, constraints ->
+        },
+        measurePolicy = getRowFillMeasurePolicy(contentModel, presentationModel, preferredSizes)
+    )
+}
+
+private fun getRowFillMeasurePolicy(
+    contentModel: CommandPanelContentModel,
+    presentationModel: CommandPanelPresentationModel,
+    preferredSizes: Map<Command, Size>
+): MeasurePolicy {
+    return MeasurePolicy { measurables, constraints ->
         // Our grid is uniform. The buttons will have the same width and height. Start
         // by computing the max preferred width / height across all the buttons.
         var maxButtonWidth = 0
@@ -173,45 +176,39 @@ internal fun AuroraCommandButtonPanel(
             }
         }
 
-        if (presentationModel.layoutFill == PanelLayoutFill.RowFill) {
-            layout(width = panelWidth, height = panelHeight) {
-                var currPlaceableIndex = 0
-                var currX = 0
-                var currY = 0
-                // TODO - support RTL
-                for (groupModel in contentModel.commandGroups) {
-                    currX = 0
-                    if (presentationModel.showGroupLabels && (groupModel.title != null)) {
-                        // The current command group has a title
-                        val currTitlePlaceable = placeables[currPlaceableIndex++]
-                        currTitlePlaceable.place(currX, currY)
-                        currY += currTitlePlaceable.height
-                    }
-                    // And also measure all the buttons
-                    for ((index, _) in groupModel.commands.withIndex()) {
-                        val commandButtonPlaceable = placeables[currPlaceableIndex++]
-                        commandButtonPlaceable.place(currX, currY)
-                        currX += (actualButtonWidth + gap)
-                        if (currX >= panelWidth) {
-                            // No more horizontal space in this row
-                            currX = 0
+        layout(width = panelWidth, height = panelHeight) {
+            var currPlaceableIndex = 0
+            var currX = 0
+            var currY = 0
+            // TODO - support RTL
+            for (groupModel in contentModel.commandGroups) {
+                currX = 0
+                if (presentationModel.showGroupLabels && (groupModel.title != null)) {
+                    // The current command group has a title
+                    val currTitlePlaceable = placeables[currPlaceableIndex++]
+                    currTitlePlaceable.place(currX, currY)
+                    currY += currTitlePlaceable.height
+                }
+                // And also measure all the buttons
+                for ((index, _) in groupModel.commands.withIndex()) {
+                    val commandButtonPlaceable = placeables[currPlaceableIndex++]
+                    commandButtonPlaceable.place(currX, currY)
+                    currX += (actualButtonWidth + gap)
+                    if (currX >= panelWidth) {
+                        // No more horizontal space in this row
+                        currX = 0
+                        currY += maxButtonHeight
+                        if (index < (groupModel.commands.size - 1)) {
+                            // This is not the last row
+                            currY += gap
+                        }
+                    } else {
+                        if (index == (groupModel.commands.size - 1)) {
+                            // Partially filled last row
                             currY += maxButtonHeight
-                            if (index < (groupModel.commands.size - 1)) {
-                                // This is not the last row
-                                currY += gap
-                            }
-                        } else {
-                            if (index == (groupModel.commands.size - 1)) {
-                                // Partially filled last row
-                                currY += maxButtonHeight
-                            }
                         }
                     }
                 }
-            }
-        } else {
-            layout(width = 200, height = 200) {
-
             }
         }
     }
