@@ -247,7 +247,6 @@ private fun getRowFillMeasurePolicy(
             }
         }
 
-        println("Row $panelWidth x $panelHeight")
         layout(width = panelWidth, height = panelHeight) {
             var currPlaceableIndex = 0
             var currX = 0
@@ -343,7 +342,6 @@ private fun getColumnFillMeasurePolicy(
             }
         }
 
-        println("Column $panelWidth x $panelHeight")
         layout(width = panelWidth, height = panelHeight) {
             var currPlaceableIndex = 0
             var currX = 0
