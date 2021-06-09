@@ -27,9 +27,7 @@ import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.LocalTextStyle
 import org.pushingpixels.aurora.Sides
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
@@ -446,8 +444,9 @@ internal fun getPreferredCommandButtonPanelSize(
     contentModel: CommandPanelContentModel,
     presentationModel: CommandPanelPresentationModel,
     buttonLayoutManager: CommandButtonLayoutManager,
-    gap: Int
-): IntSize {
+    layoutDirection: LayoutDirection,
+    density: Density
+): Size {
     // Our grid is uniform. The buttons will have the same width and height. Start
     // by computing the max preferred width / height across all the buttons.
     var maxButtonWidth = 0
@@ -481,9 +480,24 @@ internal fun getPreferredCommandButtonPanelSize(
         }
     }
 
-    val panelWidth = maxButtonWidth * presentationModel.maxColumns +
+    val gap = (CommandPanelSizingConstants.DefaultGap.value * density.density)
+    var panelWidth = maxButtonWidth * presentationModel.maxColumns +
             gap * (presentationModel.maxColumns - 1)
-    val panelHeight = maxButtonHeight * presentationModel.maxRows +
+    var panelHeight = maxButtonHeight * presentationModel.maxRows +
             gap * (presentationModel.maxColumns - 1)
-    return IntSize(panelWidth, panelHeight)
+
+    // Account for content padding
+    panelWidth += (presentationModel.contentPadding.calculateStartPadding(layoutDirection) +
+            presentationModel.contentPadding.calculateEndPadding(layoutDirection)).value * density.density
+    panelHeight += (presentationModel.contentPadding.calculateTopPadding() +
+            presentationModel.contentPadding.calculateBottomPadding()).value * density.density
+
+    // Account for scroll bar. For now the assumption is that it's always showing
+    if (presentationModel.layoutFillMode == PanelLayoutFillMode.RowFill) {
+        panelWidth += ScrollBarSizingConstants.DefaultScrollBarSize.value * density.density
+    } else {
+        panelHeight += ScrollBarSizingConstants.DefaultScrollBarSize.value * density.density
+    }
+
+    return Size(panelWidth, panelHeight)
 }

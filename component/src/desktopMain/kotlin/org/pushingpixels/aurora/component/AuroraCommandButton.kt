@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
@@ -1219,8 +1220,9 @@ private fun CommandButtonPopupContent(
                 textStyle = textStyle,
                 resourceLoader = resourceLoader
             ),
-            gap = (CommandPanelSizingConstants.DefaultGap.value * density.density).roundToInt()
-        ) else IntSize(0, 0)
+            layoutDirection = layoutDirection,
+            density = density
+        ) else Size(0.0f, 0.0f)
         CommandButtonPopupColumn(
             contentSize = contentSize,
             hasPanel = hasPanel,
@@ -1288,7 +1290,7 @@ private fun CommandButtonPopupContent(
 private fun CommandButtonPopupColumn(
     contentSize: AuroraSize,
     hasPanel: Boolean,
-    panelPreferredSize: IntSize,
+    panelPreferredSize: Size,
     content: @Composable () -> Unit
 ) {
     Layout(content = content) { measurables, _ ->
@@ -1298,8 +1300,8 @@ private fun CommandButtonPopupColumn(
             // The column width is determined by the panel
             panelPlaceable = measurables[0].measure(
                 Constraints.fixed(
-                    width = panelPreferredSize.width,
-                    height = panelPreferredSize.height
+                    width = panelPreferredSize.width.toInt(),
+                    height = panelPreferredSize.height.toInt()
                 )
             )
             contentTotalWidth = panelPlaceable.measuredWidth
@@ -1319,7 +1321,7 @@ private fun CommandButtonPopupColumn(
         }
 
         // The children are laid out in a column
-        val contentMaxHeight = panelPreferredSize.height +
+        val contentMaxHeight = panelPreferredSize.height.toInt() +
             buttonPlaceables.sumOf { it.height }
         contentSize.width = contentTotalWidth
         contentSize.height = contentMaxHeight
