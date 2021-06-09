@@ -49,6 +49,7 @@ object ScrollBarSizingConstants {
     val DefaultScrollBarMinimumHeight = 16.dp
     val DefaultScrollBarThickness = 8.dp
     val DefaultScrollBarMargin = 2.dp
+    val DefaultScrollBarSize = DefaultScrollBarThickness + 2 * DefaultScrollBarMargin
 }
 
 @Immutable
@@ -280,6 +281,8 @@ private fun Scrollbar(
         }
     }
 
+    val isVisible = sliderAdapter.size < containerSize
+
     Layout(
         {
             Box(
@@ -326,8 +329,11 @@ private fun Scrollbar(
                 val fillPainter = AuroraSkin.painters.fillPainter
                 val borderPainter = AuroraSkin.painters.borderPainter
 
-                val alpha = if (currentState.value.isDisabled)
+                var alpha = if (currentState.value.isDisabled)
                     AuroraSkin.colors.getAlpha(decorationAreaType, currentState.value) else 1.0f
+                if (!isVisible) {
+                    alpha = 0.0f
+                }
 
                 Canvas(Modifier.matchParentSize()) {
                     val insets = 0.5f

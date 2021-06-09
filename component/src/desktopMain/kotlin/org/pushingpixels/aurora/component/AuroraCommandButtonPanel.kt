@@ -15,8 +15,10 @@
  */
 package org.pushingpixels.aurora.component
 
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.Layout
@@ -26,6 +28,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.LocalTextStyle
 import org.pushingpixels.aurora.Sides
 import org.pushingpixels.aurora.component.model.*
@@ -131,55 +134,111 @@ internal fun AuroraCommandButtonPanel(
             iconDisabledFilterStrategy = presentationModel.iconDisabledFilterStrategy
         )
 
-    val preferredSizes = mutableMapOf<Command, Size>()
-    Layout(
-        modifier = Modifier.padding(presentationModel.contentPadding),
-        content = {
-            val commandPreviewListener = contentModel.commandActionPreview
-            for (groupModel in contentModel.commandGroups) {
-                if (presentationModel.showGroupLabels && (groupModel.title != null)) {
-                    // The title of the current command group
-                    LabelProjection(contentModel = LabelContentModel(text = groupModel.title)).project()
-                }
+    Box {
+        val stateVertical = rememberScrollState(0)
+        val stateHorizontal = rememberScrollState(0)
 
-                for (command in groupModel.commands) {
-                    // Apply overlay if we have one registered for the current command
-                    val commandPresentation = if (overlays.containsKey(command))
-                        baseCommandButtonPresentationModel.overlayWith(overlays[command]!!)
-                    else
-                        baseCommandButtonPresentationModel
+        val preferredSizes = mutableMapOf<Command, Size>()
 
-                    // Propagate command overlays so that key tips are properly displayed
-                    // on secondary content of the current command's projection
-                    AuroraCommandButton(
-                        command = command,
-                        parentWindow = null,
-                        extraActionPreview = commandPreviewListener,
-                        presentationModel = commandPresentation,
-                        overlays = overlays,
-                        buttonSides = Sides()
-                    )
-
-                    // Cache pre-layout info
-                    val preLayoutInfo =
-                        layoutManager.getPreLayoutInfo(command, commandPresentation)
-
-                    // Cache preferred size
-                    preferredSizes[command] = layoutManager.getPreferredSize(
-                        command = command,
-                        presentationModel = commandPresentation,
-                        preLayoutInfo = preLayoutInfo
-                    )
-                }
-            }
-        },
-        measurePolicy = when (presentationModel.layoutFillMode) {
-            PanelLayoutFillMode.RowFill ->
-                getRowFillMeasurePolicy(contentModel, presentationModel, preferredSizes)
-            PanelLayoutFillMode.ColumnFill ->
-                getColumnFillMeasurePolicy(contentModel, presentationModel, preferredSizes)
+        val extraEndPadding = if (presentationModel.layoutFillMode == PanelLayoutFillMode.RowFill)
+            ScrollBarSizingConstants.DefaultScrollBarSize else 0.dp
+        val extraBottomPadding =
+            if (presentationModel.layoutFillMode == PanelLayoutFillMode.ColumnFill)
+                ScrollBarSizingConstants.DefaultScrollBarSize else 0.dp
+        val contentStartPadding =
+            presentationModel.contentPadding.calculateStartPadding(layoutDirection)
+        val contentEndPadding =
+            presentationModel.contentPadding.calculateEndPadding(layoutDirection)
+        val contentTopPadding = presentationModel.contentPadding.calculateTopPadding()
+        val contentBottomPadding = presentationModel.contentPadding.calculateBottomPadding()
+        var topLevelModifier = modifier.padding(
+            start = contentStartPadding,
+            end = contentEndPadding + extraEndPadding,
+            top = contentTopPadding,
+            bottom = contentBottomPadding + extraBottomPadding
+        )
+        topLevelModifier = when (presentationModel.layoutFillMode) {
+            PanelLayoutFillMode.RowFill -> topLevelModifier.verticalScroll(stateVertical)
+            PanelLayoutFillMode.ColumnFill -> topLevelModifier.horizontalScroll(stateHorizontal)
         }
-    )
+        Layout(
+            modifier = topLevelModifier,
+            content = {
+                val commandPreviewListener = contentModel.commandActionPreview
+                for (groupModel in contentModel.commandGroups) {
+                    if (presentationModel.showGroupLabels && (groupModel.title != null)) {
+                        // The title of the current command group
+                        // TODO - add horizontal separators and background fill
+                        LabelProjection(
+                            contentModel = LabelContentModel(text = groupModel.title),
+                            presentationModel = LabelPresentationModel(
+                                horizontalAlignment = HorizontalAlignment.Leading
+                            )
+                        ).project()
+                    }
+
+                    // TODO - add even-odd background fill
+                    for (command in groupModel.commands) {
+                        // Apply overlay if we have one registered for the current command
+                        val commandPresentation = if (overlays.containsKey(command))
+                            baseCommandButtonPresentationModel.overlayWith(overlays[command]!!)
+                        else
+                            baseCommandButtonPresentationModel
+
+                        // Propagate command overlays so that key tips are properly displayed
+                        // on secondary content of the current command's projection
+                        AuroraCommandButton(
+                            command = command,
+                            parentWindow = null,
+                            extraActionPreview = commandPreviewListener,
+                            presentationModel = commandPresentation,
+                            overlays = overlays,
+                            buttonSides = Sides()
+                        )
+
+                        // Cache pre-layout info
+                        val preLayoutInfo =
+                            layoutManager.getPreLayoutInfo(command, commandPresentation)
+
+                        // Cache preferred size
+                        preferredSizes[command] = layoutManager.getPreferredSize(
+                            command = command,
+                            presentationModel = commandPresentation,
+                            preLayoutInfo = preLayoutInfo
+                        )
+                    }
+                }
+            },
+            measurePolicy = when (presentationModel.layoutFillMode) {
+                PanelLayoutFillMode.RowFill ->
+                    getRowFillMeasurePolicy(contentModel, presentationModel, preferredSizes)
+                PanelLayoutFillMode.ColumnFill ->
+                    getColumnFillMeasurePolicy(contentModel, presentationModel, preferredSizes)
+            }
+        )
+        if (presentationModel.layoutFillMode == PanelLayoutFillMode.RowFill) {
+            AuroraVerticalScrollbar(
+                modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight().padding(
+                    start = 0.dp,
+                    end = contentEndPadding + ScrollBarSizingConstants.DefaultScrollBarMargin,
+                    top = contentTopPadding,
+                    bottom = contentBottomPadding
+                ),
+                adapter = rememberScrollbarAdapter(stateVertical)
+            )
+        } else {
+            AuroraHorizontalScrollbar(
+                modifier = Modifier.align(Alignment.BottomStart).fillMaxWidth()
+                    .padding(
+                        start = contentStartPadding,
+                        end = contentEndPadding,
+                        top = 0.dp,
+                        bottom = contentBottomPadding + ScrollBarSizingConstants.DefaultScrollBarMargin
+                    ),
+                adapter = rememberScrollbarAdapter(stateHorizontal)
+            )
+        }
+    }
 }
 
 private fun getRowFillMeasurePolicy(
@@ -236,7 +295,8 @@ private fun getRowFillMeasurePolicy(
                 ceil((groupModel.commands.size.toFloat()) / actualColumnCount).toInt()
             // Add to overall panel height, including gaps between the rows
             panelHeight += buttonRows * maxButtonHeight + (buttonRows - 1) * gap
-            // And also measure all the buttons
+
+            // Measure all the buttons
             for (command in groupModel.commands) {
                 val commandButtonPlaceable = measurables[currMeasurableIndex++].measure(
                     Constraints.fixed(
@@ -246,6 +306,9 @@ private fun getRowFillMeasurePolicy(
                 placeables.add(commandButtonPlaceable)
             }
         }
+
+        // And account for gaps between groups
+        panelHeight += (contentModel.commandGroups.size - 1) * gap
 
         layout(width = panelWidth, height = panelHeight) {
             var currPlaceableIndex = 0
@@ -280,6 +343,7 @@ private fun getRowFillMeasurePolicy(
                         }
                     }
                 }
+                currY += gap
             }
         }
     }
@@ -304,7 +368,7 @@ private fun getColumnFillMeasurePolicy(
         }
 
         val gap = CommandPanelSizingConstants.DefaultGap.roundToPx()
-        val panelHeight = if (constraints.hasFixedWidth || constraints.hasBoundedWidth) {
+        val panelHeight = if (constraints.hasFixedHeight || constraints.hasBoundedHeight) {
             constraints.maxHeight
         } else {
             maxButtonHeight * presentationModel.maxRows +
@@ -331,7 +395,8 @@ private fun getColumnFillMeasurePolicy(
                 ceil((groupModel.commands.size.toFloat()) / actualRowCount).toInt()
             // Add to overall panel width, including gaps between the columns
             panelWidth += buttonColumns * maxButtonWidth + (buttonColumns - 1) * gap
-            // And also measure all the buttons
+
+            // Measure all the buttons
             for (command in groupModel.commands) {
                 val commandButtonPlaceable = measurables[currMeasurableIndex++].measure(
                     Constraints.fixed(
@@ -341,6 +406,8 @@ private fun getColumnFillMeasurePolicy(
                 placeables.add(commandButtonPlaceable)
             }
         }
+        // And account for gaps between groups
+        panelWidth += (contentModel.commandGroups.size - 1) * gap
 
         layout(width = panelWidth, height = panelHeight) {
             var currPlaceableIndex = 0
