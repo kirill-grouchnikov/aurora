@@ -35,7 +35,7 @@ import org.pushingpixels.aurora.skin.businessSkin
 import org.pushingpixels.aurora.skin.getAuroraSkins
 import org.pushingpixels.aurora.window.AuroraWindow
 
-fun getCommandPanelContentModel(): CommandPanelContentModel {
+fun getCommandPanelContentModel(vararg groupSizes: Int): CommandPanelContentModel {
     val icons = arrayOf(
         accessibility_new_24px.factory(),
         account_box_24px.factory(),
@@ -51,34 +51,26 @@ fun getCommandPanelContentModel(): CommandPanelContentModel {
         waves_24px.factory()
     )
 
-    val size1 = 20
-    val size2 = 10
+    val commandGroups = arrayListOf<CommandGroup>()
 
-    val commandList1 = arrayListOf<Command>()
-    for (index in 1 until size1) {
-        commandList1.add(
-            Command(
-                text = "test $index/$size1",
-                action = { println("test $index/$size1 activated!") },
-                iconFactory = icons[index % icons.size]
+    var groupIndex = 1
+    for (groupSize in groupSizes) {
+        val commandList = arrayListOf<Command>()
+        for (index in 1 until groupSize) {
+            commandList.add(
+                Command(
+                    text = "test $index/$groupSize",
+                    action = { println("test $index/$groupSize activated!") },
+                    iconFactory = icons[index % icons.size]
+                )
             )
-        )
+        }
+        val group = CommandGroup(title = "Group $groupIndex", commands = commandList)
+        commandGroups.add(group)
+        groupIndex++
     }
-    val group1 = CommandGroup(title = "Group 1", commands = commandList1)
 
-    val commandList2 = arrayListOf<Command>()
-    for (index in 1 until size2) {
-        commandList2.add(
-            Command(
-                text = "test $index/$size2",
-                action = { println("test $index/$size2 activated!") },
-                iconFactory = icons[index % icons.size]
-            )
-        )
-    }
-    val group2 = CommandGroup(title = "Group 2", commands = commandList2)
-
-    return CommandPanelContentModel(commandGroups = listOf(group1, group2),
+    return CommandPanelContentModel(commandGroups = commandGroups,
         commandActionPreview = object : CommandActionPreview {
             override fun onCommandPreviewActivated(command: Command) {
                 println("Action preview activated for ${command.text}!")
@@ -122,11 +114,11 @@ fun main() {
                     )
                 ).project()
 
-                val commandPanelContentModel = remember { getCommandPanelContentModel() }
+                val commandPanelContentModel = remember { getCommandPanelContentModel(20, 10, 15) }
 
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Box(
-                        modifier = Modifier.background(color = Color.Red.withAlpha(0.5f))
+                        modifier = Modifier.background(color = Color.Red.withAlpha(0.2f))
                             .fillMaxWidth(fraction = 0.5f)
                     ) {
                         CommandButtonPanelProjection(
@@ -143,7 +135,7 @@ fun main() {
                     }
 
                     Box(
-                        modifier = Modifier.background(color = Color.Blue.withAlpha(0.5f))
+                        modifier = Modifier.background(color = Color.Blue.withAlpha(0.2f))
                             .fillMaxWidth()
                     ) {
                         CommandButtonPanelProjection(
