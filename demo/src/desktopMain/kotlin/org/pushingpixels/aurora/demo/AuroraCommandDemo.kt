@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.AuroraSkinDefinition
+import org.pushingpixels.aurora.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.IconFilterStrategy
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CheckBoxProjection
@@ -237,9 +238,10 @@ fun CommandDemoEditStrip(
                 popupMenuPresentationModel = CommandPopupMenuPresentationModel(
                     panelPresentationModel = CommandPanelPresentationModel(
                         contentPadding = PaddingValues(2.dp),
-                        showGroupLabels = false,
+                        showGroupLabels = true,
                         commandPresentationState = CommandButtonPresentationState.FitToIcon,
                         commandIconSize = 24.dp,
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                         maxColumns = 5,
                         maxRows = 3
                     )

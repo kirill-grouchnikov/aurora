@@ -46,7 +46,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.common.interpolateTowards
@@ -1234,6 +1233,7 @@ private fun CommandButtonPopupContent(
                     presentationModel = presentationModel.popupMenuPresentationModel.panelPresentationModel!!,
                     overlays = overlays
                 ).project()
+                AuroraHorizontalSeparator()
             }
 
             // Command presentation for menu content, taking some of the values from
@@ -1296,6 +1296,7 @@ private fun CommandButtonPopupColumn(
     Layout(content = content) { measurables, _ ->
         var contentTotalWidth = 0
         var panelPlaceable: Placeable? = null
+        var panelSeparatorPlaceable: Placeable? = null
         if (hasPanel) {
             // The column width is determined by the panel
             panelPlaceable = measurables[0].measure(
@@ -1305,13 +1306,19 @@ private fun CommandButtonPopupColumn(
                 )
             )
             contentTotalWidth = panelPlaceable.measuredWidth
+            panelSeparatorPlaceable = measurables[1].measure(
+                Constraints.fixed(
+                    width = contentTotalWidth,
+                    height = SeparatorSizingConstants.Thickness.roundToPx()
+                )
+            )
         } else {
             // The column width is determined by the widest child
             contentTotalWidth = measurables.maxOf { it.maxIntrinsicWidth(Integer.MAX_VALUE) }
         }
 
         val buttonPlaceables = arrayListOf<Placeable>()
-        val startIndex = if (hasPanel) 1 else 0
+        val startIndex = if (hasPanel) 2 else 0
         for (buttonIndex in startIndex until measurables.size) {
             // Measure each button with fixed (widest) width
             buttonPlaceables.add(
@@ -1322,7 +1329,7 @@ private fun CommandButtonPopupColumn(
 
         // The children are laid out in a column
         val contentMaxHeight = panelPreferredSize.height.toInt() +
-            buttonPlaceables.sumOf { it.height }
+                buttonPlaceables.sumOf { it.height }
         contentSize.width = contentTotalWidth
         contentSize.height = contentMaxHeight
 
@@ -1332,6 +1339,8 @@ private fun CommandButtonPopupColumn(
             if (panelPlaceable != null) {
                 panelPlaceable.placeRelative(0, 0)
                 yPosition += panelPlaceable.height
+                panelSeparatorPlaceable!!.placeRelative(0, yPosition)
+                yPosition += panelSeparatorPlaceable.height
             }
 
             buttonPlaceables.forEach { placeable ->

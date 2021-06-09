@@ -18,6 +18,7 @@ package org.pushingpixels.aurora.component.model
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.IconFilterStrategy
 import org.pushingpixels.aurora.PopupPlacementStrategy
 
@@ -49,6 +50,7 @@ data class CommandPanelPresentationModel(
     val commandPresentationState: CommandButtonPresentationState,
     val commandIconSize: Dp = 0.dp,
     val commandHorizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
+    val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
     val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
