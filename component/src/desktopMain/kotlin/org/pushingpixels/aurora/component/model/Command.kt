@@ -61,10 +61,16 @@ data class CommandGroup(
 
 data class CommandMenuContentModel(
     val groups: List<CommandGroup>,
+    val panelContentModel: CommandPanelContentModel? = null,
     val highlightedCommand: Command? = null
 ) {
-    constructor(group: CommandGroup, highlightedCommand: Command? = null) : this(
+    constructor(
+        group: CommandGroup,
+        panelContentModel: CommandPanelContentModel? = null,
+        highlightedCommand: Command? = null
+    ) : this(
         groups = listOf(group),
+        panelContentModel = panelContentModel,
         highlightedCommand = highlightedCommand
     )
 }
@@ -72,6 +78,7 @@ data class CommandMenuContentModel(
 enum class TextClick {
     /** Clicking command text will activate the command action. */
     Action,
+
     /** Clicking command text will activate the secondary content of the command. */
     Popup
 }

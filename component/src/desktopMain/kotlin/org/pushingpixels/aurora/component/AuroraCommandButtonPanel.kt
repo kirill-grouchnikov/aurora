@@ -28,9 +28,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.LocalTextStyle
 import org.pushingpixels.aurora.Sides
+import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import kotlin.math.ceil
@@ -196,7 +198,6 @@ internal fun AuroraCommandButtonPanel(
                             buttonSides = Sides()
                         )
 
-                        // Cache pre-layout info
                         val preLayoutInfo =
                             layoutManager.getPreLayoutInfo(command, commandPresentation)
 
@@ -439,4 +440,50 @@ private fun getColumnFillMeasurePolicy(
             }
         }
     }
+}
+
+internal fun getPreferredCommandButtonPanelSize(
+    contentModel: CommandPanelContentModel,
+    presentationModel: CommandPanelPresentationModel,
+    buttonLayoutManager: CommandButtonLayoutManager,
+    gap: Int
+): IntSize {
+    // Our grid is uniform. The buttons will have the same width and height. Start
+    // by computing the max preferred width / height across all the buttons.
+    var maxButtonWidth = 0
+    var maxButtonHeight = 0
+
+    val baseCommandButtonPresentationModel =
+        CommandButtonPresentationModel(
+            presentationState = presentationModel.commandPresentationState,
+            iconDimension = presentationModel.commandIconSize,
+            isMenu = presentationModel.isMenu,
+            horizontalAlignment = presentationModel.commandHorizontalAlignment,
+            popupPlacementStrategy = presentationModel.popupPlacementStrategy,
+            iconActiveFilterStrategy = presentationModel.iconActiveFilterStrategy,
+            iconEnabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
+            iconDisabledFilterStrategy = presentationModel.iconDisabledFilterStrategy
+        )
+
+    for (groupModel in contentModel.commandGroups) {
+        for (command in groupModel.commands) {
+            val preLayoutInfo =
+                buttonLayoutManager.getPreLayoutInfo(command, baseCommandButtonPresentationModel)
+
+            // Compute the preferred size of this button
+            val preferredSize = buttonLayoutManager.getPreferredSize(
+                command = command,
+                presentationModel = baseCommandButtonPresentationModel,
+                preLayoutInfo = preLayoutInfo
+            )
+            maxButtonWidth = max(maxButtonWidth, preferredSize.width.toInt())
+            maxButtonHeight = max(maxButtonHeight, preferredSize.height.toInt())
+        }
+    }
+
+    val panelWidth = maxButtonWidth * presentationModel.maxColumns +
+            gap * (presentationModel.maxColumns - 1)
+    val panelHeight = maxButtonHeight * presentationModel.maxRows +
+            gap * (presentationModel.maxColumns - 1)
+    return IntSize(panelWidth, panelHeight)
 }

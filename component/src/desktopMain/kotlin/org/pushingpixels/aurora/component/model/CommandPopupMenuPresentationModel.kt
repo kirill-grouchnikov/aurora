@@ -24,7 +24,7 @@ import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManagerMedium
 
 data class CommandPopupMenuPresentationModel(
-    // TODO - add panel presentation model
+    val panelPresentationModel: CommandPanelPresentationModel? = null,
     val menuPresentationState: CommandButtonPresentationState =
         DefaultCommandPopupMenuPresentationState,
     val maxVisibleMenuCommands: Int = 0,

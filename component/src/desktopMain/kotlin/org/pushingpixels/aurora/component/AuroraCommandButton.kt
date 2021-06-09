@@ -45,11 +45,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.component.layout.*
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.CommandButtonPanelProjection
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.icon.AuroraThemedIcon
 import java.awt.*
@@ -1203,7 +1205,35 @@ private fun CommandButtonPopupContent(
                 outline = outline, color = popupBorderColor, style = Stroke(width = 1.0f)
             )
         }
-        CommandButtonPopupColumn(contentSize = contentSize) {
+        val hasPanel = (command.secondaryContentModel!!.panelContentModel != null)
+        val density = LocalDensity.current
+        val layoutDirection = LocalLayoutDirection.current
+        val textStyle = LocalTextStyle.current
+        val resourceLoader = LocalFontLoader.current
+        val panelPreferredSize = if (hasPanel) getPreferredCommandButtonPanelSize(
+            contentModel = command.secondaryContentModel.panelContentModel!!,
+            presentationModel = presentationModel.popupMenuPresentationModel.panelPresentationModel!!,
+            buttonLayoutManager = presentationModel.popupMenuPresentationModel.panelPresentationModel.commandPresentationState.createLayoutManager(
+                layoutDirection = layoutDirection,
+                density = density,
+                textStyle = textStyle,
+                resourceLoader = resourceLoader
+            ),
+            gap = (CommandPanelSizingConstants.DefaultGap.value * density.density).roundToInt()
+        ) else IntSize(0, 0)
+        CommandButtonPopupColumn(
+            contentSize = contentSize,
+            hasPanel = hasPanel,
+            panelPreferredSize = panelPreferredSize
+        ) {
+            if (hasPanel) {
+                CommandButtonPanelProjection(
+                    contentModel = command.secondaryContentModel.panelContentModel!!,
+                    presentationModel = presentationModel.popupMenuPresentationModel.panelPresentationModel!!,
+                    overlays = overlays
+                ).project()
+            }
+
             // Command presentation for menu content, taking some of the values from
             // the popup menu presentation model configured on the top-level presentation model
             val menuButtonPresentationModel = CommandButtonPresentationModel(
@@ -1214,7 +1244,7 @@ private fun CommandButtonPopupContent(
                 isMenu = true
             )
 
-            for ((commandGroupIndex, commandGroup) in command.secondaryContentModel!!.groups.withIndex()) {
+            for ((commandGroupIndex, commandGroup) in command.secondaryContentModel.groups.withIndex()) {
                 for (secondaryCommand in commandGroup.commands) {
                     // Check if we have a presentation overlay for this secondary command
                     val hasOverlay = overlays.containsKey(secondaryCommand)
@@ -1255,25 +1285,54 @@ private fun CommandButtonPopupContent(
 }
 
 @Composable
-private fun CommandButtonPopupColumn(contentSize: AuroraSize, content: @Composable () -> Unit) {
+private fun CommandButtonPopupColumn(
+    contentSize: AuroraSize,
+    hasPanel: Boolean,
+    panelPreferredSize: IntSize,
+    content: @Composable () -> Unit
+) {
     Layout(content = content) { measurables, _ ->
-        // The column width is determined by the widest child
-        val contentTotalWidth = measurables.maxOf { it.maxIntrinsicWidth(Int.MAX_VALUE) }
+        var contentTotalWidth = 0
+        var panelPlaceable: Placeable? = null
+        if (hasPanel) {
+            // The column width is determined by the panel
+            panelPlaceable = measurables[0].measure(
+                Constraints.fixed(
+                    width = panelPreferredSize.width,
+                    height = panelPreferredSize.height
+                )
+            )
+            contentTotalWidth = panelPlaceable.measuredWidth
+        } else {
+            // The column width is determined by the widest child
+            contentTotalWidth = measurables.maxOf { it.maxIntrinsicWidth(Integer.MAX_VALUE) }
+        }
 
-        val placeables = measurables.map { measurable ->
-            // Measure each child with fixed (widest) width
-            measurable.measure(Constraints.fixedWidth(contentTotalWidth))
+        val buttonPlaceables = arrayListOf<Placeable>()
+        val startIndex = if (hasPanel) 1 else 0
+        for (buttonIndex in startIndex until measurables.size) {
+            // Measure each button with fixed (widest) width
+            buttonPlaceables.add(
+                measurables[buttonIndex]
+                    .measure(Constraints.fixedWidth(contentTotalWidth))
+            )
         }
 
         // The children are laid out in a column
-        val contentMaxHeight = placeables.sumOf { it.height }
+        val contentMaxHeight = panelPreferredSize.height +
+            buttonPlaceables.sumOf { it.height }
         contentSize.width = contentTotalWidth
         contentSize.height = contentMaxHeight
 
         layout(width = contentTotalWidth, height = contentMaxHeight) {
             var yPosition = 0
 
-            placeables.forEach { placeable ->
+            if (panelPlaceable != null) {
+                panelPlaceable.placeRelative(0, 0)
+                yPosition += panelPlaceable.height
+            }
+
+            buttonPlaceables.forEach { placeable ->
                 placeable.placeRelative(x = 0, y = yPosition)
                 yPosition += placeable.height
             }

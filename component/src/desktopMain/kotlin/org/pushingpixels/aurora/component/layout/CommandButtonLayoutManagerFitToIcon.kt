@@ -34,7 +34,7 @@ internal class CommandButtonLayoutManagerFitToIcon(
         command: Command,
         presentationModel: CommandButtonPresentationModel
     ): Dp {
-        return (-1).dp
+        return presentationModel.iconDimension ?: (-1).dp
     }
 
     override fun getCurrentIconWidth(

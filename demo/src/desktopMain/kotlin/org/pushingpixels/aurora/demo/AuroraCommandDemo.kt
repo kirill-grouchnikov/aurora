@@ -211,7 +211,8 @@ fun CommandDemoEditStrip(
                             text = "Text only",
                             action = { println("Paste text only") })
                     )
-                )
+                ),
+                panelContentModel = getQuickStylesContentModel()
             ),
             isSecondaryEnabled = popupEnabled
         )
@@ -230,6 +231,20 @@ fun CommandDemoEditStrip(
             iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
             iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
             iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText
+        ),
+        overlays = mapOf(
+            commandPaste to CommandButtonPresentationModel.Overlay(
+                popupMenuPresentationModel = CommandPopupMenuPresentationModel(
+                    panelPresentationModel = CommandPanelPresentationModel(
+                        contentPadding = PaddingValues(2.dp),
+                        showGroupLabels = false,
+                        commandPresentationState = CommandButtonPresentationState.FitToIcon,
+                        commandIconSize = 24.dp,
+                        maxColumns = 5,
+                        maxRows = 3
+                    )
+                )
+            )
         )
     ).project()
 }
