@@ -202,7 +202,7 @@ fun main() {
                             }
                             scope.launch {
                                 if (!lazyListState.isItemFullyVisible(stateSelection.value)) {
-                                    lazyListState.scrollToItem(stateSelection.value)
+                                    lazyListState.animateScrollToItem(stateSelection.value)
                                 }
                             }
                             handled = true
@@ -215,7 +215,7 @@ fun main() {
                             }
                             scope.launch {
                                 if (!lazyListState.isItemFullyVisible(stateSelection.value)) {
-                                    lazyListState.scrollToItem(stateSelection.value)
+                                    lazyListState.animateScrollToItem(stateSelection.value)
                                 }
                             }
                             handled = true
