@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.demo
 
+import androidx.compose.desktop.LocalAppWindow
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,7 +29,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.*
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
@@ -104,32 +105,7 @@ fun main() {
             title = "Aurora Scrollbars",
             skin = currentAuroraSkin,
             size = IntSize(250, 400),
-            undecorated = true,
-            keyboardShortcuts = mapOf(
-                Key.DirectionDown to {
-                    if (stateSelection.value < 0) {
-                        stateSelection.value = 0
-                    } else if (stateSelection.value < (itemCount - 1)) {
-                        stateSelection.value++
-                    }
-                    scope.launch {
-                        if (!lazyListState.isItemFullyVisible(stateSelection.value)) {
-                            lazyListState.scrollToItem(stateSelection.value)
-                        }
-                    }
-                },
-                Key.DirectionUp to {
-                    if (stateSelection.value < 0) {
-                        stateSelection.value = itemCount - 1
-                    } else if (stateSelection.value > 0) {
-                        stateSelection.value--
-                    }
-                    scope.launch {
-                        if (!lazyListState.isItemFullyVisible(stateSelection.value)) {
-                            lazyListState.scrollToItem(stateSelection.value)
-                        }
-                    }
-                })
+            undecorated = true
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
                 val currentSkinDisplayName = AuroraSkin.displayName
@@ -211,6 +187,42 @@ fun main() {
                         )
                     )
                 }
+            }
+
+            // Register a keyboard event handler to process Up and Down arrows for list traversal
+            LocalAppWindow.current.keyboard.onKeyEvent = {
+                var handled = false
+                if (it.type == KeyEventType.KeyDown) {
+                    when (it.key) {
+                        Key.DirectionDown -> {
+                            if (stateSelection.value < 0) {
+                                stateSelection.value = 0
+                            } else if (stateSelection.value < (itemCount - 1)) {
+                                stateSelection.value++
+                            }
+                            scope.launch {
+                                if (!lazyListState.isItemFullyVisible(stateSelection.value)) {
+                                    lazyListState.scrollToItem(stateSelection.value)
+                                }
+                            }
+                            handled = true
+                        }
+                        Key.DirectionUp -> {
+                            if (stateSelection.value < 0) {
+                                stateSelection.value = itemCount - 1
+                            } else if (stateSelection.value > 0) {
+                                stateSelection.value--
+                            }
+                            scope.launch {
+                                if (!lazyListState.isItemFullyVisible(stateSelection.value)) {
+                                    lazyListState.scrollToItem(stateSelection.value)
+                                }
+                            }
+                            handled = true
+                        }
+                    }
+                }
+                handled
             }
         }
     }
