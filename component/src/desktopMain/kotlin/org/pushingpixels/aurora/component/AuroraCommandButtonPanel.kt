@@ -18,9 +18,14 @@ package org.pushingpixels.aurora.component
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.ClipOp
+import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.Placeable
@@ -28,11 +33,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.*
-import org.pushingpixels.aurora.LocalTextStyle
-import org.pushingpixels.aurora.Sides
+import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.LabelProjection
+import org.pushingpixels.aurora.shaper.ClassicButtonShaper
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
@@ -166,16 +171,9 @@ internal fun AuroraCommandButtonPanel(
             modifier = topLevelModifier,
             content = {
                 val commandPreviewListener = contentModel.commandActionPreview
-                for (groupModel in contentModel.commandGroups) {
+                for ((groupIndex, groupModel) in contentModel.commandGroups.withIndex()) {
                     if (presentationModel.showGroupLabels && (groupModel.title != null)) {
-                        // The title of the current command group
-                        // TODO - add horizontal separators and background fill
-                        LabelProjection(
-                            contentModel = LabelContentModel(text = groupModel.title),
-                            presentationModel = LabelPresentationModel(
-                                horizontalAlignment = HorizontalAlignment.Leading
-                            )
-                        ).project()
+                        CommandButtonGroupTitle(groupIndex, groupModel)
                     }
 
                     // TODO - add even-odd background fill
@@ -502,4 +500,99 @@ internal fun getPreferredCommandButtonPanelSize(
     }
 
     return Size(panelWidth, panelHeight)
+}
+
+@Composable
+private fun CommandButtonGroupTitle(groupModelIndex: Int, groupModel: CommandGroup) {
+    require(groupModel.title != null) {
+        "This composable should not be called on a command group with no title"
+    }
+
+    val decorationAreaType = AuroraSkin.decorationAreaType
+    val skinColors = AuroraSkin.colors
+    val buttonShaper = remember { ClassicButtonShaper() }
+    val borderPainter = AuroraSkin.painters.borderPainter
+
+    Box {
+        Canvas(modifier = Modifier.matchParentSize()) {
+            val width = this.size.width
+            val height = this.size.height
+
+            withTransform({
+                clipRect(
+                    left = 0.0f,
+                    top = 0.0f,
+                    right = width,
+                    bottom = height,
+                    clipOp = ClipOp.Intersect
+                )
+            }) {
+                // Fill the background with accented fill color
+                drawRect(
+                    color = skinColors.getBackgroundColorScheme(decorationAreaType)
+                        .accentedBackgroundFillColor,
+                    topLeft = Offset.Zero,
+                    size = this.size,
+                    style = Fill
+                )
+
+                val bump = 4.dp.toPx()
+                val horizontalExtra = 2 * bump
+                val verticalExtra = if (groupModelIndex == 0) bump else 0.0f
+
+                val outline = buttonShaper.getButtonOutline(
+                    width = width + horizontalExtra,
+                    height = height + verticalExtra,
+                    extraInsets = 0.5f,
+                    isInner = false,
+                    sides = Sides(straightSides = Side.values().toSet()),
+                    drawScope = this
+                )
+
+                val outlineBoundingRect = outline.bounds
+                if (outlineBoundingRect.isEmpty) {
+                    return@withTransform
+                }
+
+                val borderColorScheme = skinColors.getColorScheme(
+                    decorationAreaType = decorationAreaType,
+                    associationKind = ColorSchemeAssociationKind.BORDER,
+                    componentState = ComponentState.ENABLED
+                )
+
+                val innerOutline = if (borderPainter.isPaintingInnerOutline)
+                    buttonShaper.getButtonOutline(
+                        width = width + horizontalExtra,
+                        height = height + verticalExtra,
+                        extraInsets = 1.0f,
+                        isInner = true,
+                        sides = Sides(straightSides = Side.values().toSet()),
+                        drawScope = this
+                    ) else null
+
+                withTransform({
+                    translate(
+                        left = -bump,
+                        top = -verticalExtra
+                    )
+                }) {
+                    borderPainter.paintBorder(
+                        this,
+                        Size(width = width + horizontalExtra, height = height + verticalExtra),
+                        outline,
+                        innerOutline,
+                        borderColorScheme,
+                        1.0f
+                    )
+                }
+            }
+        }
+        // The title of the current command group
+        LabelProjection(
+            contentModel = LabelContentModel(text = groupModel.title),
+            presentationModel = LabelPresentationModel(
+                horizontalAlignment = HorizontalAlignment.Leading
+            )
+        ).project()
+    }
 }

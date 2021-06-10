@@ -15,18 +15,16 @@
  */
 package org.pushingpixels.aurora.demo
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.window.application
 import org.pushingpixels.aurora.AuroraSkin
+import org.pushingpixels.aurora.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.IconFilterStrategy
-import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.ComboBoxProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonPanelProjection
@@ -118,8 +116,7 @@ fun main() {
 
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Box(
-                        modifier = Modifier.background(color = Color.Red.withAlpha(0.2f))
-                            .fillMaxWidth(fraction = 0.5f)
+                        modifier = Modifier.fillMaxWidth(fraction = 0.5f)
                     ) {
                         CommandButtonPanelProjection(
                             contentModel = commandPanelContentModel,
@@ -127,6 +124,7 @@ fun main() {
                                 layoutFillMode = PanelLayoutFillMode.RowFill,
                                 maxColumns = 5,
                                 showGroupLabels = true,
+                                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                 commandPresentationState = CommandButtonPresentationState.Medium,
                                 iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                                 iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
@@ -135,8 +133,7 @@ fun main() {
                     }
 
                     Box(
-                        modifier = Modifier.background(color = Color.Blue.withAlpha(0.2f))
-                            .fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         CommandButtonPanelProjection(
                             contentModel = commandPanelContentModel,
@@ -144,6 +141,7 @@ fun main() {
                                 layoutFillMode = PanelLayoutFillMode.ColumnFill,
                                 maxRows = 6,
                                 showGroupLabels = false,
+                                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                 commandPresentationState = CommandButtonPresentationState.Big,
                                 iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                                 iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
