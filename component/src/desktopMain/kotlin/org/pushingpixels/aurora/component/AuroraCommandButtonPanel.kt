@@ -277,7 +277,7 @@ private fun getRowFillMeasurePolicy(
             constraints.maxWidth
         } else {
             maxButtonWidth * presentationModel.maxColumns +
-                    gap * (presentationModel.maxColumns - 1)
+                    gap * (presentationModel.maxColumns + 1)
         }
 
         var actualColumnCount = min(
@@ -288,7 +288,7 @@ private fun getRowFillMeasurePolicy(
             actualColumnCount = 1
         }
 
-        val actualButtonWidth = (panelWidth - gap * (actualColumnCount - 1)) / actualColumnCount
+        val actualButtonWidth = (panelWidth - gap * (actualColumnCount + 1)) / actualColumnCount
 
         var panelHeight = 0
         val placeables = arrayListOf<Placeable>()
@@ -307,7 +307,7 @@ private fun getRowFillMeasurePolicy(
             val buttonRows =
                 ceil((groupModel.commands.size.toFloat()) / actualColumnCount).toInt()
             // Add to overall panel height, including gaps between the rows
-            val buttonContentHeight = buttonRows * maxButtonHeight + (buttonRows - 1) * gap
+            val buttonContentHeight = buttonRows * maxButtonHeight + (buttonRows + 1) * gap
             panelHeight += buttonContentHeight
 
             val canvasMeasurable = measurables[currMeasurableIndex++]
@@ -330,16 +330,12 @@ private fun getRowFillMeasurePolicy(
             }
         }
 
-        // And account for gaps between groups
-        panelHeight += (contentModel.commandGroups.size - 1) * gap
-
         layout(width = panelWidth, height = panelHeight) {
             var currPlaceableIndex = 0
-            var currX = 0
             var currY = 0
             // TODO - support RTL
             for (groupModel in contentModel.commandGroups) {
-                currX = 0
+                var currX = 0
                 if (presentationModel.showGroupLabels && (groupModel.title != null)) {
                     // The current command group has a title
                     val currTitlePlaceable = placeables[currPlaceableIndex++]
@@ -349,13 +345,15 @@ private fun getRowFillMeasurePolicy(
                 // Place the background canvas
                 placeables[currPlaceableIndex++].place(currX, currY)
                 // And place all the buttons
+                currX = gap
+                currY += gap
                 for ((index, _) in groupModel.commands.withIndex()) {
                     val commandButtonPlaceable = placeables[currPlaceableIndex++]
                     commandButtonPlaceable.place(currX, currY)
                     currX += (actualButtonWidth + gap)
-                    if (currX >= panelWidth) {
+                    if ((currX + actualButtonWidth) >= panelWidth) {
                         // No more horizontal space in this row
-                        currX = 0
+                        currX = gap
                         currY += maxButtonHeight
                         if (index < (groupModel.commands.size - 1)) {
                             // This is not the last row
@@ -397,7 +395,7 @@ private fun getColumnFillMeasurePolicy(
             constraints.maxHeight
         } else {
             maxButtonHeight * presentationModel.maxRows +
-                    gap * (presentationModel.maxRows - 1)
+                    gap * (presentationModel.maxRows + 1)
         }
 
         var actualRowCount = min(
@@ -408,7 +406,7 @@ private fun getColumnFillMeasurePolicy(
             actualRowCount = 1
         }
 
-        val actualButtonHeight = (panelHeight - gap * (actualRowCount - 1)) / actualRowCount
+        val actualButtonHeight = (panelHeight - gap * (actualRowCount + 1)) / actualRowCount
 
         var panelWidth = 0
         val placeables = arrayListOf<Placeable>()
@@ -419,7 +417,7 @@ private fun getColumnFillMeasurePolicy(
             val buttonColumns =
                 ceil((groupModel.commands.size.toFloat()) / actualRowCount).toInt()
             // Add to overall panel width, including gaps between the columns
-            val buttonContentWidth = buttonColumns * maxButtonWidth + (buttonColumns - 1) * gap
+            val buttonContentWidth = buttonColumns * maxButtonWidth + (buttonColumns + 1) * gap
             panelWidth += buttonContentWidth
 
             val canvasMeasurable = measurables[currMeasurableIndex++]
@@ -441,26 +439,25 @@ private fun getColumnFillMeasurePolicy(
                 placeables.add(commandButtonPlaceable)
             }
         }
-        // And account for gaps between groups
-        panelWidth += (contentModel.commandGroups.size - 1) * gap
 
         layout(width = panelWidth, height = panelHeight) {
             var currPlaceableIndex = 0
             var currX = 0
-            var currY = 0
             // TODO - support RTL
             for (groupModel in contentModel.commandGroups) {
-                currY = 0
+                var currY = 0
                 // Place the background canvas
                 placeables[currPlaceableIndex++].place(currX, currY)
                 // And place all the buttons
+                currX += gap
+                currY = gap
                 for ((index, _) in groupModel.commands.withIndex()) {
                     val commandButtonPlaceable = placeables[currPlaceableIndex++]
                     commandButtonPlaceable.place(currX, currY)
                     currY += (actualButtonHeight + gap)
-                    if (currY >= panelHeight) {
+                    if ((currY + actualButtonHeight) >= panelHeight) {
                         // No more vertical space in this column
-                        currY = 0
+                        currY = gap
                         currX += maxButtonWidth
                         if (index < (groupModel.commands.size - 1)) {
                             // This is not the last column
@@ -522,9 +519,9 @@ internal fun getPreferredCommandButtonPanelSize(
 
     val gap = (CommandPanelSizingConstants.DefaultGap.value * density.density)
     var panelWidth = maxButtonWidth * presentationModel.maxColumns +
-            gap * (presentationModel.maxColumns - 1)
+            gap * (presentationModel.maxColumns + 1)
     var panelHeight = maxButtonHeight * presentationModel.maxRows +
-            gap * (presentationModel.maxColumns - 1)
+            gap * (presentationModel.maxColumns + 1)
 
     // Account for content padding
     panelWidth += (presentationModel.contentPadding.calculateStartPadding(layoutDirection) +

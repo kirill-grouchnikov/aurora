@@ -37,9 +37,9 @@ fun getQuickStylesContentModel(): CommandPanelContentModel {
     )
 
     val commandGroups: MutableList<CommandGroup> = arrayListOf()
-    for (groupIndex in 0..3) {
+    for (groupIndex in 1..4) {
         val commands: MutableList<Command> = arrayListOf()
-        for (i in 0..14) {
+        for (i in 1..15) {
             val command = Command(
                 text = "Option $i",
                 iconFactory = icons[i % icons.size],

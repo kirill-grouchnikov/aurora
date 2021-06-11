@@ -237,7 +237,7 @@ fun CommandDemoEditStrip(
             commandPaste to CommandButtonPresentationModel.Overlay(
                 popupMenuPresentationModel = CommandPopupMenuPresentationModel(
                     panelPresentationModel = CommandPanelPresentationModel(
-                        contentPadding = PaddingValues(2.dp),
+                        contentPadding = PaddingValues(1.dp),
                         showGroupLabels = true,
                         commandPresentationState = CommandButtonPresentationState.FitToIcon,
                         commandIconSize = 24.dp,
