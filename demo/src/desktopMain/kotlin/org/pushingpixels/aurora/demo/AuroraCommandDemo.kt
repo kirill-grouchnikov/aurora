@@ -242,6 +242,8 @@ fun CommandDemoEditStrip(
                         commandPresentationState = CommandButtonPresentationState.FitToIcon,
                         commandIconSize = 24.dp,
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                        iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         maxColumns = 5,
                         maxRows = 3
                     )
