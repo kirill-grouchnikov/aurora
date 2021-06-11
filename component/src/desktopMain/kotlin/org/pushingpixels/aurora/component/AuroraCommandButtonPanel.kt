@@ -148,10 +148,10 @@ internal fun AuroraCommandButtonPanel(
         val preferredSizes = mutableMapOf<Command, Size>()
 
         val extraEndPadding = if (presentationModel.layoutFillMode == PanelLayoutFillMode.RowFill)
-            ScrollBarSizingConstants.DefaultScrollBarSize else 0.dp
+            ScrollBarSizingConstants.DefaultScrollBarThickness + ScrollBarSizingConstants.DefaultScrollBarMargin else 0.dp
         val extraBottomPadding =
             if (presentationModel.layoutFillMode == PanelLayoutFillMode.ColumnFill)
-                ScrollBarSizingConstants.DefaultScrollBarSize else 0.dp
+                ScrollBarSizingConstants.DefaultScrollBarThickness + ScrollBarSizingConstants.DefaultScrollBarMargin else 0.dp
         val contentStartPadding =
             presentationModel.contentPadding.calculateStartPadding(layoutDirection)
         val contentEndPadding =
@@ -532,10 +532,12 @@ internal fun getPreferredCommandButtonPanelSize(
             presentationModel.contentPadding.calculateBottomPadding()).value * density.density
 
     // Account for scroll bar. For now the assumption is that it's always showing
+    val extraSpaceForScrollBar = (ScrollBarSizingConstants.DefaultScrollBarThickness +
+            ScrollBarSizingConstants.DefaultScrollBarMargin).value * density.density
     if (presentationModel.layoutFillMode == PanelLayoutFillMode.RowFill) {
-        panelWidth += ScrollBarSizingConstants.DefaultScrollBarSize.value * density.density
+        panelWidth += extraSpaceForScrollBar
     } else {
-        panelHeight += ScrollBarSizingConstants.DefaultScrollBarSize.value * density.density
+        panelHeight += extraSpaceForScrollBar
     }
 
     return Size(panelWidth, panelHeight)

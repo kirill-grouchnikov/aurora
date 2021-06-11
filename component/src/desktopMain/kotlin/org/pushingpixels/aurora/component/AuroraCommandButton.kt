@@ -1200,16 +1200,6 @@ private fun CommandButtonPopupContent(
         popupContentWindow.validate()
         popupContentWindow.contentPane.revalidate()
     }) {
-        Canvas(Modifier.matchParentSize()) {
-            val outline = Outline.Rectangle(
-                rect = Rect(
-                    left = 0.5f, top = 0.5f, right = size.width - 0.5f, bottom = size.height - 0.5f
-                )
-            )
-            drawOutline(
-                outline = outline, color = popupBorderColor, style = Stroke(width = 1.0f)
-            )
-        }
         val hasPanel = (command.secondaryContentModel!!.panelContentModel != null)
         val layoutDirection = LocalLayoutDirection.current
         val textStyle = LocalTextStyle.current
@@ -1231,6 +1221,16 @@ private fun CommandButtonPopupContent(
             hasPanel = hasPanel,
             panelPreferredSize = panelPreferredSize
         ) {
+            Canvas(Modifier) {
+                val outline = Outline.Rectangle(
+                    rect = Rect(
+                        left = 0.5f, top = 0.5f, right = size.width - 0.5f, bottom = size.height - 0.5f
+                    )
+                )
+                drawOutline(
+                    outline = outline, color = popupBorderColor, style = Stroke(width = 1.0f)
+                )
+            }
             if (hasPanel) {
                 AuroraCommandButtonPanel(
                     contentModel = command.secondaryContentModel.panelContentModel!!,
@@ -1245,7 +1245,12 @@ private fun CommandButtonPopupContent(
                         }
                     }
                 )
-                AuroraHorizontalSeparator()
+                AuroraHorizontalSeparator(
+                    presentationModel = SeparatorPresentationModel(
+                        startGradientAmount = 0.dp,
+                        endGradientAmount = 0.dp
+                    )
+                )
             }
 
             // Command presentation for menu content, taking some of the values from
@@ -1291,7 +1296,12 @@ private fun CommandButtonPopupContent(
                     )
                 }
                 if (commandGroupIndex < (command.secondaryContentModel.groups.size - 1)) {
-                    AuroraHorizontalSeparator()
+                    AuroraHorizontalSeparator(
+                        presentationModel = SeparatorPresentationModel(
+                            startGradientAmount = 0.dp,
+                            endGradientAmount = 0.dp
+                        )
+                    )
                 }
             }
         }
@@ -1306,19 +1316,19 @@ private fun CommandButtonPopupColumn(
     content: @Composable () -> Unit
 ) {
     Layout(content = content) { measurables, _ ->
-        val contentTotalWidth: Int
+        var contentTotalWidth: Int
         var panelPlaceable: Placeable? = null
         var panelSeparatorPlaceable: Placeable? = null
         if (hasPanel) {
             // The column width is determined by the panel
-            panelPlaceable = measurables[0].measure(
+            panelPlaceable = measurables[1].measure(
                 Constraints.fixed(
                     width = panelPreferredSize.width.toInt(),
                     height = panelPreferredSize.height.toInt()
                 )
             )
             contentTotalWidth = panelPlaceable.measuredWidth
-            panelSeparatorPlaceable = measurables[1].measure(
+            panelSeparatorPlaceable = measurables[2].measure(
                 Constraints.fixed(
                     width = contentTotalWidth,
                     height = SeparatorSizingConstants.Thickness.roundToPx()
@@ -1330,7 +1340,7 @@ private fun CommandButtonPopupColumn(
         }
 
         val buttonPlaceables = arrayListOf<Placeable>()
-        val startIndex = if (hasPanel) 2 else 0
+        val startIndex = if (hasPanel) 3 else 1
         for (buttonIndex in startIndex until measurables.size) {
             // Measure each button with fixed (widest) width
             buttonPlaceables.add(
@@ -1340,23 +1350,32 @@ private fun CommandButtonPopupColumn(
         }
 
         // The children are laid out in a column
-        val contentMaxHeight = panelPreferredSize.height.toInt() +
+        var contentMaxHeight = panelPreferredSize.height.toInt() +
+                (if (hasPanel) SeparatorSizingConstants.Thickness.roundToPx() else 0) +
                 buttonPlaceables.sumOf { it.height }
-        contentSize.width = contentTotalWidth
-        contentSize.height = contentMaxHeight
+
+        // Add one pixel on each side for the popup border
+        contentSize.width = contentTotalWidth + 2
+        contentSize.height = contentMaxHeight + 2
+
+        val canvasPlaceable = measurables[0].measure(constraints = Constraints.fixed(
+            width = contentSize.width, height = contentSize.height
+        ))
 
         layout(width = contentTotalWidth, height = contentMaxHeight) {
-            var yPosition = 0
+            // TODO - support RTL
+            canvasPlaceable.placeRelative(0, 0)
 
+            var yPosition = 1
             if (panelPlaceable != null) {
-                panelPlaceable.placeRelative(0, 0)
+                panelPlaceable.placeRelative(1, 1)
                 yPosition += panelPlaceable.height
-                panelSeparatorPlaceable!!.placeRelative(0, yPosition)
+                panelSeparatorPlaceable!!.placeRelative(1, yPosition)
                 yPosition += panelSeparatorPlaceable.height
             }
 
             buttonPlaceables.forEach { placeable ->
-                placeable.placeRelative(x = 0, y = yPosition)
+                placeable.placeRelative(x = 1, y = yPosition)
                 yPosition += placeable.height
             }
         }
