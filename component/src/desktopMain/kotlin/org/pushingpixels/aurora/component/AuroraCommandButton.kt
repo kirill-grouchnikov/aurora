@@ -46,12 +46,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.component.layout.*
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.component.projection.CommandButtonPanelProjection
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.icon.AuroraThemedIcon
 import java.awt.*
@@ -564,6 +564,10 @@ internal fun AuroraCommandButton(
                         // TODO - figure out the sizing (see above)
                         val initialWidth = 1000
                         val initialHeight = 1000
+                        val initialWindowAnchor = IntOffset(
+                            x = (locationOnScreen.x + auroraTopLeftOffset.x / density.density).toInt(),
+                            y = (locationOnScreen.y + auroraTopLeftOffset.y / density.density).toInt()
+                        )
                         popupContentWindow.setBounds(
                             (locationOnScreen.x + auroraTopLeftOffset.x / density.density).toInt(),
                             (locationOnScreen.y + auroraTopLeftOffset.y / density.density).toInt(),
@@ -583,6 +587,7 @@ internal fun AuroraCommandButton(
                             ) {
                                 CommandButtonPopupContent(
                                     popupContentWindow = popupContentWindow,
+                                    initialAnchor = initialWindowAnchor,
                                     anchorSize = auroraSize,
                                     command = command,
                                     presentationModel = presentationModel,
@@ -1117,6 +1122,7 @@ private fun CommandButtonPopupIconContent(
 @Composable
 private fun CommandButtonPopupContent(
     popupContentWindow: JWindow,
+    initialAnchor: IntOffset,
     anchorSize: AuroraSize,
     command: Command,
     presentationModel: CommandButtonPresentationModel,
@@ -1130,43 +1136,42 @@ private fun CommandButtonPopupContent(
         componentState = ComponentState.ENABLED
     )
     val popupBorderColor = AuroraSkin.painters.borderPainter.getRepresentativeColor(borderScheme)
-    val density = LocalDensity.current.density
+    val density = LocalDensity.current
     val contentSize = AuroraSize(0, 0)
     Box(modifier = Modifier.auroraBackground(window = popupContentWindow).onGloballyPositioned {
         // Get the size of the content and update the popup window bounds
-        val popupWidth = (contentSize.width / density).toInt()
-        val popupHeight = (contentSize.height / density).toInt()
+        val popupWidth = (contentSize.width / density.density).toInt()
+        val popupHeight = (contentSize.height / density.density).toInt()
 
         // TODO - support RTL for startward and endward
-        // TODO - figure out the extra factor
         val popupRect = when (presentationModel.popupPlacementStrategy) {
             PopupPlacementStrategy.Downward -> Rectangle(
-                popupContentWindow.x,
-                popupContentWindow.y + (anchorSize.height / (2 * density)).toInt(),
+                initialAnchor.x,
+                initialAnchor.y + (anchorSize.height / density.density).toInt(),
                 popupWidth,
                 popupHeight
             )
             PopupPlacementStrategy.Upward -> Rectangle(
-                popupContentWindow.x,
-                popupContentWindow.y - popupHeight / 2,
+                initialAnchor.x,
+                initialAnchor.y - popupHeight,
                 popupWidth,
                 popupHeight
             )
             PopupPlacementStrategy.Startward -> Rectangle(
-                popupContentWindow.x - popupWidth / 2,
-                popupContentWindow.y,
+                initialAnchor.x - popupWidth,
+                initialAnchor.y,
                 popupWidth,
                 popupHeight
             )
             PopupPlacementStrategy.Endward -> Rectangle(
-                popupContentWindow.x + (anchorSize.width / (2 * density)).toInt(),
-                popupContentWindow.y,
+                initialAnchor.x + (anchorSize.width / density.density).toInt(),
+                initialAnchor.y,
                 popupWidth,
                 popupHeight
             )
             PopupPlacementStrategy.CenteredVertically -> Rectangle(
-                popupContentWindow.x,
-                popupContentWindow.y + (anchorSize.height / (4 * density)).toInt() - popupHeight / 4,
+                initialAnchor.x,
+                initialAnchor.y + (anchorSize.height / (2 * density.density)).toInt() - popupHeight / 2,
                 popupWidth,
                 popupHeight
             )
@@ -1206,7 +1211,6 @@ private fun CommandButtonPopupContent(
             )
         }
         val hasPanel = (command.secondaryContentModel!!.panelContentModel != null)
-        val density = LocalDensity.current
         val layoutDirection = LocalLayoutDirection.current
         val textStyle = LocalTextStyle.current
         val resourceLoader = LocalFontLoader.current
@@ -1302,7 +1306,7 @@ private fun CommandButtonPopupColumn(
     content: @Composable () -> Unit
 ) {
     Layout(content = content) { measurables, _ ->
-        var contentTotalWidth = 0
+        val contentTotalWidth: Int
         var panelPlaceable: Placeable? = null
         var panelSeparatorPlaceable: Placeable? = null
         if (hasPanel) {
