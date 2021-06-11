@@ -170,13 +170,28 @@ internal fun AuroraCommandButtonPanel(
         Layout(
             modifier = topLevelModifier,
             content = {
+                val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
+                    decorationAreaType = AuroraSkin.decorationAreaType
+                )
+                val backgroundEvenRows = backgroundColorScheme.backgroundFillColor
+                val backgroundOddRows = backgroundColorScheme.accentedBackgroundFillColor
+
                 val commandPreviewListener = contentModel.commandActionPreview
                 for ((groupIndex, groupModel) in contentModel.commandGroups.withIndex()) {
                     if (presentationModel.showGroupLabels && (groupModel.title != null)) {
                         CommandButtonGroupTitle(groupIndex, groupModel)
                     }
 
-                    // TODO - add even-odd background fill
+                    // Canvas for even-odd background fill
+                    Canvas(modifier = Modifier) {
+                        drawRect(
+                            color = if (groupIndex % 2 == 0) backgroundEvenRows else backgroundOddRows,
+                            topLeft = Offset.Zero,
+                            size = size,
+                            style = Fill
+                        )
+                    }
+
                     for (command in groupModel.commands) {
                         // Apply overlay if we have one registered for the current command
                         val commandPresentation = if (overlays.containsKey(command))
@@ -292,7 +307,17 @@ private fun getRowFillMeasurePolicy(
             val buttonRows =
                 ceil((groupModel.commands.size.toFloat()) / actualColumnCount).toInt()
             // Add to overall panel height, including gaps between the rows
-            panelHeight += buttonRows * maxButtonHeight + (buttonRows - 1) * gap
+            val buttonContentHeight = buttonRows * maxButtonHeight + (buttonRows - 1) * gap
+            panelHeight += buttonContentHeight
+
+            val canvasMeasurable = measurables[currMeasurableIndex++]
+            val canvasPlaceable = canvasMeasurable.measure(
+                Constraints.fixed(
+                    width = panelWidth,
+                    height = buttonContentHeight + gap
+                )
+            )
+            placeables.add(canvasPlaceable)
 
             // Measure all the buttons
             for (command in groupModel.commands) {
@@ -321,6 +346,8 @@ private fun getRowFillMeasurePolicy(
                     currTitlePlaceable.place(currX, currY)
                     currY += currTitlePlaceable.height
                 }
+                // Place the background canvas
+                placeables[currPlaceableIndex++].place(currX, currY)
                 // And place all the buttons
                 for ((index, _) in groupModel.commands.withIndex()) {
                     val commandButtonPlaceable = placeables[currPlaceableIndex++]
@@ -392,7 +419,17 @@ private fun getColumnFillMeasurePolicy(
             val buttonColumns =
                 ceil((groupModel.commands.size.toFloat()) / actualRowCount).toInt()
             // Add to overall panel width, including gaps between the columns
-            panelWidth += buttonColumns * maxButtonWidth + (buttonColumns - 1) * gap
+            val buttonContentWidth = buttonColumns * maxButtonWidth + (buttonColumns - 1) * gap
+            panelWidth += buttonContentWidth
+
+            val canvasMeasurable = measurables[currMeasurableIndex++]
+            val canvasPlaceable = canvasMeasurable.measure(
+                Constraints.fixed(
+                    width = buttonContentWidth + gap,
+                    height = panelHeight
+                )
+            )
+            placeables.add(canvasPlaceable)
 
             // Measure all the buttons
             for (command in groupModel.commands) {
@@ -414,6 +451,8 @@ private fun getColumnFillMeasurePolicy(
             // TODO - support RTL
             for (groupModel in contentModel.commandGroups) {
                 currY = 0
+                // Place the background canvas
+                placeables[currPlaceableIndex++].place(currX, currY)
                 // And place all the buttons
                 for ((index, _) in groupModel.commands.withIndex()) {
                     val commandButtonPlaceable = placeables[currPlaceableIndex++]

@@ -145,7 +145,6 @@ fun main() {
 
                 Box(modifier = Modifier.fillMaxSize().padding(6.dp)) {
                     val itemsList = (0 until itemCount).toList()
-                    val colors = AuroraSkin.colors
                     val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
                         decorationAreaType = AuroraSkin.decorationAreaType
                     )
