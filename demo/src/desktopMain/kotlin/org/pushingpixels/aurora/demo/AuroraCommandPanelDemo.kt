@@ -54,7 +54,7 @@ fun getCommandPanelContentModel(vararg groupSizes: Int): CommandPanelContentMode
     var groupIndex = 1
     for (groupSize in groupSizes) {
         val commandList = arrayListOf<Command>()
-        for (index in 1 until groupSize) {
+        for (index in 1..groupSize) {
             commandList.add(
                 Command(
                     text = "test $index/$groupSize",

@@ -469,10 +469,11 @@ private fun getColumnFillMeasurePolicy(
                     } else {
                         if (index == (groupModel.commands.size - 1)) {
                             // Partially filled last column
-                            currX += (maxButtonWidth + gap)
+                            currX += maxButtonWidth
                         }
                     }
                 }
+                currX += gap
             }
         }
     }
