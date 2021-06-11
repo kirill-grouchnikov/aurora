@@ -112,6 +112,7 @@ import kotlin.math.min
 internal fun AuroraCommandButtonPanel(
     modifier: Modifier = Modifier,
     contentModel: CommandPanelContentModel,
+    extraAction: (() -> Unit)? = null,
     presentationModel: CommandPanelPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay> = mapOf()
 ) {
@@ -204,6 +205,7 @@ internal fun AuroraCommandButtonPanel(
                         AuroraCommandButton(
                             command = command,
                             parentWindow = null,
+                            extraAction = extraAction,
                             extraActionPreview = commandPreviewListener,
                             presentationModel = commandPresentation,
                             overlays = overlays,

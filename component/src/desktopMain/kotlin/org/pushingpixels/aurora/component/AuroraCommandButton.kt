@@ -1228,11 +1228,19 @@ private fun CommandButtonPopupContent(
             panelPreferredSize = panelPreferredSize
         ) {
             if (hasPanel) {
-                CommandButtonPanelProjection(
+                AuroraCommandButtonPanel(
                     contentModel = command.secondaryContentModel.panelContentModel!!,
                     presentationModel = presentationModel.popupMenuPresentationModel.panelPresentationModel!!,
-                    overlays = overlays
-                ).project()
+                    extraAction = {
+                        if (presentationModel.toDismissPopupsOnActivation) {
+                            for (window in Window.getWindows()) {
+                                if (window.isDisplayable && window is AuroraPopupWindow) {
+                                    window.dispose()
+                                }
+                            }
+                        }
+                    }
+                )
                 AuroraHorizontalSeparator()
             }
 

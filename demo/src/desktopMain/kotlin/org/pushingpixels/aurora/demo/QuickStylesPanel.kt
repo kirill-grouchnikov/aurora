@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.demo
 
 import org.pushingpixels.aurora.component.model.Command
+import org.pushingpixels.aurora.component.model.CommandActionPreview
 import org.pushingpixels.aurora.component.model.CommandGroup
 import org.pushingpixels.aurora.component.model.CommandPanelContentModel
 import org.pushingpixels.aurora.demo.svg.material.*
@@ -49,5 +50,14 @@ fun getQuickStylesContentModel(): CommandPanelContentModel {
         }
         commandGroups.add(CommandGroup("Group $groupIndex", commands))
     }
-    return CommandPanelContentModel(commandGroups)
+    return CommandPanelContentModel(commandGroups = commandGroups,
+        commandActionPreview = object : CommandActionPreview {
+            override fun onCommandPreviewActivated(command: Command) {
+                println("Action preview activated for ${command.text}!")
+            }
+
+            override fun onCommandPreviewCanceled(command: Command) {
+                println("Action preview canceled for ${command.text}!")
+            }
+        })
 }
