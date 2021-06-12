@@ -83,7 +83,6 @@ internal fun AuroraCommandButton(
     extraActionPreview: CommandActionPreview? = null,
     presentationModel: CommandButtonPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
-    textStyle: TextStyle? = null,
     buttonSides: Sides
 ) {
     val drawingCache = remember { CommandButtonDrawingCache() }
@@ -128,7 +127,7 @@ internal fun AuroraCommandButton(
     val auroraSize = AuroraSize(0, 0)
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
-    val mergedTextStyle = LocalTextStyle.current.merge(textStyle)
+    val mergedTextStyle = LocalTextStyle.current.merge(presentationModel.textStyle)
     val resourceLoader = LocalFontLoader.current
 
     val resolvedTextStyle = remember { resolveDefaults(mergedTextStyle, layoutDirection) }
@@ -1224,7 +1223,10 @@ private fun CommandButtonPopupContent(
             Canvas(Modifier) {
                 val outline = Outline.Rectangle(
                     rect = Rect(
-                        left = 0.5f, top = 0.5f, right = size.width - 0.5f, bottom = size.height - 0.5f
+                        left = 0.5f,
+                        top = 0.5f,
+                        right = size.width - 0.5f,
+                        bottom = size.height - 0.5f
                     )
                 )
                 drawOutline(
@@ -1267,9 +1269,14 @@ private fun CommandButtonPopupContent(
                 for (secondaryCommand in commandGroup.commands) {
                     // Check if we have a presentation overlay for this secondary command
                     val hasOverlay = overlays.containsKey(secondaryCommand)
-                    val currSecondaryPresentationModel = if (hasOverlay)
+                    var currSecondaryPresentationModel = if (hasOverlay)
                         menuButtonPresentationModel.overlayWith(overlays[secondaryCommand]!!)
                     else menuButtonPresentationModel
+                    if (secondaryCommand == command.secondaryContentModel.highlightedCommand) {
+                        currSecondaryPresentationModel = currSecondaryPresentationModel.overlayWith(
+                            CommandButtonPresentationModel.Overlay(textStyle = TextStyle(fontWeight = FontWeight.Bold))
+                        )
+                    }
 
                     // Create a command button for each secondary command, passing the same
                     // overlays into it. If our secondary content model has a highlighted command,
@@ -1290,8 +1297,6 @@ private fun CommandButtonPopupContent(
                         },
                         presentationModel = currSecondaryPresentationModel,
                         overlays = overlays,
-                        textStyle = if (secondaryCommand == command.secondaryContentModel.highlightedCommand)
-                            TextStyle(fontWeight = FontWeight.Bold) else null,
                         buttonSides = Sides(straightSides = Side.values().toSet())
                     )
                 }
@@ -1316,7 +1321,7 @@ private fun CommandButtonPopupColumn(
     content: @Composable () -> Unit
 ) {
     Layout(content = content) { measurables, _ ->
-        var contentTotalWidth: Int
+        val contentTotalWidth: Int
         var panelPlaceable: Placeable? = null
         var panelSeparatorPlaceable: Placeable? = null
         if (hasPanel) {
@@ -1350,7 +1355,7 @@ private fun CommandButtonPopupColumn(
         }
 
         // The children are laid out in a column
-        var contentMaxHeight = panelPreferredSize.height.toInt() +
+        val contentMaxHeight = panelPreferredSize.height.toInt() +
                 (if (hasPanel) SeparatorSizingConstants.Thickness.roundToPx() else 0) +
                 buttonPlaceables.sumOf { it.height }
 
@@ -1358,14 +1363,17 @@ private fun CommandButtonPopupColumn(
         contentSize.width = contentTotalWidth + 2
         contentSize.height = contentMaxHeight + 2
 
-        val canvasPlaceable = measurables[0].measure(constraints = Constraints.fixed(
-            width = contentSize.width, height = contentSize.height
-        ))
+        val canvasPlaceable = measurables[0].measure(
+            constraints = Constraints.fixed(
+                width = contentSize.width, height = contentSize.height
+            )
+        )
 
         layout(width = contentTotalWidth, height = contentMaxHeight) {
             // TODO - support RTL
             canvasPlaceable.placeRelative(0, 0)
 
+            // Offset everything else by 1,1 for border insets
             var yPosition = 1
             if (panelPlaceable != null) {
                 panelPlaceable.placeRelative(1, 1)

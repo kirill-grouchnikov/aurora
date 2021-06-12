@@ -130,11 +130,15 @@ internal fun AuroraCommandButtonPanel(
 
     val baseCommandButtonPresentationModel =
         CommandButtonPresentationModel(
+            contentPadding = presentationModel.contentPadding,
             presentationState = presentationModel.commandPresentationState,
             iconDimension = presentationModel.commandIconSize,
             isMenu = presentationModel.isMenu,
             backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
+            textStyle = presentationModel.commandTextStyle,
             horizontalAlignment = presentationModel.commandHorizontalAlignment,
+            horizontalGapScaleFactor = presentationModel.commandHorizontalGapScaleFactor,
+            verticalGapScaleFactor = presentationModel.commandVerticalGapScaleFactor,
             popupPlacementStrategy = presentationModel.popupPlacementStrategy,
             iconActiveFilterStrategy = presentationModel.iconActiveFilterStrategy,
             iconEnabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
@@ -492,11 +496,15 @@ internal fun getPreferredCommandButtonPanelSize(
 
     val baseCommandButtonPresentationModel =
         CommandButtonPresentationModel(
+            contentPadding = presentationModel.contentPadding,
             presentationState = presentationModel.commandPresentationState,
             iconDimension = presentationModel.commandIconSize,
             isMenu = presentationModel.isMenu,
             backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
+            textStyle = presentationModel.commandTextStyle,
             horizontalAlignment = presentationModel.commandHorizontalAlignment,
+            horizontalGapScaleFactor = presentationModel.commandHorizontalGapScaleFactor,
+            verticalGapScaleFactor = presentationModel.commandVerticalGapScaleFactor,
             popupPlacementStrategy = presentationModel.popupPlacementStrategy,
             iconActiveFilterStrategy = presentationModel.iconActiveFilterStrategy,
             iconEnabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,

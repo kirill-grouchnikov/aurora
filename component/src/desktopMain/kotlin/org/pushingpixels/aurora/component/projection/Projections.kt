@@ -41,7 +41,6 @@ class CommandButtonProjection(
             extraAction = null,
             presentationModel = this.presentationModel,
             overlays = this.overlays ?: mapOf(),
-            textStyle = null,
             buttonSides = Sides(
                 straightSides = if (presentationModel.isMenu) Side.values().toSet() else emptySet()
             )

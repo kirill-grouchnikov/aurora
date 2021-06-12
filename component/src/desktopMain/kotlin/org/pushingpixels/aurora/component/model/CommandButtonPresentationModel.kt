@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.BackgroundAppearanceStrategy
@@ -35,6 +36,7 @@ data class CommandButtonPresentationModel(
     val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    val textStyle: TextStyle? = null,
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward,
     val toDismissPopupsOnActivation: Boolean = true,
     val popupMenuPresentationModel: CommandPopupMenuPresentationModel = CommandPopupMenuPresentationModel(),
@@ -52,6 +54,7 @@ data class CommandButtonPresentationModel(
         val iconDisabledFilterStrategy: IconFilterStrategy? = null,
         val iconEnabledFilterStrategy: IconFilterStrategy? = null,
         val iconActiveFilterStrategy: IconFilterStrategy? = null,
+        val textStyle: TextStyle? = null,
         val popupPlacementStrategy: PopupPlacementStrategy? = null,
         val toDismissPopupsOnActivation: Boolean? = null,
         val popupMenuPresentationModel: CommandPopupMenuPresentationModel? = null,
@@ -72,6 +75,7 @@ data class CommandButtonPresentationModel(
             iconDisabledFilterStrategy = overlay.iconDisabledFilterStrategy ?: this.iconDisabledFilterStrategy,
             iconEnabledFilterStrategy = overlay.iconEnabledFilterStrategy ?: this.iconEnabledFilterStrategy,
             iconActiveFilterStrategy = overlay.iconActiveFilterStrategy ?: this.iconActiveFilterStrategy,
+            textStyle = overlay.textStyle ?: this.textStyle,
             popupPlacementStrategy = overlay.popupPlacementStrategy ?: this.popupPlacementStrategy,
             toDismissPopupsOnActivation = overlay.toDismissPopupsOnActivation ?: this.toDismissPopupsOnActivation,
             popupMenuPresentationModel = overlay.popupMenuPresentationModel ?: this.popupMenuPresentationModel,

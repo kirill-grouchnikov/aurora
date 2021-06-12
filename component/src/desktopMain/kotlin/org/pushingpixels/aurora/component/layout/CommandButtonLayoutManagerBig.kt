@@ -90,7 +90,10 @@ internal open class CommandButtonLayoutManagerBig(
             while (tokenizer.hasMoreTokens()) {
                 currLeading.append(tokenizer.nextToken())
                 val part1 = currLeading.toString()
-                val part2 = text.substring(currLeading.length)
+                var part2 = text.substring(currLeading.length)
+                if (part2.startsWith(" ")) {
+                   part2 = part2.substring(1)
+                }
                 val len1 = Paragraph(
                     text = part1, style = textStyle, width = Float.POSITIVE_INFINITY,
                     density = _density, maxLines = 1, resourceLoader = resourceLoader

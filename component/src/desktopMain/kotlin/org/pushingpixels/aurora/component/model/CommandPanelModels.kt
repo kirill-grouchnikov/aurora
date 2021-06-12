@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.BackgroundAppearanceStrategy
@@ -49,7 +50,10 @@ data class CommandPanelPresentationModel(
     val showGroupLabels: Boolean = true,
     val commandPresentationState: CommandButtonPresentationState,
     val commandIconSize: Dp = 0.dp,
+    val commandTextStyle: TextStyle? = null,
     val commandHorizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
+    val commandHorizontalGapScaleFactor: Float = 1.0f,
+    val commandVerticalGapScaleFactor: Float = 1.0f,
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
     val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
