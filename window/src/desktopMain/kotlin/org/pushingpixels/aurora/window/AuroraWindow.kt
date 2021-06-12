@@ -29,7 +29,6 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
@@ -50,9 +49,7 @@ import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.shaper.AuroraButtonShaper
 import org.pushingpixels.aurora.shaper.ClassicButtonShaper
 import java.awt.*
-import java.awt.event.AWTEventListener
-import java.awt.event.KeyEvent
-import java.awt.event.MouseEvent
+import java.awt.event.*
 import java.awt.image.BufferedImage
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
@@ -523,6 +520,21 @@ fun AuroraWindow(
                 AWTEvent.MOUSE_EVENT_MASK or AWTEvent.MOUSE_MOTION_EVENT_MASK
             )
         }
+
+        appWindow.window.addWindowFocusListener(object : WindowFocusListener {
+            override fun windowGainedFocus(e: WindowEvent) {
+            }
+
+            override fun windowLostFocus(e: WindowEvent) {
+                for (window in Window.getWindows()) {
+                    // Hide all Aurora popup windows when our app window loses focus
+                    if (window.isDisplayable && (window is AuroraPopupWindow)) {
+                        window.hide()
+                        window.dispose()
+                    }
+                }
+            }
+        })
     }
 
 
@@ -597,6 +609,21 @@ fun AuroraWindow(
                 AWTEvent.MOUSE_EVENT_MASK or AWTEvent.MOUSE_MOTION_EVENT_MASK
             )
         }
+
+        appWindow.window.addWindowFocusListener(object: WindowFocusListener {
+            override fun windowGainedFocus(e: WindowEvent) {
+            }
+
+            override fun windowLostFocus(e: WindowEvent) {
+                for (window in Window.getWindows()) {
+                    // Hide all Aurora popup windows when our app window loses focus
+                    if (window.isDisplayable && (window is AuroraPopupWindow)) {
+                        window.hide()
+                        window.dispose()
+                    }
+                }
+            }
+        })
     }
 
 @Composable
