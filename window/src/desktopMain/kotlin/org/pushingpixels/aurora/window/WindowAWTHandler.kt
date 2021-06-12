@@ -107,22 +107,21 @@ internal class AWTInputHandler(
         }
     }
     
-    private fun getEventWindow(ev: MouseEvent) : Window {
+    private fun getEventWindow(ev: MouseEvent) : Window? {
         val source = ev.source
-        if (source is Window) {
-            return source
+        when (source) {
+            is Window -> return source
+            is Component -> return SwingUtilities.getWindowAncestor(source)
+            else -> return null
         }
-        return SwingUtilities.getWindowAncestor(source as Component)
     }
 
     private fun mousePressed(ev: MouseEvent) {
         //println("mousePressed!")
         isMousePressed = true
         val dragWindowOffset: Point = ev.point
-        val w: Window = getEventWindow(ev)
-        if (w != null) {
-            w.toFront()
-        }
+        val w = getEventWindow(ev) ?: return
+        w.toFront()
         var f: Frame? = null
         var d: Dialog? = null
         if (w is Frame) {
@@ -163,9 +162,10 @@ internal class AWTInputHandler(
 //        if (rootPane.windowDecorationStyle == JRootPane.NONE) {
 //            return
 //        }
-        val w: Window = getEventWindow(ev)
+        val w = getEventWindow(ev) ?: return
         var f: Frame? = null
         var d: Dialog? = null
+
         if (w is Frame) {
             f = w
         } else if (w is Dialog) {
@@ -229,7 +229,7 @@ internal class AWTInputHandler(
 
     private fun mouseDragged(ev: MouseEvent) {
         //println("mouseDragged!")
-        val w: Window = getEventWindow(ev)
+        val w = getEventWindow(ev) ?: return
         val pt: Point = ev.point
         if (isMovingWindow) {
             val windowPt: Point
@@ -300,7 +300,7 @@ internal class AWTInputHandler(
         if (isMousePressed) {
             return
         }
-        val w: Window = getEventWindow(ev)
+        val w = getEventWindow(ev) ?: return
         if ((lastCursor.value == null)
             && (cursorState !== CursorState.Entered)
         ) {
@@ -316,7 +316,7 @@ internal class AWTInputHandler(
         if (isMousePressed) {
             return
         }
-        val w: Window = getEventWindow(ev)
+        val w = getEventWindow(ev) ?: return
         w.cursor = lastCursor.value
         lastCursor.value = null
         cursorState = CursorState.Exited
