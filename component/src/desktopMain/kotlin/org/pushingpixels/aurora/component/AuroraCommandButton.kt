@@ -19,6 +19,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.desktop.AppManager
 import androidx.compose.desktop.ComposePanel
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -1137,7 +1138,7 @@ private fun CommandButtonPopupContent(
     val popupBorderColor = AuroraSkin.painters.borderPainter.getRepresentativeColor(borderScheme)
     val density = LocalDensity.current
     val contentSize = AuroraSize(0, 0)
-    Box(modifier = Modifier.auroraBackground(window = popupContentWindow).onGloballyPositioned {
+    Box(modifier = Modifier.onGloballyPositioned {
         // Get the size of the content and update the popup window bounds
         val popupWidth = (contentSize.width / density.density).toInt()
         val popupHeight = (contentSize.height / density.density).toInt()
@@ -1220,7 +1221,8 @@ private fun CommandButtonPopupContent(
             hasPanel = hasPanel,
             panelPreferredSize = panelPreferredSize
         ) {
-            Canvas(Modifier) {
+            // This canvas paints the background fill of the popup and the outer hairline border
+            Canvas(modifier = Modifier.auroraBackground(window = popupContentWindow)) {
                 val outline = Outline.Rectangle(
                     rect = Rect(
                         left = 0.5f,
