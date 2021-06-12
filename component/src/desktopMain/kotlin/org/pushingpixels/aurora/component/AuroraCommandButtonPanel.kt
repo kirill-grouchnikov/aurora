@@ -240,8 +240,8 @@ internal fun AuroraCommandButtonPanel(
                 modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight().padding(
                     start = 0.dp,
                     end = contentEndPadding + ScrollBarSizingConstants.DefaultScrollBarMargin,
-                    top = contentTopPadding,
-                    bottom = contentBottomPadding
+                    top = contentTopPadding + ScrollBarSizingConstants.DefaultScrollBarMargin,
+                    bottom = contentBottomPadding + ScrollBarSizingConstants.DefaultScrollBarMargin
                 ),
                 adapter = rememberScrollbarAdapter(stateVertical)
             )
@@ -249,8 +249,8 @@ internal fun AuroraCommandButtonPanel(
             AuroraHorizontalScrollbar(
                 modifier = Modifier.align(Alignment.BottomStart).fillMaxWidth()
                     .padding(
-                        start = contentStartPadding,
-                        end = contentEndPadding,
+                        start = contentStartPadding + ScrollBarSizingConstants.DefaultScrollBarMargin,
+                        end = contentEndPadding + ScrollBarSizingConstants.DefaultScrollBarMargin,
                         top = 0.dp,
                         bottom = contentBottomPadding + ScrollBarSizingConstants.DefaultScrollBarMargin
                     ),
