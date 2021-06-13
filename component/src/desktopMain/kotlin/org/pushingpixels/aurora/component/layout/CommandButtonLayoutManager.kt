@@ -74,6 +74,7 @@ interface CommandButtonLayoutManager : MeasureScope {
      */
     data class CommandButtonPreLayoutInfo(
         val commandButtonKind: CommandButtonKind,
+        val showIcon: Boolean,
         val texts: List<String>,
         val extraTexts: List<String>,
         val isTextInActionArea: Boolean,

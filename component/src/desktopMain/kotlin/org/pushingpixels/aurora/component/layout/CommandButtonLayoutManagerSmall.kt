@@ -109,6 +109,7 @@ internal class CommandButtonLayoutManagerSmall(
 
         return CommandButtonLayoutManager.CommandButtonPreLayoutInfo(
             commandButtonKind = commandButtonKind,
+            showIcon = (command.iconFactory != null),
             texts = emptyList(),
             extraTexts = emptyList(),
             isTextInActionArea = (hasAction or command.isActionToggle) &&

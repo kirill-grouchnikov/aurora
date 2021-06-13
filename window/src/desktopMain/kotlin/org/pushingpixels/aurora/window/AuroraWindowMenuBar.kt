@@ -93,6 +93,7 @@ private object WindowMenuBarLayout {
 
             return CommandButtonLayoutManager.CommandButtonPreLayoutInfo(
                 commandButtonKind = commandButtonKind,
+                showIcon = false,
                 texts = listOf(command.text),
                 extraTexts = emptyList(),
                 isTextInActionArea = (hasAction or command.isActionToggle) &&
@@ -154,6 +155,7 @@ private object WindowMenuBarLayout {
 
     val MenuBar: CommandButtonPresentationState =
         object : CommandButtonPresentationState("Menu Bar") {
+            @Composable
             override fun createLayoutManager(
                 layoutDirection: LayoutDirection,
                 density: Density,

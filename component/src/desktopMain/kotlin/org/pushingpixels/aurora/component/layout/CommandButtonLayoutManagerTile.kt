@@ -142,6 +142,7 @@ internal class CommandButtonLayoutManagerTile(
 
         return CommandButtonLayoutManager.CommandButtonPreLayoutInfo(
             commandButtonKind = commandButtonKind,
+            showIcon = (command.iconFactory != null),
             texts = listOf(command.text),
             extraTexts = if (command.extraText != null) listOf(command.extraText) else emptyList(),
             isTextInActionArea = (hasAction or command.isActionToggle) &&

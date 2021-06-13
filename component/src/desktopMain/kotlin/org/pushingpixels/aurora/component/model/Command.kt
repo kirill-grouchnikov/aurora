@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.unit.Density
@@ -117,6 +118,7 @@ enum class CommandButtonKind(val hasAction: Boolean, val hasPopup: Boolean) {
  * methods.
  */
 abstract class CommandButtonPresentationState(val displayName: String) {
+    @Composable
     abstract fun createLayoutManager(
         layoutDirection: LayoutDirection,
         density: Density,
@@ -132,6 +134,7 @@ abstract class CommandButtonPresentationState(val displayName: String) {
         /** Big state */
         val Big: CommandButtonPresentationState =
             object : CommandButtonPresentationState("Big") {
+                @Composable
                 override fun createLayoutManager(
                     layoutDirection: LayoutDirection,
                     density: Density,
@@ -150,6 +153,7 @@ abstract class CommandButtonPresentationState(val displayName: String) {
         /** Medium state */
         val Medium: CommandButtonPresentationState =
             object : CommandButtonPresentationState("Medium") {
+                @Composable
                 override fun createLayoutManager(
                     layoutDirection: LayoutDirection,
                     density: Density,
@@ -168,6 +172,7 @@ abstract class CommandButtonPresentationState(val displayName: String) {
         /** Small state */
         val Small: CommandButtonPresentationState =
             object : CommandButtonPresentationState("Small") {
+                @Composable
                 override fun createLayoutManager(
                     layoutDirection: LayoutDirection,
                     density: Density,
@@ -186,6 +191,7 @@ abstract class CommandButtonPresentationState(val displayName: String) {
         /** Tile state */
         val Tile: CommandButtonPresentationState =
             object : CommandButtonPresentationState("Tile") {
+                @Composable
                 override fun createLayoutManager(
                     layoutDirection: LayoutDirection,
                     density: Density,
@@ -204,6 +210,7 @@ abstract class CommandButtonPresentationState(val displayName: String) {
         /** Fit-to-icon state */
         val FitToIcon: CommandButtonPresentationState =
             object : CommandButtonPresentationState("Fit to icon") {
+                @Composable
                 override fun createLayoutManager(
                     layoutDirection: LayoutDirection,
                     density: Density,

@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.component.layout
 
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.Paragraph
@@ -45,6 +46,10 @@ internal open class CommandButtonLayoutManagerMedium(
         return 16.dp
     }
 
+    internal open fun hasIcon(command: Command): Boolean {
+        return (command.iconFactory != null)
+    }
+
     override fun getPreferredSize(
         command: Command,
         presentationModel: CommandButtonPresentationModel,
@@ -56,7 +61,7 @@ internal open class CommandButtonLayoutManagerMedium(
         val buttonText = command.text
         val layoutHGap = (CommandButtonSizingConstants.DefaultHorizontalContentLayoutGap *
                 presentationModel.horizontalGapScaleFactor).toPx()
-        val hasIcon = (command.iconFactory != null)
+        val hasIcon = hasIcon(command)
         val hasText = (buttonText != null)
         val hasPopup = (command.secondaryContentModel != null)
         val prefIconSize = getPreferredIconSize(command, presentationModel).toPx()
@@ -138,6 +143,7 @@ internal open class CommandButtonLayoutManagerMedium(
 
         return CommandButtonLayoutManager.CommandButtonPreLayoutInfo(
             commandButtonKind = commandButtonKind,
+            showIcon = hasIcon(command),
             texts = listOf(command.text),
             extraTexts = emptyList(),
             isTextInActionArea = (hasAction or command.isActionToggle) &&
@@ -158,7 +164,7 @@ internal open class CommandButtonLayoutManagerMedium(
         val buttonText = command.text
         val layoutHGap = (CommandButtonSizingConstants.DefaultHorizontalContentLayoutGap *
                 presentationModel.horizontalGapScaleFactor).toPx()
-        val hasIcon = (command.iconFactory != null)
+        val hasIcon = hasIcon(command)
         val hasText = (buttonText != null)
         val hasPopup = (command.secondaryContentModel != null)
         val iconSize = getPreferredIconSize(command, presentationModel).toPx()

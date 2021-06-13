@@ -19,7 +19,6 @@ import androidx.compose.animation.core.*
 import androidx.compose.desktop.AppManager
 import androidx.compose.desktop.ComposePanel
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -31,10 +30,9 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.ClipOp
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
@@ -51,6 +49,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.common.interpolateTowards
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.layout.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
@@ -72,7 +71,8 @@ private class CommandButtonDrawingCache(
         dark = Color.White,
         ultraDark = Color.White,
         foreground = Color.Black
-    )
+    ),
+    val markPath: Path = Path()
 )
 
 @Composable
@@ -305,16 +305,14 @@ internal fun AuroraCommandButton(
         }
     }
 
-    val layoutManager = remember {
+    val layoutManager =
         presentationModel.presentationState.createLayoutManager(
             layoutDirection = layoutDirection,
             density = density,
             textStyle = resolvedTextStyle,
             resourceLoader = resourceLoader
         )
-    }
 
-    val hasIcon = (command.iconFactory != null)
     val hasAction = (command.action != null)
     val isActionEnabled = command.isActionEnabled
     val isPopupEnabled = command.isSecondaryEnabled
@@ -330,6 +328,8 @@ internal fun AuroraCommandButton(
     ) {
         layoutManager.getPreLayoutInfo(command, presentationModel)
     }
+
+    val hasIcon = preLayoutInfo.showIcon
 
     Layout(
         modifier = modifier.commandButtonLocator(auroraTopLeftOffset, auroraSize),
@@ -777,12 +777,20 @@ internal fun AuroraCommandButton(
                     if (hasAction or isToggle) actionModelStateInfo else popupModelStateInfo
                 val currStateForIcon =
                     if (hasAction or isToggle) currentActionState.value else currentPopupState.value
+
+                val selectionStrength = modelStateInfoForIcon.stateContributionMap
+                    .filter { it.key.isFacetActive(ComponentStateFacet.SELECTION) }
+                    .map { it.value }
+                    .sumOf { it.contribution.toDouble() }
+                    .toFloat()
                 CommandButtonIconContent(
                     command,
                     presentationModel,
                     layoutManager.getPreferredIconSize(command, presentationModel),
                     modelStateInfoForIcon,
-                    currStateForIcon
+                    currStateForIcon,
+                    selectionStrength,
+                    drawingCache
                 )
             }
 
@@ -1040,40 +1048,96 @@ private fun CommandButtonExtraTextContent(
 @Composable
 private fun CommandButtonIconContent(
     command: Command, presentationModel: CommandButtonPresentationModel,
-    iconSize: Dp, modelStateInfo: ModelStateInfo, currState: ComponentState
+    iconSize: Dp, modelStateInfo: ModelStateInfo, currState: ComponentState,
+    selectionStrength: Float, drawingCache: CommandButtonDrawingCache
 ) {
-    if (command.iconFactory != null) {
-        val icon = if (command.iconFactory is TransitionAwareIcon.TransitionAwareIconFactory)
-            command.iconFactory.createNewIcon(modelStateInfo.getSnapshot(currState))
-        else
-            remember(iconSize) { command.iconFactory.createNewIcon() }
-        icon.setSize(width = iconSize, height = iconSize)
+    Box {
+        Canvas(modifier = Modifier.matchParentSize()) {
+            // TODO - display the selected fill for selected toggle menu commands
+        }
+        if (command.iconFactory == null) {
+            // If we get to this function, we are being asked to display the icon. If the icon
+            // factory is null, we're going to display a checkmark if the button is in selected
+            // state (full or partial)
+            val checkmarkAlpha =
+                remember { mutableStateOf(if (command.isActionToggleSelected) 1.0f else 0.0f) }
 
-        val decorationAreaType = AuroraSkin.decorationAreaType
-        val skinColors = AuroraSkin.colors
+            // Checkmark color
+            val decorationAreaType = AuroraSkin.decorationAreaType
+            val markColor = getStateAwareColor(
+                modelStateInfo, currState,
+                decorationAreaType, ColorSchemeAssociationKind.MARK
+            ) { it.markColor }
 
-        // Compute the text color based on the passed model state (which can be action
-        // or popup)
-        val textColor = getTextColor(
-            modelStateInfo = modelStateInfo,
-            currState = currState,
-            skinColors = skinColors,
-            decorationAreaType = decorationAreaType,
-            colorSchemeAssociationKind = ColorSchemeAssociationKind.FILL,
-            isTextInFilledArea = true
-        )
+            // Checkmark alpha is the combined strength of all the
+            // states that have the selection bit turned on
+            checkmarkAlpha.value = modelStateInfo.stateContributionMap
+                .filter { it.key.isFacetActive(ComponentStateFacet.SELECTION) }
+                .map { it.value }
+                .sumOf { it.contribution.toDouble() }
+                .toFloat()
+            Canvas(modifier = Modifier.matchParentSize()) {
+                val width = this.size.width
+                val height = this.size.height
 
-        // Pass our text color and model state snapshot to the children
-        CompositionLocalProvider(
-            LocalTextColor provides textColor,
-            LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currState)
-        ) {
-            AuroraThemedIcon(
-                icon = icon,
-                disabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
-                enabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
-                activeFilterStrategy = presentationModel.iconActiveFilterStrategy
+                // Draw the checkbox mark with the alpha that corresponds to the current
+                // selection and potential transition
+                val markStroke = 0.12f * width
+
+                with(drawingCache) {
+                    markPath.reset()
+                    markPath.moveTo(0.25f * width, 0.48f * height)
+                    markPath.lineTo(0.48f * width, 0.73f * height)
+                    markPath.lineTo(0.76f * width, 0.28f * height)
+
+                    // Note that we apply alpha twice - once for the selected / checked
+                    // state or transition, and the second time based on the enabled state
+                    // TODO - get the second alpha
+                    drawPath(
+                        path = markPath,
+                        color = markColor.withAlpha(selectionStrength),
+                        style = Stroke(
+                            width = markStroke,
+                            cap = StrokeCap.Round,
+                            join = StrokeJoin.Round
+                        ),
+                        alpha = 1.0f
+                    )
+                }
+            }
+        } else {
+            val icon = if (command.iconFactory is TransitionAwareIcon.TransitionAwareIconFactory)
+                command.iconFactory.createNewIcon(modelStateInfo.getSnapshot(currState))
+            else
+                remember(iconSize) { command.iconFactory.createNewIcon() }
+            icon.setSize(width = iconSize, height = iconSize)
+
+            val decorationAreaType = AuroraSkin.decorationAreaType
+            val skinColors = AuroraSkin.colors
+
+            // Compute the text color based on the passed model state (which can be action
+            // or popup)
+            val textColor = getTextColor(
+                modelStateInfo = modelStateInfo,
+                currState = currState,
+                skinColors = skinColors,
+                decorationAreaType = decorationAreaType,
+                colorSchemeAssociationKind = ColorSchemeAssociationKind.FILL,
+                isTextInFilledArea = true
             )
+
+            // Pass our text color and model state snapshot to the children
+            CompositionLocalProvider(
+                LocalTextColor provides textColor,
+                LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currState)
+            ) {
+                AuroraThemedIcon(
+                    icon = icon,
+                    disabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
+                    enabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
+                    activeFilterStrategy = presentationModel.iconActiveFilterStrategy
+                )
+            }
         }
     }
 }
@@ -1267,48 +1331,70 @@ private fun CommandButtonPopupContent(
                 isMenu = true
             )
 
-            for ((commandGroupIndex, commandGroup) in command.secondaryContentModel.groups.withIndex()) {
+            var atLeastOneButtonHasIcon = false
+            for (commandGroup in command.secondaryContentModel.groups) {
                 for (secondaryCommand in commandGroup.commands) {
-                    // Check if we have a presentation overlay for this secondary command
-                    val hasOverlay = overlays.containsKey(secondaryCommand)
-                    var currSecondaryPresentationModel = if (hasOverlay)
-                        menuButtonPresentationModel.overlayWith(overlays[secondaryCommand]!!)
-                    else menuButtonPresentationModel
-                    if (secondaryCommand == command.secondaryContentModel.highlightedCommand) {
-                        currSecondaryPresentationModel = currSecondaryPresentationModel.overlayWith(
-                            CommandButtonPresentationModel.Overlay(textStyle = TextStyle(fontWeight = FontWeight.Bold))
-                        )
+                    if (secondaryCommand.iconFactory != null) {
+                        atLeastOneButtonHasIcon = true
                     }
+                    if (secondaryCommand.isActionToggle) {
+                        atLeastOneButtonHasIcon = true
+                    }
+                }
+            }
 
-                    // Create a command button for each secondary command, passing the same
-                    // overlays into it. If our secondary content model has a highlighted command,
-                    // pass bold font weight to the text style of the matching command button.
-                    AuroraCommandButton(
-                        command = secondaryCommand,
-                        parentWindow = popupContentWindow,
-                        extraAction = {
-                            if (presentationModel.toDismissPopupsOnActivation and
-                                currSecondaryPresentationModel.toDismissPopupsOnActivation
-                            ) {
-                                for (window in Window.getWindows()) {
-                                    if (window.isDisplayable && window is AuroraPopupWindow) {
-                                        window.dispose()
+            CompositionLocalProvider(
+                LocalCommandForceIcon provides atLeastOneButtonHasIcon
+            ) {
+                for ((commandGroupIndex, commandGroup) in command.secondaryContentModel.groups.withIndex()) {
+                    for (secondaryCommand in commandGroup.commands) {
+                        // Check if we have a presentation overlay for this secondary command
+                        val hasOverlay = overlays.containsKey(secondaryCommand)
+                        var currSecondaryPresentationModel = if (hasOverlay)
+                            menuButtonPresentationModel.overlayWith(overlays[secondaryCommand]!!)
+                        else menuButtonPresentationModel
+                        if (secondaryCommand == command.secondaryContentModel.highlightedCommand) {
+                            // If our secondary content model has a highlighted command, pass bold
+                            // font weight to the text style of the matching command button.
+                            currSecondaryPresentationModel =
+                                currSecondaryPresentationModel.overlayWith(
+                                    CommandButtonPresentationModel.Overlay(
+                                        textStyle = TextStyle(
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    )
+                                )
+                        }
+
+                        // Create a command button for each secondary command, passing the same
+                        // overlays into it.
+                        AuroraCommandButton(
+                            command = secondaryCommand,
+                            parentWindow = popupContentWindow,
+                            extraAction = {
+                                if (presentationModel.toDismissPopupsOnActivation and
+                                    currSecondaryPresentationModel.toDismissPopupsOnActivation
+                                ) {
+                                    for (window in Window.getWindows()) {
+                                        if (window.isDisplayable && window is AuroraPopupWindow) {
+                                            window.dispose()
+                                        }
                                     }
                                 }
-                            }
-                        },
-                        presentationModel = currSecondaryPresentationModel,
-                        overlays = overlays,
-                        buttonSides = Sides(straightSides = Side.values().toSet())
-                    )
-                }
-                if (commandGroupIndex < (command.secondaryContentModel.groups.size - 1)) {
-                    AuroraHorizontalSeparator(
-                        presentationModel = SeparatorPresentationModel(
-                            startGradientAmount = 0.dp,
-                            endGradientAmount = 0.dp
+                            },
+                            presentationModel = currSecondaryPresentationModel,
+                            overlays = overlays,
+                            buttonSides = Sides(straightSides = Side.values().toSet())
                         )
-                    )
+                    }
+                    if (commandGroupIndex < (command.secondaryContentModel.groups.size - 1)) {
+                        AuroraHorizontalSeparator(
+                            presentationModel = SeparatorPresentationModel(
+                                startGradientAmount = 0.dp,
+                                endGradientAmount = 0.dp
+                            )
+                        )
+                    }
                 }
             }
         }
@@ -1411,3 +1497,5 @@ private fun Modifier.commandButtonLocator(topLeftOffset: AuroraOffset, size: Aur
     this.then(
         CommandButtonBoxLocator(topLeftOffset, size)
     )
+
+internal val LocalCommandForceIcon = staticCompositionLocalOf { false }

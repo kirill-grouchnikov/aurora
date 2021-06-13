@@ -193,6 +193,19 @@ fun CommandDemoEditStrip(
             action = { println("Copy!") }
 
         )
+
+    var togglePasteText by remember { mutableStateOf(false) }
+    val commandPasteTextOnly = Command(
+        text = "Text only",
+        action = { println("Paste text only") },
+        isActionToggle = true,
+        isActionToggleSelected = togglePasteText,
+        onTriggerActionToggleSelectedChange = {
+            println("Selected toggle paste text? $it")
+            togglePasteText = it
+        }
+    )
+
     val commandPaste =
         Command(
             text = "Paste",
@@ -208,9 +221,7 @@ fun CommandDemoEditStrip(
                         Command(
                             text = "Merge Formatting",
                             action = { println("Paste with merge formatting") }),
-                        Command(
-                            text = "Text only",
-                            action = { println("Paste text only") })
+                        commandPasteTextOnly,
                     )
                 ),
                 panelContentModel = getQuickStylesContentModel()
@@ -234,6 +245,9 @@ fun CommandDemoEditStrip(
             iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText
         ),
         overlays = mapOf(
+            commandPasteTextOnly to CommandButtonPresentationModel.Overlay(
+                toDismissPopupsOnActivation = false
+            ),
             commandPaste to CommandButtonPresentationModel.Overlay(
                 popupMenuPresentationModel = CommandPopupMenuPresentationModel(
                     panelPresentationModel = CommandPanelPresentationModel(
