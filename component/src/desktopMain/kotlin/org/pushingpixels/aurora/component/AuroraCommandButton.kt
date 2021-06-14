@@ -1119,6 +1119,14 @@ private fun CommandButtonIconContent(
                 .map { it.value }
                 .sumOf { it.contribution.toDouble() }
                 .toFloat()
+
+            val stateForMark = if (currState.isDisabled) ComponentState.DISABLED_SELECTED
+            else ComponentState.SELECTED
+            val alphaForMark = skinColors.getAlpha(
+                decorationAreaType = decorationAreaType,
+                componentState = stateForMark
+            )
+
             Canvas(modifier = Modifier.matchParentSize()) {
                 val width = this.size.width
                 val height = this.size.height
@@ -1134,8 +1142,7 @@ private fun CommandButtonIconContent(
                     markPath.lineTo(0.76f * width, 0.28f * height)
 
                     // Note that we apply alpha twice - once for the selected / checked
-                    // state or transition, and the second time based on the enabled state
-                    // TODO - get the second alpha
+                    // state or transition, and the second time based on the enabled bit
                     drawPath(
                         path = markPath,
                         color = markColor.withAlpha(checkmarkAlpha),
@@ -1144,7 +1151,7 @@ private fun CommandButtonIconContent(
                             cap = StrokeCap.Round,
                             join = StrokeJoin.Round
                         ),
-                        alpha = 1.0f
+                        alpha = alphaForMark
                     )
                 }
             }
@@ -1154,9 +1161,6 @@ private fun CommandButtonIconContent(
             else
                 remember(iconSize) { command.iconFactory.createNewIcon() }
             icon.setSize(width = iconSize, height = iconSize)
-
-            val decorationAreaType = AuroraSkin.decorationAreaType
-            val skinColors = AuroraSkin.colors
 
             // Compute the text color based on the passed model state (which can be action
             // or popup)
