@@ -274,7 +274,6 @@ class SliderProjection(
     }
 }
 
-
 class TextFieldValueProjection(
     contentModel: TextFieldValueContentModel,
     presentationModel: TextFieldPresentationModel = TextFieldPresentationModel()

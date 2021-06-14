@@ -32,7 +32,6 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
@@ -778,18 +777,12 @@ internal fun AuroraCommandButton(
                 val currStateForIcon =
                     if (hasAction or isToggle) currentActionState.value else currentPopupState.value
 
-                val selectionStrength = modelStateInfoForIcon.stateContributionMap
-                    .filter { it.key.isFacetActive(ComponentStateFacet.SELECTION) }
-                    .map { it.value }
-                    .sumOf { it.contribution.toDouble() }
-                    .toFloat()
                 CommandButtonIconContent(
                     command,
                     presentationModel,
                     layoutManager.getPreferredIconSize(command, presentationModel),
                     modelStateInfoForIcon,
                     currStateForIcon,
-                    selectionStrength,
                     drawingCache
                 )
             }
@@ -1049,21 +1042,71 @@ private fun CommandButtonExtraTextContent(
 private fun CommandButtonIconContent(
     command: Command, presentationModel: CommandButtonPresentationModel,
     iconSize: Dp, modelStateInfo: ModelStateInfo, currState: ComponentState,
-    selectionStrength: Float, drawingCache: CommandButtonDrawingCache
+    drawingCache: CommandButtonDrawingCache
 ) {
+    val isSelectedMenu = currState.isFacetActive(ComponentStateFacet.SELECTION) &&
+            presentationModel.isMenu
+
+    val skinColors = AuroraSkin.colors
+    val decorationAreaType = AuroraSkin.decorationAreaType
+    val borderPainter = AuroraSkin.painters.borderPainter
+    val fillPainter = AuroraSkin.painters.fillPainter
+
     Box {
-        Canvas(modifier = Modifier.matchParentSize()) {
-            // TODO - display the selected fill for selected toggle menu commands
+        if (isSelectedMenu) {
+            Canvas(modifier = Modifier.matchParentSize()) {
+                // Background fill / border for selected toggle menu commands
+                val stateForBackground = if (currState.isDisabled) ComponentState.DISABLED_SELECTED
+                else ComponentState.SELECTED
+                val alphaForBackground = skinColors.getAlpha(
+                    decorationAreaType = decorationAreaType,
+                    componentState = stateForBackground
+                )
+                val outline = Outline.Rectangle(
+                    rect = Rect(
+                        left = 0.5f,
+                        top = 0.5f,
+                        right = size.width - 0.5f,
+                        bottom = size.height - 0.5f
+                    )
+                )
+
+                val fillScheme = skinColors.getColorScheme(
+                    decorationAreaType = decorationAreaType,
+                    associationKind = ColorSchemeAssociationKind.HIGHLIGHT,
+                    componentState = stateForBackground
+                )
+
+                fillPainter.paintContourBackground(
+                    drawScope = this,
+                    size = size,
+                    outline = outline,
+                    fillScheme = fillScheme,
+                    alpha = alphaForBackground
+                )
+
+                val borderScheme = skinColors.getColorScheme(
+                    decorationAreaType = decorationAreaType,
+                    associationKind = ColorSchemeAssociationKind.HIGHLIGHT_BORDER,
+                    componentState = stateForBackground
+                )
+
+                borderPainter.paintBorder(
+                    drawScope = this,
+                    size = size,
+                    outline = outline,
+                    outlineInner = null,
+                    borderScheme = borderScheme,
+                    alpha = alphaForBackground
+                )
+            }
         }
         if (command.iconFactory == null) {
             // If we get to this function, we are being asked to display the icon. If the icon
-            // factory is null, we're going to display a checkmark if the button is in selected
+            // factory is null, we display a checkmark if the button is in selected
             // state (full or partial)
-            val checkmarkAlpha =
-                remember { mutableStateOf(if (command.isActionToggleSelected) 1.0f else 0.0f) }
 
             // Checkmark color
-            val decorationAreaType = AuroraSkin.decorationAreaType
             val markColor = getStateAwareColor(
                 modelStateInfo, currState,
                 decorationAreaType, ColorSchemeAssociationKind.MARK
@@ -1071,7 +1114,7 @@ private fun CommandButtonIconContent(
 
             // Checkmark alpha is the combined strength of all the
             // states that have the selection bit turned on
-            checkmarkAlpha.value = modelStateInfo.stateContributionMap
+            val checkmarkAlpha = modelStateInfo.stateContributionMap
                 .filter { it.key.isFacetActive(ComponentStateFacet.SELECTION) }
                 .map { it.value }
                 .sumOf { it.contribution.toDouble() }
@@ -1095,7 +1138,7 @@ private fun CommandButtonIconContent(
                     // TODO - get the second alpha
                     drawPath(
                         path = markPath,
-                        color = markColor.withAlpha(selectionStrength),
+                        color = markColor.withAlpha(checkmarkAlpha),
                         style = Stroke(
                             width = markStroke,
                             cap = StrokeCap.Round,
