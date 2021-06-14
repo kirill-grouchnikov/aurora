@@ -89,6 +89,12 @@ val String.asColor: Color
         blue = decodeChannel(this.substring(5, 7))
     )
 
+sealed class Style
+object UnsetStyle : Style()
+data class SolidStyle(val index: Int) : Style()
+data class GradientStyle(val index: Int) : Style()
+
+@Composable
 fun getStylesContentModel(
     permanentTopColor: MutableState<Color>,
     permanentBottomColor: MutableState<Color>,
@@ -112,6 +118,8 @@ fun getStylesContentModel(
         "#110141".asColor,
     )
 
+    val selectedStyle = remember { mutableStateOf<Style>(UnsetStyle) }
+
     val commandGroups: MutableList<CommandGroup> = arrayListOf()
     val solids: MutableList<Command> = arrayListOf()
     for (i in 1..solidColors.size) {
@@ -120,10 +128,6 @@ fun getStylesContentModel(
             text = "Solid ${color.shorthexa}",
             extraText = color.shorthexa,
             iconFactory = ColorSolidIcon.factory(color),
-            action = {
-                permanentTopColor.value = color
-                permanentBottomColor.value = color
-            },
             actionPreview = object : CommandActionPreview {
                 override fun onCommandPreviewActivated(command: Command) {
                     isInPreview.value = true
@@ -133,6 +137,15 @@ fun getStylesContentModel(
 
                 override fun onCommandPreviewCanceled(command: Command) {
                     isInPreview.value = false
+                }
+            },
+            isActionToggle = true,
+            isActionToggleSelected = ((selectedStyle.value as? SolidStyle)?.index == i),
+            onTriggerActionToggleSelectedChange = {
+                if (it) {
+                    permanentTopColor.value = color
+                    permanentBottomColor.value = color
+                    selectedStyle.value = SolidStyle(i)
                 }
             }
         )
@@ -148,10 +161,6 @@ fun getStylesContentModel(
             text = "${colorTop.shorthexa} ${colorBottom.shorthexa}",
             extraText = colorTop.shorthexa,
             iconFactory = ColorGradientIcon.factory(colorTop, colorBottom),
-            action = {
-                permanentTopColor.value = colorTop
-                permanentBottomColor.value = colorBottom
-            },
             actionPreview = object : CommandActionPreview {
                 override fun onCommandPreviewActivated(command: Command) {
                     isInPreview.value = true
@@ -161,6 +170,15 @@ fun getStylesContentModel(
 
                 override fun onCommandPreviewCanceled(command: Command) {
                     isInPreview.value = false
+                }
+            },
+            isActionToggle = true,
+            isActionToggleSelected = ((selectedStyle.value as? GradientStyle)?.index == i),
+            onTriggerActionToggleSelectedChange = {
+                if (it) {
+                    permanentTopColor.value = colorTop
+                    permanentBottomColor.value = colorBottom
+                    selectedStyle.value = GradientStyle(i)
                 }
             }
         )
