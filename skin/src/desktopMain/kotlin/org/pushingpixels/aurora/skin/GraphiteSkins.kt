@@ -55,90 +55,90 @@ private fun graphiteBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColo
     // border scheme
     val borderScheme = schemes["Graphite Border"]
     val separatorScheme = schemes["Graphite Separator"]
-    defaultSchemeBundle.registerColorScheme(borderScheme, ColorSchemeAssociationKind.BORDER)
-    defaultSchemeBundle.registerColorScheme(separatorScheme, ColorSchemeAssociationKind.SEPARATOR)
+    defaultSchemeBundle.registerColorScheme(borderScheme, ColorSchemeAssociationKind.Border)
+    defaultSchemeBundle.registerColorScheme(separatorScheme, ColorSchemeAssociationKind.Separator)
 
-    defaultSchemeBundle.registerAlpha(0.5f, ComponentState.DISABLED_UNSELECTED)
-    defaultSchemeBundle.registerAlpha(0.65f, ComponentState.DISABLED_SELECTED)
+    defaultSchemeBundle.registerAlpha(0.5f, ComponentState.DisabledUnselected)
+    defaultSchemeBundle.registerAlpha(0.65f, ComponentState.DisabledSelected)
     defaultSchemeBundle.registerColorScheme(
         disabledScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledUnselected
     )
     defaultSchemeBundle.registerColorScheme(
         selectedDisabledScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_SELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected
     )
     defaultSchemeBundle.registerColorScheme(
-        disabledScheme, ColorSchemeAssociationKind.MARK,
-        ComponentState.DISABLED_UNSELECTED, ComponentState.DISABLED_SELECTED
+        disabledScheme, ColorSchemeAssociationKind.Mark,
+        ComponentState.DisabledUnselected, ComponentState.DisabledSelected
     )
 
     defaultSchemeBundle.registerColorScheme(
         selectedScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.SELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.Selected
     )
 
     result.registerDecorationAreaSchemeBundle(
         defaultSchemeBundle, backgroundScheme,
-        DecorationAreaType.NONE
+        DecorationAreaType.None
     )
 
     // highlight fill scheme + custom alpha for rollover unselected state
-    defaultSchemeBundle.registerHighlightAlpha(0.9f, ComponentState.SELECTED)
-    defaultSchemeBundle.registerHighlightAlpha(0.8f, ComponentState.ROLLOVER_UNSELECTED)
-    defaultSchemeBundle.registerHighlightAlpha(1.0f, ComponentState.ROLLOVER_SELECTED)
+    defaultSchemeBundle.registerHighlightAlpha(0.9f, ComponentState.Selected)
+    defaultSchemeBundle.registerHighlightAlpha(0.8f, ComponentState.RolloverUnselected)
+    defaultSchemeBundle.registerHighlightAlpha(1.0f, ComponentState.RolloverSelected)
     defaultSchemeBundle.registerHighlightColorScheme(
         accentBuilder.highlightsAccent!!,
-        ComponentState.ROLLOVER_UNSELECTED,
-        ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED
+        ComponentState.RolloverUnselected,
+        ComponentState.Selected, ComponentState.RolloverSelected
     )
 
-    defaultSchemeBundle.registerAlpha(0.5f, ComponentState.DISABLED_SELECTED)
+    defaultSchemeBundle.registerAlpha(0.5f, ComponentState.DisabledSelected)
     defaultSchemeBundle.registerColorScheme(
         accentBuilder.activeControlsAccent!!,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_SELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected
     )
     defaultSchemeBundle.registerColorScheme(
         accentBuilder.activeControlsAccent!!,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.Selected, ComponentState.RolloverSelected
     )
     defaultSchemeBundle.registerColorScheme(
         accentBuilder.activeControlsAccent!!.shade(0.2f).saturate(0.2f),
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.PRESSED_SELECTED, ComponentState.PRESSED_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.PressedSelected, ComponentState.PressedUnselected
     )
     defaultSchemeBundle.registerColorScheme(
         accentBuilder.activeControlsAccent!!,
-        ColorSchemeAssociationKind.TAB,
-        ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED
+        ColorSchemeAssociationKind.Tab,
+        ComponentState.Selected, ComponentState.RolloverSelected
     )
 
     defaultSchemeBundle.registerColorScheme(
         borderScheme,
-        ColorSchemeAssociationKind.HIGHLIGHT_BORDER, *ComponentState.activeStates
+        ColorSchemeAssociationKind.HighlightBorder, *ComponentState.activeStates
     )
     defaultSchemeBundle.registerColorScheme(
         borderScheme,
-        ColorSchemeAssociationKind.BORDER, *ComponentState.activeStates
+        ColorSchemeAssociationKind.Border, *ComponentState.activeStates
     )
 
     defaultSchemeBundle.registerColorScheme(
         accentBuilder.activeControlsAccent!!,
-        ColorSchemeAssociationKind.MARK,
-        ComponentState.SELECTED, ComponentState.PRESSED_SELECTED,
-        ComponentState.PRESSED_UNSELECTED, ComponentState.ROLLOVER_UNSELECTED,
-        ComponentState.ROLLOVER_SELECTED
+        ColorSchemeAssociationKind.Mark,
+        ComponentState.Selected, ComponentState.PressedSelected,
+        ComponentState.PressedUnselected, ComponentState.RolloverUnselected,
+        ComponentState.RolloverSelected
     )
-    defaultSchemeBundle.registerAlpha(0.5f, ComponentState.DISABLED_SELECTED)
+    defaultSchemeBundle.registerAlpha(0.5f, ComponentState.DisabledSelected)
     defaultSchemeBundle.registerColorScheme(
         accentBuilder.activeControlsAccent!!,
-        ColorSchemeAssociationKind.MARK,
-        ComponentState.DISABLED_SELECTED
+        ColorSchemeAssociationKind.Mark,
+        ComponentState.DisabledSelected
     )
 
     // text highlight scheme
@@ -146,14 +146,14 @@ private fun graphiteBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColo
     // text highlight scheme
     defaultSchemeBundle.registerColorScheme(
         accentBuilder.highlightsAccent!!,
-        ColorSchemeAssociationKind.HIGHLIGHT_TEXT,
-        ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED
+        ColorSchemeAssociationKind.HighlightText,
+        ComponentState.Selected, ComponentState.RolloverSelected
     )
 
     defaultSchemeBundle.registerColorScheme(
         accentBuilder.activeControlsAccent!!,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.ROLLOVER_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.RolloverUnselected
     )
 
     return result
@@ -199,67 +199,67 @@ private fun graphiteSkinColorsBaseExtensions(bundle: AuroraColorSchemeBundle) {
         )
     )
 
-    bundle.registerAlpha(0.65f, ComponentState.DISABLED_SELECTED)
+    bundle.registerAlpha(0.65f, ComponentState.DisabledSelected)
     val highlightMarkScheme = schemes["Graphite Highlight Mark"]
     bundle.registerColorScheme(
         highlightMarkScheme,
-        ColorSchemeAssociationKind.HIGHLIGHT_MARK, *ComponentState.activeStates
+        ColorSchemeAssociationKind.HighlightMark, *ComponentState.activeStates
     )
     bundle.registerColorScheme(
         highlightMarkScheme,
-        ColorSchemeAssociationKind.MARK, ComponentState.ROLLOVER_SELECTED,
-        ComponentState.ROLLOVER_UNSELECTED
+        ColorSchemeAssociationKind.Mark, ComponentState.RolloverSelected,
+        ComponentState.RolloverUnselected
     )
 
     val selectedScheme = schemes["Graphite Selected"]
     val borderScheme = schemes["Graphite Border"]
     bundle.registerColorScheme(
-        selectedScheme, ColorSchemeAssociationKind.FILL,
-        ComponentState.SELECTED
+        selectedScheme, ColorSchemeAssociationKind.Fill,
+        ComponentState.Selected
     )
     bundle.registerColorScheme(
-        borderScheme, ColorSchemeAssociationKind.MARK,
-        ComponentState.SELECTED
+        borderScheme, ColorSchemeAssociationKind.Mark,
+        ComponentState.Selected
     )
 
     val selectedDisabledScheme = schemes["Graphite Selected Disabled"]
     val disabledScheme = schemes["Graphite Disabled"]
     bundle.registerColorScheme(
         disabledScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledUnselected
     )
     bundle.registerColorScheme(
         selectedDisabledScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_SELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected
     )
     bundle.registerColorScheme(
-        disabledScheme, ColorSchemeAssociationKind.MARK,
-        ComponentState.DISABLED_UNSELECTED, ComponentState.DISABLED_SELECTED
+        disabledScheme, ColorSchemeAssociationKind.Mark,
+        ComponentState.DisabledUnselected, ComponentState.DisabledSelected
     )
 
     val pressedSelectedScheme = schemes["Graphite Pressed Selected"]
     val pressedUnselectedScheme = schemes["Graphite Pressed Unselected"]
     bundle.registerColorScheme(
         pressedSelectedScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.PRESSED_SELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.PressedSelected
     )
     bundle.registerColorScheme(
         pressedSelectedScheme,
-        ColorSchemeAssociationKind.MARK,
-        ComponentState.PRESSED_SELECTED
+        ColorSchemeAssociationKind.Mark,
+        ComponentState.PressedSelected
     )
     bundle.registerColorScheme(
         pressedUnselectedScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.PRESSED_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.PressedUnselected
     )
     bundle.registerColorScheme(
         pressedUnselectedScheme,
-        ColorSchemeAssociationKind.MARK,
-        ComponentState.PRESSED_UNSELECTED
+        ColorSchemeAssociationKind.Mark,
+        ComponentState.PressedUnselected
     )
 }
 
@@ -273,11 +273,11 @@ fun graphiteSkin(): AuroraSkinDefinition {
                 .withHighlightsAccent("Graphite Highlight")
         ).also {
             it.registerAsDecorationArea(
-                backgroundColorScheme = it.getBackgroundColorScheme(DecorationAreaType.NONE),
+                backgroundColorScheme = it.getBackgroundColorScheme(DecorationAreaType.None),
                 noneTransformationOverlay = { bundle ->
                     graphiteSkinColorsBaseExtensions(bundle)
                 },
-                areaTypes = arrayOf(DecorationAreaType.NONE)
+                areaTypes = arrayOf(DecorationAreaType.None)
             )
         },
         painters = graphiteBasePainters(),
@@ -295,7 +295,7 @@ fun graphiteAquaSkin(): AuroraSkinDefinition {
                 .withHighlightsAccent("Graphite Aqua")
         ).also {
             it.registerAsDecorationArea(
-                backgroundColorScheme = it.getBackgroundColorScheme(DecorationAreaType.NONE),
+                backgroundColorScheme = it.getBackgroundColorScheme(DecorationAreaType.None),
                 noneTransformationOverlay = { bundle ->
                     // Use disabled color scheme for marks of disabled selected checkboxes and radio buttons
                     // for better contrast
@@ -306,10 +306,10 @@ fun graphiteAquaSkin(): AuroraSkinDefinition {
                     )
                     bundle.registerColorScheme(
                         schemes["Graphite Disabled"],
-                        ColorSchemeAssociationKind.MARK, ComponentState.DISABLED_SELECTED
+                        ColorSchemeAssociationKind.Mark, ComponentState.DisabledSelected
                     )
                 },
-                areaTypes = arrayOf(DecorationAreaType.NONE)
+                areaTypes = arrayOf(DecorationAreaType.None)
             )
         },
         painters = graphiteBasePainters(),
@@ -327,7 +327,7 @@ fun graphiteChalkSkin(): AuroraSkinDefinition {
                 .withHighlightsAccent("Graphite Highlight")
         ).also {
             it.registerAsDecorationArea(
-                backgroundColorScheme = it.getBackgroundColorScheme(DecorationAreaType.NONE),
+                backgroundColorScheme = it.getBackgroundColorScheme(DecorationAreaType.None),
                 noneTransformationOverlay = { bundle ->
                     graphiteSkinColorsBaseExtensions(bundle)
 
@@ -339,44 +339,44 @@ fun graphiteChalkSkin(): AuroraSkinDefinition {
                     val chalkScheme = schemes["Chalk"]
                     bundle.registerColorScheme(
                         chalkScheme,
-                        ColorSchemeAssociationKind.TAB_BORDER,
+                        ColorSchemeAssociationKind.TabBorder,
                         *ComponentState.activeStates
                     )
                     bundle.registerColorScheme(
                         chalkScheme,
-                        ColorSchemeAssociationKind.BORDER,
-                        ComponentState.ENABLED
+                        ColorSchemeAssociationKind.Border,
+                        ComponentState.Enabled
                     )
                     bundle.registerColorScheme(
                         chalkScheme,
-                        ColorSchemeAssociationKind.BORDER,
+                        ColorSchemeAssociationKind.Border,
                         *ComponentState.activeStates
                     )
                     bundle.registerAlpha(
                         0.5f,
-                        ComponentState.DISABLED_UNSELECTED, ComponentState.DISABLED_SELECTED
+                        ComponentState.DisabledUnselected, ComponentState.DisabledSelected
                     )
                     bundle.registerColorScheme(
                         chalkScheme,
-                        ColorSchemeAssociationKind.BORDER,
-                        ComponentState.DISABLED_UNSELECTED, ComponentState.DISABLED_SELECTED
+                        ColorSchemeAssociationKind.Border,
+                        ComponentState.DisabledUnselected, ComponentState.DisabledSelected
                     )
                     bundle.registerColorScheme(
                         chalkScheme,
-                        ColorSchemeAssociationKind.HIGHLIGHT_BORDER,
+                        ColorSchemeAssociationKind.HighlightBorder,
                         *ComponentState.activeStates
                     )
 
                     val markScheme = schemes["Graphite Mark"]
-                    bundle.registerColorScheme(markScheme, ColorSchemeAssociationKind.MARK)
+                    bundle.registerColorScheme(markScheme, ColorSchemeAssociationKind.Mark)
 
                     val separatorScheme = schemes["Chalk Separator"]
                     bundle.registerColorScheme(
                         separatorScheme,
-                        ColorSchemeAssociationKind.SEPARATOR, ComponentState.ENABLED
+                        ColorSchemeAssociationKind.Separator, ComponentState.Enabled
                     )
                 },
-                areaTypes = arrayOf(DecorationAreaType.NONE)
+                areaTypes = arrayOf(DecorationAreaType.None)
             )
         },
         painters = graphiteBasePainters(borderPainter = ClassicBorderPainter()),
@@ -401,7 +401,7 @@ fun graphiteGlassSkin(): AuroraSkinDefinition {
             val backgroundScheme = schemes["Graphite Background"]
             it.registerAsDecorationArea(
                 backgroundScheme,
-                DecorationAreaType.TITLE_PANE, DecorationAreaType.HEADER
+                DecorationAreaType.TitlePane, DecorationAreaType.Header
             )
         },
         painters = graphiteBasePainters(borderPainter = ClassicBorderPainter()).also {
@@ -409,13 +409,13 @@ fun graphiteGlassSkin(): AuroraSkinDefinition {
             // menu bar and toolbars
             it.addOverlayPainter(
                 BottomLineOverlayPainter(colorSchemeQuery = { scheme -> scheme.midColor }),
-                DecorationAreaType.HEADER)
+                DecorationAreaType.Header)
             it.addOverlayPainter(TopLineOverlayPainter(
                 composite(
                     { scheme -> scheme.foregroundColor },
                     ColorTransforms.alpha(0.125f)
                 )
-            ), DecorationAreaType.TOOLBAR)
+            ), DecorationAreaType.Toolbar)
 
         },
         buttonShaper = ClassicButtonShaper()
@@ -475,7 +475,7 @@ fun graphiteSunsetSkin(): AuroraSkinDefinition {
                 .withHighlightsAccent(accentScheme)
         ).also {
             it.registerAsDecorationArea(
-                backgroundColorScheme = it.getBackgroundColorScheme(DecorationAreaType.NONE),
+                backgroundColorScheme = it.getBackgroundColorScheme(DecorationAreaType.None),
                 noneTransformationOverlay = { bundle ->
                     // Sunset needs tweaks for the enabled / disabled visuals of checkbox and radio button marks
                     // for better contrast
@@ -484,17 +484,17 @@ fun graphiteSunsetSkin(): AuroraSkinDefinition {
                     // for better contrast
                     bundle.registerColorScheme(
                         accentScheme,
-                        ColorSchemeAssociationKind.MARK,
-                        ComponentState.SELECTED
+                        ColorSchemeAssociationKind.Mark,
+                        ComponentState.Selected
                     )
-                    bundle.registerAlpha(0.7f, ComponentState.DISABLED_SELECTED)
+                    bundle.registerAlpha(0.7f, ComponentState.DisabledSelected)
                     bundle.registerColorScheme(
                         accentScheme.shade(0.4f),
-                        ColorSchemeAssociationKind.MARK,
-                        ComponentState.DISABLED_SELECTED
+                        ColorSchemeAssociationKind.Mark,
+                        ComponentState.DisabledSelected
                     )
                 },
-                areaTypes = arrayOf(DecorationAreaType.NONE)
+                areaTypes = arrayOf(DecorationAreaType.None)
             )
         },
         painters = graphiteBasePainters(),

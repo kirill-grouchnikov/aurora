@@ -65,11 +65,11 @@ internal fun AuroraCircularProgress(
 
     val color = AuroraSkin.colors.getColorScheme(
         decorationAreaType = AuroraSkin.decorationAreaType,
-        componentState = if (contentModel.enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
+        componentState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
     ).foregroundColor
     val alpha = AuroraSkin.colors.getAlpha(
         decorationAreaType = AuroraSkin.decorationAreaType,
-        componentState = if (contentModel.enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
+        componentState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
     )
 
     Canvas(
@@ -107,29 +107,29 @@ internal fun AuroraCircularProgress(
 
 private val DETERMINATE_SELECTED = ComponentState(
     "determinate enabled", arrayOf(
-        ComponentStateFacet.ENABLE,
-        ComponentStateFacet.DETERMINATE, ComponentStateFacet.SELECTION
+        ComponentStateFacet.Enable,
+        ComponentStateFacet.Determinate, ComponentStateFacet.Selection
     ),
     null
 )
 
 private val DETERMINATE_SELECTED_DISABLED = ComponentState(
     "determinate disabled", arrayOf(
-        ComponentStateFacet.DETERMINATE,
-        ComponentStateFacet.SELECTION
-    ), arrayOf(ComponentStateFacet.ENABLE)
+        ComponentStateFacet.Determinate,
+        ComponentStateFacet.Selection
+    ), arrayOf(ComponentStateFacet.Enable)
 )
 
 private val INDETERMINATE_SELECTED = ComponentState(
     "indeterminate enabled",
-    arrayOf(ComponentStateFacet.ENABLE, ComponentStateFacet.SELECTION),
-    arrayOf(ComponentStateFacet.DETERMINATE)
+    arrayOf(ComponentStateFacet.Enable, ComponentStateFacet.Selection),
+    arrayOf(ComponentStateFacet.Determinate)
 )
 
 private val INDETERMINATE_SELECTED_DISABLED = ComponentState(
     "indeterminate disabled", null, arrayOf(
-        ComponentStateFacet.DETERMINATE, ComponentStateFacet.ENABLE,
-        ComponentStateFacet.SELECTION
+        ComponentStateFacet.Determinate, ComponentStateFacet.Enable,
+        ComponentStateFacet.Selection
     )
 )
 
@@ -159,7 +159,7 @@ internal fun AuroraIndeterminateLinearProgress(
     )
 
     val progressState = if (contentModel.enabled) INDETERMINATE_SELECTED else INDETERMINATE_SELECTED_DISABLED
-    val borderState = if (contentModel.enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
+    val borderState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
 
     // install state-aware alpha channel (support for skins
     // that use translucency on disabled states).
@@ -173,7 +173,7 @@ internal fun AuroraIndeterminateLinearProgress(
     )
     val borderColorScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = AuroraSkin.decorationAreaType,
-        associationKind = ColorSchemeAssociationKind.BORDER,
+        associationKind = ColorSchemeAssociationKind.Border,
         componentState = borderState
     )
 
@@ -259,8 +259,8 @@ internal fun AuroraDeterminateLinearProgress(
     presentationModel: ProgressLinearPresentationModel = ProgressLinearPresentationModel()
 ) {
     val progressState = if (contentModel.enabled) DETERMINATE_SELECTED else DETERMINATE_SELECTED_DISABLED
-    val fillState = if (contentModel.enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
-    val borderState = if (contentModel.enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
+    val fillState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
+    val borderState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
 
     // install state-aware alpha channel (support for skins
     // that use translucency on disabled states).
@@ -278,7 +278,7 @@ internal fun AuroraDeterminateLinearProgress(
     )
     val borderColorScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = AuroraSkin.decorationAreaType,
-        associationKind = ColorSchemeAssociationKind.BORDER,
+        associationKind = ColorSchemeAssociationKind.Border,
         componentState = borderState
     )
     val fillPainter = AuroraSkin.painters.fillPainter

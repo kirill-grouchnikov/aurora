@@ -400,7 +400,7 @@ internal fun AuroraCommandButton(
                         actionModelStateInfo,
                         currentActionState.value,
                         decorationAreaType,
-                        ColorSchemeAssociationKind.FILL
+                        ColorSchemeAssociationKind.Fill
                     )
                     // And retrieve the container fill colors
                     val fillUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -418,7 +418,7 @@ internal fun AuroraCommandButton(
                         actionModelStateInfo,
                         currentActionState.value,
                         decorationAreaType,
-                        ColorSchemeAssociationKind.BORDER
+                        ColorSchemeAssociationKind.Border
                     )
                     // And retrieve the border colors
                     val borderUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -437,7 +437,7 @@ internal fun AuroraCommandButton(
                             // For flat buttons, compute the combined contribution of all
                             // non-disabled states - ignoring ComponentState.ENABLED
                             actionModelStateInfo.stateContributionMap
-                                .filter { !it.key.isDisabled && (it.key != ComponentState.ENABLED) }
+                                .filter { !it.key.isDisabled && (it.key != ComponentState.Enabled) }
                                 .values.sumOf { it.contribution.toDouble() }.toFloat()
                         } else {
                             if (currentActionState.value.isDisabled)
@@ -630,7 +630,7 @@ internal fun AuroraCommandButton(
                         popupModelStateInfo,
                         currentPopupState.value,
                         decorationAreaType,
-                        ColorSchemeAssociationKind.FILL
+                        ColorSchemeAssociationKind.Fill
                     )
                     // And retrieve the container fill colors
                     val fillUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -648,7 +648,7 @@ internal fun AuroraCommandButton(
                         popupModelStateInfo,
                         currentPopupState.value,
                         decorationAreaType,
-                        ColorSchemeAssociationKind.BORDER
+                        ColorSchemeAssociationKind.Border
                     )
                     // And retrieve the border colors
                     val borderUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -667,7 +667,7 @@ internal fun AuroraCommandButton(
                             // For flat buttons, compute the combined contribution of all
                             // non-disabled states - ignoring ComponentState.ENABLED
                             popupModelStateInfo.stateContributionMap
-                                .filter { !it.key.isDisabled && (it.key != ComponentState.ENABLED) }
+                                .filter { !it.key.isDisabled && (it.key != ComponentState.Enabled) }
                                 .values.sumOf { it.contribution.toDouble() }.toFloat()
                         } else {
                             if (currentPopupState.value.isDisabled)
@@ -974,7 +974,7 @@ private fun CommandButtonTextContent(
         currState = currState,
         skinColors = skinColors,
         decorationAreaType = decorationAreaType,
-        colorSchemeAssociationKind = ColorSchemeAssociationKind.FILL,
+        colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
         isTextInFilledArea = true
     )
 
@@ -1004,14 +1004,14 @@ private fun CommandButtonExtraTextContent(
         currState = currState,
         skinColors = skinColors,
         decorationAreaType = decorationAreaType,
-        colorSchemeAssociationKind = ColorSchemeAssociationKind.FILL,
+        colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
         isTextInFilledArea = true
     )
 
     // "Move" the regular text color towards the disabled state for more muted visuals
     // of the extra text
     val disabledColorScheme = skinColors.getColorScheme(
-        decorationAreaType, ComponentState.DISABLED_UNSELECTED
+        decorationAreaType, ComponentState.DisabledUnselected
     )
     var disabledFgColor = disabledColorScheme.foregroundColor
     val buttonAlpha = skinColors.getAlpha(decorationAreaType, currState)
@@ -1044,7 +1044,7 @@ private fun CommandButtonIconContent(
     iconSize: Dp, modelStateInfo: ModelStateInfo, currState: ComponentState,
     drawingCache: CommandButtonDrawingCache
 ) {
-    val isSelectedMenu = currState.isFacetActive(ComponentStateFacet.SELECTION) &&
+    val isSelectedMenu = currState.isFacetActive(ComponentStateFacet.Selection) &&
             presentationModel.isMenu
 
     val skinColors = AuroraSkin.colors
@@ -1056,8 +1056,8 @@ private fun CommandButtonIconContent(
         if (isSelectedMenu) {
             Canvas(modifier = Modifier.matchParentSize()) {
                 // Background fill / border for selected toggle menu commands
-                val stateForBackground = if (currState.isDisabled) ComponentState.DISABLED_SELECTED
-                else ComponentState.SELECTED
+                val stateForBackground = if (currState.isDisabled) ComponentState.DisabledSelected
+                else ComponentState.Selected
                 val alphaForBackground = skinColors.getAlpha(
                     decorationAreaType = decorationAreaType,
                     componentState = stateForBackground
@@ -1073,7 +1073,7 @@ private fun CommandButtonIconContent(
 
                 val fillScheme = skinColors.getColorScheme(
                     decorationAreaType = decorationAreaType,
-                    associationKind = ColorSchemeAssociationKind.HIGHLIGHT,
+                    associationKind = ColorSchemeAssociationKind.Highlight,
                     componentState = stateForBackground
                 )
 
@@ -1087,7 +1087,7 @@ private fun CommandButtonIconContent(
 
                 val borderScheme = skinColors.getColorScheme(
                     decorationAreaType = decorationAreaType,
-                    associationKind = ColorSchemeAssociationKind.HIGHLIGHT_BORDER,
+                    associationKind = ColorSchemeAssociationKind.HighlightBorder,
                     componentState = stateForBackground
                 )
 
@@ -1109,19 +1109,19 @@ private fun CommandButtonIconContent(
             // Checkmark color
             val markColor = getStateAwareColor(
                 modelStateInfo, currState,
-                decorationAreaType, ColorSchemeAssociationKind.MARK
+                decorationAreaType, ColorSchemeAssociationKind.Mark
             ) { it.markColor }
 
             // Checkmark alpha is the combined strength of all the
             // states that have the selection bit turned on
             val checkmarkAlpha = modelStateInfo.stateContributionMap
-                .filter { it.key.isFacetActive(ComponentStateFacet.SELECTION) }
+                .filter { it.key.isFacetActive(ComponentStateFacet.Selection) }
                 .map { it.value }
                 .sumOf { it.contribution.toDouble() }
                 .toFloat()
 
-            val stateForMark = if (currState.isDisabled) ComponentState.DISABLED_SELECTED
-            else ComponentState.SELECTED
+            val stateForMark = if (currState.isDisabled) ComponentState.DisabledSelected
+            else ComponentState.Selected
             val alphaForMark = skinColors.getAlpha(
                 decorationAreaType = decorationAreaType,
                 componentState = stateForMark
@@ -1169,7 +1169,7 @@ private fun CommandButtonIconContent(
                 currState = currState,
                 skinColors = skinColors,
                 decorationAreaType = decorationAreaType,
-                colorSchemeAssociationKind = ColorSchemeAssociationKind.FILL,
+                colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
                 isTextInFilledArea = true
             )
 
@@ -1200,7 +1200,7 @@ private fun CommandButtonPopupIconContent(
         modelStateInfo,
         currState,
         decorationAreaType,
-        ColorSchemeAssociationKind.MARK
+        ColorSchemeAssociationKind.Mark
     ) { it.markColor }
 
     Box {
@@ -1242,9 +1242,9 @@ private fun CommandButtonPopupContent(
     assert(command.secondaryContentModel != null) { "Secondary content model cannot be null here " }
 
     val borderScheme = AuroraSkin.colors.getColorScheme(
-        decorationAreaType = DecorationAreaType.NONE,
-        associationKind = ColorSchemeAssociationKind.BORDER,
-        componentState = ComponentState.ENABLED
+        decorationAreaType = DecorationAreaType.None,
+        associationKind = ColorSchemeAssociationKind.Border,
+        componentState = ComponentState.Enabled
     )
     val popupBorderColor = AuroraSkin.painters.borderPainter.getRepresentativeColor(borderScheme)
     val density = LocalDensity.current

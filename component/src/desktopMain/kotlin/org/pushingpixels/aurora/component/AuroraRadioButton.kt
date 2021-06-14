@@ -200,7 +200,7 @@ internal fun AuroraRadioButton(
         // based on the current model state info
         populateColorScheme(
             drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-            ColorSchemeAssociationKind.MARK_BOX
+            ColorSchemeAssociationKind.MarkBox
         )
         // And retrieve the mark box colors
         val fillUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -215,7 +215,7 @@ internal fun AuroraRadioButton(
         // based on the current model state info
         populateColorScheme(
             drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-            ColorSchemeAssociationKind.BORDER
+            ColorSchemeAssociationKind.Border
         )
         // And retrieve the mark box border colors
         val borderUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -229,14 +229,14 @@ internal fun AuroraRadioButton(
         // Mark color
         val markColor = getStateAwareColor(
             modelStateInfo, currentState.value,
-            decorationAreaType, ColorSchemeAssociationKind.MARK
+            decorationAreaType, ColorSchemeAssociationKind.Mark
         ) { it.markColor }
 
         // Checkmark alpha is the combined strength of all the
         // states that have the selection bit turned on
         markAlpha.value =
             modelStateInfo.stateContributionMap
-                .filter { it.key.isFacetActive(ComponentStateFacet.SELECTION) }
+                .filter { it.key.isFacetActive(ComponentStateFacet.Selection) }
                 .map { it.value }
                 .sumOf { it.contribution.toDouble() }
                 .toFloat()
@@ -248,7 +248,7 @@ internal fun AuroraRadioButton(
             currState = currentState.value,
             skinColors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
-            colorSchemeAssociationKind = ColorSchemeAssociationKind.FILL,
+            colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
             isTextInFilledArea = false
         )
         val alpha = if (currentState.value.isDisabled)

@@ -47,79 +47,79 @@ private fun nebulaBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors
     )
     defaultSchemeBundle.registerColorScheme(
         rolloverUnselectedScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.ROLLOVER_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.RolloverUnselected
     )
     defaultSchemeBundle.registerColorScheme(
         rolloverSelectedScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.ROLLOVER_SELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.RolloverSelected
     )
     defaultSchemeBundle.registerColorScheme(
         pressedScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.PRESSED_SELECTED, ComponentState.PRESSED_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.PressedSelected, ComponentState.PressedUnselected
     )
 
     defaultSchemeBundle.registerColorScheme(
         rolloverUnselectedScheme,
-        ColorSchemeAssociationKind.BORDER, ComponentState.SELECTED
+        ColorSchemeAssociationKind.Border, ComponentState.Selected
     )
 
-    defaultSchemeBundle.registerHighlightAlpha(0.6f, ComponentState.ROLLOVER_UNSELECTED)
-    defaultSchemeBundle.registerHighlightAlpha(0.8f, ComponentState.SELECTED)
-    defaultSchemeBundle.registerHighlightAlpha(0.95f, ComponentState.ROLLOVER_SELECTED)
+    defaultSchemeBundle.registerHighlightAlpha(0.6f, ComponentState.RolloverUnselected)
+    defaultSchemeBundle.registerHighlightAlpha(0.8f, ComponentState.Selected)
+    defaultSchemeBundle.registerHighlightAlpha(0.95f, ComponentState.RolloverSelected)
     defaultSchemeBundle.registerHighlightColorScheme(
-        pressedScheme, ComponentState.ROLLOVER_UNSELECTED,
-        ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED
+        pressedScheme, ComponentState.RolloverUnselected,
+        ComponentState.Selected, ComponentState.RolloverSelected
     )
 
     // for progress bars
     val determinateState = ComponentState(
         "determinate", arrayOf(
-            ComponentStateFacet.ENABLE,
-            ComponentStateFacet.DETERMINATE
+            ComponentStateFacet.Enable,
+            ComponentStateFacet.Determinate
         ), null
     )
     val indeterminateState =
-        ComponentState("indeterminate", arrayOf(ComponentStateFacet.ENABLE), arrayOf(ComponentStateFacet.DETERMINATE))
+        ComponentState("indeterminate", arrayOf(ComponentStateFacet.Enable), arrayOf(ComponentStateFacet.Determinate))
     val determinateScheme = schemes["Nebula Determinate"]
     val determinateBorderScheme = schemes["Nebula Determinate Border"]
     defaultSchemeBundle.registerColorScheme(
         determinateScheme,
-        ColorSchemeAssociationKind.FILL,
+        ColorSchemeAssociationKind.Fill,
         determinateState, indeterminateState
     )
     defaultSchemeBundle.registerColorScheme(
         determinateBorderScheme,
-        ColorSchemeAssociationKind.BORDER, determinateState,
+        ColorSchemeAssociationKind.Border, determinateState,
         indeterminateState
     )
 
     val determinateDisabledState = ComponentState(
-        "determinate disabled", arrayOf(ComponentStateFacet.DETERMINATE), arrayOf(ComponentStateFacet.ENABLE)
+        "determinate disabled", arrayOf(ComponentStateFacet.Determinate), arrayOf(ComponentStateFacet.Enable)
     )
     val indeterminateDisabledState = ComponentState(
         "indeterminate disabled", null, arrayOf(
-            ComponentStateFacet.ENABLE,
-            ComponentStateFacet.DETERMINATE
+            ComponentStateFacet.Enable,
+            ComponentStateFacet.Determinate
         )
     )
     val determinateDisabledScheme = schemes["Nebula Determinate Disabled"]
     val determinateDisabledBorderScheme = schemes["Nebula Determinate Disabled Border"]
     defaultSchemeBundle.registerColorScheme(
         determinateDisabledScheme,
-        ColorSchemeAssociationKind.FILL,
+        ColorSchemeAssociationKind.Fill,
         determinateDisabledState, indeterminateDisabledState
     )
     defaultSchemeBundle.registerColorScheme(
         determinateDisabledBorderScheme,
-        ColorSchemeAssociationKind.BORDER, determinateDisabledState,
+        ColorSchemeAssociationKind.Border, determinateDisabledState,
         indeterminateDisabledState
     )
 
     result.registerDecorationAreaSchemeBundle(
-        defaultSchemeBundle, DecorationAreaType.NONE
+        defaultSchemeBundle, DecorationAreaType.None
     )
 
     result.registerAsDecorationArea(
@@ -127,15 +127,15 @@ private fun nebulaBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors
         noneTransformationOverlay = { bundle ->
             bundle.registerColorScheme(
                 schemes["Nebula Decorations Separator"],
-                ColorSchemeAssociationKind.SEPARATOR
+                ColorSchemeAssociationKind.Separator
             )
         },
-        areaTypes = arrayOf(DecorationAreaType.FOOTER, DecorationAreaType.CONTROL_PANE)
+        areaTypes = arrayOf(DecorationAreaType.Footer, DecorationAreaType.ControlPane)
     )
 
     result.registerAsDecorationArea(
         accentBuilder.windowChromeAccent!!,
-        DecorationAreaType.TITLE_PANE, DecorationAreaType.HEADER
+        DecorationAreaType.TitlePane, DecorationAreaType.Header
     )
 
     return result
@@ -154,7 +154,7 @@ private fun nebulaBasePainters(): AuroraPainters {
     // add an overlay painter to paint a drop shadow along the top edge of toolbars
     painters.addOverlayPainter(
         TopShadowOverlayPainter.getInstance(60),
-        DecorationAreaType.TOOLBAR
+        DecorationAreaType.Toolbar
     )
 
     // add an overlay painter to paint separator lines along the bottom
@@ -163,7 +163,7 @@ private fun nebulaBasePainters(): AuroraPainters {
         BottomLineOverlayPainter(
             composite({ it.darkColor }, ColorTransforms.alpha(0.625f))
         ),
-        DecorationAreaType.TITLE_PANE, DecorationAreaType.HEADER
+        DecorationAreaType.TitlePane, DecorationAreaType.Header
     )
 
     return painters
@@ -193,18 +193,18 @@ fun nebulaAmethystSkin(): AuroraSkinDefinition {
             // Use the window chrome accent color scheme on toolbars
             it.registerAsDecorationArea(
                 accentBuilder.windowChromeAccent!!,
-                DecorationAreaType.TOOLBAR
+                DecorationAreaType.Toolbar
             )
         },
         painters = nebulaBasePainters().also { painters ->
             // Clear the top shadow painter on the toolbars and add combined
             // separator + drop shadow along the toolbar bottom
-            painters.clearOverlayPainters(DecorationAreaType.TOOLBAR)
-            painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.TOOLBAR)
+            painters.clearOverlayPainters(DecorationAreaType.Toolbar)
+            painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.Toolbar)
             painters.addOverlayPainter(
                 BottomLineOverlayPainter(
                     composite({ it.darkColor }, ColorTransforms.alpha(0.625f))
-                ), DecorationAreaType.TOOLBAR
+                ), DecorationAreaType.Toolbar
             )
 
         },

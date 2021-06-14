@@ -46,78 +46,78 @@ private fun nightShadeSkinColors(): AuroraSkinColors {
     val defaultSchemeBundle = AuroraColorSchemeBundle(
         activeScheme, enabledScheme, disabledScheme
     )
-    defaultSchemeBundle.registerAlpha(0.6f, ComponentState.DISABLED_UNSELECTED, ComponentState.DISABLED_SELECTED)
+    defaultSchemeBundle.registerAlpha(0.6f, ComponentState.DisabledUnselected, ComponentState.DisabledSelected)
     defaultSchemeBundle.registerColorScheme(disabledScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_UNSELECTED)
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledUnselected)
     defaultSchemeBundle.registerColorScheme(disabledSelectedScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_SELECTED)
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected)
 
     // borders
     val borderScheme = schemes["Night Shade Border"]
-    defaultSchemeBundle.registerColorScheme(borderScheme, ColorSchemeAssociationKind.BORDER)
+    defaultSchemeBundle.registerColorScheme(borderScheme, ColorSchemeAssociationKind.Border)
 
     // marks
     val markActiveScheme = schemes["Night Shade Mark Active"]
     defaultSchemeBundle.registerColorScheme(
-        markActiveScheme, ColorSchemeAssociationKind.MARK,
+        markActiveScheme, ColorSchemeAssociationKind.Mark,
         *ComponentState.activeStates
     )
     defaultSchemeBundle.registerColorScheme(
         markActiveScheme,
-        ColorSchemeAssociationKind.MARK, ComponentState.DISABLED_SELECTED,
-        ComponentState.DISABLED_UNSELECTED
+        ColorSchemeAssociationKind.Mark, ComponentState.DisabledSelected,
+        ComponentState.DisabledUnselected
     )
 
     // separators
     val separatorScheme = schemes["Night Shade Separator"]
-    defaultSchemeBundle.registerColorScheme(separatorScheme, ColorSchemeAssociationKind.SEPARATOR)
+    defaultSchemeBundle.registerColorScheme(separatorScheme, ColorSchemeAssociationKind.Separator)
 
     // tab borders
     defaultSchemeBundle.registerColorScheme(
         schemes["Night Shade Tab Border"],
-        ColorSchemeAssociationKind.TAB_BORDER, *ComponentState.activeStates
+        ColorSchemeAssociationKind.TabBorder, *ComponentState.activeStates
     )
 
     val backgroundScheme = schemes["Night Shade Background"]
 
-    result.registerDecorationAreaSchemeBundle(defaultSchemeBundle, backgroundScheme, DecorationAreaType.NONE)
+    result.registerDecorationAreaSchemeBundle(defaultSchemeBundle, backgroundScheme, DecorationAreaType.None)
 
     val decorationsSchemeBundle = AuroraColorSchemeBundle(
         activeScheme, enabledScheme, disabledScheme
     )
-    decorationsSchemeBundle.registerAlpha(0.4f, ComponentState.DISABLED_UNSELECTED)
+    decorationsSchemeBundle.registerAlpha(0.4f, ComponentState.DisabledUnselected)
     decorationsSchemeBundle.registerColorScheme(enabledScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_UNSELECTED)
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledUnselected)
 
     // borders
-    decorationsSchemeBundle.registerColorScheme(borderScheme, ColorSchemeAssociationKind.BORDER)
+    decorationsSchemeBundle.registerColorScheme(borderScheme, ColorSchemeAssociationKind.Border)
 
     // marks
     decorationsSchemeBundle.registerColorScheme(
         markActiveScheme,
-        ColorSchemeAssociationKind.MARK, *ComponentState.activeStates
+        ColorSchemeAssociationKind.Mark, *ComponentState.activeStates
     )
 
     // separators
     val separatorDecorationsScheme = schemes["Night Shade Decorations Separator"]
     decorationsSchemeBundle.registerColorScheme(
         separatorDecorationsScheme,
-        ColorSchemeAssociationKind.SEPARATOR
+        ColorSchemeAssociationKind.Separator
     )
 
     val decorationsBackgroundScheme = schemes["Night Shade Decorations Background"]
     result.registerDecorationAreaSchemeBundle(
         decorationsSchemeBundle, decorationsBackgroundScheme,
-        DecorationAreaType.TOOLBAR, DecorationAreaType.FOOTER
+        DecorationAreaType.Toolbar, DecorationAreaType.Footer
     )
 
     val controlPaneBackgroundScheme = schemes["Night Shade Control Pane Background"]
     result.registerDecorationAreaSchemeBundle(
         decorationsSchemeBundle, controlPaneBackgroundScheme,
-        DecorationAreaType.CONTROL_PANE
+        DecorationAreaType.ControlPane
     )
 
     val headerSchemeBundle = AuroraColorSchemeBundle(
@@ -125,48 +125,48 @@ private fun nightShadeSkinColors(): AuroraSkinColors {
         enabledScheme, disabledScheme
     )
     headerSchemeBundle.registerAlpha(
-        0.6f, ComponentState.DISABLED_UNSELECTED,
-        ComponentState.DISABLED_SELECTED
+        0.6f, ComponentState.DisabledUnselected,
+        ComponentState.DisabledSelected
     )
     headerSchemeBundle.registerColorScheme(disabledScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_UNSELECTED)
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledUnselected)
     headerSchemeBundle.registerColorScheme(disabledSelectedScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_SELECTED)
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected)
 
     // borders
     val headerBorderScheme = schemes["Night Shade Header Border"]
-    headerSchemeBundle.registerColorScheme(headerBorderScheme, ColorSchemeAssociationKind.BORDER)
+    headerSchemeBundle.registerColorScheme(headerBorderScheme, ColorSchemeAssociationKind.Border)
     // marks
     headerSchemeBundle.registerColorScheme(
-        markActiveScheme, ColorSchemeAssociationKind.MARK,
+        markActiveScheme, ColorSchemeAssociationKind.Mark,
         *ComponentState.activeStates
     )
     headerSchemeBundle.registerColorScheme(
         markActiveScheme,
-        ColorSchemeAssociationKind.MARK, ComponentState.DISABLED_SELECTED,
-        ComponentState.DISABLED_UNSELECTED
+        ColorSchemeAssociationKind.Mark, ComponentState.DisabledSelected,
+        ComponentState.DisabledUnselected
     )
     headerSchemeBundle.registerColorScheme(
         separatorDecorationsScheme,
-        ColorSchemeAssociationKind.SEPARATOR
+        ColorSchemeAssociationKind.Separator
     )
 
-    headerSchemeBundle.registerHighlightAlpha(0.7f, ComponentState.ROLLOVER_UNSELECTED)
-    headerSchemeBundle.registerHighlightAlpha(0.8f, ComponentState.SELECTED)
-    headerSchemeBundle.registerHighlightAlpha(1.0f, ComponentState.ROLLOVER_SELECTED)
+    headerSchemeBundle.registerHighlightAlpha(0.7f, ComponentState.RolloverUnselected)
+    headerSchemeBundle.registerHighlightAlpha(0.8f, ComponentState.Selected)
+    headerSchemeBundle.registerHighlightAlpha(1.0f, ComponentState.RolloverSelected)
     headerSchemeBundle.registerHighlightColorScheme(
         activeScheme,
-        ComponentState.ROLLOVER_UNSELECTED, ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED
+        ComponentState.RolloverUnselected, ComponentState.Selected, ComponentState.RolloverSelected
     )
 
     val headerBackgroundScheme = schemes["Night Shade Header Background"]
 
     result.registerDecorationAreaSchemeBundle(
         headerSchemeBundle, headerBackgroundScheme,
-        DecorationAreaType.TITLE_PANE,
-        DecorationAreaType.HEADER
+        DecorationAreaType.TitlePane,
+        DecorationAreaType.Header
     )
 
     return result
@@ -197,21 +197,21 @@ fun nightShadeSkin(): AuroraSkinDefinition {
     // edges of toolbars and footers
     painters.addOverlayPainter(
         BottomShadowOverlayPainter.getInstance(100),
-        DecorationAreaType.TOOLBAR, DecorationAreaType.FOOTER
+        DecorationAreaType.Toolbar, DecorationAreaType.Footer
     )
 
     // add an overlay painter to paint a dark line along the bottom
     // edge of toolbars
     painters.addOverlayPainter(BottomLineOverlayPainter(
         composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.5f))
-    ), DecorationAreaType.TOOLBAR)
+    ), DecorationAreaType.Toolbar)
 
     // add an overlay painter to paint a bezel line along the top
     // edge of footer
     painters.addOverlayPainter(TopBezelOverlayPainter(
         colorSchemeQueryTop = composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.5f)),
         colorSchemeQueryBottom = composite({ it.foregroundColor }, ColorTransforms.alpha(0.125f))
-    ), DecorationAreaType.FOOTER)
+    ), DecorationAreaType.Footer)
 
     return AuroraSkinDefinition(
         displayName = "Night Shade",

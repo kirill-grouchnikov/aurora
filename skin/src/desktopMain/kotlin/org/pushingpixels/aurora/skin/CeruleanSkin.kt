@@ -44,100 +44,100 @@ private fun ceruleanSkinColors(): AuroraSkinColors {
 
     defaultSchemeBundle.registerColorScheme(
         schemes["Cerulean Pressed"],
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.PRESSED_SELECTED, ComponentState.PRESSED_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.PressedSelected, ComponentState.PressedUnselected
     )
     defaultSchemeBundle.registerColorScheme(
         schemes["Cerulean Disabled Selected"],
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_SELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected
     )
     defaultSchemeBundle.registerColorScheme(
         schemes["Cerulean Selected"],
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.SELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.Selected
     )
     defaultSchemeBundle.registerColorScheme(
         schemes["Cerulean Rollover Selected"],
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.ROLLOVER_SELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.RolloverSelected
     )
     defaultSchemeBundle.registerColorScheme(
         schemes["Cerulean Rollover Unselected"],
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.ROLLOVER_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.RolloverUnselected
     )
 
     defaultSchemeBundle.registerColorScheme(
         schemes["Cerulean Mark"],
-        ColorSchemeAssociationKind.MARK, *ComponentState.activeStates
+        ColorSchemeAssociationKind.Mark, *ComponentState.activeStates
     )
     defaultSchemeBundle.registerColorScheme(
         schemes["Cerulean Border"],
-        ColorSchemeAssociationKind.BORDER, *ComponentState.activeStates
+        ColorSchemeAssociationKind.Border, *ComponentState.activeStates
     )
 
     // for progress bars
     val determinateState = ComponentState(
         "determinate enabled", arrayOf(
-            ComponentStateFacet.ENABLE,
-            ComponentStateFacet.DETERMINATE, ComponentStateFacet.SELECTION
+            ComponentStateFacet.Enable,
+            ComponentStateFacet.Determinate, ComponentStateFacet.Selection
         ),
         null
     )
     val determinateDisabledState = ComponentState(
         "determinate disabled", arrayOf(
-            ComponentStateFacet.DETERMINATE,
-            ComponentStateFacet.SELECTION
-        ), arrayOf(ComponentStateFacet.ENABLE)
+            ComponentStateFacet.Determinate,
+            ComponentStateFacet.Selection
+        ), arrayOf(ComponentStateFacet.Enable)
     )
     val indeterminateState = ComponentState(
         "indeterminate enabled", arrayOf(
-            ComponentStateFacet.ENABLE,
-            ComponentStateFacet.SELECTION
-        ), arrayOf(ComponentStateFacet.DETERMINATE)
+            ComponentStateFacet.Enable,
+            ComponentStateFacet.Selection
+        ), arrayOf(ComponentStateFacet.Determinate)
     )
     val indeterminateDisabledState = ComponentState(
         "indeterminate disabled",
         null, arrayOf(
-            ComponentStateFacet.DETERMINATE,
-            ComponentStateFacet.ENABLE, ComponentStateFacet.SELECTION
+            ComponentStateFacet.Determinate,
+            ComponentStateFacet.Enable, ComponentStateFacet.Selection
         )
     )
     defaultSchemeBundle.registerColorScheme(
         rolloverSelectedScheme,
-        ColorSchemeAssociationKind.FILL,
+        ColorSchemeAssociationKind.Fill,
         determinateState, indeterminateState
     )
     defaultSchemeBundle.registerColorScheme(
         rolloverSelectedScheme,
-        ColorSchemeAssociationKind.BORDER, determinateState, indeterminateState
+        ColorSchemeAssociationKind.Border, determinateState, indeterminateState
     )
     defaultSchemeBundle.registerColorScheme(
         disabledScheme,
-        ColorSchemeAssociationKind.FILL,
+        ColorSchemeAssociationKind.Fill,
         determinateDisabledState, indeterminateDisabledState
     )
     defaultSchemeBundle.registerColorScheme(
-        disabledScheme, ColorSchemeAssociationKind.BORDER,
+        disabledScheme, ColorSchemeAssociationKind.Border,
         determinateDisabledState, indeterminateDisabledState
     )
 
     // for uneditable fields
     val editable = ComponentState(
         "editable", arrayOf(
-            ComponentStateFacet.ENABLE, ComponentStateFacet.EDITABLE
+            ComponentStateFacet.Enable, ComponentStateFacet.Editable
         ), null
     )
     val uneditable = ComponentState(
         "uneditable",
         editable,
-        arrayOf(ComponentStateFacet.ENABLE),
-        arrayOf(ComponentStateFacet.EDITABLE)
+        arrayOf(ComponentStateFacet.Enable),
+        arrayOf(ComponentStateFacet.Editable)
     )
     defaultSchemeBundle.registerColorScheme(
         defaultSchemeBundle.getColorScheme(editable),
-        ColorSchemeAssociationKind.FILL, uneditable
+        ColorSchemeAssociationKind.Fill, uneditable
     )
 
     // for text highlight
@@ -150,7 +150,7 @@ private fun ceruleanSkinColors(): AuroraSkinColors {
     val highlightColorScheme = kitchenSinkSchemes["Moderate Highlight"]
     defaultSchemeBundle.registerHighlightColorScheme(highlightColorScheme)
 
-    result.registerDecorationAreaSchemeBundle(defaultSchemeBundle, DecorationAreaType.NONE)
+    result.registerDecorationAreaSchemeBundle(defaultSchemeBundle, DecorationAreaType.None)
 
     val activeHeaderScheme = schemes["Cerulean Active Header"]
     val headerScheme = schemes["Cerulean Header"]
@@ -159,22 +159,22 @@ private fun ceruleanSkinColors(): AuroraSkinColors {
         activeHeaderScheme, headerScheme, disabledHeaderScheme
     )
     headerSchemeBundle.registerAlpha(
-        0.6f, ComponentState.DISABLED_UNSELECTED,
-        ComponentState.DISABLED_SELECTED
+        0.6f, ComponentState.DisabledUnselected,
+        ComponentState.DisabledSelected
     )
     headerSchemeBundle.registerColorScheme(
         activeHeaderScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_SELECTED, ComponentState.DISABLED_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected, ComponentState.DisabledUnselected
     )
     headerSchemeBundle.registerColorScheme(
         activeHeaderScheme,
-        ColorSchemeAssociationKind.MARK,
-        ComponentState.DISABLED_SELECTED, ComponentState.DISABLED_UNSELECTED
+        ColorSchemeAssociationKind.Mark,
+        ComponentState.DisabledSelected, ComponentState.DisabledUnselected
     )
     result.registerDecorationAreaSchemeBundle(
         headerSchemeBundle, headerScheme,
-        DecorationAreaType.TITLE_PANE, DecorationAreaType.HEADER
+        DecorationAreaType.TitlePane, DecorationAreaType.Header
     )
 
     result.registerAsDecorationArea(
@@ -182,10 +182,10 @@ private fun ceruleanSkinColors(): AuroraSkinColors {
         noneTransformationOverlay = {
             it.registerColorScheme(
                 schemes["Cerulean Footer Separator"],
-                ColorSchemeAssociationKind.SEPARATOR
+                ColorSchemeAssociationKind.Separator
             )
         },
-        areaTypes = arrayOf(DecorationAreaType.FOOTER, DecorationAreaType.CONTROL_PANE)
+        areaTypes = arrayOf(DecorationAreaType.Footer, DecorationAreaType.ControlPane)
     )
 
     return result
@@ -200,7 +200,7 @@ fun ceruleanSkin(): AuroraSkinDefinition {
 
     // Add an overlay painter to paint a drop shadow along the top
     // edge of toolbars
-    painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(100), DecorationAreaType.TOOLBAR)
+    painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(100), DecorationAreaType.Toolbar)
 
     return AuroraSkinDefinition(
         displayName = "Green Magic",

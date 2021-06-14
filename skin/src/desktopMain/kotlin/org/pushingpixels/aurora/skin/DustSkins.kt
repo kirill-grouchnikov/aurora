@@ -45,17 +45,17 @@ private fun dustBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
     )
     defaultSchemeBundle.registerAlpha(
         0.5f,
-        ComponentState.DISABLED_UNSELECTED, ComponentState.DISABLED_SELECTED
+        ComponentState.DisabledUnselected, ComponentState.DisabledSelected
     )
     defaultSchemeBundle.registerColorScheme(
         enabledControlsAccent,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledUnselected
     )
     defaultSchemeBundle.registerColorScheme(
         activeControlsAccent,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_SELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected
     )
 
     // borders and marks
@@ -65,38 +65,38 @@ private fun dustBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
 
     defaultSchemeBundle.registerColorScheme(
         borderEnabledScheme,
-        ColorSchemeAssociationKind.BORDER, ComponentState.ENABLED,
-        ComponentState.DISABLED_SELECTED, ComponentState.DISABLED_UNSELECTED
+        ColorSchemeAssociationKind.Border, ComponentState.Enabled,
+        ComponentState.DisabledSelected, ComponentState.DisabledUnselected
     )
     defaultSchemeBundle.registerColorScheme(
         borderActiveScheme,
-        ColorSchemeAssociationKind.BORDER, *ComponentState.activeStates
+        ColorSchemeAssociationKind.Border, *ComponentState.activeStates
     )
     defaultSchemeBundle.registerColorScheme(
         markEnabledScheme,
-        ColorSchemeAssociationKind.MARK
+        ColorSchemeAssociationKind.Mark
     )
 
     // text highlight
     defaultSchemeBundle.registerColorScheme(
         accentBuilder.highlightsAccent!!,
-        ColorSchemeAssociationKind.HIGHLIGHT_TEXT,
-        ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED
+        ColorSchemeAssociationKind.HighlightText,
+        ComponentState.Selected, ComponentState.RolloverSelected
     )
 
     // custom highlight alphas
-    defaultSchemeBundle.registerHighlightAlpha(0.6f, ComponentState.ROLLOVER_UNSELECTED)
-    defaultSchemeBundle.registerHighlightAlpha(0.8f, ComponentState.SELECTED)
-    defaultSchemeBundle.registerHighlightAlpha(1.0f, ComponentState.ROLLOVER_SELECTED)
+    defaultSchemeBundle.registerHighlightAlpha(0.6f, ComponentState.RolloverUnselected)
+    defaultSchemeBundle.registerHighlightAlpha(0.8f, ComponentState.Selected)
+    defaultSchemeBundle.registerHighlightAlpha(1.0f, ComponentState.RolloverSelected)
     defaultSchemeBundle.registerHighlightColorScheme(
         accentBuilder.highlightsAccent!!,
-        ComponentState.ROLLOVER_UNSELECTED, ComponentState.SELECTED,
-        ComponentState.ROLLOVER_SELECTED
+        ComponentState.RolloverUnselected, ComponentState.Selected,
+        ComponentState.RolloverSelected
     )
 
     result.registerDecorationAreaSchemeBundle(
         defaultSchemeBundle, accentBuilder.backgroundAccent!!,
-        DecorationAreaType.NONE
+        DecorationAreaType.None
     )
 
     // header color scheme bundle
@@ -113,35 +113,35 @@ private fun dustBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
     )
     headerSchemeBundle.registerAlpha(
         0.7f,
-        ComponentState.DISABLED_UNSELECTED, ComponentState.DISABLED_SELECTED
+        ComponentState.DisabledUnselected, ComponentState.DisabledSelected
     )
     headerSchemeBundle.registerColorScheme(
         headerDisabledScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_UNSELECTED, ComponentState.DISABLED_SELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledUnselected, ComponentState.DisabledSelected
     )
 
     headerSchemeBundle.registerColorScheme(
         headerBorderScheme,
-        ColorSchemeAssociationKind.BORDER
+        ColorSchemeAssociationKind.Border
     )
     headerSchemeBundle.registerColorScheme(
         headerSeparatorScheme,
-        ColorSchemeAssociationKind.SEPARATOR
+        ColorSchemeAssociationKind.Separator
     )
 
     headerSchemeBundle.registerHighlightAlpha(1.0f)
     headerSchemeBundle.registerHighlightColorScheme(headerActiveScheme)
     // the next line is to have consistent coloring during the rollover menu animations
     // the next line is to have consistent coloring during the rollover menu animations
-    headerSchemeBundle.registerHighlightAlpha(0.0f, ComponentState.ENABLED)
+    headerSchemeBundle.registerHighlightAlpha(0.0f, ComponentState.Enabled)
 
-    result.registerDecorationAreaSchemeBundle(headerSchemeBundle, DecorationAreaType.TOOLBAR)
+    result.registerDecorationAreaSchemeBundle(headerSchemeBundle, DecorationAreaType.Toolbar)
 
     result.registerDecorationAreaSchemeBundle(
         headerSchemeBundle, headerBackgroundScheme,
-        DecorationAreaType.TITLE_PANE,
-        DecorationAreaType.HEADER, DecorationAreaType.FOOTER
+        DecorationAreaType.TitlePane,
+        DecorationAreaType.Header, DecorationAreaType.Footer
     )
 
     return result
@@ -177,14 +177,14 @@ private fun dustBasePainters(): AuroraPainters {
                 { it.ultraDarkColor },
                 ColorTransforms.brightness(-0.5f)
             )
-        ), DecorationAreaType.HEADER
+        ), DecorationAreaType.Header
     )
     painters.addOverlayPainter(TopLineOverlayPainter(
         composite(
             { it.foregroundColor },
             ColorTransforms.alpha(0.125f)
         )
-    ), DecorationAreaType.TOOLBAR)
+    ), DecorationAreaType.Toolbar)
 
     return painters
 }

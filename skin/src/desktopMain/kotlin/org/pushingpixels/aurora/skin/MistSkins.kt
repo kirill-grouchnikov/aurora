@@ -41,28 +41,28 @@ private fun mistBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
     )
     defaultSchemeBundle.registerColorScheme(
         accentBuilder.highlightsAccent!!,
-        ColorSchemeAssociationKind.HIGHLIGHT_TEXT,
-        ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED
+        ColorSchemeAssociationKind.HighlightText,
+        ComponentState.Selected, ComponentState.RolloverSelected
     )
     defaultSchemeBundle.registerColorScheme(
         accentBuilder.highlightsAccent!!,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.SELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.Selected
     )
     defaultSchemeBundle.registerColorScheme(
         enabledScheme,
-        ColorSchemeAssociationKind.BORDER, ComponentState.SELECTED
+        ColorSchemeAssociationKind.Border, ComponentState.Selected
     )
 
     defaultSchemeBundle.registerColorScheme(
         accentBuilder.activeControlsAccent!!,
-        ColorSchemeAssociationKind.TAB,
-        ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED
+        ColorSchemeAssociationKind.Tab,
+        ComponentState.Selected, ComponentState.RolloverSelected
     )
 
     result.registerDecorationAreaSchemeBundle(
         defaultSchemeBundle,
-        DecorationAreaType.NONE
+        DecorationAreaType.None
     )
 
     val controlPaneBackgroundScheme = schemes["Mist Control Pane Background"]
@@ -71,14 +71,14 @@ private fun mistBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
             accentBuilder.activeControlsAccent!!, enabledScheme, disabledScheme
         ),
         controlPaneBackgroundScheme,
-        DecorationAreaType.CONTROL_PANE
+        DecorationAreaType.ControlPane
     )
 
     result.registerAsDecorationArea(
         enabledScheme,
-        DecorationAreaType.TITLE_PANE,
-        DecorationAreaType.HEADER, DecorationAreaType.FOOTER,
-        DecorationAreaType.TOOLBAR
+        DecorationAreaType.TitlePane,
+        DecorationAreaType.Header, DecorationAreaType.Footer,
+        DecorationAreaType.Toolbar
     )
 
     return result

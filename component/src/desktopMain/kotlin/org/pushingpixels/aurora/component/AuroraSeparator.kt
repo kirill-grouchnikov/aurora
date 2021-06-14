@@ -40,8 +40,8 @@ fun AuroraVerticalSeparator(
 ) {
     val separatorScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = AuroraSkin.decorationAreaType,
-        associationKind = ColorSchemeAssociationKind.SEPARATOR,
-        componentState = if (contentModel.enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
+        associationKind = ColorSchemeAssociationKind.Separator,
+        componentState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
     )
 
     Canvas(modifier.width(SeparatorSizingConstants.Thickness)) {
@@ -92,8 +92,8 @@ fun AuroraHorizontalSeparator(
 ) {
     val separatorScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = AuroraSkin.decorationAreaType,
-        associationKind = ColorSchemeAssociationKind.SEPARATOR,
-        componentState = if (contentModel.enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
+        associationKind = ColorSchemeAssociationKind.Separator,
+        componentState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
     )
 
     Canvas(modifier.height(SeparatorSizingConstants.Thickness)) {

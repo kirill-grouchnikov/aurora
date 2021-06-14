@@ -301,13 +301,13 @@ internal fun <E> AuroraComboBox(
             currState = currentState.value,
             skinColors = skinColors,
             decorationAreaType = decorationAreaType,
-            colorSchemeAssociationKind = ColorSchemeAssociationKind.FILL,
+            colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
             isTextInFilledArea = true
         )
         // And the arrow color
         val arrowColor = getStateAwareColor(
             modelStateInfo, currentState.value,
-            decorationAreaType, ColorSchemeAssociationKind.MARK
+            decorationAreaType, ColorSchemeAssociationKind.Mark
         ) { it.markColor }
 
 
@@ -316,7 +316,7 @@ internal fun <E> AuroraComboBox(
             // based on the current model state info
             populateColorScheme(
                 drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-                ColorSchemeAssociationKind.FILL
+                ColorSchemeAssociationKind.Fill
             )
             // And retrieve the container fill colors
             val fillUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -331,7 +331,7 @@ internal fun <E> AuroraComboBox(
             // based on the current model state info
             populateColorScheme(
                 drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-                ColorSchemeAssociationKind.BORDER
+                ColorSchemeAssociationKind.Border
             )
             // And retrieve the border colors
             val borderUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -350,7 +350,7 @@ internal fun <E> AuroraComboBox(
                 // For flat buttons, compute the combined contribution of all
                 // non-disabled states - ignoring ComponentState.ENABLED
                 alpha = modelStateInfo.stateContributionMap
-                    .filter { !it.key.isDisabled && (it.key != ComponentState.ENABLED) }
+                    .filter { !it.key.isDisabled && (it.key != ComponentState.Enabled) }
                     .values.sumOf { it.contribution.toDouble() }.toFloat()
             } else {
                 alpha = if (currentState.value.isDisabled)
@@ -531,9 +531,9 @@ private fun <E> ComboBoxPopupContent(
     onItemSelected: (E) -> Unit
 ) {
     val borderScheme = AuroraSkin.colors.getColorScheme(
-        decorationAreaType = DecorationAreaType.NONE,
-        associationKind = ColorSchemeAssociationKind.BORDER,
-        componentState = ComponentState.ENABLED
+        decorationAreaType = DecorationAreaType.None,
+        associationKind = ColorSchemeAssociationKind.Border,
+        componentState = ComponentState.Enabled
     )
     val popupBorderColor = AuroraSkin.painters.borderPainter.getRepresentativeColor(borderScheme)
     val density = LocalDensity.current.density

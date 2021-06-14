@@ -45,16 +45,16 @@ private fun twilightSkinColors(): AuroraSkinColors {
     val defaultSchemeBundle = AuroraColorSchemeBundle(
         activeScheme, enabledScheme, enabledScheme
     )
-    defaultSchemeBundle.registerAlpha(0.6f, ComponentState.DISABLED_UNSELECTED, ComponentState.DISABLED_SELECTED)
+    defaultSchemeBundle.registerAlpha(0.6f, ComponentState.DisabledUnselected, ComponentState.DisabledSelected)
     defaultSchemeBundle.registerColorScheme(
         enabledScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledUnselected
     )
     defaultSchemeBundle.registerColorScheme(
         activeScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_SELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected
     )
 
     // borders
@@ -62,131 +62,131 @@ private fun twilightSkinColors(): AuroraSkinColors {
     val borderScheme = schemes["Twilight Border"]
     defaultSchemeBundle.registerColorScheme(
         borderDisabledSelectedScheme,
-        ColorSchemeAssociationKind.BORDER, ComponentState.DISABLED_SELECTED
+        ColorSchemeAssociationKind.Border, ComponentState.DisabledSelected
     )
-    defaultSchemeBundle.registerColorScheme(borderScheme, ColorSchemeAssociationKind.BORDER)
+    defaultSchemeBundle.registerColorScheme(borderScheme, ColorSchemeAssociationKind.Border)
 
     // marks
     val markActiveScheme = schemes["Twilight Mark Active"]
     defaultSchemeBundle.registerAlpha(
-        0.6f, ComponentState.DISABLED_UNSELECTED,
-        ComponentState.DISABLED_SELECTED
+        0.6f, ComponentState.DisabledUnselected,
+        ComponentState.DisabledSelected
     )
     defaultSchemeBundle.registerColorScheme(
-        markActiveScheme, ColorSchemeAssociationKind.MARK,
+        markActiveScheme, ColorSchemeAssociationKind.Mark,
         *ComponentState.activeStates
     )
     defaultSchemeBundle.registerColorScheme(
         markActiveScheme,
-        ColorSchemeAssociationKind.MARK, ComponentState.DISABLED_SELECTED,
-        ComponentState.DISABLED_UNSELECTED
+        ColorSchemeAssociationKind.Mark, ComponentState.DisabledSelected,
+        ComponentState.DisabledUnselected
     )
 
     // separators
     val separatorScheme = schemes["Twilight Separator"]
     defaultSchemeBundle.registerColorScheme(
         separatorScheme,
-        ColorSchemeAssociationKind.SEPARATOR
+        ColorSchemeAssociationKind.Separator
     )
 
     // tab borders
     defaultSchemeBundle.registerColorScheme(
         schemes["Twilight Tab Border"],
-        ColorSchemeAssociationKind.TAB_BORDER, *ComponentState.activeStates
+        ColorSchemeAssociationKind.TabBorder, *ComponentState.activeStates
     )
 
     val backgroundScheme = schemes["Twilight Background"]
 
     result.registerDecorationAreaSchemeBundle(
         defaultSchemeBundle, backgroundScheme,
-        DecorationAreaType.NONE
+        DecorationAreaType.None
     )
 
     val decorationsSchemeBundle = AuroraColorSchemeBundle(
         activeScheme, enabledScheme, enabledScheme
     )
-    decorationsSchemeBundle.registerAlpha(0.5f, ComponentState.DISABLED_UNSELECTED)
+    decorationsSchemeBundle.registerAlpha(0.5f, ComponentState.DisabledUnselected)
     decorationsSchemeBundle.registerColorScheme(
         enabledScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledUnselected
     )
 
     // borders
     decorationsSchemeBundle.registerColorScheme(
         borderDisabledSelectedScheme,
-        ColorSchemeAssociationKind.BORDER, ComponentState.DISABLED_SELECTED
+        ColorSchemeAssociationKind.Border, ComponentState.DisabledSelected
     )
     decorationsSchemeBundle.registerColorScheme(
         borderScheme,
-        ColorSchemeAssociationKind.BORDER
+        ColorSchemeAssociationKind.Border
     )
 
     // marks
     decorationsSchemeBundle.registerColorScheme(
         markActiveScheme,
-        ColorSchemeAssociationKind.MARK, *ComponentState.activeStates
+        ColorSchemeAssociationKind.Mark, *ComponentState.activeStates
     )
 
     // separators
     val separatorDecorationsScheme = schemes["Twilight Decorations Separator"]
     decorationsSchemeBundle.registerColorScheme(
         separatorDecorationsScheme,
-        ColorSchemeAssociationKind.SEPARATOR
+        ColorSchemeAssociationKind.Separator
     )
 
     val decorationsBackgroundScheme = schemes["Twilight Decorations Background"]
     result.registerDecorationAreaSchemeBundle(
         decorationsSchemeBundle, decorationsBackgroundScheme,
-        DecorationAreaType.TOOLBAR, DecorationAreaType.FOOTER
+        DecorationAreaType.Toolbar, DecorationAreaType.Footer
     )
 
     val backgroundControlPaneScheme = schemes["Twilight Control Pane Background"]
     result.registerDecorationAreaSchemeBundle(
         decorationsSchemeBundle, backgroundControlPaneScheme,
-        DecorationAreaType.CONTROL_PANE
+        DecorationAreaType.ControlPane
     )
 
     val headerSchemeBundle = AuroraColorSchemeBundle(
         activeScheme,
         enabledScheme, enabledScheme
     )
-    headerSchemeBundle.registerAlpha(0.5f, ComponentState.DISABLED_UNSELECTED)
+    headerSchemeBundle.registerAlpha(0.5f, ComponentState.DisabledUnselected)
     headerSchemeBundle.registerColorScheme(
         enabledScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledUnselected
     )
 
     // borders
     val headerBorderScheme = schemes["Twilight Header Border"]
     headerSchemeBundle.registerColorScheme(
         borderDisabledSelectedScheme,
-        ColorSchemeAssociationKind.BORDER, ComponentState.DISABLED_SELECTED
+        ColorSchemeAssociationKind.Border, ComponentState.DisabledSelected
     )
     headerSchemeBundle.registerColorScheme(
         headerBorderScheme,
-        ColorSchemeAssociationKind.BORDER
+        ColorSchemeAssociationKind.Border
     )
     // marks
     headerSchemeBundle.registerColorScheme(
-        markActiveScheme, ColorSchemeAssociationKind.MARK,
+        markActiveScheme, ColorSchemeAssociationKind.Mark,
         *ComponentState.activeStates
     )
 
-    headerSchemeBundle.registerHighlightAlpha(0.7f, ComponentState.ROLLOVER_UNSELECTED)
-    headerSchemeBundle.registerHighlightAlpha(0.8f, ComponentState.SELECTED)
-    headerSchemeBundle.registerHighlightAlpha(1.0f, ComponentState.ROLLOVER_SELECTED)
+    headerSchemeBundle.registerHighlightAlpha(0.7f, ComponentState.RolloverUnselected)
+    headerSchemeBundle.registerHighlightAlpha(0.8f, ComponentState.Selected)
+    headerSchemeBundle.registerHighlightAlpha(1.0f, ComponentState.RolloverSelected)
     headerSchemeBundle.registerHighlightColorScheme(
         activeScheme,
-        ComponentState.ROLLOVER_UNSELECTED, ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED
+        ComponentState.RolloverUnselected, ComponentState.Selected, ComponentState.RolloverSelected
     )
 
     val headerBackgroundScheme = schemes["Twilight Header Background"]
 
     result.registerDecorationAreaSchemeBundle(
         headerSchemeBundle, headerBackgroundScheme,
-        DecorationAreaType.TITLE_PANE, DecorationAreaType.HEADER
+        DecorationAreaType.TitlePane, DecorationAreaType.Header
     )
 
     return result
@@ -215,15 +215,15 @@ fun twilightSkin(): AuroraSkinDefinition {
 
     // Add overlay painters to paint drop shadows along the bottom
     // edges of toolbars and footers
-    painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.TOOLBAR)
-    painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.FOOTER)
+    painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.Toolbar)
+    painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.Footer)
 
     // add an overlay painter to paint a dark line along the bottom
     // edge of toolbars
     painters.addOverlayPainter(
         BottomLineOverlayPainter(
             composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.5f))
-        ), DecorationAreaType.TOOLBAR
+        ), DecorationAreaType.Toolbar
     )
 
     // add an overlay painter to paint a dark line along the bottom
@@ -231,7 +231,7 @@ fun twilightSkin(): AuroraSkinDefinition {
     painters.addOverlayPainter(
         TopLineOverlayPainter(
             composite({ it.foregroundColor }, ColorTransforms.alpha(0.125f))
-        ), DecorationAreaType.TOOLBAR
+        ), DecorationAreaType.Toolbar
     )
 
     // add an overlay painter to paint a bezel line along the top
@@ -240,7 +240,7 @@ fun twilightSkin(): AuroraSkinDefinition {
         TopBezelOverlayPainter(
             colorSchemeQueryTop = composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.5f)),
             colorSchemeQueryBottom = composite({ it.foregroundColor }, ColorTransforms.alpha(0.125f))
-        ), DecorationAreaType.FOOTER
+        ), DecorationAreaType.Footer
     )
 
     return AuroraSkinDefinition(

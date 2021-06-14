@@ -189,7 +189,7 @@ internal fun AuroraWindowMenuBar(menuCommands: CommandGroup) {
         }
     }
 
-    AuroraDecorationArea(decorationAreaType = DecorationAreaType.HEADER) {
+    AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth().auroraBackground()

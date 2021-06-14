@@ -44,59 +44,59 @@ private fun autumnSkinColors(): AuroraSkinColors {
         activeScheme, enabledScheme, disabledScheme
     )
 
-    defaultSchemeBundle.registerAlpha(0.6f, ComponentState.DISABLED_UNSELECTED, ComponentState.DISABLED_SELECTED)
+    defaultSchemeBundle.registerAlpha(0.6f, ComponentState.DisabledUnselected, ComponentState.DisabledSelected)
     defaultSchemeBundle.registerColorScheme(
-        disabledScheme, ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_UNSELECTED
+        disabledScheme, ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledUnselected
     )
     defaultSchemeBundle.registerColorScheme(
         activeScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_SELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected
     )
 
     result.registerDecorationAreaSchemeBundle(
         defaultSchemeBundle,
-        DecorationAreaType.NONE
+        DecorationAreaType.None
     )
 
     val titlePaneSchemeBundle = AuroraColorSchemeBundle(
         activeScheme, enabledScheme, disabledScheme
     )
-    titlePaneSchemeBundle.registerAlpha(0.6f, ComponentState.DISABLED_UNSELECTED, ComponentState.DISABLED_SELECTED)
+    titlePaneSchemeBundle.registerAlpha(0.6f, ComponentState.DisabledUnselected, ComponentState.DisabledSelected)
     titlePaneSchemeBundle.registerColorScheme(
-        disabledScheme, ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_UNSELECTED
+        disabledScheme, ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledUnselected
     )
     titlePaneSchemeBundle.registerColorScheme(
-        activeScheme, ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_SELECTED
+        activeScheme, ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected
     )
 
     val borderScheme = enabledScheme.saturate(0.2f)
     titlePaneSchemeBundle.registerColorScheme(
         borderScheme,
-        ColorSchemeAssociationKind.BORDER, ComponentState.ENABLED
+        ColorSchemeAssociationKind.Border, ComponentState.Enabled
     )
 
     result.registerDecorationAreaSchemeBundle(
         bundle = titlePaneSchemeBundle,
         backgroundColorScheme = activeScheme,
-        DecorationAreaType.TITLE_PANE
+        DecorationAreaType.TitlePane
     )
 
     val backgroundScheme = schemes["Autumn Background"]
 
     result.registerAsDecorationArea(
         activeScheme,
-        DecorationAreaType.TITLE_PANE,
-        DecorationAreaType.HEADER
+        DecorationAreaType.TitlePane,
+        DecorationAreaType.Header
     )
 
     result.registerAsDecorationArea(
         backgroundScheme,
-        DecorationAreaType.CONTROL_PANE, DecorationAreaType.FOOTER,
-        DecorationAreaType.TOOLBAR
+        DecorationAreaType.ControlPane, DecorationAreaType.Footer,
+        DecorationAreaType.Toolbar
     )
 
     return result
@@ -117,13 +117,13 @@ fun autumnSkin(): AuroraSkinDefinition {
     )
     // add an overlay painter to paint a drop shadow along the top
     // edge of toolbars
-    painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(50), DecorationAreaType.TOOLBAR)
+    painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(50), DecorationAreaType.Toolbar)
     // add an overlay painter to paint separator lines along the bottom
     // edges of title panes and menu bars
     painters.addOverlayPainter(
         BottomLineOverlayPainter(colorSchemeQuery = { it.darkColor }),
-        DecorationAreaType.TITLE_PANE,
-        DecorationAreaType.HEADER
+        DecorationAreaType.TitlePane,
+        DecorationAreaType.Header
     )
 
     return AuroraSkinDefinition(

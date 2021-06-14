@@ -31,34 +31,34 @@ class ComponentStateFacet(var name: String, value: Int) {
         /**
          * Facet that describes the enabled bit.
          */
-        val ENABLE = ComponentStateFacet("enable", 0)
+        val Enable = ComponentStateFacet("enable", 0)
 
         /**
          * Facet that describes the rollover bit.
          */
-        val ROLLOVER = ComponentStateFacet("rollover", 10)
+        val Rollover = ComponentStateFacet("rollover", 10)
 
         /**
          * Facet that describes the selection bit.
          */
-        val SELECTION = ComponentStateFacet("selection", 10)
+        val Selection = ComponentStateFacet("selection", 10)
 
         /**
          * Facet that describes the press bit.
          */
-        val PRESS = ComponentStateFacet("press", 50)
+        val Press = ComponentStateFacet("press", 50)
 
         /**
          * Facet that describes the determinate bit. This is relevant for [JProgressBar]
          * control and its [JProgressBar.setIndeterminate] API.
          */
-        val DETERMINATE = ComponentStateFacet("determinate", 10)
+        val Determinate = ComponentStateFacet("determinate", 10)
 
         /**
          * Facet that describes the editable bit. This is relevant for [JTextComponent]
          * derived controls and its [JTextComponent.setEditable] API.
          */
-        val EDITABLE = ComponentStateFacet("editable", 50)
+        val Editable = ComponentStateFacet("editable", 50)
     }
 
     /**
@@ -81,15 +81,15 @@ class ComponentState(
 ) {
     /**
      * Facets that are turned on for this state. For example,
-     * [.ROLLOVER_SELECTED] contains [ComponentStateFacet.ROLLOVER]
-     * and [ComponentStateFacet.SELECTION].
+     * [.ROLLOVER_SELECTED] contains [ComponentStateFacet.Rollover]
+     * and [ComponentStateFacet.Selection].
      */
     private val facetsTurnedOn: MutableSet<ComponentStateFacet>?
 
     /**
      * Facets that are turned on for this state. For example,
-     * [.DISABLED_UNSELECTED] contains [ComponentStateFacet.ENABLE]
-     * and [ComponentStateFacet.SELECTION].
+     * [.DISABLED_UNSELECTED] contains [ComponentStateFacet.Enable]
+     * and [ComponentStateFacet.Selection].
      */
     private val facetsTurnedOff: MutableSet<ComponentStateFacet>?
 
@@ -105,10 +105,10 @@ class ComponentState(
      * only used in the [.toString].
      * @param facetsOn
      * Indicates that are turned on for this state. For example, [.ROLLOVER_SELECTED] should pass both
-     * [ComponentStateFacet.ROLLOVER] and [ComponentStateFacet.SELECTION].
+     * [ComponentStateFacet.Rollover] and [ComponentStateFacet.Selection].
      * @param facetsOff
      * Indicates that are turned on for this state. For example, [.DISABLED_UNSELECTED] should pass both
-     * [ComponentStateFacet.ENABLE] and [ComponentStateFacet.SELECTION].
+     * [ComponentStateFacet.Enable] and [ComponentStateFacet.Selection].
      */
     constructor(
         name: String, facetsOn: Array<ComponentStateFacet>?,
@@ -143,16 +143,16 @@ class ComponentState(
     /**
      * Returns indication whether `this` component state is "active"
      * under the specified facet. For example, [.ROLLOVER_SELECTED] will
-     * return `true` for both [ComponentStateFacet.ROLLOVER]
-     * and [ComponentStateFacet.SELECTION].
+     * return `true` for both [ComponentStateFacet.Rollover]
+     * and [ComponentStateFacet.Selection].
      *
      * @param stateFacet
      * State facet.
      * @return `true` if `this` component state is
      * "active" under the specified facet (for example,
      * [.ROLLOVER_SELECTED] will return `true` for both
-     * [ComponentStateFacet.ROLLOVER] and
-     * [ComponentStateFacet.SELECTION]), `false`
+     * [ComponentStateFacet.Rollover] and
+     * [ComponentStateFacet.Selection]), `false`
      * otherwise.
      */
     fun isFacetActive(stateFacet: ComponentStateFacet): Boolean {
@@ -170,19 +170,19 @@ class ComponentState(
 
     /**
      * Checks whether this state is disabled. A disabled state has
-     * [ComponentStateFacet.ENABLE] facet in its `off` set.
+     * [ComponentStateFacet.Enable] facet in its `off` set.
      *
      * @return `true` if this state is disabled, `false`
      * otherwise.
      */
     val isDisabled: Boolean
-        get() = !isFacetActive(ComponentStateFacet.ENABLE)
+        get() = !isFacetActive(ComponentStateFacet.Enable)
     val isActive: Boolean
         get() {
-            if (this === ENABLED) {
+            if (this === Enabled) {
                 return false
             }
-            return if (!isFacetActive(ComponentStateFacet.ENABLE)) {
+            return if (!isFacetActive(ComponentStateFacet.Enable)) {
                 false
             } else true
         }
@@ -304,57 +304,57 @@ class ComponentState(
         /**
          * Disabled selected.
          */
-        val DISABLED_SELECTED = ComponentState(
+        val DisabledSelected = ComponentState(
             "disabled selected",
-            arrayOf(ComponentStateFacet.SELECTION),
-            arrayOf(ComponentStateFacet.ENABLE)
+            arrayOf(ComponentStateFacet.Selection),
+            arrayOf(ComponentStateFacet.Enable)
         )
 
         /**
          * Disabled and not selected.
          */
-        val DISABLED_UNSELECTED = ComponentState(
+        val DisabledUnselected = ComponentState(
             "disabled unselected", null, arrayOf(
-                ComponentStateFacet.ENABLE, ComponentStateFacet.SELECTION
+                ComponentStateFacet.Enable, ComponentStateFacet.Selection
             )
         )
 
         /**
          * Pressed selected.
          */
-        val PRESSED_SELECTED = ComponentState(
+        val PressedSelected = ComponentState(
             "pressed selected", arrayOf(
-                ComponentStateFacet.SELECTION, ComponentStateFacet.PRESS,
-                ComponentStateFacet.ENABLE
+                ComponentStateFacet.Selection, ComponentStateFacet.Press,
+                ComponentStateFacet.Enable
             ), null
         )
 
         /**
          * Pressed and not selected.
          */
-        val PRESSED_UNSELECTED = ComponentState(
+        val PressedUnselected = ComponentState(
             "pressed unselected", arrayOf(
-                ComponentStateFacet.PRESS, ComponentStateFacet.ENABLE
-            ), arrayOf(ComponentStateFacet.SELECTION)
+                ComponentStateFacet.Press, ComponentStateFacet.Enable
+            ), arrayOf(ComponentStateFacet.Selection)
         )
 
         /**
          * Selected.
          */
-        val SELECTED = ComponentState(
+        val Selected = ComponentState(
             "selected", arrayOf(
-                ComponentStateFacet.SELECTION,
-                ComponentStateFacet.ENABLE
+                ComponentStateFacet.Selection,
+                ComponentStateFacet.Enable
             ), null
         )
 
         /**
          * Selected and rolled over.
          */
-        val ROLLOVER_SELECTED = ComponentState(
+        val RolloverSelected = ComponentState(
             "rollover selected", arrayOf(
-                ComponentStateFacet.SELECTION,
-                ComponentStateFacet.ROLLOVER, ComponentStateFacet.ENABLE
+                ComponentStateFacet.Selection,
+                ComponentStateFacet.Rollover, ComponentStateFacet.Enable
             ),
             null
         )
@@ -362,20 +362,20 @@ class ComponentState(
         /**
          * Not selected and rolled over.
          */
-        val ROLLOVER_UNSELECTED = ComponentState(
+        val RolloverUnselected = ComponentState(
             "rollover unselected", arrayOf(
-                ComponentStateFacet.ROLLOVER, ComponentStateFacet.ENABLE
-            ), arrayOf(ComponentStateFacet.SELECTION)
+                ComponentStateFacet.Rollover, ComponentStateFacet.Enable
+            ), arrayOf(ComponentStateFacet.Selection)
         )
 
         /**
          * Enabled state.
          */
-        val ENABLED = ComponentState("enabled", arrayOf(ComponentStateFacet.ENABLE), null)
+        val Enabled = ComponentState("enabled", arrayOf(ComponentStateFacet.Enable), null)
 
         /**
          * Returns all active component states. Note that the result will **not** contain
-         * [ComponentState.ENABLED].
+         * [ComponentState.Enabled].
          *
          * @return All active component states.
          */
@@ -418,22 +418,22 @@ class ComponentState(
         ): ComponentState {
             if (!isEnabled) {
                 return if (isSelected) {
-                    DISABLED_SELECTED
-                } else DISABLED_UNSELECTED
+                    DisabledSelected
+                } else DisabledUnselected
             }
             if (isPressed) {
                 return if (isSelected) {
-                    PRESSED_SELECTED
-                } else PRESSED_UNSELECTED
+                    PressedSelected
+                } else PressedUnselected
             }
             if (isSelected) {
                 return if (isRollover) {
-                    ROLLOVER_SELECTED
-                } else SELECTED
+                    RolloverSelected
+                } else Selected
             }
             return if (isRollover) {
-                ROLLOVER_UNSELECTED
-            } else ENABLED
+                RolloverUnselected
+            } else Enabled
         }
     }
 
@@ -447,14 +447,13 @@ class ComponentState(
      * The fallback state that will be used in [AuroraColors.getColorScheme]
      * in case [.bestFit] returns `null`
      * @param facetsOn
-     * Indicates that are turned on for this state. For example, [.ROLLOVER_SELECTED] should pass both
-     * [ComponentStateFacet.ROLLOVER] and [ComponentStateFacet.SELECTION].
+     * Indicates that are turned on for this state. For example, [.RolloverSelected] should pass both
+     * [ComponentStateFacet.Rollover] and [ComponentStateFacet.Selection].
      * @param facetsOff
-     * Indicates that are turned on for this state. For example, [.DISABLED_UNSELECTED] should pass both
-     * [ComponentStateFacet.ENABLE] and [ComponentStateFacet.SELECTION].
+     * Indicates that are turned on for this state. For example, [.DisabledUnselected] should pass both
+     * [ComponentStateFacet.Enable] and [ComponentStateFacet.Selection].
      */
     init {
-        requireNotNull(name) { "Component state name must be non-null" }
         this.name = name
         this.hardFallback = hardFallback
         facetsTurnedOn = mutableSetOf()
@@ -512,63 +511,63 @@ class ColorSchemeAssociationKind(
         /**
          * The default visual area that is used for the inner part of most controls.
          */
-        val FILL = ColorSchemeAssociationKind("fill", null)
+        val Fill = ColorSchemeAssociationKind("fill", null)
 
         /**
          * Visual area of separators.
          */
-        val SEPARATOR = ColorSchemeAssociationKind("separator", FILL)
+        val Separator = ColorSchemeAssociationKind("separator", Fill)
 
         /**
          * Fill visual area of the tabs.
          */
-        val TAB = ColorSchemeAssociationKind("tab", FILL)
+        val Tab = ColorSchemeAssociationKind("tab", Fill)
 
         /**
          * Border visual area of non-tab controls.
          */
-        val BORDER = ColorSchemeAssociationKind("border", FILL)
+        val Border = ColorSchemeAssociationKind("border", Fill)
 
         /**
          * Visual area of marks. Used for painting check marks of checkboxes and radio buttons, as
          * well as arrow icons of combo boxes, spinners and more.
          */
-        val MARK = ColorSchemeAssociationKind("mark", BORDER)
+        val Mark = ColorSchemeAssociationKind("mark", Border)
 
         /**
          * Visual area of mark boxes. Used for painting the box of checkboxes and radio buttons.
          */
-        val MARK_BOX = ColorSchemeAssociationKind("markBox", FILL)
+        val MarkBox = ColorSchemeAssociationKind("markBox", Fill)
 
         /**
          * Visual area of focus indication.
          */
-        val FOCUS = ColorSchemeAssociationKind("focus", MARK)
+        val Focus = ColorSchemeAssociationKind("focus", Mark)
 
         /**
          * Border visual area of the tabs.
          */
-        val TAB_BORDER = ColorSchemeAssociationKind("tabBorder", BORDER)
+        val TabBorder = ColorSchemeAssociationKind("tabBorder", Border)
 
         /**
          * Highlight visual areas for lists, tables, trees and menus.
          */
-        val HIGHLIGHT = ColorSchemeAssociationKind("highlight", FILL)
+        val Highlight = ColorSchemeAssociationKind("highlight", Fill)
 
         /**
          * Highlight visual areas for text components.
          */
-        val HIGHLIGHT_TEXT = ColorSchemeAssociationKind("highlightText", HIGHLIGHT)
+        val HighlightText = ColorSchemeAssociationKind("highlightText", Highlight)
 
         /**
          * Border visual areas for highlighted regions of lists, tables, trees and menus.
          */
-        val HIGHLIGHT_BORDER = ColorSchemeAssociationKind("highlightBorder", BORDER)
+        val HighlightBorder = ColorSchemeAssociationKind("highlightBorder", Border)
 
         /**
          * Visual area of marks in highlighted regions of lists, tables, trees and menus.
          */
-        val HIGHLIGHT_MARK = ColorSchemeAssociationKind("highlightMark", MARK)
+        val HighlightMark = ColorSchemeAssociationKind("highlightMark", Mark)
 
         /**
          * Returns all available association kinds.
@@ -612,34 +611,34 @@ class DecorationAreaType(val displayName: String) {
         /**
          * Title pane of top-level windows (frames, dialogs).
          */
-        val TITLE_PANE = DecorationAreaType("Title pane")
+        val TitlePane = DecorationAreaType("Title pane")
 
         /**
-         * Toolsbar.
+         * Toolbar.
          */
-        val TOOLBAR = DecorationAreaType("Toolbar")
+        val Toolbar = DecorationAreaType("Toolbar")
 
         /**
          * Any area that can be placed in the top portion of its window. Menu bar is an example of a
          * core Aurora component.
          */
-        val HEADER = DecorationAreaType("Header")
+        val Header = DecorationAreaType("Header")
 
         /**
          * Any area that can be placed in the bottom portion of its window.
          */
-        val FOOTER = DecorationAreaType("Footer")
+        val Footer = DecorationAreaType("Footer")
 
         /**
          * Control pane area, such as sidebars / task panes or ribbon bands.
          */
-        val CONTROL_PANE = DecorationAreaType("Control pane")
+        val ControlPane = DecorationAreaType("Control pane")
 
         /**
          * The default decoration area type. Components placed in areas with this type do not get
          * any special background decoration painting.
          */
-        val NONE = DecorationAreaType("None")
+        val None = DecorationAreaType("None")
     }
 }
 

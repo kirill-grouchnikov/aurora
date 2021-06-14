@@ -44,11 +44,11 @@ private fun applyHighlightColorScheme(
     highlightScheme: AuroraColorScheme
 ) {
     // specify custom alpha values for the highlights
-    schemeBundle.registerHighlightAlpha(0.85f, ComponentState.ROLLOVER_UNSELECTED)
-    schemeBundle.registerHighlightAlpha(0.9f, ComponentState.SELECTED)
+    schemeBundle.registerHighlightAlpha(0.85f, ComponentState.RolloverUnselected)
+    schemeBundle.registerHighlightAlpha(0.9f, ComponentState.Selected)
     schemeBundle.registerHighlightColorScheme(
-        highlightScheme, ComponentState.ROLLOVER_UNSELECTED,
-        ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED
+        highlightScheme, ComponentState.RolloverUnselected,
+        ComponentState.Selected, ComponentState.RolloverSelected
     )
 }
 
@@ -58,27 +58,27 @@ private fun applyHighlightAsFill(
 ) {
     // use for borders on rollover controls
     schemeBundle.registerColorScheme(
-        highlightBorderScheme, ColorSchemeAssociationKind.BORDER,
-        ComponentState.ROLLOVER_SELECTED,
-        ComponentState.ROLLOVER_UNSELECTED
+        highlightBorderScheme, ColorSchemeAssociationKind.Border,
+        ComponentState.RolloverSelected,
+        ComponentState.RolloverUnselected
     )
 
     // use for fill of selected controls
     schemeBundle.registerColorScheme(
-        highlightScheme, ColorSchemeAssociationKind.FILL,
-        ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED
+        highlightScheme, ColorSchemeAssociationKind.Fill,
+        ComponentState.Selected, ComponentState.RolloverSelected
     )
 
     // use for borders of highlights
     schemeBundle.registerColorScheme(
         highlightScheme,
-        ColorSchemeAssociationKind.HIGHLIGHT_BORDER, *ComponentState.activeStates
+        ColorSchemeAssociationKind.HighlightBorder, *ComponentState.activeStates
     )
 
     // use for text highlight
     schemeBundle.registerColorScheme(
-        highlightScheme, ColorSchemeAssociationKind.HIGHLIGHT_TEXT,
-        ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED
+        highlightScheme, ColorSchemeAssociationKind.HighlightText,
+        ComponentState.Selected, ComponentState.RolloverSelected
     )
 }
 
@@ -111,37 +111,37 @@ private fun geminiSkinColors(): AuroraSkinColors {
     val darkGraySeparatorScheme = schemes["Gemini Dark Gray Separator"]
     defaultSchemeBundle.registerColorScheme(
         grayBorderScheme,
-        ColorSchemeAssociationKind.BORDER
+        ColorSchemeAssociationKind.Border
     )
     defaultSchemeBundle.registerColorScheme(
         lightGrayBorderScheme,
-        ColorSchemeAssociationKind.BORDER,
-        ComponentState.DISABLED_SELECTED, ComponentState.DISABLED_UNSELECTED
+        ColorSchemeAssociationKind.Border,
+        ComponentState.DisabledSelected, ComponentState.DisabledUnselected
     )
     defaultSchemeBundle.registerColorScheme(
         grayScheme,
-        ColorSchemeAssociationKind.FILL, ComponentState.ROLLOVER_UNSELECTED
+        ColorSchemeAssociationKind.Fill, ComponentState.RolloverUnselected
     )
     defaultSchemeBundle.registerColorScheme(
         darkGraySeparatorScheme,
-        ColorSchemeAssociationKind.SEPARATOR
+        ColorSchemeAssociationKind.Separator
     )
-    defaultSchemeBundle.registerColorScheme(grayScheme, ColorSchemeAssociationKind.MARK)
+    defaultSchemeBundle.registerColorScheme(grayScheme, ColorSchemeAssociationKind.Mark)
 
     defaultSchemeBundle.registerAlpha(
-        0.6f, ComponentState.DISABLED_UNSELECTED,
-        ComponentState.DISABLED_SELECTED
+        0.6f, ComponentState.DisabledUnselected,
+        ComponentState.DisabledSelected
     )
     defaultSchemeBundle.registerColorScheme(
-        highlightScheme.tone(0.2f), ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_SELECTED
+        highlightScheme.tone(0.2f), ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected
     )
 
     val whiteBackgroundScheme = schemes["Gemini White Background"]
 
     result.registerDecorationAreaSchemeBundle(
         defaultSchemeBundle, whiteBackgroundScheme,
-        DecorationAreaType.NONE
+        DecorationAreaType.None
     )
 
     // control pane color scheme bundle
@@ -150,20 +150,20 @@ private fun geminiSkinColors(): AuroraSkinColors {
         grayScheme, disabledScheme
     )
     controlPaneSchemeBundle.registerColorScheme(
-        grayScheme, ColorSchemeAssociationKind.FILL,
-        ComponentState.ROLLOVER_UNSELECTED
+        grayScheme, ColorSchemeAssociationKind.Fill,
+        ComponentState.RolloverUnselected
     )
-    controlPaneSchemeBundle.registerColorScheme(grayScheme, ColorSchemeAssociationKind.MARK)
-    controlPaneSchemeBundle.registerColorScheme(grayBorderScheme, ColorSchemeAssociationKind.BORDER)
+    controlPaneSchemeBundle.registerColorScheme(grayScheme, ColorSchemeAssociationKind.Mark)
+    controlPaneSchemeBundle.registerColorScheme(grayBorderScheme, ColorSchemeAssociationKind.Border)
     controlPaneSchemeBundle.registerAlpha(
-        0.6f, ComponentState.DISABLED_UNSELECTED,
-        ComponentState.DISABLED_SELECTED
+        0.6f, ComponentState.DisabledUnselected,
+        ComponentState.DisabledSelected
     )
     applyHighlightColorScheme(controlPaneSchemeBundle, highlightScheme)
     applyHighlightAsFill(controlPaneSchemeBundle, highlightScheme, highlightBorderScheme)
     result.registerDecorationAreaSchemeBundle(
         controlPaneSchemeBundle, grayScheme,
-        DecorationAreaType.CONTROL_PANE, DecorationAreaType.FOOTER
+        DecorationAreaType.ControlPane, DecorationAreaType.Footer
     )
 
     // header color scheme bundle
@@ -174,32 +174,32 @@ private fun geminiSkinColors(): AuroraSkinColors {
         activeHeaderScheme, blackColorScheme, blackColorScheme
     )
     headerSchemeBundle.registerAlpha(
-        0.5f, ComponentState.DISABLED_UNSELECTED,
-        ComponentState.DISABLED_SELECTED
+        0.5f, ComponentState.DisabledUnselected,
+        ComponentState.DisabledSelected
     )
     headerSchemeBundle.registerColorScheme(
-        disabledHeaderScheme, ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_SELECTED, ComponentState.DISABLED_UNSELECTED
+        disabledHeaderScheme, ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected, ComponentState.DisabledUnselected
     )
     headerSchemeBundle.registerColorScheme(
-        blackColorScheme, ColorSchemeAssociationKind.FILL,
-        ComponentState.ROLLOVER_UNSELECTED
+        blackColorScheme, ColorSchemeAssociationKind.Fill,
+        ComponentState.RolloverUnselected
     )
-    headerSchemeBundle.registerColorScheme(blackColorScheme, ColorSchemeAssociationKind.MARK)
+    headerSchemeBundle.registerColorScheme(blackColorScheme, ColorSchemeAssociationKind.Mark)
     headerSchemeBundle.registerColorScheme(
-        grayScheme, ColorSchemeAssociationKind.MARK,
-        ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED
+        grayScheme, ColorSchemeAssociationKind.Mark,
+        ComponentState.Selected, ComponentState.RolloverSelected
     )
     headerSchemeBundle.registerColorScheme(
         blackColorScheme.shade(0.9f),
-        ColorSchemeAssociationKind.BORDER
+        ColorSchemeAssociationKind.Border
     )
     applyHighlightColorScheme(headerSchemeBundle, highlightScheme)
     applyHighlightAsFill(headerSchemeBundle, highlightScheme, highlightBorderScheme)
 
     result.registerDecorationAreaSchemeBundle(
         headerSchemeBundle, blackColorScheme,
-        DecorationAreaType.TITLE_PANE, DecorationAreaType.HEADER
+        DecorationAreaType.TitlePane, DecorationAreaType.Header
     )
 
     // toolbar color scheme bundle
@@ -210,37 +210,37 @@ private fun geminiSkinColors(): AuroraSkinColors {
         blackColorScheme, darkBlueColorScheme, darkBlueColorScheme
     )
     toolbarSchemeBundle.registerAlpha(
-        0.5f, ComponentState.DISABLED_UNSELECTED,
-        ComponentState.DISABLED_SELECTED
+        0.5f, ComponentState.DisabledUnselected,
+        ComponentState.DisabledSelected
     )
     toolbarSchemeBundle.registerColorScheme(
-        blackColorScheme, ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_SELECTED
+        blackColorScheme, ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected
     )
     toolbarSchemeBundle.registerColorScheme(
-        darkBlueColorScheme, ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_UNSELECTED
+        darkBlueColorScheme, ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledUnselected
     )
     toolbarSchemeBundle.registerColorScheme(
-        blackColorScheme, ColorSchemeAssociationKind.FILL,
-        ComponentState.ROLLOVER_UNSELECTED
+        blackColorScheme, ColorSchemeAssociationKind.Fill,
+        ComponentState.RolloverUnselected
     )
-    toolbarSchemeBundle.registerColorScheme(darkBlueColorScheme, ColorSchemeAssociationKind.MARK)
-    toolbarSchemeBundle.registerColorScheme(darkBlueColorScheme, ColorSchemeAssociationKind.BORDER)
+    toolbarSchemeBundle.registerColorScheme(darkBlueColorScheme, ColorSchemeAssociationKind.Mark)
+    toolbarSchemeBundle.registerColorScheme(darkBlueColorScheme, ColorSchemeAssociationKind.Border)
     toolbarSchemeBundle.registerColorScheme(
         darkBlueSeparatorColorScheme,
-        ColorSchemeAssociationKind.SEPARATOR
+        ColorSchemeAssociationKind.Separator
     )
     toolbarSchemeBundle.registerColorScheme(
-        highlightScheme, ColorSchemeAssociationKind.MARK,
-        ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED,
-        ComponentState.PRESSED_SELECTED
+        highlightScheme, ColorSchemeAssociationKind.Mark,
+        ComponentState.Selected, ComponentState.RolloverSelected,
+        ComponentState.PressedSelected
     )
     applyHighlightColorScheme(toolbarSchemeBundle, highlightScheme)
     applyHighlightAsFill(toolbarSchemeBundle, highlightScheme, darkBlueColorScheme)
     result.registerDecorationAreaSchemeBundle(
         toolbarSchemeBundle, darkBlueBackgroundColorScheme,
-        DecorationAreaType.TOOLBAR
+        DecorationAreaType.Toolbar
     )
 
     return result
@@ -280,7 +280,7 @@ fun geminiSkin(): AuroraSkinDefinition {
             colorSchemeQueryTop = { it.darkColor },
             colorSchemeQueryBottom = { it.ultraLightColor }
         ),
-        DecorationAreaType.FOOTER
+        DecorationAreaType.Footer
     )
 
     // add two overlay painters to create a bezel line between
@@ -289,27 +289,27 @@ fun geminiSkin(): AuroraSkinDefinition {
         BottomLineOverlayPainter(
             composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.5f))
         ),
-        DecorationAreaType.HEADER
+        DecorationAreaType.Header
     )
     painters.addOverlayPainter(
         TopLineOverlayPainter(
             composite({ it.foregroundColor }, ColorTransforms.alpha(0.125f))
         ),
-        DecorationAreaType.TOOLBAR
+        DecorationAreaType.Toolbar
     )
 
     // add overlay painter to paint drop shadows along the bottom
     // edges of toolbars
     painters.addOverlayPainter(
         BottomShadowOverlayPainter.getInstance(100),
-        DecorationAreaType.TOOLBAR
+        DecorationAreaType.Toolbar
     )
 
     // add overlay painter to paint a dark line along the bottom
     // edge of toolbars
     painters.addOverlayPainter(
         BottomLineOverlayPainter(colorSchemeQuery = { it.ultraDarkColor }),
-        DecorationAreaType.TOOLBAR
+        DecorationAreaType.Toolbar
     )
 
     return AuroraSkinDefinition(

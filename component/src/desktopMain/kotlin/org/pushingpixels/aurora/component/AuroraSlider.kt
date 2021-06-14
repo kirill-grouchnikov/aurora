@@ -100,9 +100,9 @@ internal fun AuroraSlider(
 
 
     val trackFillState =
-        if (contentModel.enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
+        if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
     val trackSelectedState =
-        if (contentModel.enabled) ComponentState.SELECTED else ComponentState.DISABLED_SELECTED
+        if (contentModel.enabled) ComponentState.Selected else ComponentState.DisabledSelected
 
     val skinColors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
@@ -124,17 +124,17 @@ internal fun AuroraSlider(
     )
     val borderFillColorScheme = skinColors.getColorScheme(
         decorationAreaType = decorationAreaType,
-        associationKind = ColorSchemeAssociationKind.BORDER,
+        associationKind = ColorSchemeAssociationKind.Border,
         componentState = trackFillState
     )
     val borderSelectionColorScheme = skinColors.getColorScheme(
         decorationAreaType = decorationAreaType,
-        associationKind = ColorSchemeAssociationKind.BORDER,
+        associationKind = ColorSchemeAssociationKind.Border,
         componentState = trackSelectedState
     )
     val tickScheme = skinColors.getColorScheme(
         decorationAreaType = decorationAreaType,
-        associationKind = ColorSchemeAssociationKind.SEPARATOR,
+        associationKind = ColorSchemeAssociationKind.Separator,
         componentState = trackFillState
     )
     val fillPainter = ClassicFillPainter.INSTANCE
@@ -315,7 +315,7 @@ internal fun AuroraSlider(
         // based on the current model state info
         populateColorScheme(
             drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-            ColorSchemeAssociationKind.FILL
+            ColorSchemeAssociationKind.Fill
         )
 
         // And retrieve the thumb fill colors
@@ -331,7 +331,7 @@ internal fun AuroraSlider(
         // based on the current model state info
         populateColorScheme(
             drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-            ColorSchemeAssociationKind.BORDER
+            ColorSchemeAssociationKind.Border
         )
         // And retrieve the border colors
         val thumbBorderUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -354,7 +354,7 @@ internal fun AuroraSlider(
             currState = currentState.value,
             skinColors = skinColors,
             decorationAreaType = decorationAreaType,
-            colorSchemeAssociationKind = ColorSchemeAssociationKind.FILL,
+            colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
             isTextInFilledArea = true
         )
 

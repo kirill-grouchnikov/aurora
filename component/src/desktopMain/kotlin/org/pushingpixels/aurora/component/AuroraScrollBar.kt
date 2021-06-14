@@ -297,7 +297,7 @@ private fun Scrollbar(
                     modelStateInfo,
                     currentState.value,
                     decorationAreaType,
-                    ColorSchemeAssociationKind.FILL
+                    ColorSchemeAssociationKind.Fill
                 )
                 // And retrieve the container fill colors
                 val fillUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -315,7 +315,7 @@ private fun Scrollbar(
                     modelStateInfo,
                     currentState.value,
                     decorationAreaType,
-                    ColorSchemeAssociationKind.BORDER
+                    ColorSchemeAssociationKind.Border
                 )
                 // And retrieve the border colors
                 val borderUltraLight = drawingCache.colorScheme.ultraLightColor

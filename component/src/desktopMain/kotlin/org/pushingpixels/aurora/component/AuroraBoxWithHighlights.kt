@@ -209,7 +209,7 @@ fun AuroraBoxWithHighlights(
             currState = currentState.value,
             skinColors = skinColors,
             decorationAreaType = decorationAreaType,
-            colorSchemeAssociationKind = ColorSchemeAssociationKind.HIGHLIGHT,
+            colorSchemeAssociationKind = ColorSchemeAssociationKind.Highlight,
             isTextInFilledArea = true
         )
 
@@ -217,7 +217,7 @@ fun AuroraBoxWithHighlights(
         // based on the current model state info
         populateColorSchemeWithHighlightAlpha(
             drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-            ColorSchemeAssociationKind.HIGHLIGHT
+            ColorSchemeAssociationKind.Highlight
         )
         // And retrieve the container fill colors
         val fillUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -232,7 +232,7 @@ fun AuroraBoxWithHighlights(
         // based on the current model state info
         populateColorSchemeWithHighlightAlpha(
             drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-            ColorSchemeAssociationKind.HIGHLIGHT_BORDER
+            ColorSchemeAssociationKind.HighlightBorder
         )
         // And retrieve the border colors
         val borderUltraLight = drawingCache.colorScheme.ultraLightColor

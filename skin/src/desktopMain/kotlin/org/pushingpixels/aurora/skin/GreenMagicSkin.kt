@@ -44,18 +44,18 @@ private fun greenMagicSkinColors(): AuroraSkinColors {
     )
     result.registerDecorationAreaSchemeBundle(
         defaultSchemeBundle,
-        DecorationAreaType.NONE
+        DecorationAreaType.None
     )
 
     // mark title panes and headers as decoration areas
     result.registerAsDecorationArea(
         enabledScheme,
-        DecorationAreaType.TITLE_PANE,
-        DecorationAreaType.HEADER
+        DecorationAreaType.TitlePane,
+        DecorationAreaType.Header
     )
 
     val footerFillScheme = schemes["Green Magic Footer Fill"]
-    result.registerAsDecorationArea(footerFillScheme, DecorationAreaType.FOOTER)
+    result.registerAsDecorationArea(footerFillScheme, DecorationAreaType.Footer)
 
     return result
 }
@@ -74,12 +74,12 @@ fun greenMagicSkin(): AuroraSkinDefinition {
 
     // Add overlay painters to paint drop shadow and a dark line along the bottom
     // edges of headers
-    painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.HEADER)
+    painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.Header)
     painters.addOverlayPainter(
         BottomLineOverlayPainter(
             composite({ it.darkColor }, ColorTransforms.alpha(0.5f))
         ),
-        DecorationAreaType.HEADER
+        DecorationAreaType.Header
     )
 
     return AuroraSkinDefinition(

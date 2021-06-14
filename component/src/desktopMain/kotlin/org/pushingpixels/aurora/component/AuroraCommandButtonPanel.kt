@@ -605,8 +605,8 @@ private fun CommandButtonGroupTitle(groupModelIndex: Int, groupModel: CommandGro
 
                 val borderColorScheme = skinColors.getColorScheme(
                     decorationAreaType = decorationAreaType,
-                    associationKind = ColorSchemeAssociationKind.BORDER,
-                    componentState = ComponentState.ENABLED
+                    associationKind = ColorSchemeAssociationKind.Border,
+                    componentState = ComponentState.Enabled
                 )
 
                 val innerOutline = if (borderPainter.isPaintingInnerOutline)

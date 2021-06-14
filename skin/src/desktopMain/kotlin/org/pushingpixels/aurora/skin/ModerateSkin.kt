@@ -47,19 +47,19 @@ private fun moderateSkinColors(): AuroraSkinColors {
     val highlightColorScheme = kitchenSinkSchemes["Moderate Highlight"]
     defaultSchemeBundle.registerHighlightColorScheme(highlightColorScheme)
 
-    result.registerDecorationAreaSchemeBundle(defaultSchemeBundle, DecorationAreaType.NONE)
+    result.registerDecorationAreaSchemeBundle(defaultSchemeBundle, DecorationAreaType.None)
 
     val headerSchemeBundle = AuroraColorSchemeBundle(
         activeScheme.saturate(0.2f), activeScheme, kitchenSinkSchemes["Gray Disabled"]
     )
     result.registerDecorationAreaSchemeBundle(
         headerSchemeBundle,
-        DecorationAreaType.TITLE_PANE, DecorationAreaType.HEADER
+        DecorationAreaType.TitlePane, DecorationAreaType.Header
     )
 
     result.registerAsDecorationArea(
         kitchenSinkSchemes["LightGray Control Pane Background"],
-        DecorationAreaType.CONTROL_PANE
+        DecorationAreaType.ControlPane
     )
 
     return result
@@ -73,12 +73,12 @@ fun moderateSkin(): AuroraSkinDefinition {
     )
     // add an overlay painter to paint a drop shadow along the top
     // edge of toolbars
-    painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(100), DecorationAreaType.TOOLBAR)
+    painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(100), DecorationAreaType.Toolbar)
     // add an overlay painter to paint separator lines along the bottom
     // edges of menu bars
     painters.addOverlayPainter(
         BottomLineOverlayPainter(colorSchemeQuery = { it.midColor }),
-        DecorationAreaType.HEADER
+        DecorationAreaType.Header
     )
 
     return AuroraSkinDefinition(

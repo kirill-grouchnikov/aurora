@@ -47,18 +47,18 @@ private fun magellanSkinColors(): AuroraSkinColors {
         blueControlsActive, blueControlsEnabled, blueControlsEnabled
     )
     defaultColorSchemeBundle.registerAlpha(
-        0.5f, ComponentState.DISABLED_SELECTED,
-        ComponentState.DISABLED_UNSELECTED
+        0.5f, ComponentState.DisabledSelected,
+        ComponentState.DisabledUnselected
     )
     defaultColorSchemeBundle.registerColorScheme(
         blueControlsEnabled,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledUnselected
     )
     defaultColorSchemeBundle.registerColorScheme(
         blueControlsActive,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_SELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected
     )
 
     // color schemes for the active states
@@ -66,27 +66,27 @@ private fun magellanSkinColors(): AuroraSkinColors {
     val blueControlsEnabledBorder = schemes["Magellan Blue Controls Enabled Border"]
     defaultColorSchemeBundle.registerColorScheme(
         blueControlsActiveBorder,
-        ColorSchemeAssociationKind.BORDER, *ComponentState.activeStates
+        ColorSchemeAssociationKind.Border, *ComponentState.activeStates
     )
     defaultColorSchemeBundle.registerColorScheme(
         blueControlsActiveBorder,
-        ColorSchemeAssociationKind.BORDER,
-        ComponentState.DISABLED_SELECTED
+        ColorSchemeAssociationKind.Border,
+        ComponentState.DisabledSelected
     )
     defaultColorSchemeBundle.registerColorScheme(
         blueControlsEnabledBorder,
-        ColorSchemeAssociationKind.BORDER, ComponentState.ENABLED,
-        ComponentState.DISABLED_UNSELECTED
+        ColorSchemeAssociationKind.Border, ComponentState.Enabled,
+        ComponentState.DisabledUnselected
     )
     defaultColorSchemeBundle.registerColorScheme(
         blueControlsActiveBorder,
-        ColorSchemeAssociationKind.MARK,
-        ComponentState.SELECTED
+        ColorSchemeAssociationKind.Mark,
+        ComponentState.Selected
     )
-    defaultColorSchemeBundle.registerAlpha(0.5f, ComponentState.DISABLED_SELECTED)
+    defaultColorSchemeBundle.registerAlpha(0.5f, ComponentState.DisabledSelected)
     defaultColorSchemeBundle.registerColorScheme(
         blueControlsActiveBorder,
-        ColorSchemeAssociationKind.MARK, ComponentState.DISABLED_SELECTED
+        ColorSchemeAssociationKind.Mark, ComponentState.DisabledSelected
     )
 
     // color schemes for the pressed states
@@ -94,15 +94,15 @@ private fun magellanSkinColors(): AuroraSkinColors {
     val blueControlsPressedBorder = schemes["Magellan Blue Controls Pressed Border"]
     defaultColorSchemeBundle.registerColorScheme(
         blueControlsPressed,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.PRESSED_SELECTED,
-        ComponentState.PRESSED_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.PressedSelected,
+        ComponentState.PressedUnselected
     )
     defaultColorSchemeBundle.registerColorScheme(
         blueControlsPressedBorder,
-        ColorSchemeAssociationKind.BORDER,
-        ComponentState.PRESSED_SELECTED,
-        ComponentState.PRESSED_UNSELECTED
+        ColorSchemeAssociationKind.Border,
+        ComponentState.PressedSelected,
+        ComponentState.PressedUnselected
     )
 
     // color schemes for the rollover / armed states
@@ -113,106 +113,106 @@ private fun magellanSkinColors(): AuroraSkinColors {
     val activeControlsBorder = schemes["Magellan Green Controls Border"]
     defaultColorSchemeBundle.registerColorScheme(
         greenControlsRollover,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.ROLLOVER_SELECTED,
-        ComponentState.ROLLOVER_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.RolloverSelected,
+        ComponentState.RolloverUnselected
     )
     defaultColorSchemeBundle.registerColorScheme(
         blueActiveControlsPressed,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.PRESSED_SELECTED,
-        ComponentState.PRESSED_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.PressedSelected,
+        ComponentState.PressedUnselected
     )
     defaultColorSchemeBundle.registerColorScheme(
         greenControlsMark,
-        ColorSchemeAssociationKind.MARK,
-        ComponentState.ROLLOVER_SELECTED,
-        ComponentState.ROLLOVER_UNSELECTED,
-        ComponentState.PRESSED_UNSELECTED,
-        ComponentState.PRESSED_SELECTED,
-        ComponentState.SELECTED
+        ColorSchemeAssociationKind.Mark,
+        ComponentState.RolloverSelected,
+        ComponentState.RolloverUnselected,
+        ComponentState.PressedUnselected,
+        ComponentState.PressedSelected,
+        ComponentState.Selected
     )
     defaultColorSchemeBundle.registerColorScheme(
         activeControlsBorder,
-        ColorSchemeAssociationKind.BORDER,
-        ComponentState.ROLLOVER_SELECTED,
-        ComponentState.ROLLOVER_UNSELECTED
+        ColorSchemeAssociationKind.Border,
+        ComponentState.RolloverSelected,
+        ComponentState.RolloverUnselected
     )
 
     // Also use active colors for selected checkboxes and radio buttons
     defaultColorSchemeBundle.registerColorScheme(
         greenControls,
-        ColorSchemeAssociationKind.MARK_BOX,
-        ComponentState.SELECTED
+        ColorSchemeAssociationKind.MarkBox,
+        ComponentState.Selected
     )
     defaultColorSchemeBundle.registerColorScheme(
         greenControlsRollover,
-        ColorSchemeAssociationKind.MARK_BOX,
-        ComponentState.ROLLOVER_SELECTED,
-        ComponentState.ROLLOVER_UNSELECTED
+        ColorSchemeAssociationKind.MarkBox,
+        ComponentState.RolloverSelected,
+        ComponentState.RolloverUnselected
     )
     defaultColorSchemeBundle.registerColorScheme(
         blueActiveControlsPressed,
-        ColorSchemeAssociationKind.MARK_BOX,
-        ComponentState.PRESSED_UNSELECTED,
-        ComponentState.PRESSED_SELECTED
+        ColorSchemeAssociationKind.MarkBox,
+        ComponentState.PressedUnselected,
+        ComponentState.PressedSelected
     )
 
     // color scheme for the uneditable text components
     val uneditable = ComponentState(
         "uneditable",
-        arrayOf(ComponentStateFacet.ENABLE), arrayOf(ComponentStateFacet.EDITABLE)
+        arrayOf(ComponentStateFacet.Enable), arrayOf(ComponentStateFacet.Editable)
     )
     val uneditableControls = schemes["Magellan Uneditable Controls"]
     defaultColorSchemeBundle.registerColorScheme(
         uneditableControls,
-        ColorSchemeAssociationKind.FILL, uneditable
+        ColorSchemeAssociationKind.Fill, uneditable
     )
 
     // color scheme for the selected state - preventing fallback to the
     // rollover selected state
     defaultColorSchemeBundle.registerColorScheme(
         blueControlsActive,
-        ColorSchemeAssociationKind.FILL, ComponentState.SELECTED
+        ColorSchemeAssociationKind.Fill, ComponentState.Selected
     )
     // But continue using green for selected highlight text
     defaultColorSchemeBundle.registerColorScheme(
         greenControls,
-        ColorSchemeAssociationKind.HIGHLIGHT_TEXT
+        ColorSchemeAssociationKind.HighlightText
     )
 
     // highlight alphas
-    defaultColorSchemeBundle.registerHighlightAlpha(0.75f, ComponentState.ROLLOVER_UNSELECTED)
-    defaultColorSchemeBundle.registerHighlightAlpha(0.85f, ComponentState.SELECTED)
-    defaultColorSchemeBundle.registerHighlightAlpha(0.95f, ComponentState.ROLLOVER_SELECTED)
+    defaultColorSchemeBundle.registerHighlightAlpha(0.75f, ComponentState.RolloverUnselected)
+    defaultColorSchemeBundle.registerHighlightAlpha(0.85f, ComponentState.Selected)
+    defaultColorSchemeBundle.registerHighlightAlpha(0.95f, ComponentState.RolloverSelected)
     defaultColorSchemeBundle.registerHighlightColorScheme(
-        greenControls, ComponentState.ROLLOVER_UNSELECTED,
-        ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED
+        greenControls, ComponentState.RolloverUnselected,
+        ComponentState.Selected, ComponentState.RolloverSelected
     )
 
     defaultColorSchemeBundle.registerColorScheme(
         blueControlsActive.tint(0.2f),
-        ColorSchemeAssociationKind.TAB,
-        ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED
+        ColorSchemeAssociationKind.Tab,
+        ComponentState.Selected, ComponentState.RolloverSelected
     )
 
     val lightBlueBackground = schemes["Magellan Light Blue Background"]
 
     result.registerDecorationAreaSchemeBundle(
         defaultColorSchemeBundle,
-        lightBlueBackground, DecorationAreaType.NONE
+        lightBlueBackground, DecorationAreaType.None
     )
 
     val mediumBlueBackground = schemes["Magellan Medium Blue Background"]
     val darkBlueBackground = schemes["Magellan Dark Blue Background"]
     result.registerAsDecorationArea(
         mediumBlueBackground,
-        DecorationAreaType.CONTROL_PANE, DecorationAreaType.TOOLBAR
+        DecorationAreaType.ControlPane, DecorationAreaType.Toolbar
     )
     result.registerAsDecorationArea(
         darkBlueBackground,
-        DecorationAreaType.TITLE_PANE,
-        DecorationAreaType.HEADER
+        DecorationAreaType.TitlePane,
+        DecorationAreaType.Header
     )
 
     val lightBlueControlsActive = schemes["Magellan Light Blue Controls Active"]
@@ -223,40 +223,40 @@ private fun magellanSkinColors(): AuroraSkinColors {
         lightBlueControlsEnabled
     )
     footerColorSchemeBundle.registerAlpha(
-        0.5f, ComponentState.DISABLED_SELECTED,
-        ComponentState.DISABLED_UNSELECTED
+        0.5f, ComponentState.DisabledSelected,
+        ComponentState.DisabledUnselected
     )
     footerColorSchemeBundle.registerColorScheme(
         lightBlueControlsEnabled,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledUnselected
     )
     footerColorSchemeBundle.registerColorScheme(
         lightBlueControlsActive,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_SELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected
     )
     footerColorSchemeBundle.registerColorScheme(
         lightBlueBordersEnabled,
-        ColorSchemeAssociationKind.BORDER, ComponentState.ENABLED
+        ColorSchemeAssociationKind.Border, ComponentState.Enabled
     )
 
     val lightBlueSeparator = schemes["Magellan Light Blue Separator"]
     footerColorSchemeBundle.registerColorScheme(
         lightBlueSeparator,
-        ColorSchemeAssociationKind.SEPARATOR
+        ColorSchemeAssociationKind.Separator
     )
 
     // And use light-on-blue for text highlights in the footer area
     footerColorSchemeBundle.registerColorScheme(
         blueControlsEnabled,
-        ColorSchemeAssociationKind.HIGHLIGHT_TEXT
+        ColorSchemeAssociationKind.HighlightText
     )
 
     val ultraLightBlueBackground = schemes["Magellan Ultralight Blue Background"]
     result.registerDecorationAreaSchemeBundle(
         footerColorSchemeBundle,
-        ultraLightBlueBackground, DecorationAreaType.FOOTER
+        ultraLightBlueBackground, DecorationAreaType.Footer
     )
 
     return result
@@ -291,14 +291,14 @@ fun magellanSkin(): AuroraSkinDefinition {
     // edges of toolbars
     painters.addOverlayPainter(
         BottomShadowOverlayPainter.getInstance(100),
-        DecorationAreaType.TOOLBAR
+        DecorationAreaType.Toolbar
     )
 
     // add overlay painter to paint a dark line along the bottom
     // edge of toolbars
     painters.addOverlayPainter(
         BottomLineOverlayPainter(colorSchemeQuery = { it.ultraDarkColor }),
-        DecorationAreaType.TOOLBAR
+        DecorationAreaType.Toolbar
     )
 
     // add an overlay painter to paint a light line along the top
@@ -309,12 +309,12 @@ fun magellanSkin(): AuroraSkinDefinition {
                 { it.foregroundColor },
                 ColorTransforms.alpha(0.15625f)
             )
-        ), DecorationAreaType.TOOLBAR
+        ), DecorationAreaType.Toolbar
     )
 
     // add an overlay painter to paint a bezel line along the top
     // edge of footer
-    painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(100), DecorationAreaType.FOOTER)
+    painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(100), DecorationAreaType.Footer)
 
     return AuroraSkinDefinition(
         displayName = "Magellan",

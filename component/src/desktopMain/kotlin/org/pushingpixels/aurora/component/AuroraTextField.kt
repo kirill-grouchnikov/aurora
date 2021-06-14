@@ -223,7 +223,7 @@ internal fun AuroraTextField(
         modelStateInfo,
         currentState.value,
         decorationAreaType,
-        ColorSchemeAssociationKind.BORDER
+        ColorSchemeAssociationKind.Border
     )
     // And retrieve the border colors
     val borderUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -242,7 +242,7 @@ internal fun AuroraTextField(
         currState = currentState.value,
         skinColors = AuroraSkin.colors,
         decorationAreaType = decorationAreaType,
-        colorSchemeAssociationKind = ColorSchemeAssociationKind.FILL,
+        colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
         isTextInFilledArea = false
     )
     val textStyle = LocalTextStyle.current.merge(TextStyle(color = textColor))
@@ -258,7 +258,7 @@ internal fun AuroraTextField(
             val backgroundFillColor = if (contentModel.readOnly)
                 skinColors.getColorScheme(
                     decorationAreaType = decorationAreaType,
-                    associationKind = ColorSchemeAssociationKind.FILL,
+                    associationKind = ColorSchemeAssociationKind.Fill,
                     componentState = currentState.value
                 ).backgroundFillColor
             else getTextFillBackground(
@@ -316,7 +316,7 @@ internal fun AuroraTextField(
                 // Get the base border color
                 val baseBorderScheme = skinColors.getColorScheme(
                     decorationAreaType = decorationAreaType,
-                    associationKind = ColorSchemeAssociationKind.BORDER,
+                    associationKind = ColorSchemeAssociationKind.Border,
                     componentState = currentState.value
                 )
                 var borderColor = borderPainter.getRepresentativeColor(baseBorderScheme)
@@ -340,7 +340,7 @@ internal fun AuroraTextField(
                         val activeBorderScheme =
                             skinColors.getColorScheme(
                                 decorationAreaType = decorationAreaType,
-                                associationKind = ColorSchemeAssociationKind.BORDER,
+                                associationKind = ColorSchemeAssociationKind.Border,
                                 componentState = activeState
                             )
                         val activeBorderColor =

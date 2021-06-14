@@ -44,9 +44,9 @@ class AuroraColorSchemeBundle(
      * state, this field will contain a synthesized color scheme for the pressed
      * state.
      *
-     * @see ComponentState.PRESSED_SELECTED
+     * @see ComponentState.PressedSelected
      *
-     * @see ComponentState.PRESSED_UNSELECTED
+     * @see ComponentState.PressedUnselected
      */
     private var pressedScheme: AuroraColorScheme? = null
 
@@ -55,7 +55,7 @@ class AuroraColorSchemeBundle(
      * selected component state, this field will contain a synthesized color
      * scheme for the disabled selected state.
      *
-     * @see ComponentState.DISABLED_SELECTED
+     * @see ComponentState.DisabledSelected
      */
     private var disabledSelectedScheme: AuroraColorScheme? = null
 
@@ -64,7 +64,7 @@ class AuroraColorSchemeBundle(
      * component state, this field will contain a synthesized color scheme for
      * the selected state.
      *
-     * @see ComponentState.SELECTED
+     * @see ComponentState.Selected
      */
     private var selectedScheme: AuroraColorScheme? = null
 
@@ -73,7 +73,7 @@ class AuroraColorSchemeBundle(
      * selected component state, this field will contain a synthesized color
      * scheme for the rollover selected state.
      *
-     * @see ComponentState.ROLLOVER_SELECTED
+     * @see ComponentState.RolloverSelected
      */
     private var rolloverSelectedScheme: AuroraColorScheme? = null
 
@@ -85,11 +85,11 @@ class AuroraColorSchemeBundle(
      * for the border. In this case, this map will have:
      *
      *
-     *  * An entry with key [ColorSchemeAssociationKind.FILL]. This entry
-     * has a map entry with key [ComponentState.SELECTED] and value that
+     *  * An entry with key [ColorSchemeAssociationKind.Fill]. This entry
+     * has a map entry with key [ComponentState.Selected] and value that
      * points to the light orange scheme.
-     *  * An entry with key [ColorSchemeAssociationKind.BORDER]. This
-     * entry has a map entry with key [ComponentState.SELECTED] and value
+     *  * An entry with key [ColorSchemeAssociationKind.Border]. This
+     * entry has a map entry with key [ComponentState.Selected] and value
      * that points to the dark gray scheme.
      *
      */
@@ -105,43 +105,43 @@ class AuroraColorSchemeBundle(
      * state.
      */
     fun getColorScheme(componentState: ComponentState): AuroraColorScheme {
-        var registered: AuroraColorScheme? = colorSchemeMap[ColorSchemeAssociationKind.FILL]!![componentState]
+        var registered: AuroraColorScheme? = colorSchemeMap[ColorSchemeAssociationKind.Fill]!![componentState]
         if (registered != null) {
             return registered
         }
 
         // for now look for the best fit only on active states
-        val bestFitForFill: MutableMap<ComponentState, ComponentState?> = bestFillMap[ColorSchemeAssociationKind.FILL]!!
+        val bestFitForFill: MutableMap<ComponentState, ComponentState?> = bestFillMap[ColorSchemeAssociationKind.Fill]!!
         if (!bestFitForFill.containsKey(componentState)) {
-            val registeredStates: Collection<ComponentState> = colorSchemeMap[ColorSchemeAssociationKind.FILL]!!.keys
+            val registeredStates: Collection<ComponentState> = colorSchemeMap[ColorSchemeAssociationKind.Fill]!!.keys
             bestFitForFill[componentState] = componentState.bestFit(registeredStates)
         }
         val bestFit: ComponentState? = bestFitForFill[componentState]
         if (bestFit != null) {
-            registered = colorSchemeMap[ColorSchemeAssociationKind.FILL]!![bestFit]
+            registered = colorSchemeMap[ColorSchemeAssociationKind.Fill]!![bestFit]
             if (registered != null) {
                 return registered
             }
         }
-        if (componentState.isFacetActive(ComponentStateFacet.PRESS)) {
+        if (componentState.isFacetActive(ComponentStateFacet.Press)) {
             if (pressedScheme == null) {
                 pressedScheme = activeColorScheme.shade(0.2f).saturate(0.1f)
             }
             return pressedScheme!!
         }
-        if (componentState === ComponentState.DISABLED_SELECTED) {
+        if (componentState === ComponentState.DisabledSelected) {
             if (disabledSelectedScheme == null) {
                 disabledSelectedScheme = activeColorScheme.blendWith(disabledColorScheme, 0.25f)
             }
             return disabledSelectedScheme!!
         }
-        if (componentState === ComponentState.SELECTED) {
+        if (componentState === ComponentState.Selected) {
             if (selectedScheme == null) {
                 selectedScheme = activeColorScheme.saturate(0.2f)
             }
             return selectedScheme!!
         }
-        if (componentState === ComponentState.ROLLOVER_SELECTED) {
+        if (componentState === ComponentState.RolloverSelected) {
             if (rolloverSelectedScheme == null) {
                 rolloverSelectedScheme = activeColorScheme.tint(0.1f).saturate(0.1f)
             }
@@ -151,7 +151,7 @@ class AuroraColorSchemeBundle(
         if (hardFallback != null) {
             return this.getColorScheme(hardFallback)
         }
-        if (componentState === ComponentState.ENABLED) {
+        if (componentState === ComponentState.Enabled) {
             return enabledColorScheme
         }
         return if (componentState.isDisabled) {
@@ -195,10 +195,10 @@ class AuroraColorSchemeBundle(
      *
      *  * `scheme`=light orange scheme
      *  *
-     * `associationKind`=[ColorSchemeAssociationKind.FILL]
+     * `associationKind`=[ColorSchemeAssociationKind.Fill]
      *  *
-     * `states`=[ComponentState.ROLLOVER_SELECTED],
-     * [ComponentState.ROLLOVER_UNSELECTED]
+     * `states`=[ComponentState.RolloverSelected],
+     * [ComponentState.RolloverUnselected]
      *
      *
      * @param scheme          Color scheme.
@@ -209,7 +209,7 @@ class AuroraColorSchemeBundle(
      */
     fun registerColorScheme(
         scheme: AuroraColorScheme,
-        associationKind: ColorSchemeAssociationKind = ColorSchemeAssociationKind.FILL,
+        associationKind: ColorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
         vararg states: ComponentState
     ) {
         if (states.isEmpty()) {
@@ -242,7 +242,7 @@ class AuroraColorSchemeBundle(
         associationKind: ColorSchemeAssociationKind,
         componentState: ComponentState, allowFallback: Boolean
     ): AuroraColorScheme? {
-        if (associationKind === ColorSchemeAssociationKind.FILL) {
+        if (associationKind === ColorSchemeAssociationKind.Fill) {
             return this.getColorScheme(componentState)
         }
         var registered: AuroraColorScheme? = colorSchemeMap[associationKind]!![componentState]
@@ -299,20 +299,20 @@ class AuroraColorSchemeBundle(
     fun registerHighlightColorScheme(stateHighlightScheme: AuroraColorScheme, vararg states: ComponentState) {
         if (states.isEmpty()) {
             for (state in ComponentState.getAllStates()) {
-                if (colorSchemeMap[ColorSchemeAssociationKind.HIGHLIGHT]!!.containsKey(state)) {
+                if (colorSchemeMap[ColorSchemeAssociationKind.Highlight]!!.containsKey(state)) {
                     continue
                 }
                 if (state.isDisabled) {
                     continue
                 }
-                if (state === ComponentState.ENABLED) {
+                if (state === ComponentState.Enabled) {
                     continue
                 }
-                colorSchemeMap[ColorSchemeAssociationKind.HIGHLIGHT]!![state] = stateHighlightScheme
+                colorSchemeMap[ColorSchemeAssociationKind.Highlight]!![state] = stateHighlightScheme
             }
         } else {
             for (state in states) {
-                colorSchemeMap[ColorSchemeAssociationKind.HIGHLIGHT]!![state] = stateHighlightScheme
+                colorSchemeMap[ColorSchemeAssociationKind.Highlight]!![state] = stateHighlightScheme
             }
         }
     }
@@ -424,7 +424,7 @@ class AuroraColorSchemeBundle(
 class AuroraSkinColors {
     /**
      * Maps decoration area type to the color scheme bundles. Must contain an
-     * entry for [DecorationAreaType.NONE].
+     * entry for [DecorationAreaType.None].
      */
     private val colorSchemeBundleMap: MutableMap<DecorationAreaType, AuroraColorSchemeBundle>
 
@@ -451,7 +451,7 @@ class AuroraSkinColors {
         backgroundColorSchemeMap = HashMap()
 
         decoratedAreaSet = HashSet()
-        decoratedAreaSet.add(DecorationAreaType.TITLE_PANE)
+        decoratedAreaSet.add(DecorationAreaType.TitlePane)
 
         statesWithAlpha = HashSet()
     }
@@ -476,7 +476,7 @@ class AuroraSkinColors {
                 return colorSchemeBundleMap[decorationAreaType]!!.getColorScheme(componentState)
             }
         }
-        return colorSchemeBundleMap[DecorationAreaType.NONE]!!.getColorScheme(componentState)
+        return colorSchemeBundleMap[DecorationAreaType.None]!!.getColorScheme(componentState)
     }
 
     /**
@@ -501,13 +501,13 @@ class AuroraSkinColors {
                 }
             }
         }
-        val registered = colorSchemeBundleMap[DecorationAreaType.NONE]!!
+        val registered = colorSchemeBundleMap[DecorationAreaType.None]!!
             .getHighlightAlpha(componentState)
         if (registered >= 0.0) {
             return registered
         }
-        val isRollover = componentState.isFacetActive(ComponentStateFacet.ROLLOVER)
-        val isSelected = componentState.isFacetActive(ComponentStateFacet.SELECTION)
+        val isRollover = componentState.isFacetActive(ComponentStateFacet.Rollover)
+        val isSelected = componentState.isFacetActive(ComponentStateFacet.Selection)
         if (isRollover && isSelected) {
             return 0.9f
         }
@@ -544,7 +544,7 @@ class AuroraSkinColors {
                 }
             }
         }
-        val registered = colorSchemeBundleMap[DecorationAreaType.NONE]!!.getAlpha(componentState)
+        val registered = colorSchemeBundleMap[DecorationAreaType.None]!!.getAlpha(componentState)
         return if (registered >= 0.0) {
             registered
         } else fallback?.let { getAlpha(decorationAreaType, it) } ?: 1.0f
@@ -616,7 +616,7 @@ class AuroraSkinColors {
      * @param backgroundColorScheme     The color scheme to use for background of controls in
      * decoration areas.
      * @param noneTransformationOverlay Overlay to be applied to the [AuroraColorSchemeBundle]
-     * registered on the [DecorationAreaType.NONE], with the
+     * registered on the [DecorationAreaType.None], with the
      * resulting color scheme bundle to be used on #areaTypes.
      * @param areaTypes                 Enumerates the area types that are affected by the
      * parameters.
@@ -626,7 +626,7 @@ class AuroraSkinColors {
         noneTransformationOverlay: (AuroraColorSchemeBundle) -> Unit,
         vararg areaTypes: DecorationAreaType
     ) {
-        val defaultBundle = colorSchemeBundleMap[DecorationAreaType.NONE]
+        val defaultBundle = colorSchemeBundleMap[DecorationAreaType.None]
             ?: throw IllegalStateException("Cannot apply overlay without a registered NONE bundle")
 
         // Apply a dummy "transformation" - effectively makes a deep copy of the default bundle
@@ -671,7 +671,7 @@ class AuroraSkinColors {
     ): AuroraColorScheme {
         return if (colorSchemeBundleMap.containsKey(decorationAreaType)) {
             colorSchemeBundleMap[decorationAreaType]!!.getActiveColorScheme()
-        } else colorSchemeBundleMap[DecorationAreaType.NONE]!!.getActiveColorScheme()
+        } else colorSchemeBundleMap[DecorationAreaType.None]!!.getActiveColorScheme()
     }
 
     /**
@@ -689,7 +689,7 @@ class AuroraSkinColors {
     ): AuroraColorScheme {
         return if (colorSchemeBundleMap.containsKey(decorationAreaType)) {
             colorSchemeBundleMap[decorationAreaType]!!.getEnabledColorScheme()
-        } else colorSchemeBundleMap[DecorationAreaType.NONE]!!.getEnabledColorScheme()
+        } else colorSchemeBundleMap[DecorationAreaType.None]!!.getEnabledColorScheme()
     }
 
     /**
@@ -707,7 +707,7 @@ class AuroraSkinColors {
     ): AuroraColorScheme {
         return if (colorSchemeBundleMap.containsKey(decorationAreaType)) {
             colorSchemeBundleMap[decorationAreaType]!!.getDisabledColorScheme()
-        } else colorSchemeBundleMap[DecorationAreaType.NONE]!!.getDisabledColorScheme()
+        } else colorSchemeBundleMap[DecorationAreaType.None]!!.getDisabledColorScheme()
     }
 
     /**
@@ -731,7 +731,7 @@ class AuroraSkinColors {
                     .getColorScheme(associationKind, componentState, true)!!
             }
         }
-        return colorSchemeBundleMap[DecorationAreaType.NONE]!!
+        return colorSchemeBundleMap[DecorationAreaType.None]!!
             .getColorScheme(associationKind, componentState, true)!!
     }
 
@@ -757,7 +757,7 @@ class AuroraSkinColors {
                 return colorSchemeBundleMap[decorationAreaType]?.getColorScheme(associationKind, componentState, false)
             }
         }
-        return colorSchemeBundleMap[DecorationAreaType.NONE]?.getColorScheme(associationKind, componentState, false)
+        return colorSchemeBundleMap[DecorationAreaType.None]?.getColorScheme(associationKind, componentState, false)
     }
 
     /**
@@ -783,7 +783,7 @@ class AuroraSkinColors {
             }
         }
         // 3 - return the background scheme for the default area type
-        return backgroundColorSchemeMap[DecorationAreaType.NONE]!!
+        return backgroundColorSchemeMap[DecorationAreaType.None]!!
     }
 }
 

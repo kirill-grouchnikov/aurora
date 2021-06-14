@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.*
 import org.pushingpixels.aurora.common.byAlpha
-import org.pushingpixels.aurora.common.hexadecimal
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.lighter
 import kotlin.math.max
@@ -345,7 +344,7 @@ internal fun getTextColor(
     // Special case for when text is not drawn in the filled area
     if (!isTextInFilledArea) {
         tweakedCurrState =
-            if (currState.isDisabled) ComponentState.DISABLED_UNSELECTED else ComponentState.ENABLED
+            if (currState.isDisabled) ComponentState.DisabledUnselected else ComponentState.Enabled
         activeStates = null
     }
 
@@ -387,7 +386,7 @@ internal fun getTextColor(
         // Blend with the background fill
         val backgroundColorScheme = skinColors.getColorScheme(
             decorationAreaType,
-            if (tweakedCurrState.isDisabled) ComponentState.DISABLED_UNSELECTED else ComponentState.ENABLED
+            if (tweakedCurrState.isDisabled) ComponentState.DisabledUnselected else ComponentState.Enabled
         )
         val bgFillColor = backgroundColorScheme.backgroundFillColor
         foreground = foreground.interpolateTowards(bgFillColor, baseAlpha)
@@ -403,11 +402,11 @@ internal fun getMenuTextColor(
 ): Color {
     val activeStates = modelStateInfo.stateContributionMap
 
-    var currAssocKind = ColorSchemeAssociationKind.FILL
+    var currAssocKind = ColorSchemeAssociationKind.Fill
     // use HIGHLIGHT on active and non-rollover menu items
-    if (!currState.isDisabled && (currState !== ComponentState.ENABLED)
-        && !currState.isFacetActive(ComponentStateFacet.ROLLOVER)
-    ) currAssocKind = ColorSchemeAssociationKind.HIGHLIGHT
+    if (!currState.isDisabled && (currState !== ComponentState.Enabled)
+        && !currState.isFacetActive(ComponentStateFacet.Rollover)
+    ) currAssocKind = ColorSchemeAssociationKind.Highlight
 
     val colorScheme = skinColors.getColorScheme(
         decorationAreaType = decorationAreaType,
@@ -426,11 +425,11 @@ internal fun getMenuTextColor(
         var aggrBlue = 0f
         for ((activeState, value) in activeStates) {
             val contribution = value.contribution
-            var assocKind: ColorSchemeAssociationKind = ColorSchemeAssociationKind.FILL
+            var assocKind: ColorSchemeAssociationKind = ColorSchemeAssociationKind.Fill
             // use HIGHLIGHT on active and non-rollover menu items
-            if (!activeState.isDisabled && (activeState !== ComponentState.ENABLED)
-                && !activeState.isFacetActive(ComponentStateFacet.ROLLOVER)
-            ) assocKind = ColorSchemeAssociationKind.HIGHLIGHT
+            if (!activeState.isDisabled && (activeState !== ComponentState.Enabled)
+                && !activeState.isFacetActive(ComponentStateFacet.Rollover)
+            ) assocKind = ColorSchemeAssociationKind.Highlight
             val activeColorScheme = skinColors.getColorScheme(
                 decorationAreaType = decorationAreaType,
                 associationKind = assocKind,
@@ -453,7 +452,7 @@ internal fun getMenuTextColor(
         // Blend with the background fill
         val backgroundColorScheme = skinColors.getColorScheme(
             decorationAreaType,
-            if (currState.isDisabled) ComponentState.DISABLED_UNSELECTED else ComponentState.ENABLED
+            if (currState.isDisabled) ComponentState.DisabledUnselected else ComponentState.Enabled
         )
         val bgFillColor = backgroundColorScheme.backgroundFillColor
         foreground = foreground.interpolateTowards(bgFillColor, baseAlpha)
@@ -470,9 +469,9 @@ internal fun getTextSelectionBackground(
     val activeStates = modelStateInfo.stateContributionMap
 
     var tweakedCurrState = currState
-    if (currState == ComponentState.ENABLED) {
+    if (currState == ComponentState.Enabled) {
         // Treat ENABLED state as SELECTED (since we are talking about selections)
-        tweakedCurrState = ComponentState.SELECTED
+        tweakedCurrState = ComponentState.Selected
     }
 
     var result =
@@ -485,9 +484,9 @@ internal fun getTextSelectionBackground(
             if (activeState === tweakedCurrState) {
                 continue
             }
-            if (activeState === ComponentState.ENABLED) {
+            if (activeState === ComponentState.Enabled) {
                 // Treat ENABLED state as SELECTED (since we are talking about selections)
-                activeState = ComponentState.SELECTED
+                activeState = ComponentState.Selected
             }
             val contribution: Float = activeEntry.value.contribution
             if (contribution == 0.0f) {
@@ -512,10 +511,10 @@ internal fun getTextFillBackground(
     decorationAreaType: DecorationAreaType
 ): Color {
     val stateForQuery =
-        if (currState.isDisabled) ComponentState.DISABLED_UNSELECTED else ComponentState.ENABLED
+        if (currState.isDisabled) ComponentState.DisabledUnselected else ComponentState.Enabled
     val fillColorScheme = skinColors.getColorScheme(
         decorationAreaType = decorationAreaType,
-        associationKind = ColorSchemeAssociationKind.FILL,
+        associationKind = ColorSchemeAssociationKind.Fill,
         componentState = stateForQuery
     )
     var textBackgroundFillColor = fillColorScheme.textBackgroundFillColor
@@ -523,8 +522,8 @@ internal fun getTextFillBackground(
     val lightnessFactor = if (fillColorScheme.isDark) 0.1f else 0.4f
     var lighterFill = textBackgroundFillColor.lighter(lightnessFactor)
     lighterFill = lighterFill.interpolateTowards(textBackgroundFillColor, 0.6f)
-    val selectionStrength = modelStateInfo.strength(ComponentStateFacet.SELECTION)
-    val rolloverStrength = modelStateInfo.strength(ComponentStateFacet.ROLLOVER)
+    val selectionStrength = modelStateInfo.strength(ComponentStateFacet.Selection)
+    val rolloverStrength = modelStateInfo.strength(ComponentStateFacet.Rollover)
     val activeStrength = max(selectionStrength, rolloverStrength) / 4.0f
     textBackgroundFillColor = lighterFill.interpolateTowards(
         textBackgroundFillColor, activeStrength

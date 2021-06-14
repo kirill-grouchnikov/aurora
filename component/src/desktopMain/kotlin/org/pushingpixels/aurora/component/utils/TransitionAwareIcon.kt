@@ -44,7 +44,7 @@ class TransitionAwareIcon(
         //ModelStateInfoSnapshot(ComponentState.ENABLED, emptyMap(), 1.0f),
         skinColors.getColorScheme(
             decorationAreaType,
-            ColorSchemeAssociationKind.MARK, ComponentState.ENABLED
+            ColorSchemeAssociationKind.Mark, ComponentState.Enabled
         )
     )
 
@@ -63,12 +63,12 @@ class TransitionAwareIcon(
             val buttonNeverPainted =
                 (buttonBackgroundAppearanceStrategy == BackgroundAppearanceStrategy.Never)
             if (buttonNeverPainted) {
-                if (currState.isFacetActive(ComponentStateFacet.ENABLE)) currState =
-                    ComponentState.ENABLED
+                if (currState.isFacetActive(ComponentStateFacet.Enable)) currState =
+                    ComponentState.Enabled
             }
             val baseAssociationKind =
                 colorSchemeAssociationKindDelegate?.invoke(currState)
-                    ?: ColorSchemeAssociationKind.MARK
+                    ?: ColorSchemeAssociationKind.Mark
             val baseScheme =
                 skinColors.getColorScheme(decorationAreaType, baseAssociationKind, currState)
             val baseAlpha: Float = skinColors.getAlpha(decorationAreaType, currState)
@@ -117,7 +117,7 @@ class TransitionAwareIcon(
                 if (stateContribution > 0.0f) {
                     val associationKind =
                         colorSchemeAssociationKindDelegate?.invoke(activeState)
-                            ?: ColorSchemeAssociationKind.MARK
+                            ?: ColorSchemeAssociationKind.Mark
                     val scheme =
                         skinColors.getColorScheme(decorationAreaType, associationKind, activeState)
                     val alpha = skinColors.getAlpha(decorationAreaType, activeState)

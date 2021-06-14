@@ -46,15 +46,15 @@ private fun marinerSkinColors(): AuroraSkinColors {
         activeScheme, enabledScheme, disabledScheme
     )
 
-    defaultSchemeBundle.registerAlpha(0.8f, ComponentState.DISABLED_SELECTED)
-    defaultSchemeBundle.registerAlpha(0.8f, ComponentState.DISABLED_UNSELECTED)
+    defaultSchemeBundle.registerAlpha(0.8f, ComponentState.DisabledSelected)
+    defaultSchemeBundle.registerAlpha(0.8f, ComponentState.DisabledUnselected)
     defaultSchemeBundle.registerColorScheme(
-        disabledSelectedScheme, ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_SELECTED
+        disabledSelectedScheme, ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected
     )
     defaultSchemeBundle.registerColorScheme(
-        disabledScheme, ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_UNSELECTED
+        disabledScheme, ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledUnselected
     )
 
     // borders
@@ -63,41 +63,41 @@ private fun marinerSkinColors(): AuroraSkinColors {
     val disabledSelectedBorderScheme = schemes["Mariner Disabled Selected Border"]
     defaultSchemeBundle.registerColorScheme(
         activeBorderScheme,
-        ColorSchemeAssociationKind.BORDER, *ComponentState.activeStates
+        ColorSchemeAssociationKind.Border, *ComponentState.activeStates
     )
     defaultSchemeBundle.registerColorScheme(
         disabledSelectedBorderScheme,
-        ColorSchemeAssociationKind.BORDER, ComponentState.DISABLED_SELECTED
+        ColorSchemeAssociationKind.Border, ComponentState.DisabledSelected
     )
     defaultSchemeBundle.registerColorScheme(
         enabledBorderScheme,
-        ColorSchemeAssociationKind.BORDER, ComponentState.ENABLED
+        ColorSchemeAssociationKind.Border, ComponentState.Enabled
     )
 
     // marks
     val activeMarkScheme = schemes["Mariner Active Mark"]
     val enabledMarkScheme = schemes["Mariner Enabled Mark"]
     defaultSchemeBundle.registerColorScheme(
-        activeMarkScheme, ColorSchemeAssociationKind.MARK,
+        activeMarkScheme, ColorSchemeAssociationKind.Mark,
         *ComponentState.activeStates
     )
     defaultSchemeBundle.registerColorScheme(
-        enabledMarkScheme, ColorSchemeAssociationKind.MARK,
-        ComponentState.ENABLED
+        enabledMarkScheme, ColorSchemeAssociationKind.Mark,
+        ComponentState.Enabled
     )
 
     val uneditableState =
         ComponentState(
-            "uneditable", arrayOf(ComponentStateFacet.ENABLE),
-            arrayOf(ComponentStateFacet.EDITABLE)
+            "uneditable", arrayOf(ComponentStateFacet.Enable),
+            arrayOf(ComponentStateFacet.Editable)
         )
     val uneditableControls = schemes["Mariner Uneditable"]
     defaultSchemeBundle.registerColorScheme(
-        uneditableControls, ColorSchemeAssociationKind.FILL,
+        uneditableControls, ColorSchemeAssociationKind.Fill,
         uneditableState
     )
 
-    result.registerDecorationAreaSchemeBundle(defaultSchemeBundle, DecorationAreaType.NONE)
+    result.registerDecorationAreaSchemeBundle(defaultSchemeBundle, DecorationAreaType.None)
 
     // header color scheme bundle
     val headerColorScheme = schemes["Mariner Header"]
@@ -105,32 +105,32 @@ private fun marinerSkinColors(): AuroraSkinColors {
     val headerSchemeBundle = AuroraColorSchemeBundle(
         headerColorScheme, headerColorScheme, headerColorScheme
     )
-    headerSchemeBundle.registerAlpha(0.4f, ComponentState.DISABLED_SELECTED, ComponentState.DISABLED_UNSELECTED)
+    headerSchemeBundle.registerAlpha(0.4f, ComponentState.DisabledSelected, ComponentState.DisabledUnselected)
     headerSchemeBundle.registerColorScheme(
-        headerColorScheme, ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_SELECTED, ComponentState.DISABLED_UNSELECTED
+        headerColorScheme, ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected, ComponentState.DisabledUnselected
     )
     headerSchemeBundle.registerColorScheme(
-        activeScheme, ColorSchemeAssociationKind.FILL,
-        ComponentState.ROLLOVER_UNSELECTED, ComponentState.ROLLOVER_SELECTED
+        activeScheme, ColorSchemeAssociationKind.Fill,
+        ComponentState.RolloverUnselected, ComponentState.RolloverSelected
     )
-    headerSchemeBundle.registerColorScheme(headerColorScheme, ColorSchemeAssociationKind.MARK)
+    headerSchemeBundle.registerColorScheme(headerColorScheme, ColorSchemeAssociationKind.Mark)
     headerSchemeBundle.registerColorScheme(
         headerBorderColorScheme,
-        ColorSchemeAssociationKind.BORDER
+        ColorSchemeAssociationKind.Border
     )
     headerSchemeBundle.registerColorScheme(
-        enabledMarkScheme.shade(0.8f), ColorSchemeAssociationKind.MARK,
-        ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED,
-        ComponentState.PRESSED_SELECTED
+        enabledMarkScheme.shade(0.8f), ColorSchemeAssociationKind.Mark,
+        ComponentState.Selected, ComponentState.RolloverSelected,
+        ComponentState.PressedSelected
     )
     headerSchemeBundle.registerColorScheme(
-        enabledMarkScheme.shade(0.7f), ColorSchemeAssociationKind.MARK,
-        ComponentState.ROLLOVER_UNSELECTED
+        enabledMarkScheme.shade(0.7f), ColorSchemeAssociationKind.Mark,
+        ComponentState.RolloverUnselected
     )
     result.registerDecorationAreaSchemeBundle(
         headerSchemeBundle, headerColorScheme,
-        DecorationAreaType.TITLE_PANE, DecorationAreaType.HEADER
+        DecorationAreaType.TitlePane, DecorationAreaType.Header
     )
 
     // footer color scheme bundle
@@ -142,56 +142,56 @@ private fun marinerSkinColors(): AuroraSkinColors {
         enabledFooterScheme, disabledFooterScheme
     )
 
-    footerSchemeBundle.registerAlpha(0.5f, ComponentState.DISABLED_SELECTED)
-    footerSchemeBundle.registerAlpha(0.8f, ComponentState.DISABLED_UNSELECTED)
+    footerSchemeBundle.registerAlpha(0.5f, ComponentState.DisabledSelected)
+    footerSchemeBundle.registerAlpha(0.8f, ComponentState.DisabledUnselected)
     footerSchemeBundle.registerColorScheme(
         activeScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_SELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected
     )
     footerSchemeBundle.registerColorScheme(
         disabledFooterScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledUnselected
     )
 
     // borders
     val footerEnabledBorderScheme = schemes["Mariner Footer Enabled Border"]
     footerSchemeBundle.registerColorScheme(
         activeBorderScheme,
-        ColorSchemeAssociationKind.BORDER, *ComponentState.activeStates
+        ColorSchemeAssociationKind.Border, *ComponentState.activeStates
     )
     footerSchemeBundle.registerColorScheme(
         activeBorderScheme,
-        ColorSchemeAssociationKind.BORDER, ComponentState.DISABLED_SELECTED
+        ColorSchemeAssociationKind.Border, ComponentState.DisabledSelected
     )
     footerSchemeBundle.registerColorScheme(
         footerEnabledBorderScheme,
-        ColorSchemeAssociationKind.BORDER, ComponentState.ENABLED
+        ColorSchemeAssociationKind.Border, ComponentState.Enabled
     )
 
     // marks
     val footerEnabledMarkScheme = schemes["Mariner Footer Enabled Mark"]
     footerSchemeBundle.registerColorScheme(
-        activeMarkScheme, ColorSchemeAssociationKind.MARK,
+        activeMarkScheme, ColorSchemeAssociationKind.Mark,
         *ComponentState.activeStates
     )
     footerSchemeBundle.registerColorScheme(
         footerEnabledMarkScheme,
-        ColorSchemeAssociationKind.MARK, ComponentState.ENABLED
+        ColorSchemeAssociationKind.Mark, ComponentState.Enabled
     )
 
     // separators
     val footerSeparatorScheme = schemes["Mariner Footer Separator"]
     footerSchemeBundle.registerColorScheme(
         footerSeparatorScheme,
-        ColorSchemeAssociationKind.SEPARATOR
+        ColorSchemeAssociationKind.Separator
     )
 
     val footerBackgroundColorScheme = schemes["Mariner Footer Background"]
     result.registerDecorationAreaSchemeBundle(
         footerSchemeBundle, footerBackgroundColorScheme,
-        DecorationAreaType.FOOTER, DecorationAreaType.TOOLBAR, DecorationAreaType.CONTROL_PANE
+        DecorationAreaType.Footer, DecorationAreaType.Toolbar, DecorationAreaType.ControlPane
     )
     return result
 }
@@ -220,7 +220,7 @@ fun marinerSkin(): AuroraSkinDefinition {
             colorSchemeQueryTop = { it.ultraDarkColor },
             colorSchemeQueryBottom = { it.lightColor }
         ),
-        DecorationAreaType.FOOTER
+        DecorationAreaType.Footer
     )
 
     // add two overlay painters to create a bezel line between
@@ -229,21 +229,21 @@ fun marinerSkin(): AuroraSkinDefinition {
         BottomLineOverlayPainter(
             composite({ it.ultraDarkColor }, ColorTransforms.brightness(0.5f))
         ),
-        DecorationAreaType.HEADER
+        DecorationAreaType.Header
     )
 
     // add overlay painter to paint drop shadows along the bottom
     // edges of toolbars
     painters.addOverlayPainter(
         BottomShadowOverlayPainter.getInstance(100),
-        DecorationAreaType.TOOLBAR
+        DecorationAreaType.Toolbar
     )
 
     // add overlay painter to paint a dark line along the bottom
     // edge of toolbars
     painters.addOverlayPainter(
         BottomLineOverlayPainter(colorSchemeQuery = { it.ultraDarkColor }),
-        DecorationAreaType.TOOLBAR
+        DecorationAreaType.Toolbar
     )
 
     return AuroraSkinDefinition(

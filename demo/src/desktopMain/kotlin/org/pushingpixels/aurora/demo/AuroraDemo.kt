@@ -888,17 +888,17 @@ fun DemoContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
     )
 
     Column(modifier = Modifier.fillMaxSize()) {
-        AuroraDecorationArea(decorationAreaType = DecorationAreaType.TOOLBAR) {
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.Toolbar) {
             DemoToolbar(alignmentCommands = alignmentCommands, styleCommands = styleCommands)
         }
-        AuroraDecorationArea(decorationAreaType = DecorationAreaType.NONE) {
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.None) {
             DemoArea(
                 styleCommands = styleCommands, auroraSkinDefinition = auroraSkinDefinition,
                 contentEnabled = contentEnabled
             )
         }
         Spacer(modifier = Modifier.weight(weight = 1.0f, fill = true))
-        AuroraDecorationArea(decorationAreaType = DecorationAreaType.FOOTER) {
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.Footer) {
             DemoFooter(alignmentCommands = alignmentCommands)
         }
     }

@@ -46,14 +46,14 @@ private fun cremeBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors 
     defaultSchemeBundle.registerHighlightColorScheme(accentBuilder.highlightsAccent!!)
     result.registerDecorationAreaSchemeBundle(
         defaultSchemeBundle,
-        DecorationAreaType.NONE
+        DecorationAreaType.None
     )
 
     result.registerAsDecorationArea(
         enabledScheme,
-        DecorationAreaType.TITLE_PANE,
-        DecorationAreaType.HEADER, DecorationAreaType.FOOTER,
-        DecorationAreaType.CONTROL_PANE, DecorationAreaType.TOOLBAR
+        DecorationAreaType.TitlePane,
+        DecorationAreaType.Header, DecorationAreaType.Footer,
+        DecorationAreaType.ControlPane, DecorationAreaType.Toolbar
     )
 
     return result
@@ -72,11 +72,11 @@ private fun cremeBasePainters(): AuroraPainters {
     )
 
     // Add overlay painters to paint drop shadows along the bottom edges of toolbars
-    painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(40), DecorationAreaType.TOOLBAR)
+    painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(40), DecorationAreaType.Toolbar)
 
     // add an overlay painter to paint a dark line along the bottom edge of toolbars
     painters.addOverlayPainter(BottomLineOverlayPainter(colorSchemeQuery = { it.midColor }),
-        DecorationAreaType.TOOLBAR)
+        DecorationAreaType.Toolbar)
 
     return painters
 }

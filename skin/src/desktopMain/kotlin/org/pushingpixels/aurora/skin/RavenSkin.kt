@@ -44,98 +44,98 @@ private fun ravenSkinColors(): AuroraSkinColors {
 
     // highlight fill scheme + custom alpha for rollover unselected state
     val highlightScheme = schemes["Graphite Highlight"]
-    defaultSchemeBundle.registerHighlightAlpha(0.6f, ComponentState.ROLLOVER_UNSELECTED)
-    defaultSchemeBundle.registerHighlightAlpha(0.8f, ComponentState.SELECTED)
-    defaultSchemeBundle.registerHighlightAlpha(1.0f, ComponentState.ROLLOVER_SELECTED)
+    defaultSchemeBundle.registerHighlightAlpha(0.6f, ComponentState.RolloverUnselected)
+    defaultSchemeBundle.registerHighlightAlpha(0.8f, ComponentState.Selected)
+    defaultSchemeBundle.registerHighlightAlpha(1.0f, ComponentState.RolloverSelected)
     defaultSchemeBundle.registerHighlightColorScheme(
-        highlightScheme, ComponentState.ROLLOVER_UNSELECTED,
-        ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED
+        highlightScheme, ComponentState.RolloverUnselected,
+        ComponentState.Selected, ComponentState.RolloverSelected
     )
 
     // highlight border scheme
     defaultSchemeBundle.registerColorScheme(
         EbonyColorScheme(),
-        ColorSchemeAssociationKind.HIGHLIGHT_BORDER, *ComponentState.activeStates
+        ColorSchemeAssociationKind.HighlightBorder, *ComponentState.activeStates
     )
 
     // text highlight scheme
     val textHighlightScheme = schemes["Graphite Text Highlight"]
     defaultSchemeBundle.registerColorScheme(
         textHighlightScheme,
-        ColorSchemeAssociationKind.HIGHLIGHT_TEXT,
-        ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED
+        ColorSchemeAssociationKind.HighlightText,
+        ComponentState.Selected, ComponentState.RolloverSelected
     )
 
     defaultSchemeBundle.registerColorScheme(
         highlightScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.ROLLOVER_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.RolloverUnselected
     )
 
     val highlightMarkScheme = schemes["Raven Highlight Mark"]
     defaultSchemeBundle.registerColorScheme(
         highlightMarkScheme,
-        ColorSchemeAssociationKind.HIGHLIGHT_MARK, *ComponentState.activeStates
+        ColorSchemeAssociationKind.HighlightMark, *ComponentState.activeStates
     )
 
-    defaultSchemeBundle.registerAlpha(0.5f, ComponentState.DISABLED_UNSELECTED, ComponentState.DISABLED_SELECTED)
+    defaultSchemeBundle.registerAlpha(0.5f, ComponentState.DisabledUnselected, ComponentState.DisabledSelected)
     defaultSchemeBundle.registerColorScheme(
         disabledScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledUnselected
     )
     defaultSchemeBundle.registerColorScheme(
         highlightScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_SELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected
     )
 
     val tabHighlightScheme = schemes["Graphite Tab Highlight"]
     defaultSchemeBundle.registerColorScheme(
         highlightScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.SELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.Selected
     )
     defaultSchemeBundle.registerColorScheme(
         tabHighlightScheme,
-        ColorSchemeAssociationKind.TAB, ComponentState.SELECTED
+        ColorSchemeAssociationKind.Tab, ComponentState.Selected
     )
     defaultSchemeBundle.registerColorScheme(
         activeScheme,
-        ColorSchemeAssociationKind.BORDER, ComponentState.SELECTED,
-        ComponentState.ROLLOVER_SELECTED,
-        ComponentState.ROLLOVER_UNSELECTED
+        ColorSchemeAssociationKind.Border, ComponentState.Selected,
+        ComponentState.RolloverSelected,
+        ComponentState.RolloverUnselected
     )
 
     val selectedMarkScheme = schemes["Raven Selected Mark"]
     defaultSchemeBundle.registerColorScheme(
         selectedMarkScheme,
-        ColorSchemeAssociationKind.MARK, ComponentState.SELECTED,
-        ComponentState.ROLLOVER_SELECTED,
-        ComponentState.DISABLED_SELECTED
+        ColorSchemeAssociationKind.Mark, ComponentState.Selected,
+        ComponentState.RolloverSelected,
+        ComponentState.DisabledSelected
     )
     defaultSchemeBundle.registerColorScheme(
         selectedMarkScheme,
-        ColorSchemeAssociationKind.MARK,
-        ComponentState.ROLLOVER_UNSELECTED
+        ColorSchemeAssociationKind.Mark,
+        ComponentState.RolloverUnselected
     )
 
     defaultSchemeBundle.registerColorScheme(
         activeScheme,
-        ColorSchemeAssociationKind.BORDER,
-        ComponentState.DISABLED_SELECTED
+        ColorSchemeAssociationKind.Border,
+        ComponentState.DisabledSelected
     )
 
     result.registerDecorationAreaSchemeBundle(
         defaultSchemeBundle,
-        schemes["Graphite Background"].shade(0.4f), DecorationAreaType.NONE
+        schemes["Graphite Background"].shade(0.4f), DecorationAreaType.None
     )
 
     result.registerAsDecorationArea(
         enabledScheme,
-        DecorationAreaType.TITLE_PANE,
-        DecorationAreaType.HEADER, DecorationAreaType.FOOTER,
-        DecorationAreaType.CONTROL_PANE, DecorationAreaType.TOOLBAR
+        DecorationAreaType.TitlePane,
+        DecorationAreaType.Header, DecorationAreaType.Footer,
+        DecorationAreaType.ControlPane, DecorationAreaType.Toolbar
     )
 
     return result

@@ -47,12 +47,12 @@ private fun saharaSkinColors(): AuroraSkinColors {
     defaultSchemeBundle.registerHighlightColorScheme(kitchenSinkSchemes["Sahara Highlight"])
     result.registerDecorationAreaSchemeBundle(
         defaultSchemeBundle,
-        DecorationAreaType.NONE
+        DecorationAreaType.None
     )
 
     result.registerAsDecorationArea(
         activeScheme,
-        DecorationAreaType.TITLE_PANE, DecorationAreaType.HEADER
+        DecorationAreaType.TitlePane, DecorationAreaType.Header
     )
 
     return result
@@ -66,12 +66,12 @@ fun saharaSkin(): AuroraSkinDefinition {
     )
     // add an overlay painter to paint a drop shadow along the top
     // edge of toolbars
-    painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(100), DecorationAreaType.TOOLBAR)
+    painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(100), DecorationAreaType.Toolbar)
     // add an overlay painter to paint separator lines along the bottom
     // edges of menu bars
     painters.addOverlayPainter(
         BottomLineOverlayPainter(colorSchemeQuery = { it.midColor }),
-        DecorationAreaType.HEADER
+        DecorationAreaType.Header
     )
 
     return AuroraSkinDefinition(

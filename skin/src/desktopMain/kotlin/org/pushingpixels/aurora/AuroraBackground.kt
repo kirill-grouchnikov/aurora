@@ -74,7 +74,7 @@ private class AuroraBackground(
     }
 
     override fun ContentDrawScope.draw() {
-        if (decorationAreaType != DecorationAreaType.NONE
+        if (decorationAreaType != DecorationAreaType.None
             && colors.isRegisteredAsDecorationArea(decorationAreaType)
         ) {
             // If the current skin has a decoration painter that provides custom visuals
@@ -93,8 +93,8 @@ private class AuroraBackground(
             drawRect(
                 color = colors.getColorScheme(
                     decorationAreaType = decorationAreaType,
-                    associationKind = ColorSchemeAssociationKind.FILL,
-                    componentState = ComponentState.ENABLED
+                    associationKind = ColorSchemeAssociationKind.Fill,
+                    componentState = ComponentState.Enabled
                 ).backgroundFillColor
             )
         }

@@ -105,7 +105,7 @@ fun IconDemoArea() {
 @Composable
 fun IconDemoContent() {
     Column(modifier = Modifier.fillMaxSize().padding(vertical = 12.dp)) {
-        AuroraDecorationArea(decorationAreaType = DecorationAreaType.HEADER) {
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
             IconDemoArea()
         }
     }

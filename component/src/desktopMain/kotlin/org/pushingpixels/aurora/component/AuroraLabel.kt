@@ -41,7 +41,7 @@ internal fun AuroraLabel(
     presentationModel: LabelPresentationModel = LabelPresentationModel()
 ) {
     val state =
-        if (contentModel.enabled) ComponentState.ENABLED else ComponentState.DISABLED_UNSELECTED
+        if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
 
     Row(
         modifier = modifier.padding(presentationModel.contentPadding),

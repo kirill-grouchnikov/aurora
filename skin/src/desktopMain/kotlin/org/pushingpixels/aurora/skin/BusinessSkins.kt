@@ -44,31 +44,31 @@ private fun businessBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColo
 
     defaultSchemeBundle.registerAlpha(
         0.5f,
-        ComponentState.DISABLED_UNSELECTED, ComponentState.DISABLED_SELECTED
+        ComponentState.DisabledUnselected, ComponentState.DisabledSelected
     )
     defaultSchemeBundle.registerColorScheme(
         enabledScheme,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_UNSELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledUnselected
     )
     defaultSchemeBundle.registerColorScheme(
         accentBuilder.activeControlsAccent!!,
-        ColorSchemeAssociationKind.FILL,
-        ComponentState.DISABLED_SELECTED, ComponentState.SELECTED
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected, ComponentState.Selected
     )
 
     defaultSchemeBundle.registerColorScheme(
         accentBuilder.activeControlsAccent!!,
-        ColorSchemeAssociationKind.TAB, ComponentState.SELECTED,
-        ComponentState.ROLLOVER_SELECTED
+        ColorSchemeAssociationKind.Tab, ComponentState.Selected,
+        ComponentState.RolloverSelected
     )
 
-    result.registerDecorationAreaSchemeBundle(defaultSchemeBundle, DecorationAreaType.NONE)
+    result.registerDecorationAreaSchemeBundle(defaultSchemeBundle, DecorationAreaType.None)
 
     result.registerAsDecorationArea(
         accentBuilder.windowChromeAccent!!,
-        DecorationAreaType.TITLE_PANE,
-        DecorationAreaType.HEADER, DecorationAreaType.FOOTER
+        DecorationAreaType.TitlePane,
+        DecorationAreaType.Header, DecorationAreaType.Footer
     )
 
     val kitchenSinkSchemes = getColorSchemes(
@@ -79,7 +79,7 @@ private fun businessBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColo
 
     result.registerAsDecorationArea(
         kitchenSinkSchemes["LightGray Control Pane Background"],
-        DecorationAreaType.CONTROL_PANE
+        DecorationAreaType.ControlPane
     )
 
     return result
@@ -93,13 +93,13 @@ private fun businessBasePainters(): AuroraPainters {
     )
 
     // add an overlay painter to paint a drop shadow along the top edge of toolbars
-    painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(80), DecorationAreaType.TOOLBAR)
+    painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(80), DecorationAreaType.Toolbar)
 
     // add an overlay painter to paint separator lines along the bottom
     // edges of title panes and menu bars
     painters.addOverlayPainter(
         BottomLineOverlayPainter(colorSchemeQuery = { it.midColor }),
-        DecorationAreaType.HEADER
+        DecorationAreaType.Header
     )
 
     return painters
@@ -147,24 +147,24 @@ fun businessBlackSteelSkin(): AuroraSkinDefinition {
             )
             headerSchemeBundle.registerAlpha(
                 0.5f,
-                ComponentState.DISABLED_UNSELECTED, ComponentState.DISABLED_SELECTED
+                ComponentState.DisabledUnselected, ComponentState.DisabledSelected
             )
             headerSchemeBundle.registerColorScheme(
                 enabledHeaderScheme,
-                ColorSchemeAssociationKind.FILL,
-                ComponentState.DISABLED_UNSELECTED, ComponentState.DISABLED_SELECTED
+                ColorSchemeAssociationKind.Fill,
+                ComponentState.DisabledUnselected, ComponentState.DisabledSelected
             )
-            headerSchemeBundle.registerHighlightAlpha(0.6f, ComponentState.ROLLOVER_UNSELECTED)
-            headerSchemeBundle.registerHighlightAlpha(0.8f, ComponentState.SELECTED)
-            headerSchemeBundle.registerHighlightAlpha(0.95f, ComponentState.ROLLOVER_SELECTED)
+            headerSchemeBundle.registerHighlightAlpha(0.6f, ComponentState.RolloverUnselected)
+            headerSchemeBundle.registerHighlightAlpha(0.8f, ComponentState.Selected)
+            headerSchemeBundle.registerHighlightAlpha(0.95f, ComponentState.RolloverSelected)
             headerSchemeBundle.registerHighlightColorScheme(
-                activeScheme, ComponentState.ROLLOVER_UNSELECTED,
-                ComponentState.SELECTED, ComponentState.ROLLOVER_SELECTED
+                activeScheme, ComponentState.RolloverUnselected,
+                ComponentState.Selected, ComponentState.RolloverSelected
             )
 
             it.registerDecorationAreaSchemeBundle(
                 headerSchemeBundle, activeHeaderScheme,
-                DecorationAreaType.TITLE_PANE, DecorationAreaType.HEADER
+                DecorationAreaType.TitlePane, DecorationAreaType.Header
             )
 
             // color scheme bundle for control pane areas
@@ -175,15 +175,15 @@ fun businessBlackSteelSkin(): AuroraSkinDefinition {
             val controlPaneSchemeBundle = AuroraColorSchemeBundle(
                 activeControlPaneScheme, enabledControlPaneScheme, disabledScheme
             )
-            controlPaneSchemeBundle.registerAlpha(0.5f, ComponentState.DISABLED_UNSELECTED)
+            controlPaneSchemeBundle.registerAlpha(0.5f, ComponentState.DisabledUnselected)
             controlPaneSchemeBundle.registerColorScheme(
                 disabledScheme,
-                ColorSchemeAssociationKind.FILL,
-                ComponentState.DISABLED_UNSELECTED
+                ColorSchemeAssociationKind.Fill,
+                ComponentState.DisabledUnselected
             )
             it.registerDecorationAreaSchemeBundle(
-                controlPaneSchemeBundle, DecorationAreaType.FOOTER,
-                DecorationAreaType.CONTROL_PANE
+                controlPaneSchemeBundle, DecorationAreaType.Footer,
+                DecorationAreaType.ControlPane
             )
         },
         painters = businessBasePainters(),
@@ -215,15 +215,15 @@ fun businessBlueSteelSkin(): AuroraSkinDefinition {
                 activeHeaderScheme, enabledHeaderScheme, enabledHeaderScheme
             )
             headerSchemeBundle.registerAlpha(0.5f,
-                ComponentState.DISABLED_UNSELECTED, ComponentState.DISABLED_SELECTED)
+                ComponentState.DisabledUnselected, ComponentState.DisabledSelected)
             headerSchemeBundle.registerColorScheme(
                 enabledHeaderScheme,
-                ColorSchemeAssociationKind.FILL,
-                ComponentState.DISABLED_UNSELECTED, ComponentState.DISABLED_SELECTED
+                ColorSchemeAssociationKind.Fill,
+                ComponentState.DisabledUnselected, ComponentState.DisabledSelected
             )
             it.registerDecorationAreaSchemeBundle(
                 headerSchemeBundle,
-                DecorationAreaType.TITLE_PANE, DecorationAreaType.HEADER
+                DecorationAreaType.TitlePane, DecorationAreaType.Header
             )
 
             val activeControlPaneScheme =
@@ -233,15 +233,15 @@ fun businessBlueSteelSkin(): AuroraSkinDefinition {
             val controlPaneSchemeBundle = AuroraColorSchemeBundle(
                 activeControlPaneScheme, enabledControlPaneScheme, disabledScheme
             )
-            controlPaneSchemeBundle.registerAlpha(0.7f, ComponentState.DISABLED_UNSELECTED)
+            controlPaneSchemeBundle.registerAlpha(0.7f, ComponentState.DisabledUnselected)
             controlPaneSchemeBundle.registerColorScheme(
                 enabledControlPaneScheme,
-                ColorSchemeAssociationKind.FILL,
-                ComponentState.DISABLED_UNSELECTED
+                ColorSchemeAssociationKind.Fill,
+                ComponentState.DisabledUnselected
             )
             it.registerDecorationAreaSchemeBundle(
-                controlPaneSchemeBundle, DecorationAreaType.FOOTER,
-                DecorationAreaType.CONTROL_PANE
+                controlPaneSchemeBundle, DecorationAreaType.Footer,
+                DecorationAreaType.ControlPane
             )
 
         },

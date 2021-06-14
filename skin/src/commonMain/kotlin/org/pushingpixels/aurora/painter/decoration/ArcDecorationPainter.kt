@@ -57,7 +57,7 @@ class ArcDecorationPainter : AuroraDecorationPainter {
         offsetFromRoot: Offset,
         colorScheme: AuroraColorScheme
     ) {
-        if (decorationAreaType === DecorationAreaType.TITLE_PANE) {
+        if (decorationAreaType === DecorationAreaType.TitlePane) {
             paintTitleBackground(drawScope, componentSize, outline, rootSize, offsetFromRoot, colorScheme)
         } else {
             paintExtraBackground(drawScope, componentSize, outline, rootSize, offsetFromRoot, colorScheme)

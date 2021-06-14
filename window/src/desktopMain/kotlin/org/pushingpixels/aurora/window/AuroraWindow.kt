@@ -81,7 +81,7 @@ private fun WindowTitlePane(
     CompositionLocalProvider(
         LocalButtonShaper provides ClassicButtonShaper(),
     ) {
-        AuroraDecorationArea(decorationAreaType = DecorationAreaType.TITLE_PANE) {
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.TitlePane) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -100,7 +100,7 @@ private fun WindowTitlePane(
                     modifier = Modifier.weight(1f)
                 ) {
                     val colorScheme =
-                        skinColors.getEnabledColorScheme(DecorationAreaType.TITLE_PANE)
+                        skinColors.getEnabledColorScheme(DecorationAreaType.TitlePane)
                     val titleTextStyle = TextStyle(
                         color = colorScheme.foregroundColor,
                         shadow = Shadow(
@@ -141,7 +141,7 @@ private fun WindowTitlePane(
                             TransitionAwareIcon.TransitionAwareIconFactory() {
                             override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
                                 return TransitionAwareIcon(
-                                    decorationAreaType = DecorationAreaType.TITLE_PANE,
+                                    decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = colors,
                                     buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
@@ -184,7 +184,7 @@ private fun WindowTitlePane(
                             override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
                                 return if (isMaximized.value) {
                                     TransitionAwareIcon(
-                                        decorationAreaType = DecorationAreaType.TITLE_PANE,
+                                        decorationAreaType = DecorationAreaType.TitlePane,
                                         skinColors = colors,
                                         buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                         modelStateInfoSnapshot = modelStateInfoSnapshot,
@@ -201,7 +201,7 @@ private fun WindowTitlePane(
                                     )
                                 } else {
                                     TransitionAwareIcon(
-                                        decorationAreaType = DecorationAreaType.TITLE_PANE,
+                                        decorationAreaType = DecorationAreaType.TitlePane,
                                         skinColors = colors,
                                         buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                         modelStateInfoSnapshot = modelStateInfoSnapshot,
@@ -236,7 +236,7 @@ private fun WindowTitlePane(
                             TransitionAwareIcon.TransitionAwareIconFactory() {
                             override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
                                 return TransitionAwareIcon(
-                                    decorationAreaType = DecorationAreaType.TITLE_PANE,
+                                    decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = colors,
                                     buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
@@ -279,7 +279,7 @@ private fun WindowInnerContent(
         }
         // Wrap the entire content in NONE decoration area. App code can set its
         // own decoration area types on specific parts.
-        AuroraDecorationArea(decorationAreaType = DecorationAreaType.NONE) {
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.None) {
             content()
         }
     }
@@ -385,9 +385,9 @@ private fun WindowContent(
 ) {
 
     val skinColors = AuroraSkin.colors
-    val backgroundColorScheme = skinColors.getBackgroundColorScheme(DecorationAreaType.TITLE_PANE)
+    val backgroundColorScheme = skinColors.getBackgroundColorScheme(DecorationAreaType.TitlePane)
     val borderColorScheme = skinColors.getColorScheme(
-        DecorationAreaType.TITLE_PANE, ColorSchemeAssociationKind.BORDER, ComponentState.ENABLED
+        DecorationAreaType.TitlePane, ColorSchemeAssociationKind.Border, ComponentState.Enabled
     )
 
     if (undecorated) {
@@ -484,7 +484,7 @@ fun AuroraWindow(
         appWindow.show {
             AuroraSkin(
                 displayName = skin.displayName,
-                decorationAreaType = DecorationAreaType.NONE,
+                decorationAreaType = DecorationAreaType.None,
                 colors = skin.colors,
                 buttonShaper = skin.buttonShaper,
                 painters = skin.painters,
@@ -573,7 +573,7 @@ fun AuroraWindow(
         appWindow.show {
             AuroraSkin(
                 displayName = skin.value.displayName,
-                decorationAreaType = DecorationAreaType.NONE,
+                decorationAreaType = DecorationAreaType.None,
                 colors = skin.value.colors,
                 buttonShaper = skin.value.buttonShaper,
                 painters = skin.value.painters,
