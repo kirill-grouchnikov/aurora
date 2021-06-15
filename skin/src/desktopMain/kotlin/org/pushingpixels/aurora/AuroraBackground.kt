@@ -30,7 +30,6 @@ import androidx.compose.ui.platform.LocalDensity
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.painter.decoration.AuroraDecorationPainter
 import org.pushingpixels.aurora.painter.overlay.AuroraOverlayPainter
-import javax.swing.JWindow
 
 @Composable
 fun Modifier.auroraBackground() = this.then(
@@ -43,20 +42,6 @@ fun Modifier.auroraBackground() = this.then(
         colors = AuroraSkin.colors,
         decorationPainter = AuroraSkin.painters.decorationPainter,
         overlayPainters = AuroraSkin.painters.getOverlayPainters(AuroraSkin.decorationAreaType)
-    )
-)
-
-@Composable
-fun Modifier.auroraBackground(window: JWindow) = this.then(
-    AuroraBackground(
-        rootSize = Size(
-            width = window.width * LocalDensity.current.density,
-            height = window.height * LocalDensity.current.density
-        ),
-        decorationAreaType = AuroraSkin.decorationAreaType,
-        colors = AuroraSkin.colors,
-        decorationPainter = AuroraSkin.painters.decorationPainter,
-        overlayPainters = emptyList()
     )
 )
 

@@ -1398,7 +1398,7 @@ private fun CommandButtonPopupContent(
             panelPreferredSize = panelPreferredSize
         ) {
             // This canvas paints the background fill of the popup and the outer hairline border
-            Canvas(modifier = Modifier.auroraBackground()) {//window = popupContentWindow)) {
+            Canvas(modifier = Modifier.auroraBackground()) {
                 val outline = Outline.Rectangle(
                     rect = Rect(
                         left = 0.5f,
