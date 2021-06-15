@@ -236,7 +236,8 @@ internal fun AuroraCommandButton(
         }
     }
 
-    val actionModelNoSelectionStateInfo = remember { ModelStateInfo(currentActionNoSelectionState.value) }
+    val actionModelNoSelectionStateInfo =
+        remember { ModelStateInfo(currentActionNoSelectionState.value) }
     val actionNoSelectionTransitionInfo = remember { mutableStateOf<TransitionInfo?>(null) }
 
     StateTransitionTracker(
@@ -845,10 +846,18 @@ internal fun AuroraCommandButton(
 
             // Text content can be in action or popup area. Use the matching model
             // to determine the text color
-            val modelStateInfoForText =
-                if (isTextInActionArea) actionModelStateInfo else popupModelStateInfo
-            val currStateForText =
-                if (isTextInActionArea) currentActionState.value else currentPopupState.value
+            val modelStateInfoForText = if (isTextInActionArea) {
+                if (command.isActionToggle && presentationModel.isMenu) actionModelNoSelectionStateInfo
+                else actionModelStateInfo
+            } else {
+                popupModelStateInfo
+            }
+            val currStateForText = if (isTextInActionArea) {
+                if (command.isActionToggle && presentationModel.isMenu) currentActionNoSelectionState.value
+                else currentActionState.value
+            } else {
+                currentActionState.value
+            }
 
             for (text in preLayoutInfo.texts) {
                 CommandButtonTextContent(
@@ -1410,7 +1419,8 @@ private fun CommandButtonPopupContent(
                         if (toDismissPopupsOnActivation) {
                             for (window in Window.getWindows()) {
                                 if (window.isDisplayable && (window is ComposeWindow)
-                                    && window.isAuroraPopup) {
+                                    && window.isAuroraPopup
+                                ) {
                                     window.dispose()
                                 }
                             }
@@ -1481,7 +1491,8 @@ private fun CommandButtonPopupContent(
                                 ) {
                                     for (window in Window.getWindows()) {
                                         if (window.isDisplayable && (window is ComposeWindow)
-                                            && window.isAuroraPopup) {
+                                            && window.isAuroraPopup
+                                        ) {
                                             window.dispose()
                                         }
                                     }
