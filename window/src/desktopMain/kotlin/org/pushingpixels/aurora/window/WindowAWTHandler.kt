@@ -96,6 +96,12 @@ internal class AWTInputHandler(
 
     override fun eventDispatched(event: AWTEvent?) {
         if (event is MouseEvent) {
+            val window = getEventWindow(event)
+            if (window != this.window) {
+                // Only handle events originating in the associated window
+                return
+            }
+
             when (event.id) {
                 MouseEvent.MOUSE_ENTERED -> mouseEntered(event)
                 MouseEvent.MOUSE_EXITED -> mouseExited(event)

@@ -18,6 +18,7 @@ package org.pushingpixels.aurora.window
 
 import androidx.compose.desktop.AppManager
 import androidx.compose.desktop.AppWindow
+import androidx.compose.desktop.ComposeWindow
 import androidx.compose.desktop.WindowEvents
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -41,6 +42,7 @@ import androidx.compose.ui.window.WindowDraggableArea
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.common.isAuroraPopup
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.*
@@ -414,20 +416,19 @@ private fun WindowContent(
             }
             if ((event is KeyEvent) && (event.id == KeyEvent.KEY_RELEASED) && (event.keyCode == KeyEvent.VK_ESCAPE)) {
                 for (window in Window.getWindows()) {
-                    if (window.isDisplayable && (window is AuroraPopupWindow)) {
+                    if (window.isDisplayable && (window is ComposeWindow) && window.isAuroraPopup) {
                         window.hide()
                         window.dispose()
                     }
                 }
             }
             if ((event is MouseEvent) && (event.id == MouseEvent.MOUSE_PRESSED)) {
-                if (SwingUtilities.getAncestorOfClass(
-                        AuroraPopupWindow::class.java,
-                        src
-                    ) == null
+                val windowAncestor = SwingUtilities.getWindowAncestor(src)
+                if ((windowAncestor == null) ||
+                    ((windowAncestor is ComposeWindow) && !windowAncestor.isAuroraPopup)
                 ) {
                     for (window in Window.getWindows()) {
-                        if (window.isDisplayable && (window is AuroraPopupWindow)) {
+                        if (window.isDisplayable && (window is ComposeWindow) && window.isAuroraPopup) {
                             window.hide()
                             window.dispose()
                         }
@@ -528,7 +529,7 @@ fun AuroraWindow(
             override fun windowLostFocus(e: WindowEvent) {
                 for (window in Window.getWindows()) {
                     // Hide all Aurora popup windows when our app window loses focus
-                    if (window.isDisplayable && (window is AuroraPopupWindow)) {
+                    if (window.isDisplayable && (window is ComposeWindow) && window.isAuroraPopup) {
                         window.hide()
                         window.dispose()
                     }
@@ -610,14 +611,14 @@ fun AuroraWindow(
             )
         }
 
-        appWindow.window.addWindowFocusListener(object: WindowFocusListener {
+        appWindow.window.addWindowFocusListener(object : WindowFocusListener {
             override fun windowGainedFocus(e: WindowEvent) {
             }
 
             override fun windowLostFocus(e: WindowEvent) {
                 for (window in Window.getWindows()) {
                     // Hide all Aurora popup windows when our app window loses focus
-                    if (window.isDisplayable && (window is AuroraPopupWindow)) {
+                    if (window.isDisplayable && (window is ComposeWindow) && window.isAuroraPopup) {
                         window.hide()
                         window.dispose()
                     }

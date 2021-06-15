@@ -18,6 +18,7 @@ package org.pushingpixels.aurora.component
 import androidx.compose.animation.core.*
 import androidx.compose.desktop.AppManager
 import androidx.compose.desktop.ComposePanel
+import androidx.compose.desktop.ComposeWindow
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -43,6 +44,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
+import org.pushingpixels.aurora.common.markAsAuroraPopup
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.component.utils.*
@@ -88,8 +90,6 @@ private class ComboBoxLocator(val topLeftOffset: AuroraOffset, val size: AuroraS
 private fun Modifier.comboBoxLocator(topLeftOffset: AuroraOffset, size: AuroraSize) = this.then(
     ComboBoxLocator(topLeftOffset, size)
 )
-
-class AuroraPopupWindow : JWindow()
 
 @Composable
 internal fun <E> AuroraComboBox(
@@ -211,6 +211,8 @@ internal fun <E> AuroraComboBox(
         }
     }
 
+    val parentComposition = rememberCompositionContext()
+
     Box(
         modifier = modifier
             .pointerMoveFilter(
@@ -230,10 +232,12 @@ internal fun <E> AuroraComboBox(
                 onClick = {
                     // TODO - move off of JWindow when https://github.com/JetBrains/compose-jb/issues/195
                     //  is addressed
-                    val jwindow = AuroraPopupWindow()
+                    val jwindow = ComposeWindow()
                     jwindow.focusableWindowState = false
                     jwindow.type = Window.Type.POPUP
                     jwindow.isAlwaysOnTop = true
+                    jwindow.isUndecorated = true
+                    jwindow.markAsAuroraPopup()
 
                     // TODO - hopefully temporary. Mark the popup window as fully transparent
                     //  so that when it is globally positioned, we can size it to the actual
@@ -259,9 +263,9 @@ internal fun <E> AuroraComboBox(
                         initialHeight
                     )
 
-                    val composePopupContent = ComposePanel()
-                    composePopupContent.preferredSize = Dimension(initialWidth, initialHeight)
-                    composePopupContent.setContent {
+                    jwindow.setContent(
+                        parentComposition = parentComposition
+                    ) {
                         CompositionLocalProvider(
                             LocalDecorationAreaType provides decorationAreaType,
                             LocalSkinColors provides skinColors,
@@ -282,8 +286,6 @@ internal fun <E> AuroraComboBox(
                             )
                         }
                     }
-                    jwindow.contentPane.layout = BorderLayout()
-                    jwindow.contentPane.add(composePopupContent, BorderLayout.CENTER)
                     jwindow.invalidate()
                     jwindow.validate()
                     jwindow.isVisible = true
@@ -523,7 +525,7 @@ internal fun <E> AuroraComboBox(
 
 @Composable
 private fun <E> ComboBoxPopupContent(
-    window: JWindow,
+    window: ComposeWindow,
     initialAnchor: IntOffset,
     anchorSize: AuroraSize,
     contentModel: ComboBoxContentModel<E>,
@@ -565,7 +567,7 @@ private fun <E> ComboBoxPopupContent(
     ).height
 
     ComboBoxPopupLayout(
-        modifier = Modifier.auroraBackground(window = window)
+        modifier = Modifier.auroraBackground()
             .onGloballyPositioned {
                 // Get the size of the content and update the popup window bounds
                 val popupWidth = (contentSize.width / density).toInt()

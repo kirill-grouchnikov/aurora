@@ -18,6 +18,7 @@ package org.pushingpixels.aurora.component
 import androidx.compose.animation.core.*
 import androidx.compose.desktop.AppManager
 import androidx.compose.desktop.ComposePanel
+import androidx.compose.desktop.ComposeWindow
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -48,6 +49,8 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.common.interpolateTowards
+import org.pushingpixels.aurora.common.isAuroraPopup
+import org.pushingpixels.aurora.common.markAsAuroraPopup
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.layout.*
 import org.pushingpixels.aurora.component.model.*
@@ -78,13 +81,14 @@ private class CommandButtonDrawingCache(
 internal fun AuroraCommandButton(
     modifier: Modifier = Modifier,
     command: Command,
-    parentWindow: JWindow? = null,
+    parentWindow: Window? = null,
     extraAction: (() -> Unit)? = null,
     extraActionPreview: CommandActionPreview? = null,
     presentationModel: CommandButtonPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
     buttonSides: Sides
 ) {
+    val secondaryContentModel = rememberUpdatedState(command.secondaryContentModel)
     val drawingCache = remember { CommandButtonDrawingCache() }
 
     val actionInteractionSource = remember { MutableInteractionSource() }
@@ -329,6 +333,7 @@ internal fun AuroraCommandButton(
     }
 
     val hasIcon = preLayoutInfo.showIcon
+    val parentComposition = rememberCompositionContext()
 
     Layout(
         modifier = modifier.commandButtonLocator(auroraTopLeftOffset, auroraSize),
@@ -545,10 +550,12 @@ internal fun AuroraCommandButton(
                     onClick = {
                         // TODO - move off of JWindow when https://github.com/JetBrains/compose-jb/issues/195
                         //  is addressed
-                        val popupContentWindow = AuroraPopupWindow()
+                        val popupContentWindow = ComposeWindow()
                         popupContentWindow.focusableWindowState = false
                         popupContentWindow.type = Window.Type.POPUP
                         popupContentWindow.isAlwaysOnTop = true
+                        popupContentWindow.isUndecorated = true
+                        popupContentWindow.markAsAuroraPopup()
 
                         // TODO - hopefully temporary. Mark the popup window as fully transparent
                         //  so that when it is globally positioned, we can size it to the actual
@@ -574,9 +581,9 @@ internal fun AuroraCommandButton(
                             initialHeight
                         )
 
-                        val popupContent = ComposePanel()
-                        popupContent.preferredSize = Dimension(initialWidth, initialHeight)
-                        popupContent.setContent {
+                        popupContentWindow.setContent(
+                            parentComposition = parentComposition
+                        ) {
                             CompositionLocalProvider(
                                 LocalDecorationAreaType provides decorationAreaType,
                                 LocalSkinColors provides skinColors,
@@ -588,14 +595,15 @@ internal fun AuroraCommandButton(
                                     popupContentWindow = popupContentWindow,
                                     initialAnchor = initialWindowAnchor,
                                     anchorSize = auroraSize,
-                                    command = command,
-                                    presentationModel = presentationModel,
+                                    menuContentModel = secondaryContentModel,
+                                    menuPresentationModel = presentationModel.popupMenuPresentationModel,
+                                    popupPlacementStrategy = presentationModel.popupPlacementStrategy,
+                                    toDismissPopupsOnActivation = presentationModel.toDismissPopupsOnActivation,
                                     overlays = overlays
                                 )
                             }
                         }
-                        popupContentWindow.contentPane.layout = BorderLayout()
-                        popupContentWindow.contentPane.add(popupContent, BorderLayout.CENTER)
+
                         popupContentWindow.invalidate()
                         popupContentWindow.validate()
                         popupContentWindow.isVisible = true
@@ -1232,15 +1240,15 @@ private fun CommandButtonPopupIconContent(
 
 @Composable
 private fun CommandButtonPopupContent(
-    popupContentWindow: JWindow,
+    popupContentWindow: Window,
     initialAnchor: IntOffset,
     anchorSize: AuroraSize,
-    command: Command,
-    presentationModel: CommandButtonPresentationModel,
+    menuContentModel: State<CommandMenuContentModel?>,
+    menuPresentationModel: CommandPopupMenuPresentationModel,
+    popupPlacementStrategy: PopupPlacementStrategy,
+    toDismissPopupsOnActivation: Boolean,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>
 ) {
-    assert(command.secondaryContentModel != null) { "Secondary content model cannot be null here " }
-
     val borderScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = DecorationAreaType.None,
         associationKind = ColorSchemeAssociationKind.Border,
@@ -1255,7 +1263,7 @@ private fun CommandButtonPopupContent(
         val popupHeight = (contentSize.height / density.density).toInt()
 
         // TODO - support RTL for startward and endward
-        val popupRect = when (presentationModel.popupPlacementStrategy) {
+        val popupRect = when (popupPlacementStrategy) {
             PopupPlacementStrategy.Downward -> Rectangle(
                 initialAnchor.x,
                 initialAnchor.y + (anchorSize.height / density.density).toInt(),
@@ -1309,16 +1317,16 @@ private fun CommandButtonPopupContent(
         popupContentWindow.size = Dimension(popupRect.width, popupRect.height)
         popupContentWindow.invalidate()
         popupContentWindow.validate()
-        popupContentWindow.contentPane.revalidate()
+        //popupContentWindow.contentPane.revalidate()
     }) {
-        val hasPanel = (command.secondaryContentModel!!.panelContentModel != null)
+        val hasPanel = (menuContentModel.value!!.panelContentModel != null)
         val layoutDirection = LocalLayoutDirection.current
         val textStyle = LocalTextStyle.current
         val resourceLoader = LocalFontLoader.current
         val panelPreferredSize = if (hasPanel) getPreferredCommandButtonPanelSize(
-            contentModel = command.secondaryContentModel.panelContentModel!!,
-            presentationModel = presentationModel.popupMenuPresentationModel.panelPresentationModel!!,
-            buttonLayoutManager = presentationModel.popupMenuPresentationModel.panelPresentationModel.commandPresentationState.createLayoutManager(
+            contentModel = menuContentModel.value!!.panelContentModel!!,
+            presentationModel = menuPresentationModel.panelPresentationModel!!,
+            buttonLayoutManager = menuPresentationModel.panelPresentationModel.commandPresentationState.createLayoutManager(
                 layoutDirection = layoutDirection,
                 density = density,
                 textStyle = textStyle,
@@ -1333,7 +1341,7 @@ private fun CommandButtonPopupContent(
             panelPreferredSize = panelPreferredSize
         ) {
             // This canvas paints the background fill of the popup and the outer hairline border
-            Canvas(modifier = Modifier.auroraBackground(window = popupContentWindow)) {
+            Canvas(modifier = Modifier.auroraBackground()) {//window = popupContentWindow)) {
                 val outline = Outline.Rectangle(
                     rect = Rect(
                         left = 0.5f,
@@ -1348,12 +1356,13 @@ private fun CommandButtonPopupContent(
             }
             if (hasPanel) {
                 AuroraCommandButtonPanel(
-                    contentModel = command.secondaryContentModel.panelContentModel!!,
-                    presentationModel = presentationModel.popupMenuPresentationModel.panelPresentationModel!!,
+                    contentModel = menuContentModel.value!!.panelContentModel!!,
+                    presentationModel = menuPresentationModel.panelPresentationModel!!,
                     extraAction = {
-                        if (presentationModel.toDismissPopupsOnActivation) {
+                        if (toDismissPopupsOnActivation) {
                             for (window in Window.getWindows()) {
-                                if (window.isDisplayable && window is AuroraPopupWindow) {
+                                if (window.isDisplayable && (window is ComposeWindow)
+                                    && window.isAuroraPopup) {
                                     window.dispose()
                                 }
                             }
@@ -1371,15 +1380,15 @@ private fun CommandButtonPopupContent(
             // Command presentation for menu content, taking some of the values from
             // the popup menu presentation model configured on the top-level presentation model
             val menuButtonPresentationModel = CommandButtonPresentationModel(
-                presentationState = presentationModel.popupMenuPresentationModel.menuPresentationState,
-                popupPlacementStrategy = presentationModel.popupMenuPresentationModel.popupPlacementStrategy,
+                presentationState = menuPresentationModel.menuPresentationState,
+                popupPlacementStrategy = menuPresentationModel.popupPlacementStrategy,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 horizontalAlignment = HorizontalAlignment.Leading,
                 isMenu = true
             )
 
             var atLeastOneButtonHasIcon = false
-            for (commandGroup in command.secondaryContentModel.groups) {
+            for (commandGroup in menuContentModel.value!!.groups) {
                 for (secondaryCommand in commandGroup.commands) {
                     if (secondaryCommand.iconFactory != null) {
                         atLeastOneButtonHasIcon = true
@@ -1393,14 +1402,14 @@ private fun CommandButtonPopupContent(
             CompositionLocalProvider(
                 LocalCommandForceIcon provides atLeastOneButtonHasIcon
             ) {
-                for ((commandGroupIndex, commandGroup) in command.secondaryContentModel.groups.withIndex()) {
+                for ((commandGroupIndex, commandGroup) in menuContentModel.value!!.groups.withIndex()) {
                     for (secondaryCommand in commandGroup.commands) {
                         // Check if we have a presentation overlay for this secondary command
                         val hasOverlay = overlays.containsKey(secondaryCommand)
                         var currSecondaryPresentationModel = if (hasOverlay)
                             menuButtonPresentationModel.overlayWith(overlays[secondaryCommand]!!)
                         else menuButtonPresentationModel
-                        if (secondaryCommand == command.secondaryContentModel.highlightedCommand) {
+                        if (secondaryCommand == menuContentModel.value!!.highlightedCommand) {
                             // If our secondary content model has a highlighted command, pass bold
                             // font weight to the text style of the matching command button.
                             currSecondaryPresentationModel =
@@ -1419,11 +1428,12 @@ private fun CommandButtonPopupContent(
                             command = secondaryCommand,
                             parentWindow = popupContentWindow,
                             extraAction = {
-                                if (presentationModel.toDismissPopupsOnActivation and
+                                if (toDismissPopupsOnActivation and
                                     currSecondaryPresentationModel.toDismissPopupsOnActivation
                                 ) {
                                     for (window in Window.getWindows()) {
-                                        if (window.isDisplayable && window is AuroraPopupWindow) {
+                                        if (window.isDisplayable && (window is ComposeWindow)
+                                            && window.isAuroraPopup) {
                                             window.dispose()
                                         }
                                     }
@@ -1434,7 +1444,7 @@ private fun CommandButtonPopupContent(
                             buttonSides = Sides(straightSides = Side.values().toSet())
                         )
                     }
-                    if (commandGroupIndex < (command.secondaryContentModel.groups.size - 1)) {
+                    if (commandGroupIndex < (menuContentModel.value!!.groups.size - 1)) {
                         AuroraHorizontalSeparator(
                             presentationModel = SeparatorPresentationModel(
                                 startGradientAmount = 0.dp,
