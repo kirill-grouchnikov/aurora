@@ -18,10 +18,7 @@ package org.pushingpixels.aurora.demo
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -214,6 +211,17 @@ fun CommandDemoEditStrip(
             isActionEnabled = true,
             action = { println("Copy!") }
         )
+    var togglePasteText by remember { mutableStateOf(false) }
+    val commandPasteTextOnly = Command(
+        text = "Text only",
+        action = { println("Paste text only") },
+        isActionToggle = true,
+        isActionToggleSelected = togglePasteText,
+        onTriggerActionToggleSelectedChange = {
+            println("Selected toggle paste text? $it")
+            togglePasteText = it
+        }
+    )
     val commandPaste =
         Command(
             text = "Paste",
@@ -229,9 +237,7 @@ fun CommandDemoEditStrip(
                         Command(
                             text = "Merge Formatting",
                             action = { println("Paste with merge formatting") }),
-                        Command(
-                            text = "Text only",
-                            action = { println("Paste text only") })
+                        commandPasteTextOnly
                     )
                 ),
                 panelContentModel = getStylesContentModel(
@@ -269,6 +275,9 @@ fun CommandDemoEditStrip(
             iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText
         ),
         overlays = mapOf(
+            commandPasteTextOnly to CommandButtonPresentationModel.Overlay(
+                toDismissPopupsOnActivation = false
+            ),
             commandPaste to CommandButtonPresentationModel.Overlay(
                 popupMenuPresentationModel = CommandPopupMenuPresentationModel(
                     panelPresentationModel = CommandPanelPresentationModel(

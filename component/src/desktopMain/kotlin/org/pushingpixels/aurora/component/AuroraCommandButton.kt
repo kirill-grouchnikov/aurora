@@ -17,7 +17,6 @@ package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.core.*
 import androidx.compose.desktop.AppManager
-import androidx.compose.desktop.ComposePanel
 import androidx.compose.desktop.ComposeWindow
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
@@ -57,7 +56,6 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.icon.AuroraThemedIcon
 import java.awt.*
-import javax.swing.JWindow
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -107,6 +105,16 @@ internal fun AuroraCommandButton(
                 isEnabled = command.isActionEnabled,
                 isRollover = actionRollover,
                 isSelected = command.isActionToggle and command.isActionToggleSelected,
+                isPressed = isActionPressed
+            )
+        )
+    }
+    val currentActionNoSelectionState = remember {
+        mutableStateOf(
+            ComponentState.getState(
+                isEnabled = command.isActionEnabled,
+                isRollover = actionRollover,
+                isSelected = false,
                 isPressed = isActionPressed
             )
         )
@@ -224,6 +232,37 @@ internal fun AuroraCommandButton(
             if (result.endReason == AnimationEndReason.Finished) {
                 actionModelStateInfo.updateActiveStates(1.0f)
                 actionModelStateInfo.clear(currentActionState.value)
+            }
+        }
+    }
+
+    val actionModelNoSelectionStateInfo = remember { ModelStateInfo(currentActionNoSelectionState.value) }
+    val actionNoSelectionTransitionInfo = remember { mutableStateOf<TransitionInfo?>(null) }
+
+    StateTransitionTracker(
+        modelStateInfo = actionModelNoSelectionStateInfo,
+        currentState = currentActionNoSelectionState,
+        transitionInfo = actionNoSelectionTransitionInfo,
+        enabled = command.isActionEnabled,
+        selected = false,
+        rollover = actionRollover,
+        pressed = isActionPressed,
+        duration = AuroraSkin.animationConfig.regular
+    )
+
+    if (actionNoSelectionTransitionInfo.value != null) {
+        LaunchedEffect(currentActionNoSelectionState.value) {
+            val transitionFloat = Animatable(actionNoSelectionTransitionInfo.value!!.from)
+            val result = transitionFloat.animateTo(
+                targetValue = actionNoSelectionTransitionInfo.value!!.to,
+                animationSpec = tween(durationMillis = actionNoSelectionTransitionInfo.value!!.duration)
+            ) {
+                actionModelNoSelectionStateInfo.updateActiveStates(value)
+            }
+
+            if (result.endReason == AnimationEndReason.Finished) {
+                actionModelNoSelectionStateInfo.updateActiveStates(1.0f)
+                actionModelNoSelectionStateInfo.clear(currentActionNoSelectionState.value)
             }
         }
     }
@@ -398,12 +437,21 @@ internal fun AuroraCommandButton(
                 }
             ) {
                 if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.Never) {
-                    // Populate the cached color scheme for filling the button container
+                    // Ignore the selected bit on toggle menu commands
+                    val isActionToggleMenu = command.isActionToggle && presentationModel.isMenu
+                    val actionModelStateInfoToUse =
+                        if (isActionToggleMenu) actionModelNoSelectionStateInfo
+                        else actionModelStateInfo
+                    val currentActionStateToUse =
+                        if (isActionToggleMenu) currentActionNoSelectionState
+                        else currentActionState
+
+                    // Populate the cached color scheme for filling the action area
                     // based on the current model state info
                     populateColorScheme(
                         drawingCache.colorScheme,
-                        actionModelStateInfo,
-                        currentActionState.value,
+                        actionModelStateInfoToUse,
+                        currentActionStateToUse.value,
                         decorationAreaType,
                         ColorSchemeAssociationKind.Fill
                     )
@@ -420,8 +468,8 @@ internal fun AuroraCommandButton(
                     // based on the current model state info
                     populateColorScheme(
                         drawingCache.colorScheme,
-                        actionModelStateInfo,
-                        currentActionState.value,
+                        actionModelStateInfoToUse,
+                        currentActionStateToUse.value,
                         decorationAreaType,
                         ColorSchemeAssociationKind.Border
                     )
@@ -441,14 +489,14 @@ internal fun AuroraCommandButton(
                         if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat) {
                             // For flat buttons, compute the combined contribution of all
                             // non-disabled states - ignoring ComponentState.ENABLED
-                            actionModelStateInfo.stateContributionMap
+                            actionModelStateInfoToUse.stateContributionMap
                                 .filter { !it.key.isDisabled && (it.key != ComponentState.Enabled) }
                                 .values.sumOf { it.contribution.toDouble() }.toFloat()
                         } else {
-                            if (currentActionState.value.isDisabled)
+                            if (currentActionStateToUse.value.isDisabled)
                                 skinColors.getAlpha(
                                     decorationAreaType,
-                                    currentActionState.value
+                                    currentActionStateToUse.value
                                 ) else 1.0f
                         }
                     )
