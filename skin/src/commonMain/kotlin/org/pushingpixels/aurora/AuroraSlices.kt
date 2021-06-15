@@ -49,14 +49,16 @@ class ComponentStateFacet(var name: String, value: Int) {
         val Press = ComponentStateFacet("press", 50)
 
         /**
-         * Facet that describes the determinate bit. This is relevant for [JProgressBar]
-         * control and its [JProgressBar.setIndeterminate] API.
+         * Facet that describes the determinate bit. This is relevant for
+         * [DeterminateLinearProgressProjection] and
+         * [IndeterminateLinearProgressProjection] APIs.
          */
         val Determinate = ComponentStateFacet("determinate", 10)
 
         /**
-         * Facet that describes the editable bit. This is relevant for [JTextComponent]
-         * derived controls and its [JTextComponent.setEditable] API.
+         * Facet that describes the editable bit.
+         *
+         * Note that this is not used and will be removed soon.
          */
         val Editable = ComponentStateFacet("editable", 50)
     }
@@ -81,14 +83,14 @@ class ComponentState(
 ) {
     /**
      * Facets that are turned on for this state. For example,
-     * [.ROLLOVER_SELECTED] contains [ComponentStateFacet.Rollover]
+     * [.RolloverSelected] contains [ComponentStateFacet.Rollover]
      * and [ComponentStateFacet.Selection].
      */
     private val facetsTurnedOn: MutableSet<ComponentStateFacet>?
 
     /**
      * Facets that are turned on for this state. For example,
-     * [.DISABLED_UNSELECTED] contains [ComponentStateFacet.Enable]
+     * [.DisabledUnselected] contains [ComponentStateFacet.Enable]
      * and [ComponentStateFacet.Selection].
      */
     private val facetsTurnedOff: MutableSet<ComponentStateFacet>?
@@ -104,10 +106,10 @@ class ComponentState(
      * Component state name. Does not have to be unique. The name is
      * only used in the [.toString].
      * @param facetsOn
-     * Indicates that are turned on for this state. For example, [.ROLLOVER_SELECTED] should pass both
+     * Indicates that are turned on for this state. For example, [.RolloverSelected] should pass both
      * [ComponentStateFacet.Rollover] and [ComponentStateFacet.Selection].
      * @param facetsOff
-     * Indicates that are turned on for this state. For example, [.DISABLED_UNSELECTED] should pass both
+     * Indicates that are turned on for this state. For example, [.DisabledUnselected] should pass both
      * [ComponentStateFacet.Enable] and [ComponentStateFacet.Selection].
      */
     constructor(
@@ -142,7 +144,7 @@ class ComponentState(
 
     /**
      * Returns indication whether `this` component state is "active"
-     * under the specified facet. For example, [.ROLLOVER_SELECTED] will
+     * under the specified facet. For example, [.RolloverSelected] will
      * return `true` for both [ComponentStateFacet.Rollover]
      * and [ComponentStateFacet.Selection].
      *
@@ -150,7 +152,7 @@ class ComponentState(
      * State facet.
      * @return `true` if `this` component state is
      * "active" under the specified facet (for example,
-     * [.ROLLOVER_SELECTED] will return `true` for both
+     * [.RolloverSelected] will return `true` for both
      * [ComponentStateFacet.Rollover] and
      * [ComponentStateFacet.Selection]), `false`
      * otherwise.
@@ -473,9 +475,9 @@ class ComponentState(
  * Allows associating different color schemes to different visual parts of UI components. For
  * example, the checkbox has three different visual areas:
  *
- *  * Border - assciated with [.BORDER]
- *  * Fill - associated with [.MARK_BOX]
- *  * Check mark - associated with [.MARK]
+ *  * Border - associated with [.Border]
+ *  * Fill - associated with [.MarkBox]
+ *  * Check mark - associated with [.Mark]
  *
  * Applications can create custom instances of this class to further refine the control over the
  * painting. In this case, the custom UI delegates must be created to use these new association
@@ -490,11 +492,11 @@ class ColorSchemeAssociationKind(
     private val name: String,
     /**
      * Fallback for this association kind. This is used when no color scheme is associated with
-     * this kind. For example, [.TAB_BORDER] specifies that its fallback is
-     * [.BORDER]. When the tabs are painted, it will
-     * try to use the color scheme associated with [.TAB_BORDER]. If none was registered,
-     * it will fall back to use the color scheme associated with [.BORDER], and if that is
-     * not registered as well, will use the color scheme associated with [.FILL].
+     * this kind. For example, [.TabBorder] specifies that its fallback is
+     * [.Border]. When the tabs are painted, it will
+     * try to use the color scheme associated with [.TabBorder]. If none was registered,
+     * it will fall back to use the color scheme associated with [.Border], and if that is
+     * not registered as well, will use the color scheme associated with [.Fill].
      */
     val fallback: ColorSchemeAssociationKind?
 ) {
@@ -584,13 +586,13 @@ class ColorSchemeAssociationKind(
      *
      * @param name     Association kind name.
      * @param fallback Fallback association kind. This is used when no color scheme is
-     * associated with this kind. For example, [.TAB_BORDER] specifies that its
-     * fallback is [.BORDER]. When the tabbed pane is
+     * associated with this kind. For example, [.TabBorder] specifies that its
+     * fallback is [.Border]. When the tabbed pane is
      * painting the tabs, it will try to use the color scheme associated with
-     * [.TAB_BORDER].
+     * [.TabBorder].
      * If none was registered, it will fall back to use the color scheme associated
-     * with [.BORDER], and if that is not registered as well, will use the
-     * color scheme associated with [.FILL].
+     * with [.Border], and if that is not registered as well, will use the
+     * color scheme associated with [.Fill].
      */
     init {
         values.add(this)
