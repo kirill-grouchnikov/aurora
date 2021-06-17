@@ -139,13 +139,16 @@ internal fun populateColorScheme(
     modelStateInfo: ModelStateInfo,
     currState: ComponentState,
     decorationAreaType: DecorationAreaType,
-    associationKind: ColorSchemeAssociationKind
+    associationKind: ColorSchemeAssociationKind,
+    treatEnabledAsActive: Boolean = false
 ) {
-    val currStateScheme = AuroraSkin.colors.getColorScheme(
-        decorationAreaType = decorationAreaType,
-        associationKind = associationKind,
-        componentState = currState
-    )
+    val currStateScheme = if (treatEnabledAsActive && (currState == ComponentState.Enabled))
+        AuroraSkin.colors.getActiveColorScheme(decorationAreaType = decorationAreaType) else
+        AuroraSkin.colors.getColorScheme(
+            decorationAreaType = decorationAreaType,
+            associationKind = associationKind,
+            componentState = currState
+        )
 
     var ultraLight = currStateScheme.ultraLightColor
     var extraLight = currStateScheme.extraLightColor
@@ -168,11 +171,14 @@ internal fun populateColorScheme(
             continue
         }
         // Get the color scheme that matches the contribution state
-        val contributionScheme = AuroraSkin.colors.getColorScheme(
-            decorationAreaType = decorationAreaType,
-            associationKind = associationKind,
-            componentState = contribution.key
-        )
+        val contributionScheme = if (treatEnabledAsActive && (contribution.key == ComponentState.Enabled))
+            AuroraSkin.colors.getActiveColorScheme(decorationAreaType = decorationAreaType) else
+            AuroraSkin.colors.getColorScheme(
+                decorationAreaType = decorationAreaType,
+                associationKind = associationKind,
+                componentState = contribution.key
+            )
+
         // And interpolate the colors
         ultraLight =
             ultraLight.interpolateTowards(contributionScheme.ultraLightColor, 1.0f - amount)

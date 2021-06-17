@@ -41,6 +41,7 @@ import kotlinx.coroutines.sync.Mutex
 import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.ColorSchemeAssociationKind
 import org.pushingpixels.aurora.ComponentState
+import org.pushingpixels.aurora.auroraBackground
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.utils.getBaseOutline
 import kotlin.math.sign
@@ -284,20 +285,23 @@ private fun Scrollbar(
     val isVisible = sliderAdapter.size < containerSize
 
     Layout(
-        {
+        content = {
             Box(
-                Modifier.scrollbarDrag(interactionSource, dragInteraction) { offset ->
-                    sliderAdapter.position += if (isVertical) offset.y else offset.x
-                }
+                Modifier.auroraBackground()
+                    .scrollbarDrag(interactionSource, dragInteraction) { offset ->
+                        sliderAdapter.position += if (isVertical) offset.y else offset.x
+                    }
             ) {
                 // Populate the cached color scheme for filling the component
-                // based on the current model state info
+                // based on the current model state info. Note that enabled scroll bar
+                // is filled as active
                 populateColorScheme(
                     drawingCache.colorScheme,
                     modelStateInfo,
                     currentState.value,
                     decorationAreaType,
-                    ColorSchemeAssociationKind.Fill
+                    ColorSchemeAssociationKind.Fill,
+                    treatEnabledAsActive = true
                 )
                 // And retrieve the container fill colors
                 val fillUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -309,13 +313,14 @@ private fun Scrollbar(
                 val fillIsDark = drawingCache.colorScheme.isDark
 
                 // Populate the cached color scheme for drawing the border
-                // based on the current model state info
+                // based on the current model state info.
                 populateColorScheme(
                     drawingCache.colorScheme,
                     modelStateInfo,
                     currentState.value,
                     decorationAreaType,
-                    ColorSchemeAssociationKind.Border
+                    ColorSchemeAssociationKind.Border,
+                    treatEnabledAsActive = false
                 )
                 // And retrieve the border colors
                 val borderUltraLight = drawingCache.colorScheme.ultraLightColor
