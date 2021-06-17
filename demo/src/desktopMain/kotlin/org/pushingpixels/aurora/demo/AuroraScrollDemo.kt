@@ -196,8 +196,9 @@ fun main() {
                         Key.DirectionDown -> {
                             if (stateSelection.value < 0) {
                                 stateSelection.value = 0
-                            } else if (stateSelection.value < (itemCount - 1)) {
-                                stateSelection.value++
+                            } else {
+                                stateSelection.value =
+                                    (stateSelection.value + 1).coerceAtMost(itemCount - 1 )
                             }
                             scope.launch {
                                 if (!lazyListState.isItemFullyVisible(stateSelection.value)) {
@@ -209,8 +210,8 @@ fun main() {
                         Key.DirectionUp -> {
                             if (stateSelection.value < 0) {
                                 stateSelection.value = itemCount - 1
-                            } else if (stateSelection.value > 0) {
-                                stateSelection.value--
+                            } else {
+                                stateSelection.value = (stateSelection.value - 1).coerceAtLeast(0)
                             }
                             scope.launch {
                                 if (!lazyListState.isItemFullyVisible(stateSelection.value)) {
