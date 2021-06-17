@@ -76,10 +76,8 @@ private class AuroraBackground(
         } else {
             // Otherwise use flat color fill
             drawRect(
-                color = colors.getColorScheme(
-                    decorationAreaType = decorationAreaType,
-                    associationKind = ColorSchemeAssociationKind.Fill,
-                    componentState = ComponentState.Enabled
+                color = colors.getBackgroundColorScheme(
+                    decorationAreaType = decorationAreaType
                 ).backgroundFillColor
             )
         }

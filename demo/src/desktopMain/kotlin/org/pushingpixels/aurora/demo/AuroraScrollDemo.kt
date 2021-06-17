@@ -29,7 +29,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.*
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
@@ -41,6 +44,7 @@ import org.pushingpixels.aurora.IconFilterStrategy
 import org.pushingpixels.aurora.Side
 import org.pushingpixels.aurora.Sides
 import org.pushingpixels.aurora.component.AuroraBoxWithHighlights
+import org.pushingpixels.aurora.component.AuroraHorizontalSeparator
 import org.pushingpixels.aurora.component.AuroraVerticalScrollbar
 import org.pushingpixels.aurora.component.ScrollBarSizingConstants
 import org.pushingpixels.aurora.component.model.ComboBoxContentModel
@@ -136,12 +140,14 @@ fun main() {
                         contentPadding = PaddingValues(
                             start = 20.dp,
                             end = 20.dp,
-                            top = 12.dp,
-                            bottom = 2.dp
+                            top = 10.dp,
+                            bottom = 8.dp
                         ),
                         textStyle = TextStyle(fontWeight = FontWeight.Bold)
                     )
                 ).project()
+
+                AuroraHorizontalSeparator(modifier = Modifier.fillMaxWidth())
 
                 Box(modifier = Modifier.fillMaxSize().padding(6.dp)) {
                     val itemsList = (0 until itemCount).toList()
