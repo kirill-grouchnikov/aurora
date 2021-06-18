@@ -31,9 +31,8 @@ import org.pushingpixels.aurora.component.model.SeparatorContentModel
 import org.pushingpixels.aurora.component.model.SeparatorPresentationModel
 import org.pushingpixels.aurora.component.model.SeparatorSizingConstants
 
-// TODO - mark internal when modifier support on projections is available
 @Composable
-fun AuroraVerticalSeparator(
+internal fun AuroraVerticalSeparator(
     modifier: Modifier = Modifier,
     contentModel: SeparatorContentModel = SeparatorContentModel(),
     presentationModel: SeparatorPresentationModel = SeparatorPresentationModel()
@@ -83,9 +82,8 @@ fun AuroraVerticalSeparator(
     }
 }
 
-// TODO - mark internal when modifier support on projections is available
 @Composable
-fun AuroraHorizontalSeparator(
+internal fun AuroraHorizontalSeparator(
     modifier: Modifier = Modifier,
     contentModel: SeparatorContentModel = SeparatorContentModel(),
     presentationModel: SeparatorPresentationModel = SeparatorPresentationModel()

@@ -32,10 +32,10 @@ class CommandButtonProjection(
     overlays = overlays
 ) {
     @Composable
-    override fun project() {
+    override fun project(modifier: Modifier?) {
         // TODO - pass the app-side modifier
         AuroraCommandButton(
-            modifier = Modifier,
+            modifier = modifier?: Modifier,
             command = this.contentModel,
             parentWindow = null,
             extraAction = null,
@@ -58,10 +58,10 @@ class CommandButtonStripProjection(
     overlays = overlays
 ) {
     @Composable
-    override fun project() {
+    override fun project(modifier: Modifier?) {
         // TODO - pass the app-side modifier
         AuroraCommandButtonStrip(
-            modifier = Modifier,
+            modifier = modifier?: Modifier,
             commandGroup = this.contentModel,
             presentationModel = this.presentationModel,
             overlays = this.overlays ?: mapOf()
@@ -79,14 +79,14 @@ class CommandButtonPanelProjection(
     overlays = overlays
 ) {
     @Composable
-    override fun project() {
+    override fun project(modifier: Modifier?) {
         require(!presentationModel.showGroupLabels ||
                 (presentationModel.layoutFillMode == PanelLayoutFillMode.RowFill)) {
             "Column fill layout is not supported when group labels are shown"
         }
         // TODO - pass the app-side modifier
         AuroraCommandButtonPanel(
-            modifier = Modifier,
+            modifier = modifier?: Modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel,
             overlays = this.overlays ?: mapOf()
@@ -102,10 +102,10 @@ class ComboBoxProjection<E>(
     presentationModel = presentationModel
 ) {
     @Composable
-    override fun project() {
+    override fun project(modifier: Modifier?) {
         // TODO - pass the app-side modifier
         AuroraComboBox(
-            modifier = Modifier,
+            modifier = modifier?: Modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -120,10 +120,10 @@ class CheckBoxProjection(
     presentationModel = presentationModel
 ) {
     @Composable
-    override fun project() {
+    override fun project(modifier: Modifier?) {
         // TODO - pass the app-side modifier
         AuroraCheckBox(
-            modifier = Modifier,
+            modifier = modifier?: Modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -138,10 +138,10 @@ class RadioButtonProjection(
     presentationModel = presentationModel
 ) {
     @Composable
-    override fun project() {
+    override fun project(modifier: Modifier?) {
         // TODO - pass the app-side modifier
         AuroraRadioButton(
-            modifier = Modifier,
+            modifier = modifier?: Modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -156,10 +156,10 @@ class CircularProgressProjection(
     presentationModel = presentationModel
 ) {
     @Composable
-    override fun project() {
+    override fun project(modifier: Modifier?) {
         // TODO - pass the app-side modifier
         AuroraCircularProgress(
-            modifier = Modifier,
+            modifier = modifier?: Modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -174,10 +174,10 @@ class IndeterminateLinearProgressProjection(
     presentationModel = presentationModel
 ) {
     @Composable
-    override fun project() {
+    override fun project(modifier: Modifier?) {
         // TODO - pass the app-side modifier
         AuroraIndeterminateLinearProgress(
-            modifier = Modifier,
+            modifier = modifier?: Modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -192,10 +192,10 @@ class DeterminateLinearProgressProjection(
     presentationModel = presentationModel
 ) {
     @Composable
-    override fun project() {
+    override fun project(modifier: Modifier?) {
         // TODO - pass the app-side modifier
         AuroraDeterminateLinearProgress(
-            modifier = Modifier,
+            modifier = modifier?: Modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -210,10 +210,10 @@ class LabelProjection(
     presentationModel = presentationModel
 ) {
     @Composable
-    override fun project() {
+    override fun project(modifier: Modifier?) {
         // TODO - pass the app-side modifier
         AuroraLabel(
-            modifier = Modifier,
+            modifier = modifier?: Modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -228,10 +228,10 @@ class VerticalSeparatorProjection(
     presentationModel = presentationModel
 ) {
     @Composable
-    override fun project() {
+    override fun project(modifier: Modifier?) {
         // TODO - pass the app-side modifier
         AuroraVerticalSeparator(
-            modifier = Modifier,
+            modifier = modifier?: Modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -246,10 +246,10 @@ class HorizontalSeparatorProjection(
     presentationModel = presentationModel
 ) {
     @Composable
-    override fun project() {
+    override fun project(modifier: Modifier?) {
         // TODO - pass the app-side modifier
         AuroraHorizontalSeparator(
-            modifier = Modifier,
+            modifier = modifier?: Modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -264,10 +264,10 @@ class SliderProjection(
     presentationModel = presentationModel
 ) {
     @Composable
-    override fun project() {
+    override fun project(modifier: Modifier?) {
         // TODO - pass the app-side modifier
         AuroraSlider(
-            modifier = Modifier,
+            modifier = modifier?: Modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -282,10 +282,10 @@ class TextFieldValueProjection(
     presentationModel = presentationModel
 ) {
     @Composable
-    override fun project() {
+    override fun project(modifier: Modifier?) {
         // TODO - pass the app-side modifier
         AuroraTextField(
-            modifier = Modifier,
+            modifier = modifier?: Modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -300,10 +300,10 @@ class TextFieldStringProjection(
     presentationModel = presentationModel
 ) {
     @Composable
-    override fun project() {
+    override fun project(modifier: Modifier?) {
         // TODO - pass the app-side modifier
         AuroraTextField(
-            modifier = Modifier,
+            modifier = modifier?: Modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )

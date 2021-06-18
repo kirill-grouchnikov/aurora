@@ -30,8 +30,6 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
-import org.pushingpixels.aurora.component.AuroraHorizontalSeparator
-import org.pushingpixels.aurora.component.AuroraVerticalSeparator
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.demo.svg.material.*
@@ -213,7 +211,7 @@ fun DemoToolbar(
         ).project()
 
         Spacer(modifier = Modifier.width(4.dp))
-        AuroraVerticalSeparator(modifier = Modifier.height(20.dp))
+        VerticalSeparatorProjection().project(modifier = Modifier.height(20.dp))
         Spacer(modifier = Modifier.width(4.dp))
 
         CommandButtonStripProjection(
@@ -225,7 +223,7 @@ fun DemoToolbar(
         ).project()
 
         Spacer(modifier = Modifier.width(4.dp))
-        AuroraVerticalSeparator(modifier = Modifier.height(20.dp))
+        VerticalSeparatorProjection().project(modifier = Modifier.height(20.dp))
         Spacer(modifier = Modifier.width(4.dp))
 
         CommandButtonStripProjection(
@@ -296,7 +294,7 @@ fun DemoHeader(
         modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        AuroraHorizontalSeparator(modifier = Modifier.weight(1.0f, fill = true))
+        HorizontalSeparatorProjection().project(modifier = Modifier.weight(1.0f, fill = true))
         LabelProjection(
             contentModel = LabelContentModel(
                 text = text.uppercase(),
@@ -310,7 +308,7 @@ fun DemoHeader(
                 iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
             )
         ).project()
-        AuroraHorizontalSeparator(modifier = Modifier.weight(1.0f, fill = true))
+        HorizontalSeparatorProjection().project(modifier = Modifier.weight(1.0f, fill = true))
     }
 }
 

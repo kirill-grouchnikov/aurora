@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.component.projection
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.model.ContentModel
@@ -25,9 +26,10 @@ abstract class BaseProjection<C : ContentModel, P : PresentationModel>(
     val contentModel: C,
     val presentationModel: P
 ) {
-    // TODO - add Modifier as a parameter
+    // TODO - replace with non-nullable Modifier when issue
+    //  https://issuetracker.google.com/issues/165812010 is fixed
     @Composable
-    abstract fun project()
+    abstract fun project(modifier: Modifier? = null)
 }
 
 abstract class CommandBasedProjection<C : ContentModel, P : PresentationModel>(

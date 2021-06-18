@@ -44,7 +44,6 @@ import org.pushingpixels.aurora.IconFilterStrategy
 import org.pushingpixels.aurora.Side
 import org.pushingpixels.aurora.Sides
 import org.pushingpixels.aurora.component.AuroraBoxWithHighlights
-import org.pushingpixels.aurora.component.AuroraHorizontalSeparator
 import org.pushingpixels.aurora.component.AuroraVerticalScrollbar
 import org.pushingpixels.aurora.component.ScrollBarSizingConstants
 import org.pushingpixels.aurora.component.model.ComboBoxContentModel
@@ -52,6 +51,7 @@ import org.pushingpixels.aurora.component.model.ComboBoxPresentationModel
 import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.model.LabelPresentationModel
 import org.pushingpixels.aurora.component.projection.ComboBoxProjection
+import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.skin.getAuroraSkins
@@ -147,7 +147,7 @@ fun main() {
                     )
                 ).project()
 
-                AuroraHorizontalSeparator(modifier = Modifier.fillMaxWidth())
+                HorizontalSeparatorProjection().project(modifier = Modifier.fillMaxWidth())
 
                 Box(modifier = Modifier.fillMaxSize().padding(6.dp)) {
                     val itemsList = (0 until itemCount).toList()

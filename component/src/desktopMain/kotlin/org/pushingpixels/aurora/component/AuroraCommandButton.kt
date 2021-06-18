@@ -50,6 +50,8 @@ import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.component.layout.*
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
+import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.icon.AuroraThemedIcon
 import java.awt.*
@@ -887,21 +889,19 @@ internal fun AuroraCommandButton(
             if (hasAction and hasPopup and isActionEnabled and isPopupEnabled) {
                 when (preLayoutInfo.separatorOrientation) {
                     CommandButtonLayoutManager.CommandButtonSeparatorOrientation.Vertical ->
-                        AuroraVerticalSeparator(
-                            modifier = Modifier.alpha(combinedRolloverFraction),
+                        VerticalSeparatorProjection(
                             presentationModel = SeparatorPresentationModel(
                                 startGradientAmount = 4.dp,
                                 endGradientAmount = 4.dp
                             )
-                        )
+                        ).project(modifier = Modifier.alpha(combinedRolloverFraction))
                     CommandButtonLayoutManager.CommandButtonSeparatorOrientation.Horizontal ->
-                        AuroraHorizontalSeparator(
-                            modifier = Modifier.alpha(combinedRolloverFraction),
+                        HorizontalSeparatorProjection(
                             presentationModel = SeparatorPresentationModel(
                                 startGradientAmount = 4.dp,
                                 endGradientAmount = 4.dp
                             )
-                        )
+                        ).project(modifier = Modifier.alpha(combinedRolloverFraction))
                 }
             }
         }) { measurables, constraints ->
@@ -1425,12 +1425,12 @@ private fun CommandButtonPopupContent(
                         }
                     }
                 )
-                AuroraHorizontalSeparator(
+                HorizontalSeparatorProjection(
                     presentationModel = SeparatorPresentationModel(
                         startGradientAmount = 0.dp,
                         endGradientAmount = 0.dp
                     )
-                )
+                ).project()
             }
 
             // Command presentation for menu content, taking some of the values from
@@ -1496,12 +1496,12 @@ private fun CommandButtonPopupContent(
                         )
                     }
                     if (commandGroupIndex < (menuContentModel.value!!.groups.size - 1)) {
-                        AuroraHorizontalSeparator(
+                        HorizontalSeparatorProjection(
                             presentationModel = SeparatorPresentationModel(
                                 startGradientAmount = 0.dp,
                                 endGradientAmount = 0.dp
                             )
-                        )
+                        ).project()
                     }
                 }
             }
