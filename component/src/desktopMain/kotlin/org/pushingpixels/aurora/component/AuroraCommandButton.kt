@@ -1113,8 +1113,14 @@ private fun CommandButtonIconContent(
     iconSize: Dp, modelStateInfo: ModelStateInfo, currState: ComponentState,
     drawingCache: CommandButtonDrawingCache
 ) {
-    val isSelectedMenu = currState.isFacetActive(ComponentStateFacet.Selection) &&
-            presentationModel.isMenu
+    // Compute the combined strength of all the
+    // states that have the selection bit turned on
+    val selectionAlpha = modelStateInfo.stateContributionMap
+        .filter { it.key.isFacetActive(ComponentStateFacet.Selection) }
+        .map { it.value }
+        .sumOf { it.contribution.toDouble() }
+        .toFloat()
+    val isSelectedMenu = presentationModel.isMenu && (selectionAlpha > 0.0f)
 
     val skinColors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
@@ -1127,10 +1133,11 @@ private fun CommandButtonIconContent(
                 // Background fill / border for selected toggle menu commands
                 val stateForBackground = if (currState.isDisabled) ComponentState.DisabledSelected
                 else ComponentState.Selected
+
                 val alphaForBackground = skinColors.getAlpha(
                     decorationAreaType = decorationAreaType,
                     componentState = stateForBackground
-                )
+                ) * selectionAlpha
                 val outline = Outline.Rectangle(
                     rect = Rect(
                         left = 0.5f,
@@ -1181,14 +1188,6 @@ private fun CommandButtonIconContent(
                 decorationAreaType, ColorSchemeAssociationKind.Mark
             ) { it.markColor }
 
-            // Checkmark alpha is the combined strength of all the
-            // states that have the selection bit turned on
-            val checkmarkAlpha = modelStateInfo.stateContributionMap
-                .filter { it.key.isFacetActive(ComponentStateFacet.Selection) }
-                .map { it.value }
-                .sumOf { it.contribution.toDouble() }
-                .toFloat()
-
             val stateForMark = if (currState.isDisabled) ComponentState.DisabledSelected
             else ComponentState.Selected
             val alphaForMark = skinColors.getAlpha(
@@ -1214,7 +1213,7 @@ private fun CommandButtonIconContent(
                     // state or transition, and the second time based on the enabled bit
                     drawPath(
                         path = markPath,
-                        color = markColor.withAlpha(checkmarkAlpha),
+                        color = markColor.withAlpha(selectionAlpha),
                         style = Stroke(
                             width = markStroke,
                             cap = StrokeCap.Round,
