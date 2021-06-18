@@ -17,7 +17,6 @@ package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.core.*
 import androidx.compose.desktop.AppManager
-import androidx.compose.desktop.ComposePanel
 import androidx.compose.desktop.ComposeWindow
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -44,15 +43,14 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
+import org.pushingpixels.aurora.common.PopupManager
 import org.pushingpixels.aurora.common.markAsAuroraPopup
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.component.utils.*
-import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Rectangle
 import java.awt.Window
-import javax.swing.JWindow
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -232,20 +230,20 @@ internal fun <E> AuroraComboBox(
                 onClick = {
                     // TODO - move off of JWindow when https://github.com/JetBrains/compose-jb/issues/195
                     //  is addressed
-                    val jwindow = ComposeWindow()
-                    jwindow.focusableWindowState = false
-                    jwindow.type = Window.Type.POPUP
-                    jwindow.isAlwaysOnTop = true
-                    jwindow.isUndecorated = true
-                    jwindow.markAsAuroraPopup()
+                    val popupContentWindow = ComposeWindow()
+                    popupContentWindow.focusableWindowState = false
+                    popupContentWindow.type = Window.Type.POPUP
+                    popupContentWindow.isAlwaysOnTop = true
+                    popupContentWindow.isUndecorated = true
+                    popupContentWindow.markAsAuroraPopup()
 
                     // TODO - hopefully temporary. Mark the popup window as fully transparent
                     //  so that when it is globally positioned, we can size it to the actual
                     //  content and make it fully opaque
-                    jwindow.opacity = 0.0f
+                    popupContentWindow.opacity = 0.0f
 
-                    val auroraWindow = AppManager.focusedWindow!!.window
-                    val locationOnScreen = auroraWindow.locationOnScreen
+                    val currentWindow = AppManager.focusedWindow!!.window
+                    val locationOnScreen = currentWindow.locationOnScreen
 
                     // anchor the popup window to the bottom left corner of the component
                     // in screen coordinates
@@ -256,14 +254,14 @@ internal fun <E> AuroraComboBox(
                         x = (locationOnScreen.x + auroraTopLeftOffset.x / density).toInt(),
                         y = (locationOnScreen.y + auroraTopLeftOffset.y / density).toInt()
                     )
-                    jwindow.setBounds(
+                    popupContentWindow.setBounds(
                         initialWindowAnchor.x,
                         initialWindowAnchor.y,
                         initialWidth,
                         initialHeight
                     )
 
-                    jwindow.setContent(
+                    popupContentWindow.setContent(
                         parentComposition = parentComposition
                     ) {
                         CompositionLocalProvider(
@@ -274,22 +272,26 @@ internal fun <E> AuroraComboBox(
                             LocalAnimationConfig provides AuroraSkin.animationConfig
                         ) {
                             ComboBoxPopupContent(
-                                window = jwindow,
+                                window = popupContentWindow,
                                 initialAnchor = initialWindowAnchor,
                                 anchorSize = auroraSize,
                                 contentModel = contentModel,
                                 presentationModel = presentationModel,
                                 onItemSelected = {
                                     contentModel.onTriggerItemSelectedChange.invoke(it)
-                                    jwindow.dispose()
+                                    popupContentWindow.dispose()
                                 }
                             )
                         }
                     }
-                    jwindow.invalidate()
-                    jwindow.validate()
-                    jwindow.isVisible = true
-                    jwindow.pack()
+                    popupContentWindow.invalidate()
+                    popupContentWindow.validate()
+                    popupContentWindow.isVisible = true
+                    popupContentWindow.pack()
+                    PopupManager.addPopup(
+                        originator = currentWindow,
+                        popupWindow = popupContentWindow
+                    )
                 },
                 interactionSource = interactionSource,
                 indication = null

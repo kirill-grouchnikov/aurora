@@ -47,10 +47,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
-import org.pushingpixels.aurora.common.interpolateTowards
-import org.pushingpixels.aurora.common.isAuroraPopup
-import org.pushingpixels.aurora.common.markAsAuroraPopup
-import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.component.layout.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
@@ -79,7 +76,7 @@ private class CommandButtonDrawingCache(
 internal fun AuroraCommandButton(
     modifier: Modifier = Modifier,
     command: Command,
-    parentWindow: Window? = null,
+    parentWindow: ComposeWindow? = null,
     extraAction: (() -> Unit)? = null,
     extraActionPreview: CommandActionPreview? = null,
     presentationModel: CommandButtonPresentationModel,
@@ -611,8 +608,8 @@ internal fun AuroraCommandButton(
                         //  content and make it fully opaque
                         popupContentWindow.opacity = 0.0f
 
-                        val locationOnScreen =
-                            (parentWindow ?: AppManager.focusedWindow!!.window).locationOnScreen
+                        val currentWindow = parentWindow ?: AppManager.focusedWindow!!.window
+                        val locationOnScreen = currentWindow.locationOnScreen
 
                         // anchor the popup window to the bottom left corner of the component
                         // in screen coordinates
@@ -657,6 +654,14 @@ internal fun AuroraCommandButton(
                         popupContentWindow.validate()
                         popupContentWindow.isVisible = true
                         popupContentWindow.pack()
+
+                        // Hide the popups that "start" from the current window
+                        PopupManager.hidePopups(originator = currentWindow)
+                        // And display our new popup content
+                        PopupManager.addPopup(
+                            originator = currentWindow,
+                            popupWindow = popupContentWindow
+                        )
                     },
                     interactionSource = popupInteractionSource,
                     indication = null
@@ -1297,7 +1302,7 @@ private fun CommandButtonPopupIconContent(
 
 @Composable
 private fun CommandButtonPopupContent(
-    popupContentWindow: Window,
+    popupContentWindow: ComposeWindow,
     initialAnchor: IntOffset,
     anchorSize: AuroraSize,
     menuContentModel: State<CommandMenuContentModel?>,
@@ -1417,13 +1422,7 @@ private fun CommandButtonPopupContent(
                     presentationModel = menuPresentationModel.panelPresentationModel!!,
                     extraAction = {
                         if (toDismissPopupsOnActivation) {
-                            for (window in Window.getWindows()) {
-                                if (window.isDisplayable && (window is ComposeWindow)
-                                    && window.isAuroraPopup
-                                ) {
-                                    window.dispose()
-                                }
-                            }
+                            PopupManager.hidePopups(null)
                         }
                     }
                 )
@@ -1489,13 +1488,7 @@ private fun CommandButtonPopupContent(
                                 if (toDismissPopupsOnActivation and
                                     currSecondaryPresentationModel.toDismissPopupsOnActivation
                                 ) {
-                                    for (window in Window.getWindows()) {
-                                        if (window.isDisplayable && (window is ComposeWindow)
-                                            && window.isAuroraPopup
-                                        ) {
-                                            window.dispose()
-                                        }
-                                    }
+                                    PopupManager.hidePopups(popupContentWindow)
                                 }
                             },
                             presentationModel = currSecondaryPresentationModel,

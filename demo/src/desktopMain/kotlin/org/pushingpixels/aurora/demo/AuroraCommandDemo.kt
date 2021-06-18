@@ -452,7 +452,36 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
         text = "secondary 4",
         iconFactory = computer.factory(),
         action = { println("secondary 4 activated!") },
-        isActionEnabled = actionEnabled
+        isActionEnabled = actionEnabled,
+        secondaryContentModel = CommandMenuContentModel(
+            group = CommandGroup(
+                title = "Sub group",
+                commands = listOf(
+                    Command(
+                        text = "secondary 4/1",
+                        extraText = "extra text for 4/1",
+                        iconFactory = computer.factory(),
+                        action = { println("secondary 4/1 activated!") },
+                        isActionEnabled = actionEnabled
+                    ),
+                    Command(
+                        text = "secondary 4/2",
+                        extraText = "extra text for 4/2",
+                        iconFactory = computer.factory(),
+                        action = { println("secondary 4/2 activated!") },
+                        isActionEnabled = actionEnabled
+                    ),
+                    Command(
+                        text = "secondary 4/3",
+                        extraText = "extra text for 4/3",
+                        iconFactory = computer.factory(),
+                        action = { println("secondary 4/3 activated!") },
+                        isActionEnabled = actionEnabled
+                    )
+                )
+            )
+        ),
+        isSecondaryEnabled = popupEnabled
     )
 
     val secondaryCommand5 = Command(
@@ -488,7 +517,7 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
                 )
             )
         ),
-        isSecondaryEnabled = popupEnabled,
+        isSecondaryEnabled = popupEnabled
     )
 
     val commandActionAndSecondary =

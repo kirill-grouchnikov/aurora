@@ -25,3 +25,51 @@ public fun ComposeWindow.markAsAuroraPopup() {
 
 public val ComposeWindow.isAuroraPopup: Boolean
     get() = (this.rootPane.getClientProperty(AURORA_POPUP_WINDOW_KEY) == true)
+
+data class PopupInfo(val originator: ComposeWindow, val popupWindow: ComposeWindow)
+
+object PopupManager {
+    private val shownPath = arrayListOf<PopupInfo>()
+
+    fun addPopup(originator: ComposeWindow, popupWindow: ComposeWindow) {
+        shownPath.add(PopupInfo(originator, popupWindow))
+
+        popupWindow.invalidate()
+        popupWindow.validate()
+        popupWindow.isVisible = true
+        popupWindow.pack()
+    }
+
+    fun hideLastPopup() {
+        if (shownPath.size == 0) {
+            return
+        }
+        val last: PopupInfo = shownPath.removeLast()
+        val lastPopupWindow = last.popupWindow
+        if (lastPopupWindow.isDisplayable) {
+            lastPopupWindow.hide()
+            lastPopupWindow.dispose()
+        }
+    }
+
+    fun hidePopups(originator: ComposeWindow?) {
+        // Start going over the popups in reverse order (from the most recently displayed
+        // towards the very first one) and dismissing them one by one until we hit the
+        // originator
+        while (shownPath.size > 0) {
+            if (shownPath[shownPath.size - 1].popupWindow == originator) {
+                // The current popup window we're looking at is the requested originator.
+                // Stop unwinding and return
+                return
+            }
+
+            val last = shownPath.removeLast()
+            val lastPopupWindow = last.popupWindow
+            if (lastPopupWindow.isDisplayable) {
+                lastPopupWindow.hide()
+                lastPopupWindow.dispose()
+            }
+            // Continue unwinding
+        }
+    }
+}
