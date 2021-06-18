@@ -651,7 +651,12 @@ private fun <E> ComboBoxPopupContent(
             }
         }
         ComboBoxPopupColumn(modifier = Modifier.verticalScroll(stateVertical)) {
-            for (item in contentModel.items) {
+            val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
+                decorationAreaType = AuroraSkin.decorationAreaType
+            )
+            val backgroundEvenRows = backgroundColorScheme.backgroundFillColor
+            val backgroundOddRows = backgroundColorScheme.accentedBackgroundFillColor
+            for ((itemIndex, item) in contentModel.items.withIndex()) {
                 // TODO - pass background modifier with even-odd background striping
                 //  using [AuroraColorScheme.backgroundFillColor] and
                 //  [AuroraColorScheme.accentedBackgroundFillColor]
@@ -667,7 +672,11 @@ private fun <E> ComboBoxPopupContent(
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                         horizontalAlignment = HorizontalAlignment.Leading
                     )
-                ).project()
+                ).project(
+                    modifier = Modifier.background(
+                        color = if ((itemIndex % 2) == 0) backgroundEvenRows else backgroundOddRows
+                    )
+                )
             }
         }
         if (presentationModel.popupMaxVisibleItems < contentModel.items.size) {
@@ -726,23 +735,23 @@ private fun <E> ComboBoxPopupLayout(
             fullWidth += (scrollBarMarginPx + verticalScrollBarPlaceable.width + scrollBarMarginPx)
         }
 
+        popupSize.width = fullWidth + 2
+        popupSize.height = popupColumnHeight + 2
+
         val canvasPlaceable = canvasMeasurable.measure(
             Constraints.fixed(
-                width = fullWidth,
-                height = popupColumnHeight
+                width = popupSize.width, height = popupSize.height
             )
         )
-
-        popupSize.width = fullWidth
-        popupSize.height = popupColumnHeight
 
         layout(width = fullWidth, height = popupColumnHeight) {
             canvasPlaceable.place(x = 0, y = 0)
             // TODO - support RTL
-            popupColumnPlaceable.place(x = 0, y = 0)
+            // Offset everything else by 1,1 for border insets
+            popupColumnPlaceable.place(x = 1, y = 1)
             verticalScrollBarPlaceable?.place(
-                x = popupColumnWidth + scrollBarMarginPx,
-                y = scrollBarMarginPx
+                x = popupColumnWidth + scrollBarMarginPx + 1,
+                y = scrollBarMarginPx + 1
             )
         }
     }
