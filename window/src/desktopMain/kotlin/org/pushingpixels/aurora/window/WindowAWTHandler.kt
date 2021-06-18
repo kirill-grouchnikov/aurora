@@ -102,13 +102,16 @@ internal class AWTInputHandler(
                 return
             }
 
+            val pointInWindow = SwingUtilities.convertPoint(
+                event.source as Component?, event.point, window)
+
             when (event.id) {
-                MouseEvent.MOUSE_ENTERED -> mouseEntered(event, window)
-                MouseEvent.MOUSE_EXITED -> mouseExited(event, window)
-                MouseEvent.MOUSE_PRESSED -> mousePressed(event, window)
-                MouseEvent.MOUSE_RELEASED -> mouseReleased(event, window)
-                MouseEvent.MOUSE_DRAGGED -> mouseDragged(event, window)
-                MouseEvent.MOUSE_MOVED -> mouseMoved(event, window)
+                MouseEvent.MOUSE_ENTERED -> mouseEntered(pointInWindow, window)
+                MouseEvent.MOUSE_EXITED -> mouseExited(pointInWindow, window)
+                MouseEvent.MOUSE_PRESSED -> mousePressed(pointInWindow, window)
+                MouseEvent.MOUSE_RELEASED -> mouseReleased(pointInWindow, window)
+                MouseEvent.MOUSE_DRAGGED -> mouseDragged(pointInWindow, window)
+                MouseEvent.MOUSE_MOVED -> mouseMoved(pointInWindow, window)
             }
         }
     }
@@ -122,10 +125,10 @@ internal class AWTInputHandler(
         }
     }
 
-    private fun mousePressed(ev: MouseEvent, w: Window) {
+    private fun mousePressed(pointInWindow: Point, w: Window) {
         //println("mousePressed!")
         isMousePressed = true
-        val dragWindowOffset: Point = ev.point
+        val dragWindowOffset: Point = pointInWindow
         w.toFront()
         var f: Frame? = null
         var d: Dialog? = null
@@ -147,7 +150,7 @@ internal class AWTInputHandler(
         }
     }
 
-    private fun mouseReleased(ev: MouseEvent?, w: Window) {
+    private fun mouseReleased(pointInWindow: Point, w: Window) {
         //println("mouseReleased!")
         if ((dragCursor != 0) && (window != null)
             && !window.isValid
@@ -162,7 +165,7 @@ internal class AWTInputHandler(
         dragCursor = 0
     }
 
-    private fun mouseMoved(ev: MouseEvent, w: Window) {
+    private fun mouseMoved(pointInWindow: Point, w: Window) {
         //println("mouseMoved ${ev.x}x${ev.y} / ${ev.source}! ${rootPane.windowDecorationStyle}")
 //        if (rootPane.windowDecorationStyle == JRootPane.NONE) {
 //            return
@@ -175,9 +178,8 @@ internal class AWTInputHandler(
         } else if (w is Dialog) {
             d = w
         }
-
         // Update the cursor
-        val cursor = getCursor(calculateCorner(w, ev.x, ev.y))
+        val cursor = getCursor(calculateCorner(w, pointInWindow.x, pointInWindow.y))
         val isFrameResizable = (f != null
                 && f.isResizable && ((f.extendedState and Frame.MAXIMIZED_BOTH) == 0))
         val isDialogResizable = d != null && d.isResizable
@@ -231,9 +233,9 @@ internal class AWTInputHandler(
         }
     }
 
-    private fun mouseDragged(ev: MouseEvent, w: Window) {
+    private fun mouseDragged(pointInWindow: Point, w: Window) {
         //println("mouseDragged!")
-        val pt: Point = ev.point
+        val pt: Point = pointInWindow
         if (isMovingWindow) {
             val windowPt: Point
             try {
@@ -298,7 +300,7 @@ internal class AWTInputHandler(
     }
 
     private var cursorState: CursorState = CursorState.Nil
-    private fun mouseEntered(ev: MouseEvent, w: Window) {
+    private fun mouseEntered(pointInWindow: Point, w: Window) {
         //println("mouseEntered!")
         if (isMousePressed) {
             return
@@ -310,10 +312,10 @@ internal class AWTInputHandler(
             lastCursor.value = w.cursor
         }
         cursorState = CursorState.Entered
-        mouseMoved(ev, w)
+        mouseMoved(pointInWindow, w)
     }
 
-    private fun mouseExited(ev: MouseEvent, w: Window) {
+    private fun mouseExited(pointInWindow: Point, w: Window) {
         //println("mouseExited!")
         if (isMousePressed) {
             return
