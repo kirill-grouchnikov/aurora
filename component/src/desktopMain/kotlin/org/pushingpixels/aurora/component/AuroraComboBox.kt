@@ -43,8 +43,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
-import org.pushingpixels.aurora.common.PopupManager
-import org.pushingpixels.aurora.common.markAsAuroraPopup
+import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.component.utils.*
@@ -235,7 +234,6 @@ internal fun <E> AuroraComboBox(
                     popupContentWindow.type = Window.Type.POPUP
                     popupContentWindow.isAlwaysOnTop = true
                     popupContentWindow.isUndecorated = true
-                    popupContentWindow.markAsAuroraPopup()
 
                     // TODO - hopefully temporary. Mark the popup window as fully transparent
                     //  so that when it is globally positioned, we can size it to the actual
@@ -288,7 +286,7 @@ internal fun <E> AuroraComboBox(
                     popupContentWindow.validate()
                     popupContentWindow.isVisible = true
                     popupContentWindow.pack()
-                    PopupManager.addPopup(
+                    AuroraPopupManager.addPopup(
                         originator = currentWindow,
                         popupWindow = popupContentWindow
                     )

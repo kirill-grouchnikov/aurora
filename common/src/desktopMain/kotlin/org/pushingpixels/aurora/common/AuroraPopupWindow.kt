@@ -17,18 +17,9 @@ package org.pushingpixels.aurora.common
 
 import androidx.compose.desktop.ComposeWindow
 
-private const val AURORA_POPUP_WINDOW_KEY = "aurora.popupWindow"
+object AuroraPopupManager {
+    private data class PopupInfo(val originator: ComposeWindow, val popupWindow: ComposeWindow)
 
-public fun ComposeWindow.markAsAuroraPopup() {
-    this.rootPane.putClientProperty(AURORA_POPUP_WINDOW_KEY, true)
-}
-
-public val ComposeWindow.isAuroraPopup: Boolean
-    get() = (this.rootPane.getClientProperty(AURORA_POPUP_WINDOW_KEY) == true)
-
-data class PopupInfo(val originator: ComposeWindow, val popupWindow: ComposeWindow)
-
-object PopupManager {
     private val shownPath = arrayListOf<PopupInfo>()
 
     fun addPopup(originator: ComposeWindow, popupWindow: ComposeWindow) {

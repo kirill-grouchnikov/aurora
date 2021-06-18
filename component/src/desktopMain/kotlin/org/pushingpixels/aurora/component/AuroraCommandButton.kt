@@ -601,7 +601,6 @@ internal fun AuroraCommandButton(
                         popupContentWindow.type = Window.Type.POPUP
                         popupContentWindow.isAlwaysOnTop = true
                         popupContentWindow.isUndecorated = true
-                        popupContentWindow.markAsAuroraPopup()
 
                         // TODO - hopefully temporary. Mark the popup window as fully transparent
                         //  so that when it is globally positioned, we can size it to the actual
@@ -656,9 +655,9 @@ internal fun AuroraCommandButton(
                         popupContentWindow.pack()
 
                         // Hide the popups that "start" from the current window
-                        PopupManager.hidePopups(originator = currentWindow)
+                        AuroraPopupManager.hidePopups(originator = currentWindow)
                         // And display our new popup content
-                        PopupManager.addPopup(
+                        AuroraPopupManager.addPopup(
                             originator = currentWindow,
                             popupWindow = popupContentWindow
                         )
@@ -1422,7 +1421,7 @@ private fun CommandButtonPopupContent(
                     presentationModel = menuPresentationModel.panelPresentationModel!!,
                     extraAction = {
                         if (toDismissPopupsOnActivation) {
-                            PopupManager.hidePopups(null)
+                            AuroraPopupManager.hidePopups(null)
                         }
                     }
                 )
@@ -1488,7 +1487,7 @@ private fun CommandButtonPopupContent(
                                 if (toDismissPopupsOnActivation and
                                     currSecondaryPresentationModel.toDismissPopupsOnActivation
                                 ) {
-                                    PopupManager.hidePopups(popupContentWindow)
+                                    AuroraPopupManager.hidePopups(popupContentWindow)
                                 }
                             },
                             presentationModel = currSecondaryPresentationModel,
