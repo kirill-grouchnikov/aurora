@@ -38,7 +38,7 @@ object AuroraPopupManager {
         val last: PopupInfo = shownPath.removeLast()
         val lastPopupWindow = last.popupWindow
         if (lastPopupWindow.isDisplayable) {
-            lastPopupWindow.hide()
+            lastPopupWindow.isVisible = false
             lastPopupWindow.dispose()
         }
     }
@@ -57,7 +57,7 @@ object AuroraPopupManager {
             val last = shownPath.removeLast()
             val lastPopupWindow = last.popupWindow
             if (lastPopupWindow.isDisplayable) {
-                lastPopupWindow.hide()
+                lastPopupWindow.isVisible = false
                 lastPopupWindow.dispose()
             }
             // Continue unwinding
