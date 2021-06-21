@@ -270,7 +270,7 @@ internal fun <E> AuroraComboBox(
                             LocalAnimationConfig provides AuroraSkin.animationConfig
                         ) {
                             ComboBoxPopupContent(
-                                window = popupContentWindow,
+                                popupContentWindow = popupContentWindow,
                                 initialAnchor = initialWindowAnchor,
                                 anchorSize = auroraSize,
                                 contentModel = contentModel,
@@ -525,7 +525,7 @@ internal fun <E> AuroraComboBox(
 
 @Composable
 private fun <E> ComboBoxPopupContent(
-    window: ComposeWindow,
+    popupContentWindow: ComposeWindow,
     initialAnchor: IntOffset,
     anchorSize: AuroraSize,
     contentModel: ComboBoxContentModel<E>,
@@ -608,7 +608,7 @@ private fun <E> ComboBoxPopupContent(
                 }
 
                 // Make sure the popup stays in screen bounds
-                val screenBounds = window.graphicsConfiguration.bounds
+                val screenBounds = popupContentWindow.graphicsConfiguration.bounds
                 if (popupRect.x < 0) {
                     popupRect.translate(-popupRect.x, 0)
                 }
@@ -622,13 +622,12 @@ private fun <E> ComboBoxPopupContent(
                     popupRect.translate(0, screenBounds.height - popupRect.y - popupRect.height)
                 }
 
-                window.bounds = popupRect
-                window.opacity = 1.0f
-                window.preferredSize = Dimension(popupRect.width, popupRect.height)
-                window.size = Dimension(popupRect.width, popupRect.height)
-                window.invalidate()
-                window.validate()
-                window.contentPane.revalidate()
+                popupContentWindow.bounds = popupRect
+                popupContentWindow.opacity = 1.0f
+                popupContentWindow.preferredSize = Dimension(popupRect.width, popupRect.height)
+                popupContentWindow.size = Dimension(popupRect.width, popupRect.height)
+                popupContentWindow.invalidate()
+                popupContentWindow.validate()
             },
         representativePopupItemHeight = representativePopupItemHeight,
         contentModel = contentModel,
@@ -710,13 +709,7 @@ private fun <E> ComboBoxPopupLayout(
         val popupColumnHeight = (representativePopupItemHeight *
                 min(presentationModel.popupMaxVisibleItems, contentModel.items.size)).roundToInt()
         val popupColumnPlaceable =
-            popupColumnMeasurable.measure(
-                constraints.copy(
-                    minWidth = 0,
-                    minHeight = 0,
-                    maxHeight = popupColumnHeight
-                )
-            )
+            popupColumnMeasurable.measure(Constraints(maxHeight = popupColumnHeight))
         val popupColumnWidth = popupColumnPlaceable.width
 
         var fullWidth = popupColumnWidth

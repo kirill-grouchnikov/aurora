@@ -1377,7 +1377,6 @@ private fun CommandButtonPopupContent(
         popupContentWindow.size = Dimension(popupRect.width, popupRect.height)
         popupContentWindow.invalidate()
         popupContentWindow.validate()
-        //popupContentWindow.contentPane.revalidate()
     }) {
         val hasPanel = (menuContentModel.value!!.panelContentModel != null)
         val layoutDirection = LocalLayoutDirection.current
