@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
+import org.pushingpixels.aurora.component.contextmenu.auroraContextMenu
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.demo.svg.material.*
@@ -307,7 +308,10 @@ fun DemoHeader(
                 iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                 iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
             )
-        ).project()
+        ).project(modifier = Modifier.auroraContextMenu(
+            contentModel = CommandMenuContentModel(CommandGroup(commands = listOf())),
+            presentationModel = CommandPopupMenuPresentationModel()
+        ))
         HorizontalSeparatorProjection().project(modifier = Modifier.weight(1.0f, fill = true))
     }
 }
