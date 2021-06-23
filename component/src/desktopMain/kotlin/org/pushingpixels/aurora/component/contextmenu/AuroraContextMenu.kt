@@ -15,14 +15,22 @@
  */
 package org.pushingpixels.aurora.component.contextmenu
 
+import androidx.compose.desktop.AppManager
+import androidx.compose.desktop.ComposeWindow
 import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.input.pointer.*
-import androidx.compose.ui.platform.debugInspectorInfo
+import androidx.compose.ui.unit.IntOffset
+import org.pushingpixels.aurora.*
+import org.pushingpixels.aurora.common.AuroraPopupManager
+import org.pushingpixels.aurora.component.CommandButtonPopupContent
+import org.pushingpixels.aurora.component.model.Command
+import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.model.CommandMenuContentModel
 import org.pushingpixels.aurora.component.model.CommandPopupMenuPresentationModel
+import org.pushingpixels.aurora.component.utils.AuroraSize
+import java.awt.Window
 import java.awt.event.MouseEvent
 
 private suspend fun AwaitPointerEventScope.awaitEventFirstDown(): PointerEvent {
@@ -38,26 +46,95 @@ private suspend fun AwaitPointerEventScope.awaitEventFirstDown(): PointerEvent {
 @Composable
 fun Modifier.auroraContextMenu(
     contentModel: CommandMenuContentModel,
-    presentationModel: CommandPopupMenuPresentationModel
-): Modifier = composed(
-    inspectorInfo = debugInspectorInfo {
-        name = "auroraContextMenu"
-        properties["contentModel"] = contentModel
-        properties["presentationModel"] = presentationModel
-    }
-) {
+    presentationModel: CommandPopupMenuPresentationModel = CommandPopupMenuPresentationModel(),
+    overlays: Map<Command, CommandButtonPresentationModel.Overlay> = mapOf()
+): Modifier {
     var lastEvent by remember { mutableStateOf<MouseEvent?>(null) }
+    val auroraSize = AuroraSize(0, 0)
 
-    val gestures =
-        Modifier.pointerInput(Unit) {
-            forEachGesture {
-                awaitPointerEventScope {
-                    lastEvent = awaitEventFirstDown().also {
-                            event -> event.changes.forEach { it.consumeDownChange() }
-                    }.mouseEvent
+    val parentComposition = rememberCompositionContext()
+    val contentModelState = rememberUpdatedState(contentModel)
+
+    val decorationAreaType = AuroraSkin.decorationAreaType
+    val skinColors = AuroraSkin.colors
+    val buttonShaper = AuroraSkin.buttonShaper
+    val painters = AuroraSkin.painters
+
+    return this.then(Modifier.pointerInput(Unit) {
+        forEachGesture {
+            awaitPointerEventScope {
+                lastEvent = awaitEventFirstDown().also { event ->
+                    event.changes.forEach { it.consumeDownChange() }
+                }.mouseEvent
+            }
+
+            if (lastEvent?.isPopupTrigger == true) {
+                val popupContentWindow = ComposeWindow()
+                popupContentWindow.focusableWindowState = false
+                popupContentWindow.type = Window.Type.POPUP
+                popupContentWindow.isAlwaysOnTop = true
+                popupContentWindow.isUndecorated = true
+
+                // TODO - hopefully temporary. Mark the popup window as fully transparent
+                //  so that when it is globally positioned, we can size it to the actual
+                //  content and make it fully opaque
+                popupContentWindow.opacity = 0.0f
+
+                val currentWindow = AppManager.focusedWindow!!.window
+                val locationOnScreen = currentWindow.locationOnScreen
+
+                // anchor the popup window to the bottom left corner of the component
+                // in screen coordinates
+                // TODO - figure out the sizing (see above)
+                val initialWidth = 1000
+                val initialHeight = 1000
+                val initialWindowAnchor = IntOffset(
+                    x = locationOnScreen.x + lastEvent!!.x,
+                    y = locationOnScreen.y + lastEvent!!.y
+                )
+                popupContentWindow.setBounds(
+                    locationOnScreen.x + lastEvent!!.x,
+                    locationOnScreen.y + lastEvent!!.y,
+                    initialWidth,
+                    initialHeight
+                )
+
+                popupContentWindow.setContent(
+                    parentComposition = parentComposition
+                ) {
+                    CompositionLocalProvider(
+                        LocalDecorationAreaType provides decorationAreaType,
+                        LocalSkinColors provides skinColors,
+                        LocalButtonShaper provides buttonShaper,
+                        LocalPainters provides painters,
+                        LocalAnimationConfig provides AuroraSkin.animationConfig
+                    ) {
+                        CommandButtonPopupContent(
+                            popupContentWindow = popupContentWindow,
+                            initialAnchor = initialWindowAnchor,
+                            anchorSize = auroraSize,
+                            menuContentModel = contentModelState,
+                            menuPresentationModel = presentationModel,
+                            popupPlacementStrategy = presentationModel.popupPlacementStrategy,
+                            toDismissPopupsOnActivation = true,
+                            overlays = overlays
+                        )
+                    }
                 }
-                println("Last event ${lastEvent?.isPopupTrigger}")
+
+                popupContentWindow.invalidate()
+                popupContentWindow.validate()
+                popupContentWindow.isVisible = true
+                popupContentWindow.pack()
+
+                // Hide the popups that "start" from the current window
+                AuroraPopupManager.hidePopups(originator = currentWindow)
+                // And display our new popup content
+                AuroraPopupManager.addPopup(
+                    originator = currentWindow,
+                    popupWindow = popupContentWindow
+                )
             }
         }
-    this.then(gestures)
+    })
 }

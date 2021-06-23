@@ -263,6 +263,49 @@ fun DemoFooter(
     ) {
         Spacer(modifier.weight(weight = 1.0f, fill = true))
 
+        val count = 10
+        val toggleStates = remember { mutableStateListOf<Boolean>() }
+        for (i in 0 until count) {
+            toggleStates.add(false)
+        }
+
+        val commands1 = arrayListOf<Command>()
+        val commands2 = arrayListOf<Command>()
+        val commands3 = arrayListOf<Command>()
+
+        for (i in 0 until count) {
+            val command = Command(
+                text = "option $i",
+                isActionToggle = true,
+                isActionToggleSelected = toggleStates[i],
+                onTriggerActionToggleSelectedChange = {
+                    toggleStates[i] = it
+                }
+            )
+
+            when (i) {
+                0, 1, 2 -> commands1.add(command)
+                3, 4, 5, 6 -> commands2.add(command)
+                else -> commands3.add(command)
+            }
+        }
+
+        LabelProjection(contentModel = LabelContentModel(text = "Right click to show menu"))
+            .project(
+                modifier = Modifier.auroraContextMenu(
+                    contentModel = CommandMenuContentModel(
+                        groups = listOf(
+                            CommandGroup(commands = commands1),
+                            CommandGroup(commands = commands2),
+                            CommandGroup(commands = commands3)
+                        )
+                    ),
+                    presentationModel = CommandPopupMenuPresentationModel(
+                        popupPlacementStrategy = PopupPlacementStrategy.Upward
+                    )
+                )
+            )
+
         CommandButtonStripProjection(
             contentModel = alignmentCommands,
             presentationModel = CommandStripPresentationModel(
@@ -308,10 +351,7 @@ fun DemoHeader(
                 iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                 iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
             )
-        ).project(modifier = Modifier.auroraContextMenu(
-            contentModel = CommandMenuContentModel(CommandGroup(commands = listOf())),
-            presentationModel = CommandPopupMenuPresentationModel()
-        ))
+        ).project()
         HorizontalSeparatorProjection().project(modifier = Modifier.weight(1.0f, fill = true))
     }
 }

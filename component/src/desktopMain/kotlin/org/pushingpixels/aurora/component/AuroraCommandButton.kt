@@ -1299,7 +1299,7 @@ private fun CommandButtonPopupIconContent(
 }
 
 @Composable
-private fun CommandButtonPopupContent(
+internal fun CommandButtonPopupContent(
     popupContentWindow: ComposeWindow,
     initialAnchor: IntOffset,
     anchorSize: AuroraSize,
