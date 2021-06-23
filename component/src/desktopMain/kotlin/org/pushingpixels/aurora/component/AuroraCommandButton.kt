@@ -1485,7 +1485,7 @@ internal fun CommandButtonPopupContent(
                                 if (toDismissPopupsOnActivation and
                                     currSecondaryPresentationModel.toDismissPopupsOnActivation
                                 ) {
-                                    AuroraPopupManager.hidePopups(popupContentWindow)
+                                    AuroraPopupManager.hidePopups(null)
                                 }
                             },
                             presentationModel = currSecondaryPresentationModel,

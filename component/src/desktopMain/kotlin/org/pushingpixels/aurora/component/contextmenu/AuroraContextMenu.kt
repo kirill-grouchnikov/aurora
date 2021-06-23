@@ -77,8 +77,7 @@ fun Modifier.auroraContextMenu(
                 val currentWindow = AppManager.focusedWindow!!.window
                 val locationOnScreen = currentWindow.locationOnScreen
 
-                // anchor the popup window to the bottom left corner of the component
-                // in screen coordinates
+                // anchor the popup window to the point that was clicked
                 // TODO - figure out the sizing (see above)
                 val initialWidth = 1000
                 val initialHeight = 1000

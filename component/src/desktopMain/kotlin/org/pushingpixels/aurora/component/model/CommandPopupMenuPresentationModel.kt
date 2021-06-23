@@ -30,7 +30,6 @@ data class CommandPopupMenuPresentationModel(
     val menuPresentationState: CommandButtonPresentationState =
         DefaultCommandPopupMenuPresentationState,
     val maxVisibleMenuCommands: Int = 0,
-    val toDismissOnCommandActivation: Boolean = false,
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Endward
 )
 
