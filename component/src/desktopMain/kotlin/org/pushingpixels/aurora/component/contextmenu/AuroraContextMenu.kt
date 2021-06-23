@@ -22,7 +22,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.unit.IntOffset
-import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.component.CommandButtonPopupContent
 import org.pushingpixels.aurora.component.model.Command
@@ -54,11 +53,6 @@ fun Modifier.auroraContextMenu(
 
     val parentComposition = rememberCompositionContext()
     val contentModelState = rememberUpdatedState(contentModel)
-
-    val decorationAreaType = AuroraSkin.decorationAreaType
-    val skinColors = AuroraSkin.colors
-    val buttonShaper = AuroraSkin.buttonShaper
-    val painters = AuroraSkin.painters
 
     return this.then(Modifier.pointerInput(Unit) {
         forEachGesture {
@@ -102,24 +96,16 @@ fun Modifier.auroraContextMenu(
                 popupContentWindow.setContent(
                     parentComposition = parentComposition
                 ) {
-                    CompositionLocalProvider(
-                        LocalDecorationAreaType provides decorationAreaType,
-                        LocalSkinColors provides skinColors,
-                        LocalButtonShaper provides buttonShaper,
-                        LocalPainters provides painters,
-                        LocalAnimationConfig provides AuroraSkin.animationConfig
-                    ) {
-                        CommandButtonPopupContent(
-                            popupContentWindow = popupContentWindow,
-                            initialAnchor = initialWindowAnchor,
-                            anchorSize = auroraSize,
-                            menuContentModel = contentModelState,
-                            menuPresentationModel = presentationModel,
-                            popupPlacementStrategy = presentationModel.popupPlacementStrategy,
-                            toDismissPopupsOnActivation = true,
-                            overlays = overlays
-                        )
-                    }
+                    CommandButtonPopupContent(
+                        popupContentWindow = popupContentWindow,
+                        initialAnchor = initialWindowAnchor,
+                        anchorSize = auroraSize,
+                        menuContentModel = contentModelState,
+                        menuPresentationModel = presentationModel,
+                        popupPlacementStrategy = presentationModel.popupPlacementStrategy,
+                        toDismissPopupsOnActivation = true,
+                        overlays = overlays
+                    )
                 }
 
                 popupContentWindow.invalidate()
