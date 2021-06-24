@@ -36,10 +36,10 @@ Add Aurora dependencies:
 
 ```
 dependencies {
-    implementation("org.pushing-pixels:aurora-skin:0.0.39-SNAPSHOT")
-    implementation("org.pushing-pixels:aurora-icon-icon:0.0.39-SNAPSHOT")
-    implementation("org.pushing-pixels:aurora-component:0.0.39-SNAPSHOT")
-    implementation("org.pushing-pixels:aurora-window:0.0.39-SNAPSHOT")
+    implementation("org.pushing-pixels:aurora-skin:0.0.40-SNAPSHOT")
+    implementation("org.pushing-pixels:aurora-icon-icon:0.0.40-SNAPSHOT")
+    implementation("org.pushing-pixels:aurora-component:0.0.40-SNAPSHOT")
+    implementation("org.pushing-pixels:aurora-window:0.0.40-SNAPSHOT")
     implementation(compose.desktop.currentOs)
 }
 ```
