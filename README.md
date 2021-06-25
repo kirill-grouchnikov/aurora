@@ -23,7 +23,7 @@ Add the latest Kotlin and Compose Desktop dependencies:
 ```kotlin
 plugins {
     kotlin("jvm") version "1.5.10"
-    id("org.jetbrains.compose") version "0.4.0-build211"
+    id("org.jetbrains.compose") version "0.5.0-build226"
 }
 ```
 
