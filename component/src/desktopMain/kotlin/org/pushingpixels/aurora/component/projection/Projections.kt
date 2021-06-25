@@ -22,20 +22,31 @@ import org.pushingpixels.aurora.Side
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
 
+// TODO - restore when issue
+//  https://issuetracker.google.com/issues/165812010 is fixed
+//abstract class BaseProjection<C : ContentModel, P : PresentationModel>(
+//    val contentModel: C,
+//    val presentationModel: P
+//) {
+//    @Composable
+//    abstract fun project(modifier: Modifier? = null)
+//}
+//
+//abstract class CommandBasedProjection<C : ContentModel, P : PresentationModel>(
+//    contentModel: C,
+//    presentationModel: P,
+//    val overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
+//) : BaseProjection<C, P>(contentModel, presentationModel)
+
 class CommandButtonProjection(
-    contentModel: Command,
-    presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel(),
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
-) : CommandBasedProjection<Command, CommandButtonPresentationModel>(
-    contentModel = contentModel,
-    presentationModel = presentationModel,
-    overlays = overlays
+    val contentModel: Command,
+    val presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel(),
+    val overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
 ) {
     @Composable
-    override fun project(modifier: Modifier?) {
-        // TODO - pass the app-side modifier
+    fun project(modifier: Modifier = Modifier) {
         AuroraCommandButton(
-            modifier = modifier?: Modifier,
+            modifier = modifier,
             command = this.contentModel,
             parentWindow = null,
             extraAction = null,
@@ -49,19 +60,15 @@ class CommandButtonProjection(
 }
 
 class CommandButtonStripProjection(
-    contentModel: CommandGroup,
-    presentationModel: CommandStripPresentationModel,
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
-) : CommandBasedProjection<CommandGroup, CommandStripPresentationModel>(
-    contentModel = contentModel,
-    presentationModel = presentationModel,
-    overlays = overlays
+    val contentModel: CommandGroup,
+    val presentationModel: CommandStripPresentationModel,
+    val overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
 ) {
     @Composable
-    override fun project(modifier: Modifier?) {
+    fun project(modifier: Modifier = Modifier) {
         // TODO - pass the app-side modifier
         AuroraCommandButtonStrip(
-            modifier = modifier?: Modifier,
+            modifier = modifier,
             commandGroup = this.contentModel,
             presentationModel = this.presentationModel,
             overlays = this.overlays ?: mapOf()
@@ -70,23 +77,19 @@ class CommandButtonStripProjection(
 }
 
 class CommandButtonPanelProjection(
-    contentModel: CommandPanelContentModel,
-    presentationModel: CommandPanelPresentationModel,
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
-) : CommandBasedProjection<CommandPanelContentModel, CommandPanelPresentationModel>(
-    contentModel = contentModel,
-    presentationModel = presentationModel,
-    overlays = overlays
+    val contentModel: CommandPanelContentModel,
+    val presentationModel: CommandPanelPresentationModel,
+    val overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
 ) {
     @Composable
-    override fun project(modifier: Modifier?) {
+    fun project(modifier: Modifier = Modifier) {
         require(!presentationModel.showGroupLabels ||
                 (presentationModel.layoutFillMode == PanelLayoutFillMode.RowFill)) {
             "Column fill layout is not supported when group labels are shown"
         }
         // TODO - pass the app-side modifier
         AuroraCommandButtonPanel(
-            modifier = modifier?: Modifier,
+            modifier = modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel,
             overlays = this.overlays ?: mapOf()
@@ -95,17 +98,14 @@ class CommandButtonPanelProjection(
 }
 
 class ComboBoxProjection<E>(
-    contentModel: ComboBoxContentModel<E>,
-    presentationModel: ComboBoxPresentationModel<E>
-) : BaseProjection<ComboBoxContentModel<E>, ComboBoxPresentationModel<E>>(
-    contentModel = contentModel,
-    presentationModel = presentationModel
+    val contentModel: ComboBoxContentModel<E>,
+    val presentationModel: ComboBoxPresentationModel<E>
 ) {
     @Composable
-    override fun project(modifier: Modifier?) {
+    fun project(modifier: Modifier = Modifier) {
         // TODO - pass the app-side modifier
         AuroraComboBox(
-            modifier = modifier?: Modifier,
+            modifier = modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -113,17 +113,14 @@ class ComboBoxProjection<E>(
 }
 
 class CheckBoxProjection(
-    contentModel: SelectorContentModel,
-    presentationModel: SelectorPresentationModel = SelectorPresentationModel()
-) : BaseProjection<SelectorContentModel, SelectorPresentationModel>(
-    contentModel = contentModel,
-    presentationModel = presentationModel
+    val contentModel: SelectorContentModel,
+    val presentationModel: SelectorPresentationModel = SelectorPresentationModel()
 ) {
     @Composable
-    override fun project(modifier: Modifier?) {
+    fun project(modifier: Modifier = Modifier) {
         // TODO - pass the app-side modifier
         AuroraCheckBox(
-            modifier = modifier?: Modifier,
+            modifier = modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -131,17 +128,14 @@ class CheckBoxProjection(
 }
 
 class RadioButtonProjection(
-    contentModel: SelectorContentModel,
-    presentationModel: SelectorPresentationModel = SelectorPresentationModel()
-) : BaseProjection<SelectorContentModel, SelectorPresentationModel>(
-    contentModel = contentModel,
-    presentationModel = presentationModel
+    val contentModel: SelectorContentModel,
+    val presentationModel: SelectorPresentationModel = SelectorPresentationModel()
 ) {
     @Composable
-    override fun project(modifier: Modifier?) {
+    fun project(modifier: Modifier = Modifier) {
         // TODO - pass the app-side modifier
         AuroraRadioButton(
-            modifier = modifier?: Modifier,
+            modifier = modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -149,17 +143,14 @@ class RadioButtonProjection(
 }
 
 class CircularProgressProjection(
-    contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
-    presentationModel: ProgressCircularPresentationModel = ProgressCircularPresentationModel()
-) : BaseProjection<ProgressIndeterminateContentModel, ProgressCircularPresentationModel>(
-    contentModel = contentModel,
-    presentationModel = presentationModel
+    val contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
+    val presentationModel: ProgressCircularPresentationModel = ProgressCircularPresentationModel()
 ) {
     @Composable
-    override fun project(modifier: Modifier?) {
+    fun project(modifier: Modifier = Modifier) {
         // TODO - pass the app-side modifier
         AuroraCircularProgress(
-            modifier = modifier?: Modifier,
+            modifier = modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -167,17 +158,14 @@ class CircularProgressProjection(
 }
 
 class IndeterminateLinearProgressProjection(
-    contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
-    presentationModel: ProgressLinearPresentationModel = ProgressLinearPresentationModel()
-) : BaseProjection<ProgressIndeterminateContentModel, ProgressLinearPresentationModel>(
-    contentModel = contentModel,
-    presentationModel = presentationModel
+    val contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
+    val presentationModel: ProgressLinearPresentationModel = ProgressLinearPresentationModel()
 ) {
     @Composable
-    override fun project(modifier: Modifier?) {
+    fun project(modifier: Modifier = Modifier) {
         // TODO - pass the app-side modifier
         AuroraIndeterminateLinearProgress(
-            modifier = modifier?: Modifier,
+            modifier = modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -185,17 +173,14 @@ class IndeterminateLinearProgressProjection(
 }
 
 class DeterminateLinearProgressProjection(
-    contentModel: ProgressDeterminateContentModel,
-    presentationModel: ProgressLinearPresentationModel = ProgressLinearPresentationModel()
-) : BaseProjection<ProgressDeterminateContentModel, ProgressLinearPresentationModel>(
-    contentModel = contentModel,
-    presentationModel = presentationModel
+    val contentModel: ProgressDeterminateContentModel,
+    val presentationModel: ProgressLinearPresentationModel = ProgressLinearPresentationModel()
 ) {
     @Composable
-    override fun project(modifier: Modifier?) {
+    fun project(modifier: Modifier = Modifier) {
         // TODO - pass the app-side modifier
         AuroraDeterminateLinearProgress(
-            modifier = modifier?: Modifier,
+            modifier = modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -203,17 +188,14 @@ class DeterminateLinearProgressProjection(
 }
 
 class LabelProjection(
-    contentModel: LabelContentModel,
-    presentationModel: LabelPresentationModel = LabelPresentationModel()
-) : BaseProjection<LabelContentModel, LabelPresentationModel>(
-    contentModel = contentModel,
-    presentationModel = presentationModel
+    val contentModel: LabelContentModel,
+    val presentationModel: LabelPresentationModel = LabelPresentationModel()
 ) {
     @Composable
-    override fun project(modifier: Modifier?) {
+    fun project(modifier: Modifier = Modifier) {
         // TODO - pass the app-side modifier
         AuroraLabel(
-            modifier = modifier?: Modifier,
+            modifier = modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -221,17 +203,14 @@ class LabelProjection(
 }
 
 class VerticalSeparatorProjection(
-    contentModel: SeparatorContentModel = SeparatorContentModel(),
-    presentationModel: SeparatorPresentationModel = SeparatorPresentationModel()
-) : BaseProjection<SeparatorContentModel, SeparatorPresentationModel>(
-    contentModel = contentModel,
-    presentationModel = presentationModel
+    val contentModel: SeparatorContentModel = SeparatorContentModel(),
+    val presentationModel: SeparatorPresentationModel = SeparatorPresentationModel()
 ) {
     @Composable
-    override fun project(modifier: Modifier?) {
+    fun project(modifier: Modifier = Modifier) {
         // TODO - pass the app-side modifier
         AuroraVerticalSeparator(
-            modifier = modifier?: Modifier,
+            modifier = modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -239,17 +218,14 @@ class VerticalSeparatorProjection(
 }
 
 class HorizontalSeparatorProjection(
-    contentModel: SeparatorContentModel = SeparatorContentModel(),
-    presentationModel: SeparatorPresentationModel = SeparatorPresentationModel()
-) : BaseProjection<SeparatorContentModel, SeparatorPresentationModel>(
-    contentModel = contentModel,
-    presentationModel = presentationModel
+    val contentModel: SeparatorContentModel = SeparatorContentModel(),
+    val presentationModel: SeparatorPresentationModel = SeparatorPresentationModel()
 ) {
     @Composable
-    override fun project(modifier: Modifier?) {
+    fun project(modifier: Modifier = Modifier) {
         // TODO - pass the app-side modifier
         AuroraHorizontalSeparator(
-            modifier = modifier?: Modifier,
+            modifier = modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -257,17 +233,14 @@ class HorizontalSeparatorProjection(
 }
 
 class SliderProjection(
-    contentModel: SliderContentModel,
-    presentationModel: SliderPresentationModel = SliderPresentationModel()
-) : BaseProjection<SliderContentModel, SliderPresentationModel>(
-    contentModel = contentModel,
-    presentationModel = presentationModel
+    val contentModel: SliderContentModel,
+    val presentationModel: SliderPresentationModel = SliderPresentationModel()
 ) {
     @Composable
-    override fun project(modifier: Modifier?) {
+    fun project(modifier: Modifier = Modifier) {
         // TODO - pass the app-side modifier
         AuroraSlider(
-            modifier = modifier?: Modifier,
+            modifier = modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -275,17 +248,14 @@ class SliderProjection(
 }
 
 class TextFieldValueProjection(
-    contentModel: TextFieldValueContentModel,
-    presentationModel: TextFieldPresentationModel = TextFieldPresentationModel()
-) : BaseProjection<TextFieldValueContentModel, TextFieldPresentationModel>(
-    contentModel = contentModel,
-    presentationModel = presentationModel
+    val contentModel: TextFieldValueContentModel,
+    val presentationModel: TextFieldPresentationModel = TextFieldPresentationModel()
 ) {
     @Composable
-    override fun project(modifier: Modifier?) {
+    fun project(modifier: Modifier = Modifier) {
         // TODO - pass the app-side modifier
         AuroraTextField(
-            modifier = modifier?: Modifier,
+            modifier = modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -293,17 +263,14 @@ class TextFieldValueProjection(
 }
 
 class TextFieldStringProjection(
-    contentModel: TextFieldStringContentModel,
-    presentationModel: TextFieldPresentationModel = TextFieldPresentationModel()
-) : BaseProjection<TextFieldStringContentModel, TextFieldPresentationModel>(
-    contentModel = contentModel,
-    presentationModel = presentationModel
+    val contentModel: TextFieldStringContentModel,
+    val presentationModel: TextFieldPresentationModel = TextFieldPresentationModel()
 ) {
     @Composable
-    override fun project(modifier: Modifier?) {
+    fun project(modifier: Modifier = Modifier) {
         // TODO - pass the app-side modifier
         AuroraTextField(
-            modifier = modifier?: Modifier,
+            modifier = modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
