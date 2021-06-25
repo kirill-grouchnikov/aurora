@@ -252,6 +252,7 @@ fun DemoToolbar(
 @Composable
 fun DemoFooter(
     modifier: Modifier = Modifier,
+    contentEnabled: MutableState<Boolean>,
     alignmentCommands: CommandGroup
 ) {
     Row(
@@ -290,21 +291,26 @@ fun DemoFooter(
             }
         }
 
-        LabelProjection(contentModel = LabelContentModel(text = "Right click to show menu"))
-            .project(
-                modifier = Modifier.auroraContextMenu(
-                    contentModel = CommandMenuContentModel(
-                        groups = listOf(
-                            CommandGroup(commands = commands1),
-                            CommandGroup(commands = commands2),
-                            CommandGroup(commands = commands3)
-                        )
-                    ),
-                    presentationModel = CommandPopupMenuPresentationModel(
-                        popupPlacementStrategy = PopupPlacementStrategy.Upward
+        LabelProjection(
+            contentModel = LabelContentModel(
+                text = "Right click to show menu",
+                enabled = contentEnabled.value
+            )
+        ).project(
+            modifier = Modifier.auroraContextMenu(
+                enabled = contentEnabled.value,
+                contentModel = CommandMenuContentModel(
+                    groups = listOf(
+                        CommandGroup(commands = commands1),
+                        CommandGroup(commands = commands2),
+                        CommandGroup(commands = commands3)
                     )
+                ),
+                presentationModel = CommandPopupMenuPresentationModel(
+                    popupPlacementStrategy = PopupPlacementStrategy.Upward
                 )
             )
+        )
 
         CommandButtonStripProjection(
             contentModel = alignmentCommands,
@@ -935,13 +941,17 @@ fun DemoContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
         }
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.None) {
             DemoArea(
-                styleCommands = styleCommands, auroraSkinDefinition = auroraSkinDefinition,
+                styleCommands = styleCommands,
+                auroraSkinDefinition = auroraSkinDefinition,
                 contentEnabled = contentEnabled
             )
         }
         Spacer(modifier = Modifier.weight(weight = 1.0f, fill = true))
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.Footer) {
-            DemoFooter(alignmentCommands = alignmentCommands)
+            DemoFooter(
+                contentEnabled = contentEnabled,
+                alignmentCommands = alignmentCommands
+            )
         }
     }
 }

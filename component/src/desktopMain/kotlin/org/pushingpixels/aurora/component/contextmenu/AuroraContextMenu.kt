@@ -44,6 +44,7 @@ private suspend fun AwaitPointerEventScope.awaitEventFirstDown(): PointerEvent {
 
 @Composable
 fun Modifier.auroraContextMenu(
+    enabled: Boolean = true,
     contentModel: CommandMenuContentModel,
     presentationModel: CommandPopupMenuPresentationModel = CommandPopupMenuPresentationModel(),
     overlays: Map<Command, CommandButtonPresentationModel.Overlay> = mapOf()
@@ -53,16 +54,20 @@ fun Modifier.auroraContextMenu(
 
     val parentComposition = rememberCompositionContext()
     val contentModelState = rememberUpdatedState(contentModel)
+    val enabledState = rememberUpdatedState(enabled)
 
     return this.then(Modifier.pointerInput(Unit) {
         forEachGesture {
+            // TODO - this only detects PRESSED events, so it doesn't work on platforms
+            //  such as Windows that show popups on RELEASED. See
+            //  https://github.com/JetBrains/compose-jb/issues/812
             awaitPointerEventScope {
                 lastEvent = awaitEventFirstDown().also { event ->
                     event.changes.forEach { it.consumeDownChange() }
                 }.mouseEvent
             }
 
-            if (lastEvent?.isPopupTrigger == true) {
+            if (enabledState.value && (lastEvent?.isPopupTrigger == true)) {
                 val popupContentWindow = ComposeWindow()
                 popupContentWindow.focusableWindowState = false
                 popupContentWindow.type = Window.Type.POPUP
