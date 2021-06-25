@@ -17,8 +17,8 @@ package org.pushingpixels.aurora.component.projection
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import org.pushingpixels.aurora.Sides
 import org.pushingpixels.aurora.Side
+import org.pushingpixels.aurora.Sides
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
 
@@ -66,7 +66,6 @@ class CommandButtonStripProjection(
 ) {
     @Composable
     fun project(modifier: Modifier = Modifier) {
-        // TODO - pass the app-side modifier
         AuroraCommandButtonStrip(
             modifier = modifier,
             commandGroup = this.contentModel,
@@ -83,8 +82,10 @@ class CommandButtonPanelProjection(
 ) {
     @Composable
     fun project(modifier: Modifier = Modifier) {
-        require(!presentationModel.showGroupLabels ||
-                (presentationModel.layoutFillMode == PanelLayoutFillMode.RowFill)) {
+        require(
+            !presentationModel.showGroupLabels ||
+                    (presentationModel.layoutFillMode == PanelLayoutFillMode.RowFill)
+        ) {
             "Column fill layout is not supported when group labels are shown"
         }
         // TODO - pass the app-side modifier
