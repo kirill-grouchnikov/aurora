@@ -128,6 +128,12 @@ private fun marinerSkinColors(): AuroraSkinColors {
         enabledMarkScheme.shade(0.7f), ColorSchemeAssociationKind.Mark,
         ComponentState.RolloverUnselected
     )
+
+    headerSchemeBundle.registerHighlightAlpha(1.0f)
+    headerSchemeBundle.registerHighlightColorScheme(activeScheme)
+    // the next line is to have consistent coloring during the rollover menu animations
+    headerSchemeBundle.registerHighlightAlpha(0.0f, ComponentState.Enabled)
+
     result.registerDecorationAreaSchemeBundle(
         headerSchemeBundle, headerColorScheme,
         DecorationAreaType.TitlePane, DecorationAreaType.Header

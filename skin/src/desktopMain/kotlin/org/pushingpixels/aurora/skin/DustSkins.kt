@@ -133,7 +133,6 @@ private fun dustBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
     headerSchemeBundle.registerHighlightAlpha(1.0f)
     headerSchemeBundle.registerHighlightColorScheme(headerActiveScheme)
     // the next line is to have consistent coloring during the rollover menu animations
-    // the next line is to have consistent coloring during the rollover menu animations
     headerSchemeBundle.registerHighlightAlpha(0.0f, ComponentState.Enabled)
 
     result.registerDecorationAreaSchemeBundle(headerSchemeBundle, DecorationAreaType.Toolbar)
