@@ -44,7 +44,6 @@ data class Command(
     val text: String,
     val extraText: String? = null,
     val iconFactory: AuroraIcon.Factory? = null,
-    val disabledIconFactory: AuroraIcon.Factory? = null,
     val action: (() -> Unit)? = null,
     val actionPreview: CommandActionPreview? = null,
     val isActionEnabled: Boolean = true,
