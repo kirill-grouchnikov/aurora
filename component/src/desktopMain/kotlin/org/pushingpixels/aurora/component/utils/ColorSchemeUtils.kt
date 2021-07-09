@@ -21,6 +21,7 @@ import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.common.byAlpha
+import org.pushingpixels.aurora.common.hexadecimal
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.lighter
 import org.pushingpixels.aurora.utils.MutableColorScheme
@@ -92,17 +93,17 @@ internal fun populateColorScheme(
         dark = dark.interpolateTowards(contributionScheme.darkColor, 1.0f - amount)
         ultraDark = ultraDark.interpolateTowards(contributionScheme.ultraDarkColor, 1.0f - amount)
         foreground = foreground.interpolateTowards(contributionScheme.foregroundColor, 1.0f - amount)
-        backgroundFill = backgroundFill.interpolateTowards(currStateScheme.backgroundFillColor, 1.0f - amount)
-        accentedBackgroundFill = accentedBackgroundFill.interpolateTowards(currStateScheme.accentedBackgroundFillColor, 1.0f - amount)
-        focusRing = focusRing.interpolateTowards(currStateScheme.focusRingColor, 1.0f - amount)
-        line = line.interpolateTowards(currStateScheme.lineColor, 1.0f - amount)
-        selectionForeground = selectionForeground.interpolateTowards(currStateScheme.selectionForegroundColor, 1.0f - amount)
-        selectionBackground = selectionBackground.interpolateTowards(currStateScheme.selectionBackgroundColor, 1.0f - amount)
-        textBackgroundFill = textBackgroundFill.interpolateTowards(currStateScheme.textBackgroundFillColor, 1.0f - amount)
-        separatorPrimary = separatorPrimary.interpolateTowards(currStateScheme.separatorPrimaryColor, 1.0f - amount)
-        separatorSecondary = separatorSecondary.interpolateTowards(currStateScheme.separatorSecondaryColor, 1.0f - amount)
-        mark = mark.interpolateTowards(currStateScheme.markColor, 1.0f - amount)
-        echo = echo.interpolateTowards(currStateScheme.echoColor, 1.0f - amount)
+        backgroundFill = backgroundFill.interpolateTowards(contributionScheme.backgroundFillColor, 1.0f - amount)
+        accentedBackgroundFill = accentedBackgroundFill.interpolateTowards(contributionScheme.accentedBackgroundFillColor, 1.0f - amount)
+        focusRing = focusRing.interpolateTowards(contributionScheme.focusRingColor, 1.0f - amount)
+        line = line.interpolateTowards(contributionScheme.lineColor, 1.0f - amount)
+        selectionForeground = selectionForeground.interpolateTowards(contributionScheme.selectionForegroundColor, 1.0f - amount)
+        selectionBackground = selectionBackground.interpolateTowards(contributionScheme.selectionBackgroundColor, 1.0f - amount)
+        textBackgroundFill = textBackgroundFill.interpolateTowards(contributionScheme.textBackgroundFillColor, 1.0f - amount)
+        separatorPrimary = separatorPrimary.interpolateTowards(contributionScheme.separatorPrimaryColor, 1.0f - amount)
+        separatorSecondary = separatorSecondary.interpolateTowards(contributionScheme.separatorSecondaryColor, 1.0f - amount)
+        mark = mark.interpolateTowards(contributionScheme.markColor, 1.0f - amount)
+        echo = echo.interpolateTowards(contributionScheme.echoColor, 1.0f - amount)
 
         //println("\tcontribution of $amount from ${contribution.key} to $backgroundStart")
     }
@@ -160,7 +161,7 @@ internal fun populateColorScheme(
     var mark = currStateScheme.markColor
     var echo = currStateScheme.echoColor
 
-    //println("Starting with $currState at $backgroundStart")
+    //println("Starting with ${modelStateInfo.currModelState} at ${mark.hexadecimal}")
 
     for (contribution in modelStateInfo.stateContributionMap) {
         if (contribution.key == modelStateInfo.currModelState) {
@@ -187,19 +188,19 @@ internal fun populateColorScheme(
         dark = dark.interpolateTowards(contributionScheme.darkColor, 1.0f - amount)
         ultraDark = ultraDark.interpolateTowards(contributionScheme.ultraDarkColor, 1.0f - amount)
         foreground = foreground.interpolateTowards(contributionScheme.foregroundColor, 1.0f - amount)
-        backgroundFill = backgroundFill.interpolateTowards(currStateScheme.backgroundFillColor, 1.0f - amount)
-        accentedBackgroundFill = accentedBackgroundFill.interpolateTowards(currStateScheme.accentedBackgroundFillColor, 1.0f - amount)
-        focusRing = focusRing.interpolateTowards(currStateScheme.focusRingColor, 1.0f - amount)
-        line = line.interpolateTowards(currStateScheme.lineColor, 1.0f - amount)
-        selectionForeground = selectionForeground.interpolateTowards(currStateScheme.selectionForegroundColor, 1.0f - amount)
-        selectionBackground = selectionBackground.interpolateTowards(currStateScheme.selectionBackgroundColor, 1.0f - amount)
-        textBackgroundFill = textBackgroundFill.interpolateTowards(currStateScheme.textBackgroundFillColor, 1.0f - amount)
-        separatorPrimary = separatorPrimary.interpolateTowards(currStateScheme.separatorPrimaryColor, 1.0f - amount)
-        separatorSecondary = separatorSecondary.interpolateTowards(currStateScheme.separatorSecondaryColor, 1.0f - amount)
-        mark = mark.interpolateTowards(currStateScheme.markColor, 1.0f - amount)
-        echo = echo.interpolateTowards(currStateScheme.echoColor, 1.0f - amount)
+        backgroundFill = backgroundFill.interpolateTowards(contributionScheme.backgroundFillColor, 1.0f - amount)
+        accentedBackgroundFill = accentedBackgroundFill.interpolateTowards(contributionScheme.accentedBackgroundFillColor, 1.0f - amount)
+        focusRing = focusRing.interpolateTowards(contributionScheme.focusRingColor, 1.0f - amount)
+        line = line.interpolateTowards(contributionScheme.lineColor, 1.0f - amount)
+        selectionForeground = selectionForeground.interpolateTowards(contributionScheme.selectionForegroundColor, 1.0f - amount)
+        selectionBackground = selectionBackground.interpolateTowards(contributionScheme.selectionBackgroundColor, 1.0f - amount)
+        textBackgroundFill = textBackgroundFill.interpolateTowards(contributionScheme.textBackgroundFillColor, 1.0f - amount)
+        separatorPrimary = separatorPrimary.interpolateTowards(contributionScheme.separatorPrimaryColor, 1.0f - amount)
+        separatorSecondary = separatorSecondary.interpolateTowards(contributionScheme.separatorSecondaryColor, 1.0f - amount)
+        mark = mark.interpolateTowards(contributionScheme.markColor, 1.0f - amount)
+        echo = echo.interpolateTowards(contributionScheme.echoColor, 1.0f - amount)
 
-        //println("\tcontribution of $amount from ${contribution.key} to $backgroundStart")
+        //println("\tcontribution of $amount from ${contribution.key} to ${mark.hexadecimal}")
     }
 
     // Update the mutable color scheme with the interpolated colors
@@ -251,17 +252,17 @@ internal fun populateColorSchemeWithHighlightAlpha(
     var dark = currStateScheme.darkColor.byAlpha(currHighlightAmount)
     var ultraDark = currStateScheme.ultraDarkColor.byAlpha(currHighlightAmount)
     var foreground = currStateScheme.foregroundColor.byAlpha(currHighlightAmount)
-    var backgroundFill = currStateScheme.backgroundFillColor
-    var accentedBackgroundFill = currStateScheme.accentedBackgroundFillColor
-    var focusRing = currStateScheme.focusRingColor
-    var line = currStateScheme.lineColor
-    var selectionForeground = currStateScheme.selectionForegroundColor
-    var selectionBackground = currStateScheme.selectionBackgroundColor
-    var textBackgroundFill = currStateScheme.textBackgroundFillColor
-    var separatorPrimary = currStateScheme.separatorPrimaryColor
-    var separatorSecondary = currStateScheme.separatorSecondaryColor
-    var mark = currStateScheme.markColor
-    var echo = currStateScheme.echoColor
+    var backgroundFill = currStateScheme.backgroundFillColor.byAlpha(currHighlightAmount)
+    var accentedBackgroundFill = currStateScheme.accentedBackgroundFillColor.byAlpha(currHighlightAmount)
+    var focusRing = currStateScheme.focusRingColor.byAlpha(currHighlightAmount)
+    var line = currStateScheme.lineColor.byAlpha(currHighlightAmount)
+    var selectionForeground = currStateScheme.selectionForegroundColor.byAlpha(currHighlightAmount)
+    var selectionBackground = currStateScheme.selectionBackgroundColor.byAlpha(currHighlightAmount)
+    var textBackgroundFill = currStateScheme.textBackgroundFillColor.byAlpha(currHighlightAmount)
+    var separatorPrimary = currStateScheme.separatorPrimaryColor.byAlpha(currHighlightAmount)
+    var separatorSecondary = currStateScheme.separatorSecondaryColor.byAlpha(currHighlightAmount)
+    var mark = currStateScheme.markColor.byAlpha(currHighlightAmount)
+    var echo = currStateScheme.echoColor.byAlpha(currHighlightAmount)
 
     for (contribution in modelStateInfo.stateContributionMap) {
         if (contribution.key == currState) {
@@ -291,17 +292,17 @@ internal fun populateColorSchemeWithHighlightAlpha(
         dark = dark.interpolateTowards(contributionScheme.darkColor.byAlpha(amount), 1.0f - amount)
         ultraDark = ultraDark.interpolateTowards(contributionScheme.ultraDarkColor.byAlpha(amount), 1.0f - amount)
         foreground = foreground.interpolateTowards(contributionScheme.foregroundColor.byAlpha(amount), 1.0f - amount)
-        backgroundFill = backgroundFill.interpolateTowards(currStateScheme.backgroundFillColor.byAlpha(amount), 1.0f - amount)
-        accentedBackgroundFill = accentedBackgroundFill.interpolateTowards(currStateScheme.accentedBackgroundFillColor.byAlpha(amount), 1.0f - amount)
-        focusRing = focusRing.interpolateTowards(currStateScheme.focusRingColor.byAlpha(amount), 1.0f - amount)
-        line = line.interpolateTowards(currStateScheme.lineColor.byAlpha(amount), 1.0f - amount)
-        selectionForeground = selectionForeground.interpolateTowards(currStateScheme.selectionForegroundColor.byAlpha(amount), 1.0f - amount)
-        selectionBackground = selectionBackground.interpolateTowards(currStateScheme.selectionBackgroundColor.byAlpha(amount), 1.0f - amount)
-        textBackgroundFill = textBackgroundFill.interpolateTowards(currStateScheme.textBackgroundFillColor.byAlpha(amount), 1.0f - amount)
-        separatorPrimary = separatorPrimary.interpolateTowards(currStateScheme.separatorPrimaryColor.byAlpha(amount), 1.0f - amount)
-        separatorSecondary = separatorSecondary.interpolateTowards(currStateScheme.separatorSecondaryColor.byAlpha(amount), 1.0f - amount)
-        mark = mark.interpolateTowards(currStateScheme.markColor.byAlpha(amount), 1.0f - amount)
-        echo = echo.interpolateTowards(currStateScheme.echoColor.byAlpha(amount), 1.0f - amount)
+        backgroundFill = backgroundFill.interpolateTowards(contributionScheme.backgroundFillColor.byAlpha(amount), 1.0f - amount)
+        accentedBackgroundFill = accentedBackgroundFill.interpolateTowards(contributionScheme.accentedBackgroundFillColor.byAlpha(amount), 1.0f - amount)
+        focusRing = focusRing.interpolateTowards(contributionScheme.focusRingColor.byAlpha(amount), 1.0f - amount)
+        line = line.interpolateTowards(contributionScheme.lineColor.byAlpha(amount), 1.0f - amount)
+        selectionForeground = selectionForeground.interpolateTowards(contributionScheme.selectionForegroundColor.byAlpha(amount), 1.0f - amount)
+        selectionBackground = selectionBackground.interpolateTowards(contributionScheme.selectionBackgroundColor.byAlpha(amount), 1.0f - amount)
+        textBackgroundFill = textBackgroundFill.interpolateTowards(contributionScheme.textBackgroundFillColor.byAlpha(amount), 1.0f - amount)
+        separatorPrimary = separatorPrimary.interpolateTowards(contributionScheme.separatorPrimaryColor.byAlpha(amount), 1.0f - amount)
+        separatorSecondary = separatorSecondary.interpolateTowards(contributionScheme.separatorSecondaryColor.byAlpha(amount), 1.0f - amount)
+        mark = mark.interpolateTowards(contributionScheme.markColor.byAlpha(amount), 1.0f - amount)
+        echo = echo.interpolateTowards(contributionScheme.echoColor.byAlpha(amount), 1.0f - amount)
 
         //println("\tcontribution of $amount from ${contribution.key} to $backgroundStart")
     }
