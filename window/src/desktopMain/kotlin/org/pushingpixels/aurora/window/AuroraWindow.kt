@@ -66,6 +66,21 @@ object WindowSizingConstants {
     val BorderDragThickness = 5.dp
 }
 
+object WindowTitlePaneSizingConstants {
+    // The height of the title pane
+    val TitlePaneHeight = 32.dp
+
+    // Title pane content padding (for the area that hosts the title text and the buttons)
+    val TitlePaneContentPadding = PaddingValues(start = 24.dp, end = 8.dp)
+
+    // Icon size for each title pane control button (minimize, maximize, etc)
+    val TitlePaneButtonIconSize = 18.dp
+
+    // Content padding for each title pane control button
+    val TitlePaneButtonContentPadding =
+        PaddingValues(start = 1.dp, end = 2.dp, top = 1.dp, bottom = 2.dp)
+}
+
 @Composable
 private fun WindowTitlePane(
     title: String,
@@ -86,7 +101,7 @@ private fun WindowTitlePane(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(32.dp)
+                    .height(WindowTitlePaneSizingConstants.TitlePaneHeight)
                     .onGloballyPositioned {
                         titlePaneBounds.value = Rect(
                             offset = it.positionInWindow(),
@@ -94,7 +109,7 @@ private fun WindowTitlePane(
                         )
                     }
                     .auroraBackground()
-                    .padding(start = 24.dp, end = 8.dp),
+                    .padding(WindowTitlePaneSizingConstants.TitlePaneContentPadding),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 WindowDraggableArea(
@@ -120,12 +135,7 @@ private fun WindowTitlePane(
                 val titlePaneButtonPresentationModel = CommandButtonPresentationModel(
                     presentationState = CommandButtonPresentationState.Small,
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                    contentPadding = PaddingValues(
-                        start = 1.dp,
-                        end = 2.dp,
-                        top = 1.dp,
-                        bottom = 2.dp
-                    ),
+                    contentPadding = WindowTitlePaneSizingConstants.TitlePaneButtonContentPadding,
                     horizontalGapScaleFactor = 1.0f,
                     verticalGapScaleFactor = 1.0f
                 )
@@ -142,7 +152,7 @@ private fun WindowTitlePane(
                             TransitionAwareIcon.TransitionAwareIconFactory() {
                             override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
                                 return TransitionAwareIcon(
-                                    iconSize = 18.dp,
+                                    iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = colors,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
@@ -179,7 +189,7 @@ private fun WindowTitlePane(
                             override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
                                 return if (isMaximized.value) {
                                     TransitionAwareIcon(
-                                        iconSize = 18.dp,
+                                        iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                         decorationAreaType = DecorationAreaType.TitlePane,
                                         skinColors = colors,
                                         modelStateInfoSnapshot = modelStateInfoSnapshot,
@@ -190,7 +200,7 @@ private fun WindowTitlePane(
                                     )
                                 } else {
                                     TransitionAwareIcon(
-                                        iconSize = 18.dp,
+                                        iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                         decorationAreaType = DecorationAreaType.TitlePane,
                                         skinColors = colors,
                                         modelStateInfoSnapshot = modelStateInfoSnapshot,
@@ -219,7 +229,7 @@ private fun WindowTitlePane(
                             TransitionAwareIcon.TransitionAwareIconFactory() {
                             override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
                                 return TransitionAwareIcon(
-                                    iconSize = 18.dp,
+                                    iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = colors,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
