@@ -20,7 +20,13 @@ import org.pushingpixels.aurora.bitmapfilter.BaseBitmapFilter
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.common.*
 
+private val interpolations: MutableMap<AuroraColorScheme, Array<Color?>> = hashMapOf()
+
 fun getInterpolatedColors(scheme: AuroraColorScheme): Array<Color?> {
+    if ((scheme !is MutableColorScheme) && interpolations.containsKey(scheme)) {
+        return interpolations[scheme]!!
+    }
+
     val result = arrayOfNulls<Color>(ColorSchemeBitmapFilter.MAPSTEPS)
 
     // collect the brightness factors of the color scheme
@@ -99,7 +105,46 @@ fun getInterpolatedColors(scheme: AuroraColorScheme): Array<Color?> {
             }
         }
     }
+    if (scheme !is MutableColorScheme) {
+        interpolations[scheme] = result
+    }
     return result
+}
+
+fun getColorSchemeFilter(
+    scheme: AuroraColorScheme,
+    originalBrightnessFactor: Float,
+    alpha: Float
+): (Color) -> Color {
+    val filtering = getInterpolatedColors(scheme)
+    return { color ->
+        val b = color.blue
+        val g = color.green
+        val r = color.red
+        val a = color.alpha
+
+        val brightness = getColorBrightness(r, g, b)
+        val hsb = RGBtoHSB(r, g, b)
+
+        val pixelColor =
+            filtering[(brightness * ColorSchemeBitmapFilter.MAPSTEPS - 0.5f).toInt()]!!
+        val hsbInterpolated = RGBtoHSB(pixelColor)
+
+        // Preserve hue and value
+        hsb[0] = hsbInterpolated[0]
+        hsb[1] = hsbInterpolated[1]
+        // And remap the brightness
+        if (originalBrightnessFactor >= 0.0f) {
+            hsb[2] = (originalBrightnessFactor * hsb[2]
+                    + (1.0f - originalBrightnessFactor) * hsbInterpolated[2])
+        } else {
+            hsb[2] = hsb[2] * hsbInterpolated[2] * (1.0f + originalBrightnessFactor)
+        }
+
+        // Convert the remapped HSB back to RGB
+        val finalPixel = HSBtoRGB(floatArrayOf(hsb[0], hsb[1], hsb[2]))
+        finalPixel.withAlpha(a * alpha)
+    }
 }
 
 class ColorSchemeBitmapFilter(
