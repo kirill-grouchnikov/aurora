@@ -33,6 +33,7 @@ class globe private constructor(var _width: Dp, var _height: Dp) : AuroraIcon {
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var alphaStack = mutableListOf(1.0f)
+    private var colorFilter: ((Color) -> Color)? = null
 
 	private fun _paint0(drawScope : DrawScope) {
 with(drawScope) {
@@ -142,7 +143,7 @@ generalPath!!.cubicTo(12.800001f, 12.600001f, 12.900001f, 12.700002f, 13.000001f
 generalPath!!.cubicTo(11.700001f, 14.200001f, 10.000001f, 15.000001f, 8.000001f, 15.000001f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(Color(68, 68, 68, 255))
+brush = SolidColor(colorFilter?.invoke(Color(68, 68, 68, 255)) ?: Color(68, 68, 68, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -243,6 +244,10 @@ alpha = alphaStack.removeAt(0)
     override fun setSize(width: Dp, height: Dp) {
         _width = width
         _height = height
+    }
+
+    override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
+        this.colorFilter = colorFilter
     }
 
     override fun paintIcon(drawScope: DrawScope) {

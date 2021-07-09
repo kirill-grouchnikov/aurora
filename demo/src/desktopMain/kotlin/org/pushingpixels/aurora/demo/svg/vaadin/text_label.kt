@@ -33,6 +33,7 @@ class text_label private constructor(var _width: Dp, var _height: Dp) : AuroraIc
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var alphaStack = mutableListOf(1.0f)
+    private var colorFilter: ((Color) -> Color)? = null
 
 	private fun _paint0(drawScope : DrawScope) {
 with(drawScope) {
@@ -83,7 +84,7 @@ generalPath!!.lineTo(14.0f, 10.599999f)
 generalPath!!.cubicTo(14.0f, 11.799999f, 11.7f, 12.9f, 11.5f, 11.4f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(Color(68, 68, 68, 255))
+brush = SolidColor(colorFilter?.invoke(Color(68, 68, 68, 255)) ?: Color(68, 68, 68, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -119,7 +120,7 @@ generalPath!!.lineTo(5.3f, 8.0f)
 generalPath!!.lineTo(3.6000001f, 8.0f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(Color(68, 68, 68, 255))
+brush = SolidColor(colorFilter?.invoke(Color(68, 68, 68, 255)) ?: Color(68, 68, 68, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -220,6 +221,10 @@ alpha = alphaStack.removeAt(0)
     override fun setSize(width: Dp, height: Dp) {
         _width = width
         _height = height
+    }
+
+    override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
+        this.colorFilter = colorFilter
     }
 
     override fun paintIcon(drawScope: DrawScope) {

@@ -33,6 +33,7 @@ class kirill private constructor(var _width: Dp, var _height: Dp) : AuroraIcon {
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var alphaStack = mutableListOf(1.0f)
+    private var colorFilter: ((Color) -> Color)? = null
 
 	private fun _paint0(drawScope : DrawScope) {
 with(drawScope) {
@@ -323,6 +324,10 @@ private fun getImage484482440f4da3ada2d5781785d20a7c(): ImageBitmap? {
     override fun setSize(width: Dp, height: Dp) {
         _width = width
         _height = height
+    }
+
+    override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
+        this.colorFilter = colorFilter
     }
 
     override fun paintIcon(drawScope: DrawScope) {

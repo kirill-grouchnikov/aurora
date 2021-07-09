@@ -329,9 +329,10 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         printWriterManager!!.print("brush = Brush.linearGradient(")
         val stopCount = correctedFractions.size
         for (stop in 0 until stopCount) {
+            val stopColor = "Color(${colors[stop].red}, ${colors[stop].green}, " +
+                    "${colors[stop].blue}, ${colors[stop].alpha})"
             printWriterManager!!.print(
-                "${correctedFractions[stop]}f to Color(${colors[stop].red}, " +
-                        "${colors[stop].green}, ${colors[stop].blue}, ${colors[stop].alpha}), "
+                "${correctedFractions[stop]}f to (colorFilter?.invoke($stopColor) ?: $stopColor), "
             )
         }
 
@@ -660,9 +661,10 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         printWriterManager!!.print("brush = Brush.radialGradient(")
         val stopCount = correctedFractions.size
         for (stop in 0 until stopCount) {
+            val stopColor = "Color(${colors[stop].red}, ${colors[stop].green}, " +
+                    "${colors[stop].blue}, ${colors[stop].alpha})"
             printWriterManager!!.print(
-                "${correctedFractions[stop]}f to Color(${colors[stop].red}, " +
-                        "${colors[stop].green}, ${colors[stop].blue}, ${colors[stop].alpha}), "
+                "${correctedFractions[stop]}f to (colorFilter?.invoke($stopColor) ?: $stopColor), "
             )
         }
 
@@ -709,7 +711,8 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             return
         }
         if (paint is Color) {
-            printWriterManager!!.println("brush = SolidColor(Color(${paint.red}, ${paint.green}, ${paint.blue}, ${paint.alpha}))")
+            val solidColor = "Color(${paint.red}, ${paint.green}, ${paint.blue}, ${paint.alpha})"
+            printWriterManager!!.println("brush = SolidColor(colorFilter?.invoke($solidColor) ?: $solidColor)")
             return
         }
         if (paint == null) {
@@ -742,9 +745,8 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             return
         }
         if (paint is Color) {
-            printWriterManager!!.println(
-                "brush = SolidColor(Color(${paint.red}, ${paint.green}, ${paint.blue}, ${paint.alpha}))"
-            )
+            val solidColor = "Color(${paint.red}, ${paint.green}, ${paint.blue}, ${paint.alpha})"
+            printWriterManager!!.println("brush = SolidColor(colorFilter?.invoke($solidColor) ?: $solidColor)")
             printWriterManager!!.println("drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)")
             return
         }

@@ -46,6 +46,7 @@ import org.pushingpixels.aurora.component.model.SliderPresentationModel
 import org.pushingpixels.aurora.component.model.SliderSizingConstants
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.painter.fill.ClassicFillPainter
+import org.pushingpixels.aurora.utils.MutableColorScheme
 import org.pushingpixels.aurora.utils.getBaseOutline
 import kotlin.math.roundToInt
 

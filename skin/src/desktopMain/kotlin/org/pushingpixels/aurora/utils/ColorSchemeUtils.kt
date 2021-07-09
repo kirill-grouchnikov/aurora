@@ -16,14 +16,119 @@
 package org.pushingpixels.aurora.utils
 
 import androidx.compose.ui.graphics.Color
-import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.colorscheme.BaseDarkColorScheme
-import org.pushingpixels.aurora.colorscheme.BaseLightColorScheme
-import org.pushingpixels.aurora.colorscheme.ColorSchemes
+import org.pushingpixels.aurora.colorscheme.*
 import org.pushingpixels.aurora.common.interpolateTowards
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
+
+data class MutableColorScheme(
+    override val displayName: String,
+    override var isDark: Boolean,
+    var ultraLight: Color,
+    var extraLight: Color,
+    var light: Color,
+    var mid: Color,
+    var dark: Color,
+    var ultraDark: Color,
+    var foreground: Color
+) : AuroraColorScheme {
+
+    override val ultraLightColor: Color
+        get() = ultraLight
+    override val extraLightColor: Color
+        get() = extraLight
+    override val lightColor: Color
+        get() = light
+    override val midColor: Color
+        get() = mid
+    override val darkColor: Color
+        get() = dark
+    override val ultraDarkColor: Color
+        get() = ultraDark
+    override val foregroundColor: Color
+        get() = foreground
+
+    override val backgroundFillColor: Color
+        get() = throw UnsupportedOperationException()
+    override val accentedBackgroundFillColor: Color
+        get() = throw UnsupportedOperationException()
+    override val focusRingColor: Color
+        get() = throw UnsupportedOperationException()
+    override val lineColor: Color
+        get() = throw UnsupportedOperationException()
+    override val selectionForegroundColor: Color
+        get() = throw UnsupportedOperationException()
+    override val selectionBackgroundColor: Color
+        get() = throw UnsupportedOperationException()
+    override val textBackgroundFillColor: Color
+        get() = throw UnsupportedOperationException()
+    override val separatorPrimaryColor: Color
+        get() = throw UnsupportedOperationException()
+    override val separatorSecondaryColor: Color
+        get() = throw UnsupportedOperationException()
+    override val markColor: Color
+        get() = throw UnsupportedOperationException()
+    override val echoColor: Color
+        get() = throw UnsupportedOperationException()
+
+    override fun shift(
+        backgroundShiftColor: Color,
+        backgroundShiftFactor: Float,
+        foregroundShiftColor: Color,
+        foregroundShiftFactor: Float
+    ): AuroraColorScheme {
+        // TODO - what are the performance implications?
+        return ShiftColorScheme(
+            this, backgroundShiftColor,
+            backgroundShiftFactor, foregroundShiftColor,
+            foregroundShiftFactor, true
+        )
+    }
+
+    override fun shade(shadeFactor: Float): AuroraColorScheme {
+        // TODO - what are the performance implications?
+        return ShadeColorScheme(this, shadeFactor)
+    }
+
+    override fun tint(tintFactor: Float): AuroraColorScheme {
+        // TODO - what are the performance implications?
+        return TintColorScheme(this, tintFactor)
+    }
+
+    override fun tone(toneFactor: Float): AuroraColorScheme {
+        // TODO - what are the performance implications?
+        return ToneColorScheme(this, toneFactor)
+    }
+
+    override fun negate(): AuroraColorScheme {
+        // TODO - what are the performance implications?
+        return NegatedColorScheme(this)
+    }
+
+    override fun invert(): AuroraColorScheme {
+        // TODO - what are the performance implications?
+        return InvertedColorScheme(this)
+    }
+
+    override fun saturate(saturateFactor: Float): AuroraColorScheme {
+        // TODO - what are the performance implications?
+        return SaturatedColorScheme(this, saturateFactor)
+    }
+
+    override fun hueShift(hueShiftFactor: Float): AuroraColorScheme {
+        // TODO - what are the performance implications?
+        return HueShiftColorScheme(this, hueShiftFactor)
+    }
+
+    override fun blendWith(
+        otherScheme: AuroraColorScheme,
+        likenessToThisScheme: Float
+    ): AuroraColorScheme {
+        // TODO - what are the performance implications?
+        return BlendBiColorScheme(this, otherScheme, likenessToThisScheme)
+    }
+}
 
 private fun decodeColor(value: String, colorMap: Map<String, Color>): Color {
     if (value.startsWith("@")) {

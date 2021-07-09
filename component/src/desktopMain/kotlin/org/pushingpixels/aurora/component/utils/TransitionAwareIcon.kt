@@ -3,6 +3,7 @@ package org.pushingpixels.aurora.component.utils
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Canvas
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -166,6 +167,10 @@ class TransitionAwareIcon(
     @Composable
     override fun setSize(width: Dp, height: Dp) {
         // This icon only "pretends" to be resizable
+    }
+
+    override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
+        // TODO - add functionality if this class still needs to exist
     }
 
     companion object {

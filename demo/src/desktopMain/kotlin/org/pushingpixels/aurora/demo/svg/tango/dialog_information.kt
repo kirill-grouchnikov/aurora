@@ -33,6 +33,7 @@ class dialog_information private constructor(var _width: Dp, var _height: Dp) : 
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var alphaStack = mutableListOf(1.0f)
+    private var colorFilter: ((Color) -> Color)? = null
 
 	private fun _paint0(drawScope : DrawScope) {
 with(drawScope) {
@@ -84,7 +85,7 @@ generalPath!!.cubicTo(23.421051f, 37.405834f, 28.703949f, 37.405834f, 32.986645f
 generalPath!!.cubicTo(37.26934f, 39.000046f, 39.897133f, 40.472404f, 39.875f, 42.0625f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.radialGradient(0.0f to Color(0, 0, 0, 131), 0.55172414f to Color(0, 0, 0, 37), 1.0f to Color(0, 0, 0, 0), center = Offset(26.062506f, 42.06249f), radius = 13.812502f, tileMode = TileMode.Clamp)
+brush = Brush.radialGradient(0.0f to (colorFilter?.invoke(Color(0, 0, 0, 131)) ?: Color(0, 0, 0, 131)), 0.55172414f to (colorFilter?.invoke(Color(0, 0, 0, 37)) ?: Color(0, 0, 0, 37)), 1.0f to (colorFilter?.invoke(Color(0, 0, 0, 0)) ?: Color(0, 0, 0, 0)), center = Offset(26.062506f, 42.06249f), radius = 13.812502f, tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -123,9 +124,9 @@ generalPath!!.lineTo(27.46654f, 38.885944f)
 generalPath!!.lineTo(21.893503f, 38.885944f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.linearGradient(0.005618f to Color(104, 104, 104, 255), 0.03012137f to Color(119, 119, 119, 255), 0.08366583f to Color(146, 146, 146, 255), 0.1422f to Color(167, 167, 167, 255), 0.2074f to Color(182, 182, 182, 255), 0.2846f to Color(190, 190, 190, 255), 0.4045f to Color(193, 193, 193, 255), 0.4962f to Color(188, 188, 188, 255), 0.6057f to Color(173, 173, 173, 255), 0.7245f to Color(149, 149, 149, 255), 0.8497f to Color(116, 116, 116, 255), 0.9789f to Color(73, 73, 73, 255), 1.0f to Color(65, 65, 65, 255), start = Offset(-0.0229114f, -0.042768143f), end = Offset(-0.025412137f, -0.041426625f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.005618f to (colorFilter?.invoke(Color(104, 104, 104, 255)) ?: Color(104, 104, 104, 255)), 0.03012137f to (colorFilter?.invoke(Color(119, 119, 119, 255)) ?: Color(119, 119, 119, 255)), 0.08366583f to (colorFilter?.invoke(Color(146, 146, 146, 255)) ?: Color(146, 146, 146, 255)), 0.1422f to (colorFilter?.invoke(Color(167, 167, 167, 255)) ?: Color(167, 167, 167, 255)), 0.2074f to (colorFilter?.invoke(Color(182, 182, 182, 255)) ?: Color(182, 182, 182, 255)), 0.2846f to (colorFilter?.invoke(Color(190, 190, 190, 255)) ?: Color(190, 190, 190, 255)), 0.4045f to (colorFilter?.invoke(Color(193, 193, 193, 255)) ?: Color(193, 193, 193, 255)), 0.4962f to (colorFilter?.invoke(Color(188, 188, 188, 255)) ?: Color(188, 188, 188, 255)), 0.6057f to (colorFilter?.invoke(Color(173, 173, 173, 255)) ?: Color(173, 173, 173, 255)), 0.7245f to (colorFilter?.invoke(Color(149, 149, 149, 255)) ?: Color(149, 149, 149, 255)), 0.8497f to (colorFilter?.invoke(Color(116, 116, 116, 255)) ?: Color(116, 116, 116, 255)), 0.9789f to (colorFilter?.invoke(Color(73, 73, 73, 255)) ?: Color(73, 73, 73, 255)), 1.0f to (colorFilter?.invoke(Color(65, 65, 65, 255)) ?: Color(65, 65, 65, 255)), start = Offset(-0.0229114f, -0.042768143f), end = Offset(-0.025412137f, -0.041426625f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
-brush = SolidColor(Color(86, 86, 86, 255))
+brush = SolidColor(colorFilter?.invoke(Color(86, 86, 86, 255)) ?: Color(86, 86, 86, 255))
 stroke = Stroke(width=1.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -188,9 +189,9 @@ generalPath!!.cubicTo(30.310848f, 30.817287f, 30.872816f, 30.133928f, 30.820616f
 generalPath!!.cubicTo(30.762592f, 28.829447f, 27.61599f, 27.676357f, 24.511724f, 27.668867f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(Color(174, 174, 87, 255))
+brush = SolidColor(colorFilter?.invoke(Color(174, 174, 87, 255)) ?: Color(174, 174, 87, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
-brush = Brush.linearGradient(0.0f to Color(76, 76, 40, 255), 1.0f to Color(76, 76, 40, 0), start = Offset(24.6784f, 31.063726f), end = Offset(24.6784f, 26.668818f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(76, 76, 40, 255)) ?: Color(76, 76, 40, 255)), 1.0f to (colorFilter?.invoke(Color(76, 76, 40, 0)) ?: Color(76, 76, 40, 0)), start = Offset(24.6784f, 31.063726f), end = Offset(24.6784f, 26.668818f), tileMode = TileMode.Clamp)
 stroke = Stroke(width=2.0175292f, cap=StrokeCap.Round, join=StrokeJoin.Round, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -241,9 +242,9 @@ generalPath!!.cubicTo(19.722534f, 36.510925f, 22.458319f, 35.65848f, 25.609509f,
 generalPath!!.cubicTo(28.7607f, 35.990936f, 31.139893f, 37.1132f, 30.920208f, 38.329765f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.linearGradient(0.005618f to Color(163, 163, 73, 255), 0.02078677f to Color(172, 172, 84, 255), 0.06600059f to Color(193, 193, 114, 255), 0.1148f to Color(212, 214, 142, 255), 0.1677f to Color(226, 228, 166, 255), 0.2265f to Color(237, 240, 184, 255), 0.2963f to Color(243, 246, 195, 255), 0.4045f to Color(245, 248, 199, 255), 0.5239f to Color(238, 240, 190, 255), 0.6666f to Color(219, 221, 169, 255), 0.8211f to Color(190, 189, 136, 255), 0.9832f to Color(152, 149, 100, 255), 1.0f to Color(148, 145, 96, 255), start = Offset(0.23620462f, -0.5623359f), end = Offset(-0.0021522515f, 0.041872725f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.005618f to (colorFilter?.invoke(Color(163, 163, 73, 255)) ?: Color(163, 163, 73, 255)), 0.02078677f to (colorFilter?.invoke(Color(172, 172, 84, 255)) ?: Color(172, 172, 84, 255)), 0.06600059f to (colorFilter?.invoke(Color(193, 193, 114, 255)) ?: Color(193, 193, 114, 255)), 0.1148f to (colorFilter?.invoke(Color(212, 214, 142, 255)) ?: Color(212, 214, 142, 255)), 0.1677f to (colorFilter?.invoke(Color(226, 228, 166, 255)) ?: Color(226, 228, 166, 255)), 0.2265f to (colorFilter?.invoke(Color(237, 240, 184, 255)) ?: Color(237, 240, 184, 255)), 0.2963f to (colorFilter?.invoke(Color(243, 246, 195, 255)) ?: Color(243, 246, 195, 255)), 0.4045f to (colorFilter?.invoke(Color(245, 248, 199, 255)) ?: Color(245, 248, 199, 255)), 0.5239f to (colorFilter?.invoke(Color(238, 240, 190, 255)) ?: Color(238, 240, 190, 255)), 0.6666f to (colorFilter?.invoke(Color(219, 221, 169, 255)) ?: Color(219, 221, 169, 255)), 0.8211f to (colorFilter?.invoke(Color(190, 189, 136, 255)) ?: Color(190, 189, 136, 255)), 0.9832f to (colorFilter?.invoke(Color(152, 149, 100, 255)) ?: Color(152, 149, 100, 255)), 1.0f to (colorFilter?.invoke(Color(148, 145, 96, 255)) ?: Color(148, 145, 96, 255)), start = Offset(0.23620462f, -0.5623359f), end = Offset(-0.0021522515f, 0.041872725f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
-brush = Brush.linearGradient(0.0f to Color(146, 148, 112, 255), 0.2647059f to Color(252, 255, 193, 255), 0.63235295f to Color(243, 245, 186, 255), 1.0f to Color(146, 148, 112, 255), start = Offset(-0.011763208f, 0.06623628f), end = Offset(0.16250998f, -0.3755338f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(146, 148, 112, 255)) ?: Color(146, 148, 112, 255)), 0.2647059f to (colorFilter?.invoke(Color(252, 255, 193, 255)) ?: Color(252, 255, 193, 255)), 0.63235295f to (colorFilter?.invoke(Color(243, 245, 186, 255)) ?: Color(243, 245, 186, 255)), 1.0f to (colorFilter?.invoke(Color(146, 148, 112, 255)) ?: Color(146, 148, 112, 255)), start = Offset(-0.011763208f, 0.06623628f), end = Offset(0.16250998f, -0.3755338f), tileMode = TileMode.Clamp)
 stroke = Stroke(width=0.08906282f, cap=StrokeCap.Round, join=StrokeJoin.Round, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -285,9 +286,9 @@ generalPath!!.cubicTo(-15.854626f, 23.796848f, -11.899315f, 23.796848f, -8.69285
 generalPath!!.cubicTo(-5.486396f, 24.971758f, -3.5189617f, 26.056864f, -3.535534f, 27.228739f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.linearGradient(0.005618f to Color(163, 163, 73, 255), 0.02078677f to Color(172, 172, 84, 255), 0.06600059f to Color(193, 193, 114, 255), 0.1148f to Color(212, 214, 142, 255), 0.1677f to Color(226, 228, 166, 255), 0.2265f to Color(237, 240, 184, 255), 0.2963f to Color(243, 246, 195, 255), 0.4045f to Color(245, 248, 199, 255), 0.5239f to Color(238, 240, 190, 255), 0.6666f to Color(219, 221, 169, 255), 0.8211f to Color(190, 189, 136, 255), 0.9832f to Color(152, 149, 100, 255), 1.0f to Color(148, 145, 96, 255), start = Offset(-23.479193f, 37.67939f), end = Offset(-4.506969f, 37.67939f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.005618f to (colorFilter?.invoke(Color(163, 163, 73, 255)) ?: Color(163, 163, 73, 255)), 0.02078677f to (colorFilter?.invoke(Color(172, 172, 84, 255)) ?: Color(172, 172, 84, 255)), 0.06600059f to (colorFilter?.invoke(Color(193, 193, 114, 255)) ?: Color(193, 193, 114, 255)), 0.1148f to (colorFilter?.invoke(Color(212, 214, 142, 255)) ?: Color(212, 214, 142, 255)), 0.1677f to (colorFilter?.invoke(Color(226, 228, 166, 255)) ?: Color(226, 228, 166, 255)), 0.2265f to (colorFilter?.invoke(Color(237, 240, 184, 255)) ?: Color(237, 240, 184, 255)), 0.2963f to (colorFilter?.invoke(Color(243, 246, 195, 255)) ?: Color(243, 246, 195, 255)), 0.4045f to (colorFilter?.invoke(Color(245, 248, 199, 255)) ?: Color(245, 248, 199, 255)), 0.5239f to (colorFilter?.invoke(Color(238, 240, 190, 255)) ?: Color(238, 240, 190, 255)), 0.6666f to (colorFilter?.invoke(Color(219, 221, 169, 255)) ?: Color(219, 221, 169, 255)), 0.8211f to (colorFilter?.invoke(Color(190, 189, 136, 255)) ?: Color(190, 189, 136, 255)), 0.9832f to (colorFilter?.invoke(Color(152, 149, 100, 255)) ?: Color(152, 149, 100, 255)), 1.0f to (colorFilter?.invoke(Color(148, 145, 96, 255)) ?: Color(148, 145, 96, 255)), start = Offset(-23.479193f, 37.67939f), end = Offset(-4.506969f, 37.67939f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
-brush = Brush.linearGradient(0.0f to Color(146, 148, 112, 255), 0.2647059f to Color(252, 255, 193, 255), 0.63235295f to Color(243, 245, 186, 255), 1.0f to Color(146, 148, 112, 255), start = Offset(-10.758083f, 38.028126f), end = Offset(-24.48226f, 38.134212f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(146, 148, 112, 255)) ?: Color(146, 148, 112, 255)), 0.2647059f to (colorFilter?.invoke(Color(252, 255, 193, 255)) ?: Color(252, 255, 193, 255)), 0.63235295f to (colorFilter?.invoke(Color(243, 245, 186, 255)) ?: Color(243, 245, 186, 255)), 1.0f to (colorFilter?.invoke(Color(146, 148, 112, 255)) ?: Color(146, 148, 112, 255)), start = Offset(-10.758083f, 38.028126f), end = Offset(-24.48226f, 38.134212f), tileMode = TileMode.Clamp)
 stroke = Stroke(width=0.13035245f, cap=StrokeCap.Round, join=StrokeJoin.Round, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -331,9 +332,9 @@ generalPath!!.cubicTo(-15.854626f, 23.796848f, -11.899315f, 23.796848f, -8.69285
 generalPath!!.cubicTo(-5.486396f, 24.971758f, -3.5189617f, 26.056864f, -3.535534f, 27.228739f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.linearGradient(0.005618f to Color(163, 163, 73, 255), 0.02078677f to Color(172, 172, 84, 255), 0.06600059f to Color(193, 193, 114, 255), 0.1148f to Color(212, 214, 142, 255), 0.1677f to Color(226, 228, 166, 255), 0.2265f to Color(237, 240, 184, 255), 0.2963f to Color(243, 246, 195, 255), 0.4045f to Color(245, 248, 199, 255), 0.5239f to Color(238, 240, 190, 255), 0.6666f to Color(219, 221, 169, 255), 0.8211f to Color(190, 189, 136, 255), 0.9832f to Color(152, 149, 100, 255), 1.0f to Color(148, 145, 96, 255), start = Offset(-23.479193f, 37.67939f), end = Offset(-4.506969f, 37.67939f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.005618f to (colorFilter?.invoke(Color(163, 163, 73, 255)) ?: Color(163, 163, 73, 255)), 0.02078677f to (colorFilter?.invoke(Color(172, 172, 84, 255)) ?: Color(172, 172, 84, 255)), 0.06600059f to (colorFilter?.invoke(Color(193, 193, 114, 255)) ?: Color(193, 193, 114, 255)), 0.1148f to (colorFilter?.invoke(Color(212, 214, 142, 255)) ?: Color(212, 214, 142, 255)), 0.1677f to (colorFilter?.invoke(Color(226, 228, 166, 255)) ?: Color(226, 228, 166, 255)), 0.2265f to (colorFilter?.invoke(Color(237, 240, 184, 255)) ?: Color(237, 240, 184, 255)), 0.2963f to (colorFilter?.invoke(Color(243, 246, 195, 255)) ?: Color(243, 246, 195, 255)), 0.4045f to (colorFilter?.invoke(Color(245, 248, 199, 255)) ?: Color(245, 248, 199, 255)), 0.5239f to (colorFilter?.invoke(Color(238, 240, 190, 255)) ?: Color(238, 240, 190, 255)), 0.6666f to (colorFilter?.invoke(Color(219, 221, 169, 255)) ?: Color(219, 221, 169, 255)), 0.8211f to (colorFilter?.invoke(Color(190, 189, 136, 255)) ?: Color(190, 189, 136, 255)), 0.9832f to (colorFilter?.invoke(Color(152, 149, 100, 255)) ?: Color(152, 149, 100, 255)), 1.0f to (colorFilter?.invoke(Color(148, 145, 96, 255)) ?: Color(148, 145, 96, 255)), start = Offset(-23.479193f, 37.67939f), end = Offset(-4.506969f, 37.67939f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
-brush = Brush.linearGradient(0.0f to Color(146, 148, 112, 255), 0.2647059f to Color(252, 255, 193, 255), 0.63235295f to Color(243, 245, 186, 255), 1.0f to Color(146, 148, 112, 255), start = Offset(-10.758083f, 38.028126f), end = Offset(-24.48226f, 38.134212f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(146, 148, 112, 255)) ?: Color(146, 148, 112, 255)), 0.2647059f to (colorFilter?.invoke(Color(252, 255, 193, 255)) ?: Color(252, 255, 193, 255)), 0.63235295f to (colorFilter?.invoke(Color(243, 245, 186, 255)) ?: Color(243, 245, 186, 255)), 1.0f to (colorFilter?.invoke(Color(146, 148, 112, 255)) ?: Color(146, 148, 112, 255)), start = Offset(-10.758083f, 38.028126f), end = Offset(-24.48226f, 38.134212f), tileMode = TileMode.Clamp)
 stroke = Stroke(width=0.13035245f, cap=StrokeCap.Round, join=StrokeJoin.Round, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -375,9 +376,9 @@ generalPath!!.cubicTo(18.157124f, 30.757395f, 20.50968f, 29.155466f, 23.952389f,
 generalPath!!.cubicTo(27.422379f, 28.78071f, 30.698088f, 28.9249f, 30.698088f, 29.636387f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.linearGradient(0.005618f to Color(163, 163, 73, 255), 0.02078677f to Color(172, 172, 84, 255), 0.06600059f to Color(193, 193, 114, 255), 0.1148f to Color(212, 214, 142, 255), 0.1677f to Color(226, 228, 166, 255), 0.2265f to Color(237, 240, 184, 255), 0.2963f to Color(243, 246, 195, 255), 0.4045f to Color(245, 248, 199, 255), 0.5239f to Color(238, 240, 190, 255), 0.6666f to Color(219, 221, 169, 255), 0.8211f to Color(190, 189, 136, 255), 0.9832f to Color(152, 149, 100, 255), 1.0f to Color(148, 145, 96, 255), start = Offset(0.04940227f, -0.06986124f), end = Offset(-0.04219807f, 0.15314804f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.005618f to (colorFilter?.invoke(Color(163, 163, 73, 255)) ?: Color(163, 163, 73, 255)), 0.02078677f to (colorFilter?.invoke(Color(172, 172, 84, 255)) ?: Color(172, 172, 84, 255)), 0.06600059f to (colorFilter?.invoke(Color(193, 193, 114, 255)) ?: Color(193, 193, 114, 255)), 0.1148f to (colorFilter?.invoke(Color(212, 214, 142, 255)) ?: Color(212, 214, 142, 255)), 0.1677f to (colorFilter?.invoke(Color(226, 228, 166, 255)) ?: Color(226, 228, 166, 255)), 0.2265f to (colorFilter?.invoke(Color(237, 240, 184, 255)) ?: Color(237, 240, 184, 255)), 0.2963f to (colorFilter?.invoke(Color(243, 246, 195, 255)) ?: Color(243, 246, 195, 255)), 0.4045f to (colorFilter?.invoke(Color(245, 248, 199, 255)) ?: Color(245, 248, 199, 255)), 0.5239f to (colorFilter?.invoke(Color(238, 240, 190, 255)) ?: Color(238, 240, 190, 255)), 0.6666f to (colorFilter?.invoke(Color(219, 221, 169, 255)) ?: Color(219, 221, 169, 255)), 0.8211f to (colorFilter?.invoke(Color(190, 189, 136, 255)) ?: Color(190, 189, 136, 255)), 0.9832f to (colorFilter?.invoke(Color(152, 149, 100, 255)) ?: Color(152, 149, 100, 255)), 1.0f to (colorFilter?.invoke(Color(148, 145, 96, 255)) ?: Color(148, 145, 96, 255)), start = Offset(0.04940227f, -0.06986124f), end = Offset(-0.04219807f, 0.15314804f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
-brush = Brush.linearGradient(0.0f to Color(146, 148, 112, 255), 0.2647059f to Color(252, 255, 193, 255), 0.63235295f to Color(243, 245, 186, 255), 1.0f to Color(146, 148, 112, 255), start = Offset(9.9561205f, -24.18906f), end = Offset(0.047853798f, -0.0660928f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(146, 148, 112, 255)) ?: Color(146, 148, 112, 255)), 0.2647059f to (colorFilter?.invoke(Color(252, 255, 193, 255)) ?: Color(252, 255, 193, 255)), 0.63235295f to (colorFilter?.invoke(Color(243, 245, 186, 255)) ?: Color(243, 245, 186, 255)), 1.0f to (colorFilter?.invoke(Color(146, 148, 112, 255)) ?: Color(146, 148, 112, 255)), start = Offset(9.9561205f, -24.18906f), end = Offset(0.047853798f, -0.0660928f), tileMode = TileMode.Clamp)
 stroke = Stroke(width=0.08906286f, cap=StrokeCap.Round, join=StrokeJoin.Round, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -419,7 +420,7 @@ generalPath!!.cubicTo(27.128483f, 18.964483f, 28.371517f, 18.964483f, 29.37921f,
 generalPath!!.cubicTo(30.386904f, 20.132076f, 31.005209f, 21.210424f, 31.0f, 22.375f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(Color(255, 255, 255, 255))
+brush = SolidColor(colorFilter?.invoke(Color(255, 255, 255, 255)) ?: Color(255, 255, 255, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -445,7 +446,7 @@ generalPath!!.cubicTo(30.025581f, 30.944962f, 30.147604f, 30.343945f, 30.520922f
 generalPath!!.cubicTo(29.09679f, 31.000706f, 25.494982f, 34.035625f, 19.342182f, 33.378864f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(Color(0, 0, 0, 60))
+brush = SolidColor(colorFilter?.invoke(Color(0, 0, 0, 60)) ?: Color(0, 0, 0, 60))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -474,7 +475,7 @@ generalPath!!.cubicTo(27.128483f, 18.964483f, 28.371517f, 18.964483f, 29.37921f,
 generalPath!!.cubicTo(30.386904f, 20.132076f, 31.005209f, 21.210424f, 31.0f, 22.375f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(Color(255, 255, 255, 255))
+brush = SolidColor(colorFilter?.invoke(Color(255, 255, 255, 255)) ?: Color(255, 255, 255, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -500,7 +501,7 @@ generalPath!!.cubicTo(30.15002f, 37.083935f, 30.272043f, 36.482918f, 30.645359f,
 generalPath!!.cubicTo(29.221228f, 37.13968f, 25.61942f, 40.1746f, 19.466621f, 39.517838f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(Color(0, 0, 0, 60))
+brush = SolidColor(colorFilter?.invoke(Color(0, 0, 0, 60)) ?: Color(0, 0, 0, 60))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -526,7 +527,7 @@ generalPath!!.cubicTo(30.17076f, 33.97297f, 30.292782f, 33.371952f, 30.6661f, 32
 generalPath!!.cubicTo(29.241968f, 34.028713f, 25.64016f, 37.063633f, 19.487362f, 36.40687f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(Color(0, 0, 0, 60))
+brush = SolidColor(colorFilter?.invoke(Color(0, 0, 0, 60)) ?: Color(0, 0, 0, 60))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -577,9 +578,9 @@ generalPath!!.cubicTo(30.526608f, 31.345282f, 27.307241f, 32.174416f, 23.874678f
 generalPath!!.cubicTo(20.442114f, 31.84196f, 18.87103f, 30.868006f, 18.87103f, 29.628128f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.linearGradient(0.0f to Color(214, 215, 165, 255), 1.0f to Color(142, 143, 109, 255), start = Offset(2.149528f, 2.2804809f), end = Offset(1.9770123f, 3.1213932f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(214, 215, 165, 255)) ?: Color(214, 215, 165, 255)), 1.0f to (colorFilter?.invoke(Color(142, 143, 109, 255)) ?: Color(142, 143, 109, 255)), start = Offset(2.149528f, 2.2804809f), end = Offset(1.9770123f, 3.1213932f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
-brush = Brush.linearGradient(0.0f to Color(146, 148, 112, 255), 0.2647059f to Color(96, 97, 74, 255), 0.63235295f to Color(243, 245, 186, 255), 1.0f to Color(146, 148, 112, 255), start = Offset(-1.5719136f, -1.3230133f), end = Offset(-1.5493056f, -0.9360691f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(146, 148, 112, 255)) ?: Color(146, 148, 112, 255)), 0.2647059f to (colorFilter?.invoke(Color(96, 97, 74, 255)) ?: Color(96, 97, 74, 255)), 0.63235295f to (colorFilter?.invoke(Color(243, 245, 186, 255)) ?: Color(243, 245, 186, 255)), 1.0f to (colorFilter?.invoke(Color(146, 148, 112, 255)) ?: Color(146, 148, 112, 255)), start = Offset(-1.5719136f, -1.3230133f), end = Offset(-1.5493056f, -0.9360691f), tileMode = TileMode.Clamp)
 stroke = Stroke(width=0.09083303f, cap=StrokeCap.Round, join=StrokeJoin.Round, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -621,9 +622,9 @@ generalPath!!.cubicTo(33.464184f, 22.384064f, 38.853783f, 22.30489f, 38.853783f,
 generalPath!!.cubicTo(38.853783f, 6.837263f, 32.502037f, 0.8622936f, 24.680021f, 0.8622936f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.radialGradient(0.0f to Color(255, 255, 255, 45), 0.882f to Color(112, 154, 200, 255), 1.0f to Color(111, 150, 221, 255), center = Offset(-0.061722342f, -0.037596628f), radius = 0.014277713f, tileMode = TileMode.Clamp)
+brush = Brush.radialGradient(0.0f to (colorFilter?.invoke(Color(255, 255, 255, 45)) ?: Color(255, 255, 255, 45)), 0.882f to (colorFilter?.invoke(Color(112, 154, 200, 255)) ?: Color(112, 154, 200, 255)), 1.0f to (colorFilter?.invoke(Color(111, 150, 221, 255)) ?: Color(111, 150, 221, 255)), center = Offset(-0.061722342f, -0.037596628f), radius = 0.014277713f, tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
-brush = SolidColor(Color(97, 100, 113, 255))
+brush = SolidColor(colorFilter?.invoke(Color(97, 100, 113, 255)) ?: Color(97, 100, 113, 255))
 stroke = Stroke(width=1.0159545f, cap=StrokeCap.Round, join=StrokeJoin.Round, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -653,7 +654,7 @@ Matrix(values=floatArrayOf(
 0.0f, 0.0f, 0.0f, 1.0f)
 ))}){
 // _0_0_1_2_0_2
-brush = Brush.linearGradient(0.0f to Color(241, 243, 255, 255), 1.0f to Color(241, 243, 255, 0), start = Offset(0.5757097f, 0.27842075f), end = Offset(0.683804f, -0.55319047f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(241, 243, 255, 255)) ?: Color(241, 243, 255, 255)), 1.0f to (colorFilter?.invoke(Color(241, 243, 255, 0)) ?: Color(241, 243, 255, 0)), start = Offset(0.5757097f, 0.27842075f), end = Offset(0.683804f, -0.55319047f), tileMode = TileMode.Clamp)
 stroke = Stroke(width=0.946857f, cap=StrokeCap.Round, join=StrokeJoin.Round, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -710,7 +711,7 @@ generalPath!!.lineTo(31.217562f, 19.63973f)
 generalPath!!.cubicTo(31.32181f, 19.326988f, 31.63455f, 19.118492f, 31.947292f, 19.22274f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.linearGradient(0.0f to Color(255, 255, 255, 255), 0.4117647f to Color(255, 255, 255, 113), 1.0f to Color(0, 0, 0, 123), start = Offset(-0.012101424f, 0.010292555f), end = Offset(-0.011903377f, 0.016972383f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(255, 255, 255, 255)) ?: Color(255, 255, 255, 255)), 0.4117647f to (colorFilter?.invoke(Color(255, 255, 255, 113)) ?: Color(255, 255, 255, 113)), 1.0f to (colorFilter?.invoke(Color(0, 0, 0, 123)) ?: Color(0, 0, 0, 123)), start = Offset(-0.012101424f, 0.010292555f), end = Offset(-0.011903377f, 0.016972383f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -739,7 +740,7 @@ generalPath!!.lineTo(20.882133f, 19.76473f)
 generalPath!!.cubicTo(20.777887f, 19.451988f, 20.465145f, 19.243492f, 20.152405f, 19.34774f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.linearGradient(0.0f to Color(255, 255, 255, 255), 0.4117647f to Color(255, 255, 255, 113), 1.0f to Color(0, 0, 0, 123), start = Offset(0.2273667f, 0.19338089f), end = Offset(0.17187096f, 0.24506153f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(255, 255, 255, 255)) ?: Color(255, 255, 255, 255)), 0.4117647f to (colorFilter?.invoke(Color(255, 255, 255, 113)) ?: Color(255, 255, 255, 113)), 1.0f to (colorFilter?.invoke(Color(0, 0, 0, 123)) ?: Color(0, 0, 0, 123)), start = Offset(0.2273667f, 0.19338089f), end = Offset(0.17187096f, 0.24506153f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -772,9 +773,9 @@ generalPath!!.cubicTo(22.3627f, 20.368536f, 20.661612f, 19.366879f, 20.661612f, 
 generalPath!!.cubicTo(20.542177f, 19.287088f, 20.397682f, 19.253744f, 20.255362f, 19.273129f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(Color(255, 255, 255, 255))
+brush = SolidColor(colorFilter?.invoke(Color(255, 255, 255, 255)) ?: Color(255, 255, 255, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
-brush = Brush.linearGradient(0.0f to Color(163, 163, 163, 255), 1.0f to Color(181, 181, 181, 0), start = Offset(0.17028524f, 0.093009174f), end = Offset(0.1129302f, 0.09869519f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(163, 163, 163, 255)) ?: Color(163, 163, 163, 255)), 1.0f to (colorFilter?.invoke(Color(181, 181, 181, 0)) ?: Color(181, 181, 181, 0)), start = Offset(0.17028524f, 0.093009174f), end = Offset(0.1129302f, 0.09869519f), tileMode = TileMode.Clamp)
 stroke = Stroke(width=0.21454535f, cap=StrokeCap.Round, join=StrokeJoin.Round, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -824,7 +825,7 @@ generalPath!!.cubicTo(32.460552f, 7.857476f, 31.466743f, 6.107463f, 30.07856f, 4
 generalPath!!.cubicTo(28.533138f, 3.99306f, 26.85424f, 3.5644321f, 25.001158f, 3.5644321f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.linearGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(255, 255, 255, 0), start = Offset(-0.71695846f, -0.3445387f), end = Offset(-0.33425662f, -0.3105369f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(255, 255, 255, 255)) ?: Color(255, 255, 255, 255)), 1.0f to (colorFilter?.invoke(Color(255, 255, 255, 0)) ?: Color(255, 255, 255, 0)), start = Offset(-0.71695846f, -0.3445387f), end = Offset(-0.33425662f, -0.3105369f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -931,6 +932,10 @@ alpha = alphaStack.removeAt(0)
     override fun setSize(width: Dp, height: Dp) {
         _width = width
         _height = height
+    }
+
+    override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
+        this.colorFilter = colorFilter
     }
 
     override fun paintIcon(drawScope: DrawScope) {

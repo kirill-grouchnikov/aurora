@@ -18,31 +18,60 @@ package org.pushingpixels.aurora.icon
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.CombinedModifier
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.DrawModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.platform.LocalDensity
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.bitmapfilter.ColorBitmapFilter
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.common.HSBtoRGB
+import org.pushingpixels.aurora.common.RGBtoHSB
+import org.pushingpixels.aurora.common.getColorBrightness
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.utils.ColorSchemeBitmapFilter
+import org.pushingpixels.aurora.utils.MutableColorScheme
+import org.pushingpixels.aurora.utils.getInterpolatedColors
 
-private fun Modifier.auroraThemedIconPaint(iconBitmap: ImageBitmap, textColor: Color, alpha: Float) =
-    this.then(AuroraThemedByTextIconModifier(iconBitmap = iconBitmap, textColor = textColor, alpha = alpha))
+private fun Modifier.auroraThemedIconPaint(
+    iconBitmap: ImageBitmap,
+    textColor: Color,
+    alpha: Float
+) =
+    this.then(
+        AuroraThemedByTextIconModifier(
+            iconBitmap = iconBitmap,
+            textColor = textColor,
+            alpha = alpha
+        )
+    )
 
-private fun Modifier.auroraThemedIconPaint(iconBitmap: ImageBitmap, colorScheme: AuroraColorScheme, alpha: Float) =
-    this.then(AuroraThemedByColorSchemeIconModifier(iconBitmap = iconBitmap, colorScheme = colorScheme, alpha = alpha))
+private fun Modifier.auroraThemedIconPaint(
+    iconBitmap: ImageBitmap,
+    colorScheme: AuroraColorScheme,
+    alpha: Float
+) =
+    this.then(
+        AuroraThemedByColorSchemeIconModifier(
+            iconBitmap = iconBitmap,
+            colorScheme = colorScheme,
+            alpha = alpha
+        )
+    )
 
 private class AuroraThemedByTextIconModifier(
     val iconBitmap: ImageBitmap, val textColor: Color, val alpha: Float
 ) : DrawModifier {
     override fun ContentDrawScope.draw() {
-        val filtered = ColorBitmapFilter.getColorFilter(color = textColor, alpha = alpha).filter(iconBitmap)
+        val filtered =
+            ColorBitmapFilter.getColorFilter(color = textColor, alpha = alpha).filter(iconBitmap)
         drawImage(filtered)
     }
 }
@@ -65,16 +94,20 @@ private class AlphaIconModifier(val iconBitmap: ImageBitmap, val alpha: Float) :
     }
 }
 
-@Composable
-fun AuroraThemedFollowTextIcon(icon: AuroraIcon, modifier: Modifier = Modifier) {
-    AuroraThemedIcon(
-        icon = icon,
-        disabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
-        enabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
-        activeFilterStrategy = IconFilterStrategy.ThemedFollowText,
-        modifier = modifier
+@Immutable
+private class IconDrawingCache(
+    val colorScheme: MutableColorScheme = MutableColorScheme(
+        displayName = "Internal mutable",
+        isDark = false,
+        ultraLight = Color.White,
+        extraLight = Color.White,
+        light = Color.White,
+        mid = Color.White,
+        dark = Color.White,
+        ultraDark = Color.White,
+        foreground = Color.Black
     )
-}
+)
 
 @Composable
 fun AuroraThemedIcon(
@@ -84,6 +117,8 @@ fun AuroraThemedIcon(
     activeFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     modifier: Modifier = Modifier
 ) {
+    val drawingCache = remember { IconDrawingCache() }
+
     val modelStateInfoSnapshot = LocalModelStateInfoSnapshot.current
     val currModelState = modelStateInfoSnapshot.currModelState
 
@@ -92,6 +127,7 @@ fun AuroraThemedIcon(
     val colors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
 
+    icon.setColorFilter(null)
     val iconBitmap = remember { icon.toBitmap(density) }
     if (currModelState.isDisabled) {
         // TODO - do we need icon transitions from / to a disabled state?
@@ -103,27 +139,56 @@ fun AuroraThemedIcon(
                         height = icon.getHeight()
                     ).auroraIconPaint(icon)
                 )
-            IconFilterStrategy.ThemedFollowText ->
+            IconFilterStrategy.ThemedFollowText -> {
                 // For disabled states, the text color already accounts for the
                 // disabled state alpha under the current skin configuration
+                icon.setColorFilter { textColor }
                 Box(
                     modifier.size(
                         width = icon.getWidth(),
                         height = icon.getHeight()
-                    ).auroraThemedIconPaint(iconBitmap, textColor, 1.0f)
+                    ).auroraIconPaint(icon)
                 )
-            IconFilterStrategy.ThemedFollowColorScheme ->
-                Box(
-                    modifier.size(
-                        width = icon.getWidth(),
-                        height = icon.getHeight()
-                    ).auroraThemedIconPaint(
-                        iconBitmap, colors.getColorScheme(
-                            decorationAreaType = decorationAreaType,
-                            componentState = currModelState
-                        ), 1.0f
+            }
+            IconFilterStrategy.ThemedFollowColorScheme -> {
+                // TODO - this can be cached for the color scheme (by display name or
+                //  by its colors)
+                val filtering = getInterpolatedColors(
+                    colors.getColorScheme(
+                        decorationAreaType = decorationAreaType,
+                        componentState = currModelState
                     )
                 )
+                icon.setColorFilter { color ->
+                    val b = color.blue
+                    val g = color.green
+                    val r = color.red
+                    val a = color.alpha
+
+                    val brightness = getColorBrightness(r, g, b)
+                    val hsb = RGBtoHSB(r, g, b)
+
+                    val pixelColor =
+                        filtering[(brightness * ColorSchemeBitmapFilter.MAPSTEPS - 0.5f).toInt()]!!
+                    val hsbInterpolated = RGBtoHSB(pixelColor)
+
+                    // Preserve hue and value
+                    hsb[0] = hsbInterpolated[0]
+                    hsb[1] = hsbInterpolated[1]
+                    // And remap the brightness based on brightness of 50%
+                    hsb[2] = 0.5f * hsb[2] + 0.5f * hsbInterpolated[2]
+
+                    // Convert the remapped HSB back to RGB
+                    val finalPixel = HSBtoRGB(floatArrayOf(hsb[0], hsb[1], hsb[2]))
+                    finalPixel.withAlpha(a)
+                }
+                Box(
+                    modifier.size(
+                        width = icon.getWidth(),
+                        height = icon.getHeight()
+                    ).auroraIconPaint(icon)
+                )
+            }
         }
     } else {
         // Simple case - both enabled and active filter strategy are ORIGINAL

@@ -33,6 +33,7 @@ class bullseye private constructor(var _width: Dp, var _height: Dp) : AuroraIcon
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var alphaStack = mutableListOf(1.0f)
+    private var colorFilter: ((Color) -> Color)? = null
 
 	private fun _paint0(drawScope : DrawScope) {
 with(drawScope) {
@@ -77,7 +78,7 @@ generalPath!!.cubicTo(11.8f, 1.0999994f, 14.9f, 4.1999993f, 14.9f, 7.9999995f)
 generalPath!!.cubicTo(14.9f, 11.799999f, 11.799999f, 14.9f, 7.9999995f, 14.9f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(Color(68, 68, 68, 255))
+brush = SolidColor(colorFilter?.invoke(Color(68, 68, 68, 255)) ?: Color(68, 68, 68, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -110,7 +111,7 @@ generalPath!!.cubicTo(10.5f, 3.4f, 12.6f, 5.5f, 12.6f, 8.0f)
 generalPath!!.cubicTo(12.6f, 10.5f, 10.5f, 12.6f, 8.0f, 12.6f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(Color(68, 68, 68, 255))
+brush = SolidColor(colorFilter?.invoke(Color(68, 68, 68, 255)) ?: Color(68, 68, 68, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -137,7 +138,7 @@ generalPath!!.cubicTo(9.9f, 11.4f, 11.4f, 9.9f, 11.4f, 7.9999995f)
 generalPath!!.cubicTo(11.4f, 6.0999994f, 9.9f, 4.5999994f, 7.9999995f, 4.5999994f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(Color(68, 68, 68, 255))
+brush = SolidColor(colorFilter?.invoke(Color(68, 68, 68, 255)) ?: Color(68, 68, 68, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -238,6 +239,10 @@ alpha = alphaStack.removeAt(0)
     override fun setSize(width: Dp, height: Dp) {
         _width = width
         _height = height
+    }
+
+    override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
+        this.colorFilter = colorFilter
     }
 
     override fun paintIcon(drawScope: DrawScope) {

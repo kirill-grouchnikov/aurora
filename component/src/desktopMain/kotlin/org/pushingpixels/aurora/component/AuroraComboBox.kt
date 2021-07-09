@@ -47,6 +47,7 @@ import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.component.utils.*
+import org.pushingpixels.aurora.utils.MutableColorScheme
 import java.awt.Dimension
 import java.awt.Rectangle
 import java.awt.Window

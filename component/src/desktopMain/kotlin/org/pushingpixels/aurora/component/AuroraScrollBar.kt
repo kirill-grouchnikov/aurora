@@ -43,6 +43,7 @@ import org.pushingpixels.aurora.ColorSchemeAssociationKind
 import org.pushingpixels.aurora.ComponentState
 import org.pushingpixels.aurora.auroraBackground
 import org.pushingpixels.aurora.component.utils.*
+import org.pushingpixels.aurora.utils.MutableColorScheme
 import org.pushingpixels.aurora.utils.getBaseOutline
 import kotlin.math.sign
 

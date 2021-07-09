@@ -54,6 +54,7 @@ import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjecti
 import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.icon.AuroraThemedIcon
+import org.pushingpixels.aurora.utils.MutableColorScheme
 import java.awt.*
 import kotlin.math.max
 import kotlin.math.roundToInt

@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.utils.*
+import org.pushingpixels.aurora.utils.MutableColorScheme
 
 @Immutable
 private class BoxWithHighlightsDrawingCache(

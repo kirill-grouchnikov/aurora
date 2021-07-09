@@ -33,6 +33,7 @@ class cog private constructor(var _width: Dp, var _height: Dp) : AuroraIcon {
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var alphaStack = mutableListOf(1.0f)
+    private var colorFilter: ((Color) -> Color)? = null
 
 	private fun _paint0(drawScope : DrawScope) {
 with(drawScope) {
@@ -105,7 +106,7 @@ generalPath!!.cubicTo(10.2f, 4.0f, 12.0f, 5.8f, 12.0f, 8.0f)
 generalPath!!.cubicTo(12.0f, 10.2f, 10.2f, 12.0f, 8.0f, 12.0f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(Color(68, 68, 68, 255))
+brush = SolidColor(colorFilter?.invoke(Color(68, 68, 68, 255)) ?: Color(68, 68, 68, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -132,7 +133,7 @@ generalPath!!.cubicTo(5.6000004f, 6.5189996f, 6.7190003f, 5.3999996f, 8.1f, 5.39
 generalPath!!.cubicTo(9.481001f, 5.3999996f, 10.6f, 6.5189996f, 10.6f, 7.8999996f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(Color(68, 68, 68, 255))
+brush = SolidColor(colorFilter?.invoke(Color(68, 68, 68, 255)) ?: Color(68, 68, 68, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -233,6 +234,10 @@ alpha = alphaStack.removeAt(0)
     override fun setSize(width: Dp, height: Dp) {
         _width = width
         _height = height
+    }
+
+    override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
+        this.colorFilter = colorFilter
     }
 
     override fun paintIcon(drawScope: DrawScope) {

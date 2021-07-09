@@ -42,6 +42,10 @@ class ColorSolidIcon(var _width: Dp, var _height: Dp, val color: Color) : Aurora
         this._height = height
     }
 
+    override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
+        // no-op
+    }
+
     override fun paintIcon(drawScope: DrawScope) {
         with(drawScope) {
             drawRect(
@@ -82,6 +86,10 @@ class ColorGradientIcon(
     override fun setSize(width: Dp, height: Dp) {
         this._width = width
         this._height = height
+    }
+
+    override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
+        // no-op
     }
 
     override fun paintIcon(drawScope: DrawScope) {

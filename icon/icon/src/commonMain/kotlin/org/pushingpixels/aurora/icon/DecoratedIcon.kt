@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.icon
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Dp
 
@@ -64,6 +65,10 @@ class DecoratedIcon(
                 mainIconHeight = delegate.getHeight()
             )
         }
+    }
+
+    override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
+        delegate.setColorFilter(colorFilter)
     }
 
     companion object {

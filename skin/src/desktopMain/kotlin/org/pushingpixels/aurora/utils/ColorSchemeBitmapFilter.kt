@@ -20,91 +20,94 @@ import org.pushingpixels.aurora.bitmapfilter.BaseBitmapFilter
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.common.*
 
+fun getInterpolatedColors(scheme: AuroraColorScheme): Array<Color?> {
+    val result = arrayOfNulls<Color>(ColorSchemeBitmapFilter.MAPSTEPS)
+
+    // collect the brightness factors of the color scheme
+    val schemeColorMapping = hashMapOf<Int, Color>()
+    val ultraLight = scheme.ultraLightColor
+    val extraLight = scheme.extraLightColor
+    val light = scheme.lightColor
+    val mid = scheme.midColor
+    val dark = scheme.darkColor
+    val ultraDark = scheme.ultraDarkColor
+
+    // Step 1 - map the color scheme colors based on their brightness
+    if (ultraLight == extraLight && ultraLight == light && ultraLight == mid &&
+        ultraLight == dark && ultraLight == ultraDark
+    ) {
+        // If the background colors are identical, create a lighter and a darker
+        // version for brightness mapping
+        val lighter = light.withBrightness(0.2f)
+        val darker = light.withBrightness(-0.2f)
+        schemeColorMapping[(lighter.colorBrightness * 255.0f).toInt()] = lighter
+        schemeColorMapping[(light.colorBrightness * 255.0f).toInt()] = light
+        schemeColorMapping[(darker.colorBrightness * 255.0f).toInt()] = darker
+    } else {
+        schemeColorMapping[(ultraLight.colorBrightness * 255.0f).toInt()] = ultraLight
+        schemeColorMapping[(extraLight.colorBrightness * 255.0f).toInt()] = extraLight
+        schemeColorMapping[(light.colorBrightness * 255.0f).toInt()] = light
+        schemeColorMapping[(mid.colorBrightness * 255.0f).toInt()] = mid
+        schemeColorMapping[(dark.colorBrightness * 255.0f).toInt()] = dark
+        schemeColorMapping[(ultraDark.colorBrightness * 255.0f).toInt()] = ultraDark
+    }
+
+    var schemeBrightness: List<Int> = ArrayList(schemeColorMapping.keys).sorted()
+
+    // Step 2 - create a "stretched" brightness mapping where the lowest brightness
+    // is mapped to 0 and the highest to 255
+    val lowestSchemeBrightness = schemeBrightness[0]
+    val highestSchemeBrightness = schemeBrightness[schemeBrightness.size - 1]
+    val hasSameBrightness = highestSchemeBrightness == lowestSchemeBrightness
+
+    val stretchedColorMapping: MutableMap<Int, Color> = hashMapOf()
+    for ((brightness, value) in schemeColorMapping) {
+        val stretched = if (hasSameBrightness) brightness
+        else 255 - 255 * (highestSchemeBrightness - brightness) /
+                (highestSchemeBrightness - lowestSchemeBrightness)
+        stretchedColorMapping[stretched] = value
+    }
+    schemeBrightness = ArrayList(stretchedColorMapping.keys).sorted()
+
+    // Step 3 - create the full brightness mapping that assigns colors to
+    // all intermediate brightness values. The intermediate brightness values
+    // are in discrete range
+    for (i in 0 until ColorSchemeBitmapFilter.MAPSTEPS) {
+        val brightness = (256.0 * i / ColorSchemeBitmapFilter.MAPSTEPS).toInt()
+        if (schemeBrightness.contains(brightness)) {
+            result[i] = stretchedColorMapping[brightness]
+        } else {
+            if (hasSameBrightness) {
+                result[i] = stretchedColorMapping[lowestSchemeBrightness]
+            } else {
+                var currIndex = 0
+                while (true) {
+                    val currStopValue = schemeBrightness[currIndex]
+                    val nextStopValue = schemeBrightness[currIndex + 1]
+                    if (brightness > currStopValue && brightness < nextStopValue) {
+                        // interpolate
+                        val currStopColor = stretchedColorMapping[currStopValue]!!
+                        val nextStopColor = stretchedColorMapping[nextStopValue]!!
+                        result[i] = currStopColor.interpolateTowards(
+                            nextStopColor,
+                            1.0f - (brightness - currStopValue).toFloat() / (nextStopValue - currStopValue).toFloat()
+                        )
+                        break
+                    }
+                    currIndex++
+                }
+            }
+        }
+    }
+    return result
+}
+
 class ColorSchemeBitmapFilter(
     val scheme: AuroraColorScheme,
     private val originalBrightnessFactor: Float,
     val alpha: Float
 ) : BaseBitmapFilter() {
-    private val interpolated = arrayOfNulls<Color>(MAPSTEPS)
-
-    init {
-        // collect the brightness factors of the color scheme
-        val schemeColorMapping = hashMapOf<Int, Color>()
-        val ultraLight = scheme.ultraLightColor
-        val extraLight = scheme.extraLightColor
-        val light = scheme.lightColor
-        val mid = scheme.midColor
-        val dark = scheme.darkColor
-        val ultraDark = scheme.ultraDarkColor
-
-        // Step 1 - map the color scheme colors based on their brightness
-        if (ultraLight == extraLight && ultraLight == light && ultraLight == mid &&
-            ultraLight == dark && ultraLight == ultraDark
-        ) {
-            // If the background colors are identical, create a lighter and a darker
-            // version for brightness mapping
-            val lighter = light.withBrightness(0.2f)
-            val darker = light.withBrightness(-0.2f)
-            schemeColorMapping[(lighter.colorBrightness * 255.0f).toInt()] = lighter
-            schemeColorMapping[(light.colorBrightness * 255.0f).toInt()] = light
-            schemeColorMapping[(darker.colorBrightness * 255.0f).toInt()] = darker
-        } else {
-            schemeColorMapping[(ultraLight.colorBrightness * 255.0f).toInt()] = ultraLight
-            schemeColorMapping[(extraLight.colorBrightness * 255.0f).toInt()] = extraLight
-            schemeColorMapping[(light.colorBrightness * 255.0f).toInt()] = light
-            schemeColorMapping[(mid.colorBrightness * 255.0f).toInt()] = mid
-            schemeColorMapping[(dark.colorBrightness * 255.0f).toInt()] = dark
-            schemeColorMapping[(ultraDark.colorBrightness * 255.0f).toInt()] = ultraDark
-        }
-
-        var schemeBrightness: List<Int> = ArrayList(schemeColorMapping.keys).sorted()
-
-        // Step 2 - create a "stretched" brightness mapping where the lowest brightness
-        // is mapped to 0 and the highest to 255
-        val lowestSchemeBrightness = schemeBrightness[0]
-        val highestSchemeBrightness = schemeBrightness[schemeBrightness.size - 1]
-        val hasSameBrightness = highestSchemeBrightness == lowestSchemeBrightness
-
-        val stretchedColorMapping: MutableMap<Int, Color> = hashMapOf()
-        for ((brightness, value) in schemeColorMapping) {
-            val stretched = if (hasSameBrightness) brightness
-            else 255 - 255 * (highestSchemeBrightness - brightness) /
-                    (highestSchemeBrightness - lowestSchemeBrightness)
-            stretchedColorMapping[stretched] = value
-        }
-        schemeBrightness = ArrayList(stretchedColorMapping.keys).sorted()
-
-        // Step 3 - create the full brightness mapping that assigns colors to
-        // all intermediate brightness values. The intermediate brightness values
-        // are in discrete range
-        for (i in 0 until MAPSTEPS) {
-            val brightness = (256.0 * i / MAPSTEPS).toInt()
-            if (schemeBrightness.contains(brightness)) {
-                interpolated[i] = stretchedColorMapping[brightness]
-            } else {
-                if (hasSameBrightness) {
-                    interpolated[i] = stretchedColorMapping[lowestSchemeBrightness]
-                } else {
-                    var currIndex = 0
-                    while (true) {
-                        val currStopValue = schemeBrightness[currIndex]
-                        val nextStopValue = schemeBrightness[currIndex + 1]
-                        if (brightness > currStopValue && brightness < nextStopValue) {
-                            // interpolate
-                            val currStopColor = stretchedColorMapping[currStopValue]!!
-                            val nextStopColor = stretchedColorMapping[nextStopValue]!!
-                            interpolated[i] = currStopColor.interpolateTowards(
-                                nextStopColor,
-                                1.0f - (brightness - currStopValue).toFloat() / (nextStopValue - currStopValue).toFloat()
-                            )
-                            break
-                        }
-                        currIndex++
-                    }
-                }
-            }
-        }
-    }
+    private val interpolated = getInterpolatedColors(scheme)
 
     override fun filter(width: Int, height: Int, source: ByteArray): ByteArray {
         // Use the brightness mapping to colorize each original pixel "into"
