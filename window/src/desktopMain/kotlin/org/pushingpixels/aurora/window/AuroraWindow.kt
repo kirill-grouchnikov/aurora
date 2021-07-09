@@ -73,7 +73,6 @@ private fun WindowTitlePane(
     titlePaneBounds: MutableState<Rect>
 ) {
     val density = LocalDensity.current
-    val iconSize = (18 * density.density).toInt()
 
     val extendedState = AppManager.focusedWindow?.window?.extendedState
     val isMaximized =
@@ -143,20 +142,14 @@ private fun WindowTitlePane(
                             TransitionAwareIcon.TransitionAwareIconFactory() {
                             override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
                                 return TransitionAwareIcon(
+                                    iconSize = 18.dp,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = colors,
-                                    buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                    delegate = { scheme ->
-                                        getMinimizeIcon(
-                                            iconSize = iconSize,
-                                            scheme = scheme,
-                                            density = density.density
-                                        )
+                                    paintDelegate = { drawScope, iconSize, colorScheme ->
+                                        drawMinimizeIcon(drawScope, iconSize, colorScheme)
                                     },
-                                    density = density,
-                                    colorSchemeAssociationKindDelegate = null,
-                                    uniqueIconTypeId = "aurora.titlePane.minimizeIcon"
+                                    density = density
                                 )
                             }
                         }
@@ -186,37 +179,25 @@ private fun WindowTitlePane(
                             override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
                                 return if (isMaximized.value) {
                                     TransitionAwareIcon(
+                                        iconSize = 18.dp,
                                         decorationAreaType = DecorationAreaType.TitlePane,
                                         skinColors = colors,
-                                        buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                         modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                        delegate = { scheme ->
-                                            getRestoreIcon(
-                                                iconSize = iconSize,
-                                                scheme = scheme,
-                                                density = density.density
-                                            )
+                                        paintDelegate = { drawScope, iconSize, colorScheme ->
+                                            drawRestoreIcon(drawScope, iconSize, colorScheme)
                                         },
                                         density = density,
-                                        colorSchemeAssociationKindDelegate = null,
-                                        uniqueIconTypeId = "aurora.titlePane.restoreIcon"
                                     )
                                 } else {
                                     TransitionAwareIcon(
+                                        iconSize = 18.dp,
                                         decorationAreaType = DecorationAreaType.TitlePane,
                                         skinColors = colors,
-                                        buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                         modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                        delegate = { scheme ->
-                                            getMaximizeIcon(
-                                                iconSize = iconSize,
-                                                scheme = scheme,
-                                                density = density.density
-                                            )
+                                        paintDelegate = { drawScope, iconSize, colorScheme ->
+                                            drawMaximizeIcon(drawScope, iconSize, colorScheme)
                                         },
                                         density = density,
-                                        colorSchemeAssociationKindDelegate = null,
-                                        uniqueIconTypeId = "aurora.titlePane.maximizeIcon"
                                     )
                                 }
                             }
@@ -238,20 +219,14 @@ private fun WindowTitlePane(
                             TransitionAwareIcon.TransitionAwareIconFactory() {
                             override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
                                 return TransitionAwareIcon(
+                                    iconSize = 18.dp,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = colors,
-                                    buttonBackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                    delegate = { scheme ->
-                                        getCloseIcon(
-                                            iconSize = iconSize,
-                                            scheme = scheme,
-                                            density = density.density
-                                        )
+                                    paintDelegate = { drawScope, iconSize, colorScheme ->
+                                        drawCloseIcon(drawScope, iconSize, colorScheme)
                                     },
                                     density = density,
-                                    colorSchemeAssociationKindDelegate = null,
-                                    uniqueIconTypeId = "aurora.titlePane.closeIcon"
                                 )
                             }
                         }

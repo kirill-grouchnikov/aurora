@@ -63,14 +63,7 @@ import kotlin.math.roundToInt
 private class CommandButtonDrawingCache(
     val colorScheme: MutableColorScheme = MutableColorScheme(
         displayName = "Internal mutable",
-        isDark = false,
-        ultraLight = Color.White,
-        extraLight = Color.White,
-        light = Color.White,
-        mid = Color.White,
-        dark = Color.White,
-        ultraDark = Color.White,
-        foreground = Color.Black
+        isDark = false
     ),
     val markPath: Path = Path()
 )

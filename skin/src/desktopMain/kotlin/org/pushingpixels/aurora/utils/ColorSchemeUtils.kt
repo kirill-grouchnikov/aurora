@@ -25,13 +25,24 @@ import java.io.InputStreamReader
 data class MutableColorScheme(
     override val displayName: String,
     override var isDark: Boolean,
-    var ultraLight: Color,
-    var extraLight: Color,
-    var light: Color,
-    var mid: Color,
-    var dark: Color,
-    var ultraDark: Color,
-    var foreground: Color
+    var ultraLight: Color = Color.White,
+    var extraLight: Color = Color.White,
+    var light: Color = Color.White,
+    var mid: Color = Color.White,
+    var dark: Color = Color.White,
+    var ultraDark: Color = Color.White,
+    var foreground: Color = Color.Black,
+    var backgroundFill: Color = Color.White,
+    var accentedBackgroundFill: Color = Color.White,
+    var focusRing: Color = Color.White,
+    var line: Color = Color.White,
+    var selectionForeground: Color = Color.White,
+    var selectionBackground: Color = Color.White,
+    var textBackgroundFill: Color = Color.White,
+    var separatorPrimary: Color = Color.White,
+    var separatorSecondary: Color = Color.White,
+    var mark: Color = Color.White,
+    var echo: Color = Color.White,
 ) : AuroraColorScheme {
 
     override val ultraLightColor: Color
@@ -50,27 +61,27 @@ data class MutableColorScheme(
         get() = foreground
 
     override val backgroundFillColor: Color
-        get() = throw UnsupportedOperationException()
+        get() = backgroundFill
     override val accentedBackgroundFillColor: Color
-        get() = throw UnsupportedOperationException()
+        get() = accentedBackgroundFill
     override val focusRingColor: Color
-        get() = throw UnsupportedOperationException()
+        get() = focusRing
     override val lineColor: Color
-        get() = throw UnsupportedOperationException()
+        get() = line
     override val selectionForegroundColor: Color
-        get() = throw UnsupportedOperationException()
+        get() = selectionForeground
     override val selectionBackgroundColor: Color
-        get() = throw UnsupportedOperationException()
+        get() = selectionBackground
     override val textBackgroundFillColor: Color
-        get() = throw UnsupportedOperationException()
+        get() = textBackgroundFill
     override val separatorPrimaryColor: Color
-        get() = throw UnsupportedOperationException()
+        get() = separatorPrimary
     override val separatorSecondaryColor: Color
-        get() = throw UnsupportedOperationException()
+        get() = separatorSecondary
     override val markColor: Color
-        get() = throw UnsupportedOperationException()
+        get() = mark
     override val echoColor: Color
-        get() = throw UnsupportedOperationException()
+        get() = echo
 
     override fun shift(
         backgroundShiftColor: Color,
@@ -200,9 +211,22 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
                     }
 
                     val colors: Array<Color> = if (background != null) arrayOf(
-                        background!!, background!!, background!!, background!!, background!!, background!!,
+                        background!!,
+                        background!!,
+                        background!!,
+                        background!!,
+                        background!!,
+                        background!!,
                         foreground!!
-                    ) else arrayOf(ultraLight!!, extraLight!!, light!!, mid!!, dark!!, ultraDark!!, foreground!!)
+                    ) else arrayOf(
+                        ultraLight!!,
+                        extraLight!!,
+                        light!!,
+                        mid!!,
+                        dark!!,
+                        ultraDark!!,
+                        foreground!!
+                    )
                     if (kind === ColorSchemeKind.Light) {
                         schemes.add(getLightColorScheme(name!!, colors, HashMap(additionalColors)))
                     } else {
@@ -295,8 +319,10 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
                 if ("colorBackground" == key) {
                     if (value.contains("->")) {
                         val splitInner = value.split("->".toRegex()).toTypedArray()
-                        val colorStart: Color = decodeColor(splitInner[0].trim { it <= ' ' }, colorMap)
-                        val colorEnd: Color = decodeColor(splitInner[1].trim { it <= ' ' }, colorMap)
+                        val colorStart: Color =
+                            decodeColor(splitInner[0].trim { it <= ' ' }, colorMap)
+                        val colorEnd: Color =
+                            decodeColor(splitInner[1].trim { it <= ' ' }, colorMap)
                         ultraLight = colorStart
                         extraLight = colorStart.interpolateTowards(colorEnd, 0.9f)
                         light = colorStart.interpolateTowards(colorEnd, 0.7f)
@@ -362,7 +388,8 @@ private fun getLightColorScheme(
         override val backgroundFillColor: Color
             get() = additionalColors["colorBackgroundFill"] ?: super.backgroundFillColor
         override val accentedBackgroundFillColor: Color
-            get() = additionalColors["colorAccentedBackgroundFill"] ?: super.accentedBackgroundFillColor
+            get() = additionalColors["colorAccentedBackgroundFill"]
+                ?: super.accentedBackgroundFillColor
         override val textBackgroundFillColor: Color
             get() = additionalColors["colorTextBackgroundFill"] ?: super.textBackgroundFillColor
         override val selectionBackgroundColor: Color
@@ -410,7 +437,8 @@ private fun getDarkColorScheme(
         override val backgroundFillColor: Color
             get() = additionalColors["colorBackgroundFill"] ?: super.backgroundFillColor
         override val accentedBackgroundFillColor: Color
-            get() = additionalColors["colorAccentedBackgroundFill"] ?: super.accentedBackgroundFillColor
+            get() = additionalColors["colorAccentedBackgroundFill"]
+                ?: super.accentedBackgroundFillColor
         override val textBackgroundFillColor: Color
             get() = additionalColors["colorTextBackgroundFill"] ?: super.textBackgroundFillColor
         override val selectionBackgroundColor: Color
