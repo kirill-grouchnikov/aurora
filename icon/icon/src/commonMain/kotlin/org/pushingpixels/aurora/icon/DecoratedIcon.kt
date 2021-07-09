@@ -36,39 +36,47 @@ class DecoratedIcon(
         /**
          * Paints the icon decoration.
          *
-         * @param drawScope              Draw scope.
+         * @param drawScope      Draw scope.
          * @param mainIconWidth  Width of main icon.
          * @param mainIconHeight Height of main icon.
+         * @param colorFilter    Color filter to apply on this decoration.
          */
-        fun paintIconDecoration(drawScope: DrawScope, mainIconWidth: Dp, mainIconHeight: Dp)
+        fun paintIconDecoration(
+            drawScope: DrawScope, mainIconWidth: Dp, mainIconHeight: Dp,
+            colorFilter: ((Color) -> Color)?
+        )
     }
 
+    private var colorFilter: ((Color) -> Color)? = null
+
     override fun getHeight(): Dp {
-        return delegate.getHeight()
+        return this.delegate.getHeight()
     }
 
     override fun getWidth(): Dp {
-        return delegate.getWidth()
+        return this.delegate.getWidth()
     }
 
     @Composable
     override fun setSize(width: Dp, height: Dp) {
-        delegate.setSize(width, height)
+        this.delegate.setSize(width, height)
     }
 
     override fun paintIcon(drawScope: DrawScope) {
-        delegate.paintIcon(drawScope)
-        for (decorator in decorators) {
+        this.delegate.paintIcon(drawScope)
+        for (decorator in this.decorators) {
             decorator.paintIconDecoration(
                 drawScope = drawScope,
-                mainIconWidth = delegate.getWidth(),
-                mainIconHeight = delegate.getHeight()
+                mainIconWidth = this.delegate.getWidth(),
+                mainIconHeight = this.delegate.getHeight(),
+                colorFilter = this.colorFilter
             )
         }
     }
 
     override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
-        delegate.setColorFilter(colorFilter)
+        this.colorFilter = colorFilter
+        this.delegate.setColorFilter(colorFilter)
     }
 
     companion object {
