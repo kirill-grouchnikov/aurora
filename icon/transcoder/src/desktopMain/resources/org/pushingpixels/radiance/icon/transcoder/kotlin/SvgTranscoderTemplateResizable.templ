@@ -128,7 +128,7 @@ class TOKEN_CLASSNAME private constructor(var _width: Dp, var _height: Dp) : Aur
     }
 
     override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
-        this.colorFilter = colorFilter
+        TOKEN_SET_COLOR_FILTER
     }
 
     override fun paintIcon(drawScope: DrawScope) {

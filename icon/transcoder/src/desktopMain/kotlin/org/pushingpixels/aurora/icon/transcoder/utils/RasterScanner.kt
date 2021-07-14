@@ -43,6 +43,10 @@ internal class RasterScanner(private val printWriter: PrintWriter) {
         scanGraphicsNode(gvtRoot)
     }
 
+    fun hasRasters() : Boolean {
+        return processedMD5s.isNotEmpty()
+    }
+
     private fun scanPatternPaint(paint: PatternPaint) {
         // Since PatternGraphicsNode does not (yet?) expose its content, we ask it to
         // paint itself to a custom extension of Graphics2D that tracks image draw operations

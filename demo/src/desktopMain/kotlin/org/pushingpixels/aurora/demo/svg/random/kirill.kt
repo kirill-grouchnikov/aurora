@@ -327,7 +327,7 @@ private fun getImage484482440f4da3ada2d5781785d20a7c(): ImageBitmap? {
     }
 
     override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
-        this.colorFilter = colorFilter
+        throw UnsupportedOperationException("Color filters on raster content not supported")
     }
 
     override fun paintIcon(drawScope: DrawScope) {

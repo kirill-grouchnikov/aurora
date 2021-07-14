@@ -67,6 +67,8 @@ abstract class SvgBaseTranscoder(private val classname: String) {
      */
     private var packageName: String? = null
 
+    private var hasRasters = false
+
     private class PrintWriterManager {
         private val streamList: MutableList<ByteArrayOutputStream> = ArrayList()
         private var currentWriter: PrintWriter
@@ -158,6 +160,12 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         val rasterCode = String(rasterCodeStream.toByteArray())
         templateString = templateString.replace(TOKEN_RASTER_CODE.toRegex(), rasterCode)
 
+        this.hasRasters = rasterScanner.hasRasters()
+        val setColorFilter = if (this.hasRasters)
+            "throw UnsupportedOperationException(\"Color filters on raster content not supported\")"
+        else "this.colorFilter = colorFilter"
+        templateString = templateString.replace(TOKEN_SET_COLOR_FILTER.toRegex(), setColorFilter)
+
         // Pass 2 - transcode the rest of the content
         printWriterManager = PrintWriterManager()
         transcodeGraphicsNode(gvtRoot, "")
@@ -174,7 +182,8 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             combinedPaintingCode.append(paintingCodeMethod)
             combinedPaintingCode.append("\n\n")
         }
-        templateString = templateString.replace(TOKEN_PAINTING_CODE.toRegex(), combinedPaintingCode.toString())
+        templateString =
+            templateString.replace(TOKEN_PAINTING_CODE.toRegex(), combinedPaintingCode.toString())
         val combinedPaintingInvocations = StringBuffer()
         for (i in 0 until streamCount) {
             combinedPaintingInvocations.append("_paint$i(drawScope)\n")
@@ -341,13 +350,26 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         transform.getMatrix(transfMatrix)
         val matrix = Matrix(
             values = floatArrayOf(
-                transfMatrix[0].toFloat(), transfMatrix[2].toFloat(), 0.0f, transfMatrix[4].toFloat(),
-                transfMatrix[1].toFloat(), transfMatrix[3].toFloat(), 0.0f, transfMatrix[5].toFloat(),
-                0.0f, 0.0f, 1.0f, 0.0f,
-                0.0f, 0.0f, 0.0f, 1.0f
+                transfMatrix[0].toFloat(),
+                transfMatrix[2].toFloat(),
+                0.0f,
+                transfMatrix[4].toFloat(),
+                transfMatrix[1].toFloat(),
+                transfMatrix[3].toFloat(),
+                0.0f,
+                transfMatrix[5].toFloat(),
+                0.0f,
+                0.0f,
+                1.0f,
+                0.0f,
+                0.0f,
+                0.0f,
+                0.0f,
+                1.0f
             )
         )
-        val transformedStart = matrix.map(Offset(x = startPoint.x.toFloat(), y = startPoint.y.toFloat()))
+        val transformedStart =
+            matrix.map(Offset(x = startPoint.x.toFloat(), y = startPoint.y.toFloat()))
         val transformedEnd = matrix.map(Offset(x = endPoint.x.toFloat(), y = endPoint.y.toFloat()))
 
         printWriterManager!!.print("start = Offset(${transformedStart.x}f, ${transformedStart.y}f), ")
@@ -518,7 +540,12 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             }
 
             override fun setClip(x: Int, y: Int, width: Int, height: Int) {
-                _clip = Rectangle2D.Double(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
+                _clip = Rectangle2D.Double(
+                    x.toDouble(),
+                    y.toDouble(),
+                    width.toDouble(),
+                    height.toDouble()
+                )
             }
 
             override fun getClip(): Shape? {
@@ -537,7 +564,14 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             }
 
             override fun clipRect(x: Int, y: Int, width: Int, height: Int) {
-                clip(Rectangle2D.Double(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble()))
+                clip(
+                    Rectangle2D.Double(
+                        x.toDouble(),
+                        y.toDouble(),
+                        width.toDouble(),
+                        height.toDouble()
+                    )
+                )
             }
 
             override fun addRenderingHints(hints: Map<*, *>?) {
@@ -673,14 +707,28 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         transform.getMatrix(transfMatrix)
         val matrix = Matrix(
             values = floatArrayOf(
-                transfMatrix[0].toFloat(), transfMatrix[2].toFloat(), 0.0f, transfMatrix[4].toFloat(),
-                transfMatrix[1].toFloat(), transfMatrix[3].toFloat(), 0.0f, transfMatrix[5].toFloat(),
-                0.0f, 0.0f, 1.0f, 0.0f,
-                0.0f, 0.0f, 0.0f, 1.0f
+                transfMatrix[0].toFloat(),
+                transfMatrix[2].toFloat(),
+                0.0f,
+                transfMatrix[4].toFloat(),
+                transfMatrix[1].toFloat(),
+                transfMatrix[3].toFloat(),
+                0.0f,
+                transfMatrix[5].toFloat(),
+                0.0f,
+                0.0f,
+                1.0f,
+                0.0f,
+                0.0f,
+                0.0f,
+                0.0f,
+                1.0f
             )
         )
-        val transformedCenter = matrix.map(Offset(x = centerPoint.x.toFloat(), y = centerPoint.y.toFloat()))
-        val transformedEdge = matrix.map(Offset(x = (centerPoint.x + radius).toFloat(), y = centerPoint.y.toFloat()))
+        val transformedCenter =
+            matrix.map(Offset(x = centerPoint.x.toFloat(), y = centerPoint.y.toFloat()))
+        val transformedEdge =
+            matrix.map(Offset(x = (centerPoint.x + radius).toFloat(), y = centerPoint.y.toFloat()))
         val dx = transformedEdge.x - transformedCenter.x
         val dy = transformedEdge.y - transformedCenter.y
         val transformedRadius = sqrt(dx * dx + dy * dy)
@@ -1090,7 +1138,12 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             }
 
             override fun setClip(x: Int, y: Int, width: Int, height: Int) {
-                _clip = Rectangle2D.Double(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
+                _clip = Rectangle2D.Double(
+                    x.toDouble(),
+                    y.toDouble(),
+                    width.toDouble(),
+                    height.toDouble()
+                )
             }
 
             override fun getClip(): Shape? {
@@ -1109,7 +1162,14 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             }
 
             override fun clipRect(x: Int, y: Int, width: Int, height: Int) {
-                clip(Rectangle2D.Double(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble()))
+                clip(
+                    Rectangle2D.Double(
+                        x.toDouble(),
+                        y.toDouble(),
+                        width.toDouble(),
+                        height.toDouble()
+                    )
+                )
             }
 
             override fun setRenderingHints(hints: Map<*, *>?) {
@@ -1231,6 +1291,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         private const val TOKEN_PACKAGE = "TOKEN_PACKAGE"
         private const val TOKEN_CLASSNAME = "TOKEN_CLASSNAME"
         private const val TOKEN_RASTER_CODE = "TOKEN_RASTER_CODE"
+        private const val TOKEN_SET_COLOR_FILTER = "TOKEN_SET_COLOR_FILTER"
         private const val TOKEN_PAINTING_CODE = "TOKEN_PAINTING_CODE"
         private const val TOKEN_PAINTING_INVOCATIONS = "TOKEN_PAINTING_INVOCATIONS"
         private const val TOKEN_ORIG_X = "TOKEN_ORIG_X"
