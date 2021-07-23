@@ -586,41 +586,171 @@ internal fun AuroraCommandButton(
                     }
                 }
             }
+
+            // Command presentation for menu content, taking some of the values from
+            // the popup menu presentation model configured on the top-level presentation model
+            val popupButtonPresentationModel = CommandButtonPresentationModel(
+                presentationState = presentationModel.popupMenuPresentationModel.menuPresentationState,
+                popupPlacementStrategy = presentationModel.popupMenuPresentationModel.popupPlacementStrategy,
+                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                horizontalAlignment = HorizontalAlignment.Leading,
+                isMenu = true
+            )
+            val popupItemLayoutManager =
+                presentationModel.popupMenuPresentationModel.menuPresentationState.createLayoutManager(
+                    layoutDirection = layoutDirection,
+                    density = density,
+                    textStyle = mergedTextStyle,
+                    resourceLoader = resourceLoader
+                )
+            // Layout manager for the button panel if it's present
+            val hasButtonPanel = (secondaryContentModel.value?.panelContentModel != null)
+            val panelButtonLayoutManager =
+                if (hasButtonPanel) presentationModel.popupMenuPresentationModel.panelPresentationModel!!.commandPresentationState.createLayoutManager(
+                    layoutDirection = layoutDirection,
+                    density = density,
+                    textStyle = mergedTextStyle,
+                    resourceLoader = resourceLoader
+                ) else null
             Box(
                 modifier = Modifier.clickable(
                     enabled = isPopupEnabled,
                     onClick = {
-                        // TODO - move off of JWindow when https://github.com/JetBrains/compose-jb/issues/195
-                        //  is addressed
                         val popupContentWindow = ComposeWindow()
                         popupContentWindow.focusableWindowState = false
                         popupContentWindow.type = Window.Type.POPUP
                         popupContentWindow.isAlwaysOnTop = true
                         popupContentWindow.isUndecorated = true
 
-                        // TODO - hopefully temporary. Mark the popup window as fully transparent
-                        //  so that when it is globally positioned, we can size it to the actual
-                        //  content and make it fully opaque
-                        popupContentWindow.opacity = 0.0f
-
                         val currentWindow = parentWindow ?: AppManager.focusedWindow!!.window
                         val locationOnScreen = currentWindow.locationOnScreen
 
+                        // Compute the size of the popup content, accounting for the panel
+                        val panelPreferredSize =
+                            if (hasButtonPanel) getPreferredCommandButtonPanelSize(
+                                contentModel = secondaryContentModel.value!!.panelContentModel!!,
+                                presentationModel = presentationModel.popupMenuPresentationModel.panelPresentationModel!!,
+                                buttonLayoutManager = panelButtonLayoutManager!!,
+                                layoutDirection = layoutDirection,
+                                density = density
+                            ) else Size(0.0f, 0.0f)
+
+                        var atLeastOnePopupButtonHasIcon = false
+                        for (commandGroup in secondaryContentModel.value!!.groups) {
+                            for (secondaryCommand in commandGroup.commands) {
+                                if (secondaryCommand.iconFactory != null) {
+                                    atLeastOnePopupButtonHasIcon = true
+                                }
+                                if (secondaryCommand.isActionToggle) {
+                                    atLeastOnePopupButtonHasIcon = true
+                                }
+                            }
+                        }
+                        val secondaryPresentationModelOverlay =
+                            CommandButtonPresentationModel.Overlay(
+                                forceAllocateSpaceForIcon = atLeastOnePopupButtonHasIcon,
+                                textStyle = TextStyle(fontWeight = FontWeight.Bold)
+                            )
+                        val popupButtonPresentationModelWithOverlay =
+                            popupButtonPresentationModel.overlayWith(
+                                secondaryPresentationModelOverlay
+                            )
+
+                        var popupColumnWidth = 0.0f
+                        var popupColumnHeight = 0.0f
+                        for ((commandGroupIndex, commandGroup) in secondaryContentModel.value!!.groups.withIndex()) {
+                            for (secondaryCommand in commandGroup.commands) {
+                                val preferredSize = popupItemLayoutManager.getPreferredSize(
+                                    command = secondaryCommand,
+                                    presentationModel = popupButtonPresentationModelWithOverlay,
+                                    preLayoutInfo = popupItemLayoutManager.getPreLayoutInfo(
+                                        command = secondaryCommand,
+                                        presentationModel = popupButtonPresentationModelWithOverlay
+                                    )
+                                )
+                                popupColumnWidth = max(popupColumnWidth, preferredSize.width)
+                                popupColumnHeight += preferredSize.height
+                            }
+                            // Account for horizontal separator between secondary command groups
+                            if (commandGroupIndex < (secondaryContentModel.value!!.groups.size - 1)) {
+                                popupColumnHeight += SeparatorSizingConstants.Thickness.value * density.density
+                            }
+                        }
+
+                        val fullPopupWidth = (if (hasButtonPanel) panelPreferredSize.width else popupColumnWidth).roundToInt() + 2
+                        var popupHeight = 0.0f
+                        if (hasButtonPanel) {
+                            popupHeight = panelPreferredSize.height
+                            // Account for horizontal separator between the panel and the rest of
+                            // the popup content
+                            popupHeight += SeparatorSizingConstants.Thickness.value * density.density
+                        }
+                        popupHeight += popupColumnHeight
+                        val fullPopupHeight = popupHeight.roundToInt() + 2
+
                         // anchor the popup window to the bottom left corner of the component
                         // in screen coordinates
-                        // TODO - figure out the sizing (see above)
-                        val initialWidth = 1000
-                        val initialHeight = 1000
-                        val initialWindowAnchor = IntOffset(
+                        val initialAnchor = IntOffset(
                             x = (locationOnScreen.x + auroraTopLeftOffset.x / density.density).toInt(),
                             y = (locationOnScreen.y + auroraTopLeftOffset.y / density.density).toInt()
                         )
-                        popupContentWindow.setBounds(
-                            (locationOnScreen.x + auroraTopLeftOffset.x / density.density).toInt(),
-                            (locationOnScreen.y + auroraTopLeftOffset.y / density.density).toInt(),
-                            initialWidth,
-                            initialHeight
-                        )
+
+                        // TODO - support RTL for startward and endward
+                        val popupRect = when (presentationModel.popupPlacementStrategy) {
+                            PopupPlacementStrategy.Downward -> Rectangle(
+                                initialAnchor.x,
+                                initialAnchor.y + (auroraSize.height / density.density).toInt(),
+                                fullPopupWidth,
+                                fullPopupHeight
+                            )
+                            PopupPlacementStrategy.Upward -> Rectangle(
+                                initialAnchor.x,
+                                initialAnchor.y - (fullPopupHeight / density.density).toInt(),
+                                fullPopupWidth,
+                                fullPopupHeight
+                            )
+                            PopupPlacementStrategy.Startward -> Rectangle(
+                                initialAnchor.x - (fullPopupWidth / density.density).toInt(),
+                                initialAnchor.y,
+                                fullPopupWidth,
+                                fullPopupHeight
+                            )
+                            PopupPlacementStrategy.Endward -> Rectangle(
+                                initialAnchor.x + (auroraSize.width / density.density).toInt(),
+                                initialAnchor.y,
+                                fullPopupWidth,
+                                fullPopupHeight
+                            )
+                            PopupPlacementStrategy.CenteredVertically -> Rectangle(
+                                initialAnchor.x,
+                                initialAnchor.y + (auroraSize.height / density.density).toInt() - fullPopupHeight / 2,
+                                fullPopupWidth,
+                                fullPopupHeight
+                            )
+                        }
+
+                        // Make sure the popup stays in screen bounds
+                        val screenBounds = popupContentWindow.graphicsConfiguration.bounds
+                        if (popupRect.x < 0) {
+                            popupRect.translate(-popupRect.x, 0)
+                        }
+                        if ((popupRect.x + popupRect.width) > screenBounds.width) {
+                            popupRect.translate(
+                                screenBounds.width - popupRect.x - popupRect.width,
+                                0
+                            )
+                        }
+                        if (popupRect.y < 0) {
+                            popupRect.translate(0, -popupRect.y)
+                        }
+                        if ((popupRect.y + popupRect.height) > screenBounds.height) {
+                            popupRect.translate(
+                                0,
+                                screenBounds.height - popupRect.y - popupRect.height
+                            )
+                        }
+
+                        popupContentWindow.bounds = popupRect
 
                         popupContentWindow.setContent(
                             parentComposition = parentComposition
@@ -634,7 +764,7 @@ internal fun AuroraCommandButton(
                             ) {
                                 CommandButtonPopupContent(
                                     popupContentWindow = popupContentWindow,
-                                    initialAnchor = initialWindowAnchor,
+                                    initialAnchor = initialAnchor,
                                     anchorSize = auroraSize,
                                     menuContentModel = secondaryContentModel,
                                     menuPresentationModel = presentationModel.popupMenuPresentationModel,
@@ -1311,67 +1441,70 @@ internal fun CommandButtonPopupContent(
     val popupBorderColor = AuroraSkin.painters.borderPainter.getRepresentativeColor(borderScheme)
     val density = LocalDensity.current
     val contentSize = AuroraSize(0, 0)
-    Box(modifier = Modifier.onGloballyPositioned {
-        // Get the size of the content and update the popup window bounds
-        val popupWidth = (contentSize.width / density.density).toInt()
-        val popupHeight = (contentSize.height / density.density).toInt()
-
-        // TODO - support RTL for startward and endward
-        val popupRect = when (popupPlacementStrategy) {
-            PopupPlacementStrategy.Downward -> Rectangle(
-                initialAnchor.x,
-                initialAnchor.y + (anchorSize.height / density.density).toInt(),
-                popupWidth,
-                popupHeight
-            )
-            PopupPlacementStrategy.Upward -> Rectangle(
-                initialAnchor.x,
-                initialAnchor.y - popupHeight,
-                popupWidth,
-                popupHeight
-            )
-            PopupPlacementStrategy.Startward -> Rectangle(
-                initialAnchor.x - popupWidth,
-                initialAnchor.y,
-                popupWidth,
-                popupHeight
-            )
-            PopupPlacementStrategy.Endward -> Rectangle(
-                initialAnchor.x + (anchorSize.width / density.density).toInt(),
-                initialAnchor.y,
-                popupWidth,
-                popupHeight
-            )
-            PopupPlacementStrategy.CenteredVertically -> Rectangle(
-                initialAnchor.x,
-                initialAnchor.y + (anchorSize.height / (2 * density.density)).toInt() - popupHeight / 2,
-                popupWidth,
-                popupHeight
-            )
-        }
-
-        // Make sure the popup stays in screen bounds
-        val screenBounds = popupContentWindow.graphicsConfiguration.bounds
-        if (popupRect.x < 0) {
-            popupRect.translate(-popupRect.x, 0)
-        }
-        if ((popupRect.x + popupRect.width) > screenBounds.width) {
-            popupRect.translate(screenBounds.width - popupRect.x - popupRect.width, 0)
-        }
-        if (popupRect.y < 0) {
-            popupRect.translate(0, -popupRect.y)
-        }
-        if ((popupRect.y + popupRect.height) > screenBounds.height) {
-            popupRect.translate(0, screenBounds.height - popupRect.y - popupRect.height)
-        }
-
-        popupContentWindow.bounds = popupRect
-        popupContentWindow.opacity = 1.0f
-        popupContentWindow.preferredSize = Dimension(popupRect.width, popupRect.height)
-        popupContentWindow.size = Dimension(popupRect.width, popupRect.height)
-        popupContentWindow.invalidate()
-        popupContentWindow.validate()
-    }) {
+    Box(
+//        modifier = Modifier.onGloballyPositioned {
+//        // Get the size of the content and update the popup window bounds
+//        val popupWidth = (contentSize.width / density.density).toInt()
+//        val popupHeight = (contentSize.height / density.density).toInt()
+//
+//        // TODO - support RTL for startward and endward
+//        val popupRect = when (popupPlacementStrategy) {
+//            PopupPlacementStrategy.Downward -> Rectangle(
+//                initialAnchor.x,
+//                initialAnchor.y + (anchorSize.height / density.density).toInt(),
+//                popupWidth,
+//                popupHeight
+//            )
+//            PopupPlacementStrategy.Upward -> Rectangle(
+//                initialAnchor.x,
+//                initialAnchor.y - popupHeight,
+//                popupWidth,
+//                popupHeight
+//            )
+//            PopupPlacementStrategy.Startward -> Rectangle(
+//                initialAnchor.x - popupWidth,
+//                initialAnchor.y,
+//                popupWidth,
+//                popupHeight
+//            )
+//            PopupPlacementStrategy.Endward -> Rectangle(
+//                initialAnchor.x + (anchorSize.width / density.density).toInt(),
+//                initialAnchor.y,
+//                popupWidth,
+//                popupHeight
+//            )
+//            PopupPlacementStrategy.CenteredVertically -> Rectangle(
+//                initialAnchor.x,
+//                initialAnchor.y + (anchorSize.height / (2 * density.density)).toInt() - popupHeight / 2,
+//                popupWidth,
+//                popupHeight
+//            )
+//        }
+//
+//        // Make sure the popup stays in screen bounds
+//        val screenBounds = popupContentWindow.graphicsConfiguration.bounds
+//        if (popupRect.x < 0) {
+//            popupRect.translate(-popupRect.x, 0)
+//        }
+//        if ((popupRect.x + popupRect.width) > screenBounds.width) {
+//            popupRect.translate(screenBounds.width - popupRect.x - popupRect.width, 0)
+//        }
+//        if (popupRect.y < 0) {
+//            popupRect.translate(0, -popupRect.y)
+//        }
+//        if ((popupRect.y + popupRect.height) > screenBounds.height) {
+//            popupRect.translate(0, screenBounds.height - popupRect.y - popupRect.height)
+//        }
+//
+//        popupContentWindow.bounds = popupRect
+//        popupContentWindow.opacity = 1.0f
+//        popupContentWindow.preferredSize = Dimension(popupRect.width, popupRect.height)
+//        popupContentWindow.size = Dimension(popupRect.width, popupRect.height)
+//        popupContentWindow.pack()
+//        popupContentWindow.preferredSize = null
+//        popupContentWindow.pack()
+//    }
+    ) {
         val hasPanel = (menuContentModel.value!!.panelContentModel != null)
         val layoutDirection = LocalLayoutDirection.current
         val textStyle = LocalTextStyle.current
@@ -1447,54 +1580,51 @@ internal fun CommandButtonPopupContent(
                 }
             }
 
-            CompositionLocalProvider(
-                LocalCommandForceIcon provides atLeastOneButtonHasIcon
-            ) {
-                for ((commandGroupIndex, commandGroup) in menuContentModel.value!!.groups.withIndex()) {
-                    for (secondaryCommand in commandGroup.commands) {
-                        // Check if we have a presentation overlay for this secondary command
-                        val hasOverlay = overlays.containsKey(secondaryCommand)
-                        var currSecondaryPresentationModel = if (hasOverlay)
-                            menuButtonPresentationModel.overlayWith(overlays[secondaryCommand]!!)
-                        else menuButtonPresentationModel
-                        if (secondaryCommand == menuContentModel.value!!.highlightedCommand) {
-                            // If our secondary content model has a highlighted command, pass bold
-                            // font weight to the text style of the matching command button.
-                            currSecondaryPresentationModel =
-                                currSecondaryPresentationModel.overlayWith(
-                                    CommandButtonPresentationModel.Overlay(
-                                        textStyle = TextStyle(
-                                            fontWeight = FontWeight.Bold
-                                        )
+            for ((commandGroupIndex, commandGroup) in menuContentModel.value!!.groups.withIndex()) {
+                for (secondaryCommand in commandGroup.commands) {
+                    // Check if we have a presentation overlay for this secondary command
+                    val hasOverlay = overlays.containsKey(secondaryCommand)
+                    var currSecondaryPresentationModel = if (hasOverlay)
+                        menuButtonPresentationModel.overlayWith(overlays[secondaryCommand]!!)
+                    else menuButtonPresentationModel
+                    if (secondaryCommand == menuContentModel.value!!.highlightedCommand) {
+                        // If our secondary content model has a highlighted command, pass bold
+                        // font weight to the text style of the matching command button.
+                        currSecondaryPresentationModel =
+                            currSecondaryPresentationModel.overlayWith(
+                                CommandButtonPresentationModel.Overlay(
+                                    forceAllocateSpaceForIcon = atLeastOneButtonHasIcon,
+                                    textStyle = TextStyle(
+                                        fontWeight = FontWeight.Bold
                                     )
                                 )
-                        }
-
-                        // Create a command button for each secondary command, passing the same
-                        // overlays into it.
-                        AuroraCommandButton(
-                            command = secondaryCommand,
-                            parentWindow = popupContentWindow,
-                            extraAction = {
-                                if (toDismissPopupsOnActivation and
-                                    currSecondaryPresentationModel.toDismissPopupsOnActivation
-                                ) {
-                                    AuroraPopupManager.hidePopups(null)
-                                }
-                            },
-                            presentationModel = currSecondaryPresentationModel,
-                            overlays = overlays,
-                            buttonSides = Sides(straightSides = Side.values().toSet())
-                        )
-                    }
-                    if (commandGroupIndex < (menuContentModel.value!!.groups.size - 1)) {
-                        HorizontalSeparatorProjection(
-                            presentationModel = SeparatorPresentationModel(
-                                startGradientAmount = 0.dp,
-                                endGradientAmount = 0.dp
                             )
-                        ).project()
                     }
+
+                    // Create a command button for each secondary command, passing the same
+                    // overlays into it.
+                    AuroraCommandButton(
+                        command = secondaryCommand,
+                        parentWindow = popupContentWindow,
+                        extraAction = {
+                            if (toDismissPopupsOnActivation and
+                                currSecondaryPresentationModel.toDismissPopupsOnActivation
+                            ) {
+                                AuroraPopupManager.hidePopups(null)
+                            }
+                        },
+                        presentationModel = currSecondaryPresentationModel,
+                        overlays = overlays,
+                        buttonSides = Sides(straightSides = Side.values().toSet())
+                    )
+                }
+                if (commandGroupIndex < (menuContentModel.value!!.groups.size - 1)) {
+                    HorizontalSeparatorProjection(
+                        presentationModel = SeparatorPresentationModel(
+                            startGradientAmount = 0.dp,
+                            endGradientAmount = 0.dp
+                        )
+                    ).project()
                 }
             }
         }
@@ -1597,5 +1727,3 @@ private fun Modifier.commandButtonLocator(topLeftOffset: AuroraOffset, size: Aur
     this.then(
         CommandButtonBoxLocator(topLeftOffset, size)
     )
-
-internal val LocalCommandForceIcon = staticCompositionLocalOf { false }

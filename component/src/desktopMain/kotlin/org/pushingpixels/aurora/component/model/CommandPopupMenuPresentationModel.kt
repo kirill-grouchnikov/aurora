@@ -21,7 +21,6 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.PopupPlacementStrategy
-import org.pushingpixels.aurora.component.LocalCommandForceIcon
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManagerMedium
 
@@ -37,18 +36,11 @@ private class PopupMenuCommandButtonLayoutManager(
     layoutDirection: LayoutDirection,
     density: Density,
     textStyle: TextStyle,
-    resourceLoader: Font.ResourceLoader,
-    val forceIcon: Boolean
+    resourceLoader: Font.ResourceLoader
 ) : CommandButtonLayoutManagerMedium(layoutDirection, density, textStyle, resourceLoader) {
     override val iconTextGapFactor: Float = 2.0f
 
-    override fun hasIcon(command: Command): Boolean {
-        return super.hasIcon(command) || forceIcon
-    }
-
     companion object {
-        // TODO - is there a better way to "propagate" an internal bit of information
-        //  between a command button and its layout manager?
         @Composable
         fun getLayoutManager(
             layoutDirection: LayoutDirection,
@@ -57,7 +49,7 @@ private class PopupMenuCommandButtonLayoutManager(
             resourceLoader: Font.ResourceLoader
         ): CommandButtonLayoutManagerMedium {
             return PopupMenuCommandButtonLayoutManager(
-                layoutDirection, density, textStyle, resourceLoader, LocalCommandForceIcon.current
+                layoutDirection, density, textStyle, resourceLoader
             )
         }
     }

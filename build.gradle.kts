@@ -9,11 +9,11 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jetbrains.compose:compose-gradle-plugin:0.5.0-build253")
-        classpath(kotlin("gradle-plugin", version = "1.5.10"))
+        classpath("org.jetbrains.compose:compose-gradle-plugin:0.5.0-build262")
+        classpath(kotlin("gradle-plugin", version = "1.5.21"))
         classpath("com.github.ben-manes:gradle-versions-plugin:0.39.0")
-        classpath("com.vanniktech:gradle-maven-publish-plugin:0.16.0")
-        classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.4.32")
+        classpath("com.vanniktech:gradle-maven-publish-plugin:0.17.0")
+        classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.5.0")
     }
 }
 

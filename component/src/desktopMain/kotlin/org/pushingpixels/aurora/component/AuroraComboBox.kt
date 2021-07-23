@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.ClipOp
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -48,7 +47,6 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.utils.MutableColorScheme
-import java.awt.Dimension
 import java.awt.Rectangle
 import java.awt.Window
 import kotlin.math.max
@@ -111,8 +109,10 @@ internal fun <E> AuroraComboBox(
 
     val auroraTopLeftOffset = AuroraOffset(0.0f, 0.0f)
     val auroraSize = AuroraSize(0, 0)
-    val density = LocalDensity.current.density
+    val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
+    val textStyle = LocalTextStyle.current
+    val resourceLoader = LocalFontLoader.current
 
     // Transition for the selection state
     val selectionTransition = updateTransition(false)
@@ -203,6 +203,13 @@ internal fun <E> AuroraComboBox(
     }
 
     val parentComposition = rememberCompositionContext()
+    val popupItemLayoutManager =
+        CommandButtonPresentationState.Medium.createLayoutManager(
+            layoutDirection = layoutDirection,
+            density = density,
+            textStyle = textStyle,
+            resourceLoader = resourceLoader
+        )
 
     Box(
         modifier = modifier
@@ -221,41 +228,138 @@ internal fun <E> AuroraComboBox(
             .clickable(
                 enabled = contentModel.enabled,
                 onClick = {
-                    // TODO - move off of JWindow when https://github.com/JetBrains/compose-jb/issues/195
-                    //  is addressed
                     val popupContentWindow = ComposeWindow()
                     popupContentWindow.focusableWindowState = false
                     popupContentWindow.type = Window.Type.POPUP
                     popupContentWindow.isAlwaysOnTop = true
                     popupContentWindow.isUndecorated = true
 
-                    // TODO - hopefully temporary. Mark the popup window as fully transparent
-                    //  so that when it is globally positioned, we can size it to the actual
-                    //  content and make it fully opaque
-                    popupContentWindow.opacity = 0.0f
+                    // Create all the projections for the popup content
+                    val onItemSelected: (E) -> Unit = {
+                        contentModel.onTriggerItemSelectedChange.invoke(it)
+                        popupContentWindow.dispose()
+                    }
+                    val projections = contentModel.items.map {
+                        CommandButtonProjection(
+                            contentModel = Command(
+                                text = presentationModel.displayConverter.invoke(it),
+                                isActionEnabled = true,
+                                action = { onItemSelected.invoke(it) }
+                            ),
+                            presentationModel = CommandButtonPresentationModel(
+                                presentationState = CommandButtonPresentationState.Medium,
+                                isMenu = true,
+                                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                                horizontalAlignment = HorizontalAlignment.Leading
+                            )
+                        )
+                    }
+
+                    // Compute the size of the popup content, accounting for max visible
+                    // items and the width of the vertical scroll bar when we show it
+
+                    // Get the height of a single item in the popup
+                    val representativeProjection = projections[0]
+                    val representativePopupItemHeight = popupItemLayoutManager.getPreferredSize(
+                        command = representativeProjection.contentModel,
+                        presentationModel = representativeProjection.presentationModel,
+                        preLayoutInfo = popupItemLayoutManager.getPreLayoutInfo(
+                            command = representativeProjection.contentModel,
+                            presentationModel = representativeProjection.presentationModel
+                        )
+                    ).height
+
+                    // Get maximim width of popup items
+                    var popupColumnWidth = projections.map {
+                        popupItemLayoutManager.getPreferredSize(
+                            command = it.contentModel,
+                            presentationModel = it.presentationModel,
+                            preLayoutInfo = popupItemLayoutManager.getPreLayoutInfo(
+                                command = it.contentModel,
+                                presentationModel = it.presentationModel
+                            )
+                        )
+                    }.maxOf { it.width }
+
+                    val popupColumnHeight = (representativePopupItemHeight *
+                            min(
+                                presentationModel.popupMaxVisibleItems,
+                                contentModel.items.size
+                            )).roundToInt()
+
+                    // Account for possible presence of vertical scroll bar
+                    val showingVerticalPopupContentScrollBar =
+                        (presentationModel.popupMaxVisibleItems < contentModel.items.size)
+                    if (showingVerticalPopupContentScrollBar) {
+                        popupColumnWidth +=
+                            ScrollBarSizingConstants.DefaultScrollBarThickness.value * density.density
+                    }
+
+                    val fullPopupWidth = popupColumnWidth.roundToInt() + 2
+                    val fullPopupHeight = popupColumnHeight + 2
 
                     val currentWindow = AppManager.focusedWindow!!.window
                     val locationOnScreen = currentWindow.locationOnScreen
 
                     // anchor the popup window to the bottom left corner of the component
                     // in screen coordinates
-                    // TODO - figure out the sizing (see above)
-                    val initialWidth = 1000
-                    val initialHeight = 1000
-                    val initialWindowAnchor = IntOffset(
-                        x = (locationOnScreen.x + auroraTopLeftOffset.x / density).toInt(),
-                        y = (locationOnScreen.y + auroraTopLeftOffset.y / density).toInt()
-                    )
-                    popupContentWindow.setBounds(
-                        initialWindowAnchor.x,
-                        initialWindowAnchor.y,
-                        initialWidth,
-                        initialHeight
+                    val initialAnchor = IntOffset(
+                        x = (locationOnScreen.x + auroraTopLeftOffset.x / density.density).toInt(),
+                        y = (locationOnScreen.y + auroraTopLeftOffset.y / density.density).toInt()
                     )
 
-                    popupContentWindow.setContent(
-                        parentComposition = parentComposition
-                    ) {
+                    // TODO - support RTL for startward and endward
+                    val popupRect = when (presentationModel.popupPlacementStrategy) {
+                        PopupPlacementStrategy.Downward -> Rectangle(
+                            initialAnchor.x,
+                            initialAnchor.y + (auroraSize.height / density.density).toInt(),
+                            fullPopupWidth,
+                            fullPopupHeight
+                        )
+                        PopupPlacementStrategy.Upward -> Rectangle(
+                            initialAnchor.x,
+                            initialAnchor.y - (fullPopupHeight / density.density).toInt(),
+                            fullPopupWidth,
+                            fullPopupHeight
+                        )
+                        PopupPlacementStrategy.Startward -> Rectangle(
+                            initialAnchor.x - (fullPopupWidth / density.density).toInt(),
+                            initialAnchor.y,
+                            fullPopupWidth,
+                            fullPopupHeight
+                        )
+                        PopupPlacementStrategy.Endward -> Rectangle(
+                            initialAnchor.x + (auroraSize.width / density.density).toInt(),
+                            initialAnchor.y,
+                            fullPopupWidth,
+                            fullPopupHeight
+                        )
+                        PopupPlacementStrategy.CenteredVertically -> Rectangle(
+                            initialAnchor.x,
+                            initialAnchor.y + (auroraSize.height / density.density).toInt() - fullPopupHeight / 2,
+                            fullPopupWidth,
+                            fullPopupHeight
+                        )
+                    }
+
+                    // Make sure the popup stays in screen bounds
+                    val screenBounds = popupContentWindow.graphicsConfiguration.bounds
+                    if (popupRect.x < 0) {
+                        popupRect.translate(-popupRect.x, 0)
+                    }
+                    if ((popupRect.x + popupRect.width) > screenBounds.width) {
+                        popupRect.translate(screenBounds.width - popupRect.x - popupRect.width, 0)
+                    }
+                    if (popupRect.y < 0) {
+                        popupRect.translate(0, -popupRect.y)
+                    }
+                    if ((popupRect.y + popupRect.height) > screenBounds.height) {
+                        popupRect.translate(0, screenBounds.height - popupRect.y - popupRect.height)
+                    }
+
+                    popupContentWindow.bounds = popupRect
+
+                    popupContentWindow.setContent(parentComposition = parentComposition) {
                         CompositionLocalProvider(
                             LocalDecorationAreaType provides decorationAreaType,
                             LocalSkinColors provides skinColors,
@@ -264,15 +368,10 @@ internal fun <E> AuroraComboBox(
                             LocalAnimationConfig provides AuroraSkin.animationConfig
                         ) {
                             ComboBoxPopupContent(
-                                popupContentWindow = popupContentWindow,
-                                initialAnchor = initialWindowAnchor,
-                                anchorSize = auroraSize,
                                 contentModel = contentModel,
                                 presentationModel = presentationModel,
-                                onItemSelected = {
-                                    contentModel.onTriggerItemSelectedChange.invoke(it)
-                                    popupContentWindow.dispose()
-                                }
+                                contentProjections = projections,
+                                representativePopupItemHeight = representativePopupItemHeight
                             )
                         }
                     }
@@ -280,6 +379,7 @@ internal fun <E> AuroraComboBox(
                     popupContentWindow.validate()
                     popupContentWindow.isVisible = true
                     popupContentWindow.pack()
+
                     AuroraPopupManager.addPopup(
                         originator = currentWindow,
                         popupWindow = popupContentWindow
@@ -305,7 +405,6 @@ internal fun <E> AuroraComboBox(
             modelStateInfo, currentState.value,
             decorationAreaType, ColorSchemeAssociationKind.Mark
         ) { it.markColor }
-
 
         if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.Never) {
             // Populate the cached color scheme for filling the combobox
@@ -519,12 +618,10 @@ internal fun <E> AuroraComboBox(
 
 @Composable
 private fun <E> ComboBoxPopupContent(
-    popupContentWindow: ComposeWindow,
-    initialAnchor: IntOffset,
-    anchorSize: AuroraSize,
     contentModel: ComboBoxContentModel<E>,
     presentationModel: ComboBoxPresentationModel<E>,
-    onItemSelected: (E) -> Unit
+    contentProjections: List<CommandButtonProjection>,
+    representativePopupItemHeight: Float
 ) {
     val borderScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = DecorationAreaType.None,
@@ -532,97 +629,11 @@ private fun <E> ComboBoxPopupContent(
         componentState = ComponentState.Enabled
     )
     val popupBorderColor = AuroraSkin.painters.borderPainter.getRepresentativeColor(borderScheme)
-    val density = LocalDensity.current.density
     val contentSize = AuroraSize(0, 0)
     val stateVertical = rememberScrollState(0)
 
-    // Get the height of a single item in the popup
-    val popupItemLayoutManager = CommandButtonPresentationState.Medium.createLayoutManager(
-        layoutDirection = LocalLayoutDirection.current,
-        density = LocalDensity.current,
-        textStyle = LocalTextStyle.current,
-        resourceLoader = LocalFontLoader.current
-    )
-    val representativePopupItem = contentModel.items[0]
-    val representativePopupItemContentModel =
-        Command(text = presentationModel.displayConverter.invoke(representativePopupItem))
-    val representativePopupItemPresentationModel = CommandButtonPresentationModel(
-        presentationState = CommandButtonPresentationState.Medium,
-        isMenu = true,
-        horizontalAlignment = HorizontalAlignment.Leading
-    )
-    val representativePopupItemHeight = popupItemLayoutManager.getPreferredSize(
-        command = representativePopupItemContentModel,
-        presentationModel = representativePopupItemPresentationModel,
-        preLayoutInfo = popupItemLayoutManager.getPreLayoutInfo(
-            command = representativePopupItemContentModel,
-            presentationModel = representativePopupItemPresentationModel
-        )
-    ).height
-
     ComboBoxPopupLayout(
-        modifier = Modifier.auroraBackground()
-            .onGloballyPositioned {
-                // Get the size of the content and update the popup window bounds
-                val popupWidth = (contentSize.width / density).toInt()
-                val popupHeight = (contentSize.height / density).toInt()
-
-                // TODO - support RTL for startward and endward
-                val popupRect = when (presentationModel.popupPlacementStrategy) {
-                    PopupPlacementStrategy.Downward -> Rectangle(
-                        initialAnchor.x,
-                        initialAnchor.y + (anchorSize.height / density).toInt(),
-                        popupWidth,
-                        popupHeight
-                    )
-                    PopupPlacementStrategy.Upward -> Rectangle(
-                        initialAnchor.x,
-                        initialAnchor.y - popupHeight,
-                        popupWidth,
-                        popupHeight
-                    )
-                    PopupPlacementStrategy.Startward -> Rectangle(
-                        initialAnchor.x - popupWidth,
-                        initialAnchor.y,
-                        popupWidth,
-                        popupHeight
-                    )
-                    PopupPlacementStrategy.Endward -> Rectangle(
-                        initialAnchor.x + (anchorSize.width / density).toInt(),
-                        initialAnchor.y,
-                        popupWidth,
-                        popupHeight
-                    )
-                    PopupPlacementStrategy.CenteredVertically -> Rectangle(
-                        initialAnchor.x,
-                        initialAnchor.y + (anchorSize.height / (2 * density)).toInt() - popupHeight / 2,
-                        popupWidth,
-                        popupHeight
-                    )
-                }
-
-                // Make sure the popup stays in screen bounds
-                val screenBounds = popupContentWindow.graphicsConfiguration.bounds
-                if (popupRect.x < 0) {
-                    popupRect.translate(-popupRect.x, 0)
-                }
-                if ((popupRect.x + popupRect.width) > screenBounds.width) {
-                    popupRect.translate(screenBounds.width - popupRect.x - popupRect.width, 0)
-                }
-                if (popupRect.y < 0) {
-                    popupRect.translate(0, -popupRect.y)
-                }
-                if ((popupRect.y + popupRect.height) > screenBounds.height) {
-                    popupRect.translate(0, screenBounds.height - popupRect.y - popupRect.height)
-                }
-
-                popupContentWindow.bounds = popupRect
-                popupContentWindow.opacity = 1.0f
-                popupContentWindow.preferredSize = Dimension(popupRect.width, popupRect.height)
-                popupContentWindow.size = Dimension(popupRect.width, popupRect.height)
-                popupContentWindow.invalidate()
-                popupContentWindow.validate()
-            },
+        modifier = Modifier.auroraBackground(),
         representativePopupItemHeight = representativePopupItemHeight,
         contentModel = contentModel,
         presentationModel = presentationModel,
@@ -649,25 +660,10 @@ private fun <E> ComboBoxPopupContent(
             )
             val backgroundEvenRows = backgroundColorScheme.backgroundFillColor
             val backgroundOddRows = backgroundColorScheme.accentedBackgroundFillColor
-            for ((itemIndex, item) in contentModel.items.withIndex()) {
-                // TODO - pass background modifier with even-odd background striping
-                //  using [AuroraColorScheme.backgroundFillColor] and
-                //  [AuroraColorScheme.accentedBackgroundFillColor]
-                CommandButtonProjection(
-                    contentModel = Command(
-                        text = presentationModel.displayConverter.invoke(item),
-                        isActionEnabled = true,
-                        action = { onItemSelected.invoke(item) }
-                    ),
-                    presentationModel = CommandButtonPresentationModel(
-                        presentationState = CommandButtonPresentationState.Medium,
-                        isMenu = true,
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                        horizontalAlignment = HorizontalAlignment.Leading
-                    )
-                ).project(
+            for ((projectionIndex, projection) in contentProjections.withIndex()) {
+                projection.project(
                     modifier = Modifier.background(
-                        color = if ((itemIndex % 2) == 0) backgroundEvenRows else backgroundOddRows
+                        color = if ((projectionIndex % 2) == 0) backgroundEvenRows else backgroundOddRows
                     )
                 )
             }

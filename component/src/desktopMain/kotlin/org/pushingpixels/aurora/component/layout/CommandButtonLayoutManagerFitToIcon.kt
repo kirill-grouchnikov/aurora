@@ -41,7 +41,7 @@ internal class CommandButtonLayoutManagerFitToIcon(
         command: Command,
         presentationModel: CommandButtonPresentationModel
     ): Dp {
-        return if (command.iconFactory != null)
+        return if ((command.iconFactory != null) || presentationModel.forceAllocateSpaceForIcon)
             getPreferredIconSize(command, presentationModel) else 0.dp
     }
 
@@ -49,7 +49,7 @@ internal class CommandButtonLayoutManagerFitToIcon(
         command: Command,
         presentationModel: CommandButtonPresentationModel
     ): Dp {
-        return if (command.iconFactory != null)
+        return if ((command.iconFactory != null) || presentationModel.forceAllocateSpaceForIcon)
             getPreferredIconSize(command, presentationModel) else 0.dp
     }
 }

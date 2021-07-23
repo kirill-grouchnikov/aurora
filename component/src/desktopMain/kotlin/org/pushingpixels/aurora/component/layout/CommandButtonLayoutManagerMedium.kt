@@ -46,8 +46,8 @@ internal open class CommandButtonLayoutManagerMedium(
         return 16.dp
     }
 
-    internal open fun hasIcon(command: Command): Boolean {
-        return (command.iconFactory != null)
+    internal open fun hasIcon(command: Command, presentationModel: CommandButtonPresentationModel): Boolean {
+        return (command.iconFactory != null) || presentationModel.forceAllocateSpaceForIcon
     }
 
     override fun getPreferredSize(
@@ -61,7 +61,7 @@ internal open class CommandButtonLayoutManagerMedium(
         val buttonText = command.text
         val layoutHGap = (CommandButtonSizingConstants.DefaultHorizontalContentLayoutGap *
                 presentationModel.horizontalGapScaleFactor).toPx()
-        val hasIcon = hasIcon(command)
+        val hasIcon = hasIcon(command, presentationModel)
         val hasText = (buttonText != null)
         val hasPopup = (command.secondaryContentModel != null)
         val prefIconSize = getPreferredIconSize(command, presentationModel).toPx()
@@ -143,7 +143,7 @@ internal open class CommandButtonLayoutManagerMedium(
 
         return CommandButtonLayoutManager.CommandButtonPreLayoutInfo(
             commandButtonKind = commandButtonKind,
-            showIcon = hasIcon(command),
+            showIcon = hasIcon(command, presentationModel),
             texts = listOf(command.text),
             extraTexts = emptyList(),
             isTextInActionArea = (hasAction or command.isActionToggle) &&
@@ -164,7 +164,7 @@ internal open class CommandButtonLayoutManagerMedium(
         val buttonText = command.text
         val layoutHGap = (CommandButtonSizingConstants.DefaultHorizontalContentLayoutGap *
                 presentationModel.horizontalGapScaleFactor).toPx()
-        val hasIcon = hasIcon(command)
+        val hasIcon = hasIcon(command, presentationModel)
         val hasText = (buttonText != null)
         val hasPopup = (command.secondaryContentModel != null)
         val iconSize = getPreferredIconSize(command, presentationModel).toPx()
