@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawOutline
@@ -107,8 +108,8 @@ internal fun <E> AuroraComboBox(
     val buttonShaper = AuroraSkin.buttonShaper
     val painters = AuroraSkin.painters
 
-    val auroraTopLeftOffset = AuroraOffset(0.0f, 0.0f)
-    val auroraSize = AuroraSize(0, 0)
+    val comboBoxTopLeftOffset = AuroraOffset(0.0f, 0.0f)
+    val comboBoxSize = AuroraSize(0, 0)
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
@@ -285,18 +286,20 @@ internal fun <E> AuroraComboBox(
                             min(
                                 presentationModel.popupMaxVisibleItems,
                                 contentModel.items.size
-                            )).roundToInt()
+                            ))
+                    val popupColumnSize = Size(popupColumnWidth, popupColumnHeight)
 
                     // Account for possible presence of vertical scroll bar
                     val showingVerticalPopupContentScrollBar =
                         (presentationModel.popupMaxVisibleItems < contentModel.items.size)
                     if (showingVerticalPopupContentScrollBar) {
                         popupColumnWidth +=
-                            ScrollBarSizingConstants.DefaultScrollBarThickness.value * density.density
+                            (ScrollBarSizingConstants.DefaultScrollBarThickness.value * density.density +
+                                    2 * ScrollBarSizingConstants.DefaultScrollBarMargin.value * density.density)
                     }
 
                     val fullPopupWidth = popupColumnWidth.roundToInt() + 2
-                    val fullPopupHeight = popupColumnHeight + 2
+                    val fullPopupHeight = popupColumnHeight.roundToInt() + 2
 
                     val currentWindow = AppManager.focusedWindow!!.window
                     val locationOnScreen = currentWindow.locationOnScreen
@@ -304,15 +307,15 @@ internal fun <E> AuroraComboBox(
                     // anchor the popup window to the bottom left corner of the component
                     // in screen coordinates
                     val initialAnchor = IntOffset(
-                        x = (locationOnScreen.x + auroraTopLeftOffset.x / density.density).toInt(),
-                        y = (locationOnScreen.y + auroraTopLeftOffset.y / density.density).toInt()
+                        x = (locationOnScreen.x + comboBoxTopLeftOffset.x / density.density).toInt(),
+                        y = (locationOnScreen.y + comboBoxTopLeftOffset.y / density.density).toInt()
                     )
 
                     // TODO - support RTL for startward and endward
                     val popupRect = when (presentationModel.popupPlacementStrategy) {
                         PopupPlacementStrategy.Downward -> Rectangle(
                             initialAnchor.x,
-                            initialAnchor.y + (auroraSize.height / density.density).toInt(),
+                            initialAnchor.y + (comboBoxSize.height / density.density).toInt(),
                             fullPopupWidth,
                             fullPopupHeight
                         )
@@ -329,14 +332,15 @@ internal fun <E> AuroraComboBox(
                             fullPopupHeight
                         )
                         PopupPlacementStrategy.Endward -> Rectangle(
-                            initialAnchor.x + (auroraSize.width / density.density).toInt(),
+                            initialAnchor.x + (comboBoxSize.width / density.density).toInt(),
                             initialAnchor.y,
                             fullPopupWidth,
                             fullPopupHeight
                         )
                         PopupPlacementStrategy.CenteredVertically -> Rectangle(
                             initialAnchor.x,
-                            initialAnchor.y + (auroraSize.height / density.density).toInt() - fullPopupHeight / 2,
+                            initialAnchor.y + (comboBoxSize.height / density.density).toInt() / 2
+                                    - (fullPopupHeight / density.density).toInt() / 2,
                             fullPopupWidth,
                             fullPopupHeight
                         )
@@ -368,10 +372,9 @@ internal fun <E> AuroraComboBox(
                             LocalAnimationConfig provides AuroraSkin.animationConfig
                         ) {
                             ComboBoxPopupContent(
-                                contentModel = contentModel,
-                                presentationModel = presentationModel,
                                 contentProjections = projections,
-                                representativePopupItemHeight = representativePopupItemHeight
+                                popupColumnSize = popupColumnSize,
+                                showingVerticalPopupContentScrollBar = showingVerticalPopupContentScrollBar
                             )
                         }
                     }
@@ -388,7 +391,7 @@ internal fun <E> AuroraComboBox(
                 interactionSource = interactionSource,
                 indication = null
             )
-            .comboBoxLocator(auroraTopLeftOffset, auroraSize),
+            .comboBoxLocator(comboBoxTopLeftOffset, comboBoxSize),
         contentAlignment = Alignment.TopStart
     ) {
         // Compute the text color
@@ -617,11 +620,10 @@ internal fun <E> AuroraComboBox(
 }
 
 @Composable
-private fun <E> ComboBoxPopupContent(
-    contentModel: ComboBoxContentModel<E>,
-    presentationModel: ComboBoxPresentationModel<E>,
+private fun ComboBoxPopupContent(
     contentProjections: List<CommandButtonProjection>,
-    representativePopupItemHeight: Float
+    popupColumnSize: Size,
+    showingVerticalPopupContentScrollBar: Boolean
 ) {
     val borderScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = DecorationAreaType.None,
@@ -629,15 +631,12 @@ private fun <E> ComboBoxPopupContent(
         componentState = ComponentState.Enabled
     )
     val popupBorderColor = AuroraSkin.painters.borderPainter.getRepresentativeColor(borderScheme)
-    val contentSize = AuroraSize(0, 0)
     val stateVertical = rememberScrollState(0)
 
     ComboBoxPopupLayout(
         modifier = Modifier.auroraBackground(),
-        representativePopupItemHeight = representativePopupItemHeight,
-        contentModel = contentModel,
-        presentationModel = presentationModel,
-        popupSize = contentSize
+        popupColumnSize = popupColumnSize,
+        showingVerticalPopupContentScrollBar = showingVerticalPopupContentScrollBar
     ) {
         Canvas(modifier = Modifier) {
             if ((size.width > 0.0f) && (size.height > 0.0f)) {
@@ -654,7 +653,10 @@ private fun <E> ComboBoxPopupContent(
                 )
             }
         }
-        ComboBoxPopupColumn(modifier = Modifier.verticalScroll(stateVertical)) {
+        ComboBoxPopupColumn(
+            modifier = Modifier.verticalScroll(stateVertical),
+            popupColumnSize = popupColumnSize
+        ) {
             val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
                 decorationAreaType = AuroraSkin.decorationAreaType
             )
@@ -668,7 +670,7 @@ private fun <E> ComboBoxPopupContent(
                 )
             }
         }
-        if (presentationModel.popupMaxVisibleItems < contentModel.items.size) {
+        if (showingVerticalPopupContentScrollBar) {
             AuroraVerticalScrollbar(
                 adapter = remember(stateVertical) {
                     ScrollbarAdapter(stateVertical)
@@ -679,61 +681,54 @@ private fun <E> ComboBoxPopupContent(
 }
 
 @Composable
-private fun <E> ComboBoxPopupLayout(
+private fun ComboBoxPopupLayout(
     modifier: Modifier,
-    popupSize: AuroraSize,
-    representativePopupItemHeight: Float,
-    contentModel: ComboBoxContentModel<E>,
-    presentationModel: ComboBoxPresentationModel<E>,
+    popupColumnSize: Size,
+    showingVerticalPopupContentScrollBar: Boolean,
     content: @Composable () -> Unit
 ) {
     Layout(modifier = modifier, content = content) { measurables, constraints ->
-        val showingVerticalPopupContentScrollBar =
-            (presentationModel.popupMaxVisibleItems < contentModel.items.size)
-
         val canvasMeasurable = measurables[0]
         val popupColumnMeasurable = measurables[1]
         val verticalScrollBarMeasurable =
             if (showingVerticalPopupContentScrollBar) measurables[2] else null
 
-        val popupColumnHeight = (representativePopupItemHeight *
-                min(presentationModel.popupMaxVisibleItems, contentModel.items.size)).roundToInt()
-        val popupColumnPlaceable =
-            popupColumnMeasurable.measure(Constraints(maxHeight = popupColumnHeight))
-        val popupColumnWidth = popupColumnPlaceable.width
+        val popupColumnPlaceable = popupColumnMeasurable.measure(
+            Constraints.fixed(
+                width = popupColumnSize.width.roundToInt(),
+                height = popupColumnSize.height.roundToInt()
+            )
+        )
 
-        var fullWidth = popupColumnWidth
         var verticalScrollBarPlaceable: Placeable? = null
         val scrollBarMarginPx = ScrollBarSizingConstants.DefaultScrollBarMargin.roundToPx()
+        var fullWidth = popupColumnSize.width.roundToInt()
         if (verticalScrollBarMeasurable != null) {
             // account for top and bottom margins for height
             verticalScrollBarPlaceable =
                 verticalScrollBarMeasurable.measure(
                     Constraints.fixed(
                         width = ScrollBarSizingConstants.DefaultScrollBarThickness.roundToPx(),
-                        height = popupColumnHeight - 2 * scrollBarMarginPx
+                        height = popupColumnSize.height.roundToInt() - 2 * scrollBarMarginPx
                     )
                 )
-            // also add margins on left and right
-            fullWidth += (scrollBarMarginPx + verticalScrollBarPlaceable.width + scrollBarMarginPx)
+            fullWidth += (verticalScrollBarPlaceable.measuredWidth + 2 * scrollBarMarginPx)
         }
-
-        popupSize.width = fullWidth + 2
-        popupSize.height = popupColumnHeight + 2
 
         val canvasPlaceable = canvasMeasurable.measure(
             Constraints.fixed(
-                width = popupSize.width, height = popupSize.height
+                width = fullWidth + 2,
+                height = popupColumnSize.height.roundToInt() + 2
             )
         )
 
-        layout(width = fullWidth, height = popupColumnHeight) {
+        layout(width = fullWidth + 2, height = popupColumnSize.height.roundToInt() + 2) {
             canvasPlaceable.place(x = 0, y = 0)
             // TODO - support RTL
             // Offset everything else by 1,1 for border insets
             popupColumnPlaceable.place(x = 1, y = 1)
             verticalScrollBarPlaceable?.place(
-                x = popupColumnWidth + scrollBarMarginPx + 1,
+                x = popupColumnSize.width.roundToInt() + scrollBarMarginPx + 1,
                 y = scrollBarMarginPx + 1
             )
         }
@@ -741,20 +736,21 @@ private fun <E> ComboBoxPopupLayout(
 }
 
 @Composable
-private fun ComboBoxPopupColumn(modifier: Modifier, content: @Composable () -> Unit) {
+private fun ComboBoxPopupColumn(
+    modifier: Modifier,
+    popupColumnSize: Size,
+    content: @Composable () -> Unit
+) {
     Layout(modifier = modifier, content = content) { measurables, _ ->
-        // The column width is determined by the widest child
-        val contentTotalWidth = measurables.maxOf { it.maxIntrinsicWidth(Int.MAX_VALUE) }
-
         val placeables = measurables.map { measurable ->
             // Measure each child with fixed (widest) width
-            measurable.measure(Constraints.fixedWidth(contentTotalWidth))
+            measurable.measure(Constraints.fixedWidth(popupColumnSize.width.roundToInt()))
         }
 
         // The children are laid out in a column
         val contentMaxHeight = placeables.sumOf { it.height }
 
-        layout(width = contentTotalWidth, height = contentMaxHeight) {
+        layout(width = popupColumnSize.width.roundToInt(), height = contentMaxHeight) {
             var yPosition = 0
 
             // TODO - support RTL
