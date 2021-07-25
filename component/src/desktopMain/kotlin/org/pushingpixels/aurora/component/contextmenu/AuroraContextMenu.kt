@@ -50,7 +50,6 @@ fun Modifier.auroraContextMenu(
     overlays: Map<Command, CommandButtonPresentationModel.Overlay> = mapOf()
 ): Modifier {
     var lastEvent by remember { mutableStateOf<MouseEvent?>(null) }
-    val auroraSize = AuroraSize(0, 0)
 
     val parentComposition = rememberCompositionContext()
     val contentModelState = rememberUpdatedState(contentModel)
@@ -102,11 +101,8 @@ fun Modifier.auroraContextMenu(
                 ) {
                     CommandButtonPopupContent(
                         popupContentWindow = popupContentWindow,
-                        initialAnchor = initialWindowAnchor,
-                        anchorSize = auroraSize,
                         menuContentModel = contentModelState,
                         menuPresentationModel = presentationModel,
-                        popupPlacementStrategy = presentationModel.popupPlacementStrategy,
                         toDismissPopupsOnActivation = true,
                         overlays = overlays
                     )

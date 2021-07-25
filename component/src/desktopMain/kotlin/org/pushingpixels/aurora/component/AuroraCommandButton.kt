@@ -128,8 +128,8 @@ internal fun AuroraCommandButton(
     val buttonShaper = AuroraSkin.buttonShaper
     val painters = AuroraSkin.painters
 
-    val auroraTopLeftOffset = remember { AuroraOffset(0.0f, 0.0f) }
-    val auroraSize = AuroraSize(0, 0)
+    val buttonTopLeftOffset = remember { AuroraOffset(0.0f, 0.0f) }
+    val buttonSize = AuroraSize(0, 0)
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     val mergedTextStyle = LocalTextStyle.current.merge(presentationModel.textStyle)
@@ -369,7 +369,7 @@ internal fun AuroraCommandButton(
     val parentComposition = rememberCompositionContext()
 
     Layout(
-        modifier = modifier.commandButtonLocator(auroraTopLeftOffset, auroraSize),
+        modifier = modifier.commandButtonLocator(buttonTopLeftOffset, buttonSize),
         content = {
             val modifierAction: Modifier
             if (isToggle) {
@@ -496,8 +496,8 @@ internal fun AuroraCommandButton(
                     )
 
                     Canvas(modifier = Modifier.matchParentSize()) {
-                        val width = auroraSize.width.toFloat()
-                        val height = auroraSize.height.toFloat()
+                        val width = buttonSize.width.toFloat()
+                        val height = buttonSize.height.toFloat()
 
                         val openDelta = 3
                         // TODO - add RTL support
@@ -548,7 +548,7 @@ internal fun AuroraCommandButton(
                             drawingCache.colorScheme.foreground = Color.Black
                             fillPainter.paintContourBackground(
                                 this,
-                                auroraSize.asSize(deltaLeft + deltaRight, deltaTop + deltaBottom),
+                                buttonSize.asSize(deltaLeft + deltaRight, deltaTop + deltaBottom),
                                 outline,
                                 drawingCache.colorScheme,
                                 actionAlpha
@@ -576,7 +576,7 @@ internal fun AuroraCommandButton(
 
                             borderPainter.paintBorder(
                                 this,
-                                auroraSize.asSize(deltaLeft + deltaRight, deltaTop + deltaBottom),
+                                buttonSize.asSize(deltaLeft + deltaRight, deltaTop + deltaBottom),
                                 outline,
                                 innerOutline,
                                 drawingCache.colorScheme,
@@ -677,7 +677,8 @@ internal fun AuroraCommandButton(
                             }
                         }
 
-                        val fullPopupWidth = (if (hasButtonPanel) panelPreferredSize.width else popupColumnWidth).roundToInt() + 2
+                        val fullPopupWidth =
+                            (if (hasButtonPanel) panelPreferredSize.width else popupColumnWidth).roundToInt() + 2
                         var popupHeight = 0.0f
                         if (hasButtonPanel) {
                             popupHeight = panelPreferredSize.height
@@ -691,15 +692,15 @@ internal fun AuroraCommandButton(
                         // anchor the popup window to the bottom left corner of the component
                         // in screen coordinates
                         val initialAnchor = IntOffset(
-                            x = (locationOnScreen.x + auroraTopLeftOffset.x / density.density).toInt(),
-                            y = (locationOnScreen.y + auroraTopLeftOffset.y / density.density).toInt()
+                            x = (locationOnScreen.x + buttonTopLeftOffset.x / density.density).toInt(),
+                            y = (locationOnScreen.y + buttonTopLeftOffset.y / density.density).toInt()
                         )
 
                         // TODO - support RTL for startward and endward
                         val popupRect = when (presentationModel.popupPlacementStrategy) {
                             PopupPlacementStrategy.Downward -> Rectangle(
                                 initialAnchor.x,
-                                initialAnchor.y + (auroraSize.height / density.density).toInt(),
+                                initialAnchor.y + (buttonSize.height / density.density).toInt(),
                                 fullPopupWidth,
                                 fullPopupHeight
                             )
@@ -716,14 +717,15 @@ internal fun AuroraCommandButton(
                                 fullPopupHeight
                             )
                             PopupPlacementStrategy.Endward -> Rectangle(
-                                initialAnchor.x + (auroraSize.width / density.density).toInt(),
+                                initialAnchor.x + (buttonSize.width / density.density).toInt(),
                                 initialAnchor.y,
                                 fullPopupWidth,
                                 fullPopupHeight
                             )
                             PopupPlacementStrategy.CenteredVertically -> Rectangle(
                                 initialAnchor.x,
-                                initialAnchor.y + (auroraSize.height / density.density).toInt() - fullPopupHeight / 2,
+                                initialAnchor.y + (buttonSize.height / density.density).toInt() / 2
+                                        - (fullPopupHeight / density.density).toInt() / 2,
                                 fullPopupWidth,
                                 fullPopupHeight
                             )
@@ -764,11 +766,8 @@ internal fun AuroraCommandButton(
                             ) {
                                 CommandButtonPopupContent(
                                     popupContentWindow = popupContentWindow,
-                                    initialAnchor = initialAnchor,
-                                    anchorSize = auroraSize,
                                     menuContentModel = secondaryContentModel,
                                     menuPresentationModel = presentationModel.popupMenuPresentationModel,
-                                    popupPlacementStrategy = presentationModel.popupPlacementStrategy,
                                     toDismissPopupsOnActivation = presentationModel.toDismissPopupsOnActivation,
                                     overlays = overlays
                                 )
@@ -866,8 +865,8 @@ internal fun AuroraCommandButton(
                     )
 
                     Canvas(modifier = Modifier.matchParentSize()) {
-                        val width = auroraSize.width.toFloat()
-                        val height = auroraSize.height.toFloat()
+                        val width = buttonSize.width.toFloat()
+                        val height = buttonSize.height.toFloat()
 
                         val openDelta = 3
                         // TODO - add RTL support
@@ -918,7 +917,7 @@ internal fun AuroraCommandButton(
                             drawingCache.colorScheme.foreground = Color.Black
                             fillPainter.paintContourBackground(
                                 this,
-                                auroraSize.asSize(deltaLeft + deltaRight, deltaTop + deltaBottom),
+                                buttonSize.asSize(deltaLeft + deltaRight, deltaTop + deltaBottom),
                                 outline,
                                 drawingCache.colorScheme,
                                 popupAlpha
@@ -946,7 +945,7 @@ internal fun AuroraCommandButton(
 
                             borderPainter.paintBorder(
                                 this,
-                                auroraSize.asSize(deltaLeft + deltaRight, deltaTop + deltaBottom),
+                                buttonSize.asSize(deltaLeft + deltaRight, deltaTop + deltaBottom),
                                 outline,
                                 innerOutline,
                                 drawingCache.colorScheme,
@@ -1425,11 +1424,8 @@ private fun CommandButtonPopupIconContent(
 @Composable
 internal fun CommandButtonPopupContent(
     popupContentWindow: ComposeWindow,
-    initialAnchor: IntOffset,
-    anchorSize: AuroraSize,
     menuContentModel: State<CommandMenuContentModel?>,
     menuPresentationModel: CommandPopupMenuPresentationModel,
-    popupPlacementStrategy: PopupPlacementStrategy,
     toDismissPopupsOnActivation: Boolean,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>
 ) {
@@ -1441,70 +1437,7 @@ internal fun CommandButtonPopupContent(
     val popupBorderColor = AuroraSkin.painters.borderPainter.getRepresentativeColor(borderScheme)
     val density = LocalDensity.current
     val contentSize = AuroraSize(0, 0)
-    Box(
-//        modifier = Modifier.onGloballyPositioned {
-//        // Get the size of the content and update the popup window bounds
-//        val popupWidth = (contentSize.width / density.density).toInt()
-//        val popupHeight = (contentSize.height / density.density).toInt()
-//
-//        // TODO - support RTL for startward and endward
-//        val popupRect = when (popupPlacementStrategy) {
-//            PopupPlacementStrategy.Downward -> Rectangle(
-//                initialAnchor.x,
-//                initialAnchor.y + (anchorSize.height / density.density).toInt(),
-//                popupWidth,
-//                popupHeight
-//            )
-//            PopupPlacementStrategy.Upward -> Rectangle(
-//                initialAnchor.x,
-//                initialAnchor.y - popupHeight,
-//                popupWidth,
-//                popupHeight
-//            )
-//            PopupPlacementStrategy.Startward -> Rectangle(
-//                initialAnchor.x - popupWidth,
-//                initialAnchor.y,
-//                popupWidth,
-//                popupHeight
-//            )
-//            PopupPlacementStrategy.Endward -> Rectangle(
-//                initialAnchor.x + (anchorSize.width / density.density).toInt(),
-//                initialAnchor.y,
-//                popupWidth,
-//                popupHeight
-//            )
-//            PopupPlacementStrategy.CenteredVertically -> Rectangle(
-//                initialAnchor.x,
-//                initialAnchor.y + (anchorSize.height / (2 * density.density)).toInt() - popupHeight / 2,
-//                popupWidth,
-//                popupHeight
-//            )
-//        }
-//
-//        // Make sure the popup stays in screen bounds
-//        val screenBounds = popupContentWindow.graphicsConfiguration.bounds
-//        if (popupRect.x < 0) {
-//            popupRect.translate(-popupRect.x, 0)
-//        }
-//        if ((popupRect.x + popupRect.width) > screenBounds.width) {
-//            popupRect.translate(screenBounds.width - popupRect.x - popupRect.width, 0)
-//        }
-//        if (popupRect.y < 0) {
-//            popupRect.translate(0, -popupRect.y)
-//        }
-//        if ((popupRect.y + popupRect.height) > screenBounds.height) {
-//            popupRect.translate(0, screenBounds.height - popupRect.y - popupRect.height)
-//        }
-//
-//        popupContentWindow.bounds = popupRect
-//        popupContentWindow.opacity = 1.0f
-//        popupContentWindow.preferredSize = Dimension(popupRect.width, popupRect.height)
-//        popupContentWindow.size = Dimension(popupRect.width, popupRect.height)
-//        popupContentWindow.pack()
-//        popupContentWindow.preferredSize = null
-//        popupContentWindow.pack()
-//    }
-    ) {
+    Box {
         val hasPanel = (menuContentModel.value!!.panelContentModel != null)
         val layoutDirection = LocalLayoutDirection.current
         val textStyle = LocalTextStyle.current
@@ -1558,16 +1491,9 @@ internal fun CommandButtonPopupContent(
                 ).project()
             }
 
-            // Command presentation for menu content, taking some of the values from
-            // the popup menu presentation model configured on the top-level presentation model
-            val menuButtonPresentationModel = CommandButtonPresentationModel(
-                presentationState = menuPresentationModel.menuPresentationState,
-                popupPlacementStrategy = menuPresentationModel.popupPlacementStrategy,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                horizontalAlignment = HorizontalAlignment.Leading,
-                isMenu = true
-            )
-
+            // If at least one secondary command in this popup menu has icon factory
+            // we force all command buttons to allocate space for the icon (for overall
+            // alignment of content across the entire popup menu)
             var atLeastOneButtonHasIcon = false
             for (commandGroup in menuContentModel.value!!.groups) {
                 for (secondaryCommand in commandGroup.commands) {
@@ -1579,6 +1505,17 @@ internal fun CommandButtonPopupContent(
                     }
                 }
             }
+
+            // Command presentation for menu content, taking some of the values from
+            // the popup menu presentation model configured on the top-level presentation model
+            val menuButtonPresentationModel = CommandButtonPresentationModel(
+                presentationState = menuPresentationModel.menuPresentationState,
+                forceAllocateSpaceForIcon = atLeastOneButtonHasIcon,
+                popupPlacementStrategy = menuPresentationModel.popupPlacementStrategy,
+                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                horizontalAlignment = HorizontalAlignment.Leading,
+                isMenu = true
+            )
 
             for ((commandGroupIndex, commandGroup) in menuContentModel.value!!.groups.withIndex()) {
                 for (secondaryCommand in commandGroup.commands) {
@@ -1593,7 +1530,6 @@ internal fun CommandButtonPopupContent(
                         currSecondaryPresentationModel =
                             currSecondaryPresentationModel.overlayWith(
                                 CommandButtonPresentationModel.Overlay(
-                                    forceAllocateSpaceForIcon = atLeastOneButtonHasIcon,
                                     textStyle = TextStyle(
                                         fontWeight = FontWeight.Bold
                                     )
