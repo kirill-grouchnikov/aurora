@@ -31,6 +31,7 @@ import org.pushingpixels.aurora.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.PopupPlacementStrategy
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.component.CommandButtonPopupContent
+import org.pushingpixels.aurora.component.ScrollBarSizingConstants
 import org.pushingpixels.aurora.component.getPreferredCommandButtonPanelSize
 import org.pushingpixels.aurora.component.model.*
 import java.awt.Rectangle
@@ -82,14 +83,14 @@ internal fun displayPopupContent(
 
     // Command presentation for menu content, taking some of the values from
     // the popup menu presentation model configured on the top-level presentation model
-    val popupButtonPresentationModel = CommandButtonPresentationModel(
+    val regularButtonPresentationModel = CommandButtonPresentationModel(
         presentationState = presentationModel.menuPresentationState,
         popupPlacementStrategy = presentationModel.popupPlacementStrategy,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
         horizontalAlignment = HorizontalAlignment.Leading,
         isMenu = true
     )
-    val popupItemLayoutManager =
+    val regularButtonLayoutManager =
         presentationModel.menuPresentationState.createLayoutManager(
             layoutDirection = layoutDirection,
             density = density,
@@ -97,51 +98,73 @@ internal fun displayPopupContent(
             resourceLoader = resourceLoader
         )
 
-    var atLeastOnePopupButtonHasIcon = false
+    var atLeastOneRegularButtonHasIcon = false
     for (commandGroup in contentModel.value!!.groups) {
         for (secondaryCommand in commandGroup.commands) {
             if (secondaryCommand.iconFactory != null) {
-                atLeastOnePopupButtonHasIcon = true
+                atLeastOneRegularButtonHasIcon = true
             }
             if (secondaryCommand.isActionToggle) {
-                atLeastOnePopupButtonHasIcon = true
+                atLeastOneRegularButtonHasIcon = true
             }
         }
     }
 
-    val secondaryPresentationModelOverlay =
+    val regularButtonPresentationModelOverlay =
         CommandButtonPresentationModel.Overlay(
-            forceAllocateSpaceForIcon = atLeastOnePopupButtonHasIcon,
+            forceAllocateSpaceForIcon = atLeastOneRegularButtonHasIcon,
             textStyle = TextStyle(fontWeight = FontWeight.Bold)
         )
-    val popupButtonPresentationModelWithOverlay =
-        popupButtonPresentationModel.overlayWith(
-            secondaryPresentationModelOverlay
+    val regularButtonPresentationModelWithOverlay =
+        regularButtonPresentationModel.overlayWith(
+            regularButtonPresentationModelOverlay
         )
 
-    var popupColumnWidth = 0.0f
-    var popupColumnHeight = 0.0f
+    // Account for possible presence of vertical scroll bar
+    var showingVerticalRegularContentScrollBar = false
+
+    var regularButtonColumnWidth = 0.0f
+    var regularButtonColumnHeight = 0.0f
+    var regularButtonCount = 0
     for ((commandGroupIndex, commandGroup) in contentModel.value!!.groups.withIndex()) {
         for (secondaryCommand in commandGroup.commands) {
-            val preferredSize = popupItemLayoutManager.getPreferredSize(
+            val preferredSize = regularButtonLayoutManager.getPreferredSize(
                 command = secondaryCommand,
-                presentationModel = popupButtonPresentationModelWithOverlay,
-                preLayoutInfo = popupItemLayoutManager.getPreLayoutInfo(
+                presentationModel = regularButtonPresentationModelWithOverlay,
+                preLayoutInfo = regularButtonLayoutManager.getPreLayoutInfo(
                     command = secondaryCommand,
-                    presentationModel = popupButtonPresentationModelWithOverlay
+                    presentationModel = regularButtonPresentationModelWithOverlay
                 )
             )
-            popupColumnWidth = max(popupColumnWidth, preferredSize.width)
-            popupColumnHeight += preferredSize.height
+            regularButtonColumnWidth = max(regularButtonColumnWidth, preferredSize.width)
+            if (!showingVerticalRegularContentScrollBar) {
+                regularButtonColumnHeight += preferredSize.height
+            }
+
+            regularButtonCount++
+            if (presentationModel.maxVisibleMenuCommands == regularButtonCount) {
+                // This is the maximum number of menu commands that we should show
+                showingVerticalRegularContentScrollBar = true
+            }
         }
         // Account for horizontal separator between secondary command groups
         if (commandGroupIndex < (contentModel.value!!.groups.size - 1)) {
-            popupColumnHeight += SeparatorSizingConstants.Thickness.value * density.density
+            regularButtonColumnHeight += SeparatorSizingConstants.Thickness.value * density.density
         }
     }
 
-    val fullPopupWidth =
-        (((if (hasButtonPanel) panelPreferredSize.width else popupColumnWidth).roundToInt() + 2) / density.density).toInt()
+    val fullPopupWidth = ((if (hasButtonPanel) {
+        panelPreferredSize.width
+    } else {
+        if (showingVerticalRegularContentScrollBar) {
+            regularButtonColumnWidth +
+                    (ScrollBarSizingConstants.DefaultScrollBarThickness.value * density.density +
+                            2 * ScrollBarSizingConstants.DefaultScrollBarMargin.value * density.density)
+        } else {
+            regularButtonColumnWidth
+        }
+    }.roundToInt() + 2) / density.density).toInt()
+
     var popupHeight = 0.0f
     if (hasButtonPanel) {
         popupHeight = panelPreferredSize.height
@@ -149,9 +172,11 @@ internal fun displayPopupContent(
         // the popup content
         popupHeight += SeparatorSizingConstants.Thickness.value * density.density
     }
-    popupHeight += popupColumnHeight
+    popupHeight += regularButtonColumnHeight
     val fullPopupHeight = ((popupHeight.roundToInt() + 2) / density.density).toInt()
 
+    // From this point, all coordinates are in Swing display units - which are density independent.
+    // This is why the popup width and height was converted from pixels.
     val initialAnchor = IntOffset(
         x = (locationOnScreen.x + anchorBoundsInWindow.left).toInt(),
         y = (locationOnScreen.y + anchorBoundsInWindow.top).toInt()
