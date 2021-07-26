@@ -90,6 +90,7 @@ fun Modifier.auroraContextMenu(
                     contentModel = contentModelState,
                     presentationModel = presentationModel,
                     toDismissPopupsOnActivation = true,
+                    toUseBackgroundStriping = false,
                     popupPlacementStrategy = presentationModel.popupPlacementStrategy,
                     overlays = overlays
                 )

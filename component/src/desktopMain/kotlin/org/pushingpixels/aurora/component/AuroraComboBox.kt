@@ -253,6 +253,7 @@ internal fun <E> AuroraComboBox(
                             popupPlacementStrategy = presentationModel.popupPlacementStrategy
                         ),
                         toDismissPopupsOnActivation = true,
+                        toUseBackgroundStriping = true,
                         popupPlacementStrategy = presentationModel.popupPlacementStrategy,
                         overlays = emptyMap()
                     )

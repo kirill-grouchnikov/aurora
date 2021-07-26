@@ -39,6 +39,13 @@ import java.awt.Window
 import kotlin.math.max
 import kotlin.math.roundToInt
 
+internal data class PopupContentLayoutInfo(
+    val buttonPanelSize: Size,
+    val separatorSize: Size,
+    val generalContentSize: Size,
+    val generalVerticalScrollbarSize: Size
+)
+
 internal fun displayPopupContent(
     parentWindow: ComposeWindow? = null,
     layoutDirection: LayoutDirection,
@@ -50,6 +57,7 @@ internal fun displayPopupContent(
     contentModel: State<CommandMenuContentModel?>,
     presentationModel: CommandPopupMenuPresentationModel,
     toDismissPopupsOnActivation: Boolean,
+    toUseBackgroundStriping: Boolean,
     popupPlacementStrategy: PopupPlacementStrategy,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>
 ) {
@@ -153,27 +161,42 @@ internal fun displayPopupContent(
         }
     }
 
-    val fullPopupWidth = ((if (hasButtonPanel) {
-        panelPreferredSize.width
+    val generalVerticalScrollbarWidth = if (showingVerticalRegularContentScrollBar) {
+        ScrollBarSizingConstants.DefaultScrollBarThickness.value * density.density +
+                2 * ScrollBarSizingConstants.DefaultScrollBarMargin.value * density.density
     } else {
-        if (showingVerticalRegularContentScrollBar) {
-            regularButtonColumnWidth +
-                    (ScrollBarSizingConstants.DefaultScrollBarThickness.value * density.density +
-                            2 * ScrollBarSizingConstants.DefaultScrollBarMargin.value * density.density)
-        } else {
-            regularButtonColumnWidth
-        }
-    }.roundToInt() + 2) / density.density).toInt()
-
-    var popupHeight = 0.0f
-    if (hasButtonPanel) {
-        popupHeight = panelPreferredSize.height
-        // Account for horizontal separator between the panel and the rest of
-        // the popup content
-        popupHeight += SeparatorSizingConstants.Thickness.value * density.density
+        0.0f
     }
-    popupHeight += regularButtonColumnHeight
-    val fullPopupHeight = ((popupHeight.roundToInt() + 2) / density.density).toInt()
+
+    // If we're displaying the button panel, we need to tweak either the button panel width
+    // or the general content width so that they match
+    val fullContentWidth = max(
+        panelPreferredSize.width,
+        regularButtonColumnWidth + generalVerticalScrollbarWidth
+    )
+    val finalButtonPanelWidth = fullContentWidth
+    val finalGeneralContentWidth = fullContentWidth - generalVerticalScrollbarWidth
+
+    val contentLayoutInfo = PopupContentLayoutInfo(
+        buttonPanelSize = Size(width = finalButtonPanelWidth, height = panelPreferredSize.height),
+        separatorSize = Size(
+            width = finalButtonPanelWidth,
+            height = if (hasButtonPanel) SeparatorSizingConstants.Thickness.value * density.density else 0.0f
+        ),
+        generalContentSize = Size(
+            width = finalGeneralContentWidth,
+            height = regularButtonColumnHeight
+        ),
+        generalVerticalScrollbarSize = Size(
+            width = generalVerticalScrollbarWidth,
+            height = regularButtonColumnHeight
+        )
+    )
+
+    val fullPopupWidth = ((contentLayoutInfo.buttonPanelSize.width + 2) / density.density).toInt()
+    val fullPopupHeight = ((contentLayoutInfo.buttonPanelSize.height +
+            contentLayoutInfo.separatorSize.height +
+            contentLayoutInfo.generalContentSize.height + 2) / density.density).toInt()
 
     // From this point, all coordinates are in Swing display units - which are density independent.
     // This is why the popup width and height was converted from pixels.
@@ -246,7 +269,9 @@ internal fun displayPopupContent(
             menuContentModel = contentModel,
             menuPresentationModel = presentationModel,
             toDismissPopupsOnActivation = toDismissPopupsOnActivation,
-            overlays = overlays
+            toUseBackgroundStriping = toUseBackgroundStriping,
+            overlays = overlays,
+            contentLayoutInfo = contentLayoutInfo
         )
     }
 

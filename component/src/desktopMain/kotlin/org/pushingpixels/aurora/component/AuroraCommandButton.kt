@@ -18,6 +18,7 @@ package org.pushingpixels.aurora.component
 import androidx.compose.animation.core.*
 import androidx.compose.desktop.ComposeWindow
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -603,6 +604,7 @@ internal fun AuroraCommandButton(
                             contentModel = secondaryContentModel,
                             presentationModel = presentationModel.popupMenuPresentationModel,
                             toDismissPopupsOnActivation = presentationModel.toDismissPopupsOnActivation,
+                            toUseBackgroundStriping = false,
                             popupPlacementStrategy = presentationModel.popupPlacementStrategy,
                             overlays = overlays
                         )
@@ -1247,7 +1249,9 @@ internal fun CommandButtonPopupContent(
     menuContentModel: State<CommandMenuContentModel?>,
     menuPresentationModel: CommandPopupMenuPresentationModel,
     toDismissPopupsOnActivation: Boolean,
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay>
+    toUseBackgroundStriping: Boolean,
+    overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
+    contentLayoutInfo: PopupContentLayoutInfo
 ) {
     val borderScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = DecorationAreaType.None,
@@ -1337,6 +1341,12 @@ internal fun CommandButtonPopupContent(
                 isMenu = true
             )
 
+            var runningCommandIndex = 0
+            val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
+                decorationAreaType = AuroraSkin.decorationAreaType
+            )
+            val backgroundEvenRows = backgroundColorScheme.backgroundFillColor
+            val backgroundOddRows = backgroundColorScheme.accentedBackgroundFillColor
             for ((commandGroupIndex, commandGroup) in menuContentModel.value!!.groups.withIndex()) {
                 for (secondaryCommand in commandGroup.commands) {
                     // Check if we have a presentation overlay for this secondary command
@@ -1360,6 +1370,10 @@ internal fun CommandButtonPopupContent(
                     // Create a command button for each secondary command, passing the same
                     // overlays into it.
                     AuroraCommandButton(
+                        modifier = if (toUseBackgroundStriping)
+                            Modifier.background(
+                                color = if ((runningCommandIndex % 2) == 0) backgroundEvenRows else backgroundOddRows
+                            ) else Modifier,
                         command = secondaryCommand,
                         parentWindow = popupContentWindow,
                         extraAction = {
@@ -1373,6 +1387,7 @@ internal fun CommandButtonPopupContent(
                         overlays = overlays,
                         buttonSides = Sides(straightSides = Side.values().toSet())
                     )
+                    runningCommandIndex++
                 }
                 if (commandGroupIndex < (menuContentModel.value!!.groups.size - 1)) {
                     HorizontalSeparatorProjection(
