@@ -155,7 +155,6 @@ private object WindowMenuBarLayout {
 
     val MenuBar: CommandButtonPresentationState =
         object : CommandButtonPresentationState("Menu Bar") {
-            @Composable
             override fun createLayoutManager(
                 layoutDirection: LayoutDirection,
                 density: Density,

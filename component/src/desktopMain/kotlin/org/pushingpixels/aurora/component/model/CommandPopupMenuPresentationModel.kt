@@ -41,7 +41,6 @@ private class PopupMenuCommandButtonLayoutManager(
     override val iconTextGapFactor: Float = 2.0f
 
     companion object {
-        @Composable
         fun getLayoutManager(
             layoutDirection: LayoutDirection,
             density: Density,
@@ -57,7 +56,6 @@ private class PopupMenuCommandButtonLayoutManager(
 
 val DefaultCommandPopupMenuPresentationState: CommandButtonPresentationState =
     object : CommandButtonPresentationState("Popup menu") {
-        @Composable
         override fun createLayoutManager(
             layoutDirection: LayoutDirection,
             density: Density,
