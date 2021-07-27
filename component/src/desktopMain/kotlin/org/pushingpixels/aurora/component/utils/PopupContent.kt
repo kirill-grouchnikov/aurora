@@ -37,9 +37,9 @@ import org.pushingpixels.aurora.component.model.*
 import java.awt.Rectangle
 import java.awt.Window
 import kotlin.math.max
-import kotlin.math.roundToInt
 
 internal data class PopupContentLayoutInfo(
+    val fullSize: Size,
     val buttonPanelSize: Size,
     val separatorSize: Size,
     val generalContentSize: Size,
@@ -174,13 +174,19 @@ internal fun displayPopupContent(
         panelPreferredSize.width,
         regularButtonColumnWidth + generalVerticalScrollbarWidth
     )
-    val finalButtonPanelWidth = fullContentWidth
     val finalGeneralContentWidth = fullContentWidth - generalVerticalScrollbarWidth
 
+    // Full size of the popup accounts for extra one pixel on each side for the popup border
     val contentLayoutInfo = PopupContentLayoutInfo(
-        buttonPanelSize = Size(width = finalButtonPanelWidth, height = panelPreferredSize.height),
+        fullSize = Size(
+            width = fullContentWidth + 2,
+            height = panelPreferredSize.height +
+                    (if (hasButtonPanel) SeparatorSizingConstants.Thickness.value * density.density else 0.0f) +
+                    regularButtonColumnHeight + 2
+        ),
+        buttonPanelSize = Size(width = fullContentWidth, height = panelPreferredSize.height),
         separatorSize = Size(
-            width = finalButtonPanelWidth,
+            width = fullContentWidth,
             height = if (hasButtonPanel) SeparatorSizingConstants.Thickness.value * density.density else 0.0f
         ),
         generalContentSize = Size(
@@ -193,10 +199,8 @@ internal fun displayPopupContent(
         )
     )
 
-    val fullPopupWidth = ((contentLayoutInfo.buttonPanelSize.width + 2) / density.density).toInt()
-    val fullPopupHeight = ((contentLayoutInfo.buttonPanelSize.height +
-            contentLayoutInfo.separatorSize.height +
-            contentLayoutInfo.generalContentSize.height + 2) / density.density).toInt()
+    val fullPopupWidth = (contentLayoutInfo.fullSize.width / density.density).toInt()
+    val fullPopupHeight = (contentLayoutInfo.fullSize.height / density.density).toInt()
 
     // From this point, all coordinates are in Swing display units - which are density independent.
     // This is why the popup width and height was converted from pixels.

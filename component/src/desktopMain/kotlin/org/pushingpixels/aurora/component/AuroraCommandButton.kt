@@ -29,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -594,7 +593,7 @@ internal fun AuroraCommandButton(
                             parentWindow = parentWindow,
                             layoutDirection = layoutDirection,
                             density = density,
-                            textStyle = mergedTextStyle,
+                            textStyle = resolvedTextStyle,
                             resourceLoader = resourceLoader,
                             parentComposition = parentComposition,
                             anchorBoundsInWindow = Rect(
@@ -1260,28 +1259,14 @@ internal fun CommandButtonPopupContent(
     )
     val popupBorderColor = AuroraSkin.painters.borderPainter.getRepresentativeColor(borderScheme)
     val density = LocalDensity.current
-    val contentSize = AuroraSize(0, 0)
     Box {
         val hasPanel = (menuContentModel.value!!.panelContentModel != null)
         val layoutDirection = LocalLayoutDirection.current
         val textStyle = LocalTextStyle.current
         val resourceLoader = LocalFontLoader.current
-        val panelPreferredSize = if (hasPanel) getPreferredCommandButtonPanelSize(
-            contentModel = menuContentModel.value!!.panelContentModel!!,
-            presentationModel = menuPresentationModel.panelPresentationModel!!,
-            buttonLayoutManager = menuPresentationModel.panelPresentationModel.commandPresentationState.createLayoutManager(
-                layoutDirection = layoutDirection,
-                density = density,
-                textStyle = textStyle,
-                resourceLoader = resourceLoader
-            ),
-            layoutDirection = layoutDirection,
-            density = density
-        ) else Size(0.0f, 0.0f)
         CommandButtonPopupColumn(
-            contentSize = contentSize,
             hasPanel = hasPanel,
-            panelPreferredSize = panelPreferredSize
+            contentLayoutInfo = contentLayoutInfo
         ) {
             // This canvas paints the background fill of the popup and the outer hairline border
             Canvas(modifier = Modifier.auroraBackground()) {
@@ -1404,33 +1389,27 @@ internal fun CommandButtonPopupContent(
 
 @Composable
 private fun CommandButtonPopupColumn(
-    contentSize: AuroraSize,
     hasPanel: Boolean,
-    panelPreferredSize: Size,
+    contentLayoutInfo: PopupContentLayoutInfo,
     content: @Composable () -> Unit
 ) {
     Layout(content = content) { measurables, _ ->
-        val contentTotalWidth: Int
         var panelPlaceable: Placeable? = null
         var panelSeparatorPlaceable: Placeable? = null
         if (hasPanel) {
             // The column width is determined by the panel
             panelPlaceable = measurables[1].measure(
                 Constraints.fixed(
-                    width = panelPreferredSize.width.toInt(),
-                    height = panelPreferredSize.height.toInt()
+                    width = contentLayoutInfo.buttonPanelSize.width.toInt(),
+                    height = contentLayoutInfo.buttonPanelSize.height.toInt()
                 )
             )
-            contentTotalWidth = panelPlaceable.measuredWidth
             panelSeparatorPlaceable = measurables[2].measure(
                 Constraints.fixed(
-                    width = contentTotalWidth,
-                    height = SeparatorSizingConstants.Thickness.roundToPx()
+                    width = contentLayoutInfo.separatorSize.width.toInt(),
+                    height = contentLayoutInfo.separatorSize.height.toInt()
                 )
             )
-        } else {
-            // The column width is determined by the widest child
-            contentTotalWidth = measurables.maxOf { it.maxIntrinsicWidth(Integer.MAX_VALUE) }
         }
 
         val buttonPlaceables = arrayListOf<Placeable>()
@@ -1439,26 +1418,21 @@ private fun CommandButtonPopupColumn(
             // Measure each button with fixed (widest) width
             buttonPlaceables.add(
                 measurables[buttonIndex]
-                    .measure(Constraints.fixedWidth(contentTotalWidth))
+                    .measure(Constraints.fixedWidth(contentLayoutInfo.generalContentSize.width.toInt()))
             )
         }
 
-        // The children are laid out in a column
-        val contentMaxHeight = panelPreferredSize.height.toInt() +
-                (if (hasPanel) SeparatorSizingConstants.Thickness.roundToPx() else 0) +
-                buttonPlaceables.sumOf { it.height }
-
-        // Add one pixel on each side for the popup border
-        contentSize.width = contentTotalWidth + 2
-        contentSize.height = contentMaxHeight + 2
-
         val canvasPlaceable = measurables[0].measure(
             constraints = Constraints.fixed(
-                width = contentSize.width, height = contentSize.height
+                width = contentLayoutInfo.fullSize.width.toInt(),
+                height = contentLayoutInfo.fullSize.height.toInt()
             )
         )
 
-        layout(width = contentTotalWidth, height = contentMaxHeight) {
+        layout(
+            width = contentLayoutInfo.fullSize.width.toInt(),
+            height = contentLayoutInfo.fullSize.height.toInt()
+        ) {
             // TODO - support RTL
             canvasPlaceable.placeRelative(0, 0)
 
