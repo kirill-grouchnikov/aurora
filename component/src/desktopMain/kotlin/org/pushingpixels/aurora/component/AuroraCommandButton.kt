@@ -17,9 +17,7 @@ package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.core.*
 import androidx.compose.desktop.ComposeWindow
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
@@ -1252,18 +1250,17 @@ internal fun CommandButtonPopupContent(
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
     contentLayoutInfo: PopupContentLayoutInfo
 ) {
+    val density = LocalDensity.current
+    val stateVertical = rememberScrollState(0)
+
     val borderScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = DecorationAreaType.None,
         associationKind = ColorSchemeAssociationKind.Border,
         componentState = ComponentState.Enabled
     )
     val popupBorderColor = AuroraSkin.painters.borderPainter.getRepresentativeColor(borderScheme)
-    val density = LocalDensity.current
     Box {
         val hasPanel = (menuContentModel.value!!.panelContentModel != null)
-        val layoutDirection = LocalLayoutDirection.current
-        val textStyle = LocalTextStyle.current
-        val resourceLoader = LocalFontLoader.current
         CommandButtonPopupColumn(
             hasPanel = hasPanel,
             contentLayoutInfo = contentLayoutInfo
@@ -1300,89 +1297,141 @@ internal fun CommandButtonPopupContent(
                 ).project()
             }
 
-            // If at least one secondary command in this popup menu has icon factory
-            // we force all command buttons to allocate space for the icon (for overall
-            // alignment of content across the entire popup menu)
-            var atLeastOneButtonHasIcon = false
-            for (commandGroup in menuContentModel.value!!.groups) {
-                for (secondaryCommand in commandGroup.commands) {
-                    if (secondaryCommand.iconFactory != null) {
-                        atLeastOneButtonHasIcon = true
-                    }
-                    if (secondaryCommand.isActionToggle) {
-                        atLeastOneButtonHasIcon = true
-                    }
+            Layout(modifier = Modifier.verticalScroll(stateVertical), content = {
+                PopupGeneralContent(
+                    popupContentWindow = popupContentWindow,
+                    menuContentModel = menuContentModel,
+                    menuPresentationModel = menuPresentationModel,
+                    toDismissPopupsOnActivation = toDismissPopupsOnActivation,
+                    toUseBackgroundStriping = toUseBackgroundStriping,
+                    overlays = overlays
+                )
+            }) { measurables, _ ->
+                val placeables = measurables.map { measurable ->
+                    // Measure each child with fixed (widest) width
+                    measurable.measure(Constraints.fixedWidth(contentLayoutInfo.generalContentSize.width.roundToInt()))
                 }
-            }
 
-            // Command presentation for menu content, taking some of the values from
-            // the popup menu presentation model configured on the top-level presentation model
-            val menuButtonPresentationModel = CommandButtonPresentationModel(
-                presentationState = menuPresentationModel.menuPresentationState,
-                forceAllocateSpaceForIcon = atLeastOneButtonHasIcon,
-                popupPlacementStrategy = menuPresentationModel.popupPlacementStrategy,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                horizontalAlignment = HorizontalAlignment.Leading,
-                isMenu = true
-            )
+                // The children are laid out in a column
+                val contentMaxHeight = placeables.sumOf { it.height }
 
-            var runningCommandIndex = 0
-            val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
-                decorationAreaType = AuroraSkin.decorationAreaType
-            )
-            val backgroundEvenRows = backgroundColorScheme.backgroundFillColor
-            val backgroundOddRows = backgroundColorScheme.accentedBackgroundFillColor
-            for ((commandGroupIndex, commandGroup) in menuContentModel.value!!.groups.withIndex()) {
-                for (secondaryCommand in commandGroup.commands) {
-                    // Check if we have a presentation overlay for this secondary command
-                    val hasOverlay = overlays.containsKey(secondaryCommand)
-                    var currSecondaryPresentationModel = if (hasOverlay)
-                        menuButtonPresentationModel.overlayWith(overlays[secondaryCommand]!!)
-                    else menuButtonPresentationModel
-                    if (secondaryCommand == menuContentModel.value!!.highlightedCommand) {
-                        // If our secondary content model has a highlighted command, pass bold
-                        // font weight to the text style of the matching command button.
-                        currSecondaryPresentationModel =
-                            currSecondaryPresentationModel.overlayWith(
-                                CommandButtonPresentationModel.Overlay(
-                                    textStyle = TextStyle(
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                )
-                            )
-                    }
+                layout(
+                    width = contentLayoutInfo.generalContentSize.width.roundToInt(),
+                    height = contentMaxHeight
+                ) {
+                    var yPosition = 0
 
-                    // Create a command button for each secondary command, passing the same
-                    // overlays into it.
-                    AuroraCommandButton(
-                        modifier = if (toUseBackgroundStriping)
-                            Modifier.background(
-                                color = if ((runningCommandIndex % 2) == 0) backgroundEvenRows else backgroundOddRows
-                            ) else Modifier,
-                        command = secondaryCommand,
-                        parentWindow = popupContentWindow,
-                        extraAction = {
-                            if (toDismissPopupsOnActivation and
-                                currSecondaryPresentationModel.toDismissPopupsOnActivation
-                            ) {
-                                AuroraPopupManager.hidePopups(null)
-                            }
-                        },
-                        presentationModel = currSecondaryPresentationModel,
-                        overlays = overlays,
-                        buttonSides = Sides(straightSides = Side.values().toSet())
-                    )
-                    runningCommandIndex++
-                }
-                if (commandGroupIndex < (menuContentModel.value!!.groups.size - 1)) {
-                    HorizontalSeparatorProjection(
-                        presentationModel = SeparatorPresentationModel(
-                            startGradientAmount = 0.dp,
-                            endGradientAmount = 0.dp
+                    // TODO - support RTL
+                    placeables.forEach { placeable ->
+                        placeable.placeRelative(
+                            x = 0,
+                            y = yPosition
                         )
-                    ).project()
+                        yPosition += placeable.height
+                    }
                 }
             }
+            if (contentLayoutInfo.generalVerticalScrollbarSize.width > 0.0f) {
+                AuroraVerticalScrollbar(
+                    adapter = remember(stateVertical) {
+                        ScrollbarAdapter(stateVertical)
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun PopupGeneralContent(
+    popupContentWindow: ComposeWindow,
+    menuContentModel: State<CommandMenuContentModel?>,
+    menuPresentationModel: CommandPopupMenuPresentationModel,
+    toDismissPopupsOnActivation: Boolean,
+    toUseBackgroundStriping: Boolean,
+    overlays: Map<Command, CommandButtonPresentationModel.Overlay>
+) {
+    // If at least one secondary command in this popup menu has icon factory
+    // we force all command buttons to allocate space for the icon (for overall
+    // alignment of content across the entire popup menu)
+    var atLeastOneButtonHasIcon = false
+    for (commandGroup in menuContentModel.value!!.groups) {
+        for (secondaryCommand in commandGroup.commands) {
+            if (secondaryCommand.iconFactory != null) {
+                atLeastOneButtonHasIcon = true
+            }
+            if (secondaryCommand.isActionToggle) {
+                atLeastOneButtonHasIcon = true
+            }
+        }
+    }
+
+    // Command presentation for menu content, taking some of the values from
+    // the popup menu presentation model configured on the top-level presentation model
+    val menuButtonPresentationModel = CommandButtonPresentationModel(
+        presentationState = menuPresentationModel.menuPresentationState,
+        forceAllocateSpaceForIcon = atLeastOneButtonHasIcon,
+        popupPlacementStrategy = menuPresentationModel.popupPlacementStrategy,
+        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+        horizontalAlignment = HorizontalAlignment.Leading,
+        isMenu = true
+    )
+
+    var runningCommandIndex = 0
+    val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
+        decorationAreaType = AuroraSkin.decorationAreaType
+    )
+    val backgroundEvenRows = backgroundColorScheme.backgroundFillColor
+    val backgroundOddRows = backgroundColorScheme.accentedBackgroundFillColor
+    for ((commandGroupIndex, commandGroup) in menuContentModel.value!!.groups.withIndex()) {
+        for (secondaryCommand in commandGroup.commands) {
+            // Check if we have a presentation overlay for this secondary command
+            val hasOverlay = overlays.containsKey(secondaryCommand)
+            var currSecondaryPresentationModel = if (hasOverlay)
+                menuButtonPresentationModel.overlayWith(overlays[secondaryCommand]!!)
+            else menuButtonPresentationModel
+            if (secondaryCommand == menuContentModel.value!!.highlightedCommand) {
+                // If our secondary content model has a highlighted command, pass bold
+                // font weight to the text style of the matching command button.
+                currSecondaryPresentationModel =
+                    currSecondaryPresentationModel.overlayWith(
+                        CommandButtonPresentationModel.Overlay(
+                            textStyle = TextStyle(
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                    )
+            }
+
+            // Create a command button for each secondary command, passing the same
+            // overlays into it.
+            AuroraCommandButton(
+                modifier = if (toUseBackgroundStriping)
+                    Modifier.background(
+                        color = if ((runningCommandIndex % 2) == 0) backgroundEvenRows else backgroundOddRows
+                    ) else Modifier,
+                command = secondaryCommand,
+                parentWindow = popupContentWindow,
+                extraAction = {
+                    if (toDismissPopupsOnActivation and
+                        currSecondaryPresentationModel.toDismissPopupsOnActivation
+                    ) {
+                        AuroraPopupManager.hidePopups(null)
+                    }
+                },
+                presentationModel = currSecondaryPresentationModel,
+                overlays = overlays,
+                buttonSides = Sides(straightSides = Side.values().toSet())
+            )
+            runningCommandIndex++
+        }
+        if (commandGroupIndex < (menuContentModel.value!!.groups.size - 1)) {
+            HorizontalSeparatorProjection(
+                presentationModel = SeparatorPresentationModel(
+                    startGradientAmount = 0.dp,
+                    endGradientAmount = 0.dp
+                )
+            ).project()
         }
     }
 }
@@ -1394,6 +1443,13 @@ private fun CommandButtonPopupColumn(
     content: @Composable () -> Unit
 ) {
     Layout(content = content) { measurables, _ ->
+        val canvasPlaceable = measurables[0].measure(
+            constraints = Constraints.fixed(
+                width = contentLayoutInfo.fullSize.width.toInt(),
+                height = contentLayoutInfo.fullSize.height.toInt()
+            )
+        )
+
         var panelPlaceable: Placeable? = null
         var panelSeparatorPlaceable: Placeable? = null
         if (hasPanel) {
@@ -1412,22 +1468,23 @@ private fun CommandButtonPopupColumn(
             )
         }
 
-        val buttonPlaceables = arrayListOf<Placeable>()
-        val startIndex = if (hasPanel) 3 else 1
-        for (buttonIndex in startIndex until measurables.size) {
-            // Measure each button with fixed (widest) width
-            buttonPlaceables.add(
-                measurables[buttonIndex]
-                    .measure(Constraints.fixedWidth(contentLayoutInfo.generalContentSize.width.toInt()))
-            )
-        }
-
-        val canvasPlaceable = measurables[0].measure(
-            constraints = Constraints.fixed(
-                width = contentLayoutInfo.fullSize.width.toInt(),
-                height = contentLayoutInfo.fullSize.height.toInt()
+        val generalContentPlaceable = measurables[if (hasPanel) 3 else 1].measure(
+            Constraints.fixed(
+                width = contentLayoutInfo.generalContentSize.width.toInt(),
+                height = contentLayoutInfo.generalContentSize.height.toInt()
             )
         )
+        var verticalScrollBarPlaceable: Placeable? = null
+        val scrollBarMarginPx = ScrollBarSizingConstants.DefaultScrollBarMargin.roundToPx()
+        val scrollBarThicknessPx = ScrollBarSizingConstants.DefaultScrollBarThickness.roundToPx()
+        if (contentLayoutInfo.generalVerticalScrollbarSize.width > 0.0f) {
+            verticalScrollBarPlaceable = measurables[if (hasPanel) 4 else 2].measure(
+                Constraints.fixed(
+                    width = scrollBarThicknessPx,
+                    height = contentLayoutInfo.generalVerticalScrollbarSize.height.toInt() - 2 * scrollBarMarginPx
+                )
+            )
+        }
 
         layout(
             width = contentLayoutInfo.fullSize.width.toInt(),
@@ -1445,10 +1502,11 @@ private fun CommandButtonPopupColumn(
                 yPosition += panelSeparatorPlaceable.height
             }
 
-            buttonPlaceables.forEach { placeable ->
-                placeable.placeRelative(x = 1, y = yPosition)
-                yPosition += placeable.height
-            }
+            generalContentPlaceable.placeRelative(x = 1, y = yPosition)
+            verticalScrollBarPlaceable?.placeRelative(
+                x = 1 + generalContentPlaceable.width + scrollBarMarginPx,
+                y = yPosition + scrollBarMarginPx
+            )
         }
     }
 }

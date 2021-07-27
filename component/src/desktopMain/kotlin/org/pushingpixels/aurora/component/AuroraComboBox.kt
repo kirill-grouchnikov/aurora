@@ -16,8 +16,6 @@
 package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.core.*
-import androidx.compose.desktop.AppManager
-import androidx.compose.desktop.ComposeWindow
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -27,11 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ClipOp
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.drawOutline
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerMoveFilter
@@ -39,20 +33,13 @@ import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.*
-import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.utils.MutableColorScheme
-import java.awt.Rectangle
-import java.awt.Window
 import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.roundToInt
 
 @Immutable
 private class ComboBoxDrawingCache(
@@ -106,7 +93,6 @@ internal fun <E> AuroraComboBox(
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
     val buttonShaper = AuroraSkin.buttonShaper
-    val painters = AuroraSkin.painters
 
     val comboBoxTopLeftOffset = AuroraOffset(0.0f, 0.0f)
     val comboBoxSize = AuroraSize(0, 0)
@@ -488,150 +474,3 @@ internal fun <E> AuroraComboBox(
         }
     }
 }
-
-@Composable
-private fun ComboBoxPopupContent(
-    contentProjections: List<CommandButtonProjection>,
-    popupColumnSize: Size,
-    showingVerticalPopupContentScrollBar: Boolean
-) {
-    val borderScheme = AuroraSkin.colors.getColorScheme(
-        decorationAreaType = DecorationAreaType.None,
-        associationKind = ColorSchemeAssociationKind.Border,
-        componentState = ComponentState.Enabled
-    )
-    val popupBorderColor = AuroraSkin.painters.borderPainter.getRepresentativeColor(borderScheme)
-    val stateVertical = rememberScrollState(0)
-
-    ComboBoxPopupLayout(
-        modifier = Modifier.auroraBackground(),
-        popupColumnSize = popupColumnSize,
-        showingVerticalPopupContentScrollBar = showingVerticalPopupContentScrollBar
-    ) {
-        Canvas(modifier = Modifier) {
-            if ((size.width > 0.0f) && (size.height > 0.0f)) {
-                val outline = Outline.Rectangle(
-                    rect = Rect(
-                        left = 0.5f, top = 0.5f,
-                        right = size.width - 0.5f, bottom = size.height - 0.5f
-                    )
-                )
-                drawOutline(
-                    outline = outline,
-                    color = popupBorderColor,
-                    style = Stroke(width = 1.0f)
-                )
-            }
-        }
-        ComboBoxPopupColumn(
-            modifier = Modifier.verticalScroll(stateVertical),
-            popupColumnSize = popupColumnSize
-        ) {
-            val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
-                decorationAreaType = AuroraSkin.decorationAreaType
-            )
-            val backgroundEvenRows = backgroundColorScheme.backgroundFillColor
-            val backgroundOddRows = backgroundColorScheme.accentedBackgroundFillColor
-            for ((projectionIndex, projection) in contentProjections.withIndex()) {
-                projection.project(
-                    modifier = Modifier.background(
-                        color = if ((projectionIndex % 2) == 0) backgroundEvenRows else backgroundOddRows
-                    )
-                )
-            }
-        }
-        if (showingVerticalPopupContentScrollBar) {
-            AuroraVerticalScrollbar(
-                adapter = remember(stateVertical) {
-                    ScrollbarAdapter(stateVertical)
-                }
-            )
-        }
-    }
-}
-
-@Composable
-private fun ComboBoxPopupLayout(
-    modifier: Modifier,
-    popupColumnSize: Size,
-    showingVerticalPopupContentScrollBar: Boolean,
-    content: @Composable () -> Unit
-) {
-    Layout(modifier = modifier, content = content) { measurables, constraints ->
-        val canvasMeasurable = measurables[0]
-        val popupColumnMeasurable = measurables[1]
-        val verticalScrollBarMeasurable =
-            if (showingVerticalPopupContentScrollBar) measurables[2] else null
-
-        val popupColumnPlaceable = popupColumnMeasurable.measure(
-            Constraints.fixed(
-                width = popupColumnSize.width.roundToInt(),
-                height = popupColumnSize.height.roundToInt()
-            )
-        )
-
-        var verticalScrollBarPlaceable: Placeable? = null
-        val scrollBarMarginPx = ScrollBarSizingConstants.DefaultScrollBarMargin.roundToPx()
-        var fullWidth = popupColumnSize.width.roundToInt()
-        if (verticalScrollBarMeasurable != null) {
-            // account for top and bottom margins for height
-            verticalScrollBarPlaceable =
-                verticalScrollBarMeasurable.measure(
-                    Constraints.fixed(
-                        width = ScrollBarSizingConstants.DefaultScrollBarThickness.roundToPx(),
-                        height = popupColumnSize.height.roundToInt() - 2 * scrollBarMarginPx
-                    )
-                )
-            fullWidth += (verticalScrollBarPlaceable.measuredWidth + 2 * scrollBarMarginPx)
-        }
-
-        val canvasPlaceable = canvasMeasurable.measure(
-            Constraints.fixed(
-                width = fullWidth + 2,
-                height = popupColumnSize.height.roundToInt() + 2
-            )
-        )
-
-        layout(width = fullWidth + 2, height = popupColumnSize.height.roundToInt() + 2) {
-            canvasPlaceable.place(x = 0, y = 0)
-            // TODO - support RTL
-            // Offset everything else by 1,1 for border insets
-            popupColumnPlaceable.place(x = 1, y = 1)
-            verticalScrollBarPlaceable?.place(
-                x = popupColumnSize.width.roundToInt() + scrollBarMarginPx + 1,
-                y = scrollBarMarginPx + 1
-            )
-        }
-    }
-}
-
-@Composable
-private fun ComboBoxPopupColumn(
-    modifier: Modifier,
-    popupColumnSize: Size,
-    content: @Composable () -> Unit
-) {
-    Layout(modifier = modifier, content = content) { measurables, _ ->
-        val placeables = measurables.map { measurable ->
-            // Measure each child with fixed (widest) width
-            measurable.measure(Constraints.fixedWidth(popupColumnSize.width.roundToInt()))
-        }
-
-        // The children are laid out in a column
-        val contentMaxHeight = placeables.sumOf { it.height }
-
-        layout(width = popupColumnSize.width.roundToInt(), height = contentMaxHeight) {
-            var yPosition = 0
-
-            // TODO - support RTL
-            placeables.forEach { placeable ->
-                placeable.placeRelative(
-                    x = 0,
-                    y = yPosition
-                )
-                yPosition += placeable.height
-            }
-        }
-    }
-}
-
