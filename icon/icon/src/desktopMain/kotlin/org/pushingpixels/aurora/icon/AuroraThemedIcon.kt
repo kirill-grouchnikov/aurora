@@ -79,6 +79,13 @@ private class CombinedIconModifier(
                         skinColors,
                         decorationAreaType
                     )
+                    icon.setColorFilter(
+                        getColorSchemeFilter(
+                            scheme = mutableColorScheme,
+                            originalBrightnessFactor = 0.5f,
+                            alpha = 1.0f
+                        )
+                    )
                 }
             }
 
@@ -239,22 +246,44 @@ internal fun populateColorScheme(
         )
 
         // And interpolate the colors
-        ultraLight = ultraLight.interpolateTowards(contributionScheme.ultraLightColor, 1.0f - amount)
-        extraLight = extraLight.interpolateTowards(contributionScheme.extraLightColor, 1.0f - amount)
+        ultraLight =
+            ultraLight.interpolateTowards(contributionScheme.ultraLightColor, 1.0f - amount)
+        extraLight =
+            extraLight.interpolateTowards(contributionScheme.extraLightColor, 1.0f - amount)
         light = light.interpolateTowards(contributionScheme.lightColor, 1.0f - amount)
         mid = mid.interpolateTowards(contributionScheme.midColor, 1.0f - amount)
         dark = dark.interpolateTowards(contributionScheme.darkColor, 1.0f - amount)
         ultraDark = ultraDark.interpolateTowards(contributionScheme.ultraDarkColor, 1.0f - amount)
-        foreground = foreground.interpolateTowards(contributionScheme.foregroundColor, 1.0f - amount)
-        backgroundFill = backgroundFill.interpolateTowards(contributionScheme.backgroundFillColor, 1.0f - amount)
-        accentedBackgroundFill = accentedBackgroundFill.interpolateTowards(contributionScheme.accentedBackgroundFillColor, 1.0f - amount)
+        foreground =
+            foreground.interpolateTowards(contributionScheme.foregroundColor, 1.0f - amount)
+        backgroundFill =
+            backgroundFill.interpolateTowards(contributionScheme.backgroundFillColor, 1.0f - amount)
+        accentedBackgroundFill = accentedBackgroundFill.interpolateTowards(
+            contributionScheme.accentedBackgroundFillColor,
+            1.0f - amount
+        )
         focusRing = focusRing.interpolateTowards(contributionScheme.focusRingColor, 1.0f - amount)
         line = line.interpolateTowards(contributionScheme.lineColor, 1.0f - amount)
-        selectionForeground = selectionForeground.interpolateTowards(contributionScheme.selectionForegroundColor, 1.0f - amount)
-        selectionBackground = selectionBackground.interpolateTowards(contributionScheme.selectionBackgroundColor, 1.0f - amount)
-        textBackgroundFill = textBackgroundFill.interpolateTowards(contributionScheme.textBackgroundFillColor, 1.0f - amount)
-        separatorPrimary = separatorPrimary.interpolateTowards(contributionScheme.separatorPrimaryColor, 1.0f - amount)
-        separatorSecondary = separatorSecondary.interpolateTowards(contributionScheme.separatorSecondaryColor, 1.0f - amount)
+        selectionForeground = selectionForeground.interpolateTowards(
+            contributionScheme.selectionForegroundColor,
+            1.0f - amount
+        )
+        selectionBackground = selectionBackground.interpolateTowards(
+            contributionScheme.selectionBackgroundColor,
+            1.0f - amount
+        )
+        textBackgroundFill = textBackgroundFill.interpolateTowards(
+            contributionScheme.textBackgroundFillColor,
+            1.0f - amount
+        )
+        separatorPrimary = separatorPrimary.interpolateTowards(
+            contributionScheme.separatorPrimaryColor,
+            1.0f - amount
+        )
+        separatorSecondary = separatorSecondary.interpolateTowards(
+            contributionScheme.separatorSecondaryColor,
+            1.0f - amount
+        )
         mark = mark.interpolateTowards(contributionScheme.markColor, 1.0f - amount)
         echo = echo.interpolateTowards(contributionScheme.echoColor, 1.0f - amount)
 
