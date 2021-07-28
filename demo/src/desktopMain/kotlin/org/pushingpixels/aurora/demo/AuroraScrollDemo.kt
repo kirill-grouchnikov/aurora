@@ -118,8 +118,8 @@ fun main() = application {
         undecorated = true,
         onCloseRequest = ::exitApplication,
         onKeyEvent = {
+            // Keyboard event handler to process Up and Down arrows for list traversal
             var handled = false
-            // Register a keyboard event handler to process Up and Down arrows for list traversal
             if (it.type == KeyEventType.KeyDown) {
                 when (it.key) {
                     Key.DirectionDown -> {
@@ -172,7 +172,7 @@ fun main() = application {
                 presentationModel = ComboBoxPresentationModel(
                     displayConverter = { it.first }
                 )
-            ).project()
+            ).project(modifier = Modifier.padding(4.dp))
 
             LabelProjection(
                 contentModel = LabelContentModel(
@@ -228,11 +228,8 @@ fun main() = application {
                     }
                 }
                 AuroraVerticalScrollbar(
-                    modifier = Modifier.align(Alignment.CenterEnd)
-                        .fillMaxHeight(),
-                    adapter = rememberScrollbarAdapter(
-                        scrollState = lazyListState
-                    )
+                    modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                    adapter = rememberScrollbarAdapter(scrollState = lazyListState)
                 )
             }
         }
