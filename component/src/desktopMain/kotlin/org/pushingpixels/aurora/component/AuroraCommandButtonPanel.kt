@@ -120,6 +120,7 @@ internal fun AuroraCommandButtonPanel(
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
     val resourceLoader = LocalFontLoader.current
+    val window = LocalWindow.current
 
     val layoutManager = presentationModel.commandPresentationState.createLayoutManager(
         layoutDirection = layoutDirection,
@@ -208,7 +209,7 @@ internal fun AuroraCommandButtonPanel(
                         // on secondary content of the current command's projection
                         AuroraCommandButton(
                             command = command,
-                            parentWindow = null,
+                            parentWindow = window,
                             extraAction = extraAction,
                             extraActionPreview = commandPreviewListener,
                             presentationModel = commandPresentation,

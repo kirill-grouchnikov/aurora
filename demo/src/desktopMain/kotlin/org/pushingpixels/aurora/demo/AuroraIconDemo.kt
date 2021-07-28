@@ -15,11 +15,15 @@
  */
 package org.pushingpixels.aurora.demo
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.*
 import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.projection.LabelProjection
@@ -36,11 +40,22 @@ import org.pushingpixels.aurora.skin.businessSkin
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 
-fun main() {
+@ExperimentalFoundationApi
+@ExperimentalComposeUiApi
+fun main() = application {
+    val state = rememberWindowState(
+        placement = WindowPlacement.Floating,
+        position = WindowPosition.Aligned(Alignment.Center),
+        size = WindowSize(800.dp, 600.dp)
+    )
+    val skin = mutableStateOf(businessSkin())
+
     AuroraWindow(
+        skin = skin,
         title = "Aurora Demo",
-        skin = businessSkin(),
-        size = IntSize(800, 600)
+        state = state,
+        undecorated = true,
+        onCloseRequest = ::exitApplication,
     ) {
         IconDemoContent()
     }
@@ -103,7 +118,7 @@ fun IconDemoArea() {
 }
 
 @Composable
-fun IconDemoContent() {
+fun WindowScope.IconDemoContent() {
     Column(modifier = Modifier.fillMaxSize().padding(vertical = 12.dp)) {
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
             IconDemoArea()

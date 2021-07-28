@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora
 
-import androidx.compose.desktop.LocalAppWindow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.DrawModifier
@@ -33,10 +32,11 @@ import org.pushingpixels.aurora.painter.overlay.AuroraOverlayPainter
 
 @Composable
 fun Modifier.auroraBackground() = this.then(
+    // TODO - can we get the Window reference from a WindowScope on a modifier?
     AuroraBackground(
         rootSize = Size(
-            width = LocalAppWindow.current.width * LocalDensity.current.density,
-            height = LocalAppWindow.current.height * LocalDensity.current.density
+            width = LocalWindow.current.width * LocalDensity.current.density,
+            height = LocalWindow.current.height * LocalDensity.current.density
         ),
         decorationAreaType = AuroraSkin.decorationAreaType,
         colors = AuroraSkin.colors,

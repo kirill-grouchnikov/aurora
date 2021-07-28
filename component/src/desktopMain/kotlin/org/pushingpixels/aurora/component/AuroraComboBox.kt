@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.ClipOp
@@ -93,6 +94,7 @@ internal fun <E> AuroraComboBox(
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
     val buttonShaper = AuroraSkin.buttonShaper
+    val window = LocalWindow.current
 
     val comboBoxTopLeftOffset = AuroraOffset(0.0f, 0.0f)
     val comboBoxSize = AuroraSize(0, 0)
@@ -222,7 +224,7 @@ internal fun <E> AuroraComboBox(
                 enabled = contentModel.enabled,
                 onClick = {
                     displayPopupContent(
-                        parentWindow = null,
+                        currentWindow = window,
                         layoutDirection = layoutDirection,
                         density = density,
                         textStyle = textStyle,

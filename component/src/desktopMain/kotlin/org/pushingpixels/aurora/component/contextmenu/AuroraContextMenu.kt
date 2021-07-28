@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
 import org.pushingpixels.aurora.LocalTextStyle
+import org.pushingpixels.aurora.LocalWindow
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.model.CommandMenuContentModel
@@ -60,6 +61,7 @@ fun Modifier.auroraContextMenu(
     val layoutDirection = LocalLayoutDirection.current
     val mergedTextStyle = LocalTextStyle.current
     val resourceLoader = LocalFontLoader.current
+    val window = LocalWindow.current
 
     return this.then(Modifier.pointerInput(Unit) {
         forEachGesture {
@@ -74,7 +76,7 @@ fun Modifier.auroraContextMenu(
 
             if (enabledState.value && (lastEvent?.isPopupTrigger == true)) {
                 displayPopupContent(
-                    parentWindow = null,
+                    currentWindow = window,
                     layoutDirection = layoutDirection,
                     density = density,
                     textStyle = mergedTextStyle,

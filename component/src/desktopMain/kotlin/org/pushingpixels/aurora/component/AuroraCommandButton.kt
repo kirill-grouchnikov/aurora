@@ -16,7 +16,6 @@
 package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.core.*
-import androidx.compose.desktop.ComposeWindow
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -24,6 +23,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -68,7 +68,7 @@ private class CommandButtonDrawingCache(
 internal fun AuroraCommandButton(
     modifier: Modifier = Modifier,
     command: Command,
-    parentWindow: ComposeWindow? = null,
+    parentWindow: ComposeWindow,
     extraAction: (() -> Unit)? = null,
     extraActionPreview: CommandActionPreview? = null,
     presentationModel: CommandButtonPresentationModel,
@@ -588,7 +588,7 @@ internal fun AuroraCommandButton(
                     enabled = isPopupEnabled,
                     onClick = {
                         displayPopupContent(
-                            parentWindow = parentWindow,
+                            currentWindow = parentWindow,
                             layoutDirection = layoutDirection,
                             density = density,
                             textStyle = resolvedTextStyle,

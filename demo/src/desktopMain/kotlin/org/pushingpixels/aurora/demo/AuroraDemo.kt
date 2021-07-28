@@ -16,19 +16,21 @@
 package org.pushingpixels.aurora.demo
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.ExperimentalUnitApi
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.*
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.contextmenu.auroraContextMenu
 import org.pushingpixels.aurora.component.model.*
@@ -43,15 +45,23 @@ import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 import kotlin.system.exitProcess
 
+@ExperimentalFoundationApi
+@ExperimentalComposeUiApi
 @ExperimentalUnitApi
-fun main() {
+fun main() = application {
+    val state = rememberWindowState(
+        placement = WindowPlacement.Floating,
+        position = WindowPosition.Aligned(Alignment.Center),
+        size = WindowSize(720.dp, 660.dp)
+    )
     val skin = mutableStateOf(marinerSkin())
 
     AuroraWindow(
         skin = skin,
         title = "Aurora Demo",
-        size = IntSize(720, 660),
+        state = state,
         undecorated = true,
+        onCloseRequest = ::exitApplication,
         menuCommands = CommandGroup(
             commands = listOf(
                 Command(
@@ -830,7 +840,7 @@ fun DemoArea(
 
 @ExperimentalUnitApi
 @Composable
-fun DemoContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
+fun WindowScope.DemoContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
     val contentEnabled = remember { mutableStateOf(true) }
     val alignment = remember { mutableStateOf(DemoAlignment.Center) }
 

@@ -29,6 +29,7 @@ import androidx.compose.ui.text.Paragraph
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.unit.*
+import androidx.compose.ui.window.WindowScope
 import org.pushingpixels.aurora.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.auroraBackground
@@ -172,7 +173,7 @@ private object WindowMenuBarLayout {
 }
 
 @Composable
-internal fun AuroraWindowMenuBar(menuCommands: CommandGroup) {
+internal fun WindowScope.AuroraWindowMenuBar(menuCommands: CommandGroup) {
     for (menuCommand in menuCommands.commands) {
         // Needs a non-empty text
         if (menuCommand.text.isEmpty()) {

@@ -15,13 +15,15 @@
  */
 package org.pushingpixels.aurora.demo
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.window.application
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.*
 import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.IconFilterStrategy
@@ -81,73 +83,78 @@ fun getCommandPanelContentModel(vararg groupSizes: Int): CommandPanelContentMode
     )
 }
 
+@ExperimentalFoundationApi
 @ExperimentalComposeUiApi
-fun main() {
-    application {
-        val currentAuroraSkin = mutableStateOf(businessSkin())
+fun main() = application {
+    val state = rememberWindowState(
+        placement = WindowPlacement.Floating,
+        position = WindowPosition.Aligned(Alignment.Center),
+        size = WindowSize(1000.dp, 400.dp)
+    )
+    val skin = mutableStateOf(businessSkin())
 
-        AuroraWindow(
-            title = "Aurora Command Panel",
-            skin = currentAuroraSkin,
-            size = IntSize(1000, 400),
-            undecorated = true
-        ) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                val currentSkinDisplayName = AuroraSkin.displayName
-                val auroraSkins = getAuroraSkins()
-                val selectedSkinItem =
-                    remember { mutableStateOf(auroraSkins.first { it.first == currentSkinDisplayName }) }
+    AuroraWindow(
+        skin = skin,
+        title = "Aurora Command Panel",
+        state = state,
+        undecorated = true,
+        onCloseRequest = ::exitApplication,
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            val currentSkinDisplayName = AuroraSkin.displayName
+            val auroraSkins = getAuroraSkins()
+            val selectedSkinItem =
+                remember { mutableStateOf(auroraSkins.first { it.first == currentSkinDisplayName }) }
 
-                ComboBoxProjection(
-                    contentModel = ComboBoxContentModel(
-                        items = auroraSkins,
-                        selectedItem = selectedSkinItem.value,
-                        onTriggerItemSelectedChange = {
-                            selectedSkinItem.value = it
-                            currentAuroraSkin.value = it.second.invoke()
-                        }
-                    ),
-                    presentationModel = ComboBoxPresentationModel(
-                        displayConverter = { it.first }
-                    )
-                ).project()
-
-                val commandPanelContentModel = remember { getCommandPanelContentModel(20, 10, 15) }
-
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(fraction = 0.5f)
-                    ) {
-                        CommandButtonPanelProjection(
-                            contentModel = commandPanelContentModel,
-                            presentationModel = CommandPanelPresentationModel(
-                                layoutFillMode = PanelLayoutFillMode.RowFill,
-                                maxColumns = 5,
-                                showGroupLabels = true,
-                                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                                commandPresentationState = CommandButtonPresentationState.Medium,
-                                iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
-                                iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
-                            )
-                        ).project()
+            ComboBoxProjection(
+                contentModel = ComboBoxContentModel(
+                    items = auroraSkins,
+                    selectedItem = selectedSkinItem.value,
+                    onTriggerItemSelectedChange = {
+                        selectedSkinItem.value = it
+                        skin.value = it.second.invoke()
                     }
+                ),
+                presentationModel = ComboBoxPresentationModel(
+                    displayConverter = { it.first }
+                )
+            ).project()
 
-                    Box(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        CommandButtonPanelProjection(
-                            contentModel = commandPanelContentModel,
-                            presentationModel = CommandPanelPresentationModel(
-                                layoutFillMode = PanelLayoutFillMode.ColumnFill,
-                                maxRows = 6,
-                                showGroupLabels = false,
-                                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                                commandPresentationState = CommandButtonPresentationState.Big,
-                                iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
-                                iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
-                            )
-                        ).project()
-                    }
+            val commandPanelContentModel = remember { getCommandPanelContentModel(20, 10, 15) }
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Box(
+                    modifier = Modifier.fillMaxWidth(fraction = 0.5f)
+                ) {
+                    CommandButtonPanelProjection(
+                        contentModel = commandPanelContentModel,
+                        presentationModel = CommandPanelPresentationModel(
+                            layoutFillMode = PanelLayoutFillMode.RowFill,
+                            maxColumns = 5,
+                            showGroupLabels = true,
+                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                            commandPresentationState = CommandButtonPresentationState.Medium,
+                            iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                            iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                        )
+                    ).project()
+                }
+
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    CommandButtonPanelProjection(
+                        contentModel = commandPanelContentModel,
+                        presentationModel = CommandPanelPresentationModel(
+                            layoutFillMode = PanelLayoutFillMode.ColumnFill,
+                            maxRows = 6,
+                            showGroupLabels = false,
+                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                            commandPresentationState = CommandButtonPresentationState.Big,
+                            iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                            iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                        )
+                    ).project()
                 }
             }
         }

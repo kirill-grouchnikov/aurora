@@ -15,7 +15,7 @@
  */
 package org.pushingpixels.aurora.common
 
-import androidx.compose.desktop.ComposeWindow
+import androidx.compose.ui.awt.ComposeWindow
 
 object AuroraPopupManager {
     private data class PopupInfo(val originator: ComposeWindow, val popupWindow: ComposeWindow)

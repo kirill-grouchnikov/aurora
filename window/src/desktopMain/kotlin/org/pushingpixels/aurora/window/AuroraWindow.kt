@@ -16,13 +16,13 @@
 
 package org.pushingpixels.aurora.window
 
-import androidx.compose.desktop.AppManager
-import androidx.compose.desktop.AppWindow
 import androidx.compose.desktop.ComposeWindow
-import androidx.compose.desktop.WindowEvents
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -30,15 +30,14 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.WindowDraggableArea
+import androidx.compose.ui.window.*
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
@@ -81,15 +80,16 @@ object WindowTitlePaneSizingConstants {
         PaddingValues(start = 1.dp, end = 2.dp, top = 1.dp, bottom = 2.dp)
 }
 
+@ExperimentalFoundationApi
 @Composable
-private fun WindowTitlePane(
+private fun WindowScope.WindowTitlePane(
     title: String,
     icon: BufferedImage?,
     titlePaneBounds: MutableState<Rect>
 ) {
     val density = LocalDensity.current
 
-    val extendedState = AppManager.focusedWindow?.window?.extendedState
+    val extendedState = (window as? Frame)?.extendedState
     val isMaximized =
         remember { mutableStateOf(((extendedState != null) && ((extendedState and Frame.MAXIMIZED_BOTH) != 0))) }
     val skinColors = AuroraSkin.colors
@@ -112,9 +112,7 @@ private fun WindowTitlePane(
                     .padding(WindowTitlePaneSizingConstants.TitlePaneContentPadding),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                WindowDraggableArea(
-                    modifier = Modifier.weight(1f)
-                ) {
+                WindowDraggableArea(modifier = Modifier.weight(1f)) {
                     val colorScheme =
                         skinColors.getEnabledColorScheme(DecorationAreaType.TitlePane)
                     val titleTextStyle = TextStyle(
@@ -145,8 +143,7 @@ private fun WindowTitlePane(
                     contentModel = Command(
                         text = "",
                         action = {
-                            AppManager.focusedWindow?.window?.extendedState =
-                                JFrame.ICONIFIED
+                            (window as? Frame)?.extendedState = JFrame.ICONIFIED
                         },
                         iconFactory = object :
                             TransitionAwareIcon.TransitionAwareIconFactory() {
@@ -174,12 +171,12 @@ private fun WindowTitlePane(
                     contentModel = Command(
                         text = "",
                         action = {
-                            val current = AppManager.focusedWindow
+                            val current = (window as? Frame)
                             if (current != null) {
-                                if (current.window.extendedState == JFrame.MAXIMIZED_BOTH) {
-                                    current.window.extendedState = JFrame.NORMAL
+                                if (current.extendedState == JFrame.MAXIMIZED_BOTH) {
+                                    current.extendedState = JFrame.NORMAL
                                 } else {
-                                    current.window.extendedState = JFrame.MAXIMIZED_BOTH
+                                    current.extendedState = JFrame.MAXIMIZED_BOTH
                                 }
                                 isMaximized.value = !isMaximized.value
                             }
@@ -223,7 +220,7 @@ private fun WindowTitlePane(
                     contentModel = Command(
                         text = "",
                         action = {
-                            AppManager.focusedWindow?.close()
+                            (window as? Frame)?.dispatchEvent(WindowEvent(window, WindowEvent.WINDOW_CLOSING))
                         },
                         iconFactory = object :
                             TransitionAwareIcon.TransitionAwareIconFactory() {
@@ -248,14 +245,15 @@ private fun WindowTitlePane(
     }
 }
 
+@ExperimentalFoundationApi
 @Composable
-private fun WindowInnerContent(
+private fun WindowScope.WindowInnerContent(
     title: String,
     icon: BufferedImage?,
     undecorated: Boolean,
     titlePaneBounds: MutableState<Rect>,
     menuCommands: CommandGroup? = null,
-    content: @Composable () -> Unit
+    content: @Composable WindowScope.() -> Unit
 ) {
     Column(Modifier.fillMaxSize().auroraBackground()) {
         if (undecorated) {
@@ -272,7 +270,7 @@ private fun WindowInnerContent(
     }
 }
 
-private fun Modifier.drawUndecoratedWindowBorder(
+internal fun Modifier.drawUndecoratedWindowBorder(
     backgroundColorScheme: AuroraColorScheme,
     borderColorScheme: AuroraColorScheme
 ): Modifier = drawBehind {
@@ -361,14 +359,15 @@ private fun Modifier.drawUndecoratedWindowBorder(
     )
 }
 
+@ExperimentalFoundationApi
 @Composable
-private fun WindowContent(
+internal fun WindowScope.WindowContent(
     title: String,
     icon: BufferedImage?,
     titlePaneBounds: MutableState<Rect>,
     undecorated: Boolean,
     menuCommands: CommandGroup? = null,
-    content: @Composable () -> Unit
+    content: @Composable WindowScope.() -> Unit
 ) {
 
     val skinColors = AuroraSkin.colors
@@ -421,179 +420,183 @@ private fun WindowContent(
     }
 }
 
-fun AuroraWindow(
-    skin: AuroraSkinDefinition,
-    title: String,
-    size: IntSize,
-    location: IntOffset = IntOffset.Zero,
-    centered: Boolean = true,
-    icon: BufferedImage? = null,
-    menuCommands: CommandGroup? = null,
-    undecorated: Boolean = false,
-    resizable: Boolean = true,
-    events: WindowEvents = WindowEvents(),
-    onDismissRequest: (() -> Unit)? = null,
-    content: @Composable () -> Unit
-) =
-    SwingUtilities.invokeLater {
-        val appWindow = AppWindow(
-            title = title,
-            size = size,
-            location = location,
-            centered = centered,
-            icon = icon,
-            menuBar = null,
-            undecorated = undecorated,
-            resizable = resizable,
-            events = events,
-            onDismissRequest = onDismissRequest
-        )
-
-        val titlePaneBounds = mutableStateOf(Rect.Zero)
-
-        // Initialize with defaults
-        val density = mutableStateOf(Density(1.0f, 1.0f))
-        appWindow.show {
-            AuroraSkin(
-                displayName = skin.displayName,
-                decorationAreaType = DecorationAreaType.None,
-                colors = skin.colors,
-                buttonShaper = skin.buttonShaper,
-                painters = skin.painters,
-                animationConfig = AuroraSkin.animationConfig
-            ) {
-                density.value = LocalDensity.current
-                WindowContent(
-                    title = title,
-                    icon = icon,
-                    titlePaneBounds = titlePaneBounds,
-                    undecorated = undecorated,
-                    menuCommands = menuCommands,
-                    content = content
-                )
-            }
-        }
-
-        if (undecorated) {
-            // This is the underlying Swing JFrame
-            val composeWindow = appWindow.window
-
-            val lastCursor = mutableStateOf(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR))
-            val awtInputHandler = AWTInputHandler(
-                density = density.value,
-                window = composeWindow,
-                rootPane = composeWindow.rootPane,
-                lastCursor = lastCursor,
-                titlePaneBounds = titlePaneBounds
-            )
-
-            Toolkit.getDefaultToolkit().addAWTEventListener(
-                awtInputHandler,
-                AWTEvent.MOUSE_EVENT_MASK or AWTEvent.MOUSE_MOTION_EVENT_MASK
-            )
-        }
-
-        appWindow.window.addWindowFocusListener(object : WindowFocusListener {
-            override fun windowGainedFocus(e: WindowEvent) {
-            }
-
-            override fun windowLostFocus(e: WindowEvent) {
-                for (window in Window.getWindows()) {
-                    // Hide all Aurora popup windows when our app window loses focus
-                    AuroraPopupManager.hidePopups(null)
-                }
-            }
-        })
-    }
-
-
-fun AuroraWindow(
+@ExperimentalFoundationApi
+@ExperimentalComposeUiApi
+@Composable
+fun ApplicationScope.AuroraWindow(
     skin: MutableState<AuroraSkinDefinition>,
-    title: String,
-    size: IntSize,
-    location: IntOffset = IntOffset.Zero,
-    centered: Boolean = true,
-    icon: BufferedImage? = null,
+    onCloseRequest: () -> Unit,
+    state: WindowState = rememberWindowState(),
+    visible: Boolean = true,
+    title: String = "Untitled",
+    icon: Painter? = null,
     menuCommands: CommandGroup? = null,
     undecorated: Boolean = false,
     resizable: Boolean = true,
-    events: WindowEvents = WindowEvents(),
-    onDismissRequest: (() -> Unit)? = null,
-    content: @Composable () -> Unit
-) =
-    SwingUtilities.invokeLater {
-        val appWindow = AppWindow(
-            title = title,
-            size = size,
-            location = location,
-            centered = centered,
-            icon = icon,
-            menuBar = null,
-            undecorated = undecorated,
-            resizable = resizable,
-            events = events,
-            onDismissRequest = onDismissRequest
-        )
+    enabled: Boolean = true,
+    focusable: Boolean = true,
+    alwaysOnTop: Boolean = false,
+    onPreviewKeyEvent: (androidx.compose.ui.input.key.KeyEvent) -> Boolean = { false },
+    onKeyEvent: (androidx.compose.ui.input.key.KeyEvent) -> Boolean = { false },
+    content: @Composable WindowScope.() -> Unit
+) {
+    val titlePaneBounds = mutableStateOf(Rect.Zero)
+    val density = mutableStateOf(Density(1.0f, 1.0f))
+    Window(
+        onCloseRequest = onCloseRequest,
+        state = state,
+        visible = visible,
+        title = title,
+        icon = icon,
+        undecorated = undecorated,
+        resizable = resizable,
+        enabled = enabled,
+        focusable = focusable,
+        alwaysOnTop = alwaysOnTop,
+        onPreviewKeyEvent = onPreviewKeyEvent,
+        onKeyEvent = onKeyEvent
+    ) {
+        AuroraSkin(
+            displayName = skin.value.displayName,
+            decorationAreaType = DecorationAreaType.None,
+            colors = skin.value.colors,
+            buttonShaper = skin.value.buttonShaper,
+            painters = skin.value.painters,
+            animationConfig = AuroraSkin.animationConfig
+        ) {
+            density.value = LocalDensity.current
+            WindowContent(
+                title = title,
+                icon = null,
+                titlePaneBounds = titlePaneBounds,
+                undecorated = undecorated,
+                menuCommands = menuCommands,
+                content = content
+            )
+        }
 
-        val titlePaneBounds = mutableStateOf(Rect.Zero)
+        LaunchedEffect(Unit) {
+            if (undecorated) {
+                val lastCursor = mutableStateOf(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR))
+                val awtInputHandler = AWTInputHandler(
+                    density = density.value,
+                    window = window,
+                    rootPane = window.rootPane,
+                    lastCursor = lastCursor,
+                    titlePaneBounds = titlePaneBounds
+                )
 
-        // Initialize with defaults
-        val density = mutableStateOf(Density(1.0f, 1.0f))
-        appWindow.show {
-            AuroraSkin(
-                displayName = skin.value.displayName,
-                decorationAreaType = DecorationAreaType.None,
-                colors = skin.value.colors,
-                buttonShaper = skin.value.buttonShaper,
-                painters = skin.value.painters,
-                animationConfig = AuroraSkin.animationConfig
-            ) {
-                density.value = LocalDensity.current
-                WindowContent(
-                    title = title,
-                    icon = icon,
-                    titlePaneBounds = titlePaneBounds,
-                    undecorated = undecorated,
-                    menuCommands = menuCommands,
-                    content = content
+                Toolkit.getDefaultToolkit().addAWTEventListener(
+                    awtInputHandler,
+                    AWTEvent.MOUSE_EVENT_MASK or AWTEvent.MOUSE_MOTION_EVENT_MASK
                 )
             }
-        }
 
-        if (undecorated) {
-            // This is the underlying Swing JFrame
-            val composeWindow = appWindow.window
-
-            val lastCursor = mutableStateOf(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR))
-            val awtInputHandler = AWTInputHandler(
-                density = density.value,
-                window = composeWindow,
-                rootPane = composeWindow.rootPane,
-                lastCursor = lastCursor,
-                titlePaneBounds = titlePaneBounds
-            )
-
-            Toolkit.getDefaultToolkit().addAWTEventListener(
-                awtInputHandler,
-                AWTEvent.MOUSE_EVENT_MASK or AWTEvent.MOUSE_MOTION_EVENT_MASK
-            )
-        }
-
-        appWindow.window.addWindowFocusListener(object : WindowFocusListener {
-            override fun windowGainedFocus(e: WindowEvent) {
-            }
-
-            override fun windowLostFocus(e: WindowEvent) {
-                for (window in Window.getWindows()) {
-                    // Hide all Aurora popup windows when our app window loses focus
-                    AuroraPopupManager.hidePopups(null)
+            window.addWindowFocusListener(object : WindowFocusListener {
+                override fun windowGainedFocus(e: WindowEvent) {
                 }
-            }
-        })
+
+                override fun windowLostFocus(e: WindowEvent) {
+                    for (window in Window.getWindows()) {
+                        // Hide all Aurora popup windows when our app window loses focus
+                        AuroraPopupManager.hidePopups(null)
+                    }
+                }
+            })
+        }
     }
+}
+
+
+@ExperimentalFoundationApi
+@ExperimentalComposeUiApi
+@Composable
+fun ApplicationScope.AuroraWindow(
+    skin: AuroraSkinDefinition,
+    onCloseRequest: () -> Unit,
+    state: WindowState = rememberWindowState(),
+    visible: Boolean = true,
+    title: String = "Untitled",
+    icon: Painter? = null,
+    menuCommands: CommandGroup? = null,
+    undecorated: Boolean = false,
+    resizable: Boolean = true,
+    enabled: Boolean = true,
+    focusable: Boolean = true,
+    alwaysOnTop: Boolean = false,
+    onPreviewKeyEvent: (androidx.compose.ui.input.key.KeyEvent) -> Boolean = { false },
+    onKeyEvent: (androidx.compose.ui.input.key.KeyEvent) -> Boolean = { false },
+    content: @Composable WindowScope.() -> Unit
+) {
+    val titlePaneBounds = mutableStateOf(Rect.Zero)
+    val density = mutableStateOf(Density(1.0f, 1.0f))
+    Window(
+        onCloseRequest = onCloseRequest,
+        state = state,
+        visible = visible,
+        title = title,
+        icon = icon,
+        undecorated = undecorated,
+        resizable = resizable,
+        enabled = enabled,
+        focusable = focusable,
+        alwaysOnTop = alwaysOnTop,
+        onPreviewKeyEvent = onPreviewKeyEvent,
+        onKeyEvent = onKeyEvent
+    ) {
+        AuroraSkin(
+            displayName = skin.displayName,
+            decorationAreaType = DecorationAreaType.None,
+            colors = skin.colors,
+            buttonShaper = skin.buttonShaper,
+            painters = skin.painters,
+            animationConfig = AuroraSkin.animationConfig
+        ) {
+            density.value = LocalDensity.current
+            WindowContent(
+                title = title,
+                icon = null,
+                titlePaneBounds = titlePaneBounds,
+                undecorated = undecorated,
+                menuCommands = menuCommands,
+                content = content
+            )
+        }
+
+        LaunchedEffect(Unit) {
+            if (undecorated) {
+                val lastCursor = mutableStateOf(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR))
+                val awtInputHandler = AWTInputHandler(
+                    density = density.value,
+                    window = window,
+                    rootPane = window.rootPane,
+                    lastCursor = lastCursor,
+                    titlePaneBounds = titlePaneBounds
+                )
+
+                Toolkit.getDefaultToolkit().addAWTEventListener(
+                    awtInputHandler,
+                    AWTEvent.MOUSE_EVENT_MASK or AWTEvent.MOUSE_MOTION_EVENT_MASK
+                )
+            }
+
+            window.addWindowFocusListener(object : WindowFocusListener {
+                override fun windowGainedFocus(e: WindowEvent) {
+                }
+
+                override fun windowLostFocus(e: WindowEvent) {
+                    for (window in Window.getWindows()) {
+                        // Hide all Aurora popup windows when our app window loses focus
+                        AuroraPopupManager.hidePopups(null)
+                    }
+                }
+            })
+        }
+    }
+}
 
 @Composable
-fun AuroraDecorationArea(
+fun WindowScope.AuroraDecorationArea(
     decorationAreaType: DecorationAreaType,
     content: @Composable () -> Unit
 ) {
@@ -603,7 +606,7 @@ fun AuroraDecorationArea(
 }
 
 @Composable
-private fun AuroraSkin(
+internal fun WindowScope.AuroraSkin(
     displayName: String = AuroraSkin.displayName,
     decorationAreaType: DecorationAreaType,
     colors: AuroraSkinColors = AuroraSkin.colors,
@@ -618,7 +621,8 @@ private fun AuroraSkin(
         LocalSkinColors provides colors,
         LocalButtonShaper provides buttonShaper,
         LocalPainters provides painters,
-        LocalAnimationConfig provides animationConfig
+        LocalAnimationConfig provides animationConfig,
+        LocalWindow provides (window as androidx.compose.ui.awt.ComposeWindow)
     ) {
         content()
     }

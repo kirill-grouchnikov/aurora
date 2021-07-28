@@ -16,13 +16,13 @@
 package org.pushingpixels.aurora.component.utils
 
 import androidx.compose.desktop.AppManager
-import androidx.compose.desktop.ComposeWindow
 import androidx.compose.foundation.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
@@ -53,7 +53,7 @@ internal data class PopupContentLayoutInfo(
 )
 
 internal fun displayPopupContent(
-    parentWindow: ComposeWindow? = null,
+    currentWindow: ComposeWindow,
     layoutDirection: LayoutDirection,
     density: Density,
     textStyle: TextStyle,
@@ -73,7 +73,6 @@ internal fun displayPopupContent(
     popupContentWindow.isAlwaysOnTop = true
     popupContentWindow.isUndecorated = true
 
-    val currentWindow = parentWindow ?: AppManager.focusedWindow!!.window
     val locationOnScreen = currentWindow.locationOnScreen
 
     val hasButtonPanel = (contentModel.value!!.panelContentModel != null)

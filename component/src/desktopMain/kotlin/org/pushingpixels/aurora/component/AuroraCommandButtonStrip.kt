@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import org.pushingpixels.aurora.LocalWindow
 import org.pushingpixels.aurora.Sides
 import org.pushingpixels.aurora.Side
 import org.pushingpixels.aurora.component.model.*
@@ -30,6 +31,8 @@ private fun CommandButtonStripContent(
     commandButtonPresentationModel: CommandButtonPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay> = mapOf()
 ) {
+    val window = LocalWindow.current
+
     val commandCount = commandGroup.commands.size
     val isHorizontal = (presentationModel.orientation == StripOrientation.Horizontal)
     val leadingSide = if (isHorizontal) Side.Start else Side.Top
@@ -48,7 +51,7 @@ private fun CommandButtonStripContent(
         }
         AuroraCommandButton(
             command = command,
-            parentWindow = null,
+            parentWindow = window,
             extraAction = null,
             presentationModel = if (overlays.containsKey(command))
                 commandButtonPresentationModel.overlayWith(overlay = overlays[command]!!)

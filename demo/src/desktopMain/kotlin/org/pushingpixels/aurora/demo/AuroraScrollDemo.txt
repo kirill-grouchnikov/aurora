@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.demo
 
-import androidx.compose.desktop.LocalAppWindow
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -38,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.application
+import androidx.compose.ui.window.singleWindowApplication
 import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.AuroraSkin
 import org.pushingpixels.aurora.IconFilterStrategy
@@ -84,7 +84,49 @@ fun LazyListState.isItemFullyVisible(index: Int): Boolean {
 
 @ExperimentalComposeUiApi
 fun main() {
-    application {
+    val scope = rememberCoroutineScope()
+    val lazyListState = rememberLazyListState()
+    val stateSelection = mutableStateOf(-1)
+    val itemCount = 30
+
+    singleWindowApplication(
+        // Register a keyboard event handler to process Up and Down arrows for list traversal
+        onKeyEvent = {
+            var handled = false
+            if (it.type == KeyEventType.KeyDown) {
+                when (it.key) {
+                    Key.DirectionDown -> {
+                        if (stateSelection.value < 0) {
+                            stateSelection.value = 0
+                        } else {
+                            stateSelection.value =
+                                (stateSelection.value + 1).coerceAtMost(itemCount - 1 )
+                        }
+                        scope.launch {
+                            if (!lazyListState.isItemFullyVisible(stateSelection.value)) {
+                                lazyListState.animateScrollToItem(stateSelection.value)
+                            }
+                        }
+                        handled = true
+                    }
+                    Key.DirectionUp -> {
+                        if (stateSelection.value < 0) {
+                            stateSelection.value = itemCount - 1
+                        } else {
+                            stateSelection.value = (stateSelection.value - 1).coerceAtLeast(0)
+                        }
+                        scope.launch {
+                            if (!lazyListState.isItemFullyVisible(stateSelection.value)) {
+                                lazyListState.animateScrollToItem(stateSelection.value)
+                            }
+                        }
+                        handled = true
+                    }
+                }
+            }
+            handled
+        }
+    ) {
         val icons = arrayOf(
             accessibility_new_24px.factory(),
             account_box_24px.factory(),
@@ -100,10 +142,6 @@ fun main() {
             waves_24px.factory()
         )
         val currentAuroraSkin = mutableStateOf(twilightSkin())
-        val scope = rememberCoroutineScope()
-        val lazyListState = rememberLazyListState()
-        val stateSelection = mutableStateOf(-1)
-        val itemCount = 30
 
         AuroraWindow(
             title = "Aurora Scrollbars",
@@ -192,43 +230,6 @@ fun main() {
                         )
                     )
                 }
-            }
-
-            // Register a keyboard event handler to process Up and Down arrows for list traversal
-            LocalAppWindow.current.keyboard.onKeyEvent = {
-                var handled = false
-                if (it.type == KeyEventType.KeyDown) {
-                    when (it.key) {
-                        Key.DirectionDown -> {
-                            if (stateSelection.value < 0) {
-                                stateSelection.value = 0
-                            } else {
-                                stateSelection.value =
-                                    (stateSelection.value + 1).coerceAtMost(itemCount - 1 )
-                            }
-                            scope.launch {
-                                if (!lazyListState.isItemFullyVisible(stateSelection.value)) {
-                                    lazyListState.animateScrollToItem(stateSelection.value)
-                                }
-                            }
-                            handled = true
-                        }
-                        Key.DirectionUp -> {
-                            if (stateSelection.value < 0) {
-                                stateSelection.value = itemCount - 1
-                            } else {
-                                stateSelection.value = (stateSelection.value - 1).coerceAtLeast(0)
-                            }
-                            scope.launch {
-                                if (!lazyListState.isItemFullyVisible(stateSelection.value)) {
-                                    lazyListState.animateScrollToItem(stateSelection.value)
-                                }
-                            }
-                            handled = true
-                        }
-                    }
-                }
-                handled
             }
         }
     }

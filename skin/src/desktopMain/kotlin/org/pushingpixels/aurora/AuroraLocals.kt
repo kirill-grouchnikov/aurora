@@ -16,10 +16,12 @@
 package org.pushingpixels.aurora
 
 import androidx.compose.runtime.*
+import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.shaper.AuroraButtonShaper
+import java.awt.Window
 
 data class ModelStateInfoSnapshot(
     val currModelState: ComponentState,
@@ -58,5 +60,8 @@ val LocalDecorationAreaType = staticCompositionLocalOf<DecorationAreaType> {
 }
 val LocalDisplayName = staticCompositionLocalOf<String> {
     error("LocalDisplayName not provided")
+}
+val LocalWindow = staticCompositionLocalOf<ComposeWindow> {
+    error("LocalWindow not provided")
 }
 
