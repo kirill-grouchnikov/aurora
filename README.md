@@ -23,7 +23,7 @@ Add the latest Kotlin and Compose Desktop dependencies:
 ```kotlin
 plugins {
     kotlin("jvm") version "1.5.21"
-    id("org.jetbrains.compose") version "0.5.0-build262"
+    id("org.jetbrains.compose") version "0.5.0-build270"
 }
 ```
 
@@ -36,10 +36,10 @@ Add Aurora dependencies:
 
 ```
 dependencies {
-    implementation("org.pushing-pixels:aurora-skin:0.0.43-SNAPSHOT")
-    implementation("org.pushing-pixels:aurora-icon-icon:0.0.43-SNAPSHOT")
-    implementation("org.pushing-pixels:aurora-component:0.0.43-SNAPSHOT")
-    implementation("org.pushing-pixels:aurora-window:0.0.43-SNAPSHOT")
+    implementation("org.pushing-pixels:aurora-skin:0.0.44-SNAPSHOT")
+    implementation("org.pushing-pixels:aurora-icon-icon:0.0.44-SNAPSHOT")
+    implementation("org.pushing-pixels:aurora-component:0.0.44-SNAPSHOT")
+    implementation("org.pushing-pixels:aurora-window:0.0.44-SNAPSHOT")
     implementation(compose.desktop.currentOs)
 }
 ```
@@ -47,25 +47,34 @@ dependencies {
 Now you are ready for your first Aurora demo:
 
 ```kotlin
-fun main() = AuroraWindow(
-    skin = marinerSkin(),
-    title = "Aurora Demo",
-    size = IntSize(220, 150),
-    undecorated = true
-) {
-    var text by remember { mutableStateOf("Hello, World!") }
+fun main() = application {
+    val state = rememberWindowState(
+        placement = WindowPlacement.Floating,
+        position = WindowPosition.Aligned(Alignment.Center),
+        size = WindowSize(220.dp, 150.dp)
+    )
 
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxSize().auroraBackground()
+    AuroraWindow(
+        skin = marinerSkin(),
+        title = "Aurora Demo",
+        state = state,
+        undecorated = true,
+        onCloseRequest = ::exitApplication
     ) {
-        CommandButtonProjection(
-            contentModel = Command(
-                text = text,
-                action = { text = "Hello, Desktop!" }
-            )
-        ).project()
+        var text by remember { mutableStateOf("Hello, World!") }
+
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxSize().auroraBackground()
+        ) {
+            CommandButtonProjection(
+                contentModel = Command(
+                    text = text,
+                    action = { text = "Hello, Desktop!" }
+                )
+            ).project()
+        }
     }
 }
 ```
