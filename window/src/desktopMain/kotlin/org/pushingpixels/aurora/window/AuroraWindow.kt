@@ -84,7 +84,7 @@ object WindowTitlePaneSizingConstants {
 @Composable
 private fun WindowScope.WindowTitlePane(
     title: String,
-    icon: BufferedImage?,
+    icon: Painter?,
     titlePaneBounds: MutableState<Rect>
 ) {
     val density = LocalDensity.current
@@ -249,7 +249,7 @@ private fun WindowScope.WindowTitlePane(
 @Composable
 private fun WindowScope.WindowInnerContent(
     title: String,
-    icon: BufferedImage?,
+    icon: Painter?,
     undecorated: Boolean,
     titlePaneBounds: MutableState<Rect>,
     menuCommands: CommandGroup? = null,
@@ -363,7 +363,7 @@ internal fun Modifier.drawUndecoratedWindowBorder(
 @Composable
 internal fun WindowScope.WindowContent(
     title: String,
-    icon: BufferedImage?,
+    icon: Painter?,
     titlePaneBounds: MutableState<Rect>,
     undecorated: Boolean,
     menuCommands: CommandGroup? = null,
@@ -467,7 +467,7 @@ fun ApplicationScope.AuroraWindow(
             density.value = LocalDensity.current
             WindowContent(
                 title = title,
-                icon = null,
+                icon = icon,
                 titlePaneBounds = titlePaneBounds,
                 undecorated = undecorated,
                 menuCommands = menuCommands,
@@ -555,7 +555,7 @@ fun ApplicationScope.AuroraWindow(
             density.value = LocalDensity.current
             WindowContent(
                 title = title,
-                icon = null,
+                icon = icon,
                 titlePaneBounds = titlePaneBounds,
                 undecorated = undecorated,
                 menuCommands = menuCommands,
