@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.component.utils
 
-import androidx.compose.desktop.AppManager
 import androidx.compose.foundation.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionContext
