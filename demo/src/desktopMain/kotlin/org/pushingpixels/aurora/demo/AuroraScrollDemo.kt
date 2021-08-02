@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.demo
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -81,7 +80,6 @@ fun LazyListState.isItemFullyVisible(index: Int): Boolean {
     return true
 }
 
-@ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 fun main() = application {
     val state = rememberWindowState(

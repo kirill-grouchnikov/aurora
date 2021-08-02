@@ -15,12 +15,10 @@
  */
 package org.pushingpixels.aurora.demo
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
@@ -40,8 +38,6 @@ import org.pushingpixels.aurora.skin.businessSkin
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 
-@ExperimentalFoundationApi
-@ExperimentalComposeUiApi
 fun main() = application {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,

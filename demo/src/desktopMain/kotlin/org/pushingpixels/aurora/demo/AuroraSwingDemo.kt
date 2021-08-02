@@ -15,14 +15,12 @@
  */
 package org.pushingpixels.aurora.demo
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.SwingPanel
 import androidx.compose.ui.unit.dp
@@ -36,8 +34,6 @@ import java.awt.FlowLayout
 import javax.swing.JButton
 import javax.swing.JPanel
 
-@ExperimentalFoundationApi
-@ExperimentalComposeUiApi
 fun main() = application {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,

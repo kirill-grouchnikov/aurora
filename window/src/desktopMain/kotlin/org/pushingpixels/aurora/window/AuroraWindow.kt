@@ -16,12 +16,10 @@
 
 package org.pushingpixels.aurora.window
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.draw.drawBehind
@@ -51,7 +49,6 @@ import org.pushingpixels.aurora.shaper.AuroraButtonShaper
 import org.pushingpixels.aurora.shaper.ClassicButtonShaper
 import java.awt.*
 import java.awt.event.*
-import java.awt.image.BufferedImage
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
 
@@ -80,7 +77,6 @@ object WindowTitlePaneSizingConstants {
         PaddingValues(start = 1.dp, end = 2.dp, top = 1.dp, bottom = 2.dp)
 }
 
-@ExperimentalFoundationApi
 @Composable
 private fun WindowScope.WindowTitlePane(
     title: String,
@@ -245,7 +241,6 @@ private fun WindowScope.WindowTitlePane(
     }
 }
 
-@ExperimentalFoundationApi
 @Composable
 private fun WindowScope.WindowInnerContent(
     title: String,
@@ -359,7 +354,6 @@ internal fun Modifier.drawUndecoratedWindowBorder(
     )
 }
 
-@ExperimentalFoundationApi
 @Composable
 internal fun WindowScope.WindowContent(
     title: String,
@@ -420,8 +414,6 @@ internal fun WindowScope.WindowContent(
     }
 }
 
-@ExperimentalFoundationApi
-@ExperimentalComposeUiApi
 @Composable
 fun ApplicationScope.AuroraWindow(
     skin: MutableState<AuroraSkinDefinition>,
@@ -508,8 +500,6 @@ fun ApplicationScope.AuroraWindow(
 }
 
 
-@ExperimentalFoundationApi
-@ExperimentalComposeUiApi
 @Composable
 fun ApplicationScope.AuroraWindow(
     skin: AuroraSkinDefinition,
@@ -622,7 +612,7 @@ internal fun WindowScope.AuroraSkin(
         LocalButtonShaper provides buttonShaper,
         LocalPainters provides painters,
         LocalAnimationConfig provides animationConfig,
-        LocalWindow provides (window as androidx.compose.ui.awt.ComposeWindow)
+        LocalWindow provides (window as ComposeWindow)
     ) {
         content()
     }

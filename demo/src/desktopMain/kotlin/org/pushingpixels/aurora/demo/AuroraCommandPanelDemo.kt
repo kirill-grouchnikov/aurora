@@ -15,12 +15,10 @@
  */
 package org.pushingpixels.aurora.demo
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
@@ -83,8 +81,6 @@ fun getCommandPanelContentModel(vararg groupSizes: Int): CommandPanelContentMode
     )
 }
 
-@ExperimentalFoundationApi
-@ExperimentalComposeUiApi
 fun main() = application {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,

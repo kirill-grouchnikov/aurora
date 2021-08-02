@@ -17,11 +17,9 @@ package org.pushingpixels.aurora.demo
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -46,8 +44,6 @@ import org.pushingpixels.aurora.skin.getAuroraSkins
 import org.pushingpixels.aurora.skin.marinerSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 
-@ExperimentalFoundationApi
-@ExperimentalComposeUiApi
 @ExperimentalUnitApi
 fun main() = application {
     val state = rememberWindowState(
