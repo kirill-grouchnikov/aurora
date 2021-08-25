@@ -65,10 +65,10 @@ alpha *= 0.10824742f
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
-1.5504870414733887f, 0.0f, 0.0f, -12.481300354003906f,
-0.0f, 1.9787139892578125f, 0.0f, -32.491031646728516f,
+1.5504870414733887f, 0.0f, 0.0f, 0.0f,
+0.0f, 1.9787139892578125f, 0.0f, 0.0f,
 0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
+-12.481300354003906f, -32.491031646728516f, 0.0f, 1.0f)
 ))}){
 // _0_0_0
 if (generalPath == null) {
@@ -85,7 +85,7 @@ generalPath!!.cubicTo(20.985443f, 32.505833f, 24.932302f, 32.505833f, 28.131912f
 generalPath!!.cubicTo(31.33152f, 33.339386f, 33.29475f, 34.109222f, 33.278214f, 34.94062f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.radialGradient(0.0f to (colorFilter?.invoke(Color(0, 0, 0, 255)) ?: Color(0, 0, 0, 255)), 1.0f to (colorFilter?.invoke(Color(0, 0, 0, 0)) ?: Color(0, 0, 0, 0)), center = Offset(0.02137708f, 0.0072537824f), radius = 0.008674824f, tileMode = TileMode.Clamp)
+brush = Brush.radialGradient(0.0f to (colorFilter?.invoke(Color(0, 0, 0, 255)) ?: Color(0, 0, 0, 255)), 1.0f to (colorFilter?.invoke(Color(0, 0, 0, 0)) ?: Color(0, 0, 0, 0)), center = Offset(23.070679f, 34.982628f), radius = 9.44116f, tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -178,7 +178,7 @@ generalPath!!.lineTo(21.51975f, 36.50267f)
 generalPath!!.lineTo(26.498701f, 36.53392f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(114, 159, 207, 255)) ?: Color(114, 159, 207, 255)), 1.0f to (colorFilter?.invoke(Color(81, 135, 214, 255)) ?: Color(81, 135, 214, 255)), start = Offset(-0.031098867f, -0.03246263f), end = Offset(-0.030917305f, -0.03268762f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(114, 159, 207, 255)) ?: Color(114, 159, 207, 255)), 1.0f to (colorFilter?.invoke(Color(81, 135, 214, 255)) ?: Color(81, 135, 214, 255)), start = Offset(16.874998f, 22.851799f), end = Offset(27.900846f, 34.9768f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(255, 255, 255, 255)) ?: Color(255, 255, 255, 255)), 1.0f to (colorFilter?.invoke(Color(255, 255, 255, 87)) ?: Color(255, 255, 255, 87)), start = Offset(16.874998f, 22.851799f), end = Offset(27.900846f, 34.9768f), tileMode = TileMode.Clamp)
 stroke = Stroke(width=1.0000006f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
@@ -331,7 +331,6 @@ alpha = alphaStack.removeAt(0)
         return _height
     }
 
-    @Composable
     override fun setSize(width: Dp, height: Dp) {
         _width = width
         _height = height

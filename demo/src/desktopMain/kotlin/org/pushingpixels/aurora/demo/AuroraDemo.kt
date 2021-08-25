@@ -21,6 +21,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -34,9 +35,11 @@ import org.pushingpixels.aurora.component.contextmenu.auroraContextMenu
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.demo.svg.material.*
+import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.demo.svg.vaadin.*
 import org.pushingpixels.aurora.icon.AuroraIcon
+import org.pushingpixels.aurora.skin.businessSkin
 import org.pushingpixels.aurora.skin.getAuroraSkins
 import org.pushingpixels.aurora.skin.marinerSkin
 import org.pushingpixels.aurora.window.AuroraDecorationArea
@@ -50,13 +53,14 @@ fun main() = application {
         position = WindowPosition.Aligned(Alignment.Center),
         size = WindowSize(720.dp, 660.dp)
     )
-    val skin = mutableStateOf(marinerSkin())
+    val skin = mutableStateOf(businessSkin())
 
     AuroraWindow(
         skin = skin,
         title = "Aurora Demo",
         state = state,
         undecorated = true,
+        //icon = radiance_menu.factory().createNewIcon() as Painter,
         onCloseRequest = ::exitApplication,
         menuCommands = CommandGroup(
             commands = listOf(

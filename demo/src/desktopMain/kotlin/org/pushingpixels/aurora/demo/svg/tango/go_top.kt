@@ -65,10 +65,10 @@ alpha *= 0.2994652f
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
-1.2144659757614136f, 0.0f, 0.0f, -6.694176197052002f,
-0.0f, 0.5954579710960388f, 0.0f, 16.66629981994629f,
+1.2144659757614136f, 0.0f, 0.0f, 0.0f,
+0.0f, 0.5954579710960388f, 0.0f, 0.0f,
 0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
+-6.694176197052002f, 16.66629981994629f, 0.0f, 1.0f)
 ))}){
 // _0_0_0
 if (generalPath == null) {
@@ -85,7 +85,7 @@ generalPath!!.cubicTo(21.845287f, 27.609516f, 27.828962f, 27.609516f, 32.67976f,
 generalPath!!.cubicTo(37.530556f, 30.626177f, 40.50693f, 33.412262f, 40.48186f, 36.421127f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.radialGradient(0.0f to (colorFilter?.invoke(Color(0, 0, 0, 255)) ?: Color(0, 0, 0, 255)), 1.0f to (colorFilter?.invoke(Color(0, 0, 0, 0)) ?: Color(0, 0, 0, 0)), center = Offset(0.04035041f, 0.031757787f), radius = 0.025416452f, tileMode = TileMode.Clamp)
+brush = Brush.radialGradient(0.0f to (colorFilter?.invoke(Color(0, 0, 0, 255)) ?: Color(0, 0, 0, 255)), 1.0f to (colorFilter?.invoke(Color(0, 0, 0, 0)) ?: Color(0, 0, 0, 0)), center = Offset(24.837126f, 36.42112f), radius = 15.644739f, tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -120,7 +120,7 @@ generalPath!!.lineTo(40.498104f, 1.5f)
 generalPath!!.lineTo(6.5f, 1.5f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.radialGradient(0.0f to (colorFilter?.invoke(Color(115, 210, 22, 255)) ?: Color(115, 210, 22, 255)), 1.0f to (colorFilter?.invoke(Color(78, 154, 6, 255)) ?: Color(78, 154, 6, 255)), center = Offset(-0.019634217f, 0.011977047f), radius = 0.017627142f, tileMode = TileMode.Clamp)
+brush = Brush.radialGradient(0.0f to (colorFilter?.invoke(Color(115, 210, 22, 255)) ?: Color(115, 210, 22, 255)), 1.0f to (colorFilter?.invoke(Color(78, 154, 6, 255)) ?: Color(78, 154, 6, 255)), center = Offset(23.514278f, 33.0438f), radius = 14.294449f, tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 brush = SolidColor(colorFilter?.invoke(Color(58, 115, 4, 255)) ?: Color(58, 115, 4, 255))
 stroke = Stroke(width=1.0000004f, cap=StrokeCap.Round, join=StrokeJoin.Round, miter=10.0f)
@@ -172,7 +172,7 @@ generalPath!!.lineTo(22.681929f, 7.018591f)
 generalPath!!.lineTo(7.5855236f, 25.03253f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.radialGradient(0.0f to (colorFilter?.invoke(Color(255, 255, 255, 255)) ?: Color(255, 255, 255, 255)), 1.0f to (colorFilter?.invoke(Color(255, 255, 255, 0)) ?: Color(255, 255, 255, 0)), center = Offset(-0.026407164f, 0.075971164f), radius = 0.031764288f, tileMode = TileMode.Clamp)
+brush = Brush.radialGradient(0.0f to (colorFilter?.invoke(Color(255, 255, 255, 255)) ?: Color(255, 255, 255, 255)), 1.0f to (colorFilter?.invoke(Color(255, 255, 255, 0)) ?: Color(255, 255, 255, 0)), center = Offset(16.471697f, -1.1440964f), radius = 35.145233f, tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -237,7 +237,7 @@ Matrix(values=floatArrayOf(
 ))}){
 // _0_0_5
 shape = Outline.Rectangle(rect = Rect(left = 6.894291400909424f, top = 1.8612821102142334f, right = 40.12831163406372f, bottom = 7.164582967758179f))
-brush = Brush.radialGradient(0.0f to (colorFilter?.invoke(Color(255, 255, 255, 255)) ?: Color(255, 255, 255, 255)), 1.0f to (colorFilter?.invoke(Color(255, 255, 255, 0)) ?: Color(255, 255, 255, 0)), center = Offset(-0.026716597f, 0.070141494f), radius = 0.036948558f, tileMode = TileMode.Clamp)
+brush = Brush.radialGradient(0.0f to (colorFilter?.invoke(Color(255, 255, 255, 255)) ?: Color(255, 255, 255, 255)), 1.0f to (colorFilter?.invoke(Color(255, 255, 255, 0)) ?: Color(255, 255, 255, 0)), center = Offset(14.70393f, 12.821266f), radius = 35.145233f, tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -336,7 +336,6 @@ alpha = alphaStack.removeAt(0)
         return _height
     }
 
-    @Composable
     override fun setSize(width: Dp, height: Dp) {
         _width = width
         _height = height

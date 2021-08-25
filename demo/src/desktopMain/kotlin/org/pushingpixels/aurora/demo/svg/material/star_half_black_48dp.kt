@@ -43,10 +43,10 @@ alpha *= 1.0f
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
-2.0f, 0.0f, 0.0f, -0.0f,
-0.0f, 2.0f, 0.0f, -0.0f,
+2.0f, 0.0f, 0.0f, 0.0f,
+0.0f, 2.0f, 0.0f, 0.0f,
 0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
+-0.0f, -0.0f, 0.0f, 1.0f)
 ))}){
 // _0
 alphaStack.add(0, alpha)
@@ -235,7 +235,6 @@ alpha = alphaStack.removeAt(0)
         return _height
     }
 
-    @Composable
     override fun setSize(width: Dp, height: Dp) {
         _width = width
         _height = height

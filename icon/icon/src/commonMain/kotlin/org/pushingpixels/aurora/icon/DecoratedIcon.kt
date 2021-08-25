@@ -57,7 +57,6 @@ class DecoratedIcon(
         return this.delegate.getWidth()
     }
 
-    @Composable
     override fun setSize(width: Dp, height: Dp) {
         this.delegate.setSize(width, height)
     }

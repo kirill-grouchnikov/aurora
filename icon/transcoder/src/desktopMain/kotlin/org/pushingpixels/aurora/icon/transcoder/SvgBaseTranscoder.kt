@@ -351,19 +351,19 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         val matrix = Matrix(
             values = floatArrayOf(
                 transfMatrix[0].toFloat(),
-                transfMatrix[2].toFloat(),
-                0.0f,
-                transfMatrix[4].toFloat(),
                 transfMatrix[1].toFloat(),
+                0.0f,
+                0.0f,
+                transfMatrix[2].toFloat(),
                 transfMatrix[3].toFloat(),
                 0.0f,
-                transfMatrix[5].toFloat(),
+                0.0f,
                 0.0f,
                 0.0f,
                 1.0f,
                 0.0f,
-                0.0f,
-                0.0f,
+                transfMatrix[4].toFloat(),
+                transfMatrix[5].toFloat(),
                 0.0f,
                 1.0f
             )
@@ -405,15 +405,15 @@ abstract class SvgBaseTranscoder(private val classname: String) {
 
         printWriterManager!!.println("    val tTiled = Matrix(values=floatArrayOf(")
         printWriterManager!!.println(
-            "" + transfMatrix[0] + "f, " + transfMatrix[2] + "f, "
-                    + "0.0f, " + transfMatrix[4] + "f,"
+            "" + transfMatrix[0] + "f, " + transfMatrix[1] + "f, 0.0f, 0.0f,"
         )
         printWriterManager!!.println(
-            "" + transfMatrix[1] + "f, " + transfMatrix[3] + "f, "
-                    + "0.0f, " + transfMatrix[5] + "f,"
+            "" + transfMatrix[2] + "f, " + transfMatrix[3] + "f, 0.0f, 0.0f,"
         )
         printWriterManager!!.println("0.0f, 0.0f, 1.0f, 0.0f,")
-        printWriterManager!!.println("0.0f, 0.0f, 0.0f, 1.0f))")
+        printWriterManager!!.println(
+            "" + transfMatrix[4] + "f, " + transfMatrix[5] + "f, 0.0f, 1.0f))"
+        )
 
         // Apply the transformation from the pattern node
         printWriterManager!!.println("withTransform({transform(tTiled)}){")
@@ -708,19 +708,19 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         val matrix = Matrix(
             values = floatArrayOf(
                 transfMatrix[0].toFloat(),
-                transfMatrix[2].toFloat(),
-                0.0f,
-                transfMatrix[4].toFloat(),
                 transfMatrix[1].toFloat(),
+                0.0f,
+                0.0f,
+                transfMatrix[2].toFloat(),
                 transfMatrix[3].toFloat(),
                 0.0f,
-                transfMatrix[5].toFloat(),
+                0.0f,
                 0.0f,
                 0.0f,
                 1.0f,
                 0.0f,
-                0.0f,
-                0.0f,
+                transfMatrix[4].toFloat(),
+                transfMatrix[5].toFloat(),
                 0.0f,
                 1.0f
             )
@@ -1248,15 +1248,15 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             printWriterManager!!.println("transform(")
             printWriterManager!!.println("Matrix(values=floatArrayOf(")
             printWriterManager!!.println(
-                "" + transfMatrix[0] + "f, " + transfMatrix[2] + "f, "
-                        + "0.0f, " + transfMatrix[4] + "f,"
+                "" + transfMatrix[0] + "f, " + transfMatrix[1] + "f, 0.0f, 0.0f,"
             )
             printWriterManager!!.println(
-                "" + transfMatrix[1] + "f, " + transfMatrix[3] + "f, "
-                        + "0.0f, " + transfMatrix[5] + "f,"
+                "" + transfMatrix[2] + "f, " + transfMatrix[3] + "f, 0.0f, 0.0f,"
             )
             printWriterManager!!.println("0.0f, 0.0f, 1.0f, 0.0f,")
-            printWriterManager!!.println("0.0f, 0.0f, 0.0f, 1.0f)")
+            printWriterManager!!.println(
+                "" + transfMatrix[4] + "f, " + transfMatrix[5] + "f, 0.0f, 1.0f)"
+            )
             printWriterManager!!.println("))}){")
         }
         try {

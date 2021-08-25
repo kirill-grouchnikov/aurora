@@ -36,7 +36,6 @@ class ColorSolidIcon(var _width: Dp, var _height: Dp, val color: Color) : Aurora
         return _width
     }
 
-    @Composable
     override fun setSize(width: Dp, height: Dp) {
         this._width = width
         this._height = height
@@ -82,7 +81,6 @@ class ColorGradientIcon(
         return _width
     }
 
-    @Composable
     override fun setSize(width: Dp, height: Dp) {
         this._width = width
         this._height = height

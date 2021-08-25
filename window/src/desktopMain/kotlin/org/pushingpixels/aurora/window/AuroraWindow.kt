@@ -16,6 +16,7 @@
 
 package org.pushingpixels.aurora.window
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.runtime.*
@@ -23,12 +24,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
@@ -108,6 +112,12 @@ private fun WindowScope.WindowTitlePane(
                     .padding(WindowTitlePaneSizingConstants.TitlePaneContentPadding),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                if (icon != null) {
+                    Box(
+                        modifier = Modifier.size(16.dp)
+                            .paint(painter = icon, sizeToIntrinsics = false)
+                    )
+                }
                 WindowDraggableArea(modifier = Modifier.weight(1f)) {
                     val colorScheme =
                         skinColors.getEnabledColorScheme(DecorationAreaType.TitlePane)
@@ -216,7 +226,12 @@ private fun WindowScope.WindowTitlePane(
                     contentModel = Command(
                         text = "",
                         action = {
-                            (window as? Frame)?.dispatchEvent(WindowEvent(window, WindowEvent.WINDOW_CLOSING))
+                            (window as? Frame)?.dispatchEvent(
+                                WindowEvent(
+                                    window,
+                                    WindowEvent.WINDOW_CLOSING
+                                )
+                            )
                         },
                         iconFactory = object :
                             TransitionAwareIcon.TransitionAwareIconFactory() {

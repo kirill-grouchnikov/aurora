@@ -43,10 +43,10 @@ alpha *= 1.0f
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
-0.0020000000949949026f, 0.0f, 0.0f, -0.0f,
-0.0f, 0.0020000000949949026f, 0.0f, -0.0f,
+0.0020000000949949026f, 0.0f, 0.0f, 0.0f,
+0.0f, 0.0020000000949949026f, 0.0f, 0.0f,
 0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
+-0.0f, -0.0f, 0.0f, 1.0f)
 ))}){
 // _0
 alphaStack.add(0, alpha)
@@ -54,19 +54,19 @@ alpha *= 1.0f
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
-1.6699880361557007f, 0.0f, 0.0f, -171.74200439453125f,
-0.0f, 1.6844229698181152f, 0.0f, -186.52874755859375f,
+1.6699880361557007f, 0.0f, 0.0f, 0.0f,
+0.0f, 1.6844229698181152f, 0.0f, 0.0f,
 0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
+-171.74200439453125f, -186.52874755859375f, 0.0f, 1.0f)
 ))}){
 // _0_0
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
-1.0f, 0.0f, 0.0f, 149.53399658203125f,
-0.0f, 1.0f, 0.0f, 154.8280029296875f,
+1.0f, 0.0f, 0.0f, 0.0f,
+0.0f, 1.0f, 0.0f, 0.0f,
 0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
+149.53399658203125f, 154.8280029296875f, 0.0f, 1.0f)
 ))}){
 // _0_0_0
 val image484482440f4da3ada2d5781785d20a7c = getImage484482440f4da3ada2d5781785d20a7c()
@@ -320,7 +320,6 @@ private fun getImage484482440f4da3ada2d5781785d20a7c(): ImageBitmap? {
         return _height
     }
 
-    @Composable
     override fun setSize(width: Dp, height: Dp) {
         _width = width
         _height = height

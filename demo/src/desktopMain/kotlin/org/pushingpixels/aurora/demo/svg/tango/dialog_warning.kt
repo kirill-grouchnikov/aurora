@@ -65,10 +65,10 @@ alpha *= 1.0f
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
-1.5666669607162476f, 0.0f, 0.0f, -8.925565719604492f,
-0.0f, 1.5666669607162476f, 0.0f, -23.94763946533203f,
+1.5666669607162476f, 0.0f, 0.0f, 0.0f,
+0.0f, 1.5666669607162476f, 0.0f, 0.0f,
 0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
+-8.925565719604492f, -23.94763946533203f, 0.0f, 1.0f)
 ))}){
 // _0_0_0
 alphaStack.add(0, alpha)
@@ -76,10 +76,10 @@ alpha *= 1.0f
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
-0.014440740458667278f, 0.0f, 0.0f, 33.388710021972656f,
-0.0f, 0.013319729827344418f, 0.0f, 40.40336990356445f,
+0.014440740458667278f, 0.0f, 0.0f, 0.0f,
+0.0f, 0.013319729827344418f, 0.0f, 0.0f,
 0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
+33.388710021972656f, 40.40336990356445f, 0.0f, 1.0f)
 ))}){
 // _0_0_0_0
 alphaStack.add(0, alpha)
@@ -94,7 +94,7 @@ Matrix(values=floatArrayOf(
 ))}){
 // _0_0_0_0_0
 shape = Outline.Rectangle(rect = Rect(left = -1559.2523193359375f, top = -150.6968536376953f, right = -219.6187744140625f, bottom = 327.6603240966797f))
-brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(0, 0, 0, 0)) ?: Color(0, 0, 0, 0)), 0.5f to (colorFilter?.invoke(Color(0, 0, 0, 255)) ?: Color(0, 0, 0, 255)), 1.0f to (colorFilter?.invoke(Color(0, 0, 0, 0)) ?: Color(0, 0, 0, 0)), start = Offset(-9.4081636E-4f, -8.086308E-4f), end = Offset(-7.603415E-4f, -0.0010863813f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(0, 0, 0, 0)) ?: Color(0, 0, 0, 0)), 0.5f to (colorFilter?.invoke(Color(0, 0, 0, 255)) ?: Color(0, 0, 0, 255)), 1.0f to (colorFilter?.invoke(Color(0, 0, 0, 0)) ?: Color(0, 0, 0, 0)), start = Offset(-1051.9354f, -150.69684f), end = Offset(-1051.9354f, 327.6604f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -120,7 +120,7 @@ generalPath!!.cubicTo(-76.74459f, 328.55087f, 125.78146f, 220.48074f, 125.78138f
 generalPath!!.cubicTo(125.78138f, -43.572304f, -33.655437f, -150.68036f, -219.61876f, -150.68037f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.radialGradient(0.0f to (colorFilter?.invoke(Color(0, 0, 0, 255)) ?: Color(0, 0, 0, 255)), 1.0f to (colorFilter?.invoke(Color(0, 0, 0, 0)) ?: Color(0, 0, 0, 0)), center = Offset(-0.0010699814f, -6.103196E-4f), radius = 9.000149E-5f, tileMode = TileMode.Clamp)
+brush = Brush.radialGradient(0.0f to (colorFilter?.invoke(Color(0, 0, 0, 255)) ?: Color(0, 0, 0, 255)), 1.0f to (colorFilter?.invoke(Color(0, 0, 0, 0)) ?: Color(0, 0, 0, 0)), center = Offset(-211.146f, 85.66791f), radius = 325.0f, tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -146,7 +146,7 @@ generalPath!!.cubicTo(-1702.1265f, 328.55087f, -1904.6525f, 220.48074f, -1904.65
 generalPath!!.cubicTo(-1904.6525f, -43.572304f, -1745.2157f, -150.68036f, -1559.2523f, -150.68037f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.radialGradient(0.0f to (colorFilter?.invoke(Color(0, 0, 0, 255)) ?: Color(0, 0, 0, 255)), 1.0f to (colorFilter?.invoke(Color(0, 0, 0, 0)) ?: Color(0, 0, 0, 0)), center = Offset(0.004714046f, -0.0026889017f), radius = 0.0011328926f, tileMode = TileMode.Clamp)
+brush = Brush.radialGradient(0.0f to (colorFilter?.invoke(Color(0, 0, 0, 255)) ?: Color(0, 0, 0, 255)), 1.0f to (colorFilter?.invoke(Color(0, 0, 0, 0)) ?: Color(0, 0, 0, 0)), center = Offset(-1567.7247f, 85.66791f), radius = 325.0f, tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -157,10 +157,10 @@ alpha *= 1.0f
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
-1.0f, 0.004537845961749554f, 0.0f, -0.13890700042247772f,
-0.0f, 1.0f, 0.0f, -1.3947179923227081E-15f,
+1.0f, 0.0f, 0.0f, 0.0f,
+0.004537845961749554f, 1.0f, 0.0f, 0.0f,
 0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
+-0.13890700042247772f, -1.3947179923227081E-15f, 0.0f, 1.0f)
 ))}){
 // _0_0_0_1
 alphaStack.add(0, alpha)
@@ -168,10 +168,10 @@ alpha *= 1.0f
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
-1.0f, -0.00872668344527483f, 0.0f, 0.32807400822639465f,
-0.0f, 1.0f, 0.0f, 1.276595950126648f,
+1.0f, 0.0f, 0.0f, 0.0f,
+-0.00872668344527483f, 1.0f, 0.0f, 0.0f,
 0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
+0.32807400822639465f, 1.276595950126648f, 0.0f, 1.0f)
 ))}){
 // _0_0_0_1_0
 if (generalPath == null) {
@@ -220,10 +220,10 @@ alpha *= 1.0f
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
-0.625f, -0.005534933879971504f, 0.0f, 6.164052963256836f,
-0.0f, 0.634253978729248f, 0.0f, 15.760549545288086f,
+0.625f, 0.0f, 0.0f, 0.0f,
+-0.005534933879971504f, 0.634253978729248f, 0.0f, 0.0f,
 0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
+6.164052963256836f, 15.760549545288086f, 0.0f, 1.0f)
 ))}){
 // _0_0_0_1_1
 alphaStack.add(0, alpha)
@@ -262,13 +262,13 @@ alpha *= 0.5f
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
-1.0f, -0.00872668344527483f, 0.0f, 0.3182770013809204f,
-0.0f, 1.0f, 0.0f, 1.276595950126648f,
+1.0f, 0.0f, 0.0f, 0.0f,
+-0.00872668344527483f, 1.0f, 0.0f, 0.0f,
 0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
+0.3182770013809204f, 1.276595950126648f, 0.0f, 1.0f)
 ))}){
 // _0_0_0_1_2
-brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(255, 255, 255, 255)) ?: Color(255, 255, 255, 255)), 1.0f to (colorFilter?.invoke(Color(255, 255, 255, 87)) ?: Color(255, 255, 255, 87)), start = Offset(0.14450783f, 0.5320508f), end = Offset(0.2380623f, 0.3873283f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(255, 255, 255, 255)) ?: Color(255, 255, 255, 255)), 1.0f to (colorFilter?.invoke(Color(255, 255, 255, 87)) ?: Color(255, 255, 255, 87)), start = Offset(9.558879f, 29.48385f), end = Offset(29.610327f, 46.318954f), tileMode = TileMode.Clamp)
 stroke = Stroke(width=0.6382979f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -297,10 +297,10 @@ alpha *= 1.0f
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
-0.5550879836082458f, 0.0f, 0.0f, 7.749711036682129f,
-0.0f, 0.5550519824028015f, 0.0f, 17.801959991455078f,
+0.5550879836082458f, 0.0f, 0.0f, 0.0f,
+0.0f, 0.5550519824028015f, 0.0f, 0.0f,
 0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
+7.749711036682129f, 17.801959991455078f, 0.0f, 1.0f)
 ))}){
 // _0_0_0_2
 alphaStack.add(0, alpha)
@@ -437,7 +437,6 @@ alpha = alphaStack.removeAt(0)
         return _height
     }
 
-    @Composable
     override fun setSize(width: Dp, height: Dp) {
         _width = width
         _height = height

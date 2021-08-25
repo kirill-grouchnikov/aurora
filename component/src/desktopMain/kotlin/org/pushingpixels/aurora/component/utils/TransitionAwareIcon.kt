@@ -76,7 +76,6 @@ class TransitionAwareIcon(
         return iconHeight
     }
 
-    @Composable
     override fun setSize(width: Dp, height: Dp) {
         // This icon only "pretends" to be resizable
     }

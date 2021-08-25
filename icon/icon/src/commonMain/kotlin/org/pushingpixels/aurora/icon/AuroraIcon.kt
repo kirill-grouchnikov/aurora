@@ -36,7 +36,6 @@ interface AuroraIcon {
     fun getHeight(): Dp
 
     /** Changes the size of this icon. */
-    @Composable
     fun setSize(width: Dp, height: Dp)
 
     /** Sets the color filter to be used on all the colors of this icon. */
