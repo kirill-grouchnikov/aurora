@@ -441,7 +441,7 @@ fun ApplicationScope.AuroraWindow(
     state: WindowState = rememberWindowState(),
     visible: Boolean = true,
     title: String = "Untitled",
-    icon: AuroraIcon? = null,
+    iconFactory: AuroraIcon.Factory? = null,
     iconFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     menuCommands: CommandGroup? = null,
     undecorated: Boolean = false,
@@ -455,6 +455,21 @@ fun ApplicationScope.AuroraWindow(
 ) {
     val titlePaneBounds = mutableStateOf(Rect.Zero)
     val density = mutableStateOf(Density(1.0f, 1.0f))
+
+    val icon = iconFactory?.createNewIcon()
+    if (icon != null) {
+        val scheme = skin.value.colors.getEnabledColorScheme(DecorationAreaType.TitlePane)
+        when (iconFilterStrategy) {
+            IconFilterStrategy.ThemedFollowText ->
+                icon.setColorFilter { scheme.foregroundColor }
+            IconFilterStrategy.ThemedFollowColorScheme ->
+                icon.setColorFilter(getColorSchemeFilter(scheme, 1.0f, 1.0f))
+            IconFilterStrategy.Original -> {
+                // do not touch icon
+            }
+        }
+    }
+
     Window(
         onCloseRequest = onCloseRequest,
         state = state,
@@ -478,18 +493,6 @@ fun ApplicationScope.AuroraWindow(
             animationConfig = AuroraSkin.animationConfig
         ) {
             density.value = LocalDensity.current
-            if (icon != null) {
-                val scheme = skin.value.colors.getEnabledColorScheme(DecorationAreaType.TitlePane)
-                when (iconFilterStrategy) {
-                    IconFilterStrategy.ThemedFollowText ->
-                        icon.setColorFilter { scheme.foregroundColor }
-                    IconFilterStrategy.ThemedFollowColorScheme ->
-                        icon.setColorFilter(getColorSchemeFilter(scheme, 1.0f, 1.0f))
-                    IconFilterStrategy.Original -> {
-                        // do not touch icon
-                    }
-                }
-            }
             WindowContent(
                 title = title,
                 icon = icon,
@@ -540,7 +543,7 @@ fun ApplicationScope.AuroraWindow(
     state: WindowState = rememberWindowState(),
     visible: Boolean = true,
     title: String = "Untitled",
-    icon: AuroraIcon? = null,
+    iconFactory: AuroraIcon.Factory? = null,
     iconFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     menuCommands: CommandGroup? = null,
     undecorated: Boolean = false,
@@ -554,6 +557,21 @@ fun ApplicationScope.AuroraWindow(
 ) {
     val titlePaneBounds = mutableStateOf(Rect.Zero)
     val density = mutableStateOf(Density(1.0f, 1.0f))
+
+    val icon = iconFactory?.createNewIcon()
+    if (icon != null) {
+        val scheme = skin.colors.getEnabledColorScheme(DecorationAreaType.TitlePane)
+        when (iconFilterStrategy) {
+            IconFilterStrategy.ThemedFollowText ->
+                icon.setColorFilter { scheme.foregroundColor }
+            IconFilterStrategy.ThemedFollowColorScheme ->
+                icon.setColorFilter(getColorSchemeFilter(scheme, 1.0f, 1.0f))
+            IconFilterStrategy.Original -> {
+                // do not touch icon
+            }
+        }
+    }
+
     Window(
         onCloseRequest = onCloseRequest,
         state = state,
@@ -577,18 +595,6 @@ fun ApplicationScope.AuroraWindow(
             animationConfig = AuroraSkin.animationConfig
         ) {
             density.value = LocalDensity.current
-            if (icon != null) {
-                val scheme = skin.colors.getEnabledColorScheme(DecorationAreaType.TitlePane)
-                when (iconFilterStrategy) {
-                    IconFilterStrategy.ThemedFollowText ->
-                        icon.setColorFilter { scheme.foregroundColor }
-                    IconFilterStrategy.ThemedFollowColorScheme ->
-                        icon.setColorFilter(getColorSchemeFilter(scheme, 1.0f, 1.0f))
-                    IconFilterStrategy.Original -> {
-                        // do not touch icon
-                    }
-                }
-            }
             WindowContent(
                 title = title,
                 icon = icon,
