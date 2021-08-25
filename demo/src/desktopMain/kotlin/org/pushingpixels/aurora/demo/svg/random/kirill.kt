@@ -317,7 +317,7 @@ private fun getImage484482440f4da3ada2d5781785d20a7c(): ImageBitmap? {
 
     override fun DrawScope.onDraw() {
         setSize(size.width.toDp(), size.height.toDp())
-        paintIcon(DrawScope@ this)
+        paintIcon(this)
     }
 
     override fun getWidth(): Dp {

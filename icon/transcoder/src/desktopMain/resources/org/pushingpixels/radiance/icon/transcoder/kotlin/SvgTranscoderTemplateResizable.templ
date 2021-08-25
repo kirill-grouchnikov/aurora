@@ -118,7 +118,7 @@ class TOKEN_CLASSNAME private constructor(var _width: Dp, var _height: Dp) : Aur
 
     override fun DrawScope.onDraw() {
         setSize(size.width.toDp(), size.height.toDp())
-        paintIcon(DrawScope@ this)
+        paintIcon(this)
     }
 
     override fun getWidth(): Dp {
