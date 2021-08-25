@@ -27,7 +27,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.icon.AuroraIcon
 
-class ColorSolidIcon(var _width: Dp, var _height: Dp, val color: Color) : AuroraIcon {
+class ColorSolidIcon(var _width: Dp, var _height: Dp, val color: Color) : AuroraIcon() {
+    override val intrinsicSize: Size
+        get() = Size.Unspecified
+
+    override fun DrawScope.onDraw() {
+        setSize(size.width.toDp(), size.height.toDp())
+        paintIcon(DrawScope@ this)
+    }
+
     override fun getHeight(): Dp {
         return _height
     }
@@ -72,9 +80,17 @@ class ColorGradientIcon(
     var _height: Dp,
     val colorTop: Color,
     val colorBottom: Color
-) : AuroraIcon {
+) : AuroraIcon() {
     override fun getHeight(): Dp {
         return _height
+    }
+
+    override val intrinsicSize: Size
+        get() = Size.Unspecified
+
+    override fun DrawScope.onDraw() {
+        setSize(size.width.toDp(), size.height.toDp())
+        paintIcon(DrawScope@ this)
     }
 
     override fun getWidth(): Dp {

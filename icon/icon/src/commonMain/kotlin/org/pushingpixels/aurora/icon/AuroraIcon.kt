@@ -23,23 +23,24 @@ import androidx.compose.ui.draw.DrawModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Dp
 
-interface AuroraIcon {
+abstract class AuroraIcon: Painter() {
     /** Draws the icon with the provided draw scope. */
-    fun paintIcon(drawScope: DrawScope)
+    abstract fun paintIcon(drawScope: DrawScope)
 
     /** Returns the current width of this icon. */
-    fun getWidth(): Dp
+    abstract fun getWidth(): Dp
 
     /** Returns the current height of this icon. */
-    fun getHeight(): Dp
+    abstract fun getHeight(): Dp
 
     /** Changes the size of this icon. */
-    fun setSize(width: Dp, height: Dp)
+    abstract fun setSize(width: Dp, height: Dp)
 
     /** Sets the color filter to be used on all the colors of this icon. */
-    fun setColorFilter(colorFilter: ((Color) -> Color)?)
+    abstract fun setColorFilter(colorFilter: ((Color) -> Color)?)
 
     /**
      * Interface for creating new icons of this type.

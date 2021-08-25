@@ -25,7 +25,7 @@ import kotlin.math.min
  * This class has been automatically generated using
  * <a href="https://github.com/kirill-grouchnikov/aurora">Aurora SVG transcoder</a>.
  */
-class add_circle_outline_24px private constructor(var _width: Dp, var _height: Dp) : AuroraIcon {
+class add_circle_outline_24px private constructor(var _width: Dp, var _height: Dp) : AuroraIcon() {
     @Suppress("UNUSED_VARIABLE") private var shape: Outline? = null
     @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
@@ -192,6 +192,14 @@ alpha = alphaStack.removeAt(0)
         }
 
         
+    }
+
+    override val intrinsicSize: Size
+        get() = Size.Unspecified
+
+    override fun DrawScope.onDraw() {
+        setSize(size.width.toDp(), size.height.toDp())
+        paintIcon(DrawScope@ this)
     }
 
     override fun getWidth(): Dp {

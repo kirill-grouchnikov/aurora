@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.icon
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Dp
@@ -26,7 +27,7 @@ import androidx.compose.ui.unit.Dp
 class DecoratedIcon(
     private val delegate: AuroraIcon,
     private vararg val decorators: IconDecorator
-) : AuroraIcon {
+) : AuroraIcon() {
     /**
      * Icon decorator interface.
      *
@@ -48,6 +49,14 @@ class DecoratedIcon(
     }
 
     private var colorFilter: ((Color) -> Color)? = null
+
+    override val intrinsicSize: Size
+        get() = Size.Unspecified
+
+    override fun DrawScope.onDraw() {
+        setSize(size.width.toDp(), size.height.toDp())
+        paintIcon(DrawScope@ this)
+    }
 
     override fun getHeight(): Dp {
         return this.delegate.getHeight()
