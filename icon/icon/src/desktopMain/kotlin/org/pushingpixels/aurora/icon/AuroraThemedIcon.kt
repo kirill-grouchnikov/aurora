@@ -22,6 +22,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.DrawModifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.graphicsLayer
@@ -130,7 +131,7 @@ fun AuroraThemedIcon(
                     modifier.size(
                         width = icon.getWidth(),
                         height = icon.getHeight()
-                    ).auroraIconPaint(icon)
+                    ).paint(painter = icon)
                 )
             IconFilterStrategy.ThemedFollowText -> {
                 // For disabled states, the text color already accounts for the
@@ -140,7 +141,7 @@ fun AuroraThemedIcon(
                     modifier.size(
                         width = icon.getWidth(),
                         height = icon.getHeight()
-                    ).auroraIconPaint(icon)
+                    ).paint(painter = icon)
                 )
             }
             IconFilterStrategy.ThemedFollowColorScheme -> {
@@ -158,7 +159,7 @@ fun AuroraThemedIcon(
                     modifier.size(
                         width = icon.getWidth(),
                         height = icon.getHeight()
-                    ).auroraIconPaint(icon)
+                    ).paint(painter = icon)
                 )
             }
         }
@@ -171,7 +172,7 @@ fun AuroraThemedIcon(
                 modifier.size(
                     width = icon.getWidth(),
                     height = icon.getHeight()
-                ).auroraIconPaint(icon)
+                ).paint(painter = icon)
             )
         } else {
             Box(

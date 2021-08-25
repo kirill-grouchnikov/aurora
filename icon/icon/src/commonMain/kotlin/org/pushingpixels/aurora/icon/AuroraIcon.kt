@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.DrawModifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -57,15 +58,6 @@ abstract class AuroraIcon: Painter() {
     }
 }
 
-fun Modifier.auroraIconPaint(icon: AuroraIcon) =
-    this.then(AuroraIconModifier(icon = icon))
-
-class AuroraIconModifier(val icon: AuroraIcon) : DrawModifier {
-    override fun ContentDrawScope.draw() {
-        icon.paintIcon(this)
-    }
-}
-
 @Composable
 fun AuroraIcon(
     icon: AuroraIcon,
@@ -75,7 +67,7 @@ fun AuroraIcon(
         modifier.size(
             width = icon.getWidth(),
             height = icon.getHeight()
-        ).auroraIconPaint(icon)
+        ).paint(painter = icon)
     )
 }
 
