@@ -68,19 +68,19 @@ fun IconDemoArea() {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = media_floppy.of(20.dp, 20.dp))
+                AuroraIcon(icon = media_floppy.of(40.dp, 40.dp))
                 LabelProjection(contentModel = LabelContentModel(text = "icon 1")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = drive_harddisk.of(20.dp, 20.dp))
+                AuroraIcon(icon = drive_harddisk.of(40.dp, 40.dp))
                 LabelProjection(contentModel = LabelContentModel(text = "icon 2")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = help_browser.of(20.dp, 20.dp))
+                AuroraIcon(icon = help_browser.of(40.dp, 40.dp))
                 LabelProjection(contentModel = LabelContentModel(text = "icon 3")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = system_search.of(20.dp, 20.dp))
+                AuroraIcon(icon = system_search.of(40.dp, 40.dp))
                 LabelProjection(contentModel = LabelContentModel(text = "icon 4")).project()
             }
         }
@@ -89,11 +89,11 @@ fun IconDemoArea() {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = pattern.of(64.dp, 64.dp))
+                AuroraIcon(icon = pattern.of(128.dp, 128.dp))
                 LabelProjection(contentModel = LabelContentModel(text = "pattern")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = text.of(64.dp, 64.dp))
+                AuroraIcon(icon = text.of(128.dp, 128.dp))
                 LabelProjection(contentModel = LabelContentModel(text = "text")).project()
             }
         }
@@ -102,11 +102,11 @@ fun IconDemoArea() {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = marker.of(64.dp, 64.dp))
+                AuroraIcon(icon = marker.of(128.dp, 128.dp))
                 LabelProjection(contentModel = LabelContentModel(text = "themed 3")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = kirill.of(64.dp, 64.dp))
+                AuroraIcon(icon = kirill.of(128.dp, 128.dp))
                 LabelProjection(contentModel = LabelContentModel(text = "raster")).project()
             }
         }
