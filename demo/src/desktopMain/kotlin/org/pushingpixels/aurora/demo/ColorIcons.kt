@@ -33,7 +33,7 @@ class ColorSolidIcon(var _width: Dp, var _height: Dp, val color: Color) : Aurora
 
     override fun DrawScope.onDraw() {
         setSize(size.width.toDp(), size.height.toDp())
-        paintIcon(DrawScope@ this)
+        paintIcon(this)
     }
 
     override fun getHeight(): Dp {
@@ -90,7 +90,7 @@ class ColorGradientIcon(
 
     override fun DrawScope.onDraw() {
         setSize(size.width.toDp(), size.height.toDp())
-        paintIcon(DrawScope@ this)
+        paintIcon(this)
     }
 
     override fun getWidth(): Dp {

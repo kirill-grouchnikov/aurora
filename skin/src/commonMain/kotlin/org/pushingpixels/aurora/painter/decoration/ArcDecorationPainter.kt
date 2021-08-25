@@ -58,18 +58,15 @@ class ArcDecorationPainter : AuroraDecorationPainter {
         colorScheme: AuroraColorScheme
     ) {
         if (decorationAreaType === DecorationAreaType.TitlePane) {
-            paintTitleBackground(drawScope, componentSize, outline, rootSize, offsetFromRoot, colorScheme)
+            paintTitleBackground(drawScope, outline, colorScheme)
         } else {
-            paintExtraBackground(drawScope, componentSize, outline, rootSize, offsetFromRoot, colorScheme)
+            paintExtraBackground(drawScope, outline, rootSize, offsetFromRoot, colorScheme)
         }
     }
 
     private fun paintTitleBackground(
         drawScope: DrawScope,
-        componentSize: Size,
         outline: Outline,
-        rootSize: Size,
-        offsetFromRoot: Offset,
         colorScheme: AuroraColorScheme
     ) {
         val boundingRect = outline.bounds
@@ -151,7 +148,6 @@ class ArcDecorationPainter : AuroraDecorationPainter {
 
     private fun paintExtraBackground(
         drawScope: DrawScope,
-        componentSize: Size,
         outline: Outline,
         rootSize: Size,
         offsetFromRoot: Offset,

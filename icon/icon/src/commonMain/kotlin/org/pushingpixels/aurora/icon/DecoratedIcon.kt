@@ -55,7 +55,7 @@ class DecoratedIcon(
 
     override fun DrawScope.onDraw() {
         setSize(size.width.toDp(), size.height.toDp())
-        paintIcon(DrawScope@ this)
+        paintIcon(this)
     }
 
     override fun getHeight(): Dp {
