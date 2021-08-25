@@ -31,6 +31,7 @@ import org.pushingpixels.aurora.component.projection.ComboBoxProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonStripProjection
 import org.pushingpixels.aurora.demo.svg.material.*
+import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.skin.getAuroraSkins
 import org.pushingpixels.aurora.skin.marinerSkin
@@ -47,6 +48,8 @@ fun main() = application {
     AuroraWindow(
         skin = skin,
         title = "Aurora Demo",
+        icon = radiance_menu.factory().createNewIcon(),
+        iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         state = state,
         undecorated = true,
         onCloseRequest = ::exitApplication,

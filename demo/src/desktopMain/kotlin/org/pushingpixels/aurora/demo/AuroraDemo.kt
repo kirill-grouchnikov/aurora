@@ -21,7 +21,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -41,7 +40,6 @@ import org.pushingpixels.aurora.demo.svg.vaadin.*
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.skin.businessSkin
 import org.pushingpixels.aurora.skin.getAuroraSkins
-import org.pushingpixels.aurora.skin.marinerSkin
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 import kotlin.system.exitProcess
@@ -61,6 +59,7 @@ fun main() = application {
         state = state,
         undecorated = true,
         icon = radiance_menu.factory().createNewIcon(),
+        iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         onCloseRequest = ::exitApplication,
         menuCommands = CommandGroup(
             commands = listOf(

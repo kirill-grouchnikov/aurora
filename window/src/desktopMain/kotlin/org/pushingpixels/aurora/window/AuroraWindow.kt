@@ -16,7 +16,6 @@
 
 package org.pushingpixels.aurora.window
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.runtime.*
@@ -28,11 +27,9 @@ import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
@@ -51,6 +48,7 @@ import org.pushingpixels.aurora.component.utils.TransitionAwareIcon
 import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.shaper.AuroraButtonShaper
 import org.pushingpixels.aurora.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.utils.getColorSchemeFilter
 import java.awt.*
 import java.awt.event.*
 import javax.swing.JFrame
@@ -71,7 +69,10 @@ object WindowTitlePaneSizingConstants {
     val TitlePaneHeight = 32.dp
 
     // Title pane content padding (for the area that hosts the title text and the buttons)
-    val TitlePaneContentPadding = PaddingValues(start = 24.dp, end = 8.dp)
+    val TitlePaneContentPadding = PaddingValues(start = 8.dp, end = 8.dp)
+
+    // Title pane content padding (for the area that hosts the title text and the buttons)
+    val TitlePaneContentNoIconPadding = PaddingValues(start = 24.dp, end = 8.dp)
 
     // Icon size for each title pane control button (minimize, maximize, etc)
     val TitlePaneButtonIconSize = 18.dp
@@ -84,7 +85,7 @@ object WindowTitlePaneSizingConstants {
 @Composable
 private fun WindowScope.WindowTitlePane(
     title: String,
-    icon: Painter?,
+    icon: AuroraIcon?,
     titlePaneBounds: MutableState<Rect>
 ) {
     val density = LocalDensity.current
@@ -109,7 +110,11 @@ private fun WindowScope.WindowTitlePane(
                         )
                     }
                     .auroraBackground()
-                    .padding(WindowTitlePaneSizingConstants.TitlePaneContentPadding),
+                    .padding(
+                        if (icon == null)
+                            WindowTitlePaneSizingConstants.TitlePaneContentNoIconPadding
+                        else WindowTitlePaneSizingConstants.TitlePaneContentPadding
+                    ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (icon != null) {
@@ -118,7 +123,7 @@ private fun WindowScope.WindowTitlePane(
                             .paint(painter = icon, sizeToIntrinsics = false)
                     )
                 }
-                WindowDraggableArea(modifier = Modifier.weight(1f)) {
+                WindowDraggableArea(modifier = Modifier.weight(1f).padding(top = 2.dp)) {
                     val colorScheme =
                         skinColors.getEnabledColorScheme(DecorationAreaType.TitlePane)
                     val titleTextStyle = TextStyle(
@@ -259,7 +264,7 @@ private fun WindowScope.WindowTitlePane(
 @Composable
 private fun WindowScope.WindowInnerContent(
     title: String,
-    icon: Painter?,
+    icon: AuroraIcon?,
     undecorated: Boolean,
     titlePaneBounds: MutableState<Rect>,
     menuCommands: CommandGroup? = null,
@@ -372,7 +377,7 @@ internal fun Modifier.drawUndecoratedWindowBorder(
 @Composable
 internal fun WindowScope.WindowContent(
     title: String,
-    icon: Painter?,
+    icon: AuroraIcon?,
     titlePaneBounds: MutableState<Rect>,
     undecorated: Boolean,
     menuCommands: CommandGroup? = null,
@@ -436,7 +441,8 @@ fun ApplicationScope.AuroraWindow(
     state: WindowState = rememberWindowState(),
     visible: Boolean = true,
     title: String = "Untitled",
-    icon: Painter? = null,
+    icon: AuroraIcon? = null,
+    iconFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     menuCommands: CommandGroup? = null,
     undecorated: Boolean = false,
     resizable: Boolean = true,
@@ -472,6 +478,18 @@ fun ApplicationScope.AuroraWindow(
             animationConfig = AuroraSkin.animationConfig
         ) {
             density.value = LocalDensity.current
+            if (icon != null) {
+                val scheme = skin.value.colors.getEnabledColorScheme(DecorationAreaType.TitlePane)
+                when (iconFilterStrategy) {
+                    IconFilterStrategy.ThemedFollowText ->
+                        icon.setColorFilter { scheme.foregroundColor }
+                    IconFilterStrategy.ThemedFollowColorScheme ->
+                        icon.setColorFilter(getColorSchemeFilter(scheme, 1.0f, 1.0f))
+                    IconFilterStrategy.Original -> {
+                        // do not touch icon
+                    }
+                }
+            }
             WindowContent(
                 title = title,
                 icon = icon,
@@ -522,7 +540,8 @@ fun ApplicationScope.AuroraWindow(
     state: WindowState = rememberWindowState(),
     visible: Boolean = true,
     title: String = "Untitled",
-    icon: Painter? = null,
+    icon: AuroraIcon? = null,
+    iconFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     menuCommands: CommandGroup? = null,
     undecorated: Boolean = false,
     resizable: Boolean = true,
@@ -558,6 +577,18 @@ fun ApplicationScope.AuroraWindow(
             animationConfig = AuroraSkin.animationConfig
         ) {
             density.value = LocalDensity.current
+            if (icon != null) {
+                val scheme = skin.colors.getEnabledColorScheme(DecorationAreaType.TitlePane)
+                when (iconFilterStrategy) {
+                    IconFilterStrategy.ThemedFollowText ->
+                        icon.setColorFilter { scheme.foregroundColor }
+                    IconFilterStrategy.ThemedFollowColorScheme ->
+                        icon.setColorFilter(getColorSchemeFilter(scheme, 1.0f, 1.0f))
+                    IconFilterStrategy.Original -> {
+                        // do not touch icon
+                    }
+                }
+            }
             WindowContent(
                 title = title,
                 icon = icon,
