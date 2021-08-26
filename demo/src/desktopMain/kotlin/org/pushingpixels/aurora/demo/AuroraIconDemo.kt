@@ -90,11 +90,7 @@ fun IconDemoArea() {
                 AuroraIcon(iconFactory = system_search.factory(), iconSize = 40.dp)
                 LabelProjection(contentModel = LabelContentModel(text = "icon 4")).project()
             }
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
+            Spacer(modifier = Modifier.width(24.dp))
             Column(modifier = Modifier.wrapContentHeight()) {
                 AuroraIcon(
                     iconFactory = media_floppy.factory(), iconSize = 40.dp,
@@ -140,28 +136,51 @@ fun IconDemoArea() {
         ) {
             Column(modifier = Modifier.wrapContentHeight()) {
                 AuroraIcon(
+                    iconFactory = account_box_24px.factory(), iconSize = 40.dp
+                )
+                LabelProjection(contentModel = LabelContentModel(text = "icon 1")).project()
+            }
+            Column(modifier = Modifier.wrapContentHeight()) {
+                AuroraIcon(
+                    iconFactory = battery_full_24px.factory(), iconSize = 40.dp
+                )
+                LabelProjection(contentModel = LabelContentModel(text = "icon 2")).project()
+            }
+            Column(modifier = Modifier.wrapContentHeight()) {
+                AuroraIcon(iconFactory = perm_device_information_24px.factory(), iconSize = 40.dp
+                )
+                LabelProjection(contentModel = LabelContentModel(text = "icon 3")).project()
+            }
+            Column(modifier = Modifier.wrapContentHeight()) {
+                AuroraIcon(iconFactory = waves_24px.factory(), iconSize = 40.dp
+                )
+                LabelProjection(contentModel = LabelContentModel(text = "icon 4")).project()
+            }
+            Spacer(modifier = Modifier.width(24.dp))
+            Column(modifier = Modifier.wrapContentHeight()) {
+                AuroraIcon(
                     iconFactory = account_box_24px.factory(), iconSize = 40.dp,
-                    colorFilter = ColorFilter.tint(color = Color.Red)
+                    colorFilter = ColorFilter.tint(color = Color(0xFF9C27B0))
                 )
                 LabelProjection(contentModel = LabelContentModel(text = "icon 1")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
                 AuroraIcon(
                     iconFactory = battery_full_24px.factory(), iconSize = 40.dp,
-                    colorFilter = getColorSchemeFilter(
-                        scheme = autumnSkin().colors.getEnabledColorScheme(
-                            DecorationAreaType.None
-                        )
-                    )
+                    colorFilter = ColorFilter.tint(color = Color(0xFFFF1744))
                 )
                 LabelProjection(contentModel = LabelContentModel(text = "icon 2")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(iconFactory = perm_device_information_24px.factory(), iconSize = 40.dp)
+                AuroraIcon(iconFactory = perm_device_information_24px.factory(), iconSize = 40.dp,
+                    colorFilter = ColorFilter.tint(color = Color(0xFF4CAF50))
+                )
                 LabelProjection(contentModel = LabelContentModel(text = "icon 3")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(iconFactory = waves_24px.factory(), iconSize = 40.dp)
+                AuroraIcon(iconFactory = waves_24px.factory(), iconSize = 40.dp,
+                    colorFilter = ColorFilter.tint(color = Color(0xFFFF6F00))
+                )
                 LabelProjection(contentModel = LabelContentModel(text = "icon 4")).project()
             }
         }
