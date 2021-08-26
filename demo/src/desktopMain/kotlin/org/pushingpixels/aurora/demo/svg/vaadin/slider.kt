@@ -33,7 +33,6 @@ class slider private constructor() : AuroraIcon() {
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var alphaStack = mutableListOf(1.0f)
-    private var colorFilter: ((Color) -> Color)? = null
 
 	private fun _paint0(drawScope : DrawScope) {
 with(drawScope) {
@@ -91,7 +90,7 @@ generalPath!!.cubicTo(10.7f, 5.0f, 12.0f, 6.3f, 12.0f, 8.0f)
 generalPath!!.cubicTo(12.0f, 9.7f, 10.7f, 11.0f, 9.0f, 11.0f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(68, 68, 68, 255)) ?: Color(68, 68, 68, 255))
+brush = SolidColor(Color(68, 68, 68, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -170,10 +169,6 @@ alpha = alphaStack.removeAt(0)
 
     override val intrinsicSize: Size
         get() = Size.Unspecified
-
-    override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
-        this.colorFilter = colorFilter
-    }
 
     override fun DrawScope.onDraw() {
         clipRect {

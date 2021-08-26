@@ -21,15 +21,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Dp
 
 abstract class AuroraIcon : Painter() {
-    /** Sets the color filter to be used on all the colors of this icon. */
-    abstract fun setColorFilter(colorFilter: ((Color) -> Color)?)
-
     /**
      * Interface for creating new icons of this type.
      *

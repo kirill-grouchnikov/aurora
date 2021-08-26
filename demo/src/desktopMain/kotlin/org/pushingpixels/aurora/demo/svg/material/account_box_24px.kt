@@ -33,7 +33,6 @@ class account_box_24px private constructor() : AuroraIcon() {
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var alphaStack = mutableListOf(1.0f)
-    private var colorFilter: ((Color) -> Color)? = null
 
 	private fun _paint0(drawScope : DrawScope) {
 with(drawScope) {
@@ -102,7 +101,7 @@ generalPath!!.lineTo(6.0f, 18.0f)
 generalPath!!.lineTo(6.0f, 17.0f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(0, 0, 0, 255)) ?: Color(0, 0, 0, 255))
+brush = SolidColor(Color(0, 0, 0, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -181,10 +180,6 @@ alpha = alphaStack.removeAt(0)
 
     override val intrinsicSize: Size
         get() = Size.Unspecified
-
-    override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
-        this.colorFilter = colorFilter
-    }
 
     override fun DrawScope.onDraw() {
         clipRect {

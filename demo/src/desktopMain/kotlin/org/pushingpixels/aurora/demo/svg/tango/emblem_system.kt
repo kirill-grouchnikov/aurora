@@ -33,7 +33,6 @@ class emblem_system private constructor() : AuroraIcon() {
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var alphaStack = mutableListOf(1.0f)
-    private var colorFilter: ((Color) -> Color)? = null
 
 	private fun _paint0(drawScope : DrawScope) {
 with(drawScope) {
@@ -85,7 +84,7 @@ generalPath!!.cubicTo(21.70337f, 32.668396f, 29.208319f, 32.668396f, 35.29237f, 
 generalPath!!.cubicTo(41.37642f, 34.8912f, 45.1095f, 36.944103f, 45.078056f, 39.161163f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.radialGradient(0.0f to (colorFilter?.invoke(Color(0, 0, 0, 255)) ?: Color(0, 0, 0, 255)), 1.0f to (colorFilter?.invoke(Color(0, 0, 0, 0)) ?: Color(0, 0, 0, 0)), center = Offset(25.455845f, 39.16115f), radius = 19.622211f, tileMode = TileMode.Clamp)
+brush = Brush.radialGradient(0.0f to Color(0, 0, 0, 255), 1.0f to Color(0, 0, 0, 0), center = Offset(25.455845f, 39.16115f), radius = 19.622211f, tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -156,9 +155,9 @@ generalPath!!.cubicTo(20.707125f, 29.062502f, 17.71875f, 26.074125f, 17.71875f, 
 generalPath!!.cubicTo(17.718752f, 18.791473f, 20.52335f, 15.835842f, 24.0625f, 15.65625f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(201, 201, 201, 255)) ?: Color(201, 201, 201, 255)), 0.25f to (colorFilter?.invoke(Color(248, 248, 248, 255)) ?: Color(248, 248, 248, 255)), 0.5f to (colorFilter?.invoke(Color(226, 226, 226, 255)) ?: Color(226, 226, 226, 255)), 0.75f to (colorFilter?.invoke(Color(176, 176, 176, 255)) ?: Color(176, 176, 176, 255)), 1.0f to (colorFilter?.invoke(Color(201, 201, 201, 255)) ?: Color(201, 201, 201, 255)), start = Offset(12.9344635f, 8.047592f), end = Offset(37.861908f, 42.077095f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to Color(201, 201, 201, 255), 0.25f to Color(248, 248, 248, 255), 0.5f to Color(226, 226, 226, 255), 0.75f to Color(176, 176, 176, 255), 1.0f to Color(201, 201, 201, 255), start = Offset(12.9344635f, 8.047592f), end = Offset(37.861908f, 42.077095f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
-brush = SolidColor(colorFilter?.invoke(Color(128, 128, 128, 255)) ?: Color(128, 128, 128, 255))
+brush = SolidColor(Color(128, 128, 128, 255))
 stroke = Stroke(width=1.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -230,7 +229,7 @@ Matrix(values=floatArrayOf(
 10.1502103805542f, 7.936834812164307f, 0.0f, 1.0f)
 ))}){
 // _0_0_2
-brush = SolidColor(colorFilter?.invoke(Color(255, 255, 255, 255)) ?: Color(255, 255, 255, 255))
+brush = SolidColor(Color(255, 255, 255, 255))
 stroke = Stroke(width=1.6487557f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -260,7 +259,7 @@ Matrix(values=floatArrayOf(
 0.0f, 0.0f, 0.0f, 1.0f)
 ))}){
 // _0_0_3
-brush = SolidColor(colorFilter?.invoke(Color(255, 255, 255, 255)) ?: Color(255, 255, 255, 255))
+brush = SolidColor(Color(255, 255, 255, 255))
 stroke = Stroke(width=0.9999997f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -382,10 +381,6 @@ alpha = alphaStack.removeAt(0)
 
     override val intrinsicSize: Size
         get() = Size.Unspecified
-
-    override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
-        this.colorFilter = colorFilter
-    }
 
     override fun DrawScope.onDraw() {
         clipRect {

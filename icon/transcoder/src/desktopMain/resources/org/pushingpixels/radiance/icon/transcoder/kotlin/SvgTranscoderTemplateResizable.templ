@@ -33,7 +33,6 @@ class TOKEN_CLASSNAME private constructor() : AuroraIcon() {
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var alphaStack = mutableListOf(1.0f)
-    private var colorFilter: ((Color) -> Color)? = null
 
 	TOKEN_PAINTING_CODE
 
@@ -103,10 +102,6 @@ class TOKEN_CLASSNAME private constructor() : AuroraIcon() {
 
     override val intrinsicSize: Size
         get() = Size.Unspecified
-
-    override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
-        TOKEN_SET_COLOR_FILTER
-    }
 
     override fun DrawScope.onDraw() {
         clipRect {

@@ -33,7 +33,6 @@ class dialog_warning private constructor() : AuroraIcon() {
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var alphaStack = mutableListOf(1.0f)
-    private var colorFilter: ((Color) -> Color)? = null
 
 	private fun _paint0(drawScope : DrawScope) {
 with(drawScope) {
@@ -94,7 +93,7 @@ Matrix(values=floatArrayOf(
 ))}){
 // _0_0_0_0_0
 shape = Outline.Rectangle(rect = Rect(left = -1559.2523193359375f, top = -150.6968536376953f, right = -219.6187744140625f, bottom = 327.6603240966797f))
-brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(0, 0, 0, 0)) ?: Color(0, 0, 0, 0)), 0.5f to (colorFilter?.invoke(Color(0, 0, 0, 255)) ?: Color(0, 0, 0, 255)), 1.0f to (colorFilter?.invoke(Color(0, 0, 0, 0)) ?: Color(0, 0, 0, 0)), start = Offset(-1051.9354f, -150.69684f), end = Offset(-1051.9354f, 327.6604f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to Color(0, 0, 0, 0), 0.5f to Color(0, 0, 0, 255), 1.0f to Color(0, 0, 0, 0), start = Offset(-1051.9354f, -150.69684f), end = Offset(-1051.9354f, 327.6604f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -120,7 +119,7 @@ generalPath!!.cubicTo(-76.74459f, 328.55087f, 125.78146f, 220.48074f, 125.78138f
 generalPath!!.cubicTo(125.78138f, -43.572304f, -33.655437f, -150.68036f, -219.61876f, -150.68037f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.radialGradient(0.0f to (colorFilter?.invoke(Color(0, 0, 0, 255)) ?: Color(0, 0, 0, 255)), 1.0f to (colorFilter?.invoke(Color(0, 0, 0, 0)) ?: Color(0, 0, 0, 0)), center = Offset(-211.146f, 85.66791f), radius = 325.0f, tileMode = TileMode.Clamp)
+brush = Brush.radialGradient(0.0f to Color(0, 0, 0, 255), 1.0f to Color(0, 0, 0, 0), center = Offset(-211.146f, 85.66791f), radius = 325.0f, tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -146,7 +145,7 @@ generalPath!!.cubicTo(-1702.1265f, 328.55087f, -1904.6525f, 220.48074f, -1904.65
 generalPath!!.cubicTo(-1904.6525f, -43.572304f, -1745.2157f, -150.68036f, -1559.2523f, -150.68037f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.radialGradient(0.0f to (colorFilter?.invoke(Color(0, 0, 0, 255)) ?: Color(0, 0, 0, 255)), 1.0f to (colorFilter?.invoke(Color(0, 0, 0, 0)) ?: Color(0, 0, 0, 0)), center = Offset(-1567.7247f, 85.66791f), radius = 325.0f, tileMode = TileMode.Clamp)
+brush = Brush.radialGradient(0.0f to Color(0, 0, 0, 255), 1.0f to Color(0, 0, 0, 0), center = Offset(-1567.7247f, 85.66791f), radius = 325.0f, tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -191,9 +190,9 @@ generalPath!!.cubicTo(32.40778f, 41.14474f, 32.97028f, 40.832245f, 33.22028f, 40
 generalPath!!.cubicTo(33.53278f, 39.832245f, 33.53278f, 39.207245f, 33.28278f, 38.644745f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(204, 0, 0, 255)) ?: Color(204, 0, 0, 255))
+brush = SolidColor(Color(204, 0, 0, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
-brush = SolidColor(colorFilter?.invoke(Color(159, 0, 0, 255)) ?: Color(159, 0, 0, 255))
+brush = SolidColor(Color(159, 0, 0, 255))
 stroke = Stroke(width=0.6382978f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -251,7 +250,7 @@ generalPath!!.cubicTo(24.1f, 10.5f, 23.7f, 10.5f, 23.5f, 11.0f)
 generalPath!!.lineTo(9.5f, 37.6f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(212, 212, 212, 255)) ?: Color(212, 212, 212, 255)), 0.3982f to (colorFilter?.invoke(Color(226, 226, 226, 255)) ?: Color(226, 226, 226, 255)), 1.0f to (colorFilter?.invoke(Color(255, 255, 255, 255)) ?: Color(255, 255, 255, 255)), start = Offset(4.1914f, 11.1133f), end = Offset(47.3197f, 56.0523f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to Color(212, 212, 212, 255), 0.3982f to Color(226, 226, 226, 255), 1.0f to Color(255, 255, 255, 255), start = Offset(4.1914f, 11.1133f), end = Offset(47.3197f, 56.0523f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -268,7 +267,7 @@ Matrix(values=floatArrayOf(
 0.3182770013809204f, 1.276595950126648f, 0.0f, 1.0f)
 ))}){
 // _0_0_0_1_2
-brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(255, 255, 255, 255)) ?: Color(255, 255, 255, 255)), 1.0f to (colorFilter?.invoke(Color(255, 255, 255, 87)) ?: Color(255, 255, 255, 87)), start = Offset(9.558879f, 29.48385f), end = Offset(29.610327f, 46.318954f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(255, 255, 255, 87), start = Offset(9.558879f, 29.48385f), end = Offset(29.610327f, 46.318954f), tileMode = TileMode.Clamp)
 stroke = Stroke(width=0.6382979f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -334,7 +333,7 @@ generalPath!!.lineTo(22.4f, 30.6f)
 generalPath!!.lineTo(22.5f, 30.6f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(0, 0, 0, 255)) ?: Color(0, 0, 0, 255))
+brush = SolidColor(Color(0, 0, 0, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -419,10 +418,6 @@ alpha = alphaStack.removeAt(0)
 
     override val intrinsicSize: Size
         get() = Size.Unspecified
-
-    override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
-        this.colorFilter = colorFilter
-    }
 
     override fun DrawScope.onDraw() {
         clipRect {

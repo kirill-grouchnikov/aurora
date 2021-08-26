@@ -68,8 +68,4 @@ class TransitionAwareIcon(
         )
         paintDelegate.invoke(this, iconSize, mutableColorScheme)
     }
-
-    override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
-        // No op
-    }
 }

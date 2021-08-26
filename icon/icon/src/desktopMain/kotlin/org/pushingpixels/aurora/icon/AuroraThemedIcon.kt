@@ -64,7 +64,6 @@ private class CombinedIconModifier(
         // And then add the active state filter strategy if we have any active state(s)
         // in the model state snapshot
         if (modelStateInfoSnapshot.activeStrength > 0.0f) {
-            icon.setColorFilter(null)
             val activeAlpha = if (activeFilterStrategy != IconFilterStrategy.Original)
                 modelStateInfoSnapshot.activeStrength else 1.0f
             val activeColorFilter: ColorFilter? =
@@ -89,8 +88,6 @@ private class CombinedIconModifier(
                 draw(size = size, alpha = activeAlpha, colorFilter = activeColorFilter)
             }
         }
-
-        icon.setColorFilter(null)
     }
 }
 
@@ -120,7 +117,6 @@ fun AuroraThemedIcon(
     val colors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
 
-    icon.setColorFilter(null)
     if (currModelState.isDisabled) {
         // TODO - do we need icon transitions from / to a disabled state?
         when (disabledFilterStrategy) {

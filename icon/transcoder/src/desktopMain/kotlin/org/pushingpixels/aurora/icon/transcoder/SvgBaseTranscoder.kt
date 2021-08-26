@@ -161,10 +161,6 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         templateString = templateString.replace(TOKEN_RASTER_CODE.toRegex(), rasterCode)
 
         this.hasRasters = rasterScanner.hasRasters()
-        val setColorFilter = if (this.hasRasters)
-            "throw UnsupportedOperationException(\"Color filters on raster content not supported\")"
-        else "this.colorFilter = colorFilter"
-        templateString = templateString.replace(TOKEN_SET_COLOR_FILTER.toRegex(), setColorFilter)
 
         // Pass 2 - transcode the rest of the content
         printWriterManager = PrintWriterManager()
@@ -341,7 +337,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             val stopColor = "Color(${colors[stop].red}, ${colors[stop].green}, " +
                     "${colors[stop].blue}, ${colors[stop].alpha})"
             printWriterManager!!.print(
-                "${correctedFractions[stop]}f to (colorFilter?.invoke($stopColor) ?: $stopColor), "
+                "${correctedFractions[stop]}f to $stopColor, "
             )
         }
 
@@ -698,7 +694,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             val stopColor = "Color(${colors[stop].red}, ${colors[stop].green}, " +
                     "${colors[stop].blue}, ${colors[stop].alpha})"
             printWriterManager!!.print(
-                "${correctedFractions[stop]}f to (colorFilter?.invoke($stopColor) ?: $stopColor), "
+                "${correctedFractions[stop]}f to $stopColor, "
             )
         }
 
@@ -760,7 +756,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         }
         if (paint is Color) {
             val solidColor = "Color(${paint.red}, ${paint.green}, ${paint.blue}, ${paint.alpha})"
-            printWriterManager!!.println("brush = SolidColor(colorFilter?.invoke($solidColor) ?: $solidColor)")
+            printWriterManager!!.println("brush = SolidColor($solidColor)")
             return
         }
         if (paint == null) {
@@ -794,7 +790,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         }
         if (paint is Color) {
             val solidColor = "Color(${paint.red}, ${paint.green}, ${paint.blue}, ${paint.alpha})"
-            printWriterManager!!.println("brush = SolidColor(colorFilter?.invoke($solidColor) ?: $solidColor)")
+            printWriterManager!!.println("brush = SolidColor($solidColor)")
             printWriterManager!!.println("drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)")
             return
         }
@@ -1291,7 +1287,6 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         private const val TOKEN_PACKAGE = "TOKEN_PACKAGE"
         private const val TOKEN_CLASSNAME = "TOKEN_CLASSNAME"
         private const val TOKEN_RASTER_CODE = "TOKEN_RASTER_CODE"
-        private const val TOKEN_SET_COLOR_FILTER = "TOKEN_SET_COLOR_FILTER"
         private const val TOKEN_PAINTING_CODE = "TOKEN_PAINTING_CODE"
         private const val TOKEN_PAINTING_INVOCATIONS = "TOKEN_PAINTING_INVOCATIONS"
         private const val TOKEN_ORIG_X = "TOKEN_ORIG_X"

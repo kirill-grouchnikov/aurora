@@ -22,8 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.icon.AuroraIcon
 
 class ColorSolidIcon(val color: Color) : AuroraIcon() {
@@ -37,10 +35,6 @@ class ColorSolidIcon(val color: Color) : AuroraIcon() {
             size = size,
             style = Fill
         )
-    }
-
-    override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
-        // no-op
     }
 
     companion object {
@@ -74,10 +68,6 @@ class ColorGradientIcon(
             size = size,
             style = Fill
         )
-    }
-
-    override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
-        // no-op
     }
 
     companion object {

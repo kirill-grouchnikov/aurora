@@ -33,7 +33,6 @@ class font_x_generic private constructor() : AuroraIcon() {
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var alphaStack = mutableListOf(1.0f)
-    private var colorFilter: ((Color) -> Color)? = null
 
 	private fun _paint0(drawScope : DrawScope) {
 with(drawScope) {
@@ -85,7 +84,7 @@ generalPath!!.cubicTo(19.552643f, 43.32086f, 28.088676f, 43.32086f, 35.008602f, 
 generalPath!!.cubicTo(41.928524f, 43.924194f, 46.174484f, 44.48141f, 46.138718f, 45.083183f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = Brush.radialGradient(0.0f to (colorFilter?.invoke(Color(46, 52, 54, 255)) ?: Color(46, 52, 54, 255)), 1.0f to (colorFilter?.invoke(Color(46, 52, 54, 0)) ?: Color(46, 52, 54, 0)), center = Offset(22.403002f, 44.931835f), radius = 22.900167f, tileMode = TileMode.Clamp)
+brush = Brush.radialGradient(0.0f to Color(46, 52, 54, 255), 1.0f to Color(46, 52, 54, 0), center = Offset(22.403002f, 44.931835f), radius = 22.900167f, tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -101,9 +100,9 @@ Matrix(values=floatArrayOf(
 ))}){
 // _0_0_1
 shape = Outline.Rounded(roundRect = RoundRect(left = 3.488370418548584f, top = 2.512193202972412f, right = 44.49984121322632f, bottom = 45.4994330406189f,radiusX = 1.9981215000152588f, radiusY = 1.9982975721359253f))
-brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(238, 238, 236, 255)) ?: Color(238, 238, 236, 255)), 1.0f to (colorFilter?.invoke(Color(255, 255, 255, 255)) ?: Color(255, 255, 255, 255)), start = Offset(36.668537f, 36.383247f), end = Offset(10.303555f, 7.492883f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to Color(238, 238, 236, 255), 1.0f to Color(255, 255, 255, 255), start = Offset(36.668537f, 36.383247f), end = Offset(10.303555f, 7.492883f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 stroke = Stroke(width=1.0249254f, cap=StrokeCap.Round, join=StrokeJoin.Round, miter=4.0f)
 shape = Outline.Rounded(roundRect = RoundRect(left = 3.488370418548584f, top = 2.512193202972412f, right = 44.49984121322632f, bottom = 45.4994330406189f,radiusX = 1.9981215000152588f, radiusY = 1.9982975721359253f))
 drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
@@ -149,7 +148,7 @@ generalPath!!.lineTo(27.86248f, 15.803673f)
 generalPath!!.lineTo(29.912903f, 27.919804f)
 generalPath!!.lineTo(20.872404f, 27.919804f)
 shape = Outline.Generic(generalPath!!)
-brush = Brush.linearGradient(0.0f to (colorFilter?.invoke(Color(114, 159, 207, 255)) ?: Color(114, 159, 207, 255)), 1.0f to (colorFilter?.invoke(Color(52, 101, 164, 255)) ?: Color(52, 101, 164, 255)), start = Offset(17.561554f, 11.998214f), end = Offset(29.93592f, 32.68109f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to Color(114, 159, 207, 255), 1.0f to Color(52, 101, 164, 255), start = Offset(17.561554f, 11.998214f), end = Offset(29.93592f, 32.68109f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -178,7 +177,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -207,7 +206,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -236,7 +235,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -265,7 +264,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -294,7 +293,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -323,7 +322,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -352,7 +351,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -381,7 +380,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -410,7 +409,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -439,7 +438,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -468,7 +467,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -497,7 +496,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -526,7 +525,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -555,7 +554,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -584,7 +583,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -613,7 +612,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -642,7 +641,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -671,7 +670,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -700,7 +699,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -729,7 +728,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -758,7 +757,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -787,7 +786,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -816,7 +815,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -845,7 +844,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -874,7 +873,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -903,7 +902,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -932,7 +931,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -961,7 +960,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -990,7 +989,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -1019,7 +1018,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -1048,7 +1047,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -1077,7 +1076,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -1106,7 +1105,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -1135,7 +1134,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -1164,7 +1163,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -1193,7 +1192,7 @@ generalPath!!.cubicTo(21.929993f, 8.996452f, 22.35257f, 8.996452f, 22.695139f, 9
 generalPath!!.cubicTo(23.03771f, 9.333842f, 23.247906f, 9.645444f, 23.246136f, 9.981962f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-brush = SolidColor(colorFilter?.invoke(Color(136, 138, 133, 255)) ?: Color(136, 138, 133, 255))
+brush = SolidColor(Color(136, 138, 133, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
 }
 alpha = alphaStack.removeAt(0)
@@ -1208,7 +1207,7 @@ Matrix(values=floatArrayOf(
 0.0f, 0.0f, 0.0f, 1.0f)
 ))}){
 // _0_0_39
-brush = SolidColor(colorFilter?.invoke(Color(255, 255, 255, 255)) ?: Color(255, 255, 255, 255))
+brush = SolidColor(Color(255, 255, 255, 255))
 stroke = Stroke(width=1.0249996f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 shape = Outline.Rectangle(rect = Rect(left = 4.487087726593018f, top = 3.5124998092651367f, right = 43.500710010528564f, bottom = 44.54631328582764f))
 drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
@@ -1291,10 +1290,6 @@ alpha = alphaStack.removeAt(0)
 
     override val intrinsicSize: Size
         get() = Size.Unspecified
-
-    override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
-        this.colorFilter = colorFilter
-    }
 
     override fun DrawScope.onDraw() {
         clipRect {
