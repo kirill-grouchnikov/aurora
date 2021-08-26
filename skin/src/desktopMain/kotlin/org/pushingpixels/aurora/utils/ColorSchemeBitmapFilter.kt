@@ -16,9 +16,13 @@
 package org.pushingpixels.aurora.utils
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.toComposeColorFilter
 import org.pushingpixels.aurora.bitmapfilter.BaseBitmapFilter
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.common.*
+import kotlin.math.roundToInt
+import org.jetbrains.skija.ColorFilter as SkijaColorFilter
 
 private val interpolations: MutableMap<AuroraColorScheme, Array<Color?>> = hashMapOf()
 
@@ -111,40 +115,19 @@ fun getInterpolatedColors(scheme: AuroraColorScheme): Array<Color?> {
     return result
 }
 
-fun getColorSchemeFilter(
-    scheme: AuroraColorScheme,
-    originalBrightnessFactor: Float,
-    alpha: Float
-): (Color) -> Color {
+fun getColorSchemeFilter(scheme: AuroraColorScheme): ColorFilter {
     val filtering = getInterpolatedColors(scheme)
-    return { color ->
-        val b = color.blue
-        val g = color.green
-        val r = color.red
-        val a = color.alpha
+    val reds = ByteArray(256)
+    val greens = ByteArray(256)
+    val blues = ByteArray(256)
 
-        val brightness = getColorBrightness(r, g, b)
-        val hsb = RGBtoHSB(r, g, b)
-
-        val pixelColor =
-            filtering[(brightness * ColorSchemeBitmapFilter.MAPSTEPS - 0.5f).toInt()]!!
-        val hsbInterpolated = RGBtoHSB(pixelColor)
-
-        // Preserve hue and value
-        hsb[0] = hsbInterpolated[0]
-        hsb[1] = hsbInterpolated[1]
-        // And remap the brightness
-        if (originalBrightnessFactor >= 0.0f) {
-            hsb[2] = (originalBrightnessFactor * hsb[2]
-                    + (1.0f - originalBrightnessFactor) * hsbInterpolated[2])
-        } else {
-            hsb[2] = hsb[2] * hsbInterpolated[2] * (1.0f + originalBrightnessFactor)
-        }
-
-        // Convert the remapped HSB back to RGB
-        val finalPixel = HSBtoRGB(floatArrayOf(hsb[0], hsb[1], hsb[2]))
-        finalPixel.withAlpha(a * alpha)
+    for ((index, filteredColor) in filtering.withIndex()) {
+        reds[index] = (255 * filteredColor!!.red).roundToInt().toByte()
+        greens[index] = (255 * filteredColor.green).roundToInt().toByte()
+        blues[index] = (255 * filteredColor.blue).roundToInt().toByte()
     }
+
+    return SkijaColorFilter.makeTableARGB(null, reds, greens, blues).toComposeColorFilter()
 }
 
 class ColorSchemeBitmapFilter(
@@ -208,6 +191,6 @@ class ColorSchemeBitmapFilter(
     }
 
     companion object {
-        const val MAPSTEPS = 512
+        const val MAPSTEPS = 256
     }
 }

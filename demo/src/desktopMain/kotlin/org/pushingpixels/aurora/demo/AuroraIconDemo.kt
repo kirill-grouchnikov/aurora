@@ -20,11 +20,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.projection.LabelProjection
+import org.pushingpixels.aurora.demo.svg.material.account_box_24px
+import org.pushingpixels.aurora.demo.svg.material.battery_full_24px
+import org.pushingpixels.aurora.demo.svg.material.perm_device_information_24px
+import org.pushingpixels.aurora.demo.svg.material.waves_24px
 import org.pushingpixels.aurora.demo.svg.random.kirill
 import org.pushingpixels.aurora.demo.svg.random.marker
 import org.pushingpixels.aurora.demo.svg.random.pattern
@@ -34,7 +40,8 @@ import org.pushingpixels.aurora.demo.svg.tango.help_browser
 import org.pushingpixels.aurora.demo.svg.tango.media_floppy
 import org.pushingpixels.aurora.demo.svg.tango.system_search
 import org.pushingpixels.aurora.icon.AuroraIcon
-import org.pushingpixels.aurora.skin.businessSkin
+import org.pushingpixels.aurora.skin.*
+import org.pushingpixels.aurora.utils.getColorSchemeFilter
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 
@@ -81,6 +88,80 @@ fun IconDemoArea() {
             }
             Column(modifier = Modifier.wrapContentHeight()) {
                 AuroraIcon(iconFactory = system_search.factory(), iconSize = 40.dp)
+                LabelProjection(contentModel = LabelContentModel(text = "icon 4")).project()
+            }
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Column(modifier = Modifier.wrapContentHeight()) {
+                AuroraIcon(
+                    iconFactory = media_floppy.factory(), iconSize = 40.dp,
+                    colorFilter = getColorSchemeFilter(
+                        scheme = autumnSkin().colors.getEnabledColorScheme(
+                            DecorationAreaType.None
+                        )
+                    )
+                )
+                LabelProjection(contentModel = LabelContentModel(text = "icon 1")).project()
+            }
+            Column(modifier = Modifier.wrapContentHeight()) {
+                AuroraIcon(iconFactory = drive_harddisk.factory(), iconSize = 40.dp,
+                    colorFilter = getColorSchemeFilter(
+                        scheme = nebulaAmethystSkin().colors.getActiveColorScheme(
+                            DecorationAreaType.TitlePane
+                        )
+                    ))
+                LabelProjection(contentModel = LabelContentModel(text = "icon 2")).project()
+            }
+            Column(modifier = Modifier.wrapContentHeight()) {
+                AuroraIcon(iconFactory = help_browser.factory(), iconSize = 40.dp,
+                    colorFilter = getColorSchemeFilter(
+                        scheme = magellanSkin().colors.getEnabledColorScheme(
+                            DecorationAreaType.None
+                        )
+                    ))
+                LabelProjection(contentModel = LabelContentModel(text = "icon 3")).project()
+            }
+            Column(modifier = Modifier.wrapContentHeight()) {
+                AuroraIcon(iconFactory = system_search.factory(), iconSize = 40.dp,
+                    colorFilter = getColorSchemeFilter(
+                        scheme = twilightSkin().colors.getEnabledColorScheme(
+                            DecorationAreaType.None
+                        )
+                    ))
+                LabelProjection(contentModel = LabelContentModel(text = "icon 4")).project()
+            }
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Column(modifier = Modifier.wrapContentHeight()) {
+                AuroraIcon(
+                    iconFactory = account_box_24px.factory(), iconSize = 40.dp,
+                    colorFilter = ColorFilter.tint(color = Color.Red)
+                )
+                LabelProjection(contentModel = LabelContentModel(text = "icon 1")).project()
+            }
+            Column(modifier = Modifier.wrapContentHeight()) {
+                AuroraIcon(
+                    iconFactory = battery_full_24px.factory(), iconSize = 40.dp,
+                    colorFilter = getColorSchemeFilter(
+                        scheme = autumnSkin().colors.getEnabledColorScheme(
+                            DecorationAreaType.None
+                        )
+                    )
+                )
+                LabelProjection(contentModel = LabelContentModel(text = "icon 2")).project()
+            }
+            Column(modifier = Modifier.wrapContentHeight()) {
+                AuroraIcon(iconFactory = perm_device_information_24px.factory(), iconSize = 40.dp)
+                LabelProjection(contentModel = LabelContentModel(text = "icon 3")).project()
+            }
+            Column(modifier = Modifier.wrapContentHeight()) {
+                AuroraIcon(iconFactory = waves_24px.factory(), iconSize = 40.dp)
                 LabelProjection(contentModel = LabelContentModel(text = "icon 4")).project()
             }
         }

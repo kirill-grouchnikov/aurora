@@ -24,13 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.DrawModifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.common.interpolateTowards
-import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.utils.MutableColorScheme
 import org.pushingpixels.aurora.utils.getColorSchemeFilter
 
@@ -47,54 +46,47 @@ private class CombinedIconModifier(
 ) : DrawModifier {
     override fun ContentDrawScope.draw() {
         // We start with the enabled state filter strategy
-        when (enabledFilterStrategy) {
-            IconFilterStrategy.ThemedFollowText -> icon.setColorFilter { textColor }
-            IconFilterStrategy.ThemedFollowColorScheme -> icon.setColorFilter(
-                getColorSchemeFilter(
+        val enabledFilter: ColorFilter? =
+            when (enabledFilterStrategy) {
+                IconFilterStrategy.ThemedFollowText -> ColorFilter.tint(color = textColor)
+                IconFilterStrategy.ThemedFollowColorScheme -> getColorSchemeFilter(
                     scheme = skinColors.getColorScheme(
                         decorationAreaType = decorationAreaType,
                         componentState = currModelState
-                    ),
-                    originalBrightnessFactor = 0.5f,
-                    alpha = 1.0f
+                    )
                 )
-            )
-        }
+                IconFilterStrategy.Original -> null
+            }
         with(icon) {
-            draw(size = size)
+            draw(size = size, colorFilter = enabledFilter)
         }
 
         // And then add the active state filter strategy if we have any active state(s)
         // in the model state snapshot
         if (modelStateInfoSnapshot.activeStrength > 0.0f) {
             icon.setColorFilter(null)
-            when (activeFilterStrategy) {
-                IconFilterStrategy.Original -> {
-                    graphicsLayer { alpha = modelStateInfoSnapshot.activeStrength }
-                }
-                IconFilterStrategy.ThemedFollowText -> {
-                    icon.setColorFilter { textColor.withAlpha(modelStateInfoSnapshot.activeStrength) }
-                }
-                IconFilterStrategy.ThemedFollowColorScheme -> {
-                    populateColorScheme(
-                        mutableColorScheme,
-                        modelStateInfoSnapshot,
-                        currModelState,
-                        skinColors,
-                        decorationAreaType
-                    )
-                    icon.setColorFilter(
+            val activeAlpha = if (activeFilterStrategy != IconFilterStrategy.Original)
+                modelStateInfoSnapshot.activeStrength else 1.0f
+            val activeColorFilter: ColorFilter? =
+                when (activeFilterStrategy) {
+                    IconFilterStrategy.Original -> null
+                    IconFilterStrategy.ThemedFollowText -> ColorFilter.tint(color = textColor)
+                    IconFilterStrategy.ThemedFollowColorScheme -> {
+                        populateColorScheme(
+                            mutableColorScheme,
+                            modelStateInfoSnapshot,
+                            currModelState,
+                            skinColors,
+                            decorationAreaType
+                        )
                         getColorSchemeFilter(
                             scheme = mutableColorScheme,
-                            originalBrightnessFactor = 0.5f,
-                            alpha = 1.0f
                         )
-                    )
+                    }
                 }
-            }
 
             with(icon) {
-                draw(size = size)
+                draw(size = size, alpha = activeAlpha, colorFilter = activeColorFilter)
             }
         }
 
@@ -137,21 +129,23 @@ fun AuroraThemedIcon(
             IconFilterStrategy.ThemedFollowText -> {
                 // For disabled states, the text color already accounts for the
                 // disabled state alpha under the current skin configuration
-                icon.setColorFilter { textColor }
-                Box(modifier.size(size).paint(painter = icon))
+                Box(
+                    modifier.size(size)
+                        .paint(painter = icon, colorFilter = ColorFilter.tint(color = textColor))
+                )
             }
             IconFilterStrategy.ThemedFollowColorScheme -> {
-                icon.setColorFilter(
-                    getColorSchemeFilter(
-                        scheme = colors.getColorScheme(
-                            decorationAreaType = decorationAreaType,
-                            componentState = currModelState
-                        ),
-                        originalBrightnessFactor = 0.5f,
-                        alpha = 1.0f
+                Box(
+                    modifier.size(size).paint(
+                        painter = icon,
+                        colorFilter = getColorSchemeFilter(
+                            scheme = colors.getColorScheme(
+                                decorationAreaType = decorationAreaType,
+                                componentState = currModelState
+                            )
+                        )
                     )
                 )
-                Box(modifier.size(size).paint(painter = icon))
             }
         }
     } else {

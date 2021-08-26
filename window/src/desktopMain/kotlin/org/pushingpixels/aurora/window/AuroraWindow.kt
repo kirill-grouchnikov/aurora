@@ -27,9 +27,9 @@ import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
@@ -86,6 +86,7 @@ object WindowTitlePaneSizingConstants {
 private fun WindowScope.WindowTitlePane(
     title: String,
     icon: AuroraIcon?,
+    iconFilterStrategy: IconFilterStrategy,
     titlePaneBounds: MutableState<Rect>
 ) {
     val density = LocalDensity.current
@@ -118,11 +119,20 @@ private fun WindowScope.WindowTitlePane(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (icon != null) {
+                    val scheme = skinColors.getEnabledColorScheme(DecorationAreaType.TitlePane)
+                    val colorFilter: ColorFilter? = when (iconFilterStrategy) {
+                        IconFilterStrategy.ThemedFollowText ->
+                            ColorFilter.tint(color = scheme.foregroundColor)
+                        IconFilterStrategy.ThemedFollowColorScheme ->
+                            getColorSchemeFilter(scheme)
+                        IconFilterStrategy.Original -> null
+                    }
                     Box(
                         modifier = Modifier.size(16.dp)
-                            .paint(painter = icon, sizeToIntrinsics = false)
+                            .paint(painter = icon, colorFilter = colorFilter)
                     )
                 }
+
                 WindowDraggableArea(modifier = Modifier.weight(1f).padding(top = 2.dp)) {
                     val colorScheme =
                         skinColors.getEnabledColorScheme(DecorationAreaType.TitlePane)
@@ -265,6 +275,7 @@ private fun WindowScope.WindowTitlePane(
 private fun WindowScope.WindowInnerContent(
     title: String,
     icon: AuroraIcon?,
+    iconFilterStrategy: IconFilterStrategy,
     undecorated: Boolean,
     titlePaneBounds: MutableState<Rect>,
     menuCommands: CommandGroup? = null,
@@ -272,7 +283,7 @@ private fun WindowScope.WindowInnerContent(
 ) {
     Column(Modifier.fillMaxSize().auroraBackground()) {
         if (undecorated) {
-            WindowTitlePane(title, icon, titlePaneBounds)
+            WindowTitlePane(title, icon, iconFilterStrategy, titlePaneBounds)
         }
         if (menuCommands != null) {
             AuroraWindowMenuBar(menuCommands)
@@ -378,6 +389,7 @@ internal fun Modifier.drawUndecoratedWindowBorder(
 internal fun WindowScope.WindowContent(
     title: String,
     icon: AuroraIcon?,
+    iconFilterStrategy: IconFilterStrategy,
     titlePaneBounds: MutableState<Rect>,
     undecorated: Boolean,
     menuCommands: CommandGroup? = null,
@@ -400,10 +412,26 @@ internal fun WindowScope.WindowContent(
                 )
                 .padding(WindowSizingConstants.DecoratedBorderThickness)
         ) {
-            WindowInnerContent(title, icon, undecorated, titlePaneBounds, menuCommands, content)
+            WindowInnerContent(
+                title,
+                icon,
+                iconFilterStrategy,
+                undecorated,
+                titlePaneBounds,
+                menuCommands,
+                content
+            )
         }
     } else {
-        WindowInnerContent(title, icon, undecorated, titlePaneBounds, menuCommands, content)
+        WindowInnerContent(
+            title,
+            icon,
+            iconFilterStrategy,
+            undecorated,
+            titlePaneBounds,
+            menuCommands,
+            content
+        )
     }
 
     val awtEventListener = remember {
@@ -457,18 +485,6 @@ fun ApplicationScope.AuroraWindow(
     val density = mutableStateOf(Density(1.0f, 1.0f))
 
     val icon = iconFactory?.createNewIcon()
-    if (icon != null) {
-        val scheme = skin.value.colors.getEnabledColorScheme(DecorationAreaType.TitlePane)
-        when (iconFilterStrategy) {
-            IconFilterStrategy.ThemedFollowText ->
-                icon.setColorFilter { scheme.foregroundColor }
-            IconFilterStrategy.ThemedFollowColorScheme ->
-                icon.setColorFilter(getColorSchemeFilter(scheme, 1.0f, 1.0f))
-            IconFilterStrategy.Original -> {
-                // do not touch icon
-            }
-        }
-    }
 
     Window(
         onCloseRequest = onCloseRequest,
@@ -496,6 +512,7 @@ fun ApplicationScope.AuroraWindow(
             WindowContent(
                 title = title,
                 icon = icon,
+                iconFilterStrategy = iconFilterStrategy,
                 titlePaneBounds = titlePaneBounds,
                 undecorated = undecorated,
                 menuCommands = menuCommands,
@@ -559,18 +576,6 @@ fun ApplicationScope.AuroraWindow(
     val density = mutableStateOf(Density(1.0f, 1.0f))
 
     val icon = iconFactory?.createNewIcon()
-    if (icon != null) {
-        val scheme = skin.colors.getEnabledColorScheme(DecorationAreaType.TitlePane)
-        when (iconFilterStrategy) {
-            IconFilterStrategy.ThemedFollowText ->
-                icon.setColorFilter { scheme.foregroundColor }
-            IconFilterStrategy.ThemedFollowColorScheme ->
-                icon.setColorFilter(getColorSchemeFilter(scheme, 1.0f, 1.0f))
-            IconFilterStrategy.Original -> {
-                // do not touch icon
-            }
-        }
-    }
 
     Window(
         onCloseRequest = onCloseRequest,
@@ -598,6 +603,7 @@ fun ApplicationScope.AuroraWindow(
             WindowContent(
                 title = title,
                 icon = icon,
+                iconFilterStrategy = iconFilterStrategy,
                 titlePaneBounds = titlePaneBounds,
                 undecorated = undecorated,
                 menuCommands = menuCommands,
