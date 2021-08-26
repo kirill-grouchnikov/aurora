@@ -36,7 +36,7 @@ class ColorSolidIcon(var _width: Dp, var _height: Dp, val color: Color) : Aurora
         drawRect(
             color = color,
             topLeft = Offset.Zero,
-            size = Size(_width.toPx(), _height.toPx()),
+            size = size,
             style = Fill
         )
     }
@@ -93,7 +93,7 @@ class ColorGradientIcon(
                 tileMode = TileMode.Clamp
             ),
             topLeft = Offset.Zero,
-            size = Size(_width.toPx(), _height.toPx()),
+            size = size,
             style = Fill
         )
     }

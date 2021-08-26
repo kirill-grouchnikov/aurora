@@ -456,8 +456,8 @@ alpha = alphaStack.removeAt(0)
             // the scaling factor
             val fullOrigWidth = getOrigX() + getOrigWidth()
             val fullOrigHeight = getOrigY() + getOrigHeight()
-            val coef1 = _width.toPx() / fullOrigWidth
-            val coef2 = _height.toPx() / fullOrigHeight
+            val coef1 = size.width / fullOrigWidth
+            val coef2 = size.height / fullOrigHeight
             val coef = min(coef1, coef2).toFloat()
 
             // Use the original icon bounding box and the current icon dimension to compute
