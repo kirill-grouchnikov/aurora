@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.demo
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
@@ -27,7 +26,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.icon.AuroraIcon
 
-class ColorSolidIcon(var _width: Dp, var _height: Dp, val color: Color) : AuroraIcon() {
+class ColorSolidIcon(val color: Color) : AuroraIcon() {
     override val intrinsicSize: Size
         get() = Size.Unspecified
 
@@ -40,19 +39,6 @@ class ColorSolidIcon(var _width: Dp, var _height: Dp, val color: Color) : Aurora
         )
     }
 
-    override fun getHeight(): Dp {
-        return _height
-    }
-
-    override fun getWidth(): Dp {
-        return _width
-    }
-
-    override fun setSize(width: Dp, height: Dp) {
-        this._width = width
-        this._height = height
-    }
-
     override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
         // no-op
     }
@@ -61,7 +47,7 @@ class ColorSolidIcon(var _width: Dp, var _height: Dp, val color: Color) : Aurora
         fun factory(color: Color): AuroraIcon.Factory {
             return object : AuroraIcon.Factory {
                 override fun createNewIcon(): AuroraIcon {
-                    return ColorSolidIcon(16.dp, 16.dp, color)
+                    return ColorSolidIcon(color)
                 }
             }
         }
@@ -69,15 +55,9 @@ class ColorSolidIcon(var _width: Dp, var _height: Dp, val color: Color) : Aurora
 }
 
 class ColorGradientIcon(
-    var _width: Dp,
-    var _height: Dp,
     val colorTop: Color,
     val colorBottom: Color
 ) : AuroraIcon() {
-    override fun getHeight(): Dp {
-        return _height
-    }
-
     override val intrinsicSize: Size
         get() = Size.Unspecified
 
@@ -96,15 +76,6 @@ class ColorGradientIcon(
         )
     }
 
-    override fun getWidth(): Dp {
-        return _width
-    }
-
-    override fun setSize(width: Dp, height: Dp) {
-        this._width = width
-        this._height = height
-    }
-
     override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
         // no-op
     }
@@ -113,7 +84,7 @@ class ColorGradientIcon(
         fun factory(colorTop: Color, colorBottom: Color): AuroraIcon.Factory {
             return object : AuroraIcon.Factory {
                 override fun createNewIcon(): AuroraIcon {
-                    return ColorGradientIcon(16.dp, 16.dp, colorTop, colorBottom)
+                    return ColorGradientIcon(colorTop, colorBottom)
                 }
             }
         }

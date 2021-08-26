@@ -25,7 +25,7 @@ import kotlin.math.min
  * This class has been automatically generated using
  * <a href="https://github.com/kirill-grouchnikov/aurora">Aurora SVG transcoder</a>.
  */
-class slider private constructor(var _width: Dp, var _height: Dp) : AuroraIcon() {
+class slider private constructor() : AuroraIcon() {
     @Suppress("UNUSED_VARIABLE") private var shape: Outline? = null
     @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
@@ -153,18 +153,6 @@ alpha = alphaStack.removeAt(0)
         }
 
         /**
-         * Returns a new instance of this icon with specified dimensions.
-         *
-         * @param width Required width of the icon
-         * @param height Required height of the icon
-         * @return A new instance of this icon with specified dimensions.
-         */
-        @Composable
-        fun of(width: Dp, height: Dp): AuroraIcon {
-            return slider(_width = width, _height = height)
-        }
-
-        /**
          * Returns a factory that returns instances of this icon on demand.
          *
          * @return Factory that returns instances of this icon on demand.
@@ -172,7 +160,7 @@ alpha = alphaStack.removeAt(0)
         fun factory(): AuroraIcon.Factory {
             return object : AuroraIcon.Factory {
                 override fun createNewIcon(): AuroraIcon {
-                    return slider(getOrigWidth().dp, getOrigHeight().dp)
+                    return slider()
                 }
             }
         }
@@ -182,14 +170,6 @@ alpha = alphaStack.removeAt(0)
 
     override val intrinsicSize: Size
         get() = Size.Unspecified
-
-    override fun getWidth(): Dp {
-        return _width
-    }
-
-    override fun getHeight(): Dp {
-        return _height
-    }
 
     override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
         this.colorFilter = colorFilter

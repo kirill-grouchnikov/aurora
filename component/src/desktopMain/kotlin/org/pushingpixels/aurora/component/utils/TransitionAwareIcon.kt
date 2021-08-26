@@ -50,9 +50,6 @@ class TransitionAwareIcon(
         abstract fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon
     }
 
-    private val iconWidth = iconSize
-    private val iconHeight = iconSize
-
     private val mutableColorScheme = MutableColorScheme(
         displayName = "Internal mutable",
         isDark = false
@@ -70,18 +67,6 @@ class TransitionAwareIcon(
             associationKind = ColorSchemeAssociationKind.Mark
         )
         paintDelegate.invoke(this, iconSize, mutableColorScheme)
-    }
-
-    override fun getWidth(): Dp {
-        return iconWidth
-    }
-
-    override fun getHeight(): Dp {
-        return iconHeight
-    }
-
-    override fun setSize(width: Dp, height: Dp) {
-        // This icon only "pretends" to be resizable
     }
 
     override fun setColorFilter(colorFilter: ((Color) -> Color)?) {

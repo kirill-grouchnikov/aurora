@@ -25,7 +25,7 @@ import kotlin.math.min
  * This class has been automatically generated using
  * <a href="https://github.com/kirill-grouchnikov/aurora">Aurora SVG transcoder</a>.
  */
-class TOKEN_CLASSNAME private constructor(var _width: Dp, var _height: Dp) : AuroraIcon() {
+class TOKEN_CLASSNAME private constructor() : AuroraIcon() {
     @Suppress("UNUSED_VARIABLE") private var shape: Outline? = null
     @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
@@ -86,18 +86,6 @@ class TOKEN_CLASSNAME private constructor(var _width: Dp, var _height: Dp) : Aur
         }
 
         /**
-         * Returns a new instance of this icon with specified dimensions.
-         *
-         * @param width Required width of the icon
-         * @param height Required height of the icon
-         * @return A new instance of this icon with specified dimensions.
-         */
-        @Composable
-        fun of(width: Dp, height: Dp): AuroraIcon {
-            return TOKEN_CLASSNAME(_width = width, _height = height)
-        }
-
-        /**
          * Returns a factory that returns instances of this icon on demand.
          *
          * @return Factory that returns instances of this icon on demand.
@@ -105,7 +93,7 @@ class TOKEN_CLASSNAME private constructor(var _width: Dp, var _height: Dp) : Aur
         fun factory(): AuroraIcon.Factory {
             return object : AuroraIcon.Factory {
                 override fun createNewIcon(): AuroraIcon {
-                    return TOKEN_CLASSNAME(getOrigWidth().dp, getOrigHeight().dp)
+                    return TOKEN_CLASSNAME()
                 }
             }
         }
@@ -115,14 +103,6 @@ class TOKEN_CLASSNAME private constructor(var _width: Dp, var _height: Dp) : Aur
 
     override val intrinsicSize: Size
         get() = Size.Unspecified
-
-    override fun getWidth(): Dp {
-        return _width
-    }
-
-    override fun getHeight(): Dp {
-        return _height
-    }
 
     override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
         TOKEN_SET_COLOR_FILTER

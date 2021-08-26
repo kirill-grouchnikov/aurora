@@ -18,19 +18,14 @@ package org.pushingpixels.aurora.icon
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Dp
 
-abstract class AuroraIcon: Painter() {
-    /** Returns the current width of this icon. */
-    abstract fun getWidth(): Dp
-
-    /** Returns the current height of this icon. */
-    abstract fun getHeight(): Dp
-
+abstract class AuroraIcon : Painter() {
     /** Sets the color filter to be used on all the colors of this icon. */
     abstract fun setColorFilter(colorFilter: ((Color) -> Color)?)
 
@@ -51,14 +46,12 @@ abstract class AuroraIcon: Painter() {
 
 @Composable
 fun AuroraIcon(
-    icon: AuroraIcon,
-    modifier: Modifier = Modifier
+    iconFactory: AuroraIcon.Factory,
+    iconSize: Dp
 ) {
+    val icon = remember { iconFactory.createNewIcon() }
     Box(
-        modifier.size(
-            width = icon.getWidth(),
-            height = icon.getHeight()
-        ).paint(painter = icon)
+        modifier = Modifier.size(iconSize).paint(painter = icon)
     )
 }
 
