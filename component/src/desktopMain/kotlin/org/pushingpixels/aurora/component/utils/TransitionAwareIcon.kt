@@ -58,7 +58,11 @@ class TransitionAwareIcon(
         isDark = false
     )
 
-    override fun paintIcon(drawScope: DrawScope) {
+    override val intrinsicSize: Size
+        get() = Size.Unspecified
+
+    override fun DrawScope.onDraw() {
+        setSize(size.width.toDp(), size.height.toDp())
         populateColorScheme(
             colorScheme = mutableColorScheme,
             modelStateInfo = modelStateInfoSnapshot,
@@ -66,15 +70,7 @@ class TransitionAwareIcon(
             decorationAreaType = decorationAreaType,
             associationKind = ColorSchemeAssociationKind.Mark
         )
-        paintDelegate.invoke(drawScope, iconSize, mutableColorScheme)
-    }
-
-    override val intrinsicSize: Size
-        get() = Size.Unspecified
-
-    override fun DrawScope.onDraw() {
-        setSize(size.width.toDp(), size.height.toDp())
-        paintIcon(this)
+        paintDelegate.invoke(this, iconSize, mutableColorScheme)
     }
 
     override fun getWidth(): Dp {

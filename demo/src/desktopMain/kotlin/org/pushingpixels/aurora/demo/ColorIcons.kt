@@ -33,7 +33,12 @@ class ColorSolidIcon(var _width: Dp, var _height: Dp, val color: Color) : Aurora
 
     override fun DrawScope.onDraw() {
         setSize(size.width.toDp(), size.height.toDp())
-        paintIcon(this)
+        drawRect(
+            color = color,
+            topLeft = Offset.Zero,
+            size = Size(_width.toPx(), _height.toPx()),
+            style = Fill
+        )
     }
 
     override fun getHeight(): Dp {
@@ -51,17 +56,6 @@ class ColorSolidIcon(var _width: Dp, var _height: Dp, val color: Color) : Aurora
 
     override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
         // no-op
-    }
-
-    override fun paintIcon(drawScope: DrawScope) {
-        with(drawScope) {
-            drawRect(
-                color = color,
-                topLeft = Offset.Zero,
-                size = Size(_width.toPx(), _height.toPx()),
-                style = Fill
-            )
-        }
     }
 
     companion object {
@@ -90,7 +84,18 @@ class ColorGradientIcon(
 
     override fun DrawScope.onDraw() {
         setSize(size.width.toDp(), size.height.toDp())
-        paintIcon(this)
+        drawRect(
+            brush = Brush.verticalGradient(
+                0.0f to colorTop,
+                1.0f to colorBottom,
+                startY = 0.0f,
+                endY = size.height,
+                tileMode = TileMode.Clamp
+            ),
+            topLeft = Offset.Zero,
+            size = Size(_width.toPx(), _height.toPx()),
+            style = Fill
+        )
     }
 
     override fun getWidth(): Dp {
@@ -104,23 +109,6 @@ class ColorGradientIcon(
 
     override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
         // no-op
-    }
-
-    override fun paintIcon(drawScope: DrawScope) {
-        with(drawScope) {
-            drawRect(
-                brush = Brush.verticalGradient(
-                    0.0f to colorTop,
-                    1.0f to colorBottom,
-                    startY = 0.0f,
-                    endY = size.height,
-                    tileMode = TileMode.Clamp
-                ),
-                topLeft = Offset.Zero,
-                size = Size(_width.toPx(), _height.toPx()),
-                style = Fill
-            )
-        }
     }
 
     companion object {

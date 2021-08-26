@@ -172,11 +172,6 @@ alpha = alphaStack.removeAt(0)
     override val intrinsicSize: Size
         get() = Size.Unspecified
 
-    override fun DrawScope.onDraw() {
-        setSize(size.width.toDp(), size.height.toDp())
-        paintIcon(this)
-    }
-
     override fun getWidth(): Dp {
         return _width
     }
@@ -194,41 +189,40 @@ alpha = alphaStack.removeAt(0)
         this.colorFilter = colorFilter
     }
 
-    override fun paintIcon(drawScope: DrawScope) {
-        with(drawScope) {
-            clipRect {
-                // Use the original icon bounding box and the current icon dimension to compute
-                // the scaling factor
-                val fullOrigWidth = getOrigX() + getOrigWidth()
-                val fullOrigHeight = getOrigY() + getOrigHeight()
-                val coef1 = _width.toPx() / fullOrigWidth
-                val coef2 = _height.toPx() / fullOrigHeight
-                val coef = min(coef1, coef2).toFloat()
+    override fun DrawScope.onDraw() {
+        setSize(size.width.toDp(), size.height.toDp())
+        clipRect {
+            // Use the original icon bounding box and the current icon dimension to compute
+            // the scaling factor
+            val fullOrigWidth = getOrigX() + getOrigWidth()
+            val fullOrigHeight = getOrigY() + getOrigHeight()
+            val coef1 = _width.toPx() / fullOrigWidth
+            val coef2 = _height.toPx() / fullOrigHeight
+            val coef = min(coef1, coef2).toFloat()
 
-                // Use the original icon bounding box and the current icon dimension to compute
-                // the offset pivot for the scaling
-                var translateX = -getOrigX()
-                var translateY = -getOrigY()
-                if (coef1 != coef2) {
-                    if (coef1 < coef2) {
-                        val extraDy = ((fullOrigWidth - fullOrigHeight) / 2.0f).toFloat()
-                        translateY += extraDy
-                    } else {
-                        val extraDx = ((fullOrigHeight - fullOrigWidth) / 2.0f).toFloat()
-                        translateX += extraDx
-                    }
+            // Use the original icon bounding box and the current icon dimension to compute
+            // the offset pivot for the scaling
+            var translateX = -getOrigX()
+            var translateY = -getOrigY()
+            if (coef1 != coef2) {
+                if (coef1 < coef2) {
+                    val extraDy = ((fullOrigWidth - fullOrigHeight) / 2.0f).toFloat()
+                    translateY += extraDy
+                } else {
+                    val extraDx = ((fullOrigHeight - fullOrigWidth) / 2.0f).toFloat()
+                    translateX += extraDx
                 }
-                val translateXDp = translateX.toFloat().toDp().value
-                val translateYDp = translateY.toFloat().toDp().value
+            }
+            val translateXDp = translateX.toFloat().toDp().value
+            val translateYDp = translateY.toFloat().toDp().value
 
-                // Create a combined scale + translate + clip transform before calling the transcoded painting instructions
-                withTransform({
-                    scale(scaleX = coef, scaleY = coef, pivot = Offset.Zero)
-                    translate(translateXDp, translateYDp)
-                    clipRect(left = 0.0f, top = 0.0f, right = fullOrigWidth.toFloat(), bottom = fullOrigHeight.toFloat(), clipOp = ClipOp.Intersect)
-                }) {
-                    innerPaint(this)
-                }
+            // Create a combined scale + translate + clip transform before calling the transcoded painting instructions
+            withTransform({
+                scale(scaleX = coef, scaleY = coef, pivot = Offset.Zero)
+                translate(translateXDp, translateYDp)
+                clipRect(left = 0.0f, top = 0.0f, right = fullOrigWidth.toFloat(), bottom = fullOrigHeight.toFloat(), clipOp = ClipOp.Intersect)
+            }) {
+                innerPaint(this)
             }
         }
     }

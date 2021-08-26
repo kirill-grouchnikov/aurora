@@ -19,18 +19,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.DrawModifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.ContentDrawScope
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Dp
 
 abstract class AuroraIcon: Painter() {
-    /** Draws the icon with the provided draw scope. */
-    abstract fun paintIcon(drawScope: DrawScope)
-
     /** Returns the current width of this icon. */
     abstract fun getWidth(): Dp
 

@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.DrawModifier
 import androidx.compose.ui.draw.paint
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.graphicsLayer
@@ -59,7 +60,9 @@ private class CombinedIconModifier(
                 )
             )
         }
-        icon.paintIcon(this)
+        with (icon) {
+            draw(size = Size(width = icon.getWidth().toPx(), height = icon.getHeight().toPx()))
+        }
 
         // And then add the active state filter strategy if we have any active state(s)
         // in the model state snapshot
@@ -90,7 +93,9 @@ private class CombinedIconModifier(
                 }
             }
 
-            icon.paintIcon(this)
+            with (icon) {
+                draw(size = Size(width = icon.getWidth().toPx(), height = icon.getHeight().toPx()))
+            }
         }
 
         icon.setColorFilter(null)
