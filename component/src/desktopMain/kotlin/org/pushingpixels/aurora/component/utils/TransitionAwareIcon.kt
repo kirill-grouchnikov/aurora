@@ -62,7 +62,6 @@ class TransitionAwareIcon(
         get() = Size.Unspecified
 
     override fun DrawScope.onDraw() {
-        setSize(size.width.toDp(), size.height.toDp())
         populateColorScheme(
             colorScheme = mutableColorScheme,
             modelStateInfo = modelStateInfoSnapshot,

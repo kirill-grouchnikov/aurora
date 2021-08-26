@@ -180,17 +180,11 @@ alpha = alphaStack.removeAt(0)
         return _height
     }
 
-    override fun setSize(width: Dp, height: Dp) {
-        _width = width
-        _height = height
-    }
-
     override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
         this.colorFilter = colorFilter
     }
 
     override fun DrawScope.onDraw() {
-        setSize(size.width.toDp(), size.height.toDp())
         clipRect {
             // Use the original icon bounding box and the current icon dimension to compute
             // the scaling factor

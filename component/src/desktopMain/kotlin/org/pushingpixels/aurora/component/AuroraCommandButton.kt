@@ -27,6 +27,7 @@ import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -1170,7 +1171,6 @@ private fun CommandButtonIconContent(
                 command.iconFactory.createNewIcon(modelStateInfo.getSnapshot(currState))
             else
                 remember(iconSize) { command.iconFactory.createNewIcon() }
-            icon.setSize(width = iconSize, height = iconSize)
 
             // Compute the text color based on the passed model state (which can be action
             // or popup)
@@ -1190,6 +1190,7 @@ private fun CommandButtonIconContent(
             ) {
                 AuroraThemedIcon(
                     icon = icon,
+                    size = iconSize,
                     disabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
                     enabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
                     activeFilterStrategy = presentationModel.iconActiveFilterStrategy

@@ -24,7 +24,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.isSpecified
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.dp
@@ -120,11 +122,11 @@ private fun LabelIconContent(
 
     val iconSize = presentationModel.iconDimension
     val icon = remember(iconSize) { contentModel.iconFactory.createNewIcon() }
-    icon.setSize(width = iconSize, height = iconSize)
 
     if (presentationModel.inheritStateFromParent) {
         AuroraThemedIcon(
             icon = icon,
+            size = iconSize,
             disabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
             enabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
             activeFilterStrategy = presentationModel.iconEnabledFilterStrategy
@@ -146,6 +148,7 @@ private fun LabelIconContent(
         ) {
             AuroraThemedIcon(
                 icon = icon,
+                size = iconSize,
                 disabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
                 enabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
                 activeFilterStrategy = presentationModel.iconEnabledFilterStrategy

@@ -23,10 +23,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.DrawModifier
 import androidx.compose.ui.draw.paint
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.unit.Dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.common.interpolateTowards
@@ -60,8 +60,8 @@ private class CombinedIconModifier(
                 )
             )
         }
-        with (icon) {
-            draw(size = Size(width = icon.getWidth().toPx(), height = icon.getHeight().toPx()))
+        with(icon) {
+            draw(size = size)
         }
 
         // And then add the active state filter strategy if we have any active state(s)
@@ -93,8 +93,8 @@ private class CombinedIconModifier(
                 }
             }
 
-            with (icon) {
-                draw(size = Size(width = icon.getWidth().toPx(), height = icon.getHeight().toPx()))
+            with(icon) {
+                draw(size = size)
             }
         }
 
@@ -113,6 +113,7 @@ private class IconDrawingCache(
 @Composable
 fun AuroraThemedIcon(
     icon: AuroraIcon,
+    size: Dp,
     disabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
     enabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     activeFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
@@ -132,22 +133,12 @@ fun AuroraThemedIcon(
         // TODO - do we need icon transitions from / to a disabled state?
         when (disabledFilterStrategy) {
             IconFilterStrategy.Original ->
-                Box(
-                    modifier.size(
-                        width = icon.getWidth(),
-                        height = icon.getHeight()
-                    ).paint(painter = icon)
-                )
+                Box(modifier.size(size).paint(painter = icon))
             IconFilterStrategy.ThemedFollowText -> {
                 // For disabled states, the text color already accounts for the
                 // disabled state alpha under the current skin configuration
                 icon.setColorFilter { textColor }
-                Box(
-                    modifier.size(
-                        width = icon.getWidth(),
-                        height = icon.getHeight()
-                    ).paint(painter = icon)
-                )
+                Box(modifier.size(size).paint(painter = icon))
             }
             IconFilterStrategy.ThemedFollowColorScheme -> {
                 icon.setColorFilter(
@@ -160,12 +151,7 @@ fun AuroraThemedIcon(
                         alpha = 1.0f
                     )
                 )
-                Box(
-                    modifier.size(
-                        width = icon.getWidth(),
-                        height = icon.getHeight()
-                    ).paint(painter = icon)
-                )
+                Box(modifier.size(size).paint(painter = icon))
             }
         }
     } else {
@@ -173,18 +159,10 @@ fun AuroraThemedIcon(
         if ((enabledFilterStrategy == IconFilterStrategy.Original) &&
             (activeFilterStrategy == IconFilterStrategy.Original)
         ) {
-            Box(
-                modifier.size(
-                    width = icon.getWidth(),
-                    height = icon.getHeight()
-                ).paint(painter = icon)
-            )
+            Box(modifier.size(size).paint(painter = icon))
         } else {
             Box(
-                modifier.size(
-                    width = icon.getWidth(),
-                    height = icon.getHeight()
-                ).then(
+                modifier.size(size).then(
                     CombinedIconModifier(
                         icon,
                         enabledFilterStrategy,

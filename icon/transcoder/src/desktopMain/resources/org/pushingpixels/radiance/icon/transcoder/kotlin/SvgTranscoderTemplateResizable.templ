@@ -124,17 +124,11 @@ class TOKEN_CLASSNAME private constructor(var _width: Dp, var _height: Dp) : Aur
         return _height
     }
 
-    override fun setSize(width: Dp, height: Dp) {
-        _width = width
-        _height = height
-    }
-
     override fun setColorFilter(colorFilter: ((Color) -> Color)?) {
         TOKEN_SET_COLOR_FILTER
     }
 
     override fun DrawScope.onDraw() {
-        setSize(size.width.toDp(), size.height.toDp())
         clipRect {
             // Use the original icon bounding box and the current icon dimension to compute
             // the scaling factor

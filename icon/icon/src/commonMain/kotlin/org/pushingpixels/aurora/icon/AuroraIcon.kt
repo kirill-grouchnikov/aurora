@@ -31,9 +31,6 @@ abstract class AuroraIcon: Painter() {
     /** Returns the current height of this icon. */
     abstract fun getHeight(): Dp
 
-    /** Changes the size of this icon. */
-    abstract fun setSize(width: Dp, height: Dp)
-
     /** Sets the color filter to be used on all the colors of this icon. */
     abstract fun setColorFilter(colorFilter: ((Color) -> Color)?)
 

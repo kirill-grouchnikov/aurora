@@ -32,7 +32,6 @@ class ColorSolidIcon(var _width: Dp, var _height: Dp, val color: Color) : Aurora
         get() = Size.Unspecified
 
     override fun DrawScope.onDraw() {
-        setSize(size.width.toDp(), size.height.toDp())
         drawRect(
             color = color,
             topLeft = Offset.Zero,
@@ -83,7 +82,6 @@ class ColorGradientIcon(
         get() = Size.Unspecified
 
     override fun DrawScope.onDraw() {
-        setSize(size.width.toDp(), size.height.toDp())
         drawRect(
             brush = Brush.verticalGradient(
                 0.0f to colorTop,
