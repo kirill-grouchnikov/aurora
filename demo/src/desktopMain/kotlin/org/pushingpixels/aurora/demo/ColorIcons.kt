@@ -36,16 +36,6 @@ class ColorSolidIcon(val color: Color) : AuroraIcon() {
             style = Fill
         )
     }
-
-    companion object {
-        fun factory(color: Color): AuroraIcon.Factory {
-            return object : AuroraIcon.Factory {
-                override fun createNewIcon(): AuroraIcon {
-                    return ColorSolidIcon(color)
-                }
-            }
-        }
-    }
 }
 
 class ColorGradientIcon(
@@ -68,15 +58,5 @@ class ColorGradientIcon(
             size = size,
             style = Fill
         )
-    }
-
-    companion object {
-        fun factory(colorTop: Color, colorBottom: Color): AuroraIcon.Factory {
-            return object : AuroraIcon.Factory {
-                override fun createNewIcon(): AuroraIcon {
-                    return ColorGradientIcon(colorTop, colorBottom)
-                }
-            }
-        }
     }
 }

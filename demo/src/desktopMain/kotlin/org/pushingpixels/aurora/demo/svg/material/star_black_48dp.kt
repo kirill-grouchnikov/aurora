@@ -162,19 +162,6 @@ alpha = alphaStack.removeAt(0)
             return 38.0
         }
 
-        /**
-         * Returns a factory that returns instances of this icon on demand.
-         *
-         * @return Factory that returns instances of this icon on demand.
-         */
-        fun factory(): AuroraIcon.Factory {
-            return object : AuroraIcon.Factory {
-                override fun createNewIcon(): AuroraIcon {
-                    return star_black_48dp()
-                }
-            }
-        }
-
         
     }
 

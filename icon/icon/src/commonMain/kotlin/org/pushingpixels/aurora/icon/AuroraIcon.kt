@@ -26,19 +26,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Dp
 
 abstract class AuroraIcon : Painter() {
-    /**
-     * Interface for creating new icons of this type.
-     *
-     * @author Kirill Grouchnikov
-     */
-    interface Factory {
-        /**
-         * Returns a new instance of the icon managed by this factory.
-         *
-         * @return A new instance of the icon managed by this factory.
-         */
-        fun createNewIcon(): AuroraIcon
-    }
 }
 
 @Composable

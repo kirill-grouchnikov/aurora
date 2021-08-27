@@ -131,19 +131,6 @@ alpha = alphaStack.removeAt(0)
             return 0.6737691760063171
         }
 
-        /**
-         * Returns a factory that returns instances of this icon on demand.
-         *
-         * @return Factory that returns instances of this icon on demand.
-         */
-        fun factory(): AuroraIcon.Factory {
-            return object : AuroraIcon.Factory {
-                override fun createNewIcon(): AuroraIcon {
-                    return kirill()
-                }
-            }
-        }
-
         private lateinit var image484482440f4da3ada2d5781785d20a7c: WeakReference<ImageBitmap>
 private fun getImage484482440f4da3ada2d5781785d20a7c(): ImageBitmap? {
     if (::image484482440f4da3ada2d5781785d20a7c.isInitialized) {

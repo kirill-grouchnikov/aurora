@@ -83,19 +83,6 @@ class TOKEN_CLASSNAME : AuroraIcon() {
             return TOKEN_ORIG_HEIGHT
         }
 
-        /**
-         * Returns a factory that returns instances of this icon on demand.
-         *
-         * @return Factory that returns instances of this icon on demand.
-         */
-        fun factory(): AuroraIcon.Factory {
-            return object : AuroraIcon.Factory {
-                override fun createNewIcon(): AuroraIcon {
-                    return TOKEN_CLASSNAME()
-                }
-            }
-        }
-
         TOKEN_RASTER_CODE
     }
 
