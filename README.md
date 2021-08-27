@@ -9,11 +9,11 @@ Aurora is a collection of libraries for writing modern, elegant and fast [deskto
 
 # Current status
 
-Aurora is currently in pre-alpha, active early development. Most of the ideas and building blocks in Aurora come from [Radiance](https://github.com/kirill-grouchnikov/radiance). That project has been around since 2005, and it will take a bit more time to get to the more stable state where it'll be ready to be experimented with. How much more time? Probably around summer 2021.
+Aurora is currently in pre-alpha, active early development. Most of the ideas and building blocks in Aurora come from [Radiance](https://github.com/kirill-grouchnikov/radiance). That project has been around since 2005, and it will take a bit more time to get to the more stable state where it'll be ready to be experimented with. How much more time? Probably around fall 2021.
 
 The goal is to provide a collection of high-quality components for building modern desktop Compose applications. Aurora will bring the full power of the skinning layer from Radiance, including all the skins and complete support for state-based transitions for all the components. In addition, Aurora will provide a powerful painter API layer to create custom composable components with consistent visual appearance and state transitions.
 
-Going a bit further into 2021, Aurora will bring a fully-fledged ribbon container into the desktop Compose world.
+Going a bit further into 2022, Aurora will bring a fully-fledged ribbon container into the desktop Compose world.
 
 # Playing with SNAPSHOT builds
 
