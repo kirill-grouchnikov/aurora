@@ -18,20 +18,22 @@ package org.pushingpixels.aurora.utils
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.toComposeColorFilter
-import org.pushingpixels.aurora.bitmapfilter.BaseBitmapFilter
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.common.*
+import org.pushingpixels.aurora.common.colorBrightness
+import org.pushingpixels.aurora.common.interpolateTowards
+import org.pushingpixels.aurora.common.withBrightness
 import kotlin.math.roundToInt
 import org.jetbrains.skija.ColorFilter as SkijaColorFilter
 
 private val interpolations: MutableMap<AuroraColorScheme, Array<Color?>> = hashMapOf()
+private const val MAPSTEPS = 256
 
 fun getInterpolatedColors(scheme: AuroraColorScheme): Array<Color?> {
     if ((scheme !is MutableColorScheme) && interpolations.containsKey(scheme)) {
         return interpolations[scheme]!!
     }
 
-    val result = arrayOfNulls<Color>(ColorSchemeBitmapFilter.MAPSTEPS)
+    val result = arrayOfNulls<Color>(MAPSTEPS)
 
     // collect the brightness factors of the color scheme
     val schemeColorMapping = hashMapOf<Int, Color>()
@@ -82,8 +84,8 @@ fun getInterpolatedColors(scheme: AuroraColorScheme): Array<Color?> {
     // Step 3 - create the full brightness mapping that assigns colors to
     // all intermediate brightness values. The intermediate brightness values
     // are in discrete range
-    for (i in 0 until ColorSchemeBitmapFilter.MAPSTEPS) {
-        val brightness = (256.0 * i / ColorSchemeBitmapFilter.MAPSTEPS).toInt()
+    for (i in 0 until MAPSTEPS) {
+        val brightness = (256.0 * i / MAPSTEPS).toInt()
         if (schemeBrightness.contains(brightness)) {
             result[i] = stretchedColorMapping[brightness]
         } else {
@@ -128,69 +130,4 @@ fun getColorSchemeFilter(scheme: AuroraColorScheme): ColorFilter {
     }
 
     return SkijaColorFilter.makeTableARGB(null, reds, greens, blues).toComposeColorFilter()
-}
-
-class ColorSchemeBitmapFilter(
-    val scheme: AuroraColorScheme,
-    private val originalBrightnessFactor: Float,
-    val alpha: Float
-) : BaseBitmapFilter() {
-    private val interpolated = getInterpolatedColors(scheme)
-
-    override fun filter(width: Int, height: Int, source: ByteArray): ByteArray {
-        // Use the brightness mapping to colorize each original pixel "into"
-        // our target color scheme. The hue and the value of each original pixel are preserved.
-        val size = source.size / 4
-        val result = ByteArray(source.size)
-        for (pos in 0 until size) {
-            // Get the bytes from the Skija source
-            val blueByte = source[4 * pos].toInt()
-            val greenByte = source[4 * pos + 1].toInt()
-            val redByte = source[4 * pos + 2].toInt()
-            val alphaByte = source[4 * pos + 3].toInt()
-
-            // Convert them to the 0.0-1.0 range that Compose operates in
-            val b = (if (blueByte < 0) 256 + blueByte else blueByte) / 255.0f
-            val g = (if (greenByte < 0) 256 + greenByte else greenByte) / 255.0f
-            val r = (if (redByte < 0) 256 + redByte else redByte) / 255.0f
-            val a = (if (alphaByte < 0) 256 + alphaByte else alphaByte) / 255.0f
-
-            val brightness = getColorBrightness(r, g, b)
-            val hsb = RGBtoHSB(r, g, b)
-
-            val pixelColor = interpolated[(brightness * MAPSTEPS - 0.5f).toInt()]!!
-            val hsbInterpolated = RGBtoHSB(pixelColor)
-
-            // Preserve hue and value
-            hsb[0] = hsbInterpolated[0]
-            hsb[1] = hsbInterpolated[1]
-            // And remap the brightness
-            if (originalBrightnessFactor >= 0.0f) {
-                hsb[2] = (originalBrightnessFactor * hsb[2]
-                        + (1.0f - originalBrightnessFactor) * hsbInterpolated[2])
-            } else {
-                hsb[2] = hsb[2] * hsbInterpolated[2] * (1.0f + originalBrightnessFactor)
-            }
-
-            // Convert the remapped HSB back to RGB
-            val finalPixel = HSBtoRGB(floatArrayOf(hsb[0], hsb[1], hsb[2]))
-            // And compute the final channel values as bytes
-            val finalAlpha = (a * alpha * 255.0f + 0.5f).toInt().toByte()
-            val finalRed = (finalPixel.red * 255.0f + 0.5f).toInt().toByte()
-            val finalGreen = (finalPixel.green * 255.0f + 0.5f).toInt().toByte()
-            val finalBlue = (finalPixel.blue * 255.0f + 0.5f).toInt().toByte()
-
-            // Put the byte values in BGRA order
-            result[4 * pos] = finalBlue
-            result[4 * pos + 1] = finalGreen
-            result[4 * pos + 2] = finalRed
-            result[4 * pos + 3] = finalAlpha
-        }
-
-        return result
-    }
-
-    companion object {
-        const val MAPSTEPS = 256
-    }
 }

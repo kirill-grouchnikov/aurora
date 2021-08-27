@@ -14,7 +14,6 @@ kotlin {
             dependencies {
                 api(compose.runtime)
                 api(compose.foundation)
-                implementation(project(":bitmapfilter"))
                 implementation(project(":common"))
                 implementation(project(":skin"))
             }
@@ -22,7 +21,6 @@ kotlin {
         named("desktopMain") {
             dependencies {
                 api(compose.desktop.common)
-                implementation(project(":bitmapfilter"))
                 implementation(project(":common"))
                 implementation(project(":skin"))
             }

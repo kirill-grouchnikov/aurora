@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.clipPath
 import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.utils.ColorSchemeBitmapFilter
+import org.pushingpixels.aurora.utils.getColorSchemeFilter
 
 /**
  * Implementation of [AuroraDecorationPainter] that uses an image source to paint on
@@ -36,9 +36,6 @@ abstract class ImageWrapperDecorationPainter(
     val textureAlpha: Float = 0.2f,
     val baseDecorationPainter: AuroraDecorationPainter? = null
 ) : AuroraDecorationPainter {
-    /** Map of colorized tiles. */
-    private var colorizedTileMap = LinkedHashMap<String, ImageBitmap>(10)
-
     override fun paintDecorationArea(
         drawScope: DrawScope,
         decorationAreaType: DecorationAreaType,
@@ -110,9 +107,9 @@ abstract class ImageWrapperDecorationPainter(
         var offsetTextureY = offsetTexture.y
 
         with(drawScope) {
-            val colorizedTile = getColorizedTile(tileScheme)
-            val tileWidth = colorizedTile.width
-            val tileHeight = colorizedTile.height
+            val colorFilter = getColorSchemeFilter(tileScheme)
+            val tileWidth = originalTile.width
+            val tileHeight = originalTile.height
             offsetTextureX %= tileWidth
             offsetTextureY %= tileHeight
             var currTileTop = -offsetTextureY
@@ -120,32 +117,15 @@ abstract class ImageWrapperDecorationPainter(
                 var currTileLeft = -offsetTextureX
                 do {
                     drawImage(
-                        image = colorizedTile,
+                        image = originalTile,
                         alpha = textureAlpha,
-                        topLeft = Offset(currTileLeft, currTileTop)
+                        topLeft = Offset(currTileLeft, currTileTop),
+                        colorFilter = colorFilter
                     )
                     currTileLeft += tileWidth
                 } while (currTileLeft < componentSize.width)
                 currTileTop += tileHeight
             } while (currTileTop < componentSize.height)
         }
-    }
-
-    /**
-     * Returns a colorized image tile.
-     *
-     * @param scheme Color scheme for the colorization.
-     * @return Colorized tile.
-     */
-    private fun getColorizedTile(scheme: AuroraColorScheme): ImageBitmap {
-        var result = colorizedTileMap[scheme.displayName]
-        if (result == null) {
-            result = ColorSchemeBitmapFilter(scheme = scheme, originalBrightnessFactor = 0.0f, alpha = 1.0f)
-                .filter(source = originalTile)
-
-            // Cache the bitmap
-            colorizedTileMap[scheme.displayName] = result
-        }
-        return result
     }
 }
