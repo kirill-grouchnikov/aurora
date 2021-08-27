@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
@@ -39,7 +40,6 @@ import org.pushingpixels.aurora.demo.svg.tango.drive_harddisk
 import org.pushingpixels.aurora.demo.svg.tango.help_browser
 import org.pushingpixels.aurora.demo.svg.tango.media_floppy
 import org.pushingpixels.aurora.demo.svg.tango.system_search
-import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.skin.*
 import org.pushingpixels.aurora.utils.getColorSchemeFilter
 import org.pushingpixels.aurora.window.AuroraDecorationArea
@@ -75,59 +75,79 @@ fun IconDemoArea() {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = media_floppy(), iconSize = 40.dp)
+                Box(modifier = Modifier.size(40.dp).paint(painter = media_floppy()))
                 LabelProjection(contentModel = LabelContentModel(text = "icon 1")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = drive_harddisk(), iconSize = 40.dp)
+                Box(modifier = Modifier.size(40.dp).paint(painter = drive_harddisk()))
                 LabelProjection(contentModel = LabelContentModel(text = "icon 2")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = help_browser(), iconSize = 40.dp)
+                Box(modifier = Modifier.size(40.dp).paint(painter = help_browser()))
                 LabelProjection(contentModel = LabelContentModel(text = "icon 3")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = system_search(), iconSize = 40.dp)
+                Box(modifier = Modifier.size(40.dp).paint(painter = system_search()))
                 LabelProjection(contentModel = LabelContentModel(text = "icon 4")).project()
             }
             Spacer(modifier = Modifier.width(24.dp))
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(
-                    icon = media_floppy(), iconSize = 40.dp,
-                    colorFilter = getColorSchemeFilter(
-                        scheme = autumnSkin().colors.getEnabledColorScheme(
-                            DecorationAreaType.None
+                Box(
+                    modifier = Modifier.size(40.dp).paint(
+                        painter = media_floppy(),
+                        colorFilter = getColorSchemeFilter(
+                            scheme = autumnSkin().colors.getEnabledColorScheme(
+                                DecorationAreaType.None
+                            )
                         )
                     )
                 )
                 LabelProjection(contentModel = LabelContentModel(text = "icon 1")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = drive_harddisk(), iconSize = 40.dp,
-                    colorFilter = getColorSchemeFilter(
-                        scheme = nebulaAmethystSkin().colors.getActiveColorScheme(
-                            DecorationAreaType.TitlePane
+                Box(
+                    modifier = Modifier.size(40.dp).paint(
+                        painter = drive_harddisk(),
+                        colorFilter = getColorSchemeFilter(
+                            scheme = nebulaAmethystSkin().colors.getActiveColorScheme(
+                                DecorationAreaType.TitlePane
+                            )
                         )
-                    ))
+                    )
+                )
                 LabelProjection(contentModel = LabelContentModel(text = "icon 2")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = help_browser(), iconSize = 40.dp,
-                    colorFilter = getColorSchemeFilter(
-                        scheme = magellanSkin().colors.getEnabledColorScheme(
-                            DecorationAreaType.None
+                Box(
+                    modifier = Modifier.size(40.dp).paint(
+                        painter = help_browser(),
+                        colorFilter = getColorSchemeFilter(
+                            scheme = magellanSkin().colors.getEnabledColorScheme(
+                                DecorationAreaType.None
+                            )
                         )
-                    ))
-                LabelProjection(contentModel = LabelContentModel(text = "icon 3")).project()
+                    )
+                )
+                LabelProjection(
+                    contentModel =
+                    LabelContentModel(text = "icon 3")
+                ).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = system_search(), iconSize = 40.dp,
-                    colorFilter = getColorSchemeFilter(
-                        scheme = twilightSkin().colors.getEnabledColorScheme(
-                            DecorationAreaType.None
+                Box(
+                    modifier = Modifier.size(40.dp).paint(
+                        painter = system_search(),
+                        colorFilter = getColorSchemeFilter(
+                            scheme = twilightSkin().colors.getEnabledColorScheme(
+                                DecorationAreaType.None
+                            )
                         )
-                    ))
-                LabelProjection(contentModel = LabelContentModel(text = "icon 4")).project()
+                    )
+                )
+                LabelProjection(
+                    contentModel =
+                    LabelContentModel(text = "icon 4")
+                ).project()
             }
         }
         Row(
@@ -135,51 +155,55 @@ fun IconDemoArea() {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(
-                    icon = account_box_24px(), iconSize = 40.dp
-                )
+                Box(modifier = Modifier.size(40.dp).paint(painter = account_box_24px()))
                 LabelProjection(contentModel = LabelContentModel(text = "icon 1")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(
-                    icon = battery_full_24px(), iconSize = 40.dp
-                )
+                Box(modifier = Modifier.size(40.dp).paint(painter = battery_full_24px()))
                 LabelProjection(contentModel = LabelContentModel(text = "icon 2")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = perm_device_information_24px(), iconSize = 40.dp
-                )
+                Box(modifier = Modifier.size(40.dp).paint(painter = perm_device_information_24px()))
                 LabelProjection(contentModel = LabelContentModel(text = "icon 3")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = waves_24px(), iconSize = 40.dp
-                )
+                Box(modifier = Modifier.size(40.dp).paint(painter = waves_24px()))
                 LabelProjection(contentModel = LabelContentModel(text = "icon 4")).project()
             }
             Spacer(modifier = Modifier.width(24.dp))
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(
-                    icon = account_box_24px(), iconSize = 40.dp,
-                    colorFilter = ColorFilter.tint(color = Color(0xFF9C27B0))
+                Box(
+                    modifier = Modifier.size(40.dp).paint(
+                        painter = account_box_24px(),
+                        colorFilter = ColorFilter.tint(color = Color(0xFF9C27B0))
+                    )
                 )
                 LabelProjection(contentModel = LabelContentModel(text = "icon 1")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(
-                    icon = battery_full_24px(), iconSize = 40.dp,
-                    colorFilter = ColorFilter.tint(color = Color(0xFFFF1744))
+                Box(
+                    modifier = Modifier.size(40.dp).paint(
+                        painter = battery_full_24px(),
+                        colorFilter = ColorFilter.tint(color = Color(0xFFFF1744))
+                    )
                 )
                 LabelProjection(contentModel = LabelContentModel(text = "icon 2")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = perm_device_information_24px(), iconSize = 40.dp,
-                    colorFilter = ColorFilter.tint(color = Color(0xFF4CAF50))
+                Box(
+                    modifier = Modifier.size(40.dp).paint(
+                        painter = perm_device_information_24px(),
+                        colorFilter = ColorFilter.tint(color = Color(0xFF4CAF50))
+                    )
                 )
                 LabelProjection(contentModel = LabelContentModel(text = "icon 3")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = waves_24px(), iconSize = 40.dp,
-                    colorFilter = ColorFilter.tint(color = Color(0xFFFF6F00))
+                Box(
+                    modifier = Modifier.size(40.dp).paint(
+                        painter = waves_24px(),
+                        colorFilter = ColorFilter.tint(color = Color(0xFFFF6F00))
+                    )
                 )
                 LabelProjection(contentModel = LabelContentModel(text = "icon 4")).project()
             }
@@ -189,11 +213,11 @@ fun IconDemoArea() {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = pattern(), iconSize = 128.dp)
+                Box(modifier = Modifier.size(128.dp).paint(painter = pattern()))
                 LabelProjection(contentModel = LabelContentModel(text = "pattern")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = text(), iconSize = 128.dp)
+                Box(modifier = Modifier.size(128.dp).paint(painter = text()))
                 LabelProjection(contentModel = LabelContentModel(text = "text")).project()
             }
         }
@@ -202,11 +226,11 @@ fun IconDemoArea() {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = marker(), iconSize = 128.dp)
+                Box(modifier = Modifier.size(128.dp).paint(painter = marker()))
                 LabelProjection(contentModel = LabelContentModel(text = "themed 3")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                AuroraIcon(icon = kirill(), iconSize = 128.dp)
+                Box(modifier = Modifier.size(128.dp).paint(painter = kirill()))
                 LabelProjection(contentModel = LabelContentModel(text = "raster")).project()
             }
         }

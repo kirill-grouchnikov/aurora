@@ -22,9 +22,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
-import org.pushingpixels.aurora.icon.AuroraIcon
+import androidx.compose.ui.graphics.painter.Painter
 
-class ColorSolidIcon(val color: Color) : AuroraIcon() {
+class ColorSolidIcon(val color: Color) : Painter() {
     override val intrinsicSize: Size
         get() = Size.Unspecified
 
@@ -41,7 +41,7 @@ class ColorSolidIcon(val color: Color) : AuroraIcon() {
 class ColorGradientIcon(
     val colorTop: Color,
     val colorBottom: Color
-) : AuroraIcon() {
+) : Painter() {
     override val intrinsicSize: Size
         get() = Size.Unspecified
 
