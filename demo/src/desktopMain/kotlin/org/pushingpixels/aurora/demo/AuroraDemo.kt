@@ -21,6 +21,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -335,7 +336,7 @@ fun DemoFooter(
 @Composable
 fun DemoHeader(
     text: String,
-    iconFactory: AuroraIcon.Factory,
+    icon: Painter,
     contentEnabled: MutableState<Boolean>
 ) {
     // Resolve the default text style to get the default font size
@@ -358,7 +359,7 @@ fun DemoHeader(
             contentModel = LabelContentModel(
                 text = text.uppercase(),
                 enabled = contentEnabled.value,
-                iconFactory = iconFactory,
+                icon = icon,
             ),
             presentationModel = LabelPresentationModel(
                 textStyle = textStyle,
@@ -420,7 +421,7 @@ fun DemoArea(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
 
-            DemoHeader("Buttons", button.factory(), contentEnabled)
+            DemoHeader("Buttons", button(), contentEnabled)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -592,7 +593,7 @@ fun DemoArea(
                 ).project()
             }
 
-            DemoHeader("Selectors", check_square_o.factory(), contentEnabled)
+            DemoHeader("Selectors", check_square_o(), contentEnabled)
             Row(modifier = Modifier.fillMaxWidth()) {
                 // Example of a checkbox backed by a mutable boolean
                 var checkboxSelected by remember { mutableStateOf(true) }
@@ -622,7 +623,7 @@ fun DemoArea(
                     )).project()
             }
 
-            DemoHeader("Combo boxes", combobox.factory(), contentEnabled)
+            DemoHeader("Combo boxes", combobox(), contentEnabled)
 
             // Example of comboboxes with different popup placements, all updating and being
             // updated by the same mutable selection tracker
@@ -731,7 +732,7 @@ fun DemoArea(
                 ).project()
             }
 
-            DemoHeader("Progress bars", progressbar.factory(), contentEnabled)
+            DemoHeader("Progress bars", progressbar(), contentEnabled)
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -763,7 +764,7 @@ fun DemoArea(
                 ).project()
             }
 
-            DemoHeader("Sliders", slider.factory(), contentEnabled)
+            DemoHeader("Sliders", slider(), contentEnabled)
 
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
                 // Example of a continuous slider
@@ -804,7 +805,7 @@ fun DemoArea(
                 ).project()
             }
 
-            DemoHeader("Text fields", text_input.factory(), contentEnabled)
+            DemoHeader("Text fields", text_input(), contentEnabled)
 
             Row(
                 modifier = Modifier.fillMaxWidth(),

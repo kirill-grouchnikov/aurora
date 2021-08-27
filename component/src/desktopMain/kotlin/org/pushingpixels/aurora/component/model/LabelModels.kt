@@ -16,18 +16,17 @@
 package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.IconFilterStrategy
-import org.pushingpixels.aurora.icon.AuroraIcon
 
 data class LabelContentModel(
     val text: String,
     val enabled: Boolean = true,
-    val iconFactory: AuroraIcon.Factory? = null,
-    val disabledIconFactory: AuroraIcon.Factory? = null
+    val icon: Painter? = null
 ): ContentModel
 
 object LabelSizingConstants {

@@ -50,7 +50,7 @@ internal fun AuroraLabel(
         horizontalArrangement = presentationModel.horizontalAlignment.arrangement,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (contentModel.iconFactory != null) {
+        if (contentModel.icon != null) {
             LabelIconContent(contentModel, presentationModel, state)
             Spacer(modifier = Modifier.requiredWidth(4.dp * presentationModel.horizontalGapScaleFactor))
         }
@@ -116,17 +116,14 @@ private fun LabelIconContent(
     contentModel: LabelContentModel, presentationModel: LabelPresentationModel,
     currState: ComponentState
 ) {
-    if (contentModel.iconFactory == null) {
+    if (contentModel.icon == null) {
         return
     }
 
-    val iconSize = presentationModel.iconDimension
-    val icon = remember(iconSize) { contentModel.iconFactory.createNewIcon() }
-
     if (presentationModel.inheritStateFromParent) {
         AuroraThemedIcon(
-            icon = icon,
-            size = iconSize,
+            icon = contentModel.icon,
+            size = presentationModel.iconDimension,
             disabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
             enabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
             activeFilterStrategy = presentationModel.iconEnabledFilterStrategy
@@ -147,8 +144,8 @@ private fun LabelIconContent(
             )
         ) {
             AuroraThemedIcon(
-                icon = icon,
-                size = iconSize,
+                icon = contentModel.icon,
+                size = presentationModel.iconDimension,
                 disabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
                 enabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
                 activeFilterStrategy = presentationModel.iconEnabledFilterStrategy

@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Dp
 import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
@@ -34,7 +35,7 @@ import org.pushingpixels.aurora.utils.MutableColorScheme
 import org.pushingpixels.aurora.utils.getColorSchemeFilter
 
 private class CombinedIconModifier(
-    val icon: AuroraIcon,
+    val icon: Painter,
     val enabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val activeFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val skinColors: AuroraSkinColors,
@@ -101,7 +102,7 @@ private class IconDrawingCache(
 
 @Composable
 fun AuroraThemedIcon(
-    icon: AuroraIcon,
+    icon: Painter,
     size: Dp,
     disabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
     enabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,

@@ -95,18 +95,18 @@ fun main() = application {
     val itemCount = 30
 
     val icons = arrayOf(
-        accessibility_new_24px.factory(),
-        account_box_24px.factory(),
-        backup_24px.factory(),
-        brightness_medium_24px.factory(),
-        help_24px.factory(),
-        info_24px.factory(),
-        keyboard_capslock_24px.factory(),
-        location_on_24px.factory(),
-        perm_device_information_24px.factory(),
-        storage_24px.factory(),
-        visibility_24px.factory(),
-        waves_24px.factory()
+        accessibility_new_24px(),
+        account_box_24px(),
+        backup_24px(),
+        brightness_medium_24px(),
+        help_24px(),
+        info_24px(),
+        keyboard_capslock_24px(),
+        location_on_24px(),
+        perm_device_information_24px(),
+        storage_24px(),
+        visibility_24px(),
+        waves_24px()
     )
 
     AuroraWindow(
@@ -213,7 +213,7 @@ fun main() = application {
                                 LabelProjection(
                                     contentModel = LabelContentModel(
                                         text = "Item #$item",
-                                        iconFactory = icons[item % icons.size]
+                                        icon = icons[item % icons.size]
                                     ),
                                     presentationModel = LabelPresentationModel(
                                         inheritStateFromParent = true,
