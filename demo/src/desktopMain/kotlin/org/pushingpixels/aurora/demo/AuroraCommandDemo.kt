@@ -48,7 +48,7 @@ fun main() = application {
     AuroraWindow(
         skin = skin,
         title = "Aurora Demo",
-        iconFactory = radiance_menu.factory(),
+        icon = radiance_menu(),
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         state = state,
         undecorated = true,

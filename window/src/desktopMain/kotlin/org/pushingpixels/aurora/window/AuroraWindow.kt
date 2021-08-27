@@ -30,6 +30,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
@@ -85,7 +86,7 @@ object WindowTitlePaneSizingConstants {
 @Composable
 private fun WindowScope.WindowTitlePane(
     title: String,
-    icon: AuroraIcon?,
+    icon: Painter?,
     iconFilterStrategy: IconFilterStrategy,
     titlePaneBounds: MutableState<Rect>
 ) {
@@ -274,7 +275,7 @@ private fun WindowScope.WindowTitlePane(
 @Composable
 private fun WindowScope.WindowInnerContent(
     title: String,
-    icon: AuroraIcon?,
+    icon: Painter?,
     iconFilterStrategy: IconFilterStrategy,
     undecorated: Boolean,
     titlePaneBounds: MutableState<Rect>,
@@ -388,7 +389,7 @@ internal fun Modifier.drawUndecoratedWindowBorder(
 @Composable
 internal fun WindowScope.WindowContent(
     title: String,
-    icon: AuroraIcon?,
+    icon: Painter?,
     iconFilterStrategy: IconFilterStrategy,
     titlePaneBounds: MutableState<Rect>,
     undecorated: Boolean,
@@ -469,7 +470,7 @@ fun ApplicationScope.AuroraWindow(
     state: WindowState = rememberWindowState(),
     visible: Boolean = true,
     title: String = "Untitled",
-    iconFactory: AuroraIcon.Factory? = null,
+    icon: Painter? = null,
     iconFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     menuCommands: CommandGroup? = null,
     undecorated: Boolean = false,
@@ -483,8 +484,6 @@ fun ApplicationScope.AuroraWindow(
 ) {
     val titlePaneBounds = mutableStateOf(Rect.Zero)
     val density = mutableStateOf(Density(1.0f, 1.0f))
-
-    val icon = iconFactory?.createNewIcon()
 
     Window(
         onCloseRequest = onCloseRequest,
@@ -560,7 +559,7 @@ fun ApplicationScope.AuroraWindow(
     state: WindowState = rememberWindowState(),
     visible: Boolean = true,
     title: String = "Untitled",
-    iconFactory: AuroraIcon.Factory? = null,
+    icon: Painter? = null,
     iconFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     menuCommands: CommandGroup? = null,
     undecorated: Boolean = false,
@@ -574,8 +573,6 @@ fun ApplicationScope.AuroraWindow(
 ) {
     val titlePaneBounds = mutableStateOf(Rect.Zero)
     val density = mutableStateOf(Density(1.0f, 1.0f))
-
-    val icon = iconFactory?.createNewIcon()
 
     Window(
         onCloseRequest = onCloseRequest,
