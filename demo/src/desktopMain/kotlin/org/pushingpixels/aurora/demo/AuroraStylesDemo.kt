@@ -132,7 +132,7 @@ fun getStylesContentModel(
         val command = Command(
             text = "Solid ${color.shorthexa}",
             extraText = color.shorthexa,
-            iconFactory = ColorSolidIcon.factory(color),
+            icon = ColorSolidIcon(color),
             actionPreview = object : CommandActionPreview {
                 override fun onCommandPreviewActivated(command: Command) {
                     isInPreview.value = true
@@ -165,7 +165,7 @@ fun getStylesContentModel(
         val command = Command(
             text = "${colorTop.shorthexa} ${colorBottom.shorthexa}",
             extraText = colorTop.shorthexa,
-            iconFactory = ColorGradientIcon.factory(colorTop, colorBottom),
+            icon = ColorGradientIcon(colorTop, colorBottom),
             actionPreview = object : CommandActionPreview {
                 override fun onCommandPreviewActivated(command: Command) {
                     isInPreview.value = true
@@ -208,14 +208,14 @@ fun CommandDemoEditStrip(
     val commandCut =
         Command(
             text = "Cut",
-            iconFactory = content_cut_black_24dp.factory(),
+            icon = content_cut_black_24dp(),
             isActionEnabled = true,
             action = { println("Cut!") }
         )
     val commandCopy =
         Command(
             text = "Copy",
-            iconFactory = content_copy_black_24dp.factory(),
+            icon = content_copy_black_24dp(),
             isActionEnabled = true,
             action = { println("Copy!") }
         )
@@ -233,7 +233,7 @@ fun CommandDemoEditStrip(
     val commandPaste =
         Command(
             text = "Paste",
-            iconFactory = content_paste_black_24dp.factory(),
+            icon = content_paste_black_24dp(),
             isActionEnabled = true,
             action = { println("Paste!") },
             secondaryContentModel = CommandMenuContentModel(

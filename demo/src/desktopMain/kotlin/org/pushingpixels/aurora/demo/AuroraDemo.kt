@@ -38,7 +38,6 @@ import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.demo.svg.vaadin.*
-import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.skin.businessSkin
 import org.pushingpixels.aurora.skin.getAuroraSkins
 import org.pushingpixels.aurora.window.AuroraDecorationArea
@@ -111,7 +110,7 @@ fun DemoProgress(enabled: Boolean) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         CommandButtonProjection(
             contentModel = Command(text = "",
-                iconFactory = remove_circle_outline_24px.factory(),
+                icon = remove_circle_outline_24px(),
                 isActionEnabled = enabled and (progress > 0.0f),
                 action = { progress -= 0.1f }),
             presentationModel = CommandButtonPresentationModel(
@@ -133,7 +132,7 @@ fun DemoProgress(enabled: Boolean) {
 
         CommandButtonProjection(
             contentModel = Command(text = "",
-                iconFactory = add_circle_outline_24px.factory(),
+                icon = add_circle_outline_24px(),
                 isActionEnabled = enabled and (progress < 1.0f),
                 action = { progress += 0.1f }),
             presentationModel = CommandButtonPresentationModel(
@@ -164,7 +163,7 @@ fun DemoToolbar(
         CommandButtonProjection(
             contentModel = Command(
                 text = "cut",
-                iconFactory = edit_cut.factory(),
+                icon = edit_cut(),
                 action = { println("Cut!") }
             ),
             presentationModel = CommandButtonPresentationModel(
@@ -175,7 +174,7 @@ fun DemoToolbar(
         CommandButtonProjection(
             contentModel = Command(
                 text = "copy",
-                iconFactory = edit_copy.factory(),
+                icon = edit_copy(),
                 isActionEnabled = false,
                 action = { println("Copy!") }
             ),
@@ -187,7 +186,7 @@ fun DemoToolbar(
         CommandButtonProjection(
             contentModel = Command(
                 text = "paste",
-                iconFactory = edit_paste.factory(),
+                icon = edit_paste(),
                 action = { println("Paste!") }
             ),
             presentationModel = CommandButtonPresentationModel(
@@ -199,7 +198,7 @@ fun DemoToolbar(
         CommandButtonProjection(
             contentModel = Command(
                 text = "select all",
-                iconFactory = edit_select_all.factory(),
+                icon = edit_select_all(),
                 action = { println("Select all!") }
             ),
             presentationModel = CommandButtonPresentationModel(
@@ -211,7 +210,7 @@ fun DemoToolbar(
         CommandButtonProjection(
             contentModel = Command(
                 text = "delete",
-                iconFactory = edit_delete.factory(),
+                icon = edit_delete(),
                 action = { println("Delete!") }
             ),
             presentationModel = CommandButtonPresentationModel(
@@ -249,7 +248,7 @@ fun DemoToolbar(
 
         CommandButtonProjection(
             contentModel = Command(text = "exit",
-                iconFactory = process_stop.factory(),
+                icon = process_stop(),
                 action = { exitProcess(0) }),
             presentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.Small,
@@ -431,7 +430,7 @@ fun DemoArea(
                 CommandButtonProjection(
                     contentModel = Command(
                         text = "toggle",
-                        iconFactory = computer.factory(),
+                        icon = computer(),
                         isActionEnabled = contentEnabled.value,
                         isActionToggle = true,
                         isActionToggleSelected = toggleButtonSelected,
@@ -453,7 +452,7 @@ fun DemoArea(
                 CommandButtonProjection(
                     contentModel = Command(
                         text = "icon / text",
-                        iconFactory = keyboard_capslock_24px.factory(),
+                        icon = keyboard_capslock_24px(),
                         isActionEnabled = contentEnabled.value,
                         action = {}
                     ),
@@ -469,7 +468,7 @@ fun DemoArea(
                 CommandButtonProjection(
                     contentModel = Command(
                         text = "flat",
-                        iconFactory = account_box_24px.factory(),
+                        icon = account_box_24px(),
                         isActionEnabled = contentEnabled.value,
                         action = { println("Clicked!") }
                     ),
@@ -500,7 +499,7 @@ fun DemoArea(
                 CommandButtonProjection(
                     contentModel = Command(
                         text = "always",
-                        iconFactory = star_black_48dp.factory(),
+                        icon = star_black_48dp(),
                         isActionEnabled = contentEnabled.value,
                         isActionToggle = true,
                         isActionToggleSelected = toggleStarButtonSelected,
@@ -526,7 +525,7 @@ fun DemoArea(
                 CommandButtonProjection(
                     contentModel = Command(
                         text = "always",
-                        iconFactory = star_black_48dp.factory(),
+                        icon = star_black_48dp(),
                         isActionEnabled = contentEnabled.value,
                         isActionToggle = true,
                         isActionToggleSelected = toggleStarButtonSelected,
@@ -855,7 +854,7 @@ fun WindowScope.DemoContent(auroraSkinDefinition: MutableState<AuroraSkinDefinit
         commands = listOf(
             Command(
                 text = "Center",
-                iconFactory = format_justify_center.factory(),
+                icon = format_justify_center(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
                 isActionToggleSelected = (alignment.value == DemoAlignment.Center),
@@ -865,7 +864,7 @@ fun WindowScope.DemoContent(auroraSkinDefinition: MutableState<AuroraSkinDefinit
             ),
             Command(
                 text = "Left",
-                iconFactory = format_justify_left.factory(),
+                icon = format_justify_left(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
                 isActionToggleSelected = (alignment.value == DemoAlignment.Left),
@@ -875,7 +874,7 @@ fun WindowScope.DemoContent(auroraSkinDefinition: MutableState<AuroraSkinDefinit
             ),
             Command(
                 text = "Right",
-                iconFactory = format_justify_right.factory(),
+                icon = format_justify_right(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
                 isActionToggleSelected = (alignment.value == DemoAlignment.Right),
@@ -885,7 +884,7 @@ fun WindowScope.DemoContent(auroraSkinDefinition: MutableState<AuroraSkinDefinit
             ),
             Command(
                 text = "Fill",
-                iconFactory = format_justify_fill.factory(),
+                icon = format_justify_fill(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
                 isActionToggleSelected = (alignment.value == DemoAlignment.Fill),
@@ -900,7 +899,7 @@ fun WindowScope.DemoContent(auroraSkinDefinition: MutableState<AuroraSkinDefinit
         commands = listOf(
             Command(
                 text = "Bold",
-                iconFactory = format_text_bold.factory(),
+                icon = format_text_bold(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
                 isActionToggleSelected = style.bold.value,
@@ -911,7 +910,7 @@ fun WindowScope.DemoContent(auroraSkinDefinition: MutableState<AuroraSkinDefinit
             ),
             Command(
                 text = "Italic",
-                iconFactory = format_text_italic.factory(),
+                icon = format_text_italic(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
                 isActionToggleSelected = style.italic.value,
@@ -922,7 +921,7 @@ fun WindowScope.DemoContent(auroraSkinDefinition: MutableState<AuroraSkinDefinit
             ),
             Command(
                 text = "Underline",
-                iconFactory = format_text_underline.factory(),
+                icon = format_text_underline(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
                 isActionToggleSelected = style.underline.value,
@@ -933,7 +932,7 @@ fun WindowScope.DemoContent(auroraSkinDefinition: MutableState<AuroraSkinDefinit
             ),
             Command(
                 text = "Strikethrough",
-                iconFactory = format_text_strikethrough.factory(),
+                icon = format_text_strikethrough(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
                 isActionToggleSelected = style.strikethrough.value,

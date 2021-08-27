@@ -43,11 +43,10 @@ abstract class AuroraIcon : Painter() {
 
 @Composable
 fun AuroraIcon(
-    iconFactory: AuroraIcon.Factory,
+    icon: Painter,
     iconSize: Dp,
     colorFilter: ColorFilter? = null
 ) {
-    val icon = remember { iconFactory.createNewIcon() }
     Box(
         modifier = Modifier.size(iconSize).paint(painter = icon, colorFilter = colorFilter)
     )

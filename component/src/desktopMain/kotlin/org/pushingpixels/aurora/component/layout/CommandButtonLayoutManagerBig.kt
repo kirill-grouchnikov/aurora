@@ -47,7 +47,7 @@ internal open class CommandButtonLayoutManagerBig(
         command: Command,
         presentationModel: CommandButtonPresentationModel
     ): Dp {
-        return if ((command.iconFactory != null) || presentationModel.forceAllocateSpaceForIcon)
+        return if ((command.icon != null) || presentationModel.forceAllocateSpaceForIcon)
             getPreferredIconSize(command, presentationModel) else 0.dp
     }
 
@@ -55,7 +55,7 @@ internal open class CommandButtonLayoutManagerBig(
         command: Command,
         presentationModel: CommandButtonPresentationModel
     ): Dp {
-        return if ((command.iconFactory != null) || presentationModel.forceAllocateSpaceForIcon)
+        return if ((command.icon != null) || presentationModel.forceAllocateSpaceForIcon)
             getPreferredIconSize(command, presentationModel) else 0.dp
     }
 
@@ -127,7 +127,7 @@ internal open class CommandButtonLayoutManagerBig(
                 presentationModel.horizontalGapScaleFactor).toPx()
         val layoutVGap = (CommandButtonSizingConstants.DefaultVerticalContentLayoutGap *
                 presentationModel.verticalGapScaleFactor).toPx()
-        val hasIcon = (command.iconFactory != null) || presentationModel.forceAllocateSpaceForIcon
+        val hasIcon = (command.icon != null) || presentationModel.forceAllocateSpaceForIcon
         val hasText = (buttonText != null)
         val hasPopupIcon = (command.secondaryContentModel != null)
 
@@ -242,7 +242,7 @@ internal open class CommandButtonLayoutManagerBig(
                 presentationModel.horizontalGapScaleFactor).toPx()
         val layoutVGap = (CommandButtonSizingConstants.DefaultVerticalContentLayoutGap *
                 presentationModel.verticalGapScaleFactor).toPx()
-        val hasIcon = (command.iconFactory != null) || presentationModel.forceAllocateSpaceForIcon
+        val hasIcon = (command.icon != null) || presentationModel.forceAllocateSpaceForIcon
         val hasPopupIcon = (command.secondaryContentModel != null)
 
         var iconRect = Rect.Zero

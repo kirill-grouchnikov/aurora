@@ -17,7 +17,6 @@ package org.pushingpixels.aurora.component.layout
 
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.Paragraph
@@ -47,7 +46,7 @@ internal open class CommandButtonLayoutManagerMedium(
     }
 
     internal open fun hasIcon(command: Command, presentationModel: CommandButtonPresentationModel): Boolean {
-        return (command.iconFactory != null) || presentationModel.forceAllocateSpaceForIcon
+        return (command.icon != null) || presentationModel.forceAllocateSpaceForIcon
     }
 
     override fun getPreferredSize(

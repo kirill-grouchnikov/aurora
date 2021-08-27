@@ -123,7 +123,7 @@ fun CommandDemoJustifyStrip(
     val commandAlignCenter =
         Command(
             text = "Center",
-            iconFactory = format_justify_center.factory(),
+            icon = format_justify_center(),
             isActionEnabled = enabled,
             isActionToggle = true,
             isActionToggleSelected = (alignment.value == CommandDemoAlignment.Center),
@@ -134,7 +134,7 @@ fun CommandDemoJustifyStrip(
     val commandAlignLeft =
         Command(
             text = "Left",
-            iconFactory = format_justify_left.factory(),
+            icon = format_justify_left(),
             isActionEnabled = enabled,
             isActionToggle = true,
             isActionToggleSelected = (alignment.value == CommandDemoAlignment.Left),
@@ -145,7 +145,7 @@ fun CommandDemoJustifyStrip(
     val commandAlignRight =
         Command(
             text = "Right",
-            iconFactory = format_justify_right.factory(),
+            icon = format_justify_right(),
             isActionEnabled = enabled,
             isActionToggle = true,
             isActionToggleSelected = (alignment.value == CommandDemoAlignment.Right),
@@ -156,7 +156,7 @@ fun CommandDemoJustifyStrip(
     val commandAlignFill =
         Command(
             text = "Fill",
-            iconFactory = format_justify_fill.factory(),
+            icon = format_justify_fill(),
             isActionEnabled = enabled,
             isActionToggle = true,
             isActionToggleSelected = (alignment.value == CommandDemoAlignment.Fill),
@@ -191,7 +191,7 @@ fun CommandDemoEditStrip(
     val commandCut =
         Command(
             text = "Cut",
-            iconFactory = content_cut_black_24dp.factory(),
+            icon = content_cut_black_24dp(),
             isActionEnabled = actionEnabled,
             action = { println("Cut!") }
 
@@ -199,7 +199,7 @@ fun CommandDemoEditStrip(
     val commandCopy =
         Command(
             text = "Copy",
-            iconFactory = content_copy_black_24dp.factory(),
+            icon = content_copy_black_24dp(),
             isActionEnabled = actionEnabled,
             action = { println("Copy!") }
 
@@ -220,7 +220,7 @@ fun CommandDemoEditStrip(
     val commandPaste =
         Command(
             text = "Paste",
-            iconFactory = content_paste_black_24dp.factory(),
+            icon = content_paste_black_24dp(),
             isActionEnabled = actionEnabled,
             action = { println("Paste!") },
             secondaryContentModel = CommandMenuContentModel(
@@ -288,7 +288,7 @@ fun CommandDemoStyleStrip(
     val commandBold =
         Command(
             text = "Bold",
-            iconFactory = format_bold_black_24dp.factory(),
+            icon = format_bold_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
             isActionToggleSelected = style.bold.value,
@@ -300,7 +300,7 @@ fun CommandDemoStyleStrip(
     val commandItalic =
         Command(
             text = "Italic",
-            iconFactory = format_italic_black_24dp.factory(),
+            icon = format_italic_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
             isActionToggleSelected = style.italic.value,
@@ -312,7 +312,7 @@ fun CommandDemoStyleStrip(
     val commandUnderline =
         Command(
             text = "Underline",
-            iconFactory = format_underlined_black_24dp.factory(),
+            icon = format_underlined_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
             isActionToggleSelected = style.underline.value,
@@ -324,7 +324,7 @@ fun CommandDemoStyleStrip(
     val commandStrikethrough =
         Command(
             text = "Strikethrough",
-            iconFactory = format_strikethrough_black_24dp.factory(),
+            icon = format_strikethrough_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
             isActionToggleSelected = style.strikethrough.value,
@@ -363,7 +363,7 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
         Command(
             text = "Action!",
             extraText = "Extra action",
-            iconFactory = accessories_text_editor.factory(),
+            icon = accessories_text_editor(),
             action = { println("Action activated!") },
             isActionEnabled = actionEnabled,
             actionPreview = object : CommandActionPreview {
@@ -398,7 +398,7 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
         Command(
             text = "Toggle",
             extraText = "Extra toggle",
-            iconFactory = computer.factory(),
+            icon = computer(),
             isActionEnabled = actionEnabled,
             isActionToggle = true,
             isActionToggleSelected = selected,
@@ -412,7 +412,7 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
         Command(
             text = "Popup",
             extraText = "Extra popup",
-            iconFactory = computer.factory(),
+            icon = computer(),
             isSecondaryEnabled = popupEnabled,
             secondaryContentModel = CommandMenuContentModel(
                 CommandGroup(
@@ -420,19 +420,19 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
                     commands = listOf(
                         Command(
                             text = "popup1",
-                            iconFactory = computer.factory(),
+                            icon = computer(),
                             action = { println("popup1 activated!") },
                             isActionEnabled = actionEnabled
                         ),
                         Command(
                             text = "popup2",
-                            iconFactory = computer.factory(),
+                            icon = computer(),
                             action = { println("popup2 activated!") },
                             isActionEnabled = actionEnabled
                         ),
                         Command(
                             text = "popup3",
-                            iconFactory = computer.factory(),
+                            icon = computer(),
                             action = { println("popup3 activated!") },
                             isActionEnabled = actionEnabled
                         )
@@ -443,25 +443,25 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
 
     val secondaryCommand1 = Command(
         text = "secondary 1",
-        iconFactory = computer.factory(),
+        icon = computer(),
         action = { println("secondary 1 activated!") },
         isActionEnabled = actionEnabled
     )
     val secondaryCommand2 = Command(
         text = "secondary 2",
-        iconFactory = computer.factory(),
+        icon = computer(),
         action = { println("secondary 2 activated!") },
         isActionEnabled = actionEnabled
     )
     val secondaryCommand3 = Command(
         text = "secondary 3",
-        iconFactory = computer.factory(),
+        icon = computer(),
         action = { println("secondary 3 activated!") },
         isActionEnabled = actionEnabled
     )
     val secondaryCommand4 = Command(
         text = "secondary 4",
-        iconFactory = computer.factory(),
+        icon = computer(),
         action = { println("secondary 4 activated!") },
         isActionEnabled = actionEnabled,
         secondaryContentModel = CommandMenuContentModel(
@@ -471,21 +471,21 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
                     Command(
                         text = "secondary 4/1",
                         extraText = "extra text for 4/1",
-                        iconFactory = computer.factory(),
+                        icon = computer(),
                         action = { println("secondary 4/1 activated!") },
                         isActionEnabled = actionEnabled
                     ),
                     Command(
                         text = "secondary 4/2",
                         extraText = "extra text for 4/2",
-                        iconFactory = computer.factory(),
+                        icon = computer(),
                         action = { println("secondary 4/2 activated!") },
                         isActionEnabled = actionEnabled
                     ),
                     Command(
                         text = "secondary 4/3",
                         extraText = "extra text for 4/3",
-                        iconFactory = computer.factory(),
+                        icon = computer(),
                         action = { println("secondary 4/3 activated!") },
                         isActionEnabled = actionEnabled
                     )
@@ -497,7 +497,7 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
 
     val secondaryCommand5 = Command(
         text = "secondary 5",
-        iconFactory = computer.factory(),
+        icon = computer(),
         action = { println("secondary 5 activated!") },
         isActionEnabled = actionEnabled,
         secondaryContentModel = CommandMenuContentModel(
@@ -507,21 +507,21 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
                     Command(
                         text = "secondary 5/1",
                         extraText = "extra text for 5/1",
-                        iconFactory = computer.factory(),
+                        icon = computer(),
                         action = { println("secondary 5/1 activated!") },
                         isActionEnabled = actionEnabled
                     ),
                     Command(
                         text = "secondary 5/2",
                         extraText = "extra text for 5/2",
-                        iconFactory = computer.factory(),
+                        icon = computer(),
                         action = { println("secondary 5/2 activated!") },
                         isActionEnabled = actionEnabled
                     ),
                     Command(
                         text = "secondary 5/3",
                         extraText = "extra text for 5/3",
-                        iconFactory = computer.factory(),
+                        icon = computer(),
                         action = { println("secondary 5/3 activated!") },
                         isActionEnabled = actionEnabled
                     )
@@ -535,7 +535,7 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
         Command(
             text = "Both parts",
             extraText = "Extra both",
-            iconFactory = computer.factory(),
+            icon = computer(),
             action = { println("Split activated!") },
             actionPreview = object : CommandActionPreview {
                 override fun onCommandPreviewActivated(command: Command) {

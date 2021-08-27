@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.unit.Density
@@ -43,7 +44,7 @@ interface CommandActionPreview {
 data class Command(
     val text: String,
     val extraText: String? = null,
-    val iconFactory: AuroraIcon.Factory? = null,
+    val icon: Painter? = null,
     val action: (() -> Unit)? = null,
     val actionPreview: CommandActionPreview? = null,
     val isActionEnabled: Boolean = true,

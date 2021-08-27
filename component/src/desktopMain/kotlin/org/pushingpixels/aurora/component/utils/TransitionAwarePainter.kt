@@ -15,10 +15,9 @@
  */
 package org.pushingpixels.aurora.component.utils
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import org.pushingpixels.aurora.ColorSchemeAssociationKind
@@ -26,29 +25,30 @@ import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.ModelStateInfoSnapshot
 import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.icon.AuroraIcon
 import org.pushingpixels.aurora.utils.MutableColorScheme
 
+abstract class TransitionAwarePainterDelegate: Painter() {
+    abstract fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter
+
+    override val intrinsicSize: Size = Size.Unspecified
+
+    override fun DrawScope.onDraw() {
+        // Do nothing, this only pretends to be a painter
+    }
+}
+
 /**
- * Icon with transition-aware capabilities. Has a delegate that does the actual
+ * Painter with transition-aware capabilities. Has a delegate that does the actual
  * painting based on the transition color schemes.
  */
-class TransitionAwareIcon(
+class TransitionAwarePainter(
     val iconSize: Dp,
     val decorationAreaType: DecorationAreaType,
     val skinColors: AuroraSkinColors,
     val modelStateInfoSnapshot: ModelStateInfoSnapshot,
     val paintDelegate: (drawScope: DrawScope, iconSize: Dp, colorScheme: AuroraColorScheme) -> Unit,
     val density: Density
-) : AuroraIcon() {
-
-    abstract class TransitionAwareIconFactory : AuroraIcon.Factory {
-        override fun createNewIcon(): AuroraIcon {
-            throw UnsupportedOperationException()
-        }
-
-        abstract fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon
-    }
+) : Painter() {
 
     private val mutableColorScheme = MutableColorScheme(
         displayName = "Internal mutable",

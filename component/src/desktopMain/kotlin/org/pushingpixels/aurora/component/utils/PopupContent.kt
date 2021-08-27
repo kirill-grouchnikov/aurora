@@ -113,7 +113,7 @@ internal fun displayPopupContent(
     var atLeastOneRegularButtonHasIcon = false
     for (commandGroup in contentModel.value!!.groups) {
         for (secondaryCommand in commandGroup.commands) {
-            if (secondaryCommand.iconFactory != null) {
+            if (secondaryCommand.icon != null) {
                 atLeastOneRegularButtonHasIcon = true
             }
             if (secondaryCommand.isActionToggle) {
@@ -410,7 +410,7 @@ private fun PopupGeneralContent(
     var atLeastOneButtonHasIcon = false
     for (commandGroup in menuContentModel.value!!.groups) {
         for (secondaryCommand in commandGroup.commands) {
-            if (secondaryCommand.iconFactory != null) {
+            if (secondaryCommand.icon != null) {
                 atLeastOneButtonHasIcon = true
             }
             if (secondaryCommand.isActionToggle) {

@@ -27,7 +27,6 @@ import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -38,7 +37,6 @@ import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
@@ -1120,7 +1118,7 @@ private fun CommandButtonIconContent(
                 )
             }
         }
-        if (command.iconFactory == null) {
+        if (command.icon == null) {
             // If we get to this function, we are being asked to display the icon. If the icon
             // factory is null, we display a checkmark if the button is in selected
             // state (full or partial)
@@ -1167,10 +1165,10 @@ private fun CommandButtonIconContent(
                 }
             }
         } else {
-            val icon = if (command.iconFactory is TransitionAwareIcon.TransitionAwareIconFactory)
-                command.iconFactory.createNewIcon(modelStateInfo.getSnapshot(currState))
+            val icon = if (command.icon is TransitionAwarePainterDelegate)
+                command.icon.createNewIcon(modelStateInfo.getSnapshot(currState))
             else
-                remember(iconSize) { command.iconFactory.createNewIcon() }
+                command.icon
 
             // Compute the text color based on the passed model state (which can be action
             // or popup)

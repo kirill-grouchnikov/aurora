@@ -45,8 +45,8 @@ import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.*
-import org.pushingpixels.aurora.component.utils.TransitionAwareIcon
-import org.pushingpixels.aurora.icon.AuroraIcon
+import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
+import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
 import org.pushingpixels.aurora.shaper.AuroraButtonShaper
 import org.pushingpixels.aurora.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.utils.getColorSchemeFilter
@@ -167,10 +167,9 @@ private fun WindowScope.WindowTitlePane(
                         action = {
                             (window as? Frame)?.extendedState = JFrame.ICONIFIED
                         },
-                        iconFactory = object :
-                            TransitionAwareIcon.TransitionAwareIconFactory() {
-                            override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
-                                return TransitionAwareIcon(
+                        icon = object : TransitionAwarePainterDelegate() {
+                            override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
+                                return TransitionAwarePainter(
                                     iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = colors,
@@ -203,11 +202,10 @@ private fun WindowScope.WindowTitlePane(
                                 isMaximized.value = !isMaximized.value
                             }
                         },
-                        iconFactory = object :
-                            TransitionAwareIcon.TransitionAwareIconFactory() {
-                            override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
+                        icon = object : TransitionAwarePainterDelegate() {
+                            override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
                                 return if (isMaximized.value) {
-                                    TransitionAwareIcon(
+                                    TransitionAwarePainter(
                                         iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                         decorationAreaType = DecorationAreaType.TitlePane,
                                         skinColors = colors,
@@ -218,7 +216,7 @@ private fun WindowScope.WindowTitlePane(
                                         density = density,
                                     )
                                 } else {
-                                    TransitionAwareIcon(
+                                    TransitionAwarePainter(
                                         iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                         decorationAreaType = DecorationAreaType.TitlePane,
                                         skinColors = colors,
@@ -249,10 +247,9 @@ private fun WindowScope.WindowTitlePane(
                                 )
                             )
                         },
-                        iconFactory = object :
-                            TransitionAwareIcon.TransitionAwareIconFactory() {
-                            override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): AuroraIcon {
-                                return TransitionAwareIcon(
+                        icon = object : TransitionAwarePainterDelegate() {
+                            override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
+                                return TransitionAwarePainter(
                                     iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = colors,
