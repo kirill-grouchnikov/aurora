@@ -1,2 +1,2 @@
-include(":common", ":skin", ":icon:transcoder",
+include(":common", ":skin", ":tools:transcoder",
     ":component", ":window", ":demo")
