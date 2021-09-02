@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.pushingpixels.aurora.icon.transcoder.utils
+package org.pushingpixels.aurora.tools.svgtranscoder.utils
 
 import java.awt.*
 import java.awt.font.FontRenderContext

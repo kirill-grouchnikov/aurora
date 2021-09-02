@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.pushingpixels.aurora.icon.transcoder
+package org.pushingpixels.aurora.tools.svgtranscoder
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Matrix
@@ -24,8 +24,8 @@ import org.apache.batik.ext.awt.MultipleGradientPaint
 import org.apache.batik.ext.awt.RadialGradientPaint
 import org.apache.batik.ext.awt.geom.ExtendedGeneralPath
 import org.apache.batik.gvt.*
-import org.pushingpixels.aurora.icon.transcoder.utils.McCrashyGraphics2D
-import org.pushingpixels.aurora.icon.transcoder.utils.RasterScanner
+import org.pushingpixels.aurora.tools.svgtranscoder.utils.McCrashyGraphics2D
+import org.pushingpixels.aurora.tools.svgtranscoder.utils.RasterScanner
 import java.awt.*
 import java.awt.geom.*
 import java.awt.image.ImageObserver
