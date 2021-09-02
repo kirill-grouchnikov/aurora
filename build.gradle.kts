@@ -34,13 +34,24 @@ allprojects {
 
     configurations {
         all {
-            exclude(group="org.jetbrains.compose.material", module="material")
+            exclude(group = "org.jetbrains.compose.material", module = "material")
         }
     }
 }
-
 
 // To generate report about available dependency updates, run
 // ./gradlew dependencyUpdates
 apply(plugin = "com.github.ben-manes.versions")
 
+// Copies the compiled jars from all the modules into the drop folder.
+tasks.register("copyJars") {
+    delete("drop/${project.property("VERSION_NAME")}")
+    mkdir("drop/${project.property("VERSION_NAME")}")
+    subprojects {
+        copy {
+            from(("${project.buildDir}/libs"))
+            include("${rootProject.name}-${project.name}-*-${project.property("VERSION_NAME")}.jar")
+            into("${rootProject.projectDir}/drop/${project.property("VERSION_NAME")}")
+        }
+    }
+}

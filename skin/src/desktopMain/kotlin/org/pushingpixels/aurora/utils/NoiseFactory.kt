@@ -102,17 +102,17 @@ internal object NoiseFactory {
         // Step 3 - convert an array of integers (each integer is 8888 of ARGB) into an
         // array of bytes (in BGRA order) that Skija expects
         val byteDstBuffer = ByteArray(4 * width * height)
-        for (pos in 0 until width * height) {
-            val rgb = convolved[pos]
+        for (bytePos in 0 until width * height) {
+            val rgb = convolved[bytePos]
             // The order of the bytes corresponds to BGRA_8888
             // Blue
-            byteDstBuffer[4 * pos] = (rgb ushr 0 and 0xFF).toByte()
+            byteDstBuffer[4 * bytePos] = (rgb ushr 0 and 0xFF).toByte()
             // Green
-            byteDstBuffer[4 * pos + 1] = (rgb ushr 8 and 0xFF).toByte()
+            byteDstBuffer[4 * bytePos + 1] = (rgb ushr 8 and 0xFF).toByte()
             // Red
-            byteDstBuffer[4 * pos + 2] = (rgb ushr 16 and 0xFF).toByte()
+            byteDstBuffer[4 * bytePos + 2] = (rgb ushr 16 and 0xFF).toByte()
             // Alpha
-            byteDstBuffer[4 * pos + 3] = 255.toByte()
+            byteDstBuffer[4 * bytePos + 3] = 255.toByte()
         }
 
         // Step 4 - create a Skija bitmap
