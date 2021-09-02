@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.unit.LayoutDirection
-import org.pushingpixels.aurora.PopupPlacementStrategy
+import org.pushingpixels.aurora.skin.PopupPlacementStrategy
 
 internal fun drawArrow(
     drawScope: DrawScope,

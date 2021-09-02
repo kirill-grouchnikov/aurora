@@ -30,12 +30,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.WindowScope
-import org.pushingpixels.aurora.BackgroundAppearanceStrategy
-import org.pushingpixels.aurora.DecorationAreaType
-import org.pushingpixels.aurora.auroraBackground
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
+import org.pushingpixels.aurora.skin.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.skin.DecorationAreaType
+import org.pushingpixels.aurora.skin.auroraBackground
 
 private object WindowMenuBarLayout {
     private class CommandButtonLayoutManagerMenuBar(

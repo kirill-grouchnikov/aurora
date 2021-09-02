@@ -15,8 +15,6 @@
  */
 package org.pushingpixels.aurora.skin
 
-import org.pushingpixels.aurora.AuroraSkinDefinition
-
 fun getAuroraSkins(): List<Pair<String, () -> AuroraSkinDefinition>> {
     return listOf(
         Pair("Autumn", ::autumnSkin),

@@ -16,15 +16,15 @@
 package org.pushingpixels.aurora.skin
 
 import org.pushingpixels.aurora.*
-import org.pushingpixels.aurora.colorscheme.AuroraColorSchemeBundle
-import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.colorscheme.DarkMetallicColorScheme
-import org.pushingpixels.aurora.colorscheme.EbonyColorScheme
-import org.pushingpixels.aurora.painter.border.GlassBorderPainter
-import org.pushingpixels.aurora.painter.decoration.ArcDecorationPainter
-import org.pushingpixels.aurora.painter.fill.GlassFillPainter
-import org.pushingpixels.aurora.shaper.ClassicButtonShaper
-import org.pushingpixels.aurora.utils.getColorSchemes
+import org.pushingpixels.aurora.skin.colorscheme.AuroraColorSchemeBundle
+import org.pushingpixels.aurora.skin.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.skin.colorscheme.DarkMetallicColorScheme
+import org.pushingpixels.aurora.skin.colorscheme.EbonyColorScheme
+import org.pushingpixels.aurora.skin.painter.border.GlassBorderPainter
+import org.pushingpixels.aurora.skin.painter.decoration.ArcDecorationPainter
+import org.pushingpixels.aurora.skin.painter.fill.GlassFillPainter
+import org.pushingpixels.aurora.skin.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.skin.utils.getColorSchemes
 
 private fun ravenSkinColors(): AuroraSkinColors {
     val result = AuroraSkinColors()

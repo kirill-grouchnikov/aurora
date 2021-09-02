@@ -16,14 +16,14 @@
 package org.pushingpixels.aurora.skin
 
 import org.pushingpixels.aurora.*
-import org.pushingpixels.aurora.colorscheme.AquaColorScheme
-import org.pushingpixels.aurora.colorscheme.AuroraColorSchemeBundle
-import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.painter.border.ClassicBorderPainter
-import org.pushingpixels.aurora.painter.decoration.MatteDecorationPainter
-import org.pushingpixels.aurora.painter.fill.MatteFillPainter
-import org.pushingpixels.aurora.shaper.PillButtonShaper
-import org.pushingpixels.aurora.utils.getColorSchemes
+import org.pushingpixels.aurora.skin.colorscheme.AquaColorScheme
+import org.pushingpixels.aurora.skin.colorscheme.AuroraColorSchemeBundle
+import org.pushingpixels.aurora.skin.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.skin.painter.border.ClassicBorderPainter
+import org.pushingpixels.aurora.skin.painter.decoration.MatteDecorationPainter
+import org.pushingpixels.aurora.skin.painter.fill.MatteFillPainter
+import org.pushingpixels.aurora.skin.shaper.PillButtonShaper
+import org.pushingpixels.aurora.skin.utils.getColorSchemes
 
 private fun mistBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
     val result = AuroraSkinColors()

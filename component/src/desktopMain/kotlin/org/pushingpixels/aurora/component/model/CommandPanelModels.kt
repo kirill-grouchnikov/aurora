@@ -19,9 +19,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.BackgroundAppearanceStrategy
-import org.pushingpixels.aurora.IconFilterStrategy
-import org.pushingpixels.aurora.PopupPlacementStrategy
+import org.pushingpixels.aurora.skin.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.skin.IconFilterStrategy
+import org.pushingpixels.aurora.skin.PopupPlacementStrategy
 
 data class CommandPanelContentModel(
     val commandGroups: List<CommandGroup>,

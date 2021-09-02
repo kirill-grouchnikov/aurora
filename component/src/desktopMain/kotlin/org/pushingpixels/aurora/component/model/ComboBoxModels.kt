@@ -17,8 +17,8 @@ package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.BackgroundAppearanceStrategy
-import org.pushingpixels.aurora.PopupPlacementStrategy
+import org.pushingpixels.aurora.skin.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.skin.PopupPlacementStrategy
 
 data class ComboBoxContentModel<E>(
     val items: List<E>,

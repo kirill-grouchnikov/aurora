@@ -31,23 +31,26 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.AuroraSkin
-import org.pushingpixels.aurora.ColorSchemeAssociationKind
-import org.pushingpixels.aurora.ComponentState
-import org.pushingpixels.aurora.Side
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.SliderContentModel
 import org.pushingpixels.aurora.component.model.SliderPresentationModel
 import org.pushingpixels.aurora.component.model.SliderSizingConstants
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.painter.fill.ClassicFillPainter
-import org.pushingpixels.aurora.utils.MutableColorScheme
-import org.pushingpixels.aurora.utils.getBaseOutline
+import org.pushingpixels.aurora.skin.AuroraSkin
+import org.pushingpixels.aurora.skin.ColorSchemeAssociationKind
+import org.pushingpixels.aurora.skin.ComponentState
+import org.pushingpixels.aurora.skin.Side
+import org.pushingpixels.aurora.skin.painter.fill.ClassicFillPainter
+import org.pushingpixels.aurora.skin.utils.MutableColorScheme
+import org.pushingpixels.aurora.skin.utils.getBaseOutline
 import kotlin.math.roundToInt
 
 @Immutable
@@ -175,7 +178,10 @@ internal fun AuroraSlider(
             var newValue = contentModel.valueRange.start +
                     (pos.x - drawingCache.trackRect.x) *
                     (contentModel.valueRange.endInclusive - contentModel.valueRange.start) / drawingCache.trackRect.width
-            newValue = newValue.coerceIn(contentModel.valueRange.start, contentModel.valueRange.endInclusive)
+            newValue = newValue.coerceIn(
+                contentModel.valueRange.start,
+                contentModel.valueRange.endInclusive
+            )
 
             // Snap to the closest tick if needed
             if ((presentationModel.tickSteps > 0) && presentationModel.snapToTicks) {

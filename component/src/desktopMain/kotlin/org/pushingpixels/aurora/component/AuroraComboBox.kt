@@ -16,30 +16,31 @@
 package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerMoveFilter
-import androidx.compose.ui.layout.*
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.utils.MutableColorScheme
+import org.pushingpixels.aurora.skin.*
+import org.pushingpixels.aurora.skin.utils.MutableColorScheme
 import kotlin.math.max
 
 @Immutable

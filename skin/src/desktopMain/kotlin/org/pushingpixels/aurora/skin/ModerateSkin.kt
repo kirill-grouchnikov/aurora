@@ -15,21 +15,17 @@
  */
 package org.pushingpixels.aurora.skin
 
-import org.pushingpixels.aurora.AuroraSkin
-import org.pushingpixels.aurora.AuroraSkinDefinition
-import org.pushingpixels.aurora.DecorationAreaType
-import org.pushingpixels.aurora.AuroraPainters
-import org.pushingpixels.aurora.colorscheme.AuroraColorSchemeBundle
-import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.colorscheme.MetallicColorScheme
-import org.pushingpixels.aurora.colorscheme.SteelBlueColorScheme
-import org.pushingpixels.aurora.painter.border.ClassicBorderPainter
-import org.pushingpixels.aurora.painter.decoration.MatteDecorationPainter
-import org.pushingpixels.aurora.painter.fill.GlassFillPainter
-import org.pushingpixels.aurora.painter.overlay.BottomLineOverlayPainter
-import org.pushingpixels.aurora.painter.overlay.TopShadowOverlayPainter
-import org.pushingpixels.aurora.shaper.ClassicButtonShaper
-import org.pushingpixels.aurora.utils.getColorSchemes
+import org.pushingpixels.aurora.skin.colorscheme.AuroraColorSchemeBundle
+import org.pushingpixels.aurora.skin.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.skin.colorscheme.MetallicColorScheme
+import org.pushingpixels.aurora.skin.colorscheme.SteelBlueColorScheme
+import org.pushingpixels.aurora.skin.painter.border.ClassicBorderPainter
+import org.pushingpixels.aurora.skin.painter.decoration.MatteDecorationPainter
+import org.pushingpixels.aurora.skin.painter.fill.GlassFillPainter
+import org.pushingpixels.aurora.skin.painter.overlay.BottomLineOverlayPainter
+import org.pushingpixels.aurora.skin.painter.overlay.TopShadowOverlayPainter
+import org.pushingpixels.aurora.skin.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.skin.utils.getColorSchemes
 
 private fun moderateSkinColors(): AuroraSkinColors {
     val result = AuroraSkinColors()

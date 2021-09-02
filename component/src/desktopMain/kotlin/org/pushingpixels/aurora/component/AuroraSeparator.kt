@@ -23,9 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.TileMode
-import org.pushingpixels.aurora.AuroraSkin
-import org.pushingpixels.aurora.ColorSchemeAssociationKind
-import org.pushingpixels.aurora.ComponentState
+import org.pushingpixels.aurora.skin.AuroraSkin
+import org.pushingpixels.aurora.skin.ColorSchemeAssociationKind
+import org.pushingpixels.aurora.skin.ComponentState
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.SeparatorContentModel
 import org.pushingpixels.aurora.component.model.SeparatorPresentationModel

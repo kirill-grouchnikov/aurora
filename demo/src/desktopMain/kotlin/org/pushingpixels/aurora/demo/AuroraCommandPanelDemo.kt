@@ -22,9 +22,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import org.pushingpixels.aurora.AuroraSkin
-import org.pushingpixels.aurora.BackgroundAppearanceStrategy
-import org.pushingpixels.aurora.IconFilterStrategy
+import org.pushingpixels.aurora.skin.AuroraSkin
+import org.pushingpixels.aurora.skin.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.skin.IconFilterStrategy
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.ComboBoxProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonPanelProjection

@@ -37,7 +37,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.*
+import org.pushingpixels.aurora.skin.*
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.TextFieldPresentationModel
@@ -45,8 +45,8 @@ import org.pushingpixels.aurora.component.model.TextFieldSizingConstants
 import org.pushingpixels.aurora.component.model.TextFieldStringContentModel
 import org.pushingpixels.aurora.component.model.TextFieldValueContentModel
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.utils.MutableColorScheme
-import org.pushingpixels.aurora.utils.getBaseOutline
+import org.pushingpixels.aurora.skin.utils.MutableColorScheme
+import org.pushingpixels.aurora.skin.utils.getBaseOutline
 import kotlin.math.max
 import kotlin.math.roundToInt
 

@@ -28,11 +28,11 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Dp
-import org.pushingpixels.aurora.*
-import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.common.interpolateTowards
-import org.pushingpixels.aurora.utils.MutableColorScheme
-import org.pushingpixels.aurora.utils.getColorSchemeFilter
+import org.pushingpixels.aurora.skin.*
+import org.pushingpixels.aurora.skin.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.skin.utils.MutableColorScheme
+import org.pushingpixels.aurora.skin.utils.getColorSchemeFilter
 
 private class CombinedIconModifier(
     val icon: Painter,

@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.contextmenu.auroraContextMenu
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.*
@@ -38,8 +37,7 @@ import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.demo.svg.vaadin.*
-import org.pushingpixels.aurora.skin.businessSkin
-import org.pushingpixels.aurora.skin.getAuroraSkins
+import org.pushingpixels.aurora.skin.*
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 import kotlin.system.exitProcess

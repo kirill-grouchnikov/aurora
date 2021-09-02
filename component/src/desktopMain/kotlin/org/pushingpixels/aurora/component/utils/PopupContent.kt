@@ -33,11 +33,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
-import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
+import org.pushingpixels.aurora.skin.*
 import java.awt.Rectangle
 import java.awt.Window
 import kotlin.math.max

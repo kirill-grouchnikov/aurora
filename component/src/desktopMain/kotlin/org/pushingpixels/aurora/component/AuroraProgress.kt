@@ -30,13 +30,16 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.AuroraSkin
-import org.pushingpixels.aurora.ColorSchemeAssociationKind
-import org.pushingpixels.aurora.ComponentState
-import org.pushingpixels.aurora.ComponentStateFacet
-import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.painter.fill.FractionBasedFillPainter
-import org.pushingpixels.aurora.utils.getBaseOutline
+import org.pushingpixels.aurora.component.model.ProgressCircularPresentationModel
+import org.pushingpixels.aurora.component.model.ProgressDeterminateContentModel
+import org.pushingpixels.aurora.component.model.ProgressIndeterminateContentModel
+import org.pushingpixels.aurora.component.model.ProgressLinearPresentationModel
+import org.pushingpixels.aurora.skin.AuroraSkin
+import org.pushingpixels.aurora.skin.ColorSchemeAssociationKind
+import org.pushingpixels.aurora.skin.ComponentState
+import org.pushingpixels.aurora.skin.ComponentStateFacet
+import org.pushingpixels.aurora.skin.painter.fill.FractionBasedFillPainter
+import org.pushingpixels.aurora.skin.utils.getBaseOutline
 import kotlin.math.min
 
 @Composable
@@ -158,8 +161,10 @@ internal fun AuroraIndeterminateLinearProgress(
         )
     )
 
-    val progressState = if (contentModel.enabled) INDETERMINATE_SELECTED else INDETERMINATE_SELECTED_DISABLED
-    val borderState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
+    val progressState =
+        if (contentModel.enabled) INDETERMINATE_SELECTED else INDETERMINATE_SELECTED_DISABLED
+    val borderState =
+        if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
 
     // install state-aware alpha channel (support for skins
     // that use translucency on disabled states).
@@ -258,9 +263,12 @@ internal fun AuroraDeterminateLinearProgress(
     contentModel: ProgressDeterminateContentModel,
     presentationModel: ProgressLinearPresentationModel = ProgressLinearPresentationModel()
 ) {
-    val progressState = if (contentModel.enabled) DETERMINATE_SELECTED else DETERMINATE_SELECTED_DISABLED
-    val fillState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
-    val borderState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
+    val progressState =
+        if (contentModel.enabled) DETERMINATE_SELECTED else DETERMINATE_SELECTED_DISABLED
+    val fillState =
+        if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
+    val borderState =
+        if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
 
     // install state-aware alpha channel (support for skins
     // that use translucency on disabled states).
@@ -320,7 +328,12 @@ internal fun AuroraDeterminateLinearProgress(
                 progressFillPainter.paintContourBackground(
                     drawScope = this,
                     size = this.size,
-                    outline = Outline.Rectangle(Rect(offset = Offset.Zero, size = Size(progressWidth, size.height))),
+                    outline = Outline.Rectangle(
+                        Rect(
+                            offset = Offset.Zero,
+                            size = Size(progressWidth, size.height)
+                        )
+                    ),
                     fillScheme = progressColorScheme,
                     alpha = stateAlpha
                 )

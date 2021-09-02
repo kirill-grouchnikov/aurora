@@ -16,18 +16,18 @@
 package org.pushingpixels.aurora.skin
 
 import org.pushingpixels.aurora.*
-import org.pushingpixels.aurora.colorscheme.AuroraColorSchemeBundle
-import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.colorscheme.composite
-import org.pushingpixels.aurora.painter.border.ClassicBorderPainter
-import org.pushingpixels.aurora.painter.decoration.MatteDecorationPainter
-import org.pushingpixels.aurora.painter.fill.ClassicFillPainter
-import org.pushingpixels.aurora.painter.overlay.BottomLineOverlayPainter
-import org.pushingpixels.aurora.painter.overlay.BottomShadowOverlayPainter
-import org.pushingpixels.aurora.painter.overlay.TopLineOverlayPainter
-import org.pushingpixels.aurora.painter.overlay.TopShadowOverlayPainter
-import org.pushingpixels.aurora.shaper.ClassicButtonShaper
-import org.pushingpixels.aurora.utils.getColorSchemes
+import org.pushingpixels.aurora.skin.colorscheme.AuroraColorSchemeBundle
+import org.pushingpixels.aurora.skin.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.skin.colorscheme.composite
+import org.pushingpixels.aurora.skin.painter.border.ClassicBorderPainter
+import org.pushingpixels.aurora.skin.painter.decoration.MatteDecorationPainter
+import org.pushingpixels.aurora.skin.painter.fill.ClassicFillPainter
+import org.pushingpixels.aurora.skin.painter.overlay.BottomLineOverlayPainter
+import org.pushingpixels.aurora.skin.painter.overlay.BottomShadowOverlayPainter
+import org.pushingpixels.aurora.skin.painter.overlay.TopLineOverlayPainter
+import org.pushingpixels.aurora.skin.painter.overlay.TopShadowOverlayPainter
+import org.pushingpixels.aurora.skin.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.skin.utils.getColorSchemes
 
 private fun sentinelSkinColors(): AuroraSkinColors {
     val result = AuroraSkinColors()
@@ -45,13 +45,21 @@ private fun sentinelSkinColors(): AuroraSkinColors {
     val defaultSchemeBundle = AuroraColorSchemeBundle(
         activeScheme, enabledScheme, disabledScheme
     )
-    defaultSchemeBundle.registerAlpha(0.6f, ComponentState.DisabledUnselected, ComponentState.DisabledSelected)
-    defaultSchemeBundle.registerColorScheme(disabledScheme, 
+    defaultSchemeBundle.registerAlpha(
+        0.6f,
+        ComponentState.DisabledUnselected,
+        ComponentState.DisabledSelected
+    )
+    defaultSchemeBundle.registerColorScheme(
+        disabledScheme,
         ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected)
-    defaultSchemeBundle.registerColorScheme(disabledSelectedScheme,
+        ComponentState.DisabledUnselected
+    )
+    defaultSchemeBundle.registerColorScheme(
+        disabledSelectedScheme,
         ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected)
+        ComponentState.DisabledSelected
+    )
 
     // borders
     val borderScheme = schemes["Sentinel Border"]
@@ -77,7 +85,11 @@ private fun sentinelSkinColors(): AuroraSkinColors {
 
     val backgroundScheme = schemes["Sentinel Background"]
 
-    result.registerDecorationAreaSchemeBundle(defaultSchemeBundle, backgroundScheme, DecorationAreaType.None)
+    result.registerDecorationAreaSchemeBundle(
+        defaultSchemeBundle,
+        backgroundScheme,
+        DecorationAreaType.None
+    )
 
     val activeDecorationsScheme = schemes["Sentinel Decorations Active"]
     val enabledDecorationsScheme = schemes["Sentinel Decorations Enabled"]
@@ -85,17 +97,25 @@ private fun sentinelSkinColors(): AuroraSkinColors {
         activeDecorationsScheme, enabledDecorationsScheme, enabledDecorationsScheme
     )
     decorationsSchemeBundle.registerAlpha(0.4f, ComponentState.DisabledUnselected)
-    decorationsSchemeBundle.registerColorScheme(enabledDecorationsScheme,
+    decorationsSchemeBundle.registerColorScheme(
+        enabledDecorationsScheme,
         ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected)
+        ComponentState.DisabledUnselected
+    )
 
     // borders
     val borderDecorationsScheme = schemes["Sentinel Decorations Border"]
-    decorationsSchemeBundle.registerColorScheme(borderDecorationsScheme, ColorSchemeAssociationKind.Border)
+    decorationsSchemeBundle.registerColorScheme(
+        borderDecorationsScheme,
+        ColorSchemeAssociationKind.Border
+    )
 
     // marks
     val markDecorationsScheme = schemes["Sentinel Decorations Mark"]
-    decorationsSchemeBundle.registerColorScheme(markDecorationsScheme, ColorSchemeAssociationKind.Mark)
+    decorationsSchemeBundle.registerColorScheme(
+        markDecorationsScheme,
+        ColorSchemeAssociationKind.Mark
+    )
 
     // separators
     val separatorDecorationsScheme = schemes["Sentinel Decorations Separator"]
@@ -156,9 +176,11 @@ private fun sentinelSkinColors(): AuroraSkinColors {
         enabledHeaderScheme, disabledHeaderScheme
     )
     headerSchemeBundle.registerAlpha(0.95f, ComponentState.DisabledUnselected)
-    headerSchemeBundle.registerColorScheme(disabledHeaderScheme,
+    headerSchemeBundle.registerColorScheme(
+        disabledHeaderScheme,
         ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected)
+        ComponentState.DisabledUnselected
+    )
 
     // borders
     val headerBorderScheme = schemes["Sentinel Header Border"]
@@ -202,7 +224,10 @@ fun sentinelSkin(): AuroraSkinDefinition {
 
     // Add overlay painters to paint drop shadow and a dark line along the bottom
     // edges of toolbars
-    painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.Toolbar)
+    painters.addOverlayPainter(
+        BottomShadowOverlayPainter.getInstance(100),
+        DecorationAreaType.Toolbar
+    )
     painters.addOverlayPainter(
         BottomLineOverlayPainter(
             composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.1f))

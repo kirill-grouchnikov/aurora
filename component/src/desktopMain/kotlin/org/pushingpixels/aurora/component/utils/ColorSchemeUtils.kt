@@ -17,14 +17,13 @@ package org.pushingpixels.aurora.component.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import org.pushingpixels.aurora.*
-import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.common.byAlpha
-import org.pushingpixels.aurora.common.hexadecimal
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.lighter
-import org.pushingpixels.aurora.utils.MutableColorScheme
+import org.pushingpixels.aurora.skin.*
+import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
+import org.pushingpixels.aurora.skin.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.skin.utils.MutableColorScheme
 import kotlin.math.max
 
 @Composable

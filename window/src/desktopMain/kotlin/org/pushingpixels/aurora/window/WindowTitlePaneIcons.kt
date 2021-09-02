@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.unit.Dp
-import org.pushingpixels.aurora.colorscheme.AuroraColorScheme
+import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
 
 internal fun drawCloseIcon(
     drawScope: DrawScope,

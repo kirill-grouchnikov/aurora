@@ -19,9 +19,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
-import org.pushingpixels.aurora.PopupPlacementStrategy
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManagerMedium
+import org.pushingpixels.aurora.skin.PopupPlacementStrategy
 
 data class CommandPopupMenuPresentationModel(
     val panelPresentationModel: CommandPanelPresentationModel? = null,

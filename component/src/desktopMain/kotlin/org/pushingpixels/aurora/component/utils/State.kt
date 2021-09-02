@@ -16,9 +16,9 @@
 package org.pushingpixels.aurora.component.utils
 
 import androidx.compose.runtime.MutableState
-import org.pushingpixels.aurora.ComponentState
-import org.pushingpixels.aurora.ComponentStateFacet
-import org.pushingpixels.aurora.ModelStateInfoSnapshot
+import org.pushingpixels.aurora.skin.ComponentState
+import org.pushingpixels.aurora.skin.ComponentStateFacet
+import org.pushingpixels.aurora.skin.ModelStateInfoSnapshot
 
 class StateContributionInfo(var start: Float, var end: Float) {
     var contribution: Float

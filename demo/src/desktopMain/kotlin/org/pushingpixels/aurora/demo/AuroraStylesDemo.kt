@@ -33,15 +33,13 @@ import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.ComboBoxProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonStripProjection
 import org.pushingpixels.aurora.demo.svg.material.content_copy_black_24dp
 import org.pushingpixels.aurora.demo.svg.material.content_cut_black_24dp
 import org.pushingpixels.aurora.demo.svg.material.content_paste_black_24dp
-import org.pushingpixels.aurora.skin.getAuroraSkins
-import org.pushingpixels.aurora.skin.marinerSkin
+import org.pushingpixels.aurora.skin.*
 import org.pushingpixels.aurora.window.AuroraWindow
 
 @ExperimentalUnitApi

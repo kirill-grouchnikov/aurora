@@ -25,8 +25,8 @@ import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
-import org.pushingpixels.aurora.LocalTextStyle
-import org.pushingpixels.aurora.LocalWindow
+import org.pushingpixels.aurora.skin.LocalTextStyle
+import org.pushingpixels.aurora.skin.LocalWindow
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.model.CommandMenuContentModel

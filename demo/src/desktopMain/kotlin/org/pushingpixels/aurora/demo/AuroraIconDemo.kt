@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import org.pushingpixels.aurora.DecorationAreaType
 import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.demo.svg.material.account_box_24px
@@ -41,7 +40,7 @@ import org.pushingpixels.aurora.demo.svg.tango.help_browser
 import org.pushingpixels.aurora.demo.svg.tango.media_floppy
 import org.pushingpixels.aurora.demo.svg.tango.system_search
 import org.pushingpixels.aurora.skin.*
-import org.pushingpixels.aurora.utils.getColorSchemeFilter
+import org.pushingpixels.aurora.skin.utils.getColorSchemeFilter
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 

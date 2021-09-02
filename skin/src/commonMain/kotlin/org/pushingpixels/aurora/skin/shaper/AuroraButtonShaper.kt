@@ -1,0 +1,48 @@
+/*
+ * Copyright 2020-2021 Aurora, Kirill Grouchnikov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.pushingpixels.aurora.skin.shaper
+
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import org.pushingpixels.aurora.skin.AuroraTrait
+import org.pushingpixels.aurora.skin.Sides
+
+/**
+ * Button shaper interface.
+ *
+ * @author Kirill Grouchnikov
+ */
+interface AuroraButtonShaper : AuroraTrait {
+    /** Returns the outline path. */
+    fun getButtonOutline(
+        width: Float, height: Float, extraInsets: Float,
+        isInner: Boolean, sides: Sides, drawScope: DrawScope
+    ): Outline
+
+    /**
+     * Returns the preferred size for the specified button dimensions.
+     *
+     * @param uiPreferredWidth
+     *            Preferred width of the button under the regular conditions
+     *            (plain rectangular button).
+     * @param uiPreferredHeight
+     *            Preferred width of the button under the regular conditions
+     *            (plain rectangular button).
+     * @return The preferred size for the specified dimensions.
+     */
+    fun getPreferredSize(uiPreferredWidth: Float, uiPreferredHeight: Float): Size
+}

@@ -19,9 +19,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import org.pushingpixels.aurora.LocalWindow
-import org.pushingpixels.aurora.Sides
-import org.pushingpixels.aurora.Side
+import org.pushingpixels.aurora.skin.LocalWindow
+import org.pushingpixels.aurora.skin.Sides
+import org.pushingpixels.aurora.skin.Side
 import org.pushingpixels.aurora.component.model.*
 
 @Composable

@@ -37,10 +37,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import kotlinx.coroutines.launch
-import org.pushingpixels.aurora.AuroraSkin
-import org.pushingpixels.aurora.IconFilterStrategy
-import org.pushingpixels.aurora.Side
-import org.pushingpixels.aurora.Sides
 import org.pushingpixels.aurora.component.AuroraBoxWithHighlights
 import org.pushingpixels.aurora.component.AuroraVerticalScrollbar
 import org.pushingpixels.aurora.component.ScrollBarSizingConstants
@@ -52,8 +48,7 @@ import org.pushingpixels.aurora.component.projection.ComboBoxProjection
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.demo.svg.material.*
-import org.pushingpixels.aurora.skin.getAuroraSkins
-import org.pushingpixels.aurora.skin.twilightSkin
+import org.pushingpixels.aurora.skin.*
 import org.pushingpixels.aurora.window.AuroraWindow
 
 fun LazyListState.isItemFullyVisible(index: Int): Boolean {

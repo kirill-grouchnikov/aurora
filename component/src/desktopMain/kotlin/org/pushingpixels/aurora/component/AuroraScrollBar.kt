@@ -38,13 +38,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
-import org.pushingpixels.aurora.AuroraSkin
-import org.pushingpixels.aurora.ColorSchemeAssociationKind
-import org.pushingpixels.aurora.ComponentState
-import org.pushingpixels.aurora.auroraBackground
+import org.pushingpixels.aurora.skin.AuroraSkin
+import org.pushingpixels.aurora.skin.ColorSchemeAssociationKind
+import org.pushingpixels.aurora.skin.ComponentState
+import org.pushingpixels.aurora.skin.auroraBackground
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.utils.MutableColorScheme
-import org.pushingpixels.aurora.utils.getBaseOutline
+import org.pushingpixels.aurora.skin.utils.MutableColorScheme
+import org.pushingpixels.aurora.skin.utils.getBaseOutline
 import kotlin.math.sign
 
 object ScrollBarSizingConstants {
