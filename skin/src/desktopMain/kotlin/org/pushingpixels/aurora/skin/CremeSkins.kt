@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.skin
 
-import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.skin.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.skin.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.skin.colorscheme.CremeColorScheme

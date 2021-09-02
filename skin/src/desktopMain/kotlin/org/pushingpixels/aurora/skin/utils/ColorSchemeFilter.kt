@@ -18,10 +18,10 @@ package org.pushingpixels.aurora.skin.utils
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.toComposeColorFilter
-import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.common.colorBrightness
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.withBrightness
+import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
 import kotlin.math.roundToInt
 import org.jetbrains.skija.ColorFilter as SkijaColorFilter
 

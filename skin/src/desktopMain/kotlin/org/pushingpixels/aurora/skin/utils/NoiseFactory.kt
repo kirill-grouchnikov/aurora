@@ -36,8 +36,8 @@ import org.jetbrains.skija.ColorAlphaType
 import org.jetbrains.skija.ColorInfo
 import org.jetbrains.skija.ColorType
 import org.jetbrains.skija.ImageInfo
-import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.common.interpolateTowardsAsRGB
+import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt

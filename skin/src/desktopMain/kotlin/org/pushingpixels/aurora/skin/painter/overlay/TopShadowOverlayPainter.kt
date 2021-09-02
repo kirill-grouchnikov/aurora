@@ -22,10 +22,10 @@ import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.skin.DecorationAreaType
-import org.pushingpixels.aurora.skin.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.common.withBrightness
+import org.pushingpixels.aurora.skin.DecorationAreaType
+import org.pushingpixels.aurora.skin.colorscheme.AuroraSkinColors
 
 /**
  * Overlay painter that paints a few pixel-high drop shadow at the top edge of

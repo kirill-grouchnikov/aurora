@@ -6,7 +6,6 @@ import org.pushingpixels.aurora.skin.ComponentStateFacet
 import org.pushingpixels.aurora.skin.DecorationAreaType
 import org.pushingpixels.aurora.skin.painter.decoration.AuroraDecorationPainter
 import java.util.*
-import kotlin.collections.HashSet
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set

@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.skin
 
-import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.skin.colorscheme.*
 import org.pushingpixels.aurora.skin.painter.border.FlatBorderPainter
 import org.pushingpixels.aurora.skin.painter.decoration.ArcDecorationPainter
