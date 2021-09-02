@@ -21,12 +21,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.isSpecified
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.dp
@@ -34,7 +31,7 @@ import org.pushingpixels.aurora.*
 import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.model.LabelPresentationModel
 import org.pushingpixels.aurora.component.utils.AuroraText
-import org.pushingpixels.aurora.icon.AuroraThemedIcon
+import org.pushingpixels.aurora.component.utils.AuroraThemedIcon
 
 @Composable
 internal fun AuroraLabel(

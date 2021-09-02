@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.pushingpixels.aurora.icon
+package org.pushingpixels.aurora.component.utils
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -101,7 +101,7 @@ private class IconDrawingCache(
 )
 
 @Composable
-fun AuroraThemedIcon(
+internal fun AuroraThemedIcon(
     icon: Painter,
     size: Dp,
     disabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,

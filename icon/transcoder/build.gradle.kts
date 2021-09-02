@@ -13,7 +13,6 @@ kotlin {
         named("desktopMain") {
             dependencies {
                 api(compose.desktop.common)
-                implementation(project(":icon:icon"))
                 implementation("org.apache.xmlgraphics:batik-all:1.14")
             }
         }

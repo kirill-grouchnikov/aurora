@@ -22,7 +22,6 @@ kotlin {
             dependencies {
                 api(compose.desktop.common)
                 implementation(project(":common"))
-                implementation(project(":icon:icon"))
                 implementation(project(":component"))
                 implementation(project(":skin"))
             }
