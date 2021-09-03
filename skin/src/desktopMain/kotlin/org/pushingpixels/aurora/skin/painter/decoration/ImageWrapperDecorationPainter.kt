@@ -21,8 +21,10 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.clipPath
+import org.pushingpixels.aurora.common.HashMapKey
 import org.pushingpixels.aurora.skin.DecorationAreaType
 import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
+import org.pushingpixels.aurora.skin.painter.border.DelegateFractionBasedBorderPainter
 import org.pushingpixels.aurora.skin.utils.getColorSchemeFilter
 
 /**
@@ -32,10 +34,12 @@ import org.pushingpixels.aurora.skin.utils.getColorSchemeFilter
  * @author Kirill Grouchnikov
  */
 abstract class ImageWrapperDecorationPainter(
-    val originalTile: ImageBitmap,
+    val tileGenerator: (AuroraColorScheme) -> ImageBitmap,
     val textureAlpha: Float = 0.2f,
     val baseDecorationPainter: AuroraDecorationPainter? = null
 ) : AuroraDecorationPainter {
+    private val tiles = hashMapOf<String, ImageBitmap>()
+
     override fun paintDecorationArea(
         drawScope: DrawScope,
         decorationAreaType: DecorationAreaType,
@@ -107,9 +111,14 @@ abstract class ImageWrapperDecorationPainter(
         var offsetTextureY = offsetTexture.y
 
         with(drawScope) {
-            val colorFilter = getColorSchemeFilter(tileScheme)
-            val tileWidth = originalTile.width
-            val tileHeight = originalTile.height
+            var colorizedTile = tiles[tileScheme.displayName]
+            if (colorizedTile == null) {
+                colorizedTile = tileGenerator.invoke(tileScheme)
+                tiles[tileScheme.displayName] = colorizedTile
+            }
+
+            val tileWidth = colorizedTile.width
+            val tileHeight = colorizedTile.height
             offsetTextureX %= tileWidth
             offsetTextureY %= tileHeight
             var currTileTop = -offsetTextureY
@@ -117,10 +126,9 @@ abstract class ImageWrapperDecorationPainter(
                 var currTileLeft = -offsetTextureX
                 do {
                     drawImage(
-                        image = originalTile,
+                        image = colorizedTile,
                         alpha = textureAlpha,
-                        topLeft = Offset(currTileLeft, currTileTop),
-                        colorFilter = colorFilter
+                        topLeft = Offset(currTileLeft, currTileTop)
                     )
                     currTileLeft += tileWidth
                 } while (currTileLeft < componentSize.width)

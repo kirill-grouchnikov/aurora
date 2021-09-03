@@ -29,8 +29,7 @@
  */
 package org.pushingpixels.aurora.skin.painter.decoration
 
-import org.pushingpixels.aurora.skin.utils.toComposeBitmap
-import javax.imageio.ImageIO
+import org.pushingpixels.aurora.skin.utils.getBrushedMetalTile
 
 /**
  * Implementation of [AuroraDecorationPainter] that uses brushed metal
@@ -39,12 +38,8 @@ import javax.imageio.ImageIO
  * @author Kirill Grouchnikov
  */
 class BrushedMetalDecorationPainter : ImageWrapperDecorationPainter(
-    originalTile = ImageIO.read(
-        BrushedMetalDecorationPainter::class.java.getResourceAsStream(
-            "/org/pushingpixels/aurora/skins/image/brushed.gif"
-        )
-    )!!.toComposeBitmap(),
-    textureAlpha = 0.2f,
+    tileGenerator = { getBrushedMetalTile(scheme = it, width = 200, height = 200) },
+    textureAlpha = 0.4f,
     baseDecorationPainter = ArcDecorationPainter()
 ) {
     override val displayName = "Brushed Metal"
