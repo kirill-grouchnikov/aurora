@@ -15,8 +15,11 @@
  */
 package org.pushingpixels.aurora.tools.svgtranscoder.utils
 
+import androidx.compose.ui.graphics.asImageBitmap
 import org.apache.batik.bridge.SVGPatternElementBridge
 import org.apache.batik.gvt.*
+import org.jetbrains.skija.Codec
+import org.jetbrains.skija.Data
 import java.awt.Image
 import java.awt.Paint
 import java.awt.image.ImageObserver
@@ -214,16 +217,12 @@ internal class RasterScanner(private val printWriter: PrintWriter) {
                 break
             }
         }
-        printWriter.println("    try {")
-        printWriter.println(
-            "        val decoded = ImageIO.read(ByteArrayInputStream(Base64.getDecoder().decode(imageData.toString())))"
-        )
-        printWriter.println("        val result = decoded.toComposeBitmap()")
-        printWriter.println("        image$md5 = WeakReference(result)")
-        printWriter.println("        return result")
-        printWriter.println("    } catch (ioe: IOException) {")
-        printWriter.println("    }")
-        printWriter.println("    return null")
+        printWriter.println("    val data = org.jetbrains.skija.Data.makeFromBytes(Base64.getDecoder().decode(imageData.toString()))")
+        printWriter.println("    val codec = org.jetbrains.skija.Codec.makeFromData(data)")
+        printWriter.println("    val pixels = codec.readPixels()")
+        printWriter.println("    val result = pixels.asImageBitmap()")
+        printWriter.println("    image$md5 = WeakReference(result)")
+        printWriter.println("    return result")
         printWriter.println("}")
         processedMD5s.add(md5)
     }

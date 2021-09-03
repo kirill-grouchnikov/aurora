@@ -9,12 +9,9 @@ import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.painter.Painter
-import org.pushingpixels.aurora.skin.utils.toComposeBitmap
-import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.lang.ref.WeakReference
 import java.util.*
-import javax.imageio.ImageIO
 import kotlin.math.min
 
 /**
@@ -270,14 +267,12 @@ private fun getImage484482440f4da3ada2d5781785d20a7c(): ImageBitmap? {
     imageData.append("gFCYxpU+nafCH/pGTBKFQAl4D6EIwRRGcR8gI4xKi58GKgR6W1fUTQTA9rChAC6BrCvEPmylOowAC5OE2VHWGi30qGfkzFWwSErvZgZZ8rPSwf4a11/TZbfcuNKKzga1WikJRA7A0SMTHFkSKJymnpp/EWW/r8fj5BtWLrc1vogeffDb9vQj/2ivbnjc3nr+h7bzlZ/YtLPInPZC/6WdYHPPfQ4OAeRNOzO9Rf3pgGTBQ635w2gShsQ5k2A58VDrsxMcpH2dTT6i0g2LkP7dpz0+2L4gDmoeeLIOxNR2mqBcuF8+64J94T0/AhznHHRPfuceG+qrqZA3nKrkiG3YQ8OjmS7iF4NhB0ezSQjFzKmoOYw5GMYawSQ8H3A0mgj5ofBTUfWWC3dEixixzb6DhFO9MAnPGaKijpM3xHiufhNuSeBLtNNk1S8Qw94AgJCq1hcXKCrpZb4XWVSY9UszlV+0ikUruQ65Qt6qBAiOqIQnQKSfczgV2iR5sVLdpDXw2RffEnBwwCa4f6M9Nj03/SyPlZglLVLYogMAwAKkb2OqYxT/IlwCDG3SGxzOCtd0SHtIg+j12xVGKQ3M/brlNSNUiwJk6BQEvRglva8ASPqfYdKUzQIUf7EYSpHBy8AI35XsK84uX/G/c9MNK62wapUyIeTSBYZyEn3+OwCRF6h3QF9Cjfv8nJquXH3WXey2m//qRnvgW7Th3mcv/mC9bX72Cdvx8tMOkJ/aoV+9YB/s+IUDZJNrkU3OIMEkHB/PBEDmZxng8OsYKfoew6jpTd+tYXB0En5+/B1nkz3OHA6Uk3tdZDtQTh8Qg1yk1sEeIGdmHRikfPkZf5WDZt7vU2g1a39yNtrw6P3WYOYUBsJRX9z1po2PjzszNGLBE+sPMHRhyEWz647xhoQzmoupJdrG2Z8zQrbLxbncuPJdUdcYU/st439gDIZWw0IyJ+LkJR1MiAW49Hfo9fBwbBSNQjciBUrad9k3JJhCU91r")
     imageData.append("pHnLSu32+AWLEIwQq+aPR12k7Bc17Cbx3dRgkLxzUzb5KeRJCzlEe1sAIAEkzgtQRBEshWEAjatvApRAkF4nFmAwimJ//t4ie/jP2jYBhgjhrQIgTMF7IRxKWqNNoRbivcvPi9BK4RcgAHCJcaIWklgEMCXWyTWcNczYAAAC+0lEQVQUpZAVirVYTHoo/U+8p9AjVwsoeaZvLiq2tEmYG+nxWH3LzVYtlRRSFctFK1c8rPIvouD3RebEdUfV2YI+6Cq6gy/IvzS8P1z15CIdMKbtrx0bsu+v/wdNeN+44V9s+4v/ZtObnrPZzS/Y3K891HrnNTuxd5MD4w0HxmY7zcG4n0O/sbMHt9jC7FYPs7bbp4fRJLtcrO/Wts3nfstI0V3OIgyLYxPOverfOH8Ke7oDhKELGjGKU/eQXWIWL6ZE6iCuOS55iHXOQbbh0YeUTiXkGWQPDl/osIdctozsGe6XK5cqOjvNNknnqhAYt+gHNtvsG4xjcDTsJVS6AQMDGwi1qIyT1eK+uusTNAi963UX5w08XVThnXFhFg1qcBBUHRDVCmnamq3uLlipyOffp+wUix5WKDF1EeDw+ddixhYWk6p/Z8ViZK9KPVVb7bpRIj2neqMYeLUWBsBY1B9a+BFSiTXaM3ji3Mj4tAksmXFy6JQBo0W4xLWrA31C6HRN/I6QlzMXQHH1Z1HDHDzHgaAQqysAAZBCf5CtClDr9duZE8x2b8FEACQKjxkQKTyDjZQ44G+13kM2XV4F+/F/LwFGWEmyUL9K72nZ8mVWXH2z9ZSrAkihVNDR6wIvQFKyClcvp26GBFQrvSpWFWAVxbp9irMZTUPMXS74F9jdbQ/f9zf2zGMP2avPPGbbnv+BTXmINcsExW2v2JHdGwWQk/scIC7Wz8w4kxxw0X5ws1K+Cx5e/Z69AefY82O7/fEowKCIuMs+O/a2fc6+5hQPT3rIJZDMaFgcTHL5FH6s0B6Xfgco/Hdnj4sOmPMO")
     imageData.append("mFee+WfZ1vupPYyNKFxS9ZuF7vc3h9gerc+v4oM2Ocr4HSrgrg0IlQBJnexT0wb8sT6/v4INREwEEMhEMbyBPg4HiJ+Hz4qwSG20Dppmg0YnhDyAogJPVmpAi5rPv1Qp6wIESAoFfq+odZZkCKxeKsISgKHqF7OodQw7a/BcGLzg3xfD6br5jlw3/h/IQuF1zRm+IQAAAABJRU5ErkJg")
-    try {
-        val decoded = ImageIO.read(ByteArrayInputStream(Base64.getDecoder().decode(imageData.toString())))
-        val result = decoded.toComposeBitmap()
-        image484482440f4da3ada2d5781785d20a7c = WeakReference(result)
-        return result
-    } catch (ioe: IOException) {
-    }
-    return null
+    val data = org.jetbrains.skija.Data.makeFromBytes(Base64.getDecoder().decode(imageData.toString()))
+    val codec = org.jetbrains.skija.Codec.makeFromData(data)
+    val pixels = codec.readPixels()
+    val result = pixels.asImageBitmap()
+    image484482440f4da3ada2d5781785d20a7c = WeakReference(result)
+    return result
 }
 
     }
