@@ -9,7 +9,6 @@ import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.painter.Painter
-import java.io.IOException
 import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.math.min
