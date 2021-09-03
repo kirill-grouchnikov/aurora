@@ -15,11 +15,8 @@
  */
 package org.pushingpixels.aurora.tools.svgtranscoder.utils
 
-import androidx.compose.ui.graphics.asImageBitmap
 import org.apache.batik.bridge.SVGPatternElementBridge
 import org.apache.batik.gvt.*
-import org.jetbrains.skija.Codec
-import org.jetbrains.skija.Data
 import java.awt.Image
 import java.awt.Paint
 import java.awt.image.ImageObserver
@@ -32,7 +29,6 @@ import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.util.*
 import javax.imageio.ImageIO
-import kotlin.collections.HashSet
 
 internal class RasterScanner(private val printWriter: PrintWriter) {
     private val processedMD5s = HashSet<String>()
