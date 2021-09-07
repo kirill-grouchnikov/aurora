@@ -18,9 +18,7 @@ package org.pushingpixels.aurora.skin.utils
 import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.skin.colorscheme.*
-import java.io.BufferedReader
 import java.io.InputStream
-import java.io.InputStreamReader
 
 data class MutableColorScheme(
     override val displayName: String,
@@ -171,16 +169,15 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
     var inColorsBlock = false
     var lineNumber = 0
     try {
-        BufferedReader(InputStreamReader(inputStream)).use { reader ->
-            while (true) {
-                var line: String? = reader.readLine()
+        inputStream.bufferedReader().useLines { lines ->
+            lines.forEach here@{
+                var line = it
                 lineNumber++
-                if (line == null) break
-                line = line.trim { it <= ' ' }
-                if (line.isEmpty()) continue
+                line = line.trim { char -> char <= ' ' }
+                if (line.isEmpty()) return@here
                 if (line.startsWith("#")) {
                     // allow comments
-                    continue
+                    return@here
                 }
                 if (line.contains("{")) {
                     require(!(inColorSchemeBlock || inColorsBlock)) { "Already in color scheme or colors definition, line $lineNumber" }
@@ -190,14 +187,14 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
                     } else {
                         inColorSchemeBlock = true
                     }
-                    continue
+                    return@here
                 }
                 if (line.contains("}")) {
                     require(!(!inColorSchemeBlock && !inColorsBlock)) { "Not in color scheme or colors definition, line $lineNumber" }
                     if (inColorsBlock) {
                         // Colors have already been processed
                         inColorsBlock = false
-                        continue
+                        return@here
                     }
                     inColorSchemeBlock = false
                     if (background == null) {
@@ -243,7 +240,7 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
                     foreground = null
                     background = null
                     additionalColors.clear()
-                    continue
+                    return@here
                 }
                 val split = line.split("=".toRegex()).toTypedArray()
                 require(split.size == 2) { "Unsupported format in line $line [$lineNumber]" }
@@ -251,17 +248,17 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
                 val value = split[1].trim { it <= ' ' }
                 if (inColorsBlock) {
                     colorMap[key] = decodeColor(value, colorMap)
-                    continue
+                    return@here
                 }
                 if ("kind" == key) {
                     if (kind == null) {
                         if ("Light" == value) {
                             kind = ColorSchemeKind.Light
-                            continue
+                            return@here
                         }
                         if ("Dark" == value) {
                             kind = ColorSchemeKind.Dark
-                            continue
+                            return@here
                         }
                         throw IllegalArgumentException("Unsupported format in line $line [$lineNumber]")
                     }
@@ -270,49 +267,49 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
                 if ("colorUltraLight" == key) {
                     if (ultraLight == null) {
                         ultraLight = decodeColor(value, colorMap)
-                        continue
+                        return@here
                     }
                     throw IllegalArgumentException("'ultraLight' should only be defined once, line $lineNumber")
                 }
                 if ("colorExtraLight" == key) {
                     if (extraLight == null) {
                         extraLight = decodeColor(value, colorMap)
-                        continue
+                        return@here
                     }
                     throw IllegalArgumentException("'extraLight' should only be defined once, line $lineNumber")
                 }
                 if ("colorLight" == key) {
                     if (light == null) {
                         light = decodeColor(value, colorMap)
-                        continue
+                        return@here
                     }
                     throw IllegalArgumentException("'light' should only be defined once, line $lineNumber")
                 }
                 if ("colorMid" == key) {
                     if (mid == null) {
                         mid = decodeColor(value, colorMap)
-                        continue
+                        return@here
                     }
                     throw IllegalArgumentException("'mid' should only be defined once, line $lineNumber")
                 }
                 if ("colorDark" == key) {
                     if (dark == null) {
                         dark = decodeColor(value, colorMap)
-                        continue
+                        return@here
                     }
                     throw IllegalArgumentException("'dark' should only be defined once, line $lineNumber")
                 }
                 if ("colorUltraDark" == key) {
                     if (ultraDark == null) {
                         ultraDark = decodeColor(value, colorMap)
-                        continue
+                        return@here
                     }
                     throw IllegalArgumentException("'ultraDark' should only be defined once, line $lineNumber")
                 }
                 if ("colorForeground" == key) {
                     if (foreground == null) {
                         foreground = decodeColor(value, colorMap)
-                        continue
+                        return@here
                     }
                     throw IllegalArgumentException("'foreground' should only be defined once, line $lineNumber")
                 }
@@ -329,11 +326,11 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
                         mid = colorStart.interpolateTowards(colorEnd, 0.5f)
                         dark = colorStart.interpolateTowards(colorEnd, 0.2f)
                         ultraDark = colorEnd
-                        continue
+                        return@here
                     } else {
                         if (background == null) {
                             background = decodeColor(value, colorMap)
-                            continue
+                            return@here
                         }
                     }
                     throw IllegalArgumentException("'foreground' should only be defined once, line $lineNumber")
