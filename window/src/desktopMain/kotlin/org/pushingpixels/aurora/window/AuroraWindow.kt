@@ -31,8 +31,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Density
@@ -87,8 +85,7 @@ object WindowTitlePaneSizingConstants {
 private fun WindowScope.WindowTitlePane(
     title: String,
     icon: Painter?,
-    iconFilterStrategy: IconFilterStrategy,
-    titlePaneBounds: MutableState<Rect>
+    iconFilterStrategy: IconFilterStrategy
 ) {
     val density = LocalDensity.current
 
@@ -105,12 +102,6 @@ private fun WindowScope.WindowTitlePane(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(WindowTitlePaneSizingConstants.TitlePaneHeight)
-                    .onGloballyPositioned {
-                        titlePaneBounds.value = Rect(
-                            offset = it.positionInWindow(),
-                            size = Size(it.size.width.toFloat(), it.size.height.toFloat())
-                        )
-                    }
                     .auroraBackground()
                     .padding(
                         if (icon == null)
@@ -275,13 +266,12 @@ private fun WindowScope.WindowInnerContent(
     icon: Painter?,
     iconFilterStrategy: IconFilterStrategy,
     undecorated: Boolean,
-    titlePaneBounds: MutableState<Rect>,
     menuCommands: CommandGroup? = null,
     content: @Composable WindowScope.() -> Unit
 ) {
     Column(Modifier.fillMaxSize().auroraBackground()) {
         if (undecorated) {
-            WindowTitlePane(title, icon, iconFilterStrategy, titlePaneBounds)
+            WindowTitlePane(title, icon, iconFilterStrategy)
         }
         if (menuCommands != null) {
             AuroraWindowMenuBar(menuCommands)
@@ -388,7 +378,6 @@ internal fun WindowScope.WindowContent(
     title: String,
     icon: Painter?,
     iconFilterStrategy: IconFilterStrategy,
-    titlePaneBounds: MutableState<Rect>,
     undecorated: Boolean,
     menuCommands: CommandGroup? = null,
     content: @Composable WindowScope.() -> Unit
@@ -415,7 +404,6 @@ internal fun WindowScope.WindowContent(
                 icon,
                 iconFilterStrategy,
                 undecorated,
-                titlePaneBounds,
                 menuCommands,
                 content
             )
@@ -426,7 +414,6 @@ internal fun WindowScope.WindowContent(
             icon,
             iconFilterStrategy,
             undecorated,
-            titlePaneBounds,
             menuCommands,
             content
         )
@@ -479,7 +466,6 @@ fun ApplicationScope.AuroraWindow(
     onKeyEvent: (androidx.compose.ui.input.key.KeyEvent) -> Boolean = { false },
     content: @Composable WindowScope.() -> Unit
 ) {
-    val titlePaneBounds = mutableStateOf(Rect.Zero)
     val density = mutableStateOf(Density(1.0f, 1.0f))
 
     Window(
@@ -509,7 +495,6 @@ fun ApplicationScope.AuroraWindow(
                 title = title,
                 icon = icon,
                 iconFilterStrategy = iconFilterStrategy,
-                titlePaneBounds = titlePaneBounds,
                 undecorated = undecorated,
                 menuCommands = menuCommands,
                 content = content
@@ -523,8 +508,7 @@ fun ApplicationScope.AuroraWindow(
                     density = density.value,
                     window = window,
                     rootPane = window.rootPane,
-                    lastCursor = lastCursor,
-                    titlePaneBounds = titlePaneBounds
+                    lastCursor = lastCursor
                 )
 
                 Toolkit.getDefaultToolkit().addAWTEventListener(
@@ -568,7 +552,6 @@ fun ApplicationScope.AuroraWindow(
     onKeyEvent: (androidx.compose.ui.input.key.KeyEvent) -> Boolean = { false },
     content: @Composable WindowScope.() -> Unit
 ) {
-    val titlePaneBounds = mutableStateOf(Rect.Zero)
     val density = mutableStateOf(Density(1.0f, 1.0f))
 
     Window(
@@ -598,7 +581,6 @@ fun ApplicationScope.AuroraWindow(
                 title = title,
                 icon = icon,
                 iconFilterStrategy = iconFilterStrategy,
-                titlePaneBounds = titlePaneBounds,
                 undecorated = undecorated,
                 menuCommands = menuCommands,
                 content = content
@@ -612,8 +594,7 @@ fun ApplicationScope.AuroraWindow(
                     density = density.value,
                     window = window,
                     rootPane = window.rootPane,
-                    lastCursor = lastCursor,
-                    titlePaneBounds = titlePaneBounds
+                    lastCursor = lastCursor
                 )
 
                 Toolkit.getDefaultToolkit().addAWTEventListener(

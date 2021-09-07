@@ -53,8 +53,7 @@ internal class AWTInputHandler(
     val density: Density,
     val window: Window,
     val rootPane: JRootPane,
-    val lastCursor: MutableState<Cursor?>,
-    val titlePaneBounds: MutableState<Rect>
+    val lastCursor: MutableState<Cursor?>
 ) : AWTEventListener {
     /**
      * Set to true if the drag operation is moving the window.
