@@ -24,13 +24,17 @@ class backup_24px : Painter() {
     @Suppress("UNUSED_VARIABLE") private var stroke: Stroke? = null
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
+    private var blendMode = DrawScope.DefaultBlendMode
     private var alphaStack = mutableListOf(1.0f)
+    private var blendModeStack = mutableListOf(DrawScope.DefaultBlendMode)
 
 	private fun _paint0(drawScope : DrawScope) {
 with(drawScope) {
 // 
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -42,6 +46,8 @@ Matrix(values=floatArrayOf(
 // _0
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -53,8 +59,11 @@ Matrix(values=floatArrayOf(
 // _0_0
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -89,11 +98,13 @@ generalPath!!.lineTo(14.0f, 13.0f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 
 }
 }

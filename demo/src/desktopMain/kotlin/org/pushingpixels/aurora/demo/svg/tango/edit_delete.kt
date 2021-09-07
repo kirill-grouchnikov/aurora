@@ -24,13 +24,17 @@ class edit_delete : Painter() {
     @Suppress("UNUSED_VARIABLE") private var stroke: Stroke? = null
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
+    private var blendMode = DrawScope.DefaultBlendMode
     private var alphaStack = mutableListOf(1.0f)
+    private var blendModeStack = mutableListOf(DrawScope.DefaultBlendMode)
 
 	private fun _paint0(drawScope : DrawScope) {
 with(drawScope) {
 // 
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -42,6 +46,8 @@ Matrix(values=floatArrayOf(
 // _0
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -53,6 +59,8 @@ Matrix(values=floatArrayOf(
 // _0_0
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -64,6 +72,8 @@ Matrix(values=floatArrayOf(
 // _0_0_0
 alphaStack.add(0, alpha)
 alpha *= 0.40206185f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -75,11 +85,14 @@ Matrix(values=floatArrayOf(
 // _0_0_0_0
 shape = Outline.Rectangle(rect = Rect(left = -1559.2523193359375f, top = -150.6968536376953f, right = -219.6187744140625f, bottom = 327.6603240966797f))
 brush = Brush.linearGradient(0.0f to Color(0, 0, 0, 0), 0.5f to Color(0, 0, 0, 255), 1.0f to Color(0, 0, 0, 0), start = Offset(-1051.9354f, -150.69684f), end = Offset(-1051.9354f, 327.6604f), tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 0.40206185f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -101,11 +114,14 @@ generalPath!!.cubicTo(125.78138f, -43.572304f, -33.655437f, -150.68036f, -219.61
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = Brush.radialGradient(0.0f to Color(0, 0, 0, 255), 1.0f to Color(0, 0, 0, 0), center = Offset(-211.146f, 85.66791f), radius = 325.0f, tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 0.40206185f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -127,13 +143,17 @@ generalPath!!.cubicTo(-1904.6525f, -43.572304f, -1745.2157f, -150.68036f, -1559.
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = Brush.radialGradient(0.0f to Color(0, 0, 0, 255), 1.0f to Color(0, 0, 0, 0), center = Offset(-1567.7247f, 85.66791f), radius = 325.0f, tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 0.38659793f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -156,11 +176,14 @@ generalPath!!.lineTo(4.75f, 21.0f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = Brush.linearGradient(0.0f to Color(0, 0, 0, 255), 1.0f to Color(0, 0, 0, 0), start = Offset(25.0f, 21.0f), end = Offset(25.0f, 32.25f), tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 0.5f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -185,7 +208,7 @@ generalPath!!.cubicTo(30.666924f, 16.500029f, 17.333866f, 16.500029f, 4.000805f,
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(186, 189, 182, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(85, 87, 83, 255))
 stroke = Stroke(width=1.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
@@ -202,11 +225,14 @@ generalPath!!.cubicTo(42.216137f, 42.050804f, 43.986115f, 16.535f, 43.99998f, 16
 generalPath!!.cubicTo(30.666924f, 16.500029f, 17.333866f, 16.500029f, 4.000805f, 16.500029f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 0.23711339f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -228,11 +254,14 @@ generalPath!!.lineTo(43.457954f, 20.71267f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = Brush.linearGradient(0.0f to Color(0, 0, 0, 255), 1.0f to Color(0, 0, 0, 0), start = Offset(22.921103f, 11.071759f), end = Offset(23.46765f, 25.717623f), tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 0.12886599f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -244,6 +273,8 @@ Matrix(values=floatArrayOf(
 // _0_0_4
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -268,7 +299,7 @@ generalPath!!.lineTo(29.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(0, 0, 0, 255))
 stroke = Stroke(width=1.3f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
@@ -285,11 +316,14 @@ generalPath!!.cubicTo(31.745218f, 23.021023f, 30.577814f, 19.614988f, 30.577814f
 generalPath!!.lineTo(29.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -314,7 +348,7 @@ generalPath!!.lineTo(9.912416f, 19.75934f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(0, 0, 0, 255))
 stroke = Stroke(width=1.3f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
@@ -331,11 +365,14 @@ generalPath!!.cubicTo(12.49415f, 23.16629f, 11.326745f, 19.760256f, 11.326745f, 
 generalPath!!.lineTo(9.912416f, 19.75934f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -360,7 +397,7 @@ generalPath!!.lineTo(11.66716f, 19.714073f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(0, 0, 0, 255))
 stroke = Stroke(width=1.3f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
@@ -377,11 +414,14 @@ generalPath!!.cubicTo(14.248892f, 23.121023f, 13.081487f, 19.714989f, 13.081487f
 generalPath!!.lineTo(11.66716f, 19.714073f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -406,7 +446,7 @@ generalPath!!.lineTo(21.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(0, 0, 0, 255))
 stroke = Stroke(width=1.3f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
@@ -423,11 +463,14 @@ generalPath!!.cubicTo(23.745218f, 23.021023f, 22.577814f, 19.614988f, 22.577814f
 generalPath!!.lineTo(21.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -452,7 +495,7 @@ generalPath!!.lineTo(35.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(0, 0, 0, 255))
 stroke = Stroke(width=1.3f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
@@ -469,11 +512,14 @@ generalPath!!.cubicTo(37.74522f, 23.021023f, 36.577812f, 19.614988f, 36.577812f,
 generalPath!!.lineTo(35.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -498,7 +544,7 @@ generalPath!!.lineTo(31.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(0, 0, 0, 255))
 stroke = Stroke(width=1.3f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
@@ -515,11 +561,14 @@ generalPath!!.cubicTo(33.74522f, 23.021023f, 32.577812f, 19.614988f, 32.577812f,
 generalPath!!.lineTo(31.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -544,7 +593,7 @@ generalPath!!.lineTo(33.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(0, 0, 0, 255))
 stroke = Stroke(width=1.3f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
@@ -561,11 +610,14 @@ generalPath!!.cubicTo(35.74522f, 23.021023f, 34.577812f, 19.614988f, 34.577812f,
 generalPath!!.lineTo(33.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -590,7 +642,7 @@ generalPath!!.lineTo(27.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(0, 0, 0, 255))
 stroke = Stroke(width=1.3f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
@@ -607,11 +659,14 @@ generalPath!!.cubicTo(29.745218f, 23.021023f, 28.577814f, 19.614988f, 28.577814f
 generalPath!!.lineTo(27.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -636,7 +691,7 @@ generalPath!!.lineTo(25.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(0, 0, 0, 255))
 stroke = Stroke(width=1.3f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
@@ -653,11 +708,14 @@ generalPath!!.cubicTo(27.745218f, 23.021023f, 26.577814f, 19.614988f, 26.577814f
 generalPath!!.lineTo(25.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -682,7 +740,7 @@ generalPath!!.lineTo(23.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(0, 0, 0, 255))
 stroke = Stroke(width=1.3f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
@@ -699,11 +757,14 @@ generalPath!!.cubicTo(25.745218f, 23.021023f, 24.577814f, 19.614988f, 24.577814f
 generalPath!!.lineTo(23.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -728,7 +789,7 @@ generalPath!!.lineTo(13.313608f, 19.714073f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(0, 0, 0, 255))
 stroke = Stroke(width=1.3f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
@@ -745,11 +806,14 @@ generalPath!!.cubicTo(15.89534f, 23.121023f, 14.727935f, 19.714989f, 14.727935f,
 generalPath!!.lineTo(13.313608f, 19.714073f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -774,7 +838,7 @@ generalPath!!.lineTo(19.418083f, 20.520258f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(0, 0, 0, 255))
 stroke = Stroke(width=1.3f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
@@ -791,11 +855,14 @@ generalPath!!.cubicTo(21.116432f, 23.399015f, 20.83241f, 20.521172f, 20.83241f, 
 generalPath!!.lineTo(19.418083f, 20.520258f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -820,7 +887,7 @@ generalPath!!.lineTo(15.163487f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(0, 0, 0, 255))
 stroke = Stroke(width=1.3f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
@@ -837,11 +904,14 @@ generalPath!!.cubicTo(17.745218f, 23.021023f, 16.577814f, 19.614988f, 16.577814f
 generalPath!!.lineTo(15.163487f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -866,7 +936,7 @@ generalPath!!.lineTo(16.81613f, 20.479515f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(0, 0, 0, 255))
 stroke = Stroke(width=1.3f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
@@ -883,13 +953,17 @@ generalPath!!.cubicTo(19.397861f, 23.886463f, 18.230455f, 20.480429f, 18.230455f
 generalPath!!.lineTo(16.81613f, 20.479515f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -901,6 +975,8 @@ Matrix(values=floatArrayOf(
 // _0_0_5
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -925,11 +1001,14 @@ generalPath!!.lineTo(29.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = Brush.radialGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(213, 213, 213, 255), center = Offset(27.783056f, 30.953136f), radius = 8.034799f, tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -954,11 +1033,14 @@ generalPath!!.lineTo(9.912416f, 19.75934f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = Brush.radialGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(213, 213, 213, 255), center = Offset(8.531998f, 31.098408f), radius = 8.034799f, tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -983,11 +1065,14 @@ generalPath!!.lineTo(11.66716f, 19.714073f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = Brush.radialGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(213, 213, 213, 255), center = Offset(10.286747f, 31.053139f), radius = 8.034799f, tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1012,11 +1097,14 @@ generalPath!!.lineTo(21.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = Brush.radialGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(213, 213, 213, 255), center = Offset(19.783054f, 30.953136f), radius = 8.034801f, tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1041,11 +1129,14 @@ generalPath!!.lineTo(35.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = Brush.radialGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(213, 213, 213, 255), center = Offset(33.783054f, 30.953136f), radius = 8.034801f, tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1070,11 +1161,14 @@ generalPath!!.lineTo(31.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = Brush.radialGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(213, 213, 213, 255), center = Offset(29.783056f, 30.953136f), radius = 8.034799f, tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1099,11 +1193,14 @@ generalPath!!.lineTo(33.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = Brush.radialGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(213, 213, 213, 255), center = Offset(31.783056f, 30.953136f), radius = 8.034799f, tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1128,11 +1225,14 @@ generalPath!!.lineTo(27.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = Brush.radialGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(213, 213, 213, 255), center = Offset(25.783056f, 30.953136f), radius = 8.034799f, tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1157,11 +1257,14 @@ generalPath!!.lineTo(25.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = Brush.radialGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(213, 213, 213, 255), center = Offset(23.783056f, 30.953136f), radius = 8.034799f, tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1186,11 +1289,14 @@ generalPath!!.lineTo(23.163486f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = Brush.radialGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(213, 213, 213, 255), center = Offset(21.783056f, 30.953136f), radius = 8.034799f, tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1215,11 +1321,14 @@ generalPath!!.lineTo(13.313608f, 19.714073f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = Brush.radialGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(213, 213, 213, 255), center = Offset(11.9331875f, 31.053139f), radius = 8.034799f, tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1244,11 +1353,14 @@ generalPath!!.lineTo(19.418083f, 20.520258f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = Brush.radialGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(213, 213, 213, 255), center = Offset(17.330559f, 31.859318f), radius = 8.034797f, tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1273,11 +1385,14 @@ generalPath!!.lineTo(15.163487f, 19.614075f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = Brush.radialGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(213, 213, 213, 255), center = Offset(13.783068f, 30.953136f), radius = 8.034799f, tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1302,13 +1417,17 @@ generalPath!!.lineTo(16.81613f, 20.479515f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = Brush.radialGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(213, 213, 213, 255), center = Offset(15.435708f, 31.818577f), radius = 8.0348f, tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 0.62886596f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1334,11 +1453,14 @@ generalPath!!.cubicTo(41.152054f, 40.243546f, 42.601147f, 19.210922f, 42.587322f
 generalPath!!.cubicTo(32.686245f, 19.210922f, 17.64779f, 19.153519f, 5.414681f, 19.121548f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1365,7 +1487,7 @@ generalPath!!.cubicTo(40.329056f, 6.506821f, 7.296499f, 6.568457f, 7.163233f, 6.
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = Brush.linearGradient(0.0f to Color(89, 139, 203, 255), 0.7567568f to Color(47, 92, 150, 255), 1.0f to Color(32, 62, 101, 255), start = Offset(24.000006f, 15.837313f), end = Offset(24.000006f, 21.0f), tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(32, 74, 135, 255))
 stroke = Stroke(width=1.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
@@ -1384,11 +1506,14 @@ generalPath!!.cubicTo(42.067463f, 6.749683f, 41.14725f, 6.476015f, 40.463707f, 6
 generalPath!!.cubicTo(40.329056f, 6.506821f, 7.296499f, 6.568457f, 7.163233f, 6.56876f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 0.14948454f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1412,11 +1537,14 @@ generalPath!!.lineTo(4.79225f, 20.902176f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(85, 87, 83, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 0.42783505f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1441,11 +1569,14 @@ generalPath!!.lineTo(8.033569f, 41.611683f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(238, 238, 236, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 0.371134f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1469,11 +1600,14 @@ generalPath!!.lineTo(38.00699f, 41.370872f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(238, 238, 236, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 0.38659793f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1528,11 +1662,14 @@ generalPath!!.cubicTo(40.400017f, 7.535093f, 40.456734f, 7.5311365f, 40.4375f, 7
 generalPath!!.cubicTo(40.418266f, 7.5313635f, 40.408607f, 7.531119f, 40.375f, 7.53125f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 0.8298969f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1555,11 +1692,14 @@ generalPath!!.lineTo(8.0f, 10.0f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = Brush.linearGradient(0.0f to Color(0, 0, 0, 255), 1.0f to Color(0, 0, 0, 0), start = Offset(27.5f, 9.999999f), end = Offset(27.625f, 13.799969f), tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1584,7 +1724,7 @@ generalPath!!.cubicTo(9.499995f, 1.6576864f, 9.6576805f, 1.5000014f, 9.853549f, 
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = Brush.linearGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(211, 211, 211, 255), start = Offset(26.71876f, -9.031914f), end = Offset(28.046942f, 13.946809f), tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(136, 138, 133, 255))
 stroke = Stroke(width=1.0000008f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
@@ -1601,11 +1741,14 @@ generalPath!!.lineTo(9.499995f, 1.853555f)
 generalPath!!.cubicTo(9.499995f, 1.6576864f, 9.6576805f, 1.5000014f, 9.853549f, 1.5000014f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 0.62886596f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1627,11 +1770,14 @@ generalPath!!.lineTo(10.499998f, 2.5000012f)
 generalPath!!.lineTo(36.50438f, 2.5000012f)
 generalPath!!.lineTo(36.50438f, 10.611733f)
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1656,7 +1802,7 @@ generalPath!!.cubicTo(42.52839f, 14.137338f, 43.004005f, 14.552086f, 43.0f, 15.0
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(204, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(164, 0, 0, 255))
 stroke = Stroke(width=1.2417247f, cap=StrokeCap.Square, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
@@ -1673,11 +1819,14 @@ generalPath!!.cubicTo(40.02191f, 13.688263f, 40.97809f, 13.688263f, 41.75324f, 1
 generalPath!!.cubicTo(42.52839f, 14.137338f, 43.004005f, 14.552086f, 43.0f, 15.0f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1702,7 +1851,7 @@ generalPath!!.cubicTo(42.52839f, 14.137338f, 43.004005f, 14.552086f, 43.0f, 15.0
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(239, 41, 41, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = Brush.linearGradient(0.0f to Color(164, 0, 0, 255), 1.0f to Color(255, 196, 196, 255), start = Offset(40.5f, 13.822797f), end = Offset(40.5f, 16.877842f), tileMode = TileMode.Clamp)
 stroke = Stroke(width=1.2417247f, cap=StrokeCap.Square, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
@@ -1719,11 +1868,14 @@ generalPath!!.cubicTo(40.02191f, 13.688263f, 40.97809f, 13.688263f, 41.75324f, 1
 generalPath!!.cubicTo(42.52839f, 14.137338f, 43.004005f, 14.552086f, 43.0f, 15.0f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 0.2731959f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1735,11 +1887,14 @@ Matrix(values=floatArrayOf(
 // _0_0_17
 shape = Outline.Rectangle(rect = Rect(left = 9.0f, top = 6.6875f, right = 38.0f, bottom = 12.0f))
 brush = Brush.linearGradient(0.0f to Color(0, 0, 0, 255), 1.0f to Color(0, 0, 0, 0), start = Offset(23.5f, 12.0f), end = Offset(23.5f, 6.6875f), tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 0.13917527f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1751,11 +1906,14 @@ Matrix(values=floatArrayOf(
 // _0_0_18
 shape = Outline.Rounded(roundRect = RoundRect(left = 12.0f, top = 4.0f, right = 35.0f, bottom = 5.0f,radiusX = 1.0f, radiusY = 1.0f))
 brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 0.13917527f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1767,11 +1925,14 @@ Matrix(values=floatArrayOf(
 // _0_0_19
 shape = Outline.Rounded(roundRect = RoundRect(left = 12.0f, top = 6.0f, right = 27.0f, bottom = 7.0f,radiusX = 1.0f, radiusY = 1.0f))
 brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 0.13917527f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1783,13 +1944,16 @@ Matrix(values=floatArrayOf(
 // _0_0_20
 shape = Outline.Rounded(roundRect = RoundRect(left = 12.0f, top = 8.0f, right = 31.0f, bottom = 9.0f,radiusX = 1.0f, radiusY = 1.0f))
 brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 
 }
 }

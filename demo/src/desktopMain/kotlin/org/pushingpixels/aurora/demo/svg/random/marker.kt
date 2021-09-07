@@ -24,13 +24,17 @@ class marker : Painter() {
     @Suppress("UNUSED_VARIABLE") private var stroke: Stroke? = null
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
+    private var blendMode = DrawScope.DefaultBlendMode
     private var alphaStack = mutableListOf(1.0f)
+    private var blendModeStack = mutableListOf(DrawScope.DefaultBlendMode)
 
 	private fun _paint0(drawScope : DrawScope) {
 with(drawScope) {
 // 
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -42,6 +46,8 @@ Matrix(values=floatArrayOf(
 // _0
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -62,7 +68,7 @@ generalPath!!.moveTo(10.0f, 10.0f)
 generalPath!!.lineTo(10.0f, 90.0f)
 generalPath!!.lineTo(90.0f, 90.0f)
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 withTransform({
    translate(left=7.0f, top=7.0f)
 }) {
@@ -78,6 +84,8 @@ Matrix(values=floatArrayOf(
 // _0_0_m0_0
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -98,9 +106,10 @@ generalPath!!.lineTo(0.0f, 10.0f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 }
 }
 withTransform({
@@ -118,6 +127,8 @@ Matrix(values=floatArrayOf(
 // _0_0_m2_0
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -138,15 +149,19 @@ generalPath!!.lineTo(0.0f, 10.0f)
 generalPath!!.close()
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 }
 }
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -170,7 +185,7 @@ generalPath!!.lineTo(57.0f, 30.0f)
 generalPath!!.lineTo(71.0f, 40.0f)
 generalPath!!.lineTo(85.0f, 15.0f)
 shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 withTransform({
    translate(left=12.5f, top=77.5f)
 }) {
@@ -186,6 +201,8 @@ Matrix(values=floatArrayOf(
 // _0_1_m0_0
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -197,9 +214,10 @@ Matrix(values=floatArrayOf(
 // _0_1_m0_0_0
 shape = Outline.Generic(path = Path().also { it.addOval(oval=Rect(left = 0.0f, top = 0.0f, right = 10.0f, bottom = 10.0f))})
 brush = SolidColor(Color(255, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 }
 }
 withTransform({
@@ -217,6 +235,8 @@ Matrix(values=floatArrayOf(
 // _0_1_m1_0
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -228,9 +248,10 @@ Matrix(values=floatArrayOf(
 // _0_1_m1_0_0
 shape = Outline.Generic(path = Path().also { it.addOval(oval=Rect(left = 0.0f, top = 0.0f, right = 10.0f, bottom = 10.0f))})
 brush = SolidColor(Color(255, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 }
 }
 withTransform({
@@ -248,6 +269,8 @@ Matrix(values=floatArrayOf(
 // _0_1_m2_0
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -259,9 +282,10 @@ Matrix(values=floatArrayOf(
 // _0_1_m2_0_0
 shape = Outline.Generic(path = Path().also { it.addOval(oval=Rect(left = 0.0f, top = 0.0f, right = 10.0f, bottom = 10.0f))})
 brush = SolidColor(Color(255, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 }
 }
 withTransform({
@@ -279,6 +303,8 @@ Matrix(values=floatArrayOf(
 // _0_1_m3_0
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -290,9 +316,10 @@ Matrix(values=floatArrayOf(
 // _0_1_m3_0_0
 shape = Outline.Generic(path = Path().also { it.addOval(oval=Rect(left = 0.0f, top = 0.0f, right = 10.0f, bottom = 10.0f))})
 brush = SolidColor(Color(255, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 }
 }
 withTransform({
@@ -310,6 +337,8 @@ Matrix(values=floatArrayOf(
 // _0_1_m4_0
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -321,9 +350,10 @@ Matrix(values=floatArrayOf(
 // _0_1_m4_0_0
 shape = Outline.Generic(path = Path().also { it.addOval(oval=Rect(left = 0.0f, top = 0.0f, right = 10.0f, bottom = 10.0f))})
 brush = SolidColor(Color(255, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 }
 }
 withTransform({
@@ -341,6 +371,8 @@ Matrix(values=floatArrayOf(
 // _0_1_m5_0
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -352,15 +384,18 @@ Matrix(values=floatArrayOf(
 // _0_1_m5_0_0
 shape = Outline.Generic(path = Path().also { it.addOval(oval=Rect(left = 0.0f, top = 0.0f, right = 10.0f, bottom = 10.0f))})
 brush = SolidColor(Color(255, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 }
 }
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 
 }
 }

@@ -24,13 +24,17 @@ class text : Painter() {
     @Suppress("UNUSED_VARIABLE") private var stroke: Stroke? = null
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
+    private var blendMode = DrawScope.DefaultBlendMode
     private var alphaStack = mutableListOf(1.0f)
+    private var blendModeStack = mutableListOf(DrawScope.DefaultBlendMode)
 
 	private fun _paint0(drawScope : DrawScope) {
 with(drawScope) {
 // 
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -42,6 +46,8 @@ Matrix(values=floatArrayOf(
 // _0
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -54,9 +60,13 @@ Matrix(values=floatArrayOf(
             var shapeText: Outline?
             var generalPathText: Path? = null
             var alphaText = alpha
+            var blendModeText = blendMode
 alphaText = alpha * 1.0f
+blendModeText = BlendMode.SrcOver
 alphaText = alpha * 1.0f
+blendModeText = BlendMode.SrcOver
 alphaText = alpha * 1.0f
+blendModeText = BlendMode.SrcOver
 brush = SolidColor(Color(0, 0, 0, 255))
 if (generalPathText == null) {
    generalPathText = Path()
@@ -87,12 +97,16 @@ generalPathText!!.lineTo(39.291798f, 28.106445f)
 generalPathText!!.lineTo(33.64746f, 37.507324f)
 generalPathText!!.close()
 shapeText = Outline.Generic(generalPathText!!)
-drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText)
+drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
 alphaText = alpha * 1.0f
+blendModeText = BlendMode.SrcOver
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -105,9 +119,13 @@ Matrix(values=floatArrayOf(
             var shapeText: Outline?
             var generalPathText: Path? = null
             var alphaText = alpha
+            var blendModeText = blendMode
 alphaText = alpha * 1.0f
+blendModeText = BlendMode.SrcOver
 alphaText = alpha * 1.0f
+blendModeText = BlendMode.SrcOver
 alphaText = alpha * 1.0f
+blendModeText = BlendMode.SrcOver
 brush = SolidColor(Color(0, 0, 0, 255))
 if (generalPathText == null) {
    generalPathText = Path()
@@ -175,12 +193,16 @@ generalPathText!!.quadraticBezierTo(80.85449f, 32.48047f, 83.271484f, 32.48047f)
 generalPathText!!.quadraticBezierTo(83.828125f, 32.48047f, 84.60449f, 32.27539f)
 generalPathText!!.close()
 shapeText = Outline.Generic(generalPathText!!)
-drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText)
+drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
 alphaText = alpha * 1.0f
+blendModeText = BlendMode.SrcOver
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -193,9 +215,13 @@ Matrix(values=floatArrayOf(
             var shapeText: Outline?
             var generalPathText: Path? = null
             var alphaText = alpha
+            var blendModeText = blendMode
 alphaText = alpha * 1.0f
+blendModeText = BlendMode.SrcOver
 alphaText = alpha * 1.0f
+blendModeText = BlendMode.SrcOver
 alphaText = alpha * 1.0f
+blendModeText = BlendMode.SrcOver
 brush = SolidColor(Color(0, 0, 0, 255))
 if (generalPathText == null) {
    generalPathText = Path()
@@ -236,12 +262,16 @@ generalPathText!!.quadraticBezierTo(64.59004f, 53.990723f, 63.75596f, 54.574707f
 generalPathText!!.quadraticBezierTo(62.921875f, 55.15869f, 61.804688f, 55.15869f)
 generalPathText!!.close()
 shapeText = Outline.Generic(generalPathText!!)
-drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText)
+drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
 alphaText = alpha * 1.0f
+blendModeText = BlendMode.SrcOver
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -254,9 +284,13 @@ Matrix(values=floatArrayOf(
             var shapeText: Outline?
             var generalPathText: Path? = null
             var alphaText = alpha
+            var blendModeText = blendMode
 alphaText = alpha * 1.0f
+blendModeText = BlendMode.SrcOver
 alphaText = alpha * 1.0f
+blendModeText = BlendMode.SrcOver
 alphaText = alpha * 1.0f
+blendModeText = BlendMode.SrcOver
 brush = SolidColor(Color(255, 0, 0, 255))
 if (generalPathText == null) {
    generalPathText = Path()
@@ -547,12 +581,15 @@ generalPathText!!.quadraticBezierTo(207.28516f, 28.320312f, 207.7539f, 28.896484
 generalPathText!!.quadraticBezierTo(208.22266f, 29.472656f, 208.22266f, 30.253906f)
 generalPathText!!.close()
 shapeText = Outline.Generic(generalPathText!!)
-drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText)
+drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
 alphaText = alpha * 1.0f
+blendModeText = BlendMode.SrcOver
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 }
 alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
 
 }
 }

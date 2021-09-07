@@ -82,28 +82,12 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             currentWriter.print(string)
         }
 
-        fun checkin() {
-            // TODO - figure out if the nested withTransform{} blocks
-            //  can somehow be broken on bigger inputs
-//            if (lines >= ROTATION_THRESHOLD) {
-//                currentWriter.close()
-//                val paintingCodeStream = ByteArrayOutputStream()
-//                streamList.add(paintingCodeStream)
-//                currentWriter = PrintWriter(paintingCodeStream)
-//                lines = 0
-//            }
-        }
-
         fun close() {
             currentWriter.close()
         }
 
         fun getStreamList(): List<ByteArrayOutputStream> {
             return Collections.unmodifiableList(streamList)
-        }
-
-        companion object {
-            private const val ROTATION_THRESHOLD = 1000
         }
 
         init {
@@ -211,8 +195,6 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         printWriterManager!!.println("   generalPath$suffix!!.reset()")
         printWriterManager!!.println("}")
         while (!pathIterator.isDone) {
-            // Probably the resulting class will run into "error: too many constants" in any case ¯\_(ツ)_/¯
-            printWriterManager!!.checkin()
             when (pathIterator.currentSegment(coords)) {
                 PathIterator.SEG_CUBICTO -> printWriterManager?.println(
                     "generalPath$suffix!!.cubicTo(${coords[0]}f, ${coords[1]}f, ${coords[2]}f, ${coords[3]}f, ${coords[4]}f, ${coords[5]}f)"
@@ -441,6 +423,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         printWriterManager!!.println("             translate(left = startX, top = startY) {")
         printWriterManager!!.println("             var shapeTile: Outline?")
         printWriterManager!!.println("             var alphaTile = alpha")
+        printWriterManager!!.println("             var blendModeTile = blendMode")
 
         // Since PatternGraphicsNode does not (yet?) expose its content, we ask it to
         // paint itself to a custom extension of Graphics2D that tracks all relevant
@@ -466,12 +449,12 @@ abstract class SvgBaseTranscoder(private val classname: String) {
 
             override fun draw(shape: Shape) {
                 transcodeShape(shape, "Tile")
-                printWriterManager!!.println("drawOutline(outline = shapeTile!!, style = stroke!!, brush=brush!!, alpha = alphaTile)")
+                printWriterManager!!.println("drawOutline(outline = shapeTile!!, style = stroke!!, brush=brush!!, alpha = alphaTile, blendMode = blendModeTile)")
             }
 
             override fun fill(shape: Shape) {
                 transcodeShape(shape, "Tile")
-                printWriterManager!!.println("drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile)")
+                printWriterManager!!.println("drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile, blendMode = blendModeTile)")
             }
 
             override fun setComposite(composite: Composite) {
@@ -479,6 +462,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                 val rule = (composite as AlphaComposite).rule
                 val alpha = composite.alpha
                 printWriterManager!!.println("alphaTile = alpha * ${alpha}f")
+                printWriterManager!!.println("blendModeTile = ${blendModeToCompose(rule)}")
             }
 
             override fun getComposite(): Composite? {
@@ -526,8 +510,6 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                         "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f)"
                     )
                 } else {
-                    // TODO - switch away from Skija API for creating PathEffect once the fix for
-                    //  https://issuetracker.google.com/issues/171072166 is available
                     printWriterManager!!.println(
                         "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f, " +
                                 "pathEffect=PathEffect.makeDash($dashRep, ${dash_phase}f))"
@@ -780,18 +762,18 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         }
         if (paint is RadialGradientPaint) {
             transcodeRadialGradientPaint(paint)
-            printWriterManager!!.println("drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)")
+            printWriterManager!!.println("drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)")
             return
         }
         if (paint is LinearGradientPaint) {
             transcodeLinearGradientPaint(paint)
-            printWriterManager!!.println("drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)")
+            printWriterManager!!.println("drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)")
             return
         }
         if (paint is Color) {
             val solidColor = "Color(${paint.red}, ${paint.green}, ${paint.blue}, ${paint.alpha})"
             printWriterManager!!.println("brush = SolidColor($solidColor)")
-            printWriterManager!!.println("drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha)")
+            printWriterManager!!.println("drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)")
             return
         }
         if (paint == null) {
@@ -900,8 +882,6 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                 "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f)"
             )
         } else {
-            // TODO - switch away from Skija API for creating PathEffect once the fix for
-            //  https://issuetracker.google.com/issues/171072166 is available
             printWriterManager!!.println(
                 "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f, " +
                         "pathEffect=PathEffect.makeDash($dashRep, ${dash_phase}f))"
@@ -909,7 +889,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         }
         transcodeShape(shape, "")
         printWriterManager!!.println(
-            "drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha)"
+            "drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)"
         )
     }
 
@@ -1016,7 +996,6 @@ abstract class SvgBaseTranscoder(private val classname: String) {
     private fun transcodeShapeNode(node: ShapeNode, comment: String) {
         printWriterManager!!.println("// $comment")
         transcodeShapePainter(node.shapePainter, node.shape, comment)
-        printWriterManager!!.checkin()
     }
 
     /**
@@ -1031,7 +1010,6 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         for ((count, obj) in node.children.withIndex()) {
             transcodeGraphicsNode(obj as GraphicsNode?, comment + "_" + count)
         }
-        printWriterManager!!.checkin()
     }
 
     private fun transcodeRenderedImage(image: RenderedImage) {
@@ -1054,6 +1032,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         printWriterManager!!.println("            var shapeText: Outline?")
         printWriterManager!!.println("            var generalPathText: Path? = null")
         printWriterManager!!.println("            var alphaText = alpha")
+        printWriterManager!!.println("            var blendModeText = blendMode")
 
         node.primitivePaint(object : McCrashyGraphics2D() {
             var _clip: Shape? = null
@@ -1068,12 +1047,12 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             override fun dispose() {}
             override fun draw(shape: Shape) {
                 transcodeShape(shape, "Text")
-                printWriterManager!!.println("drawOutline(outline = shapeText!!, style = stroke!!, brush=brush!!, alpha = alphaText)")
+                printWriterManager!!.println("drawOutline(outline = shapeText!!, style = stroke!!, brush=brush!!, alpha = alphaText, blendMode = blendModeText)")
             }
 
             override fun fill(shape: Shape) {
                 transcodeShape(shape, "Text")
-                printWriterManager!!.println("drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText)")
+                printWriterManager!!.println("drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)")
             }
 
             override fun setComposite(composite: Composite) {
@@ -1081,6 +1060,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                 val rule = (composite as AlphaComposite).rule
                 val alpha = composite.alpha
                 printWriterManager!!.println("alphaText = alpha * ${alpha}f")
+                printWriterManager!!.println("blendModeText = ${blendModeToCompose(rule)}")
             }
 
             override fun setPaint(paint: Paint) {
@@ -1124,8 +1104,6 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                         "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f)"
                     )
                 } else {
-                    // TODO - switch away from Skija API for creating PathEffect once the fix for
-                    //  https://issuetracker.google.com/issues/171072166 is available
                     printWriterManager!!.println(
                         "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f, " +
                                 "pathEffect=PathEffect.makeDash($dashRep, ${dash_phase}f))"
@@ -1217,7 +1195,6 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                 return null
             }
         })
-        printWriterManager!!.checkin()
     }
 
     /**
@@ -1232,9 +1209,10 @@ abstract class SvgBaseTranscoder(private val classname: String) {
     private fun transcodeGraphicsNode(node: GraphicsNode?, comment: String) {
         val composite = node!!.composite as? AlphaComposite
         if (composite != null) {
-            // TODO - throw on non-default rule?
             printWriterManager!!.println("alphaStack.add(0, alpha)")
             printWriterManager!!.println("alpha *= ${composite.alpha}f")
+            printWriterManager!!.println("blendModeStack.add(0, ${blendModeToCompose(composite.rule)})")
+            printWriterManager!!.println("blendMode = ${blendModeToCompose(composite.rule)}")
         }
         val transform = node.transform
         if (transform != null) {
@@ -1278,6 +1256,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                 printWriterManager!!.println("}")
                 if (composite != null) {
                     printWriterManager!!.println("alpha = alphaStack.removeAt(0)")
+                    printWriterManager!!.println("blendMode = blendModeStack.removeAt(0)")
                 }
             }
         }
@@ -1293,5 +1272,23 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         private const val TOKEN_ORIG_Y = "TOKEN_ORIG_Y"
         private const val TOKEN_ORIG_WIDTH = "TOKEN_ORIG_WIDTH"
         private const val TOKEN_ORIG_HEIGHT = "TOKEN_ORIG_HEIGHT"
+
+        private fun blendModeToCompose(blendModeJava2D: Int) : String {
+            return when (blendModeJava2D) {
+                AlphaComposite.CLEAR -> "BlendMode.Clear"
+                AlphaComposite.DST -> "BlendMode.Dst"
+                AlphaComposite.DST_ATOP -> "BlendMode.DstAtop"
+                AlphaComposite.DST_IN -> "BlendMode.DstIn"
+                AlphaComposite.DST_OUT -> "BlendMode.DstOut"
+                AlphaComposite.DST_OVER -> "BlendMode.DstOver"
+                AlphaComposite.SRC -> "BlendMode.Src"
+                AlphaComposite.SRC_ATOP -> "BlendMode.SrcAtop"
+                AlphaComposite.SRC_IN -> "BlendMode.SrcIn"
+                AlphaComposite.SRC_OUT -> "BlendMode.SrcOut"
+                AlphaComposite.SRC_OVER -> "BlendMode.SrcOver"
+                AlphaComposite.XOR -> "BlendMode.Xor"
+                else -> "DrawScope.DefaultBlendMode"
+            }
+        }
     }
 }
