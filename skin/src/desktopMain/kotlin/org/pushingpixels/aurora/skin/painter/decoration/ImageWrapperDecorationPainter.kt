@@ -21,11 +21,8 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.clipPath
-import org.pushingpixels.aurora.common.HashMapKey
 import org.pushingpixels.aurora.skin.DecorationAreaType
 import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.skin.painter.border.DelegateFractionBasedBorderPainter
-import org.pushingpixels.aurora.skin.utils.getColorSchemeFilter
 
 /**
  * Implementation of [AuroraDecorationPainter] that uses an image source to paint on

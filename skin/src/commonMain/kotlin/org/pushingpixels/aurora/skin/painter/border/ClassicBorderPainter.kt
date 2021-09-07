@@ -16,8 +16,8 @@
 package org.pushingpixels.aurora.skin.painter.border
 
 import androidx.compose.ui.graphics.Color
-import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.common.interpolateTowards
+import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
 
 /**
  * Border painter that returns images with classic appearance.

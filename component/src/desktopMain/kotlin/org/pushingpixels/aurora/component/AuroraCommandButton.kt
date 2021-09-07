@@ -43,7 +43,6 @@ import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.skin.*
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
@@ -51,6 +50,7 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.utils.*
+import org.pushingpixels.aurora.skin.*
 import org.pushingpixels.aurora.skin.utils.MutableColorScheme
 import kotlin.math.max
 import kotlin.math.roundToInt

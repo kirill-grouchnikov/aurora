@@ -17,11 +17,11 @@ package org.pushingpixels.aurora.component.projection
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import org.pushingpixels.aurora.component.*
+import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.skin.LocalWindow
 import org.pushingpixels.aurora.skin.Side
 import org.pushingpixels.aurora.skin.Sides
-import org.pushingpixels.aurora.component.*
-import org.pushingpixels.aurora.component.model.*
 
 // TODO - restore when issue
 //  https://issuetracker.google.com/issues/165812010 is fixed

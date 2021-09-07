@@ -24,9 +24,9 @@ import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.skin.DecorationAreaType
 import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.common.interpolateTowards
 
 /**
  * Implementation of [AuroraDecorationPainter] that uses matte painting

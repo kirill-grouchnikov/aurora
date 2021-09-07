@@ -16,7 +16,10 @@
 package org.pushingpixels.aurora.common
 
 import androidx.compose.ui.graphics.Color
-import kotlin.math.*
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.pow
 
 /**
  * Interpolates this color towards the `other` color. The closer `thisLikeness` is to 0.0,

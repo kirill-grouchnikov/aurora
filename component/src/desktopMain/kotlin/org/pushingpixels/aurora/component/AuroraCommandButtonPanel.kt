@@ -33,10 +33,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.*
-import org.pushingpixels.aurora.skin.*
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.LabelProjection
+import org.pushingpixels.aurora.skin.*
 import org.pushingpixels.aurora.skin.shaper.ClassicButtonShaper
 import kotlin.math.ceil
 import kotlin.math.max
