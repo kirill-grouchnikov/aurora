@@ -23,17 +23,16 @@ import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.withBrightness
 import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
 import kotlin.math.roundToInt
-import org.jetbrains.skija.ColorFilter as SkijaColorFilter
 
 private val interpolations: MutableMap<AuroraColorScheme, Array<Color?>> = hashMapOf()
-private const val MAPSTEPS = 256
+private const val MapSteps = 256
 
-fun getInterpolatedColors(scheme: AuroraColorScheme): Array<Color?> {
+private fun getInterpolatedColors(scheme: AuroraColorScheme): Array<Color?> {
     if ((scheme !is MutableColorScheme) && interpolations.containsKey(scheme)) {
         return interpolations[scheme]!!
     }
 
-    val result = arrayOfNulls<Color>(MAPSTEPS)
+    val result = arrayOfNulls<Color>(MapSteps)
 
     // collect the brightness factors of the color scheme
     val schemeColorMapping = hashMapOf<Int, Color>()
@@ -84,8 +83,8 @@ fun getInterpolatedColors(scheme: AuroraColorScheme): Array<Color?> {
     // Step 3 - create the full brightness mapping that assigns colors to
     // all intermediate brightness values. The intermediate brightness values
     // are in discrete range
-    for (i in 0 until MAPSTEPS) {
-        val brightness = (256.0 * i / MAPSTEPS).toInt()
+    for (i in 0 until MapSteps) {
+        val brightness = (256.0 * i / MapSteps).toInt()
         if (schemeBrightness.contains(brightness)) {
             result[i] = stretchedColorMapping[brightness]
         } else {
@@ -129,5 +128,8 @@ fun getColorSchemeFilter(scheme: AuroraColorScheme): ColorFilter {
         blues[index] = (255 * filteredColor.blue).roundToInt().toByte()
     }
 
-    return SkijaColorFilter.makeTableARGB(null, reds, greens, blues).toComposeColorFilter()
+    // Pass null for alphas so that when the filter is applied, it respects the alpha
+    // channel of the source image
+    return org.jetbrains.skija.ColorFilter.makeTableARGB(null, reds, greens, blues)
+        .toComposeColorFilter()
 }
