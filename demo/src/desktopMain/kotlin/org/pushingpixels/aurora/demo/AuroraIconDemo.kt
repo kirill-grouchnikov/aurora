@@ -226,7 +226,7 @@ fun IconDemoArea() {
         ) {
             Column(modifier = Modifier.wrapContentHeight()) {
                 Box(modifier = Modifier.size(128.dp).paint(painter = marker()))
-                LabelProjection(contentModel = LabelContentModel(text = "themed 3")).project()
+                LabelProjection(contentModel = LabelContentModel(text = "marker")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
                 Box(modifier = Modifier.size(128.dp).paint(painter = kirill()))
