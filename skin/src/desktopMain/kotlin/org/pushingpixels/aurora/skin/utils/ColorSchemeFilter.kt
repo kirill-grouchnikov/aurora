@@ -130,6 +130,6 @@ fun getColorSchemeFilter(scheme: AuroraColorScheme): ColorFilter {
 
     // Pass null for alphas so that when the filter is applied, it respects the alpha
     // channel of the source image
-    return org.jetbrains.skija.ColorFilter.makeTableARGB(null, reds, greens, blues)
+    return org.jetbrains.skia.ColorFilter.makeTableARGB(null, reds, greens, blues)
         .toComposeColorFilter()
 }

@@ -32,7 +32,7 @@ package org.pushingpixels.aurora.skin.utils
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asDesktopBitmap
-import org.jetbrains.skija.*
+import org.jetbrains.skia.*
 import org.pushingpixels.aurora.common.interpolateTowardsAsRGB
 import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
 import kotlin.math.max
@@ -83,14 +83,14 @@ fun getNoiseTile(scheme: AuroraColorScheme, width: Int, height: Int): ImageBitma
     }
     // Create Skija bitmap from the noise buffer
     val noiseBitmap = Bitmap()
-    noiseBitmap.imageInfo = ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL)
+    noiseBitmap.setImageInfo(ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL))
     noiseBitmap.allocPixels()
     noiseBitmap.installPixels(byteDstBuffer)
 
     // Create another Skija bitmap that will have the softened noise (from applying a
     // convolution matrix)
     val softenedBitmap = Bitmap()
-    softenedBitmap.imageInfo = ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL)
+    softenedBitmap.setImageInfo(ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL))
     softenedBitmap.allocPixels()
     val softenedCanvas = Canvas(softenedBitmap)
     // Draw the noise tile with blur filter into the canvas
@@ -119,7 +119,7 @@ fun getBrushedMetalTile(scheme: AuroraColorScheme, width: Int, height: Int): Ima
     paint.imageFilter = blur
     // A bitmap to paint the noise tile + blur filter into
     val bitmap = Bitmap()
-    bitmap.imageInfo = ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL)
+    bitmap.setImageInfo(ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL))
     bitmap.allocPixels()
     // A canvas to wrap the bitmap
     val canvas = Canvas(bitmap)

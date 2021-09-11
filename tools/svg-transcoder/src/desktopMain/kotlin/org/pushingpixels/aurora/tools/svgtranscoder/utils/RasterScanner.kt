@@ -213,8 +213,8 @@ internal class RasterScanner(private val printWriter: PrintWriter) {
                 break
             }
         }
-        printWriter.println("    val data = org.jetbrains.skija.Data.makeFromBytes(Base64.getDecoder().decode(imageData.toString()))")
-        printWriter.println("    val codec = org.jetbrains.skija.Codec.makeFromData(data)")
+        printWriter.println("    val data = org.jetbrains.skia.Data.makeFromBytes(Base64.getDecoder().decode(imageData.toString()))")
+        printWriter.println("    val codec = org.jetbrains.skia.Codec.makeFromData(data)")
         printWriter.println("    val pixels = codec.readPixels()")
         printWriter.println("    val result = pixels.asImageBitmap()")
         printWriter.println("    image$md5 = WeakReference(result)")

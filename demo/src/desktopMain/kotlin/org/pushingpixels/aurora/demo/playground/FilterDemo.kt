@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import org.jetbrains.skija.*
+import org.jetbrains.skia.*
 import org.pushingpixels.aurora.skin.businessSkin
 import org.pushingpixels.aurora.skin.colorscheme.MetallicColorScheme
 import org.pushingpixels.aurora.skin.utils.getBrushedMetalTile
@@ -61,7 +61,7 @@ fun main() = application {
         paint.imageFilter = blur
         // A bitmap to paint the noise tile + blur filter into
         val bitmap = Bitmap()
-        bitmap.imageInfo = ImageInfo(360, 360, ColorType.BGRA_8888, ColorAlphaType.PREMUL)
+        bitmap.setImageInfo(ImageInfo(360, 360, ColorType.BGRA_8888, ColorAlphaType.PREMUL))
         bitmap.allocPixels()
         // A canvas to wrap the bitmap
         val canvas = Canvas(bitmap)
