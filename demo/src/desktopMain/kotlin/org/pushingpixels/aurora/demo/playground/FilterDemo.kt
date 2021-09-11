@@ -38,11 +38,31 @@ import org.pushingpixels.aurora.skin.utils.getBrushedMetalTile
 import org.pushingpixels.aurora.skin.utils.getNoiseTile
 import org.pushingpixels.aurora.window.AuroraWindow
 
+private fun applyBlur(input: ImageBitmap): ImageBitmap {
+    // A Skia blur filter
+    val blur = ImageFilter.makeBlur(15.0f, 0.0f, FilterTileMode.REPEAT, null, null)
+    val paint = Paint()
+    paint.imageFilter = blur
+    // A bitmap to paint the noise tile + blur filter into
+    val bitmap = Bitmap()
+    bitmap.setImageInfo(ImageInfo(360, 360, ColorType.BGRA_8888, ColorAlphaType.PREMUL))
+    bitmap.allocPixels()
+    // A canvas to wrap the bitmap
+    val canvas = Canvas(bitmap)
+    // Draw the noise tile with blur filter into the canvas
+    canvas.drawImage(Image.makeFromBitmap(input.asDesktopBitmap()), -20.0f, -20.0f, paint)
+    // A Compose image bitmap
+    val result = ImageBitmap(width = 360, height = 360)
+    // Copy over the pixels from the noise tile + blur filter bitmap
+    result.asDesktopBitmap().installPixels(bitmap.readPixels())
+    return result
+}
+
 fun main() = application {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
-        size = WindowSize(800.dp, 300.dp)
+        size = WindowSize(800.dp, 600.dp)
     )
     val skin = mutableStateOf(businessSkin())
 
@@ -54,25 +74,47 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
     ) {
         // Create a noise tile
+        val time1 = System.nanoTime()
         val tile = getNoiseTile(scheme = MetallicColorScheme(), width = 400, height = 400)
-        // A Skia blur filter
-        val blur = ImageFilter.makeBlur(15.0f, 0.0f, FilterTileMode.REPEAT, null, null)
-        val paint = Paint()
-        paint.imageFilter = blur
-        // A bitmap to paint the noise tile + blur filter into
-        val bitmap = Bitmap()
-        bitmap.setImageInfo(ImageInfo(360, 360, ColorType.BGRA_8888, ColorAlphaType.PREMUL))
-        bitmap.allocPixels()
-        // A canvas to wrap the bitmap
-        val canvas = Canvas(bitmap)
-        // Draw the noise tile with blur filter into the canvas
-        canvas.drawImage(Image.makeFromBitmap(tile.asDesktopBitmap()), -20.0f, -20.0f, paint)
-        // A Compose image bitmap
-        val texture = ImageBitmap(width = 360, height = 360)
-        // Copy over the pixels from the noise tile + blur filter bitmap
-        texture.asDesktopBitmap().installPixels(bitmap.readPixels())
+        val time2 = System.nanoTime()
 
-        val texture2 = getBrushedMetalTile(scheme = MetallicColorScheme(), width = 360, height = 360)
+        val tileNoise = Bitmap()
+        tileNoise.setImageInfo(ImageInfo(400, 400, ColorType.BGRA_8888, ColorAlphaType.PREMUL))
+        tileNoise.allocPixels()
+        val noiseCanvas = Canvas(tileNoise)
+        // Draw the noise tile with blur filter into the canvas
+        val paintNoise = Paint()
+        paintNoise.setShader(
+            Shader.makeFractalNoise(
+                baseFrequencyX = 0.45f,
+                baseFrequencyY = 0.45f,
+                numOctaves = 4,
+                seed = 0.0f,
+                tiles = arrayOf(ISize.make(400, 400))
+            )
+        )
+        paintNoise.setColorFilter(
+            ColorFilter.makeMatrix(
+                ColorMatrix(
+                    0.21f, 0.72f, 0.07f, 0.0f, 0.0f,
+                    0.21f, 0.72f, 0.07f, 0.0f, 0.0f,
+                    0.21f, 0.72f, 0.07f, 0.0f, 0.0f,
+                    0.0f, 0.0f, 0.0f, 1.0f, 0.0f
+                )
+            )
+        )
+        noiseCanvas.drawRect(Rect.makeWH(400.0f, 400.0f), paintNoise)
+        val textureNoise = ImageBitmap(width = 400, height = 400)
+        // Copy over the pixels from the noise tile + blur filter bitmap
+        textureNoise.asDesktopBitmap().installPixels(tileNoise.readPixels())
+        val time3 = System.nanoTime()
+
+        // A Skia blur filter
+        val textureBlurred1 = applyBlur(tile)
+        val textureBlurred2 = applyBlur(textureNoise)
+
+        val texture2 =
+            getBrushedMetalTile(scheme = MetallicColorScheme(), width = 360, height = 360)
 
         Box(modifier = Modifier.size(500.dp).paint(painter = object : Painter() {
             override val intrinsicSize: Size
@@ -84,8 +126,15 @@ fun main() = application {
                     srcOffset = IntOffset(20, 20), srcSize = IntSize(360, 360),
                     dstOffset = IntOffset(20, 20), dstSize = IntSize(360, 360)
                 )
-                drawImage(texture, topLeft = Offset(440f, 20f))
+                drawImage(textureBlurred1, topLeft = Offset(440f, 20f))
                 drawImage(texture2, topLeft = Offset(860f, 20f))
+
+                drawImage(
+                    textureNoise,
+                    srcOffset = IntOffset(20, 20), srcSize = IntSize(360, 360),
+                    dstOffset = IntOffset(20, 440), dstSize = IntSize(360, 360)
+                )
+                drawImage(textureBlurred2, topLeft = Offset(440f, 440f))
             }
         }))
     }
