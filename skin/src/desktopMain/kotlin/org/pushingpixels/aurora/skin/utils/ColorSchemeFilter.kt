@@ -116,7 +116,7 @@ private fun getInterpolatedColors(scheme: AuroraColorScheme): Array<Color?> {
     return result
 }
 
-fun getColorSchemeFilter(scheme: AuroraColorScheme): ColorFilter {
+fun getColorSchemeFilterSkia(scheme: AuroraColorScheme): org.jetbrains.skia.ColorFilter {
     val filtering = getInterpolatedColors(scheme)
     val reds = ByteArray(256)
     val greens = ByteArray(256)
@@ -131,5 +131,8 @@ fun getColorSchemeFilter(scheme: AuroraColorScheme): ColorFilter {
     // Pass null for alphas so that when the filter is applied, it respects the alpha
     // channel of the source image
     return org.jetbrains.skia.ColorFilter.makeTableARGB(null, reds, greens, blues)
-        .toComposeColorFilter()
+}
+
+fun getColorSchemeFilter(scheme: AuroraColorScheme): ColorFilter {
+    return getColorSchemeFilterSkia(scheme).toComposeColorFilter()
 }

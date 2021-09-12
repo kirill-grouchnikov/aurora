@@ -29,84 +29,54 @@
  */
 package org.pushingpixels.aurora.skin.utils
 
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asDesktopBitmap
 import org.jetbrains.skia.*
-import org.pushingpixels.aurora.common.interpolateTowardsAsRGB
 import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.sqrt
 
 fun getNoiseTile(scheme: AuroraColorScheme, width: Int, height: Int): ImageBitmap {
-    val c1: Color = scheme.darkColor
-    val c3: Color = scheme.lightColor
-    val xFactor = 0.8
-    val yFactor = 0.8
-    val hasConstantZ = false
+    val tileNoise = Bitmap()
+    tileNoise.setImageInfo(ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL))
+    tileNoise.allocPixels()
+    val noiseCanvas = Canvas(tileNoise)
 
-    // Create a noise pixel map
-    val noiseBuffer = IntArray(width * height)
-    val m2 = xFactor * width * xFactor * width + (yFactor * height
-            * yFactor * height)
-    var pos = 0
-    for (row in 0 until height) {
-        val tweakedRow = yFactor * row
-        for (column in 0 until width) {
-            val tweakedColumn = xFactor * column
-            val z = if (hasConstantZ) 1.0 else
-                sqrt(m2 - tweakedColumn * tweakedColumn - tweakedRow * tweakedRow)
-            val noise = 0.5f + 0.5f * PerlinNoiseGenerator.noise(tweakedColumn, tweakedRow, z)
-            val likeness = max(0.0f, min(1.0f, 2.0f * noise.toFloat()))
-
-            noiseBuffer[pos] = c3.interpolateTowardsAsRGB(c1, likeness)
-
-            // Go to the next pixel
-            pos++
-        }
-    }
-    // Convert an array of integers (each integer is 8888 of ARGB) into an
-    // array of bytes (in BGRA order) that Skija expects
-    val byteDstBuffer = ByteArray(4 * width * height)
-    for (bytePos in 0 until width * height) {
-        val rgb = noiseBuffer[bytePos]
-        // The order of the bytes corresponds to BGRA_8888
-        // Blue
-        byteDstBuffer[4 * bytePos] = (rgb ushr 0 and 0xFF).toByte()
-        // Green
-        byteDstBuffer[4 * bytePos + 1] = (rgb ushr 8 and 0xFF).toByte()
-        // Red
-        byteDstBuffer[4 * bytePos + 2] = (rgb ushr 16 and 0xFF).toByte()
-        // Alpha
-        byteDstBuffer[4 * bytePos + 3] = 255.toByte()
-    }
-    // Create Skija bitmap from the noise buffer
-    val noiseBitmap = Bitmap()
-    noiseBitmap.setImageInfo(ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL))
-    noiseBitmap.allocPixels()
-    noiseBitmap.installPixels(byteDstBuffer)
-
-    // Create another Skija bitmap that will have the softened noise (from applying a
-    // convolution matrix)
-    val softenedBitmap = Bitmap()
-    softenedBitmap.setImageInfo(ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL))
-    softenedBitmap.allocPixels()
-    val softenedCanvas = Canvas(softenedBitmap)
-    // Draw the noise tile with blur filter into the canvas
-    val paint = Paint()
-    paint.imageFilter = ImageFilter.makeMatrixConvolution(
+    val paintNoise = Paint()
+    // Fractal noise shader
+    paintNoise.setShader(
+        Shader.makeFractalNoise(
+            baseFrequencyX = 0.45f,
+            baseFrequencyY = 0.45f,
+            numOctaves = 4,
+            seed = 0.0f,
+            tiles = arrayOf(ISize.make(width, height))
+        )
+    )
+    // Composed color filter. Inner filter applies greyscale, and outer filter applies the colors of
+    // the specified Aurora color scheme
+    paintNoise.setColorFilter(
+        ColorFilter.makeComposed(
+            outer = getColorSchemeFilterSkia(scheme = scheme),
+            inner = ColorFilter.makeMatrix(
+                ColorMatrix(
+                    0.21f, 0.72f, 0.07f, 0.0f, 0.0f,
+                    0.21f, 0.72f, 0.07f, 0.0f, 0.0f,
+                    0.21f, 0.72f, 0.07f, 0.0f, 0.0f,
+                    0.0f, 0.0f, 0.0f, 1.0f, 0.0f
+                )
+            )
+        )
+    )
+    // Image filter to apply softening (to make the noise less sharp)
+    paintNoise.imageFilter = ImageFilter.makeMatrixConvolution(
         3, 3,
         floatArrayOf(.08f, .08f, .08f, .08f, .38f, .08f, .08f, .08f, .08f),
         1f / 1.02f, 1f / 1.02f, 0, 0, FilterTileMode.REPEAT, true, null, null
     )
-    softenedCanvas.drawImage(Image.makeFromBitmap(noiseBitmap), 0.0f, 0.0f, paint)
-
-    // A Compose image bitmap
-    val texture = ImageBitmap(width = width, height = height)
-    // Copy over the pixels from the noise tile + blur filter bitmap
-    texture.asDesktopBitmap().installPixels(softenedBitmap.readPixels())
-    return texture
+    noiseCanvas.drawRect(Rect.makeWH(width.toFloat(), height.toFloat()), paintNoise)
+    val textureNoise = ImageBitmap(width = width, height = height)
+    // Copy over the pixels from the noise bitmap
+    textureNoise.asDesktopBitmap().installPixels(tileNoise.readPixels())
+    return textureNoise
 }
 
 fun getBrushedMetalTile(scheme: AuroraColorScheme, width: Int, height: Int): ImageBitmap {
