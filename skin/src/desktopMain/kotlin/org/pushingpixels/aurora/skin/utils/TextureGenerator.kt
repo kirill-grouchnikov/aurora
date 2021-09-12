@@ -35,9 +35,8 @@ import org.jetbrains.skia.*
 import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
 
 fun getNoiseTile(scheme: AuroraColorScheme, width: Int, height: Int): ImageBitmap {
-    val tile = Bitmap()
-    tile.setImageInfo(ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL))
-    tile.allocPixels()
+    val result = ImageBitmap(width = width, height = height)
+    val tile = result.asDesktopBitmap()
     val canvas = Canvas(tile)
 
     val paint = Paint()
@@ -73,18 +72,15 @@ fun getNoiseTile(scheme: AuroraColorScheme, width: Int, height: Int): ImageBitma
         1f / 1.02f, 1f / 1.02f, 0, 0, FilterTileMode.REPEAT, true, null, null
     )
     canvas.drawRect(Rect.makeWH(width.toFloat(), height.toFloat()), paint)
-    val result = ImageBitmap(width = width, height = height)
-    // Copy over the pixels from the noise bitmap
-    result.asDesktopBitmap().installPixels(tile.readPixels())
+
     return result
 }
 
 fun getBrushedMetalTile(scheme: AuroraColorScheme, width: Int, height: Int): ImageBitmap {
     val hOffset = 15
 
-    val tile = Bitmap()
-    tile.setImageInfo(ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL))
-    tile.allocPixels()
+    val result = ImageBitmap(width = width, height = height)
+    val tile = result.asDesktopBitmap()
     val canvas = Canvas(tile)
 
     val paint = Paint()
@@ -118,8 +114,6 @@ fun getBrushedMetalTile(scheme: AuroraColorScheme, width: Int, height: Int): Ima
     // Apply horizontal offset to "cut off" the parts of the image that have partial translucency
     // (along left and right edges) due to application of horizontal blur
     canvas.drawRect(Rect.makeLTRB(-4.0f * hOffset, 0.0f, width + 8.0f * hOffset, height.toFloat()), paint)
-    val result = ImageBitmap(width = width, height = height)
-    // Copy over the pixels from the brushed metal bitmap
-    result.asDesktopBitmap().installPixels(tile.readPixels())
+
     return result
 }

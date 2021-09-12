@@ -116,8 +116,7 @@ fun main() = application {
         // A Skia blur filter
         val textureBlurred1 = applyBlur(tile)
 
-        val texture2 =
-            getBrushedMetalTile(scheme = OrangeColorScheme(), width = 360, height = 360)
+        val texture2 = getBrushedMetalTile(scheme = OrangeColorScheme(), width = 360, height = 360)
 
         Box(modifier = Modifier.size(500.dp).paint(painter = object : Painter() {
             override val intrinsicSize: Size
