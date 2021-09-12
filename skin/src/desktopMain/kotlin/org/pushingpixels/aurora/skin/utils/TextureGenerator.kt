@@ -35,14 +35,14 @@ import org.jetbrains.skia.*
 import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
 
 fun getNoiseTile(scheme: AuroraColorScheme, width: Int, height: Int): ImageBitmap {
-    val tileNoise = Bitmap()
-    tileNoise.setImageInfo(ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL))
-    tileNoise.allocPixels()
-    val noiseCanvas = Canvas(tileNoise)
+    val tile = Bitmap()
+    tile.setImageInfo(ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL))
+    tile.allocPixels()
+    val canvas = Canvas(tile)
 
-    val paintNoise = Paint()
+    val paint = Paint()
     // Fractal noise shader
-    paintNoise.setShader(
+    paint.setShader(
         Shader.makeFractalNoise(
             baseFrequencyX = 0.45f,
             baseFrequencyY = 0.45f,
@@ -53,7 +53,7 @@ fun getNoiseTile(scheme: AuroraColorScheme, width: Int, height: Int): ImageBitma
     )
     // Composed color filter. Inner filter applies greyscale, and outer filter applies the colors of
     // the specified Aurora color scheme
-    paintNoise.setColorFilter(
+    paint.setColorFilter(
         ColorFilter.makeComposed(
             outer = getColorSchemeFilterSkia(scheme = scheme),
             inner = ColorFilter.makeMatrix(
@@ -67,37 +67,59 @@ fun getNoiseTile(scheme: AuroraColorScheme, width: Int, height: Int): ImageBitma
         )
     )
     // Image filter to apply softening (to make the noise less sharp)
-    paintNoise.imageFilter = ImageFilter.makeMatrixConvolution(
+    paint.imageFilter = ImageFilter.makeMatrixConvolution(
         3, 3,
         floatArrayOf(.08f, .08f, .08f, .08f, .38f, .08f, .08f, .08f, .08f),
         1f / 1.02f, 1f / 1.02f, 0, 0, FilterTileMode.REPEAT, true, null, null
     )
-    noiseCanvas.drawRect(Rect.makeWH(width.toFloat(), height.toFloat()), paintNoise)
-    val textureNoise = ImageBitmap(width = width, height = height)
+    canvas.drawRect(Rect.makeWH(width.toFloat(), height.toFloat()), paint)
+    val result = ImageBitmap(width = width, height = height)
     // Copy over the pixels from the noise bitmap
-    textureNoise.asDesktopBitmap().installPixels(tileNoise.readPixels())
-    return textureNoise
+    result.asDesktopBitmap().installPixels(tile.readPixels())
+    return result
 }
 
 fun getBrushedMetalTile(scheme: AuroraColorScheme, width: Int, height: Int): ImageBitmap {
     val hOffset = 15
-    // Create a slightly larger noise tile
-    val tile = getNoiseTile(scheme = scheme, width = width + 8 * hOffset, height = height)
-    // A Skia blur filter
-    val blur = ImageFilter.makeBlur(hOffset.toFloat(), 0.0f, FilterTileMode.REPEAT, null, null)
+
+    val tile = Bitmap()
+    tile.setImageInfo(ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL))
+    tile.allocPixels()
+    val canvas = Canvas(tile)
+
     val paint = Paint()
-    paint.imageFilter = blur
-    // A bitmap to paint the noise tile + blur filter into
-    val bitmap = Bitmap()
-    bitmap.setImageInfo(ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.PREMUL))
-    bitmap.allocPixels()
-    // A canvas to wrap the bitmap
-    val canvas = Canvas(bitmap)
-    // Draw the noise tile with blur filter into the canvas
-    canvas.drawImage(Image.makeFromBitmap(tile.asDesktopBitmap()), -4.0f * hOffset, 0.0f, paint)
-    // A Compose image bitmap
-    val texture = ImageBitmap(width = width, height = height)
-    // Copy over the pixels from the noise tile + blur filter bitmap
-    texture.asDesktopBitmap().installPixels(bitmap.readPixels())
-    return texture
+    // Fractal noise shader
+    paint.setShader(
+        Shader.makeFractalNoise(
+            baseFrequencyX = 0.45f,
+            baseFrequencyY = 0.45f,
+            numOctaves = 4,
+            seed = 0.0f,
+            tiles = arrayOf(ISize.make(width, height))
+        )
+    )
+    // Composed color filter. Inner filter applies greyscale, and outer filter applies the colors of
+    // the specified Aurora color scheme
+    paint.setColorFilter(
+        ColorFilter.makeComposed(
+            outer = getColorSchemeFilterSkia(scheme = scheme),
+            inner = ColorFilter.makeMatrix(
+                ColorMatrix(
+                    0.21f, 0.72f, 0.07f, 0.0f, 0.0f,
+                    0.21f, 0.72f, 0.07f, 0.0f, 0.0f,
+                    0.21f, 0.72f, 0.07f, 0.0f, 0.0f,
+                    0.0f, 0.0f, 0.0f, 1.0f, 0.0f
+                )
+            )
+        )
+    )
+    // Image filter to apply horizontal blur
+    paint.imageFilter = ImageFilter.makeBlur(hOffset.toFloat(), 0.0f, FilterTileMode.REPEAT, null, null)
+    // Apply horizontal offset to "cut off" the parts of the image that have partial translucency
+    // (along left and right edges) due to application of horizontal blur
+    canvas.drawRect(Rect.makeLTRB(-4.0f * hOffset, 0.0f, width + 8.0f * hOffset, height.toFloat()), paint)
+    val result = ImageBitmap(width = width, height = height)
+    // Copy over the pixels from the brushed metal bitmap
+    result.asDesktopBitmap().installPixels(tile.readPixels())
+    return result
 }
