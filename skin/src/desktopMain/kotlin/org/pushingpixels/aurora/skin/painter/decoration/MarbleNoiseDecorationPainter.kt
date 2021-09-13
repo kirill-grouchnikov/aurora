@@ -29,6 +29,7 @@
  */
 package org.pushingpixels.aurora.skin.painter.decoration
 
+import org.pushingpixels.aurora.skin.utils.getColorSchemeFilterSkia
 import org.pushingpixels.aurora.skin.utils.getNoiseTile
 
 /**
@@ -40,7 +41,7 @@ import org.pushingpixels.aurora.skin.utils.getNoiseTile
 class MarbleNoiseDecorationPainter(textureAlpha: Float,
                                    baseDecorationPainter: AuroraDecorationPainter? = null) :
     ImageWrapperDecorationPainter(
-        tileGenerator = { getNoiseTile(it, 400, 400) },
+        tileGenerator = { getNoiseTile(getColorSchemeFilterSkia(it), 400, 400) },
         textureAlpha = textureAlpha,
         baseDecorationPainter = baseDecorationPainter
     ) {

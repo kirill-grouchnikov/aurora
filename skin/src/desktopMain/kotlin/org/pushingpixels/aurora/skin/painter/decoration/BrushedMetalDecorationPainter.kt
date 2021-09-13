@@ -30,6 +30,7 @@
 package org.pushingpixels.aurora.skin.painter.decoration
 
 import org.pushingpixels.aurora.skin.utils.getBrushedMetalTile
+import org.pushingpixels.aurora.skin.utils.getColorSchemeFilterSkia
 
 /**
  * Implementation of [AuroraDecorationPainter] that uses brushed metal
@@ -38,7 +39,7 @@ import org.pushingpixels.aurora.skin.utils.getBrushedMetalTile
  * @author Kirill Grouchnikov
  */
 class BrushedMetalDecorationPainter : ImageWrapperDecorationPainter(
-    tileGenerator = { getBrushedMetalTile(scheme = it, width = 200, height = 200) },
+    tileGenerator = { getBrushedMetalTile(colorFilter = getColorSchemeFilterSkia(it), width = 200, height = 200) },
     textureAlpha = 0.4f,
     baseDecorationPainter = ArcDecorationPainter()
 ) {

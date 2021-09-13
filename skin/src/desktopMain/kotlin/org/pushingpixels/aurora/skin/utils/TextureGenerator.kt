@@ -32,9 +32,8 @@ package org.pushingpixels.aurora.skin.utils
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asDesktopBitmap
 import org.jetbrains.skia.*
-import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
 
-fun getNoiseTile(scheme: AuroraColorScheme, width: Int, height: Int): ImageBitmap {
+fun getNoiseTile(colorFilter: ColorFilter, width: Int, height: Int): ImageBitmap {
     val result = ImageBitmap(width = width, height = height)
     val tile = result.asDesktopBitmap()
     val canvas = Canvas(tile)
@@ -54,7 +53,7 @@ fun getNoiseTile(scheme: AuroraColorScheme, width: Int, height: Int): ImageBitma
     // the specified Aurora color scheme
     paint.setColorFilter(
         ColorFilter.makeComposed(
-            outer = getColorSchemeFilterSkia(scheme = scheme),
+            outer = colorFilter,
             inner = ColorFilter.makeMatrix(
                 ColorMatrix(
                     0.21f, 0.72f, 0.07f, 0.0f, 0.0f,
@@ -76,7 +75,7 @@ fun getNoiseTile(scheme: AuroraColorScheme, width: Int, height: Int): ImageBitma
     return result
 }
 
-fun getBrushedMetalTile(scheme: AuroraColorScheme, width: Int, height: Int): ImageBitmap {
+fun getBrushedMetalTile(colorFilter: ColorFilter, width: Int, height: Int): ImageBitmap {
     val hOffset = 15
 
     val result = ImageBitmap(width = width, height = height)
@@ -98,7 +97,7 @@ fun getBrushedMetalTile(scheme: AuroraColorScheme, width: Int, height: Int): Ima
     // the specified Aurora color scheme
     paint.setColorFilter(
         ColorFilter.makeComposed(
-            outer = getColorSchemeFilterSkia(scheme = scheme),
+            outer = colorFilter,
             inner = ColorFilter.makeMatrix(
                 ColorMatrix(
                     0.21f, 0.72f, 0.07f, 0.0f, 0.0f,

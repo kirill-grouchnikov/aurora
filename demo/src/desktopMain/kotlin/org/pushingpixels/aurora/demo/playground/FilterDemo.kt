@@ -36,7 +36,6 @@ import org.pushingpixels.aurora.skin.businessSkin
 import org.pushingpixels.aurora.skin.colorscheme.MetallicColorScheme
 import org.pushingpixels.aurora.skin.colorscheme.OrangeColorScheme
 import org.pushingpixels.aurora.skin.utils.getBrushedMetalTile
-import org.pushingpixels.aurora.skin.utils.getColorSchemeFilter
 import org.pushingpixels.aurora.skin.utils.getColorSchemeFilterSkia
 import org.pushingpixels.aurora.skin.utils.getNoiseTile
 import org.pushingpixels.aurora.window.AuroraWindow
@@ -77,7 +76,7 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
     ) {
         // Create a noise tile
-        val tile = getNoiseTile(scheme = MetallicColorScheme(), width = 400, height = 400)
+        val tile = getNoiseTile(getColorSchemeFilterSkia(scheme = MetallicColorScheme()), width = 400, height = 400)
 
         val tileNoise = Bitmap()
         tileNoise.setImageInfo(ImageInfo(360, 360, ColorType.BGRA_8888, ColorAlphaType.PREMUL))
@@ -116,7 +115,7 @@ fun main() = application {
         // A Skia blur filter
         val textureBlurred1 = applyBlur(tile)
 
-        val texture2 = getBrushedMetalTile(scheme = OrangeColorScheme(), width = 360, height = 360)
+        val texture2 = getBrushedMetalTile(getColorSchemeFilterSkia(scheme = OrangeColorScheme()), width = 360, height = 360)
 
         Box(modifier = Modifier.size(500.dp).paint(painter = object : Painter() {
             override val intrinsicSize: Size
