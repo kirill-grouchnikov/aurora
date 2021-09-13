@@ -29,6 +29,9 @@
  */
 package org.pushingpixels.aurora.skin.painter.decoration
 
+import androidx.compose.ui.graphics.toArgb
+import org.jetbrains.skia.ColorFilter
+import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.skin.utils.getBrushedMetalTile
 import org.pushingpixels.aurora.skin.utils.getColorSchemeFilterSkia
 
@@ -39,7 +42,20 @@ import org.pushingpixels.aurora.skin.utils.getColorSchemeFilterSkia
  * @author Kirill Grouchnikov
  */
 class BrushedMetalDecorationPainter : ImageWrapperDecorationPainter(
-    tileGenerator = { getBrushedMetalTile(colorFilter = getColorSchemeFilterSkia(it), width = 200, height = 200) },
+    tileGenerator = {
+        getBrushedMetalTile(
+            colorFilter = ColorFilter.makeOverdraw(
+                intArrayOf(
+                    it.lightColor.toArgb(),
+                    it.lightColor.interpolateTowards(it.darkColor, 0.2f).toArgb(),
+                    it.lightColor.interpolateTowards(it.darkColor, 0.4f).toArgb(),
+                    it.lightColor.interpolateTowards(it.darkColor, 0.6f).toArgb(),
+                    it.lightColor.interpolateTowards(it.darkColor, 0.8f).toArgb(),
+                    it.darkColor.toArgb()
+                )
+            ), width = 200, height = 200
+        )
+    },
     textureAlpha = 0.4f,
     baseDecorationPainter = ArcDecorationPainter()
 ) {

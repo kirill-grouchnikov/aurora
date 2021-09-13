@@ -29,7 +29,9 @@
  */
 package org.pushingpixels.aurora.skin.painter.decoration
 
-import org.pushingpixels.aurora.skin.utils.getColorSchemeFilterSkia
+import androidx.compose.ui.graphics.toArgb
+import org.jetbrains.skia.ColorFilter
+import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.skin.utils.getNoiseTile
 
 /**
@@ -38,10 +40,25 @@ import org.pushingpixels.aurora.skin.utils.getNoiseTile
  *
  * @author Kirill Grouchnikov
  */
-class MarbleNoiseDecorationPainter(textureAlpha: Float,
-                                   baseDecorationPainter: AuroraDecorationPainter? = null) :
+class MarbleNoiseDecorationPainter(
+    textureAlpha: Float,
+    baseDecorationPainter: AuroraDecorationPainter? = null
+) :
     ImageWrapperDecorationPainter(
-        tileGenerator = { getNoiseTile(getColorSchemeFilterSkia(it), 400, 400) },
+        tileGenerator = {
+            getNoiseTile(
+                ColorFilter.makeOverdraw(
+                    intArrayOf(
+                        it.lightColor.toArgb(),
+                        it.lightColor.interpolateTowards(it.darkColor, 0.2f).toArgb(),
+                        it.lightColor.interpolateTowards(it.darkColor, 0.4f).toArgb(),
+                        it.lightColor.interpolateTowards(it.darkColor, 0.6f).toArgb(),
+                        it.lightColor.interpolateTowards(it.darkColor, 0.8f).toArgb(),
+                        it.darkColor.toArgb()
+                    )
+                ), 400, 400
+            )
+        },
         textureAlpha = textureAlpha,
         baseDecorationPainter = baseDecorationPainter
     ) {
