@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.clipPath
+import org.pushingpixels.aurora.common.hexadecimal
 import org.pushingpixels.aurora.skin.DecorationAreaType
 import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
 
@@ -82,21 +83,6 @@ abstract class ImageWrapperDecorationPainter(
      * Tiles the specified area with colorized version of the image tile. This is called after the
      * [.baseDecorationPainter] has painted the area. This method should respect the current
      * [.textureAlpha] value.
-     *
-     * @param g
-     * Graphic context.
-     * @param comp
-     * Component.
-     * @param tileScheme
-     * Scheme for the tile colorization.
-     * @param offsetTextureX
-     * X offset for the tiling.
-     * @param offsetTextureY
-     * Y offset for the tiling.
-     * @param width
-     * Width of the tiling region.
-     * @param height
-     * Height of the tiling region.
      */
     private fun tileArea(
         drawScope: DrawScope,

@@ -189,11 +189,19 @@ fun nebulaAmethystSkin(): AuroraSkinDefinition {
         colors = nebulaBaseSkinColors(
             AccentBuilder().withWindowChromeAccent(PurpleColorScheme())
         ).also {
-            // Use the window chrome accent color scheme on toolbars
-            it.registerAsDecorationArea(
-                accentBuilder.windowChromeAccent!!,
-                DecorationAreaType.Toolbar
+            val windowChromeAccent = accentBuilder.windowChromeAccent!!
+            val toolbarBundle = AuroraColorSchemeBundle(
+                windowChromeAccent.saturate(0.1f), windowChromeAccent, windowChromeAccent
             )
+            toolbarBundle.registerAlpha(
+                0.5f, ComponentState.DisabledSelected,
+                ComponentState.DisabledUnselected
+            )
+            toolbarBundle.registerColorScheme(
+                windowChromeAccent.saturate(0.08f),
+                ColorSchemeAssociationKind.Separator
+            )
+            it.registerDecorationAreaSchemeBundle(toolbarBundle, DecorationAreaType.Toolbar)
         },
         painters = nebulaBasePainters().also { painters ->
             // Clear the top shadow painter on the toolbars and add combined

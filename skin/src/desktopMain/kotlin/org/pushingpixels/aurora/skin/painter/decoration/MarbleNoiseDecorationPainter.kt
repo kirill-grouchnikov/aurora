@@ -30,8 +30,10 @@
 package org.pushingpixels.aurora.skin.painter.decoration
 
 import androidx.compose.ui.graphics.toArgb
+import org.jetbrains.skia.BlendMode
 import org.jetbrains.skia.ColorFilter
-import org.pushingpixels.aurora.common.interpolateTowards
+import org.jetbrains.skia.InversionMode
+import org.pushingpixels.aurora.skin.utils.getGradientColorFilter
 import org.pushingpixels.aurora.skin.utils.getNoiseTile
 
 /**
@@ -47,16 +49,10 @@ class MarbleNoiseDecorationPainter(
     ImageWrapperDecorationPainter(
         tileGenerator = {
             getNoiseTile(
-                ColorFilter.makeOverdraw(
-                    intArrayOf(
-                        it.lightColor.toArgb(),
-                        it.lightColor.interpolateTowards(it.darkColor, 0.2f).toArgb(),
-                        it.lightColor.interpolateTowards(it.darkColor, 0.4f).toArgb(),
-                        it.lightColor.interpolateTowards(it.darkColor, 0.6f).toArgb(),
-                        it.lightColor.interpolateTowards(it.darkColor, 0.8f).toArgb(),
-                        it.darkColor.toArgb()
-                    )
-                ), 400, 400
+                colorFilter = getGradientColorFilter(it.extraLightColor, it.midColor),
+                width = 400,
+                height = 400,
+                baseFrequency = 0.25f
             )
         },
         textureAlpha = textureAlpha,

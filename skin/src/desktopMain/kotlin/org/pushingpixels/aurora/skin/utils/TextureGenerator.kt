@@ -29,11 +29,35 @@
  */
 package org.pushingpixels.aurora.skin.utils
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asDesktopBitmap
 import org.jetbrains.skia.*
+import org.pushingpixels.aurora.common.interpolateTowards
+import kotlin.math.roundToInt
 
-fun getNoiseTile(colorFilter: ColorFilter, width: Int, height: Int): ImageBitmap {
+
+fun getGradientColorFilter(color1: Color, color2: Color): ColorFilter {
+    val reds = ByteArray(256)
+    val greens = ByteArray(256)
+    val blues = ByteArray(256)
+
+    for (index in 0..255) {
+        val color = color1.interpolateTowards(color2, index / 255.0f)
+        reds[index] = (255 * color.red).roundToInt().toByte()
+        greens[index] = (255 * color.green).roundToInt().toByte()
+        blues[index] = (255 * color.blue).roundToInt().toByte()
+    }
+
+    // Pass null for alphas so that when the filter is applied, it respects the alpha
+    // channel of the source image
+    return ColorFilter.makeTableARGB(null, reds, greens, blues)
+}
+
+fun getNoiseTile(
+    colorFilter: ColorFilter, width: Int, height: Int,
+    baseFrequency: Float = 0.45f
+): ImageBitmap {
     val result = ImageBitmap(width = width, height = height)
     val tile = result.asDesktopBitmap()
     val canvas = Canvas(tile)
@@ -42,9 +66,9 @@ fun getNoiseTile(colorFilter: ColorFilter, width: Int, height: Int): ImageBitmap
     // Fractal noise shader
     paint.setShader(
         Shader.makeFractalNoise(
-            baseFrequencyX = 0.45f,
-            baseFrequencyY = 0.45f,
-            numOctaves = 4,
+            baseFrequencyX = baseFrequency,
+            baseFrequencyY = baseFrequency,
+            numOctaves = 1,
             seed = 0.0f,
             tiles = arrayOf(ISize.make(width, height))
         )
@@ -63,12 +87,6 @@ fun getNoiseTile(colorFilter: ColorFilter, width: Int, height: Int): ImageBitmap
                 )
             )
         )
-    )
-    // Image filter to apply softening (to make the noise less sharp)
-    paint.imageFilter = ImageFilter.makeMatrixConvolution(
-        3, 3,
-        floatArrayOf(.08f, .08f, .08f, .08f, .38f, .08f, .08f, .08f, .08f),
-        1f / 1.02f, 1f / 1.02f, 0, 0, FilterTileMode.REPEAT, true, null, null
     )
     canvas.drawRect(Rect.makeWH(width.toFloat(), height.toFloat()), paint)
 
@@ -109,10 +127,14 @@ fun getBrushedMetalTile(colorFilter: ColorFilter, width: Int, height: Int): Imag
         )
     )
     // Image filter to apply horizontal blur
-    paint.imageFilter = ImageFilter.makeBlur(hOffset.toFloat(), 0.0f, FilterTileMode.REPEAT, null, null)
+    paint.imageFilter =
+        ImageFilter.makeBlur(hOffset.toFloat(), 0.0f, FilterTileMode.REPEAT, null, null)
     // Apply horizontal offset to "cut off" the parts of the image that have partial translucency
     // (along left and right edges) due to application of horizontal blur
-    canvas.drawRect(Rect.makeLTRB(-4.0f * hOffset, 0.0f, width + 8.0f * hOffset, height.toFloat()), paint)
+    canvas.drawRect(
+        Rect.makeLTRB(-4.0f * hOffset, 0.0f, width + 8.0f * hOffset, height.toFloat()),
+        paint
+    )
 
     return result
 }

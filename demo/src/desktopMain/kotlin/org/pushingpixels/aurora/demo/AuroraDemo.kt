@@ -226,6 +226,7 @@ fun DemoToolbar(
             contentModel = alignmentCommands,
             presentationModel = CommandStripPresentationModel(
                 orientation = StripOrientation.Horizontal,
+                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 iconDimension = 20.dp
             )
         ).project()
@@ -238,6 +239,7 @@ fun DemoToolbar(
             contentModel = styleCommands,
             presentationModel = CommandStripPresentationModel(
                 orientation = StripOrientation.Horizontal,
+                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 iconDimension = 20.dp
             )
         ).project()
@@ -250,6 +252,7 @@ fun DemoToolbar(
                 action = { exitProcess(0) }),
             presentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.Small,
+                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                 iconDimension = 20.dp
             )
         ).project()
@@ -842,7 +845,7 @@ fun WindowScope.DemoContent(auroraSkinDefinition: MutableState<AuroraSkinDefinit
     val alignment = remember { mutableStateOf(DemoAlignment.Center) }
 
     val style = DemoStyle(
-        bold = remember { mutableStateOf(false) },
+        bold = remember { mutableStateOf(true) },
         italic = remember { mutableStateOf(true) },
         underline = remember { mutableStateOf(false) },
         strikethrough = remember { mutableStateOf(false) },
