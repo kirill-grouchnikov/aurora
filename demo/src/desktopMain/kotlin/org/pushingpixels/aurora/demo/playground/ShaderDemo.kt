@@ -98,20 +98,20 @@ fun main() = application {
 
         LaunchedEffect(null) {
             while (true) {
-                delay(5)
+                withFrameNanos {
+                    clicks -= 0.001f
 
-                clicks -= 0.05f
-
-                val timeBits =
-                    ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(clicks)
-                        .array()
-                val shader = runtimeEffect.makeShader(
-                    uniforms = Data.makeFromBytes(timeBits),
-                    children = null,
-                    localMatrix = null,
-                    isOpaque = false
-                )
-                shaderPaint.setShader(shader)
+                    val timeBits =
+                        ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(clicks)
+                            .array()
+                    val shader = runtimeEffect.makeShader(
+                        uniforms = Data.makeFromBytes(timeBits),
+                        children = null,
+                        localMatrix = null,
+                        isOpaque = false
+                    )
+                    shaderPaint.setShader(shader)
+                }
             }
         }
     }
