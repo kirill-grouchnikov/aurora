@@ -71,6 +71,7 @@ fun main() = application {
     val runtimeEffect = RuntimeEffect.makeForShader(sksl)
     val shaderTile = remember {  ImageBitmap(width = 400, height = 400) }
     val shaderCanvas = remember {  Canvas(shaderTile.asDesktopBitmap()) }
+    val shaderPaint = remember { Paint() }
     var clicks by remember { mutableStateOf(0.0f) }
 
     AuroraWindow(
@@ -88,8 +89,6 @@ fun main() = application {
             isOpaque = false
         )
 
-        val shaderCanvas = Canvas(shaderTile.asDesktopBitmap())
-        val shaderPaint = Paint()
         shaderPaint.setShader(shader)
         shaderCanvas.drawPaint(shaderPaint)
 
@@ -115,7 +114,6 @@ fun main() = application {
                         isOpaque = false
                     )
                     val time2 = System.nanoTime()
-                    val shaderPaint = Paint()
                     shaderPaint.setShader(shader)
                     val time3 = System.nanoTime()
                     shaderCanvas.drawPaint(shaderPaint)
