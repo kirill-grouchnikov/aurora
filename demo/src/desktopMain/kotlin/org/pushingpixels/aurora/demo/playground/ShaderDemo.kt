@@ -20,12 +20,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.paint
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ShaderBrush
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import org.jetbrains.skia.ByteBuffer
@@ -76,17 +74,11 @@ fun main() = application {
         )
         val brush = ShaderBrush(shader)
 
-        Box(modifier = Modifier.fillMaxSize().paint(painter = object : Painter() {
-            override val intrinsicSize: Size
-                get() = Size.Unspecified
-
-            override fun DrawScope.onDraw() {
-                drawRect(
-                    brush = brush, topLeft = Offset(100f, 65f),
-                    size = Size(400f, 400f)
-                )
-            }
-        }))
+        Box(modifier = Modifier.fillMaxSize().drawBehind {
+            drawRect(
+                brush = brush, topLeft = Offset(100f, 65f), size = Size(400f, 400f)
+            )
+        })
 
         LaunchedEffect(null) {
             while (true) {
