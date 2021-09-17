@@ -16,21 +16,21 @@
 package org.pushingpixels.aurora.demo.playground
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import org.jetbrains.skia.*
+import org.jetbrains.skia.ByteBuffer
+import org.jetbrains.skia.Data
+import org.jetbrains.skia.RuntimeEffect
 import java.nio.ByteOrder
 
 fun main() = application {
@@ -59,7 +59,6 @@ fun main() = application {
         """
 
     val runtimeEffect = RuntimeEffect.makeForShader(sksl)
-    val shaderPaint = remember { Paint() }
     val byteBuffer = remember { ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN) }
     var timeUniform by remember { mutableStateOf(0.0f) }
 
@@ -75,38 +74,24 @@ fun main() = application {
             localMatrix = null,
             isOpaque = false
         )
+        val brush = ShaderBrush(shader)
 
-        shaderPaint.setShader(shader)
+        Box(modifier = Modifier.fillMaxSize().paint(painter = object : Painter() {
+            override val intrinsicSize: Size
+                get() = Size.Unspecified
 
-        Column(modifier = Modifier.fillMaxSize()) {
-            Box(modifier = Modifier.size(400.dp).paint(painter = object : Painter() {
-                override val intrinsicSize: Size
-                    get() = Size.Unspecified
-
-                override fun DrawScope.onDraw() {
-                    this.drawIntoCanvas {
-                        val nativeCanvas = it.nativeCanvas
-                        nativeCanvas.translate(100f, 65f)
-                        nativeCanvas.clipRect(Rect.makeWH(400f, 400f))
-                        nativeCanvas.drawPaint(shaderPaint)
-                    }
-                }
-            }))
-        }
+            override fun DrawScope.onDraw() {
+                drawRect(
+                    brush = brush, topLeft = Offset(100f, 65f),
+                    size = Size(400f, 400f)
+                )
+            }
+        }))
 
         LaunchedEffect(null) {
             while (true) {
                 withFrameNanos {
                     timeUniform -= 0.0005f
-
-                    val timeBits = byteBuffer.clear().putFloat(timeUniform).array()
-                    val shader = runtimeEffect.makeShader(
-                        uniforms = Data.makeFromBytes(timeBits),
-                        children = null,
-                        localMatrix = null,
-                        isOpaque = false
-                    )
-                    shaderPaint.setShader(shader)
                 }
             }
         }

@@ -16,9 +16,7 @@
 package org.pushingpixels.aurora.demo.playground
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -136,35 +134,24 @@ fun main() = application {
 
         shaderPaint.setShader(shader)
 
-        Column(modifier = Modifier.fillMaxSize()) {
-            Box(modifier = Modifier.size(400.dp).paint(painter = object : Painter() {
-                override val intrinsicSize: Size
-                    get() = Size.Unspecified
+        Box(modifier = Modifier.fillMaxSize().paint(painter = object : Painter() {
+            override val intrinsicSize: Size
+                get() = Size.Unspecified
 
-                override fun DrawScope.onDraw() {
-                    this.drawIntoCanvas {
-                        val nativeCanvas = it.nativeCanvas
-                        nativeCanvas.translate(100f, 65f)
-                        nativeCanvas.clipRect(Rect.makeWH(400f, 400f))
-                        nativeCanvas.drawPaint(shaderPaint)
-                    }
+            override fun DrawScope.onDraw() {
+                this.drawIntoCanvas {
+                    val nativeCanvas = it.nativeCanvas
+                    nativeCanvas.translate(100f, 65f)
+                    nativeCanvas.clipRect(Rect.makeWH(400f, 400f))
+                    nativeCanvas.drawPaint(shaderPaint)
                 }
-            }))
-        }
+            }
+        }))
 
         LaunchedEffect(null) {
             while (true) {
                 withFrameNanos {
                     timeUniform -= 0.0001f
-
-                    val timeBits = byteBuffer.clear().putFloat(timeUniform).array()
-                    val shader = runtimeEffect.makeShader(
-                        uniforms = Data.makeFromBytes(timeBits),
-                        children = null,
-                        localMatrix = null,
-                        isOpaque = false
-                    )
-                    shaderPaint.setShader(shader)
                 }
             }
         }
