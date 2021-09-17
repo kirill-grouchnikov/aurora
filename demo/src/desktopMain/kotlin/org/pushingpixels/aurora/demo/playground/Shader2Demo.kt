@@ -30,7 +30,6 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import kotlinx.coroutines.delay
 import org.jetbrains.skia.*
 import java.nio.ByteOrder
 
@@ -119,16 +118,15 @@ fun main() = application {
 
     val runtimeEffect = RuntimeEffect.makeForShader(sksl)
     val shaderPaint = remember { Paint() }
-    var clicks by remember { mutableStateOf(0.0f) }
+    val byteBuffer = remember { ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN) }
+    var timeUniform by remember { mutableStateOf(0.0f) }
 
     Window(
-        title = "Shader Demo",
+        title = "Compose / Skia shader demo",
         state = state,
-        undecorated = true,
         onCloseRequest = ::exitApplication,
     ) {
-        val timeBits =
-            ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(clicks).array()
+        val timeBits = byteBuffer.clear().putFloat(timeUniform).array()
         val shader = runtimeEffect.makeShader(
             uniforms = Data.makeFromBytes(timeBits),
             children = null,
@@ -146,7 +144,7 @@ fun main() = application {
                 override fun DrawScope.onDraw() {
                     this.drawIntoCanvas {
                         val nativeCanvas = it.nativeCanvas
-                        nativeCanvas.translate(100f, 100f)
+                        nativeCanvas.translate(100f, 65f)
                         nativeCanvas.clipRect(Rect.makeWH(400f, 400f))
                         nativeCanvas.drawPaint(shaderPaint)
                     }
@@ -157,11 +155,9 @@ fun main() = application {
         LaunchedEffect(null) {
             while (true) {
                 withFrameNanos {
-                    clicks -= 0.0001f
+                    timeUniform -= 0.0001f
 
-                    val timeBits =
-                        ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(clicks)
-                            .array()
+                    val timeBits = byteBuffer.clear().putFloat(timeUniform).array()
                     val shader = runtimeEffect.makeShader(
                         uniforms = Data.makeFromBytes(timeBits),
                         children = null,
