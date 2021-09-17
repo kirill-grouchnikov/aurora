@@ -29,10 +29,10 @@
  */
 package org.pushingpixels.aurora.skin.painter.decoration
 
-import androidx.compose.ui.graphics.toArgb
-import org.jetbrains.skia.BlendMode
-import org.jetbrains.skia.ColorFilter
-import org.pushingpixels.aurora.skin.utils.getBrushedMetalTile
+import androidx.compose.ui.geometry.Size
+import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.skin.utils.getBrushedMetalPaint
+import org.pushingpixels.aurora.skin.utils.getGradientColorFilter
 
 /**
  * Implementation of [AuroraDecorationPainter] that uses brushed metal
@@ -42,14 +42,15 @@ import org.pushingpixels.aurora.skin.utils.getBrushedMetalTile
  */
 class BrushedMetalDecorationPainter : ImageWrapperDecorationPainter(
     tileGenerator = {
-        getBrushedMetalTile(
-            colorFilter = ColorFilter.makeBlend(
-                it.lightColor.toArgb(),
-                BlendMode.OVERLAY
-            ), width = 200, height = 200
+        getBrushedMetalPaint(
+            colorFilter = getGradientColorFilter(
+                it.extraLightColor.withAlpha(0.4f),
+                it.midColor.withAlpha(0.4f)
+            ),
+            hOffset = 15.0f
         )
     },
-    textureAlpha = 0.4f,
+    tileSize = Size(200f, 200f),
     baseDecorationPainter = ArcDecorationPainter()
 ) {
     override val displayName = "Brushed Metal"

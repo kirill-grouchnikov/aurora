@@ -29,12 +29,10 @@
  */
 package org.pushingpixels.aurora.skin.painter.decoration
 
-import androidx.compose.ui.graphics.toArgb
-import org.jetbrains.skia.BlendMode
-import org.jetbrains.skia.ColorFilter
-import org.jetbrains.skia.InversionMode
+import androidx.compose.ui.geometry.Size
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.skin.utils.getGradientColorFilter
-import org.pushingpixels.aurora.skin.utils.getNoiseTile
+import org.pushingpixels.aurora.skin.utils.getNoisePaint
 
 /**
  * Implementation of [AuroraDecorationPainter] that uses marble noise
@@ -48,14 +46,15 @@ class MarbleNoiseDecorationPainter(
 ) :
     ImageWrapperDecorationPainter(
         tileGenerator = {
-            getNoiseTile(
-                colorFilter = getGradientColorFilter(it.extraLightColor, it.midColor),
-                width = 400,
-                height = 400,
+            getNoisePaint(
+                colorFilter = getGradientColorFilter(
+                    it.extraLightColor.withAlpha(0.0f),
+                    it.midColor.withAlpha(0.0f)
+                ),
                 baseFrequency = 0.25f
             )
         },
-        textureAlpha = textureAlpha,
+        tileSize = Size(400f, 400f),
         baseDecorationPainter = baseDecorationPainter
     ) {
     override val displayName = "Marble Noise"

@@ -21,22 +21,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asDesktopBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import org.jetbrains.skia.*
+import org.jetbrains.skia.BlendMode
+import org.jetbrains.skia.ColorFilter
+import org.jetbrains.skia.Rect
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.skin.businessSkin
 import org.pushingpixels.aurora.skin.colorscheme.MetallicColorScheme
 import org.pushingpixels.aurora.skin.colorscheme.OrangeColorScheme
-import org.pushingpixels.aurora.skin.utils.getBrushedMetalTile
-import org.pushingpixels.aurora.skin.utils.getGradientColorFilter
-import org.pushingpixels.aurora.skin.utils.getNoiseTile
+import org.pushingpixels.aurora.skin.utils.*
 import org.pushingpixels.aurora.window.AuroraWindow
 
 fun main() = application {
@@ -57,31 +57,27 @@ fun main() = application {
         val metallic = MetallicColorScheme()
         val orange = OrangeColorScheme()
 
-        val tileNoiseDense = getNoiseTile(
-            getGradientColorFilter(metallic.extraLightColor, metallic.darkColor),
-            width = 400, height = 400
+        val noiseDensePaint = getNoisePaint(
+            getGradientColorFilter(metallic.extraLightColor, metallic.darkColor)
         )
-        val tileNoiseSparse = getNoiseTile(
-            getGradientColorFilter(metallic.extraLightColor, metallic.darkColor),
-            width = 400, height = 400,
-            baseFrequency = 0.15f
+        val noiseOrangePaint = getNoisePaint(
+            getGradientColorFilter(orange.extraLightColor, orange.darkColor)
         )
+        val noiseDuotonePaint = getNoisePaintAlt()
 
-        val brushedMetal = getBrushedMetalTile(
-            colorFilter = ColorFilter.makeBlend(
-                metallic.lightColor.toArgb(),
-                BlendMode.OVERLAY
-            ),
-            width = 400,
-            height = 400
+        val brushedMetalPaint = getBrushedMetalPaint(
+            colorFilter = getGradientColorFilter(metallic.midColor, metallic.darkColor),
+            hOffset = 15f
         )
-        val brushedMetalOrange = getBrushedMetalTile(
+        val brushedMetalOrangePaint = getBrushedMetalPaint(
             colorFilter = ColorFilter.makeBlend(
-                orange.lightColor.toArgb(),
-                BlendMode.OVERLAY
+                orange.lightColor.withAlpha(0.6f).toArgb(),
+                BlendMode.MODULATE
             ),
-            width = 400,
-            height = 400
+            hOffset = 15f
+        )
+        val brushedMetalDuotonePaint = getBrushedMetalPaintAlt(
+            hOffset = 15f
         )
 
         Box(modifier = Modifier.size(500.dp).paint(painter = object : Painter() {
@@ -89,11 +85,57 @@ fun main() = application {
                 get() = Size.Unspecified
 
             override fun DrawScope.onDraw() {
-                drawImage(tileNoiseDense, topLeft = Offset(20f, 20f))
-                drawImage(tileNoiseSparse, topLeft = Offset(440f, 20f))
+                drawIntoCanvas {
+                    val nativeCanvas = it.nativeCanvas
 
-                drawImage(brushedMetal, topLeft = Offset(20f, 440f))
-                drawImage(brushedMetalOrange, topLeft = Offset(440f, 440f))
+                    nativeCanvas.save()
+                    nativeCanvas.clipRect(Rect.makeLTRB(l = 20f, t = 20f, r = 420f, b = 420f))
+                    nativeCanvas.drawRect(
+                        r = Rect.makeLTRB(l = 20f, t = 20f, r = 420f, b = 420f),
+                        paint = noiseDensePaint
+                    )
+                    nativeCanvas.restore()
+
+                    nativeCanvas.save()
+                    nativeCanvas.clipRect(Rect.makeLTRB(l = 440f, t = 20f, r = 840f, b = 420f))
+                    nativeCanvas.drawRect(
+                        r = Rect.makeLTRB(l = 440f, t = 20f, r = 840f, b = 420f),
+                        paint = noiseOrangePaint
+                    )
+                    nativeCanvas.restore()
+
+                    nativeCanvas.save()
+                    nativeCanvas.clipRect(Rect.makeLTRB(l = 860f, t = 20f, r = 1260f, b = 420f))
+                    nativeCanvas.drawRect(
+                        r = Rect.makeLTRB(l = 860f, t = 20f, r = 1260f, b = 420f),
+                        paint = noiseDuotonePaint
+                    )
+                    nativeCanvas.restore()
+
+                    nativeCanvas.save()
+                    nativeCanvas.clipRect(Rect.makeLTRB(l = 20f, t = 440f, r = 420f, b = 840f))
+                    nativeCanvas.drawRect(
+                        r = Rect.makeLTRB(l = 20f, t = 440f, r = 420f, b = 840f),
+                        paint = brushedMetalPaint
+                    )
+                    nativeCanvas.restore()
+
+                    nativeCanvas.save()
+                    nativeCanvas.clipRect(Rect.makeLTRB(l = 440f, t = 440f, r = 840f, b = 840f))
+                    nativeCanvas.drawRect(
+                        r = Rect.makeLTRB(l = 440f, t = 440f, r = 840f, b = 840f),
+                        paint = brushedMetalOrangePaint
+                    )
+                    nativeCanvas.restore()
+
+                    nativeCanvas.save()
+                    nativeCanvas.clipRect(Rect.makeLTRB(l = 860f, t = 440f, r = 1260f, b = 840f))
+                    nativeCanvas.drawRect(
+                        r = Rect.makeLTRB(l = 860f, t = 440f, r = 1260f, b = 840f),
+                        paint = brushedMetalDuotonePaint
+                    )
+                    nativeCanvas.restore()
+                }
             }
         }))
     }

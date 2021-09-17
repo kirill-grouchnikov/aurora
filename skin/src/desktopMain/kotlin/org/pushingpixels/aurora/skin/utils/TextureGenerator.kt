@@ -30,12 +30,9 @@
 package org.pushingpixels.aurora.skin.utils
 
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asDesktopBitmap
 import org.jetbrains.skia.*
 import org.pushingpixels.aurora.common.interpolateTowards
 import kotlin.math.roundToInt
-
 
 fun getGradientColorFilter(color1: Color, color2: Color): ColorFilter {
     val reds = ByteArray(256)
@@ -54,14 +51,10 @@ fun getGradientColorFilter(color1: Color, color2: Color): ColorFilter {
     return ColorFilter.makeTableARGB(null, reds, greens, blues)
 }
 
-fun getNoiseTile(
-    colorFilter: ColorFilter, width: Int, height: Int,
+fun getNoisePaint(
+    colorFilter: ColorFilter,
     baseFrequency: Float = 0.45f
-): ImageBitmap {
-    val result = ImageBitmap(width = width, height = height)
-    val tile = result.asDesktopBitmap()
-    val canvas = Canvas(tile)
-
+): Paint {
     val paint = Paint()
     // Fractal noise shader
     paint.setShader(
@@ -70,7 +63,7 @@ fun getNoiseTile(
             baseFrequencyY = baseFrequency,
             numOctaves = 1,
             seed = 0.0f,
-            tiles = arrayOf(ISize.make(width, height))
+            tiles = emptyArray()
         )
     )
     // Composed color filter. Inner filter applies greyscale, and outer filter applies the colors of
@@ -88,18 +81,11 @@ fun getNoiseTile(
             )
         )
     )
-    canvas.drawRect(Rect.makeWH(width.toFloat(), height.toFloat()), paint)
 
-    return result
+    return paint
 }
 
-fun getBrushedMetalTile(colorFilter: ColorFilter, width: Int, height: Int): ImageBitmap {
-    val hOffset = 15
-
-    val result = ImageBitmap(width = width, height = height)
-    val tile = result.asDesktopBitmap()
-    val canvas = Canvas(tile)
-
+fun getBrushedMetalPaint(colorFilter: ColorFilter, hOffset: Float): Paint {
     val paint = Paint()
     // Fractal noise shader
     paint.setShader(
@@ -108,7 +94,7 @@ fun getBrushedMetalTile(colorFilter: ColorFilter, width: Int, height: Int): Imag
             baseFrequencyY = 0.45f,
             numOctaves = 4,
             seed = 0.0f,
-            tiles = arrayOf(ISize.make(width, height))
+            tiles = emptyArray()
         )
     )
     // Composed color filter. Inner filter applies greyscale, and outer filter applies the colors of
@@ -128,13 +114,99 @@ fun getBrushedMetalTile(colorFilter: ColorFilter, width: Int, height: Int): Imag
     )
     // Image filter to apply horizontal blur
     paint.imageFilter =
-        ImageFilter.makeBlur(hOffset.toFloat(), 0.0f, FilterTileMode.REPEAT, null, null)
-    // Apply horizontal offset to "cut off" the parts of the image that have partial translucency
-    // (along left and right edges) due to application of horizontal blur
-    canvas.drawRect(
-        Rect.makeLTRB(-4.0f * hOffset, 0.0f, width + 8.0f * hOffset, height.toFloat()),
-        paint
+        ImageFilter.makeBlur(hOffset, 0.0f, FilterTileMode.REPEAT, null, null)
+
+    return paint
+}
+
+fun getNoisePaintAlt(baseFrequency: Float = 0.45f): Paint {
+    val paint = Paint()
+
+    // Fractal noise shader
+    val noiseShader = Shader.makeFractalNoise(
+        baseFrequencyX = baseFrequency,
+        baseFrequencyY = baseFrequency,
+        numOctaves = 1,
+        seed = 0.0f,
+        tiles = emptyArray()
     )
 
-    return result
+    val duotoneDesc = """
+            uniform shader input;
+            
+            vec4 lerp(float f, vec4 a, vec4 b) {
+                return a + f * (b - a);
+            }
+
+            vec4 red = vec4(255.0 / 255.0, 0.0 / 255.0, 0.0 / 255.0, 1.0);
+            vec4 blue = vec4(0.0 / 255.0, 0.0 / 255.0, 255.0 / 255.0, 1.0);
+
+            half4 main(vec2 fragcoord) { 
+                vec4 inputColor = sample(input, fragcoord);
+                float luma = 0.2126 * inputColor.r + 0.7152 * inputColor.g + 0.0722 * inputColor.b;
+                float tweakedLuma = 1.0 - (1.0 - luma) / 1.2;
+                vec4 duotone = lerp(tweakedLuma, red, blue);
+                return duotone;
+            }
+        """
+
+    val duotoneEffect = RuntimeEffect.makeForShader(duotoneDesc)
+    val duotoneShader = duotoneEffect.makeShader(
+        uniforms = null,
+        children = arrayOf(noiseShader),
+        localMatrix = null,
+        isOpaque = false
+    )
+
+    paint.setShader(duotoneShader);
+
+    return paint
+}
+
+fun getBrushedMetalPaintAlt(hOffset: Float): Paint {
+    val paint = Paint()
+
+    // Fractal noise shader
+    val noiseShader = Shader.makeFractalNoise(
+        baseFrequencyX = 0.45f,
+        baseFrequencyY = 0.45f,
+        numOctaves = 4,
+        seed = 0.0f,
+        tiles = emptyArray()
+    )
+
+    val duotoneDesc = """
+            uniform shader input;
+            
+            vec4 lerp(float f, vec4 a, vec4 b) {
+                return a + f * (b - a);
+            }
+
+            vec4 red = vec4(255.0 / 255.0, 0.0 / 255.0, 0.0 / 255.0, 1.0);
+            vec4 blue = vec4(0.0 / 255.0, 0.0 / 255.0, 255.0 / 255.0, 1.0);
+
+            half4 main(vec2 fragcoord) { 
+                vec4 inputColor = sample(input, fragcoord);
+                float luma = 0.2126 * inputColor.r + 0.7152 * inputColor.g + 0.0722 * inputColor.b;
+                float tweakedLuma = 1.0 - (1.0 - luma) / 1.2;
+                vec4 duotone = lerp(tweakedLuma, red, blue);
+                return duotone;
+            }
+        """
+
+    val duotoneEffect = RuntimeEffect.makeForShader(duotoneDesc)
+    val duotoneShader = duotoneEffect.makeShader(
+        uniforms = null,
+        children = arrayOf(noiseShader),
+        localMatrix = null,
+        isOpaque = false
+    )
+
+    paint.setShader(duotoneShader);
+
+    // Image filter to apply horizontal blur
+    paint.imageFilter =
+        ImageFilter.makeBlur(hOffset, 0.0f, FilterTileMode.REPEAT, null, null)
+
+    return paint
 }

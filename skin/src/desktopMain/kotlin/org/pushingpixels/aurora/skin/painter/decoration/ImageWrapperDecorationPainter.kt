@@ -21,7 +21,9 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.clipPath
-import org.pushingpixels.aurora.common.hexadecimal
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import org.jetbrains.skia.Paint
+import org.jetbrains.skia.Rect
 import org.pushingpixels.aurora.skin.DecorationAreaType
 import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
 
@@ -32,11 +34,11 @@ import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
  * @author Kirill Grouchnikov
  */
 abstract class ImageWrapperDecorationPainter(
-    val tileGenerator: (AuroraColorScheme) -> ImageBitmap,
-    val textureAlpha: Float = 0.2f,
+    val tileGenerator: (AuroraColorScheme) -> Paint,
+    val tileSize: Size,
     val baseDecorationPainter: AuroraDecorationPainter? = null
 ) : AuroraDecorationPainter {
-    private val tiles = hashMapOf<String, ImageBitmap>()
+    private val tiles = hashMapOf<String, Paint>()
 
     override fun paintDecorationArea(
         drawScope: DrawScope,
@@ -94,29 +96,36 @@ abstract class ImageWrapperDecorationPainter(
         var offsetTextureY = offsetTexture.y
 
         with(drawScope) {
-            var colorizedTile = tiles[tileScheme.displayName]
-            if (colorizedTile == null) {
-                colorizedTile = tileGenerator.invoke(tileScheme)
-                tiles[tileScheme.displayName] = colorizedTile
+            var colorizedPaint = tiles[tileScheme.displayName]
+            if (colorizedPaint == null) {
+                colorizedPaint = tileGenerator.invoke(tileScheme)
+                tiles[tileScheme.displayName] = colorizedPaint
             }
 
-            val tileWidth = colorizedTile.width
-            val tileHeight = colorizedTile.height
+            val tileWidth = tileSize.width
+            val tileHeight = tileSize.height
             offsetTextureX %= tileWidth
             offsetTextureY %= tileHeight
             var currTileTop = -offsetTextureY
-            do {
-                var currTileLeft = -offsetTextureX
+            this.drawIntoCanvas {
+                val nativeCanvas = it.nativeCanvas
                 do {
-                    drawImage(
-                        image = colorizedTile,
-                        alpha = textureAlpha,
-                        topLeft = Offset(currTileLeft, currTileTop)
-                    )
-                    currTileLeft += tileWidth
-                } while (currTileLeft < componentSize.width)
-                currTileTop += tileHeight
-            } while (currTileTop < componentSize.height)
+                    var currTileLeft = -offsetTextureX
+                    do {
+                        nativeCanvas.save()
+                        val tileRect = Rect.makeLTRB(
+                            l = currTileLeft, t = currTileTop,
+                            r = currTileLeft + tileWidth, b = currTileTop + tileHeight
+                        )
+                        nativeCanvas.clipRect(tileRect)
+                        nativeCanvas.drawRect(r = tileRect, paint = colorizedPaint)
+                        nativeCanvas.restore()
+
+                        currTileLeft += tileWidth
+                    } while (currTileLeft < componentSize.width)
+                    currTileTop += tileHeight
+                } while (currTileTop < componentSize.height)
+            }
         }
     }
 }
