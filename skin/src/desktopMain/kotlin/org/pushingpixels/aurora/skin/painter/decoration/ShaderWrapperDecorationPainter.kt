@@ -35,6 +35,8 @@ abstract class ShaderWrapperDecorationPainter(
     val shaderGenerator: (AuroraColorScheme) -> Shader,
     val baseDecorationPainter: AuroraDecorationPainter? = null
 ) : AuroraDecorationPainter {
+    private val shaders = hashMapOf<String, Shader>()
+
     override fun paintDecorationArea(
         drawScope: DrawScope,
         decorationAreaType: DecorationAreaType,
@@ -63,10 +65,15 @@ abstract class ShaderWrapperDecorationPainter(
                 )
             }
 
+            var shader = shaders[colorScheme.displayName]
+            if (shader == null) {
+                shader = shaderGenerator.invoke(colorScheme)
+                shaders[colorScheme.displayName] = shader
+            }
+
             val clipPath = Path()
             clipPath.addOutline(outline)
             clipPath(path = clipPath) {
-                val shader = shaderGenerator.invoke(colorScheme)
                 drawRect(
                     brush = ShaderBrush(shader),
                     topLeft = Offset(-offsetFromRoot.x, -offsetFromRoot.y),
