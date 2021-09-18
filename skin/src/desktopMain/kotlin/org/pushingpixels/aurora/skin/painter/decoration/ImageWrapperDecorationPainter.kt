@@ -35,11 +35,8 @@ import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
  */
 abstract class ImageWrapperDecorationPainter(
     val paintGenerator: (AuroraColorScheme) -> Paint,
-    val tileSize: Size,
     val baseDecorationPainter: AuroraDecorationPainter? = null
 ) : AuroraDecorationPainter {
-    private val tiles = hashMapOf<String, Paint>()
-
     override fun paintDecorationArea(
         drawScope: DrawScope,
         decorationAreaType: DecorationAreaType,
@@ -71,60 +68,16 @@ abstract class ImageWrapperDecorationPainter(
             val clipPath = Path()
             clipPath.addOutline(outline)
             clipPath(path = clipPath) {
-                tileArea(
-                    drawScope = this,
-                    componentSize = componentSize,
-                    offsetTexture = offsetFromRoot,
-                    tileScheme = colorScheme
-                )
-            }
-        }
-    }
-
-    /**
-     * Tiles the specified area with colorized version of the image tile. This is called after the
-     * [.baseDecorationPainter] has painted the area. This method should respect the current
-     * [.textureAlpha] value.
-     */
-    private fun tileArea(
-        drawScope: DrawScope,
-        componentSize: Size,
-        offsetTexture: Offset,
-        tileScheme: AuroraColorScheme
-    ) {
-        var offsetTextureX = offsetTexture.x
-        var offsetTextureY = offsetTexture.y
-
-        with(drawScope) {
-            var colorizedPaint = tiles[tileScheme.displayName]
-            if (colorizedPaint == null) {
-                colorizedPaint = paintGenerator.invoke(tileScheme)
-                tiles[tileScheme.displayName] = colorizedPaint
-            }
-
-            val tileWidth = tileSize.width
-            val tileHeight = tileSize.height
-            offsetTextureX %= tileWidth
-            offsetTextureY %= tileHeight
-            var currTileTop = -offsetTextureY
-            this.drawIntoCanvas {
-                val nativeCanvas = it.nativeCanvas
-                do {
-                    var currTileLeft = -offsetTextureX
-                    do {
-                        nativeCanvas.save()
-                        val tileRect = Rect.makeLTRB(
-                            l = currTileLeft, t = currTileTop,
-                            r = currTileLeft + tileWidth, b = currTileTop + tileHeight
-                        )
-                        nativeCanvas.clipRect(tileRect)
-                        nativeCanvas.drawRect(r = tileRect, paint = colorizedPaint)
-                        nativeCanvas.restore()
-
-                        currTileLeft += tileWidth
-                    } while (currTileLeft < componentSize.width)
-                    currTileTop += tileHeight
-                } while (currTileTop < componentSize.height)
+                val colorizedPaint = paintGenerator.invoke(colorScheme)
+                this.drawIntoCanvas {
+                    val nativeCanvas = it.nativeCanvas
+                    val tileRect = Rect.makeLTRB(
+                        l = -offsetFromRoot.x, t = -offsetFromRoot.y,
+                        r = componentSize.width, b = componentSize.height
+                    )
+                    nativeCanvas.clipRect(tileRect)
+                    nativeCanvas.drawRect(r = tileRect, paint = colorizedPaint)
+                }
             }
         }
     }

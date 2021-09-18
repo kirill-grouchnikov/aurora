@@ -47,7 +47,6 @@ class BrushedMetalDecorationPainter : ImageWrapperDecorationPainter(
             hOffset = 15.0f
         )
     },
-    tileSize = Size(200f, 200f),
     baseDecorationPainter = ArcDecorationPainter()
 ) {
     override val displayName = "Brushed Metal"

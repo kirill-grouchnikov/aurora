@@ -51,7 +51,6 @@ class MarbleNoiseDecorationPainter(
                 baseFrequency = 0.25f
             )
         },
-        tileSize = Size(400f, 400f),
         baseDecorationPainter = baseDecorationPainter
     ) {
     override val displayName = "Marble Noise"
