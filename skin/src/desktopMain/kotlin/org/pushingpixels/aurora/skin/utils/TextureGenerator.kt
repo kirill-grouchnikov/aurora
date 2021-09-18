@@ -63,23 +63,23 @@ fun getNoisePaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0f, base
             }
         """
 
-    val byteBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
+    val duotoneDataBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
     // RGBA colorLight
-    byteBuffer.putFloat(0, colorLight.red)
-    byteBuffer.putFloat(4, colorLight.green)
-    byteBuffer.putFloat(8, colorLight.blue)
-    byteBuffer.putFloat(12, colorLight.alpha)
+    duotoneDataBuffer.putFloat(0, colorLight.red)
+    duotoneDataBuffer.putFloat(4, colorLight.green)
+    duotoneDataBuffer.putFloat(8, colorLight.blue)
+    duotoneDataBuffer.putFloat(12, colorLight.alpha)
     // RGBA colorDark
-    byteBuffer.putFloat(16, colorDark.red)
-    byteBuffer.putFloat(20, colorDark.green)
-    byteBuffer.putFloat(24, colorDark.blue)
-    byteBuffer.putFloat(28, colorDark.alpha)
+    duotoneDataBuffer.putFloat(16, colorDark.red)
+    duotoneDataBuffer.putFloat(20, colorDark.green)
+    duotoneDataBuffer.putFloat(24, colorDark.blue)
+    duotoneDataBuffer.putFloat(28, colorDark.alpha)
     // Alpha
-    byteBuffer.putFloat(32, alpha)
+    duotoneDataBuffer.putFloat(32, alpha)
 
     val duotoneEffect = RuntimeEffect.makeForShader(duotoneDesc)
     val duotoneShader = duotoneEffect.makeShader(
-        uniforms = Data.makeFromBytes(byteBuffer.array()),
+        uniforms = Data.makeFromBytes(duotoneDataBuffer.array()),
         children = arrayOf(noiseShader),
         localMatrix = null,
         isOpaque = false
@@ -90,7 +90,7 @@ fun getNoisePaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0f, base
     return paint
 }
 
-fun getBrushedMetalPaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0f, hOffset: Float): Paint {
+fun getBrushedMetalPaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0f): Paint {
     val paint = Paint()
 
     // Fractal noise shader
@@ -100,6 +100,34 @@ fun getBrushedMetalPaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0
         numOctaves = 4,
         seed = 0.0f,
         tiles = emptyArray()
+    )
+
+    val blurDesc = """
+            uniform shader input;
+
+            half4 main(vec2 fragcoord) { 
+                vec3 blur = vec3(0.0);
+            
+                float sum = 0.0;
+                for (float delta = -15.0; delta <= 15.0; delta++) {
+                    // Give more "weight" to the pixels closest to the current
+                    float weight = sqrt(225.0 - delta * delta);
+                    // Aggregate the blurred value based on the weight
+                    blur += weight * sample(input, vec2(fragcoord.x + delta, fragcoord.y)).xyz;
+                    sum += weight;
+                }
+                // And normalize the aggregated blurred value
+                blur /= sum;
+            
+                return vec4(blur , 1.0);
+            }
+    """
+    val blurEffect = RuntimeEffect.makeForShader(blurDesc)
+    val blurShader = blurEffect.makeShader(
+        uniforms = null,
+        children = arrayOf(noiseShader),
+        localMatrix = null,
+        isOpaque = false
     )
 
     val duotoneDesc = """
@@ -120,33 +148,29 @@ fun getBrushedMetalPaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0
             }
         """
 
-    val byteBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
+    val duotoneDataBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
     // RGBA colorLight
-    byteBuffer.putFloat(0, colorLight.red)
-    byteBuffer.putFloat(4, colorLight.green)
-    byteBuffer.putFloat(8, colorLight.blue)
-    byteBuffer.putFloat(12, colorLight.alpha)
+    duotoneDataBuffer.putFloat(0, colorLight.red)
+    duotoneDataBuffer.putFloat(4, colorLight.green)
+    duotoneDataBuffer.putFloat(8, colorLight.blue)
+    duotoneDataBuffer.putFloat(12, colorLight.alpha)
     // RGBA colorDark
-    byteBuffer.putFloat(16, colorDark.red)
-    byteBuffer.putFloat(20, colorDark.green)
-    byteBuffer.putFloat(24, colorDark.blue)
-    byteBuffer.putFloat(28, colorDark.alpha)
+    duotoneDataBuffer.putFloat(16, colorDark.red)
+    duotoneDataBuffer.putFloat(20, colorDark.green)
+    duotoneDataBuffer.putFloat(24, colorDark.blue)
+    duotoneDataBuffer.putFloat(28, colorDark.alpha)
     // Alpha
-    byteBuffer.putFloat(32, alpha)
+    duotoneDataBuffer.putFloat(32, alpha)
 
     val duotoneEffect = RuntimeEffect.makeForShader(duotoneDesc)
     val duotoneShader = duotoneEffect.makeShader(
-        uniforms = Data.makeFromBytes(byteBuffer.array()),
-        children = arrayOf(noiseShader),
+        uniforms = Data.makeFromBytes(duotoneDataBuffer.array()),
+        children = arrayOf(blurShader),
         localMatrix = null,
         isOpaque = false
     )
 
     paint.setShader(duotoneShader);
-
-    // Image filter to apply horizontal blur
-    paint.imageFilter =
-        ImageFilter.makeBlur(hOffset, 0.0f, FilterTileMode.REPEAT, null, null)
 
     return paint
 }

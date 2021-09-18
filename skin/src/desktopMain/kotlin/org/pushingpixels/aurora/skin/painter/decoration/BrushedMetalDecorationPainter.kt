@@ -43,8 +43,7 @@ class BrushedMetalDecorationPainter : ImageWrapperDecorationPainter(
         getBrushedMetalPaint(
             colorLight = it.lightColor,
             colorDark = it.darkColor,
-            alpha = 0.4f,
-            hOffset = 15.0f
+            alpha = 0.4f
         )
     },
     baseDecorationPainter = ArcDecorationPainter()

@@ -59,16 +59,13 @@ fun main() = application {
         val noiseOrangePaintAlpha = getNoisePaint(orange.midColor, Color.Black, 0.5f, 0.05f)
 
         val brushedMetalPaint = getBrushedMetalPaint(
-            metallic.lightColor, metallic.ultraDarkColor, 1.0f,
-            hOffset = 15f
+            metallic.lightColor, metallic.ultraDarkColor, 1.0f
         )
         val brushedMetalOrangePaint = getBrushedMetalPaint(
-            orange.lightColor, orange.ultraDarkColor, 1.0f,
-            hOffset = 15f
+            orange.lightColor, orange.ultraDarkColor, 1.0f
         )
         val brushedMetalOrangePaintAlpha = getBrushedMetalPaint(
-            orange.lightColor, orange.ultraDarkColor, 0.5f,
-            hOffset = 15f
+            orange.lightColor, orange.ultraDarkColor, 0.5f
         )
 
         Box(modifier = Modifier.size(500.dp).paint(painter = object : Painter() {
