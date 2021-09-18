@@ -36,7 +36,12 @@ import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.Shader
 import java.nio.ByteOrder
 
-fun getNoisePaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0f, baseFrequency: Float = 0.45f): Shader {
+fun getNoiseShader(
+    colorLight: Color,
+    colorDark: Color,
+    alpha: Float = 1.0f,
+    baseFrequency: Float = 0.45f
+): Shader {
     // Fractal noise shader
     val noiseShader = Shader.makeFractalNoise(
         baseFrequencyX = baseFrequency,
@@ -46,6 +51,7 @@ fun getNoisePaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0f, base
         tiles = emptyArray()
     )
 
+    // Duotone shader
     val duotoneDesc = """
             uniform shader input;
             uniform vec4 colorLight;
@@ -89,7 +95,7 @@ fun getNoisePaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0f, base
     return duotoneShader
 }
 
-fun getBrushedMetalPaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0f): Shader {
+fun getBrushedMetalShader(colorLight: Color, colorDark: Color, alpha: Float = 1.0f): Shader {
     // Fractal noise shader
     val noiseShader = Shader.makeFractalNoise(
         baseFrequencyX = 0.45f,
@@ -99,6 +105,7 @@ fun getBrushedMetalPaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0
         tiles = emptyArray()
     )
 
+    // Horizontal blur shader
     val blurDesc = """
             uniform shader input;
 
@@ -127,6 +134,7 @@ fun getBrushedMetalPaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0
         isOpaque = false
     )
 
+    // Duotone shader
     val duotoneDesc = """
             uniform shader input;
             uniform vec4 colorLight;

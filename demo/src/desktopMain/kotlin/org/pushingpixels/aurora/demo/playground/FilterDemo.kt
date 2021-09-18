@@ -32,8 +32,8 @@ import androidx.compose.ui.window.*
 import org.pushingpixels.aurora.skin.businessSkin
 import org.pushingpixels.aurora.skin.colorscheme.MetallicColorScheme
 import org.pushingpixels.aurora.skin.colorscheme.OrangeColorScheme
-import org.pushingpixels.aurora.skin.utils.getBrushedMetalPaint
-import org.pushingpixels.aurora.skin.utils.getNoisePaint
+import org.pushingpixels.aurora.skin.utils.getBrushedMetalShader
+import org.pushingpixels.aurora.skin.utils.getNoiseShader
 import org.pushingpixels.aurora.window.AuroraWindow
 
 fun main() = application {
@@ -54,17 +54,17 @@ fun main() = application {
         val metallic = MetallicColorScheme()
         val orange = OrangeColorScheme()
 
-        val noiseMetallicPaint = getNoisePaint(metallic.extraLightColor, metallic.darkColor)
-        val noiseOrangePaint = getNoisePaint(orange.midColor, orange.ultraDarkColor, 1.0f, 0.25f)
-        val noiseOrangePaintAlpha = getNoisePaint(orange.midColor, Color.Black, 0.5f, 0.05f)
+        val noiseMetallicPaint = getNoiseShader(metallic.extraLightColor, metallic.darkColor)
+        val noiseOrangePaint = getNoiseShader(orange.midColor, orange.ultraDarkColor, 1.0f, 0.25f)
+        val noiseOrangePaintAlpha = getNoiseShader(orange.midColor, Color.Black, 0.5f, 0.05f)
 
-        val brushedMetalPaint = getBrushedMetalPaint(
+        val brushedMetalPaint = getBrushedMetalShader(
             metallic.lightColor, metallic.ultraDarkColor, 1.0f
         )
-        val brushedMetalOrangePaint = getBrushedMetalPaint(
+        val brushedMetalOrangePaint = getBrushedMetalShader(
             orange.lightColor, orange.ultraDarkColor, 1.0f
         )
-        val brushedMetalOrangePaintAlpha = getBrushedMetalPaint(
+        val brushedMetalOrangePaintAlpha = getBrushedMetalShader(
             orange.lightColor, orange.ultraDarkColor, 0.5f
         )
 

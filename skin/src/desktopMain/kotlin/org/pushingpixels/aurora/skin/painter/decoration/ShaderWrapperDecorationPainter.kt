@@ -26,13 +26,13 @@ import org.pushingpixels.aurora.skin.DecorationAreaType
 import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
 
 /**
- * Implementation of [AuroraDecorationPainter] that uses an image source to paint on
+ * Implementation of [AuroraDecorationPainter] that uses a Skia shader to paint on
  * decoration areas.
  *
  * @author Kirill Grouchnikov
  */
-abstract class ImageWrapperDecorationPainter(
-    val paintGenerator: (AuroraColorScheme) -> Shader,
+abstract class ShaderWrapperDecorationPainter(
+    val shaderGenerator: (AuroraColorScheme) -> Shader,
     val baseDecorationPainter: AuroraDecorationPainter? = null
 ) : AuroraDecorationPainter {
     override fun paintDecorationArea(
@@ -66,9 +66,9 @@ abstract class ImageWrapperDecorationPainter(
             val clipPath = Path()
             clipPath.addOutline(outline)
             clipPath(path = clipPath) {
-                val colorizedPaint = paintGenerator.invoke(colorScheme)
+                val shader = shaderGenerator.invoke(colorScheme)
                 drawRect(
-                    brush = ShaderBrush(colorizedPaint),
+                    brush = ShaderBrush(shader),
                     topLeft = Offset(-offsetFromRoot.x, -offsetFromRoot.y),
                     size = Size(
                         componentSize.width + offsetFromRoot.x,

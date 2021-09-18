@@ -29,7 +29,7 @@
  */
 package org.pushingpixels.aurora.skin.painter.decoration
 
-import org.pushingpixels.aurora.skin.utils.getNoisePaint
+import org.pushingpixels.aurora.skin.utils.getNoiseShader
 
 /**
  * Implementation of [AuroraDecorationPainter] that uses marble noise
@@ -41,9 +41,9 @@ class MarbleNoiseDecorationPainter(
     textureAlpha: Float,
     baseDecorationPainter: AuroraDecorationPainter? = null
 ) :
-    ImageWrapperDecorationPainter(
-        paintGenerator = {
-            getNoisePaint(
+    ShaderWrapperDecorationPainter(
+        shaderGenerator = {
+            getNoiseShader(
                 colorLight = it.lightColor,
                 colorDark = it.darkColor,
                 alpha = textureAlpha,

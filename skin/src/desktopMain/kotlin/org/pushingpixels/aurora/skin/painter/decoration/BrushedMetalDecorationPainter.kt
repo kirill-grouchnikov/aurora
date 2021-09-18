@@ -29,7 +29,7 @@
  */
 package org.pushingpixels.aurora.skin.painter.decoration
 
-import org.pushingpixels.aurora.skin.utils.getBrushedMetalPaint
+import org.pushingpixels.aurora.skin.utils.getBrushedMetalShader
 
 /**
  * Implementation of [AuroraDecorationPainter] that uses brushed metal
@@ -37,9 +37,9 @@ import org.pushingpixels.aurora.skin.utils.getBrushedMetalPaint
  *
  * @author Kirill Grouchnikov
  */
-class BrushedMetalDecorationPainter : ImageWrapperDecorationPainter(
-    paintGenerator = {
-        getBrushedMetalPaint(
+class BrushedMetalDecorationPainter : ShaderWrapperDecorationPainter(
+    shaderGenerator = {
+        getBrushedMetalShader(
             colorLight = it.lightColor,
             colorDark = it.darkColor,
             alpha = 0.4f
