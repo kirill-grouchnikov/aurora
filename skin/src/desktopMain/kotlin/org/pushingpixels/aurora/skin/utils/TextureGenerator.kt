@@ -30,12 +30,13 @@
 package org.pushingpixels.aurora.skin.utils
 
 import androidx.compose.ui.graphics.Color
-import org.jetbrains.skia.*
+import org.jetbrains.skia.ByteBuffer
+import org.jetbrains.skia.Data
+import org.jetbrains.skia.RuntimeEffect
+import org.jetbrains.skia.Shader
 import java.nio.ByteOrder
 
-fun getNoisePaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0f, baseFrequency: Float = 0.45f): Paint {
-    val paint = Paint()
-
+fun getNoisePaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0f, baseFrequency: Float = 0.45f): Shader {
     // Fractal noise shader
     val noiseShader = Shader.makeFractalNoise(
         baseFrequencyX = baseFrequency,
@@ -85,14 +86,10 @@ fun getNoisePaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0f, base
         isOpaque = false
     )
 
-    paint.setShader(duotoneShader);
-
-    return paint
+    return duotoneShader
 }
 
-fun getBrushedMetalPaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0f): Paint {
-    val paint = Paint()
-
+fun getBrushedMetalPaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0f): Shader {
     // Fractal noise shader
     val noiseShader = Shader.makeFractalNoise(
         baseFrequencyX = 0.45f,
@@ -170,7 +167,5 @@ fun getBrushedMetalPaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0
         isOpaque = false
     )
 
-    paint.setShader(duotoneShader);
-
-    return paint
+    return duotoneShader
 }

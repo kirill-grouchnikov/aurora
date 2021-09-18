@@ -29,7 +29,6 @@
  */
 package org.pushingpixels.aurora.skin.painter.decoration
 
-import androidx.compose.ui.geometry.Size
 import org.pushingpixels.aurora.skin.utils.getBrushedMetalPaint
 
 /**

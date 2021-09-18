@@ -21,9 +21,7 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.clipPath
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import org.jetbrains.skia.Paint
-import org.jetbrains.skia.Rect
+import org.jetbrains.skia.Shader
 import org.pushingpixels.aurora.skin.DecorationAreaType
 import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
 
@@ -34,7 +32,7 @@ import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
  * @author Kirill Grouchnikov
  */
 abstract class ImageWrapperDecorationPainter(
-    val paintGenerator: (AuroraColorScheme) -> Paint,
+    val paintGenerator: (AuroraColorScheme) -> Shader,
     val baseDecorationPainter: AuroraDecorationPainter? = null
 ) : AuroraDecorationPainter {
     override fun paintDecorationArea(
@@ -69,15 +67,14 @@ abstract class ImageWrapperDecorationPainter(
             clipPath.addOutline(outline)
             clipPath(path = clipPath) {
                 val colorizedPaint = paintGenerator.invoke(colorScheme)
-                this.drawIntoCanvas {
-                    val nativeCanvas = it.nativeCanvas
-                    val tileRect = Rect.makeLTRB(
-                        l = -offsetFromRoot.x, t = -offsetFromRoot.y,
-                        r = componentSize.width, b = componentSize.height
+                drawRect(
+                    brush = ShaderBrush(colorizedPaint),
+                    topLeft = Offset(-offsetFromRoot.x, -offsetFromRoot.y),
+                    size = Size(
+                        componentSize.width + offsetFromRoot.x,
+                        componentSize.height + offsetFromRoot.y
                     )
-                    nativeCanvas.clipRect(tileRect)
-                    nativeCanvas.drawRect(r = tileRect, paint = colorizedPaint)
-                }
+                )
             }
         }
     }

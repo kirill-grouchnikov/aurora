@@ -21,19 +21,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import org.jetbrains.skia.Rect
 import org.pushingpixels.aurora.skin.businessSkin
 import org.pushingpixels.aurora.skin.colorscheme.MetallicColorScheme
 import org.pushingpixels.aurora.skin.colorscheme.OrangeColorScheme
-import org.pushingpixels.aurora.skin.utils.*
+import org.pushingpixels.aurora.skin.utils.getBrushedMetalPaint
+import org.pushingpixels.aurora.skin.utils.getNoisePaint
 import org.pushingpixels.aurora.window.AuroraWindow
 
 fun main() = application {
@@ -73,57 +73,41 @@ fun main() = application {
                 get() = Size.Unspecified
 
             override fun DrawScope.onDraw() {
-                drawIntoCanvas {
-                    val nativeCanvas = it.nativeCanvas
+                drawRect(
+                    brush = ShaderBrush(noiseMetallicPaint),
+                    topLeft = Offset(20f, 20f),
+                    size = Size(400f, 400f)
+                )
 
-                    nativeCanvas.save()
-                    nativeCanvas.clipRect(Rect.makeLTRB(l = 20f, t = 20f, r = 420f, b = 420f))
-                    nativeCanvas.drawRect(
-                        r = Rect.makeLTRB(l = 20f, t = 20f, r = 420f, b = 420f),
-                        paint = noiseMetallicPaint
-                    )
-                    nativeCanvas.restore()
+                drawRect(
+                    brush = ShaderBrush(noiseOrangePaint),
+                    topLeft = Offset(440f, 20f),
+                    size = Size(400f, 400f)
+                )
 
-                    nativeCanvas.save()
-                    nativeCanvas.clipRect(Rect.makeLTRB(l = 440f, t = 20f, r = 840f, b = 420f))
-                    nativeCanvas.drawRect(
-                        r = Rect.makeLTRB(l = 440f, t = 20f, r = 840f, b = 420f),
-                        paint = noiseOrangePaint
-                    )
-                    nativeCanvas.restore()
+                drawRect(
+                    brush = ShaderBrush(noiseOrangePaintAlpha),
+                    topLeft = Offset(860f, 20f),
+                    size = Size(400f, 400f)
+                )
 
-                    nativeCanvas.save()
-                    nativeCanvas.clipRect(Rect.makeLTRB(l = 860f, t = 20f, r = 1260f, b = 420f))
-                    nativeCanvas.drawRect(
-                        r = Rect.makeLTRB(l = 860f, t = 20f, r = 1260f, b = 420f),
-                        paint = noiseOrangePaintAlpha
-                    )
-                    nativeCanvas.restore()
+                drawRect(
+                    brush = ShaderBrush(brushedMetalPaint),
+                    topLeft = Offset(20f, 440f),
+                    size = Size(400f, 400f)
+                )
 
-                    nativeCanvas.save()
-                    nativeCanvas.clipRect(Rect.makeLTRB(l = 20f, t = 440f, r = 420f, b = 840f))
-                    nativeCanvas.drawRect(
-                        r = Rect.makeLTRB(l = 20f, t = 440f, r = 420f, b = 840f),
-                        paint = brushedMetalPaint
-                    )
-                    nativeCanvas.restore()
+                drawRect(
+                    brush = ShaderBrush(brushedMetalOrangePaint),
+                    topLeft = Offset(440f, 440f),
+                    size = Size(400f, 400f)
+                )
 
-                    nativeCanvas.save()
-                    nativeCanvas.clipRect(Rect.makeLTRB(l = 440f, t = 440f, r = 840f, b = 840f))
-                    nativeCanvas.drawRect(
-                        r = Rect.makeLTRB(l = 440f, t = 440f, r = 840f, b = 840f),
-                        paint = brushedMetalOrangePaint
-                    )
-                    nativeCanvas.restore()
-
-                    nativeCanvas.save()
-                    nativeCanvas.clipRect(Rect.makeLTRB(l = 860f, t = 440f, r = 1260f, b = 840f))
-                    nativeCanvas.drawRect(
-                        r = Rect.makeLTRB(l = 860f, t = 440f, r = 1260f, b = 840f),
-                        paint = brushedMetalOrangePaintAlpha
-                    )
-                    nativeCanvas.restore()
-                }
+                drawRect(
+                    brush = ShaderBrush(brushedMetalOrangePaintAlpha),
+                    topLeft = Offset(860f, 440f),
+                    size = Size(400f, 400f)
+                )
             }
         }))
     }
