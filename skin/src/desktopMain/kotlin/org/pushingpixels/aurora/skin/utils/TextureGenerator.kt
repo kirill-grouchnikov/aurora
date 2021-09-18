@@ -53,40 +53,6 @@ fun getGradientColorFilter(color1: Color, color2: Color): ColorFilter {
     return ColorFilter.makeTableARGB(null, reds, greens, blues)
 }
 
-fun getBrushedMetalPaint(colorFilter: ColorFilter, hOffset: Float): Paint {
-    val paint = Paint()
-    // Fractal noise shader
-    paint.setShader(
-        Shader.makeFractalNoise(
-            baseFrequencyX = 0.45f,
-            baseFrequencyY = 0.45f,
-            numOctaves = 4,
-            seed = 0.0f,
-            tiles = emptyArray()
-        )
-    )
-    // Composed color filter. Inner filter applies greyscale, and outer filter applies the colors of
-    // the specified Aurora color scheme
-    paint.setColorFilter(
-        ColorFilter.makeComposed(
-            outer = colorFilter,
-            inner = ColorFilter.makeMatrix(
-                ColorMatrix(
-                    0.21f, 0.72f, 0.07f, 0.0f, 0.0f,
-                    0.21f, 0.72f, 0.07f, 0.0f, 0.0f,
-                    0.21f, 0.72f, 0.07f, 0.0f, 0.0f,
-                    0.0f, 0.0f, 0.0f, 1.0f, 0.0f
-                )
-            )
-        )
-    )
-    // Image filter to apply horizontal blur
-    paint.imageFilter =
-        ImageFilter.makeBlur(hOffset, 0.0f, FilterTileMode.REPEAT, null, null)
-
-    return paint
-}
-
 fun getNoisePaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0f, baseFrequency: Float = 0.45f): Paint {
     val paint = Paint()
 
@@ -112,7 +78,6 @@ fun getNoisePaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0f, base
             half4 main(vec2 fragcoord) { 
                 vec4 inputColor = sample(input, fragcoord);
                 float luma = 0.2126 * inputColor.r + 0.7152 * inputColor.g + 0.0722 * inputColor.b;
-                //float tweakedLuma = 1.0 - (1.0 - luma) / 1.2;
                 vec4 duotone = lerp(luma, colorLight, colorDark);
                 return vec4(duotone.r * alpha, duotone.g * alpha, duotone.b * alpha, alpha);
             }
@@ -145,7 +110,7 @@ fun getNoisePaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0f, base
     return paint
 }
 
-fun getBrushedMetalPaintAlt(hOffset: Float): Paint {
+fun getBrushedMetalPaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0f, hOffset: Float): Paint {
     val paint = Paint()
 
     // Fractal noise shader
@@ -159,26 +124,39 @@ fun getBrushedMetalPaintAlt(hOffset: Float): Paint {
 
     val duotoneDesc = """
             uniform shader input;
+            uniform vec4 colorLight;
+            uniform vec4 colorDark;
+            uniform float alpha;
             
             vec4 lerp(float f, vec4 a, vec4 b) {
                 return a + f * (b - a);
             }
 
-            vec4 red = vec4(255.0 / 255.0, 0.0 / 255.0, 0.0 / 255.0, 1.0);
-            vec4 blue = vec4(0.0 / 255.0, 0.0 / 255.0, 255.0 / 255.0, 1.0);
-
             half4 main(vec2 fragcoord) { 
                 vec4 inputColor = sample(input, fragcoord);
                 float luma = 0.2126 * inputColor.r + 0.7152 * inputColor.g + 0.0722 * inputColor.b;
-                float tweakedLuma = 1.0 - (1.0 - luma) / 1.2;
-                vec4 duotone = lerp(tweakedLuma, red, blue);
-                return duotone;
+                vec4 duotone = lerp(luma, colorLight, colorDark);
+                return vec4(duotone.r * alpha, duotone.g * alpha, duotone.b * alpha, alpha);
             }
         """
 
+    val byteBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
+    // RGBA colorLight
+    byteBuffer.putFloat(0, colorLight.red)
+    byteBuffer.putFloat(4, colorLight.green)
+    byteBuffer.putFloat(8, colorLight.blue)
+    byteBuffer.putFloat(12, colorLight.alpha)
+    // RGBA colorDark
+    byteBuffer.putFloat(16, colorDark.red)
+    byteBuffer.putFloat(20, colorDark.green)
+    byteBuffer.putFloat(24, colorDark.blue)
+    byteBuffer.putFloat(28, colorDark.alpha)
+    // Alpha
+    byteBuffer.putFloat(32, alpha)
+
     val duotoneEffect = RuntimeEffect.makeForShader(duotoneDesc)
     val duotoneShader = duotoneEffect.makeShader(
-        uniforms = null,
+        uniforms = Data.makeFromBytes(byteBuffer.array()),
         children = arrayOf(noiseShader),
         localMatrix = null,
         isOpaque = false

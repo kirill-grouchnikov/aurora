@@ -30,9 +30,7 @@
 package org.pushingpixels.aurora.skin.painter.decoration
 
 import androidx.compose.ui.geometry.Size
-import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.skin.utils.getBrushedMetalPaint
-import org.pushingpixels.aurora.skin.utils.getGradientColorFilter
 
 /**
  * Implementation of [AuroraDecorationPainter] that uses brushed metal
@@ -43,10 +41,9 @@ import org.pushingpixels.aurora.skin.utils.getGradientColorFilter
 class BrushedMetalDecorationPainter : ImageWrapperDecorationPainter(
     paintGenerator = {
         getBrushedMetalPaint(
-            colorFilter = getGradientColorFilter(
-                it.extraLightColor.withAlpha(0.4f),
-                it.midColor.withAlpha(0.4f)
-            ),
+            colorLight = it.lightColor,
+            colorDark = it.darkColor,
+            alpha = 0.4f,
             hOffset = 15.0f
         )
     },

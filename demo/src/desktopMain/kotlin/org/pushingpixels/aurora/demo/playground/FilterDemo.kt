@@ -27,13 +27,9 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import org.jetbrains.skia.BlendMode
-import org.jetbrains.skia.ColorFilter
 import org.jetbrains.skia.Rect
-import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.skin.businessSkin
 import org.pushingpixels.aurora.skin.colorscheme.MetallicColorScheme
 import org.pushingpixels.aurora.skin.colorscheme.OrangeColorScheme
@@ -63,17 +59,15 @@ fun main() = application {
         val noiseOrangePaintAlpha = getNoisePaint(orange.midColor, Color.Black, 0.5f, 0.05f)
 
         val brushedMetalPaint = getBrushedMetalPaint(
-            colorFilter = getGradientColorFilter(metallic.midColor, metallic.darkColor),
+            metallic.lightColor, metallic.ultraDarkColor, 1.0f,
             hOffset = 15f
         )
         val brushedMetalOrangePaint = getBrushedMetalPaint(
-            colorFilter = ColorFilter.makeBlend(
-                orange.lightColor.withAlpha(0.6f).toArgb(),
-                BlendMode.MODULATE
-            ),
+            orange.lightColor, orange.ultraDarkColor, 1.0f,
             hOffset = 15f
         )
-        val brushedMetalDuotonePaint = getBrushedMetalPaintAlt(
+        val brushedMetalOrangePaintAlpha = getBrushedMetalPaint(
+            orange.lightColor, orange.ultraDarkColor, 0.5f,
             hOffset = 15f
         )
 
@@ -129,7 +123,7 @@ fun main() = application {
                     nativeCanvas.clipRect(Rect.makeLTRB(l = 860f, t = 440f, r = 1260f, b = 840f))
                     nativeCanvas.drawRect(
                         r = Rect.makeLTRB(l = 860f, t = 440f, r = 1260f, b = 840f),
-                        paint = brushedMetalDuotonePaint
+                        paint = brushedMetalOrangePaintAlpha
                     )
                     nativeCanvas.restore()
                 }
