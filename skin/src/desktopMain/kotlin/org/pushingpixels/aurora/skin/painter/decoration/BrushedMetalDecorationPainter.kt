@@ -41,7 +41,7 @@ import org.pushingpixels.aurora.skin.utils.getGradientColorFilter
  * @author Kirill Grouchnikov
  */
 class BrushedMetalDecorationPainter : ImageWrapperDecorationPainter(
-    tileGenerator = {
+    paintGenerator = {
         getBrushedMetalPaint(
             colorFilter = getGradientColorFilter(
                 it.extraLightColor.withAlpha(0.4f),

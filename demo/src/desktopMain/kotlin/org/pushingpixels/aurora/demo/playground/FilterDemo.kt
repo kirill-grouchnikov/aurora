@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
@@ -57,13 +58,9 @@ fun main() = application {
         val metallic = MetallicColorScheme()
         val orange = OrangeColorScheme()
 
-        val noiseDensePaint = getNoisePaint(
-            getGradientColorFilter(metallic.extraLightColor, metallic.darkColor)
-        )
-        val noiseOrangePaint = getNoisePaint(
-            getGradientColorFilter(orange.extraLightColor, orange.darkColor)
-        )
-        val noiseDuotonePaint = getNoisePaintAlt()
+        val noiseMetallicPaint = getNoisePaint(metallic.extraLightColor, metallic.darkColor)
+        val noiseOrangePaint = getNoisePaint(orange.midColor, orange.ultraDarkColor, 1.0f, 0.25f)
+        val noiseOrangePaintAlpha = getNoisePaint(orange.midColor, Color.Black, 0.5f, 0.05f)
 
         val brushedMetalPaint = getBrushedMetalPaint(
             colorFilter = getGradientColorFilter(metallic.midColor, metallic.darkColor),
@@ -92,7 +89,7 @@ fun main() = application {
                     nativeCanvas.clipRect(Rect.makeLTRB(l = 20f, t = 20f, r = 420f, b = 420f))
                     nativeCanvas.drawRect(
                         r = Rect.makeLTRB(l = 20f, t = 20f, r = 420f, b = 420f),
-                        paint = noiseDensePaint
+                        paint = noiseMetallicPaint
                     )
                     nativeCanvas.restore()
 
@@ -108,7 +105,7 @@ fun main() = application {
                     nativeCanvas.clipRect(Rect.makeLTRB(l = 860f, t = 20f, r = 1260f, b = 420f))
                     nativeCanvas.drawRect(
                         r = Rect.makeLTRB(l = 860f, t = 20f, r = 1260f, b = 420f),
-                        paint = noiseDuotonePaint
+                        paint = noiseOrangePaintAlpha
                     )
                     nativeCanvas.restore()
 

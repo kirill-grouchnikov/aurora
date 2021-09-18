@@ -34,7 +34,7 @@ import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
  * @author Kirill Grouchnikov
  */
 abstract class ImageWrapperDecorationPainter(
-    val tileGenerator: (AuroraColorScheme) -> Paint,
+    val paintGenerator: (AuroraColorScheme) -> Paint,
     val tileSize: Size,
     val baseDecorationPainter: AuroraDecorationPainter? = null
 ) : AuroraDecorationPainter {
@@ -98,7 +98,7 @@ abstract class ImageWrapperDecorationPainter(
         with(drawScope) {
             var colorizedPaint = tiles[tileScheme.displayName]
             if (colorizedPaint == null) {
-                colorizedPaint = tileGenerator.invoke(tileScheme)
+                colorizedPaint = paintGenerator.invoke(tileScheme)
                 tiles[tileScheme.displayName] = colorizedPaint
             }
 

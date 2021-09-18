@@ -30,8 +30,6 @@
 package org.pushingpixels.aurora.skin.painter.decoration
 
 import androidx.compose.ui.geometry.Size
-import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.skin.utils.getGradientColorFilter
 import org.pushingpixels.aurora.skin.utils.getNoisePaint
 
 /**
@@ -45,12 +43,11 @@ class MarbleNoiseDecorationPainter(
     baseDecorationPainter: AuroraDecorationPainter? = null
 ) :
     ImageWrapperDecorationPainter(
-        tileGenerator = {
+        paintGenerator = {
             getNoisePaint(
-                colorFilter = getGradientColorFilter(
-                    it.extraLightColor.withAlpha(0.0f),
-                    it.midColor.withAlpha(0.0f)
-                ),
+                colorLight = it.lightColor,
+                colorDark = it.darkColor,
+                alpha = textureAlpha,
                 baseFrequency = 0.25f
             )
         },
