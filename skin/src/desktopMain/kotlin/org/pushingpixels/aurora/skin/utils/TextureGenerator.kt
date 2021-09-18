@@ -58,14 +58,10 @@ fun getNoiseShader(
             uniform vec4 colorDark;
             uniform float alpha;
             
-            vec4 lerp(float f, vec4 a, vec4 b) {
-                return a + f * (b - a);
-            }
-
             half4 main(vec2 fragcoord) { 
                 vec4 inputColor = sample(input, fragcoord);
-                float luma = 0.2126 * inputColor.r + 0.7152 * inputColor.g + 0.0722 * inputColor.b;
-                vec4 duotone = lerp(luma, colorLight, colorDark);
+                float luma = dot(inputColor.rgb, vec3(0.299, 0.587, 0.114));
+                vec4 duotone = mix(colorLight, colorDark, luma);
                 return vec4(duotone.r * alpha, duotone.g * alpha, duotone.b * alpha, alpha);
             }
         """
@@ -141,14 +137,10 @@ fun getBrushedMetalShader(colorLight: Color, colorDark: Color, alpha: Float = 1.
             uniform vec4 colorDark;
             uniform float alpha;
             
-            vec4 lerp(float f, vec4 a, vec4 b) {
-                return a + f * (b - a);
-            }
-
             half4 main(vec2 fragcoord) { 
                 vec4 inputColor = sample(input, fragcoord);
-                float luma = 0.2126 * inputColor.r + 0.7152 * inputColor.g + 0.0722 * inputColor.b;
-                vec4 duotone = lerp(luma, colorLight, colorDark);
+                float luma = dot(inputColor.rgb, vec3(0.299, 0.587, 0.114));
+                vec4 duotone = mix(colorLight, colorDark, luma);
                 return vec4(duotone.r * alpha, duotone.g * alpha, duotone.b * alpha, alpha);
             }
         """
