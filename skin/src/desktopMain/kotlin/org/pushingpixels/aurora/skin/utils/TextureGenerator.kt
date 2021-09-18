@@ -29,29 +29,9 @@
  */
 package org.pushingpixels.aurora.skin.utils
 
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import org.jetbrains.skia.*
-import org.pushingpixels.aurora.common.interpolateTowards
 import java.nio.ByteOrder
-import kotlin.math.roundToInt
-
-fun getGradientColorFilter(color1: Color, color2: Color): ColorFilter {
-    val reds = ByteArray(256)
-    val greens = ByteArray(256)
-    val blues = ByteArray(256)
-
-    for (index in 0..255) {
-        val color = color1.interpolateTowards(color2, index / 255.0f)
-        reds[index] = (255 * color.red).roundToInt().toByte()
-        greens[index] = (255 * color.green).roundToInt().toByte()
-        blues[index] = (255 * color.blue).roundToInt().toByte()
-    }
-
-    // Pass null for alphas so that when the filter is applied, it respects the alpha
-    // channel of the source image
-    return ColorFilter.makeTableARGB(null, reds, greens, blues)
-}
 
 fun getNoisePaint(colorLight: Color, colorDark: Color, alpha: Float = 1.0f, baseFrequency: Float = 0.45f): Paint {
     val paint = Paint()
