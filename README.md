@@ -36,9 +36,9 @@ Add Aurora dependencies:
 
 ```
 dependencies {
-    implementation("org.pushing-pixels:aurora-skin:0.0.52-SNAPSHOT")
-    implementation("org.pushing-pixels:aurora-component:0.0.52-SNAPSHOT")
-    implementation("org.pushing-pixels:aurora-window:0.0.52-SNAPSHOT")
+    implementation("org.pushing-pixels:aurora-skin:0.0.53-SNAPSHOT")
+    implementation("org.pushing-pixels:aurora-component:0.0.53-SNAPSHOT")
+    implementation("org.pushing-pixels:aurora-window:0.0.53-SNAPSHOT")
     implementation(compose.desktop.currentOs)
 }
 ```
