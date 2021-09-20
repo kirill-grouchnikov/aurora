@@ -145,7 +145,7 @@ private fun nebulaBasePainters(): AuroraPainters {
         fillPainter = SubduedFillPainter(),
         borderPainter = FlatBorderPainter(),
         decorationPainter = MarbleNoiseDecorationPainter(
-            textureAlpha = 0.3f,
+            textureAlpha = 0.2f,
             baseDecorationPainter = ArcDecorationPainter()
         )
     )
@@ -182,7 +182,9 @@ fun nebulaSkin(): AuroraSkinDefinition {
 }
 
 fun nebulaAmethystSkin(): AuroraSkinDefinition {
-    val accentBuilder = AccentBuilder().withWindowChromeAccent(PurpleColorScheme())
+    val accentBuilder = AccentBuilder()
+        .withAccentResource("/org/pushingpixels/aurora/skins/nebula.colorschemes")
+        .withWindowChromeAccent(PurpleColorScheme())
 
     return AuroraSkinDefinition(
         displayName = "Nebula Amethyst",
@@ -190,11 +192,13 @@ fun nebulaAmethystSkin(): AuroraSkinDefinition {
             AccentBuilder().withWindowChromeAccent(PurpleColorScheme())
         ).also {
             val windowChromeAccent = accentBuilder.windowChromeAccent!!
+            val windowChromeDisabled =
+                accentBuilder.getColorScheme("Nebula Amethyst Title Disabled")!!
             val toolbarBundle = AuroraColorSchemeBundle(
-                windowChromeAccent.saturate(0.1f), windowChromeAccent, windowChromeAccent
+                windowChromeAccent.saturate(0.1f), windowChromeAccent, windowChromeDisabled
             )
             toolbarBundle.registerAlpha(
-                0.5f, ComponentState.DisabledSelected,
+                0.8f, ComponentState.DisabledSelected,
                 ComponentState.DisabledUnselected
             )
             toolbarBundle.registerColorScheme(

@@ -137,6 +137,10 @@ class AccentBuilder {
         this.backgroundAccent = backgroundAccent
         return this
     }
+
+    fun getColorScheme(colorSchemeName: String): AuroraColorScheme? {
+        return this.accentColorSchemes?.get(colorSchemeName)
+    }
 }
 
 object ColorTransforms {

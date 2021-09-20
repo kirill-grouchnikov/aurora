@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.skin.colorscheme
 
 import androidx.compose.ui.graphics.Color
+import org.pushingpixels.aurora.common.hexadecimal
 
 open class BaseColorScheme(
     override val displayName: String,
@@ -113,7 +114,25 @@ open class BaseColorScheme(
         return HueShiftColorScheme(this, hueShiftFactor)
     }
 
-    override fun blendWith(otherScheme: AuroraColorScheme, likenessToThisScheme: Float): AuroraColorScheme {
+    override fun blendWith(
+        otherScheme: AuroraColorScheme,
+        likenessToThisScheme: Float
+    ): AuroraColorScheme {
         return BlendBiColorScheme(this, otherScheme, likenessToThisScheme)
+    }
+
+    override fun toString(): String {
+        return """
+$displayName {
+    kind=${if (isDark) "Dark" else "Light"}
+    colorUltraLight=${ultraLightColor.hexadecimal}
+    colorExtraLight=${extraLightColor.hexadecimal}
+    colorLight=${lightColor.hexadecimal}
+    colorMid=${midColor.hexadecimal}
+    colorDark=${darkColor.hexadecimal}
+    colorUltraDark=${ultraDarkColor.hexadecimal}
+    colorForeground=${foregroundColor.hexadecimal}
+}
+        """
     }
 }
