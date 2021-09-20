@@ -167,11 +167,15 @@ internal fun AuroraRadioButton(
             .padding(presentationModel.contentPadding)
             .pointerMoveFilter(
                 onEnter = {
-                    rollover = true
+                    if (contentModel.enabled) {
+                        rollover = true
+                    }
                     false
                 },
                 onExit = {
-                    rollover = false
+                    if (contentModel.enabled) {
+                        rollover = false
+                    }
                     false
                 },
                 onMove = {

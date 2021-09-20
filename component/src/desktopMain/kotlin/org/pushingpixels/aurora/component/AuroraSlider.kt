@@ -301,13 +301,17 @@ internal fun AuroraSlider(
                 false
             },
             onExit = {
-                // Reset rollover when mouse exits the component bounds
-                rollover = false
+                if (contentModel.enabled) {
+                    // Reset rollover when mouse exits the component bounds
+                    rollover = false
+                }
                 false
             },
             onMove = { position ->
-                // Rollover is only "active" in the thumb rectangle
-                rollover = drawingCache.thumbRect.contains(position.x, position.y)
+                if (contentModel.enabled) {
+                    // Rollover is only "active" in the thumb rectangle
+                    rollover = drawingCache.thumbRect.contains(position.x, position.y)
+                }
                 false
             }).then(drag)
     ) {

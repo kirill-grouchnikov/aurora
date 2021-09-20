@@ -398,19 +398,23 @@ internal fun AuroraCommandButton(
             var popupAreaOffset = remember { Offset.Zero }
             Box(
                 modifier = modifierAction.pointerMoveFilter(onEnter = {
-                    val wasRollover = actionRollover
-                    actionRollover = true
-                    if (isActionEnabled && !wasRollover) {
-                        command.actionPreview?.onCommandPreviewActivated(command)
-                        extraActionPreview?.onCommandPreviewActivated(command)
+                    if (isActionEnabled) {
+                        val wasRollover = actionRollover
+                        actionRollover = true
+                        if (!wasRollover) {
+                            command.actionPreview?.onCommandPreviewActivated(command)
+                            extraActionPreview?.onCommandPreviewActivated(command)
+                        }
                     }
                     false
                 }, onExit = {
-                    val wasRollover = actionRollover
-                    actionRollover = false
-                    if (isActionEnabled && wasRollover) {
-                        command.actionPreview?.onCommandPreviewCanceled(command)
-                        extraActionPreview?.onCommandPreviewCanceled(command)
+                    if (isActionEnabled) {
+                        val wasRollover = actionRollover
+                        actionRollover = false
+                        if (wasRollover) {
+                            command.actionPreview?.onCommandPreviewCanceled(command)
+                            extraActionPreview?.onCommandPreviewCanceled(command)
+                        }
                     }
                     false
                 }, onMove = {
@@ -609,10 +613,14 @@ internal fun AuroraCommandButton(
                     interactionSource = popupInteractionSource,
                     indication = null
                 ).pointerMoveFilter(onEnter = {
-                    popupRollover = true
+                    if (isPopupEnabled) {
+                        popupRollover = true
+                    }
                     false
                 }, onExit = {
-                    popupRollover = false
+                    if (isPopupEnabled) {
+                        popupRollover = false
+                    }
                     false
                 }, onMove = {
                     false

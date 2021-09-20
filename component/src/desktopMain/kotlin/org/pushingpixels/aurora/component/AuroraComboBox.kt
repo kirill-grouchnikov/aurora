@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.skin.*
@@ -211,11 +212,15 @@ internal fun <E> AuroraComboBox(
         modifier = modifier
             .pointerMoveFilter(
                 onEnter = {
-                    rollover = true
+                    if (contentModel.enabled) {
+                        rollover = true
+                    }
                     false
                 },
                 onExit = {
-                    rollover = false
+                    if (contentModel.enabled) {
+                        rollover = false
+                    }
                     false
                 },
                 onMove = {
@@ -238,7 +243,7 @@ internal fun <E> AuroraComboBox(
                         contentModel = contentModelState,
                         presentationModel = CommandPopupMenuPresentationModel(
                             menuPresentationState = CommandButtonPresentationState.Medium,
-                            maxVisibleMenuCommands =  presentationModel.popupMaxVisibleItems,
+                            maxVisibleMenuCommands = presentationModel.popupMaxVisibleItems,
                             popupPlacementStrategy = presentationModel.popupPlacementStrategy
                         ),
                         toDismissPopupsOnActivation = true,
@@ -399,7 +404,7 @@ internal fun <E> AuroraComboBox(
                             strokeWidth = 2.0.dp.toPx(),
                             direction = presentationModel.popupPlacementStrategy,
                             layoutDirection = layoutDirection,
-                            color = arrowColor
+                            color = arrowColor.withAlpha(alpha)
                         )
                     }
                 }

@@ -49,7 +49,7 @@ fun main() = application {
         position = WindowPosition.Aligned(Alignment.Center),
         size = WindowSize(720.dp, 660.dp)
     )
-    val skin = mutableStateOf(businessSkin())
+    val skin = mutableStateOf(marinerSkin())
 
     AuroraWindow(
         skin = skin,

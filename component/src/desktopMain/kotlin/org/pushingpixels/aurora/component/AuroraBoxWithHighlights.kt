@@ -182,11 +182,15 @@ fun AuroraBoxWithHighlights(
     }
     boxModifier = boxModifier.pointerMoveFilter(
         onEnter = {
-            rollover = true
+            if (enabled) {
+                rollover = true
+            }
             false
         },
         onExit = {
-            rollover = false
+            if (enabled) {
+                rollover = false
+            }
             false
         },
         onMove = {
