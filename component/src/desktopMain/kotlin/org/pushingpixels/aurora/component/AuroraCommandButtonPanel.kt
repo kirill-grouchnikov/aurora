@@ -44,11 +44,11 @@ import kotlin.math.min
 
 /**
  * Panel composable that hosts command buttons. Provides support for button groups,
- * same icon state / dimension and column-fill / row-fill layout. Under [RowFill]
- * layout mode, the buttons are laid out in rows, never exceeding the available
- * horizontal space. A vertical scroll bar will kick in once there is not enough
- * vertical space to show all the buttons. The schematic below shows a row-fill command
- * button panel:
+ * same icon state / dimension and column-fill / row-fill layout. Under
+ * [PanelLayoutFillMode.RowFill] layout mode, the buttons are laid out in rows, never
+ * exceeding the available horizontal space. A vertical scroll bar will kick in once
+ * there is not enough vertical space to show all the buttons. The schematic below
+ * shows a row-fill command button panel:
  * </p>
  *
  * <pre>
@@ -77,7 +77,7 @@ import kotlin.math.min
  * </p>
  *
  * <p>
- * Under the [ColumnFill] layout mode, the buttons are laid
+ * Under the [PanelLayoutFillMode.ColumnFill] layout mode, the buttons are laid
  * out in columns, never exceeding the available vertical space. A horizontal scroll
  * bar will kick in once there is not enough horizontal space to show all the
  * buttons. The schematic below shows a column-fill command button panel:

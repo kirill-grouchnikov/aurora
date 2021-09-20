@@ -17,7 +17,7 @@ import kotlin.collections.set
  * @author Kirill Grouchnikov
  * @see DecorationAreaType
  * @see ColorSchemeAssociationKind
- * @see AuroraSkin
+ * @see AuroraSkinColors
  */
 class AuroraColorSchemeBundle(
     private val activeColorScheme: AuroraColorScheme,

@@ -139,7 +139,7 @@ internal fun AuroraSlider(
     val dragStartX = remember { mutableStateOf(0.0f) }
     val cumulativeDragAmount = remember { mutableStateOf(0.0f) }
 
-    var press = remember { mutableStateOf<PressInteraction.Press?>(null) }
+    val press = remember { mutableStateOf<PressInteraction.Press?>(null) }
     val drag = Modifier.draggable(
         state = rememberDraggableState {
             // Update the cumulative drag amount

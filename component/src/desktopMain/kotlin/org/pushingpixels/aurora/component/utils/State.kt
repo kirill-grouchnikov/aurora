@@ -131,8 +131,8 @@ fun StateTransitionTracker(
 //            println("Stopping a running animation!")
 //            stateTransitionFloat.value.stop()
 //        }
-        var tweakedDuration: Int
-        var tweakedStart : Float
+        val tweakedDuration: Int
+        val tweakedStart : Float
 
         if (modelStateInfo.stateContributionMap.containsKey(currentState.value)) {
             //println("Already has new state")
