@@ -687,10 +687,7 @@ internal fun AuroraCommandButton(
                         if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat) {
                             if (currentPopupState.value == ComponentState.DisabledSelected) {
                                 // Respect the alpha in disabled+selected state
-                                skinColors.getAlpha(
-                                    decorationAreaType,
-                                    currentPopupState.value
-                                )
+                                skinColors.getAlpha(decorationAreaType, currentPopupState.value)
                             } else {
                                 // For flat buttons, compute the combined contribution of all
                                 // non-disabled states - ignoring ComponentState.ENABLED

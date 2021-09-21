@@ -307,17 +307,22 @@ internal fun <E> AuroraComboBox(
             val fillPainter = AuroraSkin.painters.fillPainter
             val borderPainter = AuroraSkin.painters.borderPainter
 
-            val alpha: Float
-            if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat) {
-                // For flat buttons, compute the combined contribution of all
-                // non-disabled states - ignoring ComponentState.ENABLED
-                alpha = modelStateInfo.stateContributionMap
-                    .filter { !it.key.isDisabled && (it.key != ComponentState.Enabled) }
-                    .values.sumOf { it.contribution.toDouble() }.toFloat()
-            } else {
-                alpha = if (currentState.value.isDisabled)
-                    AuroraSkin.colors.getAlpha(decorationAreaType, currentState.value) else 1.0f
-            }
+            val alpha =
+                if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat) {
+                    if (currentState.value == ComponentState.DisabledSelected) {
+                        // Respect the alpha in disabled+selected state
+                        skinColors.getAlpha(decorationAreaType, currentState.value)
+                    } else {
+                        // For flat comboboxes, compute the combined contribution of all
+                        // non-disabled states - ignoring ComponentState.ENABLED
+                        modelStateInfo.stateContributionMap
+                            .filter { !it.key.isDisabled && (it.key != ComponentState.Enabled) }
+                            .values.sumOf { it.contribution.toDouble() }.toFloat()
+                    }
+                } else {
+                    if (currentState.value.isDisabled)
+                        AuroraSkin.colors.getAlpha(decorationAreaType, currentState.value) else 1.0f
+                }
 
             Canvas(Modifier.matchParentSize()) {
                 val width = this.size.width
@@ -482,3 +487,4 @@ internal fun <E> AuroraComboBox(
         }
     }
 }
+
