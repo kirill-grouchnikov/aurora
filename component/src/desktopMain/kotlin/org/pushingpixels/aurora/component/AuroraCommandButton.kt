@@ -481,11 +481,19 @@ internal fun AuroraCommandButton(
 
                     val actionAlpha = max(combinedRolloverFraction,
                         if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat) {
-                            // For flat buttons, compute the combined contribution of all
-                            // non-disabled states - ignoring ComponentState.ENABLED
-                            actionModelStateInfoToUse.stateContributionMap
-                                .filter { !it.key.isDisabled && (it.key != ComponentState.Enabled) }
-                                .values.sumOf { it.contribution.toDouble() }.toFloat()
+                            if (currentActionStateToUse.value == ComponentState.DisabledSelected) {
+                                // Respect the alpha in disabled+selected state
+                                skinColors.getAlpha(
+                                    decorationAreaType,
+                                    currentActionStateToUse.value
+                                )
+                            } else {
+                                // For flat buttons, compute the combined contribution of all
+                                // non-disabled states - ignoring ComponentState.ENABLED
+                                actionModelStateInfoToUse.stateContributionMap
+                                    .filter { !it.key.isDisabled && (it.key != ComponentState.Enabled) }
+                                    .values.sumOf { it.contribution.toDouble() }.toFloat()
+                            }
                         } else {
                             if (currentActionStateToUse.value.isDisabled)
                                 skinColors.getAlpha(
@@ -677,11 +685,19 @@ internal fun AuroraCommandButton(
 
                     val popupAlpha = max(combinedRolloverFraction,
                         if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat) {
-                            // For flat buttons, compute the combined contribution of all
-                            // non-disabled states - ignoring ComponentState.ENABLED
-                            popupModelStateInfo.stateContributionMap
-                                .filter { !it.key.isDisabled && (it.key != ComponentState.Enabled) }
-                                .values.sumOf { it.contribution.toDouble() }.toFloat()
+                            if (currentPopupState.value == ComponentState.DisabledSelected) {
+                                // Respect the alpha in disabled+selected state
+                                skinColors.getAlpha(
+                                    decorationAreaType,
+                                    currentPopupState.value
+                                )
+                            } else {
+                                // For flat buttons, compute the combined contribution of all
+                                // non-disabled states - ignoring ComponentState.ENABLED
+                                popupModelStateInfo.stateContributionMap
+                                    .filter { !it.key.isDisabled && (it.key != ComponentState.Enabled) }
+                                    .values.sumOf { it.contribution.toDouble() }.toFloat()
+                            }
                         } else {
                             if (currentPopupState.value.isDisabled)
                                 skinColors.getAlpha(
