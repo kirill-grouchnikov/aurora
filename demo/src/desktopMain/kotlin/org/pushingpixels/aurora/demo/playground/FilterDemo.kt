@@ -54,17 +54,17 @@ fun main() = application {
         val metallic = MetallicColorScheme()
         val orange = OrangeColorScheme()
 
-        val noiseMetallicPaint = getNoiseShader(metallic.extraLightColor, metallic.darkColor)
-        val noiseOrangePaint = getNoiseShader(orange.midColor, orange.ultraDarkColor, 1.0f, 0.25f)
-        val noiseOrangePaintAlpha = getNoiseShader(orange.midColor, Color.Black, 0.5f, 0.05f)
+        val noiseMetallicShader = getNoiseShader(metallic.extraLightColor, metallic.darkColor)
+        val noiseOrangeShader = getNoiseShader(orange.midColor, orange.ultraDarkColor, 1.0f, 0.25f)
+        val noiseOrangeShaderAlpha = getNoiseShader(orange.midColor, Color.Black, 0.5f, 0.05f)
 
-        val brushedMetalPaint = getBrushedMetalShader(
+        val brushedMetalShader = getBrushedMetalShader(
             metallic.lightColor, metallic.ultraDarkColor, 1.0f
         )
-        val brushedMetalOrangePaint = getBrushedMetalShader(
+        val brushedMetalOrangeShader = getBrushedMetalShader(
             orange.lightColor, orange.ultraDarkColor, 1.0f
         )
-        val brushedMetalOrangePaintAlpha = getBrushedMetalShader(
+        val brushedMetalOrangeShaderAlpha = getBrushedMetalShader(
             orange.lightColor, orange.ultraDarkColor, 0.5f
         )
 
@@ -74,37 +74,37 @@ fun main() = application {
 
             override fun DrawScope.onDraw() {
                 drawRect(
-                    brush = ShaderBrush(noiseMetallicPaint),
+                    brush = ShaderBrush(noiseMetallicShader),
                     topLeft = Offset(20f, 20f),
                     size = Size(400f, 400f)
                 )
 
                 drawRect(
-                    brush = ShaderBrush(noiseOrangePaint),
+                    brush = ShaderBrush(noiseOrangeShader),
                     topLeft = Offset(440f, 20f),
                     size = Size(400f, 400f)
                 )
 
                 drawRect(
-                    brush = ShaderBrush(noiseOrangePaintAlpha),
+                    brush = ShaderBrush(noiseOrangeShaderAlpha),
                     topLeft = Offset(860f, 20f),
                     size = Size(400f, 400f)
                 )
 
                 drawRect(
-                    brush = ShaderBrush(brushedMetalPaint),
+                    brush = ShaderBrush(brushedMetalShader),
                     topLeft = Offset(20f, 440f),
                     size = Size(400f, 400f)
                 )
 
                 drawRect(
-                    brush = ShaderBrush(brushedMetalOrangePaint),
+                    brush = ShaderBrush(brushedMetalOrangeShader),
                     topLeft = Offset(440f, 440f),
                     size = Size(400f, 400f)
                 )
 
                 drawRect(
-                    brush = ShaderBrush(brushedMetalOrangePaintAlpha),
+                    brush = ShaderBrush(brushedMetalOrangeShaderAlpha),
                     topLeft = Offset(860f, 440f),
                     size = Size(400f, 400f)
                 )
