@@ -118,6 +118,7 @@ fun main() = application {
     val shaderPaint = remember { Paint() }
     val byteBuffer = remember { ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN) }
     var timeUniform by remember { mutableStateOf(0.0f) }
+    var previousNanos by remember { mutableStateOf(0L) }
 
     Window(
         title = "Compose / Skia shader demo",
@@ -150,8 +151,13 @@ fun main() = application {
 
         LaunchedEffect(null) {
             while (true) {
-                withFrameNanos {
-                    timeUniform -= 0.0001f
+                withFrameNanos { frameTimeNanos ->
+                    val nanosPassed = frameTimeNanos - previousNanos
+                    val delta = nanosPassed / 500000000f
+                    if (previousNanos > 0.0f) {
+                        timeUniform -= delta
+                    }
+                    previousNanos = frameTimeNanos
                 }
             }
         }

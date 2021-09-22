@@ -49,7 +49,7 @@ fun main() = application {
             }
             
             half4 main(vec2 fragcoord) { 
-                vec3 d = .5 - fragcoord.xy1 / 400;
+                vec3 d = .5 - fragcoord.xy1 / 500;
                 vec3 p=vec3(0);
                 for (int i = 0; i < 32; i++) p += f(p) * d;
                 return ((sin(p) + vec3(2, 5, 9)) / length(p)).xyz1;
@@ -59,6 +59,7 @@ fun main() = application {
     val runtimeEffect = RuntimeEffect.makeForShader(sksl)
     val byteBuffer = remember { ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN) }
     var timeUniform by remember { mutableStateOf(0.0f) }
+    var previousNanos by remember { mutableStateOf(0L) }
 
     Window(
         title = "Compose / Skia shader demo",
@@ -82,8 +83,13 @@ fun main() = application {
 
         LaunchedEffect(null) {
             while (true) {
-                withFrameNanos {
-                    timeUniform -= 0.0005f
+                withFrameNanos { frameTimeNanos ->
+                    val nanosPassed = frameTimeNanos - previousNanos
+                    val delta = nanosPassed / 100000000f
+                    if (previousNanos > 0.0f) {
+                        timeUniform -= delta
+                    }
+                    previousNanos = frameTimeNanos
                 }
             }
         }
