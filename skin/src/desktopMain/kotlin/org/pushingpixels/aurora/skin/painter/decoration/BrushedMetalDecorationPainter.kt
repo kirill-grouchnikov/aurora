@@ -42,7 +42,7 @@ class BrushedMetalDecorationPainter : ShaderWrapperDecorationPainter(
         getBrushedMetalShader(
             colorLight = it.lightColor,
             colorDark = it.darkColor,
-            alpha = 0.4f
+            alpha = 0.2f
         )
     },
     baseDecorationPainter = ArcDecorationPainter()

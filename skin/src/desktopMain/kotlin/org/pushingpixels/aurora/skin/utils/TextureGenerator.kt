@@ -101,29 +101,25 @@ fun getBrushedMetalShader(colorLight: Color, colorDark: Color, alpha: Float = 1.
         tiles = emptyArray()
     )
 
-    // Horizontal blur shader
-    val blurDesc = """
+    // Brushed metal shader
+    val brushedMetalDesc = """
             uniform shader input;
 
             half4 main(vec2 fragcoord) { 
-                vec3 blur = vec3(0.0);
-            
-                float sum = 0.0;
-                for (float delta = -15.0; delta <= 15.0; delta++) {
-                    // Give more "weight" to the pixels closest to the current
-                    float weight = sqrt(225.0 - delta * delta);
-                    // Aggregate the blurred value based on the weight
-                    blur += weight * sample(input, vec2(fragcoord.x + delta, fragcoord.y)).xyz;
-                    sum += weight;
-                }
-                // And normalize the aggregated blurred value
-                blur /= sum;
-            
-                return vec4(blur , 1.0);
+              vec4 inputColor = sample(input, vec2(0, fragcoord.y));
+              // Compute the luma at the first pixel in this row
+              float luma = dot(inputColor.rgb, vec3(0.299, 0.587, 0.114));
+              // Apply modulation to stretch and shift the texture for the brushed metal look 
+              float modulated = abs(cos((0.004 + 0.02 * luma) * (fragcoord.x + 200) + 0.26 * luma) 
+                  * sin((0.06 - 0.25 * luma) * (fragcoord.x + 85) + 0.75 * luma));
+              // Map 0.0-1.0 range to inverse 0.15-0.3
+              float modulated2 = 0.3 - modulated / 6.5;
+              half4 result = half4(modulated2, modulated2, modulated2, 1.0);
+              return result;
             }
     """
-    val blurEffect = RuntimeEffect.makeForShader(blurDesc)
-    val blurShader = blurEffect.makeShader(
+    val brushedMetalEffect = RuntimeEffect.makeForShader(brushedMetalDesc)
+    val brushedMetalShader = brushedMetalEffect.makeShader(
         uniforms = null,
         children = arrayOf(noiseShader),
         localMatrix = null,
@@ -162,7 +158,7 @@ fun getBrushedMetalShader(colorLight: Color, colorDark: Color, alpha: Float = 1.
     val duotoneEffect = RuntimeEffect.makeForShader(duotoneDesc)
     val duotoneShader = duotoneEffect.makeShader(
         uniforms = Data.makeFromBytes(duotoneDataBuffer.array()),
-        children = arrayOf(blurShader),
+        children = arrayOf(brushedMetalShader),
         localMatrix = null,
         isOpaque = false
     )
