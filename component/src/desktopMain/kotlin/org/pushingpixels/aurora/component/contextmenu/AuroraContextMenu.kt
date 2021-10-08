@@ -44,6 +44,7 @@ private suspend fun AwaitPointerEventScope.awaitEventFirstDown(): PointerEvent {
     return event
 }
 
+@OptIn(ExperimentalComposeApi::class)
 @Composable
 fun Modifier.auroraContextMenu(
     enabled: Boolean = true,
@@ -53,7 +54,6 @@ fun Modifier.auroraContextMenu(
 ): Modifier {
     var lastEvent by remember { mutableStateOf<MouseEvent?>(null) }
 
-    val parentComposition = rememberCompositionContext()
     val contentModelState = rememberUpdatedState(contentModel)
     val enabledState = rememberUpdatedState(enabled)
 
@@ -62,6 +62,8 @@ fun Modifier.auroraContextMenu(
     val mergedTextStyle = LocalTextStyle.current
     val resourceLoader = LocalFontLoader.current
     val window = LocalWindow.current
+    val locals = currentCompositionLocals.map { it provides it.current }.toTypedArray()
+    val currentLocals by rememberUpdatedState(locals)
 
     return this.then(Modifier.pointerInput(Unit) {
         forEachGesture {
@@ -81,7 +83,7 @@ fun Modifier.auroraContextMenu(
                     density = density,
                     textStyle = mergedTextStyle,
                     resourceLoader = resourceLoader,
-                    parentComposition = parentComposition,
+                    locals = currentLocals,
                     anchorBoundsInWindow = Rect(
                         offset = Offset(
                             x = lastEvent!!.x.toFloat(),

@@ -23,6 +23,7 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -71,6 +72,7 @@ private fun Modifier.comboBoxLocator(topLeftOffset: AuroraOffset, size: AuroraSi
     ComboBoxLocator(topLeftOffset, size)
 )
 
+@OptIn(ExperimentalComposeUiApi::class, androidx.compose.runtime.ExperimentalComposeApi::class)
 @Composable
 internal fun <E> AuroraComboBox(
     modifier: Modifier = Modifier,
@@ -193,8 +195,6 @@ internal fun <E> AuroraComboBox(
         }
     }
 
-    val parentComposition = rememberCompositionContext()
-
     val commandMenuContentModel = CommandMenuContentModel(
         group = CommandGroup(
             commands = contentModel.items.map {
@@ -207,6 +207,8 @@ internal fun <E> AuroraComboBox(
         )
     )
     val contentModelState = rememberUpdatedState(commandMenuContentModel)
+    val locals = currentCompositionLocals.map { it provides it.current }.toTypedArray()
+    val currentLocals by rememberUpdatedState(locals)
 
     Box(
         modifier = modifier
@@ -235,7 +237,7 @@ internal fun <E> AuroraComboBox(
                         density = density,
                         textStyle = textStyle,
                         resourceLoader = resourceLoader,
-                        parentComposition = parentComposition,
+                        locals = currentLocals,
                         anchorBoundsInWindow = Rect(
                             offset = comboBoxTopLeftOffset.asOffset(density),
                             size = comboBoxSize.asSize(density)

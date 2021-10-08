@@ -23,6 +23,7 @@ import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
@@ -137,6 +138,7 @@ fun AuroraHorizontalScrollbar(
     isVertical = false
 )
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun Scrollbar(
     adapter: ScrollbarAdapter,

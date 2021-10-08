@@ -22,6 +22,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.drawscope.withTransform
@@ -47,6 +48,7 @@ private class BoxWithHighlightsDrawingCache(
  *     <li>By design, this box does not support [ComponentStateFacet.PRESSED] transitions.</li>
  * </ul>
  */
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AuroraBoxWithHighlights(
     modifier: Modifier = Modifier,

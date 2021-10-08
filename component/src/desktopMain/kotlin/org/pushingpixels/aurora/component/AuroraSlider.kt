@@ -26,6 +26,7 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -63,6 +64,7 @@ private class SliderDrawingCache(
     )
 )
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 internal fun AuroraSlider(
     modifier: Modifier = Modifier,

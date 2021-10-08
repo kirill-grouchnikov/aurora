@@ -23,6 +23,7 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.draw.alpha
@@ -64,6 +65,7 @@ private class CommandButtonDrawingCache(
     val markPath: Path = Path()
 )
 
+@OptIn(ExperimentalComposeUiApi::class, androidx.compose.runtime.ExperimentalComposeApi::class)
 @Composable
 internal fun AuroraCommandButton(
     modifier: Modifier = Modifier,
@@ -362,7 +364,8 @@ internal fun AuroraCommandButton(
     }
 
     val hasIcon = preLayoutInfo.showIcon
-    val parentComposition = rememberCompositionContext()
+    val locals = currentCompositionLocals.map { it provides it.current }.toTypedArray()
+    val currentLocals by rememberUpdatedState(locals)
 
     Layout(
         modifier = modifier.commandButtonLocator(buttonTopLeftOffset, buttonSize),
@@ -605,7 +608,7 @@ internal fun AuroraCommandButton(
                             density = density,
                             textStyle = resolvedTextStyle,
                             resourceLoader = resourceLoader,
-                            parentComposition = parentComposition,
+                            locals = currentLocals,
                             anchorBoundsInWindow = Rect(
                                 offset = buttonTopLeftOffset.asOffset(density),
                                 size = buttonSize.asSize(density)

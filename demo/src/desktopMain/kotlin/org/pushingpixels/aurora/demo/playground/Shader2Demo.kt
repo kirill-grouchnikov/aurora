@@ -133,7 +133,7 @@ fun main() = application {
             isOpaque = false
         )
 
-        shaderPaint.setShader(shader)
+        shaderPaint.shader = shader
 
         Box(modifier = Modifier.fillMaxSize().paint(painter = object : Painter() {
             override val intrinsicSize: Size

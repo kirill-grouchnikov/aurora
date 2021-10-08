@@ -16,10 +16,7 @@
 package org.pushingpixels.aurora.component.utils
 
 import androidx.compose.foundation.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionContext
-import androidx.compose.runtime.State
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.geometry.Rect
@@ -57,7 +54,7 @@ internal fun displayPopupContent(
     density: Density,
     textStyle: TextStyle,
     resourceLoader: Font.ResourceLoader,
-    parentComposition: CompositionContext,
+    locals: Array<ProvidedValue<Any?>>,
     anchorBoundsInWindow: Rect,
     contentModel: State<CommandMenuContentModel?>,
     presentationModel: CommandPopupMenuPresentationModel,
@@ -271,16 +268,18 @@ internal fun displayPopupContent(
 
     popupContentWindow.bounds = popupRect
 
-    popupContentWindow.setContent(parentComposition = parentComposition) {
-        TopLevelPopupContent(
-            popupContentWindow = popupContentWindow,
-            menuContentModel = contentModel,
-            menuPresentationModel = presentationModel,
-            toDismissPopupsOnActivation = toDismissPopupsOnActivation,
-            toUseBackgroundStriping = toUseBackgroundStriping,
-            overlays = overlays,
-            contentLayoutInfo = contentLayoutInfo
-        )
+    popupContentWindow.setContent {
+        CompositionLocalProvider(*locals) {
+            TopLevelPopupContent(
+                popupContentWindow = popupContentWindow,
+                menuContentModel = contentModel,
+                menuPresentationModel = presentationModel,
+                toDismissPopupsOnActivation = toDismissPopupsOnActivation,
+                toUseBackgroundStriping = toUseBackgroundStriping,
+                overlays = overlays,
+                contentLayoutInfo = contentLayoutInfo
+            )
+        }
     }
 
     popupContentWindow.invalidate()
