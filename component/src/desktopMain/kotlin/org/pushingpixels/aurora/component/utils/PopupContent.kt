@@ -46,7 +46,7 @@ internal data class PopupContentLayoutInfo(
     val buttonPanelSize: Size,
     val separatorSize: Size,
     val generalContentSize: Size,
-    val generalContentItemHeight: Float,
+    val generalContentItemHeights: FloatArray,
     val generalVerticalScrollbarSize: Size
 )
 
@@ -99,6 +99,7 @@ internal fun displayPopupContent(
         popupPlacementStrategy = presentationModel.popupPlacementStrategy,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
         horizontalAlignment = HorizontalAlignment.Leading,
+        contentPadding = CommandButtonSizingConstants.CompactMenuButtonContentPadding,
         isMenu = true
     )
     val regularButtonLayoutManager =
@@ -157,10 +158,22 @@ internal fun displayPopupContent(
             }
         }
     }
+    val separatorHeight = SeparatorSizingConstants.Thickness.value * density.density
+    var index = 0
+    val itemHeights = FloatArray(regularButtonCount + contentModel.value!!.groups.size - 1)
+    for ((groupIndex, commandGroup) in contentModel.value!!.groups.withIndex()) {
+        for (secondaryCommand in commandGroup.commands) {
+            itemHeights[index++] = regularButtonHeight
+        }
+        if (groupIndex < (contentModel.value!!.groups.size - 1)) {
+            itemHeights[index++] = separatorHeight
+        }
+    }
+
     val visibleCommands = if (presentationModel.maxVisibleMenuCommands == 0) regularButtonCount
     else min(presentationModel.maxVisibleMenuCommands, regularButtonCount)
     val regularButtonColumnHeight = visibleCommands * regularButtonHeight +
-            (contentModel.value!!.groups.size - 1) * SeparatorSizingConstants.Thickness.value * density.density
+            (contentModel.value!!.groups.size - 1) * separatorHeight
 
     val generalVerticalScrollbarWidth = if (showingVerticalRegularContentScrollBar) {
         ScrollBarSizingConstants.DefaultScrollBarThickness.value * density.density +
@@ -194,7 +207,7 @@ internal fun displayPopupContent(
             width = finalGeneralContentWidth,
             height = regularButtonColumnHeight
         ),
-        generalContentItemHeight = regularButtonHeight,
+        generalContentItemHeights = itemHeights,
         generalVerticalScrollbarSize = Size(
             width = generalVerticalScrollbarWidth,
             height = regularButtonColumnHeight
@@ -361,12 +374,12 @@ private fun TopLevelPopupContent(
                 overlays = overlays
             )
         }) { measurables, _ ->
-            val placeables = measurables.map { measurable ->
+            val placeables = measurables.mapIndexed { index, measurable ->
                 // Measure each child with fixed (widest) width and fixed (tallest) height
                 measurable.measure(
                     Constraints.fixed(
                         width = contentLayoutInfo.generalContentSize.width.roundToInt(),
-                        height = contentLayoutInfo.generalContentItemHeight.toInt()
+                        height = contentLayoutInfo.generalContentItemHeights[index].toInt()
                     )
                 )
             }
@@ -432,6 +445,7 @@ private fun PopupGeneralContent(
         popupPlacementStrategy = menuPresentationModel.popupPlacementStrategy,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
         horizontalAlignment = HorizontalAlignment.Leading,
+        contentPadding = CommandButtonSizingConstants.CompactMenuButtonContentPadding,
         isMenu = true
     )
 
@@ -484,12 +498,12 @@ private fun PopupGeneralContent(
             runningCommandIndex++
         }
         if (commandGroupIndex < (menuContentModel.value!!.groups.size - 1)) {
-//            HorizontalSeparatorProjection(
-//                presentationModel = SeparatorPresentationModel(
-//                    startGradientAmount = 0.dp,
-//                    endGradientAmount = 0.dp
-//                )
-//            ).project()
+            HorizontalSeparatorProjection(
+                presentationModel = SeparatorPresentationModel(
+                    startGradientAmount = 0.dp,
+                    endGradientAmount = 0.dp
+                )
+            ).project()
         }
     }
 }
