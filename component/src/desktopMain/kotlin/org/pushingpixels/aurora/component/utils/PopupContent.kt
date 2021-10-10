@@ -38,6 +38,7 @@ import org.pushingpixels.aurora.skin.*
 import java.awt.Rectangle
 import java.awt.Window
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 internal data class PopupContentLayoutInfo(
@@ -45,6 +46,7 @@ internal data class PopupContentLayoutInfo(
     val buttonPanelSize: Size,
     val separatorSize: Size,
     val generalContentSize: Size,
+    val generalContentItemHeight: Float,
     val generalVerticalScrollbarSize: Size
 )
 
@@ -133,8 +135,8 @@ internal fun displayPopupContent(
     var showingVerticalRegularContentScrollBar = false
 
     var regularButtonColumnWidth = 0.0f
-    var regularButtonColumnHeight = 0.0f
     var regularButtonCount = 0
+    var regularButtonHeight = 0.0f;
     for ((commandGroupIndex, commandGroup) in contentModel.value!!.groups.withIndex()) {
         for (secondaryCommand in commandGroup.commands) {
             val preferredSize = regularButtonLayoutManager.getPreferredSize(
@@ -146,9 +148,7 @@ internal fun displayPopupContent(
                 )
             )
             regularButtonColumnWidth = max(regularButtonColumnWidth, preferredSize.width)
-            if (!showingVerticalRegularContentScrollBar) {
-                regularButtonColumnHeight += preferredSize.height
-            }
+            regularButtonHeight = max(regularButtonHeight, preferredSize.height)
 
             regularButtonCount++
             if (presentationModel.maxVisibleMenuCommands == regularButtonCount) {
@@ -156,11 +156,11 @@ internal fun displayPopupContent(
                 showingVerticalRegularContentScrollBar = true
             }
         }
-        // Account for horizontal separator between secondary command groups
-        if (commandGroupIndex < (contentModel.value!!.groups.size - 1)) {
-            regularButtonColumnHeight += SeparatorSizingConstants.Thickness.value * density.density
-        }
     }
+    val visibleCommands = if (presentationModel.maxVisibleMenuCommands == 0) regularButtonCount
+    else min(presentationModel.maxVisibleMenuCommands, regularButtonCount)
+    val regularButtonColumnHeight = visibleCommands * regularButtonHeight +
+            (contentModel.value!!.groups.size - 1) * SeparatorSizingConstants.Thickness.value * density.density
 
     val generalVerticalScrollbarWidth = if (showingVerticalRegularContentScrollBar) {
         ScrollBarSizingConstants.DefaultScrollBarThickness.value * density.density +
@@ -194,6 +194,7 @@ internal fun displayPopupContent(
             width = finalGeneralContentWidth,
             height = regularButtonColumnHeight
         ),
+        generalContentItemHeight = regularButtonHeight,
         generalVerticalScrollbarSize = Size(
             width = generalVerticalScrollbarWidth,
             height = regularButtonColumnHeight
@@ -361,8 +362,13 @@ private fun TopLevelPopupContent(
             )
         }) { measurables, _ ->
             val placeables = measurables.map { measurable ->
-                // Measure each child with fixed (widest) width
-                measurable.measure(Constraints.fixedWidth(contentLayoutInfo.generalContentSize.width.roundToInt()))
+                // Measure each child with fixed (widest) width and fixed (tallest) height
+                measurable.measure(
+                    Constraints.fixedWidth(
+                        width = contentLayoutInfo.generalContentSize.width.roundToInt(),
+//                        height = contentLayoutInfo.generalContentItemHeight.toInt()
+                    )
+                )
             }
 
             // The children are laid out in a column
@@ -478,12 +484,12 @@ private fun PopupGeneralContent(
             runningCommandIndex++
         }
         if (commandGroupIndex < (menuContentModel.value!!.groups.size - 1)) {
-            HorizontalSeparatorProjection(
-                presentationModel = SeparatorPresentationModel(
-                    startGradientAmount = 0.dp,
-                    endGradientAmount = 0.dp
-                )
-            ).project()
+//            HorizontalSeparatorProjection(
+//                presentationModel = SeparatorPresentationModel(
+//                    startGradientAmount = 0.dp,
+//                    endGradientAmount = 0.dp
+//                )
+//            ).project()
         }
     }
 }
