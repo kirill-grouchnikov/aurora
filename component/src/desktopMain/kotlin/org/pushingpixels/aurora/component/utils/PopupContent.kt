@@ -137,7 +137,7 @@ internal fun displayPopupContent(
     var regularButtonColumnWidth = 0.0f
     var regularButtonCount = 0
     var regularButtonHeight = 0.0f;
-    for ((commandGroupIndex, commandGroup) in contentModel.value!!.groups.withIndex()) {
+    for (commandGroup in contentModel.value!!.groups) {
         for (secondaryCommand in commandGroup.commands) {
             val preferredSize = regularButtonLayoutManager.getPreferredSize(
                 command = secondaryCommand,
@@ -364,9 +364,9 @@ private fun TopLevelPopupContent(
             val placeables = measurables.map { measurable ->
                 // Measure each child with fixed (widest) width and fixed (tallest) height
                 measurable.measure(
-                    Constraints.fixedWidth(
+                    Constraints.fixed(
                         width = contentLayoutInfo.generalContentSize.width.roundToInt(),
-//                        height = contentLayoutInfo.generalContentItemHeight.toInt()
+                        height = contentLayoutInfo.generalContentItemHeight.toInt()
                     )
                 )
             }
