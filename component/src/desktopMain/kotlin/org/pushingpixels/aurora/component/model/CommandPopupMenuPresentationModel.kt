@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.component.model
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.unit.Density
@@ -27,6 +28,8 @@ data class CommandPopupMenuPresentationModel(
     val panelPresentationModel: CommandPanelPresentationModel? = null,
     val menuPresentationState: CommandButtonPresentationState =
         DefaultCommandPopupMenuPresentationState,
+    val menuContentPadding: PaddingValues =
+        CommandButtonSizingConstants.CompactMenuButtonContentPadding,
     val maxVisibleMenuCommands: Int = 0,
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Endward
 )

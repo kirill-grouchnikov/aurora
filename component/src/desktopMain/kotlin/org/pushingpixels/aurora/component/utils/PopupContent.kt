@@ -99,7 +99,7 @@ internal fun displayPopupContent(
         popupPlacementStrategy = presentationModel.popupPlacementStrategy,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
         horizontalAlignment = HorizontalAlignment.Leading,
-        contentPadding = CommandButtonSizingConstants.CompactMenuButtonContentPadding,
+        contentPadding = presentationModel.menuContentPadding,
         isMenu = true
     )
     val regularButtonLayoutManager =
@@ -445,7 +445,7 @@ private fun PopupGeneralContent(
         popupPlacementStrategy = menuPresentationModel.popupPlacementStrategy,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
         horizontalAlignment = HorizontalAlignment.Leading,
-        contentPadding = CommandButtonSizingConstants.CompactMenuButtonContentPadding,
+        contentPadding = menuPresentationModel.menuContentPadding,
         isMenu = true
     )
 
