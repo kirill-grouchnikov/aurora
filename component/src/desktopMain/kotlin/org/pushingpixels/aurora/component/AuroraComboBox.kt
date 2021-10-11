@@ -37,6 +37,7 @@ import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
@@ -106,6 +107,8 @@ internal fun <E> AuroraComboBox(
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
     val resourceLoader = LocalFontLoader.current
+
+    val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
 
     // Transition for the selection state
     val selectionTransition = updateTransition(false)
@@ -235,7 +238,7 @@ internal fun <E> AuroraComboBox(
                         currentWindow = window,
                         layoutDirection = layoutDirection,
                         density = density,
-                        textStyle = textStyle,
+                        textStyle = resolvedTextStyle,
                         resourceLoader = resourceLoader,
                         locals = currentLocals,
                         anchorBoundsInWindow = Rect(
@@ -244,7 +247,7 @@ internal fun <E> AuroraComboBox(
                         ),
                         contentModel = contentModelState,
                         presentationModel = CommandPopupMenuPresentationModel(
-                            menuPresentationState = CommandButtonPresentationState.Medium,
+                            menuPresentationState = DefaultCommandPopupMenuPresentationState,
                             maxVisibleMenuCommands = presentationModel.popupMaxVisibleItems,
                             popupPlacementStrategy = presentationModel.popupPlacementStrategy
                         ),

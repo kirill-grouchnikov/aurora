@@ -26,7 +26,6 @@ import org.pushingpixels.aurora.skin.PopupPlacementStrategy
 object CommandButtonSizingConstants {
     val WideButtonContentPadding = PaddingValues(start = 10.dp, top = 4.dp, end = 10.dp, bottom = 4.dp)
     val CompactButtonContentPadding = PaddingValues(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
-    val CompactMenuButtonContentPadding = PaddingValues(start = 6.dp, top = 2.dp, end = 6.dp, bottom = 2.dp)
 }
 
 data class CommandButtonPresentationModel(

@@ -25,6 +25,7 @@ import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.resolveDefaults
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.model.CommandMenuContentModel
@@ -65,6 +66,8 @@ fun Modifier.auroraContextMenu(
     val locals = currentCompositionLocals.map { it provides it.current }.toTypedArray()
     val currentLocals by rememberUpdatedState(locals)
 
+    val resolvedTextStyle = remember { resolveDefaults(mergedTextStyle, layoutDirection) }
+
     return this.then(Modifier.pointerInput(Unit) {
         forEachGesture {
             // TODO - this only detects PRESSED events, so it doesn't work on platforms
@@ -81,7 +84,7 @@ fun Modifier.auroraContextMenu(
                     currentWindow = window,
                     layoutDirection = layoutDirection,
                     density = density,
-                    textStyle = mergedTextStyle,
+                    textStyle = resolvedTextStyle,
                     resourceLoader = resourceLoader,
                     locals = currentLocals,
                     anchorBoundsInWindow = Rect(
