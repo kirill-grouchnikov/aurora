@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
@@ -37,6 +38,7 @@ import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjecti
 import org.pushingpixels.aurora.skin.*
 import java.awt.Rectangle
 import java.awt.Window
+import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -92,7 +94,7 @@ internal fun displayPopupContent(
             density = density
         ) else Size(0.0f, 0.0f)
 
-    // Command presentation for menu content, taking some of the values from
+    // Command presentation for menu content, taking some values from
     // the popup menu presentation model configured on the top-level presentation model
     val regularButtonPresentationModel = CommandButtonPresentationModel(
         presentationState = presentationModel.menuPresentationState,
@@ -137,7 +139,7 @@ internal fun displayPopupContent(
 
     var regularButtonColumnWidth = 0.0f
     var regularButtonCount = 0
-    var regularButtonHeight = 0.0f;
+    var regularButtonHeight = 0.0f
     for (commandGroup in contentModel.value!!.groups) {
         for (secondaryCommand in commandGroup.commands) {
             val preferredSize = regularButtonLayoutManager.getPreferredSize(
@@ -189,14 +191,15 @@ internal fun displayPopupContent(
         regularButtonColumnWidth + generalVerticalScrollbarWidth
     )
     val finalGeneralContentWidth = fullContentWidth - generalVerticalScrollbarWidth
+    val offset = ceil(density.density).roundToInt()
 
     // Full size of the popup accounts for extra one pixel on each side for the popup border
     val contentLayoutInfo = PopupContentLayoutInfo(
         fullSize = Size(
-            width = fullContentWidth + 2,
+            width = fullContentWidth + 2 * offset,
             height = panelPreferredSize.height +
                     (if (hasButtonPanel) SeparatorSizingConstants.Thickness.value * density.density else 0.0f) +
-                    regularButtonColumnHeight + 2
+                    regularButtonColumnHeight + 2 * offset
         ),
         buttonPanelSize = Size(width = fullContentWidth, height = panelPreferredSize.height),
         separatorSize = Size(
@@ -214,8 +217,8 @@ internal fun displayPopupContent(
         )
     )
 
-    val fullPopupWidth = (contentLayoutInfo.fullSize.width / density.density).toInt()
-    val fullPopupHeight = (contentLayoutInfo.fullSize.height / density.density).toInt()
+    val fullPopupWidth = ceil(contentLayoutInfo.fullSize.width / density.density).toInt()
+    val fullPopupHeight = ceil(contentLayoutInfo.fullSize.height / density.density).toInt()
 
     // From this point, all coordinates are in Swing display units - which are density independent.
     // This is why the popup width and height was converted from pixels.
@@ -338,8 +341,8 @@ private fun TopLevelPopupContent(
                 rect = Rect(
                     left = 0.5f,
                     top = 0.5f,
-                    right = size.width - 0.5f,
-                    bottom = size.height - 0.5f
+                    right = size.width - 1.0f,
+                    bottom = size.height - 1.0f
                 )
             )
             drawOutline(
@@ -437,7 +440,7 @@ private fun PopupGeneralContent(
         }
     }
 
-    // Command presentation for menu content, taking some of the values from
+    // Command presentation for menu content, taking some values from
     // the popup menu presentation model configured on the top-level presentation model
     val menuButtonPresentationModel = CommandButtonPresentationModel(
         presentationState = menuPresentationModel.menuPresentationState,
@@ -514,6 +517,7 @@ private fun PopupContentLayout(
     contentLayoutInfo: PopupContentLayoutInfo,
     content: @Composable () -> Unit
 ) {
+    val offset = ceil(LocalDensity.current.density).toInt()
     Layout(content = content) { measurables, _ ->
         val canvasPlaceable = measurables[0].measure(
             constraints = Constraints.fixed(
@@ -565,18 +569,18 @@ private fun PopupContentLayout(
             // TODO - support RTL
             canvasPlaceable.placeRelative(0, 0)
 
-            // Offset everything else by 1,1 for border insets
-            var yPosition = 1
+            // Offset everything else by [offset,offset] for border insets
+            var yPosition = offset
             if (panelPlaceable != null) {
-                panelPlaceable.placeRelative(1, 1)
+                panelPlaceable.placeRelative(offset, offset)
                 yPosition += panelPlaceable.height
-                panelSeparatorPlaceable!!.placeRelative(1, yPosition)
+                panelSeparatorPlaceable!!.placeRelative(offset, yPosition)
                 yPosition += panelSeparatorPlaceable.height
             }
 
-            generalContentPlaceable.placeRelative(x = 1, y = yPosition)
+            generalContentPlaceable.placeRelative(x = offset, y = yPosition)
             verticalScrollBarPlaceable?.placeRelative(
-                x = 1 + generalContentPlaceable.width + scrollBarMarginPx,
+                x = offset + generalContentPlaceable.width + scrollBarMarginPx,
                 y = yPosition + scrollBarMarginPx
             )
         }
