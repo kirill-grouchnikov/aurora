@@ -243,6 +243,7 @@ internal fun <E> AuroraComboBox(
                         resourceLoader = resourceLoader,
                         skinColors = skinColors,
                         skinPainters = painters,
+                        decorationAreaType = decorationAreaType,
                         locals = currentLocals,
                         anchorBoundsInWindow = Rect(
                             offset = comboBoxTopLeftOffset.asOffset(density),

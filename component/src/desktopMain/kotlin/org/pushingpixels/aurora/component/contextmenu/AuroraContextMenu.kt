@@ -65,6 +65,7 @@ fun Modifier.auroraContextMenu(
     val resourceLoader = LocalFontLoader.current
     val skinColors = AuroraSkin.colors
     val painters = AuroraSkin.painters
+    val decorationAreaType = AuroraSkin.decorationAreaType
     val window = LocalWindow.current
     val locals = currentCompositionLocals.map { it provides it.current }.toTypedArray()
     val currentLocals by rememberUpdatedState(locals)
@@ -91,6 +92,7 @@ fun Modifier.auroraContextMenu(
                     resourceLoader = resourceLoader,
                     skinColors = skinColors,
                     skinPainters = painters,
+                    decorationAreaType = decorationAreaType,
                     locals = currentLocals,
                     anchorBoundsInWindow = Rect(
                         offset = Offset(

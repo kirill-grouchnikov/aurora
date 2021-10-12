@@ -15,14 +15,16 @@
  */
 package org.pushingpixels.aurora.component.utils
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.ScrollbarAdapter
+import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
@@ -36,13 +38,18 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.skin.*
 import org.pushingpixels.aurora.skin.colorscheme.AuroraSkinColors
-import java.awt.Rectangle
-import java.awt.Window
-import javax.swing.border.LineBorder
+import java.awt.*
+import java.awt.geom.Rectangle2D
+import javax.swing.border.Border
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
+
+private val Color.awtColor: java.awt.Color
+    get() = java.awt.Color(
+        this.red, this.green, this.blue, this.alpha
+    )
 
 internal data class PopupContentLayoutInfo(
     val fullSize: Size,
@@ -61,6 +68,7 @@ internal fun displayPopupContent(
     resourceLoader: Font.ResourceLoader,
     skinColors: AuroraSkinColors,
     skinPainters: AuroraPainters,
+    decorationAreaType: DecorationAreaType,
     locals: Array<ProvidedValue<Any?>>,
     anchorBoundsInWindow: Rect,
     contentModel: State<CommandMenuContentModel?>,
@@ -294,11 +302,50 @@ internal fun displayPopupContent(
         componentState = ComponentState.Enabled
     )
     val popupBorderColor = skinPainters.borderPainter.getRepresentativeColor(borderScheme)
-    popupContentWindow.rootPane.border = LineBorder(
-        java.awt.Color(
-            popupBorderColor.red, popupBorderColor.green, popupBorderColor.blue
-        )
-    )
+    val awtBorderColor = popupBorderColor.awtColor
+    val fillColor = skinColors.getBackgroundColorScheme(decorationAreaType).backgroundFillColor
+    val awtFillColor = fillColor.awtColor
+    val borderThickness = 1.0f / density.density
+    
+    popupContentWindow.rootPane.border = object : Border {
+        override fun paintBorder(
+            c: Component,
+            g: Graphics,
+            x: Int,
+            y: Int,
+            width: Int,
+            height: Int
+        ) {
+            val g2d = g.create() as Graphics2D
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+            g2d.setRenderingHint(
+                RenderingHints.KEY_STROKE_CONTROL,
+                RenderingHints.VALUE_STROKE_PURE
+            )
+
+            g2d.color = awtFillColor
+            g2d.fill(Rectangle(0, 0, width, height))
+
+            val thickness = 0.5f
+            g2d.stroke = BasicStroke(thickness, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND)
+            g2d.color = awtBorderColor
+            g2d.draw(
+                Rectangle2D.Float(
+                    borderThickness / 2.0f, borderThickness / 2.0f,
+                    width - borderThickness, height - borderThickness
+                )
+            )
+            g2d.dispose()
+        }
+
+        override fun getBorderInsets(c: Component?): Insets {
+            return Insets(1, 1, 1, 1)
+        }
+
+        override fun isBorderOpaque(): Boolean {
+            return false
+        }
+    }
 
     popupContentWindow.setContent {
         CompositionLocalProvider(*locals) {
