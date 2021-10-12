@@ -608,6 +608,8 @@ internal fun AuroraCommandButton(
                             density = density,
                             textStyle = resolvedTextStyle,
                             resourceLoader = resourceLoader,
+                            skinColors = skinColors,
+                            skinPainters = painters,
                             locals = currentLocals,
                             anchorBoundsInWindow = Rect(
                                 offset = buttonTopLeftOffset.asOffset(density),

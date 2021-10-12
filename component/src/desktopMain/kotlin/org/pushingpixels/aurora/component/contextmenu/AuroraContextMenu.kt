@@ -31,6 +31,7 @@ import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.model.CommandMenuContentModel
 import org.pushingpixels.aurora.component.model.CommandPopupMenuPresentationModel
 import org.pushingpixels.aurora.component.utils.displayPopupContent
+import org.pushingpixels.aurora.skin.AuroraSkin
 import org.pushingpixels.aurora.skin.LocalTextStyle
 import org.pushingpixels.aurora.skin.LocalWindow
 import java.awt.event.MouseEvent
@@ -62,6 +63,8 @@ fun Modifier.auroraContextMenu(
     val layoutDirection = LocalLayoutDirection.current
     val mergedTextStyle = LocalTextStyle.current
     val resourceLoader = LocalFontLoader.current
+    val skinColors = AuroraSkin.colors
+    val painters = AuroraSkin.painters
     val window = LocalWindow.current
     val locals = currentCompositionLocals.map { it provides it.current }.toTypedArray()
     val currentLocals by rememberUpdatedState(locals)
@@ -86,6 +89,8 @@ fun Modifier.auroraContextMenu(
                     density = density,
                     textStyle = resolvedTextStyle,
                     resourceLoader = resourceLoader,
+                    skinColors = skinColors,
+                    skinPainters = painters,
                     locals = currentLocals,
                     anchorBoundsInWindow = Rect(
                         offset = Offset(

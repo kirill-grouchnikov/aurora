@@ -98,6 +98,7 @@ internal fun <E> AuroraComboBox(
 
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
+    val painters = AuroraSkin.painters
     val buttonShaper = AuroraSkin.buttonShaper
     val window = LocalWindow.current
 
@@ -240,6 +241,8 @@ internal fun <E> AuroraComboBox(
                         density = density,
                         textStyle = resolvedTextStyle,
                         resourceLoader = resourceLoader,
+                        skinColors = skinColors,
+                        skinPainters = painters,
                         locals = currentLocals,
                         anchorBoundsInWindow = Rect(
                             offset = comboBoxTopLeftOffset.asOffset(density),

@@ -21,9 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.drawOutline
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
@@ -36,8 +35,10 @@ import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.skin.*
+import org.pushingpixels.aurora.skin.colorscheme.AuroraSkinColors
 import java.awt.Rectangle
 import java.awt.Window
+import javax.swing.border.LineBorder
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
@@ -58,6 +59,8 @@ internal fun displayPopupContent(
     density: Density,
     textStyle: TextStyle,
     resourceLoader: Font.ResourceLoader,
+    skinColors: AuroraSkinColors,
+    skinPainters: AuroraPainters,
     locals: Array<ProvidedValue<Any?>>,
     anchorBoundsInWindow: Rect,
     contentModel: State<CommandMenuContentModel?>,
@@ -191,7 +194,7 @@ internal fun displayPopupContent(
         regularButtonColumnWidth + generalVerticalScrollbarWidth
     )
     val finalGeneralContentWidth = fullContentWidth - generalVerticalScrollbarWidth
-    val offset = ceil(density.density).roundToInt()
+    val offset = ceil(density.density).toInt()
 
     // Full size of the popup accounts for extra one pixel on each side for the popup border
     val contentLayoutInfo = PopupContentLayoutInfo(
@@ -285,6 +288,18 @@ internal fun displayPopupContent(
 
     popupContentWindow.bounds = popupRect
 
+    val borderScheme = skinColors.getColorScheme(
+        decorationAreaType = DecorationAreaType.None,
+        associationKind = ColorSchemeAssociationKind.Border,
+        componentState = ComponentState.Enabled
+    )
+    val popupBorderColor = skinPainters.borderPainter.getRepresentativeColor(borderScheme)
+    popupContentWindow.rootPane.border = LineBorder(
+        java.awt.Color(
+            popupBorderColor.red, popupBorderColor.green, popupBorderColor.blue
+        )
+    )
+
     popupContentWindow.setContent {
         CompositionLocalProvider(*locals) {
             TopLevelPopupContent(
@@ -324,31 +339,12 @@ private fun TopLevelPopupContent(
 ) {
     val stateVertical = rememberScrollState(0)
 
-    val borderScheme = AuroraSkin.colors.getColorScheme(
-        decorationAreaType = DecorationAreaType.None,
-        associationKind = ColorSchemeAssociationKind.Border,
-        componentState = ComponentState.Enabled
-    )
-    val popupBorderColor = AuroraSkin.painters.borderPainter.getRepresentativeColor(borderScheme)
     val hasPanel = (menuContentModel.value!!.panelContentModel != null)
     PopupContentLayout(
+        modifier = Modifier.auroraBackground(),
         hasPanel = hasPanel,
         contentLayoutInfo = contentLayoutInfo
     ) {
-        // This canvas paints the background fill of the popup and the outer hairline border
-        Canvas(modifier = Modifier.auroraBackground()) {
-            val outline = Outline.Rectangle(
-                rect = Rect(
-                    left = 0.5f,
-                    top = 0.5f,
-                    right = size.width - 1.0f,
-                    bottom = size.height - 1.0f
-                )
-            )
-            drawOutline(
-                outline = outline, color = popupBorderColor, style = Stroke(width = 1.0f)
-            )
-        }
         if (hasPanel) {
             AuroraCommandButtonPanel(
                 contentModel = menuContentModel.value!!.panelContentModel!!,
@@ -514,29 +510,23 @@ private fun PopupGeneralContent(
 @Composable
 private fun PopupContentLayout(
     hasPanel: Boolean,
+    modifier: Modifier = Modifier,
     contentLayoutInfo: PopupContentLayoutInfo,
     content: @Composable () -> Unit
 ) {
     val offset = ceil(LocalDensity.current.density).toInt()
-    Layout(content = content) { measurables, _ ->
-        val canvasPlaceable = measurables[0].measure(
-            constraints = Constraints.fixed(
-                width = contentLayoutInfo.fullSize.width.toInt(),
-                height = contentLayoutInfo.fullSize.height.toInt()
-            )
-        )
-
+    Layout(modifier = modifier, content = content) { measurables, _ ->
         var panelPlaceable: Placeable? = null
         var panelSeparatorPlaceable: Placeable? = null
         if (hasPanel) {
             // The column width is determined by the panel
-            panelPlaceable = measurables[1].measure(
+            panelPlaceable = measurables[0].measure(
                 Constraints.fixed(
                     width = contentLayoutInfo.buttonPanelSize.width.toInt(),
                     height = contentLayoutInfo.buttonPanelSize.height.toInt()
                 )
             )
-            panelSeparatorPlaceable = measurables[2].measure(
+            panelSeparatorPlaceable = measurables[1].measure(
                 Constraints.fixed(
                     width = contentLayoutInfo.separatorSize.width.toInt(),
                     height = contentLayoutInfo.separatorSize.height.toInt()
@@ -544,7 +534,7 @@ private fun PopupContentLayout(
             )
         }
 
-        val generalContentPlaceable = measurables[if (hasPanel) 3 else 1].measure(
+        val generalContentPlaceable = measurables[if (hasPanel) 2 else 0].measure(
             Constraints.fixed(
                 width = contentLayoutInfo.generalContentSize.width.toInt(),
                 height = contentLayoutInfo.generalContentSize.height.toInt()
@@ -554,7 +544,7 @@ private fun PopupContentLayout(
         val scrollBarMarginPx = ScrollBarSizingConstants.DefaultScrollBarMargin.roundToPx()
         val scrollBarThicknessPx = ScrollBarSizingConstants.DefaultScrollBarThickness.roundToPx()
         if (contentLayoutInfo.generalVerticalScrollbarSize.width > 0.0f) {
-            verticalScrollBarPlaceable = measurables[if (hasPanel) 4 else 2].measure(
+            verticalScrollBarPlaceable = measurables[if (hasPanel) 3 else 1].measure(
                 Constraints.fixed(
                     width = scrollBarThicknessPx,
                     height = contentLayoutInfo.generalVerticalScrollbarSize.height.toInt() - 2 * scrollBarMarginPx
@@ -567,9 +557,8 @@ private fun PopupContentLayout(
             height = contentLayoutInfo.fullSize.height.toInt()
         ) {
             // TODO - support RTL
-            canvasPlaceable.placeRelative(0, 0)
 
-            // Offset everything else by [offset,offset] for border insets
+            // Offset everything by [offset,offset] for border insets
             var yPosition = offset
             if (panelPlaceable != null) {
                 panelPlaceable.placeRelative(offset, offset)
