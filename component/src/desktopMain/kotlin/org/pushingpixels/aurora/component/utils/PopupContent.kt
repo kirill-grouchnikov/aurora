@@ -83,6 +83,7 @@ internal fun displayPopupContent(
     popupContentWindow.type = Window.Type.POPUP
     popupContentWindow.isAlwaysOnTop = true
     popupContentWindow.isUndecorated = true
+    popupContentWindow.isResizable = false
 
     val locationOnScreen = currentWindow.locationOnScreen
 
@@ -618,7 +619,7 @@ private fun PopupContentLayout(
 
             generalContentPlaceable.placeRelative(x = offset, y = yPosition)
             verticalScrollBarPlaceable?.placeRelative(
-                x = offset + generalContentPlaceable.width + scrollBarMarginPx,
+                x = offset + generalContentPlaceable.width + scrollBarMarginPx + offset,
                 y = yPosition + scrollBarMarginPx
             )
         }
