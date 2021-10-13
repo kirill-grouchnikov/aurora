@@ -201,16 +201,17 @@ internal fun displayPopupContent(
         panelPreferredSize.width,
         regularButtonColumnWidth + generalVerticalScrollbarWidth
     )
+    val fullContentHeight = panelPreferredSize.height +
+            (if (hasButtonPanel) SeparatorSizingConstants.Thickness.value * density.density else 0.0f) +
+            regularButtonColumnHeight
     val finalGeneralContentWidth = fullContentWidth - generalVerticalScrollbarWidth
+
     val offset = ceil(density.density).toInt()
 
-    // Full size of the popup accounts for extra one pixel on each side for the popup border
     val contentLayoutInfo = PopupContentLayoutInfo(
         fullSize = Size(
             width = fullContentWidth + 2 * offset,
-            height = panelPreferredSize.height +
-                    (if (hasButtonPanel) SeparatorSizingConstants.Thickness.value * density.density else 0.0f) +
-                    regularButtonColumnHeight + 2 * offset
+            height = fullContentHeight + 2 * offset
         ),
         buttonPanelSize = Size(width = fullContentWidth, height = panelPreferredSize.height),
         separatorSize = Size(
@@ -228,8 +229,9 @@ internal fun displayPopupContent(
         )
     )
 
-    val fullPopupWidth = ceil(contentLayoutInfo.fullSize.width / density.density).toInt()
-    val fullPopupHeight = ceil(contentLayoutInfo.fullSize.height / density.density).toInt()
+    // Full size of the popup accounts for extra two pixels on each side for the popup border
+    val fullPopupWidth = ceil(fullContentWidth / density.density).toInt() + 4
+    val fullPopupHeight = ceil(fullContentHeight / density.density).toInt() + 4
 
     // From this point, all coordinates are in Swing display units - which are density independent.
     // This is why the popup width and height was converted from pixels.
