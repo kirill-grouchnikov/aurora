@@ -20,17 +20,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.*
-import org.pushingpixels.aurora.skin.AuroraSkin
-import org.pushingpixels.aurora.skin.BackgroundAppearanceStrategy
-import org.pushingpixels.aurora.skin.IconFilterStrategy
+import androidx.compose.ui.window.WindowPlacement
+import androidx.compose.ui.window.WindowPosition
+import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.ComboBoxProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonPanelProjection
 import org.pushingpixels.aurora.demo.svg.material.*
-import org.pushingpixels.aurora.skin.businessSkin
-import org.pushingpixels.aurora.skin.getAuroraSkins
+import org.pushingpixels.aurora.skin.*
 import org.pushingpixels.aurora.window.AuroraWindow
 
 fun getCommandPanelContentModel(vararg groupSizes: Int): CommandPanelContentModel {
@@ -85,7 +85,7 @@ fun main() = application {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
-        size = WindowSize(1000.dp, 400.dp)
+        size = DpSize(1000.dp, 400.dp)
     )
     val skin = mutableStateOf(businessSkin())
 

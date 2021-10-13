@@ -27,8 +27,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.*
+import androidx.compose.ui.window.WindowPlacement
+import androidx.compose.ui.window.WindowPosition
+import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.skin.businessSkin
 import org.pushingpixels.aurora.skin.colorscheme.MetallicColorScheme
 import org.pushingpixels.aurora.skin.colorscheme.OrangeColorScheme
@@ -40,7 +44,7 @@ fun main() = application {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
-        size = WindowSize(800.dp, 600.dp)
+        size = DpSize(800.dp, 600.dp)
     )
     val skin = mutableStateOf(businessSkin())
 
