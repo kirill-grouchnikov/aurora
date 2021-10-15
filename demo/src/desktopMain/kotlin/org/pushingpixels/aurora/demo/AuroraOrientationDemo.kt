@@ -19,12 +19,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.WindowPlacement
-import androidx.compose.ui.window.WindowPosition
-import androidx.compose.ui.window.application
-import androidx.compose.ui.window.rememberWindowState
+import androidx.compose.ui.window.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CheckBoxProjection
 import org.pushingpixels.aurora.component.projection.ComboBoxProjection
@@ -37,6 +36,7 @@ import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.skin.*
 import org.pushingpixels.aurora.window.AuroraWindow
+import java.awt.ComponentOrientation
 import java.text.MessageFormat
 import java.util.*
 
@@ -62,7 +62,13 @@ fun main() = application {
         undecorated = true,
         onCloseRequest = ::exitApplication,
     ) {
-        OrientationCommandContent(skin, currLocale, resourceBundle)
+        CompositionLocalProvider(
+            LocalLayoutDirection provides
+                    if (ComponentOrientation.getOrientation(currLocale.value).isLeftToRight)
+                        LayoutDirection.Ltr else LayoutDirection.Rtl,
+        ) {
+            OrientationCommandContent(skin, currLocale, resourceBundle)
+        }
     }
 }
 
@@ -391,7 +397,7 @@ private fun getPopupMenuContentModel(resourceBundle: State<ResourceBundle>): Com
 }
 
 @Composable
-fun OrientationCommandContent(
+fun WindowScope.OrientationCommandContent(
     auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
     locale: MutableState<Locale>,
     resourceBundle: State<ResourceBundle>
@@ -492,12 +498,20 @@ fun OrientationCommandContent(
                 val englishLocale = Command(
                     text = "English",
                     icon = us(),
-                    action = { locale.value = Locale("en", "US") }
+                    action = {
+                        locale.value = Locale("en", "US")
+                        Locale.setDefault(locale.value)
+                        window.applyComponentOrientation(ComponentOrientation.getOrientation(locale.value))
+                    }
                 )
                 val hebrewLocale = Command(
                     text = "Hebrew",
                     icon = il(),
-                    action = { locale.value = Locale("iw", "IL") }
+                    action = {
+                        locale.value = Locale("iw", "IL")
+                        Locale.setDefault(locale.value)
+                        window.applyComponentOrientation(ComponentOrientation.getOrientation(locale.value))
+                    }
                 )
                 val localeCommand = Command(
                     text = "Change locale",
