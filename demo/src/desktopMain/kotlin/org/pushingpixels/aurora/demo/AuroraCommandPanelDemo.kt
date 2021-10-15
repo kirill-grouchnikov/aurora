@@ -27,10 +27,11 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.component.projection.ComboBoxProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonPanelProjection
 import org.pushingpixels.aurora.demo.svg.material.*
-import org.pushingpixels.aurora.skin.*
+import org.pushingpixels.aurora.skin.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.skin.IconFilterStrategy
+import org.pushingpixels.aurora.skin.businessSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 
 fun getCommandPanelContentModel(vararg groupSizes: Int): CommandPanelContentModel {
@@ -97,24 +98,7 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            val currentSkinDisplayName = AuroraSkin.displayName
-            val auroraSkins = getAuroraSkins()
-            val selectedSkinItem =
-                remember { mutableStateOf(auroraSkins.first { it.first == currentSkinDisplayName }) }
-
-            ComboBoxProjection(
-                contentModel = ComboBoxContentModel(
-                    items = auroraSkins,
-                    selectedItem = selectedSkinItem.value,
-                    onTriggerItemSelectedChange = {
-                        selectedSkinItem.value = it
-                        skin.value = it.second.invoke()
-                    }
-                ),
-                presentationModel = ComboBoxPresentationModel(
-                    displayConverter = { it.first }
-                )
-            ).project()
+            AuroraSkinSwitcher(skin)
 
             val commandPanelContentModel = remember { getCommandPanelContentModel(20, 10, 15) }
 

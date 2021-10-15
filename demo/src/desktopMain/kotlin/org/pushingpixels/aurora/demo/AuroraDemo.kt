@@ -398,24 +398,7 @@ fun DemoArea(
                 onTriggerSelectedChange = { contentEnabled.value = !contentEnabled.value }
             )).project()
 
-            val currentSkinDisplayName = AuroraSkin.displayName
-            val auroraSkins = getAuroraSkins()
-            val selectedSkinItem =
-                remember { mutableStateOf(auroraSkins.first { it.first == currentSkinDisplayName }) }
-
-            ComboBoxProjection(
-                contentModel = ComboBoxContentModel(
-                    items = auroraSkins,
-                    selectedItem = selectedSkinItem.value,
-                    onTriggerItemSelectedChange = {
-                        selectedSkinItem.value = it
-                        auroraSkinDefinition.value = it.second.invoke()
-                    }
-                ),
-                presentationModel = ComboBoxPresentationModel(
-                    displayConverter = { it.first }
-                )
-            ).project()
+            AuroraSkinSwitcher(auroraSkinDefinition)
         }
         Column(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),

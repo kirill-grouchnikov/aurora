@@ -23,7 +23,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -44,11 +43,8 @@ import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.component.AuroraBoxWithHighlights
 import org.pushingpixels.aurora.component.AuroraVerticalScrollbar
 import org.pushingpixels.aurora.component.ScrollBarSizingConstants
-import org.pushingpixels.aurora.component.model.ComboBoxContentModel
-import org.pushingpixels.aurora.component.model.ComboBoxPresentationModel
 import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.model.LabelPresentationModel
-import org.pushingpixels.aurora.component.projection.ComboBoxProjection
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.demo.svg.material.*
@@ -152,24 +148,7 @@ fun main() = application {
         }
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            val currentSkinDisplayName = AuroraSkin.displayName
-            val auroraSkins = getAuroraSkins()
-            val selectedSkinItem =
-                remember { mutableStateOf(auroraSkins.first { it.first == currentSkinDisplayName }) }
-
-            ComboBoxProjection(
-                contentModel = ComboBoxContentModel(
-                    items = auroraSkins,
-                    selectedItem = selectedSkinItem.value,
-                    onTriggerItemSelectedChange = {
-                        selectedSkinItem.value = it
-                        skin.value = it.second.invoke()
-                    }
-                ),
-                presentationModel = ComboBoxPresentationModel(
-                    displayConverter = { it.first }
-                )
-            ).project(modifier = Modifier.padding(4.dp))
+            AuroraSkinSwitcher(skin)
 
             LabelProjection(
                 contentModel = LabelContentModel(

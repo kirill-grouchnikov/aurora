@@ -26,15 +26,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CheckBoxProjection
-import org.pushingpixels.aurora.component.projection.ComboBoxProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonStripProjection
-import org.pushingpixels.aurora.demo.svg.flags.il
-import org.pushingpixels.aurora.demo.svg.flags.us
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
-import org.pushingpixels.aurora.skin.*
+import org.pushingpixels.aurora.skin.AuroraSkinDefinition
+import org.pushingpixels.aurora.skin.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.skin.IconFilterStrategy
+import org.pushingpixels.aurora.skin.marinerSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 import java.awt.ComponentOrientation
 import java.text.MessageFormat
@@ -474,60 +474,11 @@ fun WindowScope.OrientationCommandContent(
 
         Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth()) {
-                val currentSkinDisplayName = AuroraSkin.displayName
-                val auroraSkins = getAuroraSkins()
-                val selectedSkinItem =
-                    remember { mutableStateOf(auroraSkins.first { it.first == currentSkinDisplayName }) }
-
-                ComboBoxProjection(
-                    contentModel = ComboBoxContentModel(
-                        items = auroraSkins,
-                        selectedItem = selectedSkinItem.value,
-                        onTriggerItemSelectedChange = {
-                            selectedSkinItem.value = it
-                            auroraSkinDefinition.value = it.second.invoke()
-                        }
-                    ),
-                    presentationModel = ComboBoxPresentationModel(
-                        displayConverter = { it.first }
-                    )
-                ).project()
+                AuroraSkinSwitcher(auroraSkinDefinition)
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                val englishLocale = Command(
-                    text = "English",
-                    icon = us(),
-                    action = {
-                        locale.value = Locale("en", "US")
-                        Locale.setDefault(locale.value)
-                        window.applyComponentOrientation(ComponentOrientation.getOrientation(locale.value))
-                    }
-                )
-                val hebrewLocale = Command(
-                    text = "Hebrew",
-                    icon = il(),
-                    action = {
-                        locale.value = Locale("iw", "IL")
-                        Locale.setDefault(locale.value)
-                        window.applyComponentOrientation(ComponentOrientation.getOrientation(locale.value))
-                    }
-                )
-                val localeCommand = Command(
-                    text = "Change locale",
-                    icon = preferences_desktop_locale_2(),
-                    secondaryContentModel = CommandMenuContentModel(
-                        group = CommandGroup(
-                            commands = arrayListOf(englishLocale, hebrewLocale)
-                        )
-                    )
-                )
-                CommandButtonProjection(
-                    contentModel = localeCommand,
-                    presentationModel = CommandButtonPresentationModel(
-                        presentationState = CommandButtonPresentationState.Small
-                    )
-                ).project()
+                AuroraLocaleSwitcher(locale, resourceBundle)
             }
 
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {

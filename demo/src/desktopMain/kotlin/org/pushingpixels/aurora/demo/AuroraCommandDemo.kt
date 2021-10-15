@@ -27,13 +27,15 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CheckBoxProjection
-import org.pushingpixels.aurora.component.projection.ComboBoxProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonStripProjection
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
-import org.pushingpixels.aurora.skin.*
+import org.pushingpixels.aurora.skin.AuroraSkinDefinition
+import org.pushingpixels.aurora.skin.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.skin.IconFilterStrategy
+import org.pushingpixels.aurora.skin.marinerSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 
 fun main() = application {
@@ -597,24 +599,7 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
         }
 
         Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
-            val currentSkinDisplayName = AuroraSkin.displayName
-            val auroraSkins = getAuroraSkins()
-            val selectedSkinItem =
-                remember { mutableStateOf(auroraSkins.first { it.first == currentSkinDisplayName }) }
-
-            ComboBoxProjection(
-                contentModel = ComboBoxContentModel(
-                    items = auroraSkins,
-                    selectedItem = selectedSkinItem.value,
-                    onTriggerItemSelectedChange = {
-                        selectedSkinItem.value = it
-                        auroraSkinDefinition.value = it.second.invoke()
-                    }
-                ),
-                presentationModel = ComboBoxPresentationModel(
-                    displayConverter = { it.first }
-                )
-            ).project()
+            AuroraSkinSwitcher(auroraSkinDefinition)
 
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
                 CheckBoxProjection(contentModel = SelectorContentModel(

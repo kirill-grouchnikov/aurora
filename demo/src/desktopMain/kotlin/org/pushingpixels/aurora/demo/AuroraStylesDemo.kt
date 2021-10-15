@@ -38,7 +38,6 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.component.projection.ComboBoxProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonStripProjection
 import org.pushingpixels.aurora.demo.svg.material.content_copy_black_24dp
 import org.pushingpixels.aurora.demo.svg.material.content_cut_black_24dp
@@ -335,24 +334,7 @@ fun DemoStyleCanvas(
 @Composable
 fun DemoStyleContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
     Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
-        val currentSkinDisplayName = AuroraSkin.displayName
-        val auroraSkins = getAuroraSkins()
-        val selectedSkinItem =
-            remember { mutableStateOf(auroraSkins.first { it.first == currentSkinDisplayName }) }
-
-        ComboBoxProjection(
-            contentModel = ComboBoxContentModel(
-                items = auroraSkins,
-                selectedItem = selectedSkinItem.value,
-                onTriggerItemSelectedChange = {
-                    selectedSkinItem.value = it
-                    auroraSkinDefinition.value = it.second.invoke()
-                }
-            ),
-            presentationModel = ComboBoxPresentationModel(
-                displayConverter = { it.first }
-            )
-        ).project()
+        AuroraSkinSwitcher(auroraSkinDefinition)
 
         Spacer(modifier = Modifier.height(12.dp))
 
