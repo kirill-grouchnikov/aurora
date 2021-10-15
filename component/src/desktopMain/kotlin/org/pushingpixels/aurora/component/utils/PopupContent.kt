@@ -236,12 +236,14 @@ internal fun displayPopupContent(
 
     // From this point, all coordinates are in Swing display units - which are density independent.
     // This is why the popup width and height was converted from pixels.
+    val initialAnchorX = if (layoutDirection == LayoutDirection.Ltr)
+        (locationOnScreen.x + anchorBoundsInWindow.left).toInt() else
+        (locationOnScreen.x + anchorBoundsInWindow.left + anchorBoundsInWindow.width).toInt() - fullPopupWidth
     val initialAnchor = IntOffset(
-        x = (locationOnScreen.x + anchorBoundsInWindow.left).toInt(),
+        x = initialAnchorX,
         y = (locationOnScreen.y + anchorBoundsInWindow.top).toInt()
     )
 
-    // TODO - support RTL for startward and endward
     val popupRect = when (popupPlacementStrategy) {
         PopupPlacementStrategy.Downward -> Rectangle(
             initialAnchor.x,
@@ -255,18 +257,32 @@ internal fun displayPopupContent(
             fullPopupWidth,
             fullPopupHeight
         )
-        PopupPlacementStrategy.Startward -> Rectangle(
-            initialAnchor.x - fullPopupWidth,
-            initialAnchor.y,
-            fullPopupWidth,
-            fullPopupHeight
-        )
-        PopupPlacementStrategy.Endward -> Rectangle(
-            initialAnchor.x + anchorBoundsInWindow.width.toInt(),
-            initialAnchor.y,
-            fullPopupWidth,
-            fullPopupHeight
-        )
+        PopupPlacementStrategy.Startward -> if (layoutDirection == LayoutDirection.Ltr)
+            Rectangle(
+                initialAnchor.x - fullPopupWidth,
+                initialAnchor.y,
+                fullPopupWidth,
+                fullPopupHeight
+            ) else
+            Rectangle(
+                initialAnchor.x + anchorBoundsInWindow.width.toInt(),
+                initialAnchor.y,
+                fullPopupWidth,
+                fullPopupHeight
+            )
+        PopupPlacementStrategy.Endward -> if (layoutDirection == LayoutDirection.Ltr)
+            Rectangle(
+                initialAnchor.x + anchorBoundsInWindow.width.toInt(),
+                initialAnchor.y,
+                fullPopupWidth,
+                fullPopupHeight
+            ) else
+            Rectangle(
+                initialAnchor.x - fullPopupWidth,
+                initialAnchor.y,
+                fullPopupWidth,
+                fullPopupHeight
+            )
         PopupPlacementStrategy.CenteredVertically -> Rectangle(
             initialAnchor.x,
             initialAnchor.y + anchorBoundsInWindow.height.toInt() / 2
@@ -309,7 +325,7 @@ internal fun displayPopupContent(
     val fillColor = skinColors.getBackgroundColorScheme(decorationAreaType).backgroundFillColor
     val awtFillColor = fillColor.awtColor
     val borderThickness = 1.0f / density.density
-    
+
     popupContentWindow.rootPane.border = object : Border {
         override fun paintBorder(
             c: Component,

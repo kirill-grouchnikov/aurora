@@ -38,6 +38,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
@@ -405,12 +406,19 @@ internal fun <E> AuroraComboBox(
                         if (presentationModel.popupPlacementStrategy.isHorizontal)
                             ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx() else
                             ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()
-                    // TODO - support RTL
-                    translate(
-                        left = width - ComboBoxSizingConstants.DefaultComboBoxContentPadding.calculateRightPadding(
+
+                    val arrowOffsetX = if (layoutDirection == LayoutDirection.Ltr)
+                        width - ComboBoxSizingConstants.DefaultComboBoxContentPadding.calculateRightPadding(
                             layoutDirection
-                        ).toPx() - arrowWidth,
-                        top = (height - arrowHeight) / 2.0f
+                        ).toPx() - arrowWidth
+                    else
+                        ComboBoxSizingConstants.DefaultComboBoxContentPadding.calculateLeftPadding(
+                            layoutDirection
+                        ).toPx()
+                    val arrowOffsetY = (height - arrowHeight) / 2.0f
+                    translate(
+                        left = arrowOffsetX,
+                        top = arrowOffsetY
                     ) {
                         drawArrow(
                             drawScope = this,
@@ -482,7 +490,6 @@ internal fun <E> AuroraComboBox(
 
                 // Center children vertically within the vertical space
                 layout(width = finalSize.width.toInt(), height = finalSize.height.toInt()) {
-                    // TODO - add RTL support
                     var xPosition = 0
 
                     placeables.forEach { placeable ->

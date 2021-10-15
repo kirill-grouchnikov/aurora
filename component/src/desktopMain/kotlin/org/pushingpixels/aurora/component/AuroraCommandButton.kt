@@ -961,35 +961,35 @@ internal fun AuroraCommandButton(
         layout(
             width = layoutInfo.fullSize.width.toInt(), height = layoutInfo.fullSize.height.toInt()
         ) {
-            actionPlaceable.placeRelative(
+            actionPlaceable.place(
                 x = layoutInfo.actionClickArea.left.roundToInt(),
                 y = layoutInfo.actionClickArea.top.roundToInt()
             )
-            popupPlaceable.placeRelative(
+            popupPlaceable.place(
                 x = layoutInfo.popupClickArea.left.roundToInt(),
                 y = layoutInfo.popupClickArea.top.roundToInt()
             )
-            iconPlaceable?.placeRelative(
+            iconPlaceable?.place(
                 x = layoutInfo.iconRect.left.roundToInt(),
                 y = layoutInfo.iconRect.top.roundToInt()
             )
             for ((index, textPlaceable) in textPlaceables.withIndex()) {
-                textPlaceable.placeRelative(
+                textPlaceable.place(
                     x = layoutInfo.textLayoutInfoList[index].textRect.left.roundToInt(),
                     y = layoutInfo.textLayoutInfoList[index].textRect.top.roundToInt()
                 )
             }
             for ((index, extraTextPlaceable) in extraTextPlaceables.withIndex()) {
-                extraTextPlaceable.placeRelative(
+                extraTextPlaceable.place(
                     x = layoutInfo.extraTextLayoutInfoList[index].textRect.left.roundToInt(),
                     y = layoutInfo.extraTextLayoutInfoList[index].textRect.top.roundToInt()
                 )
             }
-            popupIconPlaceable?.placeRelative(
+            popupIconPlaceable?.place(
                 x = layoutInfo.popupActionRect.left.roundToInt(),
                 y = layoutInfo.popupActionRect.top.roundToInt()
             )
-            separatorPlaceable?.placeRelative(
+            separatorPlaceable?.place(
                 x = layoutInfo.separatorArea.left.roundToInt(),
                 y = layoutInfo.separatorArea.top.roundToInt()
             )
