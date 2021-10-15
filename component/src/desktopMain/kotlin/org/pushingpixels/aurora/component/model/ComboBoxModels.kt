@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.skin.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.skin.PopupPlacementStrategy
@@ -40,6 +41,7 @@ object ComboBoxSizingConstants {
 data class ComboBoxPresentationModel<E>(
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
     val displayConverter: (E) -> String,
+    val displayIconConverter: ((E) -> Painter)? = null,
     val contentPadding: PaddingValues = ComboBoxSizingConstants.DefaultComboBoxContentPadding,
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Leading,
     val horizontalGapScaleFactor: Float = 1.0f,

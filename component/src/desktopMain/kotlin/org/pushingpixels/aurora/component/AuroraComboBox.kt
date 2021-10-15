@@ -204,6 +204,7 @@ internal fun <E> AuroraComboBox(
             commands = contentModel.items.map {
                 Command(
                     text = presentationModel.displayConverter.invoke(it),
+                    icon = presentationModel.displayIconConverter?.invoke(it),
                     isActionEnabled = true,
                     action = { contentModel.onTriggerItemSelectedChange.invoke(it) }
                 )
