@@ -208,6 +208,7 @@ internal open class CommandButtonLayoutManagerMedium(
         var actionClickArea = Rect.Zero
         var popupClickArea = Rect.Zero
         var separatorArea = Rect.Zero
+        val verticalSeparatorWidth = SeparatorSizingConstants.Thickness.toPx()
 
         if (ltr) {
             var x = presentationModel.horizontalGapScaleFactor *
@@ -297,7 +298,7 @@ internal open class CommandButtonLayoutManagerMedium(
                         // shift popup action rectangle to the right to
                         // accommodate the vertical separator
                         popupActionRect = popupActionRect.translate(
-                            translateX = SeparatorSizingConstants.Thickness.toPx(),
+                            translateX = verticalSeparatorWidth,
                             translateY = 0.0f
                         )
                         xBorderBetweenActionAndPopup = popupActionRect.left - 2.0f * layoutHGap
@@ -318,7 +319,7 @@ internal open class CommandButtonLayoutManagerMedium(
 
                         separatorArea = Rect(
                             left = xBorderBetweenActionAndPopup,
-                            right = xBorderBetweenActionAndPopup + SeparatorSizingConstants.Thickness.toPx(),
+                            right = xBorderBetweenActionAndPopup + verticalSeparatorWidth,
                             top = 0.0f,
                             bottom = finalHeight
                         )
@@ -338,12 +339,12 @@ internal open class CommandButtonLayoutManagerMedium(
                         // right to accommodate the vertical separator
                         for (textLayoutInfo in textLayoutInfoList) {
                             textLayoutInfo.textRect = textLayoutInfo.textRect.translate(
-                                translateX = SeparatorSizingConstants.Thickness.toPx(),
+                                translateX = verticalSeparatorWidth,
                                 translateY = 0.0f
                             )
                         }
                         popupActionRect = popupActionRect.translate(
-                            translateX = SeparatorSizingConstants.Thickness.toPx(),
+                            translateX = verticalSeparatorWidth,
                             translateY = 0.0f
                         )
                         xBorderBetweenActionAndPopup = (iconRect.left + iconRect.width + layoutHGap)
@@ -363,7 +364,7 @@ internal open class CommandButtonLayoutManagerMedium(
 
                         separatorArea = Rect(
                             left = xBorderBetweenActionAndPopup,
-                            right = xBorderBetweenActionAndPopup + SeparatorSizingConstants.Thickness.toPx(),
+                            right = xBorderBetweenActionAndPopup + verticalSeparatorWidth,
                             top = 0.0f,
                             bottom = finalHeight
                         )
@@ -464,7 +465,7 @@ internal open class CommandButtonLayoutManagerMedium(
                         // shift popup action rectangle to the left to
                         // accommodate the vertical separator
                         popupActionRect = popupActionRect.translate(
-                            translateX = -SeparatorSizingConstants.Thickness.toPx(),
+                            translateX = -verticalSeparatorWidth,
                             translateY = 0.0f
                         )
                         xBorderBetweenActionAndPopup = popupActionRect.right + 2.0f * layoutHGap
@@ -485,7 +486,7 @@ internal open class CommandButtonLayoutManagerMedium(
 
                         separatorArea = Rect(
                             left = xBorderBetweenActionAndPopup,
-                            right = xBorderBetweenActionAndPopup + SeparatorSizingConstants.Thickness.toPx(),
+                            right = xBorderBetweenActionAndPopup + verticalSeparatorWidth,
                             top = 0.0f,
                             bottom = finalHeight
                         )
@@ -505,12 +506,12 @@ internal open class CommandButtonLayoutManagerMedium(
                         // left to accommodate the vertical separator
                         for (textLayoutInfo in textLayoutInfoList) {
                             textLayoutInfo.textRect = textLayoutInfo.textRect.translate(
-                                translateX = -SeparatorSizingConstants.Thickness.toPx(),
+                                translateX = -verticalSeparatorWidth,
                                 translateY = 0.0f
                             )
                         }
                         popupActionRect = popupActionRect.translate(
-                            translateX = -SeparatorSizingConstants.Thickness.toPx(),
+                            translateX = -verticalSeparatorWidth,
                             translateY = 0.0f
                         )
 
@@ -531,7 +532,7 @@ internal open class CommandButtonLayoutManagerMedium(
 
                         separatorArea = Rect(
                             left = xBorderBetweenActionAndPopup,
-                            right = xBorderBetweenActionAndPopup + SeparatorSizingConstants.Thickness.toPx(),
+                            right = xBorderBetweenActionAndPopup + verticalSeparatorWidth,
                             top = 0.0f,
                             bottom = finalHeight
                         )

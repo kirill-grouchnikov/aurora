@@ -168,6 +168,7 @@ internal class CommandButtonLayoutManagerSmall(
         var actionClickArea = Rect.Zero
         var popupClickArea = Rect.Zero
         var separatorArea = Rect.Zero
+        val verticalSeparatorWidth = SeparatorSizingConstants.Thickness.toPx()
 
         if (ltr) {
             var x = presentationModel.horizontalGapScaleFactor *
@@ -200,7 +201,6 @@ internal class CommandButtonLayoutManagerSmall(
                 x += 2 * layoutHGap
             }
             var xBorderBetweenActionAndPopup = 0.0f
-            val verticalSeparatorWidth = SeparatorSizingConstants.Thickness.toPx()
             when (preLayoutInfo.commandButtonKind) {
                 CommandButtonKind.ActionOnly -> {
                     actionClickArea = Rect(
@@ -246,7 +246,7 @@ internal class CommandButtonLayoutManagerSmall(
 
                         separatorArea = Rect(
                             left = xBorderBetweenActionAndPopup,
-                            right = xBorderBetweenActionAndPopup + SeparatorSizingConstants.Thickness.toPx(),
+                            right = xBorderBetweenActionAndPopup + verticalSeparatorWidth,
                             top = 0.0f,
                             bottom = finalHeight
                         )
@@ -290,7 +290,6 @@ internal class CommandButtonLayoutManagerSmall(
                 x -= 2 * layoutHGap
             }
             var xBorderBetweenActionAndPopup = 0.0f
-            val verticalSeparatorWidth = SeparatorSizingConstants.Thickness.toPx()
             when (preLayoutInfo.commandButtonKind) {
                 CommandButtonKind.ActionOnly -> {
                     actionClickArea = Rect(
@@ -336,7 +335,7 @@ internal class CommandButtonLayoutManagerSmall(
 
                         separatorArea = Rect(
                             left = xBorderBetweenActionAndPopup,
-                            right = xBorderBetweenActionAndPopup + SeparatorSizingConstants.Thickness.toPx(),
+                            right = xBorderBetweenActionAndPopup + verticalSeparatorWidth,
                             top = 0.0f,
                             bottom = finalHeight
                         )
