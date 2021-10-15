@@ -467,7 +467,7 @@ internal fun AuroraSlider(
                         width = selectionCenterX - drawingCache.trackRect.x,
                         height = drawingCache.trackRect.height,
                         radius = radius,
-                        straightSides = setOf(Side.End),
+                        straightSides = setOf(Side.Right),
                         insets = 0.5f
                     )
                     drawOutline(

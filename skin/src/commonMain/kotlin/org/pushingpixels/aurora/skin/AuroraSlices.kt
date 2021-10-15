@@ -650,11 +650,11 @@ class DecorationAreaType(val displayName: String) {
  * @author Kirill Grouchnikov
  */
 enum class Side {
-    /** Start side */
-    Start,
+    /** Left side */
+    Left,
 
-    /** End side */
-    End,
+    /** Right side */
+    Right,
 
     /** Top side */
     Top,

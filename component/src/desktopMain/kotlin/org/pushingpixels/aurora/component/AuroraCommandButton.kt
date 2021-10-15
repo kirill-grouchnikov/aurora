@@ -511,11 +511,10 @@ internal fun AuroraCommandButton(
                         val height = buttonSize.height.toFloat()
 
                         val openDelta = 3
-                        // TODO - add RTL support
                         val deltaLeft =
-                            if (buttonSides.openSides.contains(Side.Start)) openDelta else 0
+                            if (buttonSides.openSides.contains(Side.Left)) openDelta else 0
                         val deltaRight =
-                            if (buttonSides.openSides.contains(Side.End)) openDelta else 0
+                            if (buttonSides.openSides.contains(Side.Right)) openDelta else 0
                         val deltaTop =
                             if (buttonSides.openSides.contains(Side.Top)) openDelta else 0
                         val deltaBottom =
@@ -715,11 +714,10 @@ internal fun AuroraCommandButton(
                         val height = buttonSize.height.toFloat()
 
                         val openDelta = 3
-                        // TODO - add RTL support
                         val deltaLeft =
-                            if (buttonSides.openSides.contains(Side.Start)) openDelta else 0
+                            if (buttonSides.openSides.contains(Side.Left)) openDelta else 0
                         val deltaRight =
-                            if (buttonSides.openSides.contains(Side.End)) openDelta else 0
+                            if (buttonSides.openSides.contains(Side.Right)) openDelta else 0
                         val deltaTop =
                             if (buttonSides.openSides.contains(Side.Top)) openDelta else 0
                         val deltaBottom =

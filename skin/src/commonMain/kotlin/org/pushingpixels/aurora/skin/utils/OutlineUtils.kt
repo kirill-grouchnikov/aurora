@@ -37,15 +37,14 @@ fun getBaseOutline(
     radius: Float, straightSides: Set<Side>? = null,
     insets: Float = 0.0f
 ): Outline {
-    // TODO - add RTL support
     val isTopLeftCorner = (straightSides != null
-            && (straightSides.contains(Side.Start) || straightSides.contains(Side.Top)))
+            && (straightSides.contains(Side.Left) || straightSides.contains(Side.Top)))
     val isTopRightCorner = (straightSides != null
-            && (straightSides.contains(Side.End) || straightSides.contains(Side.Top)))
+            && (straightSides.contains(Side.Right) || straightSides.contains(Side.Top)))
     val isBottomRightCorner = (straightSides != null
-            && (straightSides.contains(Side.End) || straightSides.contains(Side.Bottom)))
+            && (straightSides.contains(Side.Right) || straightSides.contains(Side.Bottom)))
     val isBottomLeftCorner = (straightSides != null
-            && (straightSides.contains(Side.Start) || straightSides.contains(Side.Bottom)))
+            && (straightSides.contains(Side.Left) || straightSides.contains(Side.Bottom)))
 
     // If all the sides are straight, the result is a simple rectangle
     if (isTopLeftCorner && isTopRightCorner && isBottomRightCorner && isBottomLeftCorner) {
