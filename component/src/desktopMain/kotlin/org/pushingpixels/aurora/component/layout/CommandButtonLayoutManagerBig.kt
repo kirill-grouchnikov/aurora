@@ -92,7 +92,7 @@ internal open class CommandButtonLayoutManagerBig(
                 val part1 = currLeading.toString()
                 var part2 = text.substring(currLeading.length)
                 if (part2.startsWith(" ")) {
-                   part2 = part2.substring(1)
+                    part2 = part2.substring(1)
                 }
                 val len1 = Paragraph(
                     text = part1, style = textStyle, width = Float.POSITIVE_INFINITY,
@@ -245,6 +245,8 @@ internal open class CommandButtonLayoutManagerBig(
         val hasIcon = (command.icon != null) || presentationModel.forceAllocateSpaceForIcon
         val hasPopupIcon = (command.secondaryContentModel != null)
 
+        val ltr = (layoutDirection == LayoutDirection.Ltr)
+
         var iconRect = Rect.Zero
         var separatorArea = Rect.Zero
         var popupActionRect = Rect.Zero
@@ -252,6 +254,7 @@ internal open class CommandButtonLayoutManagerBig(
             arrayListOf()
         val extraTextLayoutInfoList: MutableList<CommandButtonLayoutManager.TextLayoutInfo> =
             arrayListOf()
+        val horizontalSeparatorHeight = SeparatorSizingConstants.Thickness.toPx()
 
         var shiftY = 0.0f
         var finalWidth = preferredSize.width
@@ -295,10 +298,10 @@ internal open class CommandButtonLayoutManagerBig(
                 left = 0.0f,
                 right = finalWidth,
                 top = y,
-                bottom = y + SeparatorSizingConstants.Thickness.toPx()
+                bottom = y + horizontalSeparatorHeight
             )
         }
-        y += SeparatorSizingConstants.Thickness.toPx()
+        y += horizontalSeparatorHeight
 
         var lastTextLineWidth = 0.0f
         y += layoutVGap
@@ -327,12 +330,16 @@ internal open class CommandButtonLayoutManagerBig(
 
         val popupIconWidth = CommandButtonSizingConstants.PopupIconWidth.toPx()
         val popupIconHeight = CommandButtonSizingConstants.PopupIconHeight.toPx()
+
         lastTextLineWidth = title2Line.maxIntrinsicWidth
-        //val popupIconSize = getPopupIconSize(_density)
+
         val extraWidth = if (hasPopupIcon) 4 * layoutHGap + popupIconWidth else 0
-        // TODO - RTL
-        val line2x =
+
+        val line2x = if (ltr)
             (startInset + (finalWidth - lastTextLineWidth - extraWidth.toFloat() - startInset - endInset) / 2)
+        else
+            (finalWidth - startInset - lastTextLineWidth
+                    - (finalWidth - lastTextLineWidth - extraWidth.toFloat() - startInset - endInset) / 2)
         val line2LayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
             text = preLayoutInfo.texts[1],
             textRect = Rect(
@@ -346,10 +353,12 @@ internal open class CommandButtonLayoutManagerBig(
         textLayoutInfoList.add(line2LayoutInfo)
 
         if (hasPopupIcon) {
-            // TODO - RTL
-            val popupActionX = if (line2LayoutInfo.textRect.width > 0)
-                line2LayoutInfo.textRect.right + 4 * layoutHGap
-            else (finalWidth - popupIconWidth) / 2
+            val popupActionX = if (line2LayoutInfo.textRect.width > 0) {
+                if (ltr)
+                    line2LayoutInfo.textRect.right + 4 * layoutHGap
+                else
+                    line2LayoutInfo.textRect.left - 4 * layoutHGap - popupIconWidth
+            } else (finalWidth - popupIconWidth) / 2
             popupActionRect = Rect(
                 left = popupActionX,
                 right = popupActionX + popupIconWidth,
