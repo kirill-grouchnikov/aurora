@@ -188,7 +188,8 @@ fun CommandOrientationEditStrip(
     actionEnabled: Boolean,
     popupEnabled: Boolean,
     orientation: StripOrientation,
-    horizontalGapScaleFactor: Float
+    horizontalGapScaleFactor: Float,
+    resourceBundle: State<ResourceBundle>
 ) {
     val commandCut =
         Command(
@@ -237,7 +238,7 @@ fun CommandOrientationEditStrip(
                         commandPasteTextOnly,
                     )
                 ),
-                panelContentModel = getQuickStylesContentModel()
+                panelContentModel = getQuickStylesContentModel(resourceBundle)
             ),
             isSecondaryEnabled = popupEnabled
         )
@@ -519,7 +520,8 @@ fun WindowScope.OrientationCommandContent(
                     actionEnabled = actionEnabled,
                     popupEnabled = popupEnabled,
                     orientation = StripOrientation.Horizontal,
-                    horizontalGapScaleFactor = CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis
+                    horizontalGapScaleFactor = CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis,
+                    resourceBundle = resourceBundle
                 )
             }
 
