@@ -81,15 +81,15 @@ fun getQuickStylesContentModel(resourceBundle: State<ResourceBundle>): CommandPa
         waves_24px()
     )
 
-    val groupMf = MessageFormat(resourceBundle.value.getString("PanelStyles.text"))
-    val commandMf = MessageFormat(resourceBundle.value.getString("StylesGallery.textButton"))
+    val groupMf = MessageFormat(resourceBundle.value.getString("Group.title"))
+    val commandMf = MessageFormat(resourceBundle.value.getString("Group.entry"))
 
     val commandGroups: MutableList<CommandGroup> = arrayListOf()
     for (groupIndex in 1..4) {
         val commands: MutableList<Command> = arrayListOf()
         for (i in 1..15) {
             val command = Command(
-                text = commandMf.format(arrayOf<Any>(i)),
+                text = commandMf.format(arrayOf<Any>(i, 15)),
                 icon = icons[i % icons.size],
                 action = { println("Invoked action on $i") }
             )
