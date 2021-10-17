@@ -22,6 +22,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -31,9 +33,11 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
@@ -50,6 +54,9 @@ import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.skin.*
 import org.pushingpixels.aurora.window.AuroraWindow
+import java.awt.ComponentOrientation
+import java.text.MessageFormat
+import java.util.*
 
 fun LazyListState.isItemFullyVisible(index: Int): Boolean {
     val layoutInfo = this.layoutInfo
@@ -82,6 +89,12 @@ fun main() = application {
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(250.dp, 400.dp)
     )
+    val currLocale = mutableStateOf(Locale.getDefault())
+    val resourceBundle = derivedStateOf {
+        ResourceBundle
+            .getBundle("org.pushingpixels.aurora.demo.Resources", currLocale.value)
+    }
+
     val skin = mutableStateOf(twilightSkin())
 
     val scope = rememberCoroutineScope()
@@ -147,66 +160,80 @@ fun main() = application {
             handled
         }
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            AuroraSkinSwitcher(skin)
+        CompositionLocalProvider(
+            LocalLayoutDirection provides
+                    if (ComponentOrientation.getOrientation(currLocale.value).isLeftToRight)
+                        LayoutDirection.Ltr else LayoutDirection.Rtl,
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
+                    AuroraSkinSwitcher(skin)
 
-            LabelProjection(
-                contentModel = LabelContentModel(
-                    text = if (stateSelection.value < 0) "No selection"
-                    else "Selected item #${stateSelection.value}"
-                ),
-                presentationModel = LabelPresentationModel(
-                    contentPadding = PaddingValues(
-                        start = 20.dp,
-                        end = 20.dp,
-                        top = 10.dp,
-                        bottom = 8.dp
-                    ),
-                    textStyle = TextStyle(fontWeight = FontWeight.Bold)
-                )
-            ).project()
+                    Spacer(modifier = Modifier.width(8.dp))
 
-            HorizontalSeparatorProjection().project(modifier = Modifier.fillMaxWidth())
-
-            Box(modifier = Modifier.fillMaxSize().padding(6.dp)) {
-                val itemsList = (0 until itemCount).toList()
-                val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
-                    decorationAreaType = AuroraSkin.decorationAreaType
-                )
-                val backgroundEvenRows = backgroundColorScheme.backgroundFillColor
-                val backgroundOddRows = backgroundColorScheme.accentedBackgroundFillColor
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                        .padding(end = ScrollBarSizingConstants.DefaultScrollBarThickness),
-                    state = lazyListState
-                ) {
-                    itemsIndexed(itemsList) { index, item ->
-                        AuroraBoxWithHighlights(
-                            modifier = Modifier.fillMaxWidth().height(32.dp)
-                                .background(if (index % 2 == 0) backgroundEvenRows else backgroundOddRows),
-                            selected = (stateSelection.value == item),
-                            onClick = { stateSelection.value = item },
-                            sides = Sides(straightSides = Side.values().toSet()),
-                            content = {
-                                LabelProjection(
-                                    contentModel = LabelContentModel(
-                                        text = "Item #$item",
-                                        icon = icons[item % icons.size]
-                                    ),
-                                    presentationModel = LabelPresentationModel(
-                                        inheritStateFromParent = true,
-                                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
-                                        horizontalGapScaleFactor = 2.0f
-                                    )
-                                ).project()
-                            }
-                        )
-                    }
+                    AuroraLocaleSwitcher(currLocale, resourceBundle)
                 }
-                AuroraVerticalScrollbar(
-                    modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
-                    adapter = rememberScrollbarAdapter(scrollState = lazyListState)
-                )
+
+                val selectedMf = MessageFormat(resourceBundle.value.getString("Selected.entry"))
+                LabelProjection(
+                    contentModel = LabelContentModel(
+                        text = if (stateSelection.value < 0) resourceBundle.value.getString("Selected.none")
+                        else selectedMf.format(arrayOf<Any>(stateSelection.value))
+                    ),
+                    presentationModel = LabelPresentationModel(
+                        contentPadding = PaddingValues(
+                            start = 20.dp,
+                            end = 20.dp,
+                            top = 10.dp,
+                            bottom = 8.dp
+                        ),
+                        textStyle = TextStyle(fontWeight = FontWeight.Bold)
+                    )
+                ).project()
+
+                HorizontalSeparatorProjection().project(modifier = Modifier.fillMaxWidth())
+
+                val commandMf = MessageFormat(resourceBundle.value.getString("Group.entrySimple"))
+                Box(modifier = Modifier.fillMaxSize().padding(6.dp)) {
+                    val itemsList = (0 until itemCount).toList()
+                    val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
+                        decorationAreaType = AuroraSkin.decorationAreaType
+                    )
+                    val backgroundEvenRows = backgroundColorScheme.backgroundFillColor
+                    val backgroundOddRows = backgroundColorScheme.accentedBackgroundFillColor
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize()
+                            .padding(end = ScrollBarSizingConstants.DefaultScrollBarThickness),
+                        state = lazyListState
+                    ) {
+                        itemsIndexed(itemsList) { index, item ->
+                            AuroraBoxWithHighlights(
+                                modifier = Modifier.fillMaxWidth().height(32.dp)
+                                    .background(if (index % 2 == 0) backgroundEvenRows else backgroundOddRows),
+                                selected = (stateSelection.value == item),
+                                onClick = { stateSelection.value = item },
+                                sides = Sides(straightSides = Side.values().toSet()),
+                                content = {
+                                    LabelProjection(
+                                        contentModel = LabelContentModel(
+                                            text = commandMf.format(arrayOf<Any>(index)),
+                                            icon = icons[item % icons.size]
+                                        ),
+                                        presentationModel = LabelPresentationModel(
+                                            inheritStateFromParent = true,
+                                            iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                                            horizontalGapScaleFactor = 2.0f
+                                        )
+                                    ).project()
+                                }
+                            )
+                        }
+                    }
+                    AuroraVerticalScrollbar(
+                        modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                        adapter = rememberScrollbarAdapter(scrollState = lazyListState)
+                    )
+                }
             }
         }
     }
