@@ -337,39 +337,63 @@ private fun getRowFillMeasurePolicy(
             }
         }
 
+        val ltr = (layoutDirection == LayoutDirection.Ltr)
+
         layout(width = panelWidth, height = panelHeight) {
             var currPlaceableIndex = 0
             var currY = 0
-            // TODO - support RTL
             for (groupModel in contentModel.commandGroups) {
-                var currX = 0
                 if (presentationModel.showGroupLabels && (groupModel.title != null)) {
                     // The current command group has a title
                     val currTitlePlaceable = placeables[currPlaceableIndex++]
-                    currTitlePlaceable.place(currX, currY)
+                    currTitlePlaceable.place(0, currY)
                     currY += currTitlePlaceable.height
                 }
                 // Place the background canvas
-                placeables[currPlaceableIndex++].place(currX, currY)
-                // And place all the buttons
-                currX = gap
+                placeables[currPlaceableIndex++].place(0, currY)
+
                 currY += gap
-                for ((index, _) in groupModel.commands.withIndex()) {
-                    val commandButtonPlaceable = placeables[currPlaceableIndex++]
-                    commandButtonPlaceable.place(currX, currY)
-                    currX += (actualButtonWidth + gap)
-                    if ((currX + actualButtonWidth) >= panelWidth) {
-                        // No more horizontal space in this row
-                        currX = gap
-                        currY += maxButtonHeight
-                        if (index < (groupModel.commands.size - 1)) {
-                            // This is not the last row
-                            currY += gap
-                        }
-                    } else {
-                        if (index == (groupModel.commands.size - 1)) {
-                            // Partially filled last row
+                // And place all the buttons
+                if (ltr) {
+                    var currX = gap
+                    for ((index, _) in groupModel.commands.withIndex()) {
+                        val commandButtonPlaceable = placeables[currPlaceableIndex++]
+                        commandButtonPlaceable.place(currX, currY)
+                        currX += (actualButtonWidth + gap)
+                        if ((currX + actualButtonWidth) >= panelWidth) {
+                            // No more horizontal space in this row
+                            currX = gap
                             currY += maxButtonHeight
+                            if (index < (groupModel.commands.size - 1)) {
+                                // This is not the last row
+                                currY += gap
+                            }
+                        } else {
+                            if (index == (groupModel.commands.size - 1)) {
+                                // Partially filled last row
+                                currY += maxButtonHeight
+                            }
+                        }
+                    }
+                } else {
+                    var currX = panelWidth - gap
+                    for ((index, _) in groupModel.commands.withIndex()) {
+                        val commandButtonPlaceable = placeables[currPlaceableIndex++]
+                        commandButtonPlaceable.place(currX - actualButtonWidth, currY)
+                        currX -= (actualButtonWidth + gap)
+                        if ((currX - actualButtonWidth) <= 0) {
+                            // No more horizontal space in this row
+                            currX = panelWidth - gap
+                            currY += maxButtonHeight
+                            if (index < (groupModel.commands.size - 1)) {
+                                // This is not the last row
+                                currY += gap
+                            }
+                        } else {
+                            if (index == (groupModel.commands.size - 1)) {
+                                // Partially filled last row
+                                currY += maxButtonHeight
+                            }
                         }
                     }
                 }
@@ -447,37 +471,71 @@ private fun getColumnFillMeasurePolicy(
             }
         }
 
+        val ltr = (layoutDirection == LayoutDirection.Ltr)
         layout(width = panelWidth, height = panelHeight) {
             var currPlaceableIndex = 0
-            var currX = 0
-            // TODO - support RTL
-            for (groupModel in contentModel.commandGroups) {
-                var currY = 0
-                // Place the background canvas
-                placeables[currPlaceableIndex++].place(currX, currY)
-                // And place all the buttons
-                currX += gap
-                currY = gap
-                for ((index, _) in groupModel.commands.withIndex()) {
-                    val commandButtonPlaceable = placeables[currPlaceableIndex++]
-                    commandButtonPlaceable.place(currX, currY)
-                    currY += (actualButtonHeight + gap)
-                    if ((currY + actualButtonHeight) >= panelHeight) {
-                        // No more vertical space in this column
-                        currY = gap
-                        currX += maxButtonWidth
-                        if (index < (groupModel.commands.size - 1)) {
-                            // This is not the last column
-                            currX += gap
-                        }
-                    } else {
-                        if (index == (groupModel.commands.size - 1)) {
-                            // Partially filled last column
+            if (ltr) {
+                var currX = 0
+                for (groupModel in contentModel.commandGroups) {
+                    var currY = 0
+                    // Place the background canvas
+                    placeables[currPlaceableIndex++].place(currX, currY)
+                    // And place all the buttons
+                    currX += gap
+                    currY = gap
+                    for ((index, _) in groupModel.commands.withIndex()) {
+                        val commandButtonPlaceable = placeables[currPlaceableIndex++]
+                        commandButtonPlaceable.place(currX, currY)
+                        currY += (actualButtonHeight + gap)
+                        if ((currY + actualButtonHeight) >= panelHeight) {
+                            // No more vertical space in this column
+                            currY = gap
                             currX += maxButtonWidth
+                            if (index < (groupModel.commands.size - 1)) {
+                                // This is not the last column
+                                currX += gap
+                            }
+                        } else {
+                            if (index == (groupModel.commands.size - 1)) {
+                                // Partially filled last column
+                                currX += maxButtonWidth
+                            }
                         }
                     }
+                    currX += gap
                 }
-                currX += gap
+            } else {
+                var currX = panelWidth
+                for (groupModel in contentModel.commandGroups) {
+                    var currY = 0
+                    // Place the background canvas
+                    placeables[currPlaceableIndex].place(currX - placeables[currPlaceableIndex].width, currY)
+                    currPlaceableIndex++
+
+                    // And place all the buttons
+                    currX -= gap
+                    currY = gap
+                    for ((index, _) in groupModel.commands.withIndex()) {
+                        val commandButtonPlaceable = placeables[currPlaceableIndex++]
+                        commandButtonPlaceable.place(currX - maxButtonWidth, currY)
+                        currY += (actualButtonHeight + gap)
+                        if ((currY + actualButtonHeight) >= panelHeight) {
+                            // No more vertical space in this column
+                            currY = gap
+                            currX -= maxButtonWidth
+                            if (index < (groupModel.commands.size - 1)) {
+                                // This is not the last column
+                                currX -= gap
+                            }
+                        } else {
+                            if (index == (groupModel.commands.size - 1)) {
+                                // Partially filled last column
+                                currX -= maxButtonWidth
+                            }
+                        }
+                    }
+                    currX -= gap
+                }
             }
         }
     }

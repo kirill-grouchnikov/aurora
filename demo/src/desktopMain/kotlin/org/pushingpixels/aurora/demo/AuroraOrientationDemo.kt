@@ -193,7 +193,7 @@ fun CommandOrientationEditStrip(
 ) {
     val commandCut =
         Command(
-            text = "Cut",
+            text = resourceBundle.value.getString("Cut.text"),
             icon = content_cut_black_24dp(),
             isActionEnabled = actionEnabled,
             action = { println("Cut!") }
@@ -201,7 +201,7 @@ fun CommandOrientationEditStrip(
         )
     val commandCopy =
         Command(
-            text = "Copy",
+            text = resourceBundle.value.getString("Copy.text"),
             icon = content_copy_black_24dp(),
             isActionEnabled = actionEnabled,
             action = { println("Copy!") }
@@ -210,7 +210,7 @@ fun CommandOrientationEditStrip(
 
     var togglePasteText by remember { mutableStateOf(false) }
     val commandPasteTextOnly = Command(
-        text = "Text only",
+        text = resourceBundle.value.getString("Paste.textOnlyText"),
         action = { println("Paste text only") },
         isActionToggle = true,
         isActionToggleSelected = togglePasteText,
@@ -222,7 +222,7 @@ fun CommandOrientationEditStrip(
 
     val commandPaste =
         Command(
-            text = "Paste",
+            text = resourceBundle.value.getString("Paste.text"),
             icon = content_paste_black_24dp(),
             isActionEnabled = actionEnabled,
             action = { println("Paste!") },
@@ -230,10 +230,10 @@ fun CommandOrientationEditStrip(
                 group = CommandGroup(
                     commands = listOf(
                         Command(
-                            text = "Keep Formatting",
+                            text = resourceBundle.value.getString("Paste.keepFormattingText"),
                             action = { println("Paste with keep formatting") }),
                         Command(
-                            text = "Merge Formatting",
+                            text = resourceBundle.value.getString("Paste.mergeFormattingText"),
                             action = { println("Paste with merge formatting") }),
                         commandPasteTextOnly,
                     )
