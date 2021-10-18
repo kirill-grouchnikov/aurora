@@ -29,14 +29,8 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.resolveDefaults
-import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.ExperimentalUnitApi
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.WindowPlacement
-import androidx.compose.ui.window.WindowPosition
-import androidx.compose.ui.window.application
-import androidx.compose.ui.window.rememberWindowState
+import androidx.compose.ui.unit.*
+import androidx.compose.ui.window.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonStripProjection
 import org.pushingpixels.aurora.demo.svg.material.content_copy_black_24dp
@@ -44,6 +38,9 @@ import org.pushingpixels.aurora.demo.svg.material.content_cut_black_24dp
 import org.pushingpixels.aurora.demo.svg.material.content_paste_black_24dp
 import org.pushingpixels.aurora.skin.*
 import org.pushingpixels.aurora.window.AuroraWindow
+import java.awt.ComponentOrientation
+import java.text.MessageFormat
+import java.util.*
 
 @ExperimentalUnitApi
 fun main() = application {
@@ -53,6 +50,11 @@ fun main() = application {
         size = DpSize(660.dp, 400.dp)
     )
     val skin = mutableStateOf(marinerSkin())
+    val currLocale = mutableStateOf(Locale.getDefault())
+    val resourceBundle = derivedStateOf {
+        ResourceBundle
+            .getBundle("org.pushingpixels.aurora.demo.Resources", currLocale.value)
+    }
 
     AuroraWindow(
         skin = skin,
@@ -61,7 +63,13 @@ fun main() = application {
         undecorated = true,
         onCloseRequest = ::exitApplication,
     ) {
-        DemoStyleContent(skin)
+        CompositionLocalProvider(
+            LocalLayoutDirection provides
+                    if (ComponentOrientation.getOrientation(currLocale.value).isLeftToRight)
+                        LayoutDirection.Ltr else LayoutDirection.Rtl,
+        ) {
+            DemoStyleContent(skin, currLocale, resourceBundle)
+        }
     }
 }
 
@@ -106,7 +114,8 @@ fun getStylesContentModel(
     permanentBottomColor: MutableState<Color>,
     isInPreview: MutableState<Boolean>,
     previewTopColor: MutableState<Color>,
-    previewBottomColor: MutableState<Color>
+    previewBottomColor: MutableState<Color>,
+    resourceBundle: State<ResourceBundle>
 ): CommandPanelContentModel {
     // Colors from http://colrd.com/palette/24070/
     val solidColors = arrayOf(
@@ -128,10 +137,11 @@ fun getStylesContentModel(
 
     val commandGroups: MutableList<CommandGroup> = arrayListOf()
     val solids: MutableList<Command> = arrayListOf()
+    val solidMf = MessageFormat(resourceBundle.value.getString("Colors.solid"))
     for (i in 1..solidColors.size) {
         val color = solidColors[i - 1]
         val command = Command(
-            text = "Solid ${color.shorthexa}",
+            text = solidMf.format(arrayOf<Any>(color.shorthexa)),
             extraText = color.shorthexa,
             icon = ColorSolidIcon(color),
             actionPreview = object : CommandActionPreview {
@@ -157,7 +167,7 @@ fun getStylesContentModel(
         )
         solids.add(command)
     }
-    commandGroups.add(CommandGroup("Solids", solids))
+    commandGroups.add(CommandGroup(resourceBundle.value.getString("Colors.solids"), solids))
 
     val gradients: MutableList<Command> = arrayListOf()
     for (i in 1 until solidColors.size) {
@@ -190,7 +200,7 @@ fun getStylesContentModel(
         )
         gradients.add(command)
     }
-    commandGroups.add(CommandGroup("Gradients", gradients))
+    commandGroups.add(CommandGroup(resourceBundle.value.getString("Colors.gradients"), gradients))
 
     return CommandPanelContentModel(
         commandGroups = commandGroups
@@ -204,25 +214,26 @@ fun CommandDemoEditStrip(
     permanentBottomColor: MutableState<Color>,
     isInPreview: MutableState<Boolean>,
     previewTopColor: MutableState<Color>,
-    previewBottomColor: MutableState<Color>
+    previewBottomColor: MutableState<Color>,
+    resourceBundle: State<ResourceBundle>
 ) {
     val commandCut =
         Command(
-            text = "Cut",
+            text = resourceBundle.value.getString("Cut.text"),
             icon = content_cut_black_24dp(),
             isActionEnabled = true,
             action = { println("Cut!") }
         )
     val commandCopy =
         Command(
-            text = "Copy",
+            text = resourceBundle.value.getString("Copy.text"),
             icon = content_copy_black_24dp(),
             isActionEnabled = true,
             action = { println("Copy!") }
         )
     var togglePasteText by remember { mutableStateOf(false) }
     val commandPasteTextOnly = Command(
-        text = "Text only",
+        text = resourceBundle.value.getString("Paste.textOnlyText"),
         action = { println("Paste text only") },
         isActionToggle = true,
         isActionToggleSelected = togglePasteText,
@@ -233,7 +244,7 @@ fun CommandDemoEditStrip(
     )
     val commandPaste =
         Command(
-            text = "Paste",
+            text = resourceBundle.value.getString("Paste.text"),
             icon = content_paste_black_24dp(),
             isActionEnabled = true,
             action = { println("Paste!") },
@@ -241,10 +252,10 @@ fun CommandDemoEditStrip(
                 group = CommandGroup(
                     commands = listOf(
                         Command(
-                            text = "Keep Formatting",
+                            text = resourceBundle.value.getString("Paste.keepFormattingText"),
                             action = { println("Paste with keep formatting") }),
                         Command(
-                            text = "Merge Formatting",
+                            text = resourceBundle.value.getString("Paste.mergeFormattingText"),
                             action = { println("Paste with merge formatting") }),
                         commandPasteTextOnly
                     )
@@ -254,7 +265,8 @@ fun CommandDemoEditStrip(
                     permanentBottomColor,
                     isInPreview,
                     previewTopColor,
-                    previewBottomColor
+                    previewBottomColor,
+                    resourceBundle
                 )
             ),
             isSecondaryEnabled = true
@@ -332,9 +344,19 @@ fun DemoStyleCanvas(
 
 @ExperimentalUnitApi
 @Composable
-fun DemoStyleContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
+fun WindowScope.DemoStyleContent(
+    auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
+    locale: MutableState<Locale>,
+    resourceBundle: State<ResourceBundle>
+) {
     Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
-        AuroraSkinSwitcher(auroraSkinDefinition)
+        Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
+            AuroraSkinSwitcher(auroraSkinDefinition)
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            AuroraLocaleSwitcher(locale, resourceBundle)
+        }
 
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -361,7 +383,8 @@ fun DemoStyleContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
         Box(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
             CommandDemoEditStrip(
                 permanentTopColor, permanentBottomColor,
-                isInPreview, previewTopColor, previewBottomColor
+                isInPreview, previewTopColor, previewBottomColor,
+                resourceBundle
             )
         }
     }
