@@ -53,13 +53,13 @@ fun getNoiseShader(
 
     // Duotone shader
     val duotoneDesc = """
-            uniform shader input;
+            uniform shader shaderInput;
             uniform vec4 colorLight;
             uniform vec4 colorDark;
             uniform float alpha;
             
             half4 main(vec2 fragcoord) { 
-                vec4 inputColor = sample(input, fragcoord);
+                vec4 inputColor = shaderInput.eval(fragcoord);
                 float luma = dot(inputColor.rgb, vec3(0.299, 0.587, 0.114));
                 vec4 duotone = mix(colorLight, colorDark, luma);
                 return vec4(duotone.r * alpha, duotone.g * alpha, duotone.b * alpha, alpha);
@@ -103,10 +103,10 @@ fun getBrushedMetalShader(colorLight: Color, colorDark: Color, alpha: Float = 1.
 
     // Brushed metal shader
     val brushedMetalDesc = """
-            uniform shader input;
+            uniform shader shaderInput;
 
             half4 main(vec2 fragcoord) { 
-              vec4 inputColor = sample(input, vec2(0, fragcoord.y));
+              vec4 inputColor = shaderInput.eval(vec2(0, fragcoord.y));
               // Compute the luma at the first pixel in this row
               float luma = dot(inputColor.rgb, vec3(0.299, 0.587, 0.114));
               // Apply modulation to stretch and shift the texture for the brushed metal look 
@@ -128,13 +128,13 @@ fun getBrushedMetalShader(colorLight: Color, colorDark: Color, alpha: Float = 1.
 
     // Duotone shader
     val duotoneDesc = """
-            uniform shader input;
+            uniform shader shaderInput;
             uniform vec4 colorLight;
             uniform vec4 colorDark;
             uniform float alpha;
             
             half4 main(vec2 fragcoord) { 
-                vec4 inputColor = sample(input, fragcoord);
+                vec4 inputColor = shaderInput.eval(fragcoord);
                 float luma = dot(inputColor.rgb, vec3(0.299, 0.587, 0.114));
                 vec4 duotone = mix(colorLight, colorDark, luma);
                 return vec4(duotone.r * alpha, duotone.g * alpha, duotone.b * alpha, alpha);
