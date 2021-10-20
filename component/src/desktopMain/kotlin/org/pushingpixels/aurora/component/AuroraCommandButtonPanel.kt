@@ -36,8 +36,8 @@ import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.LabelProjection
-import org.pushingpixels.aurora.skin.*
-import org.pushingpixels.aurora.skin.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min

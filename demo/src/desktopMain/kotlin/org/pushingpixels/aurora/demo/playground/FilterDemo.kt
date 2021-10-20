@@ -33,11 +33,11 @@ import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import org.pushingpixels.aurora.skin.businessSkin
-import org.pushingpixels.aurora.skin.colorscheme.MetallicColorScheme
-import org.pushingpixels.aurora.skin.colorscheme.OrangeColorScheme
-import org.pushingpixels.aurora.skin.utils.getBrushedMetalShader
-import org.pushingpixels.aurora.skin.utils.getNoiseShader
+import org.pushingpixels.aurora.theming.businessSkin
+import org.pushingpixels.aurora.theming.colorscheme.MetallicColorScheme
+import org.pushingpixels.aurora.theming.colorscheme.OrangeColorScheme
+import org.pushingpixels.aurora.theming.utils.getBrushedMetalShader
+import org.pushingpixels.aurora.theming.utils.getNoiseShader
 import org.pushingpixels.aurora.window.AuroraWindow
 
 fun main() = application {

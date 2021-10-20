@@ -51,8 +51,8 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.skin.*
-import org.pushingpixels.aurora.skin.utils.MutableColorScheme
+import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 import kotlin.math.max
 import kotlin.math.roundToInt
 

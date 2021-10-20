@@ -30,9 +30,9 @@ import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonPanelProjection
 import org.pushingpixels.aurora.demo.svg.material.*
-import org.pushingpixels.aurora.skin.BackgroundAppearanceStrategy
-import org.pushingpixels.aurora.skin.IconFilterStrategy
-import org.pushingpixels.aurora.skin.businessSkin
+import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.theming.IconFilterStrategy
+import org.pushingpixels.aurora.theming.businessSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 import java.awt.ComponentOrientation
 import java.text.MessageFormat

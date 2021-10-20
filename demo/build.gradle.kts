@@ -14,7 +14,7 @@ kotlin {
                 implementation(compose.desktop.currentOs)
                 implementation(project(":common"))
                 implementation(project(":component"))
-                implementation(project(":skin"))
+                implementation(project(":theming"))
                 implementation(project(":window"))
             }
         }

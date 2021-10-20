@@ -15,7 +15,7 @@ kotlin {
                 api(compose.runtime)
                 api(compose.foundation)
                 implementation(project(":component"))
-                implementation(project(":skin"))
+                implementation(project(":theming"))
             }
         }
         named("desktopMain") {
@@ -23,7 +23,7 @@ kotlin {
                 api(compose.desktop.common)
                 implementation(project(":common"))
                 implementation(project(":component"))
-                implementation(project(":skin"))
+                implementation(project(":theming"))
             }
         }
     }

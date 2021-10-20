@@ -32,10 +32,10 @@ import org.pushingpixels.aurora.component.projection.CommandButtonStripProjectio
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
-import org.pushingpixels.aurora.skin.AuroraSkinDefinition
-import org.pushingpixels.aurora.skin.BackgroundAppearanceStrategy
-import org.pushingpixels.aurora.skin.IconFilterStrategy
-import org.pushingpixels.aurora.skin.marinerSkin
+import org.pushingpixels.aurora.theming.AuroraSkinDefinition
+import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.theming.IconFilterStrategy
+import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 
 fun main() = application {

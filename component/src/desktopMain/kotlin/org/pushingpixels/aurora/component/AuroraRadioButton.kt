@@ -37,8 +37,8 @@ import org.pushingpixels.aurora.component.model.SelectorContentModel
 import org.pushingpixels.aurora.component.model.SelectorPresentationModel
 import org.pushingpixels.aurora.component.model.SelectorSizingConstants
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.skin.*
-import org.pushingpixels.aurora.skin.utils.MutableColorScheme
+import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 
 @Immutable
 private class RadioButtonDrawingCache(

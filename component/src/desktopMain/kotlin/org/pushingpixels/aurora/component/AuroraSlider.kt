@@ -45,13 +45,13 @@ import org.pushingpixels.aurora.component.model.SliderContentModel
 import org.pushingpixels.aurora.component.model.SliderPresentationModel
 import org.pushingpixels.aurora.component.model.SliderSizingConstants
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.skin.AuroraSkin
-import org.pushingpixels.aurora.skin.ColorSchemeAssociationKind
-import org.pushingpixels.aurora.skin.ComponentState
-import org.pushingpixels.aurora.skin.Side
-import org.pushingpixels.aurora.skin.painter.fill.ClassicFillPainter
-import org.pushingpixels.aurora.skin.utils.MutableColorScheme
-import org.pushingpixels.aurora.skin.utils.getBaseOutline
+import org.pushingpixels.aurora.theming.AuroraSkin
+import org.pushingpixels.aurora.theming.ColorSchemeAssociationKind
+import org.pushingpixels.aurora.theming.ComponentState
+import org.pushingpixels.aurora.theming.Side
+import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
+import org.pushingpixels.aurora.theming.utils.MutableColorScheme
+import org.pushingpixels.aurora.theming.utils.getBaseOutline
 import kotlin.math.roundToInt
 
 @Immutable

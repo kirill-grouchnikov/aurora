@@ -7,9 +7,9 @@ import androidx.compose.runtime.remember
 import org.pushingpixels.aurora.component.model.ComboBoxContentModel
 import org.pushingpixels.aurora.component.model.ComboBoxPresentationModel
 import org.pushingpixels.aurora.component.projection.ComboBoxProjection
-import org.pushingpixels.aurora.skin.AuroraSkin
-import org.pushingpixels.aurora.skin.AuroraSkinDefinition
-import org.pushingpixels.aurora.skin.getAuroraSkins
+import org.pushingpixels.aurora.theming.AuroraSkin
+import org.pushingpixels.aurora.theming.AuroraSkinDefinition
+import org.pushingpixels.aurora.theming.getAuroraSkins
 
 @Composable
 fun AuroraSkinSwitcher(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {

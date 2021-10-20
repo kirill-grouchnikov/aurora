@@ -48,9 +48,9 @@ import org.pushingpixels.aurora.component.model.TextFieldSizingConstants
 import org.pushingpixels.aurora.component.model.TextFieldStringContentModel
 import org.pushingpixels.aurora.component.model.TextFieldValueContentModel
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.skin.*
-import org.pushingpixels.aurora.skin.utils.MutableColorScheme
-import org.pushingpixels.aurora.skin.utils.getBaseOutline
+import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.utils.MutableColorScheme
+import org.pushingpixels.aurora.theming.utils.getBaseOutline
 import kotlin.math.max
 import kotlin.math.roundToInt
 

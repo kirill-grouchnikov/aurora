@@ -52,7 +52,7 @@ import org.pushingpixels.aurora.component.model.LabelPresentationModel
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.demo.svg.material.*
-import org.pushingpixels.aurora.skin.*
+import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.window.AuroraWindow
 import java.awt.ComponentOrientation
 import java.text.MessageFormat

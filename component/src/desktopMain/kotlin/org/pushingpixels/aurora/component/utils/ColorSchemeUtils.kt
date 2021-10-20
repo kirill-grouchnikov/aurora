@@ -20,10 +20,10 @@ import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.common.byAlpha
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.lighter
-import org.pushingpixels.aurora.skin.*
-import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.skin.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.skin.utils.MutableColorScheme
+import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
+import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 import kotlin.math.max
 
 @Composable

@@ -1,2 +1,1 @@
-include(":common", ":skin", ":tools:svg-transcoder",
-    ":component", ":window", ":demo")
+include(":common", ":theming", ":component", ":window", ":tools:svg-transcoder", ":demo")

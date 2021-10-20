@@ -36,7 +36,7 @@ import org.pushingpixels.aurora.component.projection.CommandButtonStripProjectio
 import org.pushingpixels.aurora.demo.svg.material.content_copy_black_24dp
 import org.pushingpixels.aurora.demo.svg.material.content_cut_black_24dp
 import org.pushingpixels.aurora.demo.svg.material.content_paste_black_24dp
-import org.pushingpixels.aurora.skin.*
+import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.window.AuroraWindow
 import java.awt.ComponentOrientation
 import java.text.MessageFormat

@@ -28,8 +28,8 @@ import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.skin.*
-import org.pushingpixels.aurora.skin.utils.MutableColorScheme
+import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 
 @Immutable
 private class BoxWithHighlightsDrawingCache(

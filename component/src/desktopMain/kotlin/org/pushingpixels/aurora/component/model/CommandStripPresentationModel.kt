@@ -16,9 +16,9 @@
 package org.pushingpixels.aurora.component.model
 
 import androidx.compose.ui.unit.Dp
-import org.pushingpixels.aurora.skin.BackgroundAppearanceStrategy
-import org.pushingpixels.aurora.skin.IconFilterStrategy
-import org.pushingpixels.aurora.skin.PopupPlacementStrategy
+import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.theming.IconFilterStrategy
+import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 
 enum class StripOrientation {
     /**

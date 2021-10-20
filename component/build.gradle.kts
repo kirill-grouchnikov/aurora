@@ -15,14 +15,14 @@ kotlin {
                 api(compose.runtime)
                 api(compose.foundation)
                 implementation(project(":common"))
-                implementation(project(":skin"))
+                implementation(project(":theming"))
             }
         }
         named("desktopMain") {
             dependencies {
                 api(compose.desktop.common)
                 implementation(project(":common"))
-                implementation(project(":skin"))
+                implementation(project(":theming"))
             }
         }
     }

@@ -34,12 +34,12 @@ import org.pushingpixels.aurora.component.model.ProgressCircularPresentationMode
 import org.pushingpixels.aurora.component.model.ProgressDeterminateContentModel
 import org.pushingpixels.aurora.component.model.ProgressIndeterminateContentModel
 import org.pushingpixels.aurora.component.model.ProgressLinearPresentationModel
-import org.pushingpixels.aurora.skin.AuroraSkin
-import org.pushingpixels.aurora.skin.ColorSchemeAssociationKind
-import org.pushingpixels.aurora.skin.ComponentState
-import org.pushingpixels.aurora.skin.ComponentStateFacet
-import org.pushingpixels.aurora.skin.painter.fill.FractionBasedFillPainter
-import org.pushingpixels.aurora.skin.utils.getBaseOutline
+import org.pushingpixels.aurora.theming.AuroraSkin
+import org.pushingpixels.aurora.theming.ColorSchemeAssociationKind
+import org.pushingpixels.aurora.theming.ComponentState
+import org.pushingpixels.aurora.theming.ComponentStateFacet
+import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
+import org.pushingpixels.aurora.theming.utils.getBaseOutline
 import kotlin.math.min
 
 @Composable

@@ -27,9 +27,9 @@ import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.SeparatorContentModel
 import org.pushingpixels.aurora.component.model.SeparatorPresentationModel
 import org.pushingpixels.aurora.component.model.SeparatorSizingConstants
-import org.pushingpixels.aurora.skin.AuroraSkin
-import org.pushingpixels.aurora.skin.ColorSchemeAssociationKind
-import org.pushingpixels.aurora.skin.ComponentState
+import org.pushingpixels.aurora.theming.AuroraSkin
+import org.pushingpixels.aurora.theming.ColorSchemeAssociationKind
+import org.pushingpixels.aurora.theming.ComponentState
 
 @Composable
 internal fun AuroraVerticalSeparator(

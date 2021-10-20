@@ -22,9 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.skin.LocalWindow
-import org.pushingpixels.aurora.skin.Side
-import org.pushingpixels.aurora.skin.Sides
+import org.pushingpixels.aurora.theming.LocalWindow
+import org.pushingpixels.aurora.theming.Side
+import org.pushingpixels.aurora.theming.Sides
 
 @Composable
 private fun CommandButtonStripContent(

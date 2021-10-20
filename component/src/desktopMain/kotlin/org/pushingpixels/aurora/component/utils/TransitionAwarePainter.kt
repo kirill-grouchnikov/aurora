@@ -20,12 +20,12 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
-import org.pushingpixels.aurora.skin.ColorSchemeAssociationKind
-import org.pushingpixels.aurora.skin.DecorationAreaType
-import org.pushingpixels.aurora.skin.ModelStateInfoSnapshot
-import org.pushingpixels.aurora.skin.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.skin.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.skin.utils.MutableColorScheme
+import org.pushingpixels.aurora.theming.ColorSchemeAssociationKind
+import org.pushingpixels.aurora.theming.DecorationAreaType
+import org.pushingpixels.aurora.theming.ModelStateInfoSnapshot
+import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
+import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 
 abstract class TransitionAwarePainterDelegate: Painter() {
     abstract fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter

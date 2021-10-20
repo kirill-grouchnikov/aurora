@@ -19,9 +19,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.skin.LocalWindow
-import org.pushingpixels.aurora.skin.Side
-import org.pushingpixels.aurora.skin.Sides
+import org.pushingpixels.aurora.theming.LocalWindow
+import org.pushingpixels.aurora.theming.Side
+import org.pushingpixels.aurora.theming.Sides
 
 // TODO - restore when issue
 //  https://issuetracker.google.com/issues/165812010 is fixed

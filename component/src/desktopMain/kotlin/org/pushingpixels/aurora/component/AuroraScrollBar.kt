@@ -43,12 +43,12 @@ import org.pushingpixels.aurora.component.utils.ModelStateInfo
 import org.pushingpixels.aurora.component.utils.StateTransitionTracker
 import org.pushingpixels.aurora.component.utils.TransitionInfo
 import org.pushingpixels.aurora.component.utils.populateColorScheme
-import org.pushingpixels.aurora.skin.AuroraSkin
-import org.pushingpixels.aurora.skin.ColorSchemeAssociationKind
-import org.pushingpixels.aurora.skin.ComponentState
-import org.pushingpixels.aurora.skin.auroraBackground
-import org.pushingpixels.aurora.skin.utils.MutableColorScheme
-import org.pushingpixels.aurora.skin.utils.getBaseOutline
+import org.pushingpixels.aurora.theming.AuroraSkin
+import org.pushingpixels.aurora.theming.ColorSchemeAssociationKind
+import org.pushingpixels.aurora.theming.ComponentState
+import org.pushingpixels.aurora.theming.auroraBackground
+import org.pushingpixels.aurora.theming.utils.MutableColorScheme
+import org.pushingpixels.aurora.theming.utils.getBaseOutline
 import kotlin.math.sign
 
 object ScrollBarSizingConstants {

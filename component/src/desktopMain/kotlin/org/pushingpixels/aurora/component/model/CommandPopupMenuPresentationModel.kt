@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManagerMedium
-import org.pushingpixels.aurora.skin.PopupPlacementStrategy
+import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 
 data class CommandPopupMenuPresentationModel(
     val panelPresentationModel: CommandPanelPresentationModel? = null,

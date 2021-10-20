@@ -31,7 +31,7 @@ import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.model.LabelPresentationModel
 import org.pushingpixels.aurora.component.utils.AuroraText
 import org.pushingpixels.aurora.component.utils.AuroraThemedIcon
-import org.pushingpixels.aurora.skin.*
+import org.pushingpixels.aurora.theming.*
 
 @Composable
 internal fun AuroraLabel(
