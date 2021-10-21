@@ -213,8 +213,7 @@ internal fun <E> AuroraComboBox(
         )
     )
     val contentModelState = rememberUpdatedState(commandMenuContentModel)
-    val locals = currentCompositionLocals.map { it provides it.current }.toTypedArray()
-    val currentLocals by rememberUpdatedState(locals)
+    val currentLocals by rememberUpdatedState(currentCompositionLocalContext)
 
     Box(
         modifier = modifier

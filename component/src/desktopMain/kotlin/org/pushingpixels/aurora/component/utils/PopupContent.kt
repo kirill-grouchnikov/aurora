@@ -69,7 +69,7 @@ internal fun displayPopupContent(
     skinColors: AuroraSkinColors,
     skinPainters: AuroraPainters,
     decorationAreaType: DecorationAreaType,
-    locals: Array<ProvidedValue<Any?>>,
+    locals: CompositionLocalContext,
     anchorBoundsInWindow: Rect,
     contentModel: State<CommandMenuContentModel?>,
     presentationModel: CommandPopupMenuPresentationModel,
@@ -367,7 +367,7 @@ internal fun displayPopupContent(
     }
 
     popupContentWindow.setContent {
-        CompositionLocalProvider(*locals) {
+        CompositionLocalProvider(locals) {
             TopLevelPopupContent(
                 popupContentWindow = popupContentWindow,
                 menuContentModel = contentModel,

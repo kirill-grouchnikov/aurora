@@ -67,8 +67,7 @@ fun Modifier.auroraContextMenu(
     val painters = AuroraSkin.painters
     val decorationAreaType = AuroraSkin.decorationAreaType
     val window = LocalWindow.current
-    val locals = currentCompositionLocals.map { it provides it.current }.toTypedArray()
-    val currentLocals by rememberUpdatedState(locals)
+    val currentLocals by rememberUpdatedState(currentCompositionLocalContext)
 
     val resolvedTextStyle = remember { resolveDefaults(mergedTextStyle, layoutDirection) }
 
