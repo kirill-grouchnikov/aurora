@@ -29,6 +29,8 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.component.model.ProgressCircularPresentationModel
 import org.pushingpixels.aurora.component.model.ProgressDeterminateContentModel
@@ -149,6 +151,8 @@ internal fun AuroraIndeterminateLinearProgress(
     contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
     presentationModel: ProgressLinearPresentationModel = ProgressLinearPresentationModel()
 ) {
+    val layoutDirection = LocalLayoutDirection.current
+
     val infiniteTransition = rememberInfiniteTransition()
     val progress by infiniteTransition.animateFloat(
         initialValue = 0.0f,
@@ -226,7 +230,10 @@ internal fun AuroraIndeterminateLinearProgress(
             val stripeOffset = valComplete % (2 * size.height).toInt()
             val stripeWidth = 1.8f * size.height
             for (stripe in -2..stripeCount step 2) {
-                val stripePos = stripe * size.height + stripeOffset
+                var stripePos = stripe * size.height + stripeOffset
+                if (layoutDirection == LayoutDirection.Rtl) {
+                   stripePos = size.width - stripePos
+                }
 
                 drawPath(
                     path = Path().also {
@@ -263,6 +270,8 @@ internal fun AuroraDeterminateLinearProgress(
     contentModel: ProgressDeterminateContentModel,
     presentationModel: ProgressLinearPresentationModel = ProgressLinearPresentationModel()
 ) {
+    val layoutDirection = LocalLayoutDirection.current
+
     val progressState =
         if (contentModel.enabled) DETERMINATE_SELECTED else DETERMINATE_SELECTED_DISABLED
     val fillState =
@@ -324,13 +333,13 @@ internal fun AuroraDeterminateLinearProgress(
 
             val progressWidth = size.width * contentModel.progress
             if (progressWidth > 0.0f) {
-                // TODO - support RTL
                 progressFillPainter.paintContourBackground(
                     drawScope = this,
                     size = this.size,
                     outline = Outline.Rectangle(
                         Rect(
-                            offset = Offset.Zero,
+                            offset = if (layoutDirection == LayoutDirection.Ltr) Offset.Zero else
+                                Offset(x = size.width - progressWidth, 0.0f),
                             size = Size(progressWidth, size.height)
                         )
                     ),
