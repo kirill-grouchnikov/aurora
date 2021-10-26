@@ -259,14 +259,14 @@ internal open class CommandButtonLayoutManagerBig(
         var shiftY = 0.0f
         var finalWidth = preferredSize.width
         var finalHeight = preferredSize.height
-        if (constraints.hasFixedHeight) {
+        if (constraints.hasFixedHeight && (constraints.maxHeight > 0)) {
             finalHeight = constraints.maxHeight.toFloat()
             if (finalHeight > preferredSize.height) {
                 // We have more vertical space than needed to display the content.
                 shiftY = (finalHeight - preferredSize.height) / 2
             }
         }
-        if (constraints.hasFixedWidth) {
+        if (constraints.hasFixedWidth && (constraints.maxWidth > 0)) {
             finalWidth = constraints.maxWidth.toFloat()
         }
 

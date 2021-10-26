@@ -181,7 +181,7 @@ internal open class CommandButtonLayoutManagerMedium(
         var shiftX = 0.0f
         var finalWidth = preferredSize.width
         var finalHeight = preferredSize.height
-        if (constraints.hasFixedWidth) {
+        if (constraints.hasFixedWidth && (constraints.maxWidth > 0)) {
             finalWidth = constraints.maxWidth.toFloat()
             if (finalWidth > preferredSize.width) {
                 // We have more horizontal space than needed to display the content.
@@ -200,7 +200,7 @@ internal open class CommandButtonLayoutManagerMedium(
                 }
             }
         }
-        if (constraints.hasFixedHeight) {
+        if (constraints.hasFixedHeight && (constraints.maxHeight > 0)) {
             finalHeight = constraints.maxHeight.toFloat()
         }
 
