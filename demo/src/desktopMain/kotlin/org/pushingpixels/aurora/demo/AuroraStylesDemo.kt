@@ -219,21 +219,21 @@ fun CommandDemoEditStrip(
 ) {
     val commandCut =
         Command(
-            text = resourceBundle.value.getString("Cut.text"),
+            text = resourceBundle.value.getString("Edit.cut.text"),
             icon = content_cut_black_24dp(),
             isActionEnabled = true,
             action = { println("Cut!") }
         )
     val commandCopy =
         Command(
-            text = resourceBundle.value.getString("Copy.text"),
+            text = resourceBundle.value.getString("Edit.copy.text"),
             icon = content_copy_black_24dp(),
             isActionEnabled = true,
             action = { println("Copy!") }
         )
     var togglePasteText by remember { mutableStateOf(false) }
     val commandPasteTextOnly = Command(
-        text = resourceBundle.value.getString("Paste.textOnlyText"),
+        text = resourceBundle.value.getString("Edit.paste.textOnlyText"),
         action = { println("Paste text only") },
         isActionToggle = true,
         isActionToggleSelected = togglePasteText,
@@ -244,7 +244,7 @@ fun CommandDemoEditStrip(
     )
     val commandPaste =
         Command(
-            text = resourceBundle.value.getString("Paste.text"),
+            text = resourceBundle.value.getString("Edit.paste.text"),
             icon = content_paste_black_24dp(),
             isActionEnabled = true,
             action = { println("Paste!") },
@@ -252,10 +252,10 @@ fun CommandDemoEditStrip(
                 group = CommandGroup(
                     commands = listOf(
                         Command(
-                            text = resourceBundle.value.getString("Paste.keepFormattingText"),
+                            text = resourceBundle.value.getString("Edit.paste.keepFormattingText"),
                             action = { println("Paste with keep formatting") }),
                         Command(
-                            text = resourceBundle.value.getString("Paste.mergeFormattingText"),
+                            text = resourceBundle.value.getString("Edit.paste.mergeFormattingText"),
                             action = { println("Paste with merge formatting") }),
                         commandPasteTextOnly
                     )

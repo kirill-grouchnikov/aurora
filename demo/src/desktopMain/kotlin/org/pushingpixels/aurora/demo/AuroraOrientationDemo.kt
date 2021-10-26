@@ -193,7 +193,7 @@ fun CommandOrientationEditStrip(
 ) {
     val commandCut =
         Command(
-            text = resourceBundle.value.getString("Cut.text"),
+            text = resourceBundle.value.getString("Edit.cut.text"),
             icon = content_cut_black_24dp(),
             isActionEnabled = actionEnabled,
             action = { println("Cut!") }
@@ -201,7 +201,7 @@ fun CommandOrientationEditStrip(
         )
     val commandCopy =
         Command(
-            text = resourceBundle.value.getString("Copy.text"),
+            text = resourceBundle.value.getString("Edit.copy.text"),
             icon = content_copy_black_24dp(),
             isActionEnabled = actionEnabled,
             action = { println("Copy!") }
@@ -210,7 +210,7 @@ fun CommandOrientationEditStrip(
 
     var togglePasteText by remember { mutableStateOf(false) }
     val commandPasteTextOnly = Command(
-        text = resourceBundle.value.getString("Paste.textOnlyText"),
+        text = resourceBundle.value.getString("Edit.paste.textOnlyText"),
         action = { println("Paste text only") },
         isActionToggle = true,
         isActionToggleSelected = togglePasteText,
@@ -222,7 +222,7 @@ fun CommandOrientationEditStrip(
 
     val commandPaste =
         Command(
-            text = resourceBundle.value.getString("Paste.text"),
+            text = resourceBundle.value.getString("Edit.paste.text"),
             icon = content_paste_black_24dp(),
             isActionEnabled = actionEnabled,
             action = { println("Paste!") },
@@ -230,10 +230,10 @@ fun CommandOrientationEditStrip(
                 group = CommandGroup(
                     commands = listOf(
                         Command(
-                            text = resourceBundle.value.getString("Paste.keepFormattingText"),
+                            text = resourceBundle.value.getString("Edit.paste.keepFormattingText"),
                             action = { println("Paste with keep formatting") }),
                         Command(
-                            text = resourceBundle.value.getString("Paste.mergeFormattingText"),
+                            text = resourceBundle.value.getString("Edit.paste.mergeFormattingText"),
                             action = { println("Paste with merge formatting") }),
                         commandPasteTextOnly,
                     )
@@ -291,7 +291,7 @@ fun CommandOrientationStyleStrip(
 ) {
     val commandBold =
         Command(
-            text = resourceBundle.value.getString("FontBold.tooltip.textActionTitle"),
+            text = resourceBundle.value.getString("FontStyle.bold.title"),
             icon = format_bold_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -303,7 +303,7 @@ fun CommandOrientationStyleStrip(
         )
     val commandItalic =
         Command(
-            text = resourceBundle.value.getString("FontItalic.tooltip.textActionTitle"),
+            text = resourceBundle.value.getString("FontStyle.italic.title"),
             icon = format_italic_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -315,7 +315,7 @@ fun CommandOrientationStyleStrip(
         )
     val commandUnderline =
         Command(
-            text = resourceBundle.value.getString("FontUnderline.tooltip.textActionTitle"),
+            text = resourceBundle.value.getString("FontStyle.underline.title"),
             icon = format_underlined_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -327,7 +327,7 @@ fun CommandOrientationStyleStrip(
         )
     val commandStrikethrough =
         Command(
-            text = resourceBundle.value.getString("FontStrikethrough.tooltip.textActionTitle"),
+            text = resourceBundle.value.getString("FontStyle.strikethrough.title"),
             icon = format_strikethrough_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -408,8 +408,8 @@ fun WindowScope.OrientationCommandContent(
 
     val actionCommand =
         Command(
-            text = resourceBundle.value.getString("Paste.text"),
-            extraText = resourceBundle.value.getString("Paste.textExtra"),
+            text = resourceBundle.value.getString("Edit.paste.text"),
+            extraText = resourceBundle.value.getString("Edit.paste.textExtra"),
             icon = edit_paste(),
             action = { println("Paste activated!") },
             isActionEnabled = actionEnabled
@@ -417,8 +417,8 @@ fun WindowScope.OrientationCommandContent(
 
     val splitMainActionCommand =
         Command(
-            text = resourceBundle.value.getString("Copy.text"),
-            extraText = resourceBundle.value.getString("Copy.textExtra"),
+            text = resourceBundle.value.getString("Edit.copy.text"),
+            extraText = resourceBundle.value.getString("Edit.copy.textExtra"),
             icon = edit_copy(),
             action = { println("Copy activated!") },
             isActionEnabled = actionEnabled,
@@ -428,8 +428,8 @@ fun WindowScope.OrientationCommandContent(
 
     val splitMainPopupCommand =
         Command(
-            text = resourceBundle.value.getString("Cut.text"),
-            extraText = resourceBundle.value.getString("Cut.textExtra"),
+            text = resourceBundle.value.getString("Edit.cut.text"),
+            extraText = resourceBundle.value.getString("Edit.cut.textExtra"),
             icon = edit_cut(),
             action = { println("Cut activated!") },
             isActionEnabled = actionEnabled,
@@ -439,8 +439,8 @@ fun WindowScope.OrientationCommandContent(
 
     val popupCommand =
         Command(
-            text = resourceBundle.value.getString("SelectAll.text"),
-            extraText = resourceBundle.value.getString("SelectAll.textExtra"),
+            text = resourceBundle.value.getString("Edit.selectAll.text"),
+            extraText = resourceBundle.value.getString("Edit.selectAll.textExtra"),
             icon = edit_select_all(),
             secondaryContentModel = getPopupMenuContentModel(resourceBundle),
             isSecondaryEnabled = popupEnabled
