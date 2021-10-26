@@ -265,7 +265,7 @@ internal fun displayPopupContent(
                 fullPopupHeight
             ) else
             Rectangle(
-                initialAnchor.x + anchorBoundsInWindow.width.toInt(),
+                initialAnchor.x + fullPopupWidth,
                 initialAnchor.y,
                 fullPopupWidth,
                 fullPopupHeight
@@ -278,7 +278,7 @@ internal fun displayPopupContent(
                 fullPopupHeight
             ) else
             Rectangle(
-                initialAnchor.x - fullPopupWidth,
+                initialAnchor.x - anchorBoundsInWindow.width.toInt(),
                 initialAnchor.y,
                 fullPopupWidth,
                 fullPopupHeight

@@ -440,10 +440,7 @@ fun WindowScope.DemoArea(
         ) {
 
             DemoHeader(resourceBundle.value.getString("Group.buttons"), button(), contentEnabled)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+            Row(modifier = Modifier.fillMaxWidth()) {
                 // A toggle command button backed by a mutable boolean
                 var toggleButtonSelected by remember { mutableStateOf(true) }
                 CommandButtonProjection(
@@ -467,6 +464,9 @@ fun WindowScope.DemoArea(
                         iconActiveFilterStrategy = IconFilterStrategy.Original,
                     )
                 ).project()
+
+                Spacer(modifier = Modifier.width(8.dp))
+
                 // A command button with icon using THEMED_FOLLOW_TEXT filter strategy
                 CommandButtonProjection(
                     contentModel = Command(
@@ -482,6 +482,9 @@ fun WindowScope.DemoArea(
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                     )
                 ).project()
+
+                Spacer(modifier = Modifier.width(8.dp))
+
                 // A flat command button that displays background when it's
                 // active (rollover, pressed, etc)
                 CommandButtonProjection(
