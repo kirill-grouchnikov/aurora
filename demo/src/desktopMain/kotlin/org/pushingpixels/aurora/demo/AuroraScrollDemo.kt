@@ -117,53 +117,53 @@ fun main() = application {
         waves_24px()
     )
 
-    AuroraWindow(
-        skin = skin,
-        title = "Aurora Scrollbars",
-        state = state,
-        undecorated = true,
-        onCloseRequest = ::exitApplication,
-        onKeyEvent = {
-            // Keyboard event handler to process Up and Down arrows for list traversal
-            var handled = false
-            if (it.type == KeyEventType.KeyDown) {
-                when (it.key) {
-                    Key.DirectionDown -> {
-                        if (stateSelection.value < 0) {
-                            stateSelection.value = 0
-                        } else {
-                            stateSelection.value =
-                                (stateSelection.value + 1).coerceAtMost(itemCount - 1)
-                        }
-                        scope.launch {
-                            if (!lazyListState.isItemFullyVisible(stateSelection.value)) {
-                                lazyListState.animateScrollToItem(stateSelection.value)
+    CompositionLocalProvider(
+        LocalLayoutDirection provides
+                if (ComponentOrientation.getOrientation(currLocale.value).isLeftToRight)
+                    LayoutDirection.Ltr else LayoutDirection.Rtl,
+    ) {
+        AuroraWindow(
+            skin = skin,
+            title = "Aurora Scrollbars",
+            state = state,
+            undecorated = true,
+            onCloseRequest = ::exitApplication,
+            onKeyEvent = {
+                // Keyboard event handler to process Up and Down arrows for list traversal
+                var handled = false
+                if (it.type == KeyEventType.KeyDown) {
+                    when (it.key) {
+                        Key.DirectionDown -> {
+                            if (stateSelection.value < 0) {
+                                stateSelection.value = 0
+                            } else {
+                                stateSelection.value =
+                                    (stateSelection.value + 1).coerceAtMost(itemCount - 1)
                             }
-                        }
-                        handled = true
-                    }
-                    Key.DirectionUp -> {
-                        if (stateSelection.value < 0) {
-                            stateSelection.value = itemCount - 1
-                        } else {
-                            stateSelection.value = (stateSelection.value - 1).coerceAtLeast(0)
-                        }
-                        scope.launch {
-                            if (!lazyListState.isItemFullyVisible(stateSelection.value)) {
-                                lazyListState.animateScrollToItem(stateSelection.value)
+                            scope.launch {
+                                if (!lazyListState.isItemFullyVisible(stateSelection.value)) {
+                                    lazyListState.animateScrollToItem(stateSelection.value)
+                                }
                             }
+                            handled = true
                         }
-                        handled = true
+                        Key.DirectionUp -> {
+                            if (stateSelection.value < 0) {
+                                stateSelection.value = itemCount - 1
+                            } else {
+                                stateSelection.value = (stateSelection.value - 1).coerceAtLeast(0)
+                            }
+                            scope.launch {
+                                if (!lazyListState.isItemFullyVisible(stateSelection.value)) {
+                                    lazyListState.animateScrollToItem(stateSelection.value)
+                                }
+                            }
+                            handled = true
+                        }
                     }
                 }
+                handled
             }
-            handled
-        }
-    ) {
-        CompositionLocalProvider(
-            LocalLayoutDirection provides
-                    if (ComponentOrientation.getOrientation(currLocale.value).isLeftToRight)
-                        LayoutDirection.Ltr else LayoutDirection.Rtl,
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
                 Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {

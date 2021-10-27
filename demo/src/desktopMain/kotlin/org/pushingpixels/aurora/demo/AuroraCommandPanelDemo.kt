@@ -105,17 +105,17 @@ fun main() = application {
             .getBundle("org.pushingpixels.aurora.demo.Resources", currLocale.value)
     }
 
-    AuroraWindow(
-        skin = skin,
-        title = "Aurora Command Panel",
-        state = state,
-        undecorated = true,
-        onCloseRequest = ::exitApplication,
+    CompositionLocalProvider(
+        LocalLayoutDirection provides
+                if (ComponentOrientation.getOrientation(currLocale.value).isLeftToRight)
+                    LayoutDirection.Ltr else LayoutDirection.Rtl,
     ) {
-        CompositionLocalProvider(
-            LocalLayoutDirection provides
-                    if (ComponentOrientation.getOrientation(currLocale.value).isLeftToRight)
-                        LayoutDirection.Ltr else LayoutDirection.Rtl,
+        AuroraWindow(
+            skin = skin,
+            title = "Aurora Command Panel",
+            state = state,
+            undecorated = true,
+            onCloseRequest = ::exitApplication,
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
                 Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {

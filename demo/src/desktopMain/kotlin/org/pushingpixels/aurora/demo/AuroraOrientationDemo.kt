@@ -53,19 +53,19 @@ fun main() = application {
             .getBundle("org.pushingpixels.aurora.demo.Resources", currLocale.value)
     }
 
-    AuroraWindow(
-        skin = skin,
-        title = "Aurora Demo",
-        icon = radiance_menu(),
-        iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
-        state = state,
-        undecorated = true,
-        onCloseRequest = ::exitApplication,
+    CompositionLocalProvider(
+        LocalLayoutDirection provides
+                if (ComponentOrientation.getOrientation(currLocale.value).isLeftToRight)
+                    LayoutDirection.Ltr else LayoutDirection.Rtl,
     ) {
-        CompositionLocalProvider(
-            LocalLayoutDirection provides
-                    if (ComponentOrientation.getOrientation(currLocale.value).isLeftToRight)
-                        LayoutDirection.Ltr else LayoutDirection.Rtl,
+        AuroraWindow(
+            skin = skin,
+            title = "Aurora Demo",
+            icon = radiance_menu(),
+            iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
+            state = state,
+            undecorated = true,
+            onCloseRequest = ::exitApplication,
         ) {
             OrientationCommandContent(skin, currLocale, resourceBundle)
         }

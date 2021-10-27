@@ -57,56 +57,56 @@ fun main() = application {
             .getBundle("org.pushingpixels.aurora.demo.Resources", currLocale.value)
     }
 
-    AuroraWindow(
-        skin = skin,
-        title = "Aurora Demo",
-        state = state,
-        undecorated = true,
-        icon = radiance_menu(),
-        iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
-        onCloseRequest = ::exitApplication,
-        menuCommands = CommandGroup(
-            commands = listOf(
-                Command(
-                    text = resourceBundle.value.getString("Menu.file"),
-                    secondaryContentModel = CommandMenuContentModel(
-                        CommandGroup(
-                            commands = listOf(
-                                Command(
-                                    text = resourceBundle.value.getString("Menu.file.new"),
-                                    action = { println("New file!") }),
-                                Command(
-                                    text = resourceBundle.value.getString("Menu.file.open"),
-                                    action = { println("Open file!") }),
-                                Command(
-                                    text = resourceBundle.value.getString("Menu.file.save"),
-                                    action = { println("Save file!") })
+    CompositionLocalProvider(
+        LocalLayoutDirection provides
+                if (ComponentOrientation.getOrientation(currLocale.value).isLeftToRight)
+                    LayoutDirection.Ltr else LayoutDirection.Rtl,
+    ) {
+        AuroraWindow(
+            skin = skin,
+            title = "Aurora Demo",
+            state = state,
+            undecorated = true,
+            icon = radiance_menu(),
+            iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
+            onCloseRequest = ::exitApplication,
+            menuCommands = CommandGroup(
+                commands = listOf(
+                    Command(
+                        text = resourceBundle.value.getString("Menu.file"),
+                        secondaryContentModel = CommandMenuContentModel(
+                            CommandGroup(
+                                commands = listOf(
+                                    Command(
+                                        text = resourceBundle.value.getString("Menu.file.new"),
+                                        action = { println("New file!") }),
+                                    Command(
+                                        text = resourceBundle.value.getString("Menu.file.open"),
+                                        action = { println("Open file!") }),
+                                    Command(
+                                        text = resourceBundle.value.getString("Menu.file.save"),
+                                        action = { println("Save file!") })
+                                )
                             )
                         )
-                    )
-                ),
-                Command(
-                    text = resourceBundle.value.getString("Menu.edit"),
-                    action = { println("Edit activated!") }),
-                Command(
-                    text = resourceBundle.value.getString("Menu.view"),
-                    action = { println("View activated!") }),
-                Command(
-                    text = resourceBundle.value.getString("Menu.tools"),
-                    action = { println("Tools activated!") }),
-                Command(
-                    text = resourceBundle.value.getString("Menu.window"),
-                    action = { println("Window activated!") }),
-                Command(
-                    text = resourceBundle.value.getString("Menu.help"),
-                    action = { println("Help activated!") })
+                    ),
+                    Command(
+                        text = resourceBundle.value.getString("Menu.edit"),
+                        action = { println("Edit activated!") }),
+                    Command(
+                        text = resourceBundle.value.getString("Menu.view"),
+                        action = { println("View activated!") }),
+                    Command(
+                        text = resourceBundle.value.getString("Menu.tools"),
+                        action = { println("Tools activated!") }),
+                    Command(
+                        text = resourceBundle.value.getString("Menu.window"),
+                        action = { println("Window activated!") }),
+                    Command(
+                        text = resourceBundle.value.getString("Menu.help"),
+                        action = { println("Help activated!") })
+                )
             )
-        )
-    ) {
-        CompositionLocalProvider(
-            LocalLayoutDirection provides
-                    if (ComponentOrientation.getOrientation(currLocale.value).isLeftToRight)
-                        LayoutDirection.Ltr else LayoutDirection.Rtl,
         ) {
             DemoContent(skin, currLocale, resourceBundle)
         }
