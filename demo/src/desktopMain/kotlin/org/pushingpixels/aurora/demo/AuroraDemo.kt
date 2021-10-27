@@ -419,23 +419,35 @@ fun WindowScope.DemoArea(
         modifier = modifier
             .fillMaxWidth()
             .auroraBackground()
-            .padding(8.dp)
     ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            CheckBoxProjection(contentModel = SelectorContentModel(
-                text = resourceBundle.value.getString("Content.enabled"),
-                selected = contentEnabled.value,
-                onTriggerSelectedChange = { contentEnabled.value = !contentEnabled.value }
-            )).project()
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.ControlPane) {
+            Column(
+                modifier = Modifier.fillMaxHeight().auroraBackground()
+                    .padding(vertical = 8.dp, horizontal = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                CheckBoxProjection(contentModel = SelectorContentModel(
+                    text = resourceBundle.value.getString("Content.enabled"),
+                    selected = contentEnabled.value,
+                    onTriggerSelectedChange = { contentEnabled.value = !contentEnabled.value }
+                )).project()
 
-            AuroraSkinSwitcher(auroraSkinDefinition)
+                AuroraSkinSwitcher(auroraSkinDefinition)
 
-            AuroraLocaleSwitcher(locale, resourceBundle)
+                AuroraLocaleSwitcher(locale, resourceBundle)
+            }
         }
+
+        VerticalSeparatorProjection(
+            contentModel = SeparatorContentModel(),
+            presentationModel = SeparatorPresentationModel(
+                startGradientAmount = 0.dp,
+                endGradientAmount = 0.dp
+            )
+        ).project(modifier = Modifier.fillMaxHeight())
+
         Column(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+            modifier = Modifier.fillMaxWidth().padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
 
@@ -1001,6 +1013,7 @@ fun WindowScope.DemoContent(
         }
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.None) {
             DemoArea(
+                modifier = Modifier.weight(weight = 1.0f, fill = true),
                 styleCommands = styleCommands,
                 auroraSkinDefinition = auroraSkinDefinition,
                 locale = locale,
@@ -1008,7 +1021,6 @@ fun WindowScope.DemoContent(
                 contentEnabled = contentEnabled
             )
         }
-        Spacer(modifier = Modifier.weight(weight = 1.0f, fill = true))
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.Footer) {
             DemoFooter(
                 contentEnabled = contentEnabled,
