@@ -11,6 +11,7 @@ import org.pushingpixels.aurora.demo.svg.flags.us
 import org.pushingpixels.aurora.demo.svg.tango.preferences_desktop_locale_2
 import java.awt.ComponentOrientation
 import java.util.*
+import kotlin.reflect.KMutableProperty
 
 @Composable
 fun WindowScope.AuroraLocaleSwitcher(
@@ -33,6 +34,43 @@ fun WindowScope.AuroraLocaleSwitcher(
             locale.value = Locale("iw", "IL")
             Locale.setDefault(locale.value)
             window.applyComponentOrientation(ComponentOrientation.getOrientation(locale.value))
+        }
+    )
+    val localeCommand = Command(
+        text = resourceBundle.value.getString("Language.select"),
+        icon = preferences_desktop_locale_2(),
+        secondaryContentModel = CommandMenuContentModel(
+            group = CommandGroup(
+                commands = arrayListOf(englishLocale, hebrewLocale)
+            )
+        )
+    )
+    CommandButtonProjection(
+        contentModel = localeCommand,
+        presentationModel = CommandButtonPresentationModel(
+            presentationState = CommandButtonPresentationState.Medium
+        )
+    ).project()
+}
+@Composable
+fun WindowScope.AuroraLocaleSwitcher(
+    locale: KMutableProperty<Locale>,
+    resourceBundle: State<ResourceBundle>
+) {
+    val englishLocale = Command(
+        text = resourceBundle.value.getString("Language.english"),
+        icon = us(),
+        action = {
+            locale.setter.call(Locale("en", "US"))
+            window.applyComponentOrientation(ComponentOrientation.getOrientation(locale.getter.call()))
+        }
+    )
+    val hebrewLocale = Command(
+        text = resourceBundle.value.getString("Language.hebrew"),
+        icon = il(),
+        action = {
+            locale.setter.call(Locale("iw", "IL"))
+            window.applyComponentOrientation(ComponentOrientation.getOrientation(locale.getter.call()))
         }
     )
     val localeCommand = Command(

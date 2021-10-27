@@ -31,8 +31,10 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import org.pushingpixels.aurora.common.AuroraPopupManager
@@ -49,6 +51,7 @@ import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
 import java.awt.*
 import java.awt.event.*
+import java.util.*
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
 
@@ -442,6 +445,37 @@ internal fun WindowScope.WindowContent(
 
         onDispose {
             Toolkit.getDefaultToolkit().removeAWTEventListener(awtEventListener)
+        }
+    }
+}
+
+interface AuroraLocaleScope {
+    var applicationLocale: Locale
+}
+
+class AuroraApplicationScope(private val original: ApplicationScope, private val currLocale: MutableState<Locale>) :
+    ApplicationScope, AuroraLocaleScope {
+    override var applicationLocale: Locale
+        get() = currLocale.value
+        set(value) {
+            Locale.setDefault(value)
+            currLocale.value = value
+        }
+
+    override fun exitApplication() {
+        original.exitApplication()
+    }
+}
+
+fun auroraApplication(content: @Composable AuroraApplicationScope.() -> Unit) {
+    application {
+        val currLocale = mutableStateOf(Locale.getDefault())
+        CompositionLocalProvider(
+            LocalLayoutDirection provides
+                    if (ComponentOrientation.getOrientation(currLocale.value).isLeftToRight)
+                        LayoutDirection.Ltr else LayoutDirection.Rtl
+        ) {
+            AuroraApplicationScope(this, currLocale).content()
         }
     }
 }

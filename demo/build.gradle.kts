@@ -12,6 +12,7 @@ kotlin {
         named("desktopMain") {
             dependencies {
                 implementation(compose.desktop.currentOs)
+                implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.31")
                 implementation(project(":common"))
                 implementation(project(":component"))
                 implementation(project(":theming"))

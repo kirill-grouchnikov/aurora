@@ -19,11 +19,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.*
+import androidx.compose.ui.window.WindowPlacement
+import androidx.compose.ui.window.WindowPosition
+import androidx.compose.ui.window.WindowScope
+import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CheckBoxProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
@@ -36,39 +37,32 @@ import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.window.AuroraWindow
-import java.awt.ComponentOrientation
+import org.pushingpixels.aurora.window.auroraApplication
 import java.text.MessageFormat
 import java.util.*
+import kotlin.reflect.KMutableProperty
 
-fun main() = application {
+fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(800.dp, 400.dp)
     )
     val skin = mutableStateOf(marinerSkin())
-    val currLocale = mutableStateOf(Locale.getDefault())
     val resourceBundle = derivedStateOf {
-        ResourceBundle
-            .getBundle("org.pushingpixels.aurora.demo.Resources", currLocale.value)
+        ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
 
-    CompositionLocalProvider(
-        LocalLayoutDirection provides
-                if (ComponentOrientation.getOrientation(currLocale.value).isLeftToRight)
-                    LayoutDirection.Ltr else LayoutDirection.Rtl,
+    AuroraWindow(
+        skin = skin,
+        title = "Aurora Demo",
+        icon = radiance_menu(),
+        iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
+        state = state,
+        undecorated = true,
+        onCloseRequest = ::exitApplication,
     ) {
-        AuroraWindow(
-            skin = skin,
-            title = "Aurora Demo",
-            icon = radiance_menu(),
-            iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
-            state = state,
-            undecorated = true,
-            onCloseRequest = ::exitApplication,
-        ) {
-            OrientationCommandContent(skin, currLocale, resourceBundle)
-        }
+        OrientationCommandContent(skin, ::applicationLocale, resourceBundle)
     }
 }
 
@@ -400,7 +394,7 @@ private fun getPopupMenuContentModel(resourceBundle: State<ResourceBundle>): Com
 @Composable
 fun WindowScope.OrientationCommandContent(
     auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
-    locale: MutableState<Locale>,
+    locale: KMutableProperty<Locale>,
     resourceBundle: State<ResourceBundle>
 ) {
     var actionEnabled by remember { mutableStateOf(true) }
