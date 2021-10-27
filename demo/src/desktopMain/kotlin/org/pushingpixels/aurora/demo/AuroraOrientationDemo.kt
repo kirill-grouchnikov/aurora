@@ -40,7 +40,7 @@ import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.auroraApplication
 import java.text.MessageFormat
 import java.util.*
-import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KMutableProperty0
 
 fun main() = auroraApplication {
     val state = rememberWindowState(
@@ -394,7 +394,7 @@ private fun getPopupMenuContentModel(resourceBundle: State<ResourceBundle>): Com
 @Composable
 fun WindowScope.OrientationCommandContent(
     auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
-    locale: KMutableProperty<Locale>,
+    applicationLocaleProperty: KMutableProperty0<Locale>,
     resourceBundle: State<ResourceBundle>
 ) {
     var actionEnabled by remember { mutableStateOf(true) }
@@ -473,7 +473,7 @@ fun WindowScope.OrientationCommandContent(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                AuroraLocaleSwitcher(locale, resourceBundle)
+                AuroraLocaleSwitcher(applicationLocaleProperty, resourceBundle)
             }
 
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
