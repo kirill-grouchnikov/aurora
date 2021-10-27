@@ -32,7 +32,10 @@ import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.*
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.LabelProjection
@@ -280,7 +283,9 @@ private fun getRowFillMeasurePolicy(
         }
 
         val gap = CommandPanelSizingConstants.DefaultGap.roundToPx()
-        val panelWidth = if (constraints.hasFixedWidth || constraints.hasBoundedWidth) {
+        val panelWidth = if ((constraints.hasFixedWidth || constraints.hasBoundedWidth)
+            && (constraints.maxWidth > 0)
+        ) {
             constraints.maxWidth
         } else {
             maxButtonWidth * presentationModel.maxColumns +
@@ -422,7 +427,9 @@ private fun getColumnFillMeasurePolicy(
         }
 
         val gap = CommandPanelSizingConstants.DefaultGap.roundToPx()
-        val panelHeight = if (constraints.hasFixedHeight || constraints.hasBoundedHeight) {
+        val panelHeight = if ((constraints.hasFixedHeight || constraints.hasBoundedHeight)
+            && (constraints.maxHeight > 0)
+        ) {
             constraints.maxHeight
         } else {
             maxButtonHeight * presentationModel.maxRows +
@@ -509,7 +516,10 @@ private fun getColumnFillMeasurePolicy(
                 for (groupModel in contentModel.commandGroups) {
                     var currY = 0
                     // Place the background canvas
-                    placeables[currPlaceableIndex].place(currX - placeables[currPlaceableIndex].width, currY)
+                    placeables[currPlaceableIndex].place(
+                        currX - placeables[currPlaceableIndex].width,
+                        currY
+                    )
                     currPlaceableIndex++
 
                     // And place all the buttons
