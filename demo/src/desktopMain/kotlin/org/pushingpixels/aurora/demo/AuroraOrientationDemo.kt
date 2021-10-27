@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
-import androidx.compose.ui.window.WindowScope
 import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CheckBoxProjection
@@ -36,11 +35,11 @@ import org.pushingpixels.aurora.theming.AuroraSkinDefinition
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
+import org.pushingpixels.aurora.window.AuroraApplicationScope
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.auroraApplication
 import java.text.MessageFormat
 import java.util.*
-import kotlin.reflect.KMutableProperty0
 
 fun main() = auroraApplication {
     val state = rememberWindowState(
@@ -62,7 +61,7 @@ fun main() = auroraApplication {
         undecorated = true,
         onCloseRequest = ::exitApplication,
     ) {
-        OrientationCommandContent(skin, ::applicationLocale, resourceBundle)
+        OrientationCommandContent(skin, resourceBundle)
     }
 }
 
@@ -114,11 +113,12 @@ fun CommandOrientationJustifyStrip(
     enabled: Boolean,
     orientation: StripOrientation,
     alignment: MutableState<CommandDemoAlignment>,
-    horizontalGapScaleFactor: Float
+    horizontalGapScaleFactor: Float,
+    resourceBundle: State<ResourceBundle>
 ) {
     val commandAlignCenter =
         Command(
-            text = "Center",
+            text = resourceBundle.value.getString("Justify.center"),
             icon = format_justify_center(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -129,7 +129,7 @@ fun CommandOrientationJustifyStrip(
         )
     val commandAlignLeft =
         Command(
-            text = "Left",
+            text = resourceBundle.value.getString("Justify.left"),
             icon = format_justify_left(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -140,7 +140,7 @@ fun CommandOrientationJustifyStrip(
         )
     val commandAlignRight =
         Command(
-            text = "Right",
+            text = resourceBundle.value.getString("Justify.right"),
             icon = format_justify_right(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -151,7 +151,7 @@ fun CommandOrientationJustifyStrip(
         )
     val commandAlignFill =
         Command(
-            text = "Fill",
+            text = resourceBundle.value.getString("Justify.fill"),
             icon = format_justify_fill(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -392,9 +392,8 @@ private fun getPopupMenuContentModel(resourceBundle: State<ResourceBundle>): Com
 }
 
 @Composable
-fun WindowScope.OrientationCommandContent(
+fun AuroraApplicationScope.OrientationCommandContent(
     auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
-    applicationLocaleProperty: KMutableProperty0<Locale>,
     resourceBundle: State<ResourceBundle>
 ) {
     var actionEnabled by remember { mutableStateOf(true) }
@@ -454,7 +453,8 @@ fun WindowScope.OrientationCommandContent(
                 enabled = actionEnabled,
                 orientation = StripOrientation.Vertical,
                 alignment = alignment,
-                horizontalGapScaleFactor = 0.7f
+                horizontalGapScaleFactor = 0.7f,
+                resourceBundle = resourceBundle
             )
         }
         Box(modifier = Modifier.padding(8.dp)) {
@@ -473,18 +473,18 @@ fun WindowScope.OrientationCommandContent(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                AuroraLocaleSwitcher(applicationLocaleProperty, resourceBundle)
+                AuroraLocaleSwitcher(resourceBundle)
             }
 
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
                 CheckBoxProjection(contentModel = SelectorContentModel(
-                    text = "action enabled",
+                    text = resourceBundle.value.getString("Action.enabled"),
                     selected = actionEnabled,
                     onTriggerSelectedChange = { actionEnabled = !actionEnabled }
                 )).project()
                 Spacer(modifier = Modifier.width(8.dp))
                 CheckBoxProjection(contentModel = SelectorContentModel(
-                    text = "popup enabled",
+                    text = resourceBundle.value.getString("Popup.enabled"),
                     selected = popupEnabled,
                     onTriggerSelectedChange = { popupEnabled = !popupEnabled }
                 )).project()
@@ -499,7 +499,8 @@ fun WindowScope.OrientationCommandContent(
                     enabled = actionEnabled,
                     orientation = StripOrientation.Horizontal,
                     alignment = alignment,
-                    horizontalGapScaleFactor = CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis
+                    horizontalGapScaleFactor = CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis,
+                    resourceBundle = resourceBundle
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 CommandOrientationStyleStrip(

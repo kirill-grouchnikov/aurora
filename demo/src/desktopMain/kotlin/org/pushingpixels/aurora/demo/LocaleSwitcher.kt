@@ -9,9 +9,10 @@ import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.demo.svg.flags.il
 import org.pushingpixels.aurora.demo.svg.flags.us
 import org.pushingpixels.aurora.demo.svg.tango.preferences_desktop_locale_2
+import org.pushingpixels.aurora.window.AuroraApplicationScope
 import java.awt.ComponentOrientation
+import java.awt.Window
 import java.util.*
-import kotlin.reflect.KMutableProperty0
 
 @Composable
 fun WindowScope.AuroraLocaleSwitcher(
@@ -52,25 +53,33 @@ fun WindowScope.AuroraLocaleSwitcher(
         )
     ).project()
 }
+
 @Composable
-fun WindowScope.AuroraLocaleSwitcher(
-    applicationLocaleProperty: KMutableProperty0<Locale>,
-    resourceBundle: State<ResourceBundle>
-) {
+fun AuroraApplicationScope.AuroraLocaleSwitcher(resourceBundle: State<ResourceBundle>) {
     val englishLocale = Command(
         text = resourceBundle.value.getString("Language.english"),
         icon = us(),
         action = {
-            applicationLocaleProperty.set(Locale("en", "US"))
-            window.applyComponentOrientation(ComponentOrientation.getOrientation(applicationLocaleProperty.get()))
+            applicationLocale = Locale("en", "US")
+            // Only necessary for embedded Swing content
+            for (window in Window.getWindows()) {
+                window.applyComponentOrientation(
+                    ComponentOrientation.getOrientation(applicationLocale)
+                )
+            }
         }
     )
     val hebrewLocale = Command(
         text = resourceBundle.value.getString("Language.hebrew"),
         icon = il(),
         action = {
-            applicationLocaleProperty.set(Locale("iw", "IL"))
-            window.applyComponentOrientation(ComponentOrientation.getOrientation(applicationLocaleProperty.get()))
+            applicationLocale = Locale("iw", "IL")
+            // Only necessary for embedded Swing content
+            for (window in Window.getWindows()) {
+                window.applyComponentOrientation(
+                    ComponentOrientation.getOrientation(applicationLocale)
+                )
+            }
         }
     )
     val localeCommand = Command(
