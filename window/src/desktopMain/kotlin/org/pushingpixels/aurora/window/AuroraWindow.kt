@@ -84,7 +84,7 @@ object WindowTitlePaneSizingConstants {
 }
 
 @Composable
-private fun WindowScope.WindowTitlePane(
+private fun AuroraWindowScope.WindowTitlePane(
     title: String,
     icon: Painter?,
     iconFilterStrategy: IconFilterStrategy
@@ -263,13 +263,13 @@ private fun WindowScope.WindowTitlePane(
 }
 
 @Composable
-private fun WindowScope.WindowInnerContent(
+private fun AuroraWindowScope.WindowInnerContent(
     title: String,
     icon: Painter?,
     iconFilterStrategy: IconFilterStrategy,
     undecorated: Boolean,
     menuCommands: CommandGroup? = null,
-    content: @Composable WindowScope.() -> Unit
+    content: @Composable AuroraWindowScope.() -> Unit
 ) {
     Column(Modifier.fillMaxSize().auroraBackground()) {
         if (undecorated) {
@@ -376,13 +376,13 @@ internal fun Modifier.drawUndecoratedWindowBorder(
 }
 
 @Composable
-internal fun WindowScope.WindowContent(
+internal fun AuroraWindowScope.WindowContent(
     title: String,
     icon: Painter?,
     iconFilterStrategy: IconFilterStrategy,
     undecorated: Boolean,
     menuCommands: CommandGroup? = null,
-    content: @Composable WindowScope.() -> Unit
+    content: @Composable AuroraWindowScope.() -> Unit
 ) {
 
     val skinColors = AuroraSkin.colors
@@ -453,7 +453,10 @@ interface AuroraLocaleScope {
     var applicationLocale: Locale
 }
 
-class AuroraApplicationScope(private val original: ApplicationScope, private val currLocale: MutableState<Locale>) :
+class AuroraApplicationScope(
+    private val original: ApplicationScope,
+    private val currLocale: MutableState<Locale>
+) :
     ApplicationScope, AuroraLocaleScope {
     override var applicationLocale: Locale
         get() = currLocale.value
@@ -465,6 +468,21 @@ class AuroraApplicationScope(private val original: ApplicationScope, private val
     override fun exitApplication() {
         original.exitApplication()
     }
+}
+
+interface AuroraWindowScope : WindowScope, AuroraLocaleScope
+
+internal class AuroraWindowScopeImpl(
+    private val applicationScope: AuroraApplicationScope,
+    original: WindowScope
+) : AuroraWindowScope {
+    override var applicationLocale: Locale
+        get() = applicationScope.applicationLocale
+        set(value) {
+            applicationScope.applicationLocale = value
+        }
+
+    override val window = original.window
 }
 
 fun auroraApplication(content: @Composable AuroraApplicationScope.() -> Unit) {
@@ -481,7 +499,7 @@ fun auroraApplication(content: @Composable AuroraApplicationScope.() -> Unit) {
 }
 
 @Composable
-fun ApplicationScope.AuroraWindow(
+fun AuroraApplicationScope.AuroraWindow(
     skin: MutableState<AuroraSkinDefinition>,
     onCloseRequest: () -> Unit,
     state: WindowState = rememberWindowState(),
@@ -497,7 +515,7 @@ fun ApplicationScope.AuroraWindow(
     alwaysOnTop: Boolean = false,
     onPreviewKeyEvent: (androidx.compose.ui.input.key.KeyEvent) -> Boolean = { false },
     onKeyEvent: (androidx.compose.ui.input.key.KeyEvent) -> Boolean = { false },
-    content: @Composable WindowScope.() -> Unit
+    content: @Composable AuroraWindowScope.() -> Unit
 ) {
     val density = mutableStateOf(Density(1.0f, 1.0f))
 
@@ -524,7 +542,7 @@ fun ApplicationScope.AuroraWindow(
             animationConfig = AuroraSkin.animationConfig
         ) {
             density.value = LocalDensity.current
-            WindowContent(
+            AuroraWindowScopeImpl(this@AuroraWindow, this).WindowContent(
                 title = title,
                 icon = icon,
                 iconFilterStrategy = iconFilterStrategy,
@@ -565,9 +583,8 @@ fun ApplicationScope.AuroraWindow(
     }
 }
 
-
 @Composable
-fun ApplicationScope.AuroraWindow(
+fun AuroraApplicationScope.AuroraWindow(
     skin: AuroraSkinDefinition,
     onCloseRequest: () -> Unit,
     state: WindowState = rememberWindowState(),
@@ -610,7 +627,7 @@ fun ApplicationScope.AuroraWindow(
             animationConfig = AuroraSkin.animationConfig
         ) {
             density.value = LocalDensity.current
-            WindowContent(
+            AuroraWindowScopeImpl(this@AuroraWindow, this).WindowContent(
                 title = title,
                 icon = icon,
                 iconFilterStrategy = iconFilterStrategy,
@@ -652,7 +669,7 @@ fun ApplicationScope.AuroraWindow(
 }
 
 @Composable
-fun WindowScope.AuroraDecorationArea(
+fun AuroraWindowScope.AuroraDecorationArea(
     decorationAreaType: DecorationAreaType,
     content: @Composable () -> Unit
 ) {

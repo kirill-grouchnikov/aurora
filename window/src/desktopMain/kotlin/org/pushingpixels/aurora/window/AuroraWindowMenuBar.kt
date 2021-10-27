@@ -170,7 +170,7 @@ private object WindowMenuBarLayout {
 }
 
 @Composable
-internal fun WindowScope.AuroraWindowMenuBar(menuCommands: CommandGroup) {
+internal fun AuroraWindowScope.AuroraWindowMenuBar(menuCommands: CommandGroup) {
     for (menuCommand in menuCommands.commands) {
         // Needs a non-empty text
         if (menuCommand.text.isEmpty()) {

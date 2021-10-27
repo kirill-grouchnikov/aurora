@@ -44,8 +44,10 @@ import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
+import org.pushingpixels.aurora.window.AuroraWindowScope
+import org.pushingpixels.aurora.window.auroraApplication
 
-fun main() = application {
+fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
@@ -238,7 +240,7 @@ fun IconDemoArea() {
 }
 
 @Composable
-fun WindowScope.IconDemoContent() {
+fun AuroraWindowScope.IconDemoContent() {
     Column(modifier = Modifier.fillMaxSize().padding(vertical = 12.dp)) {
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
             IconDemoArea()

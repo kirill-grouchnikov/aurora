@@ -37,39 +37,33 @@ import org.pushingpixels.aurora.demo.svg.material.content_copy_black_24dp
 import org.pushingpixels.aurora.demo.svg.material.content_cut_black_24dp
 import org.pushingpixels.aurora.demo.svg.material.content_paste_black_24dp
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.window.AuroraApplicationScope
 import org.pushingpixels.aurora.window.AuroraWindow
-import java.awt.ComponentOrientation
+import org.pushingpixels.aurora.window.auroraApplication
 import java.text.MessageFormat
 import java.util.*
 
 @ExperimentalUnitApi
-fun main() = application {
+fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(660.dp, 400.dp)
     )
     val skin = mutableStateOf(marinerSkin())
-    val currLocale = mutableStateOf(Locale.getDefault())
     val resourceBundle = derivedStateOf {
         ResourceBundle
-            .getBundle("org.pushingpixels.aurora.demo.Resources", currLocale.value)
+            .getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
 
-    CompositionLocalProvider(
-        LocalLayoutDirection provides
-                if (ComponentOrientation.getOrientation(currLocale.value).isLeftToRight)
-                    LayoutDirection.Ltr else LayoutDirection.Rtl,
+    AuroraWindow(
+        skin = skin,
+        title = "Aurora Demo",
+        state = state,
+        undecorated = true,
+        onCloseRequest = ::exitApplication,
     ) {
-        AuroraWindow(
-            skin = skin,
-            title = "Aurora Demo",
-            state = state,
-            undecorated = true,
-            onCloseRequest = ::exitApplication,
-        ) {
-            DemoStyleContent(skin, currLocale, resourceBundle)
-        }
+        DemoStyleContent(skin, resourceBundle)
     }
 }
 
@@ -344,9 +338,8 @@ fun DemoStyleCanvas(
 
 @ExperimentalUnitApi
 @Composable
-fun WindowScope.DemoStyleContent(
+fun AuroraApplicationScope.DemoStyleContent(
     auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
-    locale: MutableState<Locale>,
     resourceBundle: State<ResourceBundle>
 ) {
     Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
@@ -355,7 +348,7 @@ fun WindowScope.DemoStyleContent(
 
             Spacer(modifier = Modifier.width(8.dp))
 
-            AuroraLocaleSwitcher(locale, resourceBundle)
+            AuroraLocaleSwitcher(resourceBundle)
         }
 
         Spacer(modifier = Modifier.height(12.dp))

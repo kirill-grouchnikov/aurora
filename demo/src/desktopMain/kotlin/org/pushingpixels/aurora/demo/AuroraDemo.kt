@@ -26,8 +26,13 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.resolveDefaults
-import androidx.compose.ui.unit.*
-import androidx.compose.ui.window.*
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.ExperimentalUnitApi
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.WindowPlacement
+import androidx.compose.ui.window.WindowPosition
+import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.component.contextmenu.auroraContextMenu
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.*
@@ -38,78 +43,72 @@ import org.pushingpixels.aurora.demo.svg.vaadin.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
-import java.awt.ComponentOrientation
+import org.pushingpixels.aurora.window.AuroraWindowScope
+import org.pushingpixels.aurora.window.auroraApplication
 import java.text.MessageFormat
 import java.util.*
 import kotlin.system.exitProcess
 
 @ExperimentalUnitApi
-fun main() = application {
+fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(720.dp, 660.dp)
     )
     val skin = mutableStateOf(marinerSkin())
-    val currLocale = mutableStateOf(Locale.getDefault())
     val resourceBundle = derivedStateOf {
         ResourceBundle
-            .getBundle("org.pushingpixels.aurora.demo.Resources", currLocale.value)
+            .getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
 
-    CompositionLocalProvider(
-        LocalLayoutDirection provides
-                if (ComponentOrientation.getOrientation(currLocale.value).isLeftToRight)
-                    LayoutDirection.Ltr else LayoutDirection.Rtl,
-    ) {
-        AuroraWindow(
-            skin = skin,
-            title = "Aurora Demo",
-            state = state,
-            undecorated = true,
-            icon = radiance_menu(),
-            iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
-            onCloseRequest = ::exitApplication,
-            menuCommands = CommandGroup(
-                commands = listOf(
-                    Command(
-                        text = resourceBundle.value.getString("Menu.file"),
-                        secondaryContentModel = CommandMenuContentModel(
-                            CommandGroup(
-                                commands = listOf(
-                                    Command(
-                                        text = resourceBundle.value.getString("Menu.file.new"),
-                                        action = { println("New file!") }),
-                                    Command(
-                                        text = resourceBundle.value.getString("Menu.file.open"),
-                                        action = { println("Open file!") }),
-                                    Command(
-                                        text = resourceBundle.value.getString("Menu.file.save"),
-                                        action = { println("Save file!") })
-                                )
+    AuroraWindow(
+        skin = skin,
+        title = "Aurora Demo",
+        state = state,
+        undecorated = true,
+        icon = radiance_menu(),
+        iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
+        onCloseRequest = ::exitApplication,
+        menuCommands = CommandGroup(
+            commands = listOf(
+                Command(
+                    text = resourceBundle.value.getString("Menu.file"),
+                    secondaryContentModel = CommandMenuContentModel(
+                        CommandGroup(
+                            commands = listOf(
+                                Command(
+                                    text = resourceBundle.value.getString("Menu.file.new"),
+                                    action = { println("New file!") }),
+                                Command(
+                                    text = resourceBundle.value.getString("Menu.file.open"),
+                                    action = { println("Open file!") }),
+                                Command(
+                                    text = resourceBundle.value.getString("Menu.file.save"),
+                                    action = { println("Save file!") })
                             )
                         )
-                    ),
-                    Command(
-                        text = resourceBundle.value.getString("Menu.edit"),
-                        action = { println("Edit activated!") }),
-                    Command(
-                        text = resourceBundle.value.getString("Menu.view"),
-                        action = { println("View activated!") }),
-                    Command(
-                        text = resourceBundle.value.getString("Menu.tools"),
-                        action = { println("Tools activated!") }),
-                    Command(
-                        text = resourceBundle.value.getString("Menu.window"),
-                        action = { println("Window activated!") }),
-                    Command(
-                        text = resourceBundle.value.getString("Menu.help"),
-                        action = { println("Help activated!") })
-                )
+                    )
+                ),
+                Command(
+                    text = resourceBundle.value.getString("Menu.edit"),
+                    action = { println("Edit activated!") }),
+                Command(
+                    text = resourceBundle.value.getString("Menu.view"),
+                    action = { println("View activated!") }),
+                Command(
+                    text = resourceBundle.value.getString("Menu.tools"),
+                    action = { println("Tools activated!") }),
+                Command(
+                    text = resourceBundle.value.getString("Menu.window"),
+                    action = { println("Window activated!") }),
+                Command(
+                    text = resourceBundle.value.getString("Menu.help"),
+                    action = { println("Help activated!") })
             )
-        ) {
-            DemoContent(skin, currLocale, resourceBundle)
-        }
+        )
+    ) {
+        DemoContent(skin, resourceBundle)
     }
 }
 
@@ -405,11 +404,10 @@ fun DemoHeader(
 
 @ExperimentalUnitApi
 @Composable
-fun WindowScope.DemoArea(
+fun AuroraWindowScope.DemoArea(
     modifier: Modifier = Modifier,
     contentEnabled: MutableState<Boolean>,
     auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
-    locale: MutableState<Locale>,
     resourceBundle: State<ResourceBundle>,
     styleCommands: CommandGroup
 ) {
@@ -434,7 +432,7 @@ fun WindowScope.DemoArea(
 
                 AuroraSkinSwitcher(auroraSkinDefinition)
 
-                AuroraLocaleSwitcher(locale, resourceBundle)
+                AuroraLocaleSwitcher(resourceBundle)
             }
         }
 
@@ -818,7 +816,7 @@ fun WindowScope.DemoArea(
 
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
                 // Example of a continuous slider
-                var sliderValue1 by remember { mutableStateOf(0.5f) }
+                var sliderValue1 by remember { mutableStateOf(0.3f) }
                 SliderProjection(
                     contentModel = SliderContentModel(
                         value = sliderValue1,
@@ -835,7 +833,7 @@ fun WindowScope.DemoArea(
                 Spacer(modifier = Modifier.width(16.dp))
 
                 // Example of a discrete slider that draws ticks
-                var sliderValue2 by remember { mutableStateOf(50f) }
+                var sliderValue2 by remember { mutableStateOf(30f) }
                 SliderProjection(
                     contentModel = SliderContentModel(
                         value = sliderValue2,
@@ -894,9 +892,8 @@ fun WindowScope.DemoArea(
 
 @ExperimentalUnitApi
 @Composable
-fun WindowScope.DemoContent(
+fun AuroraWindowScope.DemoContent(
     auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
-    locale: MutableState<Locale>,
     resourceBundle: State<ResourceBundle>
 ) {
     val contentEnabled = remember { mutableStateOf(true) }
@@ -1016,7 +1013,6 @@ fun WindowScope.DemoContent(
                 modifier = Modifier.weight(weight = 1.0f, fill = true),
                 styleCommands = styleCommands,
                 auroraSkinDefinition = auroraSkinDefinition,
-                locale = locale,
                 resourceBundle = resourceBundle,
                 contentEnabled = contentEnabled
             )

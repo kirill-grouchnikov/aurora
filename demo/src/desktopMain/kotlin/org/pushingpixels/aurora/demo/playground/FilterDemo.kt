@@ -39,8 +39,9 @@ import org.pushingpixels.aurora.theming.colorscheme.OrangeColorScheme
 import org.pushingpixels.aurora.theming.utils.getBrushedMetalShader
 import org.pushingpixels.aurora.theming.utils.getNoiseShader
 import org.pushingpixels.aurora.window.AuroraWindow
+import org.pushingpixels.aurora.window.auroraApplication
 
-fun main() = application {
+fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),

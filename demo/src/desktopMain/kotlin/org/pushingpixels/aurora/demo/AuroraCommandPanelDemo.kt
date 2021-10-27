@@ -16,16 +16,15 @@
 package org.pushingpixels.aurora.demo
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
-import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonPanelProjection
@@ -34,7 +33,7 @@ import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.businessSkin
 import org.pushingpixels.aurora.window.AuroraWindow
-import java.awt.ComponentOrientation
+import org.pushingpixels.aurora.window.auroraApplication
 import java.text.MessageFormat
 import java.util.*
 
@@ -74,7 +73,8 @@ fun getCommandPanelContentModel(
                 )
             )
         }
-        val group = CommandGroup(title = groupMf.format(arrayOf<Any>(groupIndex)), commands = commandList)
+        val group =
+            CommandGroup(title = groupMf.format(arrayOf<Any>(groupIndex)), commands = commandList)
         commandGroups.add(group)
         groupIndex++
     }
@@ -92,77 +92,70 @@ fun getCommandPanelContentModel(
     )
 }
 
-fun main() = application {
+fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(1000.dp, 400.dp)
     )
     val skin = mutableStateOf(businessSkin())
-    val currLocale = mutableStateOf(Locale.getDefault())
     val resourceBundle = derivedStateOf {
         ResourceBundle
-            .getBundle("org.pushingpixels.aurora.demo.Resources", currLocale.value)
+            .getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
 
-    CompositionLocalProvider(
-        LocalLayoutDirection provides
-                if (ComponentOrientation.getOrientation(currLocale.value).isLeftToRight)
-                    LayoutDirection.Ltr else LayoutDirection.Rtl,
+    AuroraWindow(
+        skin = skin,
+        title = "Aurora Command Panel",
+        state = state,
+        undecorated = true,
+        onCloseRequest = ::exitApplication,
     ) {
-        AuroraWindow(
-            skin = skin,
-            title = "Aurora Command Panel",
-            state = state,
-            undecorated = true,
-            onCloseRequest = ::exitApplication,
-        ) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
-                    AuroraSkinSwitcher(skin)
+        Column(modifier = Modifier.fillMaxSize()) {
+            Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
+                AuroraSkinSwitcher(skin)
 
-                    Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(8.dp))
 
-                    AuroraLocaleSwitcher(currLocale, resourceBundle)
+                AuroraLocaleSwitcher(resourceBundle)
+            }
+
+            val commandPanelContentModel =
+                derivedStateOf { getCommandPanelContentModel(resourceBundle, 20, 10, 15) }
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Box(
+                    modifier = Modifier.fillMaxWidth(fraction = 0.5f)
+                ) {
+                    CommandButtonPanelProjection(
+                        contentModel = commandPanelContentModel.value,
+                        presentationModel = CommandPanelPresentationModel(
+                            layoutFillMode = PanelLayoutFillMode.RowFill,
+                            maxColumns = 5,
+                            showGroupLabels = true,
+                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                            commandPresentationState = CommandButtonPresentationState.Medium,
+                            iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                            iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                        )
+                    ).project()
                 }
 
-                val commandPanelContentModel =
-                    derivedStateOf { getCommandPanelContentModel(resourceBundle, 20, 10, 15) }
-
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(fraction = 0.5f)
-                    ) {
-                        CommandButtonPanelProjection(
-                            contentModel = commandPanelContentModel.value,
-                            presentationModel = CommandPanelPresentationModel(
-                                layoutFillMode = PanelLayoutFillMode.RowFill,
-                                maxColumns = 5,
-                                showGroupLabels = true,
-                                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                                commandPresentationState = CommandButtonPresentationState.Medium,
-                                iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
-                                iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
-                            )
-                        ).project()
-                    }
-
-                    Box(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        CommandButtonPanelProjection(
-                            contentModel = commandPanelContentModel.value,
-                            presentationModel = CommandPanelPresentationModel(
-                                layoutFillMode = PanelLayoutFillMode.ColumnFill,
-                                maxRows = 6,
-                                showGroupLabels = false,
-                                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                                commandPresentationState = CommandButtonPresentationState.Big,
-                                iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
-                                iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
-                            )
-                        ).project()
-                    }
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    CommandButtonPanelProjection(
+                        contentModel = commandPanelContentModel.value,
+                        presentationModel = CommandPanelPresentationModel(
+                            layoutFillMode = PanelLayoutFillMode.ColumnFill,
+                            maxRows = 6,
+                            showGroupLabels = false,
+                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                            commandPresentationState = CommandButtonPresentationState.Big,
+                            iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                            iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                        )
+                    ).project()
                 }
             }
         }
