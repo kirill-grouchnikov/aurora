@@ -34,6 +34,7 @@ import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -267,9 +268,17 @@ private fun Scrollbar(
     var containerSize by remember { mutableStateOf(0) }
 
     val minimalHeight = ScrollBarSizingConstants.DefaultScrollBarMinimumHeight.toPx()
-    val sliderAdapter = remember(adapter, containerSize, minimalHeight, reverseLayout) {
-        SliderAdapter(adapter, containerSize, minimalHeight, reverseLayout)
-    }
+    val orientationAwareReverseLayoutDirection = if (isVertical) reverseLayout
+    else (reverseLayout xor (LocalLayoutDirection.current == LayoutDirection.Rtl))
+    val sliderAdapter =
+        remember(adapter, containerSize, minimalHeight, orientationAwareReverseLayoutDirection) {
+            SliderAdapter(
+                adapter,
+                containerSize,
+                minimalHeight,
+                orientationAwareReverseLayoutDirection
+            )
+        }
 
     val scrollThickness = ScrollBarSizingConstants.DefaultScrollBarThickness.roundToPx()
     val measurePolicy = if (isVertical) {
