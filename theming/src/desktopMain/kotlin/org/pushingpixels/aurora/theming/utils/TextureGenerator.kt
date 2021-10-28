@@ -30,10 +30,10 @@
 package org.pushingpixels.aurora.theming.utils
 
 import androidx.compose.ui.graphics.Color
-import org.jetbrains.skia.ByteBuffer
 import org.jetbrains.skia.Data
 import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.Shader
+import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 fun getNoiseShader(
@@ -47,8 +47,7 @@ fun getNoiseShader(
         baseFrequencyX = baseFrequency,
         baseFrequencyY = baseFrequency,
         numOctaves = 1,
-        seed = 0.0f,
-        tiles = emptyArray()
+        seed = 0.0f
     )
 
     // Duotone shader
@@ -97,8 +96,7 @@ fun getBrushedMetalShader(colorLight: Color, colorDark: Color, alpha: Float = 1.
         baseFrequencyX = 0.45f,
         baseFrequencyY = 0.45f,
         numOctaves = 4,
-        seed = 0.0f,
-        tiles = emptyArray()
+        seed = 0.0f
     )
 
     // Brushed metal shader

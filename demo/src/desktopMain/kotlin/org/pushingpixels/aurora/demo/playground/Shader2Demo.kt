@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import org.jetbrains.skia.*
+import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 fun main() = application {

@@ -27,9 +27,9 @@ import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import org.jetbrains.skia.ByteBuffer
 import org.jetbrains.skia.Data
 import org.jetbrains.skia.RuntimeEffect
+import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 fun main() = application {
