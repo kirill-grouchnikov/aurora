@@ -39,6 +39,8 @@ import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerMoveFilter
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.SliderContentModel
@@ -81,6 +83,8 @@ internal fun AuroraSlider(
         "Cannot have negative tick steps"
     }
 
+    val ltr = (LocalLayoutDirection.current == LayoutDirection.Ltr)
+
     val interactionSource = remember { MutableInteractionSource() }
     val drawingCache = remember { SliderDrawingCache() }
     var rollover by remember { mutableStateOf(false) }
@@ -96,7 +100,6 @@ internal fun AuroraSlider(
             )
         )
     }
-
 
     val trackFillState =
         if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
@@ -148,9 +151,17 @@ internal fun AuroraSlider(
             cumulativeDragAmount.value += it
 
             // Convert from pixels to value range
-            var newValue = contentModel.valueRange.start +
-                    (dragStartX.value + cumulativeDragAmount.value - drawingCache.trackRect.x) *
-                    (contentModel.valueRange.endInclusive - contentModel.valueRange.start) / drawingCache.trackRect.width
+            var newValue = if (ltr) {
+                contentModel.valueRange.start +
+                        (dragStartX.value + cumulativeDragAmount.value - drawingCache.trackRect.x) *
+                        (contentModel.valueRange.endInclusive - contentModel.valueRange.start) / drawingCache.trackRect.width
+            } else {
+                contentModel.valueRange.start +
+                        (drawingCache.trackRect.x + drawingCache.trackRect.width -
+                                dragStartX.value - cumulativeDragAmount.value) *
+                        (contentModel.valueRange.endInclusive - contentModel.valueRange.start) / drawingCache.trackRect.width
+
+            }
             newValue = newValue.coerceIn(
                 contentModel.valueRange.start,
                 contentModel.valueRange.endInclusive
@@ -177,13 +188,15 @@ internal fun AuroraSlider(
             cumulativeDragAmount.value = 0.0f
 
             // Convert from pixels to value range
-            var newValue = contentModel.valueRange.start +
-                    (pos.x - drawingCache.trackRect.x) *
-                    (contentModel.valueRange.endInclusive - contentModel.valueRange.start) / drawingCache.trackRect.width
-            newValue = newValue.coerceIn(
-                contentModel.valueRange.start,
-                contentModel.valueRange.endInclusive
-            )
+            var newValue = if (ltr) {
+                contentModel.valueRange.start +
+                        (pos.x - drawingCache.trackRect.x) *
+                        (contentModel.valueRange.endInclusive - contentModel.valueRange.start) / drawingCache.trackRect.width
+            } else {
+                contentModel.valueRange.start +
+                        (drawingCache.trackRect.x + drawingCache.trackRect.width - pos.x) *
+                        (contentModel.valueRange.endInclusive - contentModel.valueRange.start) / drawingCache.trackRect.width
+            }
 
             // Snap to the closest tick if needed
             if ((presentationModel.tickSteps > 0) && presentationModel.snapToTicks) {
@@ -385,11 +398,15 @@ internal fun AuroraSlider(
             drawingCache.trackRect.height = SliderSizingConstants.TrackHeight.toPx()
 
             // Calculate the thumb rectangle
-            // TODO - support RTL
             val thumbSize = SliderSizingConstants.ThumbFullSize.toPx() *
                     (2.0f + modelStateInfo.activeStrength) / 3.0f
-            val selectionCenterX = drawingCache.trackRect.x +
-                    drawingCache.trackRect.width * contentModel.value / (contentModel.valueRange.endInclusive - contentModel.valueRange.start)
+            val selectionCenterX = if (ltr) {
+                drawingCache.trackRect.x +
+                        drawingCache.trackRect.width * contentModel.value / (contentModel.valueRange.endInclusive - contentModel.valueRange.start)
+            } else {
+                drawingCache.trackRect.x + drawingCache.trackRect.width -
+                        drawingCache.trackRect.width * contentModel.value / (contentModel.valueRange.endInclusive - contentModel.valueRange.start)
+            }
             drawingCache.thumbRect.x = selectionCenterX - thumbSize / 2.0f
             drawingCache.thumbRect.y =
                 drawingCache.trackRect.y + drawingCache.trackRect.height / 2.0f - thumbSize / 2.0f
@@ -437,45 +454,89 @@ internal fun AuroraSlider(
 
             if (selectionCenterX > 0.0f) {
                 // Fill selection
-                fillPainter.paintContourBackground(
-                    drawScope = this,
-                    size = Size(
-                        selectionCenterX - drawingCache.trackRect.x,
-                        drawingCache.trackRect.height
-                    ),
-                    outline = Outline.Rounded(
-                        RoundRect(
-                            left = drawingCache.trackRect.x,
-                            top = drawingCache.trackRect.y,
-                            right = selectionCenterX,
-                            bottom = drawingCache.trackRect.y + drawingCache.trackRect.height,
-                            cornerRadius = CornerRadius(radius, radius)
-                        )
-                    ),
-                    fillScheme = selectionColorScheme,
-                    alpha = stateAlpha
-                )
-
-                // Border selection
-                withTransform({
-                    translate(
-                        left = drawingCache.trackRect.x,
-                        top = drawingCache.trackRect.y
-                    )
-                }) {
-                    val selectionOutline = getBaseOutline(
-                        width = selectionCenterX - drawingCache.trackRect.x,
-                        height = drawingCache.trackRect.height,
-                        radius = radius,
-                        straightSides = setOf(Side.Right),
-                        insets = 0.5f
-                    )
-                    drawOutline(
-                        outline = selectionOutline,
-                        style = Stroke(width = 1.0f),
-                        color = borderSelectionColorScheme.darkColor,
+                if (ltr) {
+                    fillPainter.paintContourBackground(
+                        drawScope = this,
+                        size = Size(
+                            selectionCenterX - drawingCache.trackRect.x,
+                            drawingCache.trackRect.height
+                        ),
+                        outline = Outline.Rounded(
+                            RoundRect(
+                                left = drawingCache.trackRect.x,
+                                top = drawingCache.trackRect.y,
+                                right = selectionCenterX,
+                                bottom = drawingCache.trackRect.y + drawingCache.trackRect.height,
+                                cornerRadius = CornerRadius(radius, radius)
+                            )
+                        ),
+                        fillScheme = selectionColorScheme,
                         alpha = stateAlpha
                     )
+                } else {
+                    fillPainter.paintContourBackground(
+                        drawScope = this,
+                        size = Size(
+                            drawingCache.trackRect.x + drawingCache.trackRect.width - selectionCenterX,
+                            drawingCache.trackRect.height
+                        ),
+                        outline = Outline.Rounded(
+                            RoundRect(
+                                left = selectionCenterX,
+                                top = drawingCache.trackRect.y,
+                                right = drawingCache.trackRect.x + drawingCache.trackRect.width,
+                                bottom = drawingCache.trackRect.y + drawingCache.trackRect.height,
+                                cornerRadius = CornerRadius(radius, radius)
+                            )
+                        ),
+                        fillScheme = selectionColorScheme,
+                        alpha = stateAlpha
+                    )
+                }
+
+                // Border selection
+                if (ltr) {
+                    withTransform({
+                        translate(
+                            left = drawingCache.trackRect.x,
+                            top = drawingCache.trackRect.y
+                        )
+                    }) {
+                        val selectionOutline = getBaseOutline(
+                            width = selectionCenterX - drawingCache.trackRect.x,
+                            height = drawingCache.trackRect.height,
+                            radius = radius,
+                            straightSides = setOf(Side.Right),
+                            insets = 0.5f
+                        )
+                        drawOutline(
+                            outline = selectionOutline,
+                            style = Stroke(width = 1.0f),
+                            color = borderSelectionColorScheme.darkColor,
+                            alpha = stateAlpha
+                        )
+                    }
+                } else {
+                    withTransform({
+                        translate(
+                            left = selectionCenterX,
+                            top = drawingCache.trackRect.y
+                        )
+                    }) {
+                        val selectionOutline = getBaseOutline(
+                            width = drawingCache.trackRect.x + drawingCache.trackRect.width - selectionCenterX,
+                            height = drawingCache.trackRect.height,
+                            radius = radius,
+                            straightSides = setOf(Side.Right),
+                            insets = 0.5f
+                        )
+                        drawOutline(
+                            outline = selectionOutline,
+                            style = Stroke(width = 1.0f),
+                            color = borderSelectionColorScheme.darkColor,
+                            alpha = stateAlpha
+                        )
+                    }
                 }
             }
 
