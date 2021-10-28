@@ -36,16 +36,6 @@ import org.pushingpixels.aurora.theming.LocalTextStyle
 import org.pushingpixels.aurora.theming.LocalWindow
 import java.awt.event.MouseEvent
 
-private suspend fun AwaitPointerEventScope.awaitEventFirstDown(): PointerEvent {
-    var event: PointerEvent
-    do {
-        event = awaitPointerEvent()
-    } while (
-        !event.changes.all { it.changedToDown() }
-    )
-    return event
-}
-
 @OptIn(ExperimentalComposeApi::class)
 @Composable
 fun Modifier.auroraContextMenu(
@@ -73,14 +63,11 @@ fun Modifier.auroraContextMenu(
 
     return this.then(Modifier.pointerInput(Unit) {
         forEachGesture {
-            // TODO - this only detects PRESSED events, so it doesn't work on platforms
-            //  such as Windows that show popups on RELEASED. See
-            //  https://github.com/JetBrains/compose-jb/issues/812
+            var event: PointerEvent? = null
             awaitPointerEventScope {
-                lastEvent = awaitEventFirstDown().also { event ->
-                    event.changes.forEach { it.consumeDownChange() }
-                }.mouseEvent
+                event = awaitPointerEvent()
             }
+            lastEvent = event?.mouseEvent
 
             if (enabledState.value && (lastEvent?.isPopupTrigger == true)) {
                 displayPopupContent(
