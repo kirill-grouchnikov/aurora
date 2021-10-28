@@ -320,14 +320,14 @@ internal fun AuroraSlider(
                     // Reset rollover when mouse exits the component bounds
                     rollover = false
                 }
-                false
+                true
             },
             onMove = { position ->
                 if (contentModel.enabled) {
                     // Rollover is only "active" in the thumb rectangle
                     rollover = drawingCache.thumbRect.contains(position.x, position.y)
                 }
-                false
+                true
             }).then(drag)
     ) {
         // Populate the cached color scheme for filling the thumb

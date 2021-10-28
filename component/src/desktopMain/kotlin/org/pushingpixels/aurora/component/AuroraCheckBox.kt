@@ -18,6 +18,7 @@ package org.pushingpixels.aurora.component
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
@@ -29,7 +30,6 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.withAlpha
@@ -59,7 +59,7 @@ internal fun AuroraCheckBox(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val drawingCache = remember { CheckBoxDrawingCache() }
-    var rollover by remember { mutableStateOf(false) }
+    val rollover by interactionSource.collectIsHoveredAsState()
     val isPressed by interactionSource.collectIsPressedAsState()
 
     val currentState = remember {
@@ -178,22 +178,6 @@ internal fun AuroraCheckBox(
     Row(
         modifier = modifier
             .padding(presentationModel.contentPadding)
-            .pointerMoveFilter(
-                onEnter = {
-                    if (contentModel.enabled) {
-                        rollover = true
-                    }
-                    false
-                },
-                onExit = {
-                    if (contentModel.enabled) {
-                        rollover = false
-                    }
-                    false
-                },
-                onMove = {
-                    false
-                })
             .toggleable(
                 value = contentModel.selected,
                 onValueChange = {

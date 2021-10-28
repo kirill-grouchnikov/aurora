@@ -19,6 +19,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -74,7 +75,7 @@ private fun Modifier.comboBoxLocator(topLeftOffset: AuroraOffset, size: AuroraSi
     ComboBoxLocator(topLeftOffset, size)
 )
 
-@OptIn(ExperimentalComposeUiApi::class, androidx.compose.runtime.ExperimentalComposeApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeApi::class)
 @Composable
 internal fun <E> AuroraComboBox(
     modifier: Modifier = Modifier,
@@ -83,7 +84,7 @@ internal fun <E> AuroraComboBox(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val drawingCache = remember { ComboBoxDrawingCache() }
-    var rollover by remember { mutableStateOf(false) }
+    val rollover by interactionSource.collectIsHoveredAsState()
     val isPressed by interactionSource.collectIsPressedAsState()
 
     val currentState = remember {
@@ -217,22 +218,6 @@ internal fun <E> AuroraComboBox(
 
     Box(
         modifier = modifier
-            .pointerMoveFilter(
-                onEnter = {
-                    if (contentModel.enabled) {
-                        rollover = true
-                    }
-                    false
-                },
-                onExit = {
-                    if (contentModel.enabled) {
-                        rollover = false
-                    }
-                    false
-                },
-                onMove = {
-                    false
-                })
             .clickable(
                 enabled = contentModel.enabled,
                 onClick = {

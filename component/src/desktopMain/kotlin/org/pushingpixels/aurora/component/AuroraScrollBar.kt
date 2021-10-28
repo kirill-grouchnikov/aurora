@@ -21,6 +21,7 @@ import androidx.compose.foundation.ScrollbarAdapter
 import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -148,7 +149,7 @@ private fun Scrollbar(
 ) = with(LocalDensity.current) {
     val interactionSource = remember { MutableInteractionSource() }
     val drawingCache = remember { ScrollBarDrawingCache() }
-    var rollover by remember { mutableStateOf(false) }
+    val rollover by interactionSource.collectIsHoveredAsState()
 
     val dragInteraction = remember { mutableStateOf<DragInteraction.Start?>(null) }
     DisposableEffect(interactionSource) {
@@ -396,18 +397,6 @@ private fun Scrollbar(
             }
         },
         modifier
-            .pointerMoveFilter(
-                onEnter = {
-                    rollover = true
-                    false
-                },
-                onExit = {
-                    rollover = false
-                    false
-                },
-                onMove = {
-                    false
-                })
             .scrollOnPressOutsideSlider(isVertical, sliderAdapter, adapter, containerSize),
         measurePolicy
     )

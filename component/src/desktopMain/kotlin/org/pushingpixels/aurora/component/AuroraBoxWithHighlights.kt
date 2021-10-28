@@ -19,6 +19,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,7 +27,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.input.pointer.pointerMoveFilter
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
@@ -60,7 +60,7 @@ fun AuroraBoxWithHighlights(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val drawingCache = remember { BoxWithHighlightsDrawingCache() }
-    var rollover by remember { mutableStateOf(false) }
+    val rollover by interactionSource.collectIsHoveredAsState()
 
     val currentState = remember {
         mutableStateOf(
@@ -182,22 +182,6 @@ fun AuroraBoxWithHighlights(
             indication = null
         )
     }
-    boxModifier = boxModifier.pointerMoveFilter(
-        onEnter = {
-            if (enabled) {
-                rollover = true
-            }
-            false
-        },
-        onExit = {
-            if (enabled) {
-                rollover = false
-            }
-            false
-        },
-        onMove = {
-            false
-        })
     Box(
         modifier = boxModifier,
         contentAlignment = Alignment.CenterStart

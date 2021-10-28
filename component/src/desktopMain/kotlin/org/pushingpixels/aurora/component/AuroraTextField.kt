@@ -19,6 +19,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
@@ -36,7 +37,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
@@ -98,7 +98,7 @@ internal fun AuroraTextField(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val drawingCache = remember { TextFieldDrawingCache() }
-    var rollover by remember { mutableStateOf(false) }
+    val rollover by interactionSource.collectIsHoveredAsState()
     val isPressed by interactionSource.collectIsPressedAsState()
     // Treat focused as selected
     val isFocused by interactionSource.collectIsFocusedAsState()
@@ -391,23 +391,7 @@ internal fun AuroraTextField(
                     .defaultMinSize(
                         minWidth = TextFieldSizingConstants.MinWidth,
                         minHeight = TextFieldSizingConstants.MinHeight,
-                    )
-                    .pointerMoveFilter(
-                        onEnter = {
-                            if (contentModel.enabled) {
-                                rollover = true
-                            }
-                            false
-                        },
-                        onExit = {
-                            if (contentModel.enabled) {
-                                rollover = false
-                            }
-                            false
-                        },
-                        onMove = {
-                            false
-                        }),
+                    ),
                 onValueChange = contentModel.onValueChange,
                 enabled = contentModel.enabled,
                 readOnly = contentModel.readOnly,

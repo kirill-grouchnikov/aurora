@@ -19,6 +19,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.selection.toggleable
@@ -408,7 +409,7 @@ internal fun AuroraCommandButton(
                             extraActionPreview?.onCommandPreviewActivated(command)
                         }
                     }
-                    false
+                    true
                 }, onExit = {
                     if (isActionEnabled) {
                         val wasRollover = actionRollover
@@ -418,7 +419,7 @@ internal fun AuroraCommandButton(
                             extraActionPreview?.onCommandPreviewCanceled(command)
                         }
                     }
-                    false
+                    true
                 }, onMove = {
                     false
                 }).onGloballyPositioned {
@@ -628,12 +629,12 @@ internal fun AuroraCommandButton(
                     if (isPopupEnabled) {
                         popupRollover = true
                     }
-                    false
+                    true
                 }, onExit = {
                     if (isPopupEnabled) {
                         popupRollover = false
                     }
-                    false
+                    true
                 }, onMove = {
                     false
                 }).onGloballyPositioned {
