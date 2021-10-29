@@ -35,16 +35,23 @@ import org.pushingpixels.aurora.theming.AuroraSkinDefinition
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
+import org.pushingpixels.aurora.window.AuroraApplicationScope
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.auroraApplication
+import java.text.MessageFormat
+import java.util.*
 
 fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
-        size = DpSize(660.dp, 400.dp)
+        size = DpSize(800.dp, 400.dp)
     )
     val skin = mutableStateOf(marinerSkin())
+    val resourceBundle = derivedStateOf {
+        ResourceBundle
+            .getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
+    }
 
     AuroraWindow(
         skin = skin,
@@ -55,7 +62,7 @@ fun main() = auroraApplication {
         undecorated = true,
         onCloseRequest = ::exitApplication,
     ) {
-        DemoCommandContent(skin)
+        DemoCommandContent(skin, resourceBundle)
     }
 }
 
@@ -119,11 +126,12 @@ fun CommandDemoJustifyStrip(
     enabled: Boolean,
     orientation: StripOrientation,
     alignment: MutableState<CommandDemoAlignment>,
-    horizontalGapScaleFactor: Float
+    horizontalGapScaleFactor: Float,
+    resourceBundle: State<ResourceBundle>
 ) {
     val commandAlignCenter =
         Command(
-            text = "Center",
+            text = resourceBundle.value.getString("Justify.center"),
             icon = format_justify_center(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -134,7 +142,7 @@ fun CommandDemoJustifyStrip(
         )
     val commandAlignLeft =
         Command(
-            text = "Left",
+            text = resourceBundle.value.getString("Justify.left"),
             icon = format_justify_left(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -145,7 +153,7 @@ fun CommandDemoJustifyStrip(
         )
     val commandAlignRight =
         Command(
-            text = "Right",
+            text = resourceBundle.value.getString("Justify.right"),
             icon = format_justify_right(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -156,7 +164,7 @@ fun CommandDemoJustifyStrip(
         )
     val commandAlignFill =
         Command(
-            text = "Fill",
+            text = resourceBundle.value.getString("Justify.fill"),
             icon = format_justify_fill(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -187,11 +195,12 @@ fun CommandDemoEditStrip(
     actionEnabled: Boolean,
     popupEnabled: Boolean,
     orientation: StripOrientation,
-    horizontalGapScaleFactor: Float
+    horizontalGapScaleFactor: Float,
+    resourceBundle: State<ResourceBundle>
 ) {
     val commandCut =
         Command(
-            text = "Cut",
+            text = resourceBundle.value.getString("Edit.cut.text"),
             icon = content_cut_black_24dp(),
             isActionEnabled = actionEnabled,
             action = { println("Cut!") }
@@ -199,7 +208,7 @@ fun CommandDemoEditStrip(
         )
     val commandCopy =
         Command(
-            text = "Copy",
+            text = resourceBundle.value.getString("Edit.copy.text"),
             icon = content_copy_black_24dp(),
             isActionEnabled = actionEnabled,
             action = { println("Copy!") }
@@ -208,7 +217,7 @@ fun CommandDemoEditStrip(
 
     var togglePasteText by remember { mutableStateOf(false) }
     val commandPasteTextOnly = Command(
-        text = "Text only",
+        text = resourceBundle.value.getString("Edit.paste.textOnlyText"),
         action = { println("Paste text only") },
         isActionToggle = true,
         isActionToggleSelected = togglePasteText,
@@ -220,7 +229,7 @@ fun CommandDemoEditStrip(
 
     val commandPaste =
         Command(
-            text = "Paste",
+            text = resourceBundle.value.getString("Edit.paste.text"),
             icon = content_paste_black_24dp(),
             isActionEnabled = actionEnabled,
             action = { println("Paste!") },
@@ -228,15 +237,15 @@ fun CommandDemoEditStrip(
                 group = CommandGroup(
                     commands = listOf(
                         Command(
-                            text = "Keep Formatting",
+                            text = resourceBundle.value.getString("Edit.paste.keepFormattingText"),
                             action = { println("Paste with keep formatting") }),
                         Command(
-                            text = "Merge Formatting",
+                            text = resourceBundle.value.getString("Edit.paste.mergeFormattingText"),
                             action = { println("Paste with merge formatting") }),
                         commandPasteTextOnly,
                     )
                 ),
-                panelContentModel = getQuickStylesContentModel()
+                panelContentModel = getQuickStylesContentModel(resourceBundle)
             ),
             isSecondaryEnabled = popupEnabled
         )
@@ -284,11 +293,12 @@ fun CommandDemoStyleStrip(
     enabled: Boolean,
     orientation: StripOrientation,
     style: CommandDemoStyle,
-    horizontalGapScaleFactor: Float
+    horizontalGapScaleFactor: Float,
+    resourceBundle: State<ResourceBundle>
 ) {
     val commandBold =
         Command(
-            text = "Bold",
+            text = resourceBundle.value.getString("FontStyle.bold.title"),
             icon = format_bold_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -300,7 +310,7 @@ fun CommandDemoStyleStrip(
         )
     val commandItalic =
         Command(
-            text = "Italic",
+            text = resourceBundle.value.getString("FontStyle.italic.title"),
             icon = format_italic_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -312,7 +322,7 @@ fun CommandDemoStyleStrip(
         )
     val commandUnderline =
         Command(
-            text = "Underline",
+            text = resourceBundle.value.getString("FontStyle.underline.title"),
             icon = format_underlined_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -324,7 +334,7 @@ fun CommandDemoStyleStrip(
         )
     val commandStrikethrough =
         Command(
-            text = "Strikethrough",
+            text = resourceBundle.value.getString("FontStyle.strikethrough.title"),
             icon = format_strikethrough_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -355,15 +365,18 @@ fun CommandDemoStyleStrip(
 }
 
 @Composable
-fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
+fun AuroraApplicationScope.DemoCommandContent(
+    auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
+    resourceBundle: State<ResourceBundle>
+) {
     var selected by remember { mutableStateOf(false) }
     var actionEnabled by remember { mutableStateOf(true) }
     var popupEnabled by remember { mutableStateOf(true) }
 
     val commandActionOnly =
         Command(
-            text = "Action!",
-            extraText = "Extra action",
+            text = resourceBundle.value.getString("Action.text"),
+            extraText = resourceBundle.value.getString("Action.textExtra"),
             icon = accessories_text_editor(),
             action = { println("Action activated!") },
             isActionEnabled = actionEnabled,
@@ -380,8 +393,8 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
 
     val commandActionOnlyNoIcon =
         Command(
-            text = "Action 2!",
-            extraText = "Extra action 2",
+            text = resourceBundle.value.getString("Action.text"),
+            extraText = resourceBundle.value.getString("Action.textExtra"),
             action = { println("Action 2 activated!") },
             isActionEnabled = actionEnabled,
             actionPreview = object : CommandActionPreview {
@@ -397,8 +410,7 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
 
     val commandActionToggle =
         Command(
-            text = "Toggle",
-            extraText = "Extra toggle",
+            text = resourceBundle.value.getString("Control.button.toggle"),
             icon = computer(),
             isActionEnabled = actionEnabled,
             isActionToggle = true,
@@ -409,30 +421,31 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
             }
         )
 
+    val entrySimpleMf = MessageFormat(resourceBundle.value.getString("Group.entrySimple"))
     val commandSecondaryOnly =
         Command(
-            text = "Popup",
-            extraText = "Extra popup",
+            text = resourceBundle.value.getString("Popup.text"),
+            extraText = resourceBundle.value.getString("Popup.textExtra"),
             icon = computer(),
             isSecondaryEnabled = popupEnabled,
             secondaryContentModel = CommandMenuContentModel(
                 CommandGroup(
-                    title = "Group",
+                    title = resourceBundle.value.getString("Group.titleSimple"),
                     commands = listOf(
                         Command(
-                            text = "popup1",
+                            text = entrySimpleMf.format(arrayOf<Any>(1)),
                             icon = computer(),
                             action = { println("popup1 activated!") },
                             isActionEnabled = actionEnabled
                         ),
                         Command(
-                            text = "popup2",
+                            text = entrySimpleMf.format(arrayOf<Any>(2)),
                             icon = computer(),
                             action = { println("popup2 activated!") },
                             isActionEnabled = actionEnabled
                         ),
                         Command(
-                            text = "popup3",
+                            text = entrySimpleMf.format(arrayOf<Any>(3)),
                             icon = computer(),
                             action = { println("popup3 activated!") },
                             isActionEnabled = actionEnabled
@@ -443,25 +456,27 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
         )
 
     val secondaryCommand1 = Command(
-        text = "secondary 1",
+        text = entrySimpleMf.format(arrayOf<Any>(1)),
         icon = computer(),
         action = { println("secondary 1 activated!") },
         isActionEnabled = actionEnabled
     )
     val secondaryCommand2 = Command(
-        text = "secondary 2",
+        text = entrySimpleMf.format(arrayOf<Any>(2)),
         icon = computer(),
         action = { println("secondary 2 activated!") },
         isActionEnabled = actionEnabled
     )
     val secondaryCommand3 = Command(
-        text = "secondary 3",
+        text = entrySimpleMf.format(arrayOf<Any>(3)),
         icon = computer(),
         action = { println("secondary 3 activated!") },
         isActionEnabled = actionEnabled
     )
+    val entryMf = MessageFormat(resourceBundle.value.getString("Group.entry"))
+    val entryExtraMf = MessageFormat(resourceBundle.value.getString("Group.entryExtra"))
     val secondaryCommand4 = Command(
-        text = "secondary 4",
+        text = entrySimpleMf.format(arrayOf<Any>(4)),
         icon = computer(),
         action = { println("secondary 4 activated!") },
         isActionEnabled = actionEnabled,
@@ -470,22 +485,22 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
                 title = "Sub group",
                 commands = listOf(
                     Command(
-                        text = "secondary 4/1",
-                        extraText = "extra text for 4/1",
+                        text = entryMf.format(arrayOf<Any>(4, 1)),
+                        extraText = entryExtraMf.format(arrayOf<Any>(4, 1)),
                         icon = computer(),
                         action = { println("secondary 4/1 activated!") },
                         isActionEnabled = actionEnabled
                     ),
                     Command(
-                        text = "secondary 4/2",
-                        extraText = "extra text for 4/2",
+                        text = entryMf.format(arrayOf<Any>(4, 2)),
+                        extraText = entryExtraMf.format(arrayOf<Any>(4, 2)),
                         icon = computer(),
                         action = { println("secondary 4/2 activated!") },
                         isActionEnabled = actionEnabled
                     ),
                     Command(
-                        text = "secondary 4/3",
-                        extraText = "extra text for 4/3",
+                        text = entryMf.format(arrayOf<Any>(4, 3)),
+                        extraText = entryExtraMf.format(arrayOf<Any>(4, 3)),
                         icon = computer(),
                         action = { println("secondary 4/3 activated!") },
                         isActionEnabled = actionEnabled
@@ -497,31 +512,31 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
     )
 
     val secondaryCommand5 = Command(
-        text = "secondary 5",
+        text = entrySimpleMf.format(arrayOf<Any>(5)),
         icon = computer(),
         action = { println("secondary 5 activated!") },
         isActionEnabled = actionEnabled,
         secondaryContentModel = CommandMenuContentModel(
             group = CommandGroup(
-                title = "Sub group",
+                title = resourceBundle.value.getString("Group.title"),
                 commands = listOf(
                     Command(
-                        text = "secondary 5/1",
-                        extraText = "extra text for 5/1",
+                        text = entryMf.format(arrayOf<Any>(5, 1)),
+                        extraText = entryExtraMf.format(arrayOf<Any>(5, 1)),
                         icon = computer(),
                         action = { println("secondary 5/1 activated!") },
                         isActionEnabled = actionEnabled
                     ),
                     Command(
-                        text = "secondary 5/2",
-                        extraText = "extra text for 5/2",
+                        text = entryMf.format(arrayOf<Any>(5, 2)),
+                        extraText = entryExtraMf.format(arrayOf<Any>(5, 2)),
                         icon = computer(),
                         action = { println("secondary 5/2 activated!") },
                         isActionEnabled = actionEnabled
                     ),
                     Command(
-                        text = "secondary 5/3",
-                        extraText = "extra text for 5/3",
+                        text = entryMf.format(arrayOf<Any>(5, 3)),
+                        extraText = entryExtraMf.format(arrayOf<Any>(5, 3)),
                         icon = computer(),
                         action = { println("secondary 5/3 activated!") },
                         isActionEnabled = actionEnabled
@@ -534,8 +549,8 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
 
     val commandActionAndSecondary =
         Command(
-            text = "Both parts",
-            extraText = "Extra both",
+            text = resourceBundle.value.getString("Mixed.text"),
+            extraText = resourceBundle.value.getString("Mixed.textExtra"),
             icon = computer(),
             action = { println("Split activated!") },
             actionPreview = object : CommandActionPreview {
@@ -586,7 +601,8 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
                 enabled = actionEnabled,
                 orientation = StripOrientation.Vertical,
                 alignment = alignment,
-                horizontalGapScaleFactor = 0.7f
+                horizontalGapScaleFactor = 0.7f,
+                resourceBundle = resourceBundle
             )
         }
         Box(modifier = Modifier.padding(8.dp)) {
@@ -594,22 +610,29 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
                 enabled = actionEnabled,
                 orientation = StripOrientation.Vertical,
                 style = style,
-                horizontalGapScaleFactor = 0.7f
+                horizontalGapScaleFactor = 0.7f,
+                resourceBundle = resourceBundle
             )
         }
 
         Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
-            AuroraSkinSwitcher(auroraSkinDefinition)
+            Row(modifier = Modifier.wrapContentHeight().fillMaxWidth()) {
+                AuroraSkinSwitcher(auroraSkinDefinition)
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                AuroraLocaleSwitcher(resourceBundle)
+            }
 
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
                 CheckBoxProjection(contentModel = SelectorContentModel(
-                    text = "action enabled",
+                    text = resourceBundle.value.getString("Action.enabled"),
                     selected = actionEnabled,
                     onTriggerSelectedChange = { actionEnabled = !actionEnabled }
                 )).project()
                 Spacer(modifier = Modifier.width(8.dp))
                 CheckBoxProjection(contentModel = SelectorContentModel(
-                    text = "popup enabled",
+                    text = resourceBundle.value.getString("Popup.enabled"),
                     selected = popupEnabled,
                     onTriggerSelectedChange = { popupEnabled = !popupEnabled }
                 )).project()
@@ -624,21 +647,24 @@ fun DemoCommandContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
                     enabled = actionEnabled,
                     orientation = StripOrientation.Horizontal,
                     alignment = alignment,
-                    horizontalGapScaleFactor = CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis
+                    horizontalGapScaleFactor = CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis,
+                    resourceBundle = resourceBundle
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 CommandDemoStyleStrip(
                     enabled = actionEnabled,
                     orientation = StripOrientation.Horizontal,
                     style = style,
-                    horizontalGapScaleFactor = CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis
+                    horizontalGapScaleFactor = CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis,
+                    resourceBundle = resourceBundle
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 CommandDemoEditStrip(
                     actionEnabled = actionEnabled,
                     popupEnabled = popupEnabled,
                     orientation = StripOrientation.Horizontal,
-                    horizontalGapScaleFactor = CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis
+                    horizontalGapScaleFactor = CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis,
+                    resourceBundle = resourceBundle
                 )
             }
 

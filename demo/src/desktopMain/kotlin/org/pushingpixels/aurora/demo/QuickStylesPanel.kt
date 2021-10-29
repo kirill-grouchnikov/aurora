@@ -24,47 +24,6 @@ import org.pushingpixels.aurora.demo.svg.material.*
 import java.text.MessageFormat
 import java.util.*
 
-fun getQuickStylesContentModel(): CommandPanelContentModel {
-    val icons = arrayOf(
-        accessibility_new_24px(),
-        account_box_24px(),
-        backup_24px(),
-        brightness_medium_24px(),
-        help_24px(),
-        info_24px(),
-        keyboard_capslock_24px(),
-        location_on_24px(),
-        perm_device_information_24px(),
-        storage_24px(),
-        visibility_24px(),
-        waves_24px()
-    )
-
-    val commandGroups: MutableList<CommandGroup> = arrayListOf()
-    for (groupIndex in 1..4) {
-        val commands: MutableList<Command> = arrayListOf()
-        for (i in 1..15) {
-            val command = Command(
-                text = "Option $i",
-                icon = icons[i % icons.size],
-                action = { println("Invoked action on $i") }
-            )
-            commands.add(command)
-        }
-        commandGroups.add(CommandGroup("Group $groupIndex", commands))
-    }
-    return CommandPanelContentModel(commandGroups = commandGroups,
-        commandActionPreview = object : CommandActionPreview {
-            override fun onCommandPreviewActivated(command: Command) {
-                println("Action preview activated for ${command.text}!")
-            }
-
-            override fun onCommandPreviewCanceled(command: Command) {
-                println("Action preview canceled for ${command.text}!")
-            }
-        })
-}
-
 fun getQuickStylesContentModel(resourceBundle: State<ResourceBundle>): CommandPanelContentModel {
     val icons = arrayOf(
         accessibility_new_24px(),

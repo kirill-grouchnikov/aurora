@@ -458,7 +458,6 @@ private fun TopLevelPopupContent(
             ) {
                 var yPosition = 0
 
-                // TODO - support RTL
                 placeables.forEach { placeable ->
                     placeable.placeRelative(
                         x = 0,
@@ -622,8 +621,6 @@ private fun PopupContentLayout(
             width = contentLayoutInfo.fullSize.width.toInt(),
             height = contentLayoutInfo.fullSize.height.toInt()
         ) {
-            // TODO - support RTL
-
             // Offset everything by [offset,offset] for border insets
             var yPosition = offset
             if (panelPlaceable != null) {
