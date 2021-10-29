@@ -482,7 +482,7 @@ fun AuroraApplicationScope.DemoCommandContent(
         isActionEnabled = actionEnabled,
         secondaryContentModel = CommandMenuContentModel(
             group = CommandGroup(
-                title = "Sub group",
+                title = resourceBundle.value.getString("Group.titleSimple"),
                 commands = listOf(
                     Command(
                         text = entryMf.format(arrayOf<Any>(4, 1)),
@@ -518,7 +518,7 @@ fun AuroraApplicationScope.DemoCommandContent(
         isActionEnabled = actionEnabled,
         secondaryContentModel = CommandMenuContentModel(
             group = CommandGroup(
-                title = resourceBundle.value.getString("Group.title"),
+                title = resourceBundle.value.getString("Group.titleSimple"),
                 commands = listOf(
                     Command(
                         text = entryMf.format(arrayOf<Any>(5, 1)),
@@ -547,6 +547,7 @@ fun AuroraApplicationScope.DemoCommandContent(
         isSecondaryEnabled = popupEnabled
     )
 
+    val groupMf = MessageFormat(resourceBundle.value.getString("Group.title"))
     val commandActionAndSecondary =
         Command(
             text = resourceBundle.value.getString("Mixed.text"),
@@ -567,11 +568,11 @@ fun AuroraApplicationScope.DemoCommandContent(
             secondaryContentModel = CommandMenuContentModel(
                 groups = listOf(
                     CommandGroup(
-                        title = "Group 1",
+                        title = groupMf.format(arrayOf<Any>(1)),
                         commands = listOf(secondaryCommand1, secondaryCommand2, secondaryCommand3)
                     ),
                     CommandGroup(
-                        title = "Group 2",
+                        title = groupMf.format(arrayOf<Any>(2)),
                         commands = listOf(secondaryCommand4, secondaryCommand5)
                     )
                 )
