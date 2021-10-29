@@ -17,7 +17,7 @@ package org.pushingpixels.aurora.theming.utils
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.toComposeColorFilter
+import androidx.compose.ui.graphics.asComposeColorFilter
 import org.pushingpixels.aurora.common.colorBrightness
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.withBrightness
@@ -130,5 +130,6 @@ fun getColorSchemeFilter(scheme: AuroraColorScheme): ColorFilter {
 
     // Pass null for alphas so that when the filter is applied, it respects the alpha
     // channel of the source image
-    return org.jetbrains.skia.ColorFilter.makeTableARGB(null, reds, greens, blues).toComposeColorFilter()
+    return org.jetbrains.skia.ColorFilter.makeTableARGB(null, reds, greens, blues)
+        .asComposeColorFilter()
 }
