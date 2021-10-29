@@ -33,7 +33,6 @@ import org.pushingpixels.aurora.component.utils.displayPopupContent
 import org.pushingpixels.aurora.theming.AuroraSkin
 import org.pushingpixels.aurora.theming.LocalTextStyle
 import org.pushingpixels.aurora.theming.LocalWindow
-import java.awt.event.MouseEvent
 
 @OptIn(ExperimentalComposeApi::class)
 @Composable
@@ -43,8 +42,6 @@ fun Modifier.auroraContextMenu(
     presentationModel: CommandPopupMenuPresentationModel = CommandPopupMenuPresentationModel(),
     overlays: Map<Command, CommandButtonPresentationModel.Overlay> = mapOf()
 ): Modifier {
-    var lastEvent by remember { mutableStateOf<MouseEvent?>(null) }
-
     val contentModelState = rememberUpdatedState(contentModel)
     val enabledState = rememberUpdatedState(enabled)
 
@@ -62,10 +59,9 @@ fun Modifier.auroraContextMenu(
 
     return this.then(Modifier.pointerInput(Unit) {
         while (true) {
-            val event = awaitPointerEventScope { awaitPointerEvent() }
-            lastEvent = event.mouseEvent
+            val lastMouseEvent = awaitPointerEventScope { awaitPointerEvent() }.mouseEvent
 
-            if (enabledState.value && (lastEvent?.isPopupTrigger == true)) {
+            if (enabledState.value && (lastMouseEvent?.isPopupTrigger == true)) {
                 displayPopupContent(
                     currentWindow = window,
                     layoutDirection = layoutDirection,
@@ -78,8 +74,8 @@ fun Modifier.auroraContextMenu(
                     locals = currentLocals,
                     anchorBoundsInWindow = Rect(
                         offset = Offset(
-                            x = lastEvent!!.x.toFloat(),
-                            y = lastEvent!!.y.toFloat()
+                            x = lastMouseEvent.x.toFloat(),
+                            y = lastMouseEvent.y.toFloat()
                         ),
                         size = Size.Zero
                     ),
