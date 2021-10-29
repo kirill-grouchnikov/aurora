@@ -15,13 +15,12 @@
  */
 package org.pushingpixels.aurora.component.contextmenu
 
-import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.input.pointer.*
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -62,12 +61,9 @@ fun Modifier.auroraContextMenu(
     val resolvedTextStyle = remember { resolveDefaults(mergedTextStyle, layoutDirection) }
 
     return this.then(Modifier.pointerInput(Unit) {
-        forEachGesture {
-            var event: PointerEvent? = null
-            awaitPointerEventScope {
-                event = awaitPointerEvent()
-            }
-            lastEvent = event?.mouseEvent
+        while (true) {
+            val event = awaitPointerEventScope { awaitPointerEvent() }
+            lastEvent = event.mouseEvent
 
             if (enabledState.value && (lastEvent?.isPopupTrigger == true)) {
                 displayPopupContent(
