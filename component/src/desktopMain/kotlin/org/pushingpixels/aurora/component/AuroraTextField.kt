@@ -40,7 +40,10 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.common.byAlpha
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.TextFieldPresentationModel
@@ -76,6 +79,7 @@ internal fun AuroraTextField(
         modifier = modifier,
         contentModel = TextFieldValueContentModel(
             value = textFieldValue,
+            placeholder = contentModel.placeholder,
             onValueChange = {
                 textFieldValueState = it
                 if (contentModel.value != it.text) {
@@ -246,6 +250,18 @@ internal fun AuroraTextField(
     )
     val textStyle = LocalTextStyle.current.merge(TextStyle(color = textColor))
 
+    val placeholderAlpha = 0.7f * (1.0f - modelStateInfo.activeStrength) *
+            (if (contentModel.value.text.isEmpty()) 1.0f else 0.0f)
+    val placeholderColor = getTextColor(
+        modelStateInfo = modelStateInfo,
+        currState = currentState.value,
+        skinColors = AuroraSkin.colors,
+        decorationAreaType = decorationAreaType,
+        colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
+        isTextInFilledArea = false
+    ).byAlpha(placeholderAlpha)
+    val placeholderStyle = LocalTextStyle.current.merge(TextStyle(color = placeholderColor))
+
     val cursorColor = textColor
 
     Box {
@@ -405,7 +421,17 @@ internal fun AuroraTextField(
                 maxLines = presentationModel.maxLines,
                 decorationBox = @Composable { coreTextField ->
                     TextFieldContentLayout(
-                        textField = coreTextField
+                        textField = coreTextField,
+                        placeholder = {
+                            AuroraText(
+                                text = contentModel.placeholder,
+                                color = placeholderColor,
+                                style = placeholderStyle,
+                                overflow = TextOverflow.Clip,
+                                softWrap = true,
+                                maxLines = Int.MAX_VALUE
+                            )
+                        }
                     )
                 }
             )
@@ -415,7 +441,8 @@ internal fun AuroraTextField(
 
 @Composable
 private fun TextFieldContentLayout(
-    textField: @Composable () -> Unit
+    textField: @Composable () -> Unit,
+    placeholder: @Composable () -> Unit
 ) {
     Layout(
         content = {
@@ -424,6 +451,7 @@ private fun TextFieldContentLayout(
                 propagateMinConstraints = true
             ) {
                 textField()
+                placeholder()
             }
         }
     ) { measurables, incomingConstraints ->

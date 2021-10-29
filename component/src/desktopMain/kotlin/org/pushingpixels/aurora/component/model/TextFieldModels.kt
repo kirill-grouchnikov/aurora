@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 
 data class TextFieldValueContentModel(
     val value: TextFieldValue,
+    val placeholder: String = "",
     val enabled: Boolean = true,
     val readOnly: Boolean = false,
     val onValueChange: (TextFieldValue) -> Unit
@@ -31,6 +32,7 @@ data class TextFieldValueContentModel(
 
 data class TextFieldStringContentModel(
     val value: String,
+    val placeholder: String = "",
     val enabled: Boolean = true,
     val readOnly: Boolean = false,
     val onValueChange: (String) -> Unit

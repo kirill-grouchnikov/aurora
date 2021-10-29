@@ -864,10 +864,11 @@ fun AuroraWindowScope.DemoArea(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Example of a multi-line text field
-                var text1 by rememberSaveable { mutableStateOf(resourceBundle.value.getString("Control.textfield.area")) }
+                var text1 by rememberSaveable { mutableStateOf("") }
                 TextFieldStringProjection(
                     contentModel = TextFieldStringContentModel(
                         value = text1,
+                        placeholder = resourceBundle.value.getString("Control.textfield.area"),
                         onValueChange = { text1 = it },
                         enabled = contentEnabled.value
                     )
@@ -876,10 +877,11 @@ fun AuroraWindowScope.DemoArea(
                 Spacer(modifier = Modifier.width(16.dp))
 
                 // Example of a single-line text field
-                var text2 by rememberSaveable { mutableStateOf(resourceBundle.value.getString("Control.textfield.field")) }
+                var text2 by rememberSaveable { mutableStateOf("") }
                 TextFieldStringProjection(
                     contentModel = TextFieldStringContentModel(
                         value = text2,
+                        placeholder = resourceBundle.value.getString("Control.textfield.field"),
                         onValueChange = { text2 = it },
                         enabled = contentEnabled.value
                     ),
