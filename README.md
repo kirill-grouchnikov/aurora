@@ -23,7 +23,7 @@ Add the latest Kotlin and Compose Desktop dependencies:
 ```kotlin
 plugins {
     kotlin("jvm") version "1.5.31"
-    id("org.jetbrains.compose") version "1.0.0-beta1"
+    id("org.jetbrains.compose") version "1.0.0-beta5"
 }
 ```
 
@@ -36,9 +36,9 @@ Add Aurora dependencies:
 
 ```
 dependencies {
-    implementation("org.pushing-pixels:aurora-theming:0.0.58-SNAPSHOT")
-    implementation("org.pushing-pixels:aurora-component:0.0.58-SNAPSHOT")
-    implementation("org.pushing-pixels:aurora-window:0.0.58-SNAPSHOT")
+    implementation("org.pushing-pixels:aurora-theming:0.0.59-SNAPSHOT")
+    implementation("org.pushing-pixels:aurora-component:0.0.59-SNAPSHOT")
+    implementation("org.pushing-pixels:aurora-window:0.0.59-SNAPSHOT")
     implementation(compose.desktop.currentOs)
 }
 ```
@@ -46,7 +46,7 @@ dependencies {
 Now you are ready for your first Aurora demo:
 
 ```kotlin
-fun main() = application {
+fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
