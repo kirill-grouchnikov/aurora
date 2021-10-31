@@ -32,11 +32,11 @@ import org.pushingpixels.aurora.theming.painter.overlay.AuroraOverlayPainter
 
 @Composable
 fun Modifier.auroraBackground() = this.then(
-    // TODO - can we get the Window reference from a WindowScope on a modifier?
+    // TODO - is there another way to get window size in here without our own composition local?
     AuroraBackground(
         rootSize = Size(
-            width = LocalWindow.current.width * LocalDensity.current.density,
-            height = LocalWindow.current.height * LocalDensity.current.density
+            width = LocalWindowSize.current.width.value * LocalDensity.current.density,
+            height = LocalWindowSize.current.height.value * LocalDensity.current.density
         ),
         decorationAreaType = AuroraSkin.decorationAreaType,
         colors = AuroraSkin.colors,
@@ -59,6 +59,7 @@ private class AuroraBackground(
     }
 
     override fun ContentDrawScope.draw() {
+        println("Decoration $decorationAreaType size $rootSize")
         if (decorationAreaType != DecorationAreaType.None
             && colors.isRegisteredAsDecorationArea(decorationAreaType)
         ) {

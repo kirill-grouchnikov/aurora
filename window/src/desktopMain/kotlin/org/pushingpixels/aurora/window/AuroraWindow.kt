@@ -534,7 +534,8 @@ fun AuroraApplicationScope.AuroraWindow(
         onKeyEvent = onKeyEvent
     ) {
         CompositionLocalProvider(
-            LocalWindow provides window
+            LocalWindow provides window,
+            LocalWindowSize provides state.size
         ) {
             val auroraWindowScope = AuroraWindowScopeImpl(this@AuroraWindow, this)
             AuroraSkin(
@@ -624,7 +625,8 @@ fun AuroraApplicationScope.AuroraWindow(
         onKeyEvent = onKeyEvent
     ) {
         CompositionLocalProvider(
-            LocalWindow provides window
+            LocalWindow provides window,
+            LocalWindowSize provides state.size
         ) {
             val auroraWindowScope = AuroraWindowScopeImpl(this@AuroraWindow, this)
             AuroraSkin(
