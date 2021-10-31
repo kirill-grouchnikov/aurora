@@ -533,24 +533,28 @@ fun AuroraApplicationScope.AuroraWindow(
         onPreviewKeyEvent = onPreviewKeyEvent,
         onKeyEvent = onKeyEvent
     ) {
-        val auroraWindowScope = AuroraWindowScopeImpl(this@AuroraWindow, this)
-        auroraWindowScope.AuroraSkin(
-            displayName = skin.value.displayName,
-            decorationAreaType = DecorationAreaType.None,
-            colors = skin.value.colors,
-            buttonShaper = skin.value.buttonShaper,
-            painters = skin.value.painters,
-            animationConfig = AuroraSkin.animationConfig
+        CompositionLocalProvider(
+            LocalWindow provides window
         ) {
-            density.value = LocalDensity.current
-            auroraWindowScope.WindowContent(
-                title = title,
-                icon = icon,
-                iconFilterStrategy = iconFilterStrategy,
-                undecorated = undecorated,
-                menuCommands = menuCommands,
-                content = content
-            )
+            val auroraWindowScope = AuroraWindowScopeImpl(this@AuroraWindow, this)
+            AuroraSkin(
+                displayName = skin.value.displayName,
+                decorationAreaType = DecorationAreaType.None,
+                colors = skin.value.colors,
+                buttonShaper = skin.value.buttonShaper,
+                painters = skin.value.painters,
+                animationConfig = AuroraSkin.animationConfig
+            ) {
+                density.value = LocalDensity.current
+                auroraWindowScope.WindowContent(
+                    title = title,
+                    icon = icon,
+                    iconFilterStrategy = iconFilterStrategy,
+                    undecorated = undecorated,
+                    menuCommands = menuCommands,
+                    content = content
+                )
+            }
         }
 
         LaunchedEffect(Unit) {
@@ -619,24 +623,28 @@ fun AuroraApplicationScope.AuroraWindow(
         onPreviewKeyEvent = onPreviewKeyEvent,
         onKeyEvent = onKeyEvent
     ) {
-        val auroraWindowScope = AuroraWindowScopeImpl(this@AuroraWindow, this)
-        auroraWindowScope.AuroraSkin(
-            displayName = skin.displayName,
-            decorationAreaType = DecorationAreaType.None,
-            colors = skin.colors,
-            buttonShaper = skin.buttonShaper,
-            painters = skin.painters,
-            animationConfig = AuroraSkin.animationConfig
+        CompositionLocalProvider(
+            LocalWindow provides window
         ) {
-            density.value = LocalDensity.current
-            auroraWindowScope.WindowContent(
-                title = title,
-                icon = icon,
-                iconFilterStrategy = iconFilterStrategy,
-                undecorated = undecorated,
-                menuCommands = menuCommands,
-                content = content
-            )
+            val auroraWindowScope = AuroraWindowScopeImpl(this@AuroraWindow, this)
+            AuroraSkin(
+                displayName = skin.displayName,
+                decorationAreaType = DecorationAreaType.None,
+                colors = skin.colors,
+                buttonShaper = skin.buttonShaper,
+                painters = skin.painters,
+                animationConfig = AuroraSkin.animationConfig
+            ) {
+                density.value = LocalDensity.current
+                auroraWindowScope.WindowContent(
+                    title = title,
+                    icon = icon,
+                    iconFilterStrategy = iconFilterStrategy,
+                    undecorated = undecorated,
+                    menuCommands = menuCommands,
+                    content = content
+                )
+            }
         }
 
         LaunchedEffect(Unit) {
@@ -671,7 +679,7 @@ fun AuroraApplicationScope.AuroraWindow(
 }
 
 @Composable
-fun AuroraWindowScope.AuroraDecorationArea(
+fun AuroraDecorationArea(
     decorationAreaType: DecorationAreaType,
     content: @Composable () -> Unit
 ) {
@@ -681,7 +689,7 @@ fun AuroraWindowScope.AuroraDecorationArea(
 }
 
 @Composable
-internal fun AuroraWindowScope.AuroraSkin(
+internal fun AuroraSkin(
     displayName: String = AuroraSkin.displayName,
     decorationAreaType: DecorationAreaType,
     colors: AuroraSkinColors = AuroraSkin.colors,
@@ -697,7 +705,6 @@ internal fun AuroraWindowScope.AuroraSkin(
         LocalButtonShaper provides buttonShaper,
         LocalPainters provides painters,
         LocalAnimationConfig provides animationConfig,
-        LocalWindow provides (window as ComposeWindow)
     ) {
         content()
     }

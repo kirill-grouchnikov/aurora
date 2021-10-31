@@ -22,6 +22,7 @@ import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.DpSize
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 
@@ -64,6 +65,9 @@ val LocalDisplayName = staticCompositionLocalOf<String> {
     error("LocalDisplayName not provided")
 }
 val LocalWindow = staticCompositionLocalOf<ComposeWindow> {
+    error("LocalWindow not provided")
+}
+val LocalWindowSize = staticCompositionLocalOf<DpSize> {
     error("LocalWindow not provided")
 }
 
