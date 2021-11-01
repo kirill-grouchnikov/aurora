@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.pushingpixels.aurora.demo
+package org.pushingpixels.aurora.tools.screenshot
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
@@ -30,8 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
-import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.tools.screenshot.svg.radiance_menu
 import org.pushingpixels.aurora.window.*
 import java.io.File
 import java.util.*
