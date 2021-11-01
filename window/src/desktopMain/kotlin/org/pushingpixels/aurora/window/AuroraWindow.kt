@@ -376,7 +376,7 @@ internal fun Modifier.drawUndecoratedWindowBorder(
 }
 
 @Composable
-internal fun AuroraWindowScope.WindowContent(
+fun AuroraWindowScope.AuroraWindowContent(
     title: String,
     icon: Painter?,
     iconFilterStrategy: IconFilterStrategy,
@@ -547,7 +547,7 @@ fun AuroraApplicationScope.AuroraWindow(
                 animationConfig = AuroraSkin.animationConfig
             ) {
                 density.value = LocalDensity.current
-                auroraWindowScope.WindowContent(
+                auroraWindowScope.AuroraWindowContent(
                     title = title,
                     icon = icon,
                     iconFilterStrategy = iconFilterStrategy,
@@ -638,7 +638,7 @@ fun AuroraApplicationScope.AuroraWindow(
                 animationConfig = AuroraSkin.animationConfig
             ) {
                 density.value = LocalDensity.current
-                auroraWindowScope.WindowContent(
+                auroraWindowScope.AuroraWindowContent(
                     title = title,
                     icon = icon,
                     iconFilterStrategy = iconFilterStrategy,
