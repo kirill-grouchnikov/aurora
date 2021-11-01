@@ -59,7 +59,6 @@ private class AuroraBackground(
     }
 
     override fun ContentDrawScope.draw() {
-        println("Decoration $decorationAreaType size $rootSize")
         if (decorationAreaType != DecorationAreaType.None
             && colors.isRegisteredAsDecorationArea(decorationAreaType)
         ) {

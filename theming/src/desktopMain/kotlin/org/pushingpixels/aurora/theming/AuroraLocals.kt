@@ -68,6 +68,6 @@ val LocalWindow = staticCompositionLocalOf<ComposeWindow> {
     error("LocalWindow not provided")
 }
 val LocalWindowSize = staticCompositionLocalOf<DpSize> {
-    error("LocalWindow not provided")
+    error("LocalWindowSize not provided")
 }
 
