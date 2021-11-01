@@ -16,7 +16,8 @@
 package org.pushingpixels.aurora.demo
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.ImageComposeScene
@@ -28,7 +29,6 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import org.pushingpixels.aurora.component.model.Command
-import org.pushingpixels.aurora.component.model.CommandGroup
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.theming.*
@@ -36,7 +36,7 @@ import org.pushingpixels.aurora.window.*
 import java.io.File
 import java.util.*
 
-internal class ScreenshotScope(
+private class ScreenshotScope(
     private val applicationScope: AuroraApplicationScope,
     original: WindowScope
 ) : AuroraWindowScope {
@@ -53,12 +53,9 @@ internal class ScreenshotScope(
 fun AuroraApplicationScope.ScreenshotWindow(
     windowScope: WindowScope,
     skin: AuroraSkinDefinition,
-    state: WindowState = rememberWindowState(),
-    title: String = "Untitled",
-    icon: Painter? = null,
-    iconFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
-    menuCommands: CommandGroup? = null,
-    undecorated: Boolean = false,
+    state: WindowState,
+    title: String,
+    icon: Painter,
     content: @Composable AuroraWindowScope.() -> Unit
 ) {
     val density = LocalDensity.current
@@ -76,16 +73,27 @@ fun AuroraApplicationScope.ScreenshotWindow(
         screenshotScope.AuroraWindowContent(
             title = title,
             icon = icon,
-            iconFilterStrategy = iconFilterStrategy,
-            undecorated = undecorated,
-            menuCommands = menuCommands,
+            iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
+            undecorated = true,
+            menuCommands = null,
             content = content
         )
     }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
-fun main() = auroraApplication {
+fun main() {
+    screenshot(twilightSkin(), "/Users/kirillg/twilight.png")
+    screenshot(marinerSkin(), "/Users/kirillg/mariner.png")
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+fun screenshot(
+    skin: AuroraSkinDefinition,
+    filename: String
+) = auroraApplication {
+    val title = "Aurora"
+    val icon = radiance_menu()
     val size = DpSize(220.dp, 200.dp)
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
@@ -94,13 +102,12 @@ fun main() = auroraApplication {
     )
 
     val density = LocalDensity.current
-    val skin = twilightSkin()
     AuroraWindow(
         skin = skin,
-        title = "Aurora Demo",
+        title = title,
         state = state,
         undecorated = true,
-        icon = radiance_menu(),
+        icon = icon,
         onCloseRequest = ::exitApplication
     ) {
         val scene = ImageComposeScene(
@@ -121,10 +128,9 @@ fun main() = auroraApplication {
                 ScreenshotWindow(
                     windowScope = this,
                     skin = skin,
-                    title = "Aurora Demo",
-                    icon = radiance_menu(),
-                    iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
-                    undecorated = true
+                    state = state,
+                    title = title,
+                    icon = icon
                 ) {
                     Column(modifier = Modifier.fillMaxSize()) {
                         Row(
@@ -146,7 +152,7 @@ fun main() = auroraApplication {
 
         val image = scene.render()
         val bytes = image.encodeToData()!!.bytes
-        val file = File("/Users/kirillg/mine2.png")
+        val file = File(filename)
         file.writeBytes(bytes)
         scene.close()
         exitApplication()
