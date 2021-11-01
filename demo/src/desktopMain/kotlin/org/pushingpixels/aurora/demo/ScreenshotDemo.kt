@@ -7,6 +7,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.ImageComposeScene
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
@@ -23,12 +24,14 @@ import java.io.File
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() = auroraApplication {
 
+    val size = DpSize(200.dp, 200.dp)
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
-        size = DpSize(200.dp, 200.dp)
+        size = size
     )
 
+    val density = LocalDensity.current
     val skin = twilightSkin()
     AuroraWindow(
         skin = skin,
@@ -38,10 +41,12 @@ fun main() = auroraApplication {
         icon = radiance_menu(),
         onCloseRequest = ::exitApplication
     ) {
-        val scene = ImageComposeScene(width = 400, height = 400) {
+        val scene = ImageComposeScene(width = (size.width.value / density.density).toInt(),
+            height = (size.height.value / density.density).toInt()) {
             CompositionLocalProvider(
                 LocalWindow provides (window as ComposeWindow),
-                LocalWindowSize provides DpSize(200.dp, 200.dp),
+                LocalWindowSize provides size,
+                LocalDensity provides density,
                 LocalDecorationAreaType provides DecorationAreaType.None,
                 LocalDisplayName provides skin.displayName,
                 LocalSkinColors provides skin.colors,
