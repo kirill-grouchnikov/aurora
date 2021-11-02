@@ -269,6 +269,11 @@ internal open class CommandButtonLayoutManagerBig(
         if (constraints.hasFixedWidth && (constraints.maxWidth > 0)) {
             finalWidth = constraints.maxWidth.toFloat()
         }
+        var shiftX = 0.0f
+        if (finalWidth < presentationModel.minWidth.toPx()) {
+            shiftX += (presentationModel.minWidth.toPx() - finalWidth) / 2.0f
+            finalWidth = presentationModel.minWidth.toPx()
+        }
 
         var y = presentationModel.verticalGapScaleFactor *
                 paddingValues.calculateTopPadding().toPx() + shiftY - layoutVGap

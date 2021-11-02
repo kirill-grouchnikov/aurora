@@ -162,6 +162,10 @@ internal open class CommandButtonLayoutManagerMedium(
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
         val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo)
+        val paddingTop = presentationModel.verticalGapScaleFactor *
+                presentationModel.contentPadding.calculateTopPadding().toPx()
+        val paddingBottom = presentationModel.verticalGapScaleFactor *
+                presentationModel.contentPadding.calculateBottomPadding().toPx()
 
         val buttonText = command.text
         val layoutHGap = (CommandButtonSizingConstants.DefaultHorizontalContentLayoutGap *
@@ -200,6 +204,10 @@ internal open class CommandButtonLayoutManagerMedium(
                 }
             }
         }
+        if (finalWidth < presentationModel.minWidth.toPx()) {
+            shiftX += (presentationModel.minWidth.toPx() - finalWidth) / 2.0f
+            finalWidth = presentationModel.minWidth.toPx()
+        }
         if (constraints.hasFixedHeight && (constraints.maxHeight > 0)) {
             finalHeight = constraints.maxHeight.toFloat()
         }
@@ -218,11 +226,12 @@ internal open class CommandButtonLayoutManagerMedium(
             // icon
             if (hasIcon) {
                 x += layoutHGap
+                val iconTop = paddingTop + (finalHeight - iconSize - paddingTop - paddingBottom) / 2
                 iconRect = Rect(
                     left = x,
                     right = x + iconSize,
-                    top = (finalHeight - iconSize) / 2,
-                    bottom = (finalHeight - iconSize) / 2 + iconSize
+                    top = iconTop,
+                    bottom = iconTop + iconSize
                 )
                 x += iconSize + layoutHGap
             }
@@ -242,13 +251,14 @@ internal open class CommandButtonLayoutManagerMedium(
                 )
 
                 textHeight = paragraph.height
+                val textTop = paddingTop + (finalHeight - textHeight - paddingTop - paddingBottom) / 2.0f
                 val lineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
                     text = command.text,
                     textRect = Rect(
                         left = x,
                         right = x + paragraph.maxIntrinsicWidth,
-                        top = (finalHeight - textHeight) / 2.0f,
-                        bottom = (finalHeight - textHeight) / 2.0f + textHeight
+                        top = textTop,
+                        bottom = textTop + textHeight
                     )
                 )
                 textLayoutInfoList.add(lineLayoutInfo)
@@ -385,11 +395,12 @@ internal open class CommandButtonLayoutManagerMedium(
             // icon
             if (hasIcon) {
                 x -= layoutHGap
+                val iconTop = paddingTop + (finalHeight - iconSize - paddingTop - paddingBottom) / 2
                 iconRect = Rect(
                     left = x - iconSize,
                     right = x,
-                    top = (finalHeight - iconSize) / 2,
-                    bottom = (finalHeight - iconSize) / 2 + iconSize
+                    top = iconTop,
+                    bottom = iconTop + iconSize
                 )
                 x -= iconSize + layoutHGap
             }
@@ -407,15 +418,15 @@ internal open class CommandButtonLayoutManagerMedium(
                     text = command.text, style = textStyle, width = Float.POSITIVE_INFINITY,
                     density = _density, maxLines = 1, resourceLoader = resourceLoader
                 )
-
                 textHeight = paragraph.height
+                val textTop = paddingTop + (finalHeight - textHeight - paddingTop - paddingBottom) / 2.0f
                 val lineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
                     text = command.text,
                     textRect = Rect(
                         left = x - paragraph.maxIntrinsicWidth,
                         right = x,
-                        top = (finalHeight - textHeight) / 2.0f,
-                        bottom = (finalHeight - textHeight) / 2.0f + textHeight
+                        top = textTop,
+                        bottom = textTop + textHeight
                     )
                 )
                 textLayoutInfoList.add(lineLayoutInfo)

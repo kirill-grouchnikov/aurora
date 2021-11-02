@@ -33,7 +33,7 @@ object ComboBoxSizingConstants {
     val DefaultComboBoxArrowHeight = 7.dp
     val DefaultComboBoxContentArrowGap = 6.dp
     val DefaultComboBoxContentPadding =
-        PaddingValues(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
+        PaddingValues(start = 8.dp, top = 3.dp, end = 8.dp, bottom = 4.dp)
     val DefaultComboBoxContentWidth = 60.dp
     val DefaultComboBoxContentHeight = 16.dp
 }

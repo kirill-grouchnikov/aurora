@@ -126,6 +126,10 @@ internal open class CommandButtonLayoutManagerSmall(
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
         val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo)
+        val paddingTop = presentationModel.verticalGapScaleFactor *
+                presentationModel.contentPadding.calculateTopPadding().toPx()
+        val paddingBottom = presentationModel.verticalGapScaleFactor *
+                presentationModel.contentPadding.calculateBottomPadding().toPx()
 
         val layoutHGap = (CommandButtonSizingConstants.DefaultHorizontalContentLayoutGap *
                 presentationModel.horizontalGapScaleFactor).toPx()
@@ -160,6 +164,10 @@ internal open class CommandButtonLayoutManagerSmall(
                 }
             }
         }
+        if (finalWidth < presentationModel.minWidth.toPx()) {
+            shiftX += (presentationModel.minWidth.toPx() - finalWidth) / 2.0f
+            finalWidth = presentationModel.minWidth.toPx()
+        }
         if (constraints.hasFixedHeight && (constraints.maxHeight > 0)) {
             finalHeight = constraints.maxHeight.toFloat()
         }
@@ -178,11 +186,12 @@ internal open class CommandButtonLayoutManagerSmall(
             // icon
             if (hasIcon) {
                 x += layoutHGap
+                val iconTop = paddingTop + (finalHeight - iconSize - paddingTop - paddingBottom) / 2
                 iconRect = Rect(
                     left = x,
                     right = x + iconSize,
-                    top = (finalHeight - iconSize) / 2,
-                    bottom = (finalHeight - iconSize) / 2 + iconSize
+                    top = iconTop,
+                    bottom = iconTop + iconSize
                 )
                 x += iconSize + layoutHGap
             }
@@ -266,12 +275,12 @@ internal open class CommandButtonLayoutManagerSmall(
 
             // icon
             if (hasIcon) {
-                x -= layoutHGap
+                val iconTop = paddingTop + (finalHeight - iconSize - paddingTop - paddingBottom) / 2
                 iconRect = Rect(
                     left = x - iconSize,
                     right = x,
-                    top = (finalHeight - iconSize) / 2,
-                    bottom = (finalHeight - iconSize) / 2 + iconSize
+                    top = iconTop,
+                    bottom = iconTop + iconSize
                 )
                 x -= iconSize + layoutHGap
             }

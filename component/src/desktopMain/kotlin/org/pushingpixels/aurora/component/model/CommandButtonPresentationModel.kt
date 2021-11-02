@@ -24,8 +24,8 @@ import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 
 object CommandButtonSizingConstants {
-    val WideButtonContentPadding = PaddingValues(start = 10.dp, top = 4.dp, end = 10.dp, bottom = 4.dp)
-    val CompactButtonContentPadding = PaddingValues(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
+    val WideButtonContentPadding = PaddingValues(start = 10.dp, top = 3.dp, end = 10.dp, bottom = 4.dp)
+    val CompactButtonContentPadding = PaddingValues(start = 6.dp, top = 3.dp, end = 6.dp, bottom = 4.dp)
 }
 
 data class CommandButtonPresentationModel(
@@ -45,6 +45,7 @@ data class CommandButtonPresentationModel(
     val contentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
     val horizontalGapScaleFactor: Float = 1.0f,
     val verticalGapScaleFactor: Float = 1.0f,
+    val minWidth: Dp = 0.dp,
     val isMenu: Boolean = false
 ): PresentationModel {
     data class Overlay(

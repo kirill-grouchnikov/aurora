@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.tools.screenshot
 
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.ImageComposeScene
@@ -26,6 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.tools.screenshot.svg.radiance_menu
 import org.pushingpixels.aurora.window.AuroraWindow
@@ -86,11 +90,13 @@ fun screenshot(
             }
         }
 
-        val image = scene.render()
-        val bytes = image.encodeToData()!!.bytes
-        val file = File(filename)
-        file.writeBytes(bytes)
-        scene.close()
-        exitApplication()
+        LaunchedEffect(Unit) {
+            val image = scene.render()
+            val bytes = image.encodeToData()!!.bytes
+            val file = File(filename)
+            file.writeBytes(bytes)
+            scene.close()
+            exitApplication()
+        }
     }
 }

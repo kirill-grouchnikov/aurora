@@ -202,6 +202,10 @@ internal open class CommandButtonLayoutManagerTile(
                 }
             }
         }
+        if (finalWidth < presentationModel.minWidth.toPx()) {
+            shiftX += (presentationModel.minWidth.toPx() - finalWidth) / 2.0f
+            finalWidth = presentationModel.minWidth.toPx()
+        }
         if (constraints.hasFixedHeight && (constraints.maxHeight > 0)) {
             finalHeight = constraints.maxHeight.toFloat()
         }

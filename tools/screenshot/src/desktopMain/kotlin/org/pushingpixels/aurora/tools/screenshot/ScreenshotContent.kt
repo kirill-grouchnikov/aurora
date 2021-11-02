@@ -3,6 +3,8 @@ package org.pushingpixels.aurora.tools.screenshot
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -10,12 +12,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowScope
 import androidx.compose.ui.window.WindowState
-import org.pushingpixels.aurora.component.model.Command
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
-import org.pushingpixels.aurora.component.model.CommandGroup
-import org.pushingpixels.aurora.component.projection.CommandButtonProjection
-import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
+import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.tools.screenshot.svg.tango.*
 import org.pushingpixels.aurora.window.AuroraApplicationScope
@@ -23,8 +21,6 @@ import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindowContent
 import org.pushingpixels.aurora.window.AuroraWindowScope
 import java.util.*
-
-private val ToolbarIconSize = 22.dp
 
 private class ScreenshotScope(
     private val applicationScope: AuroraApplicationScope,
@@ -97,16 +93,90 @@ fun AuroraApplicationScope.ScreenshotContent(
             AuroraDecorationArea(decorationAreaType = DecorationAreaType.Toolbar) {
                 ScreenshotToolbar()
             }
+            Row(modifier = Modifier.weight(weight = 1.0f, fill = true).padding(4.dp)) {
+                Column(modifier = Modifier.fillMaxWidth(fraction = 0.5f).fillMaxSize()) {
+                    CheckBoxProjection(contentModel = SelectorContentModel(
+                        text = "Enabled selected",
+                        selected = true,
+                        onTriggerSelectedChange = {}
+                    )).project()
+                    CheckBoxProjection(contentModel = SelectorContentModel(
+                        text = "Disabled selected",
+                        enabled = false,
+                        selected = true,
+                        onTriggerSelectedChange = {}
+                    )).project()
+                    CheckBoxProjection(contentModel = SelectorContentModel(
+                        text = "Enabled unselected",
+                        onTriggerSelectedChange = {}
+                    )).project()
+                    Spacer(Modifier.height(4.dp))
+                    val simpleComboItems = listOf("item1", "item2", "item3")
+                    val simpleComboSelectedItem = remember { mutableStateOf(simpleComboItems[0]) }
+                    ComboBoxProjection(
+                        contentModel = ComboBoxContentModel(
+                            items = simpleComboItems,
+                            selectedItem = simpleComboSelectedItem.value,
+                            onTriggerItemSelectedChange = {}
+                        ),
+                        presentationModel = ComboBoxPresentationModel(
+                            displayConverter = { it },
+                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
+                        )
+                    ).project(modifier = Modifier.fillMaxWidth())
+                }
+                Column(
+                    modifier = Modifier.fillMaxWidth(fraction = 1.0f).fillMaxSize()
+                        .padding(horizontal = 4.dp)
+                ) {
+                    RadioButtonProjection(contentModel = SelectorContentModel(
+                        text = "Enabled selected",
+                        selected = true,
+                        onTriggerSelectedChange = {}
+                    )).project()
+                    RadioButtonProjection(contentModel = SelectorContentModel(
+                        text = "Disabled selected",
+                        enabled = false,
+                        selected = true,
+                        onTriggerSelectedChange = {}
+                    )).project()
+                    RadioButtonProjection(contentModel = SelectorContentModel(
+                        text = "Enabled unselected",
+                        onTriggerSelectedChange = {}
+                    )).project()
+                    Spacer(Modifier.height(4.dp))
+                    TextFieldStringProjection(
+                        contentModel = TextFieldStringContentModel(
+                            value = "Text field",
+                            onValueChange = {}
+                        )
+                    ).project()
+                }
+            }
             Row(
-                modifier = Modifier.fillMaxSize().auroraBackground().padding(12.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
+                val commandButtonPresentationModel = CommandButtonPresentationModel(
+                    presentationState = CommandButtonPresentationState.Medium,
+                    minWidth = 76.dp
+                )
+                Spacer(Modifier.weight(1.0f))
+                CommandButtonProjection(
+                    contentModel = Command(text = "prev", action = {}),
+                    presentationModel = commandButtonPresentationModel
+                ).project()
+                CommandButtonProjection(
+                    contentModel = Command(text = "cancel", isActionEnabled = false, action = {}),
+                    presentationModel = commandButtonPresentationModel
+                ).project()
                 CommandButtonProjection(
                     contentModel = Command(
-                        text = "Hello screenshot!!!",
-                        action = {}
-                    )
+                        text = "OK",
+                        isActionToggle = true,
+                        isActionToggleSelected = true,
+                        action = {}),
+                    presentationModel = commandButtonPresentationModel
                 ).project()
             }
         }
@@ -115,6 +185,11 @@ fun AuroraApplicationScope.ScreenshotContent(
 
 @Composable
 private fun ScreenshotToolbar(modifier: Modifier = Modifier) {
+    val commandPresentationModel = CommandButtonPresentationModel(
+        presentationState = CommandButtonPresentationState.SmallFitToIcon,
+        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+        iconDimension = 22.dp
+    )
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -128,11 +203,7 @@ private fun ScreenshotToolbar(modifier: Modifier = Modifier) {
                 icon = edit_cut(),
                 action = { println("Cut!") }
             ),
-            presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.SmallFitToIcon,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = ToolbarIconSize
-            )
+            presentationModel = commandPresentationModel
         ).project()
         CommandButtonProjection(
             contentModel = Command(
@@ -141,11 +212,7 @@ private fun ScreenshotToolbar(modifier: Modifier = Modifier) {
                 isActionEnabled = false,
                 action = { println("Copy!") }
             ),
-            presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.SmallFitToIcon,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = ToolbarIconSize
-            )
+            presentationModel = commandPresentationModel
         ).project()
         CommandButtonProjection(
             contentModel = Command(
@@ -153,11 +220,7 @@ private fun ScreenshotToolbar(modifier: Modifier = Modifier) {
                 icon = edit_paste(),
                 action = { println("Paste!") }
             ),
-            presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.SmallFitToIcon,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = ToolbarIconSize
-            )
+            presentationModel = commandPresentationModel
         ).project()
         CommandButtonProjection(
             contentModel = Command(
@@ -165,11 +228,7 @@ private fun ScreenshotToolbar(modifier: Modifier = Modifier) {
                 icon = edit_select_all(),
                 action = { println("Select all!") }
             ),
-            presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.SmallFitToIcon,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = ToolbarIconSize
-            )
+            presentationModel = commandPresentationModel
         ).project()
         CommandButtonProjection(
             contentModel = Command(
@@ -177,15 +236,11 @@ private fun ScreenshotToolbar(modifier: Modifier = Modifier) {
                 icon = edit_delete(),
                 action = { println("Delete!") }
             ),
-            presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.SmallFitToIcon,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = ToolbarIconSize
-            )
+            presentationModel = commandPresentationModel
         ).project()
 
         Spacer(modifier = Modifier.width(4.dp))
-        VerticalSeparatorProjection().project(modifier = Modifier.height(ToolbarIconSize))
+        VerticalSeparatorProjection().project(modifier = Modifier.height(22.dp))
         Spacer(modifier = Modifier.width(4.dp))
 
         CommandButtonProjection(
@@ -194,11 +249,7 @@ private fun ScreenshotToolbar(modifier: Modifier = Modifier) {
                 icon = format_justify_center(),
                 action = { println("Center!") }
             ),
-            presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.SmallFitToIcon,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = ToolbarIconSize
-            )
+            presentationModel = commandPresentationModel
         ).project()
         CommandButtonProjection(
             contentModel = Command(
@@ -206,11 +257,7 @@ private fun ScreenshotToolbar(modifier: Modifier = Modifier) {
                 icon = format_justify_left(),
                 action = { println("Left!") }
             ),
-            presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.SmallFitToIcon,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = ToolbarIconSize
-            )
+            presentationModel = commandPresentationModel
         ).project()
         CommandButtonProjection(
             contentModel = Command(
@@ -218,11 +265,7 @@ private fun ScreenshotToolbar(modifier: Modifier = Modifier) {
                 icon = format_justify_right(),
                 action = { println("Right!") }
             ),
-            presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.SmallFitToIcon,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = ToolbarIconSize
-            )
+            presentationModel = commandPresentationModel
         ).project()
         CommandButtonProjection(
             contentModel = Command(
@@ -230,11 +273,7 @@ private fun ScreenshotToolbar(modifier: Modifier = Modifier) {
                 icon = format_justify_fill(),
                 action = { println("Fill!") }
             ),
-            presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.SmallFitToIcon,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = ToolbarIconSize
-            )
+            presentationModel = commandPresentationModel
         ).project()
     }
 }

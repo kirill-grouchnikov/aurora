@@ -29,7 +29,7 @@ data class SelectorContentModel(
 object SelectorSizingConstants {
     val SelectorMarkSize = 14.dp
     val SelectorMarkTextGap = 4.dp
-    val DefaultSelectorContentPadding = PaddingValues(start = 4.dp, top = 10.dp, end = 4.dp, bottom = 8.dp)
+    val DefaultSelectorContentPadding = PaddingValues(start = 4.dp, top = 6.dp, end = 4.dp, bottom = 4.dp)
 }
 
 data class SelectorPresentationModel(
