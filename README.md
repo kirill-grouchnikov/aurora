@@ -10,7 +10,7 @@ Aurora is a collection of libraries for writing modern, elegant and fast [deskto
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/graphitechalk.png" width="340" height="258" border=0>
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/skins/nightshade.png" width="340" height="258" border=0>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/nightshade.png" width="340" height="258" border=0>
 </p>
 
 # Current status
