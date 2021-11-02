@@ -27,19 +27,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.tools.screenshot.svg.radiance_menu
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.auroraApplication
 import java.io.File
+import java.util.*
 
 @OptIn(ExperimentalComposeUiApi::class)
-fun main() {
-    screenshot(twilightSkin(), "/Users/kirillg/twilight.png")
-    screenshot(marinerSkin(), "/Users/kirillg/mariner.png")
+fun main(args: Array<String>) {
+    println(args.size)
+    val auroraSkins = getAuroraSkins()
+    for (auroraSkinDef in auroraSkins) {
+        val skinName = auroraSkinDef.first
+        val skinDefinition = auroraSkinDef.second
+        val filename =
+            args[0] + "/" + skinName.replace(" ", "").lowercase(Locale.getDefault()) + ".png"
+        println("Writing $filename")
+        screenshot(skinDefinition.invoke(), filename)
+    }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
