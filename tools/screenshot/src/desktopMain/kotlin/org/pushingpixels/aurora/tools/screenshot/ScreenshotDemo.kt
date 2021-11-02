@@ -15,71 +15,22 @@
  */
 package org.pushingpixels.aurora.tools.screenshot
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.ImageComposeScene
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.*
-import org.pushingpixels.aurora.component.model.Command
-import org.pushingpixels.aurora.component.projection.CommandButtonProjection
+import androidx.compose.ui.window.WindowPlacement
+import androidx.compose.ui.window.WindowPosition
+import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.tools.screenshot.svg.radiance_menu
-import org.pushingpixels.aurora.window.*
+import org.pushingpixels.aurora.window.AuroraWindow
+import org.pushingpixels.aurora.window.auroraApplication
 import java.io.File
-import java.util.*
-
-private class ScreenshotScope(
-    private val applicationScope: AuroraApplicationScope,
-    original: WindowScope
-) : AuroraWindowScope {
-    override var applicationLocale: Locale
-        get() = applicationScope.applicationLocale
-        set(value) {
-            applicationScope.applicationLocale = value
-        }
-
-    override val window = original.window
-}
-
-@Composable
-fun AuroraApplicationScope.ScreenshotWindow(
-    windowScope: WindowScope,
-    skin: AuroraSkinDefinition,
-    state: WindowState,
-    title: String,
-    icon: Painter,
-    content: @Composable AuroraWindowScope.() -> Unit
-) {
-    val density = LocalDensity.current
-    val screenshotScope = ScreenshotScope(this@ScreenshotWindow, windowScope)
-    CompositionLocalProvider(
-        LocalWindowSize provides state.size,
-        LocalDensity provides density,
-        LocalDecorationAreaType provides DecorationAreaType.None,
-        LocalDisplayName provides skin.displayName,
-        LocalSkinColors provides skin.colors,
-        LocalButtonShaper provides skin.buttonShaper,
-        LocalPainters provides skin.painters,
-        LocalAnimationConfig provides AnimationConfig(),
-    ) {
-        screenshotScope.AuroraWindowContent(
-            title = title,
-            icon = icon,
-            iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
-            undecorated = true,
-            menuCommands = null,
-            content = content
-        )
-    }
-}
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
@@ -94,7 +45,7 @@ fun screenshot(
 ) = auroraApplication {
     val title = "Aurora"
     val icon = radiance_menu()
-    val size = DpSize(220.dp, 200.dp)
+    val size = DpSize(340.dp, 258.dp)
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
@@ -125,28 +76,13 @@ fun screenshot(
                 LocalPainters provides skin.painters,
                 LocalAnimationConfig provides AnimationConfig(),
             ) {
-                ScreenshotWindow(
+                ScreenshotContent(
                     windowScope = this,
                     skin = skin,
                     state = state,
                     title = title,
                     icon = icon
-                ) {
-                    Column(modifier = Modifier.fillMaxSize()) {
-                        Row(
-                            modifier = Modifier.fillMaxSize().auroraBackground().padding(12.dp),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            CommandButtonProjection(
-                                contentModel = Command(
-                                    text = "Hello screenshot!!!",
-                                    action = {}
-                                )
-                            ).project()
-                        }
-                    }
-                }
+                )
             }
         }
 

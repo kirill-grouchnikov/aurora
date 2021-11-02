@@ -298,7 +298,7 @@ fun CommandDemoEditStrip(
                     panelPresentationModel = CommandPanelPresentationModel(
                         contentPadding = PaddingValues(0.dp),
                         showGroupLabels = true,
-                        commandPresentationState = CommandButtonPresentationState.FitToIcon,
+                        commandPresentationState = CommandButtonPresentationState.BigFitToIcon,
                         commandIconSize = 36.dp,
                         commandTextStyle = smallerTextStyle,
                         commandHorizontalGapScaleFactor = 0.25f,

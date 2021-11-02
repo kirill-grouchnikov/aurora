@@ -427,3 +427,20 @@ internal open class CommandButtonLayoutManagerBig(
         )
     }
 }
+
+internal class CommandButtonLayoutManagerBigFitToIcon(
+    layoutDirection: LayoutDirection,
+    _density: Density,
+    textStyle: TextStyle,
+    resourceLoader: Font.ResourceLoader
+) : CommandButtonLayoutManagerBig(layoutDirection, _density, textStyle, resourceLoader) {
+    override fun getPreferredIconSize(
+        command: Command,
+        presentationModel: CommandButtonPresentationModel
+    ): Dp {
+        return presentationModel.iconDimension ?: super.getPreferredIconSize(
+            command,
+            presentationModel
+        )
+    }
+}

@@ -24,7 +24,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.component.model.*
 
-internal class CommandButtonLayoutManagerSmall(
+internal open class CommandButtonLayoutManagerSmall(
     override val layoutDirection: LayoutDirection,
     private val _density: Density,
     private val textStyle: TextStyle,
@@ -359,6 +359,23 @@ internal class CommandButtonLayoutManagerSmall(
             textLayoutInfoList = emptyList(),
             extraTextLayoutInfoList = emptyList(),
             popupActionRect = popupActionRect
+        )
+    }
+}
+
+internal class CommandButtonLayoutManagerSmallFitToIcon(
+    layoutDirection: LayoutDirection,
+    _density: Density,
+    textStyle: TextStyle,
+    resourceLoader: Font.ResourceLoader
+) : CommandButtonLayoutManagerSmall(layoutDirection, _density, textStyle, resourceLoader) {
+    override fun getPreferredIconSize(
+        command: Command,
+        presentationModel: CommandButtonPresentationModel
+    ): Dp {
+        return presentationModel.iconDimension ?: super.getPreferredIconSize(
+            command,
+            presentationModel
         )
     }
 }

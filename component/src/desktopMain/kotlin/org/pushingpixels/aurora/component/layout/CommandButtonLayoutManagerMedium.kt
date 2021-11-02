@@ -559,3 +559,20 @@ internal open class CommandButtonLayoutManagerMedium(
         )
     }
 }
+
+internal class CommandButtonLayoutManagerMediumFitToIcon(
+    layoutDirection: LayoutDirection,
+    _density: Density,
+    textStyle: TextStyle,
+    resourceLoader: Font.ResourceLoader
+) : CommandButtonLayoutManagerMedium(layoutDirection, _density, textStyle, resourceLoader) {
+    override fun getPreferredIconSize(
+        command: Command,
+        presentationModel: CommandButtonPresentationModel
+    ): Dp {
+        return presentationModel.iconDimension ?: super.getPreferredIconSize(
+            command,
+            presentationModel
+        )
+    }
+}

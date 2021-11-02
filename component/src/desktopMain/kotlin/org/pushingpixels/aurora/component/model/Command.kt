@@ -146,6 +146,24 @@ abstract class CommandButtonPresentationState(val displayName: String) {
                 }
             }
 
+        /** Fit-to-icon + big state */
+        val BigFitToIcon: CommandButtonPresentationState =
+            object : CommandButtonPresentationState("Big fit to icon") {
+                override fun createLayoutManager(
+                    layoutDirection: LayoutDirection,
+                    density: Density,
+                    textStyle: TextStyle,
+                    resourceLoader: Font.ResourceLoader
+                ): CommandButtonLayoutManager {
+                    return CommandButtonLayoutManagerBigFitToIcon(
+                        layoutDirection,
+                        density,
+                        textStyle,
+                        resourceLoader
+                    )
+                }
+            }
+
         /** Medium state */
         val Medium: CommandButtonPresentationState =
             object : CommandButtonPresentationState("Medium") {
@@ -156,6 +174,24 @@ abstract class CommandButtonPresentationState(val displayName: String) {
                     resourceLoader: Font.ResourceLoader
                 ): CommandButtonLayoutManager {
                     return CommandButtonLayoutManagerMedium(
+                        layoutDirection,
+                        density,
+                        textStyle,
+                        resourceLoader
+                    )
+                }
+            }
+
+        /** Fit-to-icon + medium state */
+        val MediumFitToIcon: CommandButtonPresentationState =
+            object : CommandButtonPresentationState("Medium fit to icon") {
+                override fun createLayoutManager(
+                    layoutDirection: LayoutDirection,
+                    density: Density,
+                    textStyle: TextStyle,
+                    resourceLoader: Font.ResourceLoader
+                ): CommandButtonLayoutManager {
+                    return CommandButtonLayoutManagerMediumFitToIcon(
                         layoutDirection,
                         density,
                         textStyle,
@@ -182,6 +218,24 @@ abstract class CommandButtonPresentationState(val displayName: String) {
                 }
             }
 
+        /** Fit-to-icon + small state */
+        val SmallFitToIcon: CommandButtonPresentationState =
+            object : CommandButtonPresentationState("Small fit to icon") {
+                override fun createLayoutManager(
+                    layoutDirection: LayoutDirection,
+                    density: Density,
+                    textStyle: TextStyle,
+                    resourceLoader: Font.ResourceLoader
+                ): CommandButtonLayoutManager {
+                    return CommandButtonLayoutManagerSmallFitToIcon(
+                        layoutDirection,
+                        density,
+                        textStyle,
+                        resourceLoader
+                    )
+                }
+            }
+
         /** Tile state */
         val Tile: CommandButtonPresentationState =
             object : CommandButtonPresentationState("Tile") {
@@ -200,16 +254,16 @@ abstract class CommandButtonPresentationState(val displayName: String) {
                 }
             }
 
-        /** Fit-to-icon state */
-        val FitToIcon: CommandButtonPresentationState =
-            object : CommandButtonPresentationState("Fit to icon") {
+        /** Fit-to-icon + tile state */
+        val TileFitToIcon: CommandButtonPresentationState =
+            object : CommandButtonPresentationState("Tile fit to icon") {
                 override fun createLayoutManager(
                     layoutDirection: LayoutDirection,
                     density: Density,
                     textStyle: TextStyle,
                     resourceLoader: Font.ResourceLoader
                 ): CommandButtonLayoutManager {
-                    return CommandButtonLayoutManagerFitToIcon(
+                    return CommandButtonLayoutManagerTileFitToIcon(
                         layoutDirection,
                         density,
                         textStyle,

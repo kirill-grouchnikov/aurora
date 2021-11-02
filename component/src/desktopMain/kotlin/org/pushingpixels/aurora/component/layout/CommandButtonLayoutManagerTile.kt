@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.component.model.*
 import kotlin.math.max
 
-internal class CommandButtonLayoutManagerTile(
+internal open class CommandButtonLayoutManagerTile(
     override val layoutDirection: LayoutDirection,
     private val _density: Density,
     private val textStyle: TextStyle,
@@ -617,6 +617,23 @@ internal class CommandButtonLayoutManagerTile(
             textLayoutInfoList = textLayoutInfoList,
             extraTextLayoutInfoList = extraTextLayoutInfoList,
             popupActionRect = popupActionRect
+        )
+    }
+}
+
+internal class CommandButtonLayoutManagerTileFitToIcon(
+    layoutDirection: LayoutDirection,
+    _density: Density,
+    textStyle: TextStyle,
+    resourceLoader: Font.ResourceLoader
+) : CommandButtonLayoutManagerTile(layoutDirection, _density, textStyle, resourceLoader) {
+    override fun getPreferredIconSize(
+        command: Command,
+        presentationModel: CommandButtonPresentationModel
+    ): Dp {
+        return presentationModel.iconDimension ?: super.getPreferredIconSize(
+            command,
+            presentationModel
         )
     }
 }
