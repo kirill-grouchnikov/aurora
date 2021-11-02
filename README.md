@@ -4,7 +4,13 @@
 Aurora is a collection of libraries for writing modern, elegant and fast [desktop Compose](https://github.com/JetBrains/compose-jb) applications.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/logo/auroraicon-512.png" width="256" height="256" border=0>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/nebula.png" width="340" height="258" border=0>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/gemini.png" width="340" height="258" border=0>
+</p>
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/graphitechalk.png" width="340" height="258" border=0>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/skins/nightshade.png" width="340" height="258" border=0>
 </p>
 
 # Current status
