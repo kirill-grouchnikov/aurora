@@ -22,7 +22,6 @@ import java.util.*
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main(args: Array<String>) {
-    println(args.size)
     val auroraSkins = getAuroraSkins()
     for (auroraSkinDef in auroraSkins) {
         val skinName = auroraSkinDef.first

@@ -43,7 +43,8 @@ interface AuroraColorScheme : SchemeBaseColors, SchemeDerivedColors, AuroraTrait
      */
     fun shift(
         backgroundShiftColor: Color,
-        backgroundShiftFactor: Float, foregroundShiftColor: Color,
+        backgroundShiftFactor: Float,
+        foregroundShiftColor: Color,
         foregroundShiftFactor: Float
     ): AuroraColorScheme
 
