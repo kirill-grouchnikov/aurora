@@ -270,8 +270,7 @@ internal open class CommandButtonLayoutManagerSmall(
             }
         } else {
             var x = finalWidth - presentationModel.horizontalGapScaleFactor *
-                    paddingValues.calculateStartPadding(layoutDirection)
-                        .toPx() - shiftX + layoutHGap
+                    paddingValues.calculateStartPadding(layoutDirection).toPx() - shiftX
 
             // icon
             if (hasIcon) {
