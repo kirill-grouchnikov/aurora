@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.component.projection
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.theming.LocalWindow
@@ -44,6 +45,7 @@ class CommandButtonProjection(
     val presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel(),
     val overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
 ) {
+    @OptIn(AuroraInternalApi::class)
     @Composable
     fun project(modifier: Modifier = Modifier) {
         val window = LocalWindow.current

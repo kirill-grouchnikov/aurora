@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
@@ -83,6 +84,7 @@ object WindowTitlePaneSizingConstants {
         PaddingValues(start = 1.dp, end = 2.dp, top = 1.dp, bottom = 2.dp)
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 private fun AuroraWindowScope.WindowTitlePane(
     title: String,
@@ -375,6 +377,7 @@ internal fun Modifier.drawUndecoratedWindowBorder(
     )
 }
 
+@AuroraInternalApi
 @Composable
 fun AuroraWindowScope.AuroraWindowContent(
     title: String,
@@ -498,6 +501,7 @@ fun auroraApplication(content: @Composable AuroraApplicationScope.() -> Unit) {
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 fun AuroraApplicationScope.AuroraWindow(
     skin: MutableState<AuroraSkinDefinition>,
@@ -589,6 +593,7 @@ fun AuroraApplicationScope.AuroraWindow(
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 fun AuroraApplicationScope.AuroraWindow(
     skin: AuroraSkinDefinition,
@@ -690,6 +695,7 @@ fun AuroraDecorationArea(
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 internal fun AuroraSkin(
     displayName: String = AuroraSkin.displayName,

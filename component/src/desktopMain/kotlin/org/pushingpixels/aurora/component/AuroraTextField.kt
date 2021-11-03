@@ -93,7 +93,7 @@ internal fun AuroraTextField(
     )
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, org.pushingpixels.aurora.common.AuroraInternalApi::class)
 @Composable
 internal fun AuroraTextField(
     modifier: Modifier = Modifier,

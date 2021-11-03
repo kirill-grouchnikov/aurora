@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.component.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.byAlpha
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.lighter
@@ -26,6 +27,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 import kotlin.math.max
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 internal fun populateColorScheme(
     colorScheme: MutableColorScheme,
@@ -223,6 +225,7 @@ internal fun populateColorScheme(
     colorScheme.echo = echo
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 internal fun populateColorSchemeWithHighlightAlpha(
     colorScheme: MutableColorScheme,
@@ -327,6 +330,7 @@ internal fun populateColorSchemeWithHighlightAlpha(
     colorScheme.echo = echo
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 internal fun getStateAwareColor(
     modelStateInfo: ModelStateInfo,
@@ -372,6 +376,7 @@ internal fun getStateAwareColor(
     return result
 }
 
+@OptIn(AuroraInternalApi::class)
 internal fun getTextColor(
     modelStateInfo: ModelStateInfo,
     currState: ComponentState,
@@ -436,6 +441,7 @@ internal fun getTextColor(
     return foreground
 }
 
+@OptIn(AuroraInternalApi::class)
 internal fun getTextSelectionBackground(
     modelStateInfo: ModelStateInfo,
     currState: ComponentState,
@@ -480,6 +486,7 @@ internal fun getTextSelectionBackground(
     return result
 }
 
+@OptIn(AuroraInternalApi::class)
 internal fun getTextFillBackground(
     modelStateInfo: ModelStateInfo,
     currState: ComponentState,

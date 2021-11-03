@@ -23,6 +23,7 @@ import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpSize
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 
@@ -32,14 +33,17 @@ data class ModelStateInfoSnapshot(
     val activeStrength: Float
 )
 
+@AuroraInternalApi
 val LocalModelStateInfoSnapshot = staticCompositionLocalOf<ModelStateInfoSnapshot> {
     error("LocalModelStateInfoSnapshot not provided")
 }
 
+@AuroraInternalApi
 val LocalTextColor = staticCompositionLocalOf<Color> {
     error("LocalTextColor not provided")
 }
 
+@AuroraInternalApi
 val LocalTextStyle = compositionLocalOf(structuralEqualityPolicy()) { TextStyle() }
 
 @Immutable
@@ -48,25 +52,33 @@ data class AnimationConfig(
     val regular: Int = 250
 )
 
+@AuroraInternalApi
 val LocalAnimationConfig = staticCompositionLocalOf { AnimationConfig() }
+@AuroraInternalApi
 val LocalSkinColors = staticCompositionLocalOf<AuroraSkinColors> {
     error("LocalSkinColors not provided")
 }
+@AuroraInternalApi
 val LocalButtonShaper  = staticCompositionLocalOf<AuroraButtonShaper> {
     error("LocalButtonShaper not provided")
 }
+@AuroraInternalApi
 val LocalPainters = staticCompositionLocalOf<AuroraPainters> {
     error("LocalPainters not provided")
 }
+@AuroraInternalApi
 val LocalDecorationAreaType = staticCompositionLocalOf<DecorationAreaType> {
     error("LocalDecorationAreaType not provided")
 }
+@AuroraInternalApi
 val LocalDisplayName = staticCompositionLocalOf<String> {
     error("LocalDisplayName not provided")
 }
+@AuroraInternalApi
 val LocalWindow = staticCompositionLocalOf<ComposeWindow> {
     error("LocalWindow not provided")
 }
+@AuroraInternalApi
 val LocalWindowSize = staticCompositionLocalOf<DpSize> {
     error("LocalWindowSize not provided")
 }

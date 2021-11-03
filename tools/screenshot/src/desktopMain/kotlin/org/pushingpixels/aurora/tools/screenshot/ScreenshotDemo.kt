@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.tools.screenshot.svg.radiance_menu
 import org.pushingpixels.aurora.window.AuroraWindow
@@ -48,7 +49,7 @@ fun main(args: Array<String>) {
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
 fun screenshot(
     skin: AuroraSkinDefinition,
     filename: String

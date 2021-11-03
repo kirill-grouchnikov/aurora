@@ -44,6 +44,7 @@ import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
@@ -65,7 +66,9 @@ private class CommandButtonDrawingCache(
     val markPath: Path = Path()
 )
 
-@OptIn(ExperimentalComposeUiApi::class, androidx.compose.runtime.ExperimentalComposeApi::class)
+@OptIn(ExperimentalComposeUiApi::class, androidx.compose.runtime.ExperimentalComposeApi::class,
+    org.pushingpixels.aurora.common.AuroraInternalApi::class
+)
 @Composable
 internal fun AuroraCommandButton(
     modifier: Modifier = Modifier,
@@ -994,6 +997,7 @@ internal fun AuroraCommandButton(
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 private fun CommandButtonTextContent(
     text: String, modelStateInfo: ModelStateInfo, currState: ComponentState,
@@ -1024,6 +1028,7 @@ private fun CommandButtonTextContent(
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 private fun CommandButtonExtraTextContent(
     text: String, modelStateInfo: ModelStateInfo, currState: ComponentState,
@@ -1073,6 +1078,7 @@ private fun CommandButtonExtraTextContent(
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 private fun CommandButtonIconContent(
     command: Command, presentationModel: CommandButtonPresentationModel,
@@ -1223,6 +1229,7 @@ private fun CommandButtonIconContent(
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 private fun CommandButtonPopupIconContent(
     presentationModel: CommandButtonPresentationModel,

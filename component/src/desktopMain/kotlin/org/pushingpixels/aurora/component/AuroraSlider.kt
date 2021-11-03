@@ -66,7 +66,7 @@ private class SliderDrawingCache(
     )
 )
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, org.pushingpixels.aurora.common.AuroraInternalApi::class)
 @Composable
 internal fun AuroraSlider(
     modifier: Modifier = Modifier,

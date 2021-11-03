@@ -29,9 +29,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.theming.LocalTextColor
 import org.pushingpixels.aurora.theming.LocalTextStyle
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 internal fun AuroraText(
     text: String,

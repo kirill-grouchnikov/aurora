@@ -48,7 +48,7 @@ private class BoxWithHighlightsDrawingCache(
  *     <li>By design, this box does not support [ComponentStateFacet.PRESSED] transitions.</li>
  * </ul>
  */
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, org.pushingpixels.aurora.common.AuroraInternalApi::class)
 @Composable
 fun AuroraBoxWithHighlights(
     modifier: Modifier = Modifier,

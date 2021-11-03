@@ -18,6 +18,11 @@ package org.pushingpixels.aurora.theming
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.resolveDefaults
+import androidx.compose.ui.unit.LayoutDirection
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.common.withBrightness
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
@@ -27,36 +32,47 @@ import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 import org.pushingpixels.aurora.theming.utils.getColorSchemes
 
 object AuroraSkin {
+    @OptIn(AuroraInternalApi::class)
     val displayName: String
         @Composable
         @ReadOnlyComposable
         get() = LocalDisplayName.current
 
+    @OptIn(AuroraInternalApi::class)
     val decorationAreaType: DecorationAreaType
         @Composable
         @ReadOnlyComposable
         get() = LocalDecorationAreaType.current
 
+    @OptIn(AuroraInternalApi::class)
     val colors: AuroraSkinColors
         @Composable
         @ReadOnlyComposable
         get() = LocalSkinColors.current
 
+    @OptIn(AuroraInternalApi::class)
     val buttonShaper: AuroraButtonShaper
         @Composable
         @ReadOnlyComposable
         get() = LocalButtonShaper.current
 
+    @OptIn(AuroraInternalApi::class)
     val painters: AuroraPainters
         @Composable
         @ReadOnlyComposable
         get() = LocalPainters.current
 
+    @OptIn(AuroraInternalApi::class)
     val animationConfig: AnimationConfig
         @Composable
         @ReadOnlyComposable
         get() = LocalAnimationConfig.current
 }
+
+@OptIn(AuroraInternalApi::class)
+@Composable
+fun resolveAuroraDefaults() =
+    resolveDefaults(LocalTextStyle.current, LocalLayoutDirection.current)
 
 data class AuroraSkinDefinition(
     override val displayName: String,

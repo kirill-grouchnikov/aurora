@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Dp
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
@@ -100,6 +101,7 @@ private class IconDrawingCache(
     )
 )
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 internal fun AuroraThemedIcon(
     icon: Painter,

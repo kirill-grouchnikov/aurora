@@ -48,7 +48,7 @@ private class RadioButtonDrawingCache(
     )
 )
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, org.pushingpixels.aurora.common.AuroraInternalApi::class)
 @Composable
 internal fun AuroraRadioButton(
     modifier: Modifier = Modifier,

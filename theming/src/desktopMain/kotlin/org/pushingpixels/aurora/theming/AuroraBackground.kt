@@ -26,10 +26,12 @@ import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.platform.LocalDensity
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter
 import org.pushingpixels.aurora.theming.painter.overlay.AuroraOverlayPainter
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 fun Modifier.auroraBackground() = this.then(
     // TODO - is there another way to get window size in here without our own composition local?

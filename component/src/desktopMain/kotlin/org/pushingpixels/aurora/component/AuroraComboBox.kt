@@ -75,7 +75,9 @@ private fun Modifier.comboBoxLocator(topLeftOffset: AuroraOffset, size: AuroraSi
     ComboBoxLocator(topLeftOffset, size)
 )
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeApi::class,
+    org.pushingpixels.aurora.common.AuroraInternalApi::class
+)
 @Composable
 internal fun <E> AuroraComboBox(
     modifier: Modifier = Modifier,

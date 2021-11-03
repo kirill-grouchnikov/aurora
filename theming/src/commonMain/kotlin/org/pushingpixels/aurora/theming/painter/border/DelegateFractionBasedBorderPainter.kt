@@ -20,6 +20,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.HashMapKey
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
@@ -88,6 +89,7 @@ class DelegateFractionBasedBorderPainter(
      * @param orig Original color scheme.
      * @return Transformed color scheme.
      */
+    @OptIn(AuroraInternalApi::class)
     private fun getShiftScheme(orig: AuroraColorScheme): AuroraColorScheme {
         val key = HashMapKey(orig.displayName, displayName, transform)
         var result = transformMap[key]
@@ -171,6 +173,7 @@ class DelegateFractionBasedBorderPainter(
         /**
          * Map of transformed color schemes (to speed up the subsequent lookups).
          */
+        @OptIn(AuroraInternalApi::class)
         private val transformMap = hashMapOf<HashMapKey, AuroraColorScheme>()
     }
 }

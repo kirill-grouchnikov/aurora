@@ -140,7 +140,7 @@ fun AuroraHorizontalScrollbar(
     isVertical = false
 )
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, org.pushingpixels.aurora.common.AuroraInternalApi::class)
 @Composable
 private fun Scrollbar(
     adapter: ScrollbarAdapter,

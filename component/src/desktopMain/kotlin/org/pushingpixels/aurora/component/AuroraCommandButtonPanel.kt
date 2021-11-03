@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.LabelProjection
@@ -111,6 +112,7 @@ import kotlin.math.min
  * scrolling the content left and right.
  * </p>
  */
+@OptIn(AuroraInternalApi::class)
 @Composable
 internal fun AuroraCommandButtonPanel(
     modifier: Modifier = Modifier,

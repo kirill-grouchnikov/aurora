@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.model.LabelPresentationModel
 import org.pushingpixels.aurora.component.utils.AuroraText
@@ -55,6 +56,7 @@ internal fun AuroraLabel(
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 private fun LabelTextContent(
     contentModel: LabelContentModel,
@@ -108,6 +110,7 @@ private fun LabelTextContent(
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 private fun LabelIconContent(
     contentModel: LabelContentModel, presentationModel: LabelPresentationModel,

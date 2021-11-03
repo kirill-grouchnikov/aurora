@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowScope
 import androidx.compose.ui.window.WindowState
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.theming.*
@@ -35,6 +36,7 @@ private class ScreenshotScope(
     override val window = original.window
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 private fun AuroraApplicationScope.ScreenshotWindow(
     windowScope: WindowScope,

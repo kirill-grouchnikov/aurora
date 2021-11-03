@@ -29,6 +29,7 @@
  */
 package org.pushingpixels.aurora.common
 
+@AuroraInternalApi
 class HashMapKey(vararg val keyFields: Any) {
     override fun hashCode(): Int {
         return keyFields.contentDeepHashCode()

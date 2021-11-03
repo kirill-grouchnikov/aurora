@@ -13,6 +13,7 @@ kotlin {
         named("desktopMain") {
             dependencies {
                 api(compose.desktop.currentOs)
+                implementation(project(":common"))
                 implementation(project(":component"))
                 implementation(project(":theming"))
                 implementation(project(":window"))

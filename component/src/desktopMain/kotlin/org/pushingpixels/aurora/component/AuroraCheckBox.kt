@@ -50,7 +50,7 @@ private class CheckBoxDrawingCache(
     val markPath: Path = Path()
 )
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, org.pushingpixels.aurora.common.AuroraInternalApi::class)
 @Composable
 internal fun AuroraCheckBox(
     modifier: Modifier = Modifier,

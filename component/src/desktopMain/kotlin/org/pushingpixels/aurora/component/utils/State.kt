@@ -16,10 +16,12 @@
 package org.pushingpixels.aurora.component.utils
 
 import androidx.compose.runtime.MutableState
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.theming.ComponentState
 import org.pushingpixels.aurora.theming.ComponentStateFacet
 import org.pushingpixels.aurora.theming.ModelStateInfoSnapshot
 
+@AuroraInternalApi
 class StateContributionInfo(var start: Float, var end: Float) {
     var contribution: Float
 
@@ -35,6 +37,7 @@ class StateContributionInfo(var start: Float, var end: Float) {
     }
 }
 
+@AuroraInternalApi
 class ModelStateInfo(startModelState: ComponentState) {
     var stateContributionMap: MutableMap<ComponentState, StateContributionInfo>
     var activeStrength: Float
@@ -103,6 +106,7 @@ class ModelStateInfo(startModelState: ComponentState) {
     }
 }
 
+@AuroraInternalApi
 fun StateTransitionTracker(
     modelStateInfo: ModelStateInfo,
     currentState: MutableState<ComponentState>,

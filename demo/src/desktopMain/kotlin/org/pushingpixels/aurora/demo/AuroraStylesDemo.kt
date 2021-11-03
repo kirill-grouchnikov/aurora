@@ -267,7 +267,7 @@ fun CommandDemoEditStrip(
         )
 
     // Resolve the default text style to get the default font size
-    val resolvedTextStyle = resolveDefaults(LocalTextStyle.current, LocalLayoutDirection.current)
+    val resolvedTextStyle = resolveAuroraDefaults()
     val fontSize = resolvedTextStyle.fontSize
     // Compute a smaller font size
     val smallerFontSize = TextUnit(fontSize.value - 2.0f, fontSize.type)
