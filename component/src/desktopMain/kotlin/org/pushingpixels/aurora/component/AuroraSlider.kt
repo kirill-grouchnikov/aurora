@@ -42,6 +42,7 @@ import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.SliderContentModel
 import org.pushingpixels.aurora.component.model.SliderPresentationModel
@@ -66,7 +67,7 @@ private class SliderDrawingCache(
     )
 )
 
-@OptIn(ExperimentalComposeUiApi::class, org.pushingpixels.aurora.common.AuroraInternalApi::class)
+@OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
 @Composable
 internal fun AuroraSlider(
     modifier: Modifier = Modifier,

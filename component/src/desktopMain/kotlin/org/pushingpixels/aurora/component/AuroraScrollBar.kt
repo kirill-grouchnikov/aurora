@@ -41,6 +41,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.utils.ModelStateInfo
 import org.pushingpixels.aurora.component.utils.StateTransitionTracker
 import org.pushingpixels.aurora.component.utils.TransitionInfo
@@ -140,7 +141,7 @@ fun AuroraHorizontalScrollbar(
     isVertical = false
 )
 
-@OptIn(ExperimentalComposeUiApi::class, org.pushingpixels.aurora.common.AuroraInternalApi::class)
+@OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
 @Composable
 private fun Scrollbar(
     adapter: ScrollbarAdapter,

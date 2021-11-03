@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.model.CommandMenuContentModel
@@ -34,7 +35,7 @@ import org.pushingpixels.aurora.theming.AuroraSkin
 import org.pushingpixels.aurora.theming.LocalTextStyle
 import org.pushingpixels.aurora.theming.LocalWindow
 
-@OptIn(ExperimentalComposeApi::class, org.pushingpixels.aurora.common.AuroraInternalApi::class)
+@OptIn(ExperimentalComposeApi::class, AuroraInternalApi::class)
 @Composable
 fun Modifier.auroraContextMenu(
     enabled: Boolean = true,

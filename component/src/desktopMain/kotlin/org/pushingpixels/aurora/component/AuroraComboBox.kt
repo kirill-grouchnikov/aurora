@@ -41,6 +41,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
@@ -75,9 +76,7 @@ private fun Modifier.comboBoxLocator(topLeftOffset: AuroraOffset, size: AuroraSi
     ComboBoxLocator(topLeftOffset, size)
 )
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeApi::class,
-    org.pushingpixels.aurora.common.AuroraInternalApi::class
-)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeApi::class, AuroraInternalApi::class)
 @Composable
 internal fun <E> AuroraComboBox(
     modifier: Modifier = Modifier,

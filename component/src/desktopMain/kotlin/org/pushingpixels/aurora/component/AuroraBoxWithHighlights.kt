@@ -27,6 +27,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.drawscope.withTransform
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
@@ -48,7 +49,7 @@ private class BoxWithHighlightsDrawingCache(
  *     <li>By design, this box does not support [ComponentStateFacet.PRESSED] transitions.</li>
  * </ul>
  */
-@OptIn(ExperimentalComposeUiApi::class, org.pushingpixels.aurora.common.AuroraInternalApi::class)
+@OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
 @Composable
 fun AuroraBoxWithHighlights(
     modifier: Modifier = Modifier,

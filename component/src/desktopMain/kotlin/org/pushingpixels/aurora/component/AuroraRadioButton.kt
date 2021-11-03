@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.SelectorContentModel
 import org.pushingpixels.aurora.component.model.SelectorPresentationModel
@@ -48,7 +49,7 @@ private class RadioButtonDrawingCache(
     )
 )
 
-@OptIn(ExperimentalComposeUiApi::class, org.pushingpixels.aurora.common.AuroraInternalApi::class)
+@OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
 @Composable
 internal fun AuroraRadioButton(
     modifier: Modifier = Modifier,

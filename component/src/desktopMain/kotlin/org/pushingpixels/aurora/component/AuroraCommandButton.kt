@@ -66,9 +66,7 @@ private class CommandButtonDrawingCache(
     val markPath: Path = Path()
 )
 
-@OptIn(ExperimentalComposeUiApi::class, androidx.compose.runtime.ExperimentalComposeApi::class,
-    org.pushingpixels.aurora.common.AuroraInternalApi::class
-)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeApi::class, AuroraInternalApi::class)
 @Composable
 internal fun AuroraCommandButton(
     modifier: Modifier = Modifier,

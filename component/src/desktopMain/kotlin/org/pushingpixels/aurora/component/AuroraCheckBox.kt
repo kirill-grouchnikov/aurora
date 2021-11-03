@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.SelectorContentModel
 import org.pushingpixels.aurora.component.model.SelectorPresentationModel
@@ -50,7 +51,7 @@ private class CheckBoxDrawingCache(
     val markPath: Path = Path()
 )
 
-@OptIn(ExperimentalComposeUiApi::class, org.pushingpixels.aurora.common.AuroraInternalApi::class)
+@OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
 @Composable
 internal fun AuroraCheckBox(
     modifier: Modifier = Modifier,
