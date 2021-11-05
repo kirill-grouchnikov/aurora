@@ -236,13 +236,9 @@ class SliderProjection(
     val presentationModel: SliderPresentationModel = SliderPresentationModel()
 ) {
     @Composable
-    fun project(
-        modifier: Modifier = Modifier,
-        interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
-    ) {
+    fun project(modifier: Modifier = Modifier) {
         AuroraSlider(
             modifier = modifier,
-            interactionSource = interactionSource,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )

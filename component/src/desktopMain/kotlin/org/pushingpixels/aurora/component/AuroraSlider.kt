@@ -71,7 +71,6 @@ private class SliderDrawingCache(
 @Composable
 internal fun AuroraSlider(
     modifier: Modifier,
-    interactionSource: MutableInteractionSource,
     contentModel: SliderContentModel,
     presentationModel: SliderPresentationModel
 ) {
@@ -87,6 +86,7 @@ internal fun AuroraSlider(
 
     val ltr = (LocalLayoutDirection.current == LayoutDirection.Ltr)
 
+    val interactionSource = remember { MutableInteractionSource() }
     val drawingCache = remember { SliderDrawingCache() }
     var rollover by remember { mutableStateOf(false) }
     val isPressed by interactionSource.collectIsPressedAsState()
