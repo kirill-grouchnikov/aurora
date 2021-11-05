@@ -16,7 +16,6 @@
 package org.pushingpixels.aurora.window
 
 import androidx.compose.runtime.MutableState
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.Density
 import java.awt.*
 import java.awt.event.AWTEventListener
@@ -117,10 +116,10 @@ internal class AWTInputHandler(
     
     private fun getEventWindow(ev: MouseEvent) : Window? {
         val source = ev.source
-        when (source) {
-            is Window -> return source
-            is Component -> return SwingUtilities.getWindowAncestor(source)
-            else -> return null
+        return when (source) {
+            is Window -> source
+            is Component -> SwingUtilities.getWindowAncestor(source)
+            else -> null
         }
     }
 
