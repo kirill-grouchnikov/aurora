@@ -266,7 +266,7 @@ fun geminiSkin(): AuroraSkinDefinition {
             inner = DelegateFractionBasedBorderPainter(
                 displayName = "Gemini Inner",
                 delegate = outerBorderPainter,
-                masks = intArrayOf(0x60FFFFFF, 0x40FFFFFF, 0x20FFFFFF),
+                masks = longArrayOf(0x60FFFFFFL, 0x40FFFFFFL, 0x20FFFFFFL),
                 transform = { it.tint(0.7f) }
             )),
         decorationPainter = MatteDecorationPainter()

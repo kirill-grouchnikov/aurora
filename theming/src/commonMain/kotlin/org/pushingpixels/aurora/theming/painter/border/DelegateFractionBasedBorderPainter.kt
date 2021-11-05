@@ -33,7 +33,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 class DelegateFractionBasedBorderPainter(
     override val displayName: String,
     val delegate: FractionBasedBorderPainter,
-    val masks: IntArray,
+    val masks: LongArray,
     val transform: (AuroraColorScheme) -> AuroraColorScheme
 ) : AuroraBorderPainter {
     override val isPaintingInnerOutline = false

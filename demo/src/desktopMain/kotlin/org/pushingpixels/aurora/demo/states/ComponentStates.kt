@@ -21,7 +21,6 @@ import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -91,10 +90,9 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(260.dp, 240.dp)
     )
-    val skin = mutableStateOf(magellanSkin())
 
     AuroraWindow(
-        skin = skin,
+        skin = magellanSkin(),
         title = "States",
         icon = radiance_menu(),
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
