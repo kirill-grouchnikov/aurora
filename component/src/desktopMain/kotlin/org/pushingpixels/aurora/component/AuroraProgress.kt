@@ -46,9 +46,9 @@ import kotlin.math.min
 
 @Composable
 internal fun AuroraCircularProgress(
-    modifier: Modifier = Modifier,
-    contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
-    presentationModel: ProgressCircularPresentationModel = ProgressCircularPresentationModel()
+    modifier: Modifier,
+    contentModel: ProgressIndeterminateContentModel,
+    presentationModel: ProgressCircularPresentationModel
 ) {
     val transition = rememberInfiniteTransition()
     val arcSpan by transition.animateFloat(
@@ -147,9 +147,9 @@ private val progressFillPainter = FractionBasedFillPainter(
 
 @Composable
 internal fun AuroraIndeterminateLinearProgress(
-    modifier: Modifier = Modifier,
-    contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
-    presentationModel: ProgressLinearPresentationModel = ProgressLinearPresentationModel()
+    modifier: Modifier,
+    contentModel: ProgressIndeterminateContentModel,
+    presentationModel: ProgressLinearPresentationModel
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -266,9 +266,9 @@ internal fun AuroraIndeterminateLinearProgress(
 
 @Composable
 internal fun AuroraDeterminateLinearProgress(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     contentModel: ProgressDeterminateContentModel,
-    presentationModel: ProgressLinearPresentationModel = ProgressLinearPresentationModel()
+    presentationModel: ProgressLinearPresentationModel
 ) {
     val layoutDirection = LocalLayoutDirection.current
 

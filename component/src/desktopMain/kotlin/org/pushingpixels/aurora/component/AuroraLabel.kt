@@ -36,9 +36,9 @@ import org.pushingpixels.aurora.theming.*
 
 @Composable
 internal fun AuroraLabel(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     contentModel: LabelContentModel,
-    presentationModel: LabelPresentationModel = LabelPresentationModel()
+    presentationModel: LabelPresentationModel
 ) {
     val state =
         if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
@@ -113,7 +113,8 @@ private fun LabelTextContent(
 @OptIn(AuroraInternalApi::class)
 @Composable
 private fun LabelIconContent(
-    contentModel: LabelContentModel, presentationModel: LabelPresentationModel,
+    contentModel: LabelContentModel,
+    presentationModel: LabelPresentationModel,
     currState: ComponentState
 ) {
     if (contentModel.icon == null) {

@@ -54,11 +54,11 @@ private class CheckBoxDrawingCache(
 @OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
 @Composable
 internal fun AuroraCheckBox(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
+    interactionSource: MutableInteractionSource,
     contentModel: SelectorContentModel,
-    presentationModel: SelectorPresentationModel = SelectorPresentationModel()
+    presentationModel: SelectorPresentationModel
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
     val drawingCache = remember { CheckBoxDrawingCache() }
     val rollover by interactionSource.collectIsHoveredAsState()
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -324,8 +324,12 @@ internal fun AuroraCheckBox(
                 )
             }
         }
-        Spacer(modifier = Modifier.width(SelectorSizingConstants.SelectorMarkTextGap *
-                presentationModel.horizontalGapScaleFactor))
+        Spacer(
+            modifier = Modifier.width(
+                SelectorSizingConstants.SelectorMarkTextGap *
+                        presentationModel.horizontalGapScaleFactor
+            )
+        )
         // Pass our text color and model state snapshot to the children
         CompositionLocalProvider(
             LocalTextColor provides textColor,

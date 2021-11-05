@@ -15,7 +15,9 @@
  */
 package org.pushingpixels.aurora.component.projection
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.*
@@ -24,22 +26,6 @@ import org.pushingpixels.aurora.theming.LocalWindow
 import org.pushingpixels.aurora.theming.Side
 import org.pushingpixels.aurora.theming.Sides
 
-// TODO - restore when issue
-//  https://issuetracker.google.com/issues/165812010 is fixed
-//abstract class BaseProjection<C : ContentModel, P : PresentationModel>(
-//    val contentModel: C,
-//    val presentationModel: P
-//) {
-//    @Composable
-//    abstract fun project(modifier: Modifier? = null)
-//}
-//
-//abstract class CommandBasedProjection<C : ContentModel, P : PresentationModel>(
-//    contentModel: C,
-//    presentationModel: P,
-//    val overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
-//) : BaseProjection<C, P>(contentModel, presentationModel)
-
 class CommandButtonProjection(
     val contentModel: Command,
     val presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel(),
@@ -47,10 +33,16 @@ class CommandButtonProjection(
 ) {
     @OptIn(AuroraInternalApi::class)
     @Composable
-    fun project(modifier: Modifier = Modifier) {
+    fun project(
+        modifier: Modifier = Modifier,
+        actionInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+        popupInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    ) {
         val window = LocalWindow.current
         AuroraCommandButton(
             modifier = modifier,
+            actionInteractionSource = actionInteractionSource,
+            popupInteractionSource = popupInteractionSource,
             command = this.contentModel,
             parentWindow = window,
             extraAction = null,
@@ -92,7 +84,6 @@ class CommandButtonPanelProjection(
         ) {
             "Column fill layout is not supported when group labels are shown"
         }
-        // TODO - pass the app-side modifier
         AuroraCommandButtonPanel(
             modifier = modifier,
             contentModel = this.contentModel,
@@ -107,10 +98,13 @@ class ComboBoxProjection<E>(
     val presentationModel: ComboBoxPresentationModel<E>
 ) {
     @Composable
-    fun project(modifier: Modifier = Modifier) {
-        // TODO - pass the app-side modifier
+    fun project(
+        modifier: Modifier = Modifier,
+        interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    ) {
         AuroraComboBox(
             modifier = modifier,
+            interactionSource = interactionSource,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -122,10 +116,13 @@ class CheckBoxProjection(
     val presentationModel: SelectorPresentationModel = SelectorPresentationModel()
 ) {
     @Composable
-    fun project(modifier: Modifier = Modifier) {
-        // TODO - pass the app-side modifier
+    fun project(
+        modifier: Modifier = Modifier,
+        interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    ) {
         AuroraCheckBox(
             modifier = modifier,
+            interactionSource = interactionSource,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -137,10 +134,13 @@ class RadioButtonProjection(
     val presentationModel: SelectorPresentationModel = SelectorPresentationModel()
 ) {
     @Composable
-    fun project(modifier: Modifier = Modifier) {
-        // TODO - pass the app-side modifier
+    fun project(
+        modifier: Modifier = Modifier,
+        interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    ) {
         AuroraRadioButton(
             modifier = modifier,
+            interactionSource = interactionSource,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -153,7 +153,6 @@ class CircularProgressProjection(
 ) {
     @Composable
     fun project(modifier: Modifier = Modifier) {
-        // TODO - pass the app-side modifier
         AuroraCircularProgress(
             modifier = modifier,
             contentModel = this.contentModel,
@@ -168,7 +167,6 @@ class IndeterminateLinearProgressProjection(
 ) {
     @Composable
     fun project(modifier: Modifier = Modifier) {
-        // TODO - pass the app-side modifier
         AuroraIndeterminateLinearProgress(
             modifier = modifier,
             contentModel = this.contentModel,
@@ -183,7 +181,6 @@ class DeterminateLinearProgressProjection(
 ) {
     @Composable
     fun project(modifier: Modifier = Modifier) {
-        // TODO - pass the app-side modifier
         AuroraDeterminateLinearProgress(
             modifier = modifier,
             contentModel = this.contentModel,
@@ -198,7 +195,6 @@ class LabelProjection(
 ) {
     @Composable
     fun project(modifier: Modifier = Modifier) {
-        // TODO - pass the app-side modifier
         AuroraLabel(
             modifier = modifier,
             contentModel = this.contentModel,
@@ -213,7 +209,6 @@ class VerticalSeparatorProjection(
 ) {
     @Composable
     fun project(modifier: Modifier = Modifier) {
-        // TODO - pass the app-side modifier
         AuroraVerticalSeparator(
             modifier = modifier,
             contentModel = this.contentModel,
@@ -228,7 +223,6 @@ class HorizontalSeparatorProjection(
 ) {
     @Composable
     fun project(modifier: Modifier = Modifier) {
-        // TODO - pass the app-side modifier
         AuroraHorizontalSeparator(
             modifier = modifier,
             contentModel = this.contentModel,
@@ -242,10 +236,13 @@ class SliderProjection(
     val presentationModel: SliderPresentationModel = SliderPresentationModel()
 ) {
     @Composable
-    fun project(modifier: Modifier = Modifier) {
-        // TODO - pass the app-side modifier
+    fun project(
+        modifier: Modifier = Modifier,
+        interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    ) {
         AuroraSlider(
             modifier = modifier,
+            interactionSource = interactionSource,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -257,10 +254,13 @@ class TextFieldValueProjection(
     val presentationModel: TextFieldPresentationModel = TextFieldPresentationModel()
 ) {
     @Composable
-    fun project(modifier: Modifier = Modifier) {
-        // TODO - pass the app-side modifier
+    fun project(
+        modifier: Modifier = Modifier,
+        interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    ) {
         AuroraTextField(
             modifier = modifier,
+            interactionSource = interactionSource,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -272,10 +272,13 @@ class TextFieldStringProjection(
     val presentationModel: TextFieldPresentationModel = TextFieldPresentationModel()
 ) {
     @Composable
-    fun project(modifier: Modifier = Modifier) {
-        // TODO - pass the app-side modifier
+    fun project(
+        modifier: Modifier = Modifier,
+        interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    ) {
         AuroraTextField(
             modifier = modifier,
+            interactionSource = interactionSource,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )

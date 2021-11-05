@@ -52,11 +52,11 @@ private class RadioButtonDrawingCache(
 @OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
 @Composable
 internal fun AuroraRadioButton(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
+    interactionSource: MutableInteractionSource,
     contentModel: SelectorContentModel,
-    presentationModel: SelectorPresentationModel = SelectorPresentationModel()
+    presentationModel: SelectorPresentationModel
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
     val drawingCache = remember { RadioButtonDrawingCache() }
     val rollover by interactionSource.collectIsHoveredAsState()
     val isPressed by interactionSource.collectIsPressedAsState()

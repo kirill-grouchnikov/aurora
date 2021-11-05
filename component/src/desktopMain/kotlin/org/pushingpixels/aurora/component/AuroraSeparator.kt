@@ -33,9 +33,9 @@ import org.pushingpixels.aurora.theming.ComponentState
 
 @Composable
 internal fun AuroraVerticalSeparator(
-    modifier: Modifier = Modifier,
-    contentModel: SeparatorContentModel = SeparatorContentModel(),
-    presentationModel: SeparatorPresentationModel = SeparatorPresentationModel()
+    modifier: Modifier,
+    contentModel: SeparatorContentModel,
+    presentationModel: SeparatorPresentationModel
 ) {
     val separatorScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = AuroraSkin.decorationAreaType,
@@ -84,9 +84,9 @@ internal fun AuroraVerticalSeparator(
 
 @Composable
 internal fun AuroraHorizontalSeparator(
-    modifier: Modifier = Modifier,
-    contentModel: SeparatorContentModel = SeparatorContentModel(),
-    presentationModel: SeparatorPresentationModel = SeparatorPresentationModel()
+    modifier: Modifier,
+    contentModel: SeparatorContentModel,
+    presentationModel: SeparatorPresentationModel
 ) {
     val separatorScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType = AuroraSkin.decorationAreaType,

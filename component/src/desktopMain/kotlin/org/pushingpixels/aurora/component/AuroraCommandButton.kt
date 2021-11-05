@@ -19,6 +19,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.selection.toggleable
@@ -69,7 +70,9 @@ private class CommandButtonDrawingCache(
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeApi::class, AuroraInternalApi::class)
 @Composable
 internal fun AuroraCommandButton(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
+    actionInteractionSource: MutableInteractionSource,
+    popupInteractionSource: MutableInteractionSource,
     command: Command,
     parentWindow: ComposeWindow,
     extraAction: (() -> Unit)? = null,
@@ -81,10 +84,23 @@ internal fun AuroraCommandButton(
     val secondaryContentModel = rememberUpdatedState(command.secondaryContentModel)
     val drawingCache = remember { CommandButtonDrawingCache() }
 
-    val actionInteractionSource = remember { MutableInteractionSource() }
-    val popupInteractionSource = remember { MutableInteractionSource() }
+    var wasActionRollover by remember { mutableStateOf(false) }
+    val actionRollover by actionInteractionSource.collectIsHoveredAsState()
 
-    var actionRollover by remember { mutableStateOf(false) }
+    if (!wasActionRollover && actionRollover) {
+        SideEffect {
+            command.actionPreview?.onCommandPreviewActivated(command)
+            extraActionPreview?.onCommandPreviewActivated(command)
+        }
+    }
+    if (wasActionRollover && !actionRollover) {
+        SideEffect {
+            command.actionPreview?.onCommandPreviewCanceled(command)
+            extraActionPreview?.onCommandPreviewCanceled(command)
+        }
+    }
+    wasActionRollover = actionRollover
+
     var popupRollover by remember { mutableStateOf(false) }
     val combinedRollover = actionRollover or popupRollover
 
@@ -400,29 +416,31 @@ internal fun AuroraCommandButton(
             var actionAreaOffset = remember { Offset.Zero }
             var popupAreaOffset = remember { Offset.Zero }
             Box(
-                modifier = modifierAction.pointerMoveFilter(onEnter = {
-                    if (isActionEnabled) {
-                        val wasRollover = actionRollover
-                        actionRollover = true
-                        if (!wasRollover) {
-                            command.actionPreview?.onCommandPreviewActivated(command)
-                            extraActionPreview?.onCommandPreviewActivated(command)
-                        }
-                    }
-                    true
-                }, onExit = {
-                    if (isActionEnabled) {
-                        val wasRollover = actionRollover
-                        actionRollover = false
-                        if (wasRollover) {
-                            command.actionPreview?.onCommandPreviewCanceled(command)
-                            extraActionPreview?.onCommandPreviewCanceled(command)
-                        }
-                    }
-                    true
-                }, onMove = {
-                    false
-                }).onGloballyPositioned {
+                modifier = modifierAction.
+//                pointerMoveFilter(onEnter = {
+//                    if (isActionEnabled) {
+//                        val wasRollover = actionRollover
+//                        //actionRollover = true
+//                        if (!wasRollover) {
+//                            command.actionPreview?.onCommandPreviewActivated(command)
+//                            extraActionPreview?.onCommandPreviewActivated(command)
+//                        }
+//                    }
+//                    true
+//                }, onExit = {
+//                    if (isActionEnabled) {
+//                        val wasRollover = actionRollover
+//                        //actionRollover = false
+//                        if (wasRollover) {
+//                            command.actionPreview?.onCommandPreviewCanceled(command)
+//                            extraActionPreview?.onCommandPreviewCanceled(command)
+//                        }
+//                    }
+//                    true
+//                }, onMove = {
+//                    false
+//                }).
+                onGloballyPositioned {
                     if (it.parentCoordinates != null) {
                         val selfToRoot = it.localToRoot(Offset.Zero)
                         val parentToRoot = it.parentCoordinates!!.localToRoot(Offset.Zero)
@@ -558,7 +576,10 @@ internal fun AuroraCommandButton(
                             drawingCache.colorScheme.foreground = Color.Black
                             fillPainter.paintContourBackground(
                                 this,
-                                buttonSize.asSize(deltaLeft + deltaRight, deltaTop + deltaBottom),
+                                buttonSize.asSize(
+                                    deltaLeft + deltaRight,
+                                    deltaTop + deltaBottom
+                                ),
                                 outline,
                                 drawingCache.colorScheme,
                                 actionAlpha
@@ -586,7 +607,10 @@ internal fun AuroraCommandButton(
 
                             borderPainter.paintBorder(
                                 this,
-                                buttonSize.asSize(deltaLeft + deltaRight, deltaTop + deltaBottom),
+                                buttonSize.asSize(
+                                    deltaLeft + deltaRight,
+                                    deltaTop + deltaBottom
+                                ),
                                 outline,
                                 innerOutline,
                                 drawingCache.colorScheme,
@@ -761,7 +785,10 @@ internal fun AuroraCommandButton(
                             drawingCache.colorScheme.foreground = Color.Black
                             fillPainter.paintContourBackground(
                                 this,
-                                buttonSize.asSize(deltaLeft + deltaRight, deltaTop + deltaBottom),
+                                buttonSize.asSize(
+                                    deltaLeft + deltaRight,
+                                    deltaTop + deltaBottom
+                                ),
                                 outline,
                                 drawingCache.colorScheme,
                                 popupAlpha
@@ -789,7 +816,10 @@ internal fun AuroraCommandButton(
 
                             borderPainter.paintBorder(
                                 this,
-                                buttonSize.asSize(deltaLeft + deltaRight, deltaTop + deltaBottom),
+                                buttonSize.asSize(
+                                    deltaLeft + deltaRight,
+                                    deltaTop + deltaBottom
+                                ),
                                 outline,
                                 innerOutline,
                                 drawingCache.colorScheme,
@@ -957,7 +987,8 @@ internal fun AuroraCommandButton(
         }
 
         layout(
-            width = layoutInfo.fullSize.width.toInt(), height = layoutInfo.fullSize.height.toInt()
+            width = layoutInfo.fullSize.width.toInt(),
+            height = layoutInfo.fullSize.height.toInt()
         ) {
             actionPlaceable.place(
                 x = layoutInfo.actionClickArea.left.roundToInt(),
@@ -1101,8 +1132,9 @@ private fun CommandButtonIconContent(
         if (isSelectedMenu) {
             Canvas(modifier = Modifier.matchParentSize()) {
                 // Background fill / border for selected toggle menu commands
-                val stateForBackground = if (currState.isDisabled) ComponentState.DisabledSelected
-                else ComponentState.Selected
+                val stateForBackground =
+                    if (currState.isDisabled) ComponentState.DisabledSelected
+                    else ComponentState.Selected
 
                 val alphaForBackground = skinColors.getAlpha(
                     decorationAreaType = decorationAreaType,

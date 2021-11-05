@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.component.utils
 
 import androidx.compose.foundation.ScrollbarAdapter
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
@@ -546,6 +547,8 @@ private fun PopupGeneralContent(
                     Modifier.background(
                         color = if ((runningCommandIndex % 2) == 0) backgroundEvenRows else backgroundOddRows
                     ) else Modifier,
+                actionInteractionSource = remember { MutableInteractionSource() },
+                popupInteractionSource = remember { MutableInteractionSource() },
                 command = secondaryCommand,
                 parentWindow = popupContentWindow,
                 extraAction = {

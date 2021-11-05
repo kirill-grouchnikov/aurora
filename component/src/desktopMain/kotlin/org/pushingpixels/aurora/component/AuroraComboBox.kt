@@ -79,11 +79,11 @@ private fun Modifier.comboBoxLocator(topLeftOffset: AuroraOffset, size: AuroraSi
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeApi::class, AuroraInternalApi::class)
 @Composable
 internal fun <E> AuroraComboBox(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
+    interactionSource: MutableInteractionSource,
     contentModel: ComboBoxContentModel<E>,
     presentationModel: ComboBoxPresentationModel<E>
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
     val drawingCache = remember { ComboBoxDrawingCache() }
     val rollover by interactionSource.collectIsHoveredAsState()
     val isPressed by interactionSource.collectIsPressedAsState()

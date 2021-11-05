@@ -68,9 +68,10 @@ private class TextFieldDrawingCache(
 
 @Composable
 internal fun AuroraTextField(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
+    interactionSource: MutableInteractionSource,
     contentModel: TextFieldStringContentModel,
-    presentationModel: TextFieldPresentationModel = TextFieldPresentationModel()
+    presentationModel: TextFieldPresentationModel
 ) {
 
     var textFieldValueState by remember { mutableStateOf(TextFieldValue(text = contentModel.value)) }
@@ -78,6 +79,7 @@ internal fun AuroraTextField(
 
     AuroraTextField(
         modifier = modifier,
+        interactionSource = interactionSource,
         contentModel = TextFieldValueContentModel(
             value = textFieldValue,
             placeholder = contentModel.placeholder,
@@ -98,10 +100,10 @@ internal fun AuroraTextField(
 @Composable
 internal fun AuroraTextField(
     modifier: Modifier = Modifier,
+    interactionSource: MutableInteractionSource,
     contentModel: TextFieldValueContentModel,
-    presentationModel: TextFieldPresentationModel = TextFieldPresentationModel()
+    presentationModel: TextFieldPresentationModel
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
     val drawingCache = remember { TextFieldDrawingCache() }
     val rollover by interactionSource.collectIsHoveredAsState()
     val isPressed by interactionSource.collectIsPressedAsState()

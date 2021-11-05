@@ -15,9 +15,11 @@
  */
 package org.pushingpixels.aurora.component
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
@@ -55,6 +57,9 @@ private fun CommandButtonStripContent(
             else -> setOf(leadingSide)
         }
         AuroraCommandButton(
+            modifier = Modifier,
+            actionInteractionSource = remember { MutableInteractionSource() },
+            popupInteractionSource = remember { MutableInteractionSource() },
             command = command,
             parentWindow = window,
             extraAction = null,

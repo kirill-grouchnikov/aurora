@@ -16,16 +16,18 @@
 package org.pushingpixels.aurora.demo
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.interaction.HoverInteraction
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
@@ -453,6 +455,7 @@ fun AuroraWindowScope.DemoArea(
             Row(modifier = Modifier.fillMaxWidth()) {
                 // A toggle command button backed by a mutable boolean
                 var toggleButtonSelected by remember { mutableStateOf(true) }
+                val toggleButtonInteractionSource = remember { MutableInteractionSource() }
                 CommandButtonProjection(
                     contentModel = Command(
                         text = resourceBundle.value.getString("Control.button.toggle"),
@@ -473,7 +476,19 @@ fun AuroraWindowScope.DemoArea(
                         iconEnabledFilterStrategy = IconFilterStrategy.Original,
                         iconActiveFilterStrategy = IconFilterStrategy.Original,
                     )
-                ).project()
+                ).project(actionInteractionSource = toggleButtonInteractionSource)
+                LaunchedEffect(null) {
+                    toggleButtonInteractionSource.tryEmit(HoverInteraction.Enter())
+                    toggleButtonInteractionSource.tryEmit(
+                        PressInteraction.Press(
+                            Offset(
+                                5.0f,
+                                5.0f
+                            )
+                        )
+                    )
+                }
+
 
                 Spacer(modifier = Modifier.width(8.dp))
 
@@ -918,6 +933,15 @@ fun AuroraWindowScope.DemoContent(
                 isActionToggleSelected = (alignment.value == DemoAlignment.Center),
                 onTriggerActionToggleSelectedChange = {
                     if (it) alignment.value = DemoAlignment.Center
+                },
+                actionPreview = object : CommandActionPreview {
+                    override fun onCommandPreviewActivated(command: Command) {
+                        println("Center justify preview activated!")
+                    }
+
+                    override fun onCommandPreviewCanceled(command: Command) {
+                        println("Center justify preview canceled!")
+                    }
                 }
             ),
             Command(
@@ -928,6 +952,15 @@ fun AuroraWindowScope.DemoContent(
                 isActionToggleSelected = (alignment.value == DemoAlignment.Left),
                 onTriggerActionToggleSelectedChange = {
                     if (it) alignment.value = DemoAlignment.Left
+                },
+                actionPreview = object : CommandActionPreview {
+                    override fun onCommandPreviewActivated(command: Command) {
+                        println("Left justify preview activated!")
+                    }
+
+                    override fun onCommandPreviewCanceled(command: Command) {
+                        println("Left justify preview canceled!")
+                    }
                 }
             ),
             Command(
@@ -938,6 +971,15 @@ fun AuroraWindowScope.DemoContent(
                 isActionToggleSelected = (alignment.value == DemoAlignment.Right),
                 onTriggerActionToggleSelectedChange = {
                     if (it) alignment.value = DemoAlignment.Right
+                },
+                actionPreview = object : CommandActionPreview {
+                    override fun onCommandPreviewActivated(command: Command) {
+                        println("Right justify preview activated!")
+                    }
+
+                    override fun onCommandPreviewCanceled(command: Command) {
+                        println("Right justify preview canceled!")
+                    }
                 }
             ),
             Command(
@@ -948,6 +990,15 @@ fun AuroraWindowScope.DemoContent(
                 isActionToggleSelected = (alignment.value == DemoAlignment.Fill),
                 onTriggerActionToggleSelectedChange = {
                     if (it) alignment.value = DemoAlignment.Fill
+                },
+                actionPreview = object : CommandActionPreview {
+                    override fun onCommandPreviewActivated(command: Command) {
+                        println("Fill justify preview activated!")
+                    }
+
+                    override fun onCommandPreviewCanceled(command: Command) {
+                        println("Fill justify preview canceled!")
+                    }
                 }
             )
         )

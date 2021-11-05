@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.component
 
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -213,6 +214,9 @@ internal fun AuroraCommandButtonPanel(
                         // Propagate command overlays so that key tips are properly displayed
                         // on secondary content of the current command's projection
                         AuroraCommandButton(
+                            modifier = Modifier,
+                            actionInteractionSource = remember { MutableInteractionSource() },
+                            popupInteractionSource = remember { MutableInteractionSource() },
                             command = command,
                             parentWindow = window,
                             extraAction = extraAction,

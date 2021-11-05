@@ -70,9 +70,10 @@ private class SliderDrawingCache(
 @OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
 @Composable
 internal fun AuroraSlider(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
+    interactionSource: MutableInteractionSource,
     contentModel: SliderContentModel,
-    presentationModel: SliderPresentationModel = SliderPresentationModel()
+    presentationModel: SliderPresentationModel
 ) {
     require(
         (contentModel.value >= contentModel.valueRange.start) and
@@ -86,7 +87,6 @@ internal fun AuroraSlider(
 
     val ltr = (LocalLayoutDirection.current == LayoutDirection.Ltr)
 
-    val interactionSource = remember { MutableInteractionSource() }
     val drawingCache = remember { SliderDrawingCache() }
     var rollover by remember { mutableStateOf(false) }
     val isPressed by interactionSource.collectIsPressedAsState()
