@@ -31,7 +31,6 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
