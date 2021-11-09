@@ -455,7 +455,6 @@ fun AuroraWindowScope.DemoArea(
             Row(modifier = Modifier.fillMaxWidth()) {
                 // A toggle command button backed by a mutable boolean
                 var toggleButtonSelected by remember { mutableStateOf(true) }
-                val toggleButtonInteractionSource = remember { MutableInteractionSource() }
                 CommandButtonProjection(
                     contentModel = Command(
                         text = resourceBundle.value.getString("Control.button.toggle"),
@@ -476,19 +475,7 @@ fun AuroraWindowScope.DemoArea(
                         iconEnabledFilterStrategy = IconFilterStrategy.Original,
                         iconActiveFilterStrategy = IconFilterStrategy.Original,
                     )
-                ).project(actionInteractionSource = toggleButtonInteractionSource)
-                LaunchedEffect(null) {
-                    toggleButtonInteractionSource.tryEmit(HoverInteraction.Enter())
-                    toggleButtonInteractionSource.tryEmit(
-                        PressInteraction.Press(
-                            Offset(
-                                5.0f,
-                                5.0f
-                            )
-                        )
-                    )
-                }
-
+                ).project()
 
                 Spacer(modifier = Modifier.width(8.dp))
 
