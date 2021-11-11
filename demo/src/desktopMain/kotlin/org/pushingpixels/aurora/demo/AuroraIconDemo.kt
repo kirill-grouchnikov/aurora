@@ -112,7 +112,7 @@ fun IconDemoArea() {
                         painter = drive_harddisk(),
                         colorFilter = getColorSchemeFilter(
                             scheme = nebulaAmethystSkin().colors.getActiveColorScheme(
-                                DecorationAreaType.TitlePane
+                                DecorationAreaType.Toolbar
                             )
                         )
                     )

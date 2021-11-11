@@ -18,6 +18,7 @@ package org.pushingpixels.aurora.theming.utils
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asComposeColorFilter
+import org.jetbrains.skia.ColorMatrix
 import org.pushingpixels.aurora.common.colorBrightness
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.withBrightness
@@ -130,6 +131,15 @@ fun getColorSchemeFilter(scheme: AuroraColorScheme): ColorFilter {
 
     // Pass null for alphas so that when the filter is applied, it respects the alpha
     // channel of the source image
-    return org.jetbrains.skia.ColorFilter.makeTableARGB(null, reds, greens, blues)
-        .asComposeColorFilter()
+    val outer = org.jetbrains.skia.ColorFilter.makeTableARGB(null, reds, greens, blues)
+
+    // But first, we need to apply a grayscale color filter to remove all hue from the
+    // original paint
+    val inner = org.jetbrains.skia.ColorFilter.makeMatrix(ColorMatrix(
+        0.2126f, 0.7152f, 0.0722f, 0.0f, 0.0f,
+        0.2126f, 0.7152f, 0.0722f, 0.0f, 0.0f,
+        0.2126f, 0.7152f, 0.0722f, 0.0f, 0.0f,
+        0.0f,  0.0f,  0.0f,  1.0f, 0.0f
+    ))
+    return org.jetbrains.skia.ColorFilter.makeComposed(outer, inner).asComposeColorFilter()
 }
