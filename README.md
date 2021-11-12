@@ -13,7 +13,7 @@ Aurora is a collection of libraries for writing modern, elegant and fast [deskto
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/nightshade.png" width="340" height="258" border=0>
 </p>
 
-# Current status
+## Current status
 
 Most of the ideas and building blocks in Aurora come from [Radiance](https://github.com/kirill-grouchnikov/radiance). Aurora is currently in beta phase of its development. 
 
@@ -21,7 +21,7 @@ The goal is to provide a collection of high-quality components for building mode
 
 Going a bit further into 2022, Aurora will bring a fully-fledged ribbon container into the desktop Compose world.
 
-# Playing with builds
+## Playing with builds
 
 Add the latest Kotlin and Compose Desktop dependencies:
 ```kotlin
@@ -29,11 +29,6 @@ plugins {
     kotlin("jvm") version "1.5.31"
     id("org.jetbrains.compose") version "1.0.0-beta6-dev455"
 }
-```
-
-For Aurora snapshot builds, add this repository to your `repositories` block:
-```kotlin
-maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
 ```
 
 Add Aurora dependencies:
@@ -85,3 +80,13 @@ fun main() = auroraApplication {
 <p align="center">
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/helloworld.png" width="266" height="196" border=0>
 </p>
+
+## Aurora artifacts
+
+* [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-theming/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-theming)
+  `aurora-theming`
+* [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-component/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-component)
+  `aurora-component`
+* [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-window/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-window)
+  `aurora-window`
+
