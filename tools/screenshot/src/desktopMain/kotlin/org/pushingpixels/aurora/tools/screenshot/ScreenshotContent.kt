@@ -91,7 +91,8 @@ fun AuroraApplicationScope.ScreenshotContent(
     skin: AuroraSkinDefinition,
     state: WindowState,
     title: String,
-    icon: Painter
+    icon: Painter,
+    toolbarIconEnabledFilterStrategy: IconFilterStrategy
 ) {
     ScreenshotWindow(
         windowScope = windowScope,
@@ -108,7 +109,7 @@ fun AuroraApplicationScope.ScreenshotContent(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             AuroraDecorationArea(decorationAreaType = DecorationAreaType.Toolbar) {
-                ScreenshotToolbar()
+                ScreenshotToolbar(iconEnabledFilterStrategy = toolbarIconEnabledFilterStrategy)
             }
             Row(modifier = Modifier.weight(weight = 1.0f, fill = true).padding(4.dp)) {
                 Column(modifier = Modifier.fillMaxWidth(fraction = 0.5f).fillMaxSize()) {
@@ -201,11 +202,15 @@ fun AuroraApplicationScope.ScreenshotContent(
 }
 
 @Composable
-private fun ScreenshotToolbar(modifier: Modifier = Modifier) {
+private fun ScreenshotToolbar(
+    modifier: Modifier = Modifier,
+    iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original
+) {
     val commandPresentationModel = CommandButtonPresentationModel(
         presentationState = CommandButtonPresentationState.SmallFitToIcon,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-        iconDimension = 22.dp
+        iconDimension = 22.dp,
+        iconEnabledFilterStrategy = iconEnabledFilterStrategy
     )
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -235,7 +240,9 @@ private fun ScreenshotToolbar(modifier: Modifier = Modifier) {
             contentModel = Command(
                 text = "Paste",
                 icon = edit_paste(),
-                action = { println("Paste!") }
+                action = { println("Paste!") },
+                isActionToggle = true,
+                isActionToggleSelected = true
             ),
             presentationModel = commandPresentationModel
         ).project()

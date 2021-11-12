@@ -37,7 +37,8 @@ import java.io.File
 @OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
 fun screenshot(
     skin: AuroraSkinDefinition,
-    filename: String
+    filename: String,
+    toolbarIconEnabledFilterStrategy : IconFilterStrategy = IconFilterStrategy.Original
 ) = auroraApplication {
     val title = "Aurora"
     val icon = radiance_menu()
@@ -77,7 +78,8 @@ fun screenshot(
                     skin = skin,
                     state = state,
                     title = title,
-                    icon = icon
+                    icon = icon,
+                    toolbarIconEnabledFilterStrategy = toolbarIconEnabledFilterStrategy
                 )
             }
         }
