@@ -15,25 +15,23 @@ Aurora is a collection of libraries for writing modern, elegant and fast [deskto
 
 # Current status
 
-Aurora is currently in pre-alpha, active early development. Most of the ideas and building blocks in Aurora come from [Radiance](https://github.com/kirill-grouchnikov/radiance). That project has been around since 2005, and it will take a bit more time to get to the more stable state where it'll be ready to be experimented with. How much more time? Probably around fall 2021.
+Most of the ideas and building blocks in Aurora come from [Radiance](https://github.com/kirill-grouchnikov/radiance). Aurora is currently in beta phase of its development. 
 
-The goal is to provide a collection of high-quality components for building modern desktop Compose applications. Aurora will bring the full power of the skinning layer from Radiance, including all the skins and complete support for state-based transitions for all the components. In addition, Aurora will provide a powerful painter API layer to create custom composable components with consistent visual appearance and state transitions.
+The goal is to provide a collection of high-quality components for building modern desktop Compose applications. Aurora brings the full power of the skinning layer from Radiance, including all the skins and complete support for state-based transitions for all the components. In addition, Aurora provides a powerful painter API layer to create custom composable components with consistent visual appearance and state transitions.
 
 Going a bit further into 2022, Aurora will bring a fully-fledged ribbon container into the desktop Compose world.
 
-# Playing with SNAPSHOT builds
-
-Aurora snapshot builds are made available on Sonatype.
+# Playing with builds
 
 Add the latest Kotlin and Compose Desktop dependencies:
 ```kotlin
 plugins {
     kotlin("jvm") version "1.5.31"
-    id("org.jetbrains.compose") version "1.0.0-beta5"
+    id("org.jetbrains.compose") version "1.0.0-beta6-dev455"
 }
 ```
 
-Add Aurora snapshot repository to your `repositories` block:
+For Aurora snapshot builds, add this repository to your `repositories` block:
 ```kotlin
 maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
 ```
@@ -42,9 +40,9 @@ Add Aurora dependencies:
 
 ```
 dependencies {
-    implementation("org.pushing-pixels:aurora-theming:0.0.62-SNAPSHOT")
-    implementation("org.pushing-pixels:aurora-component:0.0.62-SNAPSHOT")
-    implementation("org.pushing-pixels:aurora-window:0.0.62-SNAPSHOT")
+    implementation("org.pushing-pixels:aurora-theming:1.0.0-beta1")
+    implementation("org.pushing-pixels:aurora-component:1.0.0-beta1")
+    implementation("org.pushing-pixels:aurora-window:1.0.0-beta1")
     implementation(compose.desktop.currentOs)
 }
 ```
