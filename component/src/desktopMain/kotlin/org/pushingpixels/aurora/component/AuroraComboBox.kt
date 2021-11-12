@@ -214,7 +214,7 @@ internal fun <E> AuroraComboBox(
         )
     )
     val contentModelState = rememberUpdatedState(commandMenuContentModel)
-    val currentLocals by rememberUpdatedState(currentCompositionLocalContext)
+    val compositionLocalContext by rememberUpdatedState(currentCompositionLocalContext)
 
     Box(
         modifier = modifier
@@ -230,7 +230,7 @@ internal fun <E> AuroraComboBox(
                         skinColors = skinColors,
                         skinPainters = painters,
                         decorationAreaType = decorationAreaType,
-                        locals = currentLocals,
+                        compositionLocalContext = compositionLocalContext,
                         anchorBoundsInWindow = Rect(
                             offset = comboBoxTopLeftOffset.asOffset(density),
                             size = comboBoxSize.asSize(density)

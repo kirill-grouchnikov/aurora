@@ -70,7 +70,7 @@ internal fun displayPopupContent(
     skinColors: AuroraSkinColors,
     skinPainters: AuroraPainters,
     decorationAreaType: DecorationAreaType,
-    locals: CompositionLocalContext,
+    compositionLocalContext: CompositionLocalContext,
     anchorBoundsInWindow: Rect,
     contentModel: State<CommandMenuContentModel?>,
     presentationModel: CommandPopupMenuPresentationModel,
@@ -367,18 +367,17 @@ internal fun displayPopupContent(
         }
     }
 
+    popupContentWindow.compositionLocalContext = compositionLocalContext
     popupContentWindow.setContent {
-        CompositionLocalProvider(locals) {
-            TopLevelPopupContent(
-                popupContentWindow = popupContentWindow,
-                menuContentModel = contentModel,
-                menuPresentationModel = presentationModel,
-                toDismissPopupsOnActivation = toDismissPopupsOnActivation,
-                toUseBackgroundStriping = toUseBackgroundStriping,
-                overlays = overlays,
-                contentLayoutInfo = contentLayoutInfo
-            )
-        }
+        TopLevelPopupContent(
+            popupContentWindow = popupContentWindow,
+            menuContentModel = contentModel,
+            menuPresentationModel = presentationModel,
+            toDismissPopupsOnActivation = toDismissPopupsOnActivation,
+            toUseBackgroundStriping = toUseBackgroundStriping,
+            overlays = overlays,
+            contentLayoutInfo = contentLayoutInfo
+        )
     }
 
     popupContentWindow.invalidate()

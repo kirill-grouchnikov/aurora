@@ -54,7 +54,7 @@ fun Modifier.auroraContextMenu(
     val painters = AuroraSkin.painters
     val decorationAreaType = AuroraSkin.decorationAreaType
     val window = LocalWindow.current
-    val currentLocals by rememberUpdatedState(currentCompositionLocalContext)
+    val compositionLocalContext by rememberUpdatedState(currentCompositionLocalContext)
 
     val resolvedTextStyle = remember { resolveDefaults(mergedTextStyle, layoutDirection) }
 
@@ -72,7 +72,7 @@ fun Modifier.auroraContextMenu(
                     skinColors = skinColors,
                     skinPainters = painters,
                     decorationAreaType = decorationAreaType,
-                    locals = currentLocals,
+                    compositionLocalContext = compositionLocalContext,
                     anchorBoundsInWindow = Rect(
                         offset = Offset(
                             x = lastMouseEvent.x.toFloat(),

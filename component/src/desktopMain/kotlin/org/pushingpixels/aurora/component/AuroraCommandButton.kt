@@ -381,7 +381,7 @@ internal fun AuroraCommandButton(
     }
 
     val hasIcon = preLayoutInfo.showIcon
-    val currentLocals by rememberUpdatedState(currentCompositionLocalContext)
+    val compositionLocalContext by rememberUpdatedState(currentCompositionLocalContext)
 
     Layout(
         modifier = modifier.commandButtonLocator(buttonTopLeftOffset, buttonSize),
@@ -634,7 +634,7 @@ internal fun AuroraCommandButton(
                             skinColors = skinColors,
                             skinPainters = painters,
                             decorationAreaType = decorationAreaType,
-                            locals = currentLocals,
+                            compositionLocalContext = compositionLocalContext,
                             anchorBoundsInWindow = Rect(
                                 offset = buttonTopLeftOffset.asOffset(density),
                                 size = buttonSize.asSize(density)
