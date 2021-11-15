@@ -109,9 +109,7 @@ The registered associations are used by the Aurora composables during their draw
 
 Applications that want to provide [custom skinning](../painters/custom-skinning.md) of their UIs can use the following two supported APIs in order to get the relevant color schemes.
 
-First, get the current skin by passing it down the chain of your composables.
-
-Then, use the following API in the obtained `AuroraSkinColors` class to get the color scheme for the relevant visual area:
+First, get the current skin colors from `AuroraSkin.colors`. Then, use the following API in the obtained `AuroraSkinColors` object to get the color scheme for the relevant visual area:
 
 ```kotlin
   /**
