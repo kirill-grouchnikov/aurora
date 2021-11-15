@@ -111,7 +111,7 @@ Sentinel Active {
 }
 ```
 
-You can also specify two colors as "end" points for the ultra light to ultra dark spectrum, and let Radiance compute the rest of the colors for you:
+You can also specify two colors as "end" points for the ultra light to ultra dark spectrum, and let Aurora compute the rest of the colors for you:
 
 ```plaintext
 Sentinel Decorations Separator {

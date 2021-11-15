@@ -38,7 +38,7 @@ Three icon filtering strategies are supported:
  * `IconFilterStrategy.ThemedFollowText` - filter the icon to use the text color that matches the current component state
  * `IconFilterStrategy.ThemedFollowColorScheme` - filter the icon to use the Aurora color scheme from the currently set skin that matches the component in its current state
 
-`ThemedFollowColorScheme` which works best for multi-color / multi-tone icons and Radiance skins with multi-color color schemes. Here is the same UI with this icon filter strategy applied on enabled and disabled component states:
+`ThemedFollowColorScheme` which works best for multi-color / multi-tone icons and Aurora skins with multi-color color schemes. Here is the same UI with this icon filter strategy applied on enabled and disabled component states:
 
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/nebulaamethyst-filtered.png"
 width="340" height="258"/>
@@ -50,7 +50,7 @@ Take a look at the icons in the toolbar. The icon for the active / selected butt
 
 `ThemedFollowText` works best for single-tone icons found in such popular icon packs as [Material](https://material.io/resources/icons/), [Ionicons](https://ionicons.com/), [Friconix](https://friconix.com/), [Flexicons](https://setproduct.com/flexicons), [Font Awesome](https://fontawesome.com/) and many others:
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/radiance/sunshine/docs/images/theming/states/control-states-extended-themed.png"
-width="275" height="279"/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/states/component-states-icons.png"
+width="306" height="286"/>
 
 In this screenshot of the same UI from earlier under the Magellan skin, all the buttons use the same help icon from the Material icon pack converted by [SVG Transcoder](../tools/svg-transcoder/svg-transcoder.md). At runtime, Aurora filters the icon to follow the foreground / text color of the button for a consistent look across all component states.

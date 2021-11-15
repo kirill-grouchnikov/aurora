@@ -1,4 +1,4 @@
-## Radiance look and feel - dark skins
+## Aurora theming - dark skins
 
 ### Twilight
 
