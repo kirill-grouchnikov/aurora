@@ -34,6 +34,7 @@ import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.businessBlackSteelSkin
+import org.pushingpixels.aurora.theming.ceruleanSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.auroraApplication
 
@@ -46,7 +47,7 @@ fun main() = auroraApplication {
     )
 
     AuroraWindow(
-        skin = businessBlackSteelSkin(),
+        skin = ceruleanSkin(),
         title = "States",
         icon = radiance_menu(),
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,

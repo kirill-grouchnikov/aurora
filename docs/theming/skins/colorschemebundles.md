@@ -24,26 +24,26 @@ The `ComponentState` is the base class for core and custom [component states](co
    )
 ```
 
-Here is a screenshot of three buttons (active, default and disabled) under the core [Business Black Steel skin](toneddown.md#business-black-steel):
+Here is a screenshot of three buttons (active, default and disabled) under the core [Cerulean skin](toneddown.md#cerulean):
 
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/states/component-states-basic.png" width="306" height="138" />
 
 Here is the relevant code snippet from the definition of this skin:
 
 ```kotlin
-val businessSchemes = getColorSchemes(
+val schemes = getColorSchemes(
     AuroraSkin::class.java.getResourceAsStream(
-        "/org/pushingpixels/aurora/theming/business.colorschemes"
+        "/org/pushingpixels/aurora/theming/cerulean.colorschemes"
     )
 )
 
-val activeScheme = businessSchemes["Business Black Steel Active"]
-val enabledScheme = businessSchemes["Business Black Steel Enabled"]
-val disabledScheme = businessSchemes["Business Black Steel Disabled"]
+val activeScheme = schemes["Cerulean Active"]
+val enabledScheme = schemes["Cerulean Enabled"]
+val disabledScheme = schemes["Cerulean Disabled"]
 
-// the default color scheme bundle
 val defaultSchemeBundle = AuroraColorSchemeBundle(
-    activeScheme, enabledScheme, disabledScheme)
+    activeScheme, enabledScheme, disabledScheme
+)
 ```
 
 ### More states

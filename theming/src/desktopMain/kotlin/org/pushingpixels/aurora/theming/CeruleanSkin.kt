@@ -34,7 +34,6 @@ private fun ceruleanSkinColors(): AuroraSkinColors {
 
     val activeScheme = schemes["Cerulean Active"]
     val enabledScheme = schemes["Cerulean Enabled"]
-    val rolloverSelectedScheme = schemes["Cerulean Rollover Selected"]
     val disabledScheme = schemes["Cerulean Disabled"]
 
     val defaultSchemeBundle = AuroraColorSchemeBundle(
@@ -103,6 +102,7 @@ private fun ceruleanSkinColors(): AuroraSkinColors {
             ComponentStateFacet.Enable, ComponentStateFacet.Selection
         )
     )
+    val rolloverSelectedScheme = schemes["Cerulean Rollover Selected"]
     defaultSchemeBundle.registerColorScheme(
         rolloverSelectedScheme,
         ColorSchemeAssociationKind.Fill,

@@ -16,16 +16,16 @@ val businessSchemes = getColorSchemes(
 )
 ```
 
-Then, use `AuroraSkin.ColorSchemes.get(String)` API to get a specific color scheme based on its name:
+Then, use `AuroraSkin.ColorSchemes.get(String)` API (that is also available via Kotlin's [index operator](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/get.html)) to get a specific color scheme based on its name:
 
 ```java
-val activeScheme = businessSchemes["Business Black Steel Active"]
-val enabledScheme = businessSchemes["Business Black Steel Enabled"]
-val disabledScheme = businessSchemes["Business Black Steel Disabled"]
+val activeScheme = schemes["Cerulean Active"]
+val enabledScheme = schemes["Cerulean Enabled"]
+val disabledScheme = schemes["Cerulean Disabled"]
 
-// the default color scheme bundle
 val defaultSchemeBundle = AuroraColorSchemeBundle(
-    activeScheme, enabledScheme, disabledScheme);
+    activeScheme, enabledScheme, disabledScheme
+)
 ```
 
 ### File format
