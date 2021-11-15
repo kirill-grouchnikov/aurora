@@ -24,10 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.ExperimentalUnitApi
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
@@ -175,7 +172,8 @@ fun DemoToolbar(
     modifier: Modifier = Modifier,
     alignmentCommands: CommandGroup,
     styleCommands: CommandGroup,
-    resourceBundle: State<ResourceBundle>
+    resourceBundle: State<ResourceBundle>,
+    iconDimension: Dp = 16.dp
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -191,8 +189,9 @@ fun DemoToolbar(
                 action = { println("Cut!") }
             ),
             presentationModel = CommandButtonPresentationModel(
+                presentationState = CommandButtonPresentationState.MediumFitToIcon,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = 20.dp
+                iconDimension = iconDimension
             )
         ).project()
         CommandButtonProjection(
@@ -203,8 +202,9 @@ fun DemoToolbar(
                 action = { println("Copy!") }
             ),
             presentationModel = CommandButtonPresentationModel(
+                presentationState = CommandButtonPresentationState.MediumFitToIcon,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = 20.dp
+                iconDimension = iconDimension
             )
         ).project()
         CommandButtonProjection(
@@ -214,9 +214,9 @@ fun DemoToolbar(
                 action = { println("Paste!") }
             ),
             presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.Small,
+                presentationState = CommandButtonPresentationState.SmallFitToIcon,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = 20.dp
+                iconDimension = iconDimension
             )
         ).project()
         CommandButtonProjection(
@@ -226,9 +226,9 @@ fun DemoToolbar(
                 action = { println("Select all!") }
             ),
             presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.Small,
+                presentationState = CommandButtonPresentationState.SmallFitToIcon,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = 20.dp
+                iconDimension = iconDimension
             )
         ).project()
         CommandButtonProjection(
@@ -238,9 +238,9 @@ fun DemoToolbar(
                 action = { println("Delete!") }
             ),
             presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.Small,
+                presentationState = CommandButtonPresentationState.SmallFitToIcon,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = 20.dp
+                iconDimension = iconDimension
             )
         ).project()
 
@@ -251,9 +251,10 @@ fun DemoToolbar(
         CommandButtonStripProjection(
             contentModel = alignmentCommands,
             presentationModel = CommandStripPresentationModel(
+                commandPresentationState = CommandButtonPresentationState.SmallFitToIcon,
                 orientation = StripOrientation.Horizontal,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = 20.dp
+                iconDimension = iconDimension
             )
         ).project()
 
@@ -264,9 +265,10 @@ fun DemoToolbar(
         CommandButtonStripProjection(
             contentModel = styleCommands,
             presentationModel = CommandStripPresentationModel(
+                commandPresentationState = CommandButtonPresentationState.SmallFitToIcon,
                 orientation = StripOrientation.Horizontal,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = 20.dp
+                iconDimension = iconDimension
             )
         ).project()
 
@@ -277,9 +279,9 @@ fun DemoToolbar(
                 icon = process_stop(),
                 action = { exitProcess(0) }),
             presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.Small,
+                presentationState = CommandButtonPresentationState.SmallFitToIcon,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = 20.dp
+                iconDimension = iconDimension
             )
         ).project()
     }

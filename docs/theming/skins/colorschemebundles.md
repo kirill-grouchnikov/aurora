@@ -106,7 +106,7 @@ It is possible to specify a custom alpha value for controls in some states. This
  */
 fun registerAlpha(alpha: Float, vararg states: ComponentState)
 ```      
-Here is sample code from the [Autumn skin](toneddown.md#autumn) that uses the same color scheme for default and disabled states, setting alpha channel to 60% for the disabled states:
+Here is sample code from the [Autumn skin](toneddown.md#autumn) that uses the same color scheme for enabled and disabled states, setting alpha channel to 60% for the disabled states:
 
 ```kotlin
 val schemes = getColorSchemes(

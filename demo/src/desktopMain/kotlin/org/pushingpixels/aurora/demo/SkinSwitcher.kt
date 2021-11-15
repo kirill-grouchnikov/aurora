@@ -24,10 +24,14 @@ import org.pushingpixels.aurora.component.model.ComboBoxPresentationModel
 import org.pushingpixels.aurora.component.projection.ComboBoxProjection
 import org.pushingpixels.aurora.theming.AuroraSkin
 import org.pushingpixels.aurora.theming.AuroraSkinDefinition
+import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 import org.pushingpixels.aurora.theming.getAuroraSkins
 
 @Composable
-fun AuroraSkinSwitcher(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
+fun AuroraSkinSwitcher(
+    auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
+    popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward
+) {
     val currentSkinDisplayName = AuroraSkin.displayName
     val auroraSkins = getAuroraSkins()
     val selectedSkinItem =
@@ -43,7 +47,8 @@ fun AuroraSkinSwitcher(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
             }
         ),
         presentationModel = ComboBoxPresentationModel(
-            displayConverter = { it.first }
+            displayConverter = { it.first },
+            popupPlacementStrategy = popupPlacementStrategy
         )
     ).project()
 }
