@@ -58,6 +58,7 @@ private fun getAuroraSchemeBasedSkins(): List<Pair<String, AuroraSkinDefinition>
         getSchemeBasedSkin(UltramarineColorScheme()),
 
         getSchemeBasedSkin(PurpleColorScheme().saturate(-0.4f), "Derived Desaturate"),
+        getSchemeBasedSkin(PurpleColorScheme().saturate(0.4f), "Derived Saturate"),
         getSchemeBasedSkin(PurpleColorScheme().hueShift(0.4f), "Derived Hue Shift"),
         getSchemeBasedSkin(PurpleColorScheme().invert(), "Derived Invert"),
         getSchemeBasedSkin(PurpleColorScheme().negate(), "Derived Negate"),
