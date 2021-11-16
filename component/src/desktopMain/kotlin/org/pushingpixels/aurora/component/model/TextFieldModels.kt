@@ -48,6 +48,7 @@ data class TextFieldPresentationModel(
     val keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     val keyboardActions: KeyboardActions = KeyboardActions(),
     val singleLine: Boolean = false,
+    val showBorder: Boolean = true,
     val maxLines: Int = Int.MAX_VALUE,
     val visualTransformation: VisualTransformation = VisualTransformation.None
 ): PresentationModel

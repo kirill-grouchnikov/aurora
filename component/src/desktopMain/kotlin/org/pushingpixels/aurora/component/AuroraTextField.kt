@@ -291,101 +291,104 @@ internal fun AuroraTextField(
                 size = Size(size.width - borderStrokeWidth, size.height - borderStrokeWidth)
             )
 
-            val outline = getBaseOutline(
-                width = size.width,
-                height = size.height,
-                radius = 0.0f,
-                straightSides = Side.values().toSet(),
-                insets = borderStrokeWidth
-            )
-
-            val outlineBoundingRect = outline.bounds
-            if (outlineBoundingRect.isEmpty) {
-                return@Canvas
-            }
-
-            // Populate the cached color scheme for drawing the button border
-            drawingCache.colorScheme.ultraLight = borderUltraLight
-            drawingCache.colorScheme.extraLight = borderExtraLight
-            drawingCache.colorScheme.light = borderLight
-            drawingCache.colorScheme.mid = borderMid
-            drawingCache.colorScheme.dark = borderDark
-            drawingCache.colorScheme.ultraDark = borderUltraDark
-            drawingCache.colorScheme.isDark = borderIsDark
-            drawingCache.colorScheme.foreground = Color.Black
-
-            borderPainter.paintBorder(
-                drawScope = this,
-                size = size,
-                outline = getBaseOutline(
+            if (presentationModel.showBorder) {
+                val outline = getBaseOutline(
                     width = size.width,
                     height = size.height,
                     radius = 0.0f,
                     straightSides = Side.values().toSet(),
-                    insets = 1.0f
-                ),
-                outlineInner = null,
-                borderScheme = drawingCache.colorScheme,
-                alpha = alpha
-            )
-
-            if (!contentModel.readOnly) {
-                // Get the base border color
-                val baseBorderScheme = skinColors.getColorScheme(
-                    decorationAreaType = decorationAreaType,
-                    associationKind = ColorSchemeAssociationKind.Border,
-                    componentState = currentState.value
+                    insets = borderStrokeWidth
                 )
-                var borderColor = borderPainter.getRepresentativeColor(baseBorderScheme)
 
-                if (!currentState.value.isDisabled && (modelStateInfo.stateContributionMap.size > 1)) {
-                    // If we have more than one active state, compute the composite color from all
-                    // the contributions
-                    for (activeEntry in modelStateInfo.stateContributionMap.entries) {
-                        val activeState = activeEntry.key
-                        if (activeState === currentState.value) {
-                            continue
-                        }
-                        val contribution = activeEntry.value.contribution
-                        if (contribution == 0.0f) {
-                            continue
-                        }
-                        val activeStateAlpha = skinColors.getAlpha(decorationAreaType, activeState)
-                        if (activeStateAlpha == 0.0f) {
-                            continue
-                        }
-                        val activeBorderScheme =
-                            skinColors.getColorScheme(
-                                decorationAreaType = decorationAreaType,
-                                associationKind = ColorSchemeAssociationKind.Border,
-                                componentState = activeState
-                            )
-                        val activeBorderColor =
-                            borderPainter.getRepresentativeColor(activeBorderScheme)
-                        borderColor = borderColor.interpolateTowards(
-                            activeBorderColor,
-                            1.0f - contribution * activeStateAlpha
-                        )
-                    }
+                val outlineBoundingRect = outline.bounds
+                if (outlineBoundingRect.isEmpty) {
+                    return@Canvas
                 }
 
-                // Paint a translucent drop shadow along the top edge of this editable text field
-                val shadowHeight = 6.dp
-                val topAlpha = if (currentState.value.isDisabled) 16 else 32
-                drawRect(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            borderColor.withAlpha(topAlpha / 256.0f),
-                            borderColor.withAlpha(0.0f)
-                        ),
-                        startY = 0.0f,
-                        endY = shadowHeight.toPx(),
-                        tileMode = TileMode.Clamp
+                // Populate the cached color scheme for drawing the button border
+                drawingCache.colorScheme.ultraLight = borderUltraLight
+                drawingCache.colorScheme.extraLight = borderExtraLight
+                drawingCache.colorScheme.light = borderLight
+                drawingCache.colorScheme.mid = borderMid
+                drawingCache.colorScheme.dark = borderDark
+                drawingCache.colorScheme.ultraDark = borderUltraDark
+                drawingCache.colorScheme.isDark = borderIsDark
+                drawingCache.colorScheme.foreground = Color.Black
+
+                borderPainter.paintBorder(
+                    drawScope = this,
+                    size = size,
+                    outline = getBaseOutline(
+                        width = size.width,
+                        height = size.height,
+                        radius = 0.0f,
+                        straightSides = Side.values().toSet(),
+                        insets = 1.0f
                     ),
-                    topLeft = Offset(borderStrokeWidth, borderStrokeWidth),
-                    size = Size(size.width - 2 * borderStrokeWidth, shadowHeight.toPx()),
-                    style = Fill
+                    outlineInner = null,
+                    borderScheme = drawingCache.colorScheme,
+                    alpha = alpha
                 )
+
+                if (!contentModel.readOnly) {
+                    // Get the base border color
+                    val baseBorderScheme = skinColors.getColorScheme(
+                        decorationAreaType = decorationAreaType,
+                        associationKind = ColorSchemeAssociationKind.Border,
+                        componentState = currentState.value
+                    )
+                    var borderColor = borderPainter.getRepresentativeColor(baseBorderScheme)
+
+                    if (!currentState.value.isDisabled && (modelStateInfo.stateContributionMap.size > 1)) {
+                        // If we have more than one active state, compute the composite color from all
+                        // the contributions
+                        for (activeEntry in modelStateInfo.stateContributionMap.entries) {
+                            val activeState = activeEntry.key
+                            if (activeState === currentState.value) {
+                                continue
+                            }
+                            val contribution = activeEntry.value.contribution
+                            if (contribution == 0.0f) {
+                                continue
+                            }
+                            val activeStateAlpha =
+                                skinColors.getAlpha(decorationAreaType, activeState)
+                            if (activeStateAlpha == 0.0f) {
+                                continue
+                            }
+                            val activeBorderScheme =
+                                skinColors.getColorScheme(
+                                    decorationAreaType = decorationAreaType,
+                                    associationKind = ColorSchemeAssociationKind.Border,
+                                    componentState = activeState
+                                )
+                            val activeBorderColor =
+                                borderPainter.getRepresentativeColor(activeBorderScheme)
+                            borderColor = borderColor.interpolateTowards(
+                                activeBorderColor,
+                                1.0f - contribution * activeStateAlpha
+                            )
+                        }
+                    }
+
+                    // Paint a translucent drop shadow along the top edge of this text field
+                    val shadowHeight = 6.dp
+                    val topAlpha = if (currentState.value.isDisabled) 16 else 32
+                    drawRect(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                borderColor.withAlpha(topAlpha / 256.0f),
+                                borderColor.withAlpha(0.0f)
+                            ),
+                            startY = 0.0f,
+                            endY = shadowHeight.toPx(),
+                            tileMode = TileMode.Clamp
+                        ),
+                        topLeft = Offset(borderStrokeWidth, borderStrokeWidth),
+                        size = Size(size.width - 2 * borderStrokeWidth, shadowHeight.toPx()),
+                        style = Fill
+                    )
+                }
             }
         }
 
