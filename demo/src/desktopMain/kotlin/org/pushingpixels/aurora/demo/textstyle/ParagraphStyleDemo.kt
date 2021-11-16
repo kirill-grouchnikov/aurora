@@ -58,17 +58,13 @@ fun main() = auroraApplication {
         onCloseRequest = ::exitApplication,
     ) {
 
-        val text by remember {
-            mutableStateOf(
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod " +
-                        "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim" +
-                        " veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip " +
-                        "ex ea commodo consequat. Duis aute irure dolor in reprehenderit in " +
-                        "voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
-                        "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui " +
-                        "officia deserunt mollit anim id est laborum."
-            )
-        }
+        val text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod " +
+                "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim" +
+                " veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip " +
+                "ex ea commodo consequat. Duis aute irure dolor in reprehenderit in " +
+                "voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
+                "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui " +
+                "officia deserunt mollit anim id est laborum."
         var textAlign by remember { mutableStateOf(TextAlign.Left) }
         val paragraphStyle by derivedStateOf { ParagraphStyle(textAlign = textAlign) }
         val textFieldValue by derivedStateOf {
@@ -80,45 +76,48 @@ fun main() = auroraApplication {
             )
         }
 
-        val alignmentCommands = CommandGroup(
-            commands = listOf(
-                Command(
-                    text = "Left",
-                    icon = format_justify_left(),
-                    isActionToggle = true,
-                    isActionToggleSelected = (textAlign == TextAlign.Left),
-                    onTriggerActionToggleSelectedChange = {
-                        if (it) textAlign = TextAlign.Left
-                    }
-                ),
-                Command(
-                    text = "Center",
-                    icon = format_justify_center(),
-                    isActionToggle = true,
-                    isActionToggleSelected = (textAlign == TextAlign.Center),
-                    onTriggerActionToggleSelectedChange = {
-                        if (it) textAlign = TextAlign.Center
-                    }
-                ),
-                Command(
-                    text = "Right",
-                    icon = format_justify_right(),
-                    isActionToggle = true,
-                    isActionToggleSelected = (textAlign == TextAlign.Right),
-                    onTriggerActionToggleSelectedChange = {
-                        if (it) textAlign = TextAlign.Right
-                    }
-                ),
-                Command(
-                    text = "Fill",
-                    icon = format_justify_fill(),
-                    isActionToggle = true,
-                    isActionToggleSelected = (textAlign == TextAlign.Justify),
-                    onTriggerActionToggleSelectedChange = {
-                        if (it) textAlign = TextAlign.Justify
-                    }
-                )
-            )
+        // Align left command
+        val commandAlignLeft = Command(
+            text = "Left",
+            icon = format_justify_left(),
+            isActionToggle = true,
+            isActionToggleSelected = (textAlign == TextAlign.Left),
+            onTriggerActionToggleSelectedChange = {
+                if (it) textAlign = TextAlign.Left
+            }
+        )
+
+        // Align center command
+        val commandAlignCenter = Command(
+            text = "Center",
+            icon = format_justify_center(),
+            isActionToggle = true,
+            isActionToggleSelected = (textAlign == TextAlign.Center),
+            onTriggerActionToggleSelectedChange = {
+                if (it) textAlign = TextAlign.Center
+            }
+        )
+
+        // Align right command
+        val commandAlignRight = Command(
+            text = "Right",
+            icon = format_justify_right(),
+            isActionToggle = true,
+            isActionToggleSelected = (textAlign == TextAlign.Right),
+            onTriggerActionToggleSelectedChange = {
+                if (it) textAlign = TextAlign.Right
+            }
+        )
+
+        // Align fill command
+        val commandAlignFill = Command(
+            text = "Fill",
+            icon = format_justify_fill(),
+            isActionToggle = true,
+            isActionToggleSelected = (textAlign == TextAlign.Justify),
+            onTriggerActionToggleSelectedChange = {
+                if (it) textAlign = TextAlign.Justify
+            }
         )
 
         Row(
@@ -127,7 +126,14 @@ fun main() = auroraApplication {
         ) {
             Box(modifier = Modifier.padding(top = 6.dp)) {
                 CommandButtonStripProjection(
-                    contentModel = alignmentCommands,
+                    contentModel = CommandGroup(
+                        commands = listOf(
+                            commandAlignLeft,
+                            commandAlignCenter,
+                            commandAlignRight,
+                            commandAlignFill
+                        )
+                    ),
                     presentationModel = CommandStripPresentationModel(
                         orientation = StripOrientation.Vertical,
                         commandPresentationState = CommandButtonPresentationState.Small,

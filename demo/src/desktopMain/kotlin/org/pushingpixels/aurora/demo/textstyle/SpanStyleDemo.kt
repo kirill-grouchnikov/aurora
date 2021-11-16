@@ -34,7 +34,10 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonStripProjection
 import org.pushingpixels.aurora.component.projection.TextFieldValueProjection
 import org.pushingpixels.aurora.demo.svg.radiance_menu
-import org.pushingpixels.aurora.demo.svg.tango.*
+import org.pushingpixels.aurora.demo.svg.tango.format_text_bold
+import org.pushingpixels.aurora.demo.svg.tango.format_text_italic
+import org.pushingpixels.aurora.demo.svg.tango.format_text_strikethrough
+import org.pushingpixels.aurora.demo.svg.tango.format_text_underline
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.window.AuroraWindow
@@ -57,17 +60,13 @@ fun main() = auroraApplication {
         onCloseRequest = ::exitApplication,
     ) {
 
-        val text by remember {
-            mutableStateOf(
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod " +
-                        "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim" +
-                        " veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip " +
-                        "ex ea commodo consequat. Duis aute irure dolor in reprehenderit in " +
-                        "voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
-                        "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui " +
-                        "officia deserunt mollit anim id est laborum."
-            )
-        }
+        val text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod " +
+                "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim" +
+                " veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip " +
+                "ex ea commodo consequat. Duis aute irure dolor in reprehenderit in " +
+                "voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
+                "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui " +
+                "officia deserunt mollit anim id est laborum."
 
         var bold by remember { mutableStateOf(false) }
         var italic by remember { mutableStateOf(false) }
@@ -98,37 +97,40 @@ fun main() = auroraApplication {
             )
         }
 
-        val styleCommands = CommandGroup(
-            commands = listOf(
-                Command(
-                    text = "Bold",
-                    icon = format_text_bold(),
-                    isActionToggle = true,
-                    isActionToggleSelected = bold,
-                    onTriggerActionToggleSelectedChange = { bold = it }
-                ),
-                Command(
-                    text = "Italic",
-                    icon = format_text_italic(),
-                    isActionToggle = true,
-                    isActionToggleSelected = italic,
-                    onTriggerActionToggleSelectedChange = { italic = it }
-                ),
-                Command(
-                    text = "Underline",
-                    icon = format_text_underline(),
-                    isActionToggle = true,
-                    isActionToggleSelected = underline,
-                    onTriggerActionToggleSelectedChange = { underline = it }
-                ),
-                Command(
-                    text = "Strikethrough",
-                    icon = format_text_strikethrough(),
-                    isActionToggle = true,
-                    isActionToggleSelected = strikethrough,
-                    onTriggerActionToggleSelectedChange = { strikethrough = it }
-                )
-            )
+        // Bold style command
+        val commandBold = Command(
+            text = "Bold",
+            icon = format_text_bold(),
+            isActionToggle = true,
+            isActionToggleSelected = bold,
+            onTriggerActionToggleSelectedChange = { bold = it }
+        )
+
+        // Italic style command
+        val commandItalic = Command(
+            text = "Italic",
+            icon = format_text_italic(),
+            isActionToggle = true,
+            isActionToggleSelected = italic,
+            onTriggerActionToggleSelectedChange = { italic = it }
+        )
+
+        // Underline style command
+        val commandUnderline = Command(
+            text = "Underline",
+            icon = format_text_underline(),
+            isActionToggle = true,
+            isActionToggleSelected = underline,
+            onTriggerActionToggleSelectedChange = { underline = it }
+        )
+
+        // Strikethrough style command
+        val commandStrikethrough = Command(
+            text = "Strikethrough",
+            icon = format_text_strikethrough(),
+            isActionToggle = true,
+            isActionToggleSelected = strikethrough,
+            onTriggerActionToggleSelectedChange = { strikethrough = it }
         )
 
         Row(
@@ -137,7 +139,14 @@ fun main() = auroraApplication {
         ) {
             Box(modifier = Modifier.padding(top = 6.dp)) {
                 CommandButtonStripProjection(
-                    contentModel = styleCommands,
+                    contentModel = CommandGroup(
+                        commands = listOf(
+                            commandBold,
+                            commandItalic,
+                            commandUnderline,
+                            commandStrikethrough
+                        )
+                    ),
                     presentationModel = CommandStripPresentationModel(
                         orientation = StripOrientation.Vertical,
                         commandPresentationState = CommandButtonPresentationState.Small,
