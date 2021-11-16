@@ -118,6 +118,17 @@ val commandAlignRight = Command(
         if (it) textAlign = TextAlign.Right
     }
 )
+
+// Align fill command
+val commandAlignFill = Command(
+    text = "Fill",
+    icon = format_justify_fill(),
+    isActionToggle = true,
+    isActionToggleSelected = (textAlign == TextAlign.Justify),
+    onTriggerActionToggleSelectedChange = {
+        if (it) textAlign = TextAlign.Justify
+    }
+)
 ```
 
 Each command in this example is configured with the following attributes:
