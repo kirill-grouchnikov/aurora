@@ -49,7 +49,7 @@ fun main() = auroraApplication {
 
     AuroraWindow(
         skin = marinerSkin(),
-        title = "Text alignment demo",
+        title = "Text styling demo",
         icon = radiance_menu(),
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         state = state,

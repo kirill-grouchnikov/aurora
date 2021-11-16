@@ -19,7 +19,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.ExperimentalUnitApi
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
@@ -28,13 +32,11 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CheckBoxProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonStripProjection
+import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
-import org.pushingpixels.aurora.theming.AuroraSkinDefinition
-import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
-import org.pushingpixels.aurora.theming.IconFilterStrategy
-import org.pushingpixels.aurora.theming.marinerSkin
+import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.window.AuroraApplicationScope
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.auroraApplication
@@ -45,7 +47,7 @@ fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
-        size = DpSize(800.dp, 400.dp)
+        size = DpSize(800.dp, 480.dp)
     )
     val skin = mutableStateOf(marinerSkin())
     val resourceBundle = derivedStateOf {
@@ -66,47 +68,67 @@ fun main() = auroraApplication {
     }
 }
 
+@OptIn(ExperimentalUnitApi::class)
 @Composable
 fun DemoCommandRow(
+    title: String,
     commandActionOnly: Command,
     commandSecondaryOnly: Command,
     commandActionAndSecondary: Command,
     presentationState: CommandButtonPresentationState,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>
 ) {
-    Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
-        CommandButtonProjection(
-            contentModel = commandActionOnly,
-            presentationModel = CommandButtonPresentationModel(presentationState = presentationState)
+    // Resolve the default text style to get the default font size
+    val resolvedTextStyle = resolveAuroraDefaults()
+    val fontSize = resolvedTextStyle.fontSize
+    // Compute a smaller font size
+    val smallerFontSize = TextUnit(fontSize.value - 4.0f, fontSize.type)
+    // And create our own text style with smaller font size and bold weight
+    val textStyle = TextStyle(
+        fontSize = smallerFontSize,
+        fontWeight = FontWeight.Bold
+    )
+
+    Column(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
+        LabelProjection(
+            contentModel = LabelContentModel(text = title.uppercase()),
+            presentationModel = LabelPresentationModel(textStyle = textStyle)
         ).project()
 
-        Spacer(modifier = Modifier.width(8.dp))
+        Row {
+            CommandButtonProjection(
+                contentModel = commandActionOnly,
+                presentationModel = CommandButtonPresentationModel(presentationState = presentationState)
+            ).project()
 
-        CommandButtonProjection(
-            contentModel = commandSecondaryOnly,
-            presentationModel = CommandButtonPresentationModel(presentationState = presentationState)
-        ).project()
+            Spacer(modifier = Modifier.width(8.dp))
 
-        Spacer(modifier = Modifier.width(8.dp))
+            CommandButtonProjection(
+                contentModel = commandSecondaryOnly,
+                presentationModel = CommandButtonPresentationModel(presentationState = presentationState)
+            ).project()
 
-        CommandButtonProjection(
-            contentModel = commandActionAndSecondary,
-            presentationModel = CommandButtonPresentationModel(
-                presentationState = presentationState,
-                textClick = TextClick.Action
-            )
-        ).project()
+            Spacer(modifier = Modifier.width(8.dp))
 
-        Spacer(modifier = Modifier.width(8.dp))
+            CommandButtonProjection(
+                contentModel = commandActionAndSecondary,
+                presentationModel = CommandButtonPresentationModel(
+                    presentationState = presentationState,
+                    textClick = TextClick.Action
+                )
+            ).project()
 
-        CommandButtonProjection(
-            contentModel = commandActionAndSecondary,
-            presentationModel = CommandButtonPresentationModel(
-                presentationState = presentationState,
-                textClick = TextClick.Popup
-            ),
-            overlays = overlays
-        ).project()
+            Spacer(modifier = Modifier.width(8.dp))
+
+            CommandButtonProjection(
+                contentModel = commandActionAndSecondary,
+                presentationModel = CommandButtonPresentationModel(
+                    presentationState = presentationState,
+                    textClick = TextClick.Popup
+                ),
+                overlays = overlays
+            ).project()
+        }
     }
 }
 
@@ -670,6 +692,7 @@ fun AuroraApplicationScope.DemoCommandContent(
             }
 
             DemoCommandRow(
+                resourceBundle.value.getString("CommandButton.state.small"),
                 commandActionOnly,
                 commandSecondaryOnly,
                 commandActionAndSecondary,
@@ -678,6 +701,7 @@ fun AuroraApplicationScope.DemoCommandContent(
             )
 
             DemoCommandRow(
+                resourceBundle.value.getString("CommandButton.state.medium"),
                 commandActionOnly,
                 commandSecondaryOnly,
                 commandActionAndSecondary,
@@ -686,6 +710,7 @@ fun AuroraApplicationScope.DemoCommandContent(
             )
 
             DemoCommandRow(
+                resourceBundle.value.getString("CommandButton.state.tile"),
                 commandActionOnly,
                 commandSecondaryOnly,
                 commandActionAndSecondary,
@@ -694,6 +719,7 @@ fun AuroraApplicationScope.DemoCommandContent(
             )
 
             DemoCommandRow(
+                resourceBundle.value.getString("CommandButton.state.big"),
                 commandActionOnly,
                 commandSecondaryOnly,
                 commandActionAndSecondary,
