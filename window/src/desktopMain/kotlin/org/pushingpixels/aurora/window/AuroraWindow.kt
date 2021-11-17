@@ -539,7 +539,9 @@ fun AuroraApplicationScope.AuroraWindow(
     ) {
         CompositionLocalProvider(
             LocalWindow provides window,
-            LocalWindowSize provides state.size
+            LocalWindowSize provides state.size,
+            LocalLayoutDirection provides if (ComponentOrientation.getOrientation(applicationLocale).isLeftToRight)
+                LayoutDirection.Ltr else LayoutDirection.Rtl
         ) {
             val auroraWindowScope = AuroraWindowScopeImpl(this@AuroraWindow, this)
             AuroraSkin(
