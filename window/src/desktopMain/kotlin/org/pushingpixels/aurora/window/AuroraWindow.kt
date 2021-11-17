@@ -692,7 +692,13 @@ fun AuroraDecorationArea(
     decorationAreaType: DecorationAreaType,
     content: @Composable () -> Unit
 ) {
-    AuroraSkin(decorationAreaType = decorationAreaType) {
+    val buttonShaper = when (decorationAreaType) {
+        DecorationAreaType.TitlePane,
+        DecorationAreaType.Header,
+        DecorationAreaType.Toolbar -> ClassicButtonShaper()
+        else -> AuroraSkin.buttonShaper
+    }
+    AuroraSkin(decorationAreaType = decorationAreaType, buttonShaper = buttonShaper) {
         content()
     }
 }
