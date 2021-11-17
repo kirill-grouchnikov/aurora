@@ -17,7 +17,7 @@ In a nutshell:
 
 Let's take a look at these three concepts in action:
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-basics.png" width="650" height="311" border=0/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-basics.png" width="650" border=0/>
 
 Here is how the action button in the bottom left (big icon with "Action" text underneath) is created:
 

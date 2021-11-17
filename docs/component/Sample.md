@@ -4,7 +4,7 @@ Let's get right down to business of showing what Aurora Components brings to the
 
 In the screenshot below we have a multiline text area and a vertical strip of buttons on the left. Clicking one of the buttons should change the text alignment of the content. The current alignment should be represented by the visual indication on the matching button.
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/intro-text-alignment.png" width="646" height="366" border=0/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/intro-text-alignment.png" width="646" border=0/>
 
 ### Content setup
 
@@ -140,11 +140,11 @@ Each command in this example is configured with the following attributes:
 
 Let's take another look at how the visual representation of these four commands looks like:
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/intro-text-alignment.png" width="646" height="366" border=0/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/intro-text-alignment.png" width="646" border=0/>
 
 Each command is represented by a single button. When a button is clicked, the corresponding command action is activated and our `textAlign` is updated. As the result of the recomposition that follows that update, the overall button strip is updated to reflect the currently "selected" command (the one whose visual representation was just clicked):
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/intro-text-alignment-changed.png" width="646" height="366" border=0/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/intro-text-alignment-changed.png" width="646" border=0/>
 
 ### Command strip
 

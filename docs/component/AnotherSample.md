@@ -2,17 +2,17 @@
 
 Let's take a look at another similar example of using Aurora commands.
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/intro-text-styling.png" width="646" height="366" border=0/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/intro-text-styling.png" width="646" border=0/>
 
 The setup has the same multiline text area and a vertical button strip with four buttons. Each button corresponds to bold, italic, underline and strikethrough content style. When clicked, the presence of the matching style is toggled. For code brevity, each style is applied on the whole text, and not on individual spans.
 
 For example, clicking the bold button shows this:
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/intro-text-styling-bold.png" width="646" height="366" border=0/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/intro-text-styling-bold.png" width="646" border=0/>
 
 And then clicking the italic button shows this:
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/intro-text-styling-bold-italic.png" width="646" height="366" border=0/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/intro-text-styling-bold-italic.png" width="646" border=0/>
 
 Note how both bold and italic buttons show up as selected.
 
@@ -154,7 +154,7 @@ Each one is mapped to configure its current `isActionToggleSelected` state based
 
 Whenever one of these buttons is clicked, its lambda updates the underlying boolean variable, which causes the recomposition and update of the button itself, as well as the text area itself with the newly updated span style:
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/intro-text-styling-italic.png" width="646" height="366" border=0/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/intro-text-styling-italic.png" width="646" border=0/>
 
 ### Command strip
 
