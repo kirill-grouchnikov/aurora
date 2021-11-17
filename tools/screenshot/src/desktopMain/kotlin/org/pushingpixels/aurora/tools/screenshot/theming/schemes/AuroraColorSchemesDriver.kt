@@ -18,9 +18,12 @@ package org.pushingpixels.aurora.tools.screenshot.theming.schemes
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.theming.AuroraSkinDefinition
+import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.colorscheme.*
 import org.pushingpixels.aurora.tools.screenshot.screenshot
+import org.pushingpixels.aurora.window.auroraApplication
 import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
 
 private fun getSchemeBasedSkin(
     colorScheme: AuroraColorScheme,
@@ -77,15 +80,16 @@ private fun getAuroraSchemeBasedSkins(): List<Pair<String, AuroraSkinDefinition>
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
-fun main(args: Array<String>) {
+fun main(args: Array<String>) = auroraApplication {
     val auroraSkins = getAuroraSchemeBasedSkins()
+    val counter = AtomicInteger(auroraSkins.size)
     for (auroraSkinDef in auroraSkins) {
         val skinName = auroraSkinDef.first
         val skinDefinition = auroraSkinDef.second
         val filename =
             args[0] + "/" + skinName.replace(" ", "").lowercase(Locale.getDefault()) + ".png"
         println("Writing $filename")
-        screenshot(skinDefinition, filename)
+        screenshot(skinDefinition, filename, IconFilterStrategy.Original, counter)
     }
 }
 

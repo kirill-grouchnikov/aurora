@@ -19,11 +19,14 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.getAuroraSkins
 import org.pushingpixels.aurora.tools.screenshot.screenshot
+import org.pushingpixels.aurora.window.auroraApplication
 import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
 
 @OptIn(ExperimentalComposeUiApi::class)
-fun main(args: Array<String>) {
+fun main(args: Array<String>) = auroraApplication {
     val auroraSkins = getAuroraSkins()
+    val counter = AtomicInteger(auroraSkins.size)
     for (auroraSkinDef in auroraSkins) {
         val skinName = auroraSkinDef.first
         val skinDefinition = auroraSkinDef.second
@@ -31,7 +34,12 @@ fun main(args: Array<String>) {
             args[0] + "/" + skinName.replace(" ", "")
                 .lowercase(Locale.getDefault()) + "-filtered.png"
         println("Writing $filename")
-        screenshot(skinDefinition.invoke(), filename, IconFilterStrategy.ThemedFollowColorScheme)
+        screenshot(
+            skinDefinition.invoke(),
+            filename,
+            IconFilterStrategy.ThemedFollowColorScheme,
+            counter
+        )
     }
 }
 

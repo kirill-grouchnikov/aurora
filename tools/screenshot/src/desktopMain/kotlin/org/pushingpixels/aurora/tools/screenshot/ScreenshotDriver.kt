@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.tools.screenshot
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -30,16 +31,19 @@ import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.tools.screenshot.svg.radiance_menu
+import org.pushingpixels.aurora.window.AuroraApplicationScope
 import org.pushingpixels.aurora.window.AuroraWindow
-import org.pushingpixels.aurora.window.auroraApplication
 import java.io.File
+import java.util.concurrent.atomic.AtomicInteger
 
 @OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
-fun screenshot(
+@Composable
+fun AuroraApplicationScope.screenshot(
     skin: AuroraSkinDefinition,
     filename: String,
-    toolbarIconEnabledFilterStrategy : IconFilterStrategy = IconFilterStrategy.Original
-) = auroraApplication {
+    toolbarIconEnabledFilterStrategy : IconFilterStrategy = IconFilterStrategy.Original,
+    counter: AtomicInteger
+) {
     val title = "Aurora"
     val icon = radiance_menu()
     val size = DpSize(340.dp, 258.dp)
@@ -90,7 +94,10 @@ fun screenshot(
             val file = File(filename)
             file.writeBytes(bytes)
             scene.close()
-            exitApplication()
+            window.dispose()
+            if (counter.decrementAndGet() == 0) {
+                exitApplication()
+            }
         }
     }
 }

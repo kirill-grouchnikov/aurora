@@ -16,20 +16,24 @@
 package org.pushingpixels.aurora.tools.screenshot.theming.skins
 
 import androidx.compose.ui.ExperimentalComposeUiApi
+import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.getAuroraSkins
 import org.pushingpixels.aurora.tools.screenshot.screenshot
+import org.pushingpixels.aurora.window.auroraApplication
 import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
 
 @OptIn(ExperimentalComposeUiApi::class)
-fun main(args: Array<String>) {
+fun main(args: Array<String>) = auroraApplication {
     val auroraSkins = getAuroraSkins()
+    val counter = AtomicInteger(auroraSkins.size)
     for (auroraSkinDef in auroraSkins) {
         val skinName = auroraSkinDef.first
         val skinDefinition = auroraSkinDef.second
         val filename =
             args[0] + "/" + skinName.replace(" ", "").lowercase(Locale.getDefault()) + ".png"
         println("Writing $filename")
-        screenshot(skinDefinition.invoke(), filename)
+        screenshot(skinDefinition.invoke(), filename, IconFilterStrategy.Original, counter)
     }
 }
 
