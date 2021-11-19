@@ -24,6 +24,7 @@ import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 data class ComboBoxContentModel<E>(
     val items: List<E>,
     val selectedItem: E,
+    val richTooltip: RichTooltip? = null,
     val enabled: Boolean = true,
     val onTriggerItemSelectedChange: (E) -> Unit
 ): ContentModel
@@ -46,5 +47,6 @@ data class ComboBoxPresentationModel<E>(
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Leading,
     val horizontalGapScaleFactor: Float = 1.0f,
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward,
-    val popupMaxVisibleItems: Int = 8
+    val popupMaxVisibleItems: Int = 8,
+    val richTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel()
 ): PresentationModel

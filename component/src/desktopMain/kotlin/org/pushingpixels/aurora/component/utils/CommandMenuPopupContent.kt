@@ -47,7 +47,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-private val Color.awtColor: java.awt.Color
+internal val Color.awtColor: java.awt.Color
     get() = java.awt.Color(
         this.red, this.green, this.blue, this.alpha
     )

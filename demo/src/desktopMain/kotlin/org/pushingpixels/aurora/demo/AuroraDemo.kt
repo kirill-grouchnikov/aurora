@@ -591,6 +591,10 @@ fun AuroraWindowScope.DemoArea(
                         enabled = contentEnabled.value,
                         items = simpleComboItems,
                         selectedItem = simpleComboSelectedItem.value,
+                        richTooltip = RichTooltip(
+                            title = "My title!",
+                            descriptionSections = emptyList()
+                        ),
                         onTriggerItemSelectedChange = {
                             simpleComboSelectedItem.value = it
                             println("$it selected!")

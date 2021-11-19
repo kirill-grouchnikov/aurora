@@ -31,6 +31,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
@@ -40,6 +41,9 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
@@ -74,6 +78,19 @@ private class ComboBoxLocator(val topLeftOffset: AuroraOffset, val size: AuroraS
 private fun Modifier.comboBoxLocator(topLeftOffset: AuroraOffset, size: AuroraSize) = this.then(
     ComboBoxLocator(topLeftOffset, size)
 )
+
+// Rich tooltip tracking code based on code in TooltipArea.desktop.kt
+private suspend fun PointerInputScope.detectDown(onDown: (Offset) -> Unit) {
+    while (true) {
+        awaitPointerEventScope {
+            val event = awaitPointerEvent(PointerEventPass.Initial)
+            val down = event.changes.find { it.changedToDown() }
+            if (down != null) {
+                onDown(down.position)
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeApi::class, AuroraInternalApi::class)
 @Composable
@@ -216,8 +233,62 @@ internal fun <E> AuroraComboBox(
     val contentModelState = rememberUpdatedState(commandMenuContentModel)
     val compositionLocalContext by rememberUpdatedState(currentCompositionLocalContext)
 
+    val scope = rememberCoroutineScope()
+    var job: Job? by remember { mutableStateOf(null) }
+
+    fun startShowing() {
+        job?.cancel()
+        job = scope.launch {
+            delay(500)
+            if (contentModel.richTooltip != null) {
+                displayRichTooltipContent(
+                    currentWindow = window,
+                    layoutDirection = layoutDirection,
+                    density = density,
+                    textStyle = resolvedTextStyle,
+                    resourceLoader = resourceLoader,
+                    skinColors = skinColors,
+                    skinPainters = painters,
+                    decorationAreaType = decorationAreaType,
+                    compositionLocalContext = compositionLocalContext,
+                    anchorBoundsInWindow = Rect(
+                        offset = comboBoxTopLeftOffset.asOffset(density),
+                        size = comboBoxSize.asSize(density)
+                    ),
+                    richTooltip = contentModel.richTooltip,
+                    presentationModel = presentationModel.richTooltipPresentationModel,
+                    popupPlacementStrategy = presentationModel.popupPlacementStrategy
+                )
+            }
+        }
+    }
+
+    fun hide() {
+        job?.cancel()
+    }
+
     Box(
         modifier = modifier
+            .pointerInput(Unit) {
+                awaitPointerEventScope {
+                    while (true) {
+                        val event = awaitPointerEvent()
+                        when (event.type) {
+                            PointerEventType.Enter -> {
+                                startShowing()
+                            }
+                            PointerEventType.Exit -> {
+                                hide()
+                            }
+                        }
+                    }
+                }
+            }
+            .pointerInput(Unit) {
+                detectDown {
+                    hide()
+                }
+            }
             .clickable(
                 enabled = contentModel.enabled,
                 onClick = {
@@ -488,4 +559,3 @@ internal fun <E> AuroraComboBox(
         }
     }
 }
-
