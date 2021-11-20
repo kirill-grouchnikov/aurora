@@ -15,14 +15,18 @@
  */
 package org.pushingpixels.aurora.component.model
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 object RichTooltipSizingConstants {
-    val DescriptionWidth = 200.dp
+    val MaxWidth = 200.dp
     val SmallIconSize = 16.dp
     val LargeIconSize = 32.dp
+    val ContentPadding = PaddingValues(6.dp)
+    val HorizontalContentLayoutGap = 4.dp
+    val VerticalContentLayoutGap = 4.dp
 }
 
 /**

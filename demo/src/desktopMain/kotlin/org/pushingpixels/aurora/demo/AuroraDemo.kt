@@ -592,7 +592,7 @@ fun AuroraWindowScope.DemoArea(
                         items = simpleComboItems,
                         selectedItem = simpleComboSelectedItem.value,
                         richTooltip = RichTooltip(
-                            title = "My title!",
+                            title = "My title that may be long and even go to three lines maybe!",
                             mainIcon = user_home(),
                             descriptionSections = emptyList()
                         ),

@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.component.utils
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalContext
 import androidx.compose.ui.awt.ComposeWindow
@@ -23,13 +24,13 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.Paragraph
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.text.resolveDefaults
+import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.IconProjection
@@ -71,19 +72,79 @@ internal fun displayRichTooltipContent(
 
     val locationOnScreen = currentWindow.locationOnScreen
 
-    val fullContentWidth = 400.0f
-    val fullContentHeight = 200.0f
-
     val offset = ceil(density.density).toInt()
+
+    // Create our own text style with bold weight for the title
+    val boldTextStyle = resolveDefaults(
+        TextStyle(
+            fontSize = textStyle.fontSize,
+            fontWeight = FontWeight.Bold
+        ), layoutDirection
+    )
+
+    var fullContentWidth = 0.0f
+    var fullContentHeight = 0.0f
+
+    if (richTooltip.mainIcon != null) {
+        fullContentHeight = presentationModel.mainIconSize.value * density.density
+        fullContentWidth = presentationModel.mainIconSize.value * density.density
+    }
+
+    val horizontalPaddingPx =
+        (RichTooltipSizingConstants.ContentPadding.calculateLeftPadding(layoutDirection) +
+                RichTooltipSizingConstants.ContentPadding.calculateRightPadding(layoutDirection)).value *
+                density.density
+    val verticalPaddingPx =
+        (RichTooltipSizingConstants.ContentPadding.calculateTopPadding() +
+                RichTooltipSizingConstants.ContentPadding.calculateBottomPadding()).value *
+                density.density
+
+    val maxContentWidthPx = RichTooltipSizingConstants.MaxWidth.value * density.density -
+            horizontalPaddingPx
+    var maxTitleWidthPx = maxContentWidthPx
+    if (richTooltip.mainIcon != null) {
+        // If we're showing the icon, that eats into the horizontal space available to the title
+        maxTitleWidthPx -= (presentationModel.mainIconSize +
+                RichTooltipSizingConstants.HorizontalContentLayoutGap).value * density.density
+    }
+    // Create the paragraph title with the available horizontal space and bold style.
+    // Note that we're not limiting the title to be single line
+    val titleParagraph = Paragraph(
+        text = richTooltip.title, style = boldTextStyle, width = maxTitleWidthPx,
+        density = density, resourceLoader = resourceLoader
+    )
+    fullContentHeight = fullContentHeight.coerceAtLeast(titleParagraph.height)
+    val titleWidth: Float
+    if (titleParagraph.lineCount > 1) {
+        // If the title goes multi-line, the content spans the entire available space
+        titleWidth = maxTitleWidthPx
+        fullContentWidth = maxContentWidthPx
+    } else {
+        titleWidth = titleParagraph.maxIntrinsicWidth
+        if (richTooltip.mainIcon == null) {
+            fullContentWidth = titleWidth
+        } else {
+            // For single line title, add the title width to icon width and gap (if main icon
+            // is present)
+            fullContentWidth += (RichTooltipSizingConstants.HorizontalContentLayoutGap.value * density.density
+                    + titleWidth)
+        }
+    }
+
+    // Account for content paddings
+    fullContentWidth += horizontalPaddingPx
+    fullContentHeight += verticalPaddingPx
 
     val tooltipLayoutInfo = RichTooltipLayoutInfo(
         fullSize = Size(
             width = fullContentWidth + 2 * offset,
             height = fullContentHeight + 2 * offset
         ),
-        titleSize = Size(300.0f, 100.0f),
-        mainIconSize = Size(presentationModel.mainIconSize.value * density.density,
-            presentationModel.mainIconSize.value * density.density)
+        titleSize = Size(titleWidth, titleParagraph.height),
+        mainIconSize = if (richTooltip.mainIcon == null) Size.Zero else Size(
+            presentationModel.mainIconSize.value * density.density,
+            presentationModel.mainIconSize.value * density.density
+        )
     )
 
     // Full size of the rich tooltip accounts for extra two pixels on each side for the popup border
@@ -253,6 +314,7 @@ private fun TopLevelTooltipContent(
     tooltipLayoutInfo: RichTooltipLayoutInfo
 ) {
     val offset = ceil(LocalDensity.current.density).toInt()
+    val layoutDirection = LocalLayoutDirection.current
 
     Layout(content = {
         TooltipGeneralContent(
@@ -283,12 +345,19 @@ private fun TopLevelTooltipContent(
             height = tooltipLayoutInfo.fullSize.height.toInt()
         ) {
             // Offset everything by [offset,offset] for border insets
-            var x = offset
+            // TODO - RTL support
+            val left = offset + RichTooltipSizingConstants.ContentPadding.calculateLeftPadding(
+                layoutDirection
+            ).toPx().toInt()
+            val top = offset + RichTooltipSizingConstants.ContentPadding.calculateTopPadding().toPx().toInt()
+
+            var x = left
             if (iconPlaceable != null) {
-                iconPlaceable.place(offset, offset)
-                x += iconPlaceable.width
+                iconPlaceable.place(left, top)
+                x += (iconPlaceable.width +
+                        RichTooltipSizingConstants.HorizontalContentLayoutGap.toPx().toInt())
             }
-            titlePlaceable.placeRelative(x, offset)
+            titlePlaceable.placeRelative(x, top)
         }
     }
 }
@@ -302,9 +371,11 @@ private fun TooltipGeneralContent(
     // Resolve the default text style to get the default font size
     val resolvedTextStyle = resolveAuroraDefaults()
     // And create our own text style with bold weight
-    val boldTextStyle = TextStyle(
-        fontSize = resolvedTextStyle.fontSize,
-        fontWeight = FontWeight.Bold
+    val boldTextStyle = resolveDefaults(
+        TextStyle(
+            fontSize = resolvedTextStyle.fontSize,
+            fontWeight = FontWeight.Bold
+        ), LocalLayoutDirection.current
     )
 
     if (richTooltip.mainIcon != null) {
@@ -316,6 +387,9 @@ private fun TooltipGeneralContent(
 
     LabelProjection(
         contentModel = LabelContentModel(text = richTooltip.title),
-        presentationModel = LabelPresentationModel(textStyle = boldTextStyle)
+        presentationModel = LabelPresentationModel(
+            textStyle = boldTextStyle,
+            contentPadding = PaddingValues(0.dp)
+        )
     ).project()
 }
