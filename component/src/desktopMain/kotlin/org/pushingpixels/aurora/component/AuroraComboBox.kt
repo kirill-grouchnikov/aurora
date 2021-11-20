@@ -45,6 +45,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
@@ -265,6 +266,7 @@ internal fun <E> AuroraComboBox(
 
     fun hide() {
         job?.cancel()
+        AuroraPopupManager.hidePopups(window)
     }
 
     Box(

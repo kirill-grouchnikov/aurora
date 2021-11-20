@@ -16,9 +16,14 @@
 package org.pushingpixels.aurora.component.model
 
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+
+object RichTooltipSizingConstants {
+    val DescriptionWidth = 200.dp
+    val SmallIconSize = 16.dp
+    val LargeIconSize = 32.dp
+}
 
 /**
  * Rich tooltip. In its most basic form, the rich tooltip has a title and one
@@ -120,12 +125,18 @@ import androidx.compose.ui.unit.dp
 data class RichTooltip(
     val title: String,
     val mainIcon: Painter? = null,
-    val descriptionSections: List<String>,
+    val descriptionSections: List<String>? = null,
     val footerIcon: Painter? = null,
     val footerSections: List<String>? = null
 )
 
 data class RichTooltipPresentationModel(
-    val mainIconSize : DpSize = DpSize(32.dp, 32.dp),
-    val footerIconSize : DpSize = DpSize(16.dp, 16.dp)
-): PresentationModel
+    val mainIconSize: DpSize = DpSize(
+        width = RichTooltipSizingConstants.LargeIconSize,
+        height = RichTooltipSizingConstants.LargeIconSize
+    ),
+    val footerIconSize: DpSize = DpSize(
+        width = RichTooltipSizingConstants.SmallIconSize,
+        height = RichTooltipSizingConstants.SmallIconSize
+    )
+) : PresentationModel
