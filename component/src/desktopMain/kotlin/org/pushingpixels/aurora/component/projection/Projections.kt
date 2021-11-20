@@ -189,6 +189,20 @@ class DeterminateLinearProgressProjection(
     }
 }
 
+class IconProjection(
+    val contentModel: IconContentModel,
+    val presentationModel: IconPresentationModel = IconPresentationModel()
+) {
+    @Composable
+    fun project(modifier: Modifier = Modifier) {
+        AuroraIcon(
+            modifier = modifier,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel
+        )
+    }
+}
+
 class LabelProjection(
     val contentModel: LabelContentModel,
     val presentationModel: LabelPresentationModel = LabelPresentationModel()

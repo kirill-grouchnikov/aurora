@@ -593,6 +593,7 @@ fun AuroraWindowScope.DemoArea(
                         selectedItem = simpleComboSelectedItem.value,
                         richTooltip = RichTooltip(
                             title = "My title!",
+                            mainIcon = user_home(),
                             descriptionSections = emptyList()
                         ),
                         onTriggerItemSelectedChange = {
@@ -602,7 +603,8 @@ fun AuroraWindowScope.DemoArea(
                     ),
                     presentationModel = ComboBoxPresentationModel(
                         displayConverter = { it },
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+                        richTooltipPresentationModel = RichTooltipPresentationModel(mainIconSize = 48.dp)
                     )
                 ).project()
 

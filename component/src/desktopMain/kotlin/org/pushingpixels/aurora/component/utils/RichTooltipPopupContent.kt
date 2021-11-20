@@ -21,17 +21,18 @@ import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.common.AuroraPopupManager
-import org.pushingpixels.aurora.component.model.LabelContentModel
-import org.pushingpixels.aurora.component.model.RichTooltip
-import org.pushingpixels.aurora.component.model.RichTooltipPresentationModel
+import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.IconProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
@@ -42,7 +43,8 @@ import kotlin.math.ceil
 
 internal data class RichTooltipLayoutInfo(
     val fullSize: Size,
-    val titleSize: Size
+    val mainIconSize: Size,
+    val titleSize: Size,
 )
 
 internal fun displayRichTooltipContent(
@@ -79,7 +81,9 @@ internal fun displayRichTooltipContent(
             width = fullContentWidth + 2 * offset,
             height = fullContentHeight + 2 * offset
         ),
-        titleSize = Size(400.0f, 100.0f)
+        titleSize = Size(300.0f, 100.0f),
+        mainIconSize = Size(presentationModel.mainIconSize.value * density.density,
+            presentationModel.mainIconSize.value * density.density)
     )
 
     // Full size of the rich tooltip accounts for extra two pixels on each side for the popup border
@@ -257,7 +261,18 @@ private fun TopLevelTooltipContent(
             richTooltipPresentationModel = richTooltipPresentationModel
         )
     }) { measurables, _ ->
-        val titlePlaceable = measurables[0].measure(
+        var placeableIndex = 0
+
+        var iconPlaceable: Placeable? = null
+        if (richTooltip.mainIcon != null) {
+            iconPlaceable = measurables[placeableIndex++].measure(
+                Constraints.fixed(
+                    width = tooltipLayoutInfo.mainIconSize.width.toInt(),
+                    height = tooltipLayoutInfo.mainIconSize.height.toInt()
+                )
+            )
+        }
+        val titlePlaceable = measurables[placeableIndex++].measure(
             Constraints.fixed(
                 width = tooltipLayoutInfo.titleSize.width.toInt(),
                 height = tooltipLayoutInfo.titleSize.height.toInt()
@@ -268,9 +283,12 @@ private fun TopLevelTooltipContent(
             height = tooltipLayoutInfo.fullSize.height.toInt()
         ) {
             // Offset everything by [offset,offset] for border insets
-            var yPosition = offset
-            titlePlaceable.placeRelative(offset, offset)
-
+            var x = offset
+            if (iconPlaceable != null) {
+                iconPlaceable.place(offset, offset)
+                x += iconPlaceable.width
+            }
+            titlePlaceable.placeRelative(x, offset)
         }
     }
 }
@@ -281,5 +299,23 @@ private fun TooltipGeneralContent(
     richTooltip: RichTooltip,
     richTooltipPresentationModel: RichTooltipPresentationModel
 ) {
-    LabelProjection(contentModel = LabelContentModel(text = richTooltip.title)).project()
+    // Resolve the default text style to get the default font size
+    val resolvedTextStyle = resolveAuroraDefaults()
+    // And create our own text style with bold weight
+    val boldTextStyle = TextStyle(
+        fontSize = resolvedTextStyle.fontSize,
+        fontWeight = FontWeight.Bold
+    )
+
+    if (richTooltip.mainIcon != null) {
+        IconProjection(
+            contentModel = IconContentModel(icon = richTooltip.mainIcon),
+            presentationModel = IconPresentationModel(iconDimension = richTooltipPresentationModel.mainIconSize)
+        ).project()
+    }
+
+    LabelProjection(
+        contentModel = LabelContentModel(text = richTooltip.title),
+        presentationModel = LabelPresentationModel(textStyle = boldTextStyle)
+    ).project()
 }
