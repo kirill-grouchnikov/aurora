@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 object RichTooltipSizingConstants {
-    val MaxWidth = 200.dp
+    val MaxWidth = 264.dp
     val SmallIconSize = 16.dp
     val LargeIconSize = 32.dp
     val ContentPadding = PaddingValues(6.dp)

@@ -598,7 +598,11 @@ fun AuroraWindowScope.DemoArea(
                                 "First description section. Maybe introduce something in here.",
                                 "Second section which provides a bit more information, but not too much"
                             ),
-                            footerIcon = help_browser()
+                            footerIcon = help_browser(),
+                            footerSections = listOf(
+                                "First footer section. A small note maybe.",
+                                "Second section. A final bit of explanation in here."
+                            )
                         ),
                         onTriggerItemSelectedChange = {
                             simpleComboSelectedItem.value = it

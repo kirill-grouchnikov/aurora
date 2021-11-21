@@ -49,14 +49,16 @@ internal data class RichTooltipLayoutInfo(
     val titleSize: Size,
     val descriptionSizes: List<Size>,
     val footerSeparatorSize: Size,
-    val footerIconSize: Size
+    val footerIconSize: Size,
+    val footerSizes: List<Size>
 )
 
 internal val RichTooltip.hasDescriptionContent: Boolean
     get() = (this.descriptionSections?.isNotEmpty() ?: false)
+internal val RichTooltip.hasFooterSections: Boolean
+    get() = (this.footerSections?.isNotEmpty() ?: false)
 internal val RichTooltip.hasFooterContent: Boolean
-    get() = ((this.footerIcon != null) ||
-            (this.footerSections?.isNotEmpty() ?: false))
+    get() = ((this.footerIcon != null) || this.hasFooterSections)
 
 internal fun displayRichTooltipContent(
     currentWindow: ComposeWindow,
@@ -191,7 +193,37 @@ internal fun displayRichTooltipContent(
     val footerIconSize = if (richTooltip.footerIcon == null) 0.0f else
         presentationModel.footerIconSize.value * density.density
 
-    fullContentHeight += footerIconSize
+    // Footer section(s)
+    val footerSizes = ArrayList<Size>()
+    var footerTextHeightPx = 0.0f
+    if (richTooltip.hasFooterSections) {
+        // If we have at least one footer section, the entire tooltip goes full max width
+        fullContentWidth = maxContentWidthPx
+
+        // Account for vertical gaps between description sections
+        footerTextHeightPx += verticalGapPx * (richTooltip.footerSections!!.count() - 1)
+
+        val maxFooterWidthPx = maxTitleWidthPx
+        for (footerSection in richTooltip.footerSections) {
+            // Create the footer paragraph with the available horizontal space.
+            // Note that we're not limiting the description to be single line
+            val footerParagraph = Paragraph(
+                text = footerSection, style = textStyle, width = maxFooterWidthPx,
+                density = density, resourceLoader = resourceLoader
+            )
+
+            footerTextHeightPx += footerParagraph.height
+
+            footerSizes.add(
+                Size(
+                    width = maxFooterWidthPx,
+                    height = footerParagraph.height
+                )
+            )
+        }
+    }
+
+    fullContentHeight += kotlin.math.max(footerIconSize, footerTextHeightPx)
 
     // Account for content paddings
     fullContentWidth += horizontalPaddingPx
@@ -216,6 +248,7 @@ internal fun displayRichTooltipContent(
             presentationModel.footerIconSize.value * density.density,
             presentationModel.footerIconSize.value * density.density
         ),
+        footerSizes = footerSizes
     )
 
     // Full size of the rich tooltip accounts for extra two pixels on each side for the popup border
@@ -443,7 +476,19 @@ private fun TopLevelTooltipContent(
                     height = tooltipLayoutInfo.footerIconSize.height.toInt()
                 )
             )
-
+        }
+        val footerPlaceables = ArrayList<Placeable>()
+        if (richTooltip.hasFooterSections) {
+            for (index in 0 until richTooltip.footerSections!!.size) {
+                footerPlaceables.add(
+                    measurables[placeableIndex++].measure(
+                        Constraints.fixed(
+                            width = tooltipLayoutInfo.footerSizes[index].width.toInt(),
+                            height = tooltipLayoutInfo.footerSizes[index].height.toInt()
+                        )
+                    )
+                )
+            }
         }
 
         layout(
@@ -493,6 +538,14 @@ private fun TopLevelTooltipContent(
                 footerIconPlaceable.place(left, y)
                 x += (footerIconPlaceable.width +
                         RichTooltipSizingConstants.HorizontalContentLayoutGap.toPx().toInt())
+            }
+
+            if (footerPlaceables.isNotEmpty()) {
+                for (footerPlaceable in footerPlaceables) {
+                    footerPlaceable.place(x, y)
+                    y += footerPlaceable.height
+                    y += verticalGapPx
+                }
             }
         }
     }
@@ -545,8 +598,8 @@ private fun TooltipGeneralContent(
     if (richTooltip.hasFooterContent) {
         HorizontalSeparatorProjection(
             presentationModel = SeparatorPresentationModel(
-                startGradientAmount = 0.dp,
-                endGradientAmount = 0.dp
+                startGradientAmount = 6.dp,
+                endGradientAmount = 6.dp
             )
         ).project()
 
@@ -557,6 +610,16 @@ private fun TooltipGeneralContent(
                     iconDimension = richTooltipPresentationModel.footerIconSize
                 )
             ).project()
+        }
+        if (richTooltip.hasFooterSections) {
+            for (footerSection in richTooltip.footerSections!!) {
+                LabelProjection(
+                    contentModel = LabelContentModel(text = footerSection),
+                    presentationModel = LabelPresentationModel(
+                        contentPadding = PaddingValues(0.dp)
+                    )
+                ).project()
+            }
         }
     }
 }
