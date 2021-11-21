@@ -603,13 +603,16 @@ private fun TooltipGeneralContent(
 ) {
     // Resolve the default text style to get the default font size
     val resolvedTextStyle = resolveAuroraDefaults()
-    // And create our own text style with bold weight
+    // And create our own text style with bold weight. Note that we also unset
+    // the color afterwards (as resolveDefaults sets it to the default black, but
+    // we do want to use our own text color resolution that is based on the skin
+    // and the decoration area type).
     val boldTextStyle = resolveDefaults(
         TextStyle(
             fontSize = resolvedTextStyle.fontSize,
             fontWeight = FontWeight.Bold
         ), LocalLayoutDirection.current
-    )
+    ).copy(color = Color.Unspecified)
 
     LabelProjection(
         contentModel = LabelContentModel(text = richTooltip.title),
