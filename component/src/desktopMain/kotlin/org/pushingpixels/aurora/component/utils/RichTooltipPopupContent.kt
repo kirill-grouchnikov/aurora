@@ -33,6 +33,7 @@ import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.component.projection.IconProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.theming.*
@@ -46,8 +47,16 @@ internal data class RichTooltipLayoutInfo(
     val fullSize: Size,
     val mainIconSize: Size,
     val titleSize: Size,
-    val descriptionSizes: List<Size>
+    val descriptionSizes: List<Size>,
+    val footerSeparatorSize: Size,
+    val footerIconSize: Size
 )
+
+internal val RichTooltip.hasDescriptionContent: Boolean
+    get() = (this.descriptionSections?.isNotEmpty() ?: false)
+internal val RichTooltip.hasFooterContent: Boolean
+    get() = ((this.footerIcon != null) ||
+            (this.footerSections?.isNotEmpty() ?: false))
 
 internal fun displayRichTooltipContent(
     currentWindow: ComposeWindow,
@@ -138,17 +147,17 @@ internal fun displayRichTooltipContent(
 
     // Description section(s)
     val descriptionSizes = ArrayList<Size>()
-    if ((richTooltip.descriptionSections != null) && richTooltip.descriptionSections.isNotEmpty()) {
+    if (richTooltip.hasDescriptionContent) {
         // If we have at least one description section, the entire tooltip goes full max width
         fullContentWidth = maxContentWidthPx
 
         // Account for vertical gap between title and description
         mainTextHeightPx += verticalGapPx
         // and for vertical gaps between description sections
-        mainTextHeightPx += verticalGapPx * (richTooltip.descriptionSections.count() - 1)
+        mainTextHeightPx += verticalGapPx * (richTooltip.descriptionSections!!.count() - 1)
 
         val maxDescriptionWidthPx = maxTitleWidthPx
-        for (descriptionSection in richTooltip.descriptionSections) {
+        for (descriptionSection in richTooltip.descriptionSections!!) {
             // Create the description paragraph with the available horizontal space.
             // Note that we're not limiting the description to be single line
             val descriptionParagraph = Paragraph(
@@ -167,7 +176,22 @@ internal fun displayRichTooltipContent(
         }
     }
 
+    // Content height so far is the max of icon height and title / descriptions height
     var fullContentHeight = kotlin.math.max(mainIconSize, mainTextHeightPx)
+
+    if (richTooltip.hasFooterContent) {
+        // Gap above the footer separator
+        fullContentHeight += verticalGapPx
+        // Separator itself
+        fullContentHeight += SeparatorSizingConstants.Thickness.value * density.density
+        // Gap below the footer separator
+        fullContentHeight += verticalGapPx
+    }
+
+    val footerIconSize = if (richTooltip.footerIcon == null) 0.0f else
+        presentationModel.footerIconSize.value * density.density
+
+    fullContentHeight += footerIconSize
 
     // Account for content paddings
     fullContentWidth += horizontalPaddingPx
@@ -183,7 +207,15 @@ internal fun displayRichTooltipContent(
             presentationModel.mainIconSize.value * density.density,
             presentationModel.mainIconSize.value * density.density
         ),
-        descriptionSizes = descriptionSizes
+        descriptionSizes = descriptionSizes,
+        footerSeparatorSize = if (!richTooltip.hasFooterContent) Size.Zero else Size(
+            fullContentWidth - horizontalPaddingPx,
+            SeparatorSizingConstants.Thickness.value * density.density
+        ),
+        footerIconSize = if (richTooltip.footerIcon == null) Size.Zero else Size(
+            presentationModel.footerIconSize.value * density.density,
+            presentationModel.footerIconSize.value * density.density
+        ),
     )
 
     // Full size of the rich tooltip accounts for extra two pixels on each side for the popup border
@@ -381,8 +413,8 @@ private fun TopLevelTooltipContent(
             )
         )
         val descriptionPlaceables = ArrayList<Placeable>()
-        if ((richTooltip.descriptionSections != null) && richTooltip.descriptionSections.isNotEmpty()) {
-            for (index in 0 until richTooltip.descriptionSections.size) {
+        if (richTooltip.hasDescriptionContent) {
+            for (index in 0 until richTooltip.descriptionSections!!.size) {
                 descriptionPlaceables.add(
                     measurables[placeableIndex++].measure(
                         Constraints.fixed(
@@ -392,6 +424,26 @@ private fun TopLevelTooltipContent(
                     )
                 )
             }
+        }
+        var footerSeparatorPlaceable: Placeable? = null
+        if (richTooltip.hasFooterContent) {
+            footerSeparatorPlaceable = measurables[placeableIndex++].measure(
+                Constraints.fixed(
+                    width = tooltipLayoutInfo.footerSeparatorSize.width.toInt(),
+                    height = tooltipLayoutInfo.footerSeparatorSize.height.toInt()
+                )
+            )
+        }
+
+        var footerIconPlaceable: Placeable? = null
+        if (richTooltip.footerIcon != null) {
+            footerIconPlaceable = measurables[placeableIndex++].measure(
+                Constraints.fixed(
+                    width = tooltipLayoutInfo.footerIconSize.width.toInt(),
+                    height = tooltipLayoutInfo.footerIconSize.height.toInt()
+                )
+            )
+
         }
 
         layout(
@@ -423,6 +475,24 @@ private fun TopLevelTooltipContent(
                     y += descriptionPlaceable.height
                     y += verticalGapPx
                 }
+                // Remove the vertical gap "after" the last description section
+                y -= verticalGapPx
+            }
+
+            y = y.coerceAtLeast(top + (iconPlaceable?.height ?: 0))
+
+            if (richTooltip.hasFooterContent) {
+                y += verticalGapPx
+                footerSeparatorPlaceable!!.place(left, y)
+                y += footerSeparatorPlaceable.height
+                y += verticalGapPx
+            }
+
+            x = left
+            if (footerIconPlaceable != null) {
+                footerIconPlaceable.place(left, y)
+                x += (footerIconPlaceable.width +
+                        RichTooltipSizingConstants.HorizontalContentLayoutGap.toPx().toInt())
             }
         }
     }
@@ -447,7 +517,9 @@ private fun TooltipGeneralContent(
     if (richTooltip.mainIcon != null) {
         IconProjection(
             contentModel = IconContentModel(icon = richTooltip.mainIcon),
-            presentationModel = IconPresentationModel(iconDimension = richTooltipPresentationModel.mainIconSize)
+            presentationModel = IconPresentationModel(
+                iconDimension = richTooltipPresentationModel.mainIconSize
+            )
         ).project()
     }
 
@@ -459,12 +531,30 @@ private fun TooltipGeneralContent(
         )
     ).project()
 
-    if (richTooltip.descriptionSections != null) {
-        for (descriptionSection in richTooltip.descriptionSections) {
+    if (richTooltip.hasDescriptionContent) {
+        for (descriptionSection in richTooltip.descriptionSections!!) {
             LabelProjection(
                 contentModel = LabelContentModel(text = descriptionSection),
                 presentationModel = LabelPresentationModel(
                     contentPadding = PaddingValues(0.dp)
+                )
+            ).project()
+        }
+    }
+
+    if (richTooltip.hasFooterContent) {
+        HorizontalSeparatorProjection(
+            presentationModel = SeparatorPresentationModel(
+                startGradientAmount = 0.dp,
+                endGradientAmount = 0.dp
+            )
+        ).project()
+
+        if (richTooltip.footerIcon != null) {
+            IconProjection(
+                contentModel = IconContentModel(icon = richTooltip.footerIcon),
+                presentationModel = IconPresentationModel(
+                    iconDimension = richTooltipPresentationModel.footerIconSize
                 )
             ).project()
         }

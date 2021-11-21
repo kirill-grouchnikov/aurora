@@ -597,7 +597,8 @@ fun AuroraWindowScope.DemoArea(
                             descriptionSections = listOf(
                                 "First description section. Maybe introduce something in here.",
                                 "Second section which provides a bit more information, but not too much"
-                            )
+                            ),
+                            footerIcon = help_browser()
                         ),
                         onTriggerItemSelectedChange = {
                             simpleComboSelectedItem.value = it
@@ -607,7 +608,10 @@ fun AuroraWindowScope.DemoArea(
                     presentationModel = ComboBoxPresentationModel(
                         displayConverter = { it },
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-                        richTooltipPresentationModel = RichTooltipPresentationModel(mainIconSize = 36.dp)
+                        richTooltipPresentationModel = RichTooltipPresentationModel(
+                            mainIconSize = 36.dp,
+                            footerIconSize = 20.dp
+                        )
                     )
                 ).project()
 
