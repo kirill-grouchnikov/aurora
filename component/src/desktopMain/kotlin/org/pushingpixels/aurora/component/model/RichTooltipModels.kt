@@ -25,8 +25,8 @@ object RichTooltipSizingConstants {
     val SmallIconSize = 16.dp
     val LargeIconSize = 32.dp
     val ContentPadding = PaddingValues(6.dp)
-    val HorizontalContentLayoutGap = 4.dp
-    val VerticalContentLayoutGap = 4.dp
+    val HorizontalContentLayoutGap = 6.dp
+    val VerticalContentLayoutGap = 6.dp
 }
 
 /**
