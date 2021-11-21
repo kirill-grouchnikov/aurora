@@ -46,6 +46,7 @@ internal data class RichTooltipLayoutInfo(
     val fullSize: Size,
     val mainIconSize: Size,
     val titleSize: Size,
+    val descriptionSizes: List<Size>
 )
 
 internal fun displayRichTooltipContent(
@@ -82,11 +83,12 @@ internal fun displayRichTooltipContent(
         ), layoutDirection
     )
 
-    var fullContentWidth = 0.0f
-    var fullContentHeight = 0.0f
+    val mainIconSize = if (richTooltip.mainIcon == null) 0.0f else
+        presentationModel.mainIconSize.value * density.density
+
+    var fullContentWidth = mainIconSize
 
     if (richTooltip.mainIcon != null) {
-        fullContentHeight = presentationModel.mainIconSize.value * density.density
         fullContentWidth = presentationModel.mainIconSize.value * density.density
     }
 
@@ -98,7 +100,10 @@ internal fun displayRichTooltipContent(
         (RichTooltipSizingConstants.ContentPadding.calculateTopPadding() +
                 RichTooltipSizingConstants.ContentPadding.calculateBottomPadding()).value *
                 density.density
+    val verticalGapPx =
+        (RichTooltipSizingConstants.VerticalContentLayoutGap.value * density.density).toInt()
 
+    var mainTextHeightPx = 0.0f
     val maxContentWidthPx = RichTooltipSizingConstants.MaxWidth.value * density.density -
             horizontalPaddingPx
     var maxTitleWidthPx = maxContentWidthPx
@@ -107,13 +112,12 @@ internal fun displayRichTooltipContent(
         maxTitleWidthPx -= (presentationModel.mainIconSize +
                 RichTooltipSizingConstants.HorizontalContentLayoutGap).value * density.density
     }
-    // Create the paragraph title with the available horizontal space and bold style.
+    // Create the title paragraph with the available horizontal space and bold style.
     // Note that we're not limiting the title to be single line
     val titleParagraph = Paragraph(
         text = richTooltip.title, style = boldTextStyle, width = maxTitleWidthPx,
         density = density, resourceLoader = resourceLoader
     )
-    fullContentHeight = fullContentHeight.coerceAtLeast(titleParagraph.height)
     val titleWidth: Float
     if (titleParagraph.lineCount > 1) {
         // If the title goes multi-line, the content spans the entire available space
@@ -130,6 +134,40 @@ internal fun displayRichTooltipContent(
                     + titleWidth)
         }
     }
+    mainTextHeightPx = titleParagraph.height
+
+    // Description section(s)
+    val descriptionSizes = ArrayList<Size>()
+    if ((richTooltip.descriptionSections != null) && richTooltip.descriptionSections.isNotEmpty()) {
+        // If we have at least one description section, the entire tooltip goes full max width
+        fullContentWidth = maxContentWidthPx
+
+        // Account for vertical gap between title and description
+        mainTextHeightPx += verticalGapPx
+        // and for vertical gaps between description sections
+        mainTextHeightPx += verticalGapPx * (richTooltip.descriptionSections.count() - 1)
+
+        val maxDescriptionWidthPx = maxTitleWidthPx
+        for (descriptionSection in richTooltip.descriptionSections) {
+            // Create the description paragraph with the available horizontal space.
+            // Note that we're not limiting the description to be single line
+            val descriptionParagraph = Paragraph(
+                text = descriptionSection, style = textStyle, width = maxDescriptionWidthPx,
+                density = density, resourceLoader = resourceLoader
+            )
+
+            mainTextHeightPx += descriptionParagraph.height
+
+            descriptionSizes.add(
+                Size(
+                    width = maxDescriptionWidthPx,
+                    height = descriptionParagraph.height
+                )
+            )
+        }
+    }
+
+    var fullContentHeight = kotlin.math.max(mainIconSize, mainTextHeightPx)
 
     // Account for content paddings
     fullContentWidth += horizontalPaddingPx
@@ -144,7 +182,8 @@ internal fun displayRichTooltipContent(
         mainIconSize = if (richTooltip.mainIcon == null) Size.Zero else Size(
             presentationModel.mainIconSize.value * density.density,
             presentationModel.mainIconSize.value * density.density
-        )
+        ),
+        descriptionSizes = descriptionSizes
     )
 
     // Full size of the rich tooltip accounts for extra two pixels on each side for the popup border
@@ -323,6 +362,7 @@ private fun TopLevelTooltipContent(
             richTooltipPresentationModel = richTooltipPresentationModel
         )
     }) { measurables, _ ->
+        val verticalGapPx = RichTooltipSizingConstants.VerticalContentLayoutGap.toPx().toInt()
         var placeableIndex = 0
 
         var iconPlaceable: Placeable? = null
@@ -340,6 +380,20 @@ private fun TopLevelTooltipContent(
                 height = tooltipLayoutInfo.titleSize.height.toInt()
             )
         )
+        val descriptionPlaceables = ArrayList<Placeable>()
+        if ((richTooltip.descriptionSections != null) && richTooltip.descriptionSections.isNotEmpty()) {
+            for (index in 0 until richTooltip.descriptionSections.size) {
+                descriptionPlaceables.add(
+                    measurables[placeableIndex++].measure(
+                        Constraints.fixed(
+                            width = tooltipLayoutInfo.descriptionSizes[index].width.toInt(),
+                            height = tooltipLayoutInfo.descriptionSizes[index].height.toInt()
+                        )
+                    )
+                )
+            }
+        }
+
         layout(
             width = tooltipLayoutInfo.fullSize.width.toInt(),
             height = tooltipLayoutInfo.fullSize.height.toInt()
@@ -349,7 +403,9 @@ private fun TopLevelTooltipContent(
             val left = offset + RichTooltipSizingConstants.ContentPadding.calculateLeftPadding(
                 layoutDirection
             ).toPx().toInt()
-            val top = offset + RichTooltipSizingConstants.ContentPadding.calculateTopPadding().toPx().toInt()
+            val top =
+                offset + RichTooltipSizingConstants.ContentPadding.calculateTopPadding().toPx()
+                    .toInt()
 
             var x = left
             if (iconPlaceable != null) {
@@ -357,7 +413,17 @@ private fun TopLevelTooltipContent(
                 x += (iconPlaceable.width +
                         RichTooltipSizingConstants.HorizontalContentLayoutGap.toPx().toInt())
             }
-            titlePlaceable.placeRelative(x, top)
+            titlePlaceable.place(x, top)
+
+            var y = kotlin.math.max(top + (iconPlaceable?.height ?: 0), top + titlePlaceable.height)
+            if (descriptionPlaceables.isNotEmpty()) {
+                y += verticalGapPx
+                for (descriptionPlaceable in descriptionPlaceables) {
+                    descriptionPlaceable.place(x, y)
+                    y += descriptionPlaceable.height
+                    y += verticalGapPx
+                }
+            }
         }
     }
 }
@@ -392,4 +458,15 @@ private fun TooltipGeneralContent(
             contentPadding = PaddingValues(0.dp)
         )
     ).project()
+
+    if (richTooltip.descriptionSections != null) {
+        for (descriptionSection in richTooltip.descriptionSections) {
+            LabelProjection(
+                contentModel = LabelContentModel(text = descriptionSection),
+                presentationModel = LabelPresentationModel(
+                    contentPadding = PaddingValues(0.dp)
+                )
+            ).project()
+        }
+    }
 }
