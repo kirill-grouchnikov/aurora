@@ -18,12 +18,20 @@ package org.pushingpixels.aurora.common
 import androidx.compose.ui.awt.ComposeWindow
 
 object AuroraPopupManager {
-    private data class PopupInfo(val originator: ComposeWindow, val popupWindow: ComposeWindow)
+    enum class PopupKind {
+        POPUP, RICH_TOOLTIP
+    }
+
+    private data class PopupInfo(
+        val originator: ComposeWindow,
+        val popupWindow: ComposeWindow,
+        val popupKind: PopupKind
+    )
 
     private val shownPath = arrayListOf<PopupInfo>()
 
-    fun addPopup(originator: ComposeWindow, popupWindow: ComposeWindow) {
-        shownPath.add(PopupInfo(originator, popupWindow))
+    fun addPopup(originator: ComposeWindow, popupWindow: ComposeWindow, popupKind: PopupKind) {
+        shownPath.add(PopupInfo(originator, popupWindow, popupKind))
 
         popupWindow.invalidate()
         popupWindow.validate()
@@ -43,14 +51,21 @@ object AuroraPopupManager {
         }
     }
 
-    fun hidePopups(originator: ComposeWindow?) {
+    fun hidePopups(originator: ComposeWindow?, popupKind: PopupKind? = null) {
         // Start going over the popups in reverse order (from the most recently displayed
         // towards the very first one) and dismissing them one by one until we hit the
         // originator
         while (shownPath.size > 0) {
-            if (shownPath[shownPath.size - 1].popupWindow == originator) {
+            val currLastShown = shownPath[shownPath.size - 1]
+            if (currLastShown.popupWindow == originator) {
                 // The current popup window we're looking at is the requested originator.
-                // Stop unwinding and return
+                // Stop unwinding and return.
+                return
+            }
+
+            if ((popupKind != null) && (currLastShown.popupKind != popupKind)) {
+                // The current popup window we're looking at does not match the requested
+                // kind to be dismissed. Stop unwinding and return.
                 return
             }
 

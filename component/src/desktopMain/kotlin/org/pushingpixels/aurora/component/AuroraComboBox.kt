@@ -266,7 +266,10 @@ internal fun <E> AuroraComboBox(
 
     fun hide() {
         job?.cancel()
-        AuroraPopupManager.hidePopups(window)
+        AuroraPopupManager.hidePopups(
+            originator = window,
+            popupKind = AuroraPopupManager.PopupKind.RICH_TOOLTIP
+        )
     }
 
     Box(

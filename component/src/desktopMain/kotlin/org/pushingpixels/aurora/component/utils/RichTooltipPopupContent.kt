@@ -410,7 +410,8 @@ internal fun displayRichTooltipContent(
     // And display our new popup content
     AuroraPopupManager.addPopup(
         originator = currentWindow,
-        popupWindow = popupContentWindow
+        popupWindow = popupContentWindow,
+        popupKind = AuroraPopupManager.PopupKind.RICH_TOOLTIP
     )
 }
 
