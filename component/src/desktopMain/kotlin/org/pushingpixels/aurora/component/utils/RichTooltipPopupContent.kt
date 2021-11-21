@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.component.utils
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalContext
