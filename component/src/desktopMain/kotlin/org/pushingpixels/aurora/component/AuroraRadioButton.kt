@@ -168,6 +168,10 @@ internal fun AuroraRadioButton(
     Row(
         modifier = modifier
             .padding(presentationModel.contentPadding)
+            .auroraRichTooltip(
+                richTooltip = contentModel.richTooltip,
+                presentationModel = presentationModel.richTooltipPresentationModel
+            )
             .toggleable(
                 value = contentModel.selected,
                 onValueChange = {

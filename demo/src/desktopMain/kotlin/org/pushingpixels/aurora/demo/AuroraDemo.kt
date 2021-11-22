@@ -448,7 +448,6 @@ fun AuroraWindowScope.DemoArea(
             modifier = Modifier.fillMaxWidth().padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-
             DemoHeader(resourceBundle.value.getString("Group.buttons"), button(), contentEnabled)
             Row(modifier = Modifier.fillMaxWidth()) {
                 // A toggle command button backed by a mutable boolean
@@ -655,6 +654,18 @@ fun AuroraWindowScope.DemoArea(
                 var checkboxSelected by remember { mutableStateOf(true) }
                 CheckBoxProjection(contentModel = SelectorContentModel(
                     text = resourceBundle.value.getString("Control.selector.checkbox"),
+                    richTooltip = RichTooltip(
+                        title = resourceBundle.value.getString("Tooltip.genericTitle"),
+                        mainIcon = user_home(),
+                        descriptionSections = listOf(
+                            resourceBundle.value.getString("Tooltip.textParagraph1"),
+                            resourceBundle.value.getString("Tooltip.textParagraph2")
+                        ),
+                        footerIcon = help_browser(),
+                        footerSections = listOf(
+                            resourceBundle.value.getString("Tooltip.textFooterParagraph1")
+                        )
+                    ),
                     enabled = contentEnabled.value,
                     selected = checkboxSelected,
                     onTriggerSelectedChange = {
@@ -670,6 +681,18 @@ fun AuroraWindowScope.DemoArea(
                 RadioButtonProjection(
                     contentModel = SelectorContentModel(
                         text = resourceBundle.value.getString("Control.selector.radio"),
+                        richTooltip = RichTooltip(
+                            title = resourceBundle.value.getString("Tooltip.genericTitle"),
+                            mainIcon = user_home(),
+                            descriptionSections = listOf(
+                                resourceBundle.value.getString("Tooltip.textParagraph1"),
+                                resourceBundle.value.getString("Tooltip.textParagraph2")
+                            ),
+                            footerIcon = help_browser(),
+                            footerSections = listOf(
+                                resourceBundle.value.getString("Tooltip.textFooterParagraph1")
+                            )
+                        ),
                         enabled = contentEnabled.value,
                         selected = radioButtonSelected,
                         onTriggerSelectedChange = {

@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 
 data class SelectorContentModel(
     val text: String,
+    val richTooltip: RichTooltip? = null,
     val enabled: Boolean = true,
     val selected: Boolean = false,
     val onTriggerSelectedChange: (Boolean) -> Unit
@@ -36,5 +37,6 @@ data class SelectorPresentationModel(
     val contentPadding: PaddingValues = SelectorSizingConstants.DefaultSelectorContentPadding,
     val markSize: Dp = SelectorSizingConstants.SelectorMarkSize,
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Leading,
-    val horizontalGapScaleFactor: Float = 1.0f
+    val horizontalGapScaleFactor: Float = 1.0f,
+    val richTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel()
 ): PresentationModel
