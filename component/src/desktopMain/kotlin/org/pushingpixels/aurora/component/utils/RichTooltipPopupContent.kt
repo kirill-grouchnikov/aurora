@@ -393,11 +393,8 @@ internal fun displayRichTooltipContent(
 
     popupContentWindow.compositionLocalContext = compositionLocalContext
     popupContentWindow.setContent {
-        CompositionLocalProvider(
-            LocalLayoutDirection provides layoutDirection
-        ) {
-            TopLevelTooltipContent(
-                popupContentWindow = popupContentWindow,
+        CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+            TopLevelRichTooltipContent(
                 richTooltip = richTooltip,
                 richTooltipPresentationModel = presentationModel,
                 tooltipLayoutInfo = tooltipLayoutInfo
@@ -451,8 +448,7 @@ private class RichTooltipBackground(
 }
 
 @Composable
-private fun TopLevelTooltipContent(
-    popupContentWindow: ComposeWindow,
+private fun TopLevelRichTooltipContent(
     richTooltip: RichTooltip,
     richTooltipPresentationModel: RichTooltipPresentationModel,
     tooltipLayoutInfo: RichTooltipLayoutInfo
@@ -462,8 +458,7 @@ private fun TopLevelTooltipContent(
 
     Layout(modifier = Modifier.richTooltipBackground(),
         content = {
-            TooltipGeneralContent(
-                popupContentWindow = popupContentWindow,
+            RichTooltipContent(
                 richTooltip = richTooltip,
                 richTooltipPresentationModel = richTooltipPresentationModel
             )
@@ -599,8 +594,7 @@ private fun TopLevelTooltipContent(
 }
 
 @Composable
-private fun TooltipGeneralContent(
-    popupContentWindow: ComposeWindow,
+private fun RichTooltipContent(
     richTooltip: RichTooltip,
     richTooltipPresentationModel: RichTooltipPresentationModel
 ) {

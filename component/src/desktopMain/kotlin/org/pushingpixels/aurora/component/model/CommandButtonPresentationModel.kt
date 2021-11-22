@@ -42,6 +42,8 @@ data class CommandButtonPresentationModel(
     val toDismissPopupsOnActivation: Boolean = true,
     val popupMenuPresentationModel: CommandPopupMenuPresentationModel = CommandPopupMenuPresentationModel(),
     val textClick: TextClick = TextClick.Action,
+    val actionRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),
+    val popupRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),
     val contentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
     val horizontalGapScaleFactor: Float = 1.0f,
     val verticalGapScaleFactor: Float = 1.0f,

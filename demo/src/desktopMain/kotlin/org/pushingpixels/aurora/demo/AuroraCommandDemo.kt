@@ -410,7 +410,19 @@ fun AuroraApplicationScope.DemoCommandContent(
                 override fun onCommandPreviewCanceled(command: Command) {
                     println("Action preview canceled!")
                 }
-            }
+            },
+            actionRichTooltip = RichTooltip(
+                title = resourceBundle.value.getString("Tooltip.textActionTitle"),
+                mainIcon = user_home(),
+                descriptionSections = listOf(
+                    resourceBundle.value.getString("Tooltip.textParagraph1"),
+                    resourceBundle.value.getString("Tooltip.textParagraph2")
+                ),
+                footerIcon = help_browser(),
+                footerSections = listOf(
+                    resourceBundle.value.getString("Tooltip.textFooterParagraph1")
+                )
+            )
         )
 
     val commandActionOnlyNoIcon =
@@ -473,6 +485,18 @@ fun AuroraApplicationScope.DemoCommandContent(
                             isActionEnabled = actionEnabled
                         )
                     )
+                )
+            ),
+            secondaryRichTooltip = RichTooltip(
+                title = resourceBundle.value.getString("Tooltip.textPopupTitle"),
+                mainIcon = user_home(),
+                descriptionSections = listOf(
+                    resourceBundle.value.getString("Tooltip.textParagraph1"),
+                    resourceBundle.value.getString("Tooltip.textParagraph2")
+                ),
+                footerIcon = help_browser(),
+                footerSections = listOf(
+                    resourceBundle.value.getString("Tooltip.textFooterParagraph1")
                 )
             )
         )
@@ -585,6 +609,18 @@ fun AuroraApplicationScope.DemoCommandContent(
                     println("Both preview canceled!")
                 }
             },
+            actionRichTooltip = RichTooltip(
+                title = resourceBundle.value.getString("Tooltip.textActionTitle"),
+                mainIcon = user_home(),
+                descriptionSections = listOf(
+                    resourceBundle.value.getString("Tooltip.textParagraph1"),
+                    resourceBundle.value.getString("Tooltip.textParagraph2")
+                ),
+                footerIcon = help_browser(),
+                footerSections = listOf(
+                    resourceBundle.value.getString("Tooltip.textFooterParagraph1")
+                )
+            ),
             isActionEnabled = actionEnabled,
             isSecondaryEnabled = popupEnabled,
             secondaryContentModel = CommandMenuContentModel(
@@ -597,6 +633,18 @@ fun AuroraApplicationScope.DemoCommandContent(
                         title = groupMf.format(arrayOf<Any>(2)),
                         commands = listOf(secondaryCommand4, secondaryCommand5)
                     )
+                )
+            ),
+            secondaryRichTooltip = RichTooltip(
+                title = resourceBundle.value.getString("Tooltip.textPopupTitle"),
+                mainIcon = user_home(),
+                descriptionSections = listOf(
+                    resourceBundle.value.getString("Tooltip.textParagraph1"),
+                    resourceBundle.value.getString("Tooltip.textParagraph2")
+                ),
+                footerIcon = help_browser(),
+                footerSections = listOf(
+                    resourceBundle.value.getString("Tooltip.textFooterParagraph1")
                 )
             )
         )

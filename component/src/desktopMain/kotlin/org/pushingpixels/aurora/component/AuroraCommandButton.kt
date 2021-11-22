@@ -416,31 +416,10 @@ internal fun AuroraCommandButton(
             var actionAreaOffset = remember { Offset.Zero }
             var popupAreaOffset = remember { Offset.Zero }
             Box(
-                modifier = modifierAction.
-//                pointerMoveFilter(onEnter = {
-//                    if (isActionEnabled) {
-//                        val wasRollover = actionRollover
-//                        //actionRollover = true
-//                        if (!wasRollover) {
-//                            command.actionPreview?.onCommandPreviewActivated(command)
-//                            extraActionPreview?.onCommandPreviewActivated(command)
-//                        }
-//                    }
-//                    true
-//                }, onExit = {
-//                    if (isActionEnabled) {
-//                        val wasRollover = actionRollover
-//                        //actionRollover = false
-//                        if (wasRollover) {
-//                            command.actionPreview?.onCommandPreviewCanceled(command)
-//                            extraActionPreview?.onCommandPreviewCanceled(command)
-//                        }
-//                    }
-//                    true
-//                }, onMove = {
-//                    false
-//                }).
-                onGloballyPositioned {
+                modifier = modifierAction.auroraRichTooltip(
+                    richTooltip = command.actionRichTooltip,
+                    presentationModel = presentationModel.actionRichTooltipPresentationModel
+                ).onGloballyPositioned {
                     if (it.parentCoordinates != null) {
                         val selfToRoot = it.localToRoot(Offset.Zero)
                         val parentToRoot = it.parentCoordinates!!.localToRoot(Offset.Zero)
@@ -661,7 +640,10 @@ internal fun AuroraCommandButton(
                     true
                 }, onMove = {
                     false
-                }).onGloballyPositioned {
+                }).auroraRichTooltip(
+                    richTooltip = command.secondaryRichTooltip,
+                    presentationModel = presentationModel.popupRichTooltipPresentationModel
+                ).onGloballyPositioned {
                     if (it.parentCoordinates != null) {
                         val selfToRoot = it.localToRoot(Offset.Zero)
                         val parentToRoot = it.parentCoordinates!!.localToRoot(Offset.Zero)

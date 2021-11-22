@@ -48,9 +48,11 @@ data class Command(
     val isActionEnabled: Boolean = true,
     val isActionToggle: Boolean = false,
     val isActionToggleSelected: Boolean = false,
+    val actionRichTooltip: RichTooltip? = null,
     val onTriggerActionToggleSelectedChange: ((Boolean) -> Unit)? = null,
     val secondaryContentModel: CommandMenuContentModel? = null,
-    val isSecondaryEnabled: Boolean = true
+    val isSecondaryEnabled: Boolean = true,
+    val secondaryRichTooltip: RichTooltip? = null
 ) : ContentModel
 
 data class CommandGroup(

@@ -148,7 +148,7 @@ fun Modifier.auroraRichTooltip(
                 }
             }
         }
-        .pointerInput(Unit) {
+        .pointerInput(layoutDirection) {
             detectDown {
                 hide()
             }
