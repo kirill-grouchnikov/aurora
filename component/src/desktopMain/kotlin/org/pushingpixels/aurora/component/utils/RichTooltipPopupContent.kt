@@ -18,6 +18,7 @@ package org.pushingpixels.aurora.component.utils
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalContext
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.draw.DrawModifier
@@ -392,12 +393,16 @@ internal fun displayRichTooltipContent(
 
     popupContentWindow.compositionLocalContext = compositionLocalContext
     popupContentWindow.setContent {
-        TopLevelTooltipContent(
-            popupContentWindow = popupContentWindow,
-            richTooltip = richTooltip,
-            richTooltipPresentationModel = presentationModel,
-            tooltipLayoutInfo = tooltipLayoutInfo
-        )
+        CompositionLocalProvider(
+            LocalLayoutDirection provides layoutDirection
+        ) {
+            TopLevelTooltipContent(
+                popupContentWindow = popupContentWindow,
+                richTooltip = richTooltip,
+                richTooltipPresentationModel = presentationModel,
+                tooltipLayoutInfo = tooltipLayoutInfo
+            )
+        }
     }
 
     popupContentWindow.invalidate()
@@ -533,7 +538,6 @@ private fun TopLevelTooltipContent(
             height = tooltipLayoutInfo.fullSize.height.toInt()
         ) {
             // Offset everything by [offset,offset] for border insets
-            // TODO - RTL support
             val left = offset + RichTooltipSizingConstants.ContentPadding.calculateLeftPadding(
                 layoutDirection
             ).toPx().toInt()
@@ -541,7 +545,7 @@ private fun TopLevelTooltipContent(
                 offset + RichTooltipSizingConstants.ContentPadding.calculateTopPadding().toPx()
                     .toInt()
 
-            titlePlaceable.place(left, top)
+            titlePlaceable.placeRelative(left, top)
 
             var x = left
             var y = top + titlePlaceable.height
@@ -552,14 +556,14 @@ private fun TopLevelTooltipContent(
 
             var iconBottom = y
             if (iconPlaceable != null) {
-                iconPlaceable.place(x, y)
+                iconPlaceable.placeRelative(x, y)
                 x += (iconPlaceable.width + horizontalGapPx)
                 iconBottom = y + iconPlaceable.height
             }
 
             if (descriptionPlaceables.isNotEmpty()) {
                 for (descriptionPlaceable in descriptionPlaceables) {
-                    descriptionPlaceable.place(x, y)
+                    descriptionPlaceable.placeRelative(x, y)
                     y += descriptionPlaceable.height
                     y += verticalGapPx
                 }
@@ -571,21 +575,21 @@ private fun TopLevelTooltipContent(
 
             if (richTooltip.hasFooterContent) {
                 y += verticalGapPx
-                footerSeparatorPlaceable!!.place(left, y)
+                footerSeparatorPlaceable!!.placeRelative(left, y)
                 y += footerSeparatorPlaceable.height
                 y += verticalGapPx
             }
 
             x = left
             if (footerIconPlaceable != null) {
-                footerIconPlaceable.place(left, y)
+                footerIconPlaceable.placeRelative(left, y)
                 x += (footerIconPlaceable.width +
                         RichTooltipSizingConstants.HorizontalContentLayoutGap.toPx().toInt())
             }
 
             if (footerPlaceables.isNotEmpty()) {
                 for (footerPlaceable in footerPlaceables) {
-                    footerPlaceable.place(x, y)
+                    footerPlaceable.placeRelative(x, y)
                     y += footerPlaceable.height
                     y += verticalGapPx
                 }

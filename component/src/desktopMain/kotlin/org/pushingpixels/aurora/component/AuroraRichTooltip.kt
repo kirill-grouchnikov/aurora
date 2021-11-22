@@ -133,7 +133,7 @@ fun Modifier.auroraRichTooltip(
     }
 
     return this.then(Modifier.locator(topLeftOffset, size)
-        .pointerInput(Unit) {
+        .pointerInput(layoutDirection) {
             awaitPointerEventScope {
                 while (true) {
                     val event = awaitPointerEvent()

@@ -592,16 +592,15 @@ fun AuroraWindowScope.DemoArea(
                         items = simpleComboItems,
                         selectedItem = simpleComboSelectedItem.value,
                         richTooltip = RichTooltip(
-                            title = "My title that may be long and even go to two lines maybe!",
+                            title = resourceBundle.value.getString("Tooltip.genericTitle"),
                             mainIcon = user_home(),
                             descriptionSections = listOf(
-                                "First description section. Maybe introduce something in here.",
-                                "Second section which provides a bit more information, but not too much"
+                                resourceBundle.value.getString("Tooltip.textParagraph1"),
+                                resourceBundle.value.getString("Tooltip.textParagraph2")
                             ),
                             footerIcon = help_browser(),
                             footerSections = listOf(
-                                "First footer section. A small note maybe.",
-                                "Second section. A final bit of explanation in here."
+                                resourceBundle.value.getString("Tooltip.textFooterParagraph1")
                             )
                         ),
                         onTriggerItemSelectedChange = {
