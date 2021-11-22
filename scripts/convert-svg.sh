@@ -16,7 +16,7 @@
 export JAVA_HOME=`/usr/libexec/java_home -v 11`
 alias JAVA="java"
 
-AURORA_VERSION=1.0.0-beta1
+AURORA_VERSION=1.0.0-beta2
 CLASSPATH=../drop/$AURORA_VERSION/aurora-svg-transcoder-desktop-$AURORA_VERSION.jar
 
 java -cp $CLASSPATH org.pushingpixels.aurora.tools.svgtranscoder.SvgBatchConverterMain sourceFolder=../demo/src/desktopMain/kotlin/org/pushingpixels/aurora/demo/svg outputPackageName=org.pushingpixels.aurora.demo.svg templateFile=/org/pushingpixels/aurora/tools/svgtranscoder/SvgTranscoderTemplateResizable.templ
