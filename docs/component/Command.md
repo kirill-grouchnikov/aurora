@@ -24,7 +24,7 @@ Commands are created by populating all required, as well as zero or more optiona
 
 ### Base attributes
 
-Let's take a look at the following screenshot that shows how four commands might be rendered on the screen (or projected, in Radiance terminology):
+Let's take a look at the following screenshot that shows how four commands might be rendered on the screen (or projected, in Aurora terminology):
 
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-basics.png" width="650" border=0/>
 
@@ -161,7 +161,7 @@ Or instead, setting `CommandButtonPresentationModel.textClick = TextClick.Popup`
 
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-title-popup.png" width="664" border=0/>
 
-An important note is in order here. Even though all the examples so far have shown secondary content displayed as a popup menu, that is not necessarily the case. Radiance's model of separating content from presentation (and combining the two in a projection) means that the **same exact command** projected as a split button can be projected into something that looks like this in the upcoming addition of the ribbon / command bar container:
+An important note is in order here. Even though all the examples so far have shown secondary content displayed as a popup menu, that is not necessarily the case. Aurora's model of separating content from presentation (and combining the two in a projection) means that the **same exact command** projected as a split button can be projected into something that looks like this in the upcoming addition of the ribbon / command bar container:
 
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/radiance/sunshine/docs/images/component/walkthrough/ribbon-application-menu.png" width="754" border=0/>
 
