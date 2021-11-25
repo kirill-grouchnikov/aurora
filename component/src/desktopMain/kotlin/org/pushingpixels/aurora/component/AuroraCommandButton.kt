@@ -396,6 +396,7 @@ internal fun AuroraCommandButton(
                     indication = null,
                     onValueChange = {
                         command.onTriggerActionToggleSelectedChange?.invoke(it)
+                        extraAction?.invoke()
                     })
             } else {
                 modifierAction = Modifier.clickable(
