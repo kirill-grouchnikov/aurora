@@ -1,6 +1,6 @@
 ## Components - content models, presentation models, projections
 
-Let's take a deeper look at what it takes to write a content model, a presentation model and wire them up to a projection, and how to properly sync up model changes with all projected components.
+Let's take a deeper look all the pieces required to create an Aurora component.
 
 ### Content model
 
