@@ -476,7 +476,7 @@ fun AuroraWindowScope.DemoArea(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                // A command button with icon using THEMED_FOLLOW_TEXT filter strategy
+                // A command button with icon using ThemedFollowText filter strategy
                 CommandButtonProjection(
                     contentModel = Command(
                         text = resourceBundle.value.getString("Control.button.iconText"),
