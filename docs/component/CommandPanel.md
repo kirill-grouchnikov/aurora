@@ -1,6 +1,6 @@
 ## Components - command panels
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/radiance/sunshine/docs/images/component/walkthrough/command-button-panels.png" width="1046" border=0/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-button-panels.png" width="1046" border=0/>
 
 Command panel is a two-dimensional grid of logically and visually grouped commands (and their projections). In the screenshot we can see two command panels.
 
