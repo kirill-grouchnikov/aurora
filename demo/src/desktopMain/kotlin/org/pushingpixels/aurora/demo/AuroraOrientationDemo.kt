@@ -262,7 +262,7 @@ fun CommandOrientationEditStrip(
                         contentPadding = PaddingValues(0.dp),
                         showGroupLabels = true,
                         commandPresentationState = CommandButtonPresentationState.BigFitToIcon,
-                        commandIconSize = 24.dp,
+                        commandIconDimension = 24.dp,
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,

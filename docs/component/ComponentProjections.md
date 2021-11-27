@@ -23,4 +23,4 @@ Here is the list of all component projections provided by Aurora
 
 ### Next
 
-Continue to [projection customizations](ProjectionCustomization.md).
+Continue to [box with highlights](BoxWithHighlights.md).

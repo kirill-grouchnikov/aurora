@@ -49,7 +49,7 @@ data class CommandPanelPresentationModel(
     val maxRows: Int = -1,     // only relevant when layoutFillMode is ColumnFill
     val showGroupLabels: Boolean = true,
     val commandPresentationState: CommandButtonPresentationState,
-    val commandIconSize: Dp = 0.dp,
+    val commandIconDimension: Dp = 0.dp,
     val commandTextStyle: TextStyle? = null,
     val commandHorizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
     val commandHorizontalGapScaleFactor: Float = 1.0f,

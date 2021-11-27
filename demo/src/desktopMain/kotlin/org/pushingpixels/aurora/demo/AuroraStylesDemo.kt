@@ -26,9 +26,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.*
 import org.pushingpixels.aurora.component.model.*
@@ -299,7 +297,7 @@ fun CommandDemoEditStrip(
                         contentPadding = PaddingValues(0.dp),
                         showGroupLabels = true,
                         commandPresentationState = CommandButtonPresentationState.BigFitToIcon,
-                        commandIconSize = 36.dp,
+                        commandIconDimension = 36.dp,
                         commandTextStyle = smallerTextStyle,
                         commandHorizontalGapScaleFactor = 0.25f,
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
