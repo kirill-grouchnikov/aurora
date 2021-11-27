@@ -74,4 +74,4 @@ Let's take a closer look at all the parts:
 
 ### Next
 
-Continue to [projection customizations](ProjectionCustomization.md).
+Continue to [command strips](CommandStrip.md).
