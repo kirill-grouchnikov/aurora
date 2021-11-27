@@ -139,7 +139,7 @@ internal fun AuroraCommandButtonPanel(
         CommandButtonPresentationModel(
             contentPadding = presentationModel.contentPadding,
             presentationState = presentationModel.commandPresentationState,
-            iconDimension = presentationModel.commandIconSize,
+            iconDimension = presentationModel.commandIconDimension,
             isMenu = presentationModel.isMenu,
             backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
             textStyle = presentationModel.commandTextStyle,
@@ -573,7 +573,7 @@ internal fun getPreferredCommandButtonPanelSize(
         CommandButtonPresentationModel(
             contentPadding = presentationModel.contentPadding,
             presentationState = presentationModel.commandPresentationState,
-            iconDimension = presentationModel.commandIconSize,
+            iconDimension = presentationModel.commandIconDimension,
             isMenu = presentationModel.isMenu,
             backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
             textStyle = presentationModel.commandTextStyle,
