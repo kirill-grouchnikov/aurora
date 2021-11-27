@@ -347,7 +347,8 @@ fun DemoFooter(
                     )
                 ),
                 presentationModel = CommandPopupMenuPresentationModel(
-                    popupPlacementStrategy = PopupPlacementStrategy.Upward
+                    popupPlacementStrategy = PopupPlacementStrategy.Upward,
+                    toDismissOnCommandActivation = false
                 )
             )
         )
