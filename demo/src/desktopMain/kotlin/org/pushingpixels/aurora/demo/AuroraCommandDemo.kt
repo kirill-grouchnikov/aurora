@@ -739,41 +739,41 @@ fun AuroraApplicationScope.DemoCommandContent(
                 )
             }
 
-            DemoCommandRow(
-                resourceBundle.value.getString("CommandButton.state.small"),
-                commandActionOnly,
-                commandSecondaryOnly,
-                commandActionAndSecondary,
-                CommandButtonPresentationState.Small,
-                overlays
-            )
-
-            DemoCommandRow(
-                resourceBundle.value.getString("CommandButton.state.medium"),
-                commandActionOnly,
-                commandSecondaryOnly,
-                commandActionAndSecondary,
-                CommandButtonPresentationState.Medium,
-                overlays
-            )
-
-            DemoCommandRow(
-                resourceBundle.value.getString("CommandButton.state.tile"),
-                commandActionOnly,
-                commandSecondaryOnly,
-                commandActionAndSecondary,
-                CommandButtonPresentationState.Tile,
-                overlays
-            )
-
-            DemoCommandRow(
-                resourceBundle.value.getString("CommandButton.state.big"),
-                commandActionOnly,
-                commandSecondaryOnly,
-                commandActionAndSecondary,
-                CommandButtonPresentationState.Big,
-                overlays
-            )
+//            DemoCommandRow(
+//                resourceBundle.value.getString("CommandButton.state.small"),
+//                commandActionOnly,
+//                commandSecondaryOnly,
+//                commandActionAndSecondary,
+//                CommandButtonPresentationState.Small,
+//                overlays
+//            )
+//
+//            DemoCommandRow(
+//                resourceBundle.value.getString("CommandButton.state.medium"),
+//                commandActionOnly,
+//                commandSecondaryOnly,
+//                commandActionAndSecondary,
+//                CommandButtonPresentationState.Medium,
+//                overlays
+//            )
+//
+//            DemoCommandRow(
+//                resourceBundle.value.getString("CommandButton.state.tile"),
+//                commandActionOnly,
+//                commandSecondaryOnly,
+//                commandActionAndSecondary,
+//                CommandButtonPresentationState.Tile,
+//                overlays
+//            )
+//
+//            DemoCommandRow(
+//                resourceBundle.value.getString("CommandButton.state.big"),
+//                commandActionOnly,
+//                commandSecondaryOnly,
+//                commandActionAndSecondary,
+//                CommandButtonPresentationState.Big,
+//                overlays
+//            )
         }
     }
 }

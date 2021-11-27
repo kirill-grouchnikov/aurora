@@ -33,6 +33,7 @@ import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
@@ -128,16 +129,17 @@ internal fun AuroraCommandButtonPanel(
     val resourceLoader = LocalFontLoader.current
     val window = LocalWindow.current
 
+    val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
     val layoutManager = presentationModel.commandPresentationState.createLayoutManager(
         layoutDirection = layoutDirection,
         density = density,
-        textStyle = textStyle,
+        textStyle = resolvedTextStyle,
         resourceLoader = resourceLoader
     )
 
     val baseCommandButtonPresentationModel =
         CommandButtonPresentationModel(
-            contentPadding = presentationModel.contentPadding,
+            contentPadding = presentationModel.commandContentPadding,
             presentationState = presentationModel.commandPresentationState,
             iconDimension = presentationModel.commandIconDimension,
             isMenu = presentationModel.isMenu,
@@ -571,7 +573,7 @@ internal fun getPreferredCommandButtonPanelSize(
 
     val baseCommandButtonPresentationModel =
         CommandButtonPresentationModel(
-            contentPadding = presentationModel.contentPadding,
+            contentPadding = presentationModel.commandContentPadding,
             presentationState = presentationModel.commandPresentationState,
             iconDimension = presentationModel.commandIconDimension,
             isMenu = presentationModel.isMenu,

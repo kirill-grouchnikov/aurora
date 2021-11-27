@@ -50,6 +50,7 @@ data class CommandPanelPresentationModel(
     val showGroupLabels: Boolean = true,
     val commandPresentationState: CommandButtonPresentationState,
     val commandIconDimension: Dp = 0.dp,
+    val commandContentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
     val commandTextStyle: TextStyle? = null,
     val commandHorizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
     val commandHorizontalGapScaleFactor: Float = 1.0f,

@@ -4,7 +4,7 @@
 
 Command menu is a multi-tiered collection of commands. Any command in any tier can have associated secondary content that is, in turn, its own command menu - essentially creating traditional cascading menus. At *any tier*, a command menu can have a vertically scrollable [command panel](CommandPanel.md) - seen in the following screenshot above as a 4-column grid of large buttons.
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-secondary-complex.png" width="265" border=0/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-secondary-complex.png" width="348" border=0/>
 
 ### Content model
 
@@ -30,7 +30,7 @@ The `menuPresentationState` attribute determines the visual presentation of the 
 
 Let's see the code behind this popup menu:
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-secondary-complex.png" width="265" border=0/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-secondary-complex.png" width="348" border=0/>
 
 First we create the same command panel content model as in the [previous example](CommandPanel.md#sample-code):
 
@@ -132,7 +132,7 @@ Note how, in addition to the content and the presentation models, we also have t
 
 What do we want to express in our particular case?
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-secondary-complex.png" width="265" border=0/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-secondary-complex.png" width="348" border=0/>
 
 We want to say that for one particular command in the content model of the whole command button strip, we want to use a specific `CommandPopupMenuPresentationModel` (the one with at most five columns and three rows of content, and specific layout of each command button in it). Here is how the full projection definition of this command button strip looks like:
 
