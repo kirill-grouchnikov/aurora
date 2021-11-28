@@ -149,7 +149,7 @@ The simplest case of secondary content is additional commands shown in a popup m
 
 Secondary content can have a more complex structure, with an embedded, separately scrollable panel of commands:
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-secondary-complex.png" width="265" border=0/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-secondary-complex.png" width="348" border=0/>
 
 All these three examples would be called "popup buttons" in similar component suites. The power of secondary content in Aurora commands can be seen in how easily it is to configure a projected button to be a "regular" action button - with just one action.
 
