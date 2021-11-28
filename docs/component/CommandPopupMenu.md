@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-secondary-simple.png" width="652" border=0/>
 
-Command menu is a multi-tiered collection of commands. Any command in any tier can have associated secondary content that is, in turn, its own command menu - essentially creating traditional cascading menus. At *any tier*, a command menu can have a vertically scrollable [command panel](CommandPanel.md) - seen in the following screenshot above as a 4-column grid of large buttons.
+Command menu is a multi-tiered collection of commands. Any command in any tier can have associated secondary content that is, in turn, its own command menu - essentially creating traditional cascading menus. At *any tier*, a command menu can have a vertically scrollable [command panel](CommandPanel.md) - seen in the following screenshot as a 5-column grid of large buttons.
 
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-secondary-complex.png" width="348" border=0/>
 
