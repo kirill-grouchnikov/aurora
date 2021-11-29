@@ -4,6 +4,7 @@ include(
     ":component",
     ":window",
     ":tools:svg-transcoder",
+    ":tools:svg-transcoder-gradle-plugin",
     ":tools:screenshot",
     ":demo"
 )
