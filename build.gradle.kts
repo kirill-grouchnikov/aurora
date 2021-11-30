@@ -49,9 +49,24 @@ tasks.register("copyJars") {
     mkdir("drop/${project.property("VERSION_NAME")}")
     subprojects {
         copy {
-            from(("${project.buildDir}/libs"))
+            from("${project.buildDir}/libs")
             include("${rootProject.name}-${project.name}-*-${project.property("VERSION_NAME")}.jar")
             into("${rootProject.projectDir}/drop/${project.property("VERSION_NAME")}")
+        }
+    }
+}
+
+tasks.register("getDependencies") {
+    subprojects {
+        val runtimeClasspath =
+            project.configurations.matching { it.name == "desktopRuntimeClasspath" }
+        runtimeClasspath.all {
+            for (dep in map { file: File -> file.absoluteFile }) {
+                project.copy {
+                    from(dep)
+                    into("${rootProject.projectDir}/build/libs")
+                }
+            }
         }
     }
 }
