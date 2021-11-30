@@ -8,31 +8,31 @@ The `DecorationAreaType` class contains the available core decoration area types
 
 The following screenshot is the main Aurora test application under the Gemini skin (click to see full size version):
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/painters/decoration/full.png" width="766" height="706"/></a>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/painters/decoration/full.png" width="766"/></a>
 
 The next screenshot shows the `title` decoration area, which in this example includes the title pane of the main window:
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/painters/decoration/areas-title.png" width="766" height="706"/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/painters/decoration/areas-title.png" width="766"/>
 
 The next screenshot shows the `header` decoration area, which in this example includes the menu bar of the main window:
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/painters/decoration/areas-header.png" width="766" height="706"/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/painters/decoration/areas-header.png" width="766"/>
 
 The next screenshot shows the `toolbar` decoration area, which in this example includes the tool bar of the main window:
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/painters/decoration/areas-toolbar.png" width="766" height="706"/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/painters/decoration/areas-toolbar.png" width="766"/>
 
 The next screenshot shows the `footer` decoration area, which in this example includes the status bar component:
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/painters/decoration/areas-footer.png" width="766" height="706"/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/painters/decoration/areas-footer.png" width="766"/>
 
 The next screenshot shows the `control pane` decoration area, which in this example includes the task pane container component:
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/painters/decoration/areas-control-pane.png" width="766" height="706"/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/painters/decoration/areas-control-pane.png" width="766"/>
 
 Let's go back to the original screenshot:
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/painters/decoration/full.png" width="766" height="706"/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/painters/decoration/full.png" width="766"/>
 
 It illustrates that the specific skin assigns different color schemes to different decoration areas. The controls in those areas get the background and foreground colors based on their assigned color scheme (without any custom application code), thus creating visual distinction between different application areas.
 
