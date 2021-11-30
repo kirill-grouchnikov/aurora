@@ -70,3 +70,20 @@ tasks.register("getDependencies") {
         }
     }
 }
+
+tasks.register("printRuntimeDependencies") {
+    println("Project runtime dependencies:")
+    allprojects {
+        println()
+        println("-------- ${project.name} --------")
+        project.configurations.matching { it.name == "desktopRuntimeClasspath" }
+            .matching { !it.allDependencies.isEmpty() }
+            .forEach {
+                it.allDependencies.forEach { dep ->
+                    if (dep.group != null) {
+                        println("${dep.group}:${dep.name}:${dep.version}")
+                    }
+                }
+            }
+    }
+}
