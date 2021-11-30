@@ -86,8 +86,7 @@ fun main() = auroraApplication {
         size = DpSize(250.dp, 400.dp)
     )
     val resourceBundle = derivedStateOf {
-        ResourceBundle
-            .getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
+        ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
 
     val skin = mutableStateOf(twilightSkin())

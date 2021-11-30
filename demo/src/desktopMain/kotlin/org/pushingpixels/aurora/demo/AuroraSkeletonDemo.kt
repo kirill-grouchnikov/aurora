@@ -28,6 +28,7 @@ import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandActionPreview
 import org.pushingpixels.aurora.component.model.CommandGroup
+import org.pushingpixels.aurora.component.model.CommandMenuContentModel
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.*
@@ -46,8 +47,7 @@ fun main() = auroraApplication {
     )
     val skin = mutableStateOf(marinerSkin())
     val resourceBundle = derivedStateOf {
-        ResourceBundle
-            .getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
+        ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
 
     AuroraWindow(
@@ -62,7 +62,22 @@ fun main() = auroraApplication {
             commands = listOf(
                 Command(
                     text = resourceBundle.value.getString("Menu.file"),
-                    action = { println("File activated!") }),
+                    secondaryContentModel = CommandMenuContentModel(
+                        CommandGroup(
+                            commands = listOf(
+                                Command(
+                                    text = resourceBundle.value.getString("Menu.file.new"),
+                                    action = { println("New file!") }),
+                                Command(
+                                    text = resourceBundle.value.getString("Menu.file.open"),
+                                    action = { println("Open file!") }),
+                                Command(
+                                    text = resourceBundle.value.getString("Menu.file.save"),
+                                    action = { println("Save file!") })
+                            )
+                        )
+                    )
+                ),
                 Command(
                     text = resourceBundle.value.getString("Menu.edit"),
                     action = { println("Edit activated!") }),

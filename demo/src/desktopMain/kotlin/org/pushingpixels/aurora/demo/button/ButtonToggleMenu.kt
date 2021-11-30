@@ -52,8 +52,7 @@ fun main() = auroraApplication {
     )
     val skin = mutableStateOf(marinerSkin())
     val resourceBundle = derivedStateOf {
-        ResourceBundle
-            .getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
+        ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
 
     AuroraWindow(

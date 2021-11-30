@@ -459,8 +459,7 @@ interface AuroraLocaleScope {
 class AuroraApplicationScope(
     private val original: ApplicationScope,
     private val currLocale: MutableState<Locale>
-) :
-    ApplicationScope, AuroraLocaleScope {
+) : ApplicationScope, AuroraLocaleScope {
     override var applicationLocale: Locale
         get() = currLocale.value
         set(value) {
