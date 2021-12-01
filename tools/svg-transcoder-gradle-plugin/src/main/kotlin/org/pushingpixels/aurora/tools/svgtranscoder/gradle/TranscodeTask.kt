@@ -62,7 +62,7 @@ open class TranscodeTask : TranscodeBaseTask() {
             "Processing " + inputDirectory!!.absolutePath + " to " + outputPackageName
         )
         val templateFileName =
-            "/org/pushingpixels/aurora/tools/svgtranscoder/SvgTranscoderTemplateResizable.templ"
+            "/org/pushingpixels/aurora/tools/svgtranscoder/AuroraSvgTranscoderTemplate.templ"
         transcodeAllFilesInFolder(
             inputDirectory!!, outputDirectory!!,
             outputClassNamePrefix, outputPackageName!!, templateFileName

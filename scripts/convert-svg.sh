@@ -25,4 +25,4 @@ CLASSPATH=../drop/$AURORA_VERSION/aurora-svg-transcoder-desktop-$AURORA_VERSION.
 java -cp $CLASSPATH org.pushingpixels.aurora.tools.svgtranscoder.SvgDeepBatchConverter \
     sourceRootFolder=../demo/src/desktopMain/kotlin/org/pushingpixels/aurora/demo/svg \
     outputRootPackageName=org.pushingpixels.aurora.demo.svg \
-    templateFile=/org/pushingpixels/aurora/tools/svgtranscoder/SvgTranscoderTemplateResizable.templ
+    templateFile=/org/pushingpixels/aurora/tools/svgtranscoder/AuroraSvgTranscoderTemplate.templ
