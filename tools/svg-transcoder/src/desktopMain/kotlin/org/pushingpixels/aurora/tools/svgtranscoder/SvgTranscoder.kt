@@ -54,6 +54,9 @@ class SvgTranscoder(private val uri: String, classname: String) : SvgBaseTransco
         } catch (ex: IOException) {
             Logger.getLogger(SvgTranscoder::class.java.name).log(Level.SEVERE, null, ex)
             null
+        } catch (ex: IllegalArgumentException) {
+            Logger.getLogger(SvgTranscoder::class.java.name).log(Level.SEVERE, null, ex)
+            null
         } finally {
             try {
                 loader.dispose()
