@@ -4,9 +4,9 @@ The goal of this project is to allow build-time transcoding of SVG content into 
 
 ### Using the plugin in your Gradle script
 
-Add the plugin to the `buildscript` part of your Gradle build file and apply the plugin:
+Add the plugin to the `buildscript` part of your `build.gradle.kts` file:
 
-```groovy
+```kotlin
 buildscript {
     repositories {
         mavenCentral()
@@ -15,8 +15,14 @@ buildscript {
         classpath 'org.pushing-pixels:aurora-tools-svg-transcoder-gradle-plugin:X.Y.Z'
     }
 }
+```
 
-apply plugin: 'org.pushing-pixels.aurora.tools.svgtranscoder.gradle'
+Apply the plugin:
+
+```kotlin
+plugins {
+    id("org.pushing-pixels.aurora.tools.svgtranscoder.gradle")
+}
 ```
 
 In case you want to use the latest snapshot version of the plugin, use the Sonatype repository:
@@ -36,33 +42,42 @@ buildscript {
 
 ### Transcoding SVG files from a single folder
 
-For a Kotlin project, generate Kotlin classes with the plugin (add multiple `transcode` lambdas if you have more than one SVG content folder):
+Generate Kotlin classes with the plugin (add multiple tasks if you have more than one SVG content folder):
 
-```groovy
-compileKotlin.doFirst {
-    transcode {
-        inputDirectory = file('src/main/resources')
-        outputDirectory = file('src/main/java/org/aurora/demo/svg')
-        outputPackageName = 'org.aurora.demo.svg'
-        transcode()
-    }
+```kotlin
+tasks.register<org.pushingpixels.aurora.tools.svgtranscoder.gradle.TranscodeTask>("transcodeSingle") {
+    inputDirectory = file("src/desktopMain/resources")
+    outputDirectory = file("src/desktopMain/kotlin/org/aurora/demo/svg")
+    outputPackageName = "org.aurora.demo.svg"
+    transcode()
+}
+
+tasks.withType<KotlinCompile> {
+    dependsOn("transcodeSingle")
 }
 ```
 
 ### Recursively transcoding SVG files under a folder
 
-For a Kotlin project, generate Kotlin classes with the plugin (add multiple `transcodeDeep` lambdas if you have more than one SVG content root folder):
+Generate Kotlin classes with the plugin (add multiple tasks if you have more than one SVG content root folder):
 
-```groovy
-compileKotlin.doFirst {
-    transcodeDeep {
-        inputRootDirectory = file('src/main/resources')
-        outputRootDirectory = file('src/main/java/org/aurora/demo/svg')
-        outputRootPackageName = 'org.aurora.demo.svg'
-        transcode()
-    }
+```kotlin
+tasks.register<org.pushingpixels.aurora.tools.svgtranscoder.gradle.TranscodeDeepTask>("transcodeFolder") {
+    inputRootDirectory = file("src/desktopMain/resources/scalable")
+    outputRootDirectory = file("src/desktopMain/kotlin/org/aurora/demo/scalable/svg")
+    outputRootPackageName = "org.aurora.demo.scalable.svg"
+    transcode()
+}
+
+tasks.withType<KotlinCompile> {
+    dependsOn("transcodeFolder")
 }
 ```
+
 ### Additional notes
 
-Note that using `compileKotlin` assumes that you have at least one "real" source file in your project so that these tasks are executed by Gradle. If you are planning to use the plugin in a module that will have only SVG content and the transcoded classes, you will need to use the `transcode` / `transcodeDeep` tasks in a different way (perhaps as a default task).
+Note that using `tasks.withType<KotlinCompile>` assumes that you have at least one "real" source file in your project so that these tasks are executed by Gradle. If you are planning to use the plugin in a module that will have only SVG content and the transcoded classes, you will need to use the transcode tasks in a different way (perhaps as a default task).
+
+### Full sample
+
+See [full sample project here](https://github.com/kirill-grouchnikov/aurora-svg-transcoder-plugin-test).
