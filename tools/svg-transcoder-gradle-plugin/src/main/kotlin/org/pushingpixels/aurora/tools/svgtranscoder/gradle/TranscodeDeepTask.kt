@@ -21,7 +21,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import java.io.File
 
-class TranscodeDeepTask : TranscodeBaseTask() {
+open class TranscodeDeepTask : TranscodeBaseTask() {
     @get:Input
     @set:Option(
         option = "outputRootPackageName",
