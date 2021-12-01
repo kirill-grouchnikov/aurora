@@ -16,7 +16,7 @@ Some Aurora libraries have third-party dependencies. To print the full dependenc
 
 ```
 -------- svg-transcoder --------
-org.jetbrains.compose.desktop:desktop:1.0.0-rc6
+org.jetbrains.compose.desktop:desktop:1.0.0
 org.apache.xmlgraphics:batik-all:1.14
 ```
 
