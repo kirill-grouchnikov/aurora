@@ -485,13 +485,13 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                     dashRep.append("null")
                 } else {
                     var sep = ""
-                    dashRep.append("floatArrayOf")
+                    dashRep.append("floatArrayOf(")
                     for (_dash in dash) {
                         dashRep.append(sep)
                         dashRep.append(_dash.toString() + "f")
                         sep = ","
                     }
-                    dashRep.append("}")
+                    dashRep.append(")")
                 }
                 val strokeCap = when (cap) {
                     BasicStroke.CAP_BUTT -> "StrokeCap.Butt"
@@ -512,7 +512,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                 } else {
                     printWriterManager!!.println(
                         "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f, " +
-                                "pathEffect=PathEffect.makeDash($dashRep, ${dash_phase}f))"
+                                "pathEffect=PathEffect.dashPathEffect($dashRep, ${dash_phase}f))"
                     )
                 }
             }
@@ -857,13 +857,13 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             dashRep.append("null")
         } else {
             var sep = ""
-            dashRep.append("floatArrayOf")
+            dashRep.append("floatArrayOf(")
             for (_dash in dash) {
                 dashRep.append(sep)
                 dashRep.append(_dash.toString() + "f")
                 sep = ","
             }
-            dashRep.append("}")
+            dashRep.append(")")
         }
         val strokeCap = when (cap) {
             BasicStroke.CAP_BUTT -> "StrokeCap.Butt"
@@ -884,7 +884,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         } else {
             printWriterManager!!.println(
                 "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f, " +
-                        "pathEffect=PathEffect.makeDash($dashRep, ${dash_phase}f))"
+                        "pathEffect=PathEffect.dashPathEffect($dashRep, ${dash_phase}f))"
             )
         }
         transcodeShape(shape, "")
@@ -1079,13 +1079,13 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                     dashRep.append("null")
                 } else {
                     var sep = ""
-                    dashRep.append("floatArrayOf")
+                    dashRep.append("floatArrayOf(")
                     for (_dash in dash) {
                         dashRep.append(sep)
                         dashRep.append(_dash.toString() + "f")
                         sep = ","
                     }
-                    dashRep.append("}")
+                    dashRep.append(")")
                 }
                 val strokeCap = when (cap) {
                     BasicStroke.CAP_BUTT -> "StrokeCap.Butt"
@@ -1106,7 +1106,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                 } else {
                     printWriterManager!!.println(
                         "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f, " +
-                                "pathEffect=PathEffect.makeDash($dashRep, ${dash_phase}f))"
+                                "pathEffect=PathEffect.dashPathEffect($dashRep, ${dash_phase}f))"
                     )
                 }
             }

@@ -25,7 +25,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.*
+import androidx.compose.ui.window.WindowPlacement
+import androidx.compose.ui.window.WindowPosition
+import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.demo.svg.material.account_box_24px
@@ -39,7 +41,7 @@ import org.pushingpixels.aurora.demo.svg.random.text
 import org.pushingpixels.aurora.demo.svg.tango.drive_harddisk
 import org.pushingpixels.aurora.demo.svg.tango.help_browser
 import org.pushingpixels.aurora.demo.svg.tango.media_floppy
-import org.pushingpixels.aurora.demo.svg.tango.system_search
+import org.pushingpixels.aurora.demo.svg.tango.x_office_document_template
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
 import org.pushingpixels.aurora.window.AuroraDecorationArea
@@ -89,7 +91,7 @@ fun IconDemoArea() {
                 LabelProjection(contentModel = LabelContentModel(text = "icon 3")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                Box(modifier = Modifier.size(40.dp).paint(painter = system_search()))
+                Box(modifier = Modifier.size(40.dp).paint(painter = x_office_document_template()))
                 LabelProjection(contentModel = LabelContentModel(text = "icon 4")).project()
             }
             Spacer(modifier = Modifier.width(24.dp))
@@ -138,7 +140,7 @@ fun IconDemoArea() {
             Column(modifier = Modifier.wrapContentHeight()) {
                 Box(
                     modifier = Modifier.size(40.dp).paint(
-                        painter = system_search(),
+                        painter = x_office_document_template(),
                         colorFilter = getColorSchemeFilter(
                             scheme = twilightSkin().colors.getEnabledColorScheme(
                                 DecorationAreaType.None
