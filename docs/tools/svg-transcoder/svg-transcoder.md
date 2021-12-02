@@ -62,7 +62,7 @@ The second part passes the mandatory parameters:
 
 The intended usage and the scope of the Aurora SVG transcoder is to convert reasonably sized icons for usages as supporting imagery without the additional runtime overhead of bundling a full-fledged SVG parsing and rendering library.
 
-SVG content can be arbitrarily complex. For example, [this Spanish flag](https://en.wikipedia.org/wiki/File:Flag_of_Spain.svg) is a 59KB SVG file. It is transcoded by Aurora to a 674KB Kotlin file, and then compiled to a 302KB class file. There are more complex flags, such as [Ecuador](https://en.wikipedia.org/wiki/File:Flag_of_Ecuador.svg) with a lot more details or [Afghanistan](https://en.wikipedia.org/wiki/File:Flag_of_Afghanistan.svg) that has a huge path with more than 8K elements in it (all the white outlines of mosque, wheat and inscription is a single path). Such files produce a Java / Kotlin class that can't be compiled due to too many symbols in it.
+SVG content can be arbitrarily complex. For example, [this Spanish flag](https://en.wikipedia.org/wiki/File:Flag_of_Spain.svg) is a 59KB SVG file. It is transcoded by Aurora to a 805KB Kotlin file, that results in `OutOfMemoryError` exception during compilation. There are more complex flags, such as [Ecuador](https://en.wikipedia.org/wiki/File:Flag_of_Ecuador.svg) with a lot more details or [Afghanistan](https://en.wikipedia.org/wiki/File:Flag_of_Afghanistan.svg) that has a huge path with more than 8K elements in it (all the white outlines of mosque, wheat and inscription is a single path). Such files produce a Java / Kotlin class that can't be compiled due to too many symbols in it.
 
 The Aurora SVG transcoder **does not** provide support for such huge SVG files. At some point, the binary size of the compiled transcoded classes is at the same order of magnitude as simply bundling the original SVGs and the full Batik distribution.
 
@@ -72,7 +72,7 @@ The following table summarizes the level of support for different SVG elements.
 
 | SVG element | Status |
 | --- | --- |
-| `<animate>` | Under consideration using Animation |
+| `<animate>` | Not supported |
 | `<circle>` | Supported |
 | `<clipPath>` | Supported |
 | `<ellipse>` | Supported |

@@ -34,30 +34,23 @@ Second, it transcodes the paint itself. Each paint type is queried for its basic
 
 There's special handling for `PatternPaint`. This paint type is transcoded into double-nested loop that performs tiling of the shape bounds along both axes, X and Y.
 
-### Printing instructions in Java / Kotlin
+### Printing instructions in Kotlin
 
 Here is a snippet of how transcoded SVG content looks like in Kotlin:
 
 ```kotlin
-paint = Color(136, 138, 133, 255)
-stroke = BasicStroke(1.0000002f,0,0,4.0f,null,0.0f)
-shape = RoundRectangle2D.Double(8.53232192993164, 6.529515743255615,
-      30.95155906677246, 35.976688385009766,
-      1.1330167055130005, 1.1330167055130005)
-g.paint = paint
-g.stroke = stroke
-g.draw(shape)
-g.transform = defaultTransform__0_0_2
-g.composite = AlphaComposite.getInstance(3, 1.0f * origAlpha)
-val defaultTransform__0_0_3 = g.transform
-g.transform(AffineTransform(1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f))
+alpha *= 0.28070176f
+blendMode = BlendMode.SrcOver
+shape = Outline.Rectangle(rect = Rect(left = 9.0f, top = 12.0f, right = 38.0f, bottom = 13.0f))
+brush = SolidColor(Color(0, 0, 0, 255))
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 ```
 
 ### Wrapping it all together
 
-The `src/main/resources` folder contains the transcoder templates. These templates contain the general outline that is required for a valid Kotlin class. While these instructions (import statements, class definition, etc) could have been created alongside the Compose instructions emitted during the `GraphicsNode` tree traversal, the implementation preference is for `SvgBaseTranscoder` logic to focus only on the painting / rendering part of the SVG content.
+The `src/main/resources` folder contains the transcoder template. This template contains the general outline that is required for a valid Kotlin class. While these instructions (import statements, class definition, etc) could have been created alongside the Compose instructions emitted during the `GraphicsNode` tree traversal, the implementation preference is for `SvgBaseTranscoder` logic to focus only on the painting / rendering part of the SVG content.
 
-Each template uses a number of "token" strings. A token is a placeholder for a dynamic bit of information, such as the class name (that is generated based on the filename of the original SVG), dimensions of the SVG content bounding box etc.
+The template uses a number of "token" strings. A token is a placeholder for a dynamic bit of information, such as the class name (that is generated based on the filename of the original SVG), dimensions of the SVG content bounding box etc.
 
 When the template is loaded in `SvgBaseTranscoder.transcode()`, the flow is:
 
@@ -79,7 +72,7 @@ This custom implementation overrides methods such as `setStroke(Stroke)` or `fil
 
 Unlike other `Paint` nodes that are handled by inspecting their base attributes and converting those attributes into matching Compose commands, the handling of `TextPaint` is simplified by another usage of a custom implementation of `Graphics2D` class to capture the underlying visuals.
 
-Note that, depending on how many glyphs a particular SVG content uses, the resulting transcoded Java / Kotlin class may exceed the supported method length (at compile time). This is a known limitation of the transcoder. In general, the transcoder is best used for simpler vector content that targets smaller-size iconography, and not general-purpose SVG "illustration art".
+Note that, depending on how many glyphs a particular SVG content uses, the resulting transcoded Kotlin class may exceed the supported method length (at compile time). This is a known limitation of the transcoder. In general, the transcoder is best used for simpler vector content that targets smaller-size iconography, and not general-purpose SVG "illustration art".
 
 ### Addendum C - handling `RasterImageNode`
 
@@ -101,7 +94,7 @@ A few points to note:
 * More than one `RasterImageNode` in the GVT tree can use the same raster data. This can happen for `<pattern>` elements using the same bitmaps as their "content", for example.
 * Transcoding is relying on MD5 hash-sum to detect identical raster content.
 * Transcoding essentially takes the decoded `RenderedImage` raster data that originated in Base64-encoded URI, and encodes it back as a Base64-encoded string. These two are not going to necessarily match if the format of the original image content does not match what Radiance transcoding is using (png).
-* The newly Base64-encoded representation of raster data may exceed Java limitations of how long a string in the source code can be. To work around this limitation, SVG transcoding breaks up the encoded String into smaller chunks of 1,000 characters each at most.
+* The newly Base64-encoded representation of raster data may exceed Kotlin limitations of how long a string in the source code can be. To work around this limitation, SVG transcoding breaks up the encoded String into smaller chunks of 1,000 characters each at most.
 * The static function that transcoding generates for retrieving the `BufferedImage` that corresponds to the decoded/encoded/decoded-again image content uses an internal `WeakReference` based on the MD5 hash-sum of the original encoded string. This is done for performance optimizations. For example, doing Base64-decoding + image parsing on every single loop of a `PatternPaint` might result in prohibitively expensive runtime performance.
 
 The second pass for `RasterImageNode` is in `SvgBaseTranscoder`. Every supported node that may use raster data - such as `PatternNode` for example - computes the MD5 hash-sum of the underlying `RenderedImage`, and then calls the matching method to retrieve the corresponding `BufferedImage` (each such method has been generated in the first pass as detailed above).
