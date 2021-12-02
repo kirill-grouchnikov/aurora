@@ -35,9 +35,9 @@ Add Aurora dependencies:
 
 ```
 dependencies {
-    implementation("org.pushing-pixels:aurora-theming:1.0.0-beta4")
-    implementation("org.pushing-pixels:aurora-component:1.0.0-beta4")
-    implementation("org.pushing-pixels:aurora-window:1.0.0-beta4")
+    implementation("org.pushing-pixels:aurora-theming:1.0.0-beta5")
+    implementation("org.pushing-pixels:aurora-component:1.0.0-beta5")
+    implementation("org.pushing-pixels:aurora-window:1.0.0-beta5")
     implementation(compose.desktop.currentOs)
 }
 ```
