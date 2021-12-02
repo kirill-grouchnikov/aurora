@@ -29,6 +29,10 @@ class kirill : Painter() {
     private var blendModeStack = mutableListOf(DrawScope.DefaultBlendMode)
 
 	private fun _paint0(drawScope : DrawScope) {
+var shapeText: Outline?
+var generalPathText: Path? = null
+var alphaText = 0.0f
+var blendModeText = DrawScope.DefaultBlendMode
 with(drawScope) {
 // 
 alphaStack.add(0, alpha)

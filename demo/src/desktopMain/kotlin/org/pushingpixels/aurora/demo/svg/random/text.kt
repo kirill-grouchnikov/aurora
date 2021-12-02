@@ -29,6 +29,10 @@ class text : Painter() {
     private var blendModeStack = mutableListOf(DrawScope.DefaultBlendMode)
 
 	private fun _paint0(drawScope : DrawScope) {
+var shapeText: Outline?
+var generalPathText: Path? = null
+var alphaText = 0.0f
+var blendModeText = DrawScope.DefaultBlendMode
 with(drawScope) {
 // 
 alphaStack.add(0, alpha)
@@ -48,19 +52,10 @@ alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
-withTransform({
-transform(
-Matrix(values=floatArrayOf(
-1.0f, 0.0f, 0.0f, 0.0f,
-0.0f, 1.0f, 0.0f, 0.0f,
-0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
-))}){
 // _0_0
-            var shapeText: Outline?
-            var generalPathText: Path? = null
-            var alphaText = alpha
-            var blendModeText = blendMode
+            generalPathText = null
+            alphaText = alpha
+            blendModeText = blendMode
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
 alphaText = alpha * 1.0f
@@ -100,26 +95,16 @@ shapeText = Outline.Generic(generalPathText!!)
 drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-}
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
-withTransform({
-transform(
-Matrix(values=floatArrayOf(
-1.0f, 0.0f, 0.0f, 0.0f,
-0.0f, 1.0f, 0.0f, 0.0f,
-0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
-))}){
 // _0_1
-            var shapeText: Outline?
-            var generalPathText: Path? = null
-            var alphaText = alpha
-            var blendModeText = blendMode
+            generalPathText = null
+            alphaText = alpha
+            blendModeText = blendMode
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
 alphaText = alpha * 1.0f
@@ -196,26 +181,16 @@ shapeText = Outline.Generic(generalPathText!!)
 drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-}
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
-withTransform({
-transform(
-Matrix(values=floatArrayOf(
-1.0f, 0.0f, 0.0f, 0.0f,
-0.0f, 1.0f, 0.0f, 0.0f,
-0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
-))}){
 // _0_2
-            var shapeText: Outline?
-            var generalPathText: Path? = null
-            var alphaText = alpha
-            var blendModeText = blendMode
+            generalPathText = null
+            alphaText = alpha
+            blendModeText = blendMode
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
 alphaText = alpha * 1.0f
@@ -265,26 +240,16 @@ shapeText = Outline.Generic(generalPathText!!)
 drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-}
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
-withTransform({
-transform(
-Matrix(values=floatArrayOf(
-1.0f, 0.0f, 0.0f, 0.0f,
-0.0f, 1.0f, 0.0f, 0.0f,
-0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
-))}){
 // _0_3
-            var shapeText: Outline?
-            var generalPathText: Path? = null
-            var alphaText = alpha
-            var blendModeText = blendMode
+            generalPathText = null
+            alphaText = alpha
+            blendModeText = blendMode
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
 alphaText = alpha * 1.0f
@@ -404,7 +369,6 @@ shapeText = Outline.Generic(generalPathText!!)
 drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-}
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
 }

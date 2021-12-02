@@ -29,33 +29,21 @@ class font_x_generic : Painter() {
     private var blendModeStack = mutableListOf(DrawScope.DefaultBlendMode)
 
 	private fun _paint0(drawScope : DrawScope) {
+var shapeText: Outline?
+var generalPathText: Path? = null
+var alphaText = 0.0f
+var blendModeText = DrawScope.DefaultBlendMode
 with(drawScope) {
 // 
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
-withTransform({
-transform(
-Matrix(values=floatArrayOf(
-1.0f, 0.0f, 0.0f, 0.0f,
-0.0f, 1.0f, 0.0f, 0.0f,
-0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
-))}){
 // _0
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
-withTransform({
-transform(
-Matrix(values=floatArrayOf(
-1.0f, 0.0f, 0.0f, 0.0f,
-0.0f, 1.0f, 0.0f, 0.0f,
-0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
-))}){
 // _0_0
 alphaStack.add(0, alpha)
 alpha *= 0.5f
@@ -93,14 +81,6 @@ alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
-withTransform({
-transform(
-Matrix(values=floatArrayOf(
-1.0f, 0.0f, 0.0f, 0.0f,
-0.0f, 1.0f, 0.0f, 0.0f,
-0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
-))}){
 // _0_0_1
 shape = Outline.Rounded(roundRect = RoundRect(left = 3.488370418548584f, top = 2.512193202972412f, right = 44.49984121322632f, bottom = 45.4994330406189f,radiusX = 1.9981215000152588f, radiusY = 1.9982975721359253f))
 brush = Brush.linearGradient(0.0f to Color(238, 238, 236, 255), 1.0f to Color(255, 255, 255, 255), start = Offset(36.668537f, 36.383247f), end = Offset(10.303555f, 7.492883f), tileMode = TileMode.Clamp)
@@ -109,21 +89,12 @@ brush = SolidColor(Color(136, 138, 133, 255))
 stroke = Stroke(width=1.0249254f, cap=StrokeCap.Round, join=StrokeJoin.Round, miter=4.0f)
 shape = Outline.Rounded(roundRect = RoundRect(left = 3.488370418548584f, top = 2.512193202972412f, right = 44.49984121322632f, bottom = 45.4994330406189f,radiusX = 1.9981215000152588f, radiusY = 1.9982975721359253f))
 drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
-}
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
-withTransform({
-transform(
-Matrix(values=floatArrayOf(
-1.0f, 0.0f, 0.0f, 0.0f,
-0.0f, 1.0f, 0.0f, 0.0f,
-0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
-))}){
 // _0_0_2
 if (generalPath == null) {
    generalPath = Path()
@@ -156,7 +127,6 @@ generalPath!!.lineTo(20.872404f, 27.919804f)
 shape = Outline.Generic(generalPath!!)
 brush = Brush.linearGradient(0.0f to Color(114, 159, 207, 255), 1.0f to Color(52, 101, 164, 255), start = Offset(17.561554f, 11.998214f), end = Offset(29.93592f, 32.68109f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
-}
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
@@ -1315,26 +1285,15 @@ alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
-withTransform({
-transform(
-Matrix(values=floatArrayOf(
-1.0f, 0.0f, 0.0f, 0.0f,
-0.0f, 1.0f, 0.0f, 0.0f,
-0.0f, 0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 0.0f, 1.0f)
-))}){
 // _0_0_39
 brush = SolidColor(Color(255, 255, 255, 255))
 stroke = Stroke(width=1.0249996f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 shape = Outline.Rectangle(rect = Rect(left = 4.487087726593018f, top = 3.5124998092651367f, right = 43.500710010528564f, bottom = 44.54631328582764f))
 drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
-}
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
-}
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
-}
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
 

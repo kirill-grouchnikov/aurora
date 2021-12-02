@@ -17,6 +17,9 @@ package org.pushingpixels.aurora.tools.svgtranscoder
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Matrix
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import org.apache.batik.bridge.SVGPatternElementBridge
 import org.apache.batik.bridge.TextNode
 import org.apache.batik.ext.awt.LinearGradientPaint
@@ -157,8 +160,12 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             val currentPaintingCodeStream = paintingCodeStreams[i]
             val paintingCode = String(currentPaintingCodeStream.toByteArray())
             val paintingCodeMethod =
-                "private fun _paint$i(drawScope : DrawScope) {" +
-                        "\nwith(drawScope) {\n" + paintingCode + "\n}\n}"
+                "private fun _paint$i(drawScope : DrawScope) {\n" +
+                        "var shapeText: Outline?\n" +
+                        "var generalPathText: Path? = null\n" +
+                        "var alphaText = 0.0f\n" +
+                        "var blendModeText = DrawScope.DefaultBlendMode\n" +
+                        "with(drawScope) {\n" + paintingCode + "\n}\n}"
             combinedPaintingCode.append(paintingCodeMethod)
             combinedPaintingCode.append("\n\n")
         }
@@ -1029,10 +1036,9 @@ abstract class SvgBaseTranscoder(private val classname: String) {
     private fun transcodeTextNode(node: TextNode, comment: String) {
         printWriterManager!!.println("// $comment")
 
-        printWriterManager!!.println("            var shapeText: Outline?")
-        printWriterManager!!.println("            var generalPathText: Path? = null")
-        printWriterManager!!.println("            var alphaText = alpha")
-        printWriterManager!!.println("            var blendModeText = blendMode")
+        printWriterManager!!.println("            generalPathText = null")
+        printWriterManager!!.println("            alphaText = alpha")
+        printWriterManager!!.println("            blendModeText = blendMode")
 
         node.primitivePaint(object : McCrashyGraphics2D() {
             var _clip: Shape? = null
@@ -1215,7 +1221,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             printWriterManager!!.println("blendMode = ${blendModeToCompose(composite.rule)}")
         }
         val transform = node.transform
-        if (transform != null) {
+        if (isNonIdentityTransform(transform)) {
             val transfMatrix = DoubleArray(6)
             transform.getMatrix(transfMatrix)
             printWriterManager!!.println("withTransform({")
@@ -1252,12 +1258,12 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             }
             throw UnsupportedOperationException(node.javaClass.canonicalName)
         } finally {
-            if (transform != null) {
+            if (isNonIdentityTransform(transform)) {
                 printWriterManager!!.println("}")
-                if (composite != null) {
-                    printWriterManager!!.println("alpha = alphaStack.removeAt(0)")
-                    printWriterManager!!.println("blendMode = blendModeStack.removeAt(0)")
-                }
+            }
+            if (composite != null) {
+                printWriterManager!!.println("alpha = alphaStack.removeAt(0)")
+                printWriterManager!!.println("blendMode = blendModeStack.removeAt(0)")
             }
         }
     }
@@ -1273,7 +1279,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         private const val TOKEN_ORIG_WIDTH = "TOKEN_ORIG_WIDTH"
         private const val TOKEN_ORIG_HEIGHT = "TOKEN_ORIG_HEIGHT"
 
-        private fun blendModeToCompose(blendModeJava2D: Int) : String {
+        private fun blendModeToCompose(blendModeJava2D: Int): String {
             return when (blendModeJava2D) {
                 AlphaComposite.CLEAR -> "BlendMode.Clear"
                 AlphaComposite.DST -> "BlendMode.Dst"
@@ -1289,6 +1295,13 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                 AlphaComposite.XOR -> "BlendMode.Xor"
                 else -> "DrawScope.DefaultBlendMode"
             }
+        }
+
+
+        private fun isNonIdentityTransform(transform: AffineTransform?): Boolean {
+            return if (transform == null) {
+                false
+            } else !transform.isIdentity
         }
     }
 }
