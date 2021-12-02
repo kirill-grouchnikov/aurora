@@ -13,75 +13,66 @@ Aurora is a collection of libraries for writing modern, elegant and fast [deskto
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/nightshade.png" width="340" height="258" border=0>
 </p>
 
-## Current status
+## Documentation
 
-Most of the ideas and building blocks in Aurora come from [Radiance](https://github.com/kirill-grouchnikov/radiance). Aurora is currently in beta phase of its development. 
+### Window top-level APIs
 
-The goal is to provide a collection of high-quality components for building modern desktop Compose applications. Aurora brings the full power of the skinning layer from Radiance, including all the skins and complete support for state-based transitions for all the components. In addition, Aurora provides a powerful painter API layer to create custom composable components with consistent visual appearance and state transitions.
+* [Hello World](docs/window/HelloWorld.md)
+* [Aurora Application](docs/window/Application.md)
+* [Aurora Window](docs/window/Window.md)
+* [Radiance interoperability](docs/window/RadianceInterop.md)
 
-Going a bit further into 2022, Aurora will bring a fully-fledged ribbon container into the desktop Compose world.
+### Theming
 
-## Playing with builds
+* [Themed states](docs/theming/themed-states.md)
+* [Skin overview](docs/theming/skins/overview.md)
+* [Component states](docs/theming/skins/componentstates.md)
+* [Color schemes](docs/theming/skins/colorschemes.md)
+* [Color scheme association kinds](docs/theming/skins/colorschemeassociationkinds.md)
+* [Color scheme file format](docs/theming/skins/colorschemes-fileformat.md)
+* [Color scheme bundles](docs/theming/skins/colorschemebundles.md)
+* [Color scheme extras](docs/theming/skins/colorschemes-extras.md)
+* [Light skins](docs/theming/skins/toneddown.md)
+* [Dark skins](docs/theming/skins/dark.md)
+* [Painter overview](docs/theming/painters/overview.md)
+* [Fill painters](docs/theming/painters/fill.md)
+* [Border painters](docs/theming/painters/border.md)
+* [Decoration painters](docs/theming/painters/decoration.md)
+* [Overlay painters](docs/theming/painters/overlay.md)
 
-Add the latest Kotlin and Compose Desktop dependencies:
-```kotlin
-plugins {
-    kotlin("jvm") version "1.5.31"
-    id("org.jetbrains.compose") version "1.0.0"
-}
-```
+### Components
 
-Add Aurora dependencies:
+* [Basic concepts](docs/component/Intro.md)
+* [Sample app](docs/componentSample.md)
+* [Another sample app](docs/componentAnotherSample.md)
+* [Command overview](docs/componentCommand.md)
+* [Command projections](docs/componentCommandProjections.md)
+* [Command button presentation models](docs/componentCommandButtonPresentation.md)
+* [Model and projection overview](docs/componentModelProjectionOverview.md)
+* [All component projections](docs/componentComponentProjections.md)
+* [Box with highlights](docs/componentBoxWithHighlights.md)
+* [Command strips](docs/componentCommandStrip.md)
+* [Command panels](docs/componentCommandPanel.md)
+* [Command popup menus](docs/componentCommandPopupMenu.md)
+* [Context menus](docs/componentContextMenu.md)
+* [All custom modifiers](docs/componentModifiers.md)
 
-```
-dependencies {
-    implementation("org.pushing-pixels:aurora-theming:1.0.0-beta5")
-    implementation("org.pushing-pixels:aurora-component:1.0.0-beta5")
-    implementation("org.pushing-pixels:aurora-window:1.0.0-beta5")
-    implementation(compose.desktop.currentOs)
-}
-```
+### SVG transcoding
 
-Now you are ready for your first Aurora demo:
+* [What is SVG transcoding](docs/tools/svg-transcoder/svg-transcoder.md)
+* [Gradle plugin for SVG transcoding](docs/tools/svg-transcoder/svg-transcoder-gradle-plugin.md)
+* [SVG transcoding internals](docs/tools/svg-transcoder/internals.md)
 
-```kotlin
-fun main() = auroraApplication {
-    val state = rememberWindowState(
-        placement = WindowPlacement.Floating,
-        position = WindowPosition.Aligned(Alignment.Center),
-        size = DpSize(220.dp, 150.dp)
-    )
+### Have a question?
 
-    AuroraWindow(
-        skin = marinerSkin(),
-        title = "Aurora Demo",
-        state = state,
-        undecorated = true,
-        onCloseRequest = ::exitApplication
-    ) {
-        var text by remember { mutableStateOf("Hello, World!") }
-
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxSize().auroraBackground()
-        ) {
-            CommandButtonProjection(
-                contentModel = Command(
-                    text = text,
-                    action = { text = "Hello, Desktop!" }
-                )
-            ).project()
-        }
-    }
-}
-```
-
-<p align="center">
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/helloworld.png" width="266" height="196" border=0>
-</p>
+* [File a bug](https://github.com/kirill-grouchnikov/aurora/issues)
+* [Get in touch](http://www.pushing-pixels.org/about-kirill)
 
 ## Aurora artifacts
+
+Aurora artifacts are available in the central Maven repository under `groupId=org.pushing-pixels`
+
+### Core artifacts
 
 * [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-theming/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-theming)
   `aurora-theming`
@@ -90,3 +81,19 @@ fun main() = auroraApplication {
 * [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-window/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-window)
   `aurora-window`
 
+### Tools artifacts
+
+* [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-tools-svg-transcoder/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-tools-svg-transcoder) `aurora-tools-svg-transcoder`
+* [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-tools-svg-transcoder-gradle-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-tools-svg-transcoder-gradle-plugin) `aurora-tools-svg-transcoder-gradle-plugin`
+
+### Snapshots
+
+Aurora snapshot artifacts are available in the [Sonatype repository](https://oss.sonatype.org/content/repositories/snapshots/org/pushing-pixels/).
+
+## Building Aurora
+
+[This document](docs/building.md) is an overview of how to build Aurora artifacts locally.
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/logo/auroraicon-512.png" width="256" height="256" border=0>
+</p>
