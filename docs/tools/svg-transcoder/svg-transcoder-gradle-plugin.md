@@ -42,7 +42,7 @@ buildscript {
 
 ### Transcoding SVG files from a single folder
 
-Generate Kotlin classes with the plugin (add multiple tasks if you have more than one SVG content folder):
+Register a separate task for generating Kotlin classes and add a `dependsOn` clause for your `KotlinCompile` tasks. Add multiple tasks if you have more than one SVG content folder.
 
 ```kotlin
 tasks.register<org.pushingpixels.aurora.tools.svgtranscoder.gradle.TranscodeTask>("transcodeSingle") {
@@ -57,9 +57,24 @@ tasks.withType<KotlinCompile> {
 }
 ```
 
+Alternatively, use `doFirst` in your `KotlinCompile` tasks. Add multiple tasks if you have more than one SVG content folder.
+
+```kotlin
+tasks.withType<KotlinCompile> {
+    doFirst {
+        task<org.pushingpixels.aurora.tools.svgtranscoder.gradle.TranscodeTask>("transcodeSingle") {
+            inputDirectory = file("src/desktopMain/resources")
+            outputDirectory = file("src/desktopMain/kotlin/org/aurora/demo/svg2")
+            outputPackageName = "org.aurora.demo.svg2"
+            transcode()
+        }
+    }
+}
+```
+
 ### Recursively transcoding SVG files under a folder
 
-Generate Kotlin classes with the plugin (add multiple tasks if you have more than one SVG content root folder):
+Register a separate task for generating Kotlin classes and add a dependsOn clause for your KotlinCompile tasks. Add multiple tasks if you have more than one SVG content folder.
 
 ```kotlin
 tasks.register<org.pushingpixels.aurora.tools.svgtranscoder.gradle.TranscodeDeepTask>("transcodeFolder") {
@@ -71,6 +86,21 @@ tasks.register<org.pushingpixels.aurora.tools.svgtranscoder.gradle.TranscodeDeep
 
 tasks.withType<KotlinCompile> {
     dependsOn("transcodeFolder")
+}
+```
+
+Alternatively, use `doFirst` in your `KotlinCompile` tasks. Add multiple tasks if you have more than one SVG content folder.
+
+```kotlin
+tasks.withType<KotlinCompile> {
+    doFirst {
+        task<org.pushingpixels.aurora.tools.svgtranscoder.gradle.TranscodeDeepTask>("transcodeFolder") {
+            inputRootDirectory = file("src/desktopMain/resources")
+            outputRootDirectory = file("src/desktopMain/kotlin/org/aurora/demo/scalable/svg2")
+            outputRootPackageName = "org.aurora.demo.scalable.svg2"
+            transcode()
+        }
+    }
 }
 ```
 
