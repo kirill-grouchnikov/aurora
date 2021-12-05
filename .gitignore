@@ -10,3 +10,4 @@ out/
 bin/
 drop/*-SNAPSHOT/**
 drop/*-beta*/**
+drop/*-rc*/**

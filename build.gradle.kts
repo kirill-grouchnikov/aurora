@@ -30,6 +30,19 @@ allprojects {
         isPreserveFileTimestamps = false
         isReproducibleFileOrder = true
         archiveBaseName.set("${rootProject.name}-${project.name}")
+
+        manifest {
+            // add Aurora version, build JDK and build JDK vendor into the manifest file
+            attributes["Aurora-Version"] =
+                "${project.property("VERSION_NAME")} ${project.property("VERSION_CODENAME")}"
+            attributes["Build-JDK"] = System.getProperty("java.version")
+            attributes["Build-JDK-Vendor"] = System.getProperty("java.vendor")
+            if (project.hasProperty("POM_ARTIFACT_ID")) {
+                attributes["Automatic-Module-Name"] =
+                    "org.pushingpixels." + "${project.property("POM_ARTIFACT_ID")}"
+                        .replace("-", ".")
+            }
+        }
     }
 
     configurations {
