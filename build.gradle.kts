@@ -32,13 +32,20 @@ allprojects {
         archiveBaseName.set("${rootProject.name}-${project.name}")
 
         manifest {
-            // add Aurora version, build JDK and build JDK vendor into the manifest file
+            // add Aurora version and automatic module name to each MANIFEST.MF
             attributes["Aurora-Version"] =
                 "${project.property("VERSION_NAME")} ${project.property("VERSION_CODENAME")}"
             if (project.hasProperty("POM_ARTIFACT_ID")) {
                 attributes["Automatic-Module-Name"] =
                     "org.pushingpixels." + "${project.property("POM_ARTIFACT_ID")}".replace("-", ".")
             }
+        }
+    }
+
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        // Force class file format for Java 11
+        kotlinOptions {
+            jvmTarget = "11"
         }
     }
 
