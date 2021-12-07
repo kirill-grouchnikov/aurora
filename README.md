@@ -43,19 +43,19 @@ Aurora is a collection of libraries for writing modern, elegant and fast [deskto
 ### Components
 
 * [Basic concepts](docs/component/Intro.md)
-* [Sample app](docs/componentSample.md)
-* [Another sample app](docs/componentAnotherSample.md)
-* [Command overview](docs/componentCommand.md)
-* [Command projections](docs/componentCommandProjections.md)
-* [Command button presentation models](docs/componentCommandButtonPresentation.md)
-* [Model and projection overview](docs/componentModelProjectionOverview.md)
-* [All component projections](docs/componentComponentProjections.md)
-* [Box with highlights](docs/componentBoxWithHighlights.md)
-* [Command strips](docs/componentCommandStrip.md)
-* [Command panels](docs/componentCommandPanel.md)
-* [Command popup menus](docs/componentCommandPopupMenu.md)
-* [Context menus](docs/componentContextMenu.md)
-* [All custom modifiers](docs/componentModifiers.md)
+* [Sample app](docs/component/Sample.md)
+* [Another sample app](docs/component/AnotherSample.md)
+* [Command overview](docs/component/Command.md)
+* [Command projections](docs/component/CommandProjections.md)
+* [Command button presentation models](docs/component/CommandButtonPresentation.md)
+* [Model and projection overview](docs/component/ModelProjectionOverview.md)
+* [All component projections](docs/component/ComponentProjections.md)
+* [Box with highlights](docs/component/BoxWithHighlights.md)
+* [Command strips](docs/component/CommandStrip.md)
+* [Command panels](docs/component/CommandPanel.md)
+* [Command popup menus](docs/component/CommandPopupMenu.md)
+* [Context menus](docs/component/ContextMenu.md)
+* [All custom modifiers](docs/component/Modifiers.md)
 
 ### SVG transcoding
 
