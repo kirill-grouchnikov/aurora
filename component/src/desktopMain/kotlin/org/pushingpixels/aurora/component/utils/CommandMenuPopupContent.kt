@@ -86,7 +86,7 @@ internal fun displayPopupContent(
     popupContentWindow.isUndecorated = true
     popupContentWindow.isResizable = false
 
-    val locationOnScreen = currentWindow.locationOnScreen
+    val locationOnScreen = currentWindow.rootPane.locationOnScreen
 
     val hasButtonPanel = (contentModel.value!!.panelContentModel != null)
     val panelButtonLayoutManager =

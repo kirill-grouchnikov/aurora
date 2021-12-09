@@ -90,7 +90,7 @@ internal fun displayRichTooltipContent(
     popupContentWindow.isUndecorated = true
     popupContentWindow.isResizable = false
 
-    val locationOnScreen = currentWindow.locationOnScreen
+    val locationOnScreen = currentWindow.rootPane.locationOnScreen
 
     val offset = ceil(density.density).toInt()
 
