@@ -28,6 +28,22 @@ object CommandButtonSizingConstants {
     val CompactButtonContentPadding = PaddingValues(start = 6.dp, top = 3.dp, end = 6.dp, bottom = 4.dp)
 }
 
+object CommandButtonInteractionConstants {
+    const val DefaultAutoRepeatInitialIntervalMillis = 500
+    const val DefaultAutoRepeatSubsequentIntervalMillis = 100
+}
+
+enum class ActionFireTrigger {
+    /** Fire action on rollover */
+    OnRollover,
+
+    /** Fire action on press. */
+    OnPressed,
+
+    /** Fire action on press release. */
+    OnPressReleased
+}
+
 data class CommandButtonPresentationModel(
     val presentationState: CommandButtonPresentationState = CommandButtonPresentationState.Medium,
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
@@ -40,6 +56,10 @@ data class CommandButtonPresentationModel(
     val textStyle: TextStyle? = null,
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward,
     val toDismissPopupsOnActivation: Boolean = true,
+    val autoRepeatAction: Boolean = false,
+    val autoRepeatInitialInterval: Int = CommandButtonInteractionConstants.DefaultAutoRepeatInitialIntervalMillis,
+    val autoRepeatSubsequentInterval: Int = CommandButtonInteractionConstants.DefaultAutoRepeatSubsequentIntervalMillis,
+    val actionFireTrigger: ActionFireTrigger = ActionFireTrigger.OnPressReleased,
     val popupMenuPresentationModel: CommandPopupMenuPresentationModel = CommandPopupMenuPresentationModel(),
     val textClick: TextClick = TextClick.Action,
     val actionRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),
@@ -62,6 +82,10 @@ data class CommandButtonPresentationModel(
         val textStyle: TextStyle? = null,
         val popupPlacementStrategy: PopupPlacementStrategy? = null,
         val toDismissPopupsOnActivation: Boolean? = null,
+        val autoRepeatAction: Boolean? = null,
+        val autoRepeatInitialInterval: Int? = null,
+        val autoRepeatSubsequentInterval: Int? = null,
+        val actionFireTrigger: ActionFireTrigger? = null,
         val popupMenuPresentationModel: CommandPopupMenuPresentationModel? = null,
         val textClick: TextClick? = null,
         val contentPadding: PaddingValues? = null,
@@ -84,6 +108,10 @@ data class CommandButtonPresentationModel(
             textStyle = overlay.textStyle ?: this.textStyle,
             popupPlacementStrategy = overlay.popupPlacementStrategy ?: this.popupPlacementStrategy,
             toDismissPopupsOnActivation = overlay.toDismissPopupsOnActivation ?: this.toDismissPopupsOnActivation,
+            autoRepeatAction = overlay.autoRepeatAction ?: this.autoRepeatAction,
+            autoRepeatInitialInterval = overlay.autoRepeatInitialInterval ?: this.autoRepeatInitialInterval,
+            autoRepeatSubsequentInterval = overlay.autoRepeatSubsequentInterval ?: this.autoRepeatSubsequentInterval,
+            actionFireTrigger = overlay.actionFireTrigger ?: this.actionFireTrigger,
             popupMenuPresentationModel = overlay.popupMenuPresentationModel ?: this.popupMenuPresentationModel,
             textClick = overlay.textClick ?: this.textClick,
             contentPadding = overlay.contentPadding ?: this.contentPadding,

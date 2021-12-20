@@ -18,15 +18,16 @@ package org.pushingpixels.aurora.component
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsHoveredAsState
-import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.gestures.PressGestureScope
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.*
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -34,17 +35,24 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.input.key.*
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.withAlpha
@@ -55,6 +63,7 @@ import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
+import java.awt.event.KeyEvent
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -65,6 +74,216 @@ private class CommandButtonDrawingCache(
         isDark = false
     ),
     val markPath: Path = Path()
+)
+
+fun Modifier.commandButtonActionHoverable(
+    interactionSource: MutableInteractionSource,
+    enabled: Boolean = true,
+    onClickState: State<() -> Unit>
+): Modifier = composed(
+    inspectorInfo = debugInspectorInfo {
+        name = "hoverable"
+        properties["interactionSource"] = interactionSource
+        properties["enabled"] = enabled
+    }
+) {
+    var hoverInteraction by remember { mutableStateOf<HoverInteraction.Enter?>(null) }
+
+    suspend fun emitEnter() {
+        if (hoverInteraction == null) {
+            val interaction = HoverInteraction.Enter()
+            interactionSource.emit(interaction)
+            hoverInteraction = interaction
+            onClickState.value.invoke()
+        }
+    }
+
+    suspend fun emitExit() {
+        hoverInteraction?.let { oldValue ->
+            val interaction = HoverInteraction.Exit(oldValue)
+            interactionSource.emit(interaction)
+            hoverInteraction = null
+        }
+    }
+
+    fun tryEmitExit() {
+        hoverInteraction?.let { oldValue ->
+            val interaction = HoverInteraction.Exit(oldValue)
+            interactionSource.tryEmit(interaction)
+            hoverInteraction = null
+        }
+    }
+
+    DisposableEffect(interactionSource) {
+        onDispose { tryEmitExit() }
+    }
+    LaunchedEffect(enabled) {
+        if (!enabled) {
+            emitExit()
+        }
+    }
+
+    if (enabled) {
+        Modifier
+            .pointerInput(interactionSource) {
+                coroutineScope {
+                    val currentContext = currentCoroutineContext()
+                    val outerScope = this
+                    awaitPointerEventScope {
+                        while (currentContext.isActive) {
+                            val event = awaitPointerEvent()
+                            when (event.type) {
+                                PointerEventType.Enter -> outerScope.launch { emitEnter() }
+                                PointerEventType.Exit -> outerScope.launch { emitExit() }
+                            }
+                        }
+                    }
+                }
+            }
+    } else {
+        Modifier
+    }
+}
+
+internal suspend fun PressGestureScope.auroraHandlePressInteraction(
+    pressPoint: Offset,
+    interactionSource: MutableInteractionSource,
+    pressedInteraction: MutableState<PressInteraction.Press?>,
+    onClickState: State<() -> Unit>,
+    invokeOnClickOnPress: Boolean
+) {
+    coroutineScope {
+        val delayJob = launch {
+            delay(0L)
+            val pressInteraction = PressInteraction.Press(pressPoint)
+            interactionSource.emit(pressInteraction)
+            pressedInteraction.value = pressInteraction
+            if (invokeOnClickOnPress) {
+                onClickState.value.invoke()
+            }
+        }
+        val success = tryAwaitRelease()
+        if (delayJob.isActive) {
+            delayJob.cancelAndJoin()
+            // The press released successfully, before the timeout duration - emit the press
+            // interaction instantly. No else branch - if the press was cancelled before the
+            // timeout, we don't want to emit a press interaction.
+            if (success) {
+                val pressInteraction = PressInteraction.Press(pressPoint)
+                val releaseInteraction = PressInteraction.Release(pressInteraction)
+                interactionSource.emit(pressInteraction)
+                interactionSource.emit(releaseInteraction)
+            }
+        } else {
+            pressedInteraction.value?.let { pressInteraction ->
+                val endInteraction = if (success) {
+                    PressInteraction.Release(pressInteraction)
+                } else {
+                    PressInteraction.Cancel(pressInteraction)
+                }
+                interactionSource.emit(endInteraction)
+            }
+        }
+        pressedInteraction.value = null
+    }
+}
+
+private fun Modifier.commandButtonActionClickable(
+    interactionSource: MutableInteractionSource,
+    enabled: Boolean = true,
+    presentationModel: CommandButtonPresentationModel,
+    onClick: () -> Unit
+) = composed(
+    factory = {
+        // Start building the chain. First the semantics role
+        var result = this.semantics(mergeDescendants = true) {
+            this.role = Role.Button
+        }
+        // Then treating "Enter" key up event to fire the action
+        result = result.then(onKeyEvent {
+            if (enabled && (it.type == KeyEventType.KeyUp) && (it.key.nativeKeyCode == KeyEvent.VK_ENTER)) {
+                onClick()
+                true
+            } else {
+                false
+            }
+        })
+
+        val onClickState = rememberUpdatedState(onClick)
+        val pressedInteraction = remember { mutableStateOf<PressInteraction.Press?>(null) }
+
+        // Now for the mouse interaction part
+        if (presentationModel.actionFireTrigger == ActionFireTrigger.OnRollover) {
+            // Our button is configured to fire action on rollover
+
+            // Start with the hover
+            result = result.then(
+                Modifier.commandButtonActionHoverable(
+                    interactionSource,
+                    enabled,
+                    onClickState
+                )
+            )
+
+            // And add press detector, but without invoking onClick in onPress or onTap,
+            // since we are invoking onClick on PointerEventType.Enter
+            result = result.then(Modifier.pointerInput(interactionSource, enabled) {
+                detectTapAndPress(
+                    onPress = { offset ->
+                        if (enabled) {
+                            auroraHandlePressInteraction(
+                                offset, interactionSource, pressedInteraction,
+                                onClickState, false
+                            )
+                        }
+                    },
+                    onTap = {}
+                )
+            })
+        } else {
+            // Otherwise track hover state
+            result = result.hoverable(enabled = enabled, interactionSource = interactionSource)
+
+            // And finally add our custom tap-and-press detector
+            DisposableEffect(interactionSource) {
+                onDispose {
+                    pressedInteraction.value?.let { oldValue ->
+                        val interaction = PressInteraction.Cancel(oldValue)
+                        interactionSource.tryEmit(interaction)
+                        pressedInteraction.value = null
+                    }
+                }
+            }
+            result = result.then(Modifier.pointerInput(interactionSource, enabled) {
+                detectTapAndPress(
+                    onPress = { offset ->
+                        if (enabled) {
+                            auroraHandlePressInteraction(
+                                offset, interactionSource, pressedInteraction,
+                                onClickState,
+                                (presentationModel.actionFireTrigger == ActionFireTrigger.OnPressed)
+                            )
+                        }
+                    },
+                    onTap = {
+                        if (enabled && (presentationModel.actionFireTrigger == ActionFireTrigger.OnPressReleased)) {
+                            onClickState.value.invoke()
+                        }
+                    }
+                )
+            })
+        }
+        result
+    },
+    inspectorInfo = debugInspectorInfo {
+        name = "clickable"
+        properties["enabled"] = enabled
+        properties["onClickLabel"] = null
+        properties["role"] = Role.Button
+        properties["onClick"] = onClick
+        properties["indication"] = null
+        properties["interactionSource"] = interactionSource
+    }
 )
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeApi::class, AuroraInternalApi::class)
@@ -399,14 +618,14 @@ internal fun AuroraCommandButton(
                         extraAction?.invoke()
                     })
             } else {
-                modifierAction = Modifier.clickable(
+                modifierAction = Modifier.commandButtonActionClickable(
                     enabled = isActionEnabled,
                     onClick = {
                         command.action?.invoke()
                         extraAction?.invoke()
                     },
                     interactionSource = actionInteractionSource,
-                    indication = null
+                    presentationModel = presentationModel
                 )
             }
             // These two track the offset of action and popup area relative in
