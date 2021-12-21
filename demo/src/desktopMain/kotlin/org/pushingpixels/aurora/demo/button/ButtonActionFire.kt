@@ -38,6 +38,7 @@ import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.window.AuroraApplicationScope
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.auroraApplication
+import java.text.SimpleDateFormat
 import java.util.*
 
 fun main() = auroraApplication {
@@ -117,7 +118,7 @@ fun AuroraApplicationScope.ButtonActionFireContent(
             text = resourceBundle.value.getString("Edit.paste.text"),
             extraText = resourceBundle.value.getString("Edit.paste.textExtra"),
             icon = edit_paste(),
-            action = { println("Paste activated!") },
+            action = { println("${SimpleDateFormat("HH:mm:ss.SSS").format(Date())} : activated!") },
         )
 
     Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {

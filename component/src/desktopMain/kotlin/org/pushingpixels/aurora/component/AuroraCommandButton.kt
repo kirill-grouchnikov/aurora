@@ -76,10 +76,11 @@ private class CommandButtonDrawingCache(
     val markPath: Path = Path()
 )
 
-fun Modifier.commandButtonActionHoverable(
+private fun Modifier.commandButtonActionHoverable(
     interactionSource: MutableInteractionSource,
     enabled: Boolean = true,
-    onClickState: State<() -> Unit>
+    onClickState: State<() -> Unit>,
+    presentationModel: CommandButtonPresentationModel
 ): Modifier = composed(
     inspectorInfo = debugInspectorInfo {
         name = "hoverable"
@@ -88,13 +89,27 @@ fun Modifier.commandButtonActionHoverable(
     }
 ) {
     var hoverInteraction by remember { mutableStateOf<HoverInteraction.Enter?>(null) }
+    val scope = rememberCoroutineScope()
+    var clickJob: Job? by remember { mutableStateOf(null) }
 
     suspend fun emitEnter() {
         if (hoverInteraction == null) {
             val interaction = HoverInteraction.Enter()
             interactionSource.emit(interaction)
             hoverInteraction = interaction
-            onClickState.value.invoke()
+
+            if (presentationModel.autoRepeatAction) {
+                clickJob?.cancel()
+                clickJob = scope.launch {
+                    delay(presentationModel.autoRepeatInitialInterval)
+                    while (isActive) {
+                        onClickState.value.invoke()
+                        delay(presentationModel.autoRepeatSubsequentInterval)
+                    }
+                }
+            } else {
+                onClickState.value.invoke()
+            }
         }
     }
 
@@ -103,6 +118,7 @@ fun Modifier.commandButtonActionHoverable(
             val interaction = HoverInteraction.Exit(oldValue)
             interactionSource.emit(interaction)
             hoverInteraction = null
+            clickJob?.cancel()
         }
     }
 
@@ -111,6 +127,7 @@ fun Modifier.commandButtonActionHoverable(
             val interaction = HoverInteraction.Exit(oldValue)
             interactionSource.tryEmit(interaction)
             hoverInteraction = null
+            clickJob?.cancel()
         }
     }
 
@@ -150,7 +167,10 @@ internal suspend fun PressGestureScope.auroraHandlePressInteraction(
     interactionSource: MutableInteractionSource,
     pressedInteraction: MutableState<PressInteraction.Press?>,
     onClickState: State<() -> Unit>,
-    invokeOnClickOnPress: Boolean
+    invokeOnClickOnPress: Boolean,
+    presentationModel: CommandButtonPresentationModel,
+    scope: CoroutineScope,
+    clickJob: MutableState<Job?>
 ) {
     coroutineScope {
         val delayJob = launch {
@@ -159,7 +179,18 @@ internal suspend fun PressGestureScope.auroraHandlePressInteraction(
             interactionSource.emit(pressInteraction)
             pressedInteraction.value = pressInteraction
             if (invokeOnClickOnPress) {
-                onClickState.value.invoke()
+                if (presentationModel.autoRepeatAction) {
+                    clickJob.value?.cancel()
+                    clickJob.value = scope.launch {
+                        delay(presentationModel.autoRepeatInitialInterval)
+                        while (isActive) {
+                            onClickState.value.invoke()
+                            delay(presentationModel.autoRepeatSubsequentInterval)
+                        }
+                    }
+                } else {
+                    onClickState.value.invoke()
+                }
             }
         }
         val success = tryAwaitRelease()
@@ -173,6 +204,7 @@ internal suspend fun PressGestureScope.auroraHandlePressInteraction(
                 val releaseInteraction = PressInteraction.Release(pressInteraction)
                 interactionSource.emit(pressInteraction)
                 interactionSource.emit(releaseInteraction)
+                clickJob.value?.cancel()
             }
         } else {
             pressedInteraction.value?.let { pressInteraction ->
@@ -182,6 +214,7 @@ internal suspend fun PressGestureScope.auroraHandlePressInteraction(
                     PressInteraction.Cancel(pressInteraction)
                 }
                 interactionSource.emit(endInteraction)
+                clickJob.value?.cancel()
             }
         }
         pressedInteraction.value = null
@@ -211,6 +244,8 @@ private fun Modifier.commandButtonActionClickable(
 
         val onClickState = rememberUpdatedState(onClick)
         val pressedInteraction = remember { mutableStateOf<PressInteraction.Press?>(null) }
+        val scope = rememberCoroutineScope()
+        val clickJob: MutableState<Job?> = mutableStateOf(null)
 
         // Now for the mouse interaction part
         if (presentationModel.actionFireTrigger == ActionFireTrigger.OnRollover) {
@@ -221,7 +256,8 @@ private fun Modifier.commandButtonActionClickable(
                 Modifier.commandButtonActionHoverable(
                     interactionSource,
                     enabled,
-                    onClickState
+                    onClickState,
+                    presentationModel
                 )
             )
 
@@ -233,7 +269,8 @@ private fun Modifier.commandButtonActionClickable(
                         if (enabled) {
                             auroraHandlePressInteraction(
                                 offset, interactionSource, pressedInteraction,
-                                onClickState, false
+                                onClickState, false, presentationModel,
+                                scope, clickJob
                             )
                         }
                     },
@@ -261,7 +298,10 @@ private fun Modifier.commandButtonActionClickable(
                             auroraHandlePressInteraction(
                                 offset, interactionSource, pressedInteraction,
                                 onClickState,
-                                (presentationModel.actionFireTrigger == ActionFireTrigger.OnPressed)
+                                presentationModel.actionFireTrigger == ActionFireTrigger.OnPressed,
+                                presentationModel,
+                                scope,
+                                clickJob
                             )
                         }
                     },

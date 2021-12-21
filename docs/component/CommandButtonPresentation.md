@@ -40,21 +40,24 @@ Command button presentation models are created by populating attributes on the `
 |  | iconEnabledFilterStrategy | IconFilterStrategy
 |  | iconDisabledFilterStrategy | IconFilterStrategy
 |  | textStyle | TextStyle
-| **Layout metrics** | horizontalAlignment | int |
-|  | horizontalGapScaleFactor | int |
-|  | verticalGapScaleFactor | int |
+| **Layout metrics** | horizontalAlignment | HorizontalAlignment |
+|  | horizontalGapScaleFactor | Float |
+|  | verticalGapScaleFactor | Float |
 |  | contentPadding | PaddingValues |
 |  | minWidth | Dp |
 |  | forceAllocateSpaceForIcon | Boolean
-| **Interaction** | focusable | boolean |
-|  | menu | boolean |
+| **Interaction** | focusable | Boolean |
+|  | menu | Boolean |
 |  | textClick | TextClick |
 |  | popupMenuPresentationModel | CommandPopupMenuPresentationModel |
 |  | popupPlacementStrategy | PopupPlacementStrategy |
 |  | toDismissPopupsOnActivation | Boolean |
 |  | actionRichTooltipPresentationModel | RichTooltipPresentationModel |
 |  | popupRichTooltipPresentationModel | RichTooltipPresentationModel |
-
+|  | autoRepeatAction | Boolean |
+|  | autoRepeatInitialInterval | Long |
+|  | autoRepeatSubsequentInterval | Long |
+|  | fireActionTrigger | FireActionTrigger |
 
 ### Visual attributes
 
@@ -101,6 +104,17 @@ Let's take a look at two screenshots. In the first one, the mouse cursor is over
 In the second one, the mouse cursor is over the same text area, this time of the other "Both" button in tile state. Here, the area of the button with the icon is not highlighted, while the area with the two texts and the down arrow is.  This projection is configured with `textClick=TextClick.Popup` to indicate that clicking anywhere in the area that shows the command text (and extra text, if relevant) will activate the secondary command content - in this case, showing a popup menu:
 
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-title-popup.png" width="664" border=0/>
+
+#### Repeated action
+
+In some cases, the design calls for facilitating repeated activation of the command action. For example, it would be quite tedious to scroll down a large list of items by repeatedly clicking the down button (or area below the scrollbar thumb). The usability of such actions can be improved if, pressed once, the action is repeated continuously until the mouse button is released.
+
+Command button presentation models come with four attributes that aim to address such scenarios.
+
+* `autoRepeatAction=true` will result in a repeated, continuous activation of the command action as long as the projected button is activated.
+* `fireActionTrigger = FireActionTrigger.OnRollover` will result in command action activation when the mouse is moved over the projected button - without the need to press the mouse button itself.
+* Alternatively, `fireActionTrigger = FireActionTrigger.OnPressed` will result in command action activation when the mouse button is pressed - as opposed to the usual click which is a combination of pressing the button and then releasing it.
+* Finally, `autoRepeatInitialInterval` and `autoRepeatSubsequentInterval` can be used to configure the projection-specific initial and subsequent intervals between action activation. The static `CommandButtonInteractionConstants` constants can be used to check for the default values of these two intervals.
 
 #### Working with popups
 

@@ -29,8 +29,8 @@ object CommandButtonSizingConstants {
 }
 
 object CommandButtonInteractionConstants {
-    const val DefaultAutoRepeatInitialIntervalMillis = 500
-    const val DefaultAutoRepeatSubsequentIntervalMillis = 100
+    const val DefaultAutoRepeatInitialIntervalMillis = 500L
+    const val DefaultAutoRepeatSubsequentIntervalMillis = 100L
 }
 
 enum class ActionFireTrigger {
@@ -57,8 +57,8 @@ data class CommandButtonPresentationModel(
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward,
     val toDismissPopupsOnActivation: Boolean = true,
     val autoRepeatAction: Boolean = false,
-    val autoRepeatInitialInterval: Int = CommandButtonInteractionConstants.DefaultAutoRepeatInitialIntervalMillis,
-    val autoRepeatSubsequentInterval: Int = CommandButtonInteractionConstants.DefaultAutoRepeatSubsequentIntervalMillis,
+    val autoRepeatInitialInterval: Long = CommandButtonInteractionConstants.DefaultAutoRepeatInitialIntervalMillis,
+    val autoRepeatSubsequentInterval: Long = CommandButtonInteractionConstants.DefaultAutoRepeatSubsequentIntervalMillis,
     val actionFireTrigger: ActionFireTrigger = ActionFireTrigger.OnPressReleased,
     val popupMenuPresentationModel: CommandPopupMenuPresentationModel = CommandPopupMenuPresentationModel(),
     val textClick: TextClick = TextClick.Action,
@@ -83,8 +83,8 @@ data class CommandButtonPresentationModel(
         val popupPlacementStrategy: PopupPlacementStrategy? = null,
         val toDismissPopupsOnActivation: Boolean? = null,
         val autoRepeatAction: Boolean? = null,
-        val autoRepeatInitialInterval: Int? = null,
-        val autoRepeatSubsequentInterval: Int? = null,
+        val autoRepeatInitialInterval: Long? = null,
+        val autoRepeatSubsequentInterval: Long? = null,
         val actionFireTrigger: ActionFireTrigger? = null,
         val popupMenuPresentationModel: CommandPopupMenuPresentationModel? = null,
         val textClick: TextClick? = null,
