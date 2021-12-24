@@ -22,6 +22,7 @@ import org.pushingpixels.aurora.theming.colorscheme.EbonyColorScheme
 import org.pushingpixels.aurora.theming.painter.border.GlassBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.GlassFillPainter
+import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.getColorSchemes
 
@@ -145,7 +146,7 @@ fun ravenSkin(): AuroraSkinDefinition {
         displayName = "Raven",
         colors = ravenSkinColors(),
         painters = AuroraPainters(
-            fillPainter = GlassFillPainter(),
+            fillPainter = SpecularRectangularFillPainter(GlassFillPainter(), 0.6f),
             borderPainter = GlassBorderPainter(),
             decorationPainter = ArcDecorationPainter()
         ),

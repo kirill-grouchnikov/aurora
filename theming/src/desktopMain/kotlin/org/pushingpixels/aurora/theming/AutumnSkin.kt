@@ -22,6 +22,7 @@ import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.DelegateBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MarbleNoiseDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.MatteFillPainter
+import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
@@ -103,7 +104,7 @@ private fun autumnSkinColors(): AuroraSkinColors {
 
 fun autumnSkin(): AuroraSkinDefinition {
     val painters = AuroraPainters(
-        fillPainter = MatteFillPainter(),
+        fillPainter = SpecularRectangularFillPainter(MatteFillPainter(), 0.2f),
         borderPainter = CompositeBorderPainter(
             displayName = "Autumn",
             outer = DelegateBorderPainter(

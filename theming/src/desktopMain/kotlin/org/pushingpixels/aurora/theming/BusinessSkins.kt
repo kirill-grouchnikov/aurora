@@ -20,6 +20,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.BrushedMetalDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
+import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
@@ -86,7 +87,7 @@ private fun businessBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColo
 
 private fun businessBasePainters(): AuroraPainters {
     val painters = AuroraPainters(
-        fillPainter = ClassicFillPainter(),
+        fillPainter = SpecularRectangularFillPainter(ClassicFillPainter(), 0.5f),
         borderPainter = ClassicBorderPainter(),
         decorationPainter = BrushedMetalDecorationPainter()
     )

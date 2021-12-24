@@ -163,3 +163,90 @@ fun getBrushedMetalShader(colorLight: Color, colorDark: Color, alpha: Float = 1.
 
     return duotoneShader
 }
+
+internal fun getSpecularRectangularEffect(): RuntimeEffect {
+    val specularRectangularDesc = """
+            uniform vec4 color;
+            uniform float alpha;
+            uniform float width;
+            uniform float height;
+            uniform float topLeftCornerRadius;
+            uniform float topRightCornerRadius;
+            uniform float gap;
+
+            vec2 start = vec2(0.0, 0.0);
+            vec2 control1 = vec2(0.5, 0.1);
+            vec2 control2 = vec2(0.6, 0.9);
+            vec2 end = vec2(1.0, 1.0);
+            
+            vec2 spline(vec2 start, vec2 control1, vec2 control2, vec2 end, float t) {
+                // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+                float invT = 1.0 - t;
+                return start * invT * invT * invT + control1 * 3.0 * t * invT * invT + control2 * 3.0 * t * t * invT + end * t * t * t;
+            }
+
+            half4 main(vec2 fragcoord) {
+                // leading vertical gap
+                if (fragcoord.y <= gap) {
+                    return vec4(0.0, 0.0, 0.0, 0.0);
+                }
+                
+                // compute x-alpha based on the distance from left / right edges
+                float xalpha = 1.0;
+                if (fragcoord.x <= width / 2) {
+                    // closer to the left edge
+                    float overlayXStart = gap;
+                    if ((topLeftCornerRadius > 0.0) && (fragcoord.y <= (gap + topLeftCornerRadius))) {
+                        // We are within the vertical span of the top-left corner
+                        float dy = gap + topLeftCornerRadius - fragcoord.y;
+                        float dx = sqrt(topLeftCornerRadius * topLeftCornerRadius - dy * dy);
+                        overlayXStart = gap + topLeftCornerRadius - dx;
+                    }
+                    if (fragcoord.x <= overlayXStart) {
+                        // leading horizontal gap
+                        xalpha = 0.0;
+                    } else if (fragcoord.x <= (overlayXStart + gap)) {
+                        // ramp-up to full alpha horizontally
+                        float cfraction = (fragcoord.x - overlayXStart - gap) / gap;
+                        xalpha = spline(start, control1, control2, end, 1.0 - cfraction).y;
+                    }
+                } else {
+                    // closer to the right edge
+                    float overlayXEnd = width - gap;
+                    if ((topRightCornerRadius > 0.0) && (fragcoord.y <= (gap + topRightCornerRadius))) {
+                        // We are within the vertical span of the top-right corner
+                        float dy = gap + topRightCornerRadius - fragcoord.y;
+                        float dx = sqrt(topRightCornerRadius * topRightCornerRadius - dy * dy);
+                        overlayXEnd = width - gap - topRightCornerRadius + dx;
+                    }
+                    if (fragcoord.x >= overlayXEnd) {
+                        // trailing horizontal gap
+                        xalpha = 0.0;
+                    } else if (fragcoord.x >= (overlayXEnd - gap)) {
+                        // ramp-down to zero alpha horizontally
+                        float cfraction = (fragcoord.x - (overlayXEnd - gap)) / gap;
+                        xalpha = spline(start, control1, control2, end, 1.0 - cfraction).y;
+                    }
+                }
+                
+                // quick ramp-up
+                if (fragcoord.y <= 2 * gap) {
+                    float cfraction = (fragcoord.y - gap) / gap;
+                    float falpha = xalpha * alpha * spline(start, control1, control2, end, cfraction).y;
+                    return vec4(color.r * falpha, color.g * falpha, color.b * falpha, falpha); 
+                }
+                
+                // slower ramp-down
+                if (fragcoord.y <= height / 2.0) {
+                    float cfraction = (fragcoord.y - 2 * gap) / (height / 2.0 - 2 * gap);
+                    float falpha = xalpha * alpha * spline(start, control1, control2, end, 1.0 - cfraction).y;
+                    return vec4(color.r * falpha, color.g * falpha, color.b * falpha, falpha); 
+                }
+
+                // nothing in bottom half
+                return vec4(0.0, 0.0, 0.0, 0.0);
+            }
+        """
+
+    return RuntimeEffect.makeForShader(specularRectangularDesc)
+}

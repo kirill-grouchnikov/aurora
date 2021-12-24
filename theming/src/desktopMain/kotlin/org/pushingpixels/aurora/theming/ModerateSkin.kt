@@ -22,6 +22,7 @@ import org.pushingpixels.aurora.theming.colorscheme.SteelBlueColorScheme
 import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.GlassFillPainter
+import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
@@ -63,7 +64,7 @@ private fun moderateSkinColors(): AuroraSkinColors {
 
 fun moderateSkin(): AuroraSkinDefinition {
     val painters = AuroraPainters(
-        fillPainter = GlassFillPainter(),
+        fillPainter = SpecularRectangularFillPainter(GlassFillPainter(), 0.5f),
         borderPainter = ClassicBorderPainter(),
         decorationPainter = MatteDecorationPainter()
     )

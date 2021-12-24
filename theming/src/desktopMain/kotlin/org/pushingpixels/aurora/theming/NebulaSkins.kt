@@ -19,6 +19,7 @@ import org.pushingpixels.aurora.theming.colorscheme.*
 import org.pushingpixels.aurora.theming.painter.border.FlatBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MarbleNoiseDecorationPainter
+import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.SubduedFillPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomShadowOverlayPainter
@@ -142,7 +143,7 @@ private fun nebulaBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors
 
 private fun nebulaBasePainters(): AuroraPainters {
     val painters = AuroraPainters(
-        fillPainter = SubduedFillPainter(),
+        fillPainter = SpecularRectangularFillPainter(SubduedFillPainter(), 0.3f),
         borderPainter = FlatBorderPainter(),
         decorationPainter = MarbleNoiseDecorationPainter(
             textureAlpha = 0.2f,

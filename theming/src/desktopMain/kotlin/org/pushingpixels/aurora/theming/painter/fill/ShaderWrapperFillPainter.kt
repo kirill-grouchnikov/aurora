@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.unit.Density
 import org.jetbrains.skia.Data
 import org.jetbrains.skia.RuntimeEffect
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
@@ -37,7 +38,12 @@ abstract class ShaderWrapperFillPainter(
     val runtimeEffect: RuntimeEffect,
     val baseFillPainter: AuroraFillPainter
 ) : AuroraFillPainter {
-    abstract fun getShaderData(size: Size, fillScheme: AuroraColorScheme, alpha: Float): Data
+    abstract fun getShaderData(
+        density: Density,
+        outline: Outline,
+        fillScheme: AuroraColorScheme,
+        alpha: Float
+    ): Data
 
     override fun paintContourBackground(
         drawScope: DrawScope,
@@ -56,7 +62,7 @@ abstract class ShaderWrapperFillPainter(
             )
 
             val shader = runtimeEffect.makeShader(
-                uniforms = getShaderData(size, fillScheme, alpha),
+                uniforms = getShaderData(drawScope, outline, fillScheme, alpha),
                 children = null,
                 localMatrix = null,
                 isOpaque = false

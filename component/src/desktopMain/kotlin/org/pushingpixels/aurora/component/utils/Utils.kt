@@ -36,5 +36,5 @@ internal fun AuroraSize.asSize(density: Density): Size {
     return Size(width / density.density, height / density.density)
 }
 
-internal fun AuroraSize.asSize(extraWidth: Int, extraHeight: Int) =
+internal fun AuroraSize.asSize(extraWidth: Int = 0, extraHeight: Int = 0) =
     Size((width + extraWidth).toFloat(), (height + extraHeight).toFloat())

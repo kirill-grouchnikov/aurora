@@ -23,6 +23,7 @@ import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.DelegateBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.MatteFillPainter
+import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopLineOverlayPainter
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
@@ -147,7 +148,7 @@ private fun dustBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
 
 private fun dustBasePainters(): AuroraPainters {
     val painters = AuroraPainters(
-        fillPainter = MatteFillPainter(),
+        fillPainter = SpecularRectangularFillPainter(MatteFillPainter(), 0.8f),
         borderPainter = CompositeBorderPainter(
             displayName = "Dust",
             outer = ClassicBorderPainter(),

@@ -767,16 +767,6 @@ internal fun AuroraCommandButton(
                         val width = buttonSize.width.toFloat()
                         val height = buttonSize.height.toFloat()
 
-                        val openDelta = 3
-                        val deltaLeft =
-                            if (buttonSides.openSides.contains(Side.Left)) openDelta else 0
-                        val deltaRight =
-                            if (buttonSides.openSides.contains(Side.Right)) openDelta else 0
-                        val deltaTop =
-                            if (buttonSides.openSides.contains(Side.Top)) openDelta else 0
-                        val deltaBottom =
-                            if (buttonSides.openSides.contains(Side.Bottom)) openDelta else 0
-
                         withTransform({
                             clipRect(
                                 left = 0.0f,
@@ -786,13 +776,13 @@ internal fun AuroraCommandButton(
                                 clipOp = ClipOp.Intersect
                             )
                             translate(
-                                left = -actionAreaOffset.x - deltaLeft.toFloat(),
-                                top = -actionAreaOffset.y - deltaTop.toFloat()
+                                left = -actionAreaOffset.x,
+                                top = -actionAreaOffset.y
                             )
                         }) {
                             val outline = buttonShaper.getButtonOutline(
-                                width = width + deltaLeft + deltaRight,
-                                height = height + deltaTop + deltaBottom,
+                                width = width,
+                                height = height,
                                 extraInsets = 0.5f,
                                 isInner = false,
                                 sides = buttonSides,
@@ -815,10 +805,7 @@ internal fun AuroraCommandButton(
                             drawingCache.colorScheme.foreground = Color.Black
                             fillPainter.paintContourBackground(
                                 this,
-                                buttonSize.asSize(
-                                    deltaLeft + deltaRight,
-                                    deltaTop + deltaBottom
-                                ),
+                                buttonSize.asSize(),
                                 outline,
                                 drawingCache.colorScheme,
                                 actionAlpha
@@ -836,8 +823,8 @@ internal fun AuroraCommandButton(
 
                             val innerOutline =
                                 if (borderPainter.isPaintingInnerOutline) buttonShaper.getButtonOutline(
-                                    width = width + deltaLeft + deltaRight,
-                                    height = height + deltaTop + deltaBottom,
+                                    width = width,
+                                    height = height,
                                     extraInsets = 1.0f,
                                     isInner = true,
                                     sides = buttonSides,
@@ -846,10 +833,7 @@ internal fun AuroraCommandButton(
 
                             borderPainter.paintBorder(
                                 this,
-                                buttonSize.asSize(
-                                    deltaLeft + deltaRight,
-                                    deltaTop + deltaBottom
-                                ),
+                                buttonSize.asSize(),
                                 outline,
                                 innerOutline,
                                 drawingCache.colorScheme,
@@ -979,16 +963,6 @@ internal fun AuroraCommandButton(
                         val width = buttonSize.width.toFloat()
                         val height = buttonSize.height.toFloat()
 
-                        val openDelta = 3
-                        val deltaLeft =
-                            if (buttonSides.openSides.contains(Side.Left)) openDelta else 0
-                        val deltaRight =
-                            if (buttonSides.openSides.contains(Side.Right)) openDelta else 0
-                        val deltaTop =
-                            if (buttonSides.openSides.contains(Side.Top)) openDelta else 0
-                        val deltaBottom =
-                            if (buttonSides.openSides.contains(Side.Bottom)) openDelta else 0
-
                         withTransform({
                             clipRect(
                                 left = 0.0f,
@@ -998,13 +972,13 @@ internal fun AuroraCommandButton(
                                 clipOp = ClipOp.Intersect
                             )
                             translate(
-                                left = -popupAreaOffset.x - deltaLeft.toFloat(),
-                                top = -popupAreaOffset.y - deltaTop.toFloat()
+                                left = -popupAreaOffset.x,
+                                top = -popupAreaOffset.y
                             )
                         }) {
                             val outline = buttonShaper.getButtonOutline(
-                                width = width + deltaLeft + deltaRight,
-                                height = height + deltaTop + deltaBottom,
+                                width = width,
+                                height = height,
                                 extraInsets = 0.5f,
                                 isInner = false,
                                 sides = buttonSides,
@@ -1027,10 +1001,7 @@ internal fun AuroraCommandButton(
                             drawingCache.colorScheme.foreground = Color.Black
                             fillPainter.paintContourBackground(
                                 this,
-                                buttonSize.asSize(
-                                    deltaLeft + deltaRight,
-                                    deltaTop + deltaBottom
-                                ),
+                                buttonSize.asSize(),
                                 outline,
                                 drawingCache.colorScheme,
                                 popupAlpha
@@ -1048,8 +1019,8 @@ internal fun AuroraCommandButton(
 
                             val innerOutline =
                                 if (borderPainter.isPaintingInnerOutline) buttonShaper.getButtonOutline(
-                                    width = width + deltaLeft + deltaRight,
-                                    height = height + deltaTop + deltaBottom,
+                                    width = width,
+                                    height = height,
                                     extraInsets = 1.0f,
                                     isInner = true,
                                     sides = buttonSides,
@@ -1058,10 +1029,7 @@ internal fun AuroraCommandButton(
 
                             borderPainter.paintBorder(
                                 this,
-                                buttonSize.asSize(
-                                    deltaLeft + deltaRight,
-                                    deltaTop + deltaBottom
-                                ),
+                                buttonSize.asSize(),
                                 outline,
                                 innerOutline,
                                 drawingCache.colorScheme,

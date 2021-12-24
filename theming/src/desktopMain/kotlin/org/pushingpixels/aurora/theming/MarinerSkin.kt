@@ -104,7 +104,11 @@ private fun marinerSkinColors(): AuroraSkinColors {
     val headerSchemeBundle = AuroraColorSchemeBundle(
         headerColorScheme, headerColorScheme, headerColorScheme
     )
-    headerSchemeBundle.registerAlpha(0.4f, ComponentState.DisabledSelected, ComponentState.DisabledUnselected)
+    headerSchemeBundle.registerAlpha(
+        0.4f,
+        ComponentState.DisabledSelected,
+        ComponentState.DisabledUnselected
+    )
     headerSchemeBundle.registerColorScheme(
         headerColorScheme, ColorSchemeAssociationKind.Fill,
         ComponentState.DisabledSelected, ComponentState.DisabledUnselected
