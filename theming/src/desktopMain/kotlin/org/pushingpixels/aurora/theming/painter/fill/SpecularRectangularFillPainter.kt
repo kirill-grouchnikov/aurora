@@ -65,7 +65,10 @@ class SpecularRectangularFillPainter(base: AuroraFillPainter, val baseAlpha: Flo
         }
         duotoneDataBuffer.putFloat(28, topLeftRadius)
         duotoneDataBuffer.putFloat(32, topRightRadius)
-        duotoneDataBuffer.putFloat(36, 1.5f * density.density)
+
+        val minDimension = minOf(outline.bounds.width, outline.bounds.height)
+        val gapBase = if (minDimension < (16f * density.density)) 0.5f else 1.5f
+        duotoneDataBuffer.putFloat(36, gapBase * density.density)
 
         return Data.makeFromBytes(duotoneDataBuffer.array())
     }
