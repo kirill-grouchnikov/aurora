@@ -16,6 +16,7 @@
 
 package org.pushingpixels.aurora.window
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.runtime.*
@@ -26,6 +27,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
@@ -33,6 +35,8 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -134,6 +138,7 @@ private fun AuroraWindowScope.WindowTitlePane(
                         skinColors.getEnabledColorScheme(DecorationAreaType.TitlePane)
                     val titleTextStyle = TextStyle(
                         color = colorScheme.foregroundColor,
+                        fontWeight = FontWeight.Bold,
                         shadow = Shadow(
                             color = colorScheme.echoColor,
                             blurRadius = density.density
@@ -142,7 +147,7 @@ private fun AuroraWindowScope.WindowTitlePane(
                     LabelProjection(
                         contentModel = LabelContentModel(text = title),
                         presentationModel = LabelPresentationModel(textStyle = titleTextStyle)
-                    ).project()
+                    ).project(modifier = Modifier.padding(bottom = 2.dp))
                 }
 
                 val colors = AuroraSkin.colors
