@@ -274,7 +274,7 @@ fun GradientSection(gradients: Gradients, modifier: Modifier) {
 
 
         SingleGradientSection(
-            "oklab, non-linear interpolation",
+            "oklab, bezier (non-uniform) interpolation",
             gradients.colors
         ) { width, colors ->
             val sksl = """
