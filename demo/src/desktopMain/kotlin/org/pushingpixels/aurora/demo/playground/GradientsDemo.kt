@@ -18,6 +18,7 @@ package org.pushingpixels.aurora.demo.playground
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -39,6 +40,8 @@ import org.jetbrains.skia.Data
 import org.jetbrains.skia.RuntimeEffect
 import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.model.LabelPresentationModel
+import org.pushingpixels.aurora.component.model.SelectorContentModel
+import org.pushingpixels.aurora.component.projection.CheckBoxProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.theming.IconFilterStrategy
@@ -68,25 +71,56 @@ fun main() = auroraApplication {
         onCloseRequest = ::exitApplication,
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            Row(modifier = Modifier.weight(1.0f)) {
-                GradientSectionByColor(
-                    modifier = Modifier.weight(1.0f, fill = true),
-                    gradients = Gradients.CyanRed
-                )
-                GradientSectionByColor(
-                    modifier = Modifier.weight(1.0f, fill = true),
-                    gradients = Gradients.GreenMagenta
-                )
-            }
-            Row(modifier = Modifier.weight(1.0f)) {
-                GradientSectionByColor(
-                    modifier = Modifier.weight(1.0f, fill = true),
-                    gradients = Gradients.WhiteBlue
-                )
-                GradientSectionByColor(
-                    modifier = Modifier.weight(1.0f, fill = true),
-                    gradients = Gradients.PeachTeal
-                )
+            val groupByColor = remember { mutableStateOf(true) }
+
+            CheckBoxProjection(contentModel = SelectorContentModel(
+                text = "Group by color",
+                selected = groupByColor.value,
+                onTriggerSelectedChange = { groupByColor.value = it }
+            )).project(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
+
+            if (groupByColor.value) {
+                Row(modifier = Modifier.weight(1.0f)) {
+                    GradientSectionByColor(
+                        modifier = Modifier.weight(1.0f, fill = true),
+                        gradients = Gradients.CyanRed
+                    )
+                    GradientSectionByColor(
+                        modifier = Modifier.weight(1.0f, fill = true),
+                        gradients = Gradients.GreenMagenta
+                    )
+                }
+                Row(modifier = Modifier.weight(1.0f)) {
+                    GradientSectionByColor(
+                        modifier = Modifier.weight(1.0f, fill = true),
+                        gradients = Gradients.WhiteBlue
+                    )
+                    GradientSectionByColor(
+                        modifier = Modifier.weight(1.0f, fill = true),
+                        gradients = Gradients.PeachTeal
+                    )
+                }
+            } else {
+                Row(modifier = Modifier.weight(1.0f)) {
+                    GradientSectionByBrush(
+                        modifier = Modifier.weight(1.0f, fill = true),
+                        brushes = Brushes.Default
+                    )
+                    GradientSectionByBrush(
+                        modifier = Modifier.weight(1.0f, fill = true),
+                        brushes = Brushes.LinearSrgb
+                    )
+                }
+                Row(modifier = Modifier.weight(1.0f)) {
+                    GradientSectionByBrush(
+                        modifier = Modifier.weight(1.0f, fill = true),
+                        brushes = Brushes.Oklab
+                    )
+                    GradientSectionByBrush(
+                        modifier = Modifier.weight(1.0f, fill = true),
+                        brushes = Brushes.OklabBezier
+                    )
+                }
             }
         }
     }
@@ -117,6 +151,26 @@ private fun GradientSectionByColor(gradients: Gradients, modifier: Modifier) {
 
         for (brush in Brushes.values()) {
             SingleGradientSection(brush.desc, gradients.colors, brush.brushCreator)
+        }
+    }
+}
+
+@ExperimentalUnitApi
+@Composable
+private fun GradientSectionByBrush(brushes: Brushes, modifier: Modifier) {
+    Column(modifier = modifier.padding(16.dp)) {
+        LabelProjection(
+            contentModel = LabelContentModel(
+                text = brushes.desc
+            ), presentationModel = LabelPresentationModel(
+                textStyle = TextStyle(fontWeight = FontWeight.Bold)
+            )
+        ).project()
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        for (gradient in Gradients.values()) {
+            SingleGradientSection(gradient.desc, gradient.colors, brushes.brushCreator)
         }
     }
 }
@@ -414,7 +468,7 @@ private fun SingleGradientSection(
     val brush = brushCreator.invoke(400.dp.value * density, colors)
 
     Column(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
     ) {
         LabelProjection(
             contentModel = LabelContentModel(
