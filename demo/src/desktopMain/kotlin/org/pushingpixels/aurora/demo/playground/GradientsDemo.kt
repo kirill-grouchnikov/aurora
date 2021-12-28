@@ -18,7 +18,6 @@ package org.pushingpixels.aurora.demo.playground
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -68,7 +67,6 @@ fun main() = auroraApplication {
         undecorated = true,
         onCloseRequest = ::exitApplication,
     ) {
-        val gradients = remember { mutableStateOf(Gradients.CyanRed) }
         Column(modifier = Modifier.fillMaxSize()) {
             Row(modifier = Modifier.weight(1.0f)) {
                 GradientSection(
@@ -116,6 +114,7 @@ fun GradientSection(gradients: Gradients, modifier: Modifier) {
         ).project()
 
         Spacer(modifier = Modifier.height(4.dp))
+
         SingleGradientSection("default", gradients.colors) { width, colors ->
             Brush.horizontalGradient(
                 0.0f to colors.start,
@@ -125,7 +124,7 @@ fun GradientSection(gradients: Gradients, modifier: Modifier) {
             )
         }
 
-        SingleGradientSection("linear srgb", gradients.colors) { width, colors ->
+        SingleGradientSection("linear srgb, skia shader", gradients.colors) { width, colors ->
             val sksl = """
                     // https://bottosson.github.io/posts/colorwrong/#what-can-we-do%3F
                     vec3 linearSrgbToSrgb(vec3 x) {
@@ -183,7 +182,7 @@ fun GradientSection(gradients: Gradients, modifier: Modifier) {
             ShaderBrush(shader)
         }
 
-        SingleGradientSection("oklab", gradients.colors) { width, colors ->
+        SingleGradientSection("oklab, skia shader", gradients.colors) { width, colors ->
             val sksl = """
                     // https://bottosson.github.io/posts/colorwrong/#what-can-we-do%3F
                     vec3 linearSrgbToSrgb(vec3 x) {
@@ -274,7 +273,7 @@ fun GradientSection(gradients: Gradients, modifier: Modifier) {
 
 
         SingleGradientSection(
-            "oklab, bezier (non-uniform) interpolation",
+            "oklab, skia shader, bezier (non-uniform) interpolation",
             gradients.colors
         ) { width, colors ->
             val sksl = """
