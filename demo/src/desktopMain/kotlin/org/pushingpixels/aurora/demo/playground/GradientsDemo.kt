@@ -69,21 +69,21 @@ fun main() = auroraApplication {
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Row(modifier = Modifier.weight(1.0f)) {
-                GradientSection(
+                GradientSectionByColor(
                     modifier = Modifier.weight(1.0f, fill = true),
                     gradients = Gradients.CyanRed
                 )
-                GradientSection(
+                GradientSectionByColor(
                     modifier = Modifier.weight(1.0f, fill = true),
                     gradients = Gradients.GreenMagenta
                 )
             }
             Row(modifier = Modifier.weight(1.0f)) {
-                GradientSection(
+                GradientSectionByColor(
                     modifier = Modifier.weight(1.0f, fill = true),
                     gradients = Gradients.WhiteBlue
                 )
-                GradientSection(
+                GradientSectionByColor(
                     modifier = Modifier.weight(1.0f, fill = true),
                     gradients = Gradients.PeachTeal
                 )
@@ -103,7 +103,7 @@ enum class Gradients(val desc: String, val colors: GradientColors) {
 
 @ExperimentalUnitApi
 @Composable
-fun GradientSection(gradients: Gradients, modifier: Modifier) {
+private fun GradientSectionByColor(gradients: Gradients, modifier: Modifier) {
     Column(modifier = modifier.padding(16.dp)) {
         LabelProjection(
             contentModel = LabelContentModel(
@@ -115,274 +115,287 @@ fun GradientSection(gradients: Gradients, modifier: Modifier) {
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        SingleGradientSection("default", gradients.colors) { width, colors ->
-            Brush.horizontalGradient(
-                0.0f to colors.start,
-                1.0f to colors.end,
-                startX = 0.0f,
-                endX = width
-            )
-        }
-
-        SingleGradientSection("linear srgb, skia shader", gradients.colors) { width, colors ->
-            val sksl = """
-                    // https://bottosson.github.io/posts/colorwrong/#what-can-we-do%3F
-                    vec3 linearSrgbToSrgb(vec3 x) {
-                        vec3 xlo = 12.92*x;
-                        vec3 xhi = 1.055 * pow(x, vec3(1.0/2.4)) - 0.055;
-                        return mix(xlo, xhi, step(vec3(0.0031308), x));
-                    
-                    }
-                    
-                    vec3 srgbToLinearSrgb(vec3 x) {
-                        vec3 xlo = x / 12.92;
-                        vec3 xhi = pow((x + 0.055)/(1.055), vec3(2.4));
-                        return mix(xlo, xhi, step(vec3(0.04045), x));
-                    }
-                    
-                    uniform vec4 start;
-                    uniform vec4 end;
-                    uniform float width;
-
-                    half4 main(vec2 fragcoord) {
-                       // Implicit assumption in here that colors are full opacity
-                       float fraction = fragcoord.x / width;
-                       // Convert start and end colors to linear SRGB
-                       vec3 linearStart = srgbToLinearSrgb(start.xyz);
-                       vec3 linearEnd = srgbToLinearSrgb(end.xyz);
-                       // Interpolate in linear SRGB space
-                       vec3 linearInterpolated = mix(linearStart, linearEnd, fraction);
-                       // And convert back to SRGB
-                       return vec4(linearSrgbToSrgb(linearInterpolated), 1.0);
-                    }
-                """
-
-            val dataBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
-            // RGBA colorLight
-            dataBuffer.putFloat(0, colors.start.red)
-            dataBuffer.putFloat(4, colors.start.green)
-            dataBuffer.putFloat(8, colors.start.blue)
-            dataBuffer.putFloat(12, colors.start.alpha)
-            // RGBA colorDark
-            dataBuffer.putFloat(16, colors.end.red)
-            dataBuffer.putFloat(20, colors.end.green)
-            dataBuffer.putFloat(24, colors.end.blue)
-            dataBuffer.putFloat(28, colors.end.alpha)
-            // Width
-            dataBuffer.putFloat(32, width)
-
-            val effect = RuntimeEffect.makeForShader(sksl)
-            val shader = effect.makeShader(
-                uniforms = Data.makeFromBytes(dataBuffer.array()),
-                children = null,
-                localMatrix = null,
-                isOpaque = false
-            )
-
-            ShaderBrush(shader)
-        }
-
-        SingleGradientSection("oklab, skia shader", gradients.colors) { width, colors ->
-            val sksl = """
-                    // https://bottosson.github.io/posts/colorwrong/#what-can-we-do%3F
-                    vec3 linearSrgbToSrgb(vec3 x) {
-                        vec3 xlo = 12.92*x;
-                        vec3 xhi = 1.055 * pow(x, vec3(1.0/2.4)) - 0.055;
-                        return mix(xlo, xhi, step(vec3(0.0031308), x));
-                    
-                    }
-                    
-                    vec3 srgbToLinearSrgb(vec3 x) {
-                        vec3 xlo = x / 12.92;
-                        vec3 xhi = pow((x + 0.055)/(1.055), vec3(2.4));
-                        return mix(xlo, xhi, step(vec3(0.04045), x));
-                    }
-                    
-                    // https://bottosson.github.io/posts/oklab/#converting-from-linear-srgb-to-oklab
-                    const mat3 fromOkStep1 = mat3(
-                       1.0, 1.0, 1.0,
-                       0.3963377774, -0.1055613458, -0.0894841775,
-                       0.2158037573, -0.0638541728, -1.2914855480);
-                                       
-                    const mat3 fromOkStep2 = mat3(
-                       4.0767416621, -1.2684380046, -0.0041960863,
-                       -3.3077115913, 2.6097574011, -0.7034186147,
-                       0.2309699292, -0.3413193965,  1.7076147010);
-                    
-                    const mat3 toOkStep1 = mat3(
-                       0.4122214708, 0.2119034982, 0.0883024619,
-                       0.5363325363, 0.6806995451, 0.2817188376,
-                       0.0514459929, 0.1073969566, 0.6299787005);
-                                       
-                    const mat3 toOkStep2 = mat3(
-                       0.2104542553, 1.9779984951, 0.0259040371,
-                       0.7936177850, -2.4285922050, 0.7827717662,
-                       -0.0040720468, 0.4505937099, -0.8086757660);
-
-                    vec3 linearSrgbToOklab(vec3 x) {
-                        vec3 lms = toOkStep1 * x;
-                        return toOkStep2 * (sign(lms)*pow(abs(lms), vec3(1.0/3.0)));
-                    }
-                    
-                    vec3 oklabToLinearSrgb(vec3 x) {
-                        vec3 lms = fromOkStep1 * x;
-                        return fromOkStep2 * (lms * lms * lms);
-                    }
-                    
-                    uniform vec4 start;
-                    uniform vec4 end;
-                    uniform float width;
-
-                    half4 main(vec2 fragcoord) {
-                       // Implicit assumption in here that colors are full opacity
-                       float fraction = fragcoord.x / width;
-                       // Convert start and end colors to Oklab
-                       vec3 oklabStart = linearSrgbToOklab(srgbToLinearSrgb(start.xyz));
-                       vec3 oklabEnd = linearSrgbToOklab(srgbToLinearSrgb(end.xyz));
-                       // Interpolate in Oklab space
-                       vec3 oklabInterpolated = mix(oklabStart, oklabEnd, fraction);
-                       // And convert back to SRGB
-                       return vec4(linearSrgbToSrgb(oklabToLinearSrgb(oklabInterpolated)), 1.0);
-                    }
-                """
-
-            val dataBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
-            // RGBA colorLight
-            dataBuffer.putFloat(0, colors.start.red)
-            dataBuffer.putFloat(4, colors.start.green)
-            dataBuffer.putFloat(8, colors.start.blue)
-            dataBuffer.putFloat(12, colors.start.alpha)
-            // RGBA colorDark
-            dataBuffer.putFloat(16, colors.end.red)
-            dataBuffer.putFloat(20, colors.end.green)
-            dataBuffer.putFloat(24, colors.end.blue)
-            dataBuffer.putFloat(28, colors.end.alpha)
-            // Width
-            dataBuffer.putFloat(32, width)
-
-            val effect = RuntimeEffect.makeForShader(sksl)
-            val shader = effect.makeShader(
-                uniforms = Data.makeFromBytes(dataBuffer.array()),
-                children = null,
-                localMatrix = null,
-                isOpaque = false
-            )
-
-            ShaderBrush(shader)
-        }
-
-
-        SingleGradientSection(
-            "oklab, skia shader, bezier (non-uniform) interpolation",
-            gradients.colors
-        ) { width, colors ->
-            val sksl = """
-                    // https://bottosson.github.io/posts/colorwrong/#what-can-we-do%3F
-                    vec3 linearSrgbToSrgb(vec3 x) {
-                        vec3 xlo = 12.92*x;
-                        vec3 xhi = 1.055 * pow(x, vec3(1.0/2.4)) - 0.055;
-                        return mix(xlo, xhi, step(vec3(0.0031308), x));
-                    
-                    }
-                    
-                    vec3 srgbToLinearSrgb(vec3 x) {
-                        vec3 xlo = x / 12.92;
-                        vec3 xhi = pow((x + 0.055)/(1.055), vec3(2.4));
-                        return mix(xlo, xhi, step(vec3(0.04045), x));
-                    }
-                    
-                    // https://bottosson.github.io/posts/oklab/#converting-from-linear-srgb-to-oklab
-                    const mat3 fromOkStep1 = mat3(
-                       1.0, 1.0, 1.0,
-                       0.3963377774, -0.1055613458, -0.0894841775,
-                       0.2158037573, -0.0638541728, -1.2914855480);
-                                       
-                    const mat3 fromOkStep2 = mat3(
-                       4.0767416621, -1.2684380046, -0.0041960863,
-                       -3.3077115913, 2.6097574011, -0.7034186147,
-                       0.2309699292, -0.3413193965,  1.7076147010);
-                    
-                    const mat3 toOkStep1 = mat3(
-                       0.4122214708, 0.2119034982, 0.0883024619,
-                       0.5363325363, 0.6806995451, 0.2817188376,
-                       0.0514459929, 0.1073969566, 0.6299787005);
-                                       
-                    const mat3 toOkStep2 = mat3(
-                       0.2104542553, 1.9779984951, 0.0259040371,
-                       0.7936177850, -2.4285922050, 0.7827717662,
-                       -0.0040720468, 0.4505937099, -0.8086757660);
-
-                    vec3 linearSrgbToOklab(vec3 x) {
-                        vec3 lms = toOkStep1 * x;
-                        return toOkStep2 * (sign(lms)*pow(abs(lms), vec3(1.0/3.0)));
-                    }
-                    
-                    vec3 oklabToLinearSrgb(vec3 x) {
-                        vec3 lms = fromOkStep1 * x;
-                        return fromOkStep2 * (lms * lms * lms);
-                    }
-                    
-                    // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
-                    vec2 spline(vec2 start, vec2 control1, vec2 control2, vec2 end, float t) {
-                        float invT = 1.0 - t;
-                        return start * invT * invT * invT + control1 * 3.0 * t * invT * invT + control2 * 3.0 * t * t * invT + end * t * t * t;
-                    }
-        
-                    uniform vec4 start;
-                    uniform vec4 end;
-                    uniform float width;
-
-                    // Bezier curve points. Note the the first control point is intentionally
-                    // outside the 0.0-1.0 x range to further "favor" the curve towards the start
-                    vec2 bstart = vec2(0.0, 0.0);
-                    vec2 bcontrol1 = vec2(1.3, 0.0);
-                    vec2 bcontrol2 = vec2(0.9, 0.1);
-                    vec2 bend = vec2(1.0, 1.0);
-
-                    half4 main(vec2 fragcoord) {
-                       // Implicit assumption in here that colors are full opacity
-                       float fraction = spline(bstart, bcontrol1, bcontrol2, bend, fragcoord.x / width).y;
-                       // Convert start and end colors to Oklab
-                       vec3 oklabStart = linearSrgbToOklab(srgbToLinearSrgb(start.xyz));
-                       vec3 oklabEnd = linearSrgbToOklab(srgbToLinearSrgb(end.xyz));
-                       // Interpolate in Oklab space
-                       vec3 oklabInterpolated = mix(oklabStart, oklabEnd, fraction);
-                       // And convert back to SRGB
-                       return vec4(linearSrgbToSrgb(oklabToLinearSrgb(oklabInterpolated)), 1.0);
-                    }
-                """
-
-            val dataBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
-            // RGBA colorLight
-            dataBuffer.putFloat(0, colors.start.red)
-            dataBuffer.putFloat(4, colors.start.green)
-            dataBuffer.putFloat(8, colors.start.blue)
-            dataBuffer.putFloat(12, colors.start.alpha)
-            // RGBA colorDark
-            dataBuffer.putFloat(16, colors.end.red)
-            dataBuffer.putFloat(20, colors.end.green)
-            dataBuffer.putFloat(24, colors.end.blue)
-            dataBuffer.putFloat(28, colors.end.alpha)
-            // Width
-            dataBuffer.putFloat(32, width)
-
-            val effect = RuntimeEffect.makeForShader(sksl)
-            val shader = effect.makeShader(
-                uniforms = Data.makeFromBytes(dataBuffer.array()),
-                children = null,
-                localMatrix = null,
-                isOpaque = false
-            )
-
-            ShaderBrush(shader)
+        for (brush in Brushes.values()) {
+            SingleGradientSection(brush.desc, gradients.colors, brush.brushCreator)
         }
     }
 }
 
+private val DefaultBrushCreator: (Float, GradientColors) -> Brush =
+    { width, colors ->
+        Brush.horizontalGradient(
+            0.0f to colors.start,
+            1.0f to colors.end,
+            startX = 0.0f,
+            endX = width
+        )
+    }
+
+private val LinearSrgbSkiaBrushCreator: (Float, GradientColors) -> Brush =
+    { width, colors ->
+        val sksl = """
+            // https://bottosson.github.io/posts/colorwrong/#what-can-we-do%3F
+            vec3 linearSrgbToSrgb(vec3 x) {
+                vec3 xlo = 12.92*x;
+                vec3 xhi = 1.055 * pow(x, vec3(1.0/2.4)) - 0.055;
+                return mix(xlo, xhi, step(vec3(0.0031308), x));
+            
+            }
+            
+            vec3 srgbToLinearSrgb(vec3 x) {
+                vec3 xlo = x / 12.92;
+                vec3 xhi = pow((x + 0.055)/(1.055), vec3(2.4));
+                return mix(xlo, xhi, step(vec3(0.04045), x));
+            }
+            
+            uniform vec4 start;
+            uniform vec4 end;
+            uniform float width;
+
+            half4 main(vec2 fragcoord) {
+               // Implicit assumption in here that colors are full opacity
+               float fraction = fragcoord.x / width;
+               // Convert start and end colors to linear SRGB
+               vec3 linearStart = srgbToLinearSrgb(start.xyz);
+               vec3 linearEnd = srgbToLinearSrgb(end.xyz);
+               // Interpolate in linear SRGB space
+               vec3 linearInterpolated = mix(linearStart, linearEnd, fraction);
+               // And convert back to SRGB
+               return vec4(linearSrgbToSrgb(linearInterpolated), 1.0);
+            }
+        """
+
+        val dataBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
+        // RGBA colorLight
+        dataBuffer.putFloat(0, colors.start.red)
+        dataBuffer.putFloat(4, colors.start.green)
+        dataBuffer.putFloat(8, colors.start.blue)
+        dataBuffer.putFloat(12, colors.start.alpha)
+        // RGBA colorDark
+        dataBuffer.putFloat(16, colors.end.red)
+        dataBuffer.putFloat(20, colors.end.green)
+        dataBuffer.putFloat(24, colors.end.blue)
+        dataBuffer.putFloat(28, colors.end.alpha)
+        // Width
+        dataBuffer.putFloat(32, width)
+
+        val effect = RuntimeEffect.makeForShader(sksl)
+        val shader = effect.makeShader(
+            uniforms = Data.makeFromBytes(dataBuffer.array()),
+            children = null,
+            localMatrix = null,
+            isOpaque = false
+        )
+
+        ShaderBrush(shader)
+    }
+
+private val OklabSkiaBrushCreator: (Float, GradientColors) -> Brush =
+    { width, colors ->
+        val sksl = """
+            // https://bottosson.github.io/posts/colorwrong/#what-can-we-do%3F
+            vec3 linearSrgbToSrgb(vec3 x) {
+                vec3 xlo = 12.92*x;
+                vec3 xhi = 1.055 * pow(x, vec3(1.0/2.4)) - 0.055;
+                return mix(xlo, xhi, step(vec3(0.0031308), x));
+            
+            }
+            
+            vec3 srgbToLinearSrgb(vec3 x) {
+                vec3 xlo = x / 12.92;
+                vec3 xhi = pow((x + 0.055)/(1.055), vec3(2.4));
+                return mix(xlo, xhi, step(vec3(0.04045), x));
+            }
+            
+            // https://bottosson.github.io/posts/oklab/#converting-from-linear-srgb-to-oklab
+            const mat3 fromOkStep1 = mat3(
+               1.0, 1.0, 1.0,
+               0.3963377774, -0.1055613458, -0.0894841775,
+               0.2158037573, -0.0638541728, -1.2914855480);
+                               
+            const mat3 fromOkStep2 = mat3(
+               4.0767416621, -1.2684380046, -0.0041960863,
+               -3.3077115913, 2.6097574011, -0.7034186147,
+               0.2309699292, -0.3413193965,  1.7076147010);
+            
+            const mat3 toOkStep1 = mat3(
+               0.4122214708, 0.2119034982, 0.0883024619,
+               0.5363325363, 0.6806995451, 0.2817188376,
+               0.0514459929, 0.1073969566, 0.6299787005);
+                               
+            const mat3 toOkStep2 = mat3(
+               0.2104542553, 1.9779984951, 0.0259040371,
+               0.7936177850, -2.4285922050, 0.7827717662,
+               -0.0040720468, 0.4505937099, -0.8086757660);
+
+            vec3 linearSrgbToOklab(vec3 x) {
+                vec3 lms = toOkStep1 * x;
+                return toOkStep2 * (sign(lms)*pow(abs(lms), vec3(1.0/3.0)));
+            }
+            
+            vec3 oklabToLinearSrgb(vec3 x) {
+                vec3 lms = fromOkStep1 * x;
+                return fromOkStep2 * (lms * lms * lms);
+            }
+            
+            uniform vec4 start;
+            uniform vec4 end;
+            uniform float width;
+
+            half4 main(vec2 fragcoord) {
+               // Implicit assumption in here that colors are full opacity
+               float fraction = fragcoord.x / width;
+               // Convert start and end colors to Oklab
+               vec3 oklabStart = linearSrgbToOklab(srgbToLinearSrgb(start.xyz));
+               vec3 oklabEnd = linearSrgbToOklab(srgbToLinearSrgb(end.xyz));
+               // Interpolate in Oklab space
+               vec3 oklabInterpolated = mix(oklabStart, oklabEnd, fraction);
+               // And convert back to SRGB
+               return vec4(linearSrgbToSrgb(oklabToLinearSrgb(oklabInterpolated)), 1.0);
+            }
+        """
+
+        val dataBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
+        // RGBA colorLight
+        dataBuffer.putFloat(0, colors.start.red)
+        dataBuffer.putFloat(4, colors.start.green)
+        dataBuffer.putFloat(8, colors.start.blue)
+        dataBuffer.putFloat(12, colors.start.alpha)
+        // RGBA colorDark
+        dataBuffer.putFloat(16, colors.end.red)
+        dataBuffer.putFloat(20, colors.end.green)
+        dataBuffer.putFloat(24, colors.end.blue)
+        dataBuffer.putFloat(28, colors.end.alpha)
+        // Width
+        dataBuffer.putFloat(32, width)
+
+        val effect = RuntimeEffect.makeForShader(sksl)
+        val shader = effect.makeShader(
+            uniforms = Data.makeFromBytes(dataBuffer.array()),
+            children = null,
+            localMatrix = null,
+            isOpaque = false
+        )
+
+        ShaderBrush(shader)
+    }
+
+private val OklabBezierSkiaBrushCreator: (Float, GradientColors) -> Brush =
+    { width, colors ->
+        val sksl = """
+            // https://bottosson.github.io/posts/colorwrong/#what-can-we-do%3F
+            vec3 linearSrgbToSrgb(vec3 x) {
+                vec3 xlo = 12.92*x;
+                vec3 xhi = 1.055 * pow(x, vec3(1.0/2.4)) - 0.055;
+                return mix(xlo, xhi, step(vec3(0.0031308), x));
+            
+            }
+            
+            vec3 srgbToLinearSrgb(vec3 x) {
+                vec3 xlo = x / 12.92;
+                vec3 xhi = pow((x + 0.055)/(1.055), vec3(2.4));
+                return mix(xlo, xhi, step(vec3(0.04045), x));
+            }
+            
+            // https://bottosson.github.io/posts/oklab/#converting-from-linear-srgb-to-oklab
+            const mat3 fromOkStep1 = mat3(
+               1.0, 1.0, 1.0,
+               0.3963377774, -0.1055613458, -0.0894841775,
+               0.2158037573, -0.0638541728, -1.2914855480);
+                               
+            const mat3 fromOkStep2 = mat3(
+               4.0767416621, -1.2684380046, -0.0041960863,
+               -3.3077115913, 2.6097574011, -0.7034186147,
+               0.2309699292, -0.3413193965,  1.7076147010);
+            
+            const mat3 toOkStep1 = mat3(
+               0.4122214708, 0.2119034982, 0.0883024619,
+               0.5363325363, 0.6806995451, 0.2817188376,
+               0.0514459929, 0.1073969566, 0.6299787005);
+                               
+            const mat3 toOkStep2 = mat3(
+               0.2104542553, 1.9779984951, 0.0259040371,
+               0.7936177850, -2.4285922050, 0.7827717662,
+               -0.0040720468, 0.4505937099, -0.8086757660);
+
+            vec3 linearSrgbToOklab(vec3 x) {
+                vec3 lms = toOkStep1 * x;
+                return toOkStep2 * (sign(lms)*pow(abs(lms), vec3(1.0/3.0)));
+            }
+            
+            vec3 oklabToLinearSrgb(vec3 x) {
+                vec3 lms = fromOkStep1 * x;
+                return fromOkStep2 * (lms * lms * lms);
+            }
+            
+            // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+            vec2 spline(vec2 start, vec2 control1, vec2 control2, vec2 end, float t) {
+                float invT = 1.0 - t;
+                return start * invT * invT * invT + control1 * 3.0 * t * invT * invT + control2 * 3.0 * t * t * invT + end * t * t * t;
+            }
+
+            uniform vec4 start;
+            uniform vec4 end;
+            uniform float width;
+
+            // Bezier curve points. Note the the first control point is intentionally
+            // outside the 0.0-1.0 x range to further "favor" the curve towards the start
+            vec2 bstart = vec2(0.0, 0.0);
+            vec2 bcontrol1 = vec2(1.3, 0.0);
+            vec2 bcontrol2 = vec2(0.9, 0.1);
+            vec2 bend = vec2(1.0, 1.0);
+
+            half4 main(vec2 fragcoord) {
+               // Implicit assumption in here that colors are full opacity
+               float fraction = spline(bstart, bcontrol1, bcontrol2, bend, fragcoord.x / width).y;
+               // Convert start and end colors to Oklab
+               vec3 oklabStart = linearSrgbToOklab(srgbToLinearSrgb(start.xyz));
+               vec3 oklabEnd = linearSrgbToOklab(srgbToLinearSrgb(end.xyz));
+               // Interpolate in Oklab space
+               vec3 oklabInterpolated = mix(oklabStart, oklabEnd, fraction);
+               // And convert back to SRGB
+               return vec4(linearSrgbToSrgb(oklabToLinearSrgb(oklabInterpolated)), 1.0);
+            }
+        """
+
+        val dataBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
+        // RGBA colorLight
+        dataBuffer.putFloat(0, colors.start.red)
+        dataBuffer.putFloat(4, colors.start.green)
+        dataBuffer.putFloat(8, colors.start.blue)
+        dataBuffer.putFloat(12, colors.start.alpha)
+        // RGBA colorDark
+        dataBuffer.putFloat(16, colors.end.red)
+        dataBuffer.putFloat(20, colors.end.green)
+        dataBuffer.putFloat(24, colors.end.blue)
+        dataBuffer.putFloat(28, colors.end.alpha)
+        // Width
+        dataBuffer.putFloat(32, width)
+
+        val effect = RuntimeEffect.makeForShader(sksl)
+        val shader = effect.makeShader(
+            uniforms = Data.makeFromBytes(dataBuffer.array()),
+            children = null,
+            localMatrix = null,
+            isOpaque = false
+        )
+
+        ShaderBrush(shader)
+    }
+
+enum class Brushes(val desc: String, val brushCreator: (Float, GradientColors) -> Brush) {
+    Default("Default", DefaultBrushCreator),
+    LinearSrgb("Linear SRGB, Skia shader", LinearSrgbSkiaBrushCreator),
+    Oklab("Oklab, Skia shader", OklabSkiaBrushCreator),
+    OklabBezier(
+        "Oklab, Skia shader, Bezier (non-uniform) interpolation",
+        OklabBezierSkiaBrushCreator
+    )
+}
 
 @ExperimentalUnitApi
 @Composable
-fun SingleGradientSection(
+private fun SingleGradientSection(
     text: String,
     colors: GradientColors,
     brushCreator: (width: Float, colors: GradientColors) -> Brush
