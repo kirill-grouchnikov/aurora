@@ -33,9 +33,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.Density
 import org.jetbrains.skia.Data
-import org.jetbrains.skia.Shader
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.theming.utils.getBrushedMetalBaseShader
+import org.pushingpixels.aurora.theming.utils.getBrushedMetalShader
 import org.pushingpixels.aurora.theming.utils.getDuotoneEffect
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -48,7 +47,7 @@ import java.nio.ByteOrder
  */
 class BrushedMetalDecorationPainter : ShaderWrapperDecorationPainter(
     runtimeEffect = getDuotoneEffect(),
-    baseShader = getBrushedMetalBaseShader(),
+    baseShader = getBrushedMetalShader(),
     baseDecorationPainter = ArcDecorationPainter()
 ) {
     override val displayName = "Brushed Metal"
