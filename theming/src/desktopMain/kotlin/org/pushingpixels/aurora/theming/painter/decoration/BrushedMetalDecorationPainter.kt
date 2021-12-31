@@ -29,7 +29,16 @@
  */
 package org.pushingpixels.aurora.theming.painter.decoration
 
-import org.pushingpixels.aurora.theming.utils.getBrushedMetalShader
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.unit.Density
+import org.jetbrains.skia.Data
+import org.jetbrains.skia.Shader
+import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
+import org.pushingpixels.aurora.theming.utils.getBrushedMetalBaseShader
+import org.pushingpixels.aurora.theming.utils.getDuotoneEffect
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
 /**
  * Implementation of [AuroraDecorationPainter] that uses brushed metal
@@ -38,14 +47,32 @@ import org.pushingpixels.aurora.theming.utils.getBrushedMetalShader
  * @author Kirill Grouchnikov
  */
 class BrushedMetalDecorationPainter : ShaderWrapperDecorationPainter(
-    shaderGenerator = {
-        getBrushedMetalShader(
-            colorLight = it.lightColor,
-            colorDark = it.darkColor,
-            alpha = 0.2f
-        )
-    },
+    runtimeEffect = getDuotoneEffect(),
+    baseShader = getBrushedMetalBaseShader(),
     baseDecorationPainter = ArcDecorationPainter()
 ) {
     override val displayName = "Brushed Metal"
+
+    override fun getShaderData(
+        density: Density,
+        componentSize: Size,
+        offsetFromRoot: Offset,
+        fillScheme: AuroraColorScheme
+    ): Data {
+        val dataBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
+        // RGBA colorLight
+        dataBuffer.putFloat(0, fillScheme.lightColor.red)
+        dataBuffer.putFloat(4, fillScheme.lightColor.green)
+        dataBuffer.putFloat(8, fillScheme.lightColor.blue)
+        dataBuffer.putFloat(12, fillScheme.lightColor.alpha)
+        // RGBA colorDark
+        dataBuffer.putFloat(16, fillScheme.darkColor.red)
+        dataBuffer.putFloat(20, fillScheme.darkColor.green)
+        dataBuffer.putFloat(24, fillScheme.darkColor.blue)
+        dataBuffer.putFloat(28, fillScheme.darkColor.alpha)
+        // Alpha
+        dataBuffer.putFloat(32, 0.2f)
+
+        return Data.makeFromBytes(dataBuffer.array())
+    }
 }

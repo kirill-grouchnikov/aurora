@@ -90,6 +90,61 @@ fun getNoiseShader(
     return duotoneShader
 }
 
+internal fun getDuotoneEffect(): RuntimeEffect {
+    // Duotone shader
+    val duotoneDesc = """
+            uniform shader shaderInput;
+            uniform vec4 colorLight;
+            uniform vec4 colorDark;
+            uniform float alpha;
+            
+            half4 main(vec2 fragcoord) { 
+                vec4 inputColor = shaderInput.eval(fragcoord);
+                float luma = dot(inputColor.rgb, vec3(0.299, 0.587, 0.114));
+                vec4 duotone = mix(colorLight, colorDark, luma);
+                return vec4(duotone.r * alpha, duotone.g * alpha, duotone.b * alpha, alpha);
+            }
+        """
+
+    return RuntimeEffect.makeForShader(duotoneDesc)
+}
+
+fun getBrushedMetalBaseShader(): Shader {
+    // Fractal noise shader
+    val noiseShader = Shader.makeFractalNoise(
+        baseFrequencyX = 0.45f,
+        baseFrequencyY = 0.45f,
+        numOctaves = 4,
+        seed = 0.0f
+    )
+
+    // Brushed metal shader
+    val brushedMetalDesc = """
+            uniform shader shaderInput;
+
+            half4 main(vec2 fragcoord) { 
+              vec4 inputColor = shaderInput.eval(vec2(0, fragcoord.y));
+              // Compute the luma at the first pixel in this row
+              float luma = dot(inputColor.rgb, vec3(0.299, 0.587, 0.114));
+              // Apply modulation to stretch and shift the texture for the brushed metal look 
+              float modulated = abs(cos((0.004 + 0.02 * luma) * (fragcoord.x + 200) + 0.26 * luma) 
+                  * sin((0.06 - 0.25 * luma) * (fragcoord.x + 85) + 0.75 * luma));
+              // Map 0.0-1.0 range to inverse 0.15-0.3
+              float modulated2 = 0.3 - modulated / 6.5;
+              half4 result = half4(modulated2, modulated2, modulated2, 1.0);
+              return result;
+            }
+    """
+    val brushedMetalEffect = RuntimeEffect.makeForShader(brushedMetalDesc)
+    val brushedMetalShader = brushedMetalEffect.makeShader(
+        uniforms = null,
+        children = arrayOf(noiseShader),
+        localMatrix = null,
+        isOpaque = false
+    )
+    return brushedMetalShader
+}
+
 fun getBrushedMetalShader(colorLight: Color, colorDark: Color, alpha: Float = 1.0f): Shader {
     // Fractal noise shader
     val noiseShader = Shader.makeFractalNoise(

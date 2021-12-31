@@ -21,6 +21,9 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.unit.Density
+import org.jetbrains.skia.Data
+import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.Shader
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
@@ -32,10 +35,19 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
  * @author Kirill Grouchnikov
  */
 abstract class ShaderWrapperDecorationPainter(
-    val shaderGenerator: (AuroraColorScheme) -> Shader,
+    val runtimeEffect: RuntimeEffect,
+    baseShader: Shader? = null,
     val baseDecorationPainter: AuroraDecorationPainter? = null
 ) : AuroraDecorationPainter {
-    private val shaders = hashMapOf<String, Shader>()
+    private val shaderChildren: Array<Shader?>? =
+        if (baseShader != null) arrayOf(baseShader) else null
+
+    abstract fun getShaderData(
+        density: Density,
+        componentSize: Size,
+        offsetFromRoot: Offset,
+        fillScheme: AuroraColorScheme
+    ): Data
 
     override fun paintDecorationArea(
         drawScope: DrawScope,
@@ -65,11 +77,12 @@ abstract class ShaderWrapperDecorationPainter(
                 )
             }
 
-            var shader = shaders[colorScheme.displayName]
-            if (shader == null) {
-                shader = shaderGenerator.invoke(colorScheme)
-                shaders[colorScheme.displayName] = shader
-            }
+            val shader = runtimeEffect.makeShader(
+                uniforms = getShaderData(drawScope, componentSize, offsetFromRoot, colorScheme),
+                children = shaderChildren,
+                localMatrix = null,
+                isOpaque = false
+            )
 
             val clipPath = Path()
             clipPath.addOutline(outline)

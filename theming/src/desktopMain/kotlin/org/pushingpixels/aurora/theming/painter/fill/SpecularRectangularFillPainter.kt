@@ -36,18 +36,18 @@ class SpecularRectangularFillPainter(base: AuroraFillPainter, val baseAlpha: Flo
         fillScheme: AuroraColorScheme,
         alpha: Float
     ): Data {
-        val duotoneDataBuffer = ByteBuffer.allocate(40).order(ByteOrder.LITTLE_ENDIAN)
+        val dataBuffer = ByteBuffer.allocate(40).order(ByteOrder.LITTLE_ENDIAN)
         // RGBA colorLight
         val color = fillScheme.extraLightColor
-        duotoneDataBuffer.putFloat(0, color.red)
-        duotoneDataBuffer.putFloat(4, color.green)
-        duotoneDataBuffer.putFloat(8, color.blue)
-        duotoneDataBuffer.putFloat(12, color.alpha)
+        dataBuffer.putFloat(0, color.red)
+        dataBuffer.putFloat(4, color.green)
+        dataBuffer.putFloat(8, color.blue)
+        dataBuffer.putFloat(12, color.alpha)
         // Alpha
-        duotoneDataBuffer.putFloat(16, alpha * baseAlpha)
+        dataBuffer.putFloat(16, alpha * baseAlpha)
         // Width and height
-        duotoneDataBuffer.putFloat(20, outline.bounds.width)
-        duotoneDataBuffer.putFloat(24, outline.bounds.height)
+        dataBuffer.putFloat(20, outline.bounds.width)
+        dataBuffer.putFloat(24, outline.bounds.height)
 
         // This is not ideal, but supporting Path-based outlines would mean having to pass that
         // information to the underlying shader.
@@ -63,13 +63,13 @@ class SpecularRectangularFillPainter(base: AuroraFillPainter, val baseAlpha: Flo
                 topRightRadius = 0.0f
             }
         }
-        duotoneDataBuffer.putFloat(28, topLeftRadius)
-        duotoneDataBuffer.putFloat(32, topRightRadius)
+        dataBuffer.putFloat(28, topLeftRadius)
+        dataBuffer.putFloat(32, topRightRadius)
 
         val minDimension = minOf(outline.bounds.width, outline.bounds.height)
         val gapBase = if (minDimension < (16f * density.density)) 0.5f else 1.5f
-        duotoneDataBuffer.putFloat(36, gapBase * density.density)
+        dataBuffer.putFloat(36, gapBase * density.density)
 
-        return Data.makeFromBytes(duotoneDataBuffer.array())
+        return Data.makeFromBytes(dataBuffer.array())
     }
 }
