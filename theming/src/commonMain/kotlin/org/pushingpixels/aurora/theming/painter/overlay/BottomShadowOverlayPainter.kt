@@ -21,21 +21,23 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.common.withBrightness
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import kotlin.jvm.Synchronized
 
 /**
- * Overlay painter that paints a few pixel-high drop shadow at the top edge of
- * the relevant decoration area. The constructor is private to enforce that
+ * Overlay painter that paints a few pixel-high drop shadow at the bottom edge
+ * of the relevant decoration area. The constructor is private to enforce that
  * [.getInstance] is the only way an application can get an instance of this class.
  *
  * @author Kirill Grouchnikov
  */
-class TopShadowOverlayPainter private constructor(private val startAlpha: Float) : AuroraOverlayPainter {
-    override val displayName = "Top Shadow"
+class BottomShadowOverlayPainter private constructor(private val endAlpha: Float) : AuroraOverlayPainter {
+    override val displayName = "Bottom Shadow"
 
     override fun paintOverlay(
         drawScope: DrawScope,
@@ -50,42 +52,44 @@ class TopShadowOverlayPainter private constructor(private val startAlpha: Float)
 
         with(drawScope) {
             val shadowHeight = 4.0.dp.toPx()
-            drawRect(
-                topLeft = Offset.Zero,
-                size = Size(width, shadowHeight),
-                style = Fill,
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        shadowColor.withAlpha(startAlpha),
-                        shadowColor.withAlpha(0.0625f)
-                    ),
-                    startY = 0.0f,
-                    endY = shadowHeight,
-                    tileMode = TileMode.Clamp
+            translate(top = size.height - shadowHeight) {
+                drawRect(
+                    topLeft = Offset.Zero,
+                    size = Size(width, shadowHeight),
+                    style = Fill,
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            shadowColor.withAlpha(0.0625f),
+                            shadowColor.withAlpha(endAlpha)
+                        ),
+                        startY = 0.0f,
+                        endY = shadowHeight,
+                        tileMode = TileMode.Clamp
+                    )
                 )
-            )
+            }
         }
     }
 
     companion object {
-        private val MAP: MutableMap<Int, TopShadowOverlayPainter> = HashMap()
-        private const val DEFAULT_SHADOW_START_ALPHA = 160.0f / 255.0f
-        private const val MIN_SHADOW_START_ALPHA = 32.0f / 255.0f
+        private val MAP: MutableMap<Int, BottomShadowOverlayPainter> = HashMap()
+        private const val DEFAULT_SHADOW_END_ALPHA = 128.0f / 255.0f
+        private const val MIN_SHADOW_END_ALPHA = 32.0f / 255.0f
 
         /**
-         * Returns an instance of top shadow overlay painter with the requested strength.
+         * Returns an instance of bottom shadow overlay painter with the requested strength.
          *
          * @param strength Drop shadow strength. Must be in [0..100] range.
-         * @return Top shadow overlay painter with the requested strength.
+         * @return Bottom shadow overlay painter with the requested strength.
          */
         @Synchronized
-        fun getInstance(strength: Int): TopShadowOverlayPainter {
+        fun getInstance(strength: Int): BottomShadowOverlayPainter {
             require(!(strength < 0 || strength > 100)) { "Strength must be in [0..100] range" }
             var result = MAP[strength]
             if (result == null) {
-                val startAlpha = MIN_SHADOW_START_ALPHA +
-                        (DEFAULT_SHADOW_START_ALPHA - MIN_SHADOW_START_ALPHA) * strength / 100
-                result = TopShadowOverlayPainter(startAlpha = startAlpha)
+                val endAlpha = MIN_SHADOW_END_ALPHA +
+                        (DEFAULT_SHADOW_END_ALPHA - MIN_SHADOW_END_ALPHA) * strength / 100
+                result = BottomShadowOverlayPainter(endAlpha = endAlpha)
                 MAP[strength] = result
             }
             return result
