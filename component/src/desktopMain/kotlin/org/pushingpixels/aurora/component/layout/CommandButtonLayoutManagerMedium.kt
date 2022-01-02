@@ -64,7 +64,7 @@ internal open class CommandButtonLayoutManagerMedium(
         val layoutHGap = (CommandButtonSizingConstants.DefaultHorizontalContentLayoutGap *
                 presentationModel.horizontalGapScaleFactor).toPx()
         val hasIcon = hasIcon(command, presentationModel)
-        val hasText = (buttonText != null)
+        val hasText = buttonText.isNotEmpty()
         val hasPopup = (command.secondaryContentModel != null)
         val prefIconSize = getPreferredIconSize(command, presentationModel).toPx()
 
@@ -103,7 +103,7 @@ internal open class CommandButtonLayoutManagerMedium(
         // popup icon?
         if (hasPopup) {
             // padding before the popup icon
-            if (hasText && hasIcon) {
+            if (hasText || hasIcon) {
                 width += 2 * layoutHGap
             }
             // popup icon width
@@ -171,7 +171,7 @@ internal open class CommandButtonLayoutManagerMedium(
         val layoutHGap = (CommandButtonSizingConstants.DefaultHorizontalContentLayoutGap *
                 presentationModel.horizontalGapScaleFactor).toPx()
         val hasIcon = hasIcon(command, presentationModel)
-        val hasText = (buttonText != null)
+        val hasText = buttonText.isNotEmpty()
         val hasPopup = (command.secondaryContentModel != null)
         val iconSize = getPreferredIconSize(command, presentationModel).toPx()
 
@@ -267,7 +267,7 @@ internal open class CommandButtonLayoutManagerMedium(
                 x += layoutHGap
             }
             if (hasPopup) {
-                if (hasText && hasIcon) {
+                if (hasText || hasIcon) {
                     x += 2 * layoutHGap
                 }
                 val popupIconWidth = CommandButtonSizingConstants.PopupIconWidth.toPx()
@@ -435,7 +435,7 @@ internal open class CommandButtonLayoutManagerMedium(
                 x -= layoutHGap
             }
             if (hasPopup) {
-                if (hasText && hasIcon) {
+                if (hasText || hasIcon) {
                     x -= 2 * layoutHGap
                 }
                 val popupIconWidth = CommandButtonSizingConstants.PopupIconWidth.toPx()
