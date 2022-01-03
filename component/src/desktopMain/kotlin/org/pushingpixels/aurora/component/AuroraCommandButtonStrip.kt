@@ -56,6 +56,14 @@ private fun CommandButtonStripContent(
             (index == 0) -> emptySet()
             else -> setOf(leadingSide)
         }
+        var currentPresentationModel = commandButtonPresentationModel.overlayWith(
+            overlay = CommandButtonPresentationModel.Overlay(
+                sides = Sides(openSides = openSides, straightSides = straightSides)
+            )
+        )
+        if (overlays.containsKey(command)) {
+            currentPresentationModel = currentPresentationModel.overlayWith(overlay = overlays[command]!!)
+        }
         AuroraCommandButton(
             modifier = Modifier,
             actionInteractionSource = remember { MutableInteractionSource() },
@@ -63,11 +71,8 @@ private fun CommandButtonStripContent(
             command = command,
             parentWindow = window,
             extraAction = null,
-            presentationModel = if (overlays.containsKey(command))
-                commandButtonPresentationModel.overlayWith(overlay = overlays[command]!!)
-            else commandButtonPresentationModel,
-            overlays = overlays,
-            buttonSides = Sides(openSides = openSides, straightSides = straightSides)
+            presentationModel = currentPresentationModel,
+            overlays = overlays
         )
     }
 }

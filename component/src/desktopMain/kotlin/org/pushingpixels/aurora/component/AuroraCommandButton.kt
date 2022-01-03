@@ -337,8 +337,7 @@ internal fun AuroraCommandButton(
     extraAction: (() -> Unit)? = null,
     extraActionPreview: CommandActionPreview? = null,
     presentationModel: CommandButtonPresentationModel,
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
-    buttonSides: Sides
+    overlays: Map<Command, CommandButtonPresentationModel.Overlay>
 ) {
     val secondaryContentModel = rememberUpdatedState(command.secondaryContentModel)
     val drawingCache = remember { CommandButtonDrawingCache() }
@@ -785,7 +784,7 @@ internal fun AuroraCommandButton(
                                 height = height,
                                 extraInsets = 0.5f,
                                 isInner = false,
-                                sides = buttonSides,
+                                sides = presentationModel.sides,
                                 drawScope = this
                             )
 
@@ -827,7 +826,7 @@ internal fun AuroraCommandButton(
                                     height = height,
                                     extraInsets = 1.0f,
                                     isInner = true,
-                                    sides = buttonSides,
+                                    sides = presentationModel.sides,
                                     drawScope = this
                                 ) else null
 
@@ -981,7 +980,7 @@ internal fun AuroraCommandButton(
                                 height = height,
                                 extraInsets = 0.5f,
                                 isInner = false,
-                                sides = buttonSides,
+                                sides = presentationModel.sides,
                                 drawScope = this
                             )
 
@@ -1023,7 +1022,7 @@ internal fun AuroraCommandButton(
                                     height = height,
                                     extraInsets = 1.0f,
                                     isInner = true,
-                                    sides = buttonSides,
+                                    sides = presentationModel.sides,
                                     drawScope = this
                                 ) else null
 

@@ -30,9 +30,11 @@ import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
@@ -92,10 +94,14 @@ fun AuroraBreadcrumbBar(commands: List<Command>, modifier: Modifier) {
                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                     paintDelegate = { drawScope, iconSize, colorScheme ->
                         with(drawScope) {
-                            val arrowWidth = ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()
-                            val arrowHeight = ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx()
+                            val arrowWidth =
+                                ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()
+                            val arrowHeight =
+                                ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx()
                             val dx = (iconSize.toPx() - arrowWidth) / 2
                             val dy = (iconSize.toPx() - arrowHeight) / 2
+                            val alpha = if (modelStateInfoSnapshot.currModelState.isDisabled)
+                                colors.getAlpha(decorationAreaType, modelStateInfoSnapshot.currModelState) else 1.0f
                             translate(left = dx, top = dy) {
                                 drawArrow(
                                     drawScope = this,
@@ -104,7 +110,7 @@ fun AuroraBreadcrumbBar(commands: List<Command>, modifier: Modifier) {
                                     strokeWidth = 2.0.dp.toPx(),
                                     direction = PopupPlacementStrategy.Startward,
                                     layoutDirection = layoutDirection,
-                                    color = colorScheme.markColor
+                                    color = colorScheme.markColor.withAlpha(alpha)
                                 )
                             }
                         }
@@ -131,10 +137,14 @@ fun AuroraBreadcrumbBar(commands: List<Command>, modifier: Modifier) {
                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                     paintDelegate = { drawScope, iconSize, colorScheme ->
                         with(drawScope) {
-                            val arrowWidth = ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()
-                            val arrowHeight = ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx()
+                            val arrowWidth =
+                                ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()
+                            val arrowHeight =
+                                ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx()
                             val dx = (iconSize.toPx() - arrowWidth) / 2
                             val dy = (iconSize.toPx() - arrowHeight) / 2
+                            val alpha = if (modelStateInfoSnapshot.currModelState.isDisabled)
+                                colors.getAlpha(decorationAreaType, modelStateInfoSnapshot.currModelState) else 1.0f
                             translate(left = dx, top = dy) {
                                 drawArrow(
                                     drawScope = this,
@@ -143,7 +153,7 @@ fun AuroraBreadcrumbBar(commands: List<Command>, modifier: Modifier) {
                                     strokeWidth = 2.0.dp.toPx(),
                                     direction = PopupPlacementStrategy.Endward,
                                     layoutDirection = layoutDirection,
-                                    color = colorScheme.markColor
+                                    color = colorScheme.markColor.withAlpha(alpha)
                                 )
                             }
                         }
@@ -168,7 +178,15 @@ fun AuroraBreadcrumbBar(commands: List<Command>, modifier: Modifier) {
             // Leftwards scroller
             CommandButtonProjection(
                 contentModel = leftScrollerCommand,
-                presentationModel = scrollerPresentationModel
+                presentationModel = scrollerPresentationModel.overlayWith(
+                    overlay = CommandButtonPresentationModel.Overlay(
+                        sides = Sides(
+                            straightSides = hashSetOf(
+                                if (layoutDirection == LayoutDirection.Ltr) Side.Right else Side.Left
+                            )
+                        )
+                    )
+                )
             ).project()
 
             Box(modifier = Modifier.horizontalScroll(stateHorizontal)) {
@@ -185,7 +203,15 @@ fun AuroraBreadcrumbBar(commands: List<Command>, modifier: Modifier) {
             // Rightwards scroller
             CommandButtonProjection(
                 contentModel = rightScrollerCommand,
-                presentationModel = scrollerPresentationModel
+                presentationModel = scrollerPresentationModel.overlayWith(
+                    overlay = CommandButtonPresentationModel.Overlay(
+                        sides = Sides(
+                            straightSides = hashSetOf(
+                                if (layoutDirection == LayoutDirection.Ltr) Side.Left else Side.Right
+                            )
+                        )
+                    )
+                )
             ).project()
 
         },

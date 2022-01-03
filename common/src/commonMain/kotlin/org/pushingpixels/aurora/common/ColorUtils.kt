@@ -218,6 +218,9 @@ fun Color.inverted(): Color {
 
 /** Returns the version of this color based on the specified alpha. */
 fun Color.withAlpha(alpha: Float): Color {
+    if (alpha == 1.0f) {
+        return this
+    }
     return Color(this.red, this.green, this.blue, alpha, this.colorSpace)
 }
 

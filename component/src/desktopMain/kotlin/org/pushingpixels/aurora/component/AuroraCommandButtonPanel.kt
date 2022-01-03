@@ -224,8 +224,7 @@ internal fun AuroraCommandButtonPanel(
                             extraAction = extraAction,
                             extraActionPreview = commandPreviewListener,
                             presentationModel = commandPresentation,
-                            overlays = overlays,
-                            buttonSides = Sides()
+                            overlays = overlays
                         )
 
                         val preLayoutInfo =

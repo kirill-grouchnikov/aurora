@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
+import org.pushingpixels.aurora.theming.Sides
 
 object CommandButtonSizingConstants {
     val WideButtonContentPadding = PaddingValues(start = 10.dp, top = 3.dp, end = 10.dp, bottom = 4.dp)
@@ -68,7 +69,8 @@ data class CommandButtonPresentationModel(
     val horizontalGapScaleFactor: Float = 1.0f,
     val verticalGapScaleFactor: Float = 1.0f,
     val minWidth: Dp = 0.dp,
-    val isMenu: Boolean = false
+    val isMenu: Boolean = false,
+    val sides : Sides = Sides()
 ): PresentationModel {
     data class Overlay(
         val presentationState: CommandButtonPresentationState? = null,
@@ -92,6 +94,7 @@ data class CommandButtonPresentationModel(
         val horizontalGapScaleFactor: Float? = null,
         val verticalGapScaleFactor: Float? = null,
         val isMenu: Boolean? = null,
+        val sides : Sides? = null
     )
 
     fun overlayWith(overlay: Overlay): CommandButtonPresentationModel {
@@ -117,7 +120,8 @@ data class CommandButtonPresentationModel(
             contentPadding = overlay.contentPadding ?: this.contentPadding,
             horizontalGapScaleFactor = overlay.horizontalGapScaleFactor ?: this.horizontalGapScaleFactor,
             verticalGapScaleFactor = overlay.verticalGapScaleFactor ?: this.verticalGapScaleFactor,
-            isMenu = overlay.isMenu ?: this.isMenu
+            isMenu = overlay.isMenu ?: this.isMenu,
+            sides = overlay.sides ?: this.sides
         )
     }
 }

@@ -511,7 +511,8 @@ private fun PopupGeneralContent(
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
         horizontalAlignment = HorizontalAlignment.Leading,
         contentPadding = menuPresentationModel.menuContentPadding,
-        isMenu = true
+        isMenu = true,
+        sides = Sides(straightSides = Side.values().toSet())
     )
 
     var runningCommandIndex = 0
@@ -559,8 +560,7 @@ private fun PopupGeneralContent(
                     }
                 },
                 presentationModel = currSecondaryPresentationModel,
-                overlays = overlays,
-                buttonSides = Sides(straightSides = Side.values().toSet())
+                overlays = overlays
             )
             runningCommandIndex++
         }
