@@ -22,9 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
@@ -37,14 +35,16 @@ import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
+import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
+import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
 import org.pushingpixels.aurora.component.utils.drawArrow
-import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
-import org.pushingpixels.aurora.theming.LocalTextStyle
-import org.pushingpixels.aurora.theming.PopupPlacementStrategy
+import org.pushingpixels.aurora.theming.*
 
 @OptIn(AuroraInternalApi::class)
 @Composable
 fun AuroraBreadcrumbBar(commands: List<Command>, modifier: Modifier) {
+    val colors = AuroraSkin.colors
+    val decorationAreaType = AuroraSkin.decorationAreaType
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
@@ -54,7 +54,7 @@ fun AuroraBreadcrumbBar(commands: List<Command>, modifier: Modifier) {
 
     val scrollerPresentationModel = CommandButtonPresentationModel(
         presentationState = CommandButtonPresentationState.Small,
-        contentPadding = PaddingValues(2.dp),
+        contentPadding = PaddingValues(0.dp),
         actionFireTrigger = ActionFireTrigger.OnRollover,
         autoRepeatAction = true,
         autoRepeatInitialInterval = 250L,
@@ -83,18 +83,33 @@ fun AuroraBreadcrumbBar(commands: List<Command>, modifier: Modifier) {
     val scrollAmount = 12.dp.value * density.density
 
     val leftScrollerCommand = Command(text = "",
-        icon = object : Painter() {
-            override val intrinsicSize: Size = Size.Unspecified
-
-            override fun DrawScope.onDraw() {
-                drawArrow(
-                    drawScope = this,
-                    width = ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx(),
-                    height = ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx(),
-                    strokeWidth = 2.0.dp.toPx(),
-                    direction = PopupPlacementStrategy.Startward,
-                    layoutDirection = layoutDirection,
-                    color = Color.Red
+        icon = object : TransitionAwarePainterDelegate() {
+            override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
+                return TransitionAwarePainter(
+                    iconSize = ComboBoxSizingConstants.DefaultComboBoxArrowWidth,
+                    decorationAreaType = decorationAreaType,
+                    skinColors = colors,
+                    modelStateInfoSnapshot = modelStateInfoSnapshot,
+                    paintDelegate = { drawScope, iconSize, colorScheme ->
+                        with(drawScope) {
+                            val arrowWidth = ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()
+                            val arrowHeight = ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx()
+                            val dx = (iconSize.toPx() - arrowWidth) / 2
+                            val dy = (iconSize.toPx() - arrowHeight) / 2
+                            translate(left = dx, top = dy) {
+                                drawArrow(
+                                    drawScope = this,
+                                    width = arrowWidth,
+                                    height = arrowHeight,
+                                    strokeWidth = 2.0.dp.toPx(),
+                                    direction = PopupPlacementStrategy.Startward,
+                                    layoutDirection = layoutDirection,
+                                    color = colorScheme.markColor
+                                )
+                            }
+                        }
+                    },
+                    density = density
                 )
             }
         },
@@ -107,18 +122,33 @@ fun AuroraBreadcrumbBar(commands: List<Command>, modifier: Modifier) {
             }
         })
     val rightScrollerCommand = Command(text = "",
-        icon = object : Painter() {
-            override val intrinsicSize: Size = Size.Unspecified
-
-            override fun DrawScope.onDraw() {
-                drawArrow(
-                    drawScope = this,
-                    width = ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx(),
-                    height = ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx(),
-                    strokeWidth = 2.0.dp.toPx(),
-                    direction = PopupPlacementStrategy.Endward,
-                    layoutDirection = layoutDirection,
-                    color = Color.Red
+        icon = object : TransitionAwarePainterDelegate() {
+            override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
+                return TransitionAwarePainter(
+                    iconSize = ComboBoxSizingConstants.DefaultComboBoxArrowWidth,
+                    decorationAreaType = decorationAreaType,
+                    skinColors = colors,
+                    modelStateInfoSnapshot = modelStateInfoSnapshot,
+                    paintDelegate = { drawScope, iconSize, colorScheme ->
+                        with(drawScope) {
+                            val arrowWidth = ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()
+                            val arrowHeight = ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx()
+                            val dx = (iconSize.toPx() - arrowWidth) / 2
+                            val dy = (iconSize.toPx() - arrowHeight) / 2
+                            translate(left = dx, top = dy) {
+                                drawArrow(
+                                    drawScope = this,
+                                    width = arrowWidth,
+                                    height = arrowHeight,
+                                    strokeWidth = 2.0.dp.toPx(),
+                                    direction = PopupPlacementStrategy.Endward,
+                                    layoutDirection = layoutDirection,
+                                    color = colorScheme.markColor
+                                )
+                            }
+                        }
+                    },
+                    density = density
                 )
             }
         },

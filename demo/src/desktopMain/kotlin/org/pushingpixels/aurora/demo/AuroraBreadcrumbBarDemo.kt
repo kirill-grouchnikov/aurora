@@ -15,10 +15,9 @@
  */
 package org.pushingpixels.aurora.demo
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,14 +26,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.AuroraBreadcrumbBar
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
-import org.pushingpixels.aurora.theming.IconFilterStrategy
-import org.pushingpixels.aurora.theming.marinerSkin
+import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.window.AuroraApplicationScope
+import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.auroraApplication
 
@@ -55,12 +53,12 @@ fun main() = auroraApplication {
         undecorated = true,
         onCloseRequest = ::exitApplication,
     ) {
-        BreadcrumbContent()
+        BreadcrumbContent(skin)
     }
 }
 
 @Composable
-fun AuroraApplicationScope.BreadcrumbContent() {
+fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
     val icons = arrayOf(
         accessories_text_editor(),
         computer(),
@@ -80,11 +78,25 @@ fun AuroraApplicationScope.BreadcrumbContent() {
         )
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        AuroraBreadcrumbBar(
-            commands = commands,
-            modifier = Modifier.fillMaxWidth()
-        )
+    Column(modifier = Modifier.fillMaxSize()) {
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.Toolbar) {
+            AuroraBreadcrumbBar(
+                commands = commands,
+                modifier = Modifier.fillMaxWidth().auroraBackground()
+                    .padding(horizontal = 2.dp, vertical = 4.dp)
+            )
+        }
+        Spacer(modifier = Modifier.weight(1.0f, true))
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.Footer) {
+            Row(
+                modifier = Modifier.fillMaxWidth().wrapContentHeight()
+                    .auroraBackground()
+                    .padding(horizontal = 6.dp, vertical = 4.dp)
+            ) {
+                Spacer(modifier = Modifier.weight(1.0f, true))
+                AuroraSkinSwitcher(auroraSkinDefinition = auroraSkinDefinition)
+            }
+        }
     }
 }
 

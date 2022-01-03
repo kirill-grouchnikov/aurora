@@ -56,7 +56,7 @@ class TransitionAwarePainter(
     )
 
     override val intrinsicSize: Size
-        get() = Size.Unspecified
+        get() = Size(iconSize.value * density.density, iconSize.value * density.density)
 
     override fun DrawScope.onDraw() {
         populateColorScheme(
