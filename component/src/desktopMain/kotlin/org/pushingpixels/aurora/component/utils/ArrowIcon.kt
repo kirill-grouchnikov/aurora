@@ -24,7 +24,16 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
+
+internal object ArrowSizingConstants {
+    val DefaultArrowStroke = 2.0.dp
+    val DefaultDoubleArrowWidth = 8.dp
+    val DefaultDoubleArrowHeight = 5.dp
+    val DefaultDoubleArrowStroke = 1.5.dp
+    val DefaultDoubleArrowGap = 3.0.dp
+}
 
 internal fun drawArrow(
     drawScope: DrawScope,
@@ -96,3 +105,67 @@ internal fun drawArrow(
     }
 }
 
+internal fun drawDoubleArrow(
+    drawScope: DrawScope,
+    width: Float, height: Float, gap: Float, strokeWidth: Float,
+    direction: PopupPlacementStrategy, layoutDirection: LayoutDirection,
+    color: Color
+) {
+    require(direction != PopupPlacementStrategy.CenteredVertically) {
+        "CenteredVertically not supported for double arrows"
+    }
+
+    val cushion = strokeWidth / 2.0f
+    val gp = Path()
+
+    if (direction == PopupPlacementStrategy.Downward) {
+        // top part
+        gp.moveTo(cushion, cushion)
+        gp.lineTo(0.5f * width, height - gap - cushion - 1)
+        gp.lineTo(width - cushion, cushion)
+        // bottom part
+        gp.moveTo(cushion, gap + cushion)
+        gp.lineTo(0.5f * width, height - cushion - 1)
+        gp.lineTo(width - cushion, gap + cushion)
+    } else if (direction == PopupPlacementStrategy.Upward) {
+        // top part
+        gp.moveTo(cushion, height - gap - cushion - 1)
+        gp.lineTo(0.5f * width, cushion)
+        gp.lineTo(width - cushion, height - gap - cushion - 1)
+        // bottom part
+        gp.moveTo(cushion, height - cushion - 1)
+        gp.lineTo(0.5f * width, gap + cushion)
+        gp.lineTo(width - cushion, height - cushion - 1)
+    } else {
+        val leftward =
+            ((direction == PopupPlacementStrategy.Startward) && (layoutDirection == LayoutDirection.Ltr)) ||
+                    ((direction == PopupPlacementStrategy.Endward) && (layoutDirection == LayoutDirection.Rtl))
+        if (leftward) {
+            // left part
+            gp.moveTo(width - gap - 1 - cushion, cushion)
+            gp.lineTo(cushion, 0.5f * height)
+            gp.lineTo(width - gap - 1 - cushion, height - cushion)
+            // right part
+            gp.moveTo(width - 1 - cushion, cushion)
+            gp.lineTo(gap + cushion, 0.5f * height)
+            gp.lineTo(width - 1 - cushion, height - cushion)
+        } else {
+            // left part
+            gp.moveTo(cushion, cushion)
+            gp.lineTo(width - gap - 1 - cushion, 0.5f * height)
+            gp.lineTo(cushion, height - cushion)
+            // right part
+            gp.moveTo(gap + cushion, cushion)
+            gp.lineTo(width - 1 - cushion, 0.5f * height)
+            gp.lineTo(gap + cushion, height - cushion)
+        }
+    }
+
+    with(drawScope) {
+        drawPath(
+            path = gp,
+            color = color,
+            style = Stroke(width = strokeWidth, cap = StrokeCap.Round, join = StrokeJoin.Miter)
+        )
+    }
+}

@@ -37,9 +37,10 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
-import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
-import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
+import org.pushingpixels.aurora.component.utils.*
+import org.pushingpixels.aurora.component.utils.ArrowSizingConstants
 import org.pushingpixels.aurora.component.utils.drawArrow
+import org.pushingpixels.aurora.component.utils.drawDoubleArrow
 import org.pushingpixels.aurora.theming.*
 
 @OptIn(AuroraInternalApi::class)
@@ -88,26 +89,28 @@ fun AuroraBreadcrumbBar(commands: List<Command>, modifier: Modifier) {
         icon = object : TransitionAwarePainterDelegate() {
             override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
                 return TransitionAwarePainter(
-                    iconSize = ComboBoxSizingConstants.DefaultComboBoxArrowWidth,
+                    iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
                     decorationAreaType = decorationAreaType,
                     skinColors = colors,
                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                     paintDelegate = { drawScope, iconSize, colorScheme ->
                         with(drawScope) {
-                            val arrowWidth =
-                                ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()
-                            val arrowHeight =
-                                ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx()
-                            val dx = (iconSize.toPx() - arrowWidth) / 2
-                            val dy = (iconSize.toPx() - arrowHeight) / 2
+                            val arrowDoubleWidth =
+                                ArrowSizingConstants.DefaultDoubleArrowHeight.toPx() +
+                                        ArrowSizingConstants.DefaultDoubleArrowGap.toPx()
+                            val arrowDoubleHeight =
+                                ArrowSizingConstants.DefaultDoubleArrowWidth.toPx()
+                            val dx = (iconSize.toPx() - arrowDoubleWidth) / 2
+                            val dy = (iconSize.toPx() - arrowDoubleHeight) / 2
                             val alpha = if (modelStateInfoSnapshot.currModelState.isDisabled)
                                 colors.getAlpha(decorationAreaType, modelStateInfoSnapshot.currModelState) else 1.0f
                             translate(left = dx, top = dy) {
-                                drawArrow(
+                                drawDoubleArrow(
                                     drawScope = this,
-                                    width = arrowWidth,
-                                    height = arrowHeight,
-                                    strokeWidth = 2.0.dp.toPx(),
+                                    width = arrowDoubleWidth,
+                                    height = arrowDoubleHeight,
+                                    gap = ArrowSizingConstants.DefaultDoubleArrowGap.toPx(),
+                                    strokeWidth = ArrowSizingConstants.DefaultDoubleArrowStroke.toPx(),
                                     direction = PopupPlacementStrategy.Startward,
                                     layoutDirection = layoutDirection,
                                     color = colorScheme.markColor.withAlpha(alpha)
@@ -131,26 +134,28 @@ fun AuroraBreadcrumbBar(commands: List<Command>, modifier: Modifier) {
         icon = object : TransitionAwarePainterDelegate() {
             override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
                 return TransitionAwarePainter(
-                    iconSize = ComboBoxSizingConstants.DefaultComboBoxArrowWidth,
+                    iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
                     decorationAreaType = decorationAreaType,
                     skinColors = colors,
                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                     paintDelegate = { drawScope, iconSize, colorScheme ->
                         with(drawScope) {
-                            val arrowWidth =
-                                ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()
-                            val arrowHeight =
-                                ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx()
-                            val dx = (iconSize.toPx() - arrowWidth) / 2
-                            val dy = (iconSize.toPx() - arrowHeight) / 2
+                            val arrowDoubleWidth =
+                                ArrowSizingConstants.DefaultDoubleArrowHeight.toPx() +
+                                        ArrowSizingConstants.DefaultDoubleArrowGap.toPx()
+                            val arrowDoubleHeight =
+                                ArrowSizingConstants.DefaultDoubleArrowWidth.toPx()
+                            val dx = (iconSize.toPx() - arrowDoubleWidth) / 2
+                            val dy = (iconSize.toPx() - arrowDoubleHeight) / 2
                             val alpha = if (modelStateInfoSnapshot.currModelState.isDisabled)
                                 colors.getAlpha(decorationAreaType, modelStateInfoSnapshot.currModelState) else 1.0f
                             translate(left = dx, top = dy) {
-                                drawArrow(
+                                drawDoubleArrow(
                                     drawScope = this,
-                                    width = arrowWidth,
-                                    height = arrowHeight,
-                                    strokeWidth = 2.0.dp.toPx(),
+                                    width = arrowDoubleWidth,
+                                    height = arrowDoubleHeight,
+                                    gap = ArrowSizingConstants.DefaultDoubleArrowGap.toPx(),
+                                    strokeWidth = ArrowSizingConstants.DefaultDoubleArrowStroke.toPx(),
                                     direction = PopupPlacementStrategy.Endward,
                                     layoutDirection = layoutDirection,
                                     color = colorScheme.markColor.withAlpha(alpha)

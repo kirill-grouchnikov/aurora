@@ -1500,7 +1500,7 @@ private fun CommandButtonPopupIconContent(
                     drawScope = this,
                     width = arrowWidth,
                     height = arrowHeight,
-                    strokeWidth = 2.0.dp.toPx(),
+                    strokeWidth = ArrowSizingConstants.DefaultArrowStroke.toPx(),
                     direction = presentationModel.popupPlacementStrategy,
                     layoutDirection = layoutDirection,
                     color = arrowColor
