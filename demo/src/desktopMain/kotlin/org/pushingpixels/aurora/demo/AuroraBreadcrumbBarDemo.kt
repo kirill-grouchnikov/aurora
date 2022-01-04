@@ -46,7 +46,7 @@ fun main() = auroraApplication {
 
     AuroraWindow(
         skin = skin,
-        title = "Aurora Demo",
+        title = "Breadcrumb Bar Demo",
         icon = radiance_menu(),
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         state = state,
@@ -79,7 +79,7 @@ fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        AuroraDecorationArea(decorationAreaType = DecorationAreaType.Toolbar) {
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
             AuroraBreadcrumbBar(
                 commands = commands,
                 modifier = Modifier.fillMaxWidth().auroraBackground()
@@ -94,7 +94,10 @@ fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<
                     .padding(horizontal = 6.dp, vertical = 4.dp)
             ) {
                 Spacer(modifier = Modifier.weight(1.0f, true))
-                AuroraSkinSwitcher(auroraSkinDefinition = auroraSkinDefinition)
+                AuroraSkinSwitcher(
+                    auroraSkinDefinition = auroraSkinDefinition,
+                    popupPlacementStrategy = PopupPlacementStrategy.Upward
+                )
             }
         }
     }

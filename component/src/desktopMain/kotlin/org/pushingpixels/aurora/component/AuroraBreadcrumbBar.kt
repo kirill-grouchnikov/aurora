@@ -35,11 +35,14 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.model.ActionFireTrigger
+import org.pushingpixels.aurora.component.model.Command
+import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
+import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
-import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.component.utils.ArrowSizingConstants
-import org.pushingpixels.aurora.component.utils.drawArrow
+import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
+import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
 import org.pushingpixels.aurora.component.utils.drawDoubleArrow
 import org.pushingpixels.aurora.theming.*
 
@@ -57,6 +60,10 @@ fun AuroraBreadcrumbBar(commands: List<Command>, modifier: Modifier) {
 
     val scrollerPresentationModel = CommandButtonPresentationModel(
         presentationState = CommandButtonPresentationState.Small,
+        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+        iconActiveFilterStrategy = IconFilterStrategy.Original,
+        iconEnabledFilterStrategy = IconFilterStrategy.Original,
+        iconDisabledFilterStrategy = IconFilterStrategy.Original,
         contentPadding = PaddingValues(0.dp),
         actionFireTrigger = ActionFireTrigger.OnRollover,
         autoRepeatAction = true,
@@ -103,7 +110,10 @@ fun AuroraBreadcrumbBar(commands: List<Command>, modifier: Modifier) {
                             val dx = (iconSize.toPx() - arrowDoubleWidth) / 2
                             val dy = (iconSize.toPx() - arrowDoubleHeight) / 2
                             val alpha = if (modelStateInfoSnapshot.currModelState.isDisabled)
-                                colors.getAlpha(decorationAreaType, modelStateInfoSnapshot.currModelState) else 1.0f
+                                colors.getAlpha(
+                                    decorationAreaType,
+                                    modelStateInfoSnapshot.currModelState
+                                ) else 1.0f
                             translate(left = dx, top = dy) {
                                 drawDoubleArrow(
                                     drawScope = this,
@@ -148,7 +158,10 @@ fun AuroraBreadcrumbBar(commands: List<Command>, modifier: Modifier) {
                             val dx = (iconSize.toPx() - arrowDoubleWidth) / 2
                             val dy = (iconSize.toPx() - arrowDoubleHeight) / 2
                             val alpha = if (modelStateInfoSnapshot.currModelState.isDisabled)
-                                colors.getAlpha(decorationAreaType, modelStateInfoSnapshot.currModelState) else 1.0f
+                                colors.getAlpha(
+                                    decorationAreaType,
+                                    modelStateInfoSnapshot.currModelState
+                                ) else 1.0f
                             translate(left = dx, top = dy) {
                                 drawDoubleArrow(
                                     drawScope = this,
