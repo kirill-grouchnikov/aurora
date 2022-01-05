@@ -27,9 +27,10 @@ import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.component.AuroraBreadcrumbBar
+import org.pushingpixels.aurora.component.model.BreadcrumbBarPresentationModel
 import org.pushingpixels.aurora.component.model.Command
+import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
-import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.window.AuroraApplicationScope
 import org.pushingpixels.aurora.window.AuroraDecorationArea
@@ -60,15 +61,15 @@ fun main() = auroraApplication {
 @Composable
 fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
     val icons = arrayOf(
-        accessories_text_editor(),
-        computer(),
-        drive_harddisk(),
-        emblem_system(),
-        font_x_generic(),
-        help_browser(),
-        media_floppy(),
-        preferences_desktop_locale_2(),
-        user_home()
+        account_box_24px(),
+        apps_24px(),
+        backup_24px(),
+        devices_other_24px(),
+        help_24px(),
+        keyboard_capslock_24px(),
+        location_on_24px(),
+        perm_device_information_24px(),
+        storage_24px()
     )
     val commands = icons.map {
         Command(
@@ -82,6 +83,11 @@ fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
             AuroraBreadcrumbBar(
                 commands = commands,
+                presentationModel = BreadcrumbBarPresentationModel(
+                    iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                    iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                    iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                ),
                 modifier = Modifier.fillMaxWidth().auroraBackground()
                     .padding(horizontal = 2.dp, vertical = 4.dp)
             )

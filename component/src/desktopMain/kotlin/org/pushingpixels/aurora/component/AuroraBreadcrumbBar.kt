@@ -35,10 +35,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.component.model.ActionFireTrigger
-import org.pushingpixels.aurora.component.model.Command
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
+import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.utils.ArrowSizingConstants
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
@@ -48,7 +45,11 @@ import org.pushingpixels.aurora.theming.*
 
 @OptIn(AuroraInternalApi::class)
 @Composable
-fun AuroraBreadcrumbBar(commands: List<Command>, modifier: Modifier) {
+fun AuroraBreadcrumbBar(
+    commands: List<Command>,
+    presentationModel: BreadcrumbBarPresentationModel = BreadcrumbBarPresentationModel(),
+    modifier: Modifier
+) {
     val colors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
     val density = LocalDensity.current
@@ -58,6 +59,9 @@ fun AuroraBreadcrumbBar(commands: List<Command>, modifier: Modifier) {
 
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
 
+    // Presentation model for the scroller buttons. Note usage of Original icon filter strategy
+    // since we're using TransitionAwarePainterDelegate to draw the double arrows, and
+    // OnRollover action fire trigger for interacting with the scroller buttons.
     val scrollerPresentationModel = CommandButtonPresentationModel(
         presentationState = CommandButtonPresentationState.Small,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
@@ -77,9 +81,13 @@ fun AuroraBreadcrumbBar(commands: List<Command>, modifier: Modifier) {
         resourceLoader = resourceLoader
     )
 
+    // Presentation model for the content - copy fields from the breadcrumb bar presentation model
     val contentPresentationModel = CommandButtonPresentationModel(
-        presentationState = CommandButtonPresentationState.Medium,
-        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat
+        presentationState = presentationModel.presentationState,
+        backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
+        iconActiveFilterStrategy = presentationModel.iconActiveFilterStrategy,
+        iconEnabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
+        iconDisabledFilterStrategy = presentationModel.iconDisabledFilterStrategy
     )
     val contentLayoutManager = contentPresentationModel.presentationState.createLayoutManager(
         layoutDirection = layoutDirection,
@@ -238,6 +246,7 @@ fun AuroraBreadcrumbBar(commands: List<Command>, modifier: Modifier) {
             val contentMeasurable = measurables[1]
             val rightScrollerMeasurable = measurables[2]
 
+            // How big is the left scroller?
             val leftScrollerPreLayoutInfo =
                 scrollerLayoutManager.getPreLayoutInfo(
                     leftScrollerCommand,
@@ -247,6 +256,7 @@ fun AuroraBreadcrumbBar(commands: List<Command>, modifier: Modifier) {
                 leftScrollerCommand, scrollerPresentationModel, leftScrollerPreLayoutInfo
             )
 
+            // How big is the right scroller?
             val rightScrollerPreLayoutInfo =
                 scrollerLayoutManager.getPreLayoutInfo(
                     rightScrollerCommand,
@@ -256,6 +266,7 @@ fun AuroraBreadcrumbBar(commands: List<Command>, modifier: Modifier) {
                 rightScrollerCommand, scrollerPresentationModel, rightScrollerPreLayoutInfo
             )
 
+            // How much space does the scrollable content need?
             var boxRequiredWidth = 0.0f
             var boxHeight = 0
             for (command in commands) {
@@ -271,6 +282,8 @@ fun AuroraBreadcrumbBar(commands: List<Command>, modifier: Modifier) {
                 boxHeight = commandSize.height.toInt()
             }
 
+            // Do we need to show the scrollers? If available width from constraints is enough
+            // to fully display all scrollable content, we don't need to show the scrollers.
             val needScrollers = (boxRequiredWidth > constraints.maxWidth)
             val contentWidth = if (needScrollers) constraints.maxWidth -
                     leftScrollerSize.width - rightScrollerSize.width
