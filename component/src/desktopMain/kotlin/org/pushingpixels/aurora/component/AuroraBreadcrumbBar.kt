@@ -235,6 +235,14 @@ fun <T> AuroraBreadcrumbBar(
                             action = {
                                 shownPath.clear()
                                 shownPath.add(rootChoice)
+                                scope.launch {
+                                    if (shownPathChoices.size > 1) {
+                                        shownPathChoices.removeLast()
+                                    }
+                                    val newPathChoices =
+                                        contentProvider.getPathChoices(shownPath)
+                                    shownPathChoices.add(newPathChoices)
+                                }
                             })
                     }
                 )
@@ -248,10 +256,34 @@ fun <T> AuroraBreadcrumbBar(
                 action = {},
                 secondaryContentModel = rootSecondaryContentModel
             )
-        ) + shownPath.map {
-            Command(text = it.displayName,
-                icon = it.icon,
-                action = { println("Act on ${it.data}") }
+        ) + shownPath.mapIndexed { index, shownPathEntry ->
+            // First entry in "shownPathChoices" is always root path choices
+            val indexInShownPathChoices = index + 1
+            val shownPathEntryChoices =
+                if (indexInShownPathChoices <= (shownPathChoices.size - 1))
+                    shownPathChoices[indexInShownPathChoices] else null
+            val shownPathEntryMenuContentModel = shownPathEntryChoices?.let {
+                CommandMenuContentModel(
+                    group = CommandGroup(
+                        title = "",
+                        commands = it.map { entryChoice ->
+                            Command(text = entryChoice.displayName,
+                                icon = entryChoice.icon,
+                                action = {
+                                    if (shownPath.size > 1) {
+                                        shownPath.removeLast()
+                                    }
+                                    shownPath.add(entryChoice)
+                                })
+                        }
+                    )
+                )
+            }
+            Command(
+                text = shownPathEntry.displayName,
+                icon = shownPathEntry.icon,
+                action = { println("Act on ${shownPathEntry.data}") },
+                secondaryContentModel = shownPathEntryMenuContentModel
             )
         }
     }
