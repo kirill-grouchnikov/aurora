@@ -18,9 +18,7 @@ package org.pushingpixels.aurora.component
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.painter.Painter
@@ -32,6 +30,7 @@ import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
@@ -45,11 +44,31 @@ import org.pushingpixels.aurora.theming.*
 
 @OptIn(AuroraInternalApi::class)
 @Composable
-fun AuroraBreadcrumbBar(
-    commands: List<Command>,
+fun <T> AuroraBreadcrumbBar(
+    contentProvider: BreadcrumbBarContentProvider<T>,
     presentationModel: BreadcrumbBarPresentationModel = BreadcrumbBarPresentationModel(),
     modifier: Modifier
 ) {
+    val initialized = remember { mutableStateOf(false) }
+
+    // The currently shown path of breadcrumb items.
+    val shownPath: MutableList<BreadcrumbItem<T>> = remember { mutableStateListOf() }
+    // For each item in "shownPath" this has the list of path choices - to be displayed
+    // in the popup for that particular item. The first item in this list has path choices
+    // for the root.
+    val shownPathChoices: MutableList<List<BreadcrumbItem<T>>> = remember { mutableStateListOf() }
+
+    val contentModel = remember { BreadcrumbBarContentModel(shownPath) }
+    if (!initialized.value) {
+        LaunchedEffect(null) {
+            coroutineScope {
+                val rootPathChoices = contentProvider.getPathChoices(emptyList())
+                shownPathChoices.add(rootPathChoices)
+            }
+            initialized.value = true
+        }
+    }
+
     val colors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
     val density = LocalDensity.current
@@ -87,7 +106,12 @@ fun AuroraBreadcrumbBar(
         backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
         iconActiveFilterStrategy = presentationModel.iconActiveFilterStrategy,
         iconEnabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
-        iconDisabledFilterStrategy = presentationModel.iconDisabledFilterStrategy
+        iconDisabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
+        popupMenuPresentationModel = CommandPopupMenuPresentationModel(
+            menuIconActiveFilterStrategy = presentationModel.iconActiveFilterStrategy,
+            menuIconEnabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
+            menuIconDisabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
+        )
     )
     val contentLayoutManager = contentPresentationModel.presentationState.createLayoutManager(
         layoutDirection = layoutDirection,
@@ -199,6 +223,39 @@ fun AuroraBreadcrumbBar(
             }
         })
 
+    val commands = derivedStateOf {
+        val rootChoices = if (shownPathChoices.isNotEmpty()) shownPathChoices[0] else null
+        val rootSecondaryContentModel = rootChoices?.let {
+            CommandMenuContentModel(
+                group = CommandGroup(
+                    title = "",
+                    commands = it.map { rootChoice ->
+                        Command(text = rootChoice.displayName,
+                            icon = rootChoice.icon,
+                            action = {
+                                shownPath.clear()
+                                shownPath.add(rootChoice)
+                            })
+                    }
+                )
+            )
+        }
+
+        listOf(
+            Command(
+                text = "root",
+                icon = null,
+                action = {},
+                secondaryContentModel = rootSecondaryContentModel
+            )
+        ) + shownPath.map {
+            Command(text = it.displayName,
+                icon = it.icon,
+                action = { println("Act on ${it.data}") }
+            )
+        }
+    }
+
     Layout(modifier = modifier.fillMaxWidth(),
         content = {
             // Leftwards scroller
@@ -217,7 +274,7 @@ fun AuroraBreadcrumbBar(
 
             Box(modifier = Modifier.horizontalScroll(stateHorizontal)) {
                 Row(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
-                    for (command in commands) {
+                    for (command in commands.value) {
                         CommandButtonProjection(
                             contentModel = command,
                             presentationModel = contentPresentationModel
@@ -269,17 +326,29 @@ fun AuroraBreadcrumbBar(
             // How much space does the scrollable content need?
             var boxRequiredWidth = 0.0f
             var boxHeight = 0
-            for (command in commands) {
+            if (commands.value.isNotEmpty()) {
+                for (command in commands.value) {
+                    val commandPreLayoutInfo =
+                        contentLayoutManager.getPreLayoutInfo(
+                            command,
+                            contentPresentationModel
+                        )
+                    val commandSize = contentLayoutManager.getPreferredSize(
+                        command, contentPresentationModel, commandPreLayoutInfo
+                    )
+                    boxRequiredWidth += commandSize.width
+                    boxHeight = commandSize.height.toInt()
+                }
+            } else {
+                val forSizing = Command(text = "sample", action = {})
                 val commandPreLayoutInfo =
                     contentLayoutManager.getPreLayoutInfo(
-                        command,
+                        forSizing,
                         contentPresentationModel
                     )
-                val commandSize = contentLayoutManager.getPreferredSize(
-                    command, contentPresentationModel, commandPreLayoutInfo
-                )
-                boxRequiredWidth += commandSize.width
-                boxHeight = commandSize.height.toInt()
+                boxHeight = contentLayoutManager.getPreferredSize(
+                    forSizing, contentPresentationModel, commandPreLayoutInfo
+                ).height.toInt()
             }
 
             // Do we need to show the scrollers? If available width from constraints is enough

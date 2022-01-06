@@ -26,8 +26,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import kotlinx.coroutines.delay
 import org.pushingpixels.aurora.component.AuroraBreadcrumbBar
+import org.pushingpixels.aurora.component.model.BreadcrumbBarContentProvider
 import org.pushingpixels.aurora.component.model.BreadcrumbBarPresentationModel
+import org.pushingpixels.aurora.component.model.BreadcrumbItem
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
@@ -36,6 +39,7 @@ import org.pushingpixels.aurora.window.AuroraApplicationScope
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.auroraApplication
+import java.io.InputStream
 
 fun main() = auroraApplication {
     val state = rememberWindowState(
@@ -60,29 +64,52 @@ fun main() = auroraApplication {
 
 @Composable
 fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
-    val icons = arrayOf(
-        account_box_24px(),
-        apps_24px(),
-        backup_24px(),
-        devices_other_24px(),
-        help_24px(),
-        keyboard_capslock_24px(),
-        location_on_24px(),
-        perm_device_information_24px(),
-        storage_24px()
+    val topContent = listOf(
+        BreadcrumbItem("account", account_box_24px(), "account activated"),
+        BreadcrumbItem("apps", apps_24px(), "apps activated"),
+        BreadcrumbItem("backup", backup_24px(), "backup activated"),
+        BreadcrumbItem("devices", devices_other_24px(), "devices activated"),
+        BreadcrumbItem("help", help_24px(), "help activated"),
+        BreadcrumbItem("keyboard", keyboard_capslock_24px(), "keyboard activated"),
+        BreadcrumbItem("location", location_on_24px(), "location activated"),
+        BreadcrumbItem("permissions", perm_device_information_24px(), "permission activated"),
+        BreadcrumbItem("storage", storage_24px(), "storage activated")
     )
-    val commands = icons.map {
-        Command(
-            text = "sample",
-            icon = it,
-            action = { println("Activated!") }
-        )
+    val secondaryContent = listOf(
+        BreadcrumbItem("bold", format_bold_black_24dp(), ""),
+        BreadcrumbItem("italic", format_italic_black_24dp(), ""),
+        BreadcrumbItem("strikethrough", format_strikethrough_black_24dp(), ""),
+        BreadcrumbItem("underlined", format_underlined_black_24dp(), ""),
+    )
+
+    val contentProvider: BreadcrumbBarContentProvider<String> = object : BreadcrumbBarContentProvider<String> {
+        override suspend fun getPathChoices(path: List<BreadcrumbItem<String>>): List<BreadcrumbItem<String>> {
+            // Sample delay to emulate slow loading of content
+            delay(500)
+            if (path.isEmpty()) {
+                return topContent
+            }
+            if (path.size == 1) {
+                return secondaryContent
+            }
+            return emptyList()
+        }
+
+        override suspend fun getLeaves(path: List<BreadcrumbItem<String>>): List<BreadcrumbItem<String>> {
+            // Sample delay to emulate slow loading of content
+            delay(500)
+            return emptyList()
+        }
+
+        override suspend fun getLeafContent(leaf: String): InputStream? {
+            return null
+        }
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
             AuroraBreadcrumbBar(
-                commands = commands,
+                contentProvider = contentProvider,
                 presentationModel = BreadcrumbBarPresentationModel(
                     iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                     iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,

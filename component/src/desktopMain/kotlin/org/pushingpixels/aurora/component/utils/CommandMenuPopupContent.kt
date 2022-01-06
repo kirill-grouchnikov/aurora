@@ -111,6 +111,9 @@ internal fun displayPopupContent(
     // the popup menu presentation model configured on the top-level presentation model
     val regularButtonPresentationModel = CommandButtonPresentationModel(
         presentationState = presentationModel.menuPresentationState,
+        iconActiveFilterStrategy = presentationModel.menuIconActiveFilterStrategy,
+        iconEnabledFilterStrategy = presentationModel.menuIconEnabledFilterStrategy,
+        iconDisabledFilterStrategy = presentationModel.menuIconDisabledFilterStrategy,
         popupPlacementStrategy = presentationModel.popupPlacementStrategy,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
         horizontalAlignment = HorizontalAlignment.Leading,
@@ -506,6 +509,9 @@ private fun PopupGeneralContent(
     // the popup menu presentation model configured on the top-level presentation model
     val menuButtonPresentationModel = CommandButtonPresentationModel(
         presentationState = menuPresentationModel.menuPresentationState,
+        iconActiveFilterStrategy = menuPresentationModel.menuIconActiveFilterStrategy,
+        iconEnabledFilterStrategy = menuPresentationModel.menuIconEnabledFilterStrategy,
+        iconDisabledFilterStrategy = menuPresentationModel.menuIconDisabledFilterStrategy,
         forceAllocateSpaceForIcon = atLeastOneButtonHasIcon,
         popupPlacementStrategy = menuPresentationModel.popupPlacementStrategy,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
