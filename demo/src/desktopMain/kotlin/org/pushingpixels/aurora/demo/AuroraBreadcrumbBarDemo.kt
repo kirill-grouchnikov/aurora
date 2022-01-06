@@ -31,7 +31,6 @@ import org.pushingpixels.aurora.component.AuroraBreadcrumbBar
 import org.pushingpixels.aurora.component.model.BreadcrumbBarContentProvider
 import org.pushingpixels.aurora.component.model.BreadcrumbBarPresentationModel
 import org.pushingpixels.aurora.component.model.BreadcrumbItem
-import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.theming.*
@@ -39,7 +38,10 @@ import org.pushingpixels.aurora.window.AuroraApplicationScope
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.auroraApplication
+import java.io.File
 import java.io.InputStream
+import java.util.*
+import javax.swing.filechooser.FileSystemView
 
 fun main() = auroraApplication {
     val state = rememberWindowState(
@@ -64,47 +66,67 @@ fun main() = auroraApplication {
 
 @Composable
 fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
-    val topContent = listOf(
-        BreadcrumbItem("account", account_box_24px(), "account activated"),
-        BreadcrumbItem("apps", apps_24px(), "apps activated"),
-        BreadcrumbItem("backup", backup_24px(), "backup activated"),
-        BreadcrumbItem("devices", devices_other_24px(), "devices activated"),
-        BreadcrumbItem("help", help_24px(), "help activated"),
-        BreadcrumbItem("keyboard", keyboard_capslock_24px(), "keyboard activated"),
-        BreadcrumbItem("location", location_on_24px(), "location activated"),
-        BreadcrumbItem("permissions", perm_device_information_24px(), "permission activated"),
-        BreadcrumbItem("storage", storage_24px(), "storage activated")
-    )
-    val secondaryContent = listOf(
-        BreadcrumbItem("bold", format_bold_black_24dp(), ""),
-        BreadcrumbItem("italic", format_italic_black_24dp(), ""),
-        BreadcrumbItem("strikethrough", format_strikethrough_black_24dp(), ""),
-        BreadcrumbItem("underlined", format_underlined_black_24dp(), ""),
-    )
-
-    val contentProvider: BreadcrumbBarContentProvider<String> = object : BreadcrumbBarContentProvider<String> {
-        override suspend fun getPathChoices(path: List<BreadcrumbItem<String>>): List<BreadcrumbItem<String>> {
-            // Sample delay to emulate slow loading of content
-            delay(500)
-            if (path.isEmpty()) {
-                return topContent
+    val fileSystemView = FileSystemView.getFileSystemView()
+    val contentProvider: BreadcrumbBarContentProvider<File> =
+        object : BreadcrumbBarContentProvider<File> {
+            override suspend fun getPathChoices(path: List<BreadcrumbItem<File>>): List<BreadcrumbItem<File>> {
+                // Sample delay to emulate slow loading of content
+                delay(500)
+                if (path.isEmpty()) {
+                    // Get file system roots, filter out hidden ones, map the rest to
+                    // what the content provider needs to return, and sort them by display name
+                    return fileSystemView.roots.filterNot { fileSystemView.isHiddenFile(it) }
+                        .map {
+                            BreadcrumbItem(
+                                displayName = fileSystemView.getSystemDisplayName(it)
+                                    .let { rootName -> rootName.ifEmpty { it.absolutePath } },
+                                icon = null,
+                                data = it
+                            )
+                        }
+                        .sortedBy { it.displayName.lowercase() }
+                } else {
+                    // Get all files under the last file in the path, filter out hidden ones and
+                    // non-directory ones, map the rest to what the content provider needs to
+                    // return, and sort them by display name
+                    println(path.last().data.listFiles())
+                    return path.last().data.listFiles()
+                        .filterNot { !it.isDirectory || fileSystemView.isHiddenFile(it) }
+                        .map {
+                            BreadcrumbItem(
+                                displayName = fileSystemView.getSystemDisplayName(it)
+                                    .let { childName -> childName.ifEmpty { it.absolutePath } },
+                                icon = null,
+                                data = it
+                            )
+                        }
+                        .sortedBy { it.displayName.lowercase() }
+                }
             }
-            if (path.size == 1) {
-                return secondaryContent
+
+            override suspend fun getLeaves(path: List<BreadcrumbItem<File>>): List<BreadcrumbItem<File>> {
+                // Sample delay to emulate slow loading of content
+                delay(500)
+                // Get all files under the last file in the path, filter out hidden ones and
+                // directory ones, map the rest to what the content provider needs to
+                // return, and sort them by display name
+                return path.last().data.listFiles()
+                    .filterNot { it.isDirectory || fileSystemView.isHiddenFile(it) }
+                    .map {
+                        BreadcrumbItem(
+                            displayName = fileSystemView.getSystemDisplayName(it)
+                                .let { childName -> childName.ifEmpty { it.absolutePath } },
+                            icon = null,
+                            data = it
+                        )
+                    }
+                    .sortedBy { it.displayName.lowercase() }
             }
-            return emptyList()
-        }
 
-        override suspend fun getLeaves(path: List<BreadcrumbItem<String>>): List<BreadcrumbItem<String>> {
-            // Sample delay to emulate slow loading of content
-            delay(500)
-            return emptyList()
+            override suspend fun getLeafContent(leaf: File): InputStream? {
+                return null
+            }
         }
-
-        override suspend fun getLeafContent(leaf: String): InputStream? {
-            return null
-        }
-    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {

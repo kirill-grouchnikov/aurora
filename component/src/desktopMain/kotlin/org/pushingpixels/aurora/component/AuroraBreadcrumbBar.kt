@@ -236,7 +236,7 @@ fun <T> AuroraBreadcrumbBar(
                                 shownPath.clear()
                                 shownPath.add(rootChoice)
                                 scope.launch {
-                                    if (shownPathChoices.size > 1) {
+                                    while (shownPathChoices.size > 1) {
                                         shownPathChoices.removeLast()
                                     }
                                     val newPathChoices =
@@ -253,7 +253,10 @@ fun <T> AuroraBreadcrumbBar(
             Command(
                 text = "root",
                 icon = null,
-                action = {},
+                action = {
+                    // Clear all entries in the shown path
+                    shownPath.clear()
+                },
                 secondaryContentModel = rootSecondaryContentModel
             )
         ) + shownPath.mapIndexed { index, shownPathEntry ->
@@ -270,10 +273,22 @@ fun <T> AuroraBreadcrumbBar(
                             Command(text = entryChoice.displayName,
                                 icon = entryChoice.icon,
                                 action = {
-                                    if (shownPath.size > 1) {
+                                    // Clear all entries in shown path after the one that
+                                    // corresponds to the command with these choices
+                                    while (shownPath.size > indexInShownPathChoices) {
                                         shownPath.removeLast()
                                     }
                                     shownPath.add(entryChoice)
+
+                                    // And load choices for this entry
+                                    scope.launch {
+                                        while (shownPathChoices.size > (indexInShownPathChoices + 1)) {
+                                            shownPathChoices.removeLast()
+                                        }
+                                        val newPathChoices =
+                                            contentProvider.getPathChoices(shownPath)
+                                        shownPathChoices.add(newPathChoices)
+                                    }
                                 })
                         }
                     )
@@ -282,7 +297,13 @@ fun <T> AuroraBreadcrumbBar(
             Command(
                 text = shownPathEntry.displayName,
                 icon = shownPathEntry.icon,
-                action = { println("Act on ${shownPathEntry.data}") },
+                action = {
+                    // Clear all entries in shown path after the one that
+                    // corresponds to this command
+                    while (shownPath.size > indexInShownPathChoices) {
+                        shownPath.removeLast()
+                    }
+                },
                 secondaryContentModel = shownPathEntryMenuContentModel
             )
         }
