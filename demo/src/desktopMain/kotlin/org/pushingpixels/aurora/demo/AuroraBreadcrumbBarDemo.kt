@@ -16,9 +16,7 @@
 package org.pushingpixels.aurora.demo
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
@@ -26,10 +24,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.component.AuroraBreadcrumbBar
-import org.pushingpixels.aurora.component.model.BreadcrumbBarContentProvider
-import org.pushingpixels.aurora.component.model.BreadcrumbBarPresentationModel
-import org.pushingpixels.aurora.component.model.BreadcrumbItem
+import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.CommandButtonPanelProjection
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.window.AuroraApplicationScope
@@ -44,7 +42,7 @@ fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
-        size = DpSize(400.dp, 200.dp)
+        size = DpSize(600.dp, 400.dp)
     )
     val skin = mutableStateOf(marinerSkin())
 
@@ -63,6 +61,8 @@ fun main() = auroraApplication {
 
 @Composable
 fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
+    val scope = rememberCoroutineScope()
+
     val fileSystemView = FileSystemView.getFileSystemView()
     val contentProvider: BreadcrumbBarContentProvider<File> =
         object : BreadcrumbBarContentProvider<File> {
@@ -109,11 +109,27 @@ fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<
         }
 
     Column(modifier = Modifier.fillMaxSize()) {
+        val commandPanelContentModel = remember { mutableStateOf<CommandPanelContentModel?>(null) }
+
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
             AuroraBreadcrumbBar(
                 contentProvider = contentProvider,
                 onShownPathChanged = {
-                    println(it.last().data)
+                    // Update our command panel content model with the leaf content of the
+                    // currently shown path
+                    scope.launch {
+                        val leaves = contentProvider.getLeaves(it)
+                        commandPanelContentModel.value = CommandPanelContentModel(
+                            commandGroups = listOf(
+                                CommandGroup(
+                                    title = null,
+                                    leaves.map { leaf ->
+                                        Command(text = leaf.displayName, action = {})
+                                    }
+                                )
+                            )
+                        )
+                    }
                 },
                 presentationModel = BreadcrumbBarPresentationModel(
                     iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -124,7 +140,24 @@ fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<
                     .padding(horizontal = 2.dp, vertical = 4.dp)
             )
         }
-        Spacer(modifier = Modifier.weight(1.0f, true))
+
+        if (commandPanelContentModel.value == null) {
+            Spacer(modifier = Modifier.weight(1.0f, true))
+        } else {
+            CommandButtonPanelProjection(
+                contentModel = commandPanelContentModel.value!!,
+                presentationModel = CommandPanelPresentationModel(
+                    layoutFillMode = PanelLayoutFillMode.RowFill,
+                    maxColumns = 5,
+                    showGroupLabels = false,
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                    commandPresentationState = CommandButtonPresentationState.Medium,
+                    commandHorizontalAlignment = HorizontalAlignment.Leading,
+                    iconActiveFilterStrategy = IconFilterStrategy.Original,
+                    iconEnabledFilterStrategy = IconFilterStrategy.Original
+                )
+            ).project(modifier = Modifier.fillMaxWidth().weight(1.0f, true))
+        }
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.Footer) {
             Row(
                 modifier = Modifier.fillMaxWidth().wrapContentHeight()
