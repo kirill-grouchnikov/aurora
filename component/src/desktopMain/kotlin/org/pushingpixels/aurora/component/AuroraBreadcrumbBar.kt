@@ -48,6 +48,7 @@ import org.pushingpixels.aurora.theming.*
 @Composable
 fun <T> AuroraBreadcrumbBar(
     contentProvider: BreadcrumbBarContentProvider<T>,
+    onShownPathChanged: ((List<BreadcrumbItem<T>>) -> Unit)? = null,
     presentationModel: BreadcrumbBarPresentationModel = BreadcrumbBarPresentationModel(),
     modifier: Modifier
 ) {
@@ -60,7 +61,6 @@ fun <T> AuroraBreadcrumbBar(
     // for the root.
     val shownPathChoices: MutableList<List<BreadcrumbItem<T>>> = remember { mutableStateListOf() }
 
-    val contentModel = remember { BreadcrumbBarContentModel(shownPath) }
     if (!initialized.value) {
         LaunchedEffect(null) {
             coroutineScope {
@@ -240,6 +240,8 @@ fun <T> AuroraBreadcrumbBar(
                                 action = {
                                     shownPath.clear()
                                     shownPath.add(rootChoice)
+                                    onShownPathChanged?.invoke(shownPath)
+
                                     scope.launch {
                                         while (shownPathChoices.size > 1) {
                                             shownPathChoices.removeLast()
@@ -261,6 +263,7 @@ fun <T> AuroraBreadcrumbBar(
                 action = {
                     // Clear all entries in the shown path
                     shownPath.clear()
+                    onShownPathChanged?.invoke(shownPath)
                 },
                 secondaryContentModel = rootSecondaryContentModel
             )
@@ -285,6 +288,7 @@ fun <T> AuroraBreadcrumbBar(
                                             shownPath.removeLast()
                                         }
                                         shownPath.add(entryChoice)
+                                        onShownPathChanged?.invoke(shownPath)
 
                                         // And load choices for this entry
                                         scope.launch {
@@ -312,6 +316,7 @@ fun <T> AuroraBreadcrumbBar(
                     while (shownPath.size > indexInShownPathChoices) {
                         shownPath.removeLast()
                     }
+                    onShownPathChanged?.invoke(shownPath)
                 },
                 secondaryContentModel = shownPathEntryMenuContentModel
             )

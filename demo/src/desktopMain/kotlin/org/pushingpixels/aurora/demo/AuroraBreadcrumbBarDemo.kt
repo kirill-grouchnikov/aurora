@@ -112,6 +112,9 @@ fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
             AuroraBreadcrumbBar(
                 contentProvider = contentProvider,
+                onShownPathChanged = {
+                    println(it.last().data)
+                },
                 presentationModel = BreadcrumbBarPresentationModel(
                     iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                     iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,

@@ -15,13 +15,10 @@
  */
 package org.pushingpixels.aurora.component.model
 
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.painter.Painter
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import java.io.InputStream
-import java.util.*
 
 /**
  * A single item in the breadcrumb bar model.
@@ -65,77 +62,6 @@ interface BreadcrumbBarContentProvider<T> {
         return null
     }
 }
-
-/**
- * Model for the breadcrumb bar component.
- */
-class BreadcrumbBarContentModel<T>(val items: MutableList<BreadcrumbItem<T>>) {
-    /**
-     * Returns the index of the specified item.
-     *
-     * @param item Item.
-     * @return Index of the item if it is in the model or -1 if it is not.
-     */
-    fun indexOf(item: BreadcrumbItem<T>): Int {
-        return items.indexOf(item)
-    }
-
-    /**
-     * Removes the last item in this model.
-     */
-    fun removeLast() {
-        items.removeLast()
-    }
-
-    /**
-     * Resets this model, removing all the items.
-     */
-    fun reset() {
-        items.clear()
-    }
-
-    /**
-     * Returns the number of items in this model.
-     *
-     * @return Number of items in this model.
-     */
-    val itemCount: Int = items.size
-
-    /**
-     * Returns the model item at the specified index.
-     *
-     * @param index Item index.
-     * @return The model item at the specified index. Will return
-     * `null` if the index is negative or larger than the
-     * number of items.
-     */
-    fun getItem(index: Int): BreadcrumbItem<T>? {
-        if (index < 0) return null
-        return if (index >= itemCount) null else items[index]
-    }
-
-    /**
-     * Replaces the current item list with the specified list.
-     *
-     * @param items New contents of the model.
-     */
-    fun replace(items: List<BreadcrumbItem<T>>) {
-        this.items.clear()
-        for (i in items.indices) {
-            this.items.add(items[i])
-        }
-    }
-
-    /**
-     * Adds the specified item at the end of the path.
-     *
-     * @param item Item to add.
-     */
-    fun add(item: BreadcrumbItem<T>) {
-        items.add(item)
-    }
-}
-
 
 data class BreadcrumbBarPresentationModel(
     val presentationState: CommandButtonPresentationState = CommandButtonPresentationState.Medium,
