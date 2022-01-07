@@ -26,12 +26,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import kotlinx.coroutines.delay
 import org.pushingpixels.aurora.component.AuroraBreadcrumbBar
 import org.pushingpixels.aurora.component.model.BreadcrumbBarContentProvider
 import org.pushingpixels.aurora.component.model.BreadcrumbBarPresentationModel
 import org.pushingpixels.aurora.component.model.BreadcrumbItem
-import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.window.AuroraApplicationScope
@@ -40,7 +38,6 @@ import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.auroraApplication
 import java.io.File
 import java.io.InputStream
-import java.util.*
 import javax.swing.filechooser.FileSystemView
 
 fun main() = auroraApplication {
@@ -70,35 +67,23 @@ fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<
     val contentProvider: BreadcrumbBarContentProvider<File> =
         object : BreadcrumbBarContentProvider<File> {
             override suspend fun getPathChoices(path: List<BreadcrumbItem<File>>): List<BreadcrumbItem<File>> {
-                if (path.isEmpty()) {
-                    // Get file system roots, filter out hidden ones, map the rest to
-                    // what the content provider needs to return, and sort them by display name
-                    return fileSystemView.roots.filterNot { fileSystemView.isHiddenFile(it) }
-                        .map {
-                            BreadcrumbItem(
-                                displayName = fileSystemView.getSystemDisplayName(it)
-                                    .let { rootName -> rootName.ifEmpty { it.absolutePath } },
-                                icon = null,
-                                data = it
-                            )
-                        }
-                        .sortedBy { it.displayName.lowercase() }
-                } else {
-                    // Get all files under the last file in the path, filter out hidden ones and
-                    // non-directory ones, map the rest to what the content provider needs to
-                    // return, and sort them by display name
-                    return path.last().data.listFiles()
-                        .filterNot { !it.isDirectory || fileSystemView.isHiddenFile(it) }
-                        .map {
-                            BreadcrumbItem(
-                                displayName = fileSystemView.getSystemDisplayName(it)
-                                    .let { childName -> childName.ifEmpty { it.absolutePath } },
-                                icon = null,
-                                data = it
-                            )
-                        }
-                        .sortedBy { it.displayName.lowercase() }
-                }
+                // If our path is empty, get the file system roots. Otherwise, get all files under
+                // the last file in the path.
+                val candidates =
+                    if (path.isEmpty()) fileSystemView.roots else path.last().data.listFiles()
+
+                // Now filter out hidden ones and non-directories, map the rest to
+                // what the content provider needs to return, and sort them by display name
+                return candidates.filterNot { !it.isDirectory || fileSystemView.isHiddenFile(it) }
+                    .map {
+                        BreadcrumbItem(
+                            displayName = fileSystemView.getSystemDisplayName(it)
+                                .let { name -> name.ifEmpty { it.absolutePath } },
+                            icon = null,
+                            data = it
+                        )
+                    }
+                    .sortedBy { it.displayName.lowercase() }
             }
 
             override suspend fun getLeaves(path: List<BreadcrumbItem<File>>): List<BreadcrumbItem<File>> {
