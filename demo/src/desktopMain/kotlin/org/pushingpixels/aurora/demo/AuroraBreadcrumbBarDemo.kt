@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
@@ -124,7 +125,19 @@ fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<
                                 CommandGroup(
                                     title = null,
                                     leaves.map { leaf ->
-                                        Command(text = leaf.displayName, action = {})
+                                        val extension = leaf.data.extension.lowercase()
+
+                                        val className =
+                                            "org.pushingpixels.aurora.demo.svg.filetypes.ext_${extension}"
+                                        var icon: Painter? = null
+                                        try {
+                                            val transcodedClass = Class.forName(className)
+                                            val ctr = transcodedClass.getConstructor()
+                                            icon = ctr.newInstance() as Painter
+                                        } catch (_: Throwable) {
+                                        }
+
+                                        Command(text = leaf.displayName, icon = icon, action = {})
                                     }
                                 )
                             )
