@@ -70,8 +70,6 @@ fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<
     val contentProvider: BreadcrumbBarContentProvider<File> =
         object : BreadcrumbBarContentProvider<File> {
             override suspend fun getPathChoices(path: List<BreadcrumbItem<File>>): List<BreadcrumbItem<File>> {
-                // Sample delay to emulate slow loading of content
-                delay(500)
                 if (path.isEmpty()) {
                     // Get file system roots, filter out hidden ones, map the rest to
                     // what the content provider needs to return, and sort them by display name
@@ -89,7 +87,6 @@ fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<
                     // Get all files under the last file in the path, filter out hidden ones and
                     // non-directory ones, map the rest to what the content provider needs to
                     // return, and sort them by display name
-                    println(path.last().data.listFiles())
                     return path.last().data.listFiles()
                         .filterNot { !it.isDirectory || fileSystemView.isHiddenFile(it) }
                         .map {
@@ -105,8 +102,6 @@ fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<
             }
 
             override suspend fun getLeaves(path: List<BreadcrumbItem<File>>): List<BreadcrumbItem<File>> {
-                // Sample delay to emulate slow loading of content
-                delay(500)
                 // Get all files under the last file in the path, filter out hidden ones and
                 // directory ones, map the rest to what the content provider needs to
                 // return, and sort them by display name

@@ -23,8 +23,6 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.theming.LocalWindow
-import org.pushingpixels.aurora.theming.Side
-import org.pushingpixels.aurora.theming.Sides
 
 class CommandButtonProjection(
     val contentModel: Command,

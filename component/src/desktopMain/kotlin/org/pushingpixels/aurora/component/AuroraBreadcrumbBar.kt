@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.component
 
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.*
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
@@ -75,6 +77,7 @@ fun <T> AuroraBreadcrumbBar(
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
     val resourceLoader = LocalFontLoader.current
+    val window = LocalWindow.current
 
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
 
@@ -111,6 +114,7 @@ fun <T> AuroraBreadcrumbBar(
             menuIconActiveFilterStrategy = presentationModel.iconActiveFilterStrategy,
             menuIconEnabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
             menuIconDisabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
+            maxVisibleMenuCommands = presentationModel.maxVisibleChoiceCommands
         )
     )
     val contentLayoutManager = contentPresentationModel.presentationState.createLayoutManager(
@@ -226,32 +230,33 @@ fun <T> AuroraBreadcrumbBar(
     val commands = derivedStateOf {
         val rootChoices = if (shownPathChoices.isNotEmpty()) shownPathChoices[0] else null
         val rootSecondaryContentModel = rootChoices?.let {
-            CommandMenuContentModel(
-                group = CommandGroup(
-                    title = "",
-                    commands = it.map { rootChoice ->
-                        Command(text = rootChoice.displayName,
-                            icon = rootChoice.icon,
-                            action = {
-                                shownPath.clear()
-                                shownPath.add(rootChoice)
-                                scope.launch {
-                                    while (shownPathChoices.size > 1) {
-                                        shownPathChoices.removeLast()
+            if (it.isEmpty()) null else
+                CommandMenuContentModel(
+                    group = CommandGroup(
+                        title = "",
+                        commands = it.map { rootChoice ->
+                            Command(text = rootChoice.displayName,
+                                icon = rootChoice.icon,
+                                action = {
+                                    shownPath.clear()
+                                    shownPath.add(rootChoice)
+                                    scope.launch {
+                                        while (shownPathChoices.size > 1) {
+                                            shownPathChoices.removeLast()
+                                        }
+                                        val newPathChoices =
+                                            contentProvider.getPathChoices(shownPath)
+                                        shownPathChoices.add(newPathChoices)
                                     }
-                                    val newPathChoices =
-                                        contentProvider.getPathChoices(shownPath)
-                                    shownPathChoices.add(newPathChoices)
-                                }
-                            })
-                    }
+                                })
+                        }
+                    )
                 )
-            )
         }
 
         listOf(
             Command(
-                text = "root",
+                text = "",
                 icon = null,
                 action = {
                     // Clear all entries in the shown path
@@ -266,33 +271,37 @@ fun <T> AuroraBreadcrumbBar(
                 if (indexInShownPathChoices <= (shownPathChoices.size - 1))
                     shownPathChoices[indexInShownPathChoices] else null
             val shownPathEntryMenuContentModel = shownPathEntryChoices?.let {
-                CommandMenuContentModel(
-                    group = CommandGroup(
-                        title = "",
-                        commands = it.map { entryChoice ->
-                            Command(text = entryChoice.displayName,
-                                icon = entryChoice.icon,
-                                action = {
-                                    // Clear all entries in shown path after the one that
-                                    // corresponds to the command with these choices
-                                    while (shownPath.size > indexInShownPathChoices) {
-                                        shownPath.removeLast()
-                                    }
-                                    shownPath.add(entryChoice)
-
-                                    // And load choices for this entry
-                                    scope.launch {
-                                        while (shownPathChoices.size > (indexInShownPathChoices + 1)) {
-                                            shownPathChoices.removeLast()
+                if (it.isEmpty()) null else
+                    CommandMenuContentModel(
+                        group = CommandGroup(
+                            title = "",
+                            commands = it.map { entryChoice ->
+                                Command(text = entryChoice.displayName,
+                                    icon = entryChoice.icon,
+                                    action = {
+                                        // Clear all entries in shown path after the one that
+                                        // corresponds to the command with these choices
+                                        while (shownPath.size > indexInShownPathChoices) {
+                                            shownPath.removeLast()
                                         }
-                                        val newPathChoices =
-                                            contentProvider.getPathChoices(shownPath)
-                                        shownPathChoices.add(newPathChoices)
-                                    }
-                                })
-                        }
+                                        shownPath.add(entryChoice)
+
+                                        // And load choices for this entry
+                                        scope.launch {
+                                            while (shownPathChoices.size > (indexInShownPathChoices + 1)) {
+                                                shownPathChoices.removeLast()
+                                            }
+                                            val newPathChoices =
+                                                contentProvider.getPathChoices(shownPath)
+                                            shownPathChoices.add(newPathChoices)
+                                            // Scroll to reveal the newly added content
+                                            delay(150)
+                                            stateHorizontal.animateScrollTo(stateHorizontal.maxValue)
+                                        }
+                                    })
+                            }
+                        )
                     )
-                )
             }
             Command(
                 text = shownPathEntry.displayName,
@@ -328,10 +337,20 @@ fun <T> AuroraBreadcrumbBar(
             Box(modifier = Modifier.horizontalScroll(stateHorizontal)) {
                 Row(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
                     for (command in commands.value) {
-                        CommandButtonProjection(
-                            contentModel = command,
-                            presentationModel = contentPresentationModel
-                        ).project()
+                        AuroraCommandButton(
+                            modifier = Modifier,
+                            actionInteractionSource = remember { MutableInteractionSource() },
+                            popupInteractionSource = remember { MutableInteractionSource() },
+                            command = command,
+                            parentWindow = window,
+                            extraAction = null,
+                            popupPlacementStrategyProvider = { modelStateInfo ->
+                                if (modelStateInfo.activeStrength > 0.0f) PopupPlacementStrategy.Downward
+                                else PopupPlacementStrategy.Endward
+                            },
+                            presentationModel = contentPresentationModel,
+                            overlays = mapOf()
+                        )
                     }
                 }
             }

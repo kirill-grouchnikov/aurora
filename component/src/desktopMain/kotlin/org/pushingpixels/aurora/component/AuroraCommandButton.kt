@@ -336,6 +336,7 @@ internal fun AuroraCommandButton(
     parentWindow: ComposeWindow,
     extraAction: (() -> Unit)? = null,
     extraActionPreview: CommandActionPreview? = null,
+    popupPlacementStrategyProvider: ((ModelStateInfo) -> PopupPlacementStrategy)? = null,
     presentationModel: CommandButtonPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>
 ) {
@@ -1085,9 +1086,11 @@ internal fun AuroraCommandButton(
             // Popup action (arrow) if we need one
             if (preLayoutInfo.showPopupIcon) {
                 CommandButtonPopupIconContent(
-                    presentationModel,
-                    popupModelStateInfo,
-                    currentPopupState.value
+                    popupPlacementStrategy =
+                    popupPlacementStrategyProvider?.invoke(popupModelStateInfo)
+                        ?: presentationModel.popupPlacementStrategy,
+                    modelStateInfo = popupModelStateInfo,
+                    currState = currentPopupState.value
                 )
             }
 
@@ -1471,7 +1474,7 @@ private fun CommandButtonIconContent(
 @OptIn(AuroraInternalApi::class)
 @Composable
 private fun CommandButtonPopupIconContent(
-    presentationModel: CommandButtonPresentationModel,
+    popupPlacementStrategy: PopupPlacementStrategy,
     modelStateInfo: ModelStateInfo, currState: ComponentState
 ) {
     val decorationAreaType = AuroraSkin.decorationAreaType
@@ -1485,11 +1488,11 @@ private fun CommandButtonPopupIconContent(
 
     Box {
         Canvas(modifier = Modifier.matchParentSize()) {
-            val arrowWidth = if (presentationModel.popupPlacementStrategy.isHorizontal)
+            val arrowWidth = if (popupPlacementStrategy.isHorizontal)
                 ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx() else
                 ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx()
             val arrowHeight =
-                if (presentationModel.popupPlacementStrategy.isHorizontal)
+                if (popupPlacementStrategy.isHorizontal)
                     ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx() else
                     ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()
             translate(
@@ -1501,7 +1504,7 @@ private fun CommandButtonPopupIconContent(
                     width = arrowWidth,
                     height = arrowHeight,
                     strokeWidth = ArrowSizingConstants.DefaultArrowStroke.toPx(),
-                    direction = presentationModel.popupPlacementStrategy,
+                    direction = popupPlacementStrategy,
                     layoutDirection = layoutDirection,
                     color = arrowColor
                 )

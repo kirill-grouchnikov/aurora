@@ -33,6 +33,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
@@ -481,6 +482,7 @@ private fun TopLevelPopupContent(
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 private fun PopupGeneralContent(
     popupContentWindow: ComposeWindow,
@@ -565,6 +567,7 @@ private fun PopupGeneralContent(
                         AuroraPopupManager.hidePopups(null)
                     }
                 },
+                popupPlacementStrategyProvider = null,
                 presentationModel = currSecondaryPresentationModel,
                 overlays = overlays
             )

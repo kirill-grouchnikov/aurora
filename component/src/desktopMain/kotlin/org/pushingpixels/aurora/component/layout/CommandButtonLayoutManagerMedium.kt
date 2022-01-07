@@ -146,7 +146,7 @@ internal open class CommandButtonLayoutManagerMedium(
         return CommandButtonLayoutManager.CommandButtonPreLayoutInfo(
             commandButtonKind = commandButtonKind,
             showIcon = hasIcon(command, presentationModel),
-            texts = listOf(command.text),
+            texts = if (command.text.isEmpty()) emptyList() else listOf(command.text),
             extraTexts = emptyList(),
             isTextInActionArea = (hasAction or command.isActionToggle) &&
                     (presentationModel.textClick == TextClick.Action),
@@ -274,7 +274,7 @@ internal open class CommandButtonLayoutManagerMedium(
                 val popupIconHeight = CommandButtonSizingConstants.PopupIconHeight.toPx()
                 if (!hasText && !hasIcon) {
                     // horizontally center the popup icon
-                    x += (finalWidth - 2 * layoutHGap - 1 - popupIconWidth) / 2.0f
+                    x = (finalWidth - 2 * layoutHGap - popupIconWidth) / 2.0f
                 }
                 popupActionRect = Rect(
                     left = x,

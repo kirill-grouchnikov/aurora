@@ -142,5 +142,6 @@ data class BreadcrumbBarPresentationModel(
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
     val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
-    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme
+    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    val maxVisibleChoiceCommands: Int = 10,
 ) : PresentationModel
