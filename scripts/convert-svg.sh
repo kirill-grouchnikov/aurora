@@ -19,10 +19,50 @@ alias JAVA="java"
 AURORA_VERSION=1.1-SNAPSHOT
 KOTLIN_VERSION=1.6.10
 KOTLIN_COROUTINES_VERSION=1.6.0
-COMPOSE_VERSION=1.0.1-rc2
+COMPOSE_VERSION=1.0.1
 CLASSPATH=../drop/$AURORA_VERSION/aurora-svg-transcoder-desktop-$AURORA_VERSION.jar:../build/libs/batik-all-1.14.jar:../build/libs/xml-apis-1.4.01.jar:../build/libs/xml-apis-ext-1.3.04.jar:../build/libs/xmlgraphics-commons-2.6.jar:../build/libs/kotlin-stdlib-$KOTLIN_VERSION.jar:../build/libs/kotlin-stdlib-common-$KOTLIN_VERSION.jar:../build/libs/kotlinx-coroutines-core-jvm-$KOTLIN_COROUTINES_VERSION.jar:../build/libs/ui-graphics-desktop-$COMPOSE_VERSION.jar:../build/libs/ui-geometry-desktop-$COMPOSE_VERSION.jar
 
-java -cp $CLASSPATH org.pushingpixels.aurora.tools.svgtranscoder.SvgDeepBatchConverter \
-    sourceRootFolder=../demo/src/desktopMain/kotlin/org/pushingpixels/aurora/demo/svg \
-    outputRootPackageName=org.pushingpixels.aurora.demo.svg \
+# Don't convert the demo transcoding to deep traversal since one of the
+# folders needs class name prefix while others don't
+java -Djava.awt.headless=true -cp $CLASSPATH \
+    org.pushingpixels.aurora.tools.svgtranscoder.SvgBatchConverter \
+    sourceFolder=../demo/src/desktopMain/kotlin/org/pushingpixels/aurora/demo/svg \
+    outputPackageName=org.pushingpixels.aurora.demo.svg \
+    templateFile=/org/pushingpixels/aurora/tools/svgtranscoder/AuroraSvgTranscoderTemplate.templ
+
+java -Djava.awt.headless=true -cp $CLASSPATH \
+    org.pushingpixels.aurora.tools.svgtranscoder.SvgBatchConverter \
+    sourceFolder=../demo/src/desktopMain/kotlin/org/pushingpixels/aurora/demo/svg/filetypes \
+    outputPackageName=org.pushingpixels.aurora.demo.svg.filetypes \
+    outputClassNamePrefix=ext_ \
+    templateFile=/org/pushingpixels/aurora/tools/svgtranscoder/AuroraSvgTranscoderTemplate.templ
+
+java -Djava.awt.headless=true -cp $CLASSPATH \
+    org.pushingpixels.aurora.tools.svgtranscoder.SvgBatchConverter \
+    sourceFolder=../demo/src/desktopMain/kotlin/org/pushingpixels/aurora/demo/svg/flags \
+    outputPackageName=org.pushingpixels.aurora.demo.svg.flags \
+    templateFile=/org/pushingpixels/aurora/tools/svgtranscoder/AuroraSvgTranscoderTemplate.templ
+
+java -Djava.awt.headless=true -cp $CLASSPATH \
+    org.pushingpixels.aurora.tools.svgtranscoder.SvgBatchConverter \
+    sourceFolder=../demo/src/desktopMain/kotlin/org/pushingpixels/aurora/demo/svg/material \
+    outputPackageName=org.pushingpixels.aurora.demo.svg.material \
+    templateFile=/org/pushingpixels/aurora/tools/svgtranscoder/AuroraSvgTranscoderTemplate.templ
+
+java -Djava.awt.headless=true -cp $CLASSPATH \
+    org.pushingpixels.aurora.tools.svgtranscoder.SvgBatchConverter \
+    sourceFolder=../demo/src/desktopMain/kotlin/org/pushingpixels/aurora/demo/svg/random \
+    outputPackageName=org.pushingpixels.aurora.demo.svg.random \
+    templateFile=/org/pushingpixels/aurora/tools/svgtranscoder/AuroraSvgTranscoderTemplate.templ
+
+java -Djava.awt.headless=true -cp $CLASSPATH \
+    org.pushingpixels.aurora.tools.svgtranscoder.SvgBatchConverter \
+    sourceFolder=../demo/src/desktopMain/kotlin/org/pushingpixels/aurora/demo/svg/tango \
+    outputPackageName=org.pushingpixels.aurora.demo.svg.tango \
+    templateFile=/org/pushingpixels/aurora/tools/svgtranscoder/AuroraSvgTranscoderTemplate.templ
+
+java -Djava.awt.headless=true -cp $CLASSPATH \
+    org.pushingpixels.aurora.tools.svgtranscoder.SvgBatchConverter \
+    sourceFolder=../demo/src/desktopMain/kotlin/org/pushingpixels/aurora/demo/svg/vaadin \
+    outputPackageName=org.pushingpixels.aurora.demo.svg.vaadin \
     templateFile=/org/pushingpixels/aurora/tools/svgtranscoder/AuroraSvgTranscoderTemplate.templ
