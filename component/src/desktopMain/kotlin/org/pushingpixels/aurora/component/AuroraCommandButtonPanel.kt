@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ClipOp
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.layout.Layout
@@ -154,7 +155,7 @@ internal fun AuroraCommandButtonPanel(
             iconDisabledFilterStrategy = presentationModel.iconDisabledFilterStrategy
         )
 
-    Box {
+    Box(modifier = modifier.fillMaxSize()) {
         val stateVertical = rememberScrollState(0)
         val stateHorizontal = rememberScrollState(0)
 
@@ -171,7 +172,7 @@ internal fun AuroraCommandButtonPanel(
             presentationModel.contentPadding.calculateEndPadding(layoutDirection)
         val contentTopPadding = presentationModel.contentPadding.calculateTopPadding()
         val contentBottomPadding = presentationModel.contentPadding.calculateBottomPadding()
-        var topLevelModifier = modifier.padding(
+        var topLevelModifier = Modifier.fillMaxSize().padding(
             start = contentStartPadding,
             end = contentEndPadding + extraEndPadding,
             top = contentTopPadding,
@@ -351,7 +352,7 @@ private fun getRowFillMeasurePolicy(
 
         val ltr = (layoutDirection == LayoutDirection.Ltr)
 
-        layout(width = panelWidth, height = panelHeight) {
+        layout(width = panelWidth, height = panelHeight.coerceAtLeast(constraints.minHeight)) {
             var currPlaceableIndex = 0
             var currY = 0
             for (groupModel in contentModel.commandGroups) {
@@ -486,7 +487,7 @@ private fun getColumnFillMeasurePolicy(
         }
 
         val ltr = (layoutDirection == LayoutDirection.Ltr)
-        layout(width = panelWidth, height = panelHeight) {
+        layout(width = panelWidth.coerceAtLeast(constraints.minWidth), height = panelHeight) {
             var currPlaceableIndex = 0
             if (ltr) {
                 var currX = 0
