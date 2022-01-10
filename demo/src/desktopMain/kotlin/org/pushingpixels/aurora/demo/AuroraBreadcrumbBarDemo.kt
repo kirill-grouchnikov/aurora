@@ -106,24 +106,28 @@ fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<
 
     val contentModel = remember { mutableStateListOf<Command>() }
 
-    suspend fun getPathCommand(file: File?, onItemSelected: (File) -> Unit, level: Int): Command {
+    suspend fun <T> BreadcrumbBarContentProvider<T>.getPathCommand(
+        item: T?,
+        onItemSelected: (T) -> Unit,
+        level: Int
+    ): Command {
         // These will be displayed in the dropdown
-        val pathChoices = contentProvider.getPathChoices(file)
+        val pathChoices = this.getPathChoices(item)
 
         return Command(
-            text = contentProvider.getDisplayText(file),
+            text = this.getDisplayText(item),
             icon = null,
             action = {
                 // This is called when the path item is clicked
                 while (contentModel.size > level) {
                     contentModel.removeLast()
                 }
-                onItemSelected.invoke(file!!)
+                onItemSelected.invoke(item!!)
             },
-            secondaryContentModel = CommandMenuContentModel(
+            secondaryContentModel = if (pathChoices.isNotEmpty()) CommandMenuContentModel(
                 group = CommandGroup(title = null,
                     commands = pathChoices.map { pathChoice ->
-                        Command(text = contentProvider.getDisplayText(pathChoice),
+                        Command(text = this.getDisplayText(pathChoice),
                             icon = null,
                             action = {
                                 // This is called when a dropdown item is clicked
@@ -133,7 +137,7 @@ fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<
                                 scope.launch {
                                     contentModel.add(
                                         getPathCommand(
-                                            file = pathChoice,
+                                            item = pathChoice,
                                             onItemSelected = onItemSelected,
                                             level = level + 1
                                         )
@@ -143,6 +147,35 @@ fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<
                             })
                     }
                 )
+            ) else null
+        )
+    }
+
+    suspend fun getCommandPanelContent(selected: File): CommandPanelContentModel {
+        val leaves = contentProvider.getLeaves(selected)
+        return CommandPanelContentModel(
+            commandGroups = listOf(
+                CommandGroup(
+                    title = null,
+                    leaves.map { leaf ->
+                        val extension = leaf.extension.lowercase()
+
+                        val className =
+                            "org.pushingpixels.aurora.demo.svg.filetypes.ext_${extension}"
+                        var icon: Painter? = null
+                        try {
+                            val transcodedClass = Class.forName(className)
+                            val ctr = transcodedClass.getConstructor()
+                            icon = ctr.newInstance() as Painter
+                        } catch (_: Throwable) {
+                        }
+
+                        Command(
+                            text = contentProvider.getDisplayText(leaf),
+                            icon = icon,
+                            action = {})
+                    }
+                )
             )
         )
     }
@@ -150,39 +183,16 @@ fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<
     val commandPanelContentModel = remember { mutableStateOf<CommandPanelContentModel?>(null) }
     LaunchedEffect(null) {
         coroutineScope {
+            // Root content for the breadcrumb bar
             contentModel.add(
-                getPathCommand(
-                    null, { selected: File ->
+                contentProvider.getPathCommand(
+                    item = null,
+                    onItemSelected = { selected: File ->
                         scope.launch {
-                            val leaves = contentProvider.getLeaves(selected)
-                            commandPanelContentModel.value = CommandPanelContentModel(
-                                commandGroups = listOf(
-                                    CommandGroup(
-                                        title = null,
-                                        leaves.map { leaf ->
-                                            val extension = leaf.extension.lowercase()
-
-                                            val className =
-                                                "org.pushingpixels.aurora.demo.svg.filetypes.ext_${extension}"
-                                            var icon: Painter? = null
-                                            try {
-                                                val transcodedClass = Class.forName(className)
-                                                val ctr = transcodedClass.getConstructor()
-                                                icon = ctr.newInstance() as Painter
-                                            } catch (_: Throwable) {
-                                            }
-
-                                            Command(
-                                                text = contentProvider.getDisplayText(leaf),
-                                                icon = icon,
-                                                action = {})
-                                        }
-                                    )
-                                )
-                            )
+                            commandPanelContentModel.value = getCommandPanelContent(selected)
                         }
                     },
-                    0
+                    level = 0
                 )
             )
         }
