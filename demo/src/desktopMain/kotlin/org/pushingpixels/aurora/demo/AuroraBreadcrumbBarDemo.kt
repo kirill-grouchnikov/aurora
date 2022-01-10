@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.component.AuroraBreadcrumbBar
 import org.pushingpixels.aurora.component.model.*
@@ -67,41 +68,35 @@ fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<
     val fileSystemView = FileSystemView.getFileSystemView()
     val contentProvider: BreadcrumbBarContentProvider<File> =
         object : BreadcrumbBarContentProvider<File> {
-            override suspend fun getPathChoices(path: List<BreadcrumbItem<File>>): List<BreadcrumbItem<File>> {
+            override fun getDisplayText(item: File?): String {
+                if (item == null) {
+                    return ""
+                }
+                return fileSystemView.getSystemDisplayName(item)
+                    .let { name -> name.ifEmpty { item.absolutePath } }
+            }
+
+            override suspend fun getPathChoices(item: File?): List<File> {
                 // If our path is empty, get the file system roots. Otherwise, get all files under
                 // the last file in the path.
                 val candidates =
-                    if (path.isEmpty()) fileSystemView.roots else path.last().data.listFiles()
+                    if (item == null) fileSystemView.roots else item.listFiles()
 
                 // Now filter out hidden ones and non-directories, map the rest to
                 // what the content provider needs to return, and sort them by display name
                 return candidates.filterNot { !it.isDirectory || fileSystemView.isHiddenFile(it) }
-                    .map {
-                        BreadcrumbItem(
-                            displayName = fileSystemView.getSystemDisplayName(it)
-                                .let { name -> name.ifEmpty { it.absolutePath } },
-                            icon = null,
-                            data = it
-                        )
-                    }
-                    .sortedBy { it.displayName.lowercase() }
+                    .map { it }
+                    .sortedBy { getDisplayText(it).lowercase() }
             }
 
-            override suspend fun getLeaves(path: List<BreadcrumbItem<File>>): List<BreadcrumbItem<File>> {
+            override suspend fun getLeaves(item: File): List<File> {
                 // Get all files under the last file in the path, filter out hidden ones and
                 // directory ones, map the rest to what the content provider needs to
                 // return, and sort them by display name
-                return path.last().data.listFiles()
+                return item.listFiles()
                     .filterNot { it.isDirectory || fileSystemView.isHiddenFile(it) }
-                    .map {
-                        BreadcrumbItem(
-                            displayName = fileSystemView.getSystemDisplayName(it)
-                                .let { childName -> childName.ifEmpty { it.absolutePath } },
-                            icon = null,
-                            data = it
-                        )
-                    }
-                    .sortedBy { it.displayName.lowercase() }
+                    .map { it }
+                    .sortedBy { getDisplayText(it).lowercase() }
             }
 
             override suspend fun getLeafContent(leaf: File): InputStream? {
@@ -109,41 +104,94 @@ fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<
             }
         }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        val commandPanelContentModel = remember { mutableStateOf<CommandPanelContentModel?>(null) }
+    val contentModel = remember { mutableStateListOf<Command>() }
 
-        AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
-            AuroraBreadcrumbBar(
-                contentProvider = contentProvider,
-                onShownPathChanged = {
-                    // Update our command panel content model with the leaf content of the
-                    // currently shown path
-                    scope.launch {
-                        val leaves = contentProvider.getLeaves(it)
-                        commandPanelContentModel.value = CommandPanelContentModel(
-                            commandGroups = listOf(
-                                CommandGroup(
-                                    title = null,
-                                    leaves.map { leaf ->
-                                        val extension = leaf.data.extension.lowercase()
+    suspend fun getPathCommand(file: File?, onItemSelected: (File) -> Unit, level: Int): Command {
+        // These will be displayed in the dropdown
+        val pathChoices = contentProvider.getPathChoices(file)
 
-                                        val className =
-                                            "org.pushingpixels.aurora.demo.svg.filetypes.ext_${extension}"
-                                        var icon: Painter? = null
-                                        try {
-                                            val transcodedClass = Class.forName(className)
-                                            val ctr = transcodedClass.getConstructor()
-                                            icon = ctr.newInstance() as Painter
-                                        } catch (_: Throwable) {
+        return Command(
+            text = contentProvider.getDisplayText(file),
+            icon = null,
+            action = {
+                // This is called when the path item is clicked
+                while (contentModel.size > level) {
+                    contentModel.removeLast()
+                }
+                onItemSelected.invoke(file!!)
+            },
+            secondaryContentModel = CommandMenuContentModel(
+                group = CommandGroup(title = null,
+                    commands = pathChoices.map { pathChoice ->
+                        Command(text = contentProvider.getDisplayText(pathChoice),
+                            icon = null,
+                            action = {
+                                // This is called when a dropdown item is clicked
+                                while (contentModel.size > level) {
+                                    contentModel.removeLast()
+                                }
+                                scope.launch {
+                                    contentModel.add(
+                                        getPathCommand(
+                                            file = pathChoice,
+                                            onItemSelected = onItemSelected,
+                                            level = level + 1
+                                        )
+                                    )
+                                    onItemSelected.invoke(pathChoice)
+                                }
+                            })
+                    }
+                )
+            )
+        )
+    }
+
+    val commandPanelContentModel = remember { mutableStateOf<CommandPanelContentModel?>(null) }
+    LaunchedEffect(null) {
+        coroutineScope {
+            contentModel.add(
+                getPathCommand(
+                    null, { selected: File ->
+                        scope.launch {
+                            val leaves = contentProvider.getLeaves(selected)
+                            commandPanelContentModel.value = CommandPanelContentModel(
+                                commandGroups = listOf(
+                                    CommandGroup(
+                                        title = null,
+                                        leaves.map { leaf ->
+                                            val extension = leaf.extension.lowercase()
+
+                                            val className =
+                                                "org.pushingpixels.aurora.demo.svg.filetypes.ext_${extension}"
+                                            var icon: Painter? = null
+                                            try {
+                                                val transcodedClass = Class.forName(className)
+                                                val ctr = transcodedClass.getConstructor()
+                                                icon = ctr.newInstance() as Painter
+                                            } catch (_: Throwable) {
+                                            }
+
+                                            Command(
+                                                text = contentProvider.getDisplayText(leaf),
+                                                icon = icon,
+                                                action = {})
                                         }
-
-                                        Command(text = leaf.displayName, icon = icon, action = {})
-                                    }
+                                    )
                                 )
                             )
-                        )
-                    }
-                },
+                        }
+                    },
+                    0
+                )
+            )
+        }
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.Toolbar) {
+            AuroraBreadcrumbBar(
+                contentModel = contentModel,
                 presentationModel = BreadcrumbBarPresentationModel(
                     iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                     iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -186,8 +234,3 @@ fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<
         }
     }
 }
-
-
-
-
-

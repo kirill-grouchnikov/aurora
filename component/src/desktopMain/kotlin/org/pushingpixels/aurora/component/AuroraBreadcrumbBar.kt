@@ -20,6 +20,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.painter.Painter
@@ -46,31 +47,11 @@ import org.pushingpixels.aurora.theming.*
 
 @OptIn(AuroraInternalApi::class)
 @Composable
-fun <T> AuroraBreadcrumbBar(
-    contentProvider: BreadcrumbBarContentProvider<T>,
-    onShownPathChanged: ((List<BreadcrumbItem<T>>) -> Unit)? = null,
+fun AuroraBreadcrumbBar(
+    contentModel: SnapshotStateList<Command>,
     presentationModel: BreadcrumbBarPresentationModel = BreadcrumbBarPresentationModel(),
     modifier: Modifier
 ) {
-    val initialized = remember { mutableStateOf(false) }
-
-    // The currently shown path of breadcrumb items.
-    val shownPath: MutableList<BreadcrumbItem<T>> = remember { mutableStateListOf() }
-    // For each item in "shownPath" this has the list of path choices - to be displayed
-    // in the popup for that particular item. The first item in this list has path choices
-    // for the root.
-    val shownPathChoices: MutableList<List<BreadcrumbItem<T>>> = remember { mutableStateListOf() }
-
-    if (!initialized.value) {
-        LaunchedEffect(null) {
-            coroutineScope {
-                val rootPathChoices = contentProvider.getPathChoices(emptyList())
-                shownPathChoices.add(rootPathChoices)
-            }
-            initialized.value = true
-        }
-    }
-
     val colors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
     val density = LocalDensity.current
@@ -227,102 +208,6 @@ fun <T> AuroraBreadcrumbBar(
             }
         })
 
-    val commands = derivedStateOf {
-        val rootChoices = if (shownPathChoices.isNotEmpty()) shownPathChoices[0] else null
-        val rootSecondaryContentModel = rootChoices?.let {
-            if (it.isEmpty()) null else
-                CommandMenuContentModel(
-                    group = CommandGroup(
-                        title = "",
-                        commands = it.map { rootChoice ->
-                            Command(text = rootChoice.displayName,
-                                icon = rootChoice.icon,
-                                action = {
-                                    shownPath.clear()
-                                    shownPath.add(rootChoice)
-                                    onShownPathChanged?.invoke(shownPath)
-
-                                    scope.launch {
-                                        while (shownPathChoices.size > 1) {
-                                            shownPathChoices.removeLast()
-                                        }
-                                        val newPathChoices =
-                                            contentProvider.getPathChoices(shownPath)
-                                        shownPathChoices.add(newPathChoices)
-                                    }
-                                })
-                        }
-                    )
-                )
-        }
-
-        listOf(
-            Command(
-                text = "",
-                icon = null,
-                action = {
-                    // Clear all entries in the shown path
-                    shownPath.clear()
-                    onShownPathChanged?.invoke(shownPath)
-                },
-                secondaryContentModel = rootSecondaryContentModel
-            )
-        ) + shownPath.mapIndexed { index, shownPathEntry ->
-            // First entry in "shownPathChoices" is always root path choices
-            val indexInShownPathChoices = index + 1
-            val shownPathEntryChoices =
-                if (indexInShownPathChoices <= (shownPathChoices.size - 1))
-                    shownPathChoices[indexInShownPathChoices] else null
-            val shownPathEntryMenuContentModel = shownPathEntryChoices?.let {
-                if (it.isEmpty()) null else
-                    CommandMenuContentModel(
-                        group = CommandGroup(
-                            title = "",
-                            commands = it.map { entryChoice ->
-                                Command(text = entryChoice.displayName,
-                                    icon = entryChoice.icon,
-                                    action = {
-                                        // Clear all entries in shown path after the one that
-                                        // corresponds to the command with these choices
-                                        while (shownPath.size > indexInShownPathChoices) {
-                                            shownPath.removeLast()
-                                        }
-                                        shownPath.add(entryChoice)
-                                        onShownPathChanged?.invoke(shownPath)
-
-                                        // And load choices for this entry
-                                        scope.launch {
-                                            while (shownPathChoices.size > (indexInShownPathChoices + 1)) {
-                                                shownPathChoices.removeLast()
-                                            }
-                                            val newPathChoices =
-                                                contentProvider.getPathChoices(shownPath)
-                                            shownPathChoices.add(newPathChoices)
-                                            // Scroll to reveal the newly added content
-                                            delay(150)
-                                            stateHorizontal.animateScrollTo(stateHorizontal.maxValue)
-                                        }
-                                    })
-                            }
-                        )
-                    )
-            }
-            Command(
-                text = shownPathEntry.displayName,
-                icon = shownPathEntry.icon,
-                action = {
-                    // Clear all entries in shown path after the one that
-                    // corresponds to this command
-                    while (shownPath.size > indexInShownPathChoices) {
-                        shownPath.removeLast()
-                    }
-                    onShownPathChanged?.invoke(shownPath)
-                },
-                secondaryContentModel = shownPathEntryMenuContentModel
-            )
-        }
-    }
-
     Layout(modifier = modifier.fillMaxWidth(),
         content = {
             // Leftwards scroller
@@ -341,7 +226,7 @@ fun <T> AuroraBreadcrumbBar(
 
             Box(modifier = Modifier.horizontalScroll(stateHorizontal)) {
                 Row(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
-                    for (command in commands.value) {
+                    for (command in contentModel) {
                         AuroraCommandButton(
                             modifier = Modifier,
                             actionInteractionSource = remember { MutableInteractionSource() },
@@ -403,8 +288,8 @@ fun <T> AuroraBreadcrumbBar(
             // How much space does the scrollable content need?
             var boxRequiredWidth = 0.0f
             var boxHeight = 0
-            if (commands.value.isNotEmpty()) {
-                for (command in commands.value) {
+            if (contentModel.isNotEmpty()) {
+                for (command in contentModel) {
                     val commandPreLayoutInfo =
                         contentLayoutManager.getPreLayoutInfo(
                             command,

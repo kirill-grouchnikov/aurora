@@ -21,14 +21,15 @@ import org.pushingpixels.aurora.theming.IconFilterStrategy
 import java.io.InputStream
 
 /**
- * A single item in the breadcrumb bar model.
- */
-data class BreadcrumbItem<T>(val displayName: String, val icon: Painter?, val data: T)
-
-/**
  * Content provider for a breadcrumb bar.
  */
 interface BreadcrumbBarContentProvider<T> {
+    /** Returns the display text for the item, or for the root is null is passed. */
+    fun getDisplayText(item: T?): String
+
+    /** Returns the icon for the item, or for the root is null is passed. */
+    fun getIcon(item: T?): Painter? = null
+
     /**
      * Returns the choice elements that correspond to the specified path. If the
      * path is empty, `null` should be returned. If path is
@@ -37,7 +38,7 @@ interface BreadcrumbBarContentProvider<T> {
      * @param path Breadcrumb bar path.
      * @return The choice elements that correspond to the specified path
      */
-    suspend fun getPathChoices(path: List<BreadcrumbItem<T>>): List<BreadcrumbItem<T>>
+    suspend fun getPathChoices(item: T?): List<T>
 
     /**
      * Returns the leaf elements that correspond to the specified path. If the
@@ -48,7 +49,7 @@ interface BreadcrumbBarContentProvider<T> {
      * @param path Breadcrumb bar path.
      * @return The leaf elements that correspond to the specified path
      */
-    suspend fun getLeaves(path: List<BreadcrumbItem<T>>): List<BreadcrumbItem<T>>
+    suspend fun getLeaves(item: T): List<T>
 
     /**
      * Returns the input stream with the leaf content. Some implementations may
