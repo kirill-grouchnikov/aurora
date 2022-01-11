@@ -25,19 +25,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.swing.Swing
 import org.pushingpixels.aurora.component.AuroraBreadcrumbBar
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonPanelProjection
+import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.window.AuroraApplicationScope
-import org.pushingpixels.aurora.window.AuroraDecorationArea
-import org.pushingpixels.aurora.window.AuroraWindow
-import org.pushingpixels.aurora.window.auroraApplication
+import org.pushingpixels.aurora.window.*
 import java.io.File
 import java.io.InputStream
+import javax.swing.JFileChooser
 import javax.swing.filechooser.FileSystemView
 
 fun main() = auroraApplication {
@@ -62,7 +64,7 @@ fun main() = auroraApplication {
 }
 
 @Composable
-fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
+fun AuroraWindowScope.BreadcrumbContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
     val scope = rememberCoroutineScope()
 
     val fileSystemView = FileSystemView.getFileSystemView()
@@ -236,6 +238,47 @@ fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<
                     .padding(horizontal = 6.dp, vertical = 4.dp)
             ) {
                 Spacer(modifier = Modifier.weight(1.0f, true))
+
+                CommandButtonProjection(
+                    contentModel = Command(text = "Choose",
+                        action = {
+                            GlobalScope.launch(Dispatchers.Swing) {
+                                val chooser = JFileChooser()
+                                chooser.fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
+                                val returnCode = chooser.showOpenDialog(window)
+                                if (returnCode == JFileChooser.APPROVE_OPTION) {
+                                    val selected = chooser.selectedFile
+                                    // Build the full path
+                                    var filePath = arrayListOf(selected)
+                                    var currentFile = selected.parentFile
+                                    while (currentFile != null) {
+                                        filePath.add(0, currentFile)
+                                        currentFile = currentFile.parentFile
+                                    }
+                                    // Convert to list of commands
+                                    contentModel.clear()
+                                    for ((index, file) in filePath.withIndex()) {
+                                        contentModel.add(
+                                            contentProvider.getPathCommand(
+                                                item = file,
+                                                onItemSelected = { selected: File ->
+                                                    scope.launch {
+                                                        commandPanelContentModel.value = getCommandPanelContent(selected)
+                                                    }
+                                                },
+                                                level = index + 1
+                                            )
+                                        )
+                                    }
+                                    commandPanelContentModel.value = getCommandPanelContent(selected)
+                                }
+                            }
+                        }),
+                    presentationModel = CommandButtonPresentationModel(presentationState = CommandButtonPresentationState.Medium)
+                ).project()
+
+                Spacer(modifier = Modifier.width(12.dp))
+
                 AuroraSkinSwitcher(
                     auroraSkinDefinition = auroraSkinDefinition,
                     popupPlacementStrategy = PopupPlacementStrategy.Upward
