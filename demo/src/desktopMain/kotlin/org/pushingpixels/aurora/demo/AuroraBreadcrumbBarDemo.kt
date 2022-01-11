@@ -192,7 +192,7 @@ fun AuroraApplicationScope.BreadcrumbContent(auroraSkinDefinition: MutableState<
                             commandPanelContentModel.value = getCommandPanelContent(selected)
                         }
                     },
-                    level = 0
+                    level = 1
                 )
             )
         }
