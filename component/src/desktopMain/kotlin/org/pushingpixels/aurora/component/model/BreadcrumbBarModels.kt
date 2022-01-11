@@ -24,30 +24,27 @@ import java.io.InputStream
  * Content provider for a breadcrumb bar.
  */
 interface BreadcrumbBarContentProvider<T> {
-    /** Returns the display text for the item, or for the root is null is passed. */
+    /** Returns the display text for the item, or for the root is `null` is passed. */
     fun getDisplayText(item: T?): String
 
-    /** Returns the icon for the item, or for the root is null is passed. */
+    /** Returns the icon for the item, or for the root is `null` is passed. */
     fun getIcon(item: T?): Painter? = null
 
     /**
      * Returns the choice elements that correspond to the specified path. If the
-     * path is empty, `null` should be returned. If path is
-     * `null`, the "root" elements should be returned
+     * item is `null`, the list of root elements should be returned.
      *
-     * @param path Breadcrumb bar path.
-     * @return The choice elements that correspond to the specified path
+     * @param item Breadcrumb bar item.
+     * @return The choice elements that correspond to the specified item.
      */
     suspend fun getPathChoices(item: T?): List<T>
 
     /**
-     * Returns the leaf elements that correspond to the specified path. If the
-     * path is empty, `null` should be returned. If path is
-     * `null`, leaf content of the "root" elements should be returned. Most probably, if
-     * your root is more than one element, you should be returning null in here.
+     * Returns the leaf elements that correspond to the specified item. If the specified
+     * item has no leaf elements, empty list should be returned.
      *
-     * @param path Breadcrumb bar path.
-     * @return The leaf elements that correspond to the specified path
+     * @param item Breadcrumb bar item.
+     * @return The leaf elements that correspond to the specified item.
      */
     suspend fun getLeaves(item: T): List<T>
 
@@ -59,9 +56,7 @@ interface BreadcrumbBarContentProvider<T> {
      * @return Input stream with the leaf content. May be `null` if
      * this is not applicable.
      */
-    suspend fun getLeafContent(leaf: T): InputStream? {
-        return null
-    }
+    suspend fun getLeafContent(leaf: T): InputStream? = null
 }
 
 data class BreadcrumbBarPresentationModel(

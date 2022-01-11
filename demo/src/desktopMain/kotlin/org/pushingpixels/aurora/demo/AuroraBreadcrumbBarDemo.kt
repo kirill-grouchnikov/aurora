@@ -38,7 +38,6 @@ import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowScope
 import org.pushingpixels.aurora.window.auroraApplication
 import java.io.File
-import java.io.InputStream
 import javax.swing.JFileChooser
 import javax.swing.filechooser.FileSystemView
 
@@ -79,10 +78,11 @@ fun AuroraWindowScope.BreadcrumbContent(auroraSkinDefinition: MutableState<Auror
             }
 
             override suspend fun getPathChoices(item: File?): List<File> {
-                // If our path is empty, get the file system roots. Otherwise, get all files under
-                // the last file in the path.
+                // If our item is null, get the file system roots. Otherwise, get all files under
+                // this file item.
                 val candidates =
-                    if (item == null) fileSystemView.roots else item.listFiles()
+                    (if (item == null) fileSystemView.roots else item.listFiles())
+                        ?: return emptyList()
 
                 // Now filter out hidden ones and non-directories, map the rest to
                 // what the content provider needs to return, and sort them by display name
@@ -92,17 +92,14 @@ fun AuroraWindowScope.BreadcrumbContent(auroraSkinDefinition: MutableState<Auror
             }
 
             override suspend fun getLeaves(item: File): List<File> {
-                // Get all files under the last file in the path, filter out hidden ones and
+                // Get all files under the file item, filter out hidden ones and
                 // directory ones, map the rest to what the content provider needs to
                 // return, and sort them by display name
-                return item.listFiles()
+                val candidates = item.listFiles() ?: return emptyList()
+                return candidates
                     .filterNot { it.isDirectory || fileSystemView.isHiddenFile(it) }
                     .map { it }
                     .sortedBy { getDisplayText(it).lowercase() }
-            }
-
-            override suspend fun getLeafContent(leaf: File): InputStream? {
-                return null
             }
         }
 
@@ -118,7 +115,7 @@ fun AuroraWindowScope.BreadcrumbContent(auroraSkinDefinition: MutableState<Auror
 
         return Command(
             text = this.getDisplayText(item),
-            icon = null,
+            icon = this.getIcon(item),
             action = {
                 // This is called when the path item is clicked
                 while (contentModel.size > level) {
@@ -130,7 +127,7 @@ fun AuroraWindowScope.BreadcrumbContent(auroraSkinDefinition: MutableState<Auror
                 group = CommandGroup(title = null,
                     commands = pathChoices.map { pathChoice ->
                         Command(text = this.getDisplayText(pathChoice),
-                            icon = null,
+                            icon = this.getIcon(pathChoice),
                             action = {
                                 // This is called when a dropdown item is clicked
                                 while (contentModel.size > level) {
