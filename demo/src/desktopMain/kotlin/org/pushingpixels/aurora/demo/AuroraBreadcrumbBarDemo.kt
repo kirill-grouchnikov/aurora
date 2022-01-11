@@ -249,11 +249,11 @@ fun AuroraWindowScope.BreadcrumbContent(auroraSkinDefinition: MutableState<Auror
                                 if (returnCode == JFileChooser.APPROVE_OPTION) {
                                     val selected = chooser.selectedFile
                                     // Build the full path
-                                    var filePath = arrayListOf(selected)
-                                    var currentFile = selected.parentFile
+                                    val filePath = arrayListOf(selected)
+                                    var currentFile = fileSystemView.getParentDirectory(selected)
                                     while (currentFile != null) {
                                         filePath.add(0, currentFile)
-                                        currentFile = currentFile.parentFile
+                                        currentFile = fileSystemView.getParentDirectory(currentFile)
                                     }
                                     // Convert to list of commands
                                     contentModel.clear()
