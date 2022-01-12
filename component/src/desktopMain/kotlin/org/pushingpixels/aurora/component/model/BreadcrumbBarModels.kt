@@ -15,7 +15,12 @@
  */
 package org.pushingpixels.aurora.component.model
 
+import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.painter.Painter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import java.io.InputStream
@@ -57,6 +62,83 @@ interface BreadcrumbBarContentProvider<T> {
      * this is not applicable.
      */
     suspend fun getLeafContent(leaf: T): InputStream? = null
+}
+
+suspend fun <T> BreadcrumbBarContentProvider<T>.getPathCommand(
+    scope: CoroutineScope,
+    commands: SnapshotStateList<Command>,
+    item: T?,
+    onItemSelected: (T) -> Unit,
+    level: Int
+): Command {
+    // These will be displayed in the dropdown
+    val pathChoices = this.getPathChoices(item)
+
+    return Command(
+        text = this.getDisplayText(item),
+        icon = this.getIcon(item),
+        action = {
+            // This is called when the path item is clicked
+            while (commands.size > level) {
+                commands.removeLast()
+            }
+            scope.launch {
+                onItemSelected.invoke(item!!)
+            }
+        },
+        secondaryContentModel = if (pathChoices.isNotEmpty()) CommandMenuContentModel(
+            group = CommandGroup(title = null,
+                commands = pathChoices.map { pathChoice ->
+                    Command(text = this.getDisplayText(pathChoice),
+                        icon = this.getIcon(pathChoice),
+                        action = {
+                            // This is called when a dropdown item is clicked
+                            while (commands.size > level) {
+                                commands.removeLast()
+                            }
+                            scope.launch {
+                                commands.add(
+                                    getPathCommand(
+                                        scope = scope,
+                                        commands = commands,
+                                        item = pathChoice,
+                                        onItemSelected = onItemSelected,
+                                        level = level + 1
+                                    )
+                                )
+                                onItemSelected.invoke(pathChoice)
+                            }
+                        })
+                }
+            )
+        ) else null
+    )
+}
+
+@Composable
+fun <T> BreadcrumbBarContentModel(
+    contentProvider: BreadcrumbBarContentProvider<T>,
+    onItemSelected: (T) -> Unit
+): SnapshotStateList<Command> {
+    val commands = remember { mutableStateListOf<Command>() }
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(null) {
+        coroutineScope {
+            // Root content for the breadcrumb bar
+            commands.add(
+                contentProvider.getPathCommand(
+                    scope = scope,
+                    commands = commands,
+                    item = null,
+                    onItemSelected = onItemSelected,
+                    level = 1
+                )
+            )
+        }
+    }
+
+    return commands
 }
 
 data class BreadcrumbBarPresentationModel(

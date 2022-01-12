@@ -20,7 +20,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.painter.Painter
@@ -32,8 +31,6 @@ import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
@@ -48,7 +45,7 @@ import org.pushingpixels.aurora.theming.*
 @OptIn(AuroraInternalApi::class)
 @Composable
 fun AuroraBreadcrumbBar(
-    contentModel: SnapshotStateList<Command>,
+    contentModel: List<Command>,
     presentationModel: BreadcrumbBarPresentationModel = BreadcrumbBarPresentationModel(),
     modifier: Modifier
 ) {
