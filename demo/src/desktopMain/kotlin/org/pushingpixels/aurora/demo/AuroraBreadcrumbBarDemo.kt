@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.demo
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +27,7 @@ import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.component.AuroraBreadcrumbBar
 import org.pushingpixels.aurora.component.model.*
@@ -136,9 +138,13 @@ fun AuroraWindowScope.BreadcrumbContent(auroraSkinDefinition: MutableState<Auror
         }
 
     val commandPanelContentModel = remember { mutableStateOf<CommandPanelContentModel?>(null) }
+    val breadcrumbBarHorizontalScrollState = rememberScrollState(0)
     val onBreadcrumbItemSelected: (File) -> Unit = {
         scope.launch(Dispatchers.Default) {
             commandPanelContentModel.value = getCommandPanelContent(breadcrumbBarContentProvider, it)
+            delay(150)
+            breadcrumbBarHorizontalScrollState.animateScrollTo(
+                breadcrumbBarHorizontalScrollState.maxValue)
         }
     }
 
@@ -156,6 +162,7 @@ fun AuroraWindowScope.BreadcrumbContent(auroraSkinDefinition: MutableState<Auror
                     iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                     iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText
                 ),
+                horizontalScrollState = breadcrumbBarHorizontalScrollState,
                 modifier = Modifier.fillMaxWidth().auroraBackground()
                     .padding(horizontal = 2.dp, vertical = 4.dp)
             )

@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.component
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -47,6 +48,7 @@ import org.pushingpixels.aurora.theming.*
 fun AuroraBreadcrumbBar(
     contentModel: List<Command>,
     presentationModel: BreadcrumbBarPresentationModel = BreadcrumbBarPresentationModel(),
+    horizontalScrollState: ScrollState = rememberScrollState(0),
     modifier: Modifier
 ) {
     val colors = AuroraSkin.colors
@@ -102,7 +104,6 @@ fun AuroraBreadcrumbBar(
         resourceLoader = resourceLoader
     )
 
-    val stateHorizontal = rememberScrollState(0)
     val scope = rememberCoroutineScope()
     val scrollAmount = 12.dp.value * density.density
 
@@ -146,11 +147,11 @@ fun AuroraBreadcrumbBar(
                 )
             }
         },
-        isActionEnabled = (stateHorizontal.value > 0),
+        isActionEnabled = (horizontalScrollState.value > 0),
         action = {
             scope.launch {
-                stateHorizontal.scrollTo(
-                    (stateHorizontal.value - scrollAmount.toInt()).coerceAtLeast(0)
+                horizontalScrollState.scrollTo(
+                    (horizontalScrollState.value - scrollAmount.toInt()).coerceAtLeast(0)
                 )
             }
         })
@@ -194,12 +195,12 @@ fun AuroraBreadcrumbBar(
                 )
             }
         },
-        isActionEnabled = (stateHorizontal.value < stateHorizontal.maxValue),
+        isActionEnabled = (horizontalScrollState.value < horizontalScrollState.maxValue),
         action = {
             scope.launch {
-                stateHorizontal.scrollTo(
-                    (stateHorizontal.value + scrollAmount.toInt()).coerceAtMost(
-                        stateHorizontal.maxValue
+                horizontalScrollState.scrollTo(
+                    (horizontalScrollState.value + scrollAmount.toInt()).coerceAtMost(
+                        horizontalScrollState.maxValue
                     )
                 )
             }
@@ -221,7 +222,7 @@ fun AuroraBreadcrumbBar(
                 )
             ).project()
 
-            Box(modifier = Modifier.horizontalScroll(stateHorizontal)) {
+            Box(modifier = Modifier.horizontalScroll(horizontalScrollState)) {
                 Row(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
                     for (command in contentModel) {
                         AuroraCommandButton(
