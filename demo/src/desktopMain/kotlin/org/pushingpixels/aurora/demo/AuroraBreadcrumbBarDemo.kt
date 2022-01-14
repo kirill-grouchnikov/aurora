@@ -33,6 +33,7 @@ import org.pushingpixels.aurora.component.AuroraBreadcrumbBar
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonPanelProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
+import org.pushingpixels.aurora.demo.svg.material.folder_open_black_24dp
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.window.AuroraDecorationArea
@@ -109,6 +110,10 @@ fun AuroraWindowScope.BreadcrumbContent(auroraSkinDefinition: MutableState<Auror
                 }
                 return fileSystemView.getSystemDisplayName(item)
                     .let { name -> name.ifEmpty { item.absolutePath } }
+            }
+
+            override fun getIcon(item: File?): Painter? {
+                return if (item?.isDirectory == true) folder_open_black_24dp() else null
             }
 
             override suspend fun getPathChoices(item: File?): List<File> {
