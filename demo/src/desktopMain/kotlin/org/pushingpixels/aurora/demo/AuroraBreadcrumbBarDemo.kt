@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.component.AuroraBreadcrumbBar
 import org.pushingpixels.aurora.component.model.*
@@ -98,8 +99,8 @@ fun AuroraWindowScope.BreadcrumbContent(auroraSkinDefinition: MutableState<Auror
     val scope = rememberCoroutineScope()
 
     val fileSystemView = FileSystemView.getFileSystemView()
-    val breadcrumbBarContentProvider: BreadcrumbBarContentProvider<File> =
-        object : BreadcrumbBarContentProvider<File> {
+    val breadcrumbBarContentProvider =
+        object: BreadcrumbBarContentProvider<File>() {
             override fun getDisplayText(item: File?): String {
                 if (item == null) {
                     return ""
@@ -136,7 +137,7 @@ fun AuroraWindowScope.BreadcrumbContent(auroraSkinDefinition: MutableState<Auror
 
     val commandPanelContentModel = remember { mutableStateOf<CommandPanelContentModel?>(null) }
     val onBreadcrumbItemSelected: (File) -> Unit = {
-        scope.launch {
+        scope.launch(Dispatchers.Default) {
             commandPanelContentModel.value = getCommandPanelContent(breadcrumbBarContentProvider, it)
         }
     }
@@ -203,7 +204,7 @@ fun AuroraWindowScope.BreadcrumbContent(auroraSkinDefinition: MutableState<Auror
                                         filePath.add(0, currentFile)
                                         currentFile = fileSystemView.getParentDirectory(currentFile)
                                     }
-                                    // Convert to list of commands
+                                    // Convert to list of commands and set as content model
                                     breadcrumbBarContentModel.clear()
                                     for ((index, file) in filePath.withIndex()) {
                                         breadcrumbBarContentModel.add(
@@ -216,8 +217,9 @@ fun AuroraWindowScope.BreadcrumbContent(auroraSkinDefinition: MutableState<Auror
                                             )
                                         )
                                     }
-                                    commandPanelContentModel.value =
-                                        getCommandPanelContent(breadcrumbBarContentProvider, selected)
+                                    // And trigger the item selected callback to populate the
+                                    // our command panel
+                                    onBreadcrumbItemSelected.invoke(selected)
                                 }
                             }
                         }),

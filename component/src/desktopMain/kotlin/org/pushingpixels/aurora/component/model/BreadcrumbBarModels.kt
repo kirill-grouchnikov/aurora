@@ -19,7 +19,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.painter.Painter
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
@@ -28,12 +29,14 @@ import java.io.InputStream
 /**
  * Content provider for a breadcrumb bar.
  */
-interface BreadcrumbBarContentProvider<T> {
+abstract class BreadcrumbBarContentProvider<T> {
+    internal var currentJob: Job? = null
+
     /** Returns the display text for the item, or for the root is `null` is passed. */
-    fun getDisplayText(item: T?): String
+    abstract fun getDisplayText(item: T?): String
 
     /** Returns the icon for the item, or for the root is `null` is passed. */
-    fun getIcon(item: T?): Painter? = null
+    open fun getIcon(item: T?): Painter? = null
 
     /**
      * Returns the choice elements that correspond to the specified path. If the
@@ -42,7 +45,7 @@ interface BreadcrumbBarContentProvider<T> {
      * @param item Breadcrumb bar item.
      * @return The choice elements that correspond to the specified item.
      */
-    suspend fun getPathChoices(item: T?): List<T>
+    abstract suspend fun getPathChoices(item: T?): List<T>
 
     /**
      * Returns the leaf elements that correspond to the specified item. If the specified
@@ -51,7 +54,7 @@ interface BreadcrumbBarContentProvider<T> {
      * @param item Breadcrumb bar item.
      * @return The leaf elements that correspond to the specified item.
      */
-    suspend fun getLeaves(item: T): List<T>
+    abstract suspend fun getLeaves(item: T): List<T>
 
     /**
      * Returns the input stream with the leaf content. Some implementations may
@@ -61,7 +64,7 @@ interface BreadcrumbBarContentProvider<T> {
      * @return Input stream with the leaf content. May be `null` if
      * this is not applicable.
      */
-    suspend fun getLeafContent(leaf: T): InputStream? = null
+    open suspend fun getLeafContent(leaf: T): InputStream? = null
 }
 
 suspend fun <T> BreadcrumbBarContentProvider<T>.getPathCommand(
@@ -78,11 +81,12 @@ suspend fun <T> BreadcrumbBarContentProvider<T>.getPathCommand(
         text = this.getDisplayText(item),
         icon = this.getIcon(item),
         action = {
+            currentJob?.cancel()
             // This is called when the path item is clicked
             while (commands.size > level) {
                 commands.removeLast()
             }
-            scope.launch {
+            scope.launch(Dispatchers.Default) {
                 onItemSelected.invoke(item!!)
             }
         },
@@ -96,7 +100,8 @@ suspend fun <T> BreadcrumbBarContentProvider<T>.getPathCommand(
                             while (commands.size > level) {
                                 commands.removeLast()
                             }
-                            scope.launch {
+                            currentJob?.cancel()
+                            currentJob = scope.launch(Dispatchers.Default) {
                                 commands.add(
                                     getPathCommand(
                                         scope = scope,
@@ -124,7 +129,7 @@ fun <T> BreadcrumbBarContentModel(
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(null) {
-        coroutineScope {
+        scope.launch(Dispatchers.Default) {
             // Root content for the breadcrumb bar
             commands.add(
                 contentProvider.getPathCommand(
