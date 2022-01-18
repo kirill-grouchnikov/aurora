@@ -21,6 +21,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
@@ -185,6 +186,7 @@ fun AuroraWindowScope.BreadcrumbContent(auroraSkinDefinition: MutableState<Auror
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                     commandPresentationState = CommandButtonPresentationState.Medium,
                     commandHorizontalAlignment = HorizontalAlignment.Leading,
+                    commandTextOverflow = TextOverflow.Ellipsis,
                     iconActiveFilterStrategy = IconFilterStrategy.Original,
                     iconEnabledFilterStrategy = IconFilterStrategy.Original
                 )

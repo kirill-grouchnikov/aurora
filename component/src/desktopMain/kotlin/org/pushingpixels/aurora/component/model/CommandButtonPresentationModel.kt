@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
@@ -55,6 +56,7 @@ data class CommandButtonPresentationModel(
     val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val forceAllocateSpaceForIcon: Boolean = false,
     val textStyle: TextStyle? = null,
+    val textOverflow: TextOverflow = TextOverflow.Clip,
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward,
     val toDismissPopupsOnActivation: Boolean = true,
     val autoRepeatAction: Boolean = false,
@@ -82,6 +84,7 @@ data class CommandButtonPresentationModel(
         val iconActiveFilterStrategy: IconFilterStrategy? = null,
         val forceAllocateSpaceForIcon: Boolean? = null,
         val textStyle: TextStyle? = null,
+        val textOverflow: TextOverflow? = null,
         val popupPlacementStrategy: PopupPlacementStrategy? = null,
         val toDismissPopupsOnActivation: Boolean? = null,
         val autoRepeatAction: Boolean? = null,
@@ -109,6 +112,7 @@ data class CommandButtonPresentationModel(
             iconActiveFilterStrategy = overlay.iconActiveFilterStrategy ?: this.iconActiveFilterStrategy,
             forceAllocateSpaceForIcon = overlay.forceAllocateSpaceForIcon ?: this.forceAllocateSpaceForIcon,
             textStyle = overlay.textStyle ?: this.textStyle,
+            textOverflow = overlay.textOverflow ?: this.textOverflow,
             popupPlacementStrategy = overlay.popupPlacementStrategy ?: this.popupPlacementStrategy,
             toDismissPopupsOnActivation = overlay.toDismissPopupsOnActivation ?: this.toDismissPopupsOnActivation,
             autoRepeatAction = overlay.autoRepeatAction ?: this.autoRepeatAction,

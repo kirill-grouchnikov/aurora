@@ -251,7 +251,8 @@ internal open class CommandButtonLayoutManagerMedium(
                 )
 
                 textHeight = paragraph.height
-                val textTop = paddingTop + (finalHeight - textHeight - paddingTop - paddingBottom) / 2.0f
+                val textTop =
+                    paddingTop + (finalHeight - textHeight - paddingTop - paddingBottom) / 2.0f
                 val lineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
                     text = command.text,
                     textRect = Rect(
@@ -283,6 +284,41 @@ internal open class CommandButtonLayoutManagerMedium(
                     bottom = (finalHeight - popupIconHeight) / 2.0f + popupIconHeight + 1.0f
                 )
             }
+
+            // Account for content overflowing the available horizontal space (constrained width
+            // scenario).
+            if (hasText || hasPopup) {
+                val paddingEnd = presentationModel.horizontalGapScaleFactor *
+                        paddingValues.calculateEndPadding(layoutDirection).toPx()
+                if (hasPopup) {
+                    if (popupActionRect.right > (finalWidth - paddingEnd)) {
+                        shiftX = popupActionRect.right - (finalWidth - paddingEnd)
+                        // Shift the popup action rectangle to the left
+                        popupActionRect =
+                            popupActionRect.translate(translateX = -shiftX, translateY = 0.0f)
+                        if (hasText) {
+                            // And shift the right coordinate of the text rectangle
+                            textLayoutInfoList[0].textRect = Rect(
+                                left = textLayoutInfoList[0].textRect.left,
+                                top = textLayoutInfoList[0].textRect.top,
+                                right = textLayoutInfoList[0].textRect.right - shiftX,
+                                bottom = textLayoutInfoList[0].textRect.bottom
+                            )
+                        }
+                    }
+                } else {
+                    // We have no popup, but guaranteed to have text in here
+                    textLayoutInfoList[0].textRect = Rect(
+                        left = textLayoutInfoList[0].textRect.left,
+                        top = textLayoutInfoList[0].textRect.top,
+                        right = textLayoutInfoList[0].textRect.right.coerceAtMost(
+                            finalWidth - paddingEnd
+                        ),
+                        bottom = textLayoutInfoList[0].textRect.bottom
+                    )
+                }
+            }
+
             var xBorderBetweenActionAndPopup = 0.0f
             when (preLayoutInfo.commandButtonKind) {
                 CommandButtonKind.ActionOnly -> {
@@ -419,7 +455,8 @@ internal open class CommandButtonLayoutManagerMedium(
                     density = _density, maxLines = 1, resourceLoader = resourceLoader
                 )
                 textHeight = paragraph.height
-                val textTop = paddingTop + (finalHeight - textHeight - paddingTop - paddingBottom) / 2.0f
+                val textTop =
+                    paddingTop + (finalHeight - textHeight - paddingTop - paddingBottom) / 2.0f
                 val lineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
                     text = command.text,
                     textRect = Rect(
@@ -451,6 +488,39 @@ internal open class CommandButtonLayoutManagerMedium(
                     bottom = (finalHeight - popupIconHeight) / 2.0f + popupIconHeight + 1.0f
                 )
             }
+
+            // Account for content overflowing the available horizontal space (constrained width
+            // scenario).
+            if (hasText || hasPopup) {
+                val paddingEnd = presentationModel.horizontalGapScaleFactor *
+                        paddingValues.calculateEndPadding(layoutDirection).toPx()
+                if (hasPopup) {
+                    if (popupActionRect.left < paddingEnd) {
+                        shiftX = paddingEnd - popupActionRect.left
+                        // Shift the popup action rectangle to the right
+                        popupActionRect =
+                            popupActionRect.translate(translateX = shiftX, translateY = 0.0f)
+                        if (hasText) {
+                            // And shift the left coordinate of the text rectangle
+                            textLayoutInfoList[0].textRect = Rect(
+                                left = textLayoutInfoList[0].textRect.left + shiftX,
+                                top = textLayoutInfoList[0].textRect.top,
+                                right = textLayoutInfoList[0].textRect.right,
+                                bottom = textLayoutInfoList[0].textRect.bottom
+                            )
+                        }
+                    }
+                } else {
+                    // We have no popup, but guaranteed to have text in here
+                    textLayoutInfoList[0].textRect = Rect(
+                        left = textLayoutInfoList[0].textRect.left.coerceAtLeast(popupActionRect.left),
+                        top = textLayoutInfoList[0].textRect.top,
+                        right = textLayoutInfoList[0].textRect.right,
+                        bottom = textLayoutInfoList[0].textRect.bottom
+                    )
+                }
+            }
+
             var xBorderBetweenActionAndPopup = 0.0f
             when (preLayoutInfo.commandButtonKind) {
                 CommandButtonKind.ActionOnly -> {

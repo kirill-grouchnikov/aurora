@@ -218,7 +218,8 @@ internal open class CommandButtonLayoutManagerTile(
 
         if (ltr) {
             var x = presentationModel.horizontalGapScaleFactor *
-                    paddingValues.calculateStartPadding(layoutDirection).toPx() + shiftX - layoutHGap
+                    paddingValues.calculateStartPadding(layoutDirection)
+                        .toPx() + shiftX - layoutHGap
 
             // icon
             if (hasIcon) {
@@ -300,6 +301,65 @@ internal open class CommandButtonLayoutManagerTile(
                     bottom = (finalHeight - popupIconHeight) / 2.0f + popupIconHeight + 1.0f
                 )
             }
+
+            // Account for content overflowing the available horizontal space (constrained width
+            // scenario).
+            if (hasText || hasPopup) {
+                val paddingEnd = presentationModel.horizontalGapScaleFactor *
+                        paddingValues.calculateEndPadding(layoutDirection).toPx()
+                if (hasPopup) {
+                    if (popupActionRect.right > (finalWidth - paddingEnd)) {
+                        shiftX = popupActionRect.right - (finalWidth - paddingEnd)
+                        // Shift the popup action rectangle to the left
+                        popupActionRect =
+                            popupActionRect.translate(translateX = -shiftX, translateY = 0.0f)
+                        if (hasText) {
+                            // And shift the right coordinate of the text rectangle if needed
+                            textLayoutInfoList[0].textRect = Rect(
+                                left = textLayoutInfoList[0].textRect.left,
+                                top = textLayoutInfoList[0].textRect.top,
+                                right = textLayoutInfoList[0].textRect.right.coerceAtMost(
+                                    popupActionRect.left - 2 * layoutHGap
+                                ),
+                                bottom = textLayoutInfoList[0].textRect.bottom
+                            )
+                        }
+                        if (command.extraText != null) {
+                            // And shift the right coordinate of the extra text rectangle if needed
+                            extraTextLayoutInfoList[0].textRect = Rect(
+                                left = extraTextLayoutInfoList[0].textRect.left,
+                                top = extraTextLayoutInfoList[0].textRect.top,
+                                right = extraTextLayoutInfoList[0].textRect.right.coerceAtMost(
+                                    popupActionRect.left - 2 * layoutHGap
+                                ),
+                                bottom = extraTextLayoutInfoList[0].textRect.bottom
+                            )
+                        }
+                    }
+                } else {
+                    // We have no popup, but guaranteed to have text in here
+                    textLayoutInfoList[0].textRect = Rect(
+                        left = textLayoutInfoList[0].textRect.left,
+                        top = textLayoutInfoList[0].textRect.top,
+                        right = textLayoutInfoList[0].textRect.right.coerceAtMost(
+                            finalWidth - paddingEnd
+                        ),
+                        bottom = textLayoutInfoList[0].textRect.bottom
+                    )
+                    if (command.extraText != null) {
+                        // And shift the right coordinate of the extra text rectangle if needed
+                        extraTextLayoutInfoList[0].textRect = Rect(
+                            left = extraTextLayoutInfoList[0].textRect.left,
+                            top = extraTextLayoutInfoList[0].textRect.top,
+                            right = extraTextLayoutInfoList[0].textRect.right.coerceAtMost(
+                                finalWidth - paddingEnd
+                            ),
+                            bottom = extraTextLayoutInfoList[0].textRect.bottom
+                        )
+                    }
+                }
+            }
+
             var xBorderBetweenActionAndPopup = 0.0f
             when (preLayoutInfo.commandButtonKind) {
                 CommandButtonKind.ActionOnly -> {
@@ -414,7 +474,8 @@ internal open class CommandButtonLayoutManagerTile(
             }
         } else {
             var x = finalWidth - presentationModel.horizontalGapScaleFactor *
-                    paddingValues.calculateStartPadding(layoutDirection).toPx() - shiftX + layoutHGap
+                    paddingValues.calculateStartPadding(layoutDirection)
+                        .toPx() - shiftX + layoutHGap
 
             // icon
             if (hasIcon) {
@@ -495,6 +556,60 @@ internal open class CommandButtonLayoutManagerTile(
                     top = (finalHeight - popupIconHeight) / 2.0f - 1.0f,
                     bottom = (finalHeight - popupIconHeight) / 2.0f + popupIconHeight + 1.0f
                 )
+            }
+
+            // Account for content overflowing the available horizontal space (constrained width
+            // scenario).
+            if (hasText || hasPopup) {
+                val paddingEnd = presentationModel.horizontalGapScaleFactor *
+                        paddingValues.calculateEndPadding(layoutDirection).toPx()
+                if (hasPopup) {
+                    if (popupActionRect.left < paddingEnd) {
+                        shiftX = paddingEnd - popupActionRect.left
+                        // Shift the popup action rectangle to the right
+                        popupActionRect =
+                            popupActionRect.translate(translateX = shiftX, translateY = 0.0f)
+                        if (hasText) {
+                            // And shift the left coordinate of the text rectangle if needed
+                            textLayoutInfoList[0].textRect = Rect(
+                                left = textLayoutInfoList[0].textRect.left.coerceAtLeast(
+                                    popupActionRect.right + 2 * layoutHGap
+                                ),
+                                top = textLayoutInfoList[0].textRect.top,
+                                right = textLayoutInfoList[0].textRect.right,
+                                bottom = textLayoutInfoList[0].textRect.bottom
+                            )
+                            if (command.extraText != null) {
+                                // And shift the right coordinate of the extra text rectangle if needed
+                                extraTextLayoutInfoList[0].textRect = Rect(
+                                    left = extraTextLayoutInfoList[0].textRect.left.coerceAtLeast(
+                                        popupActionRect.right + 2 * layoutHGap
+                                    ),
+                                    top = extraTextLayoutInfoList[0].textRect.top,
+                                    right = extraTextLayoutInfoList[0].textRect.right,
+                                    bottom = extraTextLayoutInfoList[0].textRect.bottom
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    // We have no popup, but guaranteed to have text in here
+                    textLayoutInfoList[0].textRect = Rect(
+                        left = textLayoutInfoList[0].textRect.left.coerceAtLeast(paddingEnd),
+                        top = textLayoutInfoList[0].textRect.top,
+                        right = textLayoutInfoList[0].textRect.right,
+                        bottom = textLayoutInfoList[0].textRect.bottom
+                    )
+                    if (command.extraText != null) {
+                        // And shift the right coordinate of the extra text rectangle if needed
+                        extraTextLayoutInfoList[0].textRect = Rect(
+                            left = extraTextLayoutInfoList[0].textRect.left.coerceAtLeast(paddingEnd),
+                            top = extraTextLayoutInfoList[0].textRect.top,
+                            right = extraTextLayoutInfoList[0].textRect.right,
+                            bottom = extraTextLayoutInfoList[0].textRect.bottom
+                        )
+                    }
+                }
             }
 
             var xBorderBetweenActionAndPopup = 0.0f

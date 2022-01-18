@@ -49,6 +49,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.resolveDefaults
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -1074,12 +1075,14 @@ internal fun AuroraCommandButton(
 
             for (text in preLayoutInfo.texts) {
                 CommandButtonTextContent(
-                    text, modelStateInfoForText, currStateForText, resolvedTextStyle
+                    text, modelStateInfoForText, currStateForText, resolvedTextStyle,
+                    presentationModel.textOverflow
                 )
             }
             for (extraText in preLayoutInfo.extraTexts) {
                 CommandButtonExtraTextContent(
-                    extraText, modelStateInfoForText, currStateForText, resolvedTextStyle
+                    extraText, modelStateInfoForText, currStateForText, resolvedTextStyle,
+                    presentationModel.textOverflow
                 )
             }
 
@@ -1242,7 +1245,7 @@ internal fun AuroraCommandButton(
 @Composable
 private fun CommandButtonTextContent(
     text: String, modelStateInfo: ModelStateInfo, currState: ComponentState,
-    style: TextStyle
+    style: TextStyle, overflow: TextOverflow
 ) {
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
@@ -1265,7 +1268,7 @@ private fun CommandButtonTextContent(
     ) {
         // Since we're passing the resolved style that has the default color,
         // also explicitly pass our text color to override the one set in the style
-        AuroraText(text = text, color = textColor, style = style)
+        AuroraText(text = text, color = textColor, style = style, maxLines = 1, overflow = overflow)
     }
 }
 
@@ -1273,7 +1276,7 @@ private fun CommandButtonTextContent(
 @Composable
 private fun CommandButtonExtraTextContent(
     text: String, modelStateInfo: ModelStateInfo, currState: ComponentState,
-    style: TextStyle
+    style: TextStyle, overflow: TextOverflow
 ) {
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
@@ -1315,7 +1318,13 @@ private fun CommandButtonExtraTextContent(
     ) {
         // Since we're passing the resolved style that has the default color,
         // also explicitly pass our text color to override the one set in the style
-        AuroraText(text = text, color = disabledFgColor, style = style)
+        AuroraText(
+            text = text,
+            color = disabledFgColor,
+            style = style,
+            maxLines = 1,
+            overflow = overflow
+        )
     }
 }
 

@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
@@ -52,6 +53,7 @@ data class CommandPanelPresentationModel(
     val commandIconDimension: Dp = 0.dp,
     val commandContentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
     val commandTextStyle: TextStyle? = null,
+    val commandTextOverflow: TextOverflow = TextOverflow.Clip,
     val commandHorizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
     val commandHorizontalGapScaleFactor: Float = 1.0f,
     val commandVerticalGapScaleFactor: Float = 1.0f,
