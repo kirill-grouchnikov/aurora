@@ -16,7 +16,6 @@
 
 package org.pushingpixels.aurora.window
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.runtime.*
@@ -27,7 +26,6 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
@@ -35,7 +33,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
@@ -59,6 +56,7 @@ import java.awt.event.*
 import java.util.*
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
+
 
 object WindowSizingConstants {
     val DecoratedBorderThickness = 4.dp
@@ -197,6 +195,21 @@ private fun AuroraWindowScope.WindowTitlePane(
                                 if (current.extendedState == JFrame.MAXIMIZED_BOTH) {
                                     current.extendedState = JFrame.NORMAL
                                 } else {
+                                    // Workaround for https://bugs.java.com/bugdatabase/view_bug.do?bug_id=4737788
+                                    // to explicitly compute maximized bounds so that our window
+                                    // does not overlap the taskbar
+                                    val screenInsets = current.toolkit.getScreenInsets(
+                                        current.graphicsConfiguration
+                                    )
+                                    val screenBounds = current.graphicsConfiguration.bounds
+                                    val maximizedWindowBounds = Rectangle(
+                                        screenInsets.left + screenBounds.x,
+                                        screenInsets.top + screenBounds.y,
+                                        screenBounds.x + screenBounds.width - screenInsets.left - screenInsets.right,
+                                        screenBounds.y + screenBounds.height - screenInsets.top - screenInsets.bottom
+                                    )
+                                    current.maximizedBounds = maximizedWindowBounds
+                                    // And now we can set our extended state
                                     current.extendedState = JFrame.MAXIMIZED_BOTH
                                 }
                                 isMaximized.value = !isMaximized.value
