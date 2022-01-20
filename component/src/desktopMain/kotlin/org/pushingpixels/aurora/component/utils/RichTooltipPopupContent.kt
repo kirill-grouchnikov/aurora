@@ -90,6 +90,10 @@ internal fun displayRichTooltipContent(
     popupContentWindow.isUndecorated = true
     popupContentWindow.isResizable = false
 
+    val fillColor = skinColors.getBackgroundColorScheme(decorationAreaType).backgroundFillColor
+    val awtFillColor = fillColor.awtColor
+    popupContentWindow.background = awtFillColor
+
     val locationOnScreen = currentWindow.rootPane.locationOnScreen
 
     val offset = ceil(density.density).toInt()
@@ -347,8 +351,6 @@ internal fun displayRichTooltipContent(
     )
     val popupBorderColor = skinPainters.borderPainter.getRepresentativeColor(borderScheme)
     val awtBorderColor = popupBorderColor.awtColor
-    val fillColor = skinColors.getBackgroundColorScheme(decorationAreaType).backgroundFillColor
-    val awtFillColor = fillColor.awtColor
     val borderThickness = 1.0f / density.density
 
     popupContentWindow.rootPane.border = object : Border {

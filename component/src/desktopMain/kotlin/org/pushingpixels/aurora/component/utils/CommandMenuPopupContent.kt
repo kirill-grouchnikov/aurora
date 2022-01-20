@@ -87,6 +87,10 @@ internal fun displayPopupContent(
     popupContentWindow.isUndecorated = true
     popupContentWindow.isResizable = false
 
+    val fillColor = skinColors.getBackgroundColorScheme(decorationAreaType).backgroundFillColor
+    val awtFillColor = fillColor.awtColor
+    popupContentWindow.background = awtFillColor
+
     val locationOnScreen = currentWindow.rootPane.locationOnScreen
 
     val hasButtonPanel = (contentModel.value!!.panelContentModel != null)
@@ -327,8 +331,6 @@ internal fun displayPopupContent(
     )
     val popupBorderColor = skinPainters.borderPainter.getRepresentativeColor(borderScheme)
     val awtBorderColor = popupBorderColor.awtColor
-    val fillColor = skinColors.getBackgroundColorScheme(decorationAreaType).backgroundFillColor
-    val awtFillColor = fillColor.awtColor
     val borderThickness = 1.0f / density.density
 
     popupContentWindow.rootPane.border = object : Border {
