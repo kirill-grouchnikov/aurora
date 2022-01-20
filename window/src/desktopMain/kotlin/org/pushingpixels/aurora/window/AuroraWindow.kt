@@ -204,7 +204,8 @@ private fun AuroraWindowScope.WindowTitlePane(
                                     // See https://bugs.openjdk.java.net/browse/JDK-8176359,
                                     // https://bugs.openjdk.java.net/browse/JDK-8231564 and
                                     // https://bugs.openjdk.java.net/browse/JDK-8243925 that went into Java 15.
-                                    val maximizedWindowBounds = if (Runtime.version().feature() < 15)
+                                    val isWindows = System.getProperty("os.name")?.startsWith("Windows")
+                                    val maximizedWindowBounds = if ((isWindows == true) && (Runtime.version().feature() < 15))
                                         Rectangle(
                                             0, 0,
                                             (screenBounds.width * current.graphicsConfiguration.defaultTransform.scaleX).toInt(),
