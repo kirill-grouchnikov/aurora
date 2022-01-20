@@ -231,7 +231,7 @@ fun AuroraWindowScope.BreadcrumbContent(auroraSkinDefinition: MutableState<Auror
                                             )
                                         )
                                     }
-                                    // And trigger the item selected callback to populate the
+                                    // And trigger the item selected callback to populate
                                     // our command panel
                                     onBreadcrumbItemSelected.invoke(selected)
                                 }

@@ -55,6 +55,7 @@ Aurora is a collection of libraries for writing modern, elegant and fast [deskto
 * [Command panels](docs/component/CommandPanel.md)
 * [Command popup menus](docs/component/CommandPopupMenu.md)
 * [Context menus](docs/component/ContextMenu.md)
+* [Breadcrumb bars](docs/component/BreadcrumbBar.md)
 * [All custom modifiers](docs/component/Modifiers.md)
 
 ### SVG transcoding
