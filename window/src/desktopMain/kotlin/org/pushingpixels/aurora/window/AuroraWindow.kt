@@ -197,18 +197,29 @@ private fun AuroraWindowScope.WindowTitlePane(
                                 } else {
                                     // Workaround for https://bugs.java.com/bugdatabase/view_bug.do?bug_id=4737788
                                     // to explicitly compute maximized bounds so that our window
-                                    // does not overlap the taskbar
-                                    val screenInsets = current.toolkit.getScreenInsets(
-                                        current.graphicsConfiguration
-                                    )
+                                    // does not overlap the taskbar0
                                     val screenBounds = current.graphicsConfiguration.bounds
-                                    val maximizedWindowBounds = Rectangle(
-                                        screenInsets.left + screenBounds.x,
-                                        screenInsets.top + screenBounds.y,
-                                        screenBounds.x + screenBounds.width - screenInsets.left - screenInsets.right,
-                                        screenBounds.y + screenBounds.height - screenInsets.top - screenInsets.bottom
+                                    // Prior to Java 15, we need to account for screen resolution which is given as
+                                    // scaleX and scaleY on default transform of the window's graphics configuration.
+                                    // See https://bugs.openjdk.java.net/browse/JDK-8176359,
+                                    // https://bugs.openjdk.java.net/browse/JDK-8231564 and
+                                    // https://bugs.openjdk.java.net/browse/JDK-8243925 that went into Java 15.
+                                    val maximizedWindowBounds = if (Runtime.version().feature() < 15)
+                                        Rectangle(
+                                            0, 0,
+                                            (screenBounds.width * current.graphicsConfiguration.defaultTransform.scaleX).toInt(),
+                                            (screenBounds.height * current.graphicsConfiguration.defaultTransform.scaleY).toInt(),
+                                        ) else screenBounds
+                                    // Now account for screen insets (taskbar and anything else that should not be
+                                    // interfered with by maximized windows)
+                                    val screenInsets = current.toolkit.getScreenInsets(current.graphicsConfiguration)
+                                    // Set maximized bounds of our window
+                                    current.maximizedBounds = Rectangle(
+                                        maximizedWindowBounds.x + screenInsets.left,
+                                        maximizedWindowBounds.y + screenInsets.top,
+                                        maximizedWindowBounds.width - screenInsets.left - screenInsets.right,
+                                        maximizedWindowBounds.height - screenInsets.top - screenInsets.bottom
                                     )
-                                    current.maximizedBounds = maximizedWindowBounds
                                     // And now we can set our extended state
                                     current.extendedState = JFrame.MAXIMIZED_BOTH
                                 }
