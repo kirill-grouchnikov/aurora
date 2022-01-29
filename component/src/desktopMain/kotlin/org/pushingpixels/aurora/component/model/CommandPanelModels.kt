@@ -43,9 +43,46 @@ object CommandPanelSizingConstants {
     val DefaultGap = 4.dp
 }
 
+sealed class RowFillSpec {
+    class Fixed(val count: Int) : RowFillSpec()
+    class Adaptive(val minWidth: Dp) : RowFillSpec()
+
+    override fun hashCode() = if (this is Fixed) {
+        31 + count
+    } else {
+        require(this is Adaptive)
+        62 + minWidth.hashCode()
+    }
+
+    override fun equals(other: Any?) =
+        (this is Fixed && other is Fixed && this.count == other.count) ||
+                (this is Adaptive && other is Adaptive && this.minWidth == other.minWidth)
+}
+
+sealed class ColumnFillSpec {
+    class Fixed(val count: Int) : ColumnFillSpec()
+    class Adaptive(val minHeight: Dp) : ColumnFillSpec()
+
+    override fun hashCode() = if (this is Fixed) {
+        31 + count
+    } else {
+        require(this is Adaptive)
+        62 + minHeight.hashCode()
+    }
+
+    override fun equals(other: Any?) =
+        (this is Fixed && other is Fixed && this.count == other.count) ||
+                (this is Adaptive && other is Adaptive && this.minHeight == other.minHeight)
+}
+
+sealed class LayoutSpec {
+    class RowFill(val rowFillSpec: RowFillSpec): LayoutSpec()
+    class ColumnFill(val columnFillSpec: ColumnFillSpec): LayoutSpec()
+}
+
 data class CommandPanelPresentationModel(
     val contentPadding: PaddingValues = CommandPanelSizingConstants.DefaultContentPadding,
-    val layoutFillMode: PanelLayoutFillMode = PanelLayoutFillMode.RowFill,
+    val layoutSpec:  LayoutSpec = LayoutSpec.RowFill(RowFillSpec.Adaptive(48.dp)),
     val maxColumns: Int = -1,  // only relevant when layoutFillMode is RowFill
     val maxRows: Int = -1,     // only relevant when layoutFillMode is ColumnFill
     val showGroupLabels: Boolean = true,

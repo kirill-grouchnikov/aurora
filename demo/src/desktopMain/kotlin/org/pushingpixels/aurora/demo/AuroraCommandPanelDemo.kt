@@ -128,9 +128,7 @@ fun main() = auroraApplication {
                 ) {
                     CommandButtonPanelProjection(
                         contentModel = commandPanelContentModel.value,
-                        presentationModel = CommandPanelPresentationModel(
-                            layoutFillMode = PanelLayoutFillMode.RowFill,
-                            maxColumns = 5,
+                        presentationModel = CommandPanelPresentationModel(layoutSpec = LayoutSpec.RowFill(RowFillSpec.Adaptive(140.dp)),
                             showGroupLabels = true,
                             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                             commandPresentationState = CommandButtonPresentationState.Medium,
@@ -146,8 +144,7 @@ fun main() = auroraApplication {
                     CommandButtonPanelProjection(
                         contentModel = commandPanelContentModel.value,
                         presentationModel = CommandPanelPresentationModel(
-                            layoutFillMode = PanelLayoutFillMode.ColumnFill,
-                            maxRows = 6,
+                            layoutSpec = LayoutSpec.ColumnFill(ColumnFillSpec.Adaptive(80.dp)),
                             showGroupLabels = false,
                             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                             commandPresentationState = CommandButtonPresentationState.Big,

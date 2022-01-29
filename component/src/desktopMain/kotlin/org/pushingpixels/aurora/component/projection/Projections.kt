@@ -75,7 +75,7 @@ class CommandButtonPanelProjection(
     fun project(modifier: Modifier = Modifier) {
         require(
             !presentationModel.showGroupLabels ||
-                    (presentationModel.layoutFillMode == PanelLayoutFillMode.RowFill)
+                    (presentationModel.layoutSpec is LayoutSpec.RowFill)
         ) {
             "Column fill layout is not supported when group labels are shown"
         }
