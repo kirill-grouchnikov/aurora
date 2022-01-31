@@ -325,86 +325,89 @@ internal fun Modifier.drawUndecoratedWindowBorder(
     val width: Float = size.width
     val height: Float = size.height
     val thickness = WindowSizingConstants.DecoratedBorderThickness.toPx()
-    drawRect(
-        color = backgroundColorScheme.lightColor,
-        topLeft = Offset(thickness / 2.0f, thickness / 2.0f),
-        size = Size(width - thickness, height - thickness),
-        style = androidx.compose.ui.graphics.drawscope.Stroke(width = thickness)
-    )
 
-    val quarterThickness = thickness / 4.0f
-    // bottom and right in border ultra dark
-    drawLine(
-        color = borderColorScheme.ultraDarkColor,
-        start = Offset(x = 0f, y = height - quarterThickness / 2.0f),
-        end = Offset(x = width, y = height - quarterThickness / 2.0f),
-        strokeWidth = quarterThickness,
-        cap = StrokeCap.Butt
-    )
-    drawLine(
-        color = borderColorScheme.ultraDarkColor,
-        start = Offset(x = width - quarterThickness / 2.0f, y = 0f),
-        end = Offset(x = width - quarterThickness / 2.0f, y = height),
-        strokeWidth = quarterThickness,
-        cap = StrokeCap.Butt
-    )
-    // top and left in border dark
-    drawLine(
-        color = borderColorScheme.darkColor,
-        start = Offset(x = 0f, y = quarterThickness / 2.0f),
-        end = Offset(x = width, y = quarterThickness / 2.0f),
-        strokeWidth = quarterThickness,
-        cap = StrokeCap.Butt
-    )
-    drawLine(
-        color = borderColorScheme.darkColor,
-        start = Offset(x = quarterThickness / 2.0f, y = 0f),
-        end = Offset(x = quarterThickness / 2.0f, y = height),
-        strokeWidth = quarterThickness,
-        cap = StrokeCap.Butt
-    )
-    // inner bottom and right in background mid
-    drawLine(
-        color = borderColorScheme.midColor,
-        start = Offset(
-            x = quarterThickness,
-            y = height - 1.5f * quarterThickness
-        ),
-        end = Offset(
-            x = width - quarterThickness,
-            y = height - 1.5f * quarterThickness
-        ),
-        strokeWidth = quarterThickness,
-        cap = StrokeCap.Butt
-    )
-    drawLine(
-        color = borderColorScheme.midColor,
-        start = Offset(
-            x = width - 1.5f * quarterThickness,
-            y = quarterThickness
-        ),
-        end = Offset(
-            x = width - 1.5f * quarterThickness,
-            y = height - quarterThickness
-        ),
-        strokeWidth = quarterThickness,
-        cap = StrokeCap.Butt
-    )
-    // inner top and left in background mid
-    drawLine(
-        color = borderColorScheme.midColor,
-        start = Offset(x = quarterThickness, y = 1.5f * quarterThickness),
-        end = Offset(x = width - quarterThickness, y = 1.5f * quarterThickness),
-        strokeWidth = quarterThickness,
-        cap = StrokeCap.Butt
-    )
-    drawLine(
-        color = borderColorScheme.midColor,
-        start = Offset(x = 1.5f * quarterThickness, y = quarterThickness),
-        end = Offset(x = 1.5f * quarterThickness, y = height - quarterThickness),
-        strokeWidth = quarterThickness,
-        cap = StrokeCap.Butt
-    )
+    if ((width > thickness) && (height > thickness)) {
+        drawRect(
+            color = backgroundColorScheme.lightColor,
+            topLeft = Offset(thickness / 2.0f, thickness / 2.0f),
+            size = Size(width - thickness, height - thickness),
+            style = androidx.compose.ui.graphics.drawscope.Stroke(width = thickness)
+        )
+
+        val quarterThickness = thickness / 4.0f
+        // bottom and right in border ultra dark
+        drawLine(
+            color = borderColorScheme.ultraDarkColor,
+            start = Offset(x = 0f, y = height - quarterThickness / 2.0f),
+            end = Offset(x = width, y = height - quarterThickness / 2.0f),
+            strokeWidth = quarterThickness,
+            cap = StrokeCap.Butt
+        )
+        drawLine(
+            color = borderColorScheme.ultraDarkColor,
+            start = Offset(x = width - quarterThickness / 2.0f, y = 0f),
+            end = Offset(x = width - quarterThickness / 2.0f, y = height),
+            strokeWidth = quarterThickness,
+            cap = StrokeCap.Butt
+        )
+        // top and left in border dark
+        drawLine(
+            color = borderColorScheme.darkColor,
+            start = Offset(x = 0f, y = quarterThickness / 2.0f),
+            end = Offset(x = width, y = quarterThickness / 2.0f),
+            strokeWidth = quarterThickness,
+            cap = StrokeCap.Butt
+        )
+        drawLine(
+            color = borderColorScheme.darkColor,
+            start = Offset(x = quarterThickness / 2.0f, y = 0f),
+            end = Offset(x = quarterThickness / 2.0f, y = height),
+            strokeWidth = quarterThickness,
+            cap = StrokeCap.Butt
+        )
+        // inner bottom and right in background mid
+        drawLine(
+            color = borderColorScheme.midColor,
+            start = Offset(
+                x = quarterThickness,
+                y = height - 1.5f * quarterThickness
+            ),
+            end = Offset(
+                x = width - quarterThickness,
+                y = height - 1.5f * quarterThickness
+            ),
+            strokeWidth = quarterThickness,
+            cap = StrokeCap.Butt
+        )
+        drawLine(
+            color = borderColorScheme.midColor,
+            start = Offset(
+                x = width - 1.5f * quarterThickness,
+                y = quarterThickness
+            ),
+            end = Offset(
+                x = width - 1.5f * quarterThickness,
+                y = height - quarterThickness
+            ),
+            strokeWidth = quarterThickness,
+            cap = StrokeCap.Butt
+        )
+        // inner top and left in background mid
+        drawLine(
+            color = borderColorScheme.midColor,
+            start = Offset(x = quarterThickness, y = 1.5f * quarterThickness),
+            end = Offset(x = width - quarterThickness, y = 1.5f * quarterThickness),
+            strokeWidth = quarterThickness,
+            cap = StrokeCap.Butt
+        )
+        drawLine(
+            color = borderColorScheme.midColor,
+            start = Offset(x = 1.5f * quarterThickness, y = quarterThickness),
+            end = Offset(x = 1.5f * quarterThickness, y = height - quarterThickness),
+            strokeWidth = quarterThickness,
+            cap = StrokeCap.Butt
+        )
+    }
 }
 
 @AuroraInternalApi

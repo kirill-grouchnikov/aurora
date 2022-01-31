@@ -269,6 +269,10 @@ internal fun AuroraTextField(
     Box {
         Canvas(modifier = Modifier.matchParentSize()) {
             val borderStrokeWidth = 1.0f
+            if ((size.width <= borderStrokeWidth) || (size.height <= borderStrokeWidth)) {
+                // Size too small to do any meaningful painting
+                return@Canvas
+            }
 
             // Read-only text fields use the regular background fill. Editable text fields
             // use text background fill (with rollover and focused transitions)

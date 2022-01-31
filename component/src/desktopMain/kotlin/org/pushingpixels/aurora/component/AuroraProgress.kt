@@ -196,6 +196,10 @@ internal fun AuroraIndeterminateLinearProgress(
     ) {
         val valComplete = progress * (2 * size.height + 1)
         val radius = 1.5f.dp.toPx()
+        if ((size.width <= radius) || (size.height <= radius)) {
+            // Size too small to do any meaningful painting
+            return@Canvas
+        }
 
         withTransform({
             clipPath(Path().also {
@@ -309,6 +313,10 @@ internal fun AuroraDeterminateLinearProgress(
             )
     ) {
         val radius = 1.5f.dp.toPx()
+        if ((size.width <= radius) || (size.height <= radius)) {
+            // Size too small to do any meaningful painting
+            return@Canvas
+        }
 
         withTransform({
             clipPath(Path().also {
