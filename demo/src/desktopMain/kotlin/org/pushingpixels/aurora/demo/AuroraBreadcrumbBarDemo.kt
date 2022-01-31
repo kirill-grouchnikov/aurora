@@ -180,7 +180,7 @@ fun AuroraWindowScope.BreadcrumbContent(auroraSkinDefinition: MutableState<Auror
             CommandButtonPanelProjection(
                 contentModel = commandPanelContentModel.value!!,
                 presentationModel = CommandPanelPresentationModel(
-                    layoutSpec = LayoutSpec.RowFill(RowFillSpec.Adaptive(140.dp)),
+                    layoutSpec = PanelLayoutSpec.RowFill(PanelRowFillSpec.Adaptive(140.dp)),
                     showGroupLabels = false,
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                     commandPresentationState = CommandButtonPresentationState.Medium,

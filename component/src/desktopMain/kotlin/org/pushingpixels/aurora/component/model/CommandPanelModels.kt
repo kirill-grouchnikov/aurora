@@ -29,62 +29,51 @@ data class CommandPanelContentModel(
     val commandActionPreview: CommandActionPreview? = null
 ) : ContentModel
 
-
-enum class PanelLayoutFillMode {
-    /** The buttons are laid out in rows respecting the available width. */
-    RowFill,
-
-    /** The buttons are laid out in columns respecting the available height. */
-    ColumnFill
-}
-
 object CommandPanelSizingConstants {
     val DefaultContentPadding = PaddingValues(6.dp)
     val DefaultGap = 4.dp
 }
 
-sealed class RowFillSpec {
-    class Fixed(val count: Int) : RowFillSpec()
-    class Adaptive(val minWidth: Dp) : RowFillSpec()
+sealed class PanelRowFillSpec {
+    class Fixed(val columnCount: Int) : PanelRowFillSpec()
+    class Adaptive(val minColumnWidth: Dp) : PanelRowFillSpec()
 
     override fun hashCode() = if (this is Fixed) {
-        31 + count
+        31 + columnCount
     } else {
         require(this is Adaptive)
-        62 + minWidth.hashCode()
+        62 + minColumnWidth.hashCode()
     }
 
     override fun equals(other: Any?) =
-        (this is Fixed && other is Fixed && this.count == other.count) ||
-                (this is Adaptive && other is Adaptive && this.minWidth == other.minWidth)
+        (this is Fixed && other is Fixed && this.columnCount == other.columnCount) ||
+                (this is Adaptive && other is Adaptive && this.minColumnWidth == other.minColumnWidth)
 }
 
-sealed class ColumnFillSpec {
-    class Fixed(val count: Int) : ColumnFillSpec()
-    class Adaptive(val minHeight: Dp) : ColumnFillSpec()
+sealed class PanelColumnFillSpec {
+    class Fixed(val rowCount: Int) : PanelColumnFillSpec()
+    class Adaptive(val minRowHeight: Dp) : PanelColumnFillSpec()
 
     override fun hashCode() = if (this is Fixed) {
-        31 + count
+        31 + rowCount
     } else {
         require(this is Adaptive)
-        62 + minHeight.hashCode()
+        62 + minRowHeight.hashCode()
     }
 
     override fun equals(other: Any?) =
-        (this is Fixed && other is Fixed && this.count == other.count) ||
-                (this is Adaptive && other is Adaptive && this.minHeight == other.minHeight)
+        (this is Fixed && other is Fixed && this.rowCount == other.rowCount) ||
+                (this is Adaptive && other is Adaptive && this.minRowHeight == other.minRowHeight)
 }
 
-sealed class LayoutSpec {
-    class RowFill(val rowFillSpec: RowFillSpec): LayoutSpec()
-    class ColumnFill(val columnFillSpec: ColumnFillSpec): LayoutSpec()
+sealed class PanelLayoutSpec {
+    class RowFill(val rowFillSpec: PanelRowFillSpec) : PanelLayoutSpec()
+    class ColumnFill(val columnFillSpec: PanelColumnFillSpec) : PanelLayoutSpec()
 }
 
 data class CommandPanelPresentationModel(
     val contentPadding: PaddingValues = CommandPanelSizingConstants.DefaultContentPadding,
-    val layoutSpec:  LayoutSpec = LayoutSpec.RowFill(RowFillSpec.Adaptive(48.dp)),
-    val maxColumns: Int = -1,  // only relevant when layoutFillMode is RowFill
-    val maxRows: Int = -1,     // only relevant when layoutFillMode is ColumnFill
+    val layoutSpec: PanelLayoutSpec = PanelLayoutSpec.RowFill(PanelRowFillSpec.Adaptive(48.dp)),
     val showGroupLabels: Boolean = true,
     val commandPresentationState: CommandButtonPresentationState,
     val commandIconDimension: Dp = 0.dp,
@@ -101,3 +90,43 @@ data class CommandPanelPresentationModel(
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward,
     val isMenu: Boolean = false
 ) : PresentationModel
+
+data class MenuPopupPanelLayoutSpec(val columnCount: Int, val visibleRowCount: Int)
+
+data class CommandPopupMenuPanelPresentationModel(
+    val layoutSpec: MenuPopupPanelLayoutSpec,
+    val contentPadding: PaddingValues = CommandPanelSizingConstants.DefaultContentPadding,
+    val showGroupLabels: Boolean = true,
+    val commandPresentationState: CommandButtonPresentationState,
+    val commandIconDimension: Dp = 0.dp,
+    val commandContentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
+    val commandTextStyle: TextStyle? = null,
+    val commandTextOverflow: TextOverflow = TextOverflow.Clip,
+    val commandHorizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
+    val commandHorizontalGapScaleFactor: Float = 1.0f,
+    val commandVerticalGapScaleFactor: Float = 1.0f,
+    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original
+) : PresentationModel {
+    fun toCommandPanelPresentationModel(): CommandPanelPresentationModel {
+        return CommandPanelPresentationModel(
+            contentPadding = this.contentPadding,
+            layoutSpec = PanelLayoutSpec.RowFill(PanelRowFillSpec.Fixed(this.layoutSpec.columnCount)),
+            showGroupLabels = this.showGroupLabels,
+            commandPresentationState = this.commandPresentationState,
+            commandIconDimension = this.commandIconDimension,
+            commandContentPadding = this.commandContentPadding,
+            commandTextStyle = this.commandTextStyle,
+            commandTextOverflow = this.commandTextOverflow,
+            commandHorizontalAlignment = this.commandHorizontalAlignment,
+            commandHorizontalGapScaleFactor = this.commandHorizontalGapScaleFactor,
+            commandVerticalGapScaleFactor = this.commandVerticalGapScaleFactor,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+            iconDisabledFilterStrategy = this.iconDisabledFilterStrategy,
+            iconEnabledFilterStrategy = this.iconEnabledFilterStrategy,
+            iconActiveFilterStrategy = this.iconActiveFilterStrategy,
+            isMenu = true
+        )
+    }
+}

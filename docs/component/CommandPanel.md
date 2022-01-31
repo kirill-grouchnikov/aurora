@@ -16,9 +16,16 @@ The panel on the right arranges commands in columns. When we don't have any more
 
 `CommandPanelPresentationModel` is the presentation model for command button panels.
 
-The `layoutFillMode` attribute can be used to specify whether the button content of each group should be laid out horizontally or vertically. In the screenshot below the same content model is projected into a column-based layout:
+The `layoutSpec` attribute can be used to specify whether the button content of each group should be laid out horizontally or vertically:
 
-The `showGroupLabels` attribute is only relevant when `layoutFillMode` is `PanelLayoutFillMode.RowFill`. When set to `true`, button groups show titles.
+* `PanelLayoutSpec.RowFill` arranges the buttons in each group by rows, and kicks in vertical scrolling of the overall panel content when needed.
+   * `PanelRowFillSpec.Fixed` is used to have a fixed number of columns (buttons in each row).
+   * `PanelRowFillSpec.Adaptive` is used to specify the minimum column width for adaptive layout that scales the number of columns with available horizontal space.
+* `PanelLayoutSpec.ColumnFill` arranges the buttons in each group by columns, and kicks in horizontal scrolling of the overall panel content when needed.
+   * `PanelColumnFillSpec.Fixed` is used to have a fixed number of rows (buttons in each column).
+   * `PanelColumnFillSpec.Adaptive` is used to specify the minimum row height for adaptive layout that scales the number of rows with available vertical space.
+
+The `showGroupLabels` attribute is only relevant when `layoutSpec` is `PanelLayoutSpec.RowFill`. When set to `true`, button groups show titles.
 
 The `commandPresentationState` attribute determines the visual presentation of the commands in the projected buttons. When the presentation state is set to one of the `XYZFitToIcon`s, use `commandIconSize` to control the icon size for the projected buttons.
 
@@ -87,14 +94,13 @@ fun getCommandPanelContentModel(
 }
 ```
 
-Now we can create a presentation model with `PanelLayoutFillMode.RowFill` layout fill mode and project a sample command panel:
+Now we can create a presentation model with `PanelLayoutSpec.RowFill` layout fill mode and project a sample command panel:
 
 ```kotlin
 CommandButtonPanelProjection(
     contentModel = commandPanelContentModel.value,
     presentationModel = CommandPanelPresentationModel(
-        layoutFillMode = PanelLayoutFillMode.RowFill,
-        maxColumns = 5,
+        layoutSpec = PanelLayoutSpec.RowFill(PanelRowFillSpec.Fixed(5)),
         showGroupLabels = true,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
         commandPresentationState = CommandButtonPresentationState.Medium,
@@ -106,7 +112,7 @@ CommandButtonPanelProjection(
 
 This creates a command panel that:
 - Shows group labels
-- Has at most five columns of buttons
+- Has exactly five columns of buttons
 - Each button in `Medium` presentation state
 - With icons in active and enabled states using the color of the text
 
@@ -116,8 +122,7 @@ Or another presentation model with `PanelLayoutFillMode.ColumnFill` layout fill 
 CommandButtonPanelProjection(
     contentModel = commandPanelContentModel.value,
     presentationModel = CommandPanelPresentationModel(
-        layoutFillMode = PanelLayoutFillMode.ColumnFill,
-        maxRows = 6,
+        layoutSpec = PanelLayoutSpec.ColumnFill(PanelColumnFillSpec.Fixed(6)),
         showGroupLabels = false,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
         commandPresentationState = CommandButtonPresentationState.Big,
@@ -128,7 +133,7 @@ CommandButtonPanelProjection(
 ```
 
 This creates a command panel that:
-- Has at most six rows of buttons
+- Has exactly six rows of buttons
 - Each button in `Big` presentation state
 - With icons in active and enabled states using the color of the text
 

@@ -141,7 +141,7 @@ private fun LazyListScope.columnOfItems(
 /**
  * Panel composable that hosts command buttons. Provides support for button groups,
  * same icon state / dimension and column-fill / row-fill layout. Under
- * [PanelLayoutFillMode.RowFill] layout mode, the buttons are laid out in rows, never
+ * [PanelLayoutSpec.RowFill] layout mode, the buttons are laid out in rows, never
  * exceeding the available horizontal space. A vertical scroll bar will kick in once
  * there is not enough vertical space to show all the buttons. The schematic below
  * shows a row-fill command button panel:
@@ -173,7 +173,7 @@ private fun LazyListScope.columnOfItems(
  * </p>
  *
  * <p>
- * Under the [PanelLayoutFillMode.ColumnFill] layout mode, the buttons are laid
+ * Under the [PanelLayoutSpec.ColumnFill] layout mode, the buttons are laid
  * out in columns, never exceeding the available vertical space. A horizontal scroll
  * bar will kick in once there is not enough horizontal space to show all the
  * buttons. The schematic below shows a column-fill command button panel:
@@ -234,10 +234,10 @@ internal fun AuroraCommandButtonPanel(
             iconDisabledFilterStrategy = presentationModel.iconDisabledFilterStrategy
         )
 
-    val extraEndPadding = if (presentationModel.layoutSpec is LayoutSpec.RowFill)
+    val extraEndPadding = if (presentationModel.layoutSpec is PanelLayoutSpec.RowFill)
         ScrollBarSizingConstants.DefaultScrollBarThickness + ScrollBarSizingConstants.DefaultScrollBarMargin else 0.dp
     val extraBottomPadding =
-        if (presentationModel.layoutSpec is LayoutSpec.ColumnFill)
+        if (presentationModel.layoutSpec is PanelLayoutSpec.ColumnFill)
             ScrollBarSizingConstants.DefaultScrollBarThickness + ScrollBarSizingConstants.DefaultScrollBarMargin else 0.dp
     val contentStartPadding =
         presentationModel.contentPadding.calculateStartPadding(layoutDirection)
@@ -258,11 +258,11 @@ internal fun AuroraCommandButtonPanel(
 
         val panelPlaceable: Placeable
         when (presentationModel.layoutSpec) {
-            is LayoutSpec.RowFill -> {
+            is PanelLayoutSpec.RowFill -> {
                 val columnCount: Int = when (presentationModel.layoutSpec.rowFillSpec) {
-                    is RowFillSpec.Fixed -> presentationModel.layoutSpec.rowFillSpec.count
-                    is RowFillSpec.Adaptive -> (constraints.maxWidth - gapPx) /
-                            (presentationModel.layoutSpec.rowFillSpec.minWidth.roundToPx() + gapPx)
+                    is PanelRowFillSpec.Fixed -> presentationModel.layoutSpec.rowFillSpec.columnCount
+                    is PanelRowFillSpec.Adaptive -> (constraints.maxWidth - gapPx) /
+                            (presentationModel.layoutSpec.rowFillSpec.minColumnWidth.roundToPx() + gapPx)
                 }
                 val itemWidth = (constraints.maxWidth - gapPx * (columnCount + 1)) / columnCount
 
@@ -322,11 +322,11 @@ internal fun AuroraCommandButtonPanel(
                     }
                 }.first().measure(constraints)
             }
-            is LayoutSpec.ColumnFill -> {
+            is PanelLayoutSpec.ColumnFill -> {
                 val rowCount: Int = when (presentationModel.layoutSpec.columnFillSpec) {
-                    is ColumnFillSpec.Fixed -> presentationModel.layoutSpec.columnFillSpec.count
-                    is ColumnFillSpec.Adaptive -> (constraints.maxHeight - gapPx) /
-                            (presentationModel.layoutSpec.columnFillSpec.minHeight.roundToPx() + gapPx)
+                    is PanelColumnFillSpec.Fixed -> presentationModel.layoutSpec.columnFillSpec.rowCount
+                    is PanelColumnFillSpec.Adaptive -> (constraints.maxHeight - gapPx) /
+                            (presentationModel.layoutSpec.columnFillSpec.minRowHeight.roundToPx() + gapPx)
                 }
                 val itemHeight = (constraints.maxHeight - gapPx * (rowCount + 1)) / rowCount
 
@@ -388,9 +388,9 @@ internal fun AuroraCommandButtonPanel(
     }
 }
 
-internal fun getPreferredCommandButtonPanelSize(
+internal fun getPreferredCommandPopupMenuPanelSize(
     contentModel: CommandPanelContentModel,
-    presentationModel: CommandPanelPresentationModel,
+    presentationModel: CommandPopupMenuPanelPresentationModel,
     buttonLayoutManager: CommandButtonLayoutManager,
     layoutDirection: LayoutDirection,
     density: Density
@@ -405,14 +405,14 @@ internal fun getPreferredCommandButtonPanelSize(
             contentPadding = presentationModel.commandContentPadding,
             presentationState = presentationModel.commandPresentationState,
             iconDimension = presentationModel.commandIconDimension,
-            isMenu = presentationModel.isMenu,
-            backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
+            isMenu = true,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             textStyle = presentationModel.commandTextStyle,
             textOverflow = presentationModel.commandTextOverflow,
             horizontalAlignment = presentationModel.commandHorizontalAlignment,
             horizontalGapScaleFactor = presentationModel.commandHorizontalGapScaleFactor,
             verticalGapScaleFactor = presentationModel.commandVerticalGapScaleFactor,
-            popupPlacementStrategy = presentationModel.popupPlacementStrategy,
+            popupPlacementStrategy = PopupPlacementStrategy.Downward,
             iconActiveFilterStrategy = presentationModel.iconActiveFilterStrategy,
             iconEnabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
             iconDisabledFilterStrategy = presentationModel.iconDisabledFilterStrategy
@@ -435,10 +435,10 @@ internal fun getPreferredCommandButtonPanelSize(
     }
 
     val gap = (CommandPanelSizingConstants.DefaultGap.value * density.density)
-    var panelWidth = maxButtonWidth * presentationModel.maxColumns +
-            gap * (presentationModel.maxColumns + 1)
-    var panelHeight = maxButtonHeight * presentationModel.maxRows +
-            gap * (presentationModel.maxColumns + 1)
+    var panelWidth = maxButtonWidth * presentationModel.layoutSpec.columnCount +
+            gap * (presentationModel.layoutSpec.columnCount + 1)
+    var panelHeight = maxButtonHeight * presentationModel.layoutSpec.visibleRowCount +
+            gap * (presentationModel.layoutSpec.visibleRowCount + 1)
 
     // Account for content padding
     panelWidth += (presentationModel.contentPadding.calculateStartPadding(layoutDirection) +
@@ -449,11 +449,7 @@ internal fun getPreferredCommandButtonPanelSize(
     // Account for scroll bar. For now the assumption is that it's always showing
     val extraSpaceForScrollBar = (ScrollBarSizingConstants.DefaultScrollBarThickness +
             ScrollBarSizingConstants.DefaultScrollBarMargin).value * density.density
-    if (presentationModel.layoutSpec is LayoutSpec.RowFill) {
-        panelWidth += extraSpaceForScrollBar
-    } else {
-        panelHeight += extraSpaceForScrollBar
-    }
+    panelWidth += extraSpaceForScrollBar
 
     return Size(panelWidth, panelHeight)
 }

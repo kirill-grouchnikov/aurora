@@ -292,16 +292,14 @@ fun CommandDemoEditStrip(
             ),
             commandPaste to CommandButtonPresentationModel.Overlay(
                 popupMenuPresentationModel = CommandPopupMenuPresentationModel(
-                    panelPresentationModel = CommandPanelPresentationModel(
+                    panelPresentationModel = CommandPopupMenuPanelPresentationModel(
+                        layoutSpec = MenuPopupPanelLayoutSpec(columnCount = 5, visibleRowCount = 3),
                         contentPadding = PaddingValues(0.dp),
                         showGroupLabels = true,
                         commandPresentationState = CommandButtonPresentationState.BigFitToIcon,
                         commandIconDimension = 24.dp,
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
-                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
-                        maxColumns = 5,
-                        maxRows = 3
+                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
                     )
                 )
             )

@@ -26,7 +26,7 @@ import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 
 data class CommandPopupMenuPresentationModel(
-    val panelPresentationModel: CommandPanelPresentationModel? = null,
+    val panelPresentationModel: CommandPopupMenuPanelPresentationModel? = null,
     val menuPresentationState: CommandButtonPresentationState =
         DefaultCommandPopupMenuPresentationState,
     val menuIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,

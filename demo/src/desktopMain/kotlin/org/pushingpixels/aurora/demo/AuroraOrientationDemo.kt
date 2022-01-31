@@ -32,7 +32,6 @@ import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.AuroraSkinDefinition
-import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.window.AuroraApplicationScope
@@ -258,16 +257,14 @@ fun CommandOrientationEditStrip(
             ),
             commandPaste to CommandButtonPresentationModel.Overlay(
                 popupMenuPresentationModel = CommandPopupMenuPresentationModel(
-                    panelPresentationModel = CommandPanelPresentationModel(
+                    panelPresentationModel = CommandPopupMenuPanelPresentationModel(
+                        layoutSpec = MenuPopupPanelLayoutSpec(columnCount = 5, visibleRowCount = 3),
                         contentPadding = PaddingValues(0.dp),
                         showGroupLabels = true,
                         commandPresentationState = CommandButtonPresentationState.BigFitToIcon,
                         commandIconDimension = 24.dp,
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
-                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
-                        maxColumns = 5,
-                        maxRows = 3
+                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
                     )
                 )
             )

@@ -20,7 +20,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalContext
+import androidx.compose.runtime.State
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.geometry.Rect
@@ -104,7 +107,7 @@ internal fun displayPopupContent(
 
     // Compute the size of the popup content, accounting for the panel
     val panelPreferredSize =
-        if (hasButtonPanel) getPreferredCommandButtonPanelSize(
+        if (hasButtonPanel) getPreferredCommandPopupMenuPanelSize(
             contentModel = contentModel.value!!.panelContentModel!!,
             presentationModel = presentationModel.panelPresentationModel!!,
             buttonLayoutManager = panelButtonLayoutManager!!,
@@ -421,7 +424,7 @@ private fun TopLevelPopupContent(
         if (hasPanel) {
             AuroraCommandButtonPanel(
                 contentModel = menuContentModel.value!!.panelContentModel!!,
-                presentationModel = menuPresentationModel.panelPresentationModel!!,
+                presentationModel = menuPresentationModel.panelPresentationModel!!.toCommandPanelPresentationModel(),
                 extraAction = {
                     if (toDismissPopupsOnActivation) {
                         AuroraPopupManager.hidePopups(null)

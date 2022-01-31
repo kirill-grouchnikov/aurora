@@ -18,7 +18,7 @@ The `panelContentModel` is an optional attribute. When it's not `null`, it point
 
 `CommandPopupMenuPresentationModel` is the presentation model for command popup menus.
 
-The `panelPresentationMode` attribute can be used to provide the presentation model for the optional leading command panel.
+The `panelPresentationModel` attribute can be used to provide the presentation model for the optional leading command panel.
 
 The `maxVisibleMenuCommands` controls the maximum number of regular commands visible on the screen before vertical scrolling kicks in. In the screenshot below the combobox popup (which is implemented as a command menu) is configured to display at most 8 items:
 
@@ -158,16 +158,14 @@ CommandButtonStripProjection(
     ),
     commandPaste to CommandButtonPresentationModel.Overlay(
       popupMenuPresentationModel = CommandPopupMenuPresentationModel(
-        panelPresentationModel = CommandPanelPresentationModel(
+        panelPresentationModel = CommandPopupMenuPanelPresentationModel(
+          layoutSpec = MenuPopupPanelLayoutSpec(columnCount = 5, visibleRowCount = 3),
           contentPadding = PaddingValues(0.dp),
           showGroupLabels = true,
           commandPresentationState = CommandButtonPresentationState.BigFitToIcon,
           commandIconDimension = 24.dp,
-          backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
           iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
-          iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
-          maxColumns = 5,
-          maxRows = 3
+          iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
         )
       )
     )
