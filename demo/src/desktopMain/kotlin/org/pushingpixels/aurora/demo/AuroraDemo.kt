@@ -466,8 +466,8 @@ fun AuroraWindowScope.DemoArea(
                     ),
                     presentationModel = CommandButtonPresentationModel(
                         iconDimension = 20.dp,
-                        // This is a full-color icon. Use original colors for enabled and active states,
-                        // and color scheme based filtering for disabled states
+                        // This is a full-color icon. Use original colors for enabled and active
+                        // states, and color scheme based filtering for disabled states
                         iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
                         iconEnabledFilterStrategy = IconFilterStrategy.Original,
                         iconActiveFilterStrategy = IconFilterStrategy.Original,

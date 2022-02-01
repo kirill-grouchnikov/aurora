@@ -128,7 +128,8 @@ fun main() = auroraApplication {
                 ) {
                     CommandButtonPanelProjection(
                         contentModel = commandPanelContentModel.value,
-                        presentationModel = CommandPanelPresentationModel(layoutSpec = PanelLayoutSpec.RowFill(PanelRowFillSpec.Adaptive(140.dp)),
+                        presentationModel = CommandPanelPresentationModel(
+                            layoutSpec = PanelLayoutSpec.RowFill(PanelRowFillSpec.Adaptive(140.dp)),
                             showGroupLabels = true,
                             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                             commandPresentationState = CommandButtonPresentationState.Medium,

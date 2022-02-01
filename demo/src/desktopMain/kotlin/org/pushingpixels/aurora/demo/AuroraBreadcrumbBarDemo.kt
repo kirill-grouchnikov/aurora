@@ -104,7 +104,7 @@ fun AuroraWindowScope.BreadcrumbContent(auroraSkinDefinition: MutableState<Auror
 
     val fileSystemView = FileSystemView.getFileSystemView()
     val breadcrumbBarContentProvider =
-        object: BreadcrumbBarContentProvider<File>() {
+        object : BreadcrumbBarContentProvider<File>() {
             override fun getDisplayText(item: File?): String {
                 if (item == null) {
                     return ""
@@ -147,10 +147,12 @@ fun AuroraWindowScope.BreadcrumbContent(auroraSkinDefinition: MutableState<Auror
     val breadcrumbBarHorizontalScrollState = rememberScrollState(0)
     val onBreadcrumbItemSelected: (File) -> Unit = {
         scope.launch(Dispatchers.Default) {
-            commandPanelContentModel.value = getCommandPanelContent(breadcrumbBarContentProvider, it)
+            commandPanelContentModel.value =
+                getCommandPanelContent(breadcrumbBarContentProvider, it)
             delay(150)
             breadcrumbBarHorizontalScrollState.animateScrollTo(
-                breadcrumbBarHorizontalScrollState.maxValue)
+                breadcrumbBarHorizontalScrollState.maxValue
+            )
         }
     }
 
@@ -236,8 +238,9 @@ fun AuroraWindowScope.BreadcrumbContent(auroraSkinDefinition: MutableState<Auror
                                 }
                             }
                         }),
-                    presentationModel =
-                    CommandButtonPresentationModel(presentationState = CommandButtonPresentationState.Medium)
+                    presentationModel = CommandButtonPresentationModel(
+                        presentationState = CommandButtonPresentationState.Medium
+                    )
                 ).project()
 
                 Spacer(modifier = Modifier.width(12.dp))
