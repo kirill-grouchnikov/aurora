@@ -53,10 +53,12 @@ import kotlin.math.max
 @OptIn(AuroraInternalApi::class)
 private fun LazyListScope.rowOfItems(
     composeWindow: ComposeWindow,
-    backgroundColor: Color, gap: Dp,
+    backgroundColor: Color,
+    gap: Dp,
     commandGroup: CommandGroup,
     extraAction: (() -> Unit)? = null,
-    indexRowStart: Int, indexRowEnd: Int,
+    indexRowStart: Int,
+    indexRowEnd: Int,
     itemWidth: Dp,
     commandActionPreview: CommandActionPreview?,
     baseCommandButtonPresentationModel: CommandButtonPresentationModel,
@@ -89,6 +91,9 @@ private fun LazyListScope.rowOfItems(
                     presentationModel = commandPresentation,
                     overlays = overlays
                 )
+                if (index != (indexRowEnd - 1)) {
+                    Spacer(modifier = Modifier.width(gap))
+                }
             }
         }
     }
@@ -97,10 +102,12 @@ private fun LazyListScope.rowOfItems(
 @OptIn(AuroraInternalApi::class)
 private fun LazyListScope.columnOfItems(
     composeWindow: ComposeWindow,
-    backgroundColor: Color, gap: Dp,
+    backgroundColor: Color,
+    gap: Dp,
     commandGroup: CommandGroup,
     extraAction: (() -> Unit)? = null,
-    indexRowStart: Int, indexRowEnd: Int,
+    indexColumnStart: Int,
+    indexColumnEnd: Int,
     itemHeight: Dp,
     commandActionPreview: CommandActionPreview?,
     baseCommandButtonPresentationModel: CommandButtonPresentationModel,
@@ -112,7 +119,7 @@ private fun LazyListScope.columnOfItems(
                 .background(backgroundColor)
                 .padding(horizontal = gap / 2.0f, vertical = gap)
         ) {
-            for (index in indexRowStart until indexRowEnd) {
+            for (index in indexColumnStart until indexColumnEnd) {
                 val command = commandGroup.commands[index]
                 // Apply overlay if we have one registered for the current command
                 val commandPresentation = if (overlays.containsKey(command))
@@ -133,6 +140,9 @@ private fun LazyListScope.columnOfItems(
                     presentationModel = commandPresentation,
                     overlays = overlays
                 )
+                if (index != (indexColumnEnd - 1)) {
+                    Spacer(modifier = Modifier.height(gap))
+                }
             }
         }
     }
@@ -261,10 +271,13 @@ internal fun AuroraCommandButtonPanel(
             is PanelLayoutSpec.RowFill -> {
                 val columnCount: Int = when (presentationModel.layoutSpec.rowFillSpec) {
                     is PanelRowFillSpec.Fixed -> presentationModel.layoutSpec.rowFillSpec.columnCount
-                    is PanelRowFillSpec.Adaptive -> (constraints.maxWidth - gapPx) /
-                            (presentationModel.layoutSpec.rowFillSpec.minColumnWidth.roundToPx() + gapPx)
+                    is PanelRowFillSpec.Adaptive ->
+                        (constraints.maxWidth - contentStartPadding.roundToPx()
+                                - contentEndPadding.roundToPx() - gapPx) /
+                                (presentationModel.layoutSpec.rowFillSpec.minColumnWidth.roundToPx() + gapPx)
                 }
-                val itemWidth = (constraints.maxWidth - gapPx * (columnCount + 1)) / columnCount
+                val itemWidth = (constraints.maxWidth - contentStartPadding.roundToPx()
+                        - contentEndPadding.roundToPx() - gapPx * (columnCount + 1)) / columnCount
 
                 panelPlaceable = subcompose(0) {
                     Box(modifier = modifier.fillMaxSize()) {
@@ -325,10 +338,13 @@ internal fun AuroraCommandButtonPanel(
             is PanelLayoutSpec.ColumnFill -> {
                 val rowCount: Int = when (presentationModel.layoutSpec.columnFillSpec) {
                     is PanelColumnFillSpec.Fixed -> presentationModel.layoutSpec.columnFillSpec.rowCount
-                    is PanelColumnFillSpec.Adaptive -> (constraints.maxHeight - gapPx) /
-                            (presentationModel.layoutSpec.columnFillSpec.minRowHeight.roundToPx() + gapPx)
+                    is PanelColumnFillSpec.Adaptive ->
+                        (constraints.maxHeight - contentTopPadding.roundToPx() -
+                                contentBottomPadding.roundToPx() - gapPx) /
+                                (presentationModel.layoutSpec.columnFillSpec.minRowHeight.roundToPx() + gapPx)
                 }
-                val itemHeight = (constraints.maxHeight - gapPx * (rowCount + 1)) / rowCount
+                val itemHeight = (constraints.maxHeight - contentTopPadding.roundToPx()
+                        - contentBottomPadding.roundToPx() - gapPx * (rowCount + 1)) / rowCount
 
                 panelPlaceable = subcompose(0) {
                     Box(modifier = modifier.fillMaxSize()) {
@@ -354,8 +370,8 @@ internal fun AuroraCommandButtonPanel(
                                         gap = gap,
                                         commandGroup = commandGroup,
                                         extraAction = extraAction,
-                                        indexRowStart = indexColumnStart,
-                                        indexRowEnd = indexColumnEnd,
+                                        indexColumnStart = indexColumnStart,
+                                        indexColumnEnd = indexColumnEnd,
                                         itemHeight = itemHeight.toDp(),
                                         commandActionPreview = commandPreviewListener,
                                         baseCommandButtonPresentationModel = baseCommandButtonPresentationModel,
