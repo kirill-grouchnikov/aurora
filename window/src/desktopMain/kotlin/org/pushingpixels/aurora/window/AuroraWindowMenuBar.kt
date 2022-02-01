@@ -32,9 +32,7 @@ import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
-import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
-import org.pushingpixels.aurora.theming.DecorationAreaType
-import org.pushingpixels.aurora.theming.auroraBackground
+import org.pushingpixels.aurora.theming.*
 
 private object WindowMenuBarLayout {
     private class CommandButtonLayoutManagerMenuBar(
@@ -200,6 +198,7 @@ internal fun AuroraWindowScope.AuroraWindowMenuBar(menuCommands: CommandGroup) {
                         presentationState = WindowMenuBarLayout.MenuBar,
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                         contentPadding = CommandButtonSizingConstants.WideButtonContentPadding,
+                        sides = Sides(straightSides = Side.values().toSet()),
                         isMenu = true
                     )
                 ).project()
