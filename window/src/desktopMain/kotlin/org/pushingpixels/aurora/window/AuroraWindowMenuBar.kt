@@ -174,15 +174,18 @@ internal fun AuroraWindowScope.AuroraWindowMenuBar(menuCommands: CommandGroup) {
     for (menuCommand in menuCommands.commands) {
         // Needs a non-empty text
         if (menuCommand.text.isEmpty()) {
-            throw IllegalArgumentException("Menu command text cannot be empty")
+            throw IllegalArgumentException("Top-level menu command text cannot be empty")
+        }
+        if (menuCommand.icon != null) {
+            throw IllegalArgumentException("Icons in top-level menu commands not supported")
         }
         val hasAction = menuCommand.isActionEnabled && (menuCommand.action != null)
         val hasPopup = menuCommand.isSecondaryEnabled && (menuCommand.secondaryContentModel != null)
         if (!(hasAction xor hasPopup)) {
-            throw IllegalArgumentException("Menu command ${menuCommand.text} needs to have either action or secondary content")
+            throw IllegalArgumentException("Top-level menu command ${menuCommand.text} needs to have either action or secondary content")
         }
         if (menuCommand.isActionToggle) {
-            throw IllegalArgumentException("Toggle menu commands not supported")
+            throw IllegalArgumentException("Toggle top-level menu commands not supported")
         }
     }
 
