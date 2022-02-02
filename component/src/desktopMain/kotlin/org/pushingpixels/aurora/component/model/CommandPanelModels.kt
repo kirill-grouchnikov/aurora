@@ -72,8 +72,9 @@ sealed class PanelLayoutSpec {
 }
 
 data class CommandPanelPresentationModel(
-    val contentPadding: PaddingValues = CommandPanelSizingConstants.DefaultContentPadding,
     val layoutSpec: PanelLayoutSpec = PanelLayoutSpec.RowFill(PanelRowFillSpec.Adaptive(48.dp)),
+    val contentPadding: PaddingValues = CommandPanelSizingConstants.DefaultContentPadding,
+    val contentGap: Dp = CommandPanelSizingConstants.DefaultGap,
     val showGroupLabels: Boolean = true,
     val commandPresentationState: CommandButtonPresentationState,
     val commandIconDimension: Dp = 0.dp,
@@ -96,6 +97,7 @@ data class MenuPopupPanelLayoutSpec(val columnCount: Int, val visibleRowCount: I
 data class CommandPopupMenuPanelPresentationModel(
     val layoutSpec: MenuPopupPanelLayoutSpec,
     val contentPadding: PaddingValues = CommandPanelSizingConstants.DefaultContentPadding,
+    val contentGap: Dp = CommandPanelSizingConstants.DefaultGap,
     val showGroupLabels: Boolean = true,
     val commandPresentationState: CommandButtonPresentationState,
     val commandIconDimension: Dp = 0.dp,
@@ -111,8 +113,9 @@ data class CommandPopupMenuPanelPresentationModel(
 ) : PresentationModel {
     fun toCommandPanelPresentationModel(): CommandPanelPresentationModel {
         return CommandPanelPresentationModel(
-            contentPadding = this.contentPadding,
             layoutSpec = PanelLayoutSpec.RowFill(PanelRowFillSpec.Fixed(this.layoutSpec.columnCount)),
+            contentPadding = this.contentPadding,
+            contentGap = this.contentGap,
             showGroupLabels = this.showGroupLabels,
             commandPresentationState = this.commandPresentationState,
             commandIconDimension = this.commandIconDimension,

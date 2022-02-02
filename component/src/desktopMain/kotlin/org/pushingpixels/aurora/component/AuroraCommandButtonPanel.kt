@@ -263,8 +263,8 @@ internal fun AuroraCommandButtonPanel(
     val commandPreviewListener = contentModel.commandActionPreview
 
     SubcomposeLayout(modifier = modifier.fillMaxSize()) { constraints ->
-        val gap = CommandPanelSizingConstants.DefaultGap
-        val gapPx = CommandPanelSizingConstants.DefaultGap.roundToPx()
+        val gap = presentationModel.contentGap
+        val gapPx = gap.roundToPx()
 
         val panelPlaceable: Placeable
         when (presentationModel.layoutSpec) {
@@ -450,7 +450,7 @@ internal fun getPreferredCommandPopupMenuPanelSize(
         }
     }
 
-    val gap = (CommandPanelSizingConstants.DefaultGap.value * density.density)
+    val gap = (presentationModel.contentGap * density.density)
     var panelWidth = maxButtonWidth * presentationModel.layoutSpec.columnCount +
             gap * (presentationModel.layoutSpec.columnCount + 1)
     var panelHeight = maxButtonHeight * presentationModel.layoutSpec.visibleRowCount +
