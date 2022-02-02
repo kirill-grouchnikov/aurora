@@ -450,7 +450,7 @@ internal fun getPreferredCommandPopupMenuPanelSize(
         }
     }
 
-    val gap = (presentationModel.contentGap * density.density)
+    val gap = (presentationModel.contentGap.value * density.density)
     var panelWidth = maxButtonWidth * presentationModel.layoutSpec.columnCount +
             gap * (presentationModel.layoutSpec.columnCount + 1)
     var panelHeight = maxButtonHeight * presentationModel.layoutSpec.visibleRowCount +

@@ -38,12 +38,11 @@ sealed class PanelRowFillSpec {
     class Fixed(val columnCount: Int) : PanelRowFillSpec()
     class Adaptive(val minColumnWidth: Dp) : PanelRowFillSpec()
 
-    override fun hashCode() = if (this is Fixed) {
-        31 + columnCount
-    } else {
-        require(this is Adaptive)
-        62 + minColumnWidth.hashCode()
-    }
+    override fun hashCode() =
+        when (this) {
+            is Fixed -> 31 + columnCount
+            is Adaptive -> 62 + minColumnWidth.hashCode()
+        }
 
     override fun equals(other: Any?) =
         (this is Fixed && other is Fixed && this.columnCount == other.columnCount) ||
@@ -54,12 +53,11 @@ sealed class PanelColumnFillSpec {
     class Fixed(val rowCount: Int) : PanelColumnFillSpec()
     class Adaptive(val minRowHeight: Dp) : PanelColumnFillSpec()
 
-    override fun hashCode() = if (this is Fixed) {
-        31 + rowCount
-    } else {
-        require(this is Adaptive)
-        62 + minRowHeight.hashCode()
-    }
+    override fun hashCode() =
+        when (this) {
+            is Fixed -> 31 + rowCount
+            is Adaptive -> 62 + minRowHeight.hashCode()
+        }
 
     override fun equals(other: Any?) =
         (this is Fixed && other is Fixed && this.rowCount == other.rowCount) ||
