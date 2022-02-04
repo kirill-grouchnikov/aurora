@@ -203,7 +203,7 @@ fun ceruleanSkin(): AuroraSkinDefinition {
     painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(100), DecorationAreaType.Toolbar)
 
     return AuroraSkinDefinition(
-        displayName = "Green Magic",
+        displayName = "Cerulean",
         colors = ceruleanSkinColors(),
         painters = painters,
         buttonShaper = ClassicButtonShaper()

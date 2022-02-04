@@ -450,7 +450,8 @@ private fun TopLevelPopupContent(
             )
         }) { measurables, _ ->
             val placeables = measurables.mapIndexed { index, measurable ->
-                // Measure each child with fixed (widest) width and fixed (tallest) height
+                // Measure each child with fixed (widest) width and matching height (button
+                // height or separator height)
                 measurable.measure(
                     Constraints.fixed(
                         width = contentLayoutInfo.generalContentSize.width.roundToInt(),
