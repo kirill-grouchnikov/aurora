@@ -40,6 +40,33 @@ buildscript {
 }
 ```
 
+### Configuring a source directory for transcoded files
+
+Your SVG content is the source of truth for the transcoded icons, and should be a part of your versioned codebase. The transcoded files themselves, on the other hand, are a generated artifact and should be treated as such.
+
+Start by choosing where to place them as a separate "source" folder which will be added to your `.gitignore`, let's say `src/gen`.
+
+Configure your Kotlin source set to include that folder, as well as mark it for IDEA as a generated source:
+
+```groovy
+kotlin {
+    sourceSets {
+        kotlin {
+            sourceSets["desktopMain"].apply {
+                kotlin.srcDir("$rootDir/src/desktopMain/kotlin")
+                kotlin.srcDir("$rootDir/src/gen/kotlin")
+            }
+        }
+    }
+}
+
+idea {
+    module {
+        generatedSourceDirs.add(file("$rootDir/src/gen/kotlin"))
+    }
+}
+```
+
 ### Transcoding SVG files from a single folder
 
 Register a separate task for generating Kotlin classes and add a `dependsOn` clause for your `KotlinCompile` tasks. Add multiple tasks if you have more than one SVG content folder.
@@ -47,7 +74,7 @@ Register a separate task for generating Kotlin classes and add a `dependsOn` cla
 ```kotlin
 tasks.register<org.pushingpixels.aurora.tools.svgtranscoder.gradle.TranscodeTask>("transcodeSingle") {
     inputDirectory = file("src/desktopMain/resources")
-    outputDirectory = file("src/desktopMain/kotlin/org/aurora/demo/svg")
+    outputDirectory = file("src/gen/kotlin/org/aurora/demo/svg")
     outputPackageName = "org.aurora.demo.svg"
     transcode()
 }
@@ -64,13 +91,15 @@ tasks.withType<KotlinCompile> {
     doFirst {
         task<org.pushingpixels.aurora.tools.svgtranscoder.gradle.TranscodeTask>("transcodeSingle") {
             inputDirectory = file("src/desktopMain/resources")
-            outputDirectory = file("src/desktopMain/kotlin/org/aurora/demo/svg2")
+            outputDirectory = file("src/gen/kotlin/org/aurora/demo/svg2")
             outputPackageName = "org.aurora.demo.svg2"
             transcode()
         }
     }
 }
 ```
+
+Note that we're using our separate `src/gen` folder as the `outputDirectory`
 
 ### Recursively transcoding SVG files under a folder
 
@@ -79,7 +108,7 @@ Register a separate task for generating Kotlin classes and add a dependsOn claus
 ```kotlin
 tasks.register<org.pushingpixels.aurora.tools.svgtranscoder.gradle.TranscodeDeepTask>("transcodeFolder") {
     inputRootDirectory = file("src/desktopMain/resources/scalable")
-    outputRootDirectory = file("src/desktopMain/kotlin/org/aurora/demo/scalable/svg")
+    outputRootDirectory = file("src/gen/kotlin/org/aurora/demo/scalable/svg")
     outputRootPackageName = "org.aurora.demo.scalable.svg"
     transcode()
 }
@@ -96,13 +125,15 @@ tasks.withType<KotlinCompile> {
     doFirst {
         task<org.pushingpixels.aurora.tools.svgtranscoder.gradle.TranscodeDeepTask>("transcodeFolder") {
             inputRootDirectory = file("src/desktopMain/resources")
-            outputRootDirectory = file("src/desktopMain/kotlin/org/aurora/demo/scalable/svg2")
+            outputRootDirectory = file("src/gen/kotlin/org/aurora/demo/scalable/svg2")
             outputRootPackageName = "org.aurora.demo.scalable.svg2"
             transcode()
         }
     }
 }
 ```
+
+Note that we're using our separate `src/gen` folder as the `outputDirectory`
 
 ### Additional notes
 
