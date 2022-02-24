@@ -8,6 +8,4 @@
 build/
 out/
 bin/
-drop/*-SNAPSHOT/**
-drop/*-beta*/**
-drop/*-rc*/**
+drop/
