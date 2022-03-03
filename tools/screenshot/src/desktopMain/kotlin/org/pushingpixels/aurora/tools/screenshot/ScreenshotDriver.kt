@@ -94,7 +94,6 @@ fun AuroraApplicationScope.screenshot(
             val file = File(filename)
             file.writeBytes(bytes)
             scene.close()
-            window.dispose()
             if (counter.decrementAndGet() == 0) {
                 exitApplication()
             }
