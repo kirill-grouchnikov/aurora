@@ -3,6 +3,7 @@ plugins {
     `kotlin-dsl`
     groovy
     id("com.vanniktech.maven.publish")
+    `maven-publish`
 }
 
 dependencies {

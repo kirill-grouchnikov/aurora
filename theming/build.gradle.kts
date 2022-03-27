@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.compose")
     id("com.vanniktech.maven.publish")
     id("org.jetbrains.dokka")
+    `maven-publish`
 }
 
 kotlin {

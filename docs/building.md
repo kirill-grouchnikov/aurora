@@ -20,6 +20,10 @@ org.jetbrains.compose.desktop:desktop:1.0.0
 org.apache.xmlgraphics:batik-all:1.14
 ```
 
-To locally copy these dependencies (in case you do not want to pull them at build time with Gradle, Maven or other similar build tools in your own environment), use `./gradlew getDependencies`. Once that command completes, all dependencies willl be in the `build/libs` folder.
+To locally copy these dependencies (in case you do not want to pull them at build time with Gradle, Maven or other similar build tools in your own environment), use `./gradlew getDependencies`. Once that command completes, all dependencies will be in the `build/libs` folder.
 
 For a more detailed tree of dependencies, run `./gradlew tools:svg-transcoder:dependencies` - substituting the relevant module name.
+
+### Publishing to Maven Local
+
+Run `./gradlew publishToMavenLocal` to publish to the local Maven repository.
