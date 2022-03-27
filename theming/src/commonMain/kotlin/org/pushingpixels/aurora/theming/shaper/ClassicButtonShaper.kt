@@ -17,7 +17,7 @@ package org.pushingpixels.aurora.theming.shaper
 
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.theming.Sides
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
@@ -37,9 +37,9 @@ class ClassicButtonShaper : AuroraButtonShaper, RectangularButtonShaper {
         extraInsets: Float,
         isInner: Boolean,
         sides: Sides,
-        drawScope: DrawScope
+        density: Density
     ): Outline {
-        var radius = getCornerRadius(width, height, extraInsets, drawScope)
+        var radius = getCornerRadius(width, height, extraInsets, density)
         if (isInner) {
             radius -= 1.0f
             if (radius < 0.0f) radius = 0.0f
@@ -51,8 +51,8 @@ class ClassicButtonShaper : AuroraButtonShaper, RectangularButtonShaper {
         )
     }
 
-    override fun getCornerRadius(width: Float, height: Float, insets: Float, drawScope: DrawScope): Float {
-        with(drawScope) {
+    override fun getCornerRadius(width: Float, height: Float, insets: Float, density: Density): Float {
+        with(density) {
             return 3.0f.dp.toPx()
         }
     }

@@ -15,7 +15,7 @@
  */
 package org.pushingpixels.aurora.theming.shaper
 
-import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.unit.Density
 
 /**
  * Interface for rectangular-based button shapers.
@@ -29,5 +29,5 @@ interface RectangularButtonShaper {
      * @param insets Button insets.
      * @return Corner radius of a button.
      */
-    fun getCornerRadius(width: Float, height: Float, insets: Float, drawScope: DrawScope): Float
+    fun getCornerRadius(width: Float, height: Float, insets: Float, density: Density): Float
 }

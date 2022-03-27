@@ -251,7 +251,7 @@ fun AuroraBoxWithHighlights(
                     extraInsets = 0.5f,
                     isInner = false,
                     sides = sides,
-                    drawScope = this
+                    density = this
                 )
 
                 val outlineBoundingRect = outline.bounds
@@ -289,7 +289,7 @@ fun AuroraBoxWithHighlights(
                         extraInsets = 1.0f,
                         isInner = true,
                         sides = sides,
-                        drawScope = this
+                        density = this
                     ) else null
 
                 borderPainter.paintBorder(

@@ -514,7 +514,7 @@ private fun CommandButtonGroupTitle(groupModelIndex: Int, groupModel: CommandGro
                     extraInsets = 0.5f,
                     isInner = false,
                     sides = Sides(straightSides = Side.values().toSet()),
-                    drawScope = this
+                    density = this
                 )
 
                 val outlineBoundingRect = outline.bounds
@@ -535,7 +535,7 @@ private fun CommandButtonGroupTitle(groupModelIndex: Int, groupModel: CommandGro
                         extraInsets = 1.0f,
                         isInner = true,
                         sides = Sides(straightSides = Side.values().toSet()),
-                        drawScope = this
+                        density = this
                     ) else null
 
                 withTransform({

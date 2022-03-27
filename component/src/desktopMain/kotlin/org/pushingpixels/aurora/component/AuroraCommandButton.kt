@@ -787,7 +787,7 @@ internal fun AuroraCommandButton(
                                 extraInsets = 0.5f,
                                 isInner = false,
                                 sides = presentationModel.sides,
-                                drawScope = this
+                                density = this
                             )
 
                             val outlineBoundingRect = outline.bounds
@@ -829,7 +829,7 @@ internal fun AuroraCommandButton(
                                     extraInsets = 1.0f,
                                     isInner = true,
                                     sides = presentationModel.sides,
-                                    drawScope = this
+                                    density = this
                                 ) else null
 
                             borderPainter.paintBorder(
@@ -983,7 +983,7 @@ internal fun AuroraCommandButton(
                                 extraInsets = 0.5f,
                                 isInner = false,
                                 sides = presentationModel.sides,
-                                drawScope = this
+                                density = this
                             )
 
                             val outlineBoundingRect = outline.bounds
@@ -1025,7 +1025,7 @@ internal fun AuroraCommandButton(
                                     extraInsets = 1.0f,
                                     isInner = true,
                                     sides = presentationModel.sides,
-                                    drawScope = this
+                                    density = this
                                 ) else null
 
                             borderPainter.paintBorder(

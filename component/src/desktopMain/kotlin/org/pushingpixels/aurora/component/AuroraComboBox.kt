@@ -339,7 +339,7 @@ internal fun <E> AuroraComboBox(
                         extraInsets = 0.5f,
                         isInner = false,
                         sides = Sides(),
-                        drawScope = this
+                        density = this
                     )
 
                     val outlineBoundingRect = outline.bounds
@@ -377,7 +377,7 @@ internal fun <E> AuroraComboBox(
                             extraInsets = 1.0f,
                             isInner = true,
                             sides = Sides(),
-                            drawScope = this
+                            density = this
                         ) else null
 
                     borderPainter.paintBorder(
