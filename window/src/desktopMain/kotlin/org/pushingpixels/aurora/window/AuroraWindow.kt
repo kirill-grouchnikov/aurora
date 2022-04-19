@@ -205,12 +205,13 @@ private fun AuroraWindowScope.WindowTitlePane(
                                     // https://bugs.openjdk.java.net/browse/JDK-8231564 and
                                     // https://bugs.openjdk.java.net/browse/JDK-8243925 that went into Java 15.
                                     val isWindows = System.getProperty("os.name")?.startsWith("Windows")
-                                    val maximizedWindowBounds = if ((isWindows == true) && (Runtime.version().feature() < 15))
-                                        Rectangle(
-                                            0, 0,
-                                            (screenBounds.width * current.graphicsConfiguration.defaultTransform.scaleX).toInt(),
-                                            (screenBounds.height * current.graphicsConfiguration.defaultTransform.scaleY).toInt(),
-                                        ) else screenBounds
+                                    val maximizedWindowBounds =
+                                        if ((isWindows == true) && (Runtime.version().feature() < 15))
+                                            Rectangle(
+                                                0, 0,
+                                                (screenBounds.width * current.graphicsConfiguration.defaultTransform.scaleX).toInt(),
+                                                (screenBounds.height * current.graphicsConfiguration.defaultTransform.scaleY).toInt(),
+                                            ) else screenBounds
                                     // Now account for screen insets (taskbar and anything else that should not be
                                     // interfered with by maximized windows)
                                     val screenInsets = current.toolkit.getScreenInsets(current.graphicsConfiguration)
@@ -457,23 +458,21 @@ fun AuroraWindowScope.AuroraWindowContent(
         )
     }
 
-    val awtEventListener = remember {
+    val awtEventListener = remember(this, window) {
         AWTEventListener { event ->
             val src = event.source
-            if (src !is Component) {
-                return@AWTEventListener
-            }
-            if ((event is KeyEvent) && (event.id == KeyEvent.KEY_RELEASED) && (event.keyCode == KeyEvent.VK_ESCAPE)) {
+            if ((event is KeyEvent) && (event.id == KeyEvent.KEY_RELEASED)
+                && (event.keyCode == KeyEvent.VK_ESCAPE)) {
                 AuroraPopupManager.hideLastPopup()
             }
-            if ((event is MouseEvent) && (event.id == MouseEvent.MOUSE_PRESSED)) {
+            if ((event is MouseEvent) && (event.id == MouseEvent.MOUSE_PRESSED) && (src is Component)) {
                 val windowAncestor = SwingUtilities.getWindowAncestor(src)
                 AuroraPopupManager.hidePopups(windowAncestor as? ComposeWindow)
             }
         }
     }
 
-    DisposableEffect(awtEventListener) {
+    DisposableEffect(this, window) {
         Toolkit.getDefaultToolkit().addAWTEventListener(
             awtEventListener,
             AWTEvent.KEY_EVENT_MASK or AWTEvent.MOUSE_EVENT_MASK or AWTEvent.MOUSE_WHEEL_EVENT_MASK

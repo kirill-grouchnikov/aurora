@@ -51,9 +51,32 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(720.dp, 660.dp)
     )
+    val aboutState = rememberWindowState(
+        placement = WindowPlacement.Floating,
+        position = WindowPosition.Aligned(Alignment.TopStart),
+        size = DpSize(200.dp, 150.dp)
+    )
     val skin = mutableStateOf(marinerSkin())
     val resourceBundle = derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
+    }
+
+    var isAboutWindowOpen by remember { mutableStateOf(false) }
+    if (isAboutWindowOpen) {
+        AuroraWindow(
+            skin = skin,
+            title = "About",
+            state = aboutState,
+            undecorated = true,
+            onCloseRequest = { isAboutWindowOpen = false }) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                LabelProjection(
+                    contentModel = LabelContentModel(
+                        text = resourceBundle.value.getString("Menu.about")
+                    )
+                ).project()
+            }
+        }
     }
 
     AuroraWindow(
@@ -98,7 +121,13 @@ fun main() = auroraApplication {
                     action = { println("Window activated!") }),
                 Command(
                     text = resourceBundle.value.getString("Menu.help"),
-                    action = { println("Help activated!") })
+                    action = { println("Help activated!") }),
+                Command(
+                    text = resourceBundle.value.getString("Menu.about"),
+                    action = {
+                        println("About activated!")
+                        isAboutWindowOpen = true
+                    })
             )
         )
     ) {
