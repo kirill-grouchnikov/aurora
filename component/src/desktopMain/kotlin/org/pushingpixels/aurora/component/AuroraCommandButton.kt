@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
@@ -676,6 +677,7 @@ internal fun AuroraCommandButton(
             // area (action or popup) and offsetting during the Canvas paint pass.
             var actionAreaOffset = remember { Offset.Zero }
             var popupAreaOffset = remember { Offset.Zero }
+            var popupAreaSize = remember { AuroraSize(0, 0) }
             Box(
                 modifier = modifierAction.auroraRichTooltip(
                     richTooltip = command.actionRichTooltip,
@@ -849,27 +851,46 @@ internal fun AuroraCommandButton(
                 modifier = Modifier.clickable(
                     enabled = isPopupEnabled,
                     onClick = {
-                        displayPopupContent(
-                            currentWindow = parentWindow,
-                            layoutDirection = layoutDirection,
-                            density = density,
-                            textStyle = resolvedTextStyle,
-                            resourceLoader = resourceLoader,
-                            skinColors = skinColors,
-                            skinPainters = painters,
-                            decorationAreaType = decorationAreaType,
-                            compositionLocalContext = compositionLocalContext,
-                            anchorBoundsInWindow = Rect(
-                                offset = buttonTopLeftOffset.asOffset(density),
-                                size = buttonSize.asSize(density)
-                            ),
-                            contentModel = secondaryContentModel,
-                            presentationModel = presentationModel.popupMenuPresentationModel,
-                            toDismissPopupsOnActivation = presentationModel.toDismissPopupsOnActivation,
-                            toUseBackgroundStriping = false,
-                            popupPlacementStrategy = presentationModel.popupPlacementStrategy,
-                            overlays = overlays
-                        )
+                        if (AuroraPopupManager.isShowingPopupFrom(
+                                originatorWindow = parentWindow,
+                                pointInOriginatorWindow = AuroraOffset(
+                                    x = buttonTopLeftOffset.x + popupAreaOffset.x + popupAreaSize.width / 2.0f,
+                                    y = buttonTopLeftOffset.y + popupAreaOffset.y + popupAreaSize.height / 2.0f
+                                ).asOffset(density)
+                        )) {
+                            // We're showing a popup that originates from this popup area. Hide it.
+                            AuroraPopupManager.hidePopups(originator = parentWindow)
+                        } else {
+                            // Display our popup content.
+                            displayPopupContent(
+                                currentWindow = parentWindow,
+                                layoutDirection = layoutDirection,
+                                density = density,
+                                textStyle = resolvedTextStyle,
+                                resourceLoader = resourceLoader,
+                                skinColors = skinColors,
+                                skinPainters = painters,
+                                decorationAreaType = decorationAreaType,
+                                compositionLocalContext = compositionLocalContext,
+                                anchorBoundsInWindow = Rect(
+                                    offset = buttonTopLeftOffset.asOffset(density),
+                                    size = buttonSize.asSize(density)
+                                ),
+                                popupTriggerAreaInWindow = Rect(
+                                    offset = AuroraOffset(
+                                        x = buttonTopLeftOffset.x + popupAreaOffset.x,
+                                        y = buttonTopLeftOffset.y + popupAreaOffset.y
+                                    ).asOffset(density),
+                                    size = popupAreaSize.asSize(density)
+                                ),
+                                contentModel = secondaryContentModel,
+                                presentationModel = presentationModel.popupMenuPresentationModel,
+                                toDismissPopupsOnActivation = presentationModel.toDismissPopupsOnActivation,
+                                toUseBackgroundStriping = false,
+                                popupPlacementStrategy = presentationModel.popupPlacementStrategy,
+                                overlays = overlays
+                            )
+                        }
                     },
                     interactionSource = popupInteractionSource,
                     indication = null
@@ -897,6 +918,8 @@ internal fun AuroraCommandButton(
                             y = selfToRoot.y - parentToRoot.y
                         )
                     }
+                    popupAreaSize.width = it.size.width
+                    popupAreaSize.height = it.size.height
                 }
             ) {
                 if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.Never) {

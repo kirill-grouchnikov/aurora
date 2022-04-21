@@ -76,6 +76,7 @@ internal fun displayPopupContent(
     decorationAreaType: DecorationAreaType,
     compositionLocalContext: CompositionLocalContext,
     anchorBoundsInWindow: Rect,
+    popupTriggerAreaInWindow: Rect,
     contentModel: State<CommandMenuContentModel?>,
     presentationModel: CommandPopupMenuPresentationModel,
     toDismissPopupsOnActivation: Boolean,
@@ -398,6 +399,7 @@ internal fun displayPopupContent(
     // And display our new popup content
     AuroraPopupManager.addPopup(
         originator = currentWindow,
+        popupTriggerAreaInOriginatorWindow = popupTriggerAreaInWindow,
         popupWindow = popupContentWindow,
         popupKind = AuroraPopupManager.PopupKind.POPUP
     )

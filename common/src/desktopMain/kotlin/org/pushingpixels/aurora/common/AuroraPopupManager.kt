@@ -16,6 +16,9 @@
 package org.pushingpixels.aurora.common
 
 import androidx.compose.ui.awt.ComposeWindow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import javax.swing.SwingUtilities
 
 object AuroraPopupManager {
     enum class PopupKind {
@@ -24,14 +27,20 @@ object AuroraPopupManager {
 
     private data class PopupInfo(
         val originator: ComposeWindow,
+        val popupTriggerAreaInOriginatorWindow: Rect,
         val popupWindow: ComposeWindow,
         val popupKind: PopupKind
     )
 
     private val shownPath = arrayListOf<PopupInfo>()
 
-    fun addPopup(originator: ComposeWindow, popupWindow: ComposeWindow, popupKind: PopupKind) {
-        shownPath.add(PopupInfo(originator, popupWindow, popupKind))
+    fun addPopup(
+        originator: ComposeWindow,
+        popupTriggerAreaInOriginatorWindow: Rect,
+        popupWindow: ComposeWindow,
+        popupKind: PopupKind
+    ) {
+        shownPath.add(PopupInfo(originator, popupTriggerAreaInOriginatorWindow, popupWindow, popupKind))
 
         popupWindow.invalidate()
         popupWindow.validate()
@@ -77,5 +86,16 @@ object AuroraPopupManager {
             }
             // Continue unwinding
         }
+    }
+
+    fun isShowingPopupFrom(
+        originatorWindow: ComposeWindow,
+        pointInOriginatorWindow: Offset
+    ): Boolean {
+        val match = shownPath.reversed().find {
+            (it.originator == originatorWindow) &&
+                    (it.popupTriggerAreaInOriginatorWindow.contains(pointInOriginatorWindow))
+        }
+        return match != null
     }
 }

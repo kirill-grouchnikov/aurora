@@ -18,6 +18,7 @@ package org.pushingpixels.aurora.component.contextmenu
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.awtEvent
+import androidx.compose.ui.awt.awtEventOrNull
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -61,9 +62,9 @@ fun Modifier.auroraContextMenu(
 
     return this.then(Modifier.pointerInput(Unit) {
         while (true) {
-            val lastMouseEvent = awaitPointerEventScope { awaitPointerEvent() }.awtEvent
+            val lastMouseEvent = awaitPointerEventScope { awaitPointerEvent() }.awtEventOrNull
 
-            if (enabledState.value && lastMouseEvent.isPopupTrigger) {
+            if (enabledState.value && (lastMouseEvent?.isPopupTrigger == true)) {
                 displayPopupContent(
                     currentWindow = window,
                     layoutDirection = layoutDirection,
@@ -81,6 +82,7 @@ fun Modifier.auroraContextMenu(
                         ),
                         size = Size.Zero
                     ),
+                    popupTriggerAreaInWindow = Rect.Zero,
                     contentModel = contentModelState,
                     presentationModel = presentationModel,
                     toDismissPopupsOnActivation = presentationModel.toDismissOnCommandActivation,

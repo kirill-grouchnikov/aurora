@@ -39,8 +39,8 @@ import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
@@ -223,31 +223,47 @@ internal fun <E> AuroraComboBox(
         ).clickable(
             enabled = contentModel.enabled,
             onClick = {
-                displayPopupContent(
-                    currentWindow = window,
-                    layoutDirection = layoutDirection,
-                    density = density,
-                    textStyle = resolvedTextStyle,
-                    resourceLoader = resourceLoader,
-                    skinColors = skinColors,
-                    skinPainters = painters,
-                    decorationAreaType = decorationAreaType,
-                    compositionLocalContext = compositionLocalContext,
-                    anchorBoundsInWindow = Rect(
-                        offset = comboBoxTopLeftOffset.asOffset(density),
-                        size = comboBoxSize.asSize(density)
-                    ),
-                    contentModel = contentModelState,
-                    presentationModel = CommandPopupMenuPresentationModel(
-                        menuPresentationState = DefaultCommandPopupMenuPresentationState,
-                        maxVisibleMenuCommands = presentationModel.popupMaxVisibleItems,
-                        popupPlacementStrategy = presentationModel.popupPlacementStrategy
-                    ),
-                    toDismissPopupsOnActivation = true,
-                    toUseBackgroundStriping = true,
-                    popupPlacementStrategy = presentationModel.popupPlacementStrategy,
-                    overlays = emptyMap()
-                )
+                if (AuroraPopupManager.isShowingPopupFrom(
+                        originatorWindow = window,
+                        pointInOriginatorWindow = AuroraOffset(
+                            x = comboBoxTopLeftOffset.x + comboBoxSize.width / 2.0f,
+                            y = comboBoxTopLeftOffset.y + comboBoxSize.height / 2.0f
+                        ).asOffset(density)
+                    )) {
+                    // We're showing a popup that originates from this combo. Hide it.
+                    AuroraPopupManager.hidePopups(originator = window)
+                } else {
+                    // Display our popup content.
+                    displayPopupContent(
+                        currentWindow = window,
+                        layoutDirection = layoutDirection,
+                        density = density,
+                        textStyle = resolvedTextStyle,
+                        resourceLoader = resourceLoader,
+                        skinColors = skinColors,
+                        skinPainters = painters,
+                        decorationAreaType = decorationAreaType,
+                        compositionLocalContext = compositionLocalContext,
+                        anchorBoundsInWindow = Rect(
+                            offset = comboBoxTopLeftOffset.asOffset(density),
+                            size = comboBoxSize.asSize(density)
+                        ),
+                        popupTriggerAreaInWindow = Rect(
+                            offset = comboBoxTopLeftOffset.asOffset(density),
+                            size = comboBoxSize.asSize(density)
+                        ),
+                        contentModel = contentModelState,
+                        presentationModel = CommandPopupMenuPresentationModel(
+                            menuPresentationState = DefaultCommandPopupMenuPresentationState,
+                            maxVisibleMenuCommands = presentationModel.popupMaxVisibleItems,
+                            popupPlacementStrategy = presentationModel.popupPlacementStrategy
+                        ),
+                        toDismissPopupsOnActivation = true,
+                        toUseBackgroundStriping = true,
+                        popupPlacementStrategy = presentationModel.popupPlacementStrategy,
+                        overlays = emptyMap()
+                    )
+                }
             },
             interactionSource = interactionSource,
             indication = null

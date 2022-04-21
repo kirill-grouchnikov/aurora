@@ -462,12 +462,25 @@ fun AuroraWindowScope.AuroraWindowContent(
         AWTEventListener { event ->
             val src = event.source
             if ((event is KeyEvent) && (event.id == KeyEvent.KEY_RELEASED)
-                && (event.keyCode == KeyEvent.VK_ESCAPE)) {
+                && (event.keyCode == KeyEvent.VK_ESCAPE)
+            ) {
                 AuroraPopupManager.hideLastPopup()
             }
             if ((event is MouseEvent) && (event.id == MouseEvent.MOUSE_PRESSED) && (src is Component)) {
+                var ignoreEvent = false
                 val windowAncestor = SwingUtilities.getWindowAncestor(src)
-                AuroraPopupManager.hidePopups(windowAncestor as? ComposeWindow)
+                if (windowAncestor is ComposeWindow) {
+                    val eventLocation = event.locationOnScreen
+                    SwingUtilities.convertPointFromScreen(eventLocation, windowAncestor)
+
+                    ignoreEvent = AuroraPopupManager.isShowingPopupFrom(
+                        originatorWindow = windowAncestor,
+                        pointInOriginatorWindow = Offset(eventLocation.x.toFloat(), eventLocation.y.toFloat())
+                    )
+                }
+                if (!ignoreEvent) {
+                    AuroraPopupManager.hidePopups(windowAncestor as? ComposeWindow)
+                }
             }
         }
     }
