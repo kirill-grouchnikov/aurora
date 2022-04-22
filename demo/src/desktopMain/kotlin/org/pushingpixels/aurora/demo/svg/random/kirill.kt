@@ -137,7 +137,7 @@ blendMode = blendModeStack.removeAt(0)
         }
 
         private lateinit var image484482440f4da3ada2d5781785d20a7c: WeakReference<ImageBitmap>
-private fun getImage484482440f4da3ada2d5781785d20a7c(): ImageBitmap? {
+private fun getImage484482440f4da3ada2d5781785d20a7c(): ImageBitmap {
     if (::image484482440f4da3ada2d5781785d20a7c.isInitialized) {
         val result = image484482440f4da3ada2d5781785d20a7c.get()
         if (result != null) {
@@ -281,7 +281,7 @@ private fun getImage484482440f4da3ada2d5781785d20a7c(): ImageBitmap? {
     val data = org.jetbrains.skia.Data.makeFromBytes(Base64.getDecoder().decode(imageData.toString()))
     val codec = org.jetbrains.skia.Codec.makeFromData(data)
     val pixels = codec.readPixels()
-    val result = pixels.asImageBitmap()
+    val result = pixels.asComposeImageBitmap()
     image484482440f4da3ada2d5781785d20a7c = WeakReference(result)
     return result
 }

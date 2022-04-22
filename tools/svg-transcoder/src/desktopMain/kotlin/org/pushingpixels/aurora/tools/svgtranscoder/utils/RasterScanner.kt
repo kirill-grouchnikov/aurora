@@ -187,7 +187,7 @@ internal class RasterScanner(private val printWriter: PrintWriter) {
         printWriter.println("private lateinit var image$md5: WeakReference<ImageBitmap>")
 
         // Static method that returns an ImageBitmap
-        printWriter.println("private fun getImage$md5(): ImageBitmap? {")
+        printWriter.println("private fun getImage$md5(): ImageBitmap {")
         printWriter.println("    if (::image$md5.isInitialized) {")
         printWriter.println("        val result = image$md5.get()")
         printWriter.println("        if (result != null) {")
@@ -216,7 +216,7 @@ internal class RasterScanner(private val printWriter: PrintWriter) {
         printWriter.println("    val data = org.jetbrains.skia.Data.makeFromBytes(Base64.getDecoder().decode(imageData.toString()))")
         printWriter.println("    val codec = org.jetbrains.skia.Codec.makeFromData(data)")
         printWriter.println("    val pixels = codec.readPixels()")
-        printWriter.println("    val result = pixels.asImageBitmap()")
+        printWriter.println("    val result = pixels.asComposeImageBitmap()")
         printWriter.println("    image$md5 = WeakReference(result)")
         printWriter.println("    return result")
         printWriter.println("}")
