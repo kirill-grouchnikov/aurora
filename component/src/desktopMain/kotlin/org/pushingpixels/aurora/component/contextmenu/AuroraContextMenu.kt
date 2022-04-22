@@ -17,7 +17,6 @@ package org.pushingpixels.aurora.component.contextmenu
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.awt.awtEvent
 import androidx.compose.ui.awt.awtEventOrNull
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
