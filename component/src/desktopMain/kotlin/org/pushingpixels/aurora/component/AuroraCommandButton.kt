@@ -41,7 +41,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalFontLoader
+import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.semantics.Role
@@ -409,7 +409,7 @@ internal fun AuroraCommandButton(
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     val mergedTextStyle = LocalTextStyle.current.merge(presentationModel.textStyle)
-    val resourceLoader = LocalFontLoader.current
+    val fontFamilyResolver = LocalFontFamilyResolver.current
 
     val resolvedTextStyle = remember { resolveDefaults(mergedTextStyle, layoutDirection) }
 
@@ -622,7 +622,7 @@ internal fun AuroraCommandButton(
             layoutDirection = layoutDirection,
             density = density,
             textStyle = resolvedTextStyle,
-            resourceLoader = resourceLoader
+            fontFamilyResolver = fontFamilyResolver
         )
 
     val hasAction = (command.action != null)
@@ -867,7 +867,7 @@ internal fun AuroraCommandButton(
                                 layoutDirection = layoutDirection,
                                 density = density,
                                 textStyle = resolvedTextStyle,
-                                resourceLoader = resourceLoader,
+                                fontFamilyResolver = fontFamilyResolver,
                                 skinColors = skinColors,
                                 skinPainters = painters,
                                 decorationAreaType = decorationAreaType,

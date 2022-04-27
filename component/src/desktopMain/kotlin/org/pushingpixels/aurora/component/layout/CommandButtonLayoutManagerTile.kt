@@ -21,7 +21,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.Paragraph
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.component.model.*
 import kotlin.math.max
@@ -30,7 +30,7 @@ internal open class CommandButtonLayoutManagerTile(
     override val layoutDirection: LayoutDirection,
     private val _density: Density,
     private val textStyle: TextStyle,
-    private val resourceLoader: Font.ResourceLoader
+    private val fontFamilyResolver: FontFamily.Resolver
 ) : CommandButtonLayoutManager {
     override val density = _density.density
     override val fontScale = _density.fontScale
@@ -82,7 +82,7 @@ internal open class CommandButtonLayoutManagerTile(
             if (buttonText != null) {
                 val textParagraph = Paragraph(
                     text = buttonText, style = textStyle, width = Float.POSITIVE_INFINITY,
-                    density = _density, maxLines = 1, resourceLoader = resourceLoader
+                    density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
                 )
                 textWidth = textParagraph.maxIntrinsicWidth
                 textHeight += textParagraph.height
@@ -90,7 +90,7 @@ internal open class CommandButtonLayoutManagerTile(
             if (extraText != null) {
                 val extraTextParagraph = Paragraph(
                     text = extraText, style = textStyle, width = Float.POSITIVE_INFINITY,
-                    density = _density, maxLines = 1, resourceLoader = resourceLoader
+                    density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
                 )
                 textWidth = max(textWidth, extraTextParagraph.maxIntrinsicWidth)
                 textHeight += extraTextParagraph.height
@@ -241,7 +241,7 @@ internal open class CommandButtonLayoutManagerTile(
 
                 val paragraph = Paragraph(
                     text = command.text, style = textStyle, width = Float.POSITIVE_INFINITY,
-                    density = _density, maxLines = 1, resourceLoader = resourceLoader
+                    density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
                 )
 
                 textHeight = paragraph.height
@@ -263,7 +263,7 @@ internal open class CommandButtonLayoutManagerTile(
                         width = Float.POSITIVE_INFINITY,
                         density = _density,
                         maxLines = 1,
-                        resourceLoader = resourceLoader
+                        fontFamilyResolver = fontFamilyResolver
                     )
 
                     val extraLineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
@@ -497,7 +497,7 @@ internal open class CommandButtonLayoutManagerTile(
 
                 val paragraph = Paragraph(
                     text = command.text, style = textStyle, width = Float.POSITIVE_INFINITY,
-                    density = _density, maxLines = 1, resourceLoader = resourceLoader
+                    density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
                 )
 
                 textHeight = paragraph.height
@@ -519,7 +519,7 @@ internal open class CommandButtonLayoutManagerTile(
                         width = Float.POSITIVE_INFINITY,
                         density = _density,
                         maxLines = 1,
-                        resourceLoader = resourceLoader
+                        fontFamilyResolver = fontFamilyResolver
                     )
 
                     val extraLineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
@@ -744,8 +744,8 @@ internal class CommandButtonLayoutManagerTileFitToIcon(
     layoutDirection: LayoutDirection,
     _density: Density,
     textStyle: TextStyle,
-    resourceLoader: Font.ResourceLoader
-) : CommandButtonLayoutManagerTile(layoutDirection, _density, textStyle, resourceLoader) {
+    fontFamilyResolver: FontFamily.Resolver
+) : CommandButtonLayoutManagerTile(layoutDirection, _density, textStyle, fontFamilyResolver) {
     override fun getPreferredIconSize(
         command: Command,
         presentationModel: CommandButtonPresentationModel

@@ -35,6 +35,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
@@ -109,7 +110,7 @@ internal fun <E> AuroraComboBox(
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
-    val resourceLoader = LocalFontLoader.current
+    val fontFamilyResolver = LocalFontFamilyResolver.current
 
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
 
@@ -239,7 +240,7 @@ internal fun <E> AuroraComboBox(
                         layoutDirection = layoutDirection,
                         density = density,
                         textStyle = resolvedTextStyle,
-                        resourceLoader = resourceLoader,
+                        fontFamilyResolver = fontFamilyResolver,
                         skinColors = skinColors,
                         skinPainters = painters,
                         decorationAreaType = decorationAreaType,

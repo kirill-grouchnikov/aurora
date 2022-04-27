@@ -21,7 +21,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.Paragraph
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.component.model.*
 import kotlin.math.max
@@ -30,7 +30,7 @@ internal open class CommandButtonLayoutManagerMedium(
     override val layoutDirection: LayoutDirection,
     private val _density: Density,
     private val textStyle: TextStyle,
-    private val resourceLoader: Font.ResourceLoader
+    private val fontFamilyResolver: FontFamily.Resolver
 ) : CommandButtonLayoutManager {
     override val density = _density.density
     override val fontScale = _density.fontScale
@@ -92,7 +92,7 @@ internal open class CommandButtonLayoutManagerMedium(
 
             val paragraph = Paragraph(
                 text = buttonText, style = textStyle, width = Float.POSITIVE_INFINITY,
-                density = _density, maxLines = 1, resourceLoader = resourceLoader
+                density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
             )
             width += paragraph.maxIntrinsicWidth
             textHeight = paragraph.height
@@ -247,7 +247,7 @@ internal open class CommandButtonLayoutManagerMedium(
 
                 val paragraph = Paragraph(
                     text = command.text, style = textStyle, width = Float.POSITIVE_INFINITY,
-                    density = _density, maxLines = 1, resourceLoader = resourceLoader
+                    density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
                 )
 
                 textHeight = paragraph.height
@@ -452,7 +452,7 @@ internal open class CommandButtonLayoutManagerMedium(
 
                 val paragraph = Paragraph(
                     text = command.text, style = textStyle, width = Float.POSITIVE_INFINITY,
-                    density = _density, maxLines = 1, resourceLoader = resourceLoader
+                    density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
                 )
                 textHeight = paragraph.height
                 val textTop =
@@ -645,8 +645,8 @@ internal class CommandButtonLayoutManagerMediumFitToIcon(
     layoutDirection: LayoutDirection,
     _density: Density,
     textStyle: TextStyle,
-    resourceLoader: Font.ResourceLoader
-) : CommandButtonLayoutManagerMedium(layoutDirection, _density, textStyle, resourceLoader) {
+    fontFamilyResolver: FontFamily.Resolver
+) : CommandButtonLayoutManagerMedium(layoutDirection, _density, textStyle, fontFamilyResolver) {
     override fun getPreferredIconSize(
         command: Command,
         presentationModel: CommandButtonPresentationModel

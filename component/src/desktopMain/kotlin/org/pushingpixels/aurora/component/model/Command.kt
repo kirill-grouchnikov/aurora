@@ -18,7 +18,7 @@ package org.pushingpixels.aurora.component.model
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.component.layout.*
@@ -122,7 +122,7 @@ abstract class CommandButtonPresentationState(val displayName: String) {
         layoutDirection: LayoutDirection,
         density: Density,
         textStyle: TextStyle,
-        resourceLoader: Font.ResourceLoader
+        fontFamilyResolver: FontFamily.Resolver
     ): CommandButtonLayoutManager
 
     override fun toString(): String {
@@ -137,13 +137,13 @@ abstract class CommandButtonPresentationState(val displayName: String) {
                     layoutDirection: LayoutDirection,
                     density: Density,
                     textStyle: TextStyle,
-                    resourceLoader: Font.ResourceLoader
+                    fontFamilyResolver: FontFamily.Resolver
                 ): CommandButtonLayoutManager {
                     return CommandButtonLayoutManagerBig(
                         layoutDirection,
                         density,
                         textStyle,
-                        resourceLoader
+                        fontFamilyResolver
                     )
                 }
             }
@@ -155,13 +155,13 @@ abstract class CommandButtonPresentationState(val displayName: String) {
                     layoutDirection: LayoutDirection,
                     density: Density,
                     textStyle: TextStyle,
-                    resourceLoader: Font.ResourceLoader
+                    fontFamilyResolver: FontFamily.Resolver
                 ): CommandButtonLayoutManager {
                     return CommandButtonLayoutManagerBigFitToIcon(
                         layoutDirection,
                         density,
                         textStyle,
-                        resourceLoader
+                        fontFamilyResolver
                     )
                 }
             }
@@ -173,13 +173,13 @@ abstract class CommandButtonPresentationState(val displayName: String) {
                     layoutDirection: LayoutDirection,
                     density: Density,
                     textStyle: TextStyle,
-                    resourceLoader: Font.ResourceLoader
+                    fontFamilyResolver: FontFamily.Resolver
                 ): CommandButtonLayoutManager {
                     return CommandButtonLayoutManagerMedium(
                         layoutDirection,
                         density,
                         textStyle,
-                        resourceLoader
+                        fontFamilyResolver
                     )
                 }
             }
@@ -191,13 +191,13 @@ abstract class CommandButtonPresentationState(val displayName: String) {
                     layoutDirection: LayoutDirection,
                     density: Density,
                     textStyle: TextStyle,
-                    resourceLoader: Font.ResourceLoader
+                    fontFamilyResolver: FontFamily.Resolver
                 ): CommandButtonLayoutManager {
                     return CommandButtonLayoutManagerMediumFitToIcon(
                         layoutDirection,
                         density,
                         textStyle,
-                        resourceLoader
+                        fontFamilyResolver
                     )
                 }
             }
@@ -209,13 +209,13 @@ abstract class CommandButtonPresentationState(val displayName: String) {
                     layoutDirection: LayoutDirection,
                     density: Density,
                     textStyle: TextStyle,
-                    resourceLoader: Font.ResourceLoader
+                    fontFamilyResolver: FontFamily.Resolver
                 ): CommandButtonLayoutManager {
                     return CommandButtonLayoutManagerSmall(
                         layoutDirection,
                         density,
                         textStyle,
-                        resourceLoader
+                        fontFamilyResolver
                     )
                 }
             }
@@ -227,13 +227,13 @@ abstract class CommandButtonPresentationState(val displayName: String) {
                     layoutDirection: LayoutDirection,
                     density: Density,
                     textStyle: TextStyle,
-                    resourceLoader: Font.ResourceLoader
+                    fontFamilyResolver: FontFamily.Resolver
                 ): CommandButtonLayoutManager {
                     return CommandButtonLayoutManagerSmallFitToIcon(
                         layoutDirection,
                         density,
                         textStyle,
-                        resourceLoader
+                        fontFamilyResolver
                     )
                 }
             }
@@ -245,13 +245,13 @@ abstract class CommandButtonPresentationState(val displayName: String) {
                     layoutDirection: LayoutDirection,
                     density: Density,
                     textStyle: TextStyle,
-                    resourceLoader: Font.ResourceLoader
+                    fontFamilyResolver: FontFamily.Resolver
                 ): CommandButtonLayoutManager {
                     return CommandButtonLayoutManagerTile(
                         layoutDirection,
                         density,
                         textStyle,
-                        resourceLoader
+                        fontFamilyResolver
                     )
                 }
             }
@@ -263,13 +263,13 @@ abstract class CommandButtonPresentationState(val displayName: String) {
                     layoutDirection: LayoutDirection,
                     density: Density,
                     textStyle: TextStyle,
-                    resourceLoader: Font.ResourceLoader
+                    fontFamilyResolver: FontFamily.Resolver
                 ): CommandButtonLayoutManager {
                     return CommandButtonLayoutManagerTileFitToIcon(
                         layoutDirection,
                         density,
                         textStyle,
-                        resourceLoader
+                        fontFamilyResolver
                     )
                 }
             }

@@ -20,7 +20,7 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.component.model.*
 
@@ -28,7 +28,7 @@ internal open class CommandButtonLayoutManagerSmall(
     override val layoutDirection: LayoutDirection,
     private val _density: Density,
     private val textStyle: TextStyle,
-    private val resourceLoader: Font.ResourceLoader
+    private val fontFamilyResolver: FontFamily.Resolver
 ) : CommandButtonLayoutManager {
     override val density = _density.density
     override val fontScale = _density.fontScale
@@ -375,8 +375,8 @@ internal class CommandButtonLayoutManagerSmallFitToIcon(
     layoutDirection: LayoutDirection,
     _density: Density,
     textStyle: TextStyle,
-    resourceLoader: Font.ResourceLoader
-) : CommandButtonLayoutManagerSmall(layoutDirection, _density, textStyle, resourceLoader) {
+    fontFamilyResolver: FontFamily.Resolver
+) : CommandButtonLayoutManagerSmall(layoutDirection, _density, textStyle, fontFamilyResolver) {
     override fun getPreferredIconSize(
         command: Command,
         presentationModel: CommandButtonPresentationModel

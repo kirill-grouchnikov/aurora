@@ -33,7 +33,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
@@ -70,7 +70,7 @@ internal fun displayPopupContent(
     layoutDirection: LayoutDirection,
     density: Density,
     textStyle: TextStyle,
-    resourceLoader: Font.ResourceLoader,
+    fontFamilyResolver: FontFamily.Resolver,
     skinColors: AuroraSkinColors,
     skinPainters: AuroraPainters,
     decorationAreaType: DecorationAreaType,
@@ -103,7 +103,7 @@ internal fun displayPopupContent(
             layoutDirection = layoutDirection,
             density = density,
             textStyle = textStyle,
-            resourceLoader = resourceLoader
+            fontFamilyResolver = fontFamilyResolver
         ) else null
 
     // Compute the size of the popup content, accounting for the panel
@@ -134,7 +134,7 @@ internal fun displayPopupContent(
             layoutDirection = layoutDirection,
             density = density,
             textStyle = textStyle,
-            resourceLoader = resourceLoader
+            fontFamilyResolver = fontFamilyResolver
         )
 
     var atLeastOneRegularButtonHasIcon = false

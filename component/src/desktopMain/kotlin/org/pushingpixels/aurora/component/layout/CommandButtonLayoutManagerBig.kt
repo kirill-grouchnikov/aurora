@@ -21,7 +21,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.Paragraph
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.component.model.*
 import java.util.*
@@ -31,7 +31,7 @@ internal open class CommandButtonLayoutManagerBig(
     override val layoutDirection: LayoutDirection,
     private val _density: Density,
     private val textStyle: TextStyle,
-    private val resourceLoader: Font.ResourceLoader
+    private val fontFamilyResolver: FontFamily.Resolver
 ) : CommandButtonLayoutManager {
     override val density = _density.density
     override val fontScale = _density.fontScale
@@ -75,7 +75,7 @@ internal open class CommandButtonLayoutManagerBig(
         } else {
             val singleLineParagraph = Paragraph(
                 text = text, style = textStyle, width = Float.POSITIVE_INFINITY,
-                density = _density, maxLines = 1, resourceLoader = resourceLoader
+                density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
             )
 
             var bestPart1 = text
@@ -96,11 +96,11 @@ internal open class CommandButtonLayoutManagerBig(
                 }
                 val len1 = Paragraph(
                     text = part1, style = textStyle, width = Float.POSITIVE_INFINITY,
-                    density = _density, maxLines = 1, resourceLoader = resourceLoader
+                    density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
                 ).maxIntrinsicWidth
                 val len2 = Paragraph(
                     text = part2, style = textStyle, width = Float.POSITIVE_INFINITY,
-                    density = _density, maxLines = 1, resourceLoader = resourceLoader
+                    density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
                 ).maxIntrinsicWidth + actionIconWidth.toInt()
                 val len = max(len1, len2)
                 if (currMaxLength > len) {
@@ -133,11 +133,11 @@ internal open class CommandButtonLayoutManagerBig(
 
         val title1Line = Paragraph(
             text = preLayoutInfo.texts[0], style = textStyle, width = Float.POSITIVE_INFINITY,
-            density = _density, maxLines = 1, resourceLoader = resourceLoader
+            density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
         )
         val title2Line = Paragraph(
             text = preLayoutInfo.texts[1], style = textStyle, width = Float.POSITIVE_INFINITY,
-            density = _density, maxLines = 1, resourceLoader = resourceLoader
+            density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
         )
 
         val title1Width = title1Line.maxIntrinsicWidth
@@ -313,7 +313,7 @@ internal open class CommandButtonLayoutManagerBig(
 
         val title1Line = Paragraph(
             text = preLayoutInfo.texts[0], style = textStyle, width = Float.POSITIVE_INFINITY,
-            density = _density, maxLines = 1, resourceLoader = resourceLoader
+            density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
         )
 
         lastTextLineWidth = title1Line.maxIntrinsicWidth
@@ -330,7 +330,7 @@ internal open class CommandButtonLayoutManagerBig(
 
         val title2Line = Paragraph(
             text = preLayoutInfo.texts[1], style = textStyle, width = Float.POSITIVE_INFINITY,
-            density = _density, maxLines = 1, resourceLoader = resourceLoader
+            density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
         )
 
         val popupIconWidth = CommandButtonSizingConstants.PopupIconWidth.toPx()
@@ -437,8 +437,8 @@ internal class CommandButtonLayoutManagerBigFitToIcon(
     layoutDirection: LayoutDirection,
     _density: Density,
     textStyle: TextStyle,
-    resourceLoader: Font.ResourceLoader
-) : CommandButtonLayoutManagerBig(layoutDirection, _density, textStyle, resourceLoader) {
+    fontFamilyResolver: FontFamily.Resolver
+) : CommandButtonLayoutManagerBig(layoutDirection, _density, textStyle, fontFamilyResolver) {
     override fun getPreferredIconSize(
         command: Command,
         presentationModel: CommandButtonPresentationModel

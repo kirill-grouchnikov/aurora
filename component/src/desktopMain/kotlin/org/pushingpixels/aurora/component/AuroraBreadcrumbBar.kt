@@ -20,13 +20,15 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalFontLoader
+import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
@@ -56,7 +58,7 @@ fun AuroraBreadcrumbBar(
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
-    val resourceLoader = LocalFontLoader.current
+    val fontFamilyResolver = LocalFontFamilyResolver.current
     val window = LocalWindow.current
 
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
@@ -80,7 +82,7 @@ fun AuroraBreadcrumbBar(
         layoutDirection = layoutDirection,
         density = density,
         textStyle = resolvedTextStyle,
-        resourceLoader = resourceLoader
+        fontFamilyResolver = fontFamilyResolver
     )
 
     // Presentation model for the content - copy fields from the breadcrumb bar presentation model
@@ -101,7 +103,7 @@ fun AuroraBreadcrumbBar(
         layoutDirection = layoutDirection,
         density = density,
         textStyle = resolvedTextStyle,
-        resourceLoader = resourceLoader
+        fontFamilyResolver = fontFamilyResolver
     )
 
     val scope = rememberCoroutineScope()

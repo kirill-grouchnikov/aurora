@@ -27,7 +27,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.Paragraph
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
@@ -39,7 +39,7 @@ private object WindowMenuBarLayout {
         override val layoutDirection: LayoutDirection,
         private val _density: Density,
         private val textStyle: TextStyle,
-        private val resourceLoader: Font.ResourceLoader
+        private val fontFamilyResolver: FontFamily.Resolver
     ) : CommandButtonLayoutManager {
         override val density = _density.density
         override val fontScale = _density.fontScale
@@ -65,7 +65,7 @@ private object WindowMenuBarLayout {
 
             val paragraph = Paragraph(
                 text = command.text, style = textStyle, width = Float.POSITIVE_INFINITY,
-                density = _density, maxLines = 1, resourceLoader = resourceLoader
+                density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
             )
 
             return Size(
@@ -117,7 +117,7 @@ private object WindowMenuBarLayout {
 
             val paragraph = Paragraph(
                 text = command.text, style = textStyle, width = Float.POSITIVE_INFINITY,
-                density = _density, maxLines = 1, resourceLoader = resourceLoader
+                density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
             )
 
             return CommandButtonLayoutManager.CommandButtonLayoutInfo(
@@ -157,13 +157,13 @@ private object WindowMenuBarLayout {
                 layoutDirection: LayoutDirection,
                 density: Density,
                 textStyle: TextStyle,
-                resourceLoader: Font.ResourceLoader
+                fontFamilyResolver: FontFamily.Resolver
             ): CommandButtonLayoutManager {
                 return CommandButtonLayoutManagerMenuBar(
                     layoutDirection,
                     density,
                     textStyle,
-                    resourceLoader
+                    fontFamilyResolver
                 )
             }
         }

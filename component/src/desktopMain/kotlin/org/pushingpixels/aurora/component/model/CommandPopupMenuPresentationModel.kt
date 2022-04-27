@@ -17,7 +17,7 @@ package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
@@ -43,8 +43,8 @@ private class PopupMenuCommandButtonLayoutManager(
     layoutDirection: LayoutDirection,
     density: Density,
     textStyle: TextStyle,
-    resourceLoader: Font.ResourceLoader
-) : CommandButtonLayoutManagerMedium(layoutDirection, density, textStyle, resourceLoader) {
+    fontFamilyResolver: FontFamily.Resolver
+) : CommandButtonLayoutManagerMedium(layoutDirection, density, textStyle, fontFamilyResolver) {
     override val iconTextGapFactor: Float = 2.0f
 
     companion object {
@@ -52,10 +52,10 @@ private class PopupMenuCommandButtonLayoutManager(
             layoutDirection: LayoutDirection,
             density: Density,
             textStyle: TextStyle,
-            resourceLoader: Font.ResourceLoader
+            fontFamilyResolver: FontFamily.Resolver
         ): CommandButtonLayoutManagerMedium {
             return PopupMenuCommandButtonLayoutManager(
-                layoutDirection, density, textStyle, resourceLoader
+                layoutDirection, density, textStyle, fontFamilyResolver
             )
         }
     }
@@ -67,13 +67,13 @@ val DefaultCommandPopupMenuPresentationState: CommandButtonPresentationState =
             layoutDirection: LayoutDirection,
             density: Density,
             textStyle: TextStyle,
-            resourceLoader: Font.ResourceLoader
+            fontFamilyResolver: FontFamily.Resolver
         ): CommandButtonLayoutManager {
             return PopupMenuCommandButtonLayoutManager.getLayoutManager(
                 layoutDirection,
                 density,
                 textStyle,
-                resourceLoader
+                fontFamilyResolver
             )
         }
     }
