@@ -78,11 +78,13 @@ if (generalPath == null) {
 } else {
    generalPath!!.reset()
 }
-generalPath!!.moveTo(-219.61876f, -150.68037f)
-generalPath!!.cubicTo(-219.61876f, -150.68037f, -219.61876f, 327.65042f, -219.61876f, 327.65042f)
-generalPath!!.cubicTo(-76.74459f, 328.55087f, 125.78146f, 220.48074f, 125.78138f, 88.45424f)
-generalPath!!.cubicTo(125.78138f, -43.572304f, -33.655437f, -150.68036f, -219.61876f, -150.68037f)
-generalPath!!.close()
+generalPath?.run {
+    moveTo(-219.61876f, -150.68037f)
+    cubicTo(-219.61876f, -150.68037f, -219.61876f, 327.65042f, -219.61876f, 327.65042f)
+    cubicTo(-76.74459f, 328.55087f, 125.78146f, 220.48074f, 125.78138f, 88.45424f)
+    cubicTo(125.78138f, -43.572304f, -33.655437f, -150.68036f, -219.61876f, -150.68037f)
+    close()
+}
 shape = Outline.Generic(generalPath!!)
 brush = Brush.radialGradient(0.0f to Color(0, 0, 0, 255), 1.0f to Color(0, 0, 0, 0), center = Offset(-211.146f, 85.66791f), radius = 325.0f, tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
@@ -98,11 +100,13 @@ if (generalPath == null) {
 } else {
    generalPath!!.reset()
 }
-generalPath!!.moveTo(-1559.2523f, -150.68037f)
-generalPath!!.cubicTo(-1559.2523f, -150.68037f, -1559.2523f, 327.65042f, -1559.2523f, 327.65042f)
-generalPath!!.cubicTo(-1702.1265f, 328.55087f, -1904.6525f, 220.48074f, -1904.6525f, 88.45424f)
-generalPath!!.cubicTo(-1904.6525f, -43.572304f, -1745.2157f, -150.68036f, -1559.2523f, -150.68037f)
-generalPath!!.close()
+generalPath?.run {
+    moveTo(-1559.2523f, -150.68037f)
+    cubicTo(-1559.2523f, -150.68037f, -1559.2523f, 327.65042f, -1559.2523f, 327.65042f)
+    cubicTo(-1702.1265f, 328.55087f, -1904.6525f, 220.48074f, -1904.6525f, 88.45424f)
+    cubicTo(-1904.6525f, -43.572304f, -1745.2157f, -150.68036f, -1559.2523f, -150.68037f)
+    close()
+}
 shape = Outline.Generic(generalPath!!)
 brush = Brush.radialGradient(0.0f to Color(0, 0, 0, 255), 1.0f to Color(0, 0, 0, 0), center = Offset(-1567.7247f, 85.66791f), radius = 325.0f, tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
@@ -144,11 +148,13 @@ if (generalPath == null) {
 } else {
    generalPath!!.reset()
 }
-generalPath!!.moveTo(-219.61876f, -150.68037f)
-generalPath!!.cubicTo(-219.61876f, -150.68037f, -219.61876f, 327.65042f, -219.61876f, 327.65042f)
-generalPath!!.cubicTo(-76.74459f, 328.55087f, 125.78146f, 220.48074f, 125.78138f, 88.45424f)
-generalPath!!.cubicTo(125.78138f, -43.572304f, -33.655437f, -150.68036f, -219.61876f, -150.68037f)
-generalPath!!.close()
+generalPath?.run {
+    moveTo(-219.61876f, -150.68037f)
+    cubicTo(-219.61876f, -150.68037f, -219.61876f, 327.65042f, -219.61876f, 327.65042f)
+    cubicTo(-76.74459f, 328.55087f, 125.78146f, 220.48074f, 125.78138f, 88.45424f)
+    cubicTo(125.78138f, -43.572304f, -33.655437f, -150.68036f, -219.61876f, -150.68037f)
+    close()
+}
 shape = Outline.Generic(generalPath!!)
 brush = Brush.radialGradient(0.0f to Color(0, 0, 0, 255), 1.0f to Color(0, 0, 0, 0), center = Offset(-211.146f, 85.66791f), radius = 325.0f, tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
@@ -164,11 +170,13 @@ if (generalPath == null) {
 } else {
    generalPath!!.reset()
 }
-generalPath!!.moveTo(-1559.2523f, -150.68037f)
-generalPath!!.cubicTo(-1559.2523f, -150.68037f, -1559.2523f, 327.65042f, -1559.2523f, 327.65042f)
-generalPath!!.cubicTo(-1702.1265f, 328.55087f, -1904.6525f, 220.48074f, -1904.6525f, 88.45424f)
-generalPath!!.cubicTo(-1904.6525f, -43.572304f, -1745.2157f, -150.68036f, -1559.2523f, -150.68037f)
-generalPath!!.close()
+generalPath?.run {
+    moveTo(-1559.2523f, -150.68037f)
+    cubicTo(-1559.2523f, -150.68037f, -1559.2523f, 327.65042f, -1559.2523f, 327.65042f)
+    cubicTo(-1702.1265f, 328.55087f, -1904.6525f, 220.48074f, -1904.6525f, 88.45424f)
+    cubicTo(-1904.6525f, -43.572304f, -1745.2157f, -150.68036f, -1559.2523f, -150.68037f)
+    close()
+}
 shape = Outline.Generic(generalPath!!)
 brush = Brush.radialGradient(0.0f to Color(0, 0, 0, 255), 1.0f to Color(0, 0, 0, 0), center = Offset(-1567.7247f, 85.66791f), radius = 325.0f, tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
@@ -187,12 +195,14 @@ if (generalPath == null) {
 } else {
    generalPath!!.reset()
 }
-generalPath!!.moveTo(3.6234345f, 6.1923113f)
-generalPath!!.cubicTo(12.805777f, -0.3484262f, 29.264694f, 8.136855f, 38.62029f, 6.1923113f)
-generalPath!!.lineTo(38.62029f, 31.294603f)
-generalPath!!.cubicTo(29.611198f, 34.29981f, 14.01854f, 24.930641f, 3.6234345f, 31.294603f)
-generalPath!!.lineTo(3.6234345f, 6.1923113f)
-generalPath!!.close()
+generalPath?.run {
+    moveTo(3.6234345f, 6.1923113f)
+    cubicTo(12.805777f, -0.3484262f, 29.264694f, 8.136855f, 38.62029f, 6.1923113f)
+    lineTo(38.62029f, 31.294603f)
+    cubicTo(29.611198f, 34.29981f, 14.01854f, 24.930641f, 3.6234345f, 31.294603f)
+    lineTo(3.6234345f, 6.1923113f)
+    close()
+}
 shape = Outline.Generic(generalPath!!)
 brush = Brush.linearGradient(0.0f to Color(117, 80, 123, 255), 0.25709054f to Color(169, 132, 175, 255), 0.5655992f to Color(81, 55, 85, 255), 1.0f to Color(135, 92, 142, 255), start = Offset(3.1234348f, 17.789515f), end = Offset(39.12029f, 17.789515f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
@@ -203,12 +213,14 @@ if (generalPath == null) {
 } else {
    generalPath!!.reset()
 }
-generalPath!!.moveTo(3.6234345f, 6.1923113f)
-generalPath!!.cubicTo(12.805777f, -0.3484262f, 29.264694f, 8.136855f, 38.62029f, 6.1923113f)
-generalPath!!.lineTo(38.62029f, 31.294603f)
-generalPath!!.cubicTo(29.611198f, 34.29981f, 14.01854f, 24.930641f, 3.6234345f, 31.294603f)
-generalPath!!.lineTo(3.6234345f, 6.1923113f)
-generalPath!!.close()
+generalPath?.run {
+    moveTo(3.6234345f, 6.1923113f)
+    cubicTo(12.805777f, -0.3484262f, 29.264694f, 8.136855f, 38.62029f, 6.1923113f)
+    lineTo(38.62029f, 31.294603f)
+    cubicTo(29.611198f, 34.29981f, 14.01854f, 24.930641f, 3.6234345f, 31.294603f)
+    lineTo(3.6234345f, 6.1923113f)
+    close()
+}
 shape = Outline.Generic(generalPath!!)
 drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
@@ -225,12 +237,14 @@ if (generalPath == null) {
 } else {
    generalPath!!.reset()
 }
-generalPath!!.moveTo(4.621318f, 6.8032613f)
-generalPath!!.cubicTo(12.598466f, 1.0750242f, 28.454912f, 8.747806f, 37.656868f, 7.3032613f)
-generalPath!!.lineTo(37.531868f, 30.593054f)
-generalPath!!.cubicTo(30.717024f, 32.785755f, 14.794159f, 24.888617f, 4.683818f, 29.468054f)
-generalPath!!.lineTo(4.621318f, 6.8032613f)
-generalPath!!.close()
+generalPath?.run {
+    moveTo(4.621318f, 6.8032613f)
+    cubicTo(12.598466f, 1.0750242f, 28.454912f, 8.747806f, 37.656868f, 7.3032613f)
+    lineTo(37.531868f, 30.593054f)
+    cubicTo(30.717024f, 32.785755f, 14.794159f, 24.888617f, 4.683818f, 29.468054f)
+    lineTo(4.621318f, 6.8032613f)
+    close()
+}
 shape = Outline.Generic(generalPath!!)
 drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
@@ -245,12 +259,14 @@ if (generalPath == null) {
 } else {
    generalPath!!.reset()
 }
-generalPath!!.moveTo(10.529842f, 17.09872f)
-generalPath!!.cubicTo(19.712185f, 10.557982f, 36.171104f, 19.043262f, 45.5267f, 17.09872f)
-generalPath!!.lineTo(45.5267f, 42.20101f)
-generalPath!!.cubicTo(36.51761f, 45.206215f, 20.924948f, 35.83705f, 10.529842f, 42.20101f)
-generalPath!!.lineTo(10.529842f, 17.09872f)
-generalPath!!.close()
+generalPath?.run {
+    moveTo(10.529842f, 17.09872f)
+    cubicTo(19.712185f, 10.557982f, 36.171104f, 19.043262f, 45.5267f, 17.09872f)
+    lineTo(45.5267f, 42.20101f)
+    cubicTo(36.51761f, 45.206215f, 20.924948f, 35.83705f, 10.529842f, 42.20101f)
+    lineTo(10.529842f, 17.09872f)
+    close()
+}
 shape = Outline.Generic(generalPath!!)
 brush = Brush.linearGradient(0.0f to Color(115, 210, 22, 255), 0.2556818f to Color(156, 237, 75, 255), 0.59400827f to Color(100, 184, 19, 255), 1.0f to Color(142, 234, 52, 255), start = Offset(10.029842f, 28.695923f), end = Offset(46.0267f, 28.695923f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
@@ -261,12 +277,14 @@ if (generalPath == null) {
 } else {
    generalPath!!.reset()
 }
-generalPath!!.moveTo(10.529842f, 17.09872f)
-generalPath!!.cubicTo(19.712185f, 10.557982f, 36.171104f, 19.043262f, 45.5267f, 17.09872f)
-generalPath!!.lineTo(45.5267f, 42.20101f)
-generalPath!!.cubicTo(36.51761f, 45.206215f, 20.924948f, 35.83705f, 10.529842f, 42.20101f)
-generalPath!!.lineTo(10.529842f, 17.09872f)
-generalPath!!.close()
+generalPath?.run {
+    moveTo(10.529842f, 17.09872f)
+    cubicTo(19.712185f, 10.557982f, 36.171104f, 19.043262f, 45.5267f, 17.09872f)
+    lineTo(45.5267f, 42.20101f)
+    cubicTo(36.51761f, 45.206215f, 20.924948f, 35.83705f, 10.529842f, 42.20101f)
+    lineTo(10.529842f, 17.09872f)
+    close()
+}
 shape = Outline.Generic(generalPath!!)
 drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
@@ -283,12 +301,14 @@ if (generalPath == null) {
 } else {
    generalPath!!.reset()
 }
-generalPath!!.moveTo(11.464451f, 17.654135f)
-generalPath!!.cubicTo(19.441599f, 11.925898f, 35.298046f, 19.598679f, 44.5f, 18.154135f)
-generalPath!!.lineTo(44.375f, 41.532314f)
-generalPath!!.cubicTo(37.560158f, 43.725018f, 21.637293f, 35.82788f, 11.526951f, 40.407314f)
-generalPath!!.lineTo(11.464451f, 17.654135f)
-generalPath!!.close()
+generalPath?.run {
+    moveTo(11.464451f, 17.654135f)
+    cubicTo(19.441599f, 11.925898f, 35.298046f, 19.598679f, 44.5f, 18.154135f)
+    lineTo(44.375f, 41.532314f)
+    cubicTo(37.560158f, 43.725018f, 21.637293f, 35.82788f, 11.526951f, 40.407314f)
+    lineTo(11.464451f, 17.654135f)
+    close()
+}
 shape = Outline.Generic(generalPath!!)
 drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)

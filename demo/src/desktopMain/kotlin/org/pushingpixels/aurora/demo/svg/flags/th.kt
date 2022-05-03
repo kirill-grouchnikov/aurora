@@ -55,11 +55,13 @@ if (generalPath == null) {
 } else {
    generalPath!!.reset()
 }
-generalPath!!.moveTo(0.0f, 0.0f)
-generalPath!!.lineTo(512.0f, 0.0f)
-generalPath!!.lineTo(512.0f, 512.0f)
-generalPath!!.lineTo(0.0f, 512.0f)
-generalPath!!.close()
+generalPath?.run {
+    moveTo(0.0f, 0.0f)
+    lineTo(512.0f, 0.0f)
+    lineTo(512.0f, 512.0f)
+    lineTo(0.0f, 512.0f)
+    close()
+}
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(255, 255, 255, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
@@ -75,11 +77,13 @@ if (generalPath == null) {
 } else {
    generalPath!!.reset()
 }
-generalPath!!.moveTo(0.0f, 173.38f)
-generalPath!!.lineTo(512.0f, 173.38f)
-generalPath!!.lineTo(512.0f, 344.05f)
-generalPath!!.lineTo(0.0f, 344.05f)
-generalPath!!.close()
+generalPath?.run {
+    moveTo(0.0f, 173.38f)
+    lineTo(512.0f, 173.38f)
+    lineTo(512.0f, 344.05f)
+    lineTo(0.0f, 344.05f)
+    close()
+}
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 27, 154, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
@@ -95,16 +99,18 @@ if (generalPath == null) {
 } else {
    generalPath!!.reset()
 }
-generalPath!!.moveTo(0.0f, 0.045f)
-generalPath!!.lineTo(512.0f, 0.045f)
-generalPath!!.lineTo(512.0f, 88.045f)
-generalPath!!.lineTo(0.0f, 88.045f)
-generalPath!!.close()
-generalPath!!.moveTo(0.0f, 426.67f)
-generalPath!!.lineTo(512.0f, 426.67f)
-generalPath!!.lineTo(512.0f, 512.003f)
-generalPath!!.lineTo(0.0f, 512.003f)
-generalPath!!.close()
+generalPath?.run {
+    moveTo(0.0f, 0.045f)
+    lineTo(512.0f, 0.045f)
+    lineTo(512.0f, 88.045f)
+    lineTo(0.0f, 88.045f)
+    close()
+    moveTo(0.0f, 426.67f)
+    lineTo(512.0f, 426.67f)
+    lineTo(512.0f, 512.003f)
+    lineTo(0.0f, 512.003f)
+    close()
+}
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(231, 0, 0, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)

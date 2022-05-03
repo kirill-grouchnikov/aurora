@@ -63,11 +63,13 @@ if (generalPath == null) {
 } else {
    generalPath!!.reset()
 }
-generalPath!!.moveTo(0.0f, 0.0f)
-generalPath!!.lineTo(1063.0f, 0.0f)
-generalPath!!.lineTo(1063.0f, 708.66f)
-generalPath!!.lineTo(0.0f, 708.66f)
-generalPath!!.close()
+generalPath?.run {
+    moveTo(0.0f, 0.0f)
+    lineTo(1063.0f, 0.0f)
+    lineTo(1063.0f, 708.66f)
+    lineTo(0.0f, 708.66f)
+    close()
+}
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(255, 255, 255, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)

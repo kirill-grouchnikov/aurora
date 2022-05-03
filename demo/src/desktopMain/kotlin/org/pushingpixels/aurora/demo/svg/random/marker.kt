@@ -60,9 +60,11 @@ if (generalPath == null) {
 } else {
    generalPath!!.reset()
 }
-generalPath!!.moveTo(10.0f, 10.0f)
-generalPath!!.lineTo(10.0f, 90.0f)
-generalPath!!.lineTo(90.0f, 90.0f)
+generalPath?.run {
+    moveTo(10.0f, 10.0f)
+    lineTo(10.0f, 90.0f)
+    lineTo(90.0f, 90.0f)
+}
 shape = Outline.Generic(generalPath!!)
 drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 withTransform({
@@ -88,10 +90,12 @@ if (generalPath == null) {
 } else {
    generalPath!!.reset()
 }
-generalPath!!.moveTo(0.0f, 0.0f)
-generalPath!!.lineTo(10.0f, 5.0f)
-generalPath!!.lineTo(0.0f, 10.0f)
-generalPath!!.close()
+generalPath?.run {
+    moveTo(0.0f, 0.0f)
+    lineTo(10.0f, 5.0f)
+    lineTo(0.0f, 10.0f)
+    close()
+}
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
@@ -122,10 +126,12 @@ if (generalPath == null) {
 } else {
    generalPath!!.reset()
 }
-generalPath!!.moveTo(0.0f, 0.0f)
-generalPath!!.lineTo(10.0f, 5.0f)
-generalPath!!.lineTo(0.0f, 10.0f)
-generalPath!!.close()
+generalPath?.run {
+    moveTo(0.0f, 0.0f)
+    lineTo(10.0f, 5.0f)
+    lineTo(0.0f, 10.0f)
+    close()
+}
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
@@ -147,12 +153,14 @@ if (generalPath == null) {
 } else {
    generalPath!!.reset()
 }
-generalPath!!.moveTo(15.0f, 80.0f)
-generalPath!!.lineTo(29.0f, 50.0f)
-generalPath!!.lineTo(43.0f, 60.0f)
-generalPath!!.lineTo(57.0f, 30.0f)
-generalPath!!.lineTo(71.0f, 40.0f)
-generalPath!!.lineTo(85.0f, 15.0f)
+generalPath?.run {
+    moveTo(15.0f, 80.0f)
+    lineTo(29.0f, 50.0f)
+    lineTo(43.0f, 60.0f)
+    lineTo(57.0f, 30.0f)
+    lineTo(71.0f, 40.0f)
+    lineTo(85.0f, 15.0f)
+}
 shape = Outline.Generic(generalPath!!)
 drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 withTransform({

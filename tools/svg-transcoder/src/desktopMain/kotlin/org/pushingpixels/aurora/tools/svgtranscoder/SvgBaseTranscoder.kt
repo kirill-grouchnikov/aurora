@@ -198,26 +198,28 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         printWriterManager!!.println("} else {")
         printWriterManager!!.println("   generalPath$suffix!!.reset()")
         printWriterManager!!.println("}")
+        printWriterManager!!.println("generalPath$suffix?.run {")
         while (!pathIterator.isDone) {
             when (pathIterator.currentSegment(coords)) {
                 PathIterator.SEG_CUBICTO -> printWriterManager?.println(
-                    "generalPath$suffix!!.cubicTo(${coords[0]}f, ${coords[1]}f, ${coords[2]}f, ${coords[3]}f, ${coords[4]}f, ${coords[5]}f)"
+                    "    cubicTo(${coords[0]}f, ${coords[1]}f, ${coords[2]}f, ${coords[3]}f, ${coords[4]}f, ${coords[5]}f)"
                 )
                 PathIterator.SEG_QUADTO -> printWriterManager?.println(
-                    "generalPath$suffix!!.quadraticBezierTo(${coords[0]}f, ${coords[1]}f, ${coords[2]}f, ${coords[3]}f)"
+                    "    quadraticBezierTo(${coords[0]}f, ${coords[1]}f, ${coords[2]}f, ${coords[3]}f)"
                 )
                 PathIterator.SEG_MOVETO -> printWriterManager?.println(
-                    "generalPath$suffix!!.moveTo(${coords[0]}f, ${coords[1]}f)"
+                    "    moveTo(${coords[0]}f, ${coords[1]}f)"
                 )
                 PathIterator.SEG_LINETO -> printWriterManager?.println(
-                    "generalPath$suffix!!.lineTo(${coords[0]}f, ${coords[1]}f)"
+                    "    lineTo(${coords[0]}f, ${coords[1]}f)"
                 )
                 PathIterator.SEG_CLOSE -> printWriterManager?.println(
-                    "generalPath$suffix!!.close()"
+                    "    close()"
                 )
             }
             pathIterator.next()
         }
+        printWriterManager!!.println("}")
         printWriterManager!!.println("shape$suffix = Outline.Generic(generalPath$suffix!!)")
     }
 
