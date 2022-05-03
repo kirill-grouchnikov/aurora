@@ -15,7 +15,9 @@
  */
 package org.pushingpixels.aurora.component.projection
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -250,6 +252,21 @@ class SliderProjection(
             modifier = modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
+        )
+    }
+}
+
+class TabsProjection(
+    val contentModel: TabsContentModel,
+    val presentationModel: TabsPresentationModel = TabsPresentationModel()
+) {
+    @Composable
+    fun project(modifier: Modifier = Modifier, horizontalScrollState: ScrollState = rememberScrollState(0)) {
+        AuroraTabs(
+            modifier = modifier,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel,
+            horizontalScrollState = horizontalScrollState
         )
     }
 }
