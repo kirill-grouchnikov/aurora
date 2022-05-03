@@ -23,6 +23,7 @@ import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
@@ -84,7 +85,7 @@ fun Modifier.auroraRichTooltip(
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     val mergedTextStyle = LocalTextStyle.current
-    val resourceLoader = LocalFontLoader.current
+    val fontFamilyResolver = LocalFontFamilyResolver.current
     val skinColors = AuroraSkin.colors
     val painters = AuroraSkin.painters
     val decorationAreaType = AuroraSkin.decorationAreaType
@@ -108,7 +109,7 @@ fun Modifier.auroraRichTooltip(
                 layoutDirection = layoutDirection,
                 density = density,
                 textStyle = resolvedTextStyle,
-                resourceLoader = resourceLoader,
+                fontFamilyResolver = fontFamilyResolver,
                 skinColors = skinColors,
                 skinPainters = painters,
                 decorationAreaType = decorationAreaType,

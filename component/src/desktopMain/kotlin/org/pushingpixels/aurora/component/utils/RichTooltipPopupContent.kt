@@ -34,7 +34,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.Paragraph
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.*
@@ -73,7 +73,7 @@ internal fun displayRichTooltipContent(
     layoutDirection: LayoutDirection,
     density: Density,
     textStyle: TextStyle,
-    resourceLoader: Font.ResourceLoader,
+    fontFamilyResolver: FontFamily.Resolver,
     skinColors: AuroraSkinColors,
     skinPainters: AuroraPainters,
     decorationAreaType: DecorationAreaType,
@@ -126,7 +126,7 @@ internal fun displayRichTooltipContent(
     // Note that we're not limiting the title to be single line
     val titleParagraph = Paragraph(
         text = richTooltip.title, style = boldTextStyle, width = maxContentWidthPx,
-        density = density, resourceLoader = resourceLoader
+        density = density, fontFamilyResolver = fontFamilyResolver
     )
     var fullContentWidth = 0.0f
     var fullContentHeight = titleParagraph.height
@@ -164,7 +164,7 @@ internal fun displayRichTooltipContent(
             // Note that we're not limiting the description to be single line
             val descriptionParagraph = Paragraph(
                 text = descriptionSection, style = textStyle, width = maxDescriptionWidthPx,
-                density = density, resourceLoader = resourceLoader
+                density = density, fontFamilyResolver = fontFamilyResolver
             )
 
             descriptionTextHeightPx += descriptionParagraph.height
@@ -217,7 +217,7 @@ internal fun displayRichTooltipContent(
             // Note that we're not limiting the description to be single line
             val footerParagraph = Paragraph(
                 text = footerSection, style = textStyle, width = maxFooterWidthPx,
-                density = density, resourceLoader = resourceLoader
+                density = density, fontFamilyResolver = fontFamilyResolver
             )
 
             footerTextHeightPx += footerParagraph.height
