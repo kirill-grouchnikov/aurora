@@ -158,11 +158,11 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             val paintingCode = String(currentPaintingCodeStream.toByteArray())
             val paintingCodeMethod =
                 "private fun _paint$i(drawScope : DrawScope) {\n" +
-                        "@Suppress(\"UNUSED_VARIABLE\") var shapeText: Outline?\n" +
-                        "@Suppress(\"UNUSED_VARIABLE\") var generalPathText: Path? = null\n" +
-                        "@Suppress(\"UNUSED_VARIABLE\") var alphaText = 0.0f\n" +
-                        "@Suppress(\"UNUSED_VARIABLE\") var blendModeText = DrawScope.DefaultBlendMode\n" +
-                        "with(drawScope) {\n" + paintingCode + "\n}\n}"
+                        "        @Suppress(\"UNUSED_VARIABLE\") var shapeText: Outline?\n" +
+                        "        @Suppress(\"UNUSED_VARIABLE\") var generalPathText: Path? = null\n" +
+                        "        @Suppress(\"UNUSED_VARIABLE\") var alphaText = 0.0f\n" +
+                        "        @Suppress(\"UNUSED_VARIABLE\") var blendModeText = DrawScope.DefaultBlendMode\n" +
+                        "        with(drawScope) {\n" + paintingCode + "\n       }\n}"
             combinedPaintingCode.append(paintingCodeMethod)
             combinedPaintingCode.append("\n\n")
         }
@@ -193,34 +193,34 @@ abstract class SvgBaseTranscoder(private val classname: String) {
      */
     private fun transcodePathIterator(pathIterator: PathIterator, suffix: String) {
         val coords = FloatArray(6)
-        printWriterManager!!.println("if (generalPath$suffix == null) {")
-        printWriterManager!!.println("   generalPath$suffix = Path()")
-        printWriterManager!!.println("} else {")
-        printWriterManager!!.println("   generalPath$suffix!!.reset()")
-        printWriterManager!!.println("}")
-        printWriterManager!!.println("generalPath$suffix?.run {")
+        printWriterManager!!.println("            if (generalPath$suffix == null) {")
+        printWriterManager!!.println("                generalPath$suffix = Path()")
+        printWriterManager!!.println("            } else {")
+        printWriterManager!!.println("                generalPath$suffix!!.reset()")
+        printWriterManager!!.println("            }")
+        printWriterManager!!.println("            generalPath$suffix?.run {")
         while (!pathIterator.isDone) {
             when (pathIterator.currentSegment(coords)) {
                 PathIterator.SEG_CUBICTO -> printWriterManager?.println(
-                    "    cubicTo(${coords[0]}f, ${coords[1]}f, ${coords[2]}f, ${coords[3]}f, ${coords[4]}f, ${coords[5]}f)"
+                    "                cubicTo(${coords[0]}f, ${coords[1]}f, ${coords[2]}f, ${coords[3]}f, ${coords[4]}f, ${coords[5]}f)"
                 )
                 PathIterator.SEG_QUADTO -> printWriterManager?.println(
-                    "    quadraticBezierTo(${coords[0]}f, ${coords[1]}f, ${coords[2]}f, ${coords[3]}f)"
+                    "                quadraticBezierTo(${coords[0]}f, ${coords[1]}f, ${coords[2]}f, ${coords[3]}f)"
                 )
                 PathIterator.SEG_MOVETO -> printWriterManager?.println(
-                    "    moveTo(${coords[0]}f, ${coords[1]}f)"
+                    "                moveTo(${coords[0]}f, ${coords[1]}f)"
                 )
                 PathIterator.SEG_LINETO -> printWriterManager?.println(
-                    "    lineTo(${coords[0]}f, ${coords[1]}f)"
+                    "                lineTo(${coords[0]}f, ${coords[1]}f)"
                 )
                 PathIterator.SEG_CLOSE -> printWriterManager?.println(
-                    "    close()"
+                    "                close()"
                 )
             }
             pathIterator.next()
         }
-        printWriterManager!!.println("}")
-        printWriterManager!!.println("shape$suffix = Outline.Generic(generalPath$suffix!!)")
+        printWriterManager!!.println("            }")
+        printWriterManager!!.println("            shape$suffix = Outline.Generic(generalPath$suffix!!)")
     }
 
     /**
@@ -241,7 +241,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         }
         if (shape is Rectangle2D) {
             printWriterManager!!.println(
-                "shape$suffix = Outline.Rectangle(rect = Rect(left = ${shape.x}f, " +
+                "            shape$suffix = Outline.Rectangle(rect = Rect(left = ${shape.x}f, " +
                         "top = ${shape.y}f, right = ${shape.x + shape.width}f, " +
                         "bottom = ${shape.y + shape.height}f))"
             )
@@ -249,7 +249,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         }
         if (shape is RoundRectangle2D) {
             printWriterManager!!.println(
-                "shape$suffix = Outline.Rounded(roundRect = RoundRect(" +
+                "            shape$suffix = Outline.Rounded(roundRect = RoundRect(" +
                         "left = ${shape.x}f, top = ${shape.y}f, " +
                         "right = ${shape.x + shape.width}f, bottom = ${shape.y + shape.height}f," +
                         "radiusX = ${shape.arcWidth}f, radiusY = ${shape.arcHeight}f))"
@@ -258,7 +258,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         }
         if (shape is Ellipse2D) {
             printWriterManager!!.println(
-                "shape$suffix = Outline.Generic(path = Path().also { it.addOval(oval=Rect(" +
+                "            shape$suffix = Outline.Generic(path = Path().also { it.addOval(oval=Rect(" +
                         "left = ${shape.x}f, top = ${shape.y}f, " +
                         "right = ${shape.x + shape.width}f, bottom = ${shape.y + shape.height}f))})"
             )
@@ -513,11 +513,11 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                 }
                 if (dash == null) {
                     printWriterManager!!.println(
-                        "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f)"
+                        "            stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f)"
                     )
                 } else {
                     printWriterManager!!.println(
-                        "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f, " +
+                        "            stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f, " +
                                 "pathEffect=PathEffect.dashPathEffect($dashRep, ${dash_phase}f))"
                     )
                 }
@@ -744,7 +744,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         }
         if (paint is Color) {
             val solidColor = "Color(${paint.red}, ${paint.green}, ${paint.blue}, ${paint.alpha})"
-            printWriterManager!!.println("brush = SolidColor($solidColor)")
+            printWriterManager!!.println("            brush = SolidColor($solidColor)")
             return
         }
         if (paint == null) {
@@ -768,18 +768,18 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         }
         if (paint is RadialGradientPaint) {
             transcodeRadialGradientPaint(paint)
-            printWriterManager!!.println("drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)")
+            printWriterManager!!.println("            drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)")
             return
         }
         if (paint is LinearGradientPaint) {
             transcodeLinearGradientPaint(paint)
-            printWriterManager!!.println("drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)")
+            printWriterManager!!.println("            drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)")
             return
         }
         if (paint is Color) {
             val solidColor = "Color(${paint.red}, ${paint.green}, ${paint.blue}, ${paint.alpha})"
-            printWriterManager!!.println("brush = SolidColor($solidColor)")
-            printWriterManager!!.println("drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)")
+            printWriterManager!!.println("            brush = SolidColor($solidColor)")
+            printWriterManager!!.println("            drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)")
             return
         }
         if (paint == null) {
@@ -885,17 +885,17 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         }
         if (dash == null) {
             printWriterManager!!.println(
-                "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f)"
+                "            stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f)"
             )
         } else {
             printWriterManager!!.println(
-                "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f, " +
+                "            stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f, " +
                         "pathEffect=PathEffect.dashPathEffect($dashRep, ${dash_phase}f))"
             )
         }
         transcodeShape(shape, "")
         printWriterManager!!.println(
-            "drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)"
+            "            drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)"
         )
     }
 
@@ -1000,7 +1000,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
      * section).
      */
     private fun transcodeShapeNode(node: ShapeNode, comment: String) {
-        printWriterManager!!.println("// $comment")
+        printWriterManager!!.println("            // $comment")
         transcodeShapePainter(node.shapePainter, node.shape, comment)
     }
 
@@ -1012,7 +1012,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
      * section).
      */
     private fun transcodeCompositeGraphicsNode(node: CompositeGraphicsNode, comment: String) {
-        printWriterManager!!.println("// $comment")
+        printWriterManager!!.println("            // $comment")
         for ((count, obj) in node.children.withIndex()) {
             transcodeGraphicsNode(obj as GraphicsNode?, comment + "_" + count)
         }
@@ -1027,13 +1027,13 @@ abstract class SvgBaseTranscoder(private val classname: String) {
     }
 
     private fun transcodeRasterImageNode(node: RasterImageNode, comment: String) {
-        printWriterManager!!.println("// $comment")
+        printWriterManager!!.println("            // $comment")
         val image = node.image.createDefaultRendering()
         transcodeRenderedImage(image)
     }
 
     private fun transcodeTextNode(node: TextNode, comment: String) {
-        printWriterManager!!.println("// $comment")
+        printWriterManager!!.println("            // $comment")
 
         printWriterManager!!.println("            generalPathText = null")
         printWriterManager!!.println("            alphaText = alpha")
@@ -1052,20 +1052,20 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             override fun dispose() {}
             override fun draw(shape: Shape) {
                 transcodeShape(shape, "Text")
-                printWriterManager!!.println("drawOutline(outline = shapeText!!, style = stroke!!, brush=brush!!, alpha = alphaText, blendMode = blendModeText)")
+                printWriterManager!!.println("            drawOutline(outline = shapeText!!, style = stroke!!, brush=brush!!, alpha = alphaText, blendMode = blendModeText)")
             }
 
             override fun fill(shape: Shape) {
                 transcodeShape(shape, "Text")
-                printWriterManager!!.println("drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)")
+                printWriterManager!!.println("            drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)")
             }
 
             override fun setComposite(composite: Composite) {
                 this._composite = composite
                 val rule = (composite as AlphaComposite).rule
                 val alpha = composite.alpha
-                printWriterManager!!.println("alphaText = alpha * ${alpha}f")
-                printWriterManager!!.println("blendModeText = ${blendModeToCompose(rule)}")
+                printWriterManager!!.println("            alphaText = alpha * ${alpha}f")
+                printWriterManager!!.println("            blendModeText = ${blendModeToCompose(rule)}")
             }
 
             override fun setPaint(paint: Paint) {
@@ -1214,29 +1214,29 @@ abstract class SvgBaseTranscoder(private val classname: String) {
     private fun transcodeGraphicsNode(node: GraphicsNode?, comment: String) {
         val composite = node!!.composite as? AlphaComposite
         if (composite != null) {
-            printWriterManager!!.println("alphaStack.add(0, alpha)")
-            printWriterManager!!.println("alpha *= ${composite.alpha}f")
-            printWriterManager!!.println("blendModeStack.add(0, ${blendModeToCompose(composite.rule)})")
-            printWriterManager!!.println("blendMode = ${blendModeToCompose(composite.rule)}")
+            printWriterManager!!.println("            alphaStack.add(0, alpha)")
+            printWriterManager!!.println("            alpha *= ${composite.alpha}f")
+            printWriterManager!!.println("            blendModeStack.add(0, ${blendModeToCompose(composite.rule)})")
+            printWriterManager!!.println("            blendMode = ${blendModeToCompose(composite.rule)}")
         }
         val transform = node.transform
         if (isNonIdentityTransform(transform)) {
             val transfMatrix = DoubleArray(6)
             transform.getMatrix(transfMatrix)
-            printWriterManager!!.println("withTransform({")
-            printWriterManager!!.println("transform(")
-            printWriterManager!!.println("Matrix(values=floatArrayOf(")
+            printWriterManager!!.println("            withTransform({")
+            printWriterManager!!.println("                transform(")
+            printWriterManager!!.println("                    Matrix(values=floatArrayOf(")
             printWriterManager!!.println(
-                "" + transfMatrix[0] + "f, " + transfMatrix[1] + "f, 0.0f, 0.0f,"
+                "                        " + transfMatrix[0] + "f, " + transfMatrix[1] + "f, 0.0f, 0.0f,"
             )
             printWriterManager!!.println(
-                "" + transfMatrix[2] + "f, " + transfMatrix[3] + "f, 0.0f, 0.0f,"
+                "                        " + transfMatrix[2] + "f, " + transfMatrix[3] + "f, 0.0f, 0.0f,"
             )
-            printWriterManager!!.println("0.0f, 0.0f, 1.0f, 0.0f,")
+            printWriterManager!!.println("                        0.0f, 0.0f, 1.0f, 0.0f,")
             printWriterManager!!.println(
-                "" + transfMatrix[4] + "f, " + transfMatrix[5] + "f, 0.0f, 1.0f)"
+                "                        " + transfMatrix[4] + "f, " + transfMatrix[5] + "f, 0.0f, 1.0f)"
             )
-            printWriterManager!!.println("))}){")
+            printWriterManager!!.println("                ))}){")
         }
         try {
             if (node is ShapeNode) {
@@ -1258,11 +1258,11 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             throw UnsupportedOperationException(node.javaClass.canonicalName)
         } finally {
             if (isNonIdentityTransform(transform)) {
-                printWriterManager!!.println("}")
+                printWriterManager!!.println("            }")
             }
             if (composite != null) {
-                printWriterManager!!.println("alpha = alphaStack.removeAt(0)")
-                printWriterManager!!.println("blendMode = blendModeStack.removeAt(0)")
+                printWriterManager!!.println("            alpha = alphaStack.removeAt(0)")
+                printWriterManager!!.println("            blendMode = blendModeStack.removeAt(0)")
             }
         }
     }
