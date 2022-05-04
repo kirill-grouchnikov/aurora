@@ -53,6 +53,7 @@ allprojects {
     configurations {
         all {
             exclude(group = "org.jetbrains.compose.material", module = "material")
+            exclude(group = "org.jetbrains.compose.material3", module = "material3")
         }
     }
 }
