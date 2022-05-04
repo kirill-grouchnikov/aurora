@@ -16,8 +16,17 @@
 package org.pushingpixels.aurora.component.model
 
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
+
+object TabConstants {
+    val LeadingMargin = 2.dp
+    val TrailingMargin = 2.dp
+    val InterTabMargin = 2.dp
+    val TopPadding = 4.dp
+}
 
 data class TabContentModel(
     val text: String,
@@ -36,5 +45,9 @@ data class TabsPresentationModel(
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
     val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
-    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme
+    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    val leadingMargin: Dp = TabConstants.LeadingMargin,
+    val trailingMargin: Dp = TabConstants.TrailingMargin,
+    val interTabMargin: Dp = TabConstants.InterTabMargin,
+    val topPadding: Dp = TabConstants.TopPadding
 ) : PresentationModel

@@ -202,7 +202,7 @@ fun AuroraTabs(
             }
         })
 
-    Layout(modifier = modifier.fillMaxWidth(),
+    Layout(modifier = modifier.fillMaxWidth().padding(top = presentationModel.topPadding),
         content = {
             // Leftwards scroller
             CommandButtonProjection(
@@ -219,7 +219,13 @@ fun AuroraTabs(
             ).project()
 
             Box(modifier = Modifier.horizontalScroll(horizontalScrollState)) {
-                Row(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().wrapContentHeight().padding(
+                        start = presentationModel.leadingMargin,
+                        end = presentationModel.trailingMargin
+                    ),
+                    horizontalArrangement = Arrangement.spacedBy(presentationModel.interTabMargin)
+                ) {
                     for ((index, tabModel) in contentModel.tabs.withIndex()) {
                         AuroraCommandButton(
                             modifier = Modifier,
@@ -286,7 +292,10 @@ fun AuroraTabs(
             )
 
             // How much space does the scrollable content need?
-            var boxRequiredWidth = 0.0f
+            val sideMargins = presentationModel.leadingMargin.toPx() +
+                    presentationModel.trailingMargin.toPx()
+
+            var boxRequiredWidth = sideMargins
             var boxHeight = 0
             if (contentModel.tabs.isNotEmpty()) {
                 for (tabModel in contentModel.tabs) {
@@ -308,6 +317,9 @@ fun AuroraTabs(
                     boxRequiredWidth += commandSize.width
                     boxHeight = commandSize.height.toInt()
                 }
+                // Account for inter-tab margins (N-1 margins for N tabs)
+                boxRequiredWidth += (contentModel.tabs.size - 1) *
+                        presentationModel.interTabMargin.toPx()
             } else {
                 val forSizing = Command(text = "sample", action = {})
                 val commandPreLayoutInfo =
