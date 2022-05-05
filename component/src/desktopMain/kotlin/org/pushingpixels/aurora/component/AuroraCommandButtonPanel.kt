@@ -508,16 +508,17 @@ private fun CommandButtonGroupTitle(groupModelIndex: Int, groupModel: CommandGro
                 val horizontalExtra = 2 * bump
                 val verticalExtra = if (groupModelIndex == 0) bump else 0.0f
 
-                val outline = buttonShaper.getButtonOutline(
+                val borderOutline = buttonShaper.getButtonOutline(
                     width = width + horizontalExtra,
                     height = height + verticalExtra,
                     extraInsets = 0.5f,
                     isInner = false,
                     sides = Sides(straightSides = Side.values().toSet()),
+                    outlineKind = OutlineKind.Border,
                     density = this
                 )
 
-                val outlineBoundingRect = outline.bounds
+                val outlineBoundingRect = borderOutline.bounds
                 if (outlineBoundingRect.isEmpty) {
                     return@withTransform
                 }
@@ -528,13 +529,14 @@ private fun CommandButtonGroupTitle(groupModelIndex: Int, groupModel: CommandGro
                     componentState = ComponentState.Enabled
                 )
 
-                val innerOutline = if (borderPainter.isPaintingInnerOutline)
+                val innerBorderOutline = if (borderPainter.isPaintingInnerOutline)
                     buttonShaper.getButtonOutline(
                         width = width + horizontalExtra,
                         height = height + verticalExtra,
                         extraInsets = 1.0f,
                         isInner = true,
                         sides = Sides(straightSides = Side.values().toSet()),
+                        outlineKind = OutlineKind.Border,
                         density = this
                     ) else null
 
@@ -547,8 +549,8 @@ private fun CommandButtonGroupTitle(groupModelIndex: Int, groupModel: CommandGro
                     borderPainter.paintBorder(
                         this,
                         Size(width = width + horizontalExtra, height = height + verticalExtra),
-                        outline,
-                        innerOutline,
+                        borderOutline,
+                        innerBorderOutline,
                         borderColorScheme,
                         1.0f
                     )

@@ -47,7 +47,7 @@ import org.pushingpixels.aurora.theming.*
 
 @OptIn(AuroraInternalApi::class)
 @Composable
-fun AuroraTabs(
+internal fun AuroraTabs(
     contentModel: TabsContentModel,
     presentationModel: TabsPresentationModel = TabsPresentationModel(),
     horizontalScrollState: ScrollState = rememberScrollState(0),
@@ -91,7 +91,8 @@ fun AuroraTabs(
         backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
         iconActiveFilterStrategy = presentationModel.iconActiveFilterStrategy,
         iconEnabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
-        iconDisabledFilterStrategy = presentationModel.iconDisabledFilterStrategy
+        iconDisabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
+        sides = Sides(openSides = hashSetOf(Side.Bottom), straightSides = hashSetOf(Side.Bottom))
     )
     val contentLayoutManager = contentPresentationModel.presentationState.createLayoutManager(
         layoutDirection = layoutDirection,

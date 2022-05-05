@@ -36,7 +36,7 @@ import org.pushingpixels.aurora.theming.AuroraSkin
 import org.pushingpixels.aurora.theming.LocalTextStyle
 import org.pushingpixels.aurora.theming.LocalWindow
 
-@OptIn(ExperimentalComposeApi::class, AuroraInternalApi::class)
+@OptIn(AuroraInternalApi::class)
 @Composable
 fun Modifier.auroraContextMenu(
     enabled: Boolean = true,

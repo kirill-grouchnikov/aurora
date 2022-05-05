@@ -17,9 +17,9 @@ package org.pushingpixels.aurora.theming.shaper
 
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Density
 import org.pushingpixels.aurora.theming.AuroraTrait
+import org.pushingpixels.aurora.theming.OutlineKind
 import org.pushingpixels.aurora.theming.Sides
 
 /**
@@ -31,7 +31,8 @@ interface AuroraButtonShaper : AuroraTrait {
     /** Returns the outline path. */
     fun getButtonOutline(
         width: Float, height: Float, extraInsets: Float,
-        isInner: Boolean, sides: Sides, density: Density
+        isInner: Boolean, sides: Sides, outlineKind: OutlineKind,
+        density: Density
     ): Outline
 
     /**

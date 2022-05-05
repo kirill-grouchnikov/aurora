@@ -360,7 +360,7 @@ private fun Scrollbar(
                         width = width,
                         height = height,
                         radius = radius,
-                        straightSides = emptySet(),
+                        sides = null,
                         insets = insets
                     )
 

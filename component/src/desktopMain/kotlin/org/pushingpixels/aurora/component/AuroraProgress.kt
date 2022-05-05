@@ -256,7 +256,7 @@ internal fun AuroraIndeterminateLinearProgress(
             width = size.width,
             height = size.height,
             radius = radius,
-            straightSides = emptySet(),
+            sides = null,
             insets = 0.5f
         )
         drawOutline(
@@ -360,7 +360,7 @@ internal fun AuroraDeterminateLinearProgress(
             width = size.width,
             height = size.height,
             radius = radius,
-            straightSides = emptySet(),
+            sides = null,
             insets = 0.5f
         )
         drawOutline(

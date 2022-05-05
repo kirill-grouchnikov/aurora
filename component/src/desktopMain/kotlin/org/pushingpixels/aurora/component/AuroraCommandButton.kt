@@ -328,7 +328,7 @@ private fun Modifier.commandButtonActionClickable(
     }
 )
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeApi::class, AuroraInternalApi::class)
+@OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
 @Composable
 internal fun AuroraCommandButton(
     modifier: Modifier,
@@ -783,16 +783,17 @@ internal fun AuroraCommandButton(
                                 top = -actionAreaOffset.y
                             )
                         }) {
-                            val outline = buttonShaper.getButtonOutline(
+                            val fillOutline = buttonShaper.getButtonOutline(
                                 width = width,
                                 height = height,
                                 extraInsets = 0.5f,
                                 isInner = false,
                                 sides = presentationModel.sides,
+                                outlineKind = OutlineKind.Fill,
                                 density = this
                             )
 
-                            val outlineBoundingRect = outline.bounds
+                            val outlineBoundingRect = fillOutline.bounds
                             if (outlineBoundingRect.isEmpty) {
                                 return@withTransform
                             }
@@ -809,7 +810,7 @@ internal fun AuroraCommandButton(
                             fillPainter.paintContourBackground(
                                 this,
                                 buttonSize.asSize(),
-                                outline,
+                                fillOutline,
                                 drawingCache.colorScheme,
                                 actionAlpha
                             )
@@ -824,21 +825,31 @@ internal fun AuroraCommandButton(
                             drawingCache.colorScheme.isDark = borderIsDark
                             drawingCache.colorScheme.foreground = Color.Black
 
-                            val innerOutline =
+                            val borderOutline = buttonShaper.getButtonOutline(
+                                width = width,
+                                height = height,
+                                extraInsets = 0.5f,
+                                isInner = false,
+                                sides = presentationModel.sides,
+                                outlineKind = OutlineKind.Border,
+                                density = this
+                            )
+                            val innerBorderOutline =
                                 if (borderPainter.isPaintingInnerOutline) buttonShaper.getButtonOutline(
                                     width = width,
                                     height = height,
                                     extraInsets = 1.0f,
                                     isInner = true,
                                     sides = presentationModel.sides,
+                                    outlineKind = OutlineKind.Border,
                                     density = this
                                 ) else null
 
                             borderPainter.paintBorder(
                                 this,
                                 buttonSize.asSize(),
-                                outline,
-                                innerOutline,
+                                borderOutline,
+                                innerBorderOutline,
                                 drawingCache.colorScheme,
                                 actionAlpha
                             )
@@ -1000,16 +1011,17 @@ internal fun AuroraCommandButton(
                                 top = -popupAreaOffset.y
                             )
                         }) {
-                            val outline = buttonShaper.getButtonOutline(
+                            val fillOutline = buttonShaper.getButtonOutline(
                                 width = width,
                                 height = height,
                                 extraInsets = 0.5f,
                                 isInner = false,
                                 sides = presentationModel.sides,
+                                outlineKind = OutlineKind.Fill,
                                 density = this
                             )
 
-                            val outlineBoundingRect = outline.bounds
+                            val outlineBoundingRect = fillOutline.bounds
                             if (outlineBoundingRect.isEmpty) {
                                 return@withTransform
                             }
@@ -1026,7 +1038,7 @@ internal fun AuroraCommandButton(
                             fillPainter.paintContourBackground(
                                 this,
                                 buttonSize.asSize(),
-                                outline,
+                                fillOutline,
                                 drawingCache.colorScheme,
                                 popupAlpha
                             )
@@ -1041,21 +1053,31 @@ internal fun AuroraCommandButton(
                             drawingCache.colorScheme.isDark = borderIsDark
                             drawingCache.colorScheme.foreground = Color.Black
 
-                            val innerOutline =
+                            val borderOutline = buttonShaper.getButtonOutline(
+                                width = width,
+                                height = height,
+                                extraInsets = 0.5f,
+                                isInner = false,
+                                sides = presentationModel.sides,
+                                outlineKind = OutlineKind.Border,
+                                density = this
+                            )
+                            val innerBorderOutline =
                                 if (borderPainter.isPaintingInnerOutline) buttonShaper.getButtonOutline(
                                     width = width,
                                     height = height,
                                     extraInsets = 1.0f,
                                     isInner = true,
                                     sides = presentationModel.sides,
+                                    outlineKind = OutlineKind.Border,
                                     density = this
                                 ) else null
 
                             borderPainter.paintBorder(
                                 this,
                                 buttonSize.asSize(),
-                                outline,
-                                innerOutline,
+                                borderOutline,
+                                innerBorderOutline,
                                 drawingCache.colorScheme,
                                 popupAlpha
                             )

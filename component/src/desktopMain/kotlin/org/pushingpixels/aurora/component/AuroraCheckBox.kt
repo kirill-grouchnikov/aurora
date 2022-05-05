@@ -265,7 +265,7 @@ internal fun AuroraCheckBox(
                 width = this.size.width,
                 height = this.size.height,
                 radius = 3.0f.dp.toPx(),
-                straightSides = null,
+                sides = null,
                 insets = 0.5f
             )
 
@@ -296,7 +296,7 @@ internal fun AuroraCheckBox(
                 width = this.size.width,
                 height = this.size.height,
                 radius = 3.0f.dp.toPx() - 1,
-                straightSides = null,
+                sides = null,
                 insets = 2.0f
             ) else null
 

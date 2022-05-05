@@ -24,7 +24,6 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -36,7 +35,6 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
-import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.LayoutDirection
@@ -76,7 +74,7 @@ private fun Modifier.comboBoxLocator(topLeftOffset: AuroraOffset, size: AuroraSi
     ComboBoxLocator(topLeftOffset, size)
 )
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeApi::class, AuroraInternalApi::class)
+@OptIn(AuroraInternalApi::class)
 @Composable
 internal fun <E> AuroraComboBox(
     modifier: Modifier,
@@ -350,16 +348,17 @@ internal fun <E> AuroraComboBox(
                         clipOp = ClipOp.Intersect
                     )
                 }) {
-                    val outline = buttonShaper.getButtonOutline(
+                    val fillOutline = buttonShaper.getButtonOutline(
                         width = width,
                         height = height,
                         extraInsets = 0.5f,
                         isInner = false,
                         sides = Sides(),
+                        outlineKind = OutlineKind.Fill,
                         density = this
                     )
 
-                    val outlineBoundingRect = outline.bounds
+                    val outlineBoundingRect = fillOutline.bounds
                     if (outlineBoundingRect.isEmpty) {
                         return@withTransform
                     }
@@ -374,7 +373,7 @@ internal fun <E> AuroraComboBox(
                     drawingCache.colorScheme.isDark = fillIsDark
                     drawingCache.colorScheme.foreground = textColor
                     fillPainter.paintContourBackground(
-                        this, this.size, outline, drawingCache.colorScheme, alpha
+                        this, this.size, fillOutline, drawingCache.colorScheme, alpha
                     )
 
                     // Populate the cached color scheme for drawing the border
@@ -387,18 +386,29 @@ internal fun <E> AuroraComboBox(
                     drawingCache.colorScheme.isDark = borderIsDark
                     drawingCache.colorScheme.foreground = textColor
 
-                    val innerOutline = if (borderPainter.isPaintingInnerOutline)
+                    val borderOutline = buttonShaper.getButtonOutline(
+                        width = width,
+                        height = height,
+                        extraInsets = 0.5f,
+                        isInner = false,
+                        sides = Sides(),
+                        outlineKind = OutlineKind.Border,
+                        density = this
+                    )
+
+                    val innerBorderOutline = if (borderPainter.isPaintingInnerOutline)
                         buttonShaper.getButtonOutline(
                             width = width,
                             height = height,
                             extraInsets = 1.0f,
                             isInner = true,
                             sides = Sides(),
+                            outlineKind = OutlineKind.Border,
                             density = this
                         ) else null
 
                     borderPainter.paintBorder(
-                        this, this.size, outline, innerOutline, drawingCache.colorScheme, alpha
+                        this, this.size, borderOutline, innerBorderOutline, drawingCache.colorScheme, alpha
                     )
 
                     val arrowWidth = if (presentationModel.popupPlacementStrategy.isHorizontal)

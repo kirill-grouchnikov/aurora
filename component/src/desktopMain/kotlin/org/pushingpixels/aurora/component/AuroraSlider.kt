@@ -48,10 +48,7 @@ import org.pushingpixels.aurora.component.model.SliderContentModel
 import org.pushingpixels.aurora.component.model.SliderPresentationModel
 import org.pushingpixels.aurora.component.model.SliderSizingConstants
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.theming.AuroraSkin
-import org.pushingpixels.aurora.theming.ColorSchemeAssociationKind
-import org.pushingpixels.aurora.theming.ComponentState
-import org.pushingpixels.aurora.theming.Side
+import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
@@ -442,7 +439,7 @@ internal fun AuroraSlider(
                     width = drawingCache.trackRect.width,
                     height = drawingCache.trackRect.height,
                     radius = radius,
-                    straightSides = emptySet(),
+                    sides = null,
                     insets = 0.5f
                 )
                 drawOutline(
@@ -507,7 +504,7 @@ internal fun AuroraSlider(
                             width = selectionCenterX - drawingCache.trackRect.x,
                             height = drawingCache.trackRect.height,
                             radius = radius,
-                            straightSides = setOf(Side.Right),
+                            sides = Sides(straightSides = setOf(Side.Right)),
                             insets = 0.5f
                         )
                         drawOutline(
@@ -528,7 +525,7 @@ internal fun AuroraSlider(
                             width = drawingCache.trackRect.x + drawingCache.trackRect.width - selectionCenterX,
                             height = drawingCache.trackRect.height,
                             radius = radius,
-                            straightSides = setOf(Side.Right),
+                            sides = Sides(straightSides = setOf(Side.Right)),
                             insets = 0.5f
                         )
                         drawOutline(

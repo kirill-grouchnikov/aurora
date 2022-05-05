@@ -19,24 +19,24 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Path
+import org.pushingpixels.aurora.theming.OutlineKind
 import org.pushingpixels.aurora.theming.Side
+import org.pushingpixels.aurora.theming.Sides
 
 /**
- * Returns base outline for the specified parameters. The base outline is
- * a rectangle with rounded corners. Some corners may not be rounded based
- * on the contents of `straightSides` parameter.
- *
- * @param width Width of some UI component.
- * @param height Height of some UI component.
- * @param radius Corner radius.
- * @param straightSides Contains all sides which are straight.
- * @return The base outline for the specified parameters.
+ * Returns a base outline for the specified parameters. The base outline is
+ * a rectangle with rounded corners. Some corners may not be rounded based on
+ * the passed `sides`. If the `outlineKind` is `OutlineKind.Border` and the
+ * `sides` has open side(s), the returned outline will have a non-continuous path
+ * with "jumps" that correspond to the open side(s).
  */
 fun getBaseOutline(
     width: Float, height: Float,
-    radius: Float, straightSides: Set<Side>? = null,
-    insets: Float = 0.0f
+    radius: Float, sides: Sides? = null,
+    insets: Float = 0.0f, outlineKind: OutlineKind = OutlineKind.Border
 ): Outline {
+    val straightSides = sides?.straightSides
     val isTopLeftCorner = (straightSides != null
             && (straightSides.contains(Side.Left) || straightSides.contains(Side.Top)))
     val isTopRightCorner = (straightSides != null
@@ -46,27 +46,149 @@ fun getBaseOutline(
     val isBottomLeftCorner = (straightSides != null
             && (straightSides.contains(Side.Left) || straightSides.contains(Side.Bottom)))
 
-    // If all the sides are straight, the result is a simple rectangle
-    if (isTopLeftCorner && isTopRightCorner && isBottomRightCorner && isBottomLeftCorner) {
-        // Rectangle
-        return Outline.Rectangle(
-            rect = Rect(
+    val openSides = sides?.openSides
+    val hasOpenSides = (openSides != null) && openSides.isNotEmpty()
+
+    if (!hasOpenSides) {
+        // If all the sides are straight, the result is a simple rectangle
+        if (isTopLeftCorner && isTopRightCorner && isBottomRightCorner && isBottomLeftCorner) {
+            // Rectangle
+            return Outline.Rectangle(
+                rect = Rect(
+                    left = insets, top = insets,
+                    right = width - insets, bottom = height - insets
+                )
+            )
+        }
+
+        // Otherwise we have a rounded rectangle with potentially different corner radii
+        // based on which sides are straight
+        return Outline.Rounded(
+            roundRect = RoundRect(
                 left = insets, top = insets,
-                right = width - insets, bottom = height - insets
+                right = width - insets, bottom = height - insets,
+                topLeftCornerRadius = if (isTopLeftCorner) CornerRadius.Zero else CornerRadius(radius, radius),
+                topRightCornerRadius = if (isTopRightCorner) CornerRadius.Zero else CornerRadius(radius, radius),
+                bottomRightCornerRadius = if (isBottomRightCorner) CornerRadius.Zero else CornerRadius(radius, radius),
+                bottomLeftCornerRadius = if (isBottomLeftCorner) CornerRadius.Zero else CornerRadius(radius, radius)
             )
         )
     }
+    // Open sides are handled differently for fill and border outline kinds. For fill we need
+    // to return a fully continuous and closed path so that it can be filled. For border, we
+    // respect the open sides, using moveTo instead of lineTo for the relevant side(s).
+    val isTopOpen = openSides!!.contains(Side.Top) && (outlineKind == OutlineKind.Border)
+    val isBottomOpen = openSides.contains(Side.Bottom) && (outlineKind == OutlineKind.Border)
+    val isLeftOpen = openSides.contains(Side.Left) && (outlineKind == OutlineKind.Border)
+    val isRightOpen = openSides.contains(Side.Right) && (outlineKind == OutlineKind.Border)
 
-    // Otherwise we have a rounded rectangle with potentially different corner radii
-    // based on which sides are straight
-    return Outline.Rounded(
-        roundRect = RoundRect(
-            left = insets, top = insets,
-            right = width - insets, bottom = height - insets,
-            topLeftCornerRadius = if (isTopLeftCorner) CornerRadius.Zero else CornerRadius(radius, radius),
-            topRightCornerRadius = if (isTopRightCorner) CornerRadius.Zero else CornerRadius(radius, radius),
-            bottomRightCornerRadius = if (isBottomRightCorner) CornerRadius.Zero else CornerRadius(radius, radius),
-            bottomLeftCornerRadius = if (isBottomLeftCorner) CornerRadius.Zero else CornerRadius(radius, radius)
+    val path = Path()
+    // Start in top left
+    if (isTopLeftCorner) {
+        path.moveTo(x = insets, y = insets)
+    } else {
+        path.moveTo(x = insets + radius, y = insets)
+    }
+    // To top right
+    if (isTopOpen) {
+        if (isTopRightCorner) {
+            path.moveTo(x = width - insets, y = insets)
+        } else {
+            path.moveTo(x = width - insets - radius, y = insets)
+        }
+    } else {
+        if (isTopRightCorner) {
+            path.lineTo(x = width - insets, y = insets)
+        } else {
+            path.lineTo(x = width - insets - radius, y = insets)
+        }
+    }
+    // Rounded top right corner
+    if (!isTopRightCorner) {
+        path.arcTo(
+            rect = Rect(
+                left = width - insets - 2 * radius,
+                top = insets,
+                right = width - insets,
+                bottom = insets + 2 * radius
+            ), startAngleDegrees = 270.0f, sweepAngleDegrees = 90.0f, forceMoveTo = false
         )
-    )
+    }
+    // To bottom right
+    if (isRightOpen) {
+        if (isBottomRightCorner) {
+            path.moveTo(x = width - insets, y = height - insets)
+        } else {
+            path.moveTo(x = width - insets, y = height - insets - radius)
+        }
+    } else {
+        if (isBottomRightCorner) {
+            path.lineTo(x = width - insets, y = height - insets)
+        } else {
+            path.lineTo(x = width - insets, y = height - insets - radius)
+        }
+    }
+    // Rounded bottom right corner
+    if (!isBottomRightCorner) {
+        path.arcTo(
+            rect = Rect(
+                left = width - insets - 2 * radius,
+                top = height - insets - 2 * radius,
+                right = width - insets,
+                bottom = height - insets
+            ), startAngleDegrees = 0.0f, sweepAngleDegrees = 90.0f, forceMoveTo = false
+        )
+    }
+    // To bottom left
+    if (isBottomOpen) {
+        if (isBottomLeftCorner) {
+            path.moveTo(x = insets, y = height - insets)
+        } else {
+            path.moveTo(x = insets + radius, y = height - insets)
+        }
+    } else {
+        if (isBottomLeftCorner) {
+            path.lineTo(x = insets, y = height - insets)
+        } else {
+            path.lineTo(x = insets + radius, y = height - insets)
+        }
+    }
+    // Rounded bottom left corner
+    if (!isBottomLeftCorner) {
+        path.arcTo(
+            rect = Rect(
+                left = insets,
+                top = height - insets - 2 * radius,
+                right = insets + 2 * radius,
+                bottom = height - insets
+            ), startAngleDegrees = 90.0f, sweepAngleDegrees = 90.0f, forceMoveTo = false
+        )
+    }
+    // To top left
+    if (isLeftOpen) {
+        if (isTopLeftCorner) {
+            path.moveTo(x = insets, y = insets)
+        } else {
+            path.moveTo(x = insets, y = insets + radius)
+        }
+    } else {
+        if (isTopLeftCorner) {
+            path.lineTo(x = insets, y = insets)
+        } else {
+            path.lineTo(x = insets, y = insets + radius)
+        }
+    }
+    // Rounded top left corner
+    if (!isTopLeftCorner) {
+        path.arcTo(
+            rect = Rect(
+                left = insets,
+                top = insets,
+                right = insets + 2 * radius,
+                bottom = insets + 2 * radius
+            ), startAngleDegrees = 180.0f, sweepAngleDegrees = 90.0f, forceMoveTo = false
+        )
+    }
+
+    return Outline.Generic(path = path)
 }

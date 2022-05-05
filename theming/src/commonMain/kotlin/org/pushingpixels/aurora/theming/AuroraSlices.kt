@@ -669,6 +669,11 @@ data class Sides(
     val straightSides: Set<Side> = emptySet()
 )
 
+enum class OutlineKind {
+    Fill,
+    Border
+}
+
 /**
  * Enumerates available background appearance strategies.
  *
