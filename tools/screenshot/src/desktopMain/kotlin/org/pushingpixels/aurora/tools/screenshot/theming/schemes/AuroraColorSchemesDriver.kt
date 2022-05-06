@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.tools.screenshot.theming.schemes
 
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.theming.AuroraSkinDefinition
 import org.pushingpixels.aurora.theming.IconFilterStrategy
