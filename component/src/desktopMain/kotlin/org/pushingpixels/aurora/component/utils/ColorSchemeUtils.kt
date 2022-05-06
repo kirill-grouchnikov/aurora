@@ -378,7 +378,7 @@ internal fun getStateAwareColor(
 
 @OptIn(AuroraInternalApi::class)
 internal fun getTextColor(
-    modelStateInfo: ModelStateInfo,
+    modelStateInfo: ModelStateInfo?,
     currState: ComponentState,
     skinColors: AuroraSkinColors,
     decorationAreaType: DecorationAreaType,
@@ -386,7 +386,7 @@ internal fun getTextColor(
     isTextInFilledArea: Boolean
 ): Color {
     var activeStates: Map<ComponentState, StateContributionInfo>? =
-        modelStateInfo.stateContributionMap
+        modelStateInfo?.stateContributionMap
     var tweakedCurrState = currState
     // Special case for when text is not drawn in the filled area
     if (!isTextInFilledArea) {

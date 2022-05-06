@@ -455,9 +455,18 @@ internal fun AuroraTabButton(
                 )
             }
 
+            // Special handling of tabs under skins that show partial visuals
+            val isTextOnParentBackground = (tabDefinition.tabEndFade <= 0.5f)
+            var currentStateForText = currentActionState.value
+            if (isTextOnParentBackground) {
+                // Ignore all other "aspects" of tab's state
+                currentStateForText =
+                    if (command.isActionEnabled) ComponentState.Enabled else ComponentState.DisabledUnselected
+            }
+            val modelStateInfoForText = if (isTextOnParentBackground) null else actionModelStateInfo
             for (text in preLayoutInfo.texts) {
                 TabButtonTextContent(
-                    text, actionModelStateInfo, currentActionState.value, resolvedTextStyle,
+                    text, modelStateInfoForText, currentStateForText, resolvedTextStyle,
                     presentationModel.textOverflow
                 )
             }
@@ -531,7 +540,7 @@ internal fun AuroraTabButton(
 @OptIn(AuroraInternalApi::class)
 @Composable
 private fun TabButtonTextContent(
-    text: String, modelStateInfo: ModelStateInfo, currState: ComponentState,
+    text: String, modelStateInfo: ModelStateInfo?, currState: ComponentState,
     style: TextStyle, overflow: TextOverflow
 ) {
     val decorationAreaType = AuroraSkin.decorationAreaType
@@ -548,10 +557,9 @@ private fun TabButtonTextContent(
         isTextInFilledArea = true
     )
 
-    // Pass our text color and model state snapshot to the children
+    // Pass our text color to the children
     CompositionLocalProvider(
-        LocalTextColor provides textColor,
-        LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currState)
+        LocalTextColor provides textColor
     ) {
         // Since we're passing the resolved style that has the default color,
         // also explicitly pass our text color to override the one set in the style

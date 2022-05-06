@@ -15,10 +15,7 @@
  */
 package org.pushingpixels.aurora.demo
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,8 +25,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.model.TabContentModel
 import org.pushingpixels.aurora.component.model.TabsContentModel
+import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.projection.TabsProjection
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.theming.AuroraSkinDefinition
@@ -75,6 +74,9 @@ fun AuroraWindowScope.DemoTabsContent(
     var state by remember { mutableStateOf(0) }
 
     Column(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.padding(vertical = 6.dp, horizontal = 8.dp)) {
+            AuroraSkinSwitcher(auroraSkinDefinition)
+        }
         TabsProjection(contentModel = TabsContentModel(
             tabs = listOf(
                 TabContentModel(text = "Tab 1"),
@@ -88,9 +90,9 @@ fun AuroraWindowScope.DemoTabsContent(
             selectedTabIndex = state,
             onTriggerTabSelected = { state = it }
         )).project(modifier = Modifier.fillMaxWidth())
-        BasicText(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            text = "Text tab ${state + 1} selected"
+
+        LabelProjection(contentModel = LabelContentModel(text = "Text tab ${state + 1} selected")).project(
+            modifier = Modifier.padding(all = 12.dp).align(Alignment.CenterHorizontally),
         )
     }
 }
