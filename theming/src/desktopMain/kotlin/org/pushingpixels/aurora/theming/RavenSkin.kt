@@ -150,7 +150,8 @@ fun ravenSkin(): AuroraSkinDefinition {
             borderPainter = GlassBorderPainter(),
             decorationPainter = ArcDecorationPainter()
         ),
-        buttonShaper = ClassicButtonShaper()
+        buttonShaper = ClassicButtonShaper(),
+        tabDefinition = AuroraSkinTabDefinition(tabStartFade = 0.18f, tabEndFade = 0.18f)
     )
 }
 

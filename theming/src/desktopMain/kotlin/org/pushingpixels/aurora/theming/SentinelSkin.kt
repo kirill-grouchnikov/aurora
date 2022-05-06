@@ -248,6 +248,7 @@ fun sentinelSkin(): AuroraSkinDefinition {
         displayName = "Sentinel",
         colors = sentinelSkinColors(),
         painters = painters,
-        buttonShaper = ClassicButtonShaper()
+        buttonShaper = ClassicButtonShaper(),
+        tabDefinition = AuroraSkinTabDefinition(tabStartFade = 0.18f, tabEndFade = 0.18f)
     )
 }

@@ -259,6 +259,7 @@ fun marinerSkin(): AuroraSkinDefinition {
         displayName = "Mariner",
         colors = marinerSkinColors(),
         painters = painters,
-        buttonShaper = ClassicButtonShaper()
+        buttonShaper = ClassicButtonShaper(),
+        tabDefinition = AuroraSkinTabDefinition(tabStartFade = 0.15f, tabEndFade = 0.25f)
     )
 }

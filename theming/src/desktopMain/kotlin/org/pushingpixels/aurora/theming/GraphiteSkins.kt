@@ -312,7 +312,8 @@ fun graphiteAquaSkin(): AuroraSkinDefinition {
             )
         },
         painters = graphiteBasePainters(),
-        buttonShaper = ClassicButtonShaper()
+        buttonShaper = ClassicButtonShaper(),
+        tabDefinition = AuroraSkinTabDefinition(tabStartFade = 0.18f, tabEndFade = 0.18f)
     )
 }
 
@@ -379,7 +380,8 @@ fun graphiteChalkSkin(): AuroraSkinDefinition {
             )
         },
         painters = graphiteBasePainters(borderPainter = ClassicBorderPainter()),
-        buttonShaper = ClassicButtonShaper()
+        buttonShaper = ClassicButtonShaper(),
+        tabDefinition = AuroraSkinTabDefinition(tabStartFade = 0.18f, tabEndFade = 0.18f)
     )
 }
 
@@ -417,7 +419,8 @@ fun graphiteGlassSkin(): AuroraSkinDefinition {
             ), DecorationAreaType.Toolbar)
 
         },
-        buttonShaper = ClassicButtonShaper()
+        buttonShaper = ClassicButtonShaper(),
+        tabDefinition = AuroraSkinTabDefinition(tabStartFade = 0.18f, tabEndFade = 0.18f)
     )
 }
 
@@ -431,7 +434,8 @@ fun graphiteElectricSkin(): AuroraSkinDefinition {
                 .withHighlightsAccent("Graphite Electric")
         ),
         painters = graphiteBasePainters(),
-        buttonShaper = ClassicButtonShaper()
+        buttonShaper = ClassicButtonShaper(),
+        tabDefinition = AuroraSkinTabDefinition(tabStartFade = 0.18f, tabEndFade = 0.18f)
     )
 }
 
@@ -445,7 +449,8 @@ fun graphiteGoldSkin(): AuroraSkinDefinition {
                 .withHighlightsAccent("Graphite Gold")
         ),
         painters = graphiteBasePainters(),
-        buttonShaper = ClassicButtonShaper()
+        buttonShaper = ClassicButtonShaper(),
+        tabDefinition = AuroraSkinTabDefinition(tabStartFade = 0.18f, tabEndFade = 0.18f)
     )
 }
 
@@ -459,7 +464,8 @@ fun graphiteSiennaSkin(): AuroraSkinDefinition {
                 .withHighlightsAccent("Graphite Sienna")
         ),
         painters = graphiteBasePainters(),
-        buttonShaper = ClassicButtonShaper()
+        buttonShaper = ClassicButtonShaper(),
+        tabDefinition = AuroraSkinTabDefinition(tabStartFade = 0.18f, tabEndFade = 0.18f)
     )
 }
 
@@ -497,7 +503,8 @@ fun graphiteSunsetSkin(): AuroraSkinDefinition {
             )
         },
         painters = graphiteBasePainters(),
-        buttonShaper = ClassicButtonShaper()
+        buttonShaper = ClassicButtonShaper(),
+        tabDefinition = AuroraSkinTabDefinition(tabStartFade = 0.18f, tabEndFade = 0.18f)
     )
 }
 

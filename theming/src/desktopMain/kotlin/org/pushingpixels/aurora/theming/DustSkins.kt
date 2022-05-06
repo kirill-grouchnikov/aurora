@@ -200,7 +200,8 @@ fun dustSkin(): AuroraSkinDefinition {
                 .withHighlightsAccent("Dust Highlight")
         ),
         painters = dustBasePainters(),
-        buttonShaper = ClassicButtonShaper()
+        buttonShaper = ClassicButtonShaper(),
+        tabDefinition = AuroraSkinTabDefinition(tabStartFade = 0.1f, tabEndFade = 0.3f)
     )
 }
 
@@ -216,7 +217,8 @@ fun dustCoffeeSkin(): AuroraSkinDefinition {
                 .withHighlightsAccent("Dust Coffee Text Highlight")
         ),
         painters = dustBasePainters(),
-        buttonShaper = ClassicButtonShaper()
+        buttonShaper = ClassicButtonShaper(),
+        tabDefinition = AuroraSkinTabDefinition(tabStartFade = 0.1f, tabEndFade = 0.3f)
     )
 }
 
