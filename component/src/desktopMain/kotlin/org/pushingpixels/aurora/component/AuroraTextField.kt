@@ -95,7 +95,7 @@ internal fun AuroraTextField(
     )
 }
 
-@OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
+@OptIn(AuroraInternalApi::class)
 @Composable
 internal fun AuroraTextField(
     modifier: Modifier = Modifier,

@@ -23,7 +23,6 @@ import org.pushingpixels.aurora.window.auroraApplication
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
-@OptIn(ExperimentalComposeUiApi::class)
 fun main(args: Array<String>) = auroraApplication {
     val auroraSkins = getAuroraSkins()
     val counter = AtomicInteger(auroraSkins.size)

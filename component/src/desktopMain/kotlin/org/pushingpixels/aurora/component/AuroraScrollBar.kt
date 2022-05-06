@@ -141,7 +141,7 @@ fun AuroraHorizontalScrollbar(
     isVertical = false
 )
 
-@OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
+@OptIn(AuroraInternalApi::class)
 @Composable
 private fun Scrollbar(
     adapter: ScrollbarAdapter,

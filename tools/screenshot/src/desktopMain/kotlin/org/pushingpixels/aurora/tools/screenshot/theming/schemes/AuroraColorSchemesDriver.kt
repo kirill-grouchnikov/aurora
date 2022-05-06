@@ -79,7 +79,6 @@ private fun getAuroraSchemeBasedSkins(): List<Pair<String, AuroraSkinDefinition>
     )
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 fun main(args: Array<String>) = auroraApplication {
     val auroraSkins = getAuroraSchemeBasedSkins()
     val counter = AtomicInteger(auroraSkins.size)

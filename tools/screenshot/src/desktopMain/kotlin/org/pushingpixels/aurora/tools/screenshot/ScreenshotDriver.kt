@@ -36,7 +36,7 @@ import org.pushingpixels.aurora.window.AuroraWindow
 import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
 
-@OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
+@OptIn(AuroraInternalApi::class)
 @Composable
 fun AuroraApplicationScope.screenshot(
     skin: AuroraSkinDefinition,
