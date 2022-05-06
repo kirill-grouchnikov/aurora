@@ -228,10 +228,8 @@ internal fun AuroraTabs(
                     horizontalArrangement = Arrangement.spacedBy(presentationModel.interTabMargin)
                 ) {
                     for ((index, tabModel) in contentModel.tabs.withIndex()) {
-                        AuroraCommandButton(
+                        AuroraTabButton(
                             modifier = Modifier,
-                            actionInteractionSource = remember { MutableInteractionSource() },
-                            popupInteractionSource = remember { MutableInteractionSource() },
                             command = Command(
                                 text = tabModel.text,
                                 icon = tabModel.icon,
@@ -244,9 +242,7 @@ internal fun AuroraTabs(
                                     }
                                 }
                             ),
-                            parentWindow = window,
                             presentationModel = contentPresentationModel,
-                            overlays = mapOf()
                         )
                     }
                 }

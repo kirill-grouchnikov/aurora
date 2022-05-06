@@ -65,6 +65,12 @@ object AuroraSkin {
         @Composable
         @ReadOnlyComposable
         get() = LocalAnimationConfig.current
+
+    @OptIn(AuroraInternalApi::class)
+    val tabDefinition: AuroraSkinTabDefinition
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalSkinTabDefinition.current
 }
 
 @OptIn(AuroraInternalApi::class)
@@ -72,11 +78,14 @@ object AuroraSkin {
 fun resolveAuroraDefaults() =
     resolveDefaults(LocalTextStyle.current, LocalLayoutDirection.current)
 
+data class AuroraSkinTabDefinition(val tabStartFade: Float = 0.1f, val tabEndFade: Float = 0.3f)
+
 data class AuroraSkinDefinition(
     override val displayName: String,
     val colors: AuroraSkinColors,
     val buttonShaper: AuroraButtonShaper,
-    val painters: AuroraPainters
+    val painters: AuroraPainters,
+    val tabDefinition: AuroraSkinTabDefinition = AuroraSkinTabDefinition()
 ) : AuroraTrait
 
 class AccentBuilder {

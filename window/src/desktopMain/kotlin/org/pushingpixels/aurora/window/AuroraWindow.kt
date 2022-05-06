@@ -594,6 +594,7 @@ fun AuroraApplicationScope.AuroraWindow(
                 colors = skin.value.colors,
                 buttonShaper = skin.value.buttonShaper,
                 painters = skin.value.painters,
+                tabDefinition = skin.value.tabDefinition,
                 animationConfig = AuroraSkin.animationConfig
             ) {
                 density.value = LocalDensity.current
@@ -686,6 +687,7 @@ fun AuroraApplicationScope.AuroraWindow(
                 colors = skin.colors,
                 buttonShaper = skin.buttonShaper,
                 painters = skin.painters,
+                tabDefinition = skin.tabDefinition,
                 animationConfig = AuroraSkin.animationConfig
             ) {
                 density.value = LocalDensity.current
@@ -757,6 +759,7 @@ internal fun AuroraSkin(
     buttonShaper: AuroraButtonShaper = AuroraSkin.buttonShaper,
     painters: AuroraPainters = AuroraSkin.painters,
     animationConfig: AnimationConfig = AuroraSkin.animationConfig,
+    tabDefinition: AuroraSkinTabDefinition = AuroraSkin.tabDefinition,
     content: @Composable () -> Unit
 ) {
     CompositionLocalProvider(
@@ -766,6 +769,7 @@ internal fun AuroraSkin(
         LocalButtonShaper provides buttonShaper,
         LocalPainters provides painters,
         LocalAnimationConfig provides animationConfig,
+        LocalSkinTabDefinition provides tabDefinition
     ) {
         content()
     }

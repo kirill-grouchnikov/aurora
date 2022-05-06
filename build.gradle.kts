@@ -54,6 +54,12 @@ allprojects {
         all {
             exclude(group = "org.jetbrains.compose.material", module = "material")
             exclude(group = "org.jetbrains.compose.material3", module = "material3")
+            resolutionStrategy.eachDependency {
+                if (requested.group == "org.jetbrains.skiko") {
+                    useVersion("0.7.18")
+                    because("Pin to version that has shader bindings")
+                }
+            }
         }
     }
 }

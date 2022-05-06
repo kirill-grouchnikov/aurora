@@ -54,6 +54,10 @@ data class AnimationConfig(
 
 @AuroraInternalApi
 val LocalAnimationConfig = staticCompositionLocalOf { AnimationConfig() }
+
+@AuroraInternalApi
+val LocalSkinTabDefinition = staticCompositionLocalOf { AuroraSkinTabDefinition() }
+
 @AuroraInternalApi
 val LocalSkinColors = staticCompositionLocalOf<AuroraSkinColors> {
     error("LocalSkinColors not provided")
