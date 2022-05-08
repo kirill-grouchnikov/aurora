@@ -16,10 +16,7 @@
 package org.pushingpixels.aurora.tools.screenshot
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -112,6 +109,18 @@ fun AuroraApplicationScope.ScreenshotContent(
             AuroraDecorationArea(decorationAreaType = DecorationAreaType.Toolbar) {
                 ScreenshotToolbar(iconEnabledFilterStrategy = toolbarIconEnabledFilterStrategy)
             }
+
+            var tabState by remember { mutableStateOf(1) }
+            TabsProjection(contentModel = TabsContentModel(
+                tabs = listOf(
+                    TabContentModel(text = "Regular"),
+                    TabContentModel(text = "Sample"),
+                    TabContentModel(text = "Renderers"),
+                ),
+                selectedTabIndex = tabState,
+                onTriggerTabSelected = { tabState = it }
+            )).project(modifier = Modifier.fillMaxWidth())
+
             Row(modifier = Modifier.weight(weight = 1.0f, fill = true).padding(4.dp)) {
                 Column(modifier = Modifier.fillMaxWidth(fraction = 0.5f).fillMaxSize()) {
                     CheckBoxProjection(contentModel = SelectorContentModel(
