@@ -15,18 +15,23 @@
  */
 package org.pushingpixels.aurora.component
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -44,6 +49,7 @@ import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
 import org.pushingpixels.aurora.component.utils.drawDoubleArrow
 import org.pushingpixels.aurora.theming.*
+import kotlin.math.max
 
 @OptIn(AuroraInternalApi::class)
 @Composable
@@ -59,7 +65,6 @@ internal fun AuroraTabs(
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
     val fontFamilyResolver = LocalFontFamilyResolver.current
-    val window = LocalWindow.current
 
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
 
@@ -99,6 +104,12 @@ internal fun AuroraTabs(
         density = density,
         textStyle = resolvedTextStyle,
         fontFamilyResolver = fontFamilyResolver
+    )
+
+    val underlineScheme = AuroraSkin.colors.getColorScheme(
+        decorationAreaType = AuroraSkin.decorationAreaType,
+        associationKind = ColorSchemeAssociationKind.TabBorder,
+        componentState = ComponentState.Enabled
     )
 
     val scope = rememberCoroutineScope()
@@ -220,32 +231,93 @@ internal fun AuroraTabs(
             ).project()
 
             Box(modifier = Modifier.horizontalScroll(horizontalScrollState)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth().wrapContentHeight().padding(
-                        start = presentationModel.leadingMargin,
-                        end = presentationModel.trailingMargin
-                    ),
-                    horizontalArrangement = Arrangement.spacedBy(presentationModel.interTabMargin)
-                ) {
-                    for ((index, tabModel) in contentModel.tabs.withIndex()) {
-                        AuroraTabButton(
-                            modifier = Modifier,
-                            command = Command(
-                                text = tabModel.text,
-                                icon = tabModel.icon,
-                                isActionEnabled = tabModel.isEnabled,
-                                isActionToggle = true,
-                                isActionToggleSelected = (index == contentModel.selectedTabIndex),
-                                onTriggerActionToggleSelectedChange = {
-                                    if (it) {
-                                        contentModel.onTriggerTabSelected.invoke(index)
+                Layout(
+                    modifier = Modifier.fillMaxWidth(),
+                    content = {
+                        for ((index, tabModel) in contentModel.tabs.withIndex()) {
+                            AuroraTabButton(
+                                modifier = Modifier,
+                                command = Command(
+                                    text = tabModel.text,
+                                    icon = tabModel.icon,
+                                    isActionEnabled = tabModel.isEnabled,
+                                    isActionToggle = true,
+                                    isActionToggleSelected = (index == contentModel.selectedTabIndex),
+                                    onTriggerActionToggleSelectedChange = {
+                                        if (it) {
+                                            contentModel.onTriggerTabSelected.invoke(index)
+                                        }
                                     }
+                                ),
+                                presentationModel = contentPresentationModel,
+                            )
+                        }
+
+                        // Left underline
+                        Canvas(modifier = Modifier) {
+                            drawRect(color = underlineScheme.darkColor, topLeft = Offset.Zero, size = size)
+                        }
+                        // Right underline
+                        Canvas(modifier = Modifier) {
+                            drawRect(color = underlineScheme.darkColor, topLeft = Offset.Zero, size = size)
+                        }
+                    },
+                    measurePolicy = { measurables, constraints ->
+                        val ltr = (layoutDirection == LayoutDirection.Ltr)
+                        val leadingMarginPx = presentationModel.leadingMargin.toPx()
+                        val trailingMarginPx = presentationModel.trailingMargin.toPx()
+
+                        // Process tab buttons
+                        val tabButtonMeasurables = measurables.subList(0, measurables.size - 2)
+                        val tabButtonPlaceables = tabButtonMeasurables.map { it.measure(Constraints()) }
+                        val height = tabButtonPlaceables.maxOf { it.measuredHeight }
+                        val contentWidth = tabButtonPlaceables.sumOf { it.measuredWidth } +
+                                (tabButtonPlaceables.size - 1) * presentationModel.interTabMargin.toPx()
+
+                        val fullWidth = max(constraints.minWidth, contentWidth.toInt()) +
+                                (leadingMarginPx + trailingMarginPx).toInt()
+
+                        // Process underlines
+                        val leftUnderlineMeasurable = measurables[measurables.size - 2]
+                        val rightUnderlineMeasurable = measurables[measurables.size - 1]
+                        val leftUnderlinePlaceable: Placeable
+                        val rightUnderlinePlaceable: Placeable
+                        if (ltr) {
+                            val leftUnderlineStart = 0
+                            var leftUnderlineEnd = leadingMarginPx
+                            if (contentModel.selectedTabIndex > 0) {
+                                leftUnderlineEnd += tabButtonPlaceables.subList(0, contentModel.selectedTabIndex).sumOf { it.measuredWidth }
+                                leftUnderlineEnd += (contentModel.selectedTabIndex * presentationModel.interTabMargin.toPx())
+                            }
+                            leftUnderlinePlaceable = leftUnderlineMeasurable.measure(
+                                Constraints.fixed(width = (leftUnderlineEnd - leftUnderlineStart).toInt(), height = 1))
+                            val rightUnderlineStart = leftUnderlineEnd + tabButtonPlaceables[contentModel.selectedTabIndex].measuredWidth
+                            val rightUnderlineEnd = fullWidth
+                            rightUnderlinePlaceable = rightUnderlineMeasurable.measure(
+                                Constraints.fixed(width = (rightUnderlineEnd - rightUnderlineStart).toInt(), height = 1))
+                        } else {
+                            leftUnderlinePlaceable = leftUnderlineMeasurable.measure(
+                                Constraints.fixed(width = fullWidth / 2 - 20, height = 1))
+                            rightUnderlinePlaceable = rightUnderlineMeasurable.measure(
+                                Constraints.fixed(width = fullWidth / 2 - 20, height = 1))
+                        }
+
+                        layout(width = fullWidth, height = height) {
+                            if (ltr) {
+                                var x = leadingMarginPx
+                                for (tabButtonPlaceable in tabButtonPlaceables) {
+                                    tabButtonPlaceable.placeRelative(x.toInt(), 0)
+                                    x += (tabButtonPlaceable.width + presentationModel.interTabMargin.toPx())
                                 }
-                            ),
-                            presentationModel = contentPresentationModel,
-                        )
+                                leftUnderlinePlaceable.placeRelative(0, height - 1)
+                                rightUnderlinePlaceable.placeRelative(
+                                    fullWidth - rightUnderlinePlaceable.width,
+                                    height - 1
+                                )
+                            }
+                        }
                     }
-                }
+                )
             }
 
             // Rightwards scroller
@@ -262,11 +334,21 @@ internal fun AuroraTabs(
                 )
             ).project()
 
+            // Leading underline to extend the whole width of the tabs and scroller buttons
+            Canvas(modifier = Modifier) {
+                drawRect(color = underlineScheme.darkColor, topLeft = Offset.Zero, size = size)
+            }
+            // Trailing underline to extend the whole width of the tabs and scroller buttons
+            Canvas(modifier = Modifier) {
+                drawRect(color = underlineScheme.darkColor, topLeft = Offset.Zero, size = size)
+            }
         },
         measurePolicy = { measurables, constraints ->
             val leftScrollerMeasurable = measurables[0]
             val contentMeasurable = measurables[1]
             val rightScrollerMeasurable = measurables[2]
+            val leftUnderlineMeasurable = measurables[3]
+            val rightUnderlineMeasurable = measurables[4]
 
             // How big is the left scroller?
             val leftScrollerPreLayoutInfo =
@@ -352,6 +434,20 @@ internal fun AuroraTabs(
                 Constraints.fixed(contentWidth.toInt(), boxHeight)
             )
 
+            val leftUnderlineWidth = if (needScrollers) leftScrollerPlaceable.measuredWidth else 0
+            val rightUnderlineWidth = if (needScrollers) {
+                rightScrollerPlaceable.measuredWidth
+            } else {
+                contentWidth.toInt() - boxRequiredWidth.toInt()
+            }
+
+            val leftUnderlinePlaceable = leftUnderlineMeasurable.measure(
+                Constraints.fixed(leftUnderlineWidth, 1)
+            )
+            val rightUnderlinePlaceable = rightUnderlineMeasurable.measure(
+                Constraints.fixed(rightUnderlineWidth, 1)
+            )
+
             layout(width = constraints.maxWidth, height = boxHeight) {
                 if (leftScrollerPlaceable.width > 0) {
                     leftScrollerPlaceable.placeRelative(0, 0)
@@ -363,6 +459,9 @@ internal fun AuroraTabs(
                     )
                 }
                 contentPlaceable.placeRelative(leftScrollerPlaceable.width, 0)
+                leftUnderlinePlaceable.placeRelative(0, boxHeight - 1)
+                rightUnderlinePlaceable.placeRelative(
+                    constraints.maxWidth - rightUnderlinePlaceable.measuredWidth, boxHeight - 1)
             }
         })
 }
