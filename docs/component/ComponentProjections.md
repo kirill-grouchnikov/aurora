@@ -18,6 +18,7 @@ Here is the list of all component projections provided by Aurora
 | **Vertical separator** | SeparatorContentModel | SeparatorPresentationModel | VerticalSeparatorProjection |
 | **Horizontal separator** | SeparatorContentModel | SeparatorPresentationModel | HorizontalSeparatorProjection |
 | **Slider** | SliderContentModel | SliderPresentationModel | SliderProjection |
+| **Tabs** | TabsContentModel | TabsPresentationModel | TabsProjection |
 | **Text field** | TextFieldValueContentModel | TextFieldPresentationModel | TextFieldValueProjection |
 | | TextFieldStringContentModel | TextFieldPresentationModel | TextFieldStringProjection |
 
