@@ -81,7 +81,7 @@ fun AuroraWindowScope.DemoTabsContent(
             tabs = listOf(
                 TabContentModel(text = "Tab 1"),
                 TabContentModel(text = "Tab 2"),
-                TabContentModel(text = "Tab 3"),
+                TabContentModel(text = "Tab 3", isEnabled = false),
                 TabContentModel(text = "Tab 4"),
                 TabContentModel(text = "Tab 5"),
                 TabContentModel(text = "Tab 6"),

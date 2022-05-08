@@ -714,4 +714,12 @@ enum class PopupPlacementStrategy(val isHorizontal: Boolean) {
     CenteredVertically(false)
 }
 
+enum class TabContentSeparatorKind {
+    /** A single line under the tabs, with a break under the currently selected tab. */
+    Single,
+
+    /** A double line under the tabs, with a break in the top line under the currently selected tab. */
+    Double
+}
+
 

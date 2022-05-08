@@ -20,12 +20,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
+import org.pushingpixels.aurora.theming.TabContentSeparatorKind
 
 object TabConstants {
     val LeadingMargin = 2.dp
     val TrailingMargin = 2.dp
     val InterTabMargin = 2.dp
     val TopPadding = 4.dp
+    val DoubleSeparatorGap = 2.dp
 }
 
 data class TabContentModel(
@@ -49,5 +51,6 @@ data class TabsPresentationModel(
     val leadingMargin: Dp = TabConstants.LeadingMargin,
     val trailingMargin: Dp = TabConstants.TrailingMargin,
     val interTabMargin: Dp = TabConstants.InterTabMargin,
-    val topPadding: Dp = TabConstants.TopPadding
+    val topPadding: Dp = TabConstants.TopPadding,
+    val contentSeparatorKind: TabContentSeparatorKind = TabContentSeparatorKind.Double
 ) : PresentationModel

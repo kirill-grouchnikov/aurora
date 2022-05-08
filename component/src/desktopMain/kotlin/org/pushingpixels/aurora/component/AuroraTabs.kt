@@ -286,20 +286,26 @@ internal fun AuroraTabs(
                             val leftUnderlineStart = 0
                             var leftUnderlineEnd = leadingMarginPx
                             if (contentModel.selectedTabIndex > 0) {
-                                leftUnderlineEnd += tabButtonPlaceables.subList(0, contentModel.selectedTabIndex).sumOf { it.measuredWidth }
+                                leftUnderlineEnd += tabButtonPlaceables.subList(0, contentModel.selectedTabIndex)
+                                    .sumOf { it.measuredWidth }
                                 leftUnderlineEnd += (contentModel.selectedTabIndex * presentationModel.interTabMargin.toPx())
                             }
                             leftUnderlinePlaceable = leftUnderlineMeasurable.measure(
-                                Constraints.fixed(width = (leftUnderlineEnd - leftUnderlineStart).toInt(), height = 1))
-                            val rightUnderlineStart = leftUnderlineEnd + tabButtonPlaceables[contentModel.selectedTabIndex].measuredWidth
+                                Constraints.fixed(width = (leftUnderlineEnd - leftUnderlineStart).toInt(), height = 1)
+                            )
+                            val rightUnderlineStart =
+                                leftUnderlineEnd + tabButtonPlaceables[contentModel.selectedTabIndex].measuredWidth
                             val rightUnderlineEnd = fullWidth
                             rightUnderlinePlaceable = rightUnderlineMeasurable.measure(
-                                Constraints.fixed(width = (rightUnderlineEnd - rightUnderlineStart).toInt(), height = 1))
+                                Constraints.fixed(width = (rightUnderlineEnd - rightUnderlineStart).toInt(), height = 1)
+                            )
                         } else {
                             leftUnderlinePlaceable = leftUnderlineMeasurable.measure(
-                                Constraints.fixed(width = fullWidth / 2 - 20, height = 1))
+                                Constraints.fixed(width = fullWidth / 2 - 20, height = 1)
+                            )
                             rightUnderlinePlaceable = rightUnderlineMeasurable.measure(
-                                Constraints.fixed(width = fullWidth / 2 - 20, height = 1))
+                                Constraints.fixed(width = fullWidth / 2 - 20, height = 1)
+                            )
                         }
 
                         layout(width = fullWidth, height = height) {
@@ -342,6 +348,12 @@ internal fun AuroraTabs(
             Canvas(modifier = Modifier) {
                 drawRect(color = underlineScheme.darkColor, topLeft = Offset.Zero, size = size)
             }
+            if (presentationModel.contentSeparatorKind == TabContentSeparatorKind.Double) {
+                // Bottom part of the double content separator
+                Canvas(modifier = Modifier) {
+                    drawRect(color = underlineScheme.darkColor, topLeft = Offset.Zero, size = size)
+                }
+            }
         },
         measurePolicy = { measurables, constraints ->
             val leftScrollerMeasurable = measurables[0]
@@ -349,6 +361,8 @@ internal fun AuroraTabs(
             val rightScrollerMeasurable = measurables[2]
             val leftUnderlineMeasurable = measurables[3]
             val rightUnderlineMeasurable = measurables[4]
+            val bottomContentSeparatorMeasurable =
+                if (presentationModel.contentSeparatorKind == TabContentSeparatorKind.Double) measurables[5] else null
 
             // How big is the left scroller?
             val leftScrollerPreLayoutInfo =
@@ -448,7 +462,13 @@ internal fun AuroraTabs(
                 Constraints.fixed(rightUnderlineWidth, 1)
             )
 
-            layout(width = constraints.maxWidth, height = boxHeight) {
+            val fullHeight = boxHeight +
+                    if (bottomContentSeparatorMeasurable != null) TabConstants.DoubleSeparatorGap.toPx().toInt() else 0
+            val bottomContentSeparatorPlaceable = bottomContentSeparatorMeasurable?.measure(
+                Constraints.fixed(constraints.maxWidth, 1)
+            )
+
+            layout(width = constraints.maxWidth, height = fullHeight) {
                 if (leftScrollerPlaceable.width > 0) {
                     leftScrollerPlaceable.placeRelative(0, 0)
                 }
@@ -461,7 +481,9 @@ internal fun AuroraTabs(
                 contentPlaceable.placeRelative(leftScrollerPlaceable.width, 0)
                 leftUnderlinePlaceable.placeRelative(0, boxHeight - 1)
                 rightUnderlinePlaceable.placeRelative(
-                    constraints.maxWidth - rightUnderlinePlaceable.measuredWidth, boxHeight - 1)
+                    constraints.maxWidth - rightUnderlinePlaceable.measuredWidth, boxHeight - 1
+                )
+                bottomContentSeparatorPlaceable?.placeRelative(0, fullHeight - 1)
             }
         })
 }
