@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.model.TabContentModel
 import org.pushingpixels.aurora.component.model.TabsContentModel
@@ -37,6 +38,7 @@ import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowScope
 import org.pushingpixels.aurora.window.auroraApplication
+import java.text.MessageFormat
 import java.util.*
 
 @ExperimentalUnitApi
@@ -72,21 +74,23 @@ fun AuroraWindowScope.DemoTabsContent(
     resourceBundle: State<ResourceBundle>
 ) {
     var state by remember { mutableStateOf(0) }
+    val mf = MessageFormat(resourceBundle.value.getString("Tab.text"))
 
     Column(modifier = Modifier.fillMaxSize()) {
-        Box(modifier = Modifier.padding(vertical = 6.dp, horizontal = 8.dp)) {
+        Row(
+            modifier = Modifier.padding(vertical = 6.dp, horizontal = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             AuroraSkinSwitcher(auroraSkinDefinition)
+            AuroraLocaleSwitcher(resourceBundle)
         }
         TabsProjection(contentModel = TabsContentModel(
-            tabs = listOf(
-                TabContentModel(text = "Tab 1"),
-                TabContentModel(text = "Tab 2"),
-                TabContentModel(text = "Tab 3", isEnabled = false),
-                TabContentModel(text = "Tab 4"),
-                TabContentModel(text = "Tab 5"),
-                TabContentModel(text = "Tab 6"),
-                TabContentModel(text = "Tab 7")
-            ),
+            tabs = listOf(1..7).flatten().map {
+                TabContentModel(
+                    text = mf.format(arrayOf<Any>(it)),
+                    isEnabled = (it.mod(3) != 0)
+                )
+            },
             selectedTabIndex = state,
             onTriggerTabSelected = { state = it }
         )).project(modifier = Modifier.fillMaxWidth())

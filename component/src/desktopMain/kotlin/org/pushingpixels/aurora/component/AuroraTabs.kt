@@ -279,49 +279,47 @@ internal fun AuroraTabs(
                                 (leadingMarginPx + trailingMarginPx).toInt()
 
                         // Process underlines
-                        val leftUnderlineMeasurable = measurables[measurables.size - 2]
-                        val rightUnderlineMeasurable = measurables[measurables.size - 1]
-                        val leftUnderlinePlaceable: Placeable
-                        val rightUnderlinePlaceable: Placeable
-                        if (ltr) {
-                            val leftUnderlineStart = 0
-                            var leftUnderlineEnd = leadingMarginPx
-                            if (contentModel.selectedTabIndex > 0) {
-                                leftUnderlineEnd += tabButtonPlaceables.subList(0, contentModel.selectedTabIndex)
-                                    .sumOf { it.measuredWidth }
-                                leftUnderlineEnd += (contentModel.selectedTabIndex * presentationModel.interTabMargin.toPx())
-                            }
-                            leftUnderlinePlaceable = leftUnderlineMeasurable.measure(
-                                Constraints.fixed(width = (leftUnderlineEnd - leftUnderlineStart).toInt(), height = 1)
-                            )
-                            val rightUnderlineStart =
-                                leftUnderlineEnd + tabButtonPlaceables[contentModel.selectedTabIndex].measuredWidth
-                            val rightUnderlineEnd = fullWidth
-                            rightUnderlinePlaceable = rightUnderlineMeasurable.measure(
-                                Constraints.fixed(width = (rightUnderlineEnd - rightUnderlineStart).toInt(), height = 1)
-                            )
-                        } else {
-                            leftUnderlinePlaceable = leftUnderlineMeasurable.measure(
-                                Constraints.fixed(width = fullWidth / 2 - 20, height = 1)
-                            )
-                            rightUnderlinePlaceable = rightUnderlineMeasurable.measure(
-                                Constraints.fixed(width = fullWidth / 2 - 20, height = 1)
-                            )
+                        val leadingUnderlineMeasurable = measurables[measurables.size - 2]
+                        val trailingUnderlineMeasurable = measurables[measurables.size - 1]
+                        val leadingUnderlinePlaceable: Placeable
+                        val trailingUnderlinePlaceable: Placeable
+
+                        val leadingUnderlineStart = 0
+                        var leadingUnderlineEnd = leadingMarginPx
+                        if (contentModel.selectedTabIndex > 0) {
+                            leadingUnderlineEnd += tabButtonPlaceables.subList(0, contentModel.selectedTabIndex)
+                                .sumOf { it.measuredWidth }
+                            leadingUnderlineEnd += (contentModel.selectedTabIndex * presentationModel.interTabMargin.toPx())
                         }
+                        leadingUnderlinePlaceable = leadingUnderlineMeasurable.measure(
+                            Constraints.fixed(width = (leadingUnderlineEnd - leadingUnderlineStart).toInt(), height = 1)
+                        )
+                        val trailingUnderlineStart =
+                            leadingUnderlineEnd + tabButtonPlaceables[contentModel.selectedTabIndex].measuredWidth
+                        val trailingUnderlineEnd = fullWidth
+                        trailingUnderlinePlaceable = trailingUnderlineMeasurable.measure(
+                            Constraints.fixed(width = (trailingUnderlineEnd - trailingUnderlineStart).toInt(), height = 1)
+                        )
 
                         layout(width = fullWidth, height = height) {
                             if (ltr) {
                                 var x = leadingMarginPx
                                 for (tabButtonPlaceable in tabButtonPlaceables) {
-                                    tabButtonPlaceable.placeRelative(x.toInt(), 0)
-                                    x += (tabButtonPlaceable.width + presentationModel.interTabMargin.toPx())
+                                    tabButtonPlaceable.place(x.toInt(), 0)
+                                    x += (tabButtonPlaceable.measuredWidth + presentationModel.interTabMargin.toPx())
                                 }
-                                leftUnderlinePlaceable.placeRelative(0, height - 1)
-                                rightUnderlinePlaceable.placeRelative(
-                                    fullWidth - rightUnderlinePlaceable.width,
-                                    height - 1
-                                )
+                            } else {
+                                var x = fullWidth - leadingMarginPx
+                                for (tabButtonPlaceable in tabButtonPlaceables) {
+                                    tabButtonPlaceable.place(x.toInt() - tabButtonPlaceable.measuredWidth, 0)
+                                    x -= (tabButtonPlaceable.measuredWidth + presentationModel.interTabMargin.toPx())
+                                }
                             }
+                            leadingUnderlinePlaceable.placeRelative(0, height - 1)
+                            trailingUnderlinePlaceable.placeRelative(
+                                fullWidth - trailingUnderlinePlaceable.measuredWidth,
+                                height - 1
+                            )
                         }
                     }
                 )
