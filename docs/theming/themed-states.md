@@ -23,7 +23,7 @@ What about the icons?
 ### Theming icons
 
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/nebulaamethyst.png"
-width="340" height="258"/>
+width="340" height="280"/>
 
 This is a screenshot of a small Aurora demo app running under the Nebula Amethyst skin. As UIs with lots of icons can get pretty busy, Aurora provides APIs to theme the icons based on the current skin visuals.
 
@@ -41,7 +41,7 @@ Three icon filtering strategies are supported:
 `ThemedFollowColorScheme` which works best for multi-color / multi-tone icons and Aurora skins with multi-color color schemes. Here is the same UI with this icon filter strategy applied on enabled and disabled component states:
 
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/nebulaamethyst-filtered.png"
-width="340" height="258"/>
+width="340" height="280"/>
 
 Take a look at the icons in the toolbar. The icon for the active / selected button (paste) is still in full original color, but the rest of the icons have been themed with the colors of the enabled color scheme configured for the toolbar area of the Nebula Amethyst skin. This work well in this particular case because:
 

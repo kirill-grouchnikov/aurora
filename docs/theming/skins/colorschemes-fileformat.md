@@ -123,6 +123,6 @@ Sentinel Decorations Separator {
 
 This way you can have a small collection of "core" colors define the entire appearance of the skin. Here is a screenshot of the [Sentinel skin](toneddown.md#sentinel):
 
-<img alt="Sentinel" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/sentinel.png" width="340" height="258">
+<img alt="Sentinel" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/sentinel.png" width="340" height="280">
 
 This entire skin is defined by a dozen or so [core colors](https://github.com/kirill-grouchnikov/aurora/blob/icicle/theming/src/desktopMain/resources/org/pushingpixels/aurora/theming/sentinel.colorschemes), and around 30 color schemes created from these core colors.

@@ -42,7 +42,7 @@ The idea behind derived colors is to find the balance between consistent visuals
 
 Let's take a look at the following UI under the core Dust Coffee skin:
 
-<img alt="Dust Coffee"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/dustcoffee.png" width="340" height="258" />
+<img alt="Dust Coffee"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/dustcoffee.png" width="340" height="280" />
 
 To point out just a few places where Aurora is using derived colors:
 
@@ -59,43 +59,43 @@ The Aurora theming library provides the following sixteen light color schemes:
 
 Aqua, Barby Pink
 <p>
-<img alt="Aqua"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/aqua.png" width="340" height="258" />
-<img alt="Barby Pink"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/barbypink.png" width="340" height="258" />
+<img alt="Aqua"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/aqua.png" width="340" height="280" />
+<img alt="Barby Pink"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/barbypink.png" width="340" height="280" />
 </p>
 Bottle Green, Brown
 <p>
-<img alt="Bottle Green"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/bottlegreen.png" width="340" height="258" />
-<img alt="Brown"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/brown.png" width="340" height="258" />
+<img alt="Bottle Green"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/bottlegreen.png" width="340" height="280" />
+<img alt="Brown"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/brown.png" width="340" height="280" />
 </p>
 Creme, Light Aqua
 <p>
-<img alt="Creme"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/creme.png" width="340" height="258" />
-<img alt="Light Aqua"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/lightaqua.png" width="340" height="258" />
+<img alt="Creme"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/creme.png" width="340" height="280" />
+<img alt="Light Aqua"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/lightaqua.png" width="340" height="280" />
 </p>
 Lime Green, Olive
 <p>
-<img alt="Lime Green"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/limegreen.png" width="340" height="258" />
-<img alt="Olive"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/olive.png" width="340" height="258" />
+<img alt="Lime Green"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/limegreen.png" width="340" height="280" />
+<img alt="Olive"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/olive.png" width="340" height="280" />
 </p>
 Orange, Purple
 <p>
-<img alt="Orange"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/orange.png" width="340" height="258" />
-<img alt="Purple"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/purple.png" width="340" height="258" />
+<img alt="Orange"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/orange.png" width="340" height="280" />
+<img alt="Purple"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/purple.png" width="340" height="280" />
 </p>
 Raspberry, Sepia
 <p>
-<img alt="Raspberry"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/raspberry.png" width="340" height="258" />
-<img alt="Sepia"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/sepia.png" width="340" height="258" />
+<img alt="Raspberry"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/raspberry.png" width="340" height="280" />
+<img alt="Sepia"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/sepia.png" width="340" height="280" />
 </p>
 Steel Blue, Sunset
 <p>
-<img alt="Steel Blue"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/steelblue.png" width="340" height="258" />
-<img alt="Sunset"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/sunset.png" width="340" height="258" />
+<img alt="Steel Blue"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/steelblue.png" width="340" height="280" />
+<img alt="Sunset"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/sunset.png" width="340" height="280" />
 </p>
 Sun Glare, Terracotta
 <p>
-<img alt="Sun Glare"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/sunglare.png" width="340" height="258" />
-<img alt="Terracotta"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/terracotta.png" width="340" height="258" />
+<img alt="Sun Glare"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/sunglare.png" width="340" height="280" />
+<img alt="Terracotta"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/terracotta.png" width="340" height="280" />
 </p>
 
 ### Core dark color schemes
@@ -103,17 +103,17 @@ The Aurora theming library provides the following five dark color schemes:
 
 Ebony, Dark Violet
 <p>
-<img alt="Ebony"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/ebony.png" width="340" height="258" />
-<img alt="Dark Violet"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/darkviolet.png" width="340" height="258" />
+<img alt="Ebony"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/ebony.png" width="340" height="280" />
+<img alt="Dark Violet"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/darkviolet.png" width="340" height="280" />
 </p>
 Charcoal, Jade Forest
 <p>
-<img alt="Charcoal"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/charcoal.png" width="340" height="258" />
-<img alt="Jade Forest"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/jadeforest.png" width="340" height="258" />
+<img alt="Charcoal"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/charcoal.png" width="340" height="280" />
+<img alt="Jade Forest"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/jadeforest.png" width="340" height="280" />
 </p>
 Ultramarine
 <p>
-<img alt="Ultramarine"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/ultramarine.png" width="340" height="258" />
+<img alt="Ultramarine"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/ultramarine.png" width="340" height="280" />
 </p>
 
 ### Deriving color schemes
@@ -147,7 +147,7 @@ The following API allows shifting both the background and the foreground colors:
 ```      
 Here is the `Purple` color scheme shifted 80% towards light green in background colors and 70% towards dark red in foreground color (see the foreground color of the default button):
 
-<img alt="Derived Shifted"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/derivedshift.png" width="340" height="258" />
+<img alt="Derived Shifted"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/derivedshift.png" width="340" height="280" />
 
 The following API allows tinting the colors (shifting towards white):
 
@@ -195,9 +195,9 @@ The following API allows shading the colors (shifting towards black):
 
 Here is the same `Purple` color scheme tinted 40%, toned 40% and shaded 40%:
 
-<img alt="Derived Tinted"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/derivedtint.png" width="340" height="258" />
-<img alt="Derived Toned"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/derivedtone.png" width="340" height="258" />
-<img alt="Derived Shaded"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/derivedshade.png" width="340" height="258" />
+<img alt="Derived Tinted"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/derivedtint.png" width="340" height="280" />
+<img alt="Derived Toned"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/derivedtone.png" width="340" height="280" />
+<img alt="Derived Shaded"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/derivedshade.png" width="340" height="280" />
 
 The following API allows saturating or desaturating the colors:
 
@@ -216,8 +216,8 @@ The following API allows saturating or desaturating the colors:
 
 Here is the same `Purple` color scheme saturated 40% and desaturated 40%:
 
-<img alt="Derived Saturated"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/derivedsaturate.png" width="340" height="258" />
-<img alt="Derived Desaturated"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/deriveddesaturate.png" width="340" height="258" />
+<img alt="Derived Saturated"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/derivedsaturate.png" width="340" height="280" />
+<img alt="Derived Desaturated"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/deriveddesaturate.png" width="340" height="280" />
 
 The following API allows inverting the colors:
 
@@ -243,8 +243,8 @@ The following API allows negating the colors:
 
 Here is the same `Purple` color scheme inverted and negated:
 
-<img alt="Derived Inverted"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/derivedinvert.png" width="340" height="258" />
-<img alt="Derived Negated"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/derivednegate.png" width="340" height="258" />
+<img alt="Derived Inverted"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/derivedinvert.png" width="340" height="280" />
+<img alt="Derived Negated"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/derivednegate.png" width="340" height="280" />
 
 The following API allows shifting the hue of the colors:
 
@@ -262,4 +262,4 @@ The following API allows shifting the hue of the colors:
 
 Here is the same `Purple` color scheme hue-shifted 40%:
 
-<img alt="Derived Hue Shifted"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/derivedhueshift.png" width="340" height="258" />
+<img alt="Derived Hue Shifted"  src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/colorschemes/derivedhueshift.png" width="340" height="280" />
