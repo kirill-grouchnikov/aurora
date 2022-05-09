@@ -27,6 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.tools.screenshot.svg.radiance_menu
@@ -40,7 +44,7 @@ import java.util.concurrent.atomic.AtomicInteger
 fun AuroraApplicationScope.screenshot(
     skin: AuroraSkinDefinition,
     filename: String,
-    toolbarIconEnabledFilterStrategy : IconFilterStrategy = IconFilterStrategy.Original,
+    toolbarIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     counter: AtomicInteger
 ) {
     val title = "Aurora"
@@ -89,13 +93,24 @@ fun AuroraApplicationScope.screenshot(
         }
 
         LaunchedEffect(Unit) {
-            val image = scene.render()
-            val bytes = image.encodeToData()!!.bytes
-            val file = File(filename)
-            file.writeBytes(bytes)
-            scene.close()
-            if (counter.decrementAndGet() == 0) {
-                exitApplication()
+            runBlocking {
+                withContext(Dispatchers.Default) {
+                    // Render the first time (and discard the resulting image) to trigger the layout
+                    // and drawing pass
+                    scene.render()
+                    // Wait for a bit so that code paths that need to update runtime shaders with
+                    // the content size have executed
+                    delay(100)
+                    // Render again, this time using the resulting image
+                    val image = scene.render()
+                    val bytes = image.encodeToData()!!.bytes
+                    val file = File(filename)
+                    file.writeBytes(bytes)
+                    scene.close()
+                    if (counter.decrementAndGet() == 0) {
+                        exitApplication()
+                    }
+                }
             }
         }
     }
