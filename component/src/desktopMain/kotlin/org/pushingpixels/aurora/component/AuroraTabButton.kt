@@ -401,7 +401,8 @@ internal fun AuroraTabButton(
                                 left = -actionAreaOffset.x,
                                 top = -actionAreaOffset.y
                             )
-                        }) {                            // Populate the cached color scheme for drawing the button border
+                        }) {
+                            // Populate the cached color scheme for drawing the button border
                             drawingCache.colorScheme.ultraLight = borderUltraLight
                             drawingCache.colorScheme.extraLight = borderExtraLight
                             drawingCache.colorScheme.light = borderLight

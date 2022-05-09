@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.component.model
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -43,14 +44,15 @@ data class TabsContentModel(
 ) : ContentModel
 
 data class TabsPresentationModel(
-    val presentationState: CommandButtonPresentationState = CommandButtonPresentationState.Medium,
-    val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-    val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
-    val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
-    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
     val leadingMargin: Dp = TabConstants.LeadingMargin,
     val trailingMargin: Dp = TabConstants.TrailingMargin,
     val interTabMargin: Dp = TabConstants.InterTabMargin,
     val topPadding: Dp = TabConstants.TopPadding,
-    val contentSeparatorKind: TabContentSeparatorKind = TabContentSeparatorKind.Double
+    val contentSeparatorKind: TabContentSeparatorKind = TabContentSeparatorKind.Double,
+    val tabPresentationState: CommandButtonPresentationState = CommandButtonPresentationState.Medium,
+    val tabBackgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+    val tabIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    val tabIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    val tabIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    val tabContentPadding: PaddingValues = CommandButtonSizingConstants.WideButtonContentPadding
 ) : PresentationModel

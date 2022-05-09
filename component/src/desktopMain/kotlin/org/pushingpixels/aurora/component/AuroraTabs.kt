@@ -92,12 +92,13 @@ internal fun AuroraTabs(
 
     // Presentation model for the content - copy fields from the tabs presentation model
     val contentPresentationModel = CommandButtonPresentationModel(
-        presentationState = presentationModel.presentationState,
-        backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
-        iconActiveFilterStrategy = presentationModel.iconActiveFilterStrategy,
-        iconEnabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
-        iconDisabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
-        sides = Sides(openSides = hashSetOf(Side.Bottom), straightSides = hashSetOf(Side.Bottom))
+        presentationState = presentationModel.tabPresentationState,
+        backgroundAppearanceStrategy = presentationModel.tabBackgroundAppearanceStrategy,
+        iconActiveFilterStrategy = presentationModel.tabIconActiveFilterStrategy,
+        iconEnabledFilterStrategy = presentationModel.tabIconEnabledFilterStrategy,
+        iconDisabledFilterStrategy = presentationModel.tabIconDisabledFilterStrategy,
+        sides = Sides(openSides = hashSetOf(Side.Bottom), straightSides = hashSetOf(Side.Bottom)),
+        contentPadding = presentationModel.tabContentPadding
     )
     val contentLayoutManager = contentPresentationModel.presentationState.createLayoutManager(
         layoutDirection = layoutDirection,
