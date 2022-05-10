@@ -9,7 +9,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jetbrains.compose:compose-gradle-plugin:1.2.0-alpha01-dev679")
+        classpath("org.jetbrains.compose:compose-gradle-plugin:1.2.0-alpha01-dev682")
         classpath(kotlin("gradle-plugin", version = "1.6.21"))
         classpath("com.github.ben-manes:gradle-versions-plugin:0.42.0")
         classpath("com.vanniktech:gradle-maven-publish-plugin:0.19.0")
@@ -54,12 +54,6 @@ allprojects {
         all {
             exclude(group = "org.jetbrains.compose.material", module = "material")
             exclude(group = "org.jetbrains.compose.material3", module = "material3")
-            resolutionStrategy.eachDependency {
-                if (requested.group == "org.jetbrains.skiko") {
-                    useVersion("0.7.18")
-                    because("Pin to version that has shader bindings")
-                }
-            }
         }
     }
 }
