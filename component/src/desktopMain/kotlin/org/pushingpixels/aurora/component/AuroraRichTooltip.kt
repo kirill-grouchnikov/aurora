@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
+import androidx.compose.ui.unit.IntSize
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -53,7 +54,7 @@ private suspend fun PointerInputScope.detectDown(onDown: (Offset) -> Unit) {
     }
 }
 
-private class Locator(val topLeftOffset: AuroraOffset, val size: AuroraSize) :
+private class Locator(val topLeftOffset: AuroraOffset, val size: MutableState<IntSize>) :
     OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
         // Convert the top left corner of the component to the root coordinates
@@ -62,13 +63,12 @@ private class Locator(val topLeftOffset: AuroraOffset, val size: AuroraSize) :
         topLeftOffset.y = converted.y
 
         // And store the component size
-        size.width = coordinates.size.width
-        size.height = coordinates.size.height
+        size.value = coordinates.size
     }
 }
 
 @Composable
-private fun Modifier.locator(topLeftOffset: AuroraOffset, size: AuroraSize) = this.then(
+private fun Modifier.locator(topLeftOffset: AuroraOffset, size: MutableState<IntSize>) = this.then(
     Locator(topLeftOffset, size)
 )
 
@@ -95,7 +95,7 @@ fun Modifier.auroraRichTooltip(
     val resolvedTextStyle = remember { resolveDefaults(mergedTextStyle, layoutDirection) }
 
     val topLeftOffset = AuroraOffset(0.0f, 0.0f)
-    val size = AuroraSize(0, 0)
+    val size = remember { mutableStateOf(IntSize(0, 0)) }
 
     val scope = rememberCoroutineScope()
     var job: Job? by remember { mutableStateOf(null) }
@@ -116,7 +116,7 @@ fun Modifier.auroraRichTooltip(
                 compositionLocalContext = compositionLocalContext,
                 anchorBoundsInWindow = Rect(
                     offset = topLeftOffset.asOffset(density),
-                    size = size.asSize(density)
+                    size = size.value.asSize(density)
                 ),
                 richTooltip = richTooltip,
                 presentationModel = presentationModel,

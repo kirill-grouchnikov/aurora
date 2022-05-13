@@ -52,6 +52,7 @@ import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
@@ -405,7 +406,7 @@ internal fun AuroraCommandButton(
     val painters = AuroraSkin.painters
 
     val buttonTopLeftOffset = remember { AuroraOffset(0.0f, 0.0f) }
-    val buttonSize = AuroraSize(0, 0)
+    val buttonSize = remember { mutableStateOf(IntSize(0, 0))}
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     val mergedTextStyle = LocalTextStyle.current.merge(presentationModel.textStyle)
@@ -677,7 +678,7 @@ internal fun AuroraCommandButton(
             // area (action or popup) and offsetting during the Canvas paint pass.
             var actionAreaOffset = remember { Offset.Zero }
             var popupAreaOffset = remember { Offset.Zero }
-            var popupAreaSize = remember { AuroraSize(0, 0) }
+            val popupAreaSize = remember { mutableStateOf(IntSize(0, 0)) }
             Box(
                 modifier = modifierAction.auroraRichTooltip(
                     richTooltip = command.actionRichTooltip,
@@ -767,8 +768,8 @@ internal fun AuroraCommandButton(
                     )
 
                     Canvas(modifier = Modifier.matchParentSize()) {
-                        val width = buttonSize.width.toFloat()
-                        val height = buttonSize.height.toFloat()
+                        val width = buttonSize.value.width.toFloat()
+                        val height = buttonSize.value.height.toFloat()
 
                         withTransform({
                             clipRect(
@@ -809,7 +810,7 @@ internal fun AuroraCommandButton(
                             drawingCache.colorScheme.foreground = Color.Black
                             fillPainter.paintContourBackground(
                                 this,
-                                buttonSize.asSize(),
+                                buttonSize.value.asSize(),
                                 fillOutline,
                                 drawingCache.colorScheme,
                                 actionAlpha
@@ -847,7 +848,7 @@ internal fun AuroraCommandButton(
 
                             borderPainter.paintBorder(
                                 this,
-                                buttonSize.asSize(),
+                                buttonSize.value.asSize(),
                                 borderOutline,
                                 innerBorderOutline,
                                 drawingCache.colorScheme,
@@ -865,8 +866,8 @@ internal fun AuroraCommandButton(
                         if (AuroraPopupManager.isShowingPopupFrom(
                                 originatorWindow = parentWindow,
                                 pointInOriginatorWindow = AuroraOffset(
-                                    x = buttonTopLeftOffset.x + popupAreaOffset.x + popupAreaSize.width / 2.0f,
-                                    y = buttonTopLeftOffset.y + popupAreaOffset.y + popupAreaSize.height / 2.0f
+                                    x = buttonTopLeftOffset.x + popupAreaOffset.x + popupAreaSize.value.width / 2.0f,
+                                    y = buttonTopLeftOffset.y + popupAreaOffset.y + popupAreaSize.value.height / 2.0f
                                 ).asOffset(density)
                         )) {
                             // We're showing a popup that originates from this popup area. Hide it.
@@ -885,14 +886,14 @@ internal fun AuroraCommandButton(
                                 compositionLocalContext = compositionLocalContext,
                                 anchorBoundsInWindow = Rect(
                                     offset = buttonTopLeftOffset.asOffset(density),
-                                    size = buttonSize.asSize(density)
+                                    size = buttonSize.value.asSize(density)
                                 ),
                                 popupTriggerAreaInWindow = Rect(
                                     offset = AuroraOffset(
                                         x = buttonTopLeftOffset.x + popupAreaOffset.x,
                                         y = buttonTopLeftOffset.y + popupAreaOffset.y
                                     ).asOffset(density),
-                                    size = popupAreaSize.asSize(density)
+                                    size = popupAreaSize.value.asSize(density)
                                 ),
                                 contentModel = secondaryContentModel,
                                 presentationModel = presentationModel.popupMenuPresentationModel,
@@ -929,8 +930,7 @@ internal fun AuroraCommandButton(
                             y = selfToRoot.y - parentToRoot.y
                         )
                     }
-                    popupAreaSize.width = it.size.width
-                    popupAreaSize.height = it.size.height
+                    popupAreaSize.value = it.size
                 }
             ) {
                 if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.Never) {
@@ -995,8 +995,8 @@ internal fun AuroraCommandButton(
                     )
 
                     Canvas(modifier = Modifier.matchParentSize()) {
-                        val width = buttonSize.width.toFloat()
-                        val height = buttonSize.height.toFloat()
+                        val width = buttonSize.value.width.toFloat()
+                        val height = buttonSize.value.height.toFloat()
 
                         withTransform({
                             clipRect(
@@ -1037,7 +1037,7 @@ internal fun AuroraCommandButton(
                             drawingCache.colorScheme.foreground = Color.Black
                             fillPainter.paintContourBackground(
                                 this,
-                                buttonSize.asSize(),
+                                buttonSize.value.asSize(),
                                 fillOutline,
                                 drawingCache.colorScheme,
                                 popupAlpha
@@ -1075,7 +1075,7 @@ internal fun AuroraCommandButton(
 
                             borderPainter.paintBorder(
                                 this,
-                                buttonSize.asSize(),
+                                buttonSize.value.asSize(),
                                 borderOutline,
                                 innerBorderOutline,
                                 drawingCache.colorScheme,
@@ -1567,7 +1567,7 @@ private fun CommandButtonPopupIconContent(
     }
 }
 
-private class CommandButtonBoxLocator(val topLeftOffset: AuroraOffset, val size: AuroraSize) :
+private class CommandButtonBoxLocator(val topLeftOffset: AuroraOffset, val size: MutableState<IntSize>) :
     OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
         // Convert the top left corner of the component to the root coordinates
@@ -1576,13 +1576,12 @@ private class CommandButtonBoxLocator(val topLeftOffset: AuroraOffset, val size:
         topLeftOffset.y = converted.y
 
         // And store the component size
-        size.width = coordinates.size.width
-        size.height = coordinates.size.height
+        size.value = coordinates.size
     }
 }
 
 @Composable
-private fun Modifier.commandButtonLocator(topLeftOffset: AuroraOffset, size: AuroraSize) =
+private fun Modifier.commandButtonLocator(topLeftOffset: AuroraOffset, size: MutableState<IntSize>) =
     this.then(
         CommandButtonBoxLocator(topLeftOffset, size)
     )

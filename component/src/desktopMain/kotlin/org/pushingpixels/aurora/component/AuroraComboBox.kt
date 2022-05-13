@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
@@ -55,7 +56,7 @@ private class ComboBoxDrawingCache(
     )
 )
 
-private class ComboBoxLocator(val topLeftOffset: AuroraOffset, val size: AuroraSize) :
+private class ComboBoxLocator(val topLeftOffset: AuroraOffset, val size: MutableState<IntSize>) :
     OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
         // Convert the top left corner of the component to the root coordinates
@@ -64,13 +65,12 @@ private class ComboBoxLocator(val topLeftOffset: AuroraOffset, val size: AuroraS
         topLeftOffset.y = converted.y
 
         // And store the component size
-        size.width = coordinates.size.width
-        size.height = coordinates.size.height
+        size.value = coordinates.size
     }
 }
 
 @Composable
-private fun Modifier.comboBoxLocator(topLeftOffset: AuroraOffset, size: AuroraSize) = this.then(
+private fun Modifier.comboBoxLocator(topLeftOffset: AuroraOffset, size: MutableState<IntSize>) = this.then(
     ComboBoxLocator(topLeftOffset, size)
 )
 
@@ -104,7 +104,7 @@ internal fun <E> AuroraComboBox(
     val window = LocalWindow.current
 
     val comboBoxTopLeftOffset = AuroraOffset(0.0f, 0.0f)
-    val comboBoxSize = AuroraSize(0, 0)
+    val comboBoxSize = remember { mutableStateOf(IntSize(0, 0)) }
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
@@ -225,8 +225,8 @@ internal fun <E> AuroraComboBox(
                 if (AuroraPopupManager.isShowingPopupFrom(
                         originatorWindow = window,
                         pointInOriginatorWindow = AuroraOffset(
-                            x = comboBoxTopLeftOffset.x + comboBoxSize.width / 2.0f,
-                            y = comboBoxTopLeftOffset.y + comboBoxSize.height / 2.0f
+                            x = comboBoxTopLeftOffset.x + comboBoxSize.value.width / 2.0f,
+                            y = comboBoxTopLeftOffset.y + comboBoxSize.value.height / 2.0f
                         ).asOffset(density)
                     )) {
                     // We're showing a popup that originates from this combo. Hide it.
@@ -245,11 +245,11 @@ internal fun <E> AuroraComboBox(
                         compositionLocalContext = compositionLocalContext,
                         anchorBoundsInWindow = Rect(
                             offset = comboBoxTopLeftOffset.asOffset(density),
-                            size = comboBoxSize.asSize(density)
+                            size = comboBoxSize.value.asSize(density)
                         ),
                         popupTriggerAreaInWindow = Rect(
                             offset = comboBoxTopLeftOffset.asOffset(density),
-                            size = comboBoxSize.asSize(density)
+                            size = comboBoxSize.value.asSize(density)
                         ),
                         contentModel = contentModelState,
                         presentationModel = CommandPopupMenuPresentationModel(
