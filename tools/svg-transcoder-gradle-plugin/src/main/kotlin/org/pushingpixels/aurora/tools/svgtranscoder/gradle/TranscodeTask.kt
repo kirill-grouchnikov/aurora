@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.tools.svgtranscoder.gradle
 
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import java.io.File
@@ -43,7 +44,7 @@ open class TranscodeTask : TranscodeBaseTask() {
     )
     var inputDirectory: File? = null
 
-    @get:InputDirectory
+    @get:OutputDirectory
     @set:Option(
         option = "outputDirectory",
         description = "Configures the output directory."
