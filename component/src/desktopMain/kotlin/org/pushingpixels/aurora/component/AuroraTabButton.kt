@@ -238,7 +238,7 @@ internal fun AuroraTabButton(
             val modifierAction: Modifier = Modifier.toggleable(
                 value = command.isActionToggleSelected,
                 enabled = isActionEnabled,
-                role = Role.Button,
+                role = Role.Tab,
                 interactionSource = actionInteractionSource,
                 indication = null,
                 onValueChange = {
