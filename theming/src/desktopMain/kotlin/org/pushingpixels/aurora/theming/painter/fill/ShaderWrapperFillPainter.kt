@@ -17,10 +17,7 @@ package org.pushingpixels.aurora.theming.painter.fill
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.ShaderBrush
-import androidx.compose.ui.graphics.addOutline
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.unit.Density
@@ -83,5 +80,9 @@ abstract class ShaderWrapperFillPainter(
                 )
             }
         }
+    }
+
+    override fun getRepresentativeColor(fillScheme: AuroraColorScheme): Color {
+        return this.baseFillPainter.getRepresentativeColor(fillScheme)
     }
 }

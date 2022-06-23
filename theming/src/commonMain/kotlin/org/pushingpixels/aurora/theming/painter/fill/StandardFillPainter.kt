@@ -101,4 +101,8 @@ open class StandardFillPainter : AuroraFillPainter {
     open fun getBottomFillColor(fillScheme: AuroraColorScheme): Color {
         return fillScheme.ultraLightColor
     }
+
+    override fun getRepresentativeColor(fillScheme: AuroraColorScheme): Color {
+        return this.getMidFillColorTop(fillScheme)
+    }
 }

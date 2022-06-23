@@ -20,6 +20,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
+import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.theming.painter.ColorQueryStop
 import org.pushingpixels.aurora.theming.painter.FractionBasedPainter
@@ -58,5 +59,29 @@ class FractionBasedFillPainter(
                 alpha = alpha
             )
         }
+    }
+
+    override fun getRepresentativeColor(fillScheme: AuroraColorScheme): Color {
+        val fractions = getFractions()
+        val colorQueries = getColorQueries()
+        for (i in 0 until colorQueries.size - 1) {
+            val fractionLow = fractions[i]
+            val fractionHigh = fractions[i + 1]
+            if (fractionLow == 0.5f) {
+                return colorQueries[i].invoke(fillScheme)
+            }
+            if (fractionHigh == 0.5f) {
+                return colorQueries[i + 1].invoke(fillScheme)
+            }
+            if (fractionLow < 0.5f || fractionHigh > 0.5f) {
+                continue
+            }
+            // current range contains 0.5f
+            val colorLow: Color = colorQueries[i].invoke(fillScheme)
+            val colorHigh: Color = colorQueries[i + 1].invoke(fillScheme)
+            val colorLowLikeness = (0.5f - fractionLow) / (fractionHigh - fractionLow)
+            return colorLow.interpolateTowards(colorHigh, colorLowLikeness)
+        }
+        throw IllegalStateException("Could not find representative color")
     }
 }
