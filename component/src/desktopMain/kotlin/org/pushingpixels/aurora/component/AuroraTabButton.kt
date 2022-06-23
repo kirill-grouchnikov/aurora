@@ -28,6 +28,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.layout.*
@@ -41,16 +42,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
-import org.intellij.lang.annotations.Language
-import org.jetbrains.skia.ImageFilter
-import org.jetbrains.skia.RuntimeEffect
-import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -90,9 +88,8 @@ internal fun AuroraTabButton(
 
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
-    val buttonShaper = AuroraSkin.buttonShaper
+    val buttonShaper = ClassicButtonShaper.INSTANCE
     val painters = AuroraSkin.painters
-    val tabDefinition = AuroraSkin.tabDefinition
 
     val buttonTopLeftOffset = remember { AuroraOffset(0.0f, 0.0f) }
     val buttonSize = remember { mutableStateOf(IntSize(0, 0)) }
@@ -205,33 +202,6 @@ internal fun AuroraTabButton(
 
     val hasIcon = preLayoutInfo.showIcon
 
-    @Language("GLSL")
-    val alphaSksl = """
-        uniform shader content;
-        uniform float height;
-        uniform float transitionStartFraction;
-        uniform float transitionEndFraction;
-
-        vec4 main(vec2 coord) {
-            float fraction = coord.y / height;
-            float alpha = 1.0;
-            if (fraction > transitionEndFraction) {
-                alpha = 0.0;
-            } else if (fraction > transitionStartFraction) {
-                alpha = 1.0 - (fraction - transitionStartFraction) /
-                    (transitionEndFraction - transitionStartFraction);
-            }
-            vec4 c = content.eval(coord);
-            return vec4(c.r * alpha, c.g * alpha, c.b * alpha, c.a * alpha);
-        }
-    """
-
-    val alphaRuntimeEffect = RuntimeEffect.makeForShader(alphaSksl)
-    val alphaShaderBuilder = RuntimeShaderBuilder(alphaRuntimeEffect)
-    alphaShaderBuilder.uniform("height", buttonSize.value.height.toFloat())
-    alphaShaderBuilder.uniform("transitionStartFraction", tabDefinition.tabStartFade)
-    alphaShaderBuilder.uniform("transitionEndFraction", tabDefinition.tabEndFade)
-
     Layout(
         modifier = modifier.tabButtonLocator(buttonTopLeftOffset, buttonSize),
         content = {
@@ -325,16 +295,7 @@ internal fun AuroraTabButton(
                         }
                     )
 
-                    Canvas(
-                        modifier = Modifier.matchParentSize().graphicsLayer(
-                            renderEffect = ImageFilter.makeRuntimeShader(
-                                runtimeShaderBuilder = alphaShaderBuilder,
-                                shaderName = "content",
-                                input = null
-                            ).asComposeRenderEffect(),
-                            clip = true
-                        )
-                    ) {
+                    Canvas(modifier = Modifier.matchParentSize()) {
                         val width = buttonSize.value.width.toFloat()
                         val height = buttonSize.value.height.toFloat()
 
@@ -366,7 +327,7 @@ internal fun AuroraTabButton(
                                 return@withTransform
                             }
 
-                            // Populate the cached color scheme for filling the button container
+                            // Populate the cached color scheme for filling the top part of the tab button
                             drawingCache.colorScheme.ultraLight = fillUltraLight
                             drawingCache.colorScheme.extraLight = fillExtraLight
                             drawingCache.colorScheme.light = fillLight
@@ -375,13 +336,23 @@ internal fun AuroraTabButton(
                             drawingCache.colorScheme.ultraDark = fillUltraDark
                             drawingCache.colorScheme.isDark = fillIsDark
                             drawingCache.colorScheme.foreground = Color.Black
-                            fillPainter.paintContourBackground(
-                                this,
-                                Size(buttonSize.value.width.toFloat(), buttonSize.value.height.toFloat()),
-                                fillOutline,
-                                drawingCache.colorScheme,
-                                actionAlpha
-                            )
+
+                            withTransform({
+                                clipRect(
+                                    left = 0.0f,
+                                    top = 0.0f,
+                                    right = width,
+                                    bottom = height * 0.18f,
+                                    clipOp = ClipOp.Intersect
+                                )
+                            }) {
+                                drawOutline(
+                                    outline = fillOutline,
+                                    style = Fill,
+                                    color = fillPainter.getRepresentativeColor(drawingCache.colorScheme),
+                                    alpha = actionAlpha
+                                )
+                            }
                         }
                     }
 
@@ -456,18 +427,11 @@ internal fun AuroraTabButton(
                 )
             }
 
-            // Special handling of tabs under skins that show partial visuals
-            val isTextOnParentBackground = (tabDefinition.tabEndFade <= 0.5f)
-            var currentStateForText = currentActionState.value
-            if (isTextOnParentBackground) {
-                // Ignore all other "aspects" of tab's state
-                currentStateForText =
-                    if (command.isActionEnabled) ComponentState.Enabled else ComponentState.DisabledUnselected
-            }
-            val modelStateInfoForText = if (isTextOnParentBackground) null else actionModelStateInfo
+            val currentStateForText = if (command.isActionEnabled) ComponentState.Enabled
+                else ComponentState.DisabledUnselected
             for (text in preLayoutInfo.texts) {
                 TabButtonTextContent(
-                    text, modelStateInfoForText, currentStateForText, resolvedTextStyle,
+                    text, null, currentStateForText, resolvedTextStyle,
                     presentationModel.textOverflow
                 )
             }

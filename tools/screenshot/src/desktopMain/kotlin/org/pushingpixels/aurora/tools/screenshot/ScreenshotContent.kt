@@ -69,7 +69,6 @@ private fun AuroraApplicationScope.ScreenshotWindow(
         LocalSkinColors provides skin.colors,
         LocalButtonShaper provides skin.buttonShaper,
         LocalPainters provides skin.painters,
-        LocalSkinTabDefinition provides skin.tabDefinition,
         LocalAnimationConfig provides AnimationConfig(),
     ) {
         screenshotScope.AuroraWindowContent(

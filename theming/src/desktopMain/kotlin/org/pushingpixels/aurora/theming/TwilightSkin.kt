@@ -246,7 +246,6 @@ fun twilightSkin(): AuroraSkinDefinition {
         displayName = "Twilight",
         colors = twilightSkinColors(),
         painters = painters,
-        buttonShaper = ClassicButtonShaper(),
-        tabDefinition = AuroraSkinTabDefinition(tabStartFade = 0.18f, tabEndFade = 0.18f)
+        buttonShaper = ClassicButtonShaper()
     )
 }

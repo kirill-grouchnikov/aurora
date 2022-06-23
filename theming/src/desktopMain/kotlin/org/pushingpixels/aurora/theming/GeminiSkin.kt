@@ -315,7 +315,6 @@ fun geminiSkin(): AuroraSkinDefinition {
         displayName = "Gemini",
         colors = geminiSkinColors(),
         painters = painters,
-        buttonShaper = ClassicButtonShaper(),
-        tabDefinition = AuroraSkinTabDefinition(tabStartFade = 0.15f, tabEndFade = 0.25f)
+        buttonShaper = ClassicButtonShaper()
     )
 }
