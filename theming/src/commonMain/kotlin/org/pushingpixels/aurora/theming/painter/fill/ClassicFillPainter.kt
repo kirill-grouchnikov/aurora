@@ -42,6 +42,6 @@ open class ClassicFillPainter : StandardFillPainter() {
 
     companion object {
         /** Reusable instance of this painter. */
-        val INSTANCE = ClassicFillPainter()
+        val Instance = ClassicFillPainter()
     }
 }

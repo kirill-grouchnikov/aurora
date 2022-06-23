@@ -64,6 +64,6 @@ class ClassicButtonShaper : AuroraButtonShaper, RectangularButtonShaper {
         /**
          * Reusable instance of this shaper.
          */
-        val INSTANCE = ClassicButtonShaper()
+        val Instance = ClassicButtonShaper()
     }
 }

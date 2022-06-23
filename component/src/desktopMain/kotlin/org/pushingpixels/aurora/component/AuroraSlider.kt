@@ -137,7 +137,7 @@ internal fun AuroraSlider(
         associationKind = ColorSchemeAssociationKind.Separator,
         componentState = trackFillState
     )
-    val fillPainter = ClassicFillPainter.INSTANCE
+    val fillPainter = ClassicFillPainter.Instance
 
     val dragStartX = remember { mutableStateOf(0.0f) }
     val cumulativeDragAmount = remember { mutableStateOf(0.0f) }
