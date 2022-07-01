@@ -88,7 +88,7 @@ internal fun AuroraTabButton(
 
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
-    val buttonShaper = ClassicButtonShaper.INSTANCE
+    val buttonShaper = ClassicButtonShaper.Instance
     val painters = AuroraSkin.painters
 
     val buttonTopLeftOffset = remember { AuroraOffset(0.0f, 0.0f) }
