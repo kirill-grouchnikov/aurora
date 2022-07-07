@@ -1159,6 +1159,7 @@ internal fun AuroraCommandButton(
                                 endGradientAmount = 4.dp
                             )
                         ).project(modifier = Modifier.alpha(combinedRolloverFraction))
+                    else -> {}
                 }
             }
         }) { measurables, constraints ->
