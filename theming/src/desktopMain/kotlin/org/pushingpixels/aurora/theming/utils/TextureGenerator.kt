@@ -116,7 +116,7 @@ internal fun getSpecularRectangularEffect(): RuntimeEffect {
                         xalpha = 0.0;
                     } else if (fragcoord.x <= (overlayXStart + gap)) {
                         // ramp-up to full alpha horizontally
-                        float cfraction = (fragcoord.x - overlayXStart - gap) / gap;
+                        float cfraction = (overlayXStart + gap - fragcoord.x) / gap;
                         xalpha = spline(start, control1, control2, end, 1.0 - cfraction).y;
                     }
                 } else {
