@@ -36,7 +36,7 @@ class SpecularRectangularFillPainter(base: AuroraFillPainter, val baseAlpha: Flo
         fillScheme: AuroraColorScheme,
         alpha: Float
     ): Data {
-        val dataBuffer = ByteBuffer.allocate(40).order(ByteOrder.LITTLE_ENDIAN)
+        val dataBuffer = ByteBuffer.allocate(44).order(ByteOrder.LITTLE_ENDIAN)
         // RGBA colorLight
         val color = fillScheme.extraLightColor
         dataBuffer.putFloat(0, color.red)
@@ -66,9 +66,10 @@ class SpecularRectangularFillPainter(base: AuroraFillPainter, val baseAlpha: Flo
         dataBuffer.putFloat(28, topLeftRadius)
         dataBuffer.putFloat(32, topRightRadius)
 
-        val minDimension = minOf(outline.bounds.width, outline.bounds.height)
-        val gapBase = if (minDimension < (16f * density.density)) 0.5f else 1.5f
-        dataBuffer.putFloat(36, gapBase * density.density)
+        // Gap
+        dataBuffer.putFloat(36, 1.0f * density.density)
+        // Ramp
+        dataBuffer.putFloat(40, 2.0f * density.density)
 
         return Data.makeFromBytes(dataBuffer.array())
     }

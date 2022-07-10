@@ -15,11 +15,13 @@
  */
 package org.pushingpixels.aurora.theming.utils
 
+import org.intellij.lang.annotations.Language
 import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.Shader
 
 internal fun getDuotoneEffect(): RuntimeEffect {
     // Duotone shader
+    @Language("GLSL")
     val duotoneDesc = """
             uniform shader shaderInput;
             uniform vec4 colorLight;
@@ -30,7 +32,7 @@ internal fun getDuotoneEffect(): RuntimeEffect {
                 vec4 inputColor = shaderInput.eval(fragcoord);
                 float luma = dot(inputColor.rgb, vec3(0.299, 0.587, 0.114));
                 vec4 duotone = mix(colorLight, colorDark, luma);
-                return vec4(duotone.r * alpha, duotone.g * alpha, duotone.b * alpha, alpha);
+                return half4(duotone.r * alpha, duotone.g * alpha, duotone.b * alpha, alpha);
             }
         """
 
@@ -47,6 +49,7 @@ internal fun getBrushedMetalShader(): Shader {
     )
 
     // Brushed metal shader
+    @Language("GLSL")
     val brushedMetalDesc = """
             uniform shader shaderInput;
 
@@ -74,6 +77,7 @@ internal fun getBrushedMetalShader(): Shader {
 }
 
 internal fun getSpecularRectangularEffect(): RuntimeEffect {
+    @Language("GLSL")
     val specularRectangularDesc = """
             uniform vec4 color;
             uniform float alpha;
@@ -82,6 +86,7 @@ internal fun getSpecularRectangularEffect(): RuntimeEffect {
             uniform float topLeftCornerRadius;
             uniform float topRightCornerRadius;
             uniform float gap;
+            uniform float ramp;
 
             vec2 start = vec2(0.0, 0.0);
             vec2 control1 = vec2(0.5, 0.1);
@@ -97,7 +102,7 @@ internal fun getSpecularRectangularEffect(): RuntimeEffect {
             half4 main(vec2 fragcoord) {
                 // leading vertical gap
                 if (fragcoord.y <= gap) {
-                    return vec4(0.0, 0.0, 0.0, 0.0);
+                    return half4(0.0, 0.0, 0.0, 0.0);
                 }
                 
                 // compute x-alpha based on the distance from left / right edges
@@ -114,9 +119,9 @@ internal fun getSpecularRectangularEffect(): RuntimeEffect {
                     if (fragcoord.x <= overlayXStart) {
                         // leading horizontal gap
                         xalpha = 0.0;
-                    } else if (fragcoord.x <= (overlayXStart + gap)) {
+                    } else if (fragcoord.x <= (overlayXStart + ramp)) {
                         // ramp-up to full alpha horizontally
-                        float cfraction = (overlayXStart + gap - fragcoord.x) / gap;
+                        float cfraction = (overlayXStart + ramp - fragcoord.x) / ramp;
                         xalpha = spline(start, control1, control2, end, 1.0 - cfraction).y;
                     }
                 } else {
@@ -131,29 +136,29 @@ internal fun getSpecularRectangularEffect(): RuntimeEffect {
                     if (fragcoord.x >= overlayXEnd) {
                         // trailing horizontal gap
                         xalpha = 0.0;
-                    } else if (fragcoord.x >= (overlayXEnd - gap)) {
+                    } else if (fragcoord.x >= (overlayXEnd - ramp)) {
                         // ramp-down to zero alpha horizontally
-                        float cfraction = (fragcoord.x - (overlayXEnd - gap)) / gap;
+                        float cfraction = (fragcoord.x - (overlayXEnd - ramp)) / ramp;
                         xalpha = spline(start, control1, control2, end, 1.0 - cfraction).y;
                     }
                 }
                 
                 // quick ramp-up
-                if (fragcoord.y <= 2 * gap) {
-                    float cfraction = (fragcoord.y - gap) / gap;
+                if (fragcoord.y <= (gap + ramp)) {
+                    float cfraction = (fragcoord.y - gap) / ramp;
                     float falpha = xalpha * alpha * spline(start, control1, control2, end, cfraction).y;
-                    return vec4(color.r * falpha, color.g * falpha, color.b * falpha, falpha); 
+                    return half4(color.r * falpha, color.g * falpha, color.b * falpha, falpha); 
                 }
                 
                 // slower ramp-down
                 if (fragcoord.y <= height / 2.0) {
-                    float cfraction = (fragcoord.y - 2 * gap) / (height / 2.0 - 2 * gap);
+                    float cfraction = (fragcoord.y - gap - ramp) / (height / 2.0 - gap - ramp);
                     float falpha = xalpha * alpha * spline(start, control1, control2, end, 1.0 - cfraction).y;
-                    return vec4(color.r * falpha, color.g * falpha, color.b * falpha, falpha); 
+                    return half4(color.r * falpha, color.g * falpha, color.b * falpha, falpha); 
                 }
 
                 // nothing in bottom half
-                return vec4(0.0, 0.0, 0.0, 0.0);
+                return half4(0.0, 0.0, 0.0, 0.0);
             }
         """
 
