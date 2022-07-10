@@ -74,7 +74,7 @@ internal open class CommandButtonLayoutManagerBig(
             return Pair(text, "")
         } else {
             val singleLineParagraph = Paragraph(
-                text = text, style = textStyle, width = Float.POSITIVE_INFINITY,
+                text = text, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
                 density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
             )
 
@@ -95,11 +95,11 @@ internal open class CommandButtonLayoutManagerBig(
                     part2 = part2.substring(1)
                 }
                 val len1 = Paragraph(
-                    text = part1, style = textStyle, width = Float.POSITIVE_INFINITY,
+                    text = part1, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
                     density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
                 ).maxIntrinsicWidth
                 val len2 = Paragraph(
-                    text = part2, style = textStyle, width = Float.POSITIVE_INFINITY,
+                    text = part2, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
                     density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
                 ).maxIntrinsicWidth + actionIconWidth.toInt()
                 val len = max(len1, len2)
@@ -132,11 +132,11 @@ internal open class CommandButtonLayoutManagerBig(
         val hasPopupIcon = (command.secondaryContentModel != null)
 
         val title1Line = Paragraph(
-            text = preLayoutInfo.texts[0], style = textStyle, width = Float.POSITIVE_INFINITY,
+            text = preLayoutInfo.texts[0], style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
             density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
         )
         val title2Line = Paragraph(
-            text = preLayoutInfo.texts[1], style = textStyle, width = Float.POSITIVE_INFINITY,
+            text = preLayoutInfo.texts[1], style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
             density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
         )
 
@@ -312,7 +312,7 @@ internal open class CommandButtonLayoutManagerBig(
         y += layoutVGap
 
         val title1Line = Paragraph(
-            text = preLayoutInfo.texts[0], style = textStyle, width = Float.POSITIVE_INFINITY,
+            text = preLayoutInfo.texts[0], style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
             density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
         )
 
@@ -329,7 +329,7 @@ internal open class CommandButtonLayoutManagerBig(
         y += title1Line.height
 
         val title2Line = Paragraph(
-            text = preLayoutInfo.texts[1], style = textStyle, width = Float.POSITIVE_INFINITY,
+            text = preLayoutInfo.texts[1], style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
             density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
         )
 

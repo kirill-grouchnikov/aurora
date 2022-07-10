@@ -81,7 +81,7 @@ internal open class CommandButtonLayoutManagerTile(
             var textWidth = 0.0f
             if (buttonText != null) {
                 val textParagraph = Paragraph(
-                    text = buttonText, style = textStyle, width = Float.POSITIVE_INFINITY,
+                    text = buttonText, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
                     density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
                 )
                 textWidth = textParagraph.maxIntrinsicWidth
@@ -89,7 +89,7 @@ internal open class CommandButtonLayoutManagerTile(
             }
             if (extraText != null) {
                 val extraTextParagraph = Paragraph(
-                    text = extraText, style = textStyle, width = Float.POSITIVE_INFINITY,
+                    text = extraText, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
                     density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
                 )
                 textWidth = max(textWidth, extraTextParagraph.maxIntrinsicWidth)
@@ -240,7 +240,7 @@ internal open class CommandButtonLayoutManagerTile(
                 val hasExtraText = (buttonExtraText != null)
 
                 val paragraph = Paragraph(
-                    text = command.text, style = textStyle, width = Float.POSITIVE_INFINITY,
+                    text = command.text, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
                     density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
                 )
 
@@ -260,7 +260,7 @@ internal open class CommandButtonLayoutManagerTile(
                     val extraParagraph = Paragraph(
                         text = command.extraText,
                         style = textStyle,
-                        width = Float.POSITIVE_INFINITY,
+                        constraints = Constraints(maxWidth = Int.MAX_VALUE),
                         density = _density,
                         maxLines = 1,
                         fontFamilyResolver = fontFamilyResolver
@@ -496,7 +496,7 @@ internal open class CommandButtonLayoutManagerTile(
                 val hasExtraText = (buttonExtraText != null)
 
                 val paragraph = Paragraph(
-                    text = command.text, style = textStyle, width = Float.POSITIVE_INFINITY,
+                    text = command.text, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
                     density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
                 )
 
@@ -516,7 +516,7 @@ internal open class CommandButtonLayoutManagerTile(
                     val extraParagraph = Paragraph(
                         text = command.extraText,
                         style = textStyle,
-                        width = Float.POSITIVE_INFINITY,
+                        constraints = Constraints(maxWidth = Int.MAX_VALUE),
                         density = _density,
                         maxLines = 1,
                         fontFamilyResolver = fontFamilyResolver

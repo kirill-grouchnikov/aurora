@@ -125,7 +125,8 @@ internal fun displayRichTooltipContent(
     // Create the title paragraph with the available horizontal space and bold style.
     // Note that we're not limiting the title to be single line
     val titleParagraph = Paragraph(
-        text = richTooltip.title, style = boldTextStyle, width = maxContentWidthPx,
+        text = richTooltip.title, style = boldTextStyle,
+        constraints = Constraints(maxWidth = maxContentWidthPx.toInt()),
         density = density, fontFamilyResolver = fontFamilyResolver
     )
     var fullContentWidth = 0.0f
@@ -163,7 +164,8 @@ internal fun displayRichTooltipContent(
             // Create the description paragraph with the available horizontal space.
             // Note that we're not limiting the description to be single line
             val descriptionParagraph = Paragraph(
-                text = descriptionSection, style = textStyle, width = maxDescriptionWidthPx,
+                text = descriptionSection, style = textStyle,
+                constraints = Constraints(maxWidth = maxDescriptionWidthPx.toInt()),
                 density = density, fontFamilyResolver = fontFamilyResolver
             )
 
@@ -216,7 +218,8 @@ internal fun displayRichTooltipContent(
             // Create the footer paragraph with the available horizontal space.
             // Note that we're not limiting the description to be single line
             val footerParagraph = Paragraph(
-                text = footerSection, style = textStyle, width = maxFooterWidthPx,
+                text = footerSection, style = textStyle,
+                constraints = Constraints(maxWidth = maxFooterWidthPx.toInt()),
                 density = density, fontFamilyResolver = fontFamilyResolver
             )
 

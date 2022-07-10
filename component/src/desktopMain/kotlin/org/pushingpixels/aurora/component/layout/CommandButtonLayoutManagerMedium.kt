@@ -91,7 +91,7 @@ internal open class CommandButtonLayoutManagerMedium(
             }
 
             val paragraph = Paragraph(
-                text = buttonText, style = textStyle, width = Float.POSITIVE_INFINITY,
+                text = buttonText, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
                 density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
             )
             width += paragraph.maxIntrinsicWidth
@@ -246,7 +246,7 @@ internal open class CommandButtonLayoutManagerMedium(
                 }
 
                 val paragraph = Paragraph(
-                    text = command.text, style = textStyle, width = Float.POSITIVE_INFINITY,
+                    text = command.text, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
                     density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
                 )
 
@@ -451,7 +451,7 @@ internal open class CommandButtonLayoutManagerMedium(
                 }
 
                 val paragraph = Paragraph(
-                    text = command.text, style = textStyle, width = Float.POSITIVE_INFINITY,
+                    text = command.text, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
                     density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
                 )
                 textHeight = paragraph.height

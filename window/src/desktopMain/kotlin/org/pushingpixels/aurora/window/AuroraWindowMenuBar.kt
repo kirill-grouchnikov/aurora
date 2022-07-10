@@ -64,7 +64,7 @@ private object WindowMenuBarLayout {
                             paddingValues.calculateEndPadding(layoutDirection)).toPx()
 
             val paragraph = Paragraph(
-                text = command.text, style = textStyle, width = Float.POSITIVE_INFINITY,
+                text = command.text, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
                 density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
             )
 
@@ -116,7 +116,7 @@ private object WindowMenuBarLayout {
                     paddingValues.calculateLeftPadding(layoutDirection).toPx()
 
             val paragraph = Paragraph(
-                text = command.text, style = textStyle, width = Float.POSITIVE_INFINITY,
+                text = command.text, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
                 density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
             )
 
