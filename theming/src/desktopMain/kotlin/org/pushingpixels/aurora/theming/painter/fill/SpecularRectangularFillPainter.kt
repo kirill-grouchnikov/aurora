@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.theming.painter.fill
 
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.unit.Density
 import org.jetbrains.skia.Data
