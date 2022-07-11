@@ -422,7 +422,6 @@ internal fun displayRichTooltipContent(
     )
 }
 
-@OptIn(AuroraInternalApi::class)
 @Composable
 private fun Modifier.richTooltipBackground() = this.then(
     RichTooltipBackground(

@@ -115,8 +115,7 @@ internal class AWTInputHandler(
     }
     
     private fun getEventWindow(ev: MouseEvent) : Window? {
-        val source = ev.source
-        return when (source) {
+        return when (val source = ev.source) {
             is Window -> source
             is Component -> SwingUtilities.getWindowAncestor(source)
             else -> null

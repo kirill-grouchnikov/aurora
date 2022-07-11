@@ -67,13 +67,12 @@ internal fun getBrushedMetalShader(): Shader {
             }
     """
     val brushedMetalEffect = RuntimeEffect.makeForShader(brushedMetalDesc)
-    val brushedMetalShader = brushedMetalEffect.makeShader(
+    return brushedMetalEffect.makeShader(
         uniforms = null,
         children = arrayOf(noiseShader),
         localMatrix = null,
         isOpaque = false
     )
-    return brushedMetalShader
 }
 
 internal fun getSpecularRectangularEffect(): RuntimeEffect {

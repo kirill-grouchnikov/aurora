@@ -96,7 +96,7 @@ private fun getInterpolatedColors(scheme: AuroraColorScheme): Array<Color?> {
                 while (true) {
                     val currStopValue = schemeBrightness[currIndex]
                     val nextStopValue = schemeBrightness[currIndex + 1]
-                    if (brightness > currStopValue && brightness < nextStopValue) {
+                    if ((brightness > currStopValue) && (brightness < nextStopValue)) {
                         // interpolate
                         val currStopColor = stretchedColorMapping[currStopValue]!!
                         val nextStopColor = stretchedColorMapping[nextStopValue]!!
