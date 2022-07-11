@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.theming.painter.fill
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.unit.Density
 import org.jetbrains.skia.Data
@@ -37,7 +38,7 @@ class SpecularRectangularFillPainter(base: AuroraFillPainter, val baseAlpha: Flo
         alpha: Float
     ): Data {
         val dataBuffer = ByteBuffer.allocate(44).order(ByteOrder.LITTLE_ENDIAN)
-        // RGBA colorLight
+        // RGBA for the extra light color of the fill scheme
         val color = fillScheme.extraLightColor
         dataBuffer.putFloat(0, color.red)
         dataBuffer.putFloat(4, color.green)

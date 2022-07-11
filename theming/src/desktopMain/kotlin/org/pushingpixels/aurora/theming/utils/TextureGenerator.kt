@@ -99,66 +99,52 @@ internal fun getSpecularRectangularEffect(): RuntimeEffect {
                 return start * invT * invT * invT + control1 * 3.0 * t * invT * invT + control2 * 3.0 * t * t * invT + end * t * t * t;
             }
 
+            // SDF (signed distance function) for a rounded box
+            // from https://www.iquilezles.org/www/articles/distfunctions2d/distfunctions2d.htm
+            float sdRoundedBox( in vec2 p, in vec2 b, in vec4 r ) {
+                r.xy = (p.x > 0.0)? r.xy : r.zw;
+                r.x  = (p.y > 0.0)? r.x  : r.y;
+                vec2 q = abs(p) - b + r.x;
+                return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - r.x;  
+            }
+
             half4 main(vec2 fragcoord) {
-                // leading vertical gap
-                if (fragcoord.y <= gap) {
+                // No specular highlight in bottom half
+                if (fragcoord.y > height / 2.0) {
                     return half4(0.0, 0.0, 0.0, 0.0);
                 }
                 
-                // compute x-alpha based on the distance from left / right edges
-                float xalpha = 1.0;
-                if (fragcoord.x <= width / 2) {
-                    // closer to the left edge
-                    float overlayXStart = gap;
-                    if ((topLeftCornerRadius > 0.0) && (fragcoord.y <= (gap + topLeftCornerRadius))) {
-                        // We are within the vertical span of the top-left corner
-                        float dy = gap + topLeftCornerRadius - fragcoord.y;
-                        float dx = sqrt(topLeftCornerRadius * topLeftCornerRadius - dy * dy);
-                        overlayXStart = gap + topLeftCornerRadius - dx;
-                    }
-                    if (fragcoord.x <= overlayXStart) {
-                        // leading horizontal gap
-                        xalpha = 0.0;
-                    } else if (fragcoord.x <= (overlayXStart + ramp)) {
-                        // ramp-up to full alpha horizontally
-                        float cfraction = (overlayXStart + ramp - fragcoord.x) / ramp;
-                        xalpha = spline(start, control1, control2, end, 1.0 - cfraction).y;
-                    }
-                } else {
-                    // closer to the right edge
-                    float overlayXEnd = width - gap;
-                    if ((topRightCornerRadius > 0.0) && (fragcoord.y <= (gap + topRightCornerRadius))) {
-                        // We are within the vertical span of the top-right corner
-                        float dy = gap + topRightCornerRadius - fragcoord.y;
-                        float dx = sqrt(topRightCornerRadius * topRightCornerRadius - dy * dy);
-                        overlayXEnd = width - gap - topRightCornerRadius + dx;
-                    }
-                    if (fragcoord.x >= overlayXEnd) {
-                        // trailing horizontal gap
-                        xalpha = 0.0;
-                    } else if (fragcoord.x >= (overlayXEnd - ramp)) {
-                        // ramp-down to zero alpha horizontally
-                        float cfraction = (fragcoord.x - (overlayXEnd - ramp)) / ramp;
-                        xalpha = spline(start, control1, control2, end, 1.0 - cfraction).y;
-                    }
-                }
-                
-                // quick ramp-up
-                if (fragcoord.y <= (gap + ramp)) {
-                    float cfraction = (fragcoord.y - gap) / ramp;
-                    float falpha = xalpha * alpha * spline(start, control1, control2, end, cfraction).y;
-                    return half4(color.r * falpha, color.g * falpha, color.b * falpha, falpha); 
-                }
-                
-                // slower ramp-down
-                if (fragcoord.y <= height / 2.0) {
-                    float cfraction = (fragcoord.y - gap - ramp) / (height / 2.0 - gap - ramp);
-                    float falpha = xalpha * alpha * spline(start, control1, control2, end, 1.0 - cfraction).y;
-                    return half4(color.r * falpha, color.g * falpha, color.b * falpha, falpha); 
+                // Get distance from the edge of the box
+                vec2 rectangle = vec2(width, height) / 2.0;
+                vec4 radius = vec4(0.0, topRightCornerRadius, 0.0, topLeftCornerRadius);
+                float distanceToClosestEdge = sdRoundedBox(
+                    fragcoord - rectangle, rectangle, radius);
+
+                // Nothing outside the box
+                if (distanceToClosestEdge > 0.0) {
+                    return half4(0.0, 0.0, 0.0, 0.0);
                 }
 
-                // nothing in bottom half
-                return half4(0.0, 0.0, 0.0, 0.0);
+                // Nothing in the gap
+                if (distanceToClosestEdge >= -gap) {
+                    return half4(0.0, 0.0, 0.0, 0.0);
+                }
+                
+                // Ramp up or down between gap and ramp, also account for the downwards fade 
+                // based on the Y coordinate
+                if (distanceToClosestEdge >= -(gap + ramp)) {
+                    float dfraction = -(distanceToClosestEdge + gap) / ramp;
+                    float cfraction = (fragcoord.y - gap - ramp) / (height / 2.0 - gap - ramp);
+                    float falpha = alpha * 
+                        spline(start, control1, control2, end, dfraction).y *
+                        spline(start, control1, control2, end, 1.0 - cfraction).y;
+                    return half4(color.r * falpha, color.g * falpha, color.b * falpha, falpha); 
+                }
+                
+                // Otherwise account for the downwards fade based on the Y coordinate
+                float cfraction = (fragcoord.y - gap - ramp) / (height / 2.0 - gap - ramp);
+                float falpha = alpha * spline(start, control1, control2, end, 1.0 - cfraction).y;
+                return half4(color.r * falpha, color.g * falpha, color.b * falpha, falpha); 
             }
         """
 
