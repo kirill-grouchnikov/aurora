@@ -75,6 +75,7 @@ fun DemoCommandRow(
     commandSecondaryOnly: Command,
     commandActionAndSecondary: Command,
     presentationState: CommandButtonPresentationState,
+    backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>
 ) {
     // Resolve the default text style to get the default font size
@@ -97,14 +98,20 @@ fun DemoCommandRow(
         Row {
             CommandButtonProjection(
                 contentModel = commandActionOnly,
-                presentationModel = CommandButtonPresentationModel(presentationState = presentationState)
+                presentationModel = CommandButtonPresentationModel(
+                    presentationState = presentationState,
+                    backgroundAppearanceStrategy = backgroundAppearanceStrategy
+                )
             ).project()
 
             Spacer(modifier = Modifier.width(8.dp))
 
             CommandButtonProjection(
                 contentModel = commandSecondaryOnly,
-                presentationModel = CommandButtonPresentationModel(presentationState = presentationState)
+                presentationModel = CommandButtonPresentationModel(
+                    presentationState = presentationState,
+                    backgroundAppearanceStrategy = backgroundAppearanceStrategy
+                )
             ).project()
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -113,6 +120,7 @@ fun DemoCommandRow(
                 contentModel = commandActionAndSecondary,
                 presentationModel = CommandButtonPresentationModel(
                     presentationState = presentationState,
+                    backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                     textClick = TextClick.Action
                 )
             ).project()
@@ -123,6 +131,7 @@ fun DemoCommandRow(
                 contentModel = commandActionAndSecondary,
                 presentationModel = CommandButtonPresentationModel(
                     presentationState = presentationState,
+                    backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                     textClick = TextClick.Popup
                 ),
                 overlays = overlays
@@ -145,6 +154,7 @@ class CommandDemoStyle(
 @Composable
 fun CommandDemoJustifyStrip(
     enabled: Boolean,
+    backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     orientation: StripOrientation,
     alignment: MutableState<CommandDemoAlignment>,
     horizontalGapScaleFactor: Float,
@@ -206,7 +216,8 @@ fun CommandDemoJustifyStrip(
         ),
         presentationModel = CommandStripPresentationModel(
             orientation = orientation,
-            horizontalGapScaleFactor = horizontalGapScaleFactor
+            horizontalGapScaleFactor = horizontalGapScaleFactor,
+            backgroundAppearanceStrategy = backgroundAppearanceStrategy
         )
     ).project()
 }
@@ -215,6 +226,7 @@ fun CommandDemoJustifyStrip(
 fun CommandDemoEditStrip(
     actionEnabled: Boolean,
     popupEnabled: Boolean,
+    backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     orientation: StripOrientation,
     horizontalGapScaleFactor: Float,
     resourceBundle: State<ResourceBundle>
@@ -284,7 +296,8 @@ fun CommandDemoEditStrip(
             horizontalGapScaleFactor = horizontalGapScaleFactor,
             iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
             iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
-            iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText
+            iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+            backgroundAppearanceStrategy = backgroundAppearanceStrategy
         ),
         overlays = mapOf(
             commandPasteTextOnly to CommandButtonPresentationModel.Overlay(
@@ -310,6 +323,7 @@ fun CommandDemoEditStrip(
 @Composable
 fun CommandDemoStyleStrip(
     enabled: Boolean,
+    backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     orientation: StripOrientation,
     style: CommandDemoStyle,
     horizontalGapScaleFactor: Float,
@@ -378,7 +392,8 @@ fun CommandDemoStyleStrip(
             horizontalGapScaleFactor = horizontalGapScaleFactor,
             iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
             iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
-            iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText
+            iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+            backgroundAppearanceStrategy = backgroundAppearanceStrategy
         )
     ).project()
 }
@@ -391,6 +406,12 @@ fun AuroraApplicationScope.DemoCommandContent(
     var selected by remember { mutableStateOf(false) }
     var actionEnabled by remember { mutableStateOf(true) }
     var popupEnabled by remember { mutableStateOf(true) }
+    var flat by remember { mutableStateOf(false) }
+
+    val backgroundAppearanceStrategy by derivedStateOf {
+        if (flat) BackgroundAppearanceStrategy.Flat
+        else BackgroundAppearanceStrategy.Always
+    }
 
     val commandActionOnly =
         Command(
@@ -667,6 +688,7 @@ fun AuroraApplicationScope.DemoCommandContent(
         Box(modifier = Modifier.padding(8.dp)) {
             CommandDemoJustifyStrip(
                 enabled = actionEnabled,
+                backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                 orientation = StripOrientation.Vertical,
                 alignment = alignment,
                 horizontalGapScaleFactor = 0.7f,
@@ -676,6 +698,7 @@ fun AuroraApplicationScope.DemoCommandContent(
         Box(modifier = Modifier.padding(8.dp)) {
             CommandDemoStyleStrip(
                 enabled = actionEnabled,
+                backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                 orientation = StripOrientation.Vertical,
                 style = style,
                 horizontalGapScaleFactor = 0.7f,
@@ -704,15 +727,32 @@ fun AuroraApplicationScope.DemoCommandContent(
                     selected = popupEnabled,
                     onTriggerSelectedChange = { popupEnabled = !popupEnabled }
                 )).project()
+                Spacer(modifier = Modifier.width(8.dp))
+                CheckBoxProjection(contentModel = SelectorContentModel(
+                    text = resourceBundle.value.getString("Flat.look"),
+                    selected = flat,
+                    onTriggerSelectedChange = { flat = !flat }
+                )).project()
             }
 
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
-                CommandButtonProjection(contentModel = commandActionOnlyNoIcon).project()
+                CommandButtonProjection(
+                    contentModel = commandActionOnlyNoIcon,
+                    presentationModel = CommandButtonPresentationModel(
+                        backgroundAppearanceStrategy = backgroundAppearanceStrategy
+                    )
+                ).project()
                 Spacer(modifier = Modifier.width(8.dp))
-                CommandButtonProjection(contentModel = commandActionToggle).project()
+                CommandButtonProjection(
+                    contentModel = commandActionToggle,
+                    presentationModel = CommandButtonPresentationModel(
+                        backgroundAppearanceStrategy = backgroundAppearanceStrategy
+                    )
+                ).project()
                 Spacer(modifier = Modifier.width(8.dp))
                 CommandDemoJustifyStrip(
                     enabled = actionEnabled,
+                    backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                     orientation = StripOrientation.Horizontal,
                     alignment = alignment,
                     horizontalGapScaleFactor = CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis,
@@ -721,6 +761,7 @@ fun AuroraApplicationScope.DemoCommandContent(
                 Spacer(modifier = Modifier.width(8.dp))
                 CommandDemoStyleStrip(
                     enabled = actionEnabled,
+                    backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                     orientation = StripOrientation.Horizontal,
                     style = style,
                     horizontalGapScaleFactor = CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis,
@@ -730,6 +771,7 @@ fun AuroraApplicationScope.DemoCommandContent(
                 CommandDemoEditStrip(
                     actionEnabled = actionEnabled,
                     popupEnabled = popupEnabled,
+                    backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                     orientation = StripOrientation.Horizontal,
                     horizontalGapScaleFactor = CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis,
                     resourceBundle = resourceBundle
@@ -742,6 +784,7 @@ fun AuroraApplicationScope.DemoCommandContent(
                 commandSecondaryOnly,
                 commandActionAndSecondary,
                 CommandButtonPresentationState.Small,
+                backgroundAppearanceStrategy,
                 overlays
             )
 
@@ -751,6 +794,7 @@ fun AuroraApplicationScope.DemoCommandContent(
                 commandSecondaryOnly,
                 commandActionAndSecondary,
                 CommandButtonPresentationState.Medium,
+                backgroundAppearanceStrategy,
                 overlays
             )
 
@@ -760,6 +804,7 @@ fun AuroraApplicationScope.DemoCommandContent(
                 commandSecondaryOnly,
                 commandActionAndSecondary,
                 CommandButtonPresentationState.Tile,
+                backgroundAppearanceStrategy,
                 overlays
             )
 
@@ -769,6 +814,7 @@ fun AuroraApplicationScope.DemoCommandContent(
                 commandSecondaryOnly,
                 commandActionAndSecondary,
                 CommandButtonPresentationState.Big,
+                backgroundAppearanceStrategy,
                 overlays
             )
         }
