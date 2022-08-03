@@ -15,9 +15,37 @@
  */
 package org.pushingpixels.aurora.common
 
-import androidx.compose.ui.awt.ComposeWindow
+import androidx.compose.ui.awt.ComposePanel
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import java.awt.BorderLayout
+import java.awt.Component
+import java.awt.Rectangle
+import javax.swing.JPopupMenu
+import javax.swing.SwingUtilities
+import javax.swing.border.EmptyBorder
+
+class AuroraSwingPopupMenu : JPopupMenu() {
+    init {
+        layout = BorderLayout()
+        border = EmptyBorder(1, 1, 1, 1)
+        addPropertyChangeListener {
+            // BasicPopupMenuUI has a comment in cancelPopupMenu that instead of notifying
+            // the menu's listener that the menu is about to be canceled, it sends the
+            // following property change. Not ideal, but then this whole setup is like that.
+            if ((it.propertyName == "JPopupMenu.firePopupMenuCanceled") && (it.newValue as Boolean)) {
+                // Handle this as a signal to hide all the popups
+                AuroraPopupManager.hidePopups(null)
+            }
+        }
+    }
+
+    override fun menuSelectionChanged(isIncluded: Boolean) {
+        // Do nothing, overriding the logic in JPopupMenu that hides a popup that does not
+        // originate in Swing's JMenu. We do our own implementation of possibly cascading
+        // popups.
+    }
+}
 
 object AuroraPopupManager {
     enum class PopupKind {
@@ -25,26 +53,37 @@ object AuroraPopupManager {
     }
 
     private data class PopupInfo(
-        val originator: ComposeWindow,
+        val originatorPopup: Component,
         val popupTriggerAreaInOriginatorWindow: Rect,
-        val popupWindow: ComposeWindow,
+        val popup: AuroraSwingPopupMenu,
+        val popupContent: ComposePanel,
         val popupKind: PopupKind
     )
 
     private val shownPath = arrayListOf<PopupInfo>()
 
     fun addPopup(
-        originator: ComposeWindow,
+        originator: Component,
         popupTriggerAreaInOriginatorWindow: Rect,
-        popupWindow: ComposeWindow,
+        popup: AuroraSwingPopupMenu,
+        popupContent: ComposePanel,
+        popupRectOnScreen: Rectangle,
         popupKind: PopupKind
     ) {
-        shownPath.add(PopupInfo(originator, popupTriggerAreaInOriginatorWindow, popupWindow, popupKind))
+        shownPath.add(
+            PopupInfo(
+                originator, popupTriggerAreaInOriginatorWindow,
+                popup, popupContent, popupKind
+            )
+        )
 
-        popupWindow.invalidate()
-        popupWindow.validate()
-        popupWindow.isVisible = true
-        popupWindow.pack()
+        val invokerLocOnScreen = originator.locationOnScreen
+        popupContent.invalidate()
+        popupContent.revalidate()
+        popup.show(
+            originator, popupRectOnScreen.x - invokerLocOnScreen.x,
+            popupRectOnScreen.y - invokerLocOnScreen.y
+        )
     }
 
     fun hideLastPopup() {
@@ -52,20 +91,20 @@ object AuroraPopupManager {
             return
         }
         val last: PopupInfo = shownPath.removeLast()
-        val lastPopupWindow = last.popupWindow
-        if (lastPopupWindow.isDisplayable) {
-            lastPopupWindow.isVisible = false
-            lastPopupWindow.dispose()
-        }
+        val lastPopup = last.popup
+
+        // Do not remove this block, this is needed for some reason (shrug) for proper
+        // display of the next popup content
+        val popupWindow = SwingUtilities.getWindowAncestor(last.popupContent)
+        popupWindow.dispose()
+
+        lastPopup.isVisible = false
     }
 
-    fun hidePopups(originator: ComposeWindow?, popupKind: PopupKind? = null) {
-        // Start going over the popups in reverse order (from the most recently displayed
-        // towards the very first one) and dismissing them one by one until we hit the
-        // originator
+    fun hidePopups(originator: Component?, popupKind: PopupKind? = null) {
         while (shownPath.size > 0) {
             val currLastShown = shownPath[shownPath.size - 1]
-            if (currLastShown.popupWindow == originator) {
+            if (currLastShown.popup == originator) {
                 // The current popup window we're looking at is the requested originator.
                 // Stop unwinding and return.
                 return
@@ -78,22 +117,24 @@ object AuroraPopupManager {
             }
 
             val last = shownPath.removeLast()
-            val lastPopupWindow = last.popupWindow
-            if (lastPopupWindow.isDisplayable) {
-                lastPopupWindow.isVisible = false
-                lastPopupWindow.dispose()
-            }
-            // Continue unwinding
+            val lastPopup = last.popup
+
+            // Do not remove this block, this is needed for some reason (shrug) for proper
+            // display of the next popup content
+            val popupWindow = SwingUtilities.getWindowAncestor(last.popupContent)
+            popupWindow.dispose()
+
+            lastPopup.isVisible = false
         }
     }
 
     fun isShowingPopupFrom(
-        originatorWindow: ComposeWindow,
-        pointInOriginatorWindow: Offset
+        originator: Component,
+        pointInOriginator: Offset
     ): Boolean {
         val match = shownPath.reversed().find {
-            (it.originator == originatorWindow) &&
-                    (it.popupTriggerAreaInOriginatorWindow.contains(pointInOriginatorWindow))
+            (it.popup == originator) &&
+                    (it.popupTriggerAreaInOriginatorWindow.contains(pointInOriginator))
         }
         return match != null
     }

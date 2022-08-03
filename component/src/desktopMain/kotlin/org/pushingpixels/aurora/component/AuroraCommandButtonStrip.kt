@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.theming.LocalPopupMenu
 import org.pushingpixels.aurora.theming.LocalWindow
 import org.pushingpixels.aurora.theming.Side
 import org.pushingpixels.aurora.theming.Sides
@@ -38,6 +39,7 @@ private fun CommandButtonStripContent(
     overlays: Map<Command, CommandButtonPresentationModel.Overlay> = mapOf()
 ) {
     val window = LocalWindow.current
+    val popup = LocalPopupMenu.current
     val ltr = (LocalLayoutDirection.current == LayoutDirection.Ltr)
 
     val commandCount = commandGroup.commands.size
@@ -69,7 +71,7 @@ private fun CommandButtonStripContent(
             actionInteractionSource = remember { MutableInteractionSource() },
             popupInteractionSource = remember { MutableInteractionSource() },
             command = command,
-            parentWindow = window,
+            parentPopupMenu = popup,
             extraAction = null,
             presentationModel = currentPresentationModel,
             overlays = overlays

@@ -26,7 +26,6 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
@@ -55,10 +54,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.*
-import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.common.AuroraPopupManager
-import org.pushingpixels.aurora.common.interpolateTowards
-import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
@@ -336,7 +332,7 @@ internal fun AuroraCommandButton(
     actionInteractionSource: MutableInteractionSource,
     popupInteractionSource: MutableInteractionSource,
     command: Command,
-    parentWindow: ComposeWindow,
+    parentPopupMenu: AuroraSwingPopupMenu?,
     extraAction: (() -> Unit)? = null,
     extraActionPreview: CommandActionPreview? = null,
     popupPlacementStrategyProvider: ((ModelStateInfo) -> PopupPlacementStrategy)? = null,
@@ -411,6 +407,7 @@ internal fun AuroraCommandButton(
     val layoutDirection = LocalLayoutDirection.current
     val mergedTextStyle = LocalTextStyle.current.merge(presentationModel.textStyle)
     val fontFamilyResolver = LocalFontFamilyResolver.current
+    val popupOriginator = parentPopupMenu ?: LocalWindow.current.rootPane
 
     val resolvedTextStyle = remember { resolveDefaults(mergedTextStyle, layoutDirection) }
 
@@ -864,18 +861,18 @@ internal fun AuroraCommandButton(
                     enabled = isPopupEnabled,
                     onClick = {
                         if (AuroraPopupManager.isShowingPopupFrom(
-                                originatorWindow = parentWindow,
-                                pointInOriginatorWindow = AuroraOffset(
+                                originator = popupOriginator,
+                                pointInOriginator = AuroraOffset(
                                     x = buttonTopLeftOffset.x + popupAreaOffset.x + popupAreaSize.value.width / 2.0f,
                                     y = buttonTopLeftOffset.y + popupAreaOffset.y + popupAreaSize.value.height / 2.0f
                                 ).asOffset(density)
                         )) {
                             // We're showing a popup that originates from this popup area. Hide it.
-                            AuroraPopupManager.hidePopups(originator = parentWindow)
+                            AuroraPopupManager.hidePopups(originator = parentPopupMenu)
                         } else {
                             // Display our popup content.
                             displayPopupContent(
-                                currentWindow = parentWindow,
+                                popupOriginator = popupOriginator,
                                 layoutDirection = layoutDirection,
                                 density = density,
                                 textStyle = resolvedTextStyle,

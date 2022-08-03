@@ -33,6 +33,7 @@ import org.pushingpixels.aurora.component.model.CommandMenuContentModel
 import org.pushingpixels.aurora.component.model.CommandPopupMenuPresentationModel
 import org.pushingpixels.aurora.component.utils.displayPopupContent
 import org.pushingpixels.aurora.theming.AuroraSkin
+import org.pushingpixels.aurora.theming.LocalPopupMenu
 import org.pushingpixels.aurora.theming.LocalTextStyle
 import org.pushingpixels.aurora.theming.LocalWindow
 
@@ -54,7 +55,7 @@ fun Modifier.auroraContextMenu(
     val skinColors = AuroraSkin.colors
     val painters = AuroraSkin.painters
     val decorationAreaType = AuroraSkin.decorationAreaType
-    val window = LocalWindow.current
+    val popupOriginator = LocalPopupMenu.current ?: LocalWindow.current.rootPane
     val compositionLocalContext by rememberUpdatedState(currentCompositionLocalContext)
 
     val resolvedTextStyle = remember { resolveDefaults(mergedTextStyle, layoutDirection) }
@@ -65,7 +66,7 @@ fun Modifier.auroraContextMenu(
 
             if (enabledState.value && (lastMouseEvent?.isPopupTrigger == true)) {
                 displayPopupContent(
-                    currentWindow = window,
+                    popupOriginator = popupOriginator,
                     layoutDirection = layoutDirection,
                     density = density,
                     textStyle = resolvedTextStyle,

@@ -24,7 +24,7 @@ import androidx.compose.ui.Modifier
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.theming.LocalWindow
+import org.pushingpixels.aurora.theming.LocalPopupMenu
 
 class CommandButtonProjection(
     val contentModel: Command,
@@ -38,13 +38,13 @@ class CommandButtonProjection(
         actionInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() },
         popupInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() }
     ) {
-        val window = LocalWindow.current
+        val popupMenu = LocalPopupMenu.current
         AuroraCommandButton(
             modifier = modifier,
             actionInteractionSource = actionInteractionSource,
             popupInteractionSource = popupInteractionSource,
             command = this.contentModel,
-            parentWindow = window,
+            parentPopupMenu = popupMenu,
             extraAction = null,
             presentationModel = this.presentationModel,
             overlays = this.overlays ?: mapOf()

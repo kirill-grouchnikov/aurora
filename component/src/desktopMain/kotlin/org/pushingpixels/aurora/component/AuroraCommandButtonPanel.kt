@@ -28,7 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ClipOp
@@ -43,6 +42,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.LabelProjection
@@ -52,7 +52,7 @@ import kotlin.math.max
 
 @OptIn(AuroraInternalApi::class)
 private fun LazyListScope.rowOfItems(
-    composeWindow: ComposeWindow,
+    popupMenu: AuroraSwingPopupMenu?,
     backgroundColor: Color,
     gap: Dp,
     commandGroup: CommandGroup,
@@ -85,7 +85,7 @@ private fun LazyListScope.rowOfItems(
                     actionInteractionSource = remember { MutableInteractionSource() },
                     popupInteractionSource = remember { MutableInteractionSource() },
                     command = command,
-                    parentWindow = composeWindow,
+                    parentPopupMenu = popupMenu,
                     extraAction = extraAction,
                     extraActionPreview = commandActionPreview,
                     presentationModel = commandPresentation,
@@ -101,7 +101,7 @@ private fun LazyListScope.rowOfItems(
 
 @OptIn(AuroraInternalApi::class)
 private fun LazyListScope.columnOfItems(
-    composeWindow: ComposeWindow,
+    popupMenu: AuroraSwingPopupMenu?,
     backgroundColor: Color,
     gap: Dp,
     commandGroup: CommandGroup,
@@ -134,7 +134,7 @@ private fun LazyListScope.columnOfItems(
                     actionInteractionSource = remember { MutableInteractionSource() },
                     popupInteractionSource = remember { MutableInteractionSource() },
                     command = command,
-                    parentWindow = composeWindow,
+                    parentPopupMenu = popupMenu,
                     extraAction = extraAction,
                     extraActionPreview = commandActionPreview,
                     presentationModel = commandPresentation,
@@ -224,7 +224,7 @@ internal fun AuroraCommandButtonPanel(
     overlays: Map<Command, CommandButtonPresentationModel.Overlay> = mapOf()
 ) {
     val layoutDirection = LocalLayoutDirection.current
-    val window = LocalWindow.current
+    val popupMenu = LocalPopupMenu.current
 
     val baseCommandButtonPresentationModel =
         CommandButtonPresentationModel(
@@ -304,7 +304,7 @@ internal fun AuroraCommandButtonPanel(
                                     val indexRowEnd =
                                         (indexRowStart + columnCount).coerceAtMost(commandGroup.commands.size)
                                     rowOfItems(
-                                        composeWindow = window,
+                                        popupMenu = popupMenu,
                                         backgroundColor = if (groupIndex % 2 == 0) backgroundEvenGroups else backgroundOddGroups,
                                         gap = gap,
                                         commandGroup = commandGroup,
@@ -365,7 +365,7 @@ internal fun AuroraCommandButtonPanel(
                                     val indexColumnEnd =
                                         (indexColumnStart + rowCount).coerceAtMost(commandGroup.commands.size)
                                     columnOfItems(
-                                        composeWindow = window,
+                                        popupMenu = popupMenu,
                                         backgroundColor = if (groupIndex % 2 == 0) backgroundEvenGroups else backgroundOddGroups,
                                         gap = gap,
                                         commandGroup = commandGroup,

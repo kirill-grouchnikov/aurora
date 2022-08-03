@@ -21,7 +21,6 @@ import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
@@ -40,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
+import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
@@ -56,7 +56,6 @@ import java.awt.event.*
 import java.util.*
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
-
 
 object WindowSizingConstants {
     val DecoratedBorderThickness = 4.dp
@@ -467,19 +466,19 @@ fun AuroraWindowScope.AuroraWindowContent(
                 AuroraPopupManager.hideLastPopup()
             }
             if ((event is MouseEvent) && (event.id == MouseEvent.MOUSE_PRESSED) && (src is Component)) {
-                var ignoreEvent = false
-                val windowAncestor = SwingUtilities.getWindowAncestor(src)
-                if (windowAncestor is ComposeWindow) {
+                // This can be in our custom popup menu or in the top-level window
+                val originator = SwingUtilities.getAncestorOfClass(AuroraSwingPopupMenu::class.java, src) ?:
+                    SwingUtilities.getWindowAncestor(src)
+                if (originator != null) {
                     val eventLocation = event.locationOnScreen
-                    SwingUtilities.convertPointFromScreen(eventLocation, windowAncestor)
+                    SwingUtilities.convertPointFromScreen(eventLocation, originator)
 
-                    ignoreEvent = AuroraPopupManager.isShowingPopupFrom(
-                        originatorWindow = windowAncestor,
-                        pointInOriginatorWindow = Offset(eventLocation.x.toFloat(), eventLocation.y.toFloat())
-                    )
-                }
-                if (!ignoreEvent) {
-                    AuroraPopupManager.hidePopups(windowAncestor as? ComposeWindow)
+                    if (!AuroraPopupManager.isShowingPopupFrom(
+                        originator = originator,
+                        pointInOriginator = Offset(eventLocation.x.toFloat(), eventLocation.y.toFloat())
+                    )) {
+                        AuroraPopupManager.hidePopups(originator)
+                    }
                 }
             }
         }
@@ -623,18 +622,6 @@ fun AuroraApplicationScope.AuroraWindow(
                     AWTEvent.MOUSE_EVENT_MASK or AWTEvent.MOUSE_MOTION_EVENT_MASK
                 )
             }
-
-            window.addWindowFocusListener(object : WindowFocusListener {
-                override fun windowGainedFocus(e: WindowEvent) {
-                }
-
-                override fun windowLostFocus(e: WindowEvent) {
-                    for (window in Window.getWindows()) {
-                        // Hide all Aurora popup windows when our app window loses focus
-                        AuroraPopupManager.hidePopups(null)
-                    }
-                }
-            })
         }
     }
 }
@@ -715,18 +702,6 @@ fun AuroraApplicationScope.AuroraWindow(
                     AWTEvent.MOUSE_EVENT_MASK or AWTEvent.MOUSE_MOTION_EVENT_MASK
                 )
             }
-
-            window.addWindowFocusListener(object : WindowFocusListener {
-                override fun windowGainedFocus(e: WindowEvent) {
-                }
-
-                override fun windowLostFocus(e: WindowEvent) {
-                    for (window in Window.getWindows()) {
-                        // Hide all Aurora popup windows when our app window loses focus
-                        AuroraPopupManager.hidePopups(null)
-                    }
-                }
-            })
         }
     }
 }

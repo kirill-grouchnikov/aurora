@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpSize
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 
@@ -82,5 +83,9 @@ val LocalWindow = staticCompositionLocalOf<ComposeWindow> {
 @AuroraInternalApi
 val LocalWindowSize = staticCompositionLocalOf<DpSize> {
     error("LocalWindowSize not provided")
+}
+@AuroraInternalApi
+val LocalPopupMenu = staticCompositionLocalOf<AuroraSwingPopupMenu?> {
+    null
 }
 

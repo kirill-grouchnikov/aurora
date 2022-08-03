@@ -59,7 +59,7 @@ fun AuroraBreadcrumbBar(
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
     val fontFamilyResolver = LocalFontFamilyResolver.current
-    val window = LocalWindow.current
+    val popupMenu = LocalPopupMenu.current
 
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
 
@@ -232,7 +232,7 @@ fun AuroraBreadcrumbBar(
                             actionInteractionSource = remember { MutableInteractionSource() },
                             popupInteractionSource = remember { MutableInteractionSource() },
                             command = command,
-                            parentWindow = window,
+                            parentPopupMenu = popupMenu,
                             extraAction = null,
                             popupPlacementStrategyProvider = { modelStateInfo ->
                                 if (modelStateInfo.activeStrength > 0.0f) PopupPlacementStrategy.Downward

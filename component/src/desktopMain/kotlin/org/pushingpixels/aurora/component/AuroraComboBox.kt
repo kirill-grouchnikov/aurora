@@ -101,7 +101,7 @@ internal fun <E> AuroraComboBox(
     val skinColors = AuroraSkin.colors
     val painters = AuroraSkin.painters
     val buttonShaper = AuroraSkin.buttonShaper
-    val window = LocalWindow.current
+    val popupOriginator = LocalPopupMenu.current ?: LocalWindow.current.rootPane
 
     val comboBoxTopLeftOffset = AuroraOffset(0.0f, 0.0f)
     val comboBoxSize = remember { mutableStateOf(IntSize(0, 0)) }
@@ -223,18 +223,18 @@ internal fun <E> AuroraComboBox(
             enabled = contentModel.enabled,
             onClick = {
                 if (AuroraPopupManager.isShowingPopupFrom(
-                        originatorWindow = window,
-                        pointInOriginatorWindow = AuroraOffset(
+                        originator = popupOriginator,
+                        pointInOriginator = AuroraOffset(
                             x = comboBoxTopLeftOffset.x + comboBoxSize.value.width / 2.0f,
                             y = comboBoxTopLeftOffset.y + comboBoxSize.value.height / 2.0f
                         ).asOffset(density)
                     )) {
                     // We're showing a popup that originates from this combo. Hide it.
-                    AuroraPopupManager.hidePopups(originator = window)
+                    AuroraPopupManager.hidePopups(originator = popupOriginator)
                 } else {
                     // Display our popup content.
                     displayPopupContent(
-                        currentWindow = window,
+                        popupOriginator = popupOriginator,
                         layoutDirection = layoutDirection,
                         density = density,
                         textStyle = resolvedTextStyle,

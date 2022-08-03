@@ -24,7 +24,6 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
-import androidx.compose.ui.platform.LocalFontLoader
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.IntSize
@@ -36,10 +35,7 @@ import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.component.model.RichTooltip
 import org.pushingpixels.aurora.component.model.RichTooltipPresentationModel
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.theming.AuroraSkin
-import org.pushingpixels.aurora.theming.LocalTextStyle
-import org.pushingpixels.aurora.theming.LocalWindow
-import org.pushingpixels.aurora.theming.PopupPlacementStrategy
+import org.pushingpixels.aurora.theming.*
 
 // Rich tooltip tracking code based on code in TooltipArea.desktop.kt
 private suspend fun PointerInputScope.detectDown(onDown: (Offset) -> Unit) {
@@ -89,7 +85,7 @@ fun Modifier.auroraRichTooltip(
     val skinColors = AuroraSkin.colors
     val painters = AuroraSkin.painters
     val decorationAreaType = AuroraSkin.decorationAreaType
-    val window = LocalWindow.current
+    val popupOriginator = LocalPopupMenu.current ?: LocalWindow.current.rootPane
     val compositionLocalContext by rememberUpdatedState(currentCompositionLocalContext)
 
     val resolvedTextStyle = remember { resolveDefaults(mergedTextStyle, layoutDirection) }
@@ -105,7 +101,7 @@ fun Modifier.auroraRichTooltip(
         job = scope.launch {
             delay(500)
             displayRichTooltipContent(
-                currentWindow = window,
+                popupOriginator = popupOriginator,
                 layoutDirection = layoutDirection,
                 density = density,
                 textStyle = resolvedTextStyle,
@@ -128,7 +124,7 @@ fun Modifier.auroraRichTooltip(
     fun hide() {
         job?.cancel()
         AuroraPopupManager.hidePopups(
-            originator = window,
+            originator = popupOriginator,
             popupKind = AuroraPopupManager.PopupKind.RICH_TOOLTIP
         )
     }

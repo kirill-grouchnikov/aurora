@@ -20,7 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalContext
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.awt.ComposeWindow
+import androidx.compose.ui.awt.ComposePanel
 import androidx.compose.ui.draw.DrawModifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -40,6 +40,7 @@ import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
+import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.component.projection.IconProjection
@@ -48,6 +49,7 @@ import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import java.awt.*
 import java.awt.geom.Rectangle2D
+import javax.swing.JPopupMenu
 import javax.swing.border.Border
 import kotlin.math.ceil
 
@@ -68,8 +70,9 @@ internal val RichTooltip.hasFooterSections: Boolean
 internal val RichTooltip.hasFooterContent: Boolean
     get() = ((this.footerIcon != null) || this.hasFooterSections)
 
+@OptIn(AuroraInternalApi::class)
 internal fun displayRichTooltipContent(
-    currentWindow: ComposeWindow,
+    popupOriginator: Component,
     layoutDirection: LayoutDirection,
     density: Density,
     textStyle: TextStyle,
@@ -83,19 +86,7 @@ internal fun displayRichTooltipContent(
     presentationModel: RichTooltipPresentationModel,
     popupPlacementStrategy: PopupPlacementStrategy,
 ) {
-    val popupContentWindow = ComposeWindow()
-    popupContentWindow.focusableWindowState = false
-    popupContentWindow.type = Window.Type.POPUP
-    popupContentWindow.isAlwaysOnTop = true
-    popupContentWindow.isUndecorated = true
-    popupContentWindow.isResizable = false
-
-    val fillColor = skinColors.getBackgroundColorScheme(decorationAreaType).backgroundFillColor
-    val awtFillColor = fillColor.awtColor
-    popupContentWindow.background = awtFillColor
-
-    val locationOnScreen = currentWindow.rootPane.locationOnScreen
-
+    val popupOriginatorLocationOnScreen = popupOriginator.locationOnScreen
     val offset = ceil(density.density).toInt()
 
     // Create our own text style with bold weight for the title
@@ -262,18 +253,18 @@ internal fun displayRichTooltipContent(
         footerSizes = footerSizes
     )
 
-    // Full size of the rich tooltip accounts for extra two pixels on each side for the popup border
-    val fullPopupWidth = ceil(fullContentWidth / density.density).toInt() + 4
-    val fullPopupHeight = ceil(fullContentHeight / density.density).toInt() + 4
+    // Full size of the rich tooltip accounts for extra pixel (in DP units) on each side for the popup border
+    val fullPopupWidth = ceil(fullContentWidth / density.density).toInt() + 2
+    val fullPopupHeight = ceil(fullContentHeight / density.density).toInt() + 2
 
     // From this point, all coordinates are in Swing display units - which are density independent.
     // This is why the popup width and height was converted from pixels.
     val initialAnchorX = if (layoutDirection == LayoutDirection.Ltr)
-        (locationOnScreen.x + anchorBoundsInWindow.left).toInt() else
-        (locationOnScreen.x + anchorBoundsInWindow.left + anchorBoundsInWindow.width).toInt() - fullPopupWidth
+        (popupOriginatorLocationOnScreen.x + anchorBoundsInWindow.left).toInt() else
+        (popupOriginatorLocationOnScreen.x + anchorBoundsInWindow.left + anchorBoundsInWindow.width).toInt() - fullPopupWidth
     val initialAnchor = IntOffset(
         x = initialAnchorX,
-        y = (locationOnScreen.y + anchorBoundsInWindow.top).toInt()
+        y = (popupOriginatorLocationOnScreen.y + anchorBoundsInWindow.top).toInt()
     )
 
     val popupRect = when (popupPlacementStrategy) {
@@ -283,12 +274,14 @@ internal fun displayRichTooltipContent(
             fullPopupWidth,
             fullPopupHeight
         )
+
         PopupPlacementStrategy.Upward -> Rectangle(
             initialAnchor.x,
             initialAnchor.y - fullPopupHeight,
             fullPopupWidth,
             fullPopupHeight
         )
+
         PopupPlacementStrategy.Startward -> if (layoutDirection == LayoutDirection.Ltr)
             Rectangle(
                 initialAnchor.x - fullPopupWidth,
@@ -302,6 +295,7 @@ internal fun displayRichTooltipContent(
                 fullPopupWidth,
                 fullPopupHeight
             )
+
         PopupPlacementStrategy.Endward -> if (layoutDirection == LayoutDirection.Ltr)
             Rectangle(
                 initialAnchor.x + anchorBoundsInWindow.width.toInt(),
@@ -315,6 +309,7 @@ internal fun displayRichTooltipContent(
                 fullPopupWidth,
                 fullPopupHeight
             )
+
         PopupPlacementStrategy.CenteredVertically -> Rectangle(
             initialAnchor.x,
             initialAnchor.y + anchorBoundsInWindow.height.toInt() / 2
@@ -325,7 +320,7 @@ internal fun displayRichTooltipContent(
     }
 
     // Make sure the popup stays in screen bounds
-    val screenBounds = popupContentWindow.graphicsConfiguration.bounds
+    val screenBounds = popupOriginator.graphicsConfiguration.bounds
     if (popupRect.x < 0) {
         popupRect.translate(-popupRect.x, 0)
     }
@@ -345,7 +340,10 @@ internal fun displayRichTooltipContent(
         )
     }
 
-    popupContentWindow.bounds = popupRect
+    val popupContent = ComposePanel()
+    val fillColor = skinColors.getBackgroundColorScheme(decorationAreaType).backgroundFillColor
+    val awtFillColor = fillColor.awtColor
+    popupContent.background = awtFillColor
 
     val borderScheme = skinColors.getColorScheme(
         decorationAreaType = DecorationAreaType.None,
@@ -356,7 +354,7 @@ internal fun displayRichTooltipContent(
     val awtBorderColor = popupBorderColor.awtColor
     val borderThickness = 1.0f / density.density
 
-    popupContentWindow.rootPane.border = object : Border {
+    popupContent.border = object : Border {
         override fun paintBorder(
             c: Component,
             g: Graphics,
@@ -395,29 +393,44 @@ internal fun displayRichTooltipContent(
             return false
         }
     }
+    popupContent.preferredSize = Dimension(popupRect.width, popupRect.height)
 
-    popupContentWindow.compositionLocalContext = compositionLocalContext
-    popupContentWindow.setContent {
-        CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
-            TopLevelRichTooltipContent(
-                richTooltip = richTooltip,
-                richTooltipPresentationModel = presentationModel,
-                tooltipLayoutInfo = tooltipLayoutInfo
-            )
+    val popupDpSize = DpSize(
+        width = (popupRect.width / density.density).dp,
+        height = (popupRect.height / density.density).dp
+    )
+
+    // This line is needed to ensure that each popup is displayed in its own heavyweight window
+    JPopupMenu.setDefaultLightWeightPopupEnabled(false)
+
+    val popupMenu = AuroraSwingPopupMenu()
+    popupContent.setContent {
+        // Get the current composition context
+        CompositionLocalProvider(compositionLocalContext) {
+            // And add the composition locals for the new popup
+            CompositionLocalProvider(
+                LocalPopupMenu provides popupMenu,
+                LocalWindowSize provides popupDpSize
+            ) {
+                TopLevelRichTooltipContent(
+                    richTooltip = richTooltip,
+                    richTooltipPresentationModel = presentationModel,
+                    tooltipLayoutInfo = tooltipLayoutInfo
+                )
+            }
         }
     }
+    popupMenu.add(popupContent)
 
-    popupContentWindow.invalidate()
-    popupContentWindow.validate()
-    popupContentWindow.isVisible = true
-
-    // Hide the popups that "start" from the current window
-    AuroraPopupManager.hidePopups(originator = currentWindow)
+    // Hide the popups that "start" from our popup originator
+    AuroraPopupManager.hidePopups(originator = popupOriginator)
     // And display our new popup content
     AuroraPopupManager.addPopup(
-        originator = currentWindow,
+        originator = popupOriginator,
         popupTriggerAreaInOriginatorWindow = Rect.Zero,
-        popupWindow = popupContentWindow,
+        popup = popupMenu,
+        popupContent = popupContent,
+        popupRectOnScreen = popupRect,
         popupKind = AuroraPopupManager.PopupKind.RICH_TOOLTIP
     )
 }
