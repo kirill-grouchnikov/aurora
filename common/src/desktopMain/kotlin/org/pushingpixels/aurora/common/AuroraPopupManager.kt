@@ -62,7 +62,7 @@ object AuroraPopupManager {
 
     private val shownPath = arrayListOf<PopupInfo>()
 
-    fun addPopup(
+    fun showPopup(
         originator: Component,
         popupTriggerAreaInOriginatorWindow: Rect,
         popup: AuroraSwingPopupMenu,

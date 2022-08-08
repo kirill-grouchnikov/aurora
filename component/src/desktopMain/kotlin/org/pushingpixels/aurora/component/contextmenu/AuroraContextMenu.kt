@@ -31,7 +31,7 @@ import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.model.CommandMenuContentModel
 import org.pushingpixels.aurora.component.model.CommandPopupMenuPresentationModel
-import org.pushingpixels.aurora.component.utils.displayPopupContent
+import org.pushingpixels.aurora.component.utils.showPopupContent
 import org.pushingpixels.aurora.theming.AuroraSkin
 import org.pushingpixels.aurora.theming.LocalPopupMenu
 import org.pushingpixels.aurora.theming.LocalTextStyle
@@ -65,7 +65,7 @@ fun Modifier.auroraContextMenu(
             val lastMouseEvent = awaitPointerEventScope { awaitPointerEvent() }.awtEventOrNull
 
             if (enabledState.value && (lastMouseEvent?.isPopupTrigger == true)) {
-                displayPopupContent(
+                showPopupContent(
                     popupOriginator = popupOriginator,
                     layoutDirection = layoutDirection,
                     density = density,

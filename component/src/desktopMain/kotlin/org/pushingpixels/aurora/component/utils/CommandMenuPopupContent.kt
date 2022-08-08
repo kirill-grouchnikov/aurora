@@ -65,7 +65,7 @@ internal data class PopupContentLayoutInfo(
 )
 
 @OptIn(AuroraInternalApi::class)
-internal fun displayPopupContent(
+internal fun showPopupContent(
     popupOriginator: Component,
     layoutDirection: LayoutDirection,
     density: Density,
@@ -408,7 +408,7 @@ internal fun displayPopupContent(
     // Hide the popups that "start" from our popup originator
     AuroraPopupManager.hidePopups(originator = popupOriginator)
     // And display our new popup content
-    AuroraPopupManager.addPopup(
+    AuroraPopupManager.showPopup(
         originator = popupOriginator,
         popupTriggerAreaInOriginatorWindow = popupTriggerAreaInWindow,
         popup = popupMenu,

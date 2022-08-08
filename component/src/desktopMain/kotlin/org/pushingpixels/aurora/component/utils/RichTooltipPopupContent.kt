@@ -425,7 +425,7 @@ internal fun displayRichTooltipContent(
     // Hide the popups that "start" from our popup originator
     AuroraPopupManager.hidePopups(originator = popupOriginator)
     // And display our new popup content
-    AuroraPopupManager.addPopup(
+    AuroraPopupManager.showPopup(
         originator = popupOriginator,
         popupTriggerAreaInOriginatorWindow = Rect.Zero,
         popup = popupMenu,

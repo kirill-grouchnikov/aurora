@@ -233,7 +233,7 @@ internal fun <E> AuroraComboBox(
                     AuroraPopupManager.hidePopups(originator = popupOriginator)
                 } else {
                     // Display our popup content.
-                    displayPopupContent(
+                    showPopupContent(
                         popupOriginator = popupOriginator,
                         layoutDirection = layoutDirection,
                         density = density,

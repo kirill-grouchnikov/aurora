@@ -871,7 +871,7 @@ internal fun AuroraCommandButton(
                             AuroraPopupManager.hidePopups(originator = parentPopupMenu)
                         } else {
                             // Display our popup content.
-                            displayPopupContent(
+                            showPopupContent(
                                 popupOriginator = popupOriginator,
                                 layoutDirection = layoutDirection,
                                 density = density,
