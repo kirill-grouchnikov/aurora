@@ -36,8 +36,8 @@ import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
@@ -903,19 +903,15 @@ internal fun AuroraCommandButton(
                     },
                     interactionSource = popupInteractionSource,
                     indication = null
-                ).pointerMoveFilter(onEnter = {
+                ).onPointerEvent(PointerEventType.Enter) {
                     if (isPopupEnabled) {
                         popupRollover = true
                     }
-                    true
-                }, onExit = {
+                }.onPointerEvent(PointerEventType.Exit) {
                     if (isPopupEnabled) {
                         popupRollover = false
                     }
-                    true
-                }, onMove = {
-                    false
-                }).auroraRichTooltip(
+                }.auroraRichTooltip(
                     richTooltip = command.secondaryRichTooltip,
                     presentationModel = presentationModel.popupRichTooltipPresentationModel
                 ).onGloballyPositioned {

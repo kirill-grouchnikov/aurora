@@ -38,7 +38,8 @@ import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.input.pointer.pointerMoveFilter
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -309,24 +310,18 @@ internal fun AuroraSlider(
     }
 
     Box(
-        modifier = modifier.pointerMoveFilter(
-            onEnter = {
-                false
-            },
-            onExit = {
-                if (contentModel.enabled) {
-                    // Reset rollover when mouse exits the component bounds
-                    rollover = false
-                }
-                true
-            },
-            onMove = { position ->
-                if (contentModel.enabled) {
-                    // Rollover is only "active" in the thumb rectangle
-                    rollover = drawingCache.thumbRect.contains(position.x, position.y)
-                }
-                true
-            }).then(drag)
+        modifier = modifier.onPointerEvent(PointerEventType.Exit) {
+            if (contentModel.enabled) {
+                // Reset rollover when mouse exits the component bounds
+                rollover = false
+            }
+        }.onPointerEvent(PointerEventType.Move) {
+            if (contentModel.enabled) {
+                // Rollover is only "active" in the thumb rectangle
+                rollover = drawingCache.thumbRect.contains(
+                    it.changes.first().position.x, it.changes.first().position.y)
+            }
+        }.then(drag)
     ) {
         // Populate the cached color scheme for filling the thumb
         // based on the current model state info

@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.theming.LocalPopupMenu
-import org.pushingpixels.aurora.theming.LocalWindow
 import org.pushingpixels.aurora.theming.Side
 import org.pushingpixels.aurora.theming.Sides
 
@@ -38,7 +37,6 @@ private fun CommandButtonStripContent(
     commandButtonPresentationModel: CommandButtonPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay> = mapOf()
 ) {
-    val window = LocalWindow.current
     val popup = LocalPopupMenu.current
     val ltr = (LocalLayoutDirection.current == LayoutDirection.Ltr)
 

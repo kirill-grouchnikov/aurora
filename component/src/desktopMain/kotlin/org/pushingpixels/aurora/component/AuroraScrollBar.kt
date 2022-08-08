@@ -24,13 +24,15 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.input.pointer.*
+import androidx.compose.ui.input.pointer.PointerInputScope
+import androidx.compose.ui.input.pointer.consumeDownChange
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.platform.LocalDensity
@@ -298,9 +300,15 @@ private fun Scrollbar(
         content = {
             Box(
                 Modifier.auroraBackground()
-                    .scrollbarDrag(interactionSource, dragInteraction) { offset ->
-                        sliderAdapter.position += if (isVertical) offset.y else offset.x
-                    }
+                    .scrollbarDrag(
+                        interactionSource = interactionSource,
+                        draggedInteraction = dragInteraction,
+                        onStarted = { sliderAdapter.rawPosition = sliderAdapter.position },
+                        onDelta = { offset ->
+                            sliderAdapter.rawPosition += if (isVertical) offset.y else offset.x
+                        },
+                        onFinished = { sliderAdapter.rawPosition = sliderAdapter.position }
+                    )
             ) {
                 // Populate the cached color scheme for filling the component
                 // based on the current model state info. Note that enabled scroll bar
@@ -415,11 +423,15 @@ private fun Scrollbar(
 private fun Modifier.scrollbarDrag(
     interactionSource: MutableInteractionSource,
     draggedInteraction: MutableState<DragInteraction.Start?>,
-    onDelta: (Offset) -> Unit
+    onStarted: () -> Unit,
+    onDelta: (Offset) -> Unit,
+    onFinished: () -> Unit
 ): Modifier = composed {
     val currentInteractionSource by rememberUpdatedState(interactionSource)
     val currentDraggedInteraction by rememberUpdatedState(draggedInteraction)
+    val currentOnStarted by rememberUpdatedState(onStarted)
     val currentOnDelta by rememberUpdatedState(onDelta)
+    val currentOnFinished by rememberUpdatedState(onFinished)
     pointerInput(Unit) {
         forEachGesture {
             awaitPointerEventScope {
@@ -427,9 +439,10 @@ private fun Modifier.scrollbarDrag(
                 val interaction = DragInteraction.Start()
                 currentInteractionSource.tryEmit(interaction)
                 currentDraggedInteraction.value = interaction
+                currentOnStarted.invoke()
                 val isSuccess = drag(down.id) { change ->
                     currentOnDelta.invoke(change.positionChange())
-                    change.consumePositionChange()
+                    change.consume()
                 }
                 val finishInteraction = if (isSuccess) {
                     DragInteraction.Stop(interaction)
@@ -438,6 +451,7 @@ private fun Modifier.scrollbarDrag(
                 }
                 currentInteractionSource.tryEmit(finishInteraction)
                 currentDraggedInteraction.value = null
+                currentOnFinished.invoke()
             }
         }
     }
@@ -506,7 +520,19 @@ private class SliderAdapter(
             return if (extraContentSpace == 0f) 1f else extraScrollbarSpace / extraContentSpace
         }
 
-    private var rawPosition: Float
+    /**
+     * A position with cumulative offset, may be out of the container when dragging
+     */
+    var rawPosition: Float = position
+        set(value) {
+            field = value
+            position = value
+        }
+
+    /**
+     * Actual scroll of content regarding slider layout
+     */
+    private var scrollPosition: Float
         get() = scrollScale * adapter.scrollOffset
         set(value) {
             runBlocking {
@@ -514,10 +540,13 @@ private class SliderAdapter(
             }
         }
 
+    /**
+     * Actual position of a thumb within slider container
+     */
     var position: Float
-        get() = if (reverseLayout) containerSize - size - rawPosition else rawPosition
+        get() = if (reverseLayout) containerSize - size - scrollPosition else scrollPosition
         set(value) {
-            rawPosition = if (reverseLayout) {
+            scrollPosition = if (reverseLayout) {
                 containerSize - size - value
             } else {
                 value
