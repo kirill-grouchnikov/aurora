@@ -66,8 +66,7 @@ abstract class ShaderWrapperFillPainter(
             val shader = runtimeEffect.makeShader(
                 uniforms = getShaderData(drawScope, outline, fillScheme, alpha),
                 children = shaderChildren,
-                localMatrix = null,
-                isOpaque = false
+                localMatrix = null
             )
 
             val clipPath = Path()

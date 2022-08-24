@@ -80,8 +80,7 @@ abstract class ShaderWrapperDecorationPainter(
             val shader = runtimeEffect.makeShader(
                 uniforms = getShaderData(drawScope, componentSize, offsetFromRoot, colorScheme),
                 children = shaderChildren,
-                localMatrix = null,
-                isOpaque = false
+                localMatrix = null
             )
 
             val clipPath = Path()

@@ -70,8 +70,7 @@ internal fun getBrushedMetalShader(): Shader {
     return brushedMetalEffect.makeShader(
         uniforms = null,
         children = arrayOf(noiseShader),
-        localMatrix = null,
-        isOpaque = false
+        localMatrix = null
     )
 }
 
