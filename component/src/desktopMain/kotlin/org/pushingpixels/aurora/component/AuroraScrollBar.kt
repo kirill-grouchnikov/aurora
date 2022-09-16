@@ -610,7 +610,7 @@ internal suspend fun PointerInputScope.detectTapAndPress(
             pressScope.reset()
             awaitPointerEventScope {
 
-                val down = awaitFirstDown().also { it.consumeDownChange() }
+                val down = awaitFirstDown().also { it.consume() }
 
                 if (onPress !== NoPressGesture) {
                     launch { pressScope.onPress(down.position) }
@@ -620,7 +620,7 @@ internal suspend fun PointerInputScope.detectTapAndPress(
                 if (up == null) {
                     pressScope.cancel() // tap-up was canceled
                 } else {
-                    up.consumeDownChange()
+                    up.consume()
                     pressScope.release()
                     onTap?.invoke(up.position)
                 }
