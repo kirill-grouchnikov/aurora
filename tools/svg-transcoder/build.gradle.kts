@@ -14,7 +14,7 @@ kotlin {
         named("desktopMain") {
             dependencies {
                 api(compose.desktop.common)
-                implementation("org.apache.xmlgraphics:batik-all:1.14")
+                implementation("org.apache.xmlgraphics:batik-all:1.15")
             }
         }
     }
