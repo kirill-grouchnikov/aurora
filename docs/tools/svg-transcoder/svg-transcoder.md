@@ -10,7 +10,7 @@ The original icon format supported by the transcoder is SVG, and you need the [m
 
 SVG has a wide feature surface which, depending on the complexity of your SVG sources, can lead to significant initial parsing and rendering time of the icon content.
 
-Aurora SVG transcoder allows you to convert an SVG source into a corresponding Kotlin class that contains a sequence of matching Compose canvas draw calls to render the original content. Aurora SVG transcoder ships a built-in template file that generates a class that implements the core `Painter` interface. An instance of the generated class can be passed to any relevant Aurora API, including the matching command button calls. At runtime, the content will be automatically reconfigured based on the new display size of the icon.
+Aurora SVG transcoder allows you to convert an SVG source into a corresponding Kotlin class that contains a sequence of matching Compose canvas draw calls to render the original content. Aurora SVG transcoder ships a built-in template file that generates a class that implements the core [`Painter`](https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/painter/Painter) interface. An instance of the generated class can be passed to any relevant Aurora API, including the matching command button calls. At runtime, the content will be automatically reconfigured based on the new display size of the icon.
 
 #### Batch transcoding all SVG files in a single folder
 
@@ -117,7 +117,7 @@ These can be downloaded manually from the net, or doing the following:
 * Run `./gradlew copyJars`
 * Run `./gradlew getDependencies`
 
-At this point, the Aurora SVG transcoder jar will be under `drop/X.Y.Z/core` and the dependencies will be under `build/libs`.
+At this point, the Aurora SVG transcoder jar will be under `drop/X.Y.Z` and the dependencies will be under `build/libs`.
 
 ### Taking a deeper look at the transcoder internals
 
