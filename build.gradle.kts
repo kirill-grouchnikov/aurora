@@ -9,11 +9,11 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jetbrains.compose:compose-gradle-plugin:1.2.0-beta03")
-        classpath(kotlin("gradle-plugin", version = "1.7.20"))
-        classpath("com.github.ben-manes:gradle-versions-plugin:0.42.0")
-        classpath("com.vanniktech:gradle-maven-publish-plugin:0.22.0")
-        classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.7.10")
+        classpath(libs.compose.desktop)
+        classpath(libs.kotlin.gradlePlugin)
+        classpath(libs.dokka.gradlePlugin)
+        classpath(libs.versionchecker.gradlePlugin)
+        classpath(libs.mavenpublish.gradlePlugin)
     }
 }
 
