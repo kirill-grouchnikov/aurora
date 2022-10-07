@@ -2,11 +2,11 @@
 kotlin = "1.7.20"
 coroutines = "1.6.4"
 compose = "1.2.0-beta03"
+dokka = "1.7.10"
 batik = "1.15"
 
-dokka = "1.7.10"
-gradle_versions = "0.42.0"
-gradle_mavenpublish = "0.22.0"
+versionchecker = "0.42.0"
+mavenpublish = "0.22.0"
 
 [libraries]
 compose-desktop = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose" }
@@ -15,6 +15,6 @@ kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", 
 dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka"}
 batik = { module = "org.apache.xmlgraphics:batik-all", version.ref = "batik" }
 
-versionchecker-gradlePlugin = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "gradle_versions" }
-mavenpublish-gradlePlugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "gradle_mavenpublish" }
+versionchecker-gradlePlugin = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "versionchecker" }
+mavenpublish-gradlePlugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "mavenpublish" }
 
