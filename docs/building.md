@@ -8,7 +8,10 @@ Aurora is built with Java 11. Search for "Java 11 download" in your favorite sea
 
 ### Local artifacts
 
-To build library artifacts, run `./gradlew build` in your terminal. After this command completes, the packaged jar files will be under the matching library folders. To copy all the jars under one location, run `./gradlew copyJars` command. For version `X.Y` of Aurora (see `version` in `build.gradle`), the artifacts will be copied into the `drop/X.Y` folder.
+* To build library artifacts, run `./gradlew build` in your terminal. 
+* After this command completes, the packaged jar files will be under the matching library folders. 
+* To copy all the jars under one location, run `./gradlew copyJars` command. 
+* For version `X.Y` of Aurora (see `VERSION_NAME` in `gradle.properties`), the artifacts will be copied into the `drop/X.Y` folder.
 
 ### Local third-party dependencies
 
@@ -16,8 +19,8 @@ Some Aurora libraries have third-party dependencies. To print the full dependenc
 
 ```
 -------- svg-transcoder --------
-org.jetbrains.compose.desktop:desktop:1.0.0
-org.apache.xmlgraphics:batik-all:1.14
+org.jetbrains.compose.desktop:desktop:1.2.0
+org.apache.xmlgraphics:batik-all:1.15
 ```
 
 To locally copy these dependencies (in case you do not want to pull them at build time with Gradle, Maven or other similar build tools in your own environment), use `./gradlew getDependencies`. Once that command completes, all dependencies will be in the `build/libs` folder.
