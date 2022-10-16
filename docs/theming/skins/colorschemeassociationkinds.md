@@ -8,7 +8,7 @@ This is a screenshot of a checkbox composable icon under 72 point font. This che
 
 The `ColorSchemeAssociationKind` is the base class for core and custom color scheme association kinds. Where is this class used?
 
-* The first usage is in the skin definition. The main `AuroraSkinColors` APIs allow associating different color schemes with different visual areas of Swing controls.
+* The first usage is in the skin definition. The main `AuroraSkinColors` APIs allow associating different color schemes with different visual areas of Aurora composables.
 * The specific composables query the component skin for the color schemes that match the relevant visual areas.
 
 Let's go back to the checkbox icon example above. How do we use the color scheme association kinds to specify three different color schemes for painting this checkmark icon?
