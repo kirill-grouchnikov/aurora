@@ -50,17 +50,10 @@ class ComponentStateFacet(var name: String, value: Int) {
 
         /**
          * Facet that describes the determinate bit. This is relevant for
-         * [DeterminateLinearProgressProjection] and
-         * [IndeterminateLinearProgressProjection] APIs.
+         * [AuroraDeterminateLinearProgress] and
+         * [AuroraIndeterminateLinearProgress] APIs.
          */
         val Determinate = ComponentStateFacet("determinate", 10)
-
-        /**
-         * Facet that describes the editable bit.
-         *
-         * Note that this is not used and will be removed soon.
-         */
-        val Editable = ComponentStateFacet("editable", 50)
     }
 
     /**

@@ -157,17 +157,6 @@ private fun magellanSkinColors(): AuroraSkinColors {
         ComponentState.PressedSelected
     )
 
-    // color scheme for the uneditable text components
-    val uneditable = ComponentState(
-        "uneditable",
-        arrayOf(ComponentStateFacet.Enable), arrayOf(ComponentStateFacet.Editable)
-    )
-    val uneditableControls = schemes["Magellan Uneditable Controls"]
-    defaultColorSchemeBundle.registerColorScheme(
-        uneditableControls,
-        ColorSchemeAssociationKind.Fill, uneditable
-    )
-
     // color scheme for the selected state - preventing fallback to the
     // rollover selected state
     defaultColorSchemeBundle.registerColorScheme(

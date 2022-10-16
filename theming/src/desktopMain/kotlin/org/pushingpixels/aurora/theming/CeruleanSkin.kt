@@ -123,23 +123,6 @@ private fun ceruleanSkinColors(): AuroraSkinColors {
         determinateDisabledState, indeterminateDisabledState
     )
 
-    // for uneditable fields
-    val editable = ComponentState(
-        "editable", arrayOf(
-            ComponentStateFacet.Enable, ComponentStateFacet.Editable
-        ), null
-    )
-    val uneditable = ComponentState(
-        "uneditable",
-        editable,
-        arrayOf(ComponentStateFacet.Enable),
-        arrayOf(ComponentStateFacet.Editable)
-    )
-    defaultSchemeBundle.registerColorScheme(
-        defaultSchemeBundle.getColorScheme(editable),
-        ColorSchemeAssociationKind.Fill, uneditable
-    )
-
     // for text highlight
     val kitchenSinkSchemes = getColorSchemes(
         AuroraSkin::class.java.getResourceAsStream(

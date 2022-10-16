@@ -85,17 +85,6 @@ private fun marinerSkinColors(): AuroraSkinColors {
         ComponentState.Enabled
     )
 
-    val uneditableState =
-        ComponentState(
-            "uneditable", arrayOf(ComponentStateFacet.Enable),
-            arrayOf(ComponentStateFacet.Editable)
-        )
-    val uneditableControls = schemes["Mariner Uneditable"]
-    defaultSchemeBundle.registerColorScheme(
-        uneditableControls, ColorSchemeAssociationKind.Fill,
-        uneditableState
-    )
-
     result.registerDecorationAreaSchemeBundle(defaultSchemeBundle, DecorationAreaType.None)
 
     // header color scheme bundle
