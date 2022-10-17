@@ -81,11 +81,11 @@ internal open class CommandButtonLayoutManagerBig(
             var bestPart1 = text
             var bestPart2 = ""
 
-            var currMaxLength = singleLineParagraph.maxIntrinsicWidth
             val actionIconWidth = if (command.secondaryContentModel == null) 0.0f else
                 (CommandButtonSizingConstants.DefaultHorizontalContentLayoutGap *
                         presentationModel.horizontalGapScaleFactor).toPx() * 2 +
                         singleLineParagraph.height / 2.0f
+            var currMaxLength = singleLineParagraph.maxIntrinsicWidth + actionIconWidth.toInt()
             val currLeading = StringBuilder()
             while (tokenizer.hasMoreTokens()) {
                 currLeading.append(tokenizer.nextToken())
