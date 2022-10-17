@@ -128,7 +128,7 @@ internal open class CommandButtonLayoutManagerBig(
         val layoutVGap = (CommandButtonSizingConstants.DefaultVerticalContentLayoutGap *
                 presentationModel.verticalGapScaleFactor).toPx()
         val hasIcon = (command.icon != null) || presentationModel.forceAllocateSpaceForIcon
-        val hasText = (buttonText != null)
+        val hasText = buttonText.isNotEmpty()
         val hasPopupIcon = (command.secondaryContentModel != null)
 
         val title1Line = Paragraph(
