@@ -31,7 +31,6 @@ Aurora is a collection of libraries for writing modern, elegant and fast [deskto
 * [Color scheme association kinds](docs/theming/skins/colorschemeassociationkinds.md)
 * [Color scheme file format](docs/theming/skins/colorschemes-fileformat.md)
 * [Color scheme bundles](docs/theming/skins/colorschemebundles.md)
-* [Color scheme extras](docs/theming/skins/colorschemes-extras.md)
 * [Light skins](docs/theming/skins/toneddown.md)
 * [Dark skins](docs/theming/skins/dark.md)
 * [Painter overview](docs/theming/painters/overview.md)
