@@ -71,9 +71,7 @@ Matrix(values=floatArrayOf(
 ))}){
 // _0_0_0
 val image484482440f4da3ada2d5781785d20a7c = getImage484482440f4da3ada2d5781785d20a7c()
-if (image484482440f4da3ada2d5781785d20a7c != null) {
-    drawImage(image484482440f4da3ada2d5781785d20a7c)
-}
+drawImage(image484482440f4da3ada2d5781785d20a7c)
 }
 }
 alpha = alphaStack.removeAt(0)
