@@ -1021,9 +1021,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
     private fun transcodeRenderedImage(image: RenderedImage) {
         val md5: String = RasterScanner.getMD5(image)
         printWriterManager!!.println("val image$md5 = getImage$md5()")
-        printWriterManager!!.println("if (image$md5 != null) {")
-        printWriterManager!!.println("    drawImage(image$md5)")
-        printWriterManager!!.println("}")
+        printWriterManager!!.println("drawImage(image$md5)")
     }
 
     private fun transcodeRasterImageNode(node: RasterImageNode, comment: String) {
