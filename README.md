@@ -24,38 +24,46 @@ Aurora is a collection of libraries for writing modern, elegant and fast [deskto
 
 ### Theming
 
-* [Themed states](docs/theming/themed-states.md)
-* [Skin overview](docs/theming/skins/overview.md)
 * [Component states](docs/theming/skins/componentstates.md)
-* [Color schemes](docs/theming/skins/colorschemes.md)
-* [Color scheme association kinds](docs/theming/skins/colorschemeassociationkinds.md)
-* [Color scheme file format](docs/theming/skins/colorschemes-fileformat.md)
-* [Color scheme bundles](docs/theming/skins/colorschemebundles.md)
-* [Light skins](docs/theming/skins/toneddown.md)
-* [Dark skins](docs/theming/skins/dark.md)
-* [Painter overview](docs/theming/painters/overview.md)
-* [Fill painters](docs/theming/painters/fill.md)
-* [Border painters](docs/theming/painters/border.md)
-* [Decoration painters](docs/theming/painters/decoration.md)
-* [Overlay painters](docs/theming/painters/overlay.md)
+* Colors
+  * [Color schemes](docs/theming/skins/colorschemes.md)
+  * [Color scheme association kinds](docs/theming/skins/colorschemeassociationkinds.md)
+  * [Color scheme file format](docs/theming/skins/colorschemes-fileformat.md)
+  * [Color scheme bundles](docs/theming/skins/colorschemebundles.md)
+* Skins
+  * [Skin overview](docs/theming/skins/overview.md)
+  * [Light skins](docs/theming/skins/toneddown.md)
+  * [Dark skins](docs/theming/skins/dark.md)
+* Painters
+  * [Painter overview](docs/theming/painters/overview.md)
+  * [Fill painters](docs/theming/painters/fill.md)
+  * [Border painters](docs/theming/painters/border.md)
+  * [Decoration painters](docs/theming/painters/decoration.md)
+  * [Overlay painters](docs/theming/painters/overlay.md)
+* [Themed states](docs/theming/themed-states.md)
 
 ### Components
 
-* [Basic concepts](docs/component/Intro.md)
-* [Sample app](docs/component/Sample.md)
-* [Another sample app](docs/component/AnotherSample.md)
-* [Command overview](docs/component/Command.md)
-* [Command projections](docs/component/CommandProjections.md)
-* [Command button presentation models](docs/component/CommandButtonPresentation.md)
-* [Model and projection overview](docs/component/ModelProjectionOverview.md)
-* [All component projections](docs/component/ComponentProjections.md)
-* [Box with highlights](docs/component/BoxWithHighlights.md)
-* [Command strips](docs/component/CommandStrip.md)
-* [Command panels](docs/component/CommandPanel.md)
-* [Command popup menus](docs/component/CommandPopupMenu.md)
-* [Context menus](docs/component/ContextMenu.md)
-* [Breadcrumb bars](docs/component/BreadcrumbBar.md)
-* [All custom modifiers](docs/component/Modifiers.md)
+* Intro
+  * [Basic concepts](docs/component/Intro.md)
+  * [Sample app](docs/component/Sample.md)
+  * [Another sample app](docs/component/AnotherSample.md)
+* Commands
+  * [Command overview](docs/component/Command.md)
+  * [Command projections](docs/component/CommandProjections.md)
+  * [Command button presentation models](docs/component/CommandButtonPresentation.md)
+* Projections
+  * [Model and projection overview](docs/component/ModelProjectionOverview.md)
+  * [All component projections](docs/component/ComponentProjections.md)
+* More components
+  * [Command strips](docs/component/CommandStrip.md)
+  * [Command panels](docs/component/CommandPanel.md)
+  * [Command popup menus](docs/component/CommandPopupMenu.md)
+  * [Breadcrumb bars](docs/component/BreadcrumbBar.md)
+  * [Box with highlights](docs/component/BoxWithHighlights.md)
+* Miscellaneous
+  * [Context menus](docs/component/ContextMenu.md)
+  * [All custom modifiers](docs/component/Modifiers.md)
 
 ### SVG transcoding
 
