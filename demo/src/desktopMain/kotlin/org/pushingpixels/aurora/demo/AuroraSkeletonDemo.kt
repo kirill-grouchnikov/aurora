@@ -46,7 +46,7 @@ fun main() = auroraApplication {
         size = DpSize(600.dp, 400.dp)
     )
     val skin = mutableStateOf(marinerSkin())
-    val resourceBundle = derivedStateOf {
+    val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
 
@@ -61,40 +61,40 @@ fun main() = auroraApplication {
         menuCommands = CommandGroup(
             commands = listOf(
                 Command(
-                    text = resourceBundle.value.getString("Menu.file"),
+                    text = resourceBundle.getString("Menu.file"),
                     secondaryContentModel = CommandMenuContentModel(
                         CommandGroup(
                             commands = listOf(
                                 Command(
-                                    text = resourceBundle.value.getString("Menu.file.new"),
+                                    text = resourceBundle.getString("Menu.file.new"),
                                     action = { println("New file!") }),
                                 Command(
-                                    text = resourceBundle.value.getString("Menu.file.open"),
+                                    text = resourceBundle.getString("Menu.file.open"),
                                     action = { println("Open file!") }),
                                 Command(
-                                    text = resourceBundle.value.getString("Menu.file.save"),
+                                    text = resourceBundle.getString("Menu.file.save"),
                                     action = { println("Save file!") })
                             )
                         )
                     )
                 ),
                 Command(
-                    text = resourceBundle.value.getString("Menu.edit"),
+                    text = resourceBundle.getString("Menu.edit"),
                     action = { println("Edit activated!") }),
                 Command(
-                    text = resourceBundle.value.getString("Menu.source"),
+                    text = resourceBundle.getString("Menu.source"),
                     action = { println("Source activated!") }),
                 Command(
-                    text = resourceBundle.value.getString("Menu.refactor"),
+                    text = resourceBundle.getString("Menu.refactor"),
                     action = { println("Refactor activated!") }),
                 Command(
-                    text = resourceBundle.value.getString("Menu.navigate"),
+                    text = resourceBundle.getString("Menu.navigate"),
                     action = { println("Navigate activated!") }),
                 Command(
-                    text = resourceBundle.value.getString("Menu.search"),
+                    text = resourceBundle.getString("Menu.search"),
                     action = { println("Search activated!") }),
                 Command(
-                    text = resourceBundle.value.getString("Menu.project"),
+                    text = resourceBundle.getString("Menu.project"),
                     action = { println("Project activated!") })
             )
         )
@@ -125,7 +125,7 @@ fun DemoSkeletonFooter(
 @Composable
 fun AuroraWindowScope.DemoSkeletonContent(
     auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
-    resourceBundle: State<ResourceBundle>
+    resourceBundle: ResourceBundle
 ) {
     val contentEnabled = remember { mutableStateOf(true) }
     val alignment = remember { mutableStateOf(DemoAlignment.Center) }
@@ -140,7 +140,7 @@ fun AuroraWindowScope.DemoSkeletonContent(
     val alignmentCommands = CommandGroup(
         commands = listOf(
             Command(
-                text = resourceBundle.value.getString("Justify.center"),
+                text = resourceBundle.getString("Justify.center"),
                 icon = format_justify_center(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
@@ -159,7 +159,7 @@ fun AuroraWindowScope.DemoSkeletonContent(
                 }
             ),
             Command(
-                text = resourceBundle.value.getString("Justify.left"),
+                text = resourceBundle.getString("Justify.left"),
                 icon = format_justify_left(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
@@ -178,7 +178,7 @@ fun AuroraWindowScope.DemoSkeletonContent(
                 }
             ),
             Command(
-                text = resourceBundle.value.getString("Justify.right"),
+                text = resourceBundle.getString("Justify.right"),
                 icon = format_justify_right(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
@@ -197,7 +197,7 @@ fun AuroraWindowScope.DemoSkeletonContent(
                 }
             ),
             Command(
-                text = resourceBundle.value.getString("Justify.fill"),
+                text = resourceBundle.getString("Justify.fill"),
                 icon = format_justify_fill(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
@@ -221,7 +221,7 @@ fun AuroraWindowScope.DemoSkeletonContent(
     val styleCommands = CommandGroup(
         commands = listOf(
             Command(
-                text = resourceBundle.value.getString("FontStyle.bold.title"),
+                text = resourceBundle.getString("FontStyle.bold.title"),
                 icon = format_text_bold(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
@@ -232,7 +232,7 @@ fun AuroraWindowScope.DemoSkeletonContent(
                 }
             ),
             Command(
-                text = resourceBundle.value.getString("FontStyle.italic.title"),
+                text = resourceBundle.getString("FontStyle.italic.title"),
                 icon = format_text_italic(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
@@ -243,7 +243,7 @@ fun AuroraWindowScope.DemoSkeletonContent(
                 }
             ),
             Command(
-                text = resourceBundle.value.getString("FontStyle.underline.title"),
+                text = resourceBundle.getString("FontStyle.underline.title"),
                 icon = format_text_underline(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
@@ -254,7 +254,7 @@ fun AuroraWindowScope.DemoSkeletonContent(
                 }
             ),
             Command(
-                text = resourceBundle.value.getString("FontStyle.strikethrough.title"),
+                text = resourceBundle.getString("FontStyle.strikethrough.title"),
                 icon = format_text_strikethrough(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,

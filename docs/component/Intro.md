@@ -24,8 +24,8 @@ Here is how the action button in the bottom left (big icon with "Action" text un
 ```kotlin
 val commandActionOnly =
   Command(
-      text = resourceBundle.value.getString("Action.text"),
-      extraText = resourceBundle.value.getString("Action.textExtra"),
+      text = resourceBundle.getString("Action.text"),
+      extraText = resourceBundle.getString("Action.textExtra"),
       icon = accessories_text_editor(),
       action = { println("Action activated!") }
   )

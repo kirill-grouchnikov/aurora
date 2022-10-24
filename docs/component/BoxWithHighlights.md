@@ -18,7 +18,7 @@ val stateSelection = mutableStateOf(-1)
 Next we get the `MessageFormat` object for fetching the locale-aware texts of each row:
 
 ```kotlin
-val commandMf = MessageFormat(resourceBundle.value.getString("Group.entrySimple"))
+val commandMf = MessageFormat(resourceBundle.getString("Group.entrySimple"))
 ```
 
 And now the scrollable content itself that uses `AuroraBoxWithHighlights` to wrap the content of each row:

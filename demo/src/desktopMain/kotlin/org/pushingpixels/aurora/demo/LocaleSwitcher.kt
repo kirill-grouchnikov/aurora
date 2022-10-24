@@ -16,7 +16,6 @@
 package org.pushingpixels.aurora.demo
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.demo.svg.flags.il
@@ -29,10 +28,10 @@ import java.util.*
 
 @Composable
 fun AuroraLocaleScope.AuroraLocaleSwitcher(
-    resourceBundle: State<ResourceBundle>
+    resourceBundle: ResourceBundle
 ) {
     val englishLocale = Command(
-        text = resourceBundle.value.getString("Language.english"),
+        text = resourceBundle.getString("Language.english"),
         icon = us(),
         action = {
             applicationLocale = Locale("en", "US")
@@ -45,7 +44,7 @@ fun AuroraLocaleScope.AuroraLocaleSwitcher(
         }
     )
     val hebrewLocale = Command(
-        text = resourceBundle.value.getString("Language.hebrew"),
+        text = resourceBundle.getString("Language.hebrew"),
         icon = il(),
         action = {
             applicationLocale = Locale("iw", "IL")
@@ -58,7 +57,7 @@ fun AuroraLocaleScope.AuroraLocaleSwitcher(
         }
     )
     val localeCommand = Command(
-        text = resourceBundle.value.getString("Language.select"),
+        text = resourceBundle.getString("Language.select"),
         icon = preferences_desktop_locale_2(),
         secondaryContentModel = CommandMenuContentModel(
             group = CommandGroup(

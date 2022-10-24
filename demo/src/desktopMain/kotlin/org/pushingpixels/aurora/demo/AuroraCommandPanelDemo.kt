@@ -16,9 +16,7 @@
 package org.pushingpixels.aurora.demo
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
@@ -38,7 +36,7 @@ import java.text.MessageFormat
 import java.util.*
 
 fun getCommandPanelContentModel(
-    resourceBundle: State<ResourceBundle>,
+    resourceBundle: ResourceBundle,
     vararg groupSizes: Int
 ): CommandPanelContentModel {
     val icons = arrayOf(
@@ -56,8 +54,8 @@ fun getCommandPanelContentModel(
         waves_24px()
     )
 
-    val groupMf = MessageFormat(resourceBundle.value.getString("Group.title"))
-    val commandMf = MessageFormat(resourceBundle.value.getString("Group.entry"))
+    val groupMf = MessageFormat(resourceBundle.getString("Group.title"))
+    val commandMf = MessageFormat(resourceBundle.getString("Group.entry"))
 
     val commandGroups = arrayListOf<CommandGroup>()
 
@@ -99,7 +97,7 @@ fun main() = auroraApplication {
         size = DpSize(1000.dp, 400.dp)
     )
     val skin = mutableStateOf(businessSkin())
-    val resourceBundle = derivedStateOf {
+    val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
 

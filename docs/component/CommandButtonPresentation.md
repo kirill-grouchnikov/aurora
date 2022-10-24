@@ -7,8 +7,8 @@ As [discussed earlier](CommandProjections.md#command-button-presentation-model),
 ```kotlin
 val commandActionOnly =
     Command(
-        text = resourceBundle.value.getString("Action.text"),
-        extraText = resourceBundle.value.getString("Action.textExtra"),
+        text = resourceBundle.getString("Action.text"),
+        extraText = resourceBundle.getString("Action.textExtra"),
         icon = accessories_text_editor(),
         action = { println("Action activated!") },
         ...
@@ -133,7 +133,7 @@ Here is the code behind the "multi" button and its popup content:
 ```kotlin
 val commandBold =
     Command(
-        text = resourceBundle.value.getString("FontStyle.bold.title"),
+        text = resourceBundle.getString("FontStyle.bold.title"),
         icon = format_bold_black_24dp(),
         isActionToggle = true,
         isActionToggleSelected = style.bold.value,
@@ -144,7 +144,7 @@ val commandBold =
     )
 val commandItalic =
     Command(
-        text = resourceBundle.value.getString("FontStyle.italic.title"),
+        text = resourceBundle.getString("FontStyle.italic.title"),
         icon = format_italic_black_24dp(),
         isActionToggle = true,
         isActionToggleSelected = style.italic.value,
@@ -155,7 +155,7 @@ val commandItalic =
     )
 val commandUnderline =
     Command(
-        text = resourceBundle.value.getString("FontStyle.underline.title"),
+        text = resourceBundle.getString("FontStyle.underline.title"),
         icon = format_underlined_black_24dp(),
         isActionToggle = true,
         isActionToggleSelected = style.underline.value,
@@ -166,7 +166,7 @@ val commandUnderline =
     )
 val commandStrikethrough =
     Command(
-        text = resourceBundle.value.getString("FontStyle.strikethrough.title"),
+        text = resourceBundle.getString("FontStyle.strikethrough.title"),
         icon = format_strikethrough_black_24dp(),
         isActionToggle = true,
         isActionToggleSelected = style.strikethrough.value,

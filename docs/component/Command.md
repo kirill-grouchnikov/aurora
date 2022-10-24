@@ -40,8 +40,8 @@ For the "Action" buttons (first button in each row), the command that was used t
 ```kotlin
 val commandActionOnly =
     Command(
-        text = resourceBundle.value.getString("Action.text"),
-        extraText = resourceBundle.value.getString("Action.textExtra"),
+        text = resourceBundle.getString("Action.text"),
+        extraText = resourceBundle.getString("Action.textExtra"),
         icon = accessories_text_editor(),
         action = { println("Action activated!") },
         ...
@@ -103,18 +103,18 @@ To configure the rich tooltip for the command's action, create a `RichTooltip` d
 ```kotlin
 val commandActionOnly =
     Command(
-        text = resourceBundle.value.getString("Action.text"),
+        text = resourceBundle.getString("Action.text"),
         ...
         actionRichTooltip = RichTooltip(
-            title = resourceBundle.value.getString("Tooltip.textActionTitle"),
+            title = resourceBundle.getString("Tooltip.textActionTitle"),
             mainIcon = user_home(),
             descriptionSections = listOf(
-                resourceBundle.value.getString("Tooltip.textParagraph1"),
-                resourceBundle.value.getString("Tooltip.textParagraph2")
+                resourceBundle.getString("Tooltip.textParagraph1"),
+                resourceBundle.getString("Tooltip.textParagraph2")
             ),
             footerIcon = help_browser(),
             footerSections = listOf(
-                resourceBundle.value.getString("Tooltip.textFooterParagraph1")
+                resourceBundle.getString("Tooltip.textFooterParagraph1")
             )
         )
     )
@@ -128,7 +128,7 @@ The command's action can be disabled and enabled dynamically based on applicatio
 // Bold style command
 val commandBold =
     Command(
-        text = resourceBundle.value.getString("FontStyle.bold.title"),
+        text = resourceBundle.getString("FontStyle.bold.title"),
         icon = format_bold_black_24dp(),
         isActionEnabled = false,
         ...

@@ -41,7 +41,7 @@ val commands1 = arrayListOf<Command>()
 val commands2 = arrayListOf<Command>()
 val commands3 = arrayListOf<Command>()
 
-val mf = MessageFormat(resourceBundle.value.getString("TestMenuItem.text"))
+val mf = MessageFormat(resourceBundle.getString("TestMenuItem.text"))
 for (i in 0 until count) {
   val command = Command(
     text = mf.format(arrayOf<Any>(i)),
@@ -68,7 +68,7 @@ And now we create our `LabelProjection`, and pass `Modifier.auroraContextMenu` t
 ```kotlin
 LabelProjection(
   contentModel = LabelContentModel(
-    text = resourceBundle.value.getString("ContextMenu.show"),
+    text = resourceBundle.getString("ContextMenu.show"),
     enabled = contentEnabled.value
   )
 ).project(

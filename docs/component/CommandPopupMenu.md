@@ -51,8 +51,8 @@ fun getQuickStylesContentModel(resourceBundle: State<ResourceBundle>): CommandPa
     waves_24px()
   )
 
-  val groupMf = MessageFormat(resourceBundle.value.getString("Group.title"))
-  val commandMf = MessageFormat(resourceBundle.value.getString("Group.entry"))
+  val groupMf = MessageFormat(resourceBundle.getString("Group.title"))
+  val commandMf = MessageFormat(resourceBundle.getString("Group.entry"))
 
   val commandGroups: MutableList<CommandGroup> = arrayListOf()
   for (groupIndex in 1..4) {
@@ -84,7 +84,7 @@ Then we create a `CommandMenuContentModel` from that command panel content model
 
 ```kotlin
 val commandPasteTextOnly = Command(
-  text = resourceBundle.value.getString("Edit.paste.textOnlyText"),
+  text = resourceBundle.getString("Edit.paste.textOnlyText"),
   action = { println("Paste text only") },
   isActionToggle = true,
   isActionToggleSelected = togglePasteText,
@@ -96,17 +96,17 @@ val commandPasteTextOnly = Command(
 
 val commandPaste =
   Command(
-    text = resourceBundle.value.getString("Edit.paste.text"),
+    text = resourceBundle.getString("Edit.paste.text"),
     icon = content_paste_black_24dp(),
     action = { println("Paste!") },
     secondaryContentModel = CommandMenuContentModel(
       group = CommandGroup(
         commands = listOf(
             Command(
-              text = resourceBundle.value.getString("Edit.paste.keepFormattingText"),
+              text = resourceBundle.getString("Edit.paste.keepFormattingText"),
               action = { println("Paste with keep formatting") }),
             Command(
-              text = resourceBundle.value.getString("Edit.paste.mergeFormattingText"),
+              text = resourceBundle.getString("Edit.paste.mergeFormattingText"),
               action = { println("Paste with merge formatting") }),
             commandPasteTextOnly,
           )

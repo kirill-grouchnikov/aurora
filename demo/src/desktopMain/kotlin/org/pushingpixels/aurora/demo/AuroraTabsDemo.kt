@@ -49,7 +49,7 @@ fun main() = auroraApplication {
         size = DpSize(400.dp, 280.dp)
     )
     val skin = mutableStateOf(marinerSkin())
-    val resourceBundle = derivedStateOf {
+    val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
 
@@ -71,10 +71,10 @@ fun main() = auroraApplication {
 @Composable
 fun AuroraWindowScope.DemoTabsContent(
     auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
-    resourceBundle: State<ResourceBundle>
+    resourceBundle: ResourceBundle
 ) {
     var state by remember { mutableStateOf(0) }
-    val mf = MessageFormat(resourceBundle.value.getString("Tab.text"))
+    val mf = MessageFormat(resourceBundle.getString("Tab.text"))
 
     Column(modifier = Modifier.fillMaxSize()) {
         Row(

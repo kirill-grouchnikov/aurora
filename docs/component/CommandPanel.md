@@ -57,8 +57,8 @@ fun getCommandPanelContentModel(
         waves_24px()
     )
 
-    val groupMf = MessageFormat(resourceBundle.value.getString("Group.title"))
-    val commandMf = MessageFormat(resourceBundle.value.getString("Group.entry"))
+    val groupMf = MessageFormat(resourceBundle.getString("Group.title"))
+    val commandMf = MessageFormat(resourceBundle.getString("Group.entry"))
 
     val commandGroups = arrayListOf<CommandGroup>()
 

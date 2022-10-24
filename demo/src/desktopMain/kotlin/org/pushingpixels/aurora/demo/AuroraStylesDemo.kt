@@ -27,14 +27,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.*
-import androidx.compose.ui.window.*
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.ExperimentalUnitApi
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.WindowPlacement
+import androidx.compose.ui.window.WindowPosition
+import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonStripProjection
 import org.pushingpixels.aurora.demo.svg.material.content_copy_black_24dp
 import org.pushingpixels.aurora.demo.svg.material.content_cut_black_24dp
 import org.pushingpixels.aurora.demo.svg.material.content_paste_black_24dp
-import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.AuroraSkinDefinition
+import org.pushingpixels.aurora.theming.IconFilterStrategy
+import org.pushingpixels.aurora.theming.marinerSkin
+import org.pushingpixels.aurora.theming.resolveAuroraDefaults
 import org.pushingpixels.aurora.window.AuroraApplicationScope
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.auroraApplication
@@ -49,7 +57,7 @@ fun main() = auroraApplication {
         size = DpSize(660.dp, 400.dp)
     )
     val skin = mutableStateOf(marinerSkin())
-    val resourceBundle = derivedStateOf {
+    val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
 
@@ -106,7 +114,7 @@ fun getStylesContentModel(
     isInPreview: MutableState<Boolean>,
     previewTopColor: MutableState<Color>,
     previewBottomColor: MutableState<Color>,
-    resourceBundle: State<ResourceBundle>
+    resourceBundle: ResourceBundle
 ): CommandPanelContentModel {
     // Colors from http://colrd.com/palette/24070/
     val solidColors = arrayOf(
@@ -128,7 +136,7 @@ fun getStylesContentModel(
 
     val commandGroups: MutableList<CommandGroup> = arrayListOf()
     val solids: MutableList<Command> = arrayListOf()
-    val solidMf = MessageFormat(resourceBundle.value.getString("Colors.solid"))
+    val solidMf = MessageFormat(resourceBundle.getString("Colors.solid"))
     for (i in 1..solidColors.size) {
         val color = solidColors[i - 1]
         val command = Command(
@@ -158,7 +166,7 @@ fun getStylesContentModel(
         )
         solids.add(command)
     }
-    commandGroups.add(CommandGroup(resourceBundle.value.getString("Colors.solids"), solids))
+    commandGroups.add(CommandGroup(resourceBundle.getString("Colors.solids"), solids))
 
     val gradients: MutableList<Command> = arrayListOf()
     for (i in 1 until solidColors.size) {
@@ -191,7 +199,7 @@ fun getStylesContentModel(
         )
         gradients.add(command)
     }
-    commandGroups.add(CommandGroup(resourceBundle.value.getString("Colors.gradients"), gradients))
+    commandGroups.add(CommandGroup(resourceBundle.getString("Colors.gradients"), gradients))
 
     return CommandPanelContentModel(
         commandGroups = commandGroups
@@ -206,25 +214,25 @@ fun CommandDemoEditStrip(
     isInPreview: MutableState<Boolean>,
     previewTopColor: MutableState<Color>,
     previewBottomColor: MutableState<Color>,
-    resourceBundle: State<ResourceBundle>
+    resourceBundle: ResourceBundle
 ) {
     val commandCut =
         Command(
-            text = resourceBundle.value.getString("Edit.cut.text"),
+            text = resourceBundle.getString("Edit.cut.text"),
             icon = content_cut_black_24dp(),
             isActionEnabled = true,
             action = { println("Cut!") }
         )
     val commandCopy =
         Command(
-            text = resourceBundle.value.getString("Edit.copy.text"),
+            text = resourceBundle.getString("Edit.copy.text"),
             icon = content_copy_black_24dp(),
             isActionEnabled = true,
             action = { println("Copy!") }
         )
     var togglePasteText by remember { mutableStateOf(false) }
     val commandPasteTextOnly = Command(
-        text = resourceBundle.value.getString("Edit.paste.textOnlyText"),
+        text = resourceBundle.getString("Edit.paste.textOnlyText"),
         action = { println("Paste text only") },
         isActionToggle = true,
         isActionToggleSelected = togglePasteText,
@@ -235,7 +243,7 @@ fun CommandDemoEditStrip(
     )
     val commandPaste =
         Command(
-            text = resourceBundle.value.getString("Edit.paste.text"),
+            text = resourceBundle.getString("Edit.paste.text"),
             icon = content_paste_black_24dp(),
             isActionEnabled = true,
             action = { println("Paste!") },
@@ -243,10 +251,10 @@ fun CommandDemoEditStrip(
                 group = CommandGroup(
                     commands = listOf(
                         Command(
-                            text = resourceBundle.value.getString("Edit.paste.keepFormattingText"),
+                            text = resourceBundle.getString("Edit.paste.keepFormattingText"),
                             action = { println("Paste with keep formatting") }),
                         Command(
-                            text = resourceBundle.value.getString("Edit.paste.mergeFormattingText"),
+                            text = resourceBundle.getString("Edit.paste.mergeFormattingText"),
                             action = { println("Paste with merge formatting") }),
                         commandPasteTextOnly
                     )
@@ -335,7 +343,7 @@ fun DemoStyleCanvas(
 @Composable
 fun AuroraApplicationScope.DemoStyleContent(
     auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
-    resourceBundle: State<ResourceBundle>
+    resourceBundle: ResourceBundle
 ) {
     Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
         Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {

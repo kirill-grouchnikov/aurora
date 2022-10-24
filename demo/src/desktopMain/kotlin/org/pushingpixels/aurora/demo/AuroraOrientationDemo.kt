@@ -47,7 +47,7 @@ fun main() = auroraApplication {
         size = DpSize(800.dp, 400.dp)
     )
     val skin = mutableStateOf(marinerSkin())
-    val resourceBundle = derivedStateOf {
+    val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
 
@@ -113,11 +113,11 @@ fun CommandOrientationJustifyStrip(
     orientation: StripOrientation,
     alignment: MutableState<CommandDemoAlignment>,
     horizontalGapScaleFactor: Float,
-    resourceBundle: State<ResourceBundle>
+    resourceBundle: ResourceBundle
 ) {
     val commandAlignCenter =
         Command(
-            text = resourceBundle.value.getString("Justify.center"),
+            text = resourceBundle.getString("Justify.center"),
             icon = format_justify_center(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -128,7 +128,7 @@ fun CommandOrientationJustifyStrip(
         )
     val commandAlignLeft =
         Command(
-            text = resourceBundle.value.getString("Justify.left"),
+            text = resourceBundle.getString("Justify.left"),
             icon = format_justify_left(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -139,7 +139,7 @@ fun CommandOrientationJustifyStrip(
         )
     val commandAlignRight =
         Command(
-            text = resourceBundle.value.getString("Justify.right"),
+            text = resourceBundle.getString("Justify.right"),
             icon = format_justify_right(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -150,7 +150,7 @@ fun CommandOrientationJustifyStrip(
         )
     val commandAlignFill =
         Command(
-            text = resourceBundle.value.getString("Justify.fill"),
+            text = resourceBundle.getString("Justify.fill"),
             icon = format_justify_fill(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -182,11 +182,11 @@ fun CommandOrientationEditStrip(
     popupEnabled: Boolean,
     orientation: StripOrientation,
     horizontalGapScaleFactor: Float,
-    resourceBundle: State<ResourceBundle>
+    resourceBundle: ResourceBundle
 ) {
     val commandCut =
         Command(
-            text = resourceBundle.value.getString("Edit.cut.text"),
+            text = resourceBundle.getString("Edit.cut.text"),
             icon = content_cut_black_24dp(),
             isActionEnabled = actionEnabled,
             action = { println("Cut!") }
@@ -194,7 +194,7 @@ fun CommandOrientationEditStrip(
         )
     val commandCopy =
         Command(
-            text = resourceBundle.value.getString("Edit.copy.text"),
+            text = resourceBundle.getString("Edit.copy.text"),
             icon = content_copy_black_24dp(),
             isActionEnabled = actionEnabled,
             action = { println("Copy!") }
@@ -203,7 +203,7 @@ fun CommandOrientationEditStrip(
 
     var togglePasteText by remember { mutableStateOf(false) }
     val commandPasteTextOnly = Command(
-        text = resourceBundle.value.getString("Edit.paste.textOnlyText"),
+        text = resourceBundle.getString("Edit.paste.textOnlyText"),
         action = { println("Paste text only") },
         isActionToggle = true,
         isActionToggleSelected = togglePasteText,
@@ -215,7 +215,7 @@ fun CommandOrientationEditStrip(
 
     val commandPaste =
         Command(
-            text = resourceBundle.value.getString("Edit.paste.text"),
+            text = resourceBundle.getString("Edit.paste.text"),
             icon = content_paste_black_24dp(),
             isActionEnabled = actionEnabled,
             action = { println("Paste!") },
@@ -223,10 +223,10 @@ fun CommandOrientationEditStrip(
                 group = CommandGroup(
                     commands = listOf(
                         Command(
-                            text = resourceBundle.value.getString("Edit.paste.keepFormattingText"),
+                            text = resourceBundle.getString("Edit.paste.keepFormattingText"),
                             action = { println("Paste with keep formatting") }),
                         Command(
-                            text = resourceBundle.value.getString("Edit.paste.mergeFormattingText"),
+                            text = resourceBundle.getString("Edit.paste.mergeFormattingText"),
                             action = { println("Paste with merge formatting") }),
                         commandPasteTextOnly,
                     )
@@ -274,7 +274,7 @@ fun CommandOrientationEditStrip(
 
 @Composable
 fun CommandOrientationStyleStrip(
-    resourceBundle: State<ResourceBundle>,
+    resourceBundle: ResourceBundle,
     enabled: Boolean,
     orientation: StripOrientation,
     style: CommandDemoStyle,
@@ -282,7 +282,7 @@ fun CommandOrientationStyleStrip(
 ) {
     val commandBold =
         Command(
-            text = resourceBundle.value.getString("FontStyle.bold.title"),
+            text = resourceBundle.getString("FontStyle.bold.title"),
             icon = format_bold_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -294,7 +294,7 @@ fun CommandOrientationStyleStrip(
         )
     val commandItalic =
         Command(
-            text = resourceBundle.value.getString("FontStyle.italic.title"),
+            text = resourceBundle.getString("FontStyle.italic.title"),
             icon = format_italic_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -306,7 +306,7 @@ fun CommandOrientationStyleStrip(
         )
     val commandUnderline =
         Command(
-            text = resourceBundle.value.getString("FontStyle.underline.title"),
+            text = resourceBundle.getString("FontStyle.underline.title"),
             icon = format_underlined_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -318,7 +318,7 @@ fun CommandOrientationStyleStrip(
         )
     val commandStrikethrough =
         Command(
-            text = resourceBundle.value.getString("FontStyle.strikethrough.title"),
+            text = resourceBundle.getString("FontStyle.strikethrough.title"),
             icon = format_strikethrough_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
@@ -348,8 +348,8 @@ fun CommandOrientationStyleStrip(
     ).project()
 }
 
-private fun getPopupMenuContentModel(resourceBundle: State<ResourceBundle>): CommandMenuContentModel {
-    val mf = MessageFormat(resourceBundle.value.getString("TestMenuItem.text"))
+private fun getPopupMenuContentModel(resourceBundle: ResourceBundle): CommandMenuContentModel {
+    val mf = MessageFormat(resourceBundle.getString("TestMenuItem.text"))
     val simpleEntries1: MutableList<Command> = ArrayList()
     val simpleEntries2: MutableList<Command> = ArrayList()
 
@@ -391,15 +391,15 @@ private fun getPopupMenuContentModel(resourceBundle: State<ResourceBundle>): Com
 @Composable
 fun AuroraApplicationScope.OrientationCommandContent(
     auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
-    resourceBundle: State<ResourceBundle>
+    resourceBundle: ResourceBundle
 ) {
     var actionEnabled by remember { mutableStateOf(true) }
     var popupEnabled by remember { mutableStateOf(true) }
 
     val actionCommand =
         Command(
-            text = resourceBundle.value.getString("Edit.paste.text"),
-            extraText = resourceBundle.value.getString("Edit.paste.textExtra"),
+            text = resourceBundle.getString("Edit.paste.text"),
+            extraText = resourceBundle.getString("Edit.paste.textExtra"),
             icon = edit_paste(),
             action = { println("Paste activated!") },
             isActionEnabled = actionEnabled
@@ -407,8 +407,8 @@ fun AuroraApplicationScope.OrientationCommandContent(
 
     val splitMainActionCommand =
         Command(
-            text = resourceBundle.value.getString("Edit.copy.text"),
-            extraText = resourceBundle.value.getString("Edit.copy.textExtra"),
+            text = resourceBundle.getString("Edit.copy.text"),
+            extraText = resourceBundle.getString("Edit.copy.textExtra"),
             icon = edit_copy(),
             action = { println("Copy activated!") },
             isActionEnabled = actionEnabled,
@@ -418,8 +418,8 @@ fun AuroraApplicationScope.OrientationCommandContent(
 
     val splitMainPopupCommand =
         Command(
-            text = resourceBundle.value.getString("Edit.cut.text"),
-            extraText = resourceBundle.value.getString("Edit.cut.textExtra"),
+            text = resourceBundle.getString("Edit.cut.text"),
+            extraText = resourceBundle.getString("Edit.cut.textExtra"),
             icon = edit_cut(),
             action = { println("Cut activated!") },
             isActionEnabled = actionEnabled,
@@ -429,8 +429,8 @@ fun AuroraApplicationScope.OrientationCommandContent(
 
     val popupCommand =
         Command(
-            text = resourceBundle.value.getString("Edit.selectAll.text"),
-            extraText = resourceBundle.value.getString("Edit.selectAll.textExtra"),
+            text = resourceBundle.getString("Edit.selectAll.text"),
+            extraText = resourceBundle.getString("Edit.selectAll.textExtra"),
             icon = edit_select_all(),
             secondaryContentModel = getPopupMenuContentModel(resourceBundle),
             isSecondaryEnabled = popupEnabled
@@ -475,13 +475,13 @@ fun AuroraApplicationScope.OrientationCommandContent(
 
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
                 CheckBoxProjection(contentModel = SelectorContentModel(
-                    text = resourceBundle.value.getString("Action.enabled"),
+                    text = resourceBundle.getString("Action.enabled"),
                     selected = actionEnabled,
                     onTriggerSelectedChange = { actionEnabled = !actionEnabled }
                 )).project()
                 Spacer(modifier = Modifier.width(8.dp))
                 CheckBoxProjection(contentModel = SelectorContentModel(
-                    text = resourceBundle.value.getString("Popup.enabled"),
+                    text = resourceBundle.getString("Popup.enabled"),
                     selected = popupEnabled,
                     onTriggerSelectedChange = { popupEnabled = !popupEnabled }
                 )).project()

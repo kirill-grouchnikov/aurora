@@ -9,8 +9,8 @@ For the "Action" buttons (first button in each one of the rows), the command tha
 ```kotlin
 val commandActionOnly =
     Command(
-        text = resourceBundle.value.getString("Action.text"),
-        extraText = resourceBundle.value.getString("Action.textExtra"),
+        text = resourceBundle.getString("Action.text"),
+        extraText = resourceBundle.getString("Action.textExtra"),
         icon = accessories_text_editor(),
         action = { println("Action activated!") },
         ...
@@ -68,8 +68,8 @@ Taking another look at the combined code:
 ```kotlin
 val commandActionOnly =
     Command(
-        text = resourceBundle.value.getString("Action.text"),
-        extraText = resourceBundle.value.getString("Action.textExtra"),
+        text = resourceBundle.getString("Action.text"),
+        extraText = resourceBundle.getString("Action.textExtra"),
         icon = accessories_text_editor(),
         action = { println("Action activated!") },
         ...

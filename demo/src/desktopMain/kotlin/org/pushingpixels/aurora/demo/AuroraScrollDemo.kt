@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -85,7 +86,7 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(250.dp, 400.dp)
     )
-    val resourceBundle = derivedStateOf {
+    val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
 
@@ -163,10 +164,10 @@ fun main() = auroraApplication {
                 AuroraLocaleSwitcher(resourceBundle)
             }
 
-            val selectedMf = MessageFormat(resourceBundle.value.getString("Selected.entry"))
+            val selectedMf = MessageFormat(resourceBundle.getString("Selected.entry"))
             LabelProjection(
                 contentModel = LabelContentModel(
-                    text = if (stateSelection.value < 0) resourceBundle.value.getString("Selected.none")
+                    text = if (stateSelection.value < 0) resourceBundle.getString("Selected.none")
                     else selectedMf.format(arrayOf<Any>(stateSelection.value))
                 ),
                 presentationModel = LabelPresentationModel(
@@ -182,7 +183,7 @@ fun main() = auroraApplication {
 
             HorizontalSeparatorProjection().project(modifier = Modifier.fillMaxWidth())
 
-            val commandMf = MessageFormat(resourceBundle.value.getString("Group.entrySimple"))
+            val commandMf = MessageFormat(resourceBundle.getString("Group.entrySimple"))
             Box(modifier = Modifier.fillMaxSize().padding(6.dp)) {
                 val itemsList = (0 until itemCount).toList()
                 val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(

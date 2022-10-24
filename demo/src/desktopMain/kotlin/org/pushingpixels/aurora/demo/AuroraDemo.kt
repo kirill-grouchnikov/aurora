@@ -57,7 +57,7 @@ fun main() = auroraApplication {
         size = DpSize(200.dp, 150.dp)
     )
     val skin = mutableStateOf(marinerSkin())
-    val resourceBundle = derivedStateOf {
+    val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
 
@@ -72,7 +72,7 @@ fun main() = auroraApplication {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 LabelProjection(
                     contentModel = LabelContentModel(
-                        text = resourceBundle.value.getString("Menu.about")
+                        text = resourceBundle.getString("Menu.about")
                     )
                 ).project()
             }
@@ -90,40 +90,40 @@ fun main() = auroraApplication {
         menuCommands = CommandGroup(
             commands = listOf(
                 Command(
-                    text = resourceBundle.value.getString("Menu.file"),
+                    text = resourceBundle.getString("Menu.file"),
                     secondaryContentModel = CommandMenuContentModel(
                         CommandGroup(
                             commands = listOf(
                                 Command(
-                                    text = resourceBundle.value.getString("Menu.file.new"),
+                                    text = resourceBundle.getString("Menu.file.new"),
                                     action = { println("New file!") }),
                                 Command(
-                                    text = resourceBundle.value.getString("Menu.file.open"),
+                                    text = resourceBundle.getString("Menu.file.open"),
                                     action = { println("Open file!") }),
                                 Command(
-                                    text = resourceBundle.value.getString("Menu.file.save"),
+                                    text = resourceBundle.getString("Menu.file.save"),
                                     action = { println("Save file!") })
                             )
                         )
                     )
                 ),
                 Command(
-                    text = resourceBundle.value.getString("Menu.edit"),
+                    text = resourceBundle.getString("Menu.edit"),
                     action = { println("Edit activated!") }),
                 Command(
-                    text = resourceBundle.value.getString("Menu.view"),
+                    text = resourceBundle.getString("Menu.view"),
                     action = { println("View activated!") }),
                 Command(
-                    text = resourceBundle.value.getString("Menu.tools"),
+                    text = resourceBundle.getString("Menu.tools"),
                     action = { println("Tools activated!") }),
                 Command(
-                    text = resourceBundle.value.getString("Menu.window"),
+                    text = resourceBundle.getString("Menu.window"),
                     action = { println("Window activated!") }),
                 Command(
-                    text = resourceBundle.value.getString("Menu.help"),
+                    text = resourceBundle.getString("Menu.help"),
                     action = { println("Help activated!") }),
                 Command(
-                    text = resourceBundle.value.getString("Menu.about"),
+                    text = resourceBundle.getString("Menu.about"),
                     action = {
                         println("About activated!")
                         isAboutWindowOpen = true
@@ -200,7 +200,7 @@ fun DemoToolbar(
     modifier: Modifier = Modifier,
     alignmentCommands: CommandGroup,
     styleCommands: CommandGroup,
-    resourceBundle: State<ResourceBundle>,
+    resourceBundle: ResourceBundle,
     iconDimension: Dp = 16.dp
 ) {
     Row(
@@ -212,7 +212,7 @@ fun DemoToolbar(
     ) {
         CommandButtonProjection(
             contentModel = Command(
-                text = resourceBundle.value.getString("Edit.cut.text"),
+                text = resourceBundle.getString("Edit.cut.text"),
                 icon = edit_cut(),
                 action = { println("Cut!") }
             ),
@@ -224,7 +224,7 @@ fun DemoToolbar(
         ).project()
         CommandButtonProjection(
             contentModel = Command(
-                text = resourceBundle.value.getString("Edit.copy.text"),
+                text = resourceBundle.getString("Edit.copy.text"),
                 icon = edit_copy(),
                 isActionEnabled = false,
                 action = { println("Copy!") }
@@ -237,7 +237,7 @@ fun DemoToolbar(
         ).project()
         CommandButtonProjection(
             contentModel = Command(
-                text = resourceBundle.value.getString("Edit.paste.text"),
+                text = resourceBundle.getString("Edit.paste.text"),
                 icon = edit_paste(),
                 action = { println("Paste!") }
             ),
@@ -249,7 +249,7 @@ fun DemoToolbar(
         ).project()
         CommandButtonProjection(
             contentModel = Command(
-                text = resourceBundle.value.getString("Edit.selectAll.text"),
+                text = resourceBundle.getString("Edit.selectAll.text"),
                 icon = edit_select_all(),
                 action = { println("Select all!") }
             ),
@@ -261,7 +261,7 @@ fun DemoToolbar(
         ).project()
         CommandButtonProjection(
             contentModel = Command(
-                text = resourceBundle.value.getString("Edit.delete.text"),
+                text = resourceBundle.getString("Edit.delete.text"),
                 icon = edit_delete(),
                 action = { println("Delete!") }
             ),
@@ -303,7 +303,7 @@ fun DemoToolbar(
         Spacer(modifier.weight(weight = 1.0f, fill = true))
 
         CommandButtonProjection(
-            contentModel = Command(text = resourceBundle.value.getString("AppMenuExit.text"),
+            contentModel = Command(text = resourceBundle.getString("AppMenuExit.text"),
                 icon = process_stop(),
                 action = { exitProcess(0) }),
             presentationModel = CommandButtonPresentationModel(
@@ -320,7 +320,7 @@ fun DemoFooter(
     modifier: Modifier = Modifier,
     contentEnabled: MutableState<Boolean>,
     alignmentCommands: CommandGroup,
-    resourceBundle: State<ResourceBundle>
+    resourceBundle: ResourceBundle
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -341,7 +341,7 @@ fun DemoFooter(
         val commands2 = arrayListOf<Command>()
         val commands3 = arrayListOf<Command>()
 
-        val mf = MessageFormat(resourceBundle.value.getString("TestMenuItem.text"))
+        val mf = MessageFormat(resourceBundle.getString("TestMenuItem.text"))
         for (i in 0 until count) {
             val command = Command(
                 text = mf.format(arrayOf<Any>(i)),
@@ -361,7 +361,7 @@ fun DemoFooter(
 
         LabelProjection(
             contentModel = LabelContentModel(
-                text = resourceBundle.value.getString("ContextMenu.show"),
+                text = resourceBundle.getString("ContextMenu.show"),
                 enabled = contentEnabled.value
             )
         ).project(
@@ -437,7 +437,7 @@ fun AuroraWindowScope.DemoArea(
     modifier: Modifier = Modifier,
     contentEnabled: MutableState<Boolean>,
     auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
-    resourceBundle: State<ResourceBundle>,
+    resourceBundle: ResourceBundle,
     styleCommands: CommandGroup
 ) {
     // TODO - convert this to use ConstraintLayout when (if?) that is available for desktop
@@ -454,7 +454,7 @@ fun AuroraWindowScope.DemoArea(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 CheckBoxProjection(contentModel = SelectorContentModel(
-                    text = resourceBundle.value.getString("Content.enabled"),
+                    text = resourceBundle.getString("Content.enabled"),
                     selected = contentEnabled.value,
                     onTriggerSelectedChange = { contentEnabled.value = !contentEnabled.value }
                 )).project()
@@ -477,13 +477,13 @@ fun AuroraWindowScope.DemoArea(
             modifier = Modifier.fillMaxWidth().padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            DemoHeader(resourceBundle.value.getString("Group.buttons"), button(), contentEnabled)
+            DemoHeader(resourceBundle.getString("Group.buttons"), button(), contentEnabled)
             Row(modifier = Modifier.fillMaxWidth()) {
                 // A toggle command button backed by a mutable boolean
                 var toggleButtonSelected by remember { mutableStateOf(true) }
                 CommandButtonProjection(
                     contentModel = Command(
-                        text = resourceBundle.value.getString("Control.button.toggle"),
+                        text = resourceBundle.getString("Control.button.toggle"),
                         icon = computer(),
                         isActionEnabled = contentEnabled.value,
                         isActionToggle = true,
@@ -508,7 +508,7 @@ fun AuroraWindowScope.DemoArea(
                 // A command button with icon using ThemedFollowText filter strategy
                 CommandButtonProjection(
                     contentModel = Command(
-                        text = resourceBundle.value.getString("Control.button.iconText"),
+                        text = resourceBundle.getString("Control.button.iconText"),
                         icon = keyboard_capslock_24px(),
                         isActionEnabled = contentEnabled.value,
                         action = {}
@@ -527,7 +527,7 @@ fun AuroraWindowScope.DemoArea(
                 // active (rollover, pressed, etc)
                 CommandButtonProjection(
                     contentModel = Command(
-                        text = resourceBundle.value.getString("Control.button.flat"),
+                        text = resourceBundle.getString("Control.button.flat"),
                         icon = account_box_24px(),
                         isActionEnabled = contentEnabled.value,
                         action = { println("Clicked!") }
@@ -609,9 +609,9 @@ fun AuroraWindowScope.DemoArea(
                 // Example of a simple combobox
                 val simpleComboItems =
                     listOf(
-                        resourceBundle.value.getString("Combo.entry.one"),
-                        resourceBundle.value.getString("Combo.entry.two"),
-                        resourceBundle.value.getString("Combo.entry.three")
+                        resourceBundle.getString("Combo.entry.one"),
+                        resourceBundle.getString("Combo.entry.two"),
+                        resourceBundle.getString("Combo.entry.three")
                     )
                 val simpleComboSelectedItem = remember { mutableStateOf(simpleComboItems[1]) }
                 ComboBoxProjection(
@@ -620,15 +620,15 @@ fun AuroraWindowScope.DemoArea(
                         items = simpleComboItems,
                         selectedItem = simpleComboSelectedItem.value,
                         richTooltip = RichTooltip(
-                            title = resourceBundle.value.getString("Tooltip.genericTitle"),
+                            title = resourceBundle.getString("Tooltip.genericTitle"),
                             mainIcon = user_home(),
                             descriptionSections = listOf(
-                                resourceBundle.value.getString("Tooltip.textParagraph1"),
-                                resourceBundle.value.getString("Tooltip.textParagraph2")
+                                resourceBundle.getString("Tooltip.textParagraph1"),
+                                resourceBundle.getString("Tooltip.textParagraph2")
                             ),
                             footerIcon = help_browser(),
                             footerSections = listOf(
-                                resourceBundle.value.getString("Tooltip.textFooterParagraph1")
+                                resourceBundle.getString("Tooltip.textFooterParagraph1")
                             )
                         ),
                         onTriggerItemSelectedChange = {
@@ -674,7 +674,7 @@ fun AuroraWindowScope.DemoArea(
             }
 
             DemoHeader(
-                resourceBundle.value.getString("Group.selectors"),
+                resourceBundle.getString("Group.selectors"),
                 check_square_o(),
                 contentEnabled
             )
@@ -682,17 +682,17 @@ fun AuroraWindowScope.DemoArea(
                 // Example of a checkbox backed by a mutable boolean
                 var checkboxSelected by remember { mutableStateOf(true) }
                 CheckBoxProjection(contentModel = SelectorContentModel(
-                    text = resourceBundle.value.getString("Control.selector.checkbox"),
+                    text = resourceBundle.getString("Control.selector.checkbox"),
                     richTooltip = RichTooltip(
-                        title = resourceBundle.value.getString("Tooltip.genericTitle"),
+                        title = resourceBundle.getString("Tooltip.genericTitle"),
                         mainIcon = user_home(),
                         descriptionSections = listOf(
-                            resourceBundle.value.getString("Tooltip.textParagraph1"),
-                            resourceBundle.value.getString("Tooltip.textParagraph2")
+                            resourceBundle.getString("Tooltip.textParagraph1"),
+                            resourceBundle.getString("Tooltip.textParagraph2")
                         ),
                         footerIcon = help_browser(),
                         footerSections = listOf(
-                            resourceBundle.value.getString("Tooltip.textFooterParagraph1")
+                            resourceBundle.getString("Tooltip.textFooterParagraph1")
                         )
                     ),
                     enabled = contentEnabled.value,
@@ -709,17 +709,17 @@ fun AuroraWindowScope.DemoArea(
                 var radioButtonSelected by remember { mutableStateOf(true) }
                 RadioButtonProjection(
                     contentModel = SelectorContentModel(
-                        text = resourceBundle.value.getString("Control.selector.radio"),
+                        text = resourceBundle.getString("Control.selector.radio"),
                         richTooltip = RichTooltip(
-                            title = resourceBundle.value.getString("Tooltip.genericTitle"),
+                            title = resourceBundle.getString("Tooltip.genericTitle"),
                             mainIcon = user_home(),
                             descriptionSections = listOf(
-                                resourceBundle.value.getString("Tooltip.textParagraph1"),
-                                resourceBundle.value.getString("Tooltip.textParagraph2")
+                                resourceBundle.getString("Tooltip.textParagraph1"),
+                                resourceBundle.getString("Tooltip.textParagraph2")
                             ),
                             footerIcon = help_browser(),
                             footerSections = listOf(
-                                resourceBundle.value.getString("Tooltip.textFooterParagraph1")
+                                resourceBundle.getString("Tooltip.textFooterParagraph1")
                             )
                         ),
                         enabled = contentEnabled.value,
@@ -732,7 +732,7 @@ fun AuroraWindowScope.DemoArea(
             }
 
             DemoHeader(
-                resourceBundle.value.getString("Group.comboboxes"),
+                resourceBundle.getString("Group.comboboxes"),
                 combobox(),
                 contentEnabled
             )
@@ -845,7 +845,7 @@ fun AuroraWindowScope.DemoArea(
             }
 
             DemoHeader(
-                resourceBundle.value.getString("Group.progressbars"),
+                resourceBundle.getString("Group.progressbars"),
                 progressbar(),
                 contentEnabled
             )
@@ -880,7 +880,7 @@ fun AuroraWindowScope.DemoArea(
                 ).project()
             }
 
-            DemoHeader(resourceBundle.value.getString("Group.sliders"), slider(), contentEnabled)
+            DemoHeader(resourceBundle.getString("Group.sliders"), slider(), contentEnabled)
 
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
                 // Example of a continuous slider
@@ -922,7 +922,7 @@ fun AuroraWindowScope.DemoArea(
             }
 
             DemoHeader(
-                resourceBundle.value.getString("Group.textfields"),
+                resourceBundle.getString("Group.textfields"),
                 text_input(),
                 contentEnabled
             )
@@ -936,7 +936,7 @@ fun AuroraWindowScope.DemoArea(
                 TextFieldStringProjection(
                     contentModel = TextFieldStringContentModel(
                         value = text1,
-                        placeholder = resourceBundle.value.getString("Control.textfield.area"),
+                        placeholder = resourceBundle.getString("Control.textfield.area"),
                         onValueChange = { text1 = it },
                         enabled = contentEnabled.value
                     )
@@ -949,7 +949,7 @@ fun AuroraWindowScope.DemoArea(
                 TextFieldStringProjection(
                     contentModel = TextFieldStringContentModel(
                         value = text2,
-                        placeholder = resourceBundle.value.getString("Control.textfield.field"),
+                        placeholder = resourceBundle.getString("Control.textfield.field"),
                         onValueChange = { text2 = it },
                         enabled = contentEnabled.value
                     ),
@@ -964,7 +964,7 @@ fun AuroraWindowScope.DemoArea(
 @Composable
 fun AuroraWindowScope.DemoContent(
     auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
-    resourceBundle: State<ResourceBundle>
+    resourceBundle: ResourceBundle
 ) {
     val contentEnabled = remember { mutableStateOf(true) }
     val alignment = remember { mutableStateOf(DemoAlignment.Center) }
@@ -979,7 +979,7 @@ fun AuroraWindowScope.DemoContent(
     val alignmentCommands = CommandGroup(
         commands = listOf(
             Command(
-                text = resourceBundle.value.getString("Justify.center"),
+                text = resourceBundle.getString("Justify.center"),
                 icon = format_justify_center(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
@@ -998,7 +998,7 @@ fun AuroraWindowScope.DemoContent(
                 }
             ),
             Command(
-                text = resourceBundle.value.getString("Justify.left"),
+                text = resourceBundle.getString("Justify.left"),
                 icon = format_justify_left(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
@@ -1017,7 +1017,7 @@ fun AuroraWindowScope.DemoContent(
                 }
             ),
             Command(
-                text = resourceBundle.value.getString("Justify.right"),
+                text = resourceBundle.getString("Justify.right"),
                 icon = format_justify_right(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
@@ -1036,7 +1036,7 @@ fun AuroraWindowScope.DemoContent(
                 }
             ),
             Command(
-                text = resourceBundle.value.getString("Justify.fill"),
+                text = resourceBundle.getString("Justify.fill"),
                 icon = format_justify_fill(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
@@ -1060,7 +1060,7 @@ fun AuroraWindowScope.DemoContent(
     val styleCommands = CommandGroup(
         commands = listOf(
             Command(
-                text = resourceBundle.value.getString("FontStyle.bold.title"),
+                text = resourceBundle.getString("FontStyle.bold.title"),
                 icon = format_text_bold(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
@@ -1071,7 +1071,7 @@ fun AuroraWindowScope.DemoContent(
                 }
             ),
             Command(
-                text = resourceBundle.value.getString("FontStyle.italic.title"),
+                text = resourceBundle.getString("FontStyle.italic.title"),
                 icon = format_text_italic(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
@@ -1082,7 +1082,7 @@ fun AuroraWindowScope.DemoContent(
                 }
             ),
             Command(
-                text = resourceBundle.value.getString("FontStyle.underline.title"),
+                text = resourceBundle.getString("FontStyle.underline.title"),
                 icon = format_text_underline(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,
@@ -1093,7 +1093,7 @@ fun AuroraWindowScope.DemoContent(
                 }
             ),
             Command(
-                text = resourceBundle.value.getString("FontStyle.strikethrough.title"),
+                text = resourceBundle.getString("FontStyle.strikethrough.title"),
                 icon = format_text_strikethrough(),
                 isActionEnabled = contentEnabled.value,
                 isActionToggle = true,

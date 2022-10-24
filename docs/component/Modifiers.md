@@ -59,7 +59,7 @@ Use `Modifier.auroraContextMenu()` to display context menus. See [context menu d
 ```kotlin
 LabelProjection(
   contentModel = LabelContentModel(
-    text = resourceBundle.value.getString("ContextMenu.show"),
+    text = resourceBundle.getString("ContextMenu.show"),
     enabled = contentEnabled.value
   )
 ).project(

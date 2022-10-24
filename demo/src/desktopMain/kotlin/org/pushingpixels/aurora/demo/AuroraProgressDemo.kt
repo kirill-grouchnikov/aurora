@@ -51,7 +51,7 @@ fun main() = auroraApplication {
         size = DpSize(500.dp, 400.dp)
     )
     val skin = mutableStateOf(marinerSkin())
-    val resourceBundle = derivedStateOf {
+    val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
 
@@ -66,37 +66,37 @@ fun main() = auroraApplication {
         menuCommands = CommandGroup(
             commands = listOf(
                 Command(
-                    text = resourceBundle.value.getString("Menu.file"),
+                    text = resourceBundle.getString("Menu.file"),
                     secondaryContentModel = CommandMenuContentModel(
                         CommandGroup(
                             commands = listOf(
                                 Command(
-                                    text = resourceBundle.value.getString("Menu.file.new"),
+                                    text = resourceBundle.getString("Menu.file.new"),
                                     action = { println("New file!") }),
                                 Command(
-                                    text = resourceBundle.value.getString("Menu.file.open"),
+                                    text = resourceBundle.getString("Menu.file.open"),
                                     action = { println("Open file!") }),
                                 Command(
-                                    text = resourceBundle.value.getString("Menu.file.save"),
+                                    text = resourceBundle.getString("Menu.file.save"),
                                     action = { println("Save file!") })
                             )
                         )
                     )
                 ),
                 Command(
-                    text = resourceBundle.value.getString("Menu.edit"),
+                    text = resourceBundle.getString("Menu.edit"),
                     action = { println("Edit activated!") }),
                 Command(
-                    text = resourceBundle.value.getString("Menu.view"),
+                    text = resourceBundle.getString("Menu.view"),
                     action = { println("View activated!") }),
                 Command(
-                    text = resourceBundle.value.getString("Menu.tools"),
+                    text = resourceBundle.getString("Menu.tools"),
                     action = { println("Tools activated!") }),
                 Command(
-                    text = resourceBundle.value.getString("Menu.window"),
+                    text = resourceBundle.getString("Menu.window"),
                     action = { println("Window activated!") }),
                 Command(
-                    text = resourceBundle.value.getString("Menu.help"),
+                    text = resourceBundle.getString("Menu.help"),
                     action = { println("Help activated!") })
             )
         )
@@ -110,7 +110,7 @@ fun main() = auroraApplication {
 fun AuroraWindowScope.DemoProgressArea(
     modifier: Modifier = Modifier,
     auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
-    resourceBundle: State<ResourceBundle>
+    resourceBundle: ResourceBundle
 ) {
     // TODO - convert this to use ConstraintLayout when (if?) that is available for desktop
     Row(
@@ -166,7 +166,7 @@ fun AuroraWindowScope.DemoProgressArea(
             // Enabled determinate linear progress bar
             LabelProjection(
                 contentModel = LabelContentModel(
-                    text = resourceBundle.value.getString("Progress.determinate.enabled")
+                    text = resourceBundle.getString("Progress.determinate.enabled")
                         .uppercase()
                 ),
                 presentationModel = LabelPresentationModel(textStyle = textStyle)
@@ -183,7 +183,7 @@ fun AuroraWindowScope.DemoProgressArea(
             // Enabled indeterminate linear progress bar
             LabelProjection(
                 contentModel = LabelContentModel(
-                    text = resourceBundle.value.getString("Progress.indeterminate.enabled")
+                    text = resourceBundle.getString("Progress.indeterminate.enabled")
                         .uppercase()
                 ),
                 presentationModel = LabelPresentationModel(textStyle = textStyle)
@@ -197,7 +197,7 @@ fun AuroraWindowScope.DemoProgressArea(
             // Disabled determinate linear progress bar
             LabelProjection(
                 contentModel = LabelContentModel(
-                    text = resourceBundle.value.getString("Progress.determinate.disabled")
+                    text = resourceBundle.getString("Progress.determinate.disabled")
                         .uppercase()
                 ),
                 presentationModel = LabelPresentationModel(textStyle = textStyle)
@@ -214,7 +214,7 @@ fun AuroraWindowScope.DemoProgressArea(
             // Disabled indeterminate linear progress bar
             LabelProjection(
                 contentModel = LabelContentModel(
-                    text = resourceBundle.value.getString("Progress.indeterminate.disabled")
+                    text = resourceBundle.getString("Progress.indeterminate.disabled")
                         .uppercase()
                 ),
                 presentationModel = LabelPresentationModel(textStyle = textStyle)
@@ -231,7 +231,7 @@ fun AuroraWindowScope.DemoProgressArea(
 @Composable
 fun AuroraWindowScope.DemoProgressContent(
     auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
-    resourceBundle: State<ResourceBundle>
+    resourceBundle: ResourceBundle
 ) {
     val alignment = remember { mutableStateOf(DemoAlignment.Center) }
 
@@ -245,7 +245,7 @@ fun AuroraWindowScope.DemoProgressContent(
     val alignmentCommands = CommandGroup(
         commands = listOf(
             Command(
-                text = resourceBundle.value.getString("Justify.center"),
+                text = resourceBundle.getString("Justify.center"),
                 icon = format_justify_center(),
                 isActionToggle = true,
                 isActionToggleSelected = (alignment.value == DemoAlignment.Center),
@@ -263,7 +263,7 @@ fun AuroraWindowScope.DemoProgressContent(
                 }
             ),
             Command(
-                text = resourceBundle.value.getString("Justify.left"),
+                text = resourceBundle.getString("Justify.left"),
                 icon = format_justify_left(),
                 isActionToggle = true,
                 isActionToggleSelected = (alignment.value == DemoAlignment.Left),
@@ -281,7 +281,7 @@ fun AuroraWindowScope.DemoProgressContent(
                 }
             ),
             Command(
-                text = resourceBundle.value.getString("Justify.right"),
+                text = resourceBundle.getString("Justify.right"),
                 icon = format_justify_right(),
                 isActionToggle = true,
                 isActionToggleSelected = (alignment.value == DemoAlignment.Right),
@@ -299,7 +299,7 @@ fun AuroraWindowScope.DemoProgressContent(
                 }
             ),
             Command(
-                text = resourceBundle.value.getString("Justify.fill"),
+                text = resourceBundle.getString("Justify.fill"),
                 icon = format_justify_fill(),
                 isActionToggle = true,
                 isActionToggleSelected = (alignment.value == DemoAlignment.Fill),
@@ -322,7 +322,7 @@ fun AuroraWindowScope.DemoProgressContent(
     val styleCommands = CommandGroup(
         commands = listOf(
             Command(
-                text = resourceBundle.value.getString("FontStyle.bold.title"),
+                text = resourceBundle.getString("FontStyle.bold.title"),
                 icon = format_text_bold(),
                 isActionToggle = true,
                 isActionToggleSelected = style.bold.value,
@@ -332,7 +332,7 @@ fun AuroraWindowScope.DemoProgressContent(
                 }
             ),
             Command(
-                text = resourceBundle.value.getString("FontStyle.italic.title"),
+                text = resourceBundle.getString("FontStyle.italic.title"),
                 icon = format_text_italic(),
                 isActionToggle = true,
                 isActionToggleSelected = style.italic.value,
@@ -342,7 +342,7 @@ fun AuroraWindowScope.DemoProgressContent(
                 }
             ),
             Command(
-                text = resourceBundle.value.getString("FontStyle.underline.title"),
+                text = resourceBundle.getString("FontStyle.underline.title"),
                 icon = format_text_underline(),
                 isActionToggle = true,
                 isActionToggleSelected = style.underline.value,
@@ -352,7 +352,7 @@ fun AuroraWindowScope.DemoProgressContent(
                 }
             ),
             Command(
-                text = resourceBundle.value.getString("FontStyle.strikethrough.title"),
+                text = resourceBundle.getString("FontStyle.strikethrough.title"),
                 icon = format_text_strikethrough(),
                 isActionToggle = true,
                 isActionToggleSelected = style.strikethrough.value,

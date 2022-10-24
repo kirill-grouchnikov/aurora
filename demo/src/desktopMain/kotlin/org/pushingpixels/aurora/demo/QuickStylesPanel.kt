@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.demo
 
-import androidx.compose.runtime.State
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandActionPreview
 import org.pushingpixels.aurora.component.model.CommandGroup
@@ -24,7 +23,7 @@ import org.pushingpixels.aurora.demo.svg.material.*
 import java.text.MessageFormat
 import java.util.*
 
-fun getQuickStylesContentModel(resourceBundle: State<ResourceBundle>): CommandPanelContentModel {
+fun getQuickStylesContentModel(resourceBundle: ResourceBundle): CommandPanelContentModel {
     val icons = arrayOf(
         accessibility_new_24px(),
         account_box_24px(),
@@ -40,8 +39,8 @@ fun getQuickStylesContentModel(resourceBundle: State<ResourceBundle>): CommandPa
         waves_24px()
     )
 
-    val groupMf = MessageFormat(resourceBundle.value.getString("Group.title"))
-    val commandMf = MessageFormat(resourceBundle.value.getString("Group.entry"))
+    val groupMf = MessageFormat(resourceBundle.getString("Group.title"))
+    val commandMf = MessageFormat(resourceBundle.getString("Group.entry"))
 
     val commandGroups: MutableList<CommandGroup> = arrayListOf()
     for (groupIndex in 1..4) {
