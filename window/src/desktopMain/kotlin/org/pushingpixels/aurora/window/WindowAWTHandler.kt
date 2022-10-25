@@ -147,14 +147,15 @@ internal class AWTInputHandler(
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun mouseReleased(pointInWindow: Point, w: Window) {
         //println("mouseReleased!")
-        if ((dragCursor != 0) && (window != null)
-            && !window.isValid
+        if ((dragCursor != 0) && (w != null)
+            && !w.isValid
         ) {
             // Some Window systems validate as you resize, others won't,
             // thus the check for validity before repainting.
-            window.validate()
+            w.validate()
             rootPane.repaint()
         }
         isMousePressed = false
@@ -312,6 +313,7 @@ internal class AWTInputHandler(
         mouseMoved(pointInWindow, w)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun mouseExited(pointInWindow: Point, w: Window) {
         //println("mouseExited!")
         if (isMousePressed) {

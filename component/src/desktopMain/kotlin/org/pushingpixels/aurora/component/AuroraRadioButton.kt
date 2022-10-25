@@ -127,6 +127,7 @@ internal fun AuroraRadioButton(
 
     // TODO - figure out why the animations are not running without looking
     //  at the result (and how it looks like in the new animation APIs)
+    @Suppress("UNUSED_VARIABLE")
     val totalFraction = selectedFraction + rolloverFraction +
             pressedFraction + enabledFraction
 

@@ -308,7 +308,6 @@ internal open class CommandButtonLayoutManagerBig(
         }
         y += horizontalSeparatorHeight
 
-        var lastTextLineWidth = 0.0f
         y += layoutVGap
 
         val title1Line = Paragraph(
@@ -316,7 +315,7 @@ internal open class CommandButtonLayoutManagerBig(
             density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
         )
 
-        lastTextLineWidth = title1Line.maxIntrinsicWidth
+        var lastTextLineWidth = title1Line.maxIntrinsicWidth
         val line1LayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
             text = preLayoutInfo.texts[0],
             textRect = Rect(

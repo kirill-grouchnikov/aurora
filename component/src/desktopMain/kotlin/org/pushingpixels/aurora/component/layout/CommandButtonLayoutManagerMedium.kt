@@ -237,7 +237,6 @@ internal open class CommandButtonLayoutManagerMedium(
             }
 
             // text
-            var textHeight = 0.0f
             if (hasText) {
                 x += if (hasIcon) {
                     layoutHGap * iconTextGapFactor
@@ -250,7 +249,7 @@ internal open class CommandButtonLayoutManagerMedium(
                     density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
                 )
 
-                textHeight = paragraph.height
+                val textHeight = paragraph.height
                 val textTop =
                     paddingTop + (finalHeight - textHeight - paddingTop - paddingBottom) / 2.0f
                 val lineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
@@ -319,7 +318,7 @@ internal open class CommandButtonLayoutManagerMedium(
                 }
             }
 
-            var xBorderBetweenActionAndPopup = 0.0f
+            val xBorderBetweenActionAndPopup : Float
             when (preLayoutInfo.commandButtonKind) {
                 CommandButtonKind.ActionOnly -> {
                     actionClickArea = Rect(
@@ -442,7 +441,7 @@ internal open class CommandButtonLayoutManagerMedium(
             }
 
             // text
-            var textHeight = 0.0f
+            val textHeight : Float
             if (hasText) {
                 x -= if (hasIcon) {
                     layoutHGap * iconTextGapFactor
@@ -521,7 +520,7 @@ internal open class CommandButtonLayoutManagerMedium(
                 }
             }
 
-            var xBorderBetweenActionAndPopup = 0.0f
+            val xBorderBetweenActionAndPopup : Float
             when (preLayoutInfo.commandButtonKind) {
                 CommandButtonKind.ActionOnly -> {
                     actionClickArea = Rect(

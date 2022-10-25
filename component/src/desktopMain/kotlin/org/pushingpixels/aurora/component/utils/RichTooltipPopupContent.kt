@@ -120,7 +120,7 @@ internal fun displayRichTooltipContent(
         constraints = Constraints(maxWidth = maxContentWidthPx.toInt()),
         density = density, fontFamilyResolver = fontFamilyResolver
     )
-    var fullContentWidth = 0.0f
+    var fullContentWidth : Float
     var fullContentHeight = titleParagraph.height
     val titleWidth: Float
     if (titleParagraph.lineCount > 1) {

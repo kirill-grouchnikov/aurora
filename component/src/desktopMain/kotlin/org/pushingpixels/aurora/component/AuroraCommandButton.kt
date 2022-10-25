@@ -458,6 +458,7 @@ internal fun AuroraCommandButton(
 
     // TODO - figure out why the animations are not running without looking
     //  at the result (and how it looks like in the new animation APIs)
+    @Suppress("UNUSED_VARIABLE")
     val actionTotalFraction =
         actionSelectedFraction + actionRolloverFraction + actionPressedFraction + actionEnabledFraction
 
@@ -581,6 +582,7 @@ internal fun AuroraCommandButton(
 
     // TODO - figure out why the animations are not running without looking
     //  at the result (and how it looks like in the new animation APIs)
+    @Suppress("UNUSED_VARIABLE")
     val totalPopupFraction =
         popupSelectedFraction + popupRolloverFraction + popupPressedFraction + popupEnabledFraction
 
@@ -1231,7 +1233,7 @@ internal fun AuroraCommandButton(
         }
         var separatorPlaceable: Placeable? = null
         if (hasAction and hasPopup and isActionEnabled and isPopupEnabled) {
-            val separatorMeasurable = measurables[childIndex++]
+            val separatorMeasurable = measurables[childIndex]
             separatorPlaceable = separatorMeasurable.measure(
                 Constraints.fixed(
                     width = layoutInfo.separatorArea.width.roundToInt(),

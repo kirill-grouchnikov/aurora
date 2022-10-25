@@ -234,7 +234,7 @@ internal open class CommandButtonLayoutManagerTile(
             }
 
             // text
-            var textHeight = 0.0f
+            val textHeight : Float
             if (hasText) {
                 x += layoutHGap
                 val hasExtraText = (buttonExtraText != null)
@@ -360,7 +360,7 @@ internal open class CommandButtonLayoutManagerTile(
                 }
             }
 
-            var xBorderBetweenActionAndPopup = 0.0f
+            val xBorderBetweenActionAndPopup : Float
             when (preLayoutInfo.commandButtonKind) {
                 CommandButtonKind.ActionOnly -> {
                     actionClickArea = Rect(
@@ -490,7 +490,7 @@ internal open class CommandButtonLayoutManagerTile(
             }
 
             // text
-            var textHeight = 0.0f
+            val textHeight : Float
             if (hasText) {
                 x -= layoutHGap
                 val hasExtraText = (buttonExtraText != null)
@@ -612,7 +612,7 @@ internal open class CommandButtonLayoutManagerTile(
                 }
             }
 
-            var xBorderBetweenActionAndPopup = 0.0f
+            val xBorderBetweenActionAndPopup : Float
             when (preLayoutInfo.commandButtonKind) {
                 CommandButtonKind.ActionOnly -> {
                     actionClickArea = Rect(

@@ -147,6 +147,7 @@ internal fun AuroraTabButton(
 
     // TODO - figure out why the animations are not running without looking
     //  at the result (and how it looks like in the new animation APIs)
+    @Suppress("UNUSED_VARIABLE")
     val actionTotalFraction =
         actionSelectedFraction + actionRolloverFraction + actionPressedFraction + actionEnabledFraction
 
@@ -189,7 +190,6 @@ internal fun AuroraTabButton(
             fontFamilyResolver = fontFamilyResolver
         )
 
-    val hasAction = (command.action != null)
     val isActionEnabled = command.isActionEnabled
 
     // TODO - do we need more keys? Maybe from the presentation model

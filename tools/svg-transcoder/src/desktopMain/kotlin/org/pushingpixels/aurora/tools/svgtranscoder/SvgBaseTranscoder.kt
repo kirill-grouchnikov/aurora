@@ -453,20 +453,20 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                 return false
             }
 
-            override fun draw(shape: Shape) {
-                transcodeShape(shape, "Tile")
+            override fun draw(s: Shape) {
+                transcodeShape(s, "Tile")
                 printWriterManager!!.println("drawOutline(outline = shapeTile!!, style = stroke!!, brush=brush!!, alpha = alphaTile, blendMode = blendModeTile)")
             }
 
-            override fun fill(shape: Shape) {
-                transcodeShape(shape, "Tile")
+            override fun fill(s: Shape) {
+                transcodeShape(s, "Tile")
                 printWriterManager!!.println("drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile, blendMode = blendModeTile)")
             }
 
-            override fun setComposite(composite: Composite) {
-                this._composite = composite
-                val rule = (composite as AlphaComposite).rule
-                val alpha = composite.alpha
+            override fun setComposite(comp: Composite) {
+                this._composite = comp
+                val rule = (comp as AlphaComposite).rule
+                val alpha = comp.alpha
                 printWriterManager!!.println("alphaTile = alpha * ${alpha}f")
                 printWriterManager!!.println("blendModeTile = ${blendModeToCompose(rule)}")
             }
@@ -479,13 +479,13 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                 transcodePaint(paint)
             }
 
-            override fun setStroke(stroke: Stroke) {
-                val width = (stroke as BasicStroke).lineWidth
-                val cap = stroke.endCap
-                val join = stroke.lineJoin
-                val miterlimit = stroke.miterLimit
-                val dash = stroke.dashArray
-                val dash_phase = stroke.dashPhase
+            override fun setStroke(s: Stroke) {
+                val width = (s as BasicStroke).lineWidth
+                val cap = s.endCap
+                val join = s.lineJoin
+                val miterlimit = s.miterLimit
+                val dash = s.dashArray
+                val dash_phase = s.dashPhase
                 val dashRep = StringBuffer()
                 if (dash == null) {
                     dashRep.append("null")
@@ -566,8 +566,8 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                 _hints[hintKey] = hintValue
             }
 
-            override fun getRenderingHint(key: RenderingHints.Key): Any? {
-                return _hints[key]
+            override fun getRenderingHint(hintKey: RenderingHints.Key): Any? {
+                return _hints[hintKey]
             }
 
             override fun setRenderingHints(hints: Map<*, *>?) {
@@ -595,8 +595,8 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                 this._transform.rotate(theta, x, y)
             }
 
-            override fun setTransform(transform: AffineTransform) {
-                this._transform = transform
+            override fun setTransform(Tx: AffineTransform) {
+                this._transform = Tx
             }
 
             override fun getTransform(): AffineTransform {
@@ -1048,20 +1048,20 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             }
 
             override fun dispose() {}
-            override fun draw(shape: Shape) {
-                transcodeShape(shape, "Text")
+            override fun draw(s: Shape) {
+                transcodeShape(s, "Text")
                 printWriterManager!!.println("drawOutline(outline = shapeText!!, style = stroke!!, brush=brush!!, alpha = alphaText, blendMode = blendModeText)")
             }
 
-            override fun fill(shape: Shape) {
-                transcodeShape(shape, "Text")
+            override fun fill(s: Shape) {
+                transcodeShape(s, "Text")
                 printWriterManager!!.println("drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)")
             }
 
-            override fun setComposite(composite: Composite) {
-                this._composite = composite
-                val rule = (composite as AlphaComposite).rule
-                val alpha = composite.alpha
+            override fun setComposite(comp: Composite) {
+                this._composite = comp
+                val rule = (comp as AlphaComposite).rule
+                val alpha = comp.alpha
                 printWriterManager!!.println("alphaText = alpha * ${alpha}f")
                 printWriterManager!!.println("blendModeText = ${blendModeToCompose(rule)}")
             }
@@ -1070,13 +1070,13 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                 transcodePaint(paint)
             }
 
-            override fun setStroke(stroke: Stroke) {
-                val width = (stroke as BasicStroke).lineWidth
-                val cap = stroke.endCap
-                val join = stroke.lineJoin
-                val miterlimit = stroke.miterLimit
-                val dash = stroke.dashArray
-                val dash_phase = stroke.dashPhase
+            override fun setStroke(s: Stroke) {
+                val width = (s as BasicStroke).lineWidth
+                val cap = s.endCap
+                val join = s.lineJoin
+                val miterlimit = s.miterLimit
+                val dash = s.dashArray
+                val dash_phase = s.dashPhase
                 val dashRep = StringBuffer()
                 if (dash == null) {
                     dashRep.append("null")
@@ -1162,8 +1162,8 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                 _hints[hintKey] = hintValue
             }
 
-            override fun getRenderingHint(key: RenderingHints.Key): Any? {
-                return _hints[key]
+            override fun getRenderingHint(hintKey: RenderingHints.Key): Any? {
+                return _hints[hintKey]
             }
 
             override fun getRenderingHints(): RenderingHints {

@@ -209,7 +209,7 @@ internal open class CommandButtonLayoutManagerSmall(
 
                 x += 2 * layoutHGap
             }
-            var xBorderBetweenActionAndPopup = 0.0f
+            val xBorderBetweenActionAndPopup : Float
             when (preLayoutInfo.commandButtonKind) {
                 CommandButtonKind.ActionOnly -> {
                     actionClickArea = Rect(
@@ -297,7 +297,7 @@ internal open class CommandButtonLayoutManagerSmall(
 
                 x -= 2 * layoutHGap
             }
-            var xBorderBetweenActionAndPopup = 0.0f
+            val xBorderBetweenActionAndPopup : Float
             when (preLayoutInfo.commandButtonKind) {
                 CommandButtonKind.ActionOnly -> {
                     actionClickArea = Rect(
