@@ -19,7 +19,7 @@ alias JAVA="java"
 AURORA_VERSION=1.3-SNAPSHOT
 KOTLIN_VERSION=1.7.20
 KOTLIN_COROUTINES_VERSION=1.6.4
-COMPOSE_VERSION=1.3.0-alpha01-dev827
+COMPOSE_VERSION=1.2.0
 CLASSPATH=../../drop/$AURORA_VERSION/aurora-screenshot-desktop-$AURORA_VERSION.jar:../../demo/build/libs/aurora-demo-desktop.jar:../build/libs/:../../build/libs/*
 
 java -cp $CLASSPATH org.pushingpixels.aurora.tools.screenshot.theming.skins.AuroraSkinsIconFilterDriverKt \
