@@ -150,9 +150,8 @@ internal class AWTInputHandler(
     @Suppress("UNUSED_PARAMETER")
     private fun mouseReleased(pointInWindow: Point, w: Window) {
         //println("mouseReleased!")
-        if ((dragCursor != 0) && (w != null)
-            && !w.isValid
-        ) {
+        @Suppress("SENSELESS_COMPARISON")
+        if ((dragCursor != 0) && (w != null) && !w.isValid) {
             // Some Window systems validate as you resize, others won't,
             // thus the check for validity before repainting.
             w.validate()

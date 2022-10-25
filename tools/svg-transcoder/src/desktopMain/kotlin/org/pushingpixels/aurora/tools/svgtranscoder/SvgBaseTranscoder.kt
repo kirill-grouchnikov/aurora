@@ -157,11 +157,12 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             val currentPaintingCodeStream = paintingCodeStreams[i]
             val paintingCode = String(currentPaintingCodeStream.toByteArray())
             val paintingCodeMethod =
+                "@Suppress(\"UNUSED_VARIABLE\", \"UNUSED_VALUE\", \"VARIABLE_WITH_REDUNDANT_INITIALIZER\", \"UNNECESSARY_NOT_NULL_ASSERTION\")\n" +
                 "private fun _paint$i(drawScope : DrawScope) {\n" +
-                        "@Suppress(\"UNUSED_VARIABLE\") var shapeText: Outline?\n" +
-                        "@Suppress(\"UNUSED_VARIABLE\") var generalPathText: Path? = null\n" +
-                        "@Suppress(\"UNUSED_VARIABLE\") var alphaText = 0.0f\n" +
-                        "@Suppress(\"UNUSED_VARIABLE\") var blendModeText = DrawScope.DefaultBlendMode\n" +
+                        "var shapeText: Outline?\n" +
+                        "var generalPathText: Path? = null\n" +
+                        "var alphaText = 0.0f\n" +
+                        "var blendModeText = DrawScope.DefaultBlendMode\n" +
                         "with(drawScope) {\n" + paintingCode + "\n}\n}"
             combinedPaintingCode.append(paintingCodeMethod)
             combinedPaintingCode.append("\n\n")

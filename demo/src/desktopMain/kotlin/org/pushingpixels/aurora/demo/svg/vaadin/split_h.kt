@@ -28,11 +28,12 @@ class split_h : Painter() {
     private var alphaStack = mutableListOf(1.0f)
     private var blendModeStack = mutableListOf(DrawScope.DefaultBlendMode)
 
-	private fun _paint0(drawScope : DrawScope) {
-@Suppress("UNUSED_VARIABLE") var shapeText: Outline?
-@Suppress("UNUSED_VARIABLE") var generalPathText: Path? = null
-@Suppress("UNUSED_VARIABLE") var alphaText = 0.0f
-@Suppress("UNUSED_VARIABLE") var blendModeText = DrawScope.DefaultBlendMode
+	@Suppress("UNUSED_VARIABLE", "UNUSED_VALUE", "VARIABLE_WITH_REDUNDANT_INITIALIZER", "UNNECESSARY_NOT_NULL_ASSERTION")
+private fun _paint0(drawScope : DrawScope) {
+var shapeText: Outline?
+var generalPathText: Path? = null
+var alphaText = 0.0f
+var blendModeText = DrawScope.DefaultBlendMode
 with(drawScope) {
 // 
 alphaStack.add(0, alpha)
