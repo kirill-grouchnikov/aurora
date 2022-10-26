@@ -375,7 +375,7 @@ fun DemoFooter(
                     )
                 ),
                 presentationModel = CommandPopupMenuPresentationModel(
-                    popupPlacementStrategy = PopupPlacementStrategy.Upward,
+                    popupPlacementStrategy = PopupPlacementStrategy.Upward.HAlignStart,
                     toDismissOnCommandActivation = false
                 )
             )
@@ -762,7 +762,7 @@ fun AuroraWindowScope.DemoArea(
                         }
                     ),
                     presentationModel = ComboBoxPresentationModel(
-                        popupPlacementStrategy = PopupPlacementStrategy.Startward,
+                        popupPlacementStrategy = PopupPlacementStrategy.Startward.VAlignTop,
                         displayConverter = { it.lastName + ", " + it.firstName },
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )
@@ -780,7 +780,43 @@ fun AuroraWindowScope.DemoArea(
                         }
                     ),
                     presentationModel = ComboBoxPresentationModel(
-                        popupPlacementStrategy = PopupPlacementStrategy.Endward,
+                        popupPlacementStrategy = PopupPlacementStrategy.Startward.VAlignBottom,
+                        displayConverter = { it.lastName + ", " + it.firstName },
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
+                    )
+                ).project()
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                ComboBoxProjection(
+                    contentModel = ComboBoxContentModel(
+                        enabled = contentEnabled.value,
+                        items = snowComboItems,
+                        selectedItem = snowComboSelectedItem.value,
+                        onTriggerItemSelectedChange = {
+                            snowComboSelectedItem.value = it
+                        }
+                    ),
+                    presentationModel = ComboBoxPresentationModel(
+                        popupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignTop,
+                        displayConverter = { it.lastName + ", " + it.firstName },
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
+                    )
+                ).project()
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                ComboBoxProjection(
+                    contentModel = ComboBoxContentModel(
+                        enabled = contentEnabled.value,
+                        items = snowComboItems,
+                        selectedItem = snowComboSelectedItem.value,
+                        onTriggerItemSelectedChange = {
+                            snowComboSelectedItem.value = it
+                        }
+                    ),
+                    presentationModel = ComboBoxPresentationModel(
+                        popupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignBottom,
                         displayConverter = { it.lastName + ", " + it.firstName },
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )
@@ -801,7 +837,7 @@ fun AuroraWindowScope.DemoArea(
                         }
                     ),
                     presentationModel = ComboBoxPresentationModel(
-                        popupPlacementStrategy = PopupPlacementStrategy.Upward,
+                        popupPlacementStrategy = PopupPlacementStrategy.Upward.HAlignStart,
                         displayConverter = { it.lastName + ", " + it.firstName },
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )
@@ -819,7 +855,7 @@ fun AuroraWindowScope.DemoArea(
                         }
                     ),
                     presentationModel = ComboBoxPresentationModel(
-                        popupPlacementStrategy = PopupPlacementStrategy.Downward,
+                        popupPlacementStrategy = PopupPlacementStrategy.Upward.HAlignEnd,
                         displayConverter = { it.lastName + ", " + it.firstName },
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )
@@ -837,7 +873,65 @@ fun AuroraWindowScope.DemoArea(
                         }
                     ),
                     presentationModel = ComboBoxPresentationModel(
-                        popupPlacementStrategy = PopupPlacementStrategy.CenteredVertically,
+                        popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
+                        displayConverter = { it.lastName + ", " + it.firstName },
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
+                    )
+                ).project()
+
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                ComboBoxProjection(
+                    contentModel = ComboBoxContentModel(
+                        enabled = contentEnabled.value,
+                        items = snowComboItems,
+                        selectedItem = snowComboSelectedItem.value,
+                        onTriggerItemSelectedChange = {
+                            snowComboSelectedItem.value = it
+                        }
+                    ),
+                    presentationModel = ComboBoxPresentationModel(
+                        popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignEnd,
+                        displayConverter = { it.lastName + ", " + it.firstName },
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
+                    )
+                ).project()
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                ComboBoxProjection(
+                    contentModel = ComboBoxContentModel(
+                        enabled = contentEnabled.value,
+                        items = snowComboItems,
+                        selectedItem = snowComboSelectedItem.value,
+                        onTriggerItemSelectedChange = {
+                            snowComboSelectedItem.value = it
+                        }
+                    ),
+                    presentationModel = ComboBoxPresentationModel(
+                        popupPlacementStrategy = PopupPlacementStrategy.CenteredVertically.HAlignStart,
+                        displayConverter = { it.lastName + ", " + it.firstName },
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
+                    )
+                ).project()
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                ComboBoxProjection(
+                    contentModel = ComboBoxContentModel(
+                        enabled = contentEnabled.value,
+                        items = snowComboItems,
+                        selectedItem = snowComboSelectedItem.value,
+                        onTriggerItemSelectedChange = {
+                            snowComboSelectedItem.value = it
+                        }
+                    ),
+                    presentationModel = ComboBoxPresentationModel(
+                        popupPlacementStrategy = PopupPlacementStrategy.CenteredVertically.HAlignEnd,
                         displayConverter = { it.lastName + ", " + it.firstName },
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )

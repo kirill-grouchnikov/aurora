@@ -117,7 +117,7 @@ fun DemoSkeletonFooter(
             .padding(horizontal = 8.dp, vertical = 6.dp)
     ) {
         Spacer(modifier.weight(weight = 1.0f, fill = true))
-        AuroraSkinSwitcher(auroraSkinDefinition, PopupPlacementStrategy.Upward)
+        AuroraSkinSwitcher(auroraSkinDefinition, PopupPlacementStrategy.Upward.HAlignStart)
     }
 }
 

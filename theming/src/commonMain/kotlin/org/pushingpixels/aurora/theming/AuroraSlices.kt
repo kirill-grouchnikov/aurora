@@ -699,12 +699,27 @@ enum class IconFilterStrategy {
     ThemedFollowColorScheme
 }
 
-enum class PopupPlacementStrategy(val isHorizontal: Boolean) {
-    Startward(true),
-    Endward(true),
-    Upward(false),
-    Downward(false),
-    CenteredVertically(false)
+sealed class PopupPlacementStrategy(val isHorizontal: Boolean) {
+    object Upward {
+        object HAlignStart: PopupPlacementStrategy(false)
+        object HAlignEnd: PopupPlacementStrategy(false)
+    }
+    object Downward {
+        object HAlignStart: PopupPlacementStrategy(false)
+        object HAlignEnd: PopupPlacementStrategy(false)
+    }
+    object CenteredVertically {
+        object HAlignStart: PopupPlacementStrategy(false)
+        object HAlignEnd: PopupPlacementStrategy(false)
+    }
+    object Startward {
+        object VAlignTop: PopupPlacementStrategy(true)
+        object VAlignBottom: PopupPlacementStrategy(true)
+    }
+    object Endward {
+        object VAlignTop: PopupPlacementStrategy(true)
+        object VAlignBottom: PopupPlacementStrategy(true)
+    }
 }
 
 enum class TabContentSeparatorKind {

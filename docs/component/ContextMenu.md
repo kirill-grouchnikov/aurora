@@ -62,7 +62,7 @@ for (i in 0 until count) {
 
 And now we create our `LabelProjection`, and pass `Modifier.auroraContextMenu` to its `project` function invocation passing the command menu content model and a presentation model with:
 
-- `popupPlacementStrategy` set to `PopupPlacementStrategy.Upward` to display the context menu above the clicked point (if possible)
+- `popupPlacementStrategy` set to `PopupPlacementStrategy.Upward.HAlignStart` to display the context menu above the clicked point (if possible)
 - `toDismissOnCommandActivation` set to `false` to allow toggling multiple menu commands without automatic dismissal of the whole context menu on every toggle
 
 ```kotlin
@@ -82,7 +82,7 @@ LabelProjection(
       )
     ),
     presentationModel = CommandPopupMenuPresentationModel(
-      popupPlacementStrategy = PopupPlacementStrategy.Upward,
+      popupPlacementStrategy = PopupPlacementStrategy.Upward.HAlignStart,
       toDismissOnCommandActivation = false
     )
   )

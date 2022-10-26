@@ -35,13 +35,44 @@ internal object ArrowSizingConstants {
     val DefaultDoubleArrowGap = 3.0.dp
 }
 
+private enum class ArrowDirection {
+    Upward, Downward, Leftward, Rightward, UpAndDown
+}
+
+private fun PopupPlacementStrategy.toArrowDirection(layoutDirection: LayoutDirection): ArrowDirection {
+    return when (this) {
+        is PopupPlacementStrategy.CenteredVertically.HAlignStart,
+        is PopupPlacementStrategy.CenteredVertically.HAlignEnd -> ArrowDirection.UpAndDown
+
+        is PopupPlacementStrategy.Upward.HAlignStart,
+        is PopupPlacementStrategy.Upward.HAlignEnd -> ArrowDirection.Upward
+
+        is PopupPlacementStrategy.Downward.HAlignStart,
+        is PopupPlacementStrategy.Downward.HAlignEnd -> ArrowDirection.Downward
+
+        is PopupPlacementStrategy.Startward.VAlignTop,
+        is PopupPlacementStrategy.Startward.VAlignBottom ->
+            if (layoutDirection == LayoutDirection.Ltr) ArrowDirection.Leftward
+            else ArrowDirection.Rightward
+
+        is PopupPlacementStrategy.Endward.VAlignTop,
+        is PopupPlacementStrategy.Endward.VAlignBottom ->
+            if (layoutDirection == LayoutDirection.Ltr) ArrowDirection.Rightward
+            else ArrowDirection.Leftward
+
+        else -> ArrowDirection.Downward
+    }
+}
+
 internal fun drawArrow(
     drawScope: DrawScope,
     width: Float, height: Float, strokeWidth: Float,
-    direction: PopupPlacementStrategy, layoutDirection: LayoutDirection,
+    popupPlacementStrategy: PopupPlacementStrategy,
+    layoutDirection: LayoutDirection,
     color: Color
 ) {
-    if (direction == PopupPlacementStrategy.CenteredVertically) {
+    val direction = popupPlacementStrategy.toArrowDirection(layoutDirection)
+    if (direction == ArrowDirection.UpAndDown) {
         val smallHeight = height - strokeWidth / 2.0f
 
         drawScope.translate(left = 0.0f, top = -strokeWidth - 1.0f) {
@@ -50,7 +81,7 @@ internal fun drawArrow(
                 width = width,
                 height = smallHeight,
                 strokeWidth = strokeWidth,
-                direction = PopupPlacementStrategy.Upward,
+                popupPlacementStrategy = PopupPlacementStrategy.Upward.HAlignStart,
                 layoutDirection = layoutDirection,
                 color = color
             )
@@ -62,7 +93,7 @@ internal fun drawArrow(
                 width = width,
                 height = smallHeight,
                 strokeWidth = strokeWidth,
-                direction = PopupPlacementStrategy.Downward,
+                popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignEnd,
                 layoutDirection = layoutDirection,
                 color = color
             )
@@ -73,27 +104,32 @@ internal fun drawArrow(
     val cushion = strokeWidth / 2.0f
     val gp = Path()
 
-    if (direction == PopupPlacementStrategy.Downward) {
-        gp.moveTo(cushion, cushion)
-        gp.lineTo(0.5f * width, height - cushion - 1)
-        gp.lineTo(width - cushion, cushion)
-    } else if (direction == PopupPlacementStrategy.Upward) {
-        gp.moveTo(cushion, height - cushion - 1)
-        gp.lineTo(0.5f * width, cushion)
-        gp.lineTo(width - cushion, height - cushion - 1)
-    } else {
-        val leftward =
-            ((direction == PopupPlacementStrategy.Startward) && (layoutDirection == LayoutDirection.Ltr)) ||
-                    ((direction == PopupPlacementStrategy.Endward) && (layoutDirection == LayoutDirection.Rtl))
-        if (leftward) {
+    when (direction) {
+        ArrowDirection.Downward -> {
+            gp.moveTo(cushion, cushion)
+            gp.lineTo(0.5f * width, height - cushion - 1)
+            gp.lineTo(width - cushion, cushion)
+        }
+
+        ArrowDirection.Upward -> {
+            gp.moveTo(cushion, height - cushion - 1)
+            gp.lineTo(0.5f * width, cushion)
+            gp.lineTo(width - cushion, height - cushion - 1)
+        }
+
+        ArrowDirection.Leftward -> {
             gp.moveTo(width - 1 - cushion, cushion)
             gp.lineTo(cushion, 0.5f * height)
             gp.lineTo(width - 1 - cushion, height - cushion)
-        } else {
+        }
+
+        ArrowDirection.Rightward -> {
             gp.moveTo(cushion, cushion)
             gp.lineTo(width - 1 - cushion, 0.5f * height)
             gp.lineTo(cushion, height - cushion)
         }
+
+        else -> {}
     }
 
     with(drawScope) {
@@ -108,39 +144,41 @@ internal fun drawArrow(
 internal fun drawDoubleArrow(
     drawScope: DrawScope,
     width: Float, height: Float, gap: Float, strokeWidth: Float,
-    direction: PopupPlacementStrategy, layoutDirection: LayoutDirection,
+    popupPlacementStrategy: PopupPlacementStrategy, layoutDirection: LayoutDirection,
     color: Color
 ) {
-    require(direction != PopupPlacementStrategy.CenteredVertically) {
+    val direction = popupPlacementStrategy.toArrowDirection(layoutDirection)
+    require(direction != ArrowDirection.UpAndDown) {
         "CenteredVertically not supported for double arrows"
     }
 
     val cushion = strokeWidth / 2.0f
     val gp = Path()
 
-    if (direction == PopupPlacementStrategy.Downward) {
-        // top part
-        gp.moveTo(cushion, cushion)
-        gp.lineTo(0.5f * width, height - gap - cushion - 1)
-        gp.lineTo(width - cushion, cushion)
-        // bottom part
-        gp.moveTo(cushion, gap + cushion)
-        gp.lineTo(0.5f * width, height - cushion - 1)
-        gp.lineTo(width - cushion, gap + cushion)
-    } else if (direction == PopupPlacementStrategy.Upward) {
-        // top part
-        gp.moveTo(cushion, height - gap - cushion - 1)
-        gp.lineTo(0.5f * width, cushion)
-        gp.lineTo(width - cushion, height - gap - cushion - 1)
-        // bottom part
-        gp.moveTo(cushion, height - cushion - 1)
-        gp.lineTo(0.5f * width, gap + cushion)
-        gp.lineTo(width - cushion, height - cushion - 1)
-    } else {
-        val leftward =
-            ((direction == PopupPlacementStrategy.Startward) && (layoutDirection == LayoutDirection.Ltr)) ||
-                    ((direction == PopupPlacementStrategy.Endward) && (layoutDirection == LayoutDirection.Rtl))
-        if (leftward) {
+    when (direction) {
+        ArrowDirection.Downward -> {
+            // top part
+            gp.moveTo(cushion, cushion)
+            gp.lineTo(0.5f * width, height - gap - cushion - 1)
+            gp.lineTo(width - cushion, cushion)
+            // bottom part
+            gp.moveTo(cushion, gap + cushion)
+            gp.lineTo(0.5f * width, height - cushion - 1)
+            gp.lineTo(width - cushion, gap + cushion)
+        }
+
+        ArrowDirection.Upward -> {
+            // top part
+            gp.moveTo(cushion, height - gap - cushion - 1)
+            gp.lineTo(0.5f * width, cushion)
+            gp.lineTo(width - cushion, height - gap - cushion - 1)
+            // bottom part
+            gp.moveTo(cushion, height - cushion - 1)
+            gp.lineTo(0.5f * width, gap + cushion)
+            gp.lineTo(width - cushion, height - cushion - 1)
+        }
+
+        ArrowDirection.Leftward -> {
             // left part
             gp.moveTo(width - gap - 1 - cushion, cushion)
             gp.lineTo(cushion, 0.5f * height)
@@ -149,7 +187,9 @@ internal fun drawDoubleArrow(
             gp.moveTo(width - 1 - cushion, cushion)
             gp.lineTo(gap + cushion, 0.5f * height)
             gp.lineTo(width - 1 - cushion, height - cushion)
-        } else {
+        }
+
+        ArrowDirection.Rightward -> {
             // left part
             gp.moveTo(cushion, cushion)
             gp.lineTo(width - gap - 1 - cushion, 0.5f * height)
@@ -159,6 +199,8 @@ internal fun drawDoubleArrow(
             gp.lineTo(width - 1 - cushion, 0.5f * height)
             gp.lineTo(gap + cushion, height - cushion)
         }
+
+        else -> {}
     }
 
     with(drawScope) {

@@ -138,7 +138,7 @@ fun AuroraBreadcrumbBar(
                                     height = arrowDoubleHeight,
                                     gap = ArrowSizingConstants.DefaultDoubleArrowGap.toPx(),
                                     strokeWidth = ArrowSizingConstants.DefaultDoubleArrowStroke.toPx(),
-                                    direction = PopupPlacementStrategy.Startward,
+                                    popupPlacementStrategy = PopupPlacementStrategy.Startward.VAlignTop,
                                     layoutDirection = layoutDirection,
                                     color = colorScheme.markColor.withAlpha(alpha)
                                 )
@@ -186,7 +186,7 @@ fun AuroraBreadcrumbBar(
                                     height = arrowDoubleHeight,
                                     gap = ArrowSizingConstants.DefaultDoubleArrowGap.toPx(),
                                     strokeWidth = ArrowSizingConstants.DefaultDoubleArrowStroke.toPx(),
-                                    direction = PopupPlacementStrategy.Endward,
+                                    popupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignTop,
                                     layoutDirection = layoutDirection,
                                     color = colorScheme.markColor.withAlpha(alpha)
                                 )
@@ -235,8 +235,8 @@ fun AuroraBreadcrumbBar(
                             parentPopupMenu = popupMenu,
                             extraAction = null,
                             popupPlacementStrategyProvider = { modelStateInfo ->
-                                if (modelStateInfo.activeStrength > 0.0f) PopupPlacementStrategy.Downward
-                                else PopupPlacementStrategy.Endward
+                                if (modelStateInfo.activeStrength > 0.0f) PopupPlacementStrategy.Downward.HAlignStart
+                                else PopupPlacementStrategy.Endward.VAlignTop
                             },
                             presentationModel = contentPresentationModel,
                             overlays = mapOf()

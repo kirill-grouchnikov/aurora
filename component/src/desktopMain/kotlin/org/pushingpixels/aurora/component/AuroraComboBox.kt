@@ -438,7 +438,7 @@ internal fun <E> AuroraComboBox(
                             width = arrowWidth,
                             height = arrowHeight,
                             strokeWidth = ArrowSizingConstants.DefaultArrowStroke.toPx(),
-                            direction = presentationModel.popupPlacementStrategy,
+                            popupPlacementStrategy = presentationModel.popupPlacementStrategy,
                             layoutDirection = layoutDirection,
                             color = arrowColor.withAlpha(alpha)
                         )

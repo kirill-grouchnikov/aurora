@@ -1554,7 +1554,7 @@ private fun CommandButtonPopupIconContent(
                     width = arrowWidth,
                     height = arrowHeight,
                     strokeWidth = ArrowSizingConstants.DefaultArrowStroke.toPx(),
-                    direction = popupPlacementStrategy,
+                    popupPlacementStrategy = popupPlacementStrategy,
                     layoutDirection = layoutDirection,
                     color = arrowColor
                 )

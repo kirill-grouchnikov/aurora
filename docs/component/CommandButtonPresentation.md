@@ -122,7 +122,8 @@ A `CommandButtonProjection` uses `CommandButtonPresentationModel` to project a c
 
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-secondary-simple.png" width="652" border=0/>
 
-The `popupMenuPresentationModel` attribute can be used to tune the presentation of that popup content. Use the `popupPlacementStrategy` attribute to control the anchoring of the popup content. The default `PopupPlacementStrategy.Endward` displays the popup contentpopup to the side (right under left-to-right and left under right-to-left) of the projected button. Use `PopupPlacementStrategy.Downward` to display the popup content below the projected button.
+The `popupMenuPresentationModel` attribute can be used to tune the presentation of that popup content. Use the `popupPlacementStrategy` attribute to control the anchoring of the popup content. The default
+`PopupPlacementStrategy.Downward.HAlignStart` to display the popup content below the projected button. Use `PopupPlacementStrategy.Endward.VAlignTop` to display the popup content popup to the end side (right under left-to-right and left under right-to-left) of the projected button.
 
 In some cases, you would want to allow the user to interact with multiple entries in the popup menu. Let's take a look at this screenshot:
 

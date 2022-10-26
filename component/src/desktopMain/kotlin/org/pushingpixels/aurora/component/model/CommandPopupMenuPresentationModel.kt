@@ -35,7 +35,7 @@ data class CommandPopupMenuPresentationModel(
     val menuContentPadding: PaddingValues =
         CommandButtonSizingConstants.CompactButtonContentPadding,
     val maxVisibleMenuCommands: Int = 0,
-    val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Endward,
+    val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignTop,
     val toDismissOnCommandActivation: Boolean = true
 )
 

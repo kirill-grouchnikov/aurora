@@ -19,6 +19,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
+import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 
 internal data class AuroraOffset(var x: Float, var y: Float)
 internal data class AuroraRect(var x: Float, var y: Float, var width: Float, var height: Float)
@@ -38,3 +39,89 @@ internal fun IntSize.asSize(density: Density): Size {
 
 internal fun IntSize.asSize(extraWidth: Int = 0, extraHeight: Int = 0) =
     Size((width + extraWidth).toFloat(), (height + extraHeight).toFloat())
+
+fun getPlacementAwarePopupShift(
+    ltr: Boolean,
+    anchorDimension: IntSize, popupDimension: IntSize,
+    popupPlacementStrategy: PopupPlacementStrategy
+): IntSize {
+    var dx = 0
+    var dy = 0
+    val anchorWidth = anchorDimension.width
+    val anchorHeight = anchorDimension.height
+    val popupWidth = popupDimension.width
+    val popupHeight = popupDimension.height
+
+    when (popupPlacementStrategy) {
+        PopupPlacementStrategy.Upward.HAlignStart -> {
+            // Popup above the component, horizontally aligned to the start edge
+            dy = -popupHeight - anchorHeight
+            if (!ltr) {
+                dx = anchorWidth - popupWidth
+            }
+        }
+
+        PopupPlacementStrategy.Upward.HAlignEnd -> {
+            // Popup above the component, horizontally aligned to the end edge
+            dy = -popupHeight - anchorHeight
+            if (ltr) {
+                dx = -(popupWidth - anchorWidth)
+            }
+        }
+
+        PopupPlacementStrategy.Downward.HAlignStart -> {
+            // Popup below the component, horizontally aligned to the start edge
+            if (!ltr) {
+                dx = anchorWidth - popupWidth
+            }
+        }
+
+        PopupPlacementStrategy.Downward.HAlignEnd -> {
+            // Popup below the component, horizontally aligned to the end edge
+            if (ltr) {
+                dx = -(popupWidth - anchorWidth)
+            }
+        }
+
+        PopupPlacementStrategy.CenteredVertically.HAlignStart -> {
+            // Popup centered vertically, horizontally aligned to the start edge
+            dy = -popupHeight / 2 - anchorHeight / 2
+            if (!ltr) {
+                dx = anchorWidth - popupWidth
+            }
+        }
+
+        PopupPlacementStrategy.CenteredVertically.HAlignEnd -> {
+            // Popup centered vertically, horizontally aligned to the end edge
+            dy = -popupHeight / 2 - anchorHeight / 2
+            if (ltr) {
+                dx = -(popupWidth - anchorWidth)
+            }
+        }
+
+        PopupPlacementStrategy.Startward.VAlignTop -> {
+            // Popup next to the start edge of the component, vertically aligned to the top edge
+            dx = if (ltr) -popupWidth else popupWidth
+            dy = -anchorHeight
+        }
+
+        PopupPlacementStrategy.Startward.VAlignBottom -> {
+            // Popup next to the start edge of the component, vertically aligned to the bottom edge
+            dx = if (ltr) -popupWidth else popupWidth
+            dy = -popupHeight
+        }
+
+        PopupPlacementStrategy.Endward.VAlignTop -> {
+            // Popup next to the end edge of the component, vertically aligned to the top edge
+            dx = if (ltr) anchorWidth else -popupWidth
+            dy = -anchorHeight
+        }
+
+        PopupPlacementStrategy.Endward.VAlignBottom -> {
+            // Popup next to the end edge of the component, vertically aligned to the bottom edge
+            dx = if (ltr) anchorWidth else -popupWidth
+            dy = -popupHeight
+        }
+    }
+    return IntSize(dx, dy)
+}

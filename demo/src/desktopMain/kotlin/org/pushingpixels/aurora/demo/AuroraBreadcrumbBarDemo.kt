@@ -247,7 +247,7 @@ fun AuroraWindowScope.BreadcrumbContent(auroraSkinDefinition: MutableState<Auror
 
                 AuroraSkinSwitcher(
                     auroraSkinDefinition = auroraSkinDefinition,
-                    popupPlacementStrategy = PopupPlacementStrategy.Upward
+                    popupPlacementStrategy = PopupPlacementStrategy.Upward.HAlignStart
                 )
             }
         }

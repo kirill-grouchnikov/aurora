@@ -52,7 +52,7 @@ data class CommandStripPresentationModel(
     val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
-    val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward,
+    val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
     val textClick: TextClick = TextClick.Action,
     val isMenu: Boolean = false
 ): PresentationModel

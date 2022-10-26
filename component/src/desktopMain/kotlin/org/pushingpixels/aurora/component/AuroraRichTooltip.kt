@@ -116,7 +116,7 @@ fun Modifier.auroraRichTooltip(
                 ),
                 richTooltip = richTooltip,
                 presentationModel = presentationModel,
-                popupPlacementStrategy = PopupPlacementStrategy.Downward
+                popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart
             )
         }
     }

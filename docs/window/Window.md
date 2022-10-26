@@ -53,7 +53,7 @@ Here is sample implementation of switching the window skin as a combobox:
 @Composable
 fun AuroraSkinSwitcher(
   auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
-  popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward
+  popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart
 ) {
   val currentSkinDisplayName = AuroraSkin.displayName
   val auroraSkins = getAuroraSkins()

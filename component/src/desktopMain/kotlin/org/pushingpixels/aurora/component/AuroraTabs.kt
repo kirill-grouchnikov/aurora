@@ -145,7 +145,7 @@ internal fun AuroraTabs(
                                     height = arrowDoubleHeight,
                                     gap = ArrowSizingConstants.DefaultDoubleArrowGap.toPx(),
                                     strokeWidth = ArrowSizingConstants.DefaultDoubleArrowStroke.toPx(),
-                                    direction = PopupPlacementStrategy.Startward,
+                                    popupPlacementStrategy = PopupPlacementStrategy.Startward.VAlignTop,
                                     layoutDirection = layoutDirection,
                                     color = colorScheme.markColor.withAlpha(alpha)
                                 )
@@ -193,7 +193,7 @@ internal fun AuroraTabs(
                                     height = arrowDoubleHeight,
                                     gap = ArrowSizingConstants.DefaultDoubleArrowGap.toPx(),
                                     strokeWidth = ArrowSizingConstants.DefaultDoubleArrowStroke.toPx(),
-                                    direction = PopupPlacementStrategy.Endward,
+                                    popupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignTop,
                                     layoutDirection = layoutDirection,
                                     color = colorScheme.markColor.withAlpha(alpha)
                                 )

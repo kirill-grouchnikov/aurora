@@ -428,7 +428,7 @@ internal fun getPreferredCommandPopupMenuPanelSize(
             horizontalAlignment = presentationModel.commandHorizontalAlignment,
             horizontalGapScaleFactor = presentationModel.commandHorizontalGapScaleFactor,
             verticalGapScaleFactor = presentationModel.commandVerticalGapScaleFactor,
-            popupPlacementStrategy = PopupPlacementStrategy.Downward,
+            popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
             iconActiveFilterStrategy = presentationModel.iconActiveFilterStrategy,
             iconEnabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
             iconDisabledFilterStrategy = presentationModel.iconDisabledFilterStrategy

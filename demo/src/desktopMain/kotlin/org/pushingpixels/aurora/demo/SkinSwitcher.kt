@@ -30,7 +30,7 @@ import org.pushingpixels.aurora.theming.getAuroraSkins
 @Composable
 fun AuroraSkinSwitcher(
     auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
-    popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward
+    popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart
 ) {
     val currentSkinDisplayName = AuroraSkin.displayName
     val auroraSkins = getAuroraSkins()

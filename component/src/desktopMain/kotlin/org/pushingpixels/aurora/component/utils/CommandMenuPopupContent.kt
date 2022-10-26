@@ -246,57 +246,21 @@ internal fun showPopupContent(
         y = (popupOriginatorLocationOnScreen.y + anchorBoundsInWindow.top).toInt()
     )
 
-    val popupRect = when (popupPlacementStrategy) {
-        PopupPlacementStrategy.Downward -> Rectangle(
-            initialAnchor.x,
-            initialAnchor.y + anchorBoundsInWindow.height.toInt(),
-            fullPopupWidth,
-            fullPopupHeight
-        )
-
-        PopupPlacementStrategy.Upward -> Rectangle(
-            initialAnchor.x,
-            initialAnchor.y - fullPopupHeight,
-            fullPopupWidth,
-            fullPopupHeight
-        )
-
-        PopupPlacementStrategy.Startward -> if (layoutDirection == LayoutDirection.Ltr)
-            Rectangle(
-                initialAnchor.x - fullPopupWidth,
-                initialAnchor.y,
-                fullPopupWidth,
-                fullPopupHeight
-            ) else
-            Rectangle(
-                initialAnchor.x + fullPopupWidth,
-                initialAnchor.y,
-                fullPopupWidth,
-                fullPopupHeight
-            )
-
-        PopupPlacementStrategy.Endward -> if (layoutDirection == LayoutDirection.Ltr)
-            Rectangle(
-                initialAnchor.x + anchorBoundsInWindow.width.toInt(),
-                initialAnchor.y,
-                fullPopupWidth,
-                fullPopupHeight
-            ) else
-            Rectangle(
-                initialAnchor.x - anchorBoundsInWindow.width.toInt(),
-                initialAnchor.y,
-                fullPopupWidth,
-                fullPopupHeight
-            )
-
-        PopupPlacementStrategy.CenteredVertically -> Rectangle(
-            initialAnchor.x,
-            initialAnchor.y + anchorBoundsInWindow.height.toInt() / 2
-                    - fullPopupHeight / 2,
-            fullPopupWidth,
-            fullPopupHeight
-        )
-    }
+    val popupShift = getPlacementAwarePopupShift(
+        ltr = (layoutDirection == LayoutDirection.Ltr),
+        anchorDimension = IntSize(
+            width = anchorBoundsInWindow.width.toInt(),
+            height = anchorBoundsInWindow.height.toInt()
+        ),
+        popupDimension = IntSize(fullPopupWidth, fullPopupHeight),
+        popupPlacementStrategy = popupPlacementStrategy
+    )
+    val popupRect = Rectangle(
+        initialAnchor.x + popupShift.width,
+        initialAnchor.y + anchorBoundsInWindow.height.toInt() + popupShift.height,
+        fullPopupWidth,
+        fullPopupHeight
+    )
 
     // Make sure the popup stays in screen bounds
     val screenBounds = popupOriginator.graphicsConfiguration.bounds

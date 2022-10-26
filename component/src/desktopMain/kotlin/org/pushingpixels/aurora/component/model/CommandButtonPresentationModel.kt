@@ -57,7 +57,7 @@ data class CommandButtonPresentationModel(
     val forceAllocateSpaceForIcon: Boolean = false,
     val textStyle: TextStyle? = null,
     val textOverflow: TextOverflow = TextOverflow.Clip,
-    val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward,
+    val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
     val toDismissPopupsOnActivation: Boolean = true,
     val autoRepeatAction: Boolean = false,
     val autoRepeatInitialInterval: Long = CommandButtonInteractionConstants.DefaultAutoRepeatInitialIntervalMillis,
