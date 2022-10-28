@@ -69,22 +69,26 @@ fun main() = auroraApplication {
 
 @Composable
 fun AuroraApplicationScope.ButtonToggleMenuContent(resourceBundle: State<ResourceBundle>) {
-    val alignment = remember { mutableStateOf(CommandDemoAlignment.Center) }
-    val style = CommandDemoStyle(
-        bold = remember { mutableStateOf(false) },
-        italic = remember { mutableStateOf(false) },
-        underline = remember { mutableStateOf(false) },
-        strikethrough = remember { mutableStateOf(false) },
-    )
+    var alignment by remember { mutableStateOf(CommandDemoAlignment.Center) }
+    var style by remember {
+        mutableStateOf(
+            CommandDemoStyle(
+                bold = false,
+                italic = true,
+                underline = false,
+                strikethrough = false,
+            )
+        )
+    }
 
     val commandBold =
         Command(
             text = resourceBundle.value.getString("FontStyle.bold.title"),
             icon = format_bold_black_24dp(),
             isActionToggle = true,
-            isActionToggleSelected = style.bold.value,
+            isActionToggleSelected = style.bold,
             onTriggerActionToggleSelectedChange = {
-                style.bold.value = it
+                style = style.copy(bold = it)
                 println("Selected bold? $it")
             }
         )
@@ -93,9 +97,9 @@ fun AuroraApplicationScope.ButtonToggleMenuContent(resourceBundle: State<Resourc
             text = resourceBundle.value.getString("FontStyle.italic.title"),
             icon = format_italic_black_24dp(),
             isActionToggle = true,
-            isActionToggleSelected = style.italic.value,
+            isActionToggleSelected = style.italic,
             onTriggerActionToggleSelectedChange = {
-                style.italic.value = it
+                style = style.copy(italic = it)
                 println("Selected italic? $it")
             }
         )
@@ -104,9 +108,9 @@ fun AuroraApplicationScope.ButtonToggleMenuContent(resourceBundle: State<Resourc
             text = resourceBundle.value.getString("FontStyle.underline.title"),
             icon = format_underlined_black_24dp(),
             isActionToggle = true,
-            isActionToggleSelected = style.underline.value,
+            isActionToggleSelected = style.underline,
             onTriggerActionToggleSelectedChange = {
-                style.underline.value = it
+                style = style.copy(underline = it)
                 println("Selected underline? $it")
             }
         )
@@ -115,9 +119,9 @@ fun AuroraApplicationScope.ButtonToggleMenuContent(resourceBundle: State<Resourc
             text = resourceBundle.value.getString("FontStyle.strikethrough.title"),
             icon = format_strikethrough_black_24dp(),
             isActionToggle = true,
-            isActionToggleSelected = style.strikethrough.value,
+            isActionToggleSelected = style.strikethrough,
             onTriggerActionToggleSelectedChange = {
-                style.strikethrough.value = it
+                style = style.copy(strikethrough = it)
                 println("Selected strikethrough? $it")
             }
         )
@@ -127,9 +131,9 @@ fun AuroraApplicationScope.ButtonToggleMenuContent(resourceBundle: State<Resourc
             text = resourceBundle.value.getString("Justify.center"),
             icon = format_justify_center(),
             isActionToggle = true,
-            isActionToggleSelected = (alignment.value == CommandDemoAlignment.Center),
+            isActionToggleSelected = (alignment == CommandDemoAlignment.Center),
             onTriggerActionToggleSelectedChange = {
-                if (it) alignment.value = CommandDemoAlignment.Center
+                if (it) alignment = CommandDemoAlignment.Center
             }
         )
     val commandAlignLeft =
@@ -137,9 +141,9 @@ fun AuroraApplicationScope.ButtonToggleMenuContent(resourceBundle: State<Resourc
             text = resourceBundle.value.getString("Justify.left"),
             icon = format_justify_left(),
             isActionToggle = true,
-            isActionToggleSelected = (alignment.value == CommandDemoAlignment.Left),
+            isActionToggleSelected = (alignment == CommandDemoAlignment.Left),
             onTriggerActionToggleSelectedChange = {
-                if (it) alignment.value = CommandDemoAlignment.Left
+                if (it) alignment = CommandDemoAlignment.Left
             }
         )
     val commandAlignRight =
@@ -147,9 +151,9 @@ fun AuroraApplicationScope.ButtonToggleMenuContent(resourceBundle: State<Resourc
             text = resourceBundle.value.getString("Justify.right"),
             icon = format_justify_right(),
             isActionToggle = true,
-            isActionToggleSelected = (alignment.value == CommandDemoAlignment.Right),
+            isActionToggleSelected = (alignment == CommandDemoAlignment.Right),
             onTriggerActionToggleSelectedChange = {
-                if (it) alignment.value = CommandDemoAlignment.Right
+                if (it) alignment = CommandDemoAlignment.Right
             }
         )
     val commandAlignFill =
@@ -157,9 +161,9 @@ fun AuroraApplicationScope.ButtonToggleMenuContent(resourceBundle: State<Resourc
             text = resourceBundle.value.getString("Justify.fill"),
             icon = format_justify_fill(),
             isActionToggle = true,
-            isActionToggleSelected = (alignment.value == CommandDemoAlignment.Fill),
+            isActionToggleSelected = (alignment == CommandDemoAlignment.Fill),
             onTriggerActionToggleSelectedChange = {
-                if (it) alignment.value = CommandDemoAlignment.Fill
+                if (it) alignment = CommandDemoAlignment.Fill
             }
         )
 

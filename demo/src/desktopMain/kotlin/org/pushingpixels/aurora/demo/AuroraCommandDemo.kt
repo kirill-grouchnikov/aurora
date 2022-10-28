@@ -17,6 +17,8 @@ package org.pushingpixels.aurora.demo
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -144,11 +146,12 @@ enum class CommandDemoAlignment {
     Center, Left, Right, Fill
 }
 
-class CommandDemoStyle(
-    val bold: MutableState<Boolean>,
-    val italic: MutableState<Boolean>,
-    val underline: MutableState<Boolean>,
-    val strikethrough: MutableState<Boolean>
+@Stable
+data class CommandDemoStyle(
+    val bold: Boolean,
+    val italic: Boolean,
+    val underline: Boolean,
+    val strikethrough: Boolean
 )
 
 @Composable
@@ -156,7 +159,8 @@ fun CommandDemoJustifyStrip(
     enabled: Boolean,
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     orientation: StripOrientation,
-    alignment: MutableState<CommandDemoAlignment>,
+    alignment: CommandDemoAlignment,
+    onAlignmentChanged: (CommandDemoAlignment) -> Unit,
     horizontalGapScaleFactor: Float,
     resourceBundle: ResourceBundle
 ) {
@@ -166,9 +170,9 @@ fun CommandDemoJustifyStrip(
             icon = format_justify_center(),
             isActionEnabled = enabled,
             isActionToggle = true,
-            isActionToggleSelected = (alignment.value == CommandDemoAlignment.Center),
+            isActionToggleSelected = (alignment == CommandDemoAlignment.Center),
             onTriggerActionToggleSelectedChange = {
-                if (it) alignment.value = CommandDemoAlignment.Center
+                if (it) onAlignmentChanged(CommandDemoAlignment.Center)
             }
         )
     val commandAlignLeft =
@@ -177,9 +181,9 @@ fun CommandDemoJustifyStrip(
             icon = format_justify_left(),
             isActionEnabled = enabled,
             isActionToggle = true,
-            isActionToggleSelected = (alignment.value == CommandDemoAlignment.Left),
+            isActionToggleSelected = (alignment == CommandDemoAlignment.Left),
             onTriggerActionToggleSelectedChange = {
-                if (it) alignment.value = CommandDemoAlignment.Left
+                if (it) onAlignmentChanged(CommandDemoAlignment.Left)
             }
         )
     val commandAlignRight =
@@ -188,9 +192,9 @@ fun CommandDemoJustifyStrip(
             icon = format_justify_right(),
             isActionEnabled = enabled,
             isActionToggle = true,
-            isActionToggleSelected = (alignment.value == CommandDemoAlignment.Right),
+            isActionToggleSelected = (alignment == CommandDemoAlignment.Right),
             onTriggerActionToggleSelectedChange = {
-                if (it) alignment.value = CommandDemoAlignment.Right
+                if (it) onAlignmentChanged(CommandDemoAlignment.Right)
             }
         )
     val commandAlignFill =
@@ -199,9 +203,9 @@ fun CommandDemoJustifyStrip(
             icon = format_justify_fill(),
             isActionEnabled = enabled,
             isActionToggle = true,
-            isActionToggleSelected = (alignment.value == CommandDemoAlignment.Fill),
+            isActionToggleSelected = (alignment == CommandDemoAlignment.Fill),
             onTriggerActionToggleSelectedChange = {
-                if (it) alignment.value = CommandDemoAlignment.Fill
+                if (it) onAlignmentChanged(CommandDemoAlignment.Fill)
             }
         )
 
@@ -321,11 +325,12 @@ fun CommandDemoEditStrip(
 }
 
 @Composable
-fun CommandDemoStyleStrip(
+fun CommandDemoStyleStrip2(
     enabled: Boolean,
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     orientation: StripOrientation,
     style: CommandDemoStyle,
+    onStyleChanged: (CommandDemoStyle) -> Unit,
     horizontalGapScaleFactor: Float,
     resourceBundle: ResourceBundle
 ) {
@@ -335,9 +340,9 @@ fun CommandDemoStyleStrip(
             icon = format_bold_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
-            isActionToggleSelected = style.bold.value,
+            isActionToggleSelected = style.bold,
             onTriggerActionToggleSelectedChange = {
-                style.bold.value = it
+                onStyleChanged.invoke(style.copy(bold = it))
                 println("Selected bold? $it")
             }
         )
@@ -347,9 +352,9 @@ fun CommandDemoStyleStrip(
             icon = format_italic_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
-            isActionToggleSelected = style.italic.value,
+            isActionToggleSelected = style.italic,
             onTriggerActionToggleSelectedChange = {
-                style.italic.value = it
+                onStyleChanged.invoke(style.copy(italic = it))
                 println("Selected italic? $it")
             }
         )
@@ -359,9 +364,9 @@ fun CommandDemoStyleStrip(
             icon = format_underlined_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
-            isActionToggleSelected = style.underline.value,
+            isActionToggleSelected = style.underline,
             onTriggerActionToggleSelectedChange = {
-                style.underline.value = it
+                onStyleChanged.invoke(style.copy(underline = it))
                 println("Selected underline? $it")
             }
         )
@@ -371,9 +376,9 @@ fun CommandDemoStyleStrip(
             icon = format_strikethrough_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
-            isActionToggleSelected = style.strikethrough.value,
+            isActionToggleSelected = style.strikethrough,
             onTriggerActionToggleSelectedChange = {
-                style.strikethrough.value = it
+                onStyleChanged.invoke(style.copy(strikethrough = it))
                 println("Selected strikethrough? $it")
             }
         )
@@ -676,13 +681,13 @@ fun AuroraWindowScope.DemoCommandContent(
         )
     )
 
-    val alignment = remember { mutableStateOf(CommandDemoAlignment.Center) }
-    val style = CommandDemoStyle(
-        bold = remember { mutableStateOf(false) },
-        italic = remember { mutableStateOf(true) },
-        underline = remember { mutableStateOf(false) },
-        strikethrough = remember { mutableStateOf(false) },
-    )
+    var alignment by remember { mutableStateOf(CommandDemoAlignment.Center) }
+    var style by remember { mutableStateOf(CommandDemoStyle(
+        bold = false,
+        italic  = true,
+        underline  = false,
+        strikethrough  = false
+    )) }
 
     Row(modifier = Modifier.fillMaxSize().padding(4.dp)) {
         Box(modifier = Modifier.padding(8.dp)) {
@@ -691,16 +696,18 @@ fun AuroraWindowScope.DemoCommandContent(
                 backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                 orientation = StripOrientation.Vertical,
                 alignment = alignment,
+                onAlignmentChanged = { alignment = it },
                 horizontalGapScaleFactor = 0.7f,
                 resourceBundle = resourceBundle
             )
         }
         Box(modifier = Modifier.padding(8.dp)) {
-            CommandDemoStyleStrip(
+            CommandDemoStyleStrip2(
                 enabled = actionEnabled,
                 backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                 orientation = StripOrientation.Vertical,
                 style = style,
+                onStyleChanged = { style = it },
                 horizontalGapScaleFactor = 0.7f,
                 resourceBundle = resourceBundle
             )
@@ -755,15 +762,17 @@ fun AuroraWindowScope.DemoCommandContent(
                     backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                     orientation = StripOrientation.Horizontal,
                     alignment = alignment,
+                    onAlignmentChanged = { alignment = it },
                     horizontalGapScaleFactor = CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis,
                     resourceBundle = resourceBundle
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                CommandDemoStyleStrip(
+                CommandDemoStyleStrip2(
                     enabled = actionEnabled,
                     backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                     orientation = StripOrientation.Horizontal,
                     style = style,
+                    onStyleChanged = { style = it },
                     horizontalGapScaleFactor = CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis,
                     resourceBundle = resourceBundle
                 )

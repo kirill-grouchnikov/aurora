@@ -111,7 +111,8 @@ fun OrientationCommandRow(
 fun CommandOrientationJustifyStrip(
     enabled: Boolean,
     orientation: StripOrientation,
-    alignment: MutableState<CommandDemoAlignment>,
+    alignment: CommandDemoAlignment,
+    onAlignmentChanged: (CommandDemoAlignment) -> Unit,
     horizontalGapScaleFactor: Float,
     resourceBundle: ResourceBundle
 ) {
@@ -121,9 +122,9 @@ fun CommandOrientationJustifyStrip(
             icon = format_justify_center(),
             isActionEnabled = enabled,
             isActionToggle = true,
-            isActionToggleSelected = (alignment.value == CommandDemoAlignment.Center),
+            isActionToggleSelected = (alignment == CommandDemoAlignment.Center),
             onTriggerActionToggleSelectedChange = {
-                if (it) alignment.value = CommandDemoAlignment.Center
+                if (it) onAlignmentChanged(CommandDemoAlignment.Center)
             }
         )
     val commandAlignLeft =
@@ -132,9 +133,9 @@ fun CommandOrientationJustifyStrip(
             icon = format_justify_left(),
             isActionEnabled = enabled,
             isActionToggle = true,
-            isActionToggleSelected = (alignment.value == CommandDemoAlignment.Left),
+            isActionToggleSelected = (alignment == CommandDemoAlignment.Left),
             onTriggerActionToggleSelectedChange = {
-                if (it) alignment.value = CommandDemoAlignment.Left
+                if (it) onAlignmentChanged(CommandDemoAlignment.Left)
             }
         )
     val commandAlignRight =
@@ -143,9 +144,9 @@ fun CommandOrientationJustifyStrip(
             icon = format_justify_right(),
             isActionEnabled = enabled,
             isActionToggle = true,
-            isActionToggleSelected = (alignment.value == CommandDemoAlignment.Right),
+            isActionToggleSelected = (alignment == CommandDemoAlignment.Right),
             onTriggerActionToggleSelectedChange = {
-                if (it) alignment.value = CommandDemoAlignment.Right
+                if (it) onAlignmentChanged(CommandDemoAlignment.Right)
             }
         )
     val commandAlignFill =
@@ -154,9 +155,9 @@ fun CommandOrientationJustifyStrip(
             icon = format_justify_fill(),
             isActionEnabled = enabled,
             isActionToggle = true,
-            isActionToggleSelected = (alignment.value == CommandDemoAlignment.Fill),
+            isActionToggleSelected = (alignment == CommandDemoAlignment.Fill),
             onTriggerActionToggleSelectedChange = {
-                if (it) alignment.value = CommandDemoAlignment.Fill
+                if (it) onAlignmentChanged(CommandDemoAlignment.Fill)
             }
         )
 
@@ -278,6 +279,7 @@ fun CommandOrientationStyleStrip(
     enabled: Boolean,
     orientation: StripOrientation,
     style: CommandDemoStyle,
+    onStyleChanged: (CommandDemoStyle) -> Unit,
     horizontalGapScaleFactor: Float
 ) {
     val commandBold =
@@ -286,9 +288,9 @@ fun CommandOrientationStyleStrip(
             icon = format_bold_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
-            isActionToggleSelected = style.bold.value,
+            isActionToggleSelected = style.bold,
             onTriggerActionToggleSelectedChange = {
-                style.bold.value = it
+                onStyleChanged(style.copy(bold = it))
                 println("Selected bold? $it")
             }
         )
@@ -298,9 +300,9 @@ fun CommandOrientationStyleStrip(
             icon = format_italic_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
-            isActionToggleSelected = style.italic.value,
+            isActionToggleSelected = style.italic,
             onTriggerActionToggleSelectedChange = {
-                style.italic.value = it
+                onStyleChanged(style.copy(italic = it))
                 println("Selected italic? $it")
             }
         )
@@ -310,9 +312,9 @@ fun CommandOrientationStyleStrip(
             icon = format_underlined_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
-            isActionToggleSelected = style.underline.value,
+            isActionToggleSelected = style.underline,
             onTriggerActionToggleSelectedChange = {
-                style.underline.value = it
+                onStyleChanged(style.copy(underline = it))
                 println("Selected underline? $it")
             }
         )
@@ -322,9 +324,9 @@ fun CommandOrientationStyleStrip(
             icon = format_strikethrough_black_24dp(),
             isActionEnabled = enabled,
             isActionToggle = true,
-            isActionToggleSelected = style.strikethrough.value,
+            isActionToggleSelected = style.strikethrough,
             onTriggerActionToggleSelectedChange = {
-                style.strikethrough.value = it
+                onStyleChanged(style.copy(strikethrough = it))
                 println("Selected strikethrough? $it")
             }
         )
@@ -436,13 +438,17 @@ fun AuroraApplicationScope.OrientationCommandContent(
             isSecondaryEnabled = popupEnabled
         )
 
-    val alignment = remember { mutableStateOf(CommandDemoAlignment.Center) }
-    val style = CommandDemoStyle(
-        bold = remember { mutableStateOf(false) },
-        italic = remember { mutableStateOf(true) },
-        underline = remember { mutableStateOf(false) },
-        strikethrough = remember { mutableStateOf(false) },
-    )
+    var alignment by remember { mutableStateOf(CommandDemoAlignment.Center) }
+    var style by remember {
+        mutableStateOf(
+            CommandDemoStyle(
+                bold = false,
+                italic = true,
+                underline = false,
+                strikethrough = false,
+            )
+        )
+    }
 
     Row(modifier = Modifier.fillMaxSize().padding(4.dp)) {
         Box(modifier = Modifier.padding(8.dp)) {
@@ -450,6 +456,7 @@ fun AuroraApplicationScope.OrientationCommandContent(
                 enabled = actionEnabled,
                 orientation = StripOrientation.Vertical,
                 alignment = alignment,
+                onAlignmentChanged = { alignment = it },
                 horizontalGapScaleFactor = 0.7f,
                 resourceBundle = resourceBundle
             )
@@ -460,6 +467,7 @@ fun AuroraApplicationScope.OrientationCommandContent(
                 enabled = actionEnabled,
                 orientation = StripOrientation.Vertical,
                 style = style,
+                onStyleChanged = { style = it },
                 horizontalGapScaleFactor = 0.7f
             )
         }
@@ -496,6 +504,7 @@ fun AuroraApplicationScope.OrientationCommandContent(
                     enabled = actionEnabled,
                     orientation = StripOrientation.Horizontal,
                     alignment = alignment,
+                    onAlignmentChanged = { alignment = it },
                     horizontalGapScaleFactor = CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis,
                     resourceBundle = resourceBundle
                 )
@@ -505,6 +514,7 @@ fun AuroraApplicationScope.OrientationCommandContent(
                     enabled = actionEnabled,
                     orientation = StripOrientation.Horizontal,
                     style = style,
+                    onStyleChanged = { style = it },
                     horizontalGapScaleFactor = CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis
                 )
                 Spacer(modifier = Modifier.width(8.dp))

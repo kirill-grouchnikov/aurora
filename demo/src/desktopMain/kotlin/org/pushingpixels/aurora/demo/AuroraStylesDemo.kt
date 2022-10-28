@@ -107,13 +107,19 @@ object UnsetStyle : Style()
 data class SolidStyle(val index: Int) : Style()
 data class GradientStyle(val index: Int) : Style()
 
+@Stable
+data class StyleData(
+    val isInPreview: Boolean,
+    val permanentTopColor: Color,
+    val permanentBottomColor: Color,
+    val previewTopColor: Color,
+    val previewBottomColor: Color,
+)
+
 @Composable
 fun getStylesContentModel(
-    permanentTopColor: MutableState<Color>,
-    permanentBottomColor: MutableState<Color>,
-    isInPreview: MutableState<Boolean>,
-    previewTopColor: MutableState<Color>,
-    previewBottomColor: MutableState<Color>,
+    styleData: StyleData,
+    onStyleDataChanged: (StyleData) -> Unit,
     resourceBundle: ResourceBundle
 ): CommandPanelContentModel {
     // Colors from http://colrd.com/palette/24070/
@@ -145,21 +151,29 @@ fun getStylesContentModel(
             icon = ColorSolidIcon(color),
             actionPreview = object : CommandActionPreview {
                 override fun onCommandPreviewActivated(command: Command) {
-                    isInPreview.value = true
-                    previewTopColor.value = color
-                    previewBottomColor.value = color
+                    onStyleDataChanged.invoke(
+                        styleData.copy(
+                            isInPreview = true,
+                            previewTopColor = color,
+                            previewBottomColor = color
+                        )
+                    )
                 }
 
                 override fun onCommandPreviewCanceled(command: Command) {
-                    isInPreview.value = false
+                    onStyleDataChanged.invoke(styleData.copy(isInPreview = false))
                 }
             },
             isActionToggle = true,
             isActionToggleSelected = ((selectedStyle.value as? SolidStyle)?.index == i),
             onTriggerActionToggleSelectedChange = {
                 if (it) {
-                    permanentTopColor.value = color
-                    permanentBottomColor.value = color
+                    onStyleDataChanged.invoke(
+                        styleData.copy(
+                            permanentTopColor = color,
+                            permanentBottomColor = color
+                        )
+                    )
                     selectedStyle.value = SolidStyle(i)
                 }
             }
@@ -178,21 +192,29 @@ fun getStylesContentModel(
             icon = ColorGradientIcon(colorTop, colorBottom),
             actionPreview = object : CommandActionPreview {
                 override fun onCommandPreviewActivated(command: Command) {
-                    isInPreview.value = true
-                    previewTopColor.value = colorTop
-                    previewBottomColor.value = colorBottom
+                    onStyleDataChanged.invoke(
+                        styleData.copy(
+                            isInPreview = true,
+                            previewTopColor = colorTop,
+                            previewBottomColor = colorBottom
+                        )
+                    )
                 }
 
                 override fun onCommandPreviewCanceled(command: Command) {
-                    isInPreview.value = false
+                    onStyleDataChanged.invoke(styleData.copy(isInPreview = false))
                 }
             },
             isActionToggle = true,
             isActionToggleSelected = ((selectedStyle.value as? GradientStyle)?.index == i),
             onTriggerActionToggleSelectedChange = {
                 if (it) {
-                    permanentTopColor.value = colorTop
-                    permanentBottomColor.value = colorBottom
+                    onStyleDataChanged.invoke(
+                        styleData.copy(
+                            permanentTopColor = colorTop,
+                            permanentBottomColor = colorBottom
+                        )
+                    )
                     selectedStyle.value = GradientStyle(i)
                 }
             }
@@ -209,11 +231,8 @@ fun getStylesContentModel(
 @ExperimentalUnitApi
 @Composable
 fun CommandDemoEditStrip(
-    permanentTopColor: MutableState<Color>,
-    permanentBottomColor: MutableState<Color>,
-    isInPreview: MutableState<Boolean>,
-    previewTopColor: MutableState<Color>,
-    previewBottomColor: MutableState<Color>,
+    styleData: StyleData,
+    onStyleDataChanged: (StyleData) -> Unit,
     resourceBundle: ResourceBundle
 ) {
     val commandCut =
@@ -260,12 +279,9 @@ fun CommandDemoEditStrip(
                     )
                 ),
                 panelContentModel = getStylesContentModel(
-                    permanentTopColor,
-                    permanentBottomColor,
-                    isInPreview,
-                    previewTopColor,
-                    previewBottomColor,
-                    resourceBundle
+                    styleData = styleData,
+                    onStyleDataChanged = onStyleDataChanged,
+                    resourceBundle = resourceBundle
                 )
             ),
             isSecondaryEnabled = true
@@ -345,6 +361,18 @@ fun AuroraApplicationScope.DemoStyleContent(
     onSkinChange: (AuroraSkinDefinition) -> Unit,
     resourceBundle: ResourceBundle
 ) {
+    var styleData by remember {
+        mutableStateOf(
+            StyleData(
+                isInPreview = false,
+                permanentTopColor = Color.White,
+                permanentBottomColor = Color.White,
+                previewTopColor = Color.White,
+                previewBottomColor = Color.White,
+            )
+        )
+    }
+
     Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
         Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
             AuroraSkinSwitcher(onSkinChange)
@@ -356,18 +384,12 @@ fun AuroraApplicationScope.DemoStyleContent(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        val permanentTopColor = remember { mutableStateOf(Color.White) }
-        val permanentBottomColor = remember { mutableStateOf(Color.White) }
-        val isInPreview = remember { mutableStateOf(false) }
-        val previewTopColor = remember { mutableStateOf(Color.White) }
-        val previewBottomColor = remember { mutableStateOf(Color.White) }
-
         // Animate top and bottom color to preview / permanent based on the preview state
         val topColor = animateColorAsState(
-            targetValue = if (isInPreview.value) previewTopColor.value else permanentTopColor.value
+            targetValue = if (styleData.isInPreview) styleData.previewTopColor else styleData.permanentTopColor
         )
         val bottomColor = animateColorAsState(
-            targetValue = if (isInPreview.value) previewBottomColor.value else permanentBottomColor.value
+            targetValue = if (styleData.isInPreview) styleData.previewBottomColor else styleData.permanentBottomColor
         )
 
         DemoStyleCanvas(
@@ -378,9 +400,9 @@ fun AuroraApplicationScope.DemoStyleContent(
 
         Box(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
             CommandDemoEditStrip(
-                permanentTopColor, permanentBottomColor,
-                isInPreview, previewTopColor, previewBottomColor,
-                resourceBundle
+                styleData = styleData,
+                onStyleDataChanged = { styleData = it },
+                resourceBundle = resourceBundle
             )
         }
     }

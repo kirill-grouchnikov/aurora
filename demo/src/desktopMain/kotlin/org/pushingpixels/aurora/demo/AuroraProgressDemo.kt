@@ -233,14 +233,17 @@ fun AuroraWindowScope.DemoProgressContent(
     onSkinChange: (AuroraSkinDefinition) -> Unit,
     resourceBundle: ResourceBundle
 ) {
-    val alignment = remember { mutableStateOf(DemoAlignment.Center) }
-
-    val style = DemoStyle(
-        bold = remember { mutableStateOf(true) },
-        italic = remember { mutableStateOf(true) },
-        underline = remember { mutableStateOf(false) },
-        strikethrough = remember { mutableStateOf(false) },
-    )
+    var alignment by remember { mutableStateOf(DemoAlignment.Center) }
+    var style by remember {
+        mutableStateOf(
+            DemoStyle(
+                bold = true,
+                italic = true,
+                underline = false,
+                strikethrough = false,
+            )
+        )
+    }
 
     val alignmentCommands = CommandGroup(
         commands = listOf(
@@ -248,9 +251,9 @@ fun AuroraWindowScope.DemoProgressContent(
                 text = resourceBundle.getString("Justify.center"),
                 icon = format_justify_center(),
                 isActionToggle = true,
-                isActionToggleSelected = (alignment.value == DemoAlignment.Center),
+                isActionToggleSelected = (alignment == DemoAlignment.Center),
                 onTriggerActionToggleSelectedChange = {
-                    if (it) alignment.value = DemoAlignment.Center
+                    if (it) alignment = DemoAlignment.Center
                 },
                 actionPreview = object : CommandActionPreview {
                     override fun onCommandPreviewActivated(command: Command) {
@@ -266,9 +269,9 @@ fun AuroraWindowScope.DemoProgressContent(
                 text = resourceBundle.getString("Justify.left"),
                 icon = format_justify_left(),
                 isActionToggle = true,
-                isActionToggleSelected = (alignment.value == DemoAlignment.Left),
+                isActionToggleSelected = (alignment == DemoAlignment.Left),
                 onTriggerActionToggleSelectedChange = {
-                    if (it) alignment.value = DemoAlignment.Left
+                    if (it) alignment = DemoAlignment.Left
                 },
                 actionPreview = object : CommandActionPreview {
                     override fun onCommandPreviewActivated(command: Command) {
@@ -284,9 +287,9 @@ fun AuroraWindowScope.DemoProgressContent(
                 text = resourceBundle.getString("Justify.right"),
                 icon = format_justify_right(),
                 isActionToggle = true,
-                isActionToggleSelected = (alignment.value == DemoAlignment.Right),
+                isActionToggleSelected = (alignment == DemoAlignment.Right),
                 onTriggerActionToggleSelectedChange = {
-                    if (it) alignment.value = DemoAlignment.Right
+                    if (it) alignment = DemoAlignment.Right
                 },
                 actionPreview = object : CommandActionPreview {
                     override fun onCommandPreviewActivated(command: Command) {
@@ -302,9 +305,9 @@ fun AuroraWindowScope.DemoProgressContent(
                 text = resourceBundle.getString("Justify.fill"),
                 icon = format_justify_fill(),
                 isActionToggle = true,
-                isActionToggleSelected = (alignment.value == DemoAlignment.Fill),
+                isActionToggleSelected = (alignment == DemoAlignment.Fill),
                 onTriggerActionToggleSelectedChange = {
-                    if (it) alignment.value = DemoAlignment.Fill
+                    if (it) alignment = DemoAlignment.Fill
                 },
                 actionPreview = object : CommandActionPreview {
                     override fun onCommandPreviewActivated(command: Command) {
@@ -325,9 +328,9 @@ fun AuroraWindowScope.DemoProgressContent(
                 text = resourceBundle.getString("FontStyle.bold.title"),
                 icon = format_text_bold(),
                 isActionToggle = true,
-                isActionToggleSelected = style.bold.value,
+                isActionToggleSelected = style.bold,
                 onTriggerActionToggleSelectedChange = {
-                    style.bold.value = it
+                    style = style.copy(bold = it)
                     println("Selected bold? $it")
                 }
             ),
@@ -335,9 +338,9 @@ fun AuroraWindowScope.DemoProgressContent(
                 text = resourceBundle.getString("FontStyle.italic.title"),
                 icon = format_text_italic(),
                 isActionToggle = true,
-                isActionToggleSelected = style.italic.value,
+                isActionToggleSelected = style.italic,
                 onTriggerActionToggleSelectedChange = {
-                    style.italic.value = it
+                    style = style.copy(italic = it)
                     println("Selected italic? $it")
                 }
             ),
@@ -345,9 +348,9 @@ fun AuroraWindowScope.DemoProgressContent(
                 text = resourceBundle.getString("FontStyle.underline.title"),
                 icon = format_text_underline(),
                 isActionToggle = true,
-                isActionToggleSelected = style.underline.value,
+                isActionToggleSelected = style.underline,
                 onTriggerActionToggleSelectedChange = {
-                    style.underline.value = it
+                    style = style.copy(underline = it)
                     println("Selected underline? $it")
                 }
             ),
@@ -355,9 +358,9 @@ fun AuroraWindowScope.DemoProgressContent(
                 text = resourceBundle.getString("FontStyle.strikethrough.title"),
                 icon = format_text_strikethrough(),
                 isActionToggle = true,
-                isActionToggleSelected = style.strikethrough.value,
+                isActionToggleSelected = style.strikethrough,
                 onTriggerActionToggleSelectedChange = {
-                    style.strikethrough.value = it
+                    style = style.copy(strikethrough = it)
                     println("Selected strikethrough? $it")
                 }
             )

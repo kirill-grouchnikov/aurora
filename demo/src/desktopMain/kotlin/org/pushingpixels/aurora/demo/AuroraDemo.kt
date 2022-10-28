@@ -142,11 +142,12 @@ enum class DemoAlignment {
     Center, Left, Right, Fill
 }
 
-class DemoStyle(
-    val bold: MutableState<Boolean>,
-    val italic: MutableState<Boolean>,
-    val underline: MutableState<Boolean>,
-    val strikethrough: MutableState<Boolean>
+@Stable
+data class DemoStyle(
+    val bold: Boolean,
+    val italic: Boolean,
+    val underline: Boolean,
+    val strikethrough: Boolean
 )
 
 @Composable
@@ -320,7 +321,7 @@ fun DemoToolbar(
 @Composable
 fun DemoFooter(
     modifier: Modifier = Modifier,
-    contentEnabled: MutableState<Boolean>,
+    contentEnabled: Boolean,
     alignmentCommands: CommandGroup,
     resourceBundle: ResourceBundle
 ) {
@@ -364,11 +365,11 @@ fun DemoFooter(
         LabelProjection(
             contentModel = LabelContentModel(
                 text = resourceBundle.getString("ContextMenu.show"),
-                enabled = contentEnabled.value
+                enabled = contentEnabled
             )
         ).project(
             modifier = Modifier.auroraContextMenu(
-                enabled = contentEnabled.value,
+                enabled = contentEnabled,
                 contentModel = CommandMenuContentModel(
                     groups = listOf(
                         CommandGroup(commands = commands1),
@@ -398,7 +399,7 @@ fun DemoFooter(
 fun DemoHeader(
     text: String,
     icon: Painter,
-    contentEnabled: MutableState<Boolean>
+    contentEnabled: Boolean
 ) {
     // Resolve the default text style to get the default font size
     val resolvedTextStyle = resolveAuroraDefaults()
@@ -419,7 +420,7 @@ fun DemoHeader(
         LabelProjection(
             contentModel = LabelContentModel(
                 text = text.uppercase(),
-                enabled = contentEnabled.value,
+                enabled = contentEnabled,
                 icon = icon,
             ),
             presentationModel = LabelPresentationModel(
@@ -437,7 +438,8 @@ fun DemoHeader(
 @Composable
 fun AuroraApplicationScope.DemoArea(
     modifier: Modifier = Modifier,
-    contentEnabled: MutableState<Boolean>,
+    contentEnabled: Boolean,
+    onContentEnabledChanged: (Boolean) -> Unit,
     onSkinChange: (AuroraSkinDefinition) -> Unit,
     resourceBundle: ResourceBundle,
     styleCommands: CommandGroup
@@ -457,8 +459,8 @@ fun AuroraApplicationScope.DemoArea(
             ) {
                 CheckBoxProjection(contentModel = SelectorContentModel(
                     text = resourceBundle.getString("Content.enabled"),
-                    selected = contentEnabled.value,
-                    onTriggerSelectedChange = { contentEnabled.value = !contentEnabled.value }
+                    selected = contentEnabled,
+                    onTriggerSelectedChange = { onContentEnabledChanged.invoke(!contentEnabled) }
                 )).project()
 
                 AuroraSkinSwitcher(onSkinChange)
@@ -487,7 +489,7 @@ fun AuroraApplicationScope.DemoArea(
                     contentModel = Command(
                         text = resourceBundle.getString("Control.button.toggle"),
                         icon = computer(),
-                        isActionEnabled = contentEnabled.value,
+                        isActionEnabled = contentEnabled,
                         isActionToggle = true,
                         isActionToggleSelected = toggleButtonSelected,
                         onTriggerActionToggleSelectedChange = {
@@ -512,7 +514,7 @@ fun AuroraApplicationScope.DemoArea(
                     contentModel = Command(
                         text = resourceBundle.getString("Control.button.iconText"),
                         icon = keyboard_capslock_24px(),
-                        isActionEnabled = contentEnabled.value,
+                        isActionEnabled = contentEnabled,
                         action = {}
                     ),
                     presentationModel = CommandButtonPresentationModel(
@@ -531,7 +533,7 @@ fun AuroraApplicationScope.DemoArea(
                     contentModel = Command(
                         text = resourceBundle.getString("Control.button.flat"),
                         icon = account_box_24px(),
-                        isActionEnabled = contentEnabled.value,
+                        isActionEnabled = contentEnabled,
                         action = { println("Clicked!") }
                     ),
                     presentationModel = CommandButtonPresentationModel(
@@ -562,7 +564,7 @@ fun AuroraApplicationScope.DemoArea(
                     contentModel = Command(
                         text = "",
                         icon = star_black_48dp(),
-                        isActionEnabled = contentEnabled.value,
+                        isActionEnabled = contentEnabled,
                         isActionToggle = true,
                         isActionToggleSelected = toggleStarButtonSelected,
                         onTriggerActionToggleSelectedChange = {
@@ -588,7 +590,7 @@ fun AuroraApplicationScope.DemoArea(
                     contentModel = Command(
                         text = "",
                         icon = star_black_48dp(),
-                        isActionEnabled = contentEnabled.value,
+                        isActionEnabled = contentEnabled,
                         isActionToggle = true,
                         isActionToggleSelected = toggleStarButtonSelected,
                         onTriggerActionToggleSelectedChange = {
@@ -618,7 +620,7 @@ fun AuroraApplicationScope.DemoArea(
                 val simpleComboSelectedItem = remember { mutableStateOf(simpleComboItems[1]) }
                 ComboBoxProjection(
                     contentModel = ComboBoxContentModel(
-                        enabled = contentEnabled.value,
+                        enabled = contentEnabled,
                         items = simpleComboItems,
                         selectedItem = simpleComboSelectedItem.value,
                         richTooltip = RichTooltip(
@@ -660,7 +662,7 @@ fun AuroraApplicationScope.DemoArea(
                 val personComboSelectedItem = remember { mutableStateOf(personComboItems[0]) }
                 ComboBoxProjection(
                     contentModel = ComboBoxContentModel(
-                        enabled = contentEnabled.value,
+                        enabled = contentEnabled,
                         items = personComboItems,
                         selectedItem = personComboSelectedItem.value,
                         onTriggerItemSelectedChange = {
@@ -697,7 +699,7 @@ fun AuroraApplicationScope.DemoArea(
                             resourceBundle.getString("Tooltip.textFooterParagraph1")
                         )
                     ),
-                    enabled = contentEnabled.value,
+                    enabled = contentEnabled,
                     selected = checkboxSelected,
                     onTriggerSelectedChange = {
                         println("Selected checkbox? $it")
@@ -724,7 +726,7 @@ fun AuroraApplicationScope.DemoArea(
                                 resourceBundle.getString("Tooltip.textFooterParagraph1")
                             )
                         ),
-                        enabled = contentEnabled.value,
+                        enabled = contentEnabled,
                         selected = radioButtonSelected,
                         onTriggerSelectedChange = {
                             println("Selected radio? $it")
@@ -756,7 +758,7 @@ fun AuroraApplicationScope.DemoArea(
             ) {
                 ComboBoxProjection(
                     contentModel = ComboBoxContentModel(
-                        enabled = contentEnabled.value,
+                        enabled = contentEnabled,
                         items = snowComboItems,
                         selectedItem = snowComboSelectedItem.value,
                         onTriggerItemSelectedChange = {
@@ -774,7 +776,7 @@ fun AuroraApplicationScope.DemoArea(
 
                 ComboBoxProjection(
                     contentModel = ComboBoxContentModel(
-                        enabled = contentEnabled.value,
+                        enabled = contentEnabled,
                         items = snowComboItems,
                         selectedItem = snowComboSelectedItem.value,
                         onTriggerItemSelectedChange = {
@@ -792,7 +794,7 @@ fun AuroraApplicationScope.DemoArea(
 
                 ComboBoxProjection(
                     contentModel = ComboBoxContentModel(
-                        enabled = contentEnabled.value,
+                        enabled = contentEnabled,
                         items = snowComboItems,
                         selectedItem = snowComboSelectedItem.value,
                         onTriggerItemSelectedChange = {
@@ -810,7 +812,7 @@ fun AuroraApplicationScope.DemoArea(
 
                 ComboBoxProjection(
                     contentModel = ComboBoxContentModel(
-                        enabled = contentEnabled.value,
+                        enabled = contentEnabled,
                         items = snowComboItems,
                         selectedItem = snowComboSelectedItem.value,
                         onTriggerItemSelectedChange = {
@@ -831,7 +833,7 @@ fun AuroraApplicationScope.DemoArea(
             ) {
                 ComboBoxProjection(
                     contentModel = ComboBoxContentModel(
-                        enabled = contentEnabled.value,
+                        enabled = contentEnabled,
                         items = snowComboItems,
                         selectedItem = snowComboSelectedItem.value,
                         onTriggerItemSelectedChange = {
@@ -849,7 +851,7 @@ fun AuroraApplicationScope.DemoArea(
 
                 ComboBoxProjection(
                     contentModel = ComboBoxContentModel(
-                        enabled = contentEnabled.value,
+                        enabled = contentEnabled,
                         items = snowComboItems,
                         selectedItem = snowComboSelectedItem.value,
                         onTriggerItemSelectedChange = {
@@ -867,7 +869,7 @@ fun AuroraApplicationScope.DemoArea(
 
                 ComboBoxProjection(
                     contentModel = ComboBoxContentModel(
-                        enabled = contentEnabled.value,
+                        enabled = contentEnabled,
                         items = snowComboItems,
                         selectedItem = snowComboSelectedItem.value,
                         onTriggerItemSelectedChange = {
@@ -886,7 +888,7 @@ fun AuroraApplicationScope.DemoArea(
 
                 ComboBoxProjection(
                     contentModel = ComboBoxContentModel(
-                        enabled = contentEnabled.value,
+                        enabled = contentEnabled,
                         items = snowComboItems,
                         selectedItem = snowComboSelectedItem.value,
                         onTriggerItemSelectedChange = {
@@ -907,7 +909,7 @@ fun AuroraApplicationScope.DemoArea(
             ) {
                 ComboBoxProjection(
                     contentModel = ComboBoxContentModel(
-                        enabled = contentEnabled.value,
+                        enabled = contentEnabled,
                         items = snowComboItems,
                         selectedItem = snowComboSelectedItem.value,
                         onTriggerItemSelectedChange = {
@@ -925,7 +927,7 @@ fun AuroraApplicationScope.DemoArea(
 
                 ComboBoxProjection(
                     contentModel = ComboBoxContentModel(
-                        enabled = contentEnabled.value,
+                        enabled = contentEnabled,
                         items = snowComboItems,
                         selectedItem = snowComboSelectedItem.value,
                         onTriggerItemSelectedChange = {
@@ -952,26 +954,26 @@ fun AuroraApplicationScope.DemoArea(
             ) {
                 // Example of an indeterminate linear progress bar
                 IndeterminateLinearProgressProjection(
-                    contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled.value),
+                    contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled),
                 ).project()
 
                 Spacer(modifier = Modifier.width(16.dp))
 
                 // Example of a determinate linear progress bar
-                DemoProgress(enabled = contentEnabled.value)
+                DemoProgress(enabled = contentEnabled)
 
                 Spacer(modifier = Modifier.width(16.dp))
 
                 // Example of a circular progress indicator
                 CircularProgressProjection(
-                    contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled.value)
+                    contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled)
                 ).project()
 
                 Spacer(modifier = Modifier.width(16.dp))
 
                 // Example of a larger circular progress indicator
                 CircularProgressProjection(
-                    contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled.value),
+                    contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled),
                     presentationModel = ProgressCircularPresentationModel(size = 14.dp)
                 ).project()
             }
@@ -990,7 +992,7 @@ fun AuroraApplicationScope.DemoArea(
                             println("Slider $it")
                         },
                         onValueChangeEnd = { println("Slider change done!") },
-                        enabled = contentEnabled.value
+                        enabled = contentEnabled
                     )
                 ).project()
 
@@ -1007,7 +1009,7 @@ fun AuroraApplicationScope.DemoArea(
                             println("Slider $it")
                         },
                         onValueChangeEnd = { println("Slider change done!") },
-                        enabled = contentEnabled.value
+                        enabled = contentEnabled
                     ),
                     presentationModel = SliderPresentationModel(
                         tickSteps = 9,
@@ -1034,7 +1036,7 @@ fun AuroraApplicationScope.DemoArea(
                         value = text1,
                         placeholder = resourceBundle.getString("Control.textfield.area"),
                         onValueChange = { text1 = it },
-                        enabled = contentEnabled.value
+                        enabled = contentEnabled
                     )
                 ).project()
 
@@ -1047,7 +1049,7 @@ fun AuroraApplicationScope.DemoArea(
                         value = text2,
                         placeholder = resourceBundle.getString("Control.textfield.field"),
                         onValueChange = { text2 = it },
-                        enabled = contentEnabled.value
+                        enabled = contentEnabled
                     ),
                     presentationModel = TextFieldPresentationModel(singleLine = true)
                 ).project()
@@ -1062,26 +1064,30 @@ fun AuroraApplicationScope.DemoContent(
     onSkinChange: (AuroraSkinDefinition) -> Unit,
     resourceBundle: ResourceBundle
 ) {
-    val contentEnabled = remember { mutableStateOf(true) }
-    val alignment = remember { mutableStateOf(DemoAlignment.Center) }
+    var contentEnabled by remember { mutableStateOf(true) }
+    var alignment by remember { mutableStateOf(DemoAlignment.Center) }
 
-    val style = DemoStyle(
-        bold = remember { mutableStateOf(true) },
-        italic = remember { mutableStateOf(true) },
-        underline = remember { mutableStateOf(false) },
-        strikethrough = remember { mutableStateOf(false) },
-    )
+    var style by remember {
+        mutableStateOf(
+            DemoStyle(
+                bold = true,
+                italic = true,
+                underline = false,
+                strikethrough = false,
+            )
+        )
+    }
 
     val alignmentCommands = CommandGroup(
         commands = listOf(
             Command(
                 text = resourceBundle.getString("Justify.center"),
                 icon = format_justify_center(),
-                isActionEnabled = contentEnabled.value,
+                isActionEnabled = contentEnabled,
                 isActionToggle = true,
-                isActionToggleSelected = (alignment.value == DemoAlignment.Center),
+                isActionToggleSelected = (alignment == DemoAlignment.Center),
                 onTriggerActionToggleSelectedChange = {
-                    if (it) alignment.value = DemoAlignment.Center
+                    if (it) alignment = DemoAlignment.Center
                 },
                 actionPreview = object : CommandActionPreview {
                     override fun onCommandPreviewActivated(command: Command) {
@@ -1096,11 +1102,11 @@ fun AuroraApplicationScope.DemoContent(
             Command(
                 text = resourceBundle.getString("Justify.left"),
                 icon = format_justify_left(),
-                isActionEnabled = contentEnabled.value,
+                isActionEnabled = contentEnabled,
                 isActionToggle = true,
-                isActionToggleSelected = (alignment.value == DemoAlignment.Left),
+                isActionToggleSelected = (alignment == DemoAlignment.Left),
                 onTriggerActionToggleSelectedChange = {
-                    if (it) alignment.value = DemoAlignment.Left
+                    if (it) alignment = DemoAlignment.Left
                 },
                 actionPreview = object : CommandActionPreview {
                     override fun onCommandPreviewActivated(command: Command) {
@@ -1115,11 +1121,11 @@ fun AuroraApplicationScope.DemoContent(
             Command(
                 text = resourceBundle.getString("Justify.right"),
                 icon = format_justify_right(),
-                isActionEnabled = contentEnabled.value,
+                isActionEnabled = contentEnabled,
                 isActionToggle = true,
-                isActionToggleSelected = (alignment.value == DemoAlignment.Right),
+                isActionToggleSelected = (alignment == DemoAlignment.Right),
                 onTriggerActionToggleSelectedChange = {
-                    if (it) alignment.value = DemoAlignment.Right
+                    if (it) alignment = DemoAlignment.Right
                 },
                 actionPreview = object : CommandActionPreview {
                     override fun onCommandPreviewActivated(command: Command) {
@@ -1134,11 +1140,11 @@ fun AuroraApplicationScope.DemoContent(
             Command(
                 text = resourceBundle.getString("Justify.fill"),
                 icon = format_justify_fill(),
-                isActionEnabled = contentEnabled.value,
+                isActionEnabled = contentEnabled,
                 isActionToggle = true,
-                isActionToggleSelected = (alignment.value == DemoAlignment.Fill),
+                isActionToggleSelected = (alignment == DemoAlignment.Fill),
                 onTriggerActionToggleSelectedChange = {
-                    if (it) alignment.value = DemoAlignment.Fill
+                    if (it) alignment = DemoAlignment.Fill
                 },
                 actionPreview = object : CommandActionPreview {
                     override fun onCommandPreviewActivated(command: Command) {
@@ -1158,44 +1164,44 @@ fun AuroraApplicationScope.DemoContent(
             Command(
                 text = resourceBundle.getString("FontStyle.bold.title"),
                 icon = format_text_bold(),
-                isActionEnabled = contentEnabled.value,
+                isActionEnabled = contentEnabled,
                 isActionToggle = true,
-                isActionToggleSelected = style.bold.value,
+                isActionToggleSelected = style.bold,
                 onTriggerActionToggleSelectedChange = {
-                    style.bold.value = it
+                    style = style.copy(bold = it)
                     println("Selected bold? $it")
                 }
             ),
             Command(
                 text = resourceBundle.getString("FontStyle.italic.title"),
                 icon = format_text_italic(),
-                isActionEnabled = contentEnabled.value,
+                isActionEnabled = contentEnabled,
                 isActionToggle = true,
-                isActionToggleSelected = style.italic.value,
+                isActionToggleSelected = style.italic,
                 onTriggerActionToggleSelectedChange = {
-                    style.italic.value = it
+                    style = style.copy(italic = it)
                     println("Selected italic? $it")
                 }
             ),
             Command(
                 text = resourceBundle.getString("FontStyle.underline.title"),
                 icon = format_text_underline(),
-                isActionEnabled = contentEnabled.value,
+                isActionEnabled = contentEnabled,
                 isActionToggle = true,
-                isActionToggleSelected = style.underline.value,
+                isActionToggleSelected = style.underline,
                 onTriggerActionToggleSelectedChange = {
-                    style.underline.value = it
+                    style = style.copy(underline = it)
                     println("Selected underline? $it")
                 }
             ),
             Command(
                 text = resourceBundle.getString("FontStyle.strikethrough.title"),
                 icon = format_text_strikethrough(),
-                isActionEnabled = contentEnabled.value,
+                isActionEnabled = contentEnabled,
                 isActionToggle = true,
-                isActionToggleSelected = style.strikethrough.value,
+                isActionToggleSelected = style.strikethrough,
                 onTriggerActionToggleSelectedChange = {
-                    style.strikethrough.value = it
+                    style = style.copy(strikethrough = it)
                     println("Selected strikethrough? $it")
                 }
             )
@@ -1216,7 +1222,8 @@ fun AuroraApplicationScope.DemoContent(
                 styleCommands = styleCommands,
                 onSkinChange = onSkinChange,
                 resourceBundle = resourceBundle,
-                contentEnabled = contentEnabled
+                contentEnabled = contentEnabled,
+                onContentEnabledChanged = { contentEnabled = it }
             )
         }
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.Footer) {
