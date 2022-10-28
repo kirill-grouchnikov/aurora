@@ -308,7 +308,10 @@ The following class implements a custom combobox that lists all available Aurora
 
 ```kotlin
 @Composable
-fun AuroraSkinSwitcher(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
+fun AuroraSkinSwitcher(
+    onSkinChange: (AuroraSkinDefinition) -> Unit,
+    popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart
+) {
     val currentSkinDisplayName = AuroraSkin.displayName
     val auroraSkins = getAuroraSkins()
     val selectedSkinItem =
@@ -320,11 +323,12 @@ fun AuroraSkinSwitcher(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
             selectedItem = selectedSkinItem.value,
             onTriggerItemSelectedChange = {
                 selectedSkinItem.value = it
-                auroraSkinDefinition.value = it.second.invoke()
+                onSkinChange.invoke(it.second.invoke())
             }
         ),
         presentationModel = ComboBoxPresentationModel(
-            displayConverter = { it.first }
+            displayConverter = { it.first },
+            popupPlacementStrategy = popupPlacementStrategy
         )
     ).project()
 }
@@ -333,6 +337,6 @@ fun AuroraSkinSwitcher(auroraSkinDefinition: MutableState<AuroraSkinDefinition>)
 * First, it uses the `getAuroraSkins()` API to populate the combobox with the list of all available Aurora skins.
 * Then, it uses the current `AuroraSkinDefinition` to select the combobox entry that matches the current Aurora skin.
 * Since the model entries behind the combobox are `Pair<String, () -> AuroraSkinDefinition` objects, we pass a `displayConverter` that uses the display name of the skin.
-* Finally, our `onTriggerItemSelectedChange` updates the mutable state that was passed into our composable function, and if that mutable state is also used at the higher level of the app stack to configure one or more `AuroraWindow`s, those will get recomposed with the newly selected Aurora skin.
+* Finally, our `onTriggerItemSelectedChange` calls the passed lambda. The purpose of the lambda is to allow the higher level configuration to update the current skin. This responsibility rests with the application code - to have a mutable state variable that tracks the currently set skin, and to update that mutable state in this lambda passed to the sample `AuroraSkinSwitcher`.
 
 The same approach can be used to create a menu selection of available Aurora skins.

@@ -4,8 +4,7 @@ Every Aurora-powered window is created using the `AuroraWindow` API. The signatu
 
 | Parameter | Type | Meaning |
 | --- | --- | --- |
-| **skin** | AuroraSkinDefinition | [Skin](../theming/skins/overview.md) for the window content |
-| | MutableState&lt;AuroraSkinDefinition&gt; | [Skin](../theming/skins/overview.md) for the window content. Can be updated at runtime, which will then cause recomposition of the window content based on the new skin. |
+| **skin** | AuroraSkinDefinition | [Skin](../theming/skins/overview.md) for the window content. Use `remember { mutableStateOf(...) }` to dynamically update the skin at runtime, which will then cause recomposition of the window content based on the new skin. |
 | **iconFilterStrategy** | IconFilterStrategy | Icon filter strategy to apply on the window icon, if present |
 | **menuCommands** | CommandGroup | If present, is used to create the menu bar of this window |
 
@@ -80,7 +79,7 @@ The moving pieces:
 * Use `AuroraSkin.displayName` to get the display name of the current Aurora skin
 * Use `getAuroraSkins()` to get the list of all core Aurora skins
 * Find the current skin in this list, and set it as `selectedItem` in the combobox content model
-* Wire `onTriggerItemSelectedChange` to update the selected skin - which will cause the window content to be recomposed
+* Wire `onTriggerItemSelectedChange` to call the passed lambda that will update the mutable state variable that tracks the current skin - which will cause the window content to be recomposed
 * Use `displayConverter` in the presentation model to use the skin display name
 
 Here is how this popup looks like:

@@ -24,7 +24,7 @@ Column(modifier = Modifier.fillMaxSize()) {
   }
   Spacer(modifier = Modifier.weight(weight = 1.0f, fill = true))
   AuroraDecorationArea(decorationAreaType = DecorationAreaType.Footer) {
-    DemoSkeletonFooter(auroraSkinDefinition = auroraSkinDefinition)
+    DemoSkeletonFooter(onSkinChange = onSkinChange)
   }
 }
 ```
@@ -35,7 +35,7 @@ Column(modifier = Modifier.fillMaxSize()) {
 @Composable
 fun DemoSkeletonFooter(
     modifier: Modifier = Modifier,
-    auroraSkinDefinition: MutableState<AuroraSkinDefinition>
+    onSkinChange: (AuroraSkinDefinition) -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -45,7 +45,7 @@ fun DemoSkeletonFooter(
             .padding(horizontal = 8.dp, vertical = 6.dp)
     ) {
         Spacer(modifier.weight(weight = 1.0f, fill = true))
-        AuroraSkinSwitcher(auroraSkinDefinition, PopupPlacementStrategy.Upward.HAlignStart)
+        AuroraSkinSwitcher(onSkinChange, PopupPlacementStrategy.Upward.HAlignStart)
     }
 }
 ```
