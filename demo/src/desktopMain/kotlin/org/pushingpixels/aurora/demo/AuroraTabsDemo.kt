@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.model.TabContentModel
 import org.pushingpixels.aurora.component.model.TabsContentModel
@@ -48,7 +47,7 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(400.dp, 280.dp)
     )
-    val skin = mutableStateOf(marinerSkin())
+    var skin by remember { mutableStateOf(marinerSkin()) }
     val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
@@ -62,7 +61,7 @@ fun main() = auroraApplication {
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         onCloseRequest = ::exitApplication,
     ) {
-        DemoTabsContent(skin, resourceBundle)
+        DemoTabsContent({ skin = it }, resourceBundle)
     }
 }
 
@@ -70,7 +69,7 @@ fun main() = auroraApplication {
 @ExperimentalUnitApi
 @Composable
 fun AuroraWindowScope.DemoTabsContent(
-    auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
+    onSkinChange: (AuroraSkinDefinition) -> Unit,
     resourceBundle: ResourceBundle
 ) {
     var state by remember { mutableStateOf(0) }
@@ -81,7 +80,7 @@ fun AuroraWindowScope.DemoTabsContent(
             modifier = Modifier.padding(vertical = 6.dp, horizontal = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            AuroraSkinSwitcher(auroraSkinDefinition)
+            AuroraSkinSwitcher(onSkinChange)
             AuroraLocaleSwitcher(resourceBundle)
         }
         TabsProjection(contentModel = TabsContentModel(

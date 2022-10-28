@@ -50,7 +50,7 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(500.dp, 400.dp)
     )
-    val skin = mutableStateOf(marinerSkin())
+    var skin by remember { mutableStateOf(marinerSkin()) }
     val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
@@ -101,7 +101,7 @@ fun main() = auroraApplication {
             )
         )
     ) {
-        DemoProgressContent(skin, resourceBundle)
+        DemoProgressContent({ skin = it }, resourceBundle)
     }
 }
 
@@ -109,7 +109,7 @@ fun main() = auroraApplication {
 @Composable
 fun AuroraWindowScope.DemoProgressArea(
     modifier: Modifier = Modifier,
-    auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
+    onSkinChange: (AuroraSkinDefinition) -> Unit,
     resourceBundle: ResourceBundle
 ) {
     // TODO - convert this to use ConstraintLayout when (if?) that is available for desktop
@@ -125,7 +125,7 @@ fun AuroraWindowScope.DemoProgressArea(
                     .padding(vertical = 8.dp, horizontal = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                AuroraSkinSwitcher(auroraSkinDefinition)
+                AuroraSkinSwitcher(onSkinChange = onSkinChange)
 
                 AuroraLocaleSwitcher(resourceBundle)
             }
@@ -230,7 +230,7 @@ fun AuroraWindowScope.DemoProgressArea(
 @ExperimentalUnitApi
 @Composable
 fun AuroraWindowScope.DemoProgressContent(
-    auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
+    onSkinChange: (AuroraSkinDefinition) -> Unit,
     resourceBundle: ResourceBundle
 ) {
     val alignment = remember { mutableStateOf(DemoAlignment.Center) }
@@ -375,7 +375,7 @@ fun AuroraWindowScope.DemoProgressContent(
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.None) {
             DemoProgressArea(
                 modifier = Modifier.weight(weight = 1.0f, fill = true),
-                auroraSkinDefinition = auroraSkinDefinition,
+                onSkinChange = onSkinChange,
                 resourceBundle = resourceBundle
             )
         }

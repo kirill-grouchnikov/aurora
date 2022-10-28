@@ -29,7 +29,7 @@ import org.pushingpixels.aurora.theming.getAuroraSkins
 
 @Composable
 fun AuroraSkinSwitcher(
-    auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
+    onSkinChange: (AuroraSkinDefinition) -> Unit,
     popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart
 ) {
     val currentSkinDisplayName = AuroraSkin.displayName
@@ -43,7 +43,7 @@ fun AuroraSkinSwitcher(
             selectedItem = selectedSkinItem.value,
             onTriggerItemSelectedChange = {
                 selectedSkinItem.value = it
-                auroraSkinDefinition.value = it.second.invoke()
+                onSkinChange.invoke(it.second.invoke())
             }
         ),
         presentationModel = ComboBoxPresentationModel(

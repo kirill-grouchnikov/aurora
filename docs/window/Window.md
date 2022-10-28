@@ -11,7 +11,7 @@ Every Aurora-powered window is created using the `AuroraWindow` API. The signatu
 
 ### Setting window skin
 
-If you're not planning to allow the user to change the window skin at runtime (that is, your application has fixed design), use the `AuroraWindow` API that accepts `AuroraSkinDefintion` like this:
+If you're not planning to allow the user to change the window skin at runtime (that is, your application has fixed design), use the `AuroraWindow` with a hard-coded `AuroraSkinDefinition`:
 
 ```kotlin
 AuroraWindow(
@@ -25,15 +25,13 @@ AuroraWindow(
 
 ### Dynamically changing window skin
 
-If you want to allows the use to change the window skin at runtime, use the `AuroraWindow` API that accepts `MutableState<AuroraSkinDefinition>`.
-
-First, create the state variable that will hold the currently selected skin:
+If you want to allows the use to change the window skin at runtime, start by creating a mutable state variable that keeps track of the current skin:
 
 ```kotlin
-val skin = mutableStateOf(marinerSkin())
+var skin by remember { mutableStateOf(marinerSkin()) }
 ```
 
-Then, create your `AuroraWindow` as before:
+Then, create your `AuroraWindow` same as before:
 
 ```kotlin
 AuroraWindow(
@@ -45,35 +43,35 @@ AuroraWindow(
 }
 ```
 
-And finally, add the skin selection functionality to your UI. Such functionality can be in a settings dialog, a window-level menu, a dropdown in your toolbar / footer, or any other way your design calls for.
+Next, add the skin selection functionality to your UI. Such functionality can be in a settings dialog, a window-level menu, a dropdown in your toolbar / footer, or any other way your design calls for.
 
 Here is sample implementation of switching the window skin as a combobox:
 
 ```kotlin
 @Composable
 fun AuroraSkinSwitcher(
-  auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
-  popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart
+    onSkinChange: (AuroraSkinDefinition) -> Unit,
+    popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart
 ) {
-  val currentSkinDisplayName = AuroraSkin.displayName
-  val auroraSkins = getAuroraSkins()
-  val selectedSkinItem =
-    remember { mutableStateOf(auroraSkins.first { it.first == currentSkinDisplayName }) }
+    val currentSkinDisplayName = AuroraSkin.displayName
+    val auroraSkins = getAuroraSkins()
+    val selectedSkinItem =
+        remember { mutableStateOf(auroraSkins.first { it.first == currentSkinDisplayName }) }
 
-  ComboBoxProjection(
-    contentModel = ComboBoxContentModel(
-      items = auroraSkins,
-      selectedItem = selectedSkinItem.value,
-      onTriggerItemSelectedChange = {
-        selectedSkinItem.value = it
-        auroraSkinDefinition.value = it.second.invoke()
-      }
-    ),
-    presentationModel = ComboBoxPresentationModel(
-      displayConverter = { it.first },
-      popupPlacementStrategy = popupPlacementStrategy
-    )
-  ).project()
+    ComboBoxProjection(
+        contentModel = ComboBoxContentModel(
+            items = auroraSkins,
+            selectedItem = selectedSkinItem.value,
+            onTriggerItemSelectedChange = {
+                selectedSkinItem.value = it
+                onSkinChange.invoke(it.second.invoke())
+            }
+        ),
+        presentationModel = ComboBoxPresentationModel(
+            displayConverter = { it.first },
+            popupPlacementStrategy = popupPlacementStrategy
+        )
+    ).project()
 }
 ```
 
@@ -88,6 +86,12 @@ The moving pieces:
 Here is how this popup looks like:
 
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/window/skin-switcher.png" width="199" border=0>
+
+And finally, the last part is to wire this sample skin switcher to update our mutable skin state:
+
+```kotlin
+AuroraSkinSwitcher({ skin = it })
+```
 
 ### Menu bar
 

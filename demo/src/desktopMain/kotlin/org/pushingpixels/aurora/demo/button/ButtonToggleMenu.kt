@@ -50,13 +50,12 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(400.dp, 212.dp)
     )
-    val skin = mutableStateOf(marinerSkin())
     val resourceBundle = derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
 
     AuroraWindow(
-        skin = skin,
+        skin = marinerSkin(),
         title = "Aurora Demo",
         icon = radiance_menu(),
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,

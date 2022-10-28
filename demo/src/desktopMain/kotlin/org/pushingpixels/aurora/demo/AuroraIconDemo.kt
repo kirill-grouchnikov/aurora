@@ -17,7 +17,9 @@ package org.pushingpixels.aurora.demo
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
@@ -46,7 +48,6 @@ import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
-import org.pushingpixels.aurora.window.AuroraWindowScope
 import org.pushingpixels.aurora.window.auroraApplication
 
 fun main() = auroraApplication {
@@ -55,7 +56,7 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(800.dp, 600.dp)
     )
-    val skin = mutableStateOf(businessSkin())
+    val skin by remember { mutableStateOf(businessSkin()) }
 
     AuroraWindow(
         skin = skin,
@@ -242,7 +243,7 @@ fun IconDemoArea() {
 }
 
 @Composable
-fun AuroraWindowScope.IconDemoContent() {
+fun IconDemoContent() {
     Column(modifier = Modifier.fillMaxSize().padding(vertical = 12.dp)) {
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
             IconDemoArea()

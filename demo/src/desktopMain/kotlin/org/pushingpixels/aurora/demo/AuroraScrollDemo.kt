@@ -22,10 +22,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -90,7 +87,7 @@ fun main() = auroraApplication {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
 
-    val skin = mutableStateOf(twilightSkin())
+    var skin by remember { mutableStateOf(twilightSkin()) }
 
     val scope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
@@ -157,7 +154,7 @@ fun main() = auroraApplication {
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
-                AuroraSkinSwitcher(skin)
+                AuroraSkinSwitcher({ skin = it })
 
                 Spacer(modifier = Modifier.width(8.dp))
 

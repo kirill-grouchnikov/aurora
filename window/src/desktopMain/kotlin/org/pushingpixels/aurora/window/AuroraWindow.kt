@@ -547,88 +547,6 @@ fun auroraApplication(content: @Composable AuroraApplicationScope.() -> Unit) {
 @OptIn(AuroraInternalApi::class)
 @Composable
 fun AuroraApplicationScope.AuroraWindow(
-    skin: MutableState<AuroraSkinDefinition>,
-    onCloseRequest: () -> Unit,
-    state: WindowState = rememberWindowState(),
-    visible: Boolean = true,
-    title: String = "Untitled",
-    icon: Painter? = null,
-    iconFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
-    menuCommands: CommandGroup? = null,
-    undecorated: Boolean = false,
-    resizable: Boolean = true,
-    enabled: Boolean = true,
-    focusable: Boolean = true,
-    alwaysOnTop: Boolean = false,
-    onPreviewKeyEvent: (androidx.compose.ui.input.key.KeyEvent) -> Boolean = { false },
-    onKeyEvent: (androidx.compose.ui.input.key.KeyEvent) -> Boolean = { false },
-    content: @Composable AuroraWindowScope.() -> Unit
-) {
-    val density = mutableStateOf(Density(1.0f, 1.0f))
-
-    Window(
-        onCloseRequest = onCloseRequest,
-        state = state,
-        visible = visible,
-        title = title,
-        icon = icon,
-        undecorated = undecorated,
-        resizable = resizable,
-        enabled = enabled,
-        focusable = focusable,
-        alwaysOnTop = alwaysOnTop,
-        onPreviewKeyEvent = onPreviewKeyEvent,
-        onKeyEvent = onKeyEvent
-    ) {
-        CompositionLocalProvider(
-            LocalWindow provides window,
-            LocalWindowSize provides state.size,
-            LocalLayoutDirection provides if (ComponentOrientation.getOrientation(applicationLocale).isLeftToRight)
-                LayoutDirection.Ltr else LayoutDirection.Rtl
-        ) {
-            val auroraWindowScope = AuroraWindowScopeImpl(this@AuroraWindow, this)
-            AuroraSkin(
-                displayName = skin.value.displayName,
-                decorationAreaType = DecorationAreaType.None,
-                colors = skin.value.colors,
-                buttonShaper = skin.value.buttonShaper,
-                painters = skin.value.painters,
-                animationConfig = AuroraSkin.animationConfig
-            ) {
-                density.value = LocalDensity.current
-                auroraWindowScope.AuroraWindowContent(
-                    title = title,
-                    icon = icon,
-                    iconFilterStrategy = iconFilterStrategy,
-                    undecorated = undecorated,
-                    menuCommands = menuCommands,
-                    content = content
-                )
-            }
-        }
-
-        LaunchedEffect(Unit) {
-            if (undecorated) {
-                val lastCursor = mutableStateOf(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR))
-                val awtInputHandler = AWTInputHandler(
-                    density = density.value,
-                    window = window,
-                    rootPane = window.rootPane,
-                    lastCursor = lastCursor
-                )
-
-                Toolkit.getDefaultToolkit().addAWTEventListener(
-                    awtInputHandler,
-                    AWTEvent.MOUSE_EVENT_MASK or AWTEvent.MOUSE_MOTION_EVENT_MASK
-                )
-            }
-        }
-    }
-}
-
-@OptIn(AuroraInternalApi::class)
-@Composable
-fun AuroraApplicationScope.AuroraWindow(
     skin: AuroraSkinDefinition,
     onCloseRequest: () -> Unit,
     state: WindowState = rememberWindowState(),
@@ -644,7 +562,7 @@ fun AuroraApplicationScope.AuroraWindow(
     alwaysOnTop: Boolean = false,
     onPreviewKeyEvent: (androidx.compose.ui.input.key.KeyEvent) -> Boolean = { false },
     onKeyEvent: (androidx.compose.ui.input.key.KeyEvent) -> Boolean = { false },
-    content: @Composable WindowScope.() -> Unit
+    content: @Composable AuroraWindowScope.() -> Unit
 ) {
     val density = mutableStateOf(Density(1.0f, 1.0f))
 

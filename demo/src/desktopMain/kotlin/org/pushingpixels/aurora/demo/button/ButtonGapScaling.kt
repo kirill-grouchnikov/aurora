@@ -17,7 +17,6 @@ package org.pushingpixels.aurora.demo.button
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
@@ -43,10 +42,9 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(600.dp, 212.dp)
     )
-    val skin = mutableStateOf(marinerSkin())
 
     AuroraWindow(
-        skin = skin,
+        skin = marinerSkin(),
         title = "Aurora Demo",
         icon = radiance_menu(),
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,

@@ -18,6 +18,8 @@ package org.pushingpixels.aurora.demo
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -51,7 +53,7 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(600.dp, 400.dp)
     )
-    val skin = mutableStateOf(marinerSkin())
+    var skin by remember { mutableStateOf(businessSkin()) }
 
     AuroraWindow(
         skin = skin,
@@ -62,7 +64,7 @@ fun main() = auroraApplication {
         undecorated = true,
         onCloseRequest = ::exitApplication,
     ) {
-        BreadcrumbContent(skin)
+        BreadcrumbContent(onSkinChange = { skin = it })
     }
 }
 
@@ -99,7 +101,7 @@ private suspend fun getCommandPanelContent(
 }
 
 @Composable
-fun AuroraWindowScope.BreadcrumbContent(auroraSkinDefinition: MutableState<AuroraSkinDefinition>) {
+fun AuroraWindowScope.BreadcrumbContent(onSkinChange: (AuroraSkinDefinition) -> Unit) {
     val scope = rememberCoroutineScope()
 
     val fileSystemView = FileSystemView.getFileSystemView()
@@ -246,7 +248,7 @@ fun AuroraWindowScope.BreadcrumbContent(auroraSkinDefinition: MutableState<Auror
                 Spacer(modifier = Modifier.width(12.dp))
 
                 AuroraSkinSwitcher(
-                    auroraSkinDefinition = auroraSkinDefinition,
+                    onSkinChange = onSkinChange,
                     popupPlacementStrategy = PopupPlacementStrategy.Upward.HAlignStart
                 )
             }

@@ -18,6 +18,8 @@ package org.pushingpixels.aurora.demo
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,10 +38,7 @@ import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.demo.svg.vaadin.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.window.AuroraDecorationArea
-import org.pushingpixels.aurora.window.AuroraWindow
-import org.pushingpixels.aurora.window.AuroraWindowScope
-import org.pushingpixels.aurora.window.auroraApplication
+import org.pushingpixels.aurora.window.*
 import java.text.MessageFormat
 import java.util.*
 import kotlin.system.exitProcess
@@ -56,7 +55,7 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.TopStart),
         size = DpSize(200.dp, 150.dp)
     )
-    val skin = mutableStateOf(marinerSkin())
+    var skin by remember { mutableStateOf(businessSkin()) }
     val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
@@ -131,7 +130,10 @@ fun main() = auroraApplication {
             )
         )
     ) {
-        DemoContent(skin, resourceBundle)
+        DemoContent(
+            onSkinChange = { skin = it },
+            resourceBundle = resourceBundle
+        )
     }
 }
 
@@ -433,10 +435,10 @@ fun DemoHeader(
 
 @ExperimentalUnitApi
 @Composable
-fun AuroraWindowScope.DemoArea(
+fun AuroraApplicationScope.DemoArea(
     modifier: Modifier = Modifier,
     contentEnabled: MutableState<Boolean>,
-    auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
+    onSkinChange: (AuroraSkinDefinition) -> Unit,
     resourceBundle: ResourceBundle,
     styleCommands: CommandGroup
 ) {
@@ -459,7 +461,7 @@ fun AuroraWindowScope.DemoArea(
                     onTriggerSelectedChange = { contentEnabled.value = !contentEnabled.value }
                 )).project()
 
-                AuroraSkinSwitcher(auroraSkinDefinition)
+                AuroraSkinSwitcher(onSkinChange)
 
                 AuroraLocaleSwitcher(resourceBundle)
             }
@@ -1056,8 +1058,8 @@ fun AuroraWindowScope.DemoArea(
 
 @ExperimentalUnitApi
 @Composable
-fun AuroraWindowScope.DemoContent(
-    auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
+fun AuroraApplicationScope.DemoContent(
+    onSkinChange: (AuroraSkinDefinition) -> Unit,
     resourceBundle: ResourceBundle
 ) {
     val contentEnabled = remember { mutableStateOf(true) }
@@ -1212,7 +1214,7 @@ fun AuroraWindowScope.DemoContent(
             DemoArea(
                 modifier = Modifier.weight(weight = 1.0f, fill = true),
                 styleCommands = styleCommands,
-                auroraSkinDefinition = auroraSkinDefinition,
+                onSkinChange = onSkinChange,
                 resourceBundle = resourceBundle,
                 contentEnabled = contentEnabled
             )

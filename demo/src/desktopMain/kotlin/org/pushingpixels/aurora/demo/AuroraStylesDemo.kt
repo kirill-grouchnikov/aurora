@@ -56,7 +56,7 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(660.dp, 400.dp)
     )
-    val skin = mutableStateOf(marinerSkin())
+    var skin by remember { mutableStateOf(marinerSkin()) }
     val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
@@ -68,7 +68,7 @@ fun main() = auroraApplication {
         undecorated = true,
         onCloseRequest = ::exitApplication,
     ) {
-        DemoStyleContent(skin, resourceBundle)
+        DemoStyleContent({ skin = it }, resourceBundle)
     }
 }
 
@@ -342,12 +342,12 @@ fun DemoStyleCanvas(
 @ExperimentalUnitApi
 @Composable
 fun AuroraApplicationScope.DemoStyleContent(
-    auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
+    onSkinChange: (AuroraSkinDefinition) -> Unit,
     resourceBundle: ResourceBundle
 ) {
     Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
         Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
-            AuroraSkinSwitcher(auroraSkinDefinition)
+            AuroraSkinSwitcher(onSkinChange)
 
             Spacer(modifier = Modifier.width(8.dp))
 

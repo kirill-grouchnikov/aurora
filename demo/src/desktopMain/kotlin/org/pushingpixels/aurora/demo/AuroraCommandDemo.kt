@@ -37,8 +37,8 @@ import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.window.AuroraApplicationScope
 import org.pushingpixels.aurora.window.AuroraWindow
+import org.pushingpixels.aurora.window.AuroraWindowScope
 import org.pushingpixels.aurora.window.auroraApplication
 import java.text.MessageFormat
 import java.util.*
@@ -49,7 +49,7 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(800.dp, 480.dp)
     )
-    val skin = mutableStateOf(marinerSkin())
+    var skin by remember { mutableStateOf(marinerSkin()) }
     val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
@@ -63,7 +63,7 @@ fun main() = auroraApplication {
         undecorated = true,
         onCloseRequest = ::exitApplication,
     ) {
-        DemoCommandContent(skin, resourceBundle)
+        DemoCommandContent({ skin = it }, resourceBundle)
     }
 }
 
@@ -399,8 +399,8 @@ fun CommandDemoStyleStrip(
 }
 
 @Composable
-fun AuroraApplicationScope.DemoCommandContent(
-    auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
+fun AuroraWindowScope.DemoCommandContent(
+    onSkinChange: (AuroraSkinDefinition) -> Unit,
     resourceBundle: ResourceBundle
 ) {
     var selected by remember { mutableStateOf(false) }
@@ -708,7 +708,7 @@ fun AuroraApplicationScope.DemoCommandContent(
 
         Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth()) {
-                AuroraSkinSwitcher(auroraSkinDefinition)
+                AuroraSkinSwitcher(onSkinChange = onSkinChange)
 
                 Spacer(modifier = Modifier.width(8.dp))
 

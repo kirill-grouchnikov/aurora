@@ -45,7 +45,7 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(600.dp, 400.dp)
     )
-    val skin = mutableStateOf(marinerSkin())
+    var skin by remember { mutableStateOf(marinerSkin()) }
     val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
@@ -99,7 +99,7 @@ fun main() = auroraApplication {
             )
         )
     ) {
-        DemoSkeletonContent(skin, resourceBundle)
+        DemoSkeletonContent({ skin = it }, resourceBundle)
     }
 }
 
@@ -107,7 +107,7 @@ fun main() = auroraApplication {
 @Composable
 fun DemoSkeletonFooter(
     modifier: Modifier = Modifier,
-    auroraSkinDefinition: MutableState<AuroraSkinDefinition>
+    onSkinChange: (AuroraSkinDefinition) -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -117,14 +117,14 @@ fun DemoSkeletonFooter(
             .padding(horizontal = 8.dp, vertical = 6.dp)
     ) {
         Spacer(modifier.weight(weight = 1.0f, fill = true))
-        AuroraSkinSwitcher(auroraSkinDefinition, PopupPlacementStrategy.Upward.HAlignStart)
+        AuroraSkinSwitcher(onSkinChange, PopupPlacementStrategy.Upward.HAlignStart)
     }
 }
 
 @ExperimentalUnitApi
 @Composable
 fun AuroraWindowScope.DemoSkeletonContent(
-    auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
+    onSkinChange: (AuroraSkinDefinition) -> Unit,
     resourceBundle: ResourceBundle
 ) {
     val contentEnabled = remember { mutableStateOf(true) }
@@ -278,7 +278,7 @@ fun AuroraWindowScope.DemoSkeletonContent(
         }
         Spacer(modifier = Modifier.weight(weight = 1.0f, fill = true))
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.Footer) {
-            DemoSkeletonFooter(auroraSkinDefinition = auroraSkinDefinition)
+            DemoSkeletonFooter(onSkinChange = onSkinChange)
         }
     }
 }

@@ -96,7 +96,7 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(1000.dp, 400.dp)
     )
-    val skin = mutableStateOf(businessSkin())
+    var skin by remember { mutableStateOf(businessSkin()) }
     val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
@@ -110,7 +110,7 @@ fun main() = auroraApplication {
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
-                AuroraSkinSwitcher(skin)
+                AuroraSkinSwitcher({ skin = it })
 
                 Spacer(modifier = Modifier.width(8.dp))
 

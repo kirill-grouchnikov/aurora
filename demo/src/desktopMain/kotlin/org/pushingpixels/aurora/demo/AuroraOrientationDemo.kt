@@ -46,7 +46,7 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(800.dp, 400.dp)
     )
-    val skin = mutableStateOf(marinerSkin())
+    var skin by remember { mutableStateOf(marinerSkin()) }
     val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
@@ -60,7 +60,7 @@ fun main() = auroraApplication {
         undecorated = true,
         onCloseRequest = ::exitApplication,
     ) {
-        OrientationCommandContent(skin, resourceBundle)
+        OrientationCommandContent({ skin = it }, resourceBundle)
     }
 }
 
@@ -390,7 +390,7 @@ private fun getPopupMenuContentModel(resourceBundle: ResourceBundle): CommandMen
 
 @Composable
 fun AuroraApplicationScope.OrientationCommandContent(
-    auroraSkinDefinition: MutableState<AuroraSkinDefinition>,
+    onSkinChange: (AuroraSkinDefinition) -> Unit,
     resourceBundle: ResourceBundle
 ) {
     var actionEnabled by remember { mutableStateOf(true) }
@@ -466,7 +466,7 @@ fun AuroraApplicationScope.OrientationCommandContent(
 
         Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth()) {
-                AuroraSkinSwitcher(auroraSkinDefinition)
+                AuroraSkinSwitcher(onSkinChange = onSkinChange)
 
                 Spacer(modifier = Modifier.width(8.dp))
 
