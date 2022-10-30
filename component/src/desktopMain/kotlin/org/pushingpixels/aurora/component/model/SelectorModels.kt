@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 
 data class SelectorContentModel(
@@ -27,15 +28,37 @@ data class SelectorContentModel(
     val onTriggerSelectedChange: (Boolean) -> Unit
 ): ContentModel
 
+data class SwitchContentModel(
+    val richTooltip: RichTooltip? = null,
+    val enabled: Boolean = true,
+    val selected: Boolean = false,
+    val onTriggerSelectedChange: (Boolean) -> Unit
+): ContentModel
+
 object SelectorSizingConstants {
     val SelectorMarkSize = 14.dp
     val SelectorMarkTextGap = 4.dp
     val DefaultSelectorContentPadding = PaddingValues(start = 4.dp, top = 6.dp, end = 4.dp, bottom = 4.dp)
+    val SwitchTrackWidth = 36.dp
+    val SwitchTrackHeight = 18.dp
+    val SwitchThumbSizeOn = 12.dp
+    val SwitchThumbSizeOff = 10.dp
 }
 
 data class SelectorPresentationModel(
     val contentPadding: PaddingValues = SelectorSizingConstants.DefaultSelectorContentPadding,
     val markSize: Dp = SelectorSizingConstants.SelectorMarkSize,
+    val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Leading,
+    val horizontalGapScaleFactor: Float = 1.0f,
+    val richTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel()
+): PresentationModel
+
+data class SwitchPresentationModel(
+    val contentPadding: PaddingValues = SelectorSizingConstants.DefaultSelectorContentPadding,
+    val trackSize: DpSize = DpSize(width = SelectorSizingConstants.SwitchTrackWidth,
+        height = SelectorSizingConstants.SwitchTrackHeight),
+    val thumbSizeOn: Dp = SelectorSizingConstants.SwitchThumbSizeOn,
+    val thumbSizeOff: Dp = SelectorSizingConstants.SwitchThumbSizeOff,
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Leading,
     val horizontalGapScaleFactor: Float = 1.0f,
     val richTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel()

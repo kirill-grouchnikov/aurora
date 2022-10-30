@@ -48,7 +48,7 @@ fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
-        size = DpSize(720.dp, 660.dp)
+        size = DpSize(720.dp, 750.dp)
     )
     val aboutState = rememberWindowState(
         placement = WindowPlacement.Floating,
@@ -733,6 +733,114 @@ fun AuroraApplicationScope.DemoArea(
                             radioButtonSelected = it
                         }
                     )).project()
+            }
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+                LabelProjection(
+                    contentModel = LabelContentModel(
+                        text = resourceBundle.getString("Control.selector.switches")
+                    )
+                ).project()
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                // Enabled selected switch
+                var switchEnabledSelected by remember { mutableStateOf(true) }
+                SwitchProjection(contentModel = SwitchContentModel(
+                    richTooltip = RichTooltip(
+                        title = resourceBundle.getString("Tooltip.genericTitle"),
+                        mainIcon = user_home(),
+                        descriptionSections = listOf(
+                            resourceBundle.getString("Tooltip.textParagraph1"),
+                            resourceBundle.getString("Tooltip.textParagraph2")
+                        ),
+                        footerIcon = help_browser(),
+                        footerSections = listOf(
+                            resourceBundle.getString("Tooltip.textFooterParagraph1")
+                        )
+                    ),
+                    enabled = contentEnabled,
+                    selected = switchEnabledSelected,
+                    onTriggerSelectedChange = {
+                        println("Selected switch? $it")
+                        switchEnabledSelected = it
+                    }
+                )).project()
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                // Enabled unselected switch
+                var switchEnabledUnselected by remember { mutableStateOf(false) }
+                SwitchProjection(contentModel = SwitchContentModel(
+                    richTooltip = RichTooltip(
+                        title = resourceBundle.getString("Tooltip.genericTitle"),
+                        mainIcon = user_home(),
+                        descriptionSections = listOf(
+                            resourceBundle.getString("Tooltip.textParagraph1"),
+                            resourceBundle.getString("Tooltip.textParagraph2")
+                        ),
+                        footerIcon = help_browser(),
+                        footerSections = listOf(
+                            resourceBundle.getString("Tooltip.textFooterParagraph1")
+                        )
+                    ),
+                    enabled = contentEnabled,
+                    selected = switchEnabledUnselected,
+                    onTriggerSelectedChange = {
+                        println("Selected switch? $it")
+                        switchEnabledUnselected = it
+                    }
+                )).project()
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                // Disabled selected switch
+                var switchDisabledSelected by remember { mutableStateOf(true) }
+                SwitchProjection(contentModel = SwitchContentModel(
+                    richTooltip = RichTooltip(
+                        title = resourceBundle.getString("Tooltip.genericTitle"),
+                        mainIcon = user_home(),
+                        descriptionSections = listOf(
+                            resourceBundle.getString("Tooltip.textParagraph1"),
+                            resourceBundle.getString("Tooltip.textParagraph2")
+                        ),
+                        footerIcon = help_browser(),
+                        footerSections = listOf(
+                            resourceBundle.getString("Tooltip.textFooterParagraph1")
+                        )
+                    ),
+                    enabled = false,
+                    selected = switchDisabledSelected,
+                    onTriggerSelectedChange = {
+                        println("Selected switch? $it")
+                        switchDisabledSelected = it
+                    }
+                )).project()
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                // Disabled unselected switch
+                var switchDisabledUnselected by remember { mutableStateOf(false) }
+                SwitchProjection(contentModel = SwitchContentModel(
+                    richTooltip = RichTooltip(
+                        title = resourceBundle.getString("Tooltip.genericTitle"),
+                        mainIcon = user_home(),
+                        descriptionSections = listOf(
+                            resourceBundle.getString("Tooltip.textParagraph1"),
+                            resourceBundle.getString("Tooltip.textParagraph2")
+                        ),
+                        footerIcon = help_browser(),
+                        footerSections = listOf(
+                            resourceBundle.getString("Tooltip.textFooterParagraph1")
+                        )
+                    ),
+                    enabled = false,
+                    selected = switchDisabledUnselected,
+                    onTriggerSelectedChange = {
+                        println("Selected switch? $it")
+                        switchDisabledUnselected = it
+                    }
+                )).project()
             }
 
             DemoHeader(

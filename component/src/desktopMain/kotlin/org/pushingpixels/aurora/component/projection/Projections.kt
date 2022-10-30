@@ -144,6 +144,24 @@ class RadioButtonProjection(
     }
 }
 
+class SwitchProjection(
+    val contentModel: SwitchContentModel,
+    val presentationModel: SwitchPresentationModel = SwitchPresentationModel()
+) {
+    @Composable
+    fun project(
+        modifier: Modifier = Modifier,
+        interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    ) {
+        AuroraSwitch(
+            modifier = modifier,
+            interactionSource = interactionSource,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel
+        )
+    }
+}
+
 class CircularProgressProjection(
     val contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
     val presentationModel: ProgressCircularPresentationModel = ProgressCircularPresentationModel()
