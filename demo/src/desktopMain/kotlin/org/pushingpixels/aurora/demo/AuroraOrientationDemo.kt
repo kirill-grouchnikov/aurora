@@ -485,13 +485,13 @@ fun AuroraApplicationScope.OrientationCommandContent(
                 CheckBoxProjection(contentModel = SelectorContentModel(
                     text = resourceBundle.getString("Action.enabled"),
                     selected = actionEnabled,
-                    onTriggerSelectedChange = { actionEnabled = !actionEnabled }
+                    onClick = { actionEnabled = !actionEnabled }
                 )).project()
                 Spacer(modifier = Modifier.width(8.dp))
                 CheckBoxProjection(contentModel = SelectorContentModel(
                     text = resourceBundle.getString("Popup.enabled"),
                     selected = popupEnabled,
-                    onTriggerSelectedChange = { popupEnabled = !popupEnabled }
+                    onClick = { popupEnabled = !popupEnabled }
                 )).project()
             }
 

@@ -125,17 +125,17 @@ fun AuroraApplicationScope.ScreenshotContent(
                     CheckBoxProjection(contentModel = SelectorContentModel(
                         text = "Enabled selected",
                         selected = true,
-                        onTriggerSelectedChange = {}
+                        onClick = {}
                     )).project()
                     CheckBoxProjection(contentModel = SelectorContentModel(
                         text = "Disabled selected",
                         enabled = false,
                         selected = true,
-                        onTriggerSelectedChange = {}
+                        onClick = {}
                     )).project()
                     CheckBoxProjection(contentModel = SelectorContentModel(
                         text = "Enabled unselected",
-                        onTriggerSelectedChange = {}
+                        onClick = {}
                     )).project()
                     Spacer(Modifier.height(4.dp))
                     val simpleComboItems = listOf("item1", "item2", "item3")
@@ -159,17 +159,17 @@ fun AuroraApplicationScope.ScreenshotContent(
                     RadioButtonProjection(contentModel = SelectorContentModel(
                         text = "Enabled selected",
                         selected = true,
-                        onTriggerSelectedChange = {}
+                        onClick = {}
                     )).project()
                     RadioButtonProjection(contentModel = SelectorContentModel(
                         text = "Disabled selected",
                         enabled = false,
                         selected = true,
-                        onTriggerSelectedChange = {}
+                        onClick = {}
                     )).project()
                     RadioButtonProjection(contentModel = SelectorContentModel(
                         text = "Enabled unselected",
-                        onTriggerSelectedChange = {}
+                        onClick = {}
                     )).project()
                     Spacer(Modifier.height(4.dp))
                     TextFieldStringProjection(

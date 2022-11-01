@@ -21,6 +21,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -172,11 +173,9 @@ internal fun AuroraRadioButton(
                 richTooltip = contentModel.richTooltip,
                 presentationModel = presentationModel.richTooltipPresentationModel
             )
-            .toggleable(
-                value = contentModel.selected,
-                onValueChange = {
-                    contentModel.onTriggerSelectedChange.invoke(it)
-                },
+            .selectable(
+                selected = contentModel.selected,
+                onClick = { contentModel.onClick.invoke() },
                 enabled = contentModel.enabled,
                 role = Role.RadioButton,
                 interactionSource = interactionSource,

@@ -229,6 +229,11 @@ class AuroraColorSchemeBundle(
                 if (colorSchemeMap[associationKind]!!.containsKey(state)) {
                     continue
                 }
+                if (state.hardFallback != null) {
+                    // Skip states with hard fallback - that link will be traversed in
+                    // getColorScheme() logic
+                    continue
+                }
                 colorSchemeMap[associationKind]!![state] = scheme
             }
         } else {

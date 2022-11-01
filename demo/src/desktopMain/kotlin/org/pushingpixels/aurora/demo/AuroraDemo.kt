@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.demo
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -24,6 +25,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
@@ -460,7 +462,7 @@ fun AuroraApplicationScope.DemoArea(
                 CheckBoxProjection(contentModel = SelectorContentModel(
                     text = resourceBundle.getString("Content.enabled"),
                     selected = contentEnabled,
-                    onTriggerSelectedChange = { onContentEnabledChanged.invoke(!contentEnabled) }
+                    onClick = { onContentEnabledChanged.invoke(!contentEnabled) }
                 )).project()
 
                 AuroraSkinSwitcher(onSkinChange)
@@ -687,50 +689,52 @@ fun AuroraApplicationScope.DemoArea(
                 var checkboxSelected by remember { mutableStateOf(true) }
                 CheckBoxProjection(contentModel = SelectorContentModel(
                     text = resourceBundle.getString("Control.selector.checkbox"),
-                    richTooltip = RichTooltip(
-                        title = resourceBundle.getString("Tooltip.genericTitle"),
-                        mainIcon = user_home(),
-                        descriptionSections = listOf(
-                            resourceBundle.getString("Tooltip.textParagraph1"),
-                            resourceBundle.getString("Tooltip.textParagraph2")
-                        ),
-                        footerIcon = help_browser(),
-                        footerSections = listOf(
-                            resourceBundle.getString("Tooltip.textFooterParagraph1")
-                        )
-                    ),
                     enabled = contentEnabled,
                     selected = checkboxSelected,
-                    onTriggerSelectedChange = {
-                        println("Selected checkbox? $it")
-                        checkboxSelected = it
+                    onClick = {
+                        println("Selected checkbox? $checkboxSelected")
+                        checkboxSelected = !checkboxSelected
                     }
                 )).project()
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                // Example of a radio button backed by a mutable boolean
-                var radioButtonSelected by remember { mutableStateOf(true) }
-                RadioButtonProjection(
-                    contentModel = SelectorContentModel(
-                        text = resourceBundle.getString("Control.selector.radio"),
-                        richTooltip = RichTooltip(
-                            title = resourceBundle.getString("Tooltip.genericTitle"),
-                            mainIcon = user_home(),
-                            descriptionSections = listOf(
-                                resourceBundle.getString("Tooltip.textParagraph1"),
-                                resourceBundle.getString("Tooltip.textParagraph2")
-                            ),
-                            footerIcon = help_browser(),
-                            footerSections = listOf(
-                                resourceBundle.getString("Tooltip.textFooterParagraph1")
-                            )
-                        ),
+                // We have two radio buttons and only one can be selected
+                var radioState by remember { mutableStateOf(true) }
+                Row(Modifier.selectableGroup()) {
+                    RadioButtonProjection(
+                        contentModel = SelectorContentModel(
+                            text = resourceBundle.getString("Control.selector.radio1"),
+                            enabled = contentEnabled,
+                            selected = radioState,
+                            onClick = { radioState = true }
+                        )).project()
+
+                    RadioButtonProjection(
+                        contentModel = SelectorContentModel(
+                            text = resourceBundle.getString("Control.selector.radio2"),
+                            enabled = contentEnabled,
+                            selected = !radioState,
+                            onClick = { radioState = false }
+                        )).project()
+                }
+            }
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+                // Example of a tri-state checkbox
+                var triStateCheckbox by remember { mutableStateOf(ToggleableState.On) }
+                TriStateCheckBoxProjection(
+                    contentModel = TriStateSelectorContentModel(
+                        text = resourceBundle.getString("Control.selector.triStateCheckbox"),
                         enabled = contentEnabled,
-                        selected = radioButtonSelected,
-                        onTriggerSelectedChange = {
-                            println("Selected radio? $it")
-                            radioButtonSelected = it
+                        state = triStateCheckbox,
+                        onClick = {
+                            // Cycle through the available states
+                            triStateCheckbox = when (triStateCheckbox) {
+                                ToggleableState.On -> ToggleableState.Indeterminate
+                                ToggleableState.Indeterminate -> ToggleableState.Off
+                                ToggleableState.Off -> ToggleableState.On
+                            }
                         }
                     )).project()
             }
@@ -747,23 +751,11 @@ fun AuroraApplicationScope.DemoArea(
                 // Enabled selected switch
                 var switchEnabledSelected by remember { mutableStateOf(true) }
                 SwitchProjection(contentModel = SwitchContentModel(
-                    richTooltip = RichTooltip(
-                        title = resourceBundle.getString("Tooltip.genericTitle"),
-                        mainIcon = user_home(),
-                        descriptionSections = listOf(
-                            resourceBundle.getString("Tooltip.textParagraph1"),
-                            resourceBundle.getString("Tooltip.textParagraph2")
-                        ),
-                        footerIcon = help_browser(),
-                        footerSections = listOf(
-                            resourceBundle.getString("Tooltip.textFooterParagraph1")
-                        )
-                    ),
                     enabled = contentEnabled,
                     selected = switchEnabledSelected,
-                    onTriggerSelectedChange = {
-                        println("Selected switch? $it")
-                        switchEnabledSelected = it
+                    onClick = {
+                        println("Selected switch? $switchEnabledSelected")
+                        switchEnabledSelected = !switchEnabledSelected
                     }
                 )).project()
 
@@ -772,23 +764,11 @@ fun AuroraApplicationScope.DemoArea(
                 // Enabled unselected switch
                 var switchEnabledUnselected by remember { mutableStateOf(false) }
                 SwitchProjection(contentModel = SwitchContentModel(
-                    richTooltip = RichTooltip(
-                        title = resourceBundle.getString("Tooltip.genericTitle"),
-                        mainIcon = user_home(),
-                        descriptionSections = listOf(
-                            resourceBundle.getString("Tooltip.textParagraph1"),
-                            resourceBundle.getString("Tooltip.textParagraph2")
-                        ),
-                        footerIcon = help_browser(),
-                        footerSections = listOf(
-                            resourceBundle.getString("Tooltip.textFooterParagraph1")
-                        )
-                    ),
                     enabled = contentEnabled,
                     selected = switchEnabledUnselected,
-                    onTriggerSelectedChange = {
-                        println("Selected switch? $it")
-                        switchEnabledUnselected = it
+                    onClick = {
+                        println("Selected switch? $switchEnabledUnselected")
+                        switchEnabledUnselected = !switchEnabledUnselected
                     }
                 )).project()
 
@@ -797,23 +777,11 @@ fun AuroraApplicationScope.DemoArea(
                 // Disabled selected switch
                 var switchDisabledSelected by remember { mutableStateOf(true) }
                 SwitchProjection(contentModel = SwitchContentModel(
-                    richTooltip = RichTooltip(
-                        title = resourceBundle.getString("Tooltip.genericTitle"),
-                        mainIcon = user_home(),
-                        descriptionSections = listOf(
-                            resourceBundle.getString("Tooltip.textParagraph1"),
-                            resourceBundle.getString("Tooltip.textParagraph2")
-                        ),
-                        footerIcon = help_browser(),
-                        footerSections = listOf(
-                            resourceBundle.getString("Tooltip.textFooterParagraph1")
-                        )
-                    ),
                     enabled = false,
                     selected = switchDisabledSelected,
-                    onTriggerSelectedChange = {
-                        println("Selected switch? $it")
-                        switchDisabledSelected = it
+                    onClick = {
+                        println("Selected switch? $switchDisabledSelected")
+                        switchDisabledSelected = !switchDisabledSelected
                     }
                 )).project()
 
@@ -822,23 +790,11 @@ fun AuroraApplicationScope.DemoArea(
                 // Disabled unselected switch
                 var switchDisabledUnselected by remember { mutableStateOf(false) }
                 SwitchProjection(contentModel = SwitchContentModel(
-                    richTooltip = RichTooltip(
-                        title = resourceBundle.getString("Tooltip.genericTitle"),
-                        mainIcon = user_home(),
-                        descriptionSections = listOf(
-                            resourceBundle.getString("Tooltip.textParagraph1"),
-                            resourceBundle.getString("Tooltip.textParagraph2")
-                        ),
-                        footerIcon = help_browser(),
-                        footerSections = listOf(
-                            resourceBundle.getString("Tooltip.textFooterParagraph1")
-                        )
-                    ),
                     enabled = false,
                     selected = switchDisabledUnselected,
-                    onTriggerSelectedChange = {
-                        println("Selected switch? $it")
-                        switchDisabledUnselected = it
+                    onClick = {
+                        println("Selected switch? $switchDisabledUnselected")
+                        switchDisabledUnselected = !switchDisabledUnselected
                     }
                 )).project()
             }

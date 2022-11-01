@@ -9,7 +9,9 @@ Here is the list of all component projections provided by Aurora
 | **Command button panel** | CommandPanelContentModel | CommandPanelPresentationModel | CommandButtonPanelProjection |
 | **Combobox** | ComboBoxContentModel | ComboBoxPresentationModel | ComboBoxProjection |
 | **Checkbox** | SelectorContentModel | SelectorPresentationModel | CheckBoxProjection |
+| **Tri-state checkbox** | TriStateSelectorContentModel | SelectorPresentationModel | TriStateCheckBoxProjection |
 | **Radio button** | SelectorContentModel | SelectorPresentationModel | RadioButtonProjection |
+| **Switch** | SwitchContentModel | SwitchPresentationModel | SwitchProjection |
 | **Circular progress** | ProgressIndeterminateContentModel | ProgressCircularPresentationModel | CircularProgressProjection |
 | **Indeterminate linear progress** | ProgressIndeterminateContentModel | ProgressLinearPresentationModel | IndeterminateLinearProgressProjection |
 | **Determinate linear progress** | ProgressDeterminateContentModel | ProgressLinearPresentationModel | CircularProgressProjection |

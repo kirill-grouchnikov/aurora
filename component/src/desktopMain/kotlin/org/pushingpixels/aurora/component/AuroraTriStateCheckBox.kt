@@ -21,7 +21,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.selection.triStateToggleable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,19 +30,20 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.component.model.SelectorContentModel
 import org.pushingpixels.aurora.component.model.SelectorPresentationModel
 import org.pushingpixels.aurora.component.model.SelectorSizingConstants
+import org.pushingpixels.aurora.component.model.TriStateSelectorContentModel
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
 
 @Immutable
-private class CheckBoxDrawingCache(
+private class TriStateCheckBoxDrawingCache(
     val colorScheme: MutableColorScheme = MutableColorScheme(
         displayName = "Internal mutable",
         isDark = false
@@ -52,13 +53,13 @@ private class CheckBoxDrawingCache(
 
 @OptIn(AuroraInternalApi::class)
 @Composable
-internal fun AuroraCheckBox(
+internal fun AuroraTriStateCheckBox(
     modifier: Modifier,
     interactionSource: MutableInteractionSource,
-    contentModel: SelectorContentModel,
+    contentModel: TriStateSelectorContentModel,
     presentationModel: SelectorPresentationModel
 ) {
-    val drawingCache = remember { CheckBoxDrawingCache() }
+    val drawingCache = remember { TriStateCheckBoxDrawingCache() }
     val rollover by interactionSource.collectIsHoveredAsState()
     val isPressed by interactionSource.collectIsPressedAsState()
 
@@ -67,17 +68,33 @@ internal fun AuroraCheckBox(
             ComponentState.getState(
                 isEnabled = contentModel.enabled,
                 isRollover = rollover,
-                isSelected = contentModel.selected,
+                isSelected = (contentModel.state == ToggleableState.On),
+                isMixed = (contentModel.state == ToggleableState.Indeterminate),
                 isPressed = isPressed
             )
         )
     }
 
-    val markAlpha = remember { mutableStateOf(if (contentModel.selected) 1.0f else 0.0f) }
+    //println("State is ${contentModel.state} and ${currentState.value}")
+    //val markAlpha = remember { mutableStateOf(if (contentModel.state == ToggleableState.Off) 0.0f else 1.0f) }
+    //val indeterminateStrength = remember { mutableStateOf(if (contentModel.state == ToggleableState.Indeterminate) 1.0f else 0.0f) }
 
     // Transition for the selection state
-    val selectionTransition = updateTransition(contentModel.selected)
+    val selectionTransition = updateTransition(contentModel.state == ToggleableState.On)
     val selectedFraction by selectionTransition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = AuroraSkin.animationConfig.regular)
+        }
+    ) {
+        when (it) {
+            false -> 0.0f
+            true -> 1.0f
+        }
+    }
+
+    // Transition for the selection state
+    val indeterminateTransition = updateTransition(contentModel.state == ToggleableState.Indeterminate)
+    val indeterminateFraction by indeterminateTransition.animateFloat(
         transitionSpec = {
             tween(durationMillis = AuroraSkin.animationConfig.regular)
         }
@@ -130,7 +147,7 @@ internal fun AuroraCheckBox(
     // TODO - figure out why the animations are not running without looking
     //  at the result (and how it looks like in the new animation APIs)
     @Suppress("UNUSED_VARIABLE")
-    val totalFraction = selectedFraction + rolloverFraction +
+    val totalFraction = selectedFraction + indeterminateFraction + rolloverFraction +
             pressedFraction + enabledFraction
 
     val modelStateInfo = remember { ModelStateInfo(currentState.value) }
@@ -141,7 +158,8 @@ internal fun AuroraCheckBox(
         currentState = currentState,
         transitionInfo = transitionInfo,
         enabled = contentModel.enabled,
-        selected = contentModel.selected,
+        selected = (contentModel.state == ToggleableState.On),
+        mixed = (contentModel.state == ToggleableState.Indeterminate),
         rollover = rollover,
         pressed = isPressed,
         duration = AuroraSkin.animationConfig.regular
@@ -150,7 +168,7 @@ internal fun AuroraCheckBox(
     if (transitionInfo.value != null) {
         //val tweakedDuration = AuroraSkin.animationConfig.regular
         LaunchedEffect(currentState.value) {
-            //println("In launch effect!")
+            // println("In launch effect!")
             val transitionFloat = Animatable(transitionInfo.value!!.from)
 //            stateTransitionFloat.value = Animatable(transitionInfo.from)
 //            println("******** Animating from ${transitionInfo.value!!.from} to 1.0f over ${transitionInfo.value!!.duration} ********")
@@ -159,11 +177,11 @@ internal fun AuroraCheckBox(
                 targetValue = transitionInfo.value!!.to,
                 animationSpec = tween(durationMillis = transitionInfo.value!!.duration)
             ) {
-//                println("During animation $value towards $targetValue")
+               // println("During animation $value towards $targetValue")
                 modelStateInfo.updateActiveStates(value)
             }
 
-//            println("&&&&&&& Ended with reason ${result.endReason} at ${transitionFloat.value}")
+            //println("&&&&&&& Ended with reason ${result.endReason} at ${transitionFloat.value}")
             if (result.endReason == AnimationEndReason.Finished) {
                 modelStateInfo.updateActiveStates(1.0f)
                 modelStateInfo.clear(currentState.value)
@@ -173,7 +191,7 @@ internal fun AuroraCheckBox(
         }
     }
 
-    // The toggleable modifier is set on the checkbox mark, as well as on the
+    // The tri-state toggleable modifier is set on the checkbox mark, as well as on the
     // content so that the whole thing is clickable to toggle the control.
     val decorationAreaType = AuroraSkin.decorationAreaType
     Row(
@@ -183,9 +201,9 @@ internal fun AuroraCheckBox(
                 richTooltip = contentModel.richTooltip,
                 presentationModel = presentationModel.richTooltipPresentationModel
             )
-            .toggleable(
-                value = contentModel.selected,
-                onValueChange = { contentModel.onClick.invoke() },
+            .triStateToggleable(
+                state = contentModel.state,
+                onClick = { contentModel.onClick.invoke() },
                 enabled = contentModel.enabled,
                 role = Role.Checkbox,
                 interactionSource = interactionSource,
@@ -232,12 +250,56 @@ internal fun AuroraCheckBox(
         ) { it.markColor }
 
         // Checkmark alpha is the combined strength of all the
-        // states that have the selection bit turned on
-        markAlpha.value = modelStateInfo.stateContributionMap
+        // states that have the selection bit turned on or determinate bit turned off
+        val markAlpha =
+            modelStateInfo.stateContributionMap
+                .filter {
+                    it.key.isFacetActive(ComponentStateFacet.Selection) || it.key.isFacetActive(
+                        ComponentStateFacet.Mix
+                    )
+                }
+                .map { it.value }
+                .sumOf { it.contribution.toDouble() }
+                .toFloat()
+
+        // Indeterminate strength ("flatness" of the checkmark) is the combined strength of all the
+        // states that have the determinate bit turned off
+        val selectedStrength = modelStateInfo.stateContributionMap
             .filter { it.key.isFacetActive(ComponentStateFacet.Selection) }
             .map { it.value }
             .sumOf { it.contribution.toDouble() }
             .toFloat()
+        val mixStrength = modelStateInfo.stateContributionMap
+            .filter { it.key.isFacetActive(ComponentStateFacet.Mix) }
+            .map { it.value }
+            .sumOf { it.contribution.toDouble() }
+            .toFloat()
+
+        val checkmarkFlatness = when {
+            ((selectedStrength > 0.0f) && (mixStrength > 0.0f)) -> {
+                // Going between On and Indeterminate states
+                mixStrength
+            }
+
+            ((selectedStrength == 0.0f) && (mixStrength > 0.0f)) -> {
+                // Going between Off and Indeterminate states
+                1.0f
+            }
+
+            ((selectedStrength > 0.0f) && (mixStrength == 0.0f)) -> {
+                // Going between On and Off states
+                0.0f
+            }
+
+            else -> 0.0f
+        }
+
+//        println("State is ${contentModel.state}, markAlpha is $markAlpha, flatness is $checkmarkFlatness")
+//        println("\tInternal state is $currentState")
+//        println("\t\t Selection on? ${currentState.value.isFacetActive(ComponentStateFacet.Selection)}")
+//        println("\t\t Mixed on? ${currentState.value.isFacetActive(ComponentStateFacet.Mix)}")
+//        modelStateInfo.dumpState()
+//        println("\tselected strength $selectedStrength, mixed strength $mixStrength")
 
         // Text color. Note that the text doesn't "participate" in state changes that
         // involve rollover, selection or pressed bits
@@ -254,7 +316,6 @@ internal fun AuroraCheckBox(
 
         val fillPainter = AuroraSkin.painters.fillPainter
         val borderPainter = AuroraSkin.painters.borderPainter
-//      modelStateInfo.dumpState()
 
         Canvas(Modifier.wrapContentSize(Alignment.Center).size(presentationModel.markSize)) {
             val width = this.size.width
@@ -309,15 +370,15 @@ internal fun AuroraCheckBox(
 
             with(drawingCache) {
                 markPath.reset()
-                markPath.moveTo(0.25f * width, 0.48f * height)
-                markPath.lineTo(0.48f * width, 0.73f * height)
-                markPath.lineTo(0.76f * width, 0.28f * height)
+                markPath.moveTo(0.25f * width, 0.48f * height + 0.02f * height * checkmarkFlatness)
+                markPath.lineTo(0.48f * width, 0.73f * height - 0.23f * height * checkmarkFlatness)
+                markPath.lineTo(0.76f * width, 0.28f * height + 0.22f * height * checkmarkFlatness)
 
                 // Note that we apply alpha twice - once for the selected / checked
                 // state or transition, and the second time based on the enabled state
                 drawPath(
                     path = markPath,
-                    color = markColor.withAlpha(markAlpha.value),
+                    color = markColor.withAlpha(markAlpha),
                     style = Stroke(
                         width = markStroke,
                         cap = StrokeCap.Round,

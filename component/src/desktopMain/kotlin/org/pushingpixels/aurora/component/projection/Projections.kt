@@ -126,6 +126,24 @@ class CheckBoxProjection(
     }
 }
 
+class TriStateCheckBoxProjection(
+    val contentModel: TriStateSelectorContentModel,
+    val presentationModel: SelectorPresentationModel = SelectorPresentationModel()
+) {
+    @Composable
+    fun project(
+        modifier: Modifier = Modifier,
+        interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    ) {
+        AuroraTriStateCheckBox(
+            modifier = modifier,
+            interactionSource = interactionSource,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel
+        )
+    }
+}
+
 class RadioButtonProjection(
     val contentModel: SelectorContentModel,
     val presentationModel: SelectorPresentationModel = SelectorPresentationModel()

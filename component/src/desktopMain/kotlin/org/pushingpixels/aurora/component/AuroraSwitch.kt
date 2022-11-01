@@ -189,9 +189,7 @@ internal fun AuroraSwitch(
             )
             .toggleable(
                 value = contentModel.selected,
-                onValueChange = {
-                    contentModel.onTriggerSelectedChange.invoke(it)
-                },
+                onValueChange = { contentModel.onClick.invoke() },
                 enabled = contentModel.enabled,
                 role = Role.Switch,
                 interactionSource = interactionSource,

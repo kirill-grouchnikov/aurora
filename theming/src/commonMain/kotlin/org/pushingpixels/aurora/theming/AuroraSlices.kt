@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.theming
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.state.ToggleableState
 
 /**
  * Defines a single facet of core and custom [ComponentState]s. See Javadocs of the
@@ -49,11 +50,19 @@ class ComponentStateFacet(var name: String, value: Int) {
         val Press = ComponentStateFacet("press", 50)
 
         /**
-         * Facet that describes the determinate bit. This is relevant for
-         * [AuroraDeterminateLinearProgress] and
-         * [AuroraIndeterminateLinearProgress] APIs.
+         * Facet that describes the determinate bit.
          */
         val Determinate = ComponentStateFacet("determinate", 10)
+
+        /**
+         * Facet that describes the indeterminate bit.
+         */
+        val Indeterminate = ComponentStateFacet("indeterminate", 10)
+
+        /**
+         * Facet that describes the mix bit.
+         */
+        val Mix = ComponentStateFacet("mixed", 10)
     }
 
     /**
@@ -88,7 +97,7 @@ class ComponentState(
      */
     private val facetsTurnedOff: MutableSet<ComponentStateFacet>?
 
-    private val mapping: MutableMap<ComponentStateFacet, Boolean>
+    private val mappingOn: MutableMap<ComponentStateFacet, Boolean>
     private val name: String
     val hardFallback: ComponentState?
 
@@ -141,8 +150,7 @@ class ComponentState(
      * return `true` for both [ComponentStateFacet.Rollover]
      * and [ComponentStateFacet.Selection].
      *
-     * @param stateFacet
-     * State facet.
+     * @param stateFacet State facet.
      * @return `true` if `this` component state is
      * "active" under the specified facet (for example,
      * [.RolloverSelected] will return `true` for both
@@ -151,15 +159,15 @@ class ComponentState(
      * otherwise.
      */
     fun isFacetActive(stateFacet: ComponentStateFacet): Boolean {
-        val result = mapping[stateFacet]
+        val result = mappingOn[stateFacet]
         if (result != null) {
             return result
         }
         if (facetsTurnedOn != null && facetsTurnedOn.contains(stateFacet)) {
-            mapping[stateFacet] = true
+            mappingOn[stateFacet] = true
             return true
         }
-        mapping[stateFacet] = false
+        mappingOn[stateFacet] = false
         return false
     }
 
@@ -300,73 +308,174 @@ class ComponentState(
          * Disabled selected.
          */
         val DisabledSelected = ComponentState(
-            "disabled selected",
-            arrayOf(ComponentStateFacet.Selection),
-            arrayOf(ComponentStateFacet.Enable)
+            name = "disabled selected",
+            facetsOn = arrayOf(ComponentStateFacet.Selection),
+            facetsOff = arrayOf(ComponentStateFacet.Enable)
         )
 
         /**
          * Disabled and not selected.
          */
         val DisabledUnselected = ComponentState(
-            "disabled unselected", null, arrayOf(
+            name = "disabled unselected",
+            facetsOn = null,
+            facetsOff = arrayOf(
                 ComponentStateFacet.Enable, ComponentStateFacet.Selection
             )
+        )
+
+        /**
+         * Disabled and indeterminate.
+         */
+        val DisabledIndeterminate = ComponentState(
+            name = "indeterminate disabled",
+            hardFallback = DisabledSelected,
+            facetsOn = arrayOf(ComponentStateFacet.Indeterminate),
+            facetsOff = arrayOf(ComponentStateFacet.Enable)
+        )
+
+        /**
+         * Disabled and determinate.
+         */
+        val DisabledDeterminate = ComponentState(
+            name = "determinate disabled",
+            hardFallback = DisabledSelected,
+            facetsOn = arrayOf(ComponentStateFacet.Determinate),
+            facetsOff = arrayOf(ComponentStateFacet.Enable)
+        )
+
+        /**
+         * Disabled and mixed.
+         */
+        val DisabledMixed = ComponentState(
+            name = "mixed disabled",
+            hardFallback = DisabledSelected,
+            facetsOn = arrayOf(ComponentStateFacet.Mix),
+            facetsOff = arrayOf(ComponentStateFacet.Enable)
         )
 
         /**
          * Pressed selected.
          */
         val PressedSelected = ComponentState(
-            "pressed selected", arrayOf(
+            name = "pressed selected",
+            facetsOn = arrayOf(
                 ComponentStateFacet.Selection, ComponentStateFacet.Press,
                 ComponentStateFacet.Enable
-            ), null
+            ),
+            facetsOff = null
         )
 
         /**
          * Pressed and not selected.
          */
         val PressedUnselected = ComponentState(
-            "pressed unselected", arrayOf(
+            name = "pressed unselected",
+            facetsOn = arrayOf(
                 ComponentStateFacet.Press, ComponentStateFacet.Enable
-            ), arrayOf(ComponentStateFacet.Selection)
+            ),
+            facetsOff = arrayOf(ComponentStateFacet.Selection)
+        )
+
+        /**
+         * Pressed and indeterminate.
+         */
+        val PressedMixed = ComponentState(
+            name = "pressed mixed",
+            hardFallback = PressedSelected,
+            facetsOn = arrayOf(
+                ComponentStateFacet.Press, ComponentStateFacet.Enable, ComponentStateFacet.Mix
+            ),
+            facetsOff = null
         )
 
         /**
          * Selected.
          */
         val Selected = ComponentState(
-            "selected", arrayOf(
+            name = "selected",
+            facetsOn = arrayOf(
                 ComponentStateFacet.Selection,
                 ComponentStateFacet.Enable
-            ), null
+            ),
+            facetsOff = null
         )
 
         /**
          * Selected and rolled over.
          */
         val RolloverSelected = ComponentState(
-            "rollover selected", arrayOf(
+            name = "rollover selected",
+            facetsOn = arrayOf(
                 ComponentStateFacet.Selection,
                 ComponentStateFacet.Rollover, ComponentStateFacet.Enable
             ),
-            null
+            facetsOff = null
         )
 
         /**
          * Not selected and rolled over.
          */
         val RolloverUnselected = ComponentState(
-            "rollover unselected", arrayOf(
+            name = "rollover unselected",
+            facetsOn = arrayOf(
                 ComponentStateFacet.Rollover, ComponentStateFacet.Enable
-            ), arrayOf(ComponentStateFacet.Selection)
+            ),
+            facetsOff = arrayOf(ComponentStateFacet.Selection)
+        )
+
+        /**
+         * Not determinate and rolled over.
+         */
+        val RolloverMixed = ComponentState(
+            name = "rollover mixed",
+            hardFallback = RolloverSelected,
+            facetsOn = arrayOf(
+                ComponentStateFacet.Rollover, ComponentStateFacet.Enable, ComponentStateFacet.Mix
+            ),
+            facetsOff = null
+        )
+
+        /**
+         * Determinate
+         */
+        val Determinate = ComponentState(
+            name = "determinate",
+            hardFallback = Selected,
+            facetsOn = arrayOf(
+                ComponentStateFacet.Enable,
+                ComponentStateFacet.Determinate
+            ),
+            facetsOff = null
+        )
+
+        /**
+         * Indeterminate
+         */
+        val Indeterminate = ComponentState(
+            name = "indeterminate",
+            hardFallback = Selected,
+            facetsOn = arrayOf(ComponentStateFacet.Enable, ComponentStateFacet.Indeterminate),
+            facetsOff = null
+        )
+
+        /**
+         * Mixed
+         */
+        val Mixed = ComponentState(
+            name = "mixed",
+            hardFallback = Selected,
+            facetsOn = arrayOf(ComponentStateFacet.Enable, ComponentStateFacet.Mix),
+            facetsOff = null
         )
 
         /**
          * Enabled state.
          */
-        val Enabled = ComponentState("enabled", arrayOf(ComponentStateFacet.Enable), null)
+        val Enabled = ComponentState(
+            name = "enabled",
+            facetsOn = arrayOf(ComponentStateFacet.Enable),
+            facetsOff = null)
 
         /**
          * Returns all active component states. Note that the result will **not** contain
@@ -397,12 +506,10 @@ class ComponentState(
         /**
          * Returns the component state that matches the specified parameters.
          *
-         * @param isEnabled
-         * Enabled flag.
-         * @param isRollover
-         * Rollover flag.
-         * @param isSelected
-         * Selected flag.
+         * @param isEnabled Enabled flag.
+         * @param isRollover Rollover flag.
+         * @param isSelected Selected flag.
+         * @param isPressed Pressed flag.
          * @return The component state that matches the specified parameters.
          */
         fun getState(
@@ -429,6 +536,45 @@ class ComponentState(
             return if (isRollover) {
                 RolloverUnselected
             } else Enabled
+        }
+
+        /**
+         * Returns the component state that matches the specified parameters.
+         *
+         * @param isEnabled Enabled flag.
+         * @param isRollover Rollover flag.
+         * @param isSelected Selected flag.
+         * @param isPressed Pressed flag.
+         * @return The component state that matches the specified parameters.
+         */
+        fun getState(
+            isEnabled: Boolean,
+            isRollover: Boolean,
+            isSelected: Boolean,
+            isMixed: Boolean,
+            isPressed: Boolean
+        ): ComponentState {
+            if (!isEnabled) {
+                return when {
+                    isSelected -> DisabledSelected
+                    isMixed -> DisabledMixed
+                    else -> DisabledUnselected
+                }
+            }
+
+            if (isPressed) {
+                return when {
+                    isSelected -> PressedSelected
+                    isMixed -> PressedMixed
+                    else -> PressedUnselected
+                }
+            }
+
+            return when {
+                isSelected -> if (isRollover) RolloverSelected else Selected
+                isMixed -> if (isRollover) RolloverMixed else Mixed
+                else -> if (isRollover) RolloverUnselected else Enabled
+            }
         }
     }
 
@@ -459,7 +605,7 @@ class ComponentState(
         if (facetsOff != null) {
             facetsTurnedOff.addAll(facetsOff)
         }
-        mapping = HashMap()
+        mappingOn = HashMap()
         allStates.add(this)
     }
 }
@@ -701,24 +847,28 @@ enum class IconFilterStrategy {
 
 sealed class PopupPlacementStrategy(val isHorizontal: Boolean) {
     object Upward {
-        object HAlignStart: PopupPlacementStrategy(false)
-        object HAlignEnd: PopupPlacementStrategy(false)
+        object HAlignStart : PopupPlacementStrategy(false)
+        object HAlignEnd : PopupPlacementStrategy(false)
     }
+
     object Downward {
-        object HAlignStart: PopupPlacementStrategy(false)
-        object HAlignEnd: PopupPlacementStrategy(false)
+        object HAlignStart : PopupPlacementStrategy(false)
+        object HAlignEnd : PopupPlacementStrategy(false)
     }
+
     object CenteredVertically {
-        object HAlignStart: PopupPlacementStrategy(false)
-        object HAlignEnd: PopupPlacementStrategy(false)
+        object HAlignStart : PopupPlacementStrategy(false)
+        object HAlignEnd : PopupPlacementStrategy(false)
     }
+
     object Startward {
-        object VAlignTop: PopupPlacementStrategy(true)
-        object VAlignBottom: PopupPlacementStrategy(true)
+        object VAlignTop : PopupPlacementStrategy(true)
+        object VAlignBottom : PopupPlacementStrategy(true)
     }
+
     object Endward {
-        object VAlignTop: PopupPlacementStrategy(true)
-        object VAlignBottom: PopupPlacementStrategy(true)
+        object VAlignTop : PopupPlacementStrategy(true)
+        object VAlignBottom : PopupPlacementStrategy(true)
     }
 }
 

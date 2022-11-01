@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.component.utils
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.state.ToggleableState
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.theming.ComponentState
 import org.pushingpixels.aurora.theming.ComponentStateFacet
@@ -97,6 +98,15 @@ class ModelStateInfo(startModelState: ComponentState) {
         println("######")
     }
 
+    fun dumpState() {
+        println("######")
+        for ((state, currRange) in stateContributionMap) {
+            println("\t $state at ${currRange.contribution} [${currRange.start}-${currRange.end}]")
+        }
+        println("\tActive strength $activeStrength")
+        println("######")
+    }
+
     fun getSnapshot(currModelState: ComponentState): ModelStateInfoSnapshot {
         return ModelStateInfoSnapshot(
             currModelState = currModelState,
@@ -136,7 +146,7 @@ fun StateTransitionTracker(
 //            stateTransitionFloat.value.stop()
 //        }
         val tweakedDuration: Int
-        val tweakedStart : Float
+        val tweakedStart: Float
 
         if (modelStateInfo.stateContributionMap.containsKey(currentState.value)) {
             //println("Already has new state")
@@ -153,7 +163,7 @@ fun StateTransitionTracker(
             tweakedDuration = duration
 //            stateTransitionFloat.updateBounds(0.0f, 1.0f)
 //            stateTransitionFloat.snapTo(0.0f)
-  //          stateTransitionFloat.value = Animatable(0.0f)
+            //          stateTransitionFloat.value = Animatable(0.0f)
             //println("\tat ${stateTransitionFloat.value}")
         }
 
@@ -226,7 +236,7 @@ fun StateTransitionTracker(
 //                //modelStateInfo.dumpState(stateTransitionFloat.value)
 //            }
 //        }
-    transitionInfo.value = TransitionInfo(tweakedStart, 1.0f, tweakedDuration)
+        transitionInfo.value = TransitionInfo(tweakedStart, 1.0f, tweakedDuration)
 
         //println()
     }
@@ -241,6 +251,144 @@ fun StateTransitionTracker(
 //    }
 }
 
-data class TransitionInfo(val from:Float, val to: Float, val duration: Int)
+
+@AuroraInternalApi
+fun StateTransitionTracker(
+    modelStateInfo: ModelStateInfo,
+    currentState: MutableState<ComponentState>,
+    transitionInfo: MutableState<TransitionInfo?>,
+    enabled: Boolean,
+    selected: Boolean,
+    mixed: Boolean,
+    rollover: Boolean,
+    pressed: Boolean,
+    duration: Int
+) {
+    val oldState = currentState.value
+    currentState.value = ComponentState.getState(
+        isEnabled = enabled,
+        isRollover = rollover,
+        isSelected = selected,
+        isMixed = mixed,
+        isPressed = pressed
+    )
+
+    if (currentState.value != oldState) {
+////        if (dump) {
+//            println("******** Have new state to move to ${currentState.value} ********")
+//            modelStateInfo.dumpState(stateTransitionFloat.value.value)
+////        }
+        // Need to transition to the new state
+//        if (stateTransitionFloat.value.isRunning) {
+//            println("Stopping a running animation!")
+//            stateTransitionFloat.value.stop()
+//        }
+        val tweakedDuration: Int
+        val tweakedStart: Float
+
+        if (modelStateInfo.stateContributionMap.containsKey(currentState.value)) {
+            //println("Already has new state")
+            // Going to a state that is already partially active
+            val transitionPosition = modelStateInfo.stateContributionMap[currentState.value]!!.contribution
+            tweakedDuration = (duration * (1.0f - transitionPosition)).toInt()
+            tweakedStart = transitionPosition
+            //stateTransitionFloat.updateBounds(transitionPosition, 1.0f)
+            //stateTransitionFloat.snapTo(transitionPosition)
+//            stateTransitionFloat.value = Animatable(transitionPosition)
+        } else {
+            //println("Does not have new state (curr state ${currentState.value}) at ${stateTransitionFloat.value}")
+            tweakedStart = 0.0f
+            tweakedDuration = duration
+//            stateTransitionFloat.updateBounds(0.0f, 1.0f)
+//            stateTransitionFloat.snapTo(0.0f)
+            //          stateTransitionFloat.value = Animatable(0.0f)
+            //println("\tat ${stateTransitionFloat.value}")
+        }
+
+        // Create a new contribution map
+        val newContributionMap: MutableMap<ComponentState, StateContributionInfo> = HashMap()
+        if (modelStateInfo.stateContributionMap.containsKey(currentState.value)) {
+            // 1. the new state goes from current value to 1.0
+            // 2. the rest go from current value to 0.0
+            for ((contribState, currRange) in modelStateInfo.stateContributionMap.entries) {
+                val newEnd = if (contribState == currentState.value) 1.0f else 0.0f
+                newContributionMap[contribState] = StateContributionInfo(
+                    currRange.contribution, newEnd
+                )
+            }
+        } else {
+            // 1. all existing states go from current value to 0.0
+            // 2. the new state goes from 0.0 to 1.0
+            for ((contribState, currRange) in modelStateInfo.stateContributionMap.entries) {
+                newContributionMap[contribState] = StateContributionInfo(
+                    currRange.contribution, 0.0f
+                )
+            }
+            newContributionMap[currentState.value] = StateContributionInfo(0.0f, 1.0f)
+        }
+        modelStateInfo.stateContributionMap = newContributionMap
+        modelStateInfo.sync()
+////
+//        //modelStateInfo.currModelState = currentState.value
+//
+////        if (dump) {
+////            println("******** After moving to new state *****")
+//            modelStateInfo.dumpState(currentState.value, stateTransitionFloat.value.value)
+////        }
+
+//        return TransitionInfo(from = stateTransitionFloat.value.value,
+//        to = 1.0f,
+//        duration = tweakedDuration)
+//        println("Animating over $tweakedDuration from ${stateTransitionFloat.value.value} to 1.0f [${stateTransitionFloat.value.isRunning}]")
+//        stateTransitionFloat.value.animateTo(
+//            targetValue = 1.0f,
+//            anim = FloatTweenSpec(duration = tweakedDuration),
+//            onEnd = { endReason, _ ->
+//                //println("Ended with reason $endReason at ${stateTransitionFloat.value}")
+//                if (endReason == AnimationEndReason.TargetReached) {
+//                    modelStateInfo.updateActiveStates(1.0f)
+//                    modelStateInfo.clear()
+//                    //println("******** After clear (target reached) ********")
+//                    //modelStateInfo.dumpState(stateTransitionFloat.value)
+//                }
+//            }
+//        )
+//        LaunchedEffect(stateTransitionFloat.value) {
+//            println("In launch effect!")
+//            stateTransitionFloat.value = Animatable(tweakedStart)
+//            println("******** Animating from ${stateTransitionFloat.value.value} to 1.0f over $tweakedDuration ********")
+//            println("******** Is running ${stateTransitionFloat.value.isRunning} ********")
+//            val result = stateTransitionFloat.value.animateTo(
+//                targetValue = 1.0f,
+//                animationSpec = tween(durationMillis = tweakedDuration)
+//            ) {
+//                println("During animation $value")
+//                modelStateInfo.updateActiveStates(value)
+//            }
+//
+//            println("&&&&&&& Ended with reason ${result.endReason} at ${stateTransitionFloat.value.value}")
+//            if (result.endReason == AnimationEndReason.Finished) {
+//                modelStateInfo.updateActiveStates(1.0f)
+//                modelStateInfo.clear(currentState.value)
+//                //println("******** After clear (target reached) ********")
+//                //modelStateInfo.dumpState(stateTransitionFloat.value)
+//            }
+//        }
+        transitionInfo.value = TransitionInfo(tweakedStart, 1.0f, tweakedDuration)
+
+        //println()
+    }
+
+    //return null
+//    if (stateTransitionFloat.value.isRunning) {
+//        modelStateInfo.updateActiveStates(stateTransitionFloat.value.value)
+////        if (dump) {
+//        //println("********* [${System.currentTimeMillis()}] During animation ${stateTransitionFloat.value.value} to ${stateTransitionFloat.value.targetValue} *******")
+//        //modelStateInfo.dumpState(stateTransitionFloat.value.value)
+////        }
+//    }
+}
+
+data class TransitionInfo(val from: Float, val to: Float, val duration: Int)
 
 

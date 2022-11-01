@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -25,14 +26,22 @@ data class SelectorContentModel(
     val richTooltip: RichTooltip? = null,
     val enabled: Boolean = true,
     val selected: Boolean = false,
-    val onTriggerSelectedChange: (Boolean) -> Unit
+    val onClick: () -> Unit
+): ContentModel
+
+data class TriStateSelectorContentModel(
+    val text: String,
+    val richTooltip: RichTooltip? = null,
+    val enabled: Boolean = true,
+    val state: ToggleableState = ToggleableState.Off,
+    val onClick: () -> Unit
 ): ContentModel
 
 data class SwitchContentModel(
     val richTooltip: RichTooltip? = null,
     val enabled: Boolean = true,
     val selected: Boolean = false,
-    val onTriggerSelectedChange: (Boolean) -> Unit
+    val onClick: () -> Unit
 ): ContentModel
 
 object SelectorSizingConstants {
