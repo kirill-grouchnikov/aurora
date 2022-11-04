@@ -16,7 +16,6 @@
 package org.pushingpixels.aurora.theming
 
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.state.ToggleableState
 
 /**
  * Defines a single facet of core and custom [ComponentState]s. See Javadocs of the
