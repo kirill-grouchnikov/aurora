@@ -24,7 +24,7 @@ object RichTooltipSizingConstants {
     val MaxWidth = 264.dp
     val SmallIconSize = 16.dp
     val LargeIconSize = 32.dp
-    val ContentPadding = PaddingValues(6.dp)
+    val DefaultContentPadding = PaddingValues(6.dp)
     val HorizontalContentLayoutGap = 6.dp
     val VerticalContentLayoutGap = 6.dp
 }
@@ -136,5 +136,6 @@ data class RichTooltip(
 
 data class RichTooltipPresentationModel(
     val mainIconSize: Dp = RichTooltipSizingConstants.LargeIconSize,
-    val footerIconSize: Dp = RichTooltipSizingConstants.SmallIconSize
+    val footerIconSize: Dp = RichTooltipSizingConstants.SmallIconSize,
+    val contentPadding: PaddingValues = RichTooltipSizingConstants.DefaultContentPadding
 ) : PresentationModel

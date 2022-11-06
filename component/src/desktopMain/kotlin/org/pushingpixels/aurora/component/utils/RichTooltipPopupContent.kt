@@ -97,13 +97,14 @@ internal fun displayRichTooltipContent(
         ), layoutDirection
     )
 
+    val contentPadding = presentationModel.contentPadding
     val horizontalPaddingPx =
-        (RichTooltipSizingConstants.ContentPadding.calculateLeftPadding(layoutDirection) +
-                RichTooltipSizingConstants.ContentPadding.calculateRightPadding(layoutDirection)).value *
+        (contentPadding.calculateLeftPadding(layoutDirection) +
+                contentPadding.calculateRightPadding(layoutDirection)).value *
                 density.density
     val verticalPaddingPx =
-        (RichTooltipSizingConstants.ContentPadding.calculateTopPadding() +
-                RichTooltipSizingConstants.ContentPadding.calculateBottomPadding()).value *
+        (contentPadding.calculateTopPadding() +
+                contentPadding.calculateBottomPadding()).value *
                 density.density
     val verticalGapPx =
         (RichTooltipSizingConstants.VerticalContentLayoutGap.value * density.density).toInt()
@@ -437,6 +438,7 @@ private fun TopLevelRichTooltipContent(
 ) {
     val offset = ceil(LocalDensity.current.density).toInt()
     val layoutDirection = LocalLayoutDirection.current
+    val contentPadding = richTooltipPresentationModel.contentPadding
 
     Layout(modifier = Modifier.richTooltipBackground(),
         content = {
@@ -515,12 +517,11 @@ private fun TopLevelRichTooltipContent(
             height = tooltipLayoutInfo.fullSize.height.toInt()
         ) {
             // Offset everything by [offset,offset] for border insets
-            val left = offset + RichTooltipSizingConstants.ContentPadding.calculateLeftPadding(
+            val left = offset + contentPadding.calculateLeftPadding(
                 layoutDirection
             ).toPx().toInt()
             val top =
-                offset + RichTooltipSizingConstants.ContentPadding.calculateTopPadding().toPx()
-                    .toInt()
+                offset + contentPadding.calculateTopPadding().toPx().toInt()
 
             titlePlaceable.placeRelative(left, top)
 
