@@ -69,6 +69,5 @@ data class SwitchPresentationModel(
     val thumbSizeOn: Dp = SelectorSizingConstants.SwitchThumbSizeOn,
     val thumbSizeOff: Dp = SelectorSizingConstants.SwitchThumbSizeOff,
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Leading,
-    val horizontalGapScaleFactor: Float = 1.0f,
     val richTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel()
 ): PresentationModel
