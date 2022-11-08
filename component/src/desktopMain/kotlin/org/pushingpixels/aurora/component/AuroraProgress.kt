@@ -103,7 +103,11 @@ internal fun AuroraCircularProgress(
             useCenter = false,
             topLeft = Offset.Zero,
             size = Size(2.0f * diameter, 2.0f * diameter),
-            style = Stroke(width = 1.2f.dp.toPx(), cap = StrokeCap.Butt, join = StrokeJoin.Round),
+            style = Stroke(
+                width = presentationModel.strokeWidth.toPx(),
+                cap = StrokeCap.Butt,
+                join = StrokeJoin.Round
+            ),
             alpha = alpha
         )
     }

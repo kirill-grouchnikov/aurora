@@ -41,7 +41,8 @@ object ProgressConstants {
 }
 
 data class ProgressCircularPresentationModel(
-    val size: Dp = 10.dp
+    val size: Dp = 10.dp,
+    val strokeWidth: Dp = 1.2f.dp
 ): PresentationModel
 
 data class ProgressLinearPresentationModel(
