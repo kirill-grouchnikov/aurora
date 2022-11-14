@@ -39,13 +39,8 @@ import org.pushingpixels.aurora.component.projection.CommandButtonStripProjectio
 import org.pushingpixels.aurora.demo.svg.material.content_copy_black_24dp
 import org.pushingpixels.aurora.demo.svg.material.content_cut_black_24dp
 import org.pushingpixels.aurora.demo.svg.material.content_paste_black_24dp
-import org.pushingpixels.aurora.theming.AuroraSkinDefinition
-import org.pushingpixels.aurora.theming.IconFilterStrategy
-import org.pushingpixels.aurora.theming.marinerSkin
-import org.pushingpixels.aurora.theming.resolveAuroraDefaults
-import org.pushingpixels.aurora.window.AuroraApplicationScope
-import org.pushingpixels.aurora.window.AuroraWindow
-import org.pushingpixels.aurora.window.auroraApplication
+import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.window.*
 import java.text.MessageFormat
 import java.util.*
 
@@ -65,7 +60,7 @@ fun main() = auroraApplication {
         skin = skin,
         title = "Aurora Demo",
         state = state,
-        undecorated = true,
+        windowConfiguration = AuroraWindowConfiguration(titlePaneKind = AuroraWindowTitlePaneKind.Aurora),
         onCloseRequest = ::exitApplication,
     ) {
         DemoStyleContent({ skin = it }, resourceBundle)

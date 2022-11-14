@@ -32,10 +32,7 @@ import org.pushingpixels.aurora.component.model.CommandMenuContentModel
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.window.AuroraDecorationArea
-import org.pushingpixels.aurora.window.AuroraWindow
-import org.pushingpixels.aurora.window.AuroraWindowScope
-import org.pushingpixels.aurora.window.auroraApplication
+import org.pushingpixels.aurora.window.*
 import java.util.*
 
 @ExperimentalUnitApi
@@ -54,7 +51,7 @@ fun main() = auroraApplication {
         skin = skin,
         title = "Aurora skeleton",
         state = state,
-        undecorated = true,
+        windowConfiguration = AuroraWindowConfiguration(titlePaneKind = AuroraWindowTitlePaneKind.Aurora),
         icon = radiance_menu(),
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         onCloseRequest = ::exitApplication,

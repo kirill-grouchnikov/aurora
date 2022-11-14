@@ -31,6 +31,8 @@ import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.businessSkin
 import org.pushingpixels.aurora.window.AuroraWindow
+import org.pushingpixels.aurora.window.AuroraWindowConfiguration
+import org.pushingpixels.aurora.theming.AuroraWindowTitlePaneKind
 import org.pushingpixels.aurora.window.auroraApplication
 import java.text.MessageFormat
 import java.util.*
@@ -105,7 +107,7 @@ fun main() = auroraApplication {
         skin = skin,
         title = "Aurora Command Panel",
         state = state,
-        undecorated = true,
+        windowConfiguration = AuroraWindowConfiguration(titlePaneKind = AuroraWindowTitlePaneKind.Aurora),
         onCloseRequest = ::exitApplication,
     ) {
         Column(modifier = Modifier.fillMaxSize()) {

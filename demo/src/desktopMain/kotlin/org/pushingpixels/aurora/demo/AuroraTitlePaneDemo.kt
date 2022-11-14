@@ -15,25 +15,19 @@
  */
 package org.pushingpixels.aurora.demo
 
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.ExperimentalUnitApi
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.component.projection.DeterminateLinearProgressProjection
-import org.pushingpixels.aurora.component.projection.IndeterminateLinearProgressProjection
-import org.pushingpixels.aurora.component.projection.LabelProjection
-import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
+import org.pushingpixels.aurora.component.projection.ComboBoxProjection
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.*
@@ -45,18 +39,23 @@ fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
-        size = DpSize(500.dp, 400.dp)
+        size = DpSize(600.dp, 400.dp)
     )
     var skin by remember { mutableStateOf(marinerSkin()) }
     val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
 
+    var windowConfiguration by remember {
+        mutableStateOf(AuroraWindowConfiguration(titlePaneKind = AuroraWindowTitlePaneKind.Aurora))
+    }
+
+    println("Window configuration $windowConfiguration")
     AuroraWindow(
         skin = skin,
-        title = "Aurora Demo",
+        title = "Aurora skeleton",
         state = state,
-        windowConfiguration = AuroraWindowConfiguration(titlePaneKind = AuroraWindowTitlePaneKind.Aurora),
+        windowConfiguration = windowConfiguration,
         icon = radiance_menu(),
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         onCloseRequest = ::exitApplication,
@@ -84,152 +83,203 @@ fun main() = auroraApplication {
                     text = resourceBundle.getString("Menu.edit"),
                     action = { println("Edit activated!") }),
                 Command(
-                    text = resourceBundle.getString("Menu.view"),
-                    action = { println("View activated!") }),
+                    text = resourceBundle.getString("Menu.source"),
+                    action = { println("Source activated!") }),
                 Command(
-                    text = resourceBundle.getString("Menu.tools"),
-                    action = { println("Tools activated!") }),
+                    text = resourceBundle.getString("Menu.refactor"),
+                    action = { println("Refactor activated!") }),
                 Command(
-                    text = resourceBundle.getString("Menu.window"),
-                    action = { println("Window activated!") }),
+                    text = resourceBundle.getString("Menu.navigate"),
+                    action = { println("Navigate activated!") }),
                 Command(
-                    text = resourceBundle.getString("Menu.help"),
-                    action = { println("Help activated!") })
+                    text = resourceBundle.getString("Menu.search"),
+                    action = { println("Search activated!") }),
+                Command(
+                    text = resourceBundle.getString("Menu.project"),
+                    action = { println("Project activated!") })
             )
         )
     ) {
-        DemoProgressContent({ skin = it }, resourceBundle)
+        DemoTitlePaneContent(resourceBundle,
+            { skin = it },
+            windowConfiguration, { windowConfiguration = it })
     }
 }
 
-@ExperimentalUnitApi
+private data class TitlePaneHorizontalConfiguration(
+    val title: String,
+    val textHorizontalGravity: HorizontalGravity,
+    val controlButtonHorizontalGravity: HorizontalGravity,
+    val iconHorizontalGravity: TitleIconHorizontalGravity
+)
+
+private val TitlePaneHorizontalConfigurations = listOf(
+    TitlePaneHorizontalConfiguration(
+        title = "Default",
+        textHorizontalGravity = HorizontalGravity.Leading,
+        controlButtonHorizontalGravity = HorizontalGravity.Trailing,
+        iconHorizontalGravity = TitleIconHorizontalGravity.OppositeControlButtons
+    ),
+    TitlePaneHorizontalConfiguration(
+        title = "Platform",
+        textHorizontalGravity = HorizontalGravity.Platform,
+        controlButtonHorizontalGravity = HorizontalGravity.Platform,
+        iconHorizontalGravity = TitleIconHorizontalGravity.Platform
+    ),
+    TitlePaneHorizontalConfiguration(
+        title = "Force macOS",
+        textHorizontalGravity = HorizontalGravity.Centered,
+        controlButtonHorizontalGravity = HorizontalGravity.Leading,
+        iconHorizontalGravity = TitleIconHorizontalGravity.NextToTitle
+    ),
+    TitlePaneHorizontalConfiguration(
+        title = "Force Windows",
+        textHorizontalGravity = HorizontalGravity.Leading,
+        controlButtonHorizontalGravity = HorizontalGravity.Trailing,
+        iconHorizontalGravity = TitleIconHorizontalGravity.OppositeControlButtons
+    ),
+    TitlePaneHorizontalConfiguration(
+        title = "Force Gnome",
+        textHorizontalGravity = HorizontalGravity.Centered,
+        controlButtonHorizontalGravity = HorizontalGravity.Trailing,
+        iconHorizontalGravity = TitleIconHorizontalGravity.None
+    ),
+    TitlePaneHorizontalConfiguration(
+        title = "Force KDE",
+        textHorizontalGravity = HorizontalGravity.Centered,
+        controlButtonHorizontalGravity = HorizontalGravity.Trailing,
+        iconHorizontalGravity = TitleIconHorizontalGravity.OppositeControlButtons
+    )
+)
+
+private data class TitlePaneVerticalConfiguration(
+    val title: String,
+    val extraHeightDp: Dp,
+    val controlButtonVerticalGravity: VerticalGravity
+)
+
+private val TitlePaneVerticalConfigurations = listOf(
+    TitlePaneVerticalConfiguration(
+        title = "Default",
+        extraHeightDp = 0.dp,
+        controlButtonVerticalGravity = VerticalGravity.Centered
+    ),
+    TitlePaneVerticalConfiguration(
+        title = "Taller, centered",
+        extraHeightDp = 20.dp,
+        controlButtonVerticalGravity = VerticalGravity.Centered
+    ),
+    TitlePaneVerticalConfiguration(
+        title = "Taller, top",
+        extraHeightDp = 20.dp,
+        controlButtonVerticalGravity = VerticalGravity.Top
+    ),
+    TitlePaneVerticalConfiguration(
+        title = "Taller, bottom",
+        extraHeightDp = 20.dp,
+        controlButtonVerticalGravity = VerticalGravity.Bottom
+    )
+)
+
 @Composable
-fun AuroraWindowScope.DemoProgressArea(
+private fun AuroraTitlePaneHorizontalConfigSelector(
+    currentConfiguration: AuroraWindowConfiguration,
+    onConfigurationSelected: (AuroraWindowConfiguration) -> Unit,
+    popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart
+) {
+    val options = TitlePaneHorizontalConfigurations
+    var selectedItem by remember { mutableStateOf(options[0]) }
+
+    ComboBoxProjection(
+        contentModel = ComboBoxContentModel(
+            items = options,
+            selectedItem = selectedItem,
+            onTriggerItemSelectedChange = {
+                selectedItem = it
+                onConfigurationSelected.invoke(
+                    currentConfiguration.copy(
+                        titleTextHorizontalGravity = it.textHorizontalGravity,
+                        titleControlButtonGroupHorizontalGravity = it.controlButtonHorizontalGravity,
+                        titleIconHorizontalGravity = it.iconHorizontalGravity
+                    )
+                )
+            }
+        ),
+        presentationModel = ComboBoxPresentationModel(
+            displayConverter = { it.title },
+            popupPlacementStrategy = popupPlacementStrategy
+        )
+    ).project()
+}
+
+@Composable
+private fun AuroraTitlePaneVerticalConfigSelector(
+    currentConfiguration: AuroraWindowConfiguration,
+    onConfigurationSelected: (AuroraWindowConfiguration) -> Unit,
+    popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart
+) {
+    val options = TitlePaneVerticalConfigurations
+    var selectedItem by remember { mutableStateOf(options[0]) }
+
+    ComboBoxProjection(
+        contentModel = ComboBoxContentModel(
+            items = options,
+            selectedItem = selectedItem,
+            onTriggerItemSelectedChange = {
+                selectedItem = it
+                onConfigurationSelected.invoke(
+                    currentConfiguration.copy(
+                        titlePaneHeight = WindowTitlePaneSizingConstants.MinimumTitlePaneHeight + it.extraHeightDp,
+                        titleControlButtonGroupVerticalGravity = it.controlButtonVerticalGravity
+                    )
+                )
+            }
+        ),
+        presentationModel = ComboBoxPresentationModel(
+            displayConverter = { it.title },
+            popupPlacementStrategy = popupPlacementStrategy
+        )
+    ).project()
+}
+
+@Composable
+fun DemoTitlePaneFooter(
     modifier: Modifier = Modifier,
     onSkinChange: (AuroraSkinDefinition) -> Unit,
-    resourceBundle: ResourceBundle
+    windowConfiguration: AuroraWindowConfiguration,
+    onWindowConfigurationChange: (AuroraWindowConfiguration) -> Unit
 ) {
-    // TODO - convert this to use ConstraintLayout when (if?) that is available for desktop
     Row(
-        verticalAlignment = Alignment.Top,
+        verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
             .auroraBackground()
+            .padding(horizontal = 8.dp, vertical = 6.dp)
     ) {
-        AuroraDecorationArea(decorationAreaType = DecorationAreaType.ControlPane) {
-            Column(
-                modifier = Modifier.fillMaxHeight().auroraBackground()
-                    .padding(vertical = 8.dp, horizontal = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                AuroraSkinSwitcher(onSkinChange = onSkinChange)
-
-                AuroraLocaleSwitcher(resourceBundle)
-            }
-        }
-
-        VerticalSeparatorProjection(
-            contentModel = SeparatorContentModel(),
-            presentationModel = SeparatorPresentationModel(
-                startGradientAmount = 0.dp,
-                endGradientAmount = 0.dp
-            )
-        ).project(modifier = Modifier.fillMaxHeight())
-
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-
-            // Resolve the default text style to get the default font size
-            val resolvedTextStyle = resolveAuroraDefaults()
-            val fontSize = resolvedTextStyle.fontSize
-            // Compute a smaller font size
-            val smallerFontSize = TextUnit(fontSize.value - 4.0f, fontSize.type)
-            // And create our own text style with smaller font size and bold weight
-            val textStyle = TextStyle(
-                fontSize = smallerFontSize,
-                fontWeight = FontWeight.Bold
-            )
-
-            val progress by remember { mutableStateOf(0.2f) }
-            val animatedStateProgress = animateFloatAsState(
-                targetValue = progress,
-                animationSpec = ProgressConstants.ProgressAnimationSpec
-            )
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            // Enabled determinate linear progress bar
-            LabelProjection(
-                contentModel = LabelContentModel(
-                    text = resourceBundle.getString("Progress.determinate.enabled")
-                        .uppercase()
-                ),
-                presentationModel = LabelPresentationModel(textStyle = textStyle)
-            ).project()
-            DeterminateLinearProgressProjection(
-                contentModel = ProgressDeterminateContentModel(
-                    enabled = true,
-                    progress = animatedStateProgress.value
-                )
-            ).project()
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            // Enabled indeterminate linear progress bar
-            LabelProjection(
-                contentModel = LabelContentModel(
-                    text = resourceBundle.getString("Progress.indeterminate.enabled")
-                        .uppercase()
-                ),
-                presentationModel = LabelPresentationModel(textStyle = textStyle)
-            ).project()
-            IndeterminateLinearProgressProjection(
-                contentModel = ProgressIndeterminateContentModel(enabled = true),
-            ).project()
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            // Disabled determinate linear progress bar
-            LabelProjection(
-                contentModel = LabelContentModel(
-                    text = resourceBundle.getString("Progress.determinate.disabled")
-                        .uppercase()
-                ),
-                presentationModel = LabelPresentationModel(textStyle = textStyle)
-            ).project()
-            DeterminateLinearProgressProjection(
-                contentModel = ProgressDeterminateContentModel(
-                    enabled = false,
-                    progress = animatedStateProgress.value
-                )
-            ).project()
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            // Disabled indeterminate linear progress bar
-            LabelProjection(
-                contentModel = LabelContentModel(
-                    text = resourceBundle.getString("Progress.indeterminate.disabled")
-                        .uppercase()
-                ),
-                presentationModel = LabelPresentationModel(textStyle = textStyle)
-            ).project()
-            IndeterminateLinearProgressProjection(
-                contentModel = ProgressIndeterminateContentModel(enabled = false),
-            ).project()
-        }
-
+        Spacer(modifier.weight(weight = 1.0f, fill = true))
+        AuroraTitlePaneHorizontalConfigSelector(
+            windowConfiguration, onWindowConfigurationChange,
+            PopupPlacementStrategy.Upward.HAlignStart
+        )
+        Spacer(modifier.width(12.dp))
+        AuroraTitlePaneVerticalConfigSelector(
+            windowConfiguration, onWindowConfigurationChange,
+            PopupPlacementStrategy.Upward.HAlignStart
+        )
+        Spacer(modifier.width(12.dp))
+        AuroraSkinSwitcher(onSkinChange, PopupPlacementStrategy.Upward.HAlignStart)
     }
 }
 
 @ExperimentalUnitApi
 @Composable
-fun AuroraWindowScope.DemoProgressContent(
+fun AuroraWindowScope.DemoTitlePaneContent(
+    resourceBundle: ResourceBundle,
     onSkinChange: (AuroraSkinDefinition) -> Unit,
-    resourceBundle: ResourceBundle
+    windowConfiguration: AuroraWindowConfiguration,
+    onWindowConfigurationChange: (AuroraWindowConfiguration) -> Unit,
 ) {
+    var contentEnabled by remember { mutableStateOf(true) }
     var alignment by remember { mutableStateOf(DemoAlignment.Center) }
     var style by remember {
         mutableStateOf(
@@ -247,6 +297,7 @@ fun AuroraWindowScope.DemoProgressContent(
             Command(
                 text = resourceBundle.getString("Justify.center"),
                 icon = format_justify_center(),
+                isActionEnabled = contentEnabled,
                 isActionToggle = true,
                 isActionToggleSelected = (alignment == DemoAlignment.Center),
                 onTriggerActionToggleSelectedChange = {
@@ -265,6 +316,7 @@ fun AuroraWindowScope.DemoProgressContent(
             Command(
                 text = resourceBundle.getString("Justify.left"),
                 icon = format_justify_left(),
+                isActionEnabled = contentEnabled,
                 isActionToggle = true,
                 isActionToggleSelected = (alignment == DemoAlignment.Left),
                 onTriggerActionToggleSelectedChange = {
@@ -283,6 +335,7 @@ fun AuroraWindowScope.DemoProgressContent(
             Command(
                 text = resourceBundle.getString("Justify.right"),
                 icon = format_justify_right(),
+                isActionEnabled = contentEnabled,
                 isActionToggle = true,
                 isActionToggleSelected = (alignment == DemoAlignment.Right),
                 onTriggerActionToggleSelectedChange = {
@@ -301,6 +354,7 @@ fun AuroraWindowScope.DemoProgressContent(
             Command(
                 text = resourceBundle.getString("Justify.fill"),
                 icon = format_justify_fill(),
+                isActionEnabled = contentEnabled,
                 isActionToggle = true,
                 isActionToggleSelected = (alignment == DemoAlignment.Fill),
                 onTriggerActionToggleSelectedChange = {
@@ -324,6 +378,7 @@ fun AuroraWindowScope.DemoProgressContent(
             Command(
                 text = resourceBundle.getString("FontStyle.bold.title"),
                 icon = format_text_bold(),
+                isActionEnabled = contentEnabled,
                 isActionToggle = true,
                 isActionToggleSelected = style.bold,
                 onTriggerActionToggleSelectedChange = {
@@ -334,6 +389,7 @@ fun AuroraWindowScope.DemoProgressContent(
             Command(
                 text = resourceBundle.getString("FontStyle.italic.title"),
                 icon = format_text_italic(),
+                isActionEnabled = contentEnabled,
                 isActionToggle = true,
                 isActionToggleSelected = style.italic,
                 onTriggerActionToggleSelectedChange = {
@@ -344,6 +400,7 @@ fun AuroraWindowScope.DemoProgressContent(
             Command(
                 text = resourceBundle.getString("FontStyle.underline.title"),
                 icon = format_text_underline(),
+                isActionEnabled = contentEnabled,
                 isActionToggle = true,
                 isActionToggleSelected = style.underline,
                 onTriggerActionToggleSelectedChange = {
@@ -354,6 +411,7 @@ fun AuroraWindowScope.DemoProgressContent(
             Command(
                 text = resourceBundle.getString("FontStyle.strikethrough.title"),
                 icon = format_text_strikethrough(),
+                isActionEnabled = contentEnabled,
                 isActionToggle = true,
                 isActionToggleSelected = style.strikethrough,
                 onTriggerActionToggleSelectedChange = {
@@ -369,14 +427,16 @@ fun AuroraWindowScope.DemoProgressContent(
             DemoToolbar(
                 alignmentCommands = alignmentCommands,
                 styleCommands = styleCommands,
-                resourceBundle = resourceBundle
+                resourceBundle = resourceBundle,
+                iconDimension = 20.dp
             )
         }
-        AuroraDecorationArea(decorationAreaType = DecorationAreaType.None) {
-            DemoProgressArea(
-                modifier = Modifier.weight(weight = 1.0f, fill = true),
+        Spacer(modifier = Modifier.weight(weight = 1.0f, fill = true))
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.Footer) {
+            DemoTitlePaneFooter(
                 onSkinChange = onSkinChange,
-                resourceBundle = resourceBundle
+                windowConfiguration = windowConfiguration,
+                onWindowConfigurationChange = onWindowConfigurationChange
             )
         }
     }

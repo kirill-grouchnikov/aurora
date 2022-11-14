@@ -29,10 +29,7 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.tools.screenshot.svg.tango.*
-import org.pushingpixels.aurora.window.AuroraApplicationScope
-import org.pushingpixels.aurora.window.AuroraDecorationArea
-import org.pushingpixels.aurora.window.AuroraWindowContent
-import org.pushingpixels.aurora.window.AuroraWindowScope
+import org.pushingpixels.aurora.window.*
 import java.util.*
 
 private class ScreenshotScope(
@@ -75,7 +72,7 @@ private fun AuroraApplicationScope.ScreenshotWindow(
             title = title,
             icon = icon,
             iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
-            undecorated = true,
+            windowConfiguration = AuroraWindowConfiguration(titlePaneKind = AuroraWindowTitlePaneKind.Aurora),
             menuCommands = menuCommands,
             content = content
         )

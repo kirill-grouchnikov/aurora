@@ -17,8 +17,6 @@ package org.pushingpixels.aurora.demo
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -39,9 +37,7 @@ import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.window.AuroraWindow
-import org.pushingpixels.aurora.window.AuroraWindowScope
-import org.pushingpixels.aurora.window.auroraApplication
+import org.pushingpixels.aurora.window.*
 import java.text.MessageFormat
 import java.util.*
 
@@ -62,7 +58,7 @@ fun main() = auroraApplication {
         icon = radiance_menu(),
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         state = state,
-        undecorated = true,
+        windowConfiguration = AuroraWindowConfiguration(titlePaneKind = AuroraWindowTitlePaneKind.Aurora),
         onCloseRequest = ::exitApplication,
     ) {
         DemoCommandContent({ skin = it }, resourceBundle)

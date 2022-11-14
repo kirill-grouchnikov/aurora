@@ -46,9 +46,7 @@ import org.pushingpixels.aurora.demo.svg.tango.media_floppy
 import org.pushingpixels.aurora.demo.svg.tango.x_office_document_template
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
-import org.pushingpixels.aurora.window.AuroraDecorationArea
-import org.pushingpixels.aurora.window.AuroraWindow
-import org.pushingpixels.aurora.window.auroraApplication
+import org.pushingpixels.aurora.window.*
 
 fun main() = auroraApplication {
     val state = rememberWindowState(
@@ -62,7 +60,7 @@ fun main() = auroraApplication {
         skin = skin,
         title = "Aurora Demo",
         state = state,
-        undecorated = true,
+        windowConfiguration = AuroraWindowConfiguration(titlePaneKind = AuroraWindowTitlePaneKind.Aurora),
         onCloseRequest = ::exitApplication,
     ) {
         IconDemoContent()

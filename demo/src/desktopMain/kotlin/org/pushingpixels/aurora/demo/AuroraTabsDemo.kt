@@ -32,11 +32,10 @@ import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.projection.TabsProjection
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.theming.AuroraSkinDefinition
+import org.pushingpixels.aurora.theming.AuroraWindowTitlePaneKind
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
-import org.pushingpixels.aurora.window.AuroraWindow
-import org.pushingpixels.aurora.window.AuroraWindowScope
-import org.pushingpixels.aurora.window.auroraApplication
+import org.pushingpixels.aurora.window.*
 import java.text.MessageFormat
 import java.util.*
 
@@ -56,7 +55,7 @@ fun main() = auroraApplication {
         skin = skin,
         title = "Aurora tabs",
         state = state,
-        undecorated = true,
+        windowConfiguration = AuroraWindowConfiguration(titlePaneKind = AuroraWindowTitlePaneKind.Aurora),
         icon = radiance_menu(),
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         onCloseRequest = ::exitApplication,

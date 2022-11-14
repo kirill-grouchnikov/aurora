@@ -46,7 +46,7 @@ import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainte
 import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.getColorSchemes
-import org.pushingpixels.aurora.window.AuroraWindow
+import org.pushingpixels.aurora.window.*
 import org.pushingpixels.aurora.window.auroraApplication
 
 @Composable
@@ -229,7 +229,7 @@ fun main() = auroraApplication {
         icon = radiance_menu(),
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         state = state,
-        undecorated = true,
+        windowConfiguration = AuroraWindowConfiguration(titlePaneKind = AuroraWindowTitlePaneKind.Aurora),
         onCloseRequest = ::exitApplication,
     ) {
         Column(

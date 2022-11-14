@@ -30,11 +30,11 @@ import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.component.model.ComboBoxContentModel
 import org.pushingpixels.aurora.component.model.ComboBoxPresentationModel
 import org.pushingpixels.aurora.component.projection.ComboBoxProjection
+import org.pushingpixels.aurora.theming.AuroraWindowTitlePaneKind
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.auroraBackground
 import org.pushingpixels.aurora.theming.marinerSkin
-import org.pushingpixels.aurora.window.AuroraWindow
-import org.pushingpixels.aurora.window.auroraApplication
+import org.pushingpixels.aurora.window.*
 
 fun main() = auroraApplication {
     val state = rememberWindowState(
@@ -47,7 +47,7 @@ fun main() = auroraApplication {
         skin = marinerSkin(),
         title = "Aurora Demo",
         state = state,
-        undecorated = false,
+        windowConfiguration = AuroraWindowConfiguration(titlePaneKind = AuroraWindowTitlePaneKind.Aurora),
         onCloseRequest = ::exitApplication
     ) {
         Row(

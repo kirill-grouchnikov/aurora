@@ -48,6 +48,8 @@ import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.window.AuroraWindow
+import org.pushingpixels.aurora.window.AuroraWindowConfiguration
+import org.pushingpixels.aurora.theming.AuroraWindowTitlePaneKind
 import org.pushingpixels.aurora.window.auroraApplication
 import java.text.MessageFormat
 import java.util.*
@@ -113,7 +115,7 @@ fun main() = auroraApplication {
         skin = skin,
         title = "Aurora Scrollbars",
         state = state,
-        undecorated = true,
+        windowConfiguration = AuroraWindowConfiguration(titlePaneKind = AuroraWindowTitlePaneKind.Aurora),
         onCloseRequest = ::exitApplication,
         onKeyEvent = {
             // Keyboard event handler to process Up and Down arrows for list traversal

@@ -38,9 +38,10 @@ import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.demo.svg.radiance_menu
+import org.pushingpixels.aurora.theming.AuroraWindowTitlePaneKind
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.magellanSkin
-import org.pushingpixels.aurora.window.AuroraWindow
+import org.pushingpixels.aurora.window.*
 import org.pushingpixels.aurora.window.auroraApplication
 
 @Composable
@@ -97,7 +98,7 @@ fun main() = auroraApplication {
         icon = radiance_menu(),
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         state = state,
-        undecorated = true,
+        windowConfiguration = AuroraWindowConfiguration(titlePaneKind = AuroraWindowTitlePaneKind.Aurora),
         onCloseRequest = ::exitApplication,
     ) {
         Column(

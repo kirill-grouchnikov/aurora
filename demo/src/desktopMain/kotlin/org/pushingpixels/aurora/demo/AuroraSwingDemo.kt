@@ -33,6 +33,8 @@ import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.theming.auroraBackground
 import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.window.AuroraWindow
+import org.pushingpixels.aurora.window.AuroraWindowConfiguration
+import org.pushingpixels.aurora.theming.AuroraWindowTitlePaneKind
 import org.pushingpixels.aurora.window.auroraApplication
 import java.awt.FlowLayout
 import javax.swing.JButton
@@ -49,7 +51,7 @@ fun main() = auroraApplication {
         skin = marinerSkin(),
         title = "Aurora Demo",
         state = state,
-        undecorated = true,
+        windowConfiguration = AuroraWindowConfiguration(titlePaneKind = AuroraWindowTitlePaneKind.Aurora),
         onCloseRequest = ::exitApplication,
     ) {
         var text by remember { mutableStateOf("Hello, World!") }

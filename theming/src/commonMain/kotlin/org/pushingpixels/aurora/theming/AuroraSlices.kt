@@ -879,4 +879,72 @@ enum class TabContentSeparatorKind {
     Double
 }
 
+enum class AuroraWindowTitlePaneKind {
+    System,
+    Aurora,
+    None
+}
 
+enum class HorizontalGravity {
+    /**
+     * Platform-specific content gravity.
+     */
+    Platform,
+
+    /**
+     * Align content to the leading edge of the parent container. Leading edge is left under LTR
+     * component orientation and right under RTL component orientation.
+     */
+    Leading,
+
+    /**
+     * Center content horizontally in the parent container.
+     */
+    Centered,
+
+    /**
+     * Align content to the trailing edge of the parent container. Trailing edge is right under
+     * LTR component orientation and left under RTL component orientation.
+     */
+    Trailing
+}
+
+enum class VerticalGravity {
+    /**
+     * Align content to the top edge of the parent container.
+     */
+    Top,
+
+    /**
+     * Center content horizontally in the parent container.
+     */
+    Centered,
+
+    /**
+     * Align content to the bottom edge of the parent container.
+     */
+    Bottom
+}
+
+enum class TitleIconHorizontalGravity {
+    /**
+     * Platform-specific icon gravity.
+     */
+    Platform,
+
+    /**
+     * Do not show icon.
+     */
+    None,
+
+    /**
+     * Align icon next to the title text (on the left under LTR component orientation and on the
+     * right under RTL component orientation).
+     */
+    NextToTitle,
+
+    /**
+     * Align icon on the side of the title pane opposite to that of the control buttons.
+     */
+    OppositeControlButtons
+}

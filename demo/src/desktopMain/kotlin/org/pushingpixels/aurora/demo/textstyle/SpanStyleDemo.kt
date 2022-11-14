@@ -38,9 +38,10 @@ import org.pushingpixels.aurora.demo.svg.tango.format_text_bold
 import org.pushingpixels.aurora.demo.svg.tango.format_text_italic
 import org.pushingpixels.aurora.demo.svg.tango.format_text_strikethrough
 import org.pushingpixels.aurora.demo.svg.tango.format_text_underline
+import org.pushingpixels.aurora.theming.AuroraWindowTitlePaneKind
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
-import org.pushingpixels.aurora.window.AuroraWindow
+import org.pushingpixels.aurora.window.*
 import org.pushingpixels.aurora.window.auroraApplication
 
 fun main() = auroraApplication {
@@ -56,7 +57,7 @@ fun main() = auroraApplication {
         icon = radiance_menu(),
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         state = state,
-        undecorated = true,
+        windowConfiguration = AuroraWindowConfiguration(titlePaneKind = AuroraWindowTitlePaneKind.Aurora),
         onCloseRequest = ::exitApplication,
     ) {
 
