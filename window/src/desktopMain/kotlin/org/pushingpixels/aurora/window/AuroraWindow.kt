@@ -52,6 +52,7 @@ import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
 import java.awt.*
 import java.awt.event.*
+import java.lang.IllegalArgumentException
 import java.util.*
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
@@ -332,7 +333,7 @@ private fun AuroraWindowScope.WindowTitlePaneTextAndIcon(
 
 @OptIn(AuroraInternalApi::class)
 @Composable
-private fun AuroraWindowScope.WindowTitlePane(
+private fun AuroraWindowScope.WindowPlainTitlePane(
     title: String,
     icon: Painter?,
     iconFilterStrategy: IconFilterStrategy,
@@ -406,7 +407,7 @@ private fun AuroraWindowScope.WindowTitlePane(
                                     // See https://bugs.openjdk.java.net/browse/JDK-8176359,
                                     // https://bugs.openjdk.java.net/browse/JDK-8231564 and
                                     // https://bugs.openjdk.java.net/browse/JDK-8243925 that went into Java 15.
-                                    val isWindows = java.lang.System.getProperty("os.name")?.startsWith("Windows")
+                                    val isWindows = System.getProperty("os.name")?.startsWith("Windows")
                                     val maximizedWindowBounds =
                                         if ((isWindows == true) && (Runtime.version().feature() < 15))
                                             Rectangle(
@@ -557,8 +558,7 @@ private fun AuroraWindowScope.WindowTitlePane(
 
 @OptIn(AuroraInternalApi::class)
 @Composable
-private fun AuroraWindowScope.WindowTitlePane(
-    iconFilterStrategy: IconFilterStrategy,
+private fun AuroraWindowScope.WindowIntegratedTitlePane(
     windowConfiguration: AuroraWindowTitlePaneConfigurations.AuroraIntegrated
 ) {
     val density = LocalDensity.current
@@ -622,7 +622,7 @@ private fun AuroraWindowScope.WindowTitlePane(
                                     // See https://bugs.openjdk.java.net/browse/JDK-8176359,
                                     // https://bugs.openjdk.java.net/browse/JDK-8231564 and
                                     // https://bugs.openjdk.java.net/browse/JDK-8243925 that went into Java 15.
-                                    val isWindows = java.lang.System.getProperty("os.name")?.startsWith("Windows")
+                                    val isWindows = System.getProperty("os.name")?.startsWith("Windows")
                                     val maximizedWindowBounds =
                                         if ((isWindows == true) && (Runtime.version().feature() < 15))
                                             Rectangle(
@@ -786,7 +786,7 @@ private fun AuroraWindowScope.WindowInnerContent(
 ) {
     if (windowTitlePaneConfiguration is AuroraWindowTitlePaneConfigurations.AuroraIntegrated) {
         Box(Modifier.fillMaxSize().auroraBackground()) {
-            WindowTitlePane(iconFilterStrategy, windowTitlePaneConfiguration)
+            WindowIntegratedTitlePane(windowTitlePaneConfiguration)
             // Wrap the entire content in NONE decoration area. App code can set its
             // own decoration area types on specific parts.
             AuroraDecorationArea(decorationAreaType = DecorationAreaType.None) {
@@ -796,7 +796,7 @@ private fun AuroraWindowScope.WindowInnerContent(
     } else {
         Column(Modifier.fillMaxSize().auroraBackground()) {
             if (windowTitlePaneConfiguration is AuroraWindowTitlePaneConfigurations.AuroraPlain) {
-                WindowTitlePane(title, icon, iconFilterStrategy, windowTitlePaneConfiguration)
+                WindowPlainTitlePane(title, icon, iconFilterStrategy, windowTitlePaneConfiguration)
             }
             if (menuCommands != null) {
                 AuroraWindowMenuBar(menuCommands)
@@ -1171,15 +1171,18 @@ fun AuroraApplicationScope.AuroraWindow(
     onKeyEvent: (androidx.compose.ui.input.key.KeyEvent) -> Boolean = { false },
     content: @Composable AuroraWindowScope.() -> Unit
 ) {
+    if (windowTitlePaneConfiguration is AuroraWindowTitlePaneConfigurations.AuroraIntegrated) {
+        if (windowTitlePaneConfiguration.titlePaneHeight < WindowTitlePaneSizingConstants.MinimumTitlePaneHeight) {
+            throw IllegalArgumentException("Integrated windows must have at least ${WindowTitlePaneSizingConstants.MinimumTitlePaneHeight} tall title pane")
+        }
+        if (menuCommands != null) {
+            throw IllegalArgumentException("Integrated windows do not support menus")
+        }
+    }
+
     val density = mutableStateOf(Density(1.0f, 1.0f))
 
     val decoratedBySystem = (windowTitlePaneConfiguration is AuroraWindowTitlePaneConfigurations.System)
-    if ((windowTitlePaneConfiguration is AuroraWindowTitlePaneConfigurations.AuroraIntegrated) &&
-        (windowTitlePaneConfiguration.titlePaneHeight < WindowTitlePaneSizingConstants.MinimumTitlePaneHeight)
-    ) {
-        throw IllegalStateException("Integrated windows must have at least ${WindowTitlePaneSizingConstants.MinimumTitlePaneHeight} tall title pane")
-    }
-
     Window(
         onCloseRequest = onCloseRequest,
         state = state,
