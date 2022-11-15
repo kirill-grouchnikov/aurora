@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.demo.titlepane
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,7 +48,7 @@ fun main() = auroraApplication {
 
     AuroraWindow(
         skin = moderateSkin(),
-        title = "Aurora skeleton",
+        title = "",
         state = state,
         windowTitlePaneConfiguration = AuroraWindowTitlePaneConfigurations.AuroraIntegrated(
             titlePaneHeight = 40.dp,
@@ -70,65 +71,70 @@ fun AuroraWindowScope.ChatFrameContent(
     Column(modifier = Modifier.fillMaxSize()) {
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.TitlePane) {
             val titlePaneControlInsets = getTitlePaneControlInsets(layoutDirection, density)
-            Row(
+            WindowDraggableArea(
                 modifier = Modifier
                     .height(40.dp)
                     .fillMaxWidth()
+                    .auroraBackground()
                     .padding(
                         start = titlePaneControlInsets.calculateStartPadding(layoutDirection),
                         end = titlePaneControlInsets.calculateEndPadding(layoutDirection)
-                    ),
-                verticalAlignment = Alignment.CenterVertically
+                    )
             ) {
-                Spacer(modifier = Modifier.width(20.dp))
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Spacer(modifier = Modifier.width(20.dp))
 
-                CommandButtonProjection(
-                    contentModel = Command(text = "New chat", action = { println("Start chat!") }),
-                    presentationModel = CommandButtonPresentationModel(
-                        presentationState = CommandButtonPresentationState.Medium,
-                        contentPadding = CommandButtonSizingConstants.WideButtonContentPadding
-                    )
-                ).project()
+                    CommandButtonProjection(
+                        contentModel = Command(text = "New chat", action = { println("Start chat!") }),
+                        presentationModel = CommandButtonPresentationModel(
+                            presentationState = CommandButtonPresentationState.Medium,
+                            contentPadding = CommandButtonSizingConstants.WideButtonContentPadding
+                        )
+                    ).project()
 
-                Spacer(modifier = Modifier.weight(1.0f))
+                    Spacer(modifier = Modifier.weight(1.0f))
 
-                IconProjection(
-                    contentModel = IconContentModel(icon = chat_black_24dp()),
-                    presentationModel = IconPresentationModel(iconDimension = 16.dp)
-                ).project()
-                AuroraWindowTitlePaneTitleText(title = "Chat")
+                    IconProjection(
+                        contentModel = IconContentModel(icon = chat_black_24dp()),
+                        presentationModel = IconPresentationModel(iconDimension = 16.dp)
+                    ).project()
+                    AuroraWindowTitlePaneTitleText(title = "Chat")
 
-                Spacer(modifier = Modifier.weight(1.0f))
+                    Spacer(modifier = Modifier.weight(1.0f))
 
-                TextFieldStringProjection(
-                    contentModel = TextFieldStringContentModel(
-                        value = " ",
-                        onValueChange = { }
-                    ),
-                    presentationModel = TextFieldPresentationModel(
-                        singleLine = true,
-                        defaultMinSize = DpSize(width = 120.dp, height = 24.dp)
-                    )
-                ).project()
+                    TextFieldStringProjection(
+                        contentModel = TextFieldStringContentModel(
+                            value = " ",
+                            onValueChange = { }
+                        ),
+                        presentationModel = TextFieldPresentationModel(
+                            singleLine = true,
+                            defaultMinSize = DpSize(width = 120.dp, height = 24.dp)
+                        )
+                    ).project()
 
-                Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
 
-                IconProjection(
-                    contentModel = IconContentModel(icon = help_outline_black_24dp()),
-                    presentationModel = IconPresentationModel(iconDimension = 18.dp)
-                ).project()
+                    IconProjection(
+                        contentModel = IconContentModel(icon = help_outline_black_24dp()),
+                        presentationModel = IconPresentationModel(iconDimension = 18.dp)
+                    ).project()
 
-                Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
 
-                IconProjection(
-                    contentModel = IconContentModel(icon = person_black_24dp()),
-                    presentationModel = IconPresentationModel(iconDimension = 16.dp)
-                ).project()
+                    IconProjection(
+                        contentModel = IconContentModel(icon = person_black_24dp()),
+                        presentationModel = IconPresentationModel(iconDimension = 16.dp)
+                    ).project()
 
-                Spacer(modifier = Modifier.width(2.dp))
+                    Spacer(modifier = Modifier.width(2.dp))
+                }
             }
+            Spacer(modifier = Modifier.weight(weight = 1.0f, fill = true))
         }
-        Spacer(modifier = Modifier.weight(weight = 1.0f, fill = true))
     }
 }
 

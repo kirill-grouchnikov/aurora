@@ -577,10 +577,9 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(windowConfiguration.titlePaneHeight)
-                    .auroraBackground()
                     .padding(WindowTitlePaneSizingConstants.TitlePaneContentPadding),
                 content = {
-                    WindowDraggableArea(modifier = Modifier.padding(top = 1.dp, bottom = 1.dp)) {}
+                    Box(modifier = Modifier.padding(top = 1.dp, bottom = 1.dp)) {}
 
                     // Minimize button
                     AuroraWindowTitlePaneButton(titlePaneCommand = Command(
@@ -786,12 +785,12 @@ private fun AuroraWindowScope.WindowInnerContent(
 ) {
     if (windowTitlePaneConfiguration is AuroraWindowTitlePaneConfigurations.AuroraIntegrated) {
         Box(Modifier.fillMaxSize().auroraBackground()) {
-            WindowIntegratedTitlePane(windowTitlePaneConfiguration)
             // Wrap the entire content in NONE decoration area. App code can set its
             // own decoration area types on specific parts.
             AuroraDecorationArea(decorationAreaType = DecorationAreaType.None) {
                 content()
             }
+            WindowIntegratedTitlePane(windowTitlePaneConfiguration)
         }
     } else {
         Column(Modifier.fillMaxSize().auroraBackground()) {
@@ -1125,6 +1124,12 @@ object AuroraWindowTitlePaneConfigurations {
      * Use [getTitlePaneControlInsets] to obtain the insets that should be applied to the
      * application content that is integrated into the title pane area so that it does not
      * overlap with the window control buttons.
+     *
+     * Use [WindowDraggableArea] to designate the part of your integrated title pane content
+     * that can be used to drag the window around the screen by grabbing it with the mouse.
+     *
+     * Optionally, use [auroraBackground] modifier on your integrated title pane content for
+     * the visual appearance of the title pane area.
      *
      * Optionally, use [AuroraWindowTitlePaneTitleText] for creating a title label that is
      * styled consistently with the current Aurora skin.
