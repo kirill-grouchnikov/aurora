@@ -46,16 +46,16 @@ fun main() = auroraApplication {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
 
-    var windowConfiguration by remember {
-        mutableStateOf(AuroraWindowConfiguration(titlePaneKind = AuroraWindowTitlePaneKind.Aurora))
+    var windowTitlePaneConfiguration by remember {
+        mutableStateOf(AuroraWindowTitlePaneConfigurations.AuroraPlain())
     }
 
-    println("Window configuration $windowConfiguration")
+    println("Window title pane configuration $windowTitlePaneConfiguration")
     AuroraWindow(
         skin = skin,
         title = "Aurora skeleton",
         state = state,
-        windowConfiguration = windowConfiguration,
+        windowTitlePaneConfiguration = windowTitlePaneConfiguration,
         icon = radiance_menu(),
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         onCloseRequest = ::exitApplication,
@@ -102,7 +102,7 @@ fun main() = auroraApplication {
     ) {
         DemoTitlePaneContent(resourceBundle,
             { skin = it },
-            windowConfiguration, { windowConfiguration = it })
+            windowTitlePaneConfiguration, { windowTitlePaneConfiguration = it })
     }
 }
 
@@ -152,39 +152,11 @@ private val TitlePaneHorizontalConfigurations = listOf(
     )
 )
 
-private data class TitlePaneVerticalConfiguration(
-    val title: String,
-    val extraHeightDp: Dp,
-    val controlButtonVerticalGravity: VerticalGravity
-)
-
-private val TitlePaneVerticalConfigurations = listOf(
-    TitlePaneVerticalConfiguration(
-        title = "Default",
-        extraHeightDp = 0.dp,
-        controlButtonVerticalGravity = VerticalGravity.Centered
-    ),
-    TitlePaneVerticalConfiguration(
-        title = "Taller, centered",
-        extraHeightDp = 20.dp,
-        controlButtonVerticalGravity = VerticalGravity.Centered
-    ),
-    TitlePaneVerticalConfiguration(
-        title = "Taller, top",
-        extraHeightDp = 20.dp,
-        controlButtonVerticalGravity = VerticalGravity.Top
-    ),
-    TitlePaneVerticalConfiguration(
-        title = "Taller, bottom",
-        extraHeightDp = 20.dp,
-        controlButtonVerticalGravity = VerticalGravity.Bottom
-    )
-)
 
 @Composable
 private fun AuroraTitlePaneHorizontalConfigSelector(
-    currentConfiguration: AuroraWindowConfiguration,
-    onConfigurationSelected: (AuroraWindowConfiguration) -> Unit,
+    currentConfiguration: AuroraWindowTitlePaneConfigurations.AuroraPlain,
+    onConfigurationSelected: (AuroraWindowTitlePaneConfigurations.AuroraPlain) -> Unit,
     popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart
 ) {
     val options = TitlePaneHorizontalConfigurations
@@ -213,41 +185,11 @@ private fun AuroraTitlePaneHorizontalConfigSelector(
 }
 
 @Composable
-private fun AuroraTitlePaneVerticalConfigSelector(
-    currentConfiguration: AuroraWindowConfiguration,
-    onConfigurationSelected: (AuroraWindowConfiguration) -> Unit,
-    popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart
-) {
-    val options = TitlePaneVerticalConfigurations
-    var selectedItem by remember { mutableStateOf(options[0]) }
-
-    ComboBoxProjection(
-        contentModel = ComboBoxContentModel(
-            items = options,
-            selectedItem = selectedItem,
-            onTriggerItemSelectedChange = {
-                selectedItem = it
-                onConfigurationSelected.invoke(
-                    currentConfiguration.copy(
-                        titlePaneHeight = WindowTitlePaneSizingConstants.MinimumTitlePaneHeight + it.extraHeightDp,
-                        titleControlButtonGroupVerticalGravity = it.controlButtonVerticalGravity
-                    )
-                )
-            }
-        ),
-        presentationModel = ComboBoxPresentationModel(
-            displayConverter = { it.title },
-            popupPlacementStrategy = popupPlacementStrategy
-        )
-    ).project()
-}
-
-@Composable
 fun DemoTitlePaneFooter(
     modifier: Modifier = Modifier,
     onSkinChange: (AuroraSkinDefinition) -> Unit,
-    windowConfiguration: AuroraWindowConfiguration,
-    onWindowConfigurationChange: (AuroraWindowConfiguration) -> Unit
+    windowTitlePaneConfiguration: AuroraWindowTitlePaneConfigurations.AuroraPlain,
+    onWindowTitlePaneConfigurationChange: (AuroraWindowTitlePaneConfigurations.AuroraPlain) -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -258,12 +200,7 @@ fun DemoTitlePaneFooter(
     ) {
         Spacer(modifier.weight(weight = 1.0f, fill = true))
         AuroraTitlePaneHorizontalConfigSelector(
-            windowConfiguration, onWindowConfigurationChange,
-            PopupPlacementStrategy.Upward.HAlignStart
-        )
-        Spacer(modifier.width(12.dp))
-        AuroraTitlePaneVerticalConfigSelector(
-            windowConfiguration, onWindowConfigurationChange,
+            windowTitlePaneConfiguration, onWindowTitlePaneConfigurationChange,
             PopupPlacementStrategy.Upward.HAlignStart
         )
         Spacer(modifier.width(12.dp))
@@ -276,8 +213,8 @@ fun DemoTitlePaneFooter(
 fun AuroraWindowScope.DemoTitlePaneContent(
     resourceBundle: ResourceBundle,
     onSkinChange: (AuroraSkinDefinition) -> Unit,
-    windowConfiguration: AuroraWindowConfiguration,
-    onWindowConfigurationChange: (AuroraWindowConfiguration) -> Unit,
+    windowTitlePaneConfiguration: AuroraWindowTitlePaneConfigurations.AuroraPlain,
+    onWindowTitlePaneConfigurationChange: (AuroraWindowTitlePaneConfigurations.AuroraPlain) -> Unit,
 ) {
     var contentEnabled by remember { mutableStateOf(true) }
     var alignment by remember { mutableStateOf(DemoAlignment.Center) }
@@ -435,8 +372,8 @@ fun AuroraWindowScope.DemoTitlePaneContent(
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.Footer) {
             DemoTitlePaneFooter(
                 onSkinChange = onSkinChange,
-                windowConfiguration = windowConfiguration,
-                onWindowConfigurationChange = onWindowConfigurationChange
+                windowTitlePaneConfiguration = windowTitlePaneConfiguration,
+                onWindowTitlePaneConfigurationChange = onWindowTitlePaneConfigurationChange
             )
         }
     }

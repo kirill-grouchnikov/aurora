@@ -47,7 +47,7 @@ fun main() = auroraApplication {
         skin = marinerSkin(),
         title = "Aurora Demo",
         state = state,
-        windowConfiguration = AuroraWindowConfiguration(titlePaneKind = AuroraWindowTitlePaneKind.Aurora),
+        windowTitlePaneConfiguration = AuroraWindowTitlePaneConfigurations.AuroraPlain(),
         onCloseRequest = ::exitApplication
     ) {
         Row(

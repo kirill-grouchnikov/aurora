@@ -66,7 +66,7 @@ fun main() = auroraApplication {
             skin = skin,
             title = "About",
             state = aboutState,
-            windowConfiguration = AuroraWindowConfiguration(titlePaneKind = AuroraWindowTitlePaneKind.Aurora),
+            windowTitlePaneConfiguration = AuroraWindowTitlePaneConfigurations.AuroraPlain(),
             onCloseRequest = { isAboutWindowOpen = false }) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 LabelProjection(
@@ -82,7 +82,7 @@ fun main() = auroraApplication {
         skin = skin,
         title = "Aurora Demo",
         state = state,
-        windowConfiguration = AuroraWindowConfiguration(titlePaneKind = AuroraWindowTitlePaneKind.Aurora),
+        windowTitlePaneConfiguration = AuroraWindowTitlePaneConfigurations.AuroraPlain(),
         icon = radiance_menu(),
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         onCloseRequest = ::exitApplication,

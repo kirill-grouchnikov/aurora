@@ -34,7 +34,8 @@ import java.util.*
 
 private class ScreenshotScope(
     private val applicationScope: AuroraApplicationScope,
-    original: WindowScope
+    original: WindowScope,
+    titlePaneConfiguration: AuroraWindowTitlePaneConfiguration
 ) : AuroraWindowScope {
     override var applicationLocale: Locale
         get() = applicationScope.applicationLocale
@@ -43,6 +44,8 @@ private class ScreenshotScope(
         }
 
     override val window = original.window
+
+    override val auroraWindowTitlePaneConfiguration = titlePaneConfiguration
 }
 
 @OptIn(AuroraInternalApi::class)
@@ -53,11 +56,12 @@ private fun AuroraApplicationScope.ScreenshotWindow(
     state: WindowState,
     title: String,
     icon: Painter,
+    windowTitlePaneConfiguration: AuroraWindowTitlePaneConfiguration,
     menuCommands: CommandGroup,
     content: @Composable AuroraWindowScope.() -> Unit
 ) {
     val density = LocalDensity.current
-    val screenshotScope = ScreenshotScope(this@ScreenshotWindow, windowScope)
+    val screenshotScope = ScreenshotScope(this@ScreenshotWindow, windowScope, windowTitlePaneConfiguration)
     CompositionLocalProvider(
         LocalWindowSize provides state.size,
         LocalDensity provides density,
@@ -72,7 +76,7 @@ private fun AuroraApplicationScope.ScreenshotWindow(
             title = title,
             icon = icon,
             iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
-            windowConfiguration = AuroraWindowConfiguration(titlePaneKind = AuroraWindowTitlePaneKind.Aurora),
+            windowTitlePaneConfiguration = AuroraWindowTitlePaneConfigurations.AuroraPlain(),
             menuCommands = menuCommands,
             content = content
         )
@@ -86,6 +90,7 @@ fun AuroraApplicationScope.ScreenshotContent(
     state: WindowState,
     title: String,
     icon: Painter,
+    windowTitlePaneConfiguration: AuroraWindowTitlePaneConfiguration,
     toolbarIconEnabledFilterStrategy: IconFilterStrategy
 ) {
     ScreenshotWindow(
@@ -94,6 +99,7 @@ fun AuroraApplicationScope.ScreenshotContent(
         state = state,
         title = title,
         icon = icon,
+        windowTitlePaneConfiguration = windowTitlePaneConfiguration,
         menuCommands = CommandGroup(
             commands = listOf(
                 Command(text = "Skins", action = {}),

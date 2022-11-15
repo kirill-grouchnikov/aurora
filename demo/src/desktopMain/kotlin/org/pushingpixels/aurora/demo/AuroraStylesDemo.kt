@@ -60,7 +60,7 @@ fun main() = auroraApplication {
         skin = skin,
         title = "Aurora Demo",
         state = state,
-        windowConfiguration = AuroraWindowConfiguration(titlePaneKind = AuroraWindowTitlePaneKind.Aurora),
+        windowTitlePaneConfiguration = AuroraWindowTitlePaneConfigurations.AuroraPlain(),
         onCloseRequest = ::exitApplication,
     ) {
         DemoStyleContent({ skin = it }, resourceBundle)

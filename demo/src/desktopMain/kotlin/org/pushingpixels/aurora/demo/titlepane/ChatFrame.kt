@@ -49,12 +49,10 @@ fun main() = auroraApplication {
         skin = moderateSkin(),
         title = "Aurora skeleton",
         state = state,
-        windowConfiguration = AuroraWindowConfiguration(
-            titlePaneKind = AuroraWindowTitlePaneKind.Aurora,
+        windowTitlePaneConfiguration = AuroraWindowTitlePaneConfigurations.AuroraIntegrated(
             titlePaneHeight = 40.dp,
             titleControlButtonGroupHorizontalGravity = HorizontalGravity.Leading,
             titleControlButtonGroupVerticalGravity = VerticalGravity.Centered,
-            extendContentIntoTitlePane = true
         ),
         onCloseRequest = ::exitApplication
     ) {

@@ -133,9 +133,8 @@ private fun AuroraWindowScope.WindowTitlePaneTextAndIcon(
     title: String,
     icon: Painter?,
     iconFilterStrategy: IconFilterStrategy,
-    windowConfiguration: AuroraWindowConfiguration
+    windowConfiguration: AuroraWindowTitlePaneConfigurations.AuroraPlain
 ) {
-    val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
 
     val skinColors = AuroraSkin.colors
@@ -337,7 +336,7 @@ private fun AuroraWindowScope.WindowTitlePane(
     title: String,
     icon: Painter?,
     iconFilterStrategy: IconFilterStrategy,
-    windowConfiguration: AuroraWindowConfiguration
+    windowConfiguration: AuroraWindowTitlePaneConfigurations.AuroraPlain
 ) {
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -354,19 +353,17 @@ private fun AuroraWindowScope.WindowTitlePane(
             Layout(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(windowConfiguration.titlePaneHeight)
+                    .height(WindowTitlePaneSizingConstants.MinimumTitlePaneHeight)
                     .auroraBackground()
                     .padding(WindowTitlePaneSizingConstants.TitlePaneContentPadding),
                 content = {
                     WindowDraggableArea(modifier = Modifier.padding(top = 1.dp, bottom = 1.dp)) {
-                        if (!this.auroraWindowConfiguration.extendContentIntoTitlePane) {
-                            WindowTitlePaneTextAndIcon(
-                                title = title,
-                                icon = icon,
-                                iconFilterStrategy = iconFilterStrategy,
-                                windowConfiguration = windowConfiguration
-                            )
-                        }
+                        WindowTitlePaneTextAndIcon(
+                            title = title,
+                            icon = icon,
+                            iconFilterStrategy = iconFilterStrategy,
+                            windowConfiguration = windowConfiguration
+                        )
                     }
 
                     // Minimize button
@@ -409,7 +406,223 @@ private fun AuroraWindowScope.WindowTitlePane(
                                     // See https://bugs.openjdk.java.net/browse/JDK-8176359,
                                     // https://bugs.openjdk.java.net/browse/JDK-8231564 and
                                     // https://bugs.openjdk.java.net/browse/JDK-8243925 that went into Java 15.
-                                    val isWindows = System.getProperty("os.name")?.startsWith("Windows")
+                                    val isWindows = java.lang.System.getProperty("os.name")?.startsWith("Windows")
+                                    val maximizedWindowBounds =
+                                        if ((isWindows == true) && (Runtime.version().feature() < 15))
+                                            Rectangle(
+                                                0, 0,
+                                                (screenBounds.width * current.graphicsConfiguration.defaultTransform.scaleX).toInt(),
+                                                (screenBounds.height * current.graphicsConfiguration.defaultTransform.scaleY).toInt(),
+                                            ) else screenBounds
+                                    // Now account for screen insets (taskbar and anything else that should not be
+                                    // interfered with by maximized windows)
+                                    val screenInsets = current.toolkit.getScreenInsets(current.graphicsConfiguration)
+                                    // Set maximized bounds of our window
+                                    current.maximizedBounds = Rectangle(
+                                        maximizedWindowBounds.x + screenInsets.left,
+                                        maximizedWindowBounds.y + screenInsets.top,
+                                        maximizedWindowBounds.width - screenInsets.left - screenInsets.right,
+                                        maximizedWindowBounds.height - screenInsets.top - screenInsets.bottom
+                                    )
+                                    // And now we can set our extended state
+                                    current.extendedState = JFrame.MAXIMIZED_BOTH
+                                }
+                                isMaximized.value = !isMaximized.value
+                            }
+                        },
+                        icon = object : TransitionAwarePainterDelegate() {
+                            override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
+                                return if (isMaximized.value) {
+                                    TransitionAwarePainter(
+                                        iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
+                                        decorationAreaType = DecorationAreaType.TitlePane,
+                                        skinColors = skinColors,
+                                        modelStateInfoSnapshot = modelStateInfoSnapshot,
+                                        paintDelegate = { drawScope, iconSize, colorScheme ->
+                                            drawRestoreIcon(drawScope, iconSize, colorScheme)
+                                        },
+                                        density = density,
+                                    )
+                                } else {
+                                    TransitionAwarePainter(
+                                        iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
+                                        decorationAreaType = DecorationAreaType.TitlePane,
+                                        skinColors = skinColors,
+                                        modelStateInfoSnapshot = modelStateInfoSnapshot,
+                                        paintDelegate = { drawScope, iconSize, colorScheme ->
+                                            drawMaximizeIcon(drawScope, iconSize, colorScheme)
+                                        },
+                                        density = density,
+                                    )
+                                }
+                            }
+                        }
+                    ))
+
+                    // Close button
+                    AuroraWindowTitlePaneButton(titlePaneCommand = Command(
+                        text = "",
+                        action = {
+                            (window as? Frame)?.dispatchEvent(
+                                WindowEvent(
+                                    window,
+                                    WindowEvent.WINDOW_CLOSING
+                                )
+                            )
+                        },
+                        icon = object : TransitionAwarePainterDelegate() {
+                            override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
+                                return TransitionAwarePainter(
+                                    iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
+                                    decorationAreaType = DecorationAreaType.TitlePane,
+                                    skinColors = skinColors,
+                                    modelStateInfoSnapshot = modelStateInfoSnapshot,
+                                    paintDelegate = { drawScope, iconSize, colorScheme ->
+                                        drawCloseIcon(drawScope, iconSize, colorScheme)
+                                    },
+                                    density = density,
+                                )
+                            }
+                        }
+                    ))
+                }) { measurables, constraints ->
+                val width = constraints.maxWidth
+                val height = constraints.maxHeight
+
+                val buttonSizePx = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize.toPx().roundToInt()
+
+                val buttonMeasureSpec = Constraints.fixed(width = buttonSizePx, height = buttonSizePx)
+
+                var childIndex = 0
+
+                val titleBoxMeasurable = measurables[childIndex++]
+                val minimizeButtonMeasurable = measurables[childIndex++]
+                val maximizeButtonMeasurable = measurables[childIndex++]
+                val closeButtonMeasurable = measurables[childIndex]
+
+                val minimizeButtonPlaceable = minimizeButtonMeasurable.measure(buttonMeasureSpec)
+                val maximizeButtonPlaceable = maximizeButtonMeasurable.measure(buttonMeasureSpec)
+                val closeButtonPlaceable = closeButtonMeasurable.measure(buttonMeasureSpec)
+
+                val regularGapPx = WindowTitlePaneSizingConstants.TitlePaneButtonIconRegularGap.toPx().roundToInt()
+                val largeGapPx = WindowTitlePaneSizingConstants.TitlePaneButtonIconLargeGap.toPx().roundToInt()
+
+                val titleWidth = width -
+                        (minimizeButtonPlaceable.width + regularGapPx +
+                                maximizeButtonPlaceable.width + largeGapPx +
+                                closeButtonPlaceable.width)
+
+                val titleBoxPlaceable = titleBoxMeasurable.measure(
+                    Constraints.fixed(width = titleWidth, height = height)
+                )
+
+                layout(width = width, height = height) {
+                    val controlButtonsOnRight = windowConfiguration.areTitlePaneControlButtonsOnRight(layoutDirection)
+
+                    val buttonY = (height - buttonSizePx) / 2
+
+                    var x = if (controlButtonsOnRight) width else 0
+                    if (controlButtonsOnRight) {
+                        x -= buttonSizePx
+                    }
+                    closeButtonPlaceable.place(x = x, y = buttonY)
+
+                    if (!controlButtonsOnRight) {
+                        x += buttonSizePx
+                    }
+
+                    x += if (controlButtonsOnRight) (-largeGapPx - buttonSizePx) else largeGapPx
+                    maximizeButtonPlaceable.place(x = x, y = buttonY)
+
+                    if (!controlButtonsOnRight) {
+                        x += buttonSizePx
+                    }
+
+                    x += if (controlButtonsOnRight) (-regularGapPx - buttonSizePx) else regularGapPx
+                    minimizeButtonPlaceable.place(x = x, y = buttonY)
+                    if (!controlButtonsOnRight) {
+                        x += buttonSizePx
+                    }
+
+                    if (controlButtonsOnRight) {
+                        titleBoxPlaceable.place(0, 0)
+                    } else {
+                        titleBoxPlaceable.place(x, 0)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(AuroraInternalApi::class)
+@Composable
+private fun AuroraWindowScope.WindowTitlePane(
+    iconFilterStrategy: IconFilterStrategy,
+    windowConfiguration: AuroraWindowTitlePaneConfigurations.AuroraIntegrated
+) {
+    val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
+
+    val extendedState = (window as? Frame)?.extendedState
+    val isMaximized =
+        remember { mutableStateOf(((extendedState != null) && ((extendedState and Frame.MAXIMIZED_BOTH) != 0))) }
+    val skinColors = AuroraSkin.colors
+
+    CompositionLocalProvider(
+        LocalButtonShaper provides ClassicButtonShaper()
+    ) {
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.TitlePane) {
+            Layout(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(windowConfiguration.titlePaneHeight)
+                    .auroraBackground()
+                    .padding(WindowTitlePaneSizingConstants.TitlePaneContentPadding),
+                content = {
+                    WindowDraggableArea(modifier = Modifier.padding(top = 1.dp, bottom = 1.dp)) {}
+
+                    // Minimize button
+                    AuroraWindowTitlePaneButton(titlePaneCommand = Command(
+                        text = "",
+                        action = {
+                            (window as? Frame)?.extendedState = JFrame.ICONIFIED
+                        },
+                        icon = object : TransitionAwarePainterDelegate() {
+                            override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
+                                return TransitionAwarePainter(
+                                    iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
+                                    decorationAreaType = DecorationAreaType.TitlePane,
+                                    skinColors = skinColors,
+                                    modelStateInfoSnapshot = modelStateInfoSnapshot,
+                                    paintDelegate = { drawScope, iconSize, colorScheme ->
+                                        drawMinimizeIcon(drawScope, iconSize, colorScheme)
+                                    },
+                                    density = density
+                                )
+                            }
+                        }
+                    ))
+
+                    // Maximize / Unmaximize button
+                    AuroraWindowTitlePaneButton(titlePaneCommand = Command(
+                        text = "",
+                        action = {
+                            val current = (window as? Frame)
+                            if (current != null) {
+                                if (current.extendedState == JFrame.MAXIMIZED_BOTH) {
+                                    current.extendedState = JFrame.NORMAL
+                                } else {
+                                    // Workaround for https://bugs.java.com/bugdatabase/view_bug.do?bug_id=4737788
+                                    // to explicitly compute maximized bounds so that our window
+                                    // does not overlap the taskbar0
+                                    val screenBounds = current.graphicsConfiguration.bounds
+                                    // Prior to Java 15, we need to account for screen resolution which is given as
+                                    // scaleX and scaleY on default transform of the window's graphics configuration.
+                                    // See https://bugs.openjdk.java.net/browse/JDK-8176359,
+                                    // https://bugs.openjdk.java.net/browse/JDK-8231564 and
+                                    // https://bugs.openjdk.java.net/browse/JDK-8243925 that went into Java 15.
+                                    val isWindows = java.lang.System.getProperty("os.name")?.startsWith("Windows")
                                     val maximizedWindowBounds =
                                         if ((isWindows == true) && (Runtime.version().feature() < 15))
                                             Rectangle(
@@ -567,14 +780,13 @@ private fun AuroraWindowScope.WindowInnerContent(
     title: String,
     icon: Painter?,
     iconFilterStrategy: IconFilterStrategy,
-    windowConfiguration: AuroraWindowConfiguration,
+    windowTitlePaneConfiguration: AuroraWindowTitlePaneConfiguration,
     menuCommands: CommandGroup? = null,
     content: @Composable AuroraWindowScope.() -> Unit
 ) {
-    if ((windowConfiguration.titlePaneKind == AuroraWindowTitlePaneKind.Aurora)
-        && windowConfiguration.extendContentIntoTitlePane) {
+    if (windowTitlePaneConfiguration is AuroraWindowTitlePaneConfigurations.AuroraIntegrated) {
         Box(Modifier.fillMaxSize().auroraBackground()) {
-            WindowTitlePane(title, icon, iconFilterStrategy, windowConfiguration)
+            WindowTitlePane(iconFilterStrategy, windowTitlePaneConfiguration)
             // Wrap the entire content in NONE decoration area. App code can set its
             // own decoration area types on specific parts.
             AuroraDecorationArea(decorationAreaType = DecorationAreaType.None) {
@@ -583,8 +795,8 @@ private fun AuroraWindowScope.WindowInnerContent(
         }
     } else {
         Column(Modifier.fillMaxSize().auroraBackground()) {
-            if (windowConfiguration.titlePaneKind == AuroraWindowTitlePaneKind.Aurora) {
-                WindowTitlePane(title, icon, iconFilterStrategy, windowConfiguration)
+            if (windowTitlePaneConfiguration is AuroraWindowTitlePaneConfigurations.AuroraPlain) {
+                WindowTitlePane(title, icon, iconFilterStrategy, windowTitlePaneConfiguration)
             }
             if (menuCommands != null) {
                 AuroraWindowMenuBar(menuCommands)
@@ -696,7 +908,7 @@ fun AuroraWindowScope.AuroraWindowContent(
     title: String,
     icon: Painter?,
     iconFilterStrategy: IconFilterStrategy,
-    windowConfiguration: AuroraWindowConfiguration,
+    windowTitlePaneConfiguration: AuroraWindowTitlePaneConfiguration,
     menuCommands: CommandGroup? = null,
     content: @Composable AuroraWindowScope.() -> Unit
 ) {
@@ -707,34 +919,39 @@ fun AuroraWindowScope.AuroraWindowContent(
         DecorationAreaType.TitlePane, ColorSchemeAssociationKind.Border, ComponentState.Enabled
     )
 
-    if (windowConfiguration.titlePaneKind == AuroraWindowTitlePaneKind.Aurora) {
-        Box(
-            Modifier
-                .fillMaxSize()
-                .drawAuroraWindowBorder(
-                    backgroundColorScheme = backgroundColorScheme,
-                    borderColorScheme = borderColorScheme
+    when (windowTitlePaneConfiguration) {
+        is AuroraWindowTitlePaneConfigurations.AuroraIntegrated,
+        is AuroraWindowTitlePaneConfigurations.AuroraPlain -> {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .drawAuroraWindowBorder(
+                        backgroundColorScheme = backgroundColorScheme,
+                        borderColorScheme = borderColorScheme
+                    )
+                    .padding(WindowSizingConstants.DecoratedBorderThickness)
+            ) {
+                WindowInnerContent(
+                    title,
+                    icon,
+                    iconFilterStrategy,
+                    windowTitlePaneConfiguration,
+                    menuCommands,
+                    content
                 )
-                .padding(WindowSizingConstants.DecoratedBorderThickness)
-        ) {
+            }
+        }
+
+        else -> {
             WindowInnerContent(
                 title,
                 icon,
                 iconFilterStrategy,
-                windowConfiguration,
+                windowTitlePaneConfiguration,
                 menuCommands,
                 content
             )
         }
-    } else {
-        WindowInnerContent(
-            title,
-            icon,
-            iconFilterStrategy,
-            windowConfiguration,
-            menuCommands,
-            content
-        )
     }
 
     val awtEventListener = remember(this, window) {
@@ -798,13 +1015,13 @@ class AuroraApplicationScope(
 }
 
 interface AuroraWindowScope : WindowScope, AuroraLocaleScope {
-    val auroraWindowConfiguration: AuroraWindowConfiguration
+    val auroraWindowTitlePaneConfiguration: AuroraWindowTitlePaneConfiguration
 }
 
 internal class AuroraWindowScopeImpl(
     private val applicationScope: AuroraApplicationScope,
     original: WindowScope,
-    private val configuration: AuroraWindowConfiguration
+    titlePaneConfiguration: AuroraWindowTitlePaneConfiguration
 ) : AuroraWindowScope {
     override var applicationLocale: Locale
         get() = applicationScope.applicationLocale
@@ -814,7 +1031,7 @@ internal class AuroraWindowScopeImpl(
 
     override val window = original.window
 
-    override val auroraWindowConfiguration = configuration
+    override val auroraWindowTitlePaneConfiguration = titlePaneConfiguration
 }
 
 fun auroraApplication(content: @Composable AuroraApplicationScope.() -> Unit) {
@@ -830,15 +1047,109 @@ fun auroraApplication(content: @Composable AuroraApplicationScope.() -> Unit) {
     }
 }
 
-data class AuroraWindowConfiguration(
-    val titlePaneKind: AuroraWindowTitlePaneKind = AuroraWindowTitlePaneKind.System,
-    val titleTextHorizontalGravity: HorizontalGravity = HorizontalGravity.Leading,
-    val titleControlButtonGroupHorizontalGravity: HorizontalGravity = HorizontalGravity.Trailing,
-    val titleControlButtonGroupVerticalGravity: VerticalGravity = VerticalGravity.Centered,
-    val titleIconHorizontalGravity: TitleIconHorizontalGravity = TitleIconHorizontalGravity.OppositeControlButtons,
-    val titlePaneHeight: Dp = WindowTitlePaneSizingConstants.MinimumTitlePaneHeight,
-    val extendContentIntoTitlePane: Boolean = false
-)
+sealed class AuroraWindowTitlePaneConfiguration
+
+object AuroraWindowTitlePaneConfigurations {
+    /**
+     * Window title pane is provided by the operating system.
+     */
+    object System : AuroraWindowTitlePaneConfiguration()
+
+    /**
+     * No window title pane. The application UI is responsible for resizing, dragging and other
+     * top-level user interaction with the window.
+     */
+    object None : AuroraWindowTitlePaneConfiguration()
+
+    /**
+     * Plain title pane provided by Aurora with application icon, application title and
+     * three control buttons: minimize, maximize / restore and close. Use the gravity attributes
+     * to configure the positioning of these elements along the horizontal axis.
+     */
+    data class AuroraPlain(
+        val titleTextHorizontalGravity: HorizontalGravity = HorizontalGravity.Leading,
+        val titleControlButtonGroupHorizontalGravity: HorizontalGravity = HorizontalGravity.Trailing,
+        val titleIconHorizontalGravity: TitleIconHorizontalGravity = TitleIconHorizontalGravity.OppositeControlButtons
+    ) : AuroraWindowTitlePaneConfiguration() {
+        @OptIn(AuroraInternalApi::class)
+        internal fun areTitlePaneControlButtonsOnRight(layoutDirection: LayoutDirection): Boolean {
+            return when (this.titleControlButtonGroupHorizontalGravity) {
+                HorizontalGravity.Platform -> {
+                    when (Platform.Current) {
+                        Platform.MacOS -> layoutDirection == LayoutDirection.Rtl
+                        else -> layoutDirection == LayoutDirection.Ltr
+                    }
+                }
+
+                HorizontalGravity.Leading -> layoutDirection == LayoutDirection.Rtl
+                else -> layoutDirection == LayoutDirection.Ltr
+            }
+        }
+
+        @OptIn(AuroraInternalApi::class)
+        internal fun getTitlePaneIconGravity(): TitleIconHorizontalGravity {
+            return when (this.titleIconHorizontalGravity) {
+                TitleIconHorizontalGravity.Platform -> {
+                    when (Platform.Current) {
+                        Platform.MacOS -> TitleIconHorizontalGravity.NextToTitle
+                        Platform.Gnome -> TitleIconHorizontalGravity.None
+                        else -> TitleIconHorizontalGravity.OppositeControlButtons
+                    }
+                }
+
+                else -> this.titleIconHorizontalGravity
+            }
+        }
+
+        @OptIn(AuroraInternalApi::class)
+        internal fun getTitlePaneTextGravity(): HorizontalGravity {
+            return when (this.titleTextHorizontalGravity) {
+                HorizontalGravity.Platform -> {
+                    when (Platform.Current) {
+                        Platform.Windows -> HorizontalGravity.Leading
+                        else -> HorizontalGravity.Centered
+                    }
+                }
+
+                else -> this.titleTextHorizontalGravity
+            }
+        }
+    }
+
+    /**
+     * Integrated title pane provided by Aurora with three control buttons: minimize,
+     * maximize / restore and close. Use the gravity attributes
+     * to configure the positioning of these buttons, and the height attribute to configure
+     * the title pane height.
+     *
+     * Use [getTitlePaneControlInsets] to obtain the insets that should be applied to the
+     * application content that is integrated into the title pane area so that it does not
+     * overlap with the window control buttons.
+     *
+     * Optionally, use [AuroraWindowTitlePaneTitleText] for creating a title label that is
+     * styled consistently with the current Aurora skin.
+     */
+    data class AuroraIntegrated(
+        val titleControlButtonGroupHorizontalGravity: HorizontalGravity = HorizontalGravity.Trailing,
+        val titleControlButtonGroupVerticalGravity: VerticalGravity = VerticalGravity.Centered,
+        val titlePaneHeight: Dp = WindowTitlePaneSizingConstants.MinimumTitlePaneHeight
+    ) : AuroraWindowTitlePaneConfiguration() {
+        @OptIn(AuroraInternalApi::class)
+        internal fun areTitlePaneControlButtonsOnRight(layoutDirection: LayoutDirection): Boolean {
+            return when (this.titleControlButtonGroupHorizontalGravity) {
+                HorizontalGravity.Platform -> {
+                    when (Platform.Current) {
+                        Platform.MacOS -> layoutDirection == LayoutDirection.Rtl
+                        else -> layoutDirection == LayoutDirection.Ltr
+                    }
+                }
+
+                HorizontalGravity.Leading -> layoutDirection == LayoutDirection.Rtl
+                else -> layoutDirection == LayoutDirection.Ltr
+            }
+        }
+    }
+}
 
 @OptIn(AuroraInternalApi::class)
 @Composable
@@ -851,7 +1162,7 @@ fun AuroraApplicationScope.AuroraWindow(
     icon: Painter? = null,
     iconFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     menuCommands: CommandGroup? = null,
-    windowConfiguration: AuroraWindowConfiguration = AuroraWindowConfiguration(),
+    windowTitlePaneConfiguration: AuroraWindowTitlePaneConfiguration = AuroraWindowTitlePaneConfigurations.System,
     resizable: Boolean = true,
     enabled: Boolean = true,
     focusable: Boolean = true,
@@ -862,10 +1173,11 @@ fun AuroraApplicationScope.AuroraWindow(
 ) {
     val density = mutableStateOf(Density(1.0f, 1.0f))
 
-    val decoratedBySystem = (windowConfiguration.titlePaneKind == AuroraWindowTitlePaneKind.System)
-    val decoratedByAurora = (windowConfiguration.titlePaneKind == AuroraWindowTitlePaneKind.Aurora)
-    if (decoratedByAurora && (windowConfiguration.titlePaneHeight < WindowTitlePaneSizingConstants.MinimumTitlePaneHeight)) {
-        throw IllegalStateException("Aurora-decorated windows must have at least ${WindowTitlePaneSizingConstants.MinimumTitlePaneHeight} tall title pane")
+    val decoratedBySystem = (windowTitlePaneConfiguration is AuroraWindowTitlePaneConfigurations.System)
+    if ((windowTitlePaneConfiguration is AuroraWindowTitlePaneConfigurations.AuroraIntegrated) &&
+        (windowTitlePaneConfiguration.titlePaneHeight < WindowTitlePaneSizingConstants.MinimumTitlePaneHeight)
+    ) {
+        throw IllegalStateException("Integrated windows must have at least ${WindowTitlePaneSizingConstants.MinimumTitlePaneHeight} tall title pane")
     }
 
     Window(
@@ -886,7 +1198,7 @@ fun AuroraApplicationScope.AuroraWindow(
             LocalWindow provides window,
             LocalWindowSize provides state.size
         ) {
-            val auroraWindowScope = AuroraWindowScopeImpl(this@AuroraWindow, this, windowConfiguration)
+            val auroraWindowScope = AuroraWindowScopeImpl(this@AuroraWindow, this, windowTitlePaneConfiguration)
             AuroraSkin(
                 displayName = skin.displayName,
                 decorationAreaType = DecorationAreaType.None,
@@ -900,7 +1212,7 @@ fun AuroraApplicationScope.AuroraWindow(
                     title = title,
                     icon = icon,
                     iconFilterStrategy = iconFilterStrategy,
-                    windowConfiguration = windowConfiguration,
+                    windowTitlePaneConfiguration = windowTitlePaneConfiguration,
                     menuCommands = menuCommands,
                     content = content
                 )
@@ -908,7 +1220,9 @@ fun AuroraApplicationScope.AuroraWindow(
         }
 
         LaunchedEffect(Unit) {
-            if (decoratedByAurora) {
+            if ((windowTitlePaneConfiguration is AuroraWindowTitlePaneConfigurations.AuroraIntegrated) ||
+                (windowTitlePaneConfiguration is AuroraWindowTitlePaneConfigurations.AuroraPlain)
+            ) {
                 val lastCursor = mutableStateOf(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR))
                 val awtInputHandler = AWTInputHandler(
                     density = density.value,
@@ -967,60 +1281,19 @@ internal fun AuroraSkin(
     }
 }
 
-@OptIn(AuroraInternalApi::class)
-private fun AuroraWindowConfiguration.getTitlePaneIconGravity(): TitleIconHorizontalGravity {
-    return when (this.titleIconHorizontalGravity) {
-        TitleIconHorizontalGravity.Platform -> {
-            when (Platform.Current) {
-                Platform.MacOS -> TitleIconHorizontalGravity.NextToTitle
-                Platform.Gnome -> TitleIconHorizontalGravity.None
-                else -> TitleIconHorizontalGravity.OppositeControlButtons
-            }
-        }
-
-        else -> this.titleIconHorizontalGravity
-    }
-}
-
-@OptIn(AuroraInternalApi::class)
-private fun AuroraWindowConfiguration.getTitlePaneTextGravity(): HorizontalGravity {
-    return when (this.titleTextHorizontalGravity) {
-        HorizontalGravity.Platform -> {
-            when (Platform.Current) {
-                Platform.Windows -> HorizontalGravity.Leading
-                else -> HorizontalGravity.Centered
-            }
-        }
-
-        else -> this.titleTextHorizontalGravity
-    }
-}
-
-@OptIn(AuroraInternalApi::class)
-private fun AuroraWindowConfiguration.areTitlePaneControlButtonsOnRight(layoutDirection: LayoutDirection): Boolean {
-    return when (this.titleControlButtonGroupHorizontalGravity) {
-        HorizontalGravity.Platform -> {
-            when (Platform.Current) {
-                Platform.MacOS -> layoutDirection == LayoutDirection.Rtl
-                else -> layoutDirection == LayoutDirection.Ltr
-            }
-        }
-
-        HorizontalGravity.Leading -> layoutDirection == LayoutDirection.Rtl
-        else -> layoutDirection == LayoutDirection.Ltr
-    }
-}
-
 fun AuroraWindowScope.getTitlePaneControlInsets(
     layoutDirection: LayoutDirection,
     density: Density
 ): PaddingValues {
-    if (this.auroraWindowConfiguration.titlePaneKind != AuroraWindowTitlePaneKind.Aurora) {
-        throw IllegalStateException("Title pane control insets only available under Aurora title pane kind")
+    if (this.auroraWindowTitlePaneConfiguration !is AuroraWindowTitlePaneConfigurations.AuroraIntegrated) {
+        throw IllegalStateException("Title pane control insets only available under integrated title pane kind")
     }
 
+    val integratedConfiguration =
+        this.auroraWindowTitlePaneConfiguration as AuroraWindowTitlePaneConfigurations.AuroraIntegrated
+
     with(density) {
-        val controlButtonsOnRight = auroraWindowConfiguration.areTitlePaneControlButtonsOnRight(layoutDirection)
+        val controlButtonsOnRight = integratedConfiguration.areTitlePaneControlButtonsOnRight(layoutDirection)
         val buttonSizePx = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize.toPx().roundToInt()
         val regularGapPx = WindowTitlePaneSizingConstants.TitlePaneButtonIconRegularGap.toPx().roundToInt()
         val largeGapPx = WindowTitlePaneSizingConstants.TitlePaneButtonIconLargeGap.toPx().roundToInt()
@@ -1029,16 +1302,16 @@ fun AuroraWindowScope.getTitlePaneControlInsets(
         val leftInsetPx = if (controlButtonsOnRight) 0 else controlButtonsWidth
         val rightInsetPx = if (controlButtonsOnRight) controlButtonsWidth else 0
 
-        val y = when (auroraWindowConfiguration.titleControlButtonGroupVerticalGravity) {
+        val y = when (integratedConfiguration.titleControlButtonGroupVerticalGravity) {
             VerticalGravity.Top -> 0
-            VerticalGravity.Centered -> (auroraWindowConfiguration.titlePaneHeight.toPx()
+            VerticalGravity.Centered -> (integratedConfiguration.titlePaneHeight.toPx()
                 .roundToInt() - buttonSizePx) / 2
 
-            VerticalGravity.Bottom -> auroraWindowConfiguration.titlePaneHeight.toPx().roundToInt() - buttonSizePx
+            VerticalGravity.Bottom -> integratedConfiguration.titlePaneHeight.toPx().roundToInt() - buttonSizePx
         }
 
         val topInsetPx = y
-        val bottomInsetPx = auroraWindowConfiguration.titlePaneHeight.toPx().roundToInt() - y - buttonSizePx
+        val bottomInsetPx = integratedConfiguration.titlePaneHeight.toPx().roundToInt() - y - buttonSizePx
 
         return PaddingValues(
             start = (if (layoutDirection == LayoutDirection.Ltr) leftInsetPx else rightInsetPx).toDp() +

@@ -36,8 +36,7 @@ import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.tools.screenshot.svg.radiance_menu
 import org.pushingpixels.aurora.window.AuroraApplicationScope
 import org.pushingpixels.aurora.window.AuroraWindow
-import org.pushingpixels.aurora.window.AuroraWindowConfiguration
-import org.pushingpixels.aurora.theming.AuroraWindowTitlePaneKind
+import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -63,7 +62,7 @@ fun AuroraApplicationScope.screenshot(
         skin = skin,
         title = title,
         state = state,
-        windowConfiguration = AuroraWindowConfiguration(titlePaneKind = AuroraWindowTitlePaneKind.Aurora),
+        windowTitlePaneConfiguration = AuroraWindowTitlePaneConfigurations.AuroraPlain(),
         icon = icon,
         onCloseRequest = ::exitApplication
     ) {
@@ -88,6 +87,7 @@ fun AuroraApplicationScope.screenshot(
                     state = state,
                     title = title,
                     icon = icon,
+                    windowTitlePaneConfiguration = auroraWindowTitlePaneConfiguration,
                     toolbarIconEnabledFilterStrategy = toolbarIconEnabledFilterStrategy
                 )
             }
