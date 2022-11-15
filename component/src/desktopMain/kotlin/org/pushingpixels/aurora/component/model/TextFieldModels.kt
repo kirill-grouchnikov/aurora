@@ -18,6 +18,7 @@ package org.pushingpixels.aurora.component.model
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.DpSize
@@ -42,15 +43,17 @@ data class TextFieldStringContentModel(
 object TextFieldSizingConstants {
     val MinWidth = 200.dp
     val MinHeight = 24.dp
-    val DefaultTextFieldContentPadding = PaddingValues(start = 5.dp, top = 2.dp, end = 5.dp, bottom = 4.dp)
+    val DefaultTextFieldContentPadding = PaddingValues(start = 5.dp, top = 4.dp, end = 5.dp, bottom = 4.dp)
 }
 
 data class TextFieldPresentationModel(
     val keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     val keyboardActions: KeyboardActions = KeyboardActions(),
+    val contentPadding: PaddingValues = TextFieldSizingConstants.DefaultTextFieldContentPadding,
     val defaultMinSize: DpSize = DpSize(width = TextFieldSizingConstants.MinWidth, TextFieldSizingConstants.MinHeight),
     val singleLine: Boolean = false,
     val showBorder: Boolean = true,
     val maxLines: Int = Int.MAX_VALUE,
+    val textStyle: TextStyle? = null,
     val visualTransformation: VisualTransformation = VisualTransformation.None
 ) : PresentationModel

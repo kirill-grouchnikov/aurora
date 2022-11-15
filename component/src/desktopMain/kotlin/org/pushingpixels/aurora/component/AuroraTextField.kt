@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
@@ -250,7 +251,7 @@ internal fun AuroraTextField(
         colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
         isTextInFilledArea = false
     )
-    val textStyle = LocalTextStyle.current.merge(TextStyle(color = textColor))
+    val textStyle = LocalTextStyle.current.merge(presentationModel.textStyle).merge(TextStyle(color = textColor))
 
     val placeholderAlpha = 0.7f * (1.0f - modelStateInfo.activeStrength) *
             (if (contentModel.value.text.isEmpty()) 1.0f else 0.0f)
@@ -262,7 +263,8 @@ internal fun AuroraTextField(
         colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
         isTextInFilledArea = false
     ).byAlpha(placeholderAlpha)
-    val placeholderStyle = LocalTextStyle.current.merge(TextStyle(color = placeholderColor))
+
+    val placeholderStyle = LocalTextStyle.current.merge(presentationModel.textStyle).merge(TextStyle(color = placeholderColor))
 
     val cursorColor = textColor
 
@@ -430,6 +432,7 @@ internal fun AuroraTextField(
                 maxLines = presentationModel.maxLines,
                 decorationBox = @Composable { coreTextField ->
                     TextFieldContentLayout(
+                        presentationModel = presentationModel,
                         textField = coreTextField,
                         placeholder = {
                             AuroraText(
@@ -450,13 +453,14 @@ internal fun AuroraTextField(
 
 @Composable
 private fun TextFieldContentLayout(
+    presentationModel: TextFieldPresentationModel,
     textField: @Composable () -> Unit,
     placeholder: @Composable () -> Unit
 ) {
     Layout(
         content = {
             Box(
-                modifier = Modifier.padding(TextFieldSizingConstants.DefaultTextFieldContentPadding),
+                modifier = Modifier.padding(presentationModel.contentPadding),
                 propagateMinConstraints = true
             ) {
                 textField()
@@ -470,9 +474,7 @@ private fun TextFieldContentLayout(
         val height = max(incomingConstraints.minHeight, textFieldPlaceable.height)
 
         layout(width, height) {
-            val textVerticalPosition =
-                (TextFieldSizingConstants.DefaultTextFieldContentPadding.calculateTopPadding().value * density).roundToInt()
-            textFieldPlaceable.placeRelative(0, textVerticalPosition)
+            textFieldPlaceable.placeRelative(0, 0)
         }
     }
 }
