@@ -38,7 +38,6 @@ import org.pushingpixels.aurora.demo.svg.tango.format_text_bold
 import org.pushingpixels.aurora.demo.svg.tango.format_text_italic
 import org.pushingpixels.aurora.demo.svg.tango.format_text_strikethrough
 import org.pushingpixels.aurora.demo.svg.tango.format_text_underline
-import org.pushingpixels.aurora.theming.AuroraWindowTitlePaneKind
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.window.*

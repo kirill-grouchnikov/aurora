@@ -36,7 +36,6 @@ import org.pushingpixels.aurora.demo.svg.tango.format_justify_center
 import org.pushingpixels.aurora.demo.svg.tango.format_justify_fill
 import org.pushingpixels.aurora.demo.svg.tango.format_justify_left
 import org.pushingpixels.aurora.demo.svg.tango.format_justify_right
-import org.pushingpixels.aurora.theming.AuroraWindowTitlePaneKind
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.window.*

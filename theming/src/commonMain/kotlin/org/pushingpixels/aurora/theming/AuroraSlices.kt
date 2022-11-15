@@ -879,12 +879,6 @@ enum class TabContentSeparatorKind {
     Double
 }
 
-enum class AuroraWindowTitlePaneKind {
-    System,
-    Aurora,
-    None
-}
-
 enum class HorizontalGravity {
     /**
      * Platform-specific content gravity.
