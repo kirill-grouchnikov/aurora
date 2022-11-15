@@ -414,8 +414,8 @@ internal fun AuroraTextField(
                 value = contentModel.value,
                 modifier = modifier
                     .defaultMinSize(
-                        minWidth = TextFieldSizingConstants.MinWidth,
-                        minHeight = TextFieldSizingConstants.MinHeight,
+                        minWidth = presentationModel.defaultMinSize.width,
+                        minHeight = presentationModel.defaultMinSize.height,
                     ),
                 onValueChange = contentModel.onValueChange,
                 enabled = contentModel.enabled,

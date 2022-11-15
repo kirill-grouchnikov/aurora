@@ -20,6 +20,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 
 data class TextFieldValueContentModel(
@@ -28,7 +29,7 @@ data class TextFieldValueContentModel(
     val enabled: Boolean = true,
     val readOnly: Boolean = false,
     val onValueChange: (TextFieldValue) -> Unit
-): ContentModel
+) : ContentModel
 
 data class TextFieldStringContentModel(
     val value: String,
@@ -36,7 +37,7 @@ data class TextFieldStringContentModel(
     val enabled: Boolean = true,
     val readOnly: Boolean = false,
     val onValueChange: (String) -> Unit
-): ContentModel
+) : ContentModel
 
 object TextFieldSizingConstants {
     val MinWidth = 200.dp
@@ -47,8 +48,9 @@ object TextFieldSizingConstants {
 data class TextFieldPresentationModel(
     val keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     val keyboardActions: KeyboardActions = KeyboardActions(),
+    val defaultMinSize: DpSize = DpSize(width = TextFieldSizingConstants.MinWidth, TextFieldSizingConstants.MinHeight),
     val singleLine: Boolean = false,
     val showBorder: Boolean = true,
     val maxLines: Int = Int.MAX_VALUE,
     val visualTransformation: VisualTransformation = VisualTransformation.None
-): PresentationModel
+) : PresentationModel

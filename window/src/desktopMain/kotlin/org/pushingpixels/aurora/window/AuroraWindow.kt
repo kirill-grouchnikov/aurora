@@ -74,9 +74,6 @@ object WindowTitlePaneSizingConstants {
     // Title pane content padding (for the area that hosts the title text and the buttons)
     val TitlePaneContentPadding = PaddingValues(start = 8.dp, end = 8.dp)
 
-    // Title pane content padding (for the area that hosts the title text and the buttons)
-    val TitlePaneContentNoIconPadding = PaddingValues(start = 24.dp, end = 8.dp)
-
     // Icon size for each title pane control button (minimize, maximize, etc)
     val TitlePaneButtonIconSize = 18.dp
 
@@ -103,10 +100,31 @@ private val TitlePaneButtonPresentationModel = CommandButtonPresentationModel(
 )
 
 @Composable
-fun AuroraWindowScope.WindowTitlePaneButton(titlePaneCommand: Command) {
+fun AuroraWindowScope.AuroraWindowTitlePaneButton(titlePaneCommand: Command) {
     CommandButtonProjection(
         contentModel = titlePaneCommand,
         presentationModel = TitlePaneButtonPresentationModel
+    ).project()
+}
+
+@Composable
+fun AuroraWindowScope.AuroraWindowTitlePaneTitleText(title: String) {
+    val skinColors = AuroraSkin.colors
+    val density = LocalDensity.current
+
+    val colorScheme =
+        skinColors.getEnabledColorScheme(DecorationAreaType.TitlePane)
+    val titleTextStyle = TextStyle(
+        color = colorScheme.foregroundColor,
+        fontWeight = FontWeight.Bold,
+        shadow = Shadow(
+            color = colorScheme.echoColor,
+            blurRadius = density.density
+        )
+    )
+    LabelProjection(
+        contentModel = LabelContentModel(text = title),
+        presentationModel = LabelPresentationModel(textStyle = titleTextStyle)
     ).project()
 }
 
@@ -143,20 +161,7 @@ private fun AuroraWindowScope.WindowTitlePaneTextAndIcon(
                 )
             }
 
-            val colorScheme =
-                skinColors.getEnabledColorScheme(DecorationAreaType.TitlePane)
-            val titleTextStyle = TextStyle(
-                color = colorScheme.foregroundColor,
-                fontWeight = FontWeight.Bold,
-                shadow = Shadow(
-                    color = colorScheme.echoColor,
-                    blurRadius = density.density
-                )
-            )
-            LabelProjection(
-                contentModel = LabelContentModel(text = title),
-                presentationModel = LabelPresentationModel(textStyle = titleTextStyle)
-            ).project()
+            AuroraWindowTitlePaneTitleText(title = title)
         }) { measurables, constraints ->
         val width = constraints.maxWidth
         val height = constraints.maxHeight
@@ -212,7 +217,7 @@ private fun AuroraWindowScope.WindowTitlePaneTextAndIcon(
                         titlePlaceable.place(titleX, (height - titlePlaceable.height) / 2)
                     } else {
                         val iconX: Int
-                        val titleX : Int
+                        val titleX: Int
                         // I for icon, B for control buttons block in the layout diagrams
                         if (ltr) {
                             if (controlButtonsOnRight) {
@@ -262,7 +267,7 @@ private fun AuroraWindowScope.WindowTitlePaneTextAndIcon(
                         titlePlaceable.place(titleX, (height - titlePlaceable.height) / 2)
                     } else {
                         val iconX: Int
-                        val titleX : Int
+                        val titleX: Int
                         // I for icon, B for control buttons block in the layout diagrams
                         if (ltr) {
                             if (controlButtonsOnRight) {
@@ -351,23 +356,21 @@ private fun AuroraWindowScope.WindowTitlePane(
                     .fillMaxWidth()
                     .height(windowConfiguration.titlePaneHeight)
                     .auroraBackground()
-                    .padding(
-                        if (icon == null)
-                            WindowTitlePaneSizingConstants.TitlePaneContentNoIconPadding
-                        else WindowTitlePaneSizingConstants.TitlePaneContentPadding
-                    ),
+                    .padding(WindowTitlePaneSizingConstants.TitlePaneContentPadding),
                 content = {
                     WindowDraggableArea(modifier = Modifier.padding(top = 1.dp, bottom = 1.dp)) {
-                        WindowTitlePaneTextAndIcon(
-                            title = title,
-                            icon = icon,
-                            iconFilterStrategy = iconFilterStrategy,
-                            windowConfiguration = windowConfiguration
-                        )
+                        if (!this.auroraWindowConfiguration.extendContentIntoTitlePane) {
+                            WindowTitlePaneTextAndIcon(
+                                title = title,
+                                icon = icon,
+                                iconFilterStrategy = iconFilterStrategy,
+                                windowConfiguration = windowConfiguration
+                            )
+                        }
                     }
 
                     // Minimize button
-                    WindowTitlePaneButton(titlePaneCommand = Command(
+                    AuroraWindowTitlePaneButton(titlePaneCommand = Command(
                         text = "",
                         action = {
                             (window as? Frame)?.extendedState = JFrame.ICONIFIED
@@ -389,7 +392,7 @@ private fun AuroraWindowScope.WindowTitlePane(
                     ))
 
                     // Maximize / Unmaximize button
-                    WindowTitlePaneButton(titlePaneCommand = Command(
+                    AuroraWindowTitlePaneButton(titlePaneCommand = Command(
                         text = "",
                         action = {
                             val current = (window as? Frame)
@@ -460,7 +463,7 @@ private fun AuroraWindowScope.WindowTitlePane(
                     ))
 
                     // Close button
-                    WindowTitlePaneButton(titlePaneCommand = Command(
+                    AuroraWindowTitlePaneButton(titlePaneCommand = Command(
                         text = "",
                         action = {
                             (window as? Frame)?.dispatchEvent(
@@ -568,17 +571,29 @@ private fun AuroraWindowScope.WindowInnerContent(
     menuCommands: CommandGroup? = null,
     content: @Composable AuroraWindowScope.() -> Unit
 ) {
-    Column(Modifier.fillMaxSize().auroraBackground()) {
-        if (windowConfiguration.titlePaneKind == AuroraWindowTitlePaneKind.Aurora) {
+    if ((windowConfiguration.titlePaneKind == AuroraWindowTitlePaneKind.Aurora)
+        && windowConfiguration.extendContentIntoTitlePane) {
+        Box(Modifier.fillMaxSize().auroraBackground()) {
             WindowTitlePane(title, icon, iconFilterStrategy, windowConfiguration)
+            // Wrap the entire content in NONE decoration area. App code can set its
+            // own decoration area types on specific parts.
+            AuroraDecorationArea(decorationAreaType = DecorationAreaType.None) {
+                content()
+            }
         }
-        if (menuCommands != null) {
-            AuroraWindowMenuBar(menuCommands)
-        }
-        // Wrap the entire content in NONE decoration area. App code can set its
-        // own decoration area types on specific parts.
-        AuroraDecorationArea(decorationAreaType = DecorationAreaType.None) {
-            content()
+    } else {
+        Column(Modifier.fillMaxSize().auroraBackground()) {
+            if (windowConfiguration.titlePaneKind == AuroraWindowTitlePaneKind.Aurora) {
+                WindowTitlePane(title, icon, iconFilterStrategy, windowConfiguration)
+            }
+            if (menuCommands != null) {
+                AuroraWindowMenuBar(menuCommands)
+            }
+            // Wrap the entire content in NONE decoration area. App code can set its
+            // own decoration area types on specific parts.
+            AuroraDecorationArea(decorationAreaType = DecorationAreaType.None) {
+                content()
+            }
         }
     }
 }
@@ -782,11 +797,14 @@ class AuroraApplicationScope(
     }
 }
 
-interface AuroraWindowScope : WindowScope, AuroraLocaleScope
+interface AuroraWindowScope : WindowScope, AuroraLocaleScope {
+    val auroraWindowConfiguration: AuroraWindowConfiguration
+}
 
 internal class AuroraWindowScopeImpl(
     private val applicationScope: AuroraApplicationScope,
-    original: WindowScope
+    original: WindowScope,
+    private val configuration: AuroraWindowConfiguration
 ) : AuroraWindowScope {
     override var applicationLocale: Locale
         get() = applicationScope.applicationLocale
@@ -795,6 +813,8 @@ internal class AuroraWindowScopeImpl(
         }
 
     override val window = original.window
+
+    override val auroraWindowConfiguration = configuration
 }
 
 fun auroraApplication(content: @Composable AuroraApplicationScope.() -> Unit) {
@@ -816,7 +836,8 @@ data class AuroraWindowConfiguration(
     val titleControlButtonGroupHorizontalGravity: HorizontalGravity = HorizontalGravity.Trailing,
     val titleControlButtonGroupVerticalGravity: VerticalGravity = VerticalGravity.Centered,
     val titleIconHorizontalGravity: TitleIconHorizontalGravity = TitleIconHorizontalGravity.OppositeControlButtons,
-    val titlePaneHeight: Dp = WindowTitlePaneSizingConstants.MinimumTitlePaneHeight
+    val titlePaneHeight: Dp = WindowTitlePaneSizingConstants.MinimumTitlePaneHeight,
+    val extendContentIntoTitlePane: Boolean = false
 )
 
 @OptIn(AuroraInternalApi::class)
@@ -865,7 +886,7 @@ fun AuroraApplicationScope.AuroraWindow(
             LocalWindow provides window,
             LocalWindowSize provides state.size
         ) {
-            val auroraWindowScope = AuroraWindowScopeImpl(this@AuroraWindow, this)
+            val auroraWindowScope = AuroraWindowScopeImpl(this@AuroraWindow, this, windowConfiguration)
             AuroraSkin(
                 displayName = skin.displayName,
                 decorationAreaType = DecorationAreaType.None,
@@ -987,5 +1008,45 @@ private fun AuroraWindowConfiguration.areTitlePaneControlButtonsOnRight(layoutDi
 
         HorizontalGravity.Leading -> layoutDirection == LayoutDirection.Rtl
         else -> layoutDirection == LayoutDirection.Ltr
+    }
+}
+
+fun AuroraWindowScope.getTitlePaneControlInsets(
+    layoutDirection: LayoutDirection,
+    density: Density
+): PaddingValues {
+    if (this.auroraWindowConfiguration.titlePaneKind != AuroraWindowTitlePaneKind.Aurora) {
+        throw IllegalStateException("Title pane control insets only available under Aurora title pane kind")
+    }
+
+    with(density) {
+        val controlButtonsOnRight = auroraWindowConfiguration.areTitlePaneControlButtonsOnRight(layoutDirection)
+        val buttonSizePx = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize.toPx().roundToInt()
+        val regularGapPx = WindowTitlePaneSizingConstants.TitlePaneButtonIconRegularGap.toPx().roundToInt()
+        val largeGapPx = WindowTitlePaneSizingConstants.TitlePaneButtonIconLargeGap.toPx().roundToInt()
+        val controlButtonsWidth = 3 * buttonSizePx + regularGapPx + largeGapPx
+
+        val leftInsetPx = if (controlButtonsOnRight) 0 else controlButtonsWidth
+        val rightInsetPx = if (controlButtonsOnRight) controlButtonsWidth else 0
+
+        val y = when (auroraWindowConfiguration.titleControlButtonGroupVerticalGravity) {
+            VerticalGravity.Top -> 0
+            VerticalGravity.Centered -> (auroraWindowConfiguration.titlePaneHeight.toPx()
+                .roundToInt() - buttonSizePx) / 2
+
+            VerticalGravity.Bottom -> auroraWindowConfiguration.titlePaneHeight.toPx().roundToInt() - buttonSizePx
+        }
+
+        val topInsetPx = y
+        val bottomInsetPx = auroraWindowConfiguration.titlePaneHeight.toPx().roundToInt() - y - buttonSizePx
+
+        return PaddingValues(
+            start = (if (layoutDirection == LayoutDirection.Ltr) leftInsetPx else rightInsetPx).toDp() +
+                    WindowTitlePaneSizingConstants.TitlePaneContentPadding.calculateStartPadding(layoutDirection),
+            end = (if (layoutDirection == LayoutDirection.Ltr) rightInsetPx else leftInsetPx).toDp() +
+                    WindowTitlePaneSizingConstants.TitlePaneContentPadding.calculateEndPadding(layoutDirection),
+            top = topInsetPx.toDp(),
+            bottom = bottomInsetPx.toDp()
+        )
     }
 }
