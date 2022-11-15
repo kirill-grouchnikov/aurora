@@ -17,7 +17,7 @@ import kotlin.math.min
  * This class has been automatically generated using
  * <a href="https://github.com/kirill-grouchnikov/aurora">Aurora SVG transcoder</a>.
  */
-class ic_chat_black_24px : Painter() {
+class history_black_24dp : Painter() {
     @Suppress("UNUSED_VARIABLE") private var shape: Outline? = null
     @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
@@ -46,44 +46,6 @@ alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
 // _0_0
-if (generalPath == null) {
-   generalPath = Path()
-} else {
-   generalPath!!.reset()
-}
-generalPath?.run {
-    moveTo(20.0f, 2.0f)
-    lineTo(4.0f, 2.0f)
-    cubicTo(2.9f, 2.0f, 2.01f, 2.9f, 2.01f, 4.0f)
-    lineTo(2.0f, 22.0f)
-    lineTo(6.0f, 18.0f)
-    lineTo(20.0f, 18.0f)
-    cubicTo(21.1f, 18.0f, 22.0f, 17.1f, 22.0f, 16.0f)
-    lineTo(22.0f, 4.0f)
-    cubicTo(22.0f, 2.9f, 21.1f, 2.0f, 20.0f, 2.0f)
-    close()
-    moveTo(6.0f, 9.0f)
-    lineTo(18.0f, 9.0f)
-    lineTo(18.0f, 11.0f)
-    lineTo(6.0f, 11.0f)
-    lineTo(6.0f, 9.0f)
-    close()
-    moveTo(14.0f, 14.0f)
-    lineTo(6.0f, 14.0f)
-    lineTo(6.0f, 12.0f)
-    lineTo(14.0f, 12.0f)
-    lineTo(14.0f, 14.0f)
-    close()
-    moveTo(18.0f, 8.0f)
-    lineTo(6.0f, 8.0f)
-    lineTo(6.0f, 6.0f)
-    lineTo(18.0f, 6.0f)
-    lineTo(18.0f, 8.0f)
-    close()
-}
-shape = Outline.Generic(generalPath!!)
-brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
@@ -91,6 +53,40 @@ alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
 // _0_1
+if (generalPath == null) {
+   generalPath = Path()
+} else {
+   generalPath!!.reset()
+}
+generalPath?.run {
+    moveTo(13.0f, 3.0f)
+    cubicTo(8.030001f, 3.0f, 4.0f, 7.03f, 4.0f, 12.0f)
+    lineTo(1.0f, 12.0f)
+    lineTo(4.8900003f, 15.89f)
+    lineTo(4.9600005f, 16.03f)
+    lineTo(9.0f, 12.0f)
+    lineTo(6.0f, 12.0f)
+    cubicTo(6.0f, 8.13f, 9.13f, 5.0f, 13.0f, 5.0f)
+    cubicTo(16.869999f, 5.0f, 20.0f, 8.13f, 20.0f, 12.0f)
+    cubicTo(20.0f, 15.87f, 16.869999f, 19.0f, 13.0f, 19.0f)
+    cubicTo(11.07f, 19.0f, 9.32f, 18.21f, 8.059999f, 16.94f)
+    lineTo(6.6399994f, 18.36f)
+    cubicTo(8.27f, 19.99f, 10.51f, 21.0f, 13.0f, 21.0f)
+    cubicTo(17.97f, 21.0f, 22.0f, 16.97f, 22.0f, 12.0f)
+    cubicTo(22.0f, 7.0300007f, 17.97f, 3.0f, 13.0f, 3.0f)
+    close()
+    moveTo(12.0f, 8.0f)
+    lineTo(12.0f, 13.0f)
+    lineTo(16.28f, 15.54f)
+    lineTo(17.0f, 14.33f)
+    lineTo(13.5f, 12.25f)
+    lineTo(13.5f, 8.0f)
+    lineTo(12.0f, 8.0f)
+    close()
+}
+shape = Outline.Generic(generalPath!!)
+brush = SolidColor(Color(0, 0, 0, 255))
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
 alpha = alphaStack.removeAt(0)
@@ -120,7 +116,7 @@ blendMode = blendModeStack.removeAt(0)
          * @return The X of the bounding box of the original SVG image.
          */
         fun getOrigX(): Double {
-            return 2.0
+            return 1.0
         }
 
         /**
@@ -129,7 +125,7 @@ blendMode = blendModeStack.removeAt(0)
          * @return The Y of the bounding box of the original SVG image.
          */
         fun getOrigY(): Double {
-            return 2.0
+            return 3.0
         }
 
         /**
@@ -138,7 +134,7 @@ blendMode = blendModeStack.removeAt(0)
          * @return The width of the bounding box of the original SVG image.
          */
         fun getOrigWidth(): Double {
-            return 20.0
+            return 21.0
         }
 
         /**
@@ -147,7 +143,7 @@ blendMode = blendModeStack.removeAt(0)
          * @return The height of the bounding box of the original SVG image.
          */
         fun getOrigHeight(): Double {
-            return 20.0
+            return 18.0
         }
 
         

@@ -17,7 +17,7 @@ import kotlin.math.min
  * This class has been automatically generated using
  * <a href="https://github.com/kirill-grouchnikov/aurora">Aurora SVG transcoder</a>.
  */
-class ic_help_outline_black_24px : Painter() {
+class person_outline_black_24dp : Painter() {
     @Suppress("UNUSED_VARIABLE") private var shape: Outline? = null
     @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
@@ -59,33 +59,29 @@ if (generalPath == null) {
    generalPath!!.reset()
 }
 generalPath?.run {
-    moveTo(11.0f, 18.0f)
-    lineTo(13.0f, 18.0f)
-    lineTo(13.0f, 16.0f)
-    lineTo(11.0f, 16.0f)
-    lineTo(11.0f, 18.0f)
+    moveTo(12.0f, 5.9f)
+    cubicTo(13.16f, 5.9f, 14.1f, 6.84f, 14.1f, 8.0f)
+    cubicTo(14.1f, 9.16f, 13.160001f, 10.1f, 12.0f, 10.1f)
+    cubicTo(10.839999f, 10.1f, 9.9f, 9.16f, 9.9f, 8.0f)
+    cubicTo(9.9f, 6.84f, 10.839999f, 5.9f, 12.0f, 5.9f)
+    moveTo(12.0f, 14.9f)
+    cubicTo(14.97f, 14.9f, 18.1f, 16.36f, 18.1f, 17.0f)
+    lineTo(18.1f, 18.1f)
+    lineTo(5.9f, 18.1f)
+    lineTo(5.9f, 17.0f)
+    cubicTo(5.9f, 16.36f, 9.030001f, 14.9f, 12.0f, 14.9f)
+    moveTo(12.0f, 4.0f)
+    cubicTo(9.79f, 4.0f, 8.0f, 5.79f, 8.0f, 8.0f)
+    cubicTo(8.0f, 10.21f, 9.79f, 12.0f, 12.0f, 12.0f)
+    cubicTo(14.21f, 12.0f, 16.0f, 10.21f, 16.0f, 8.0f)
+    cubicTo(16.0f, 5.79f, 14.21f, 4.0f, 12.0f, 4.0f)
     close()
-    moveTo(12.0f, 2.0f)
-    cubicTo(6.48f, 2.0f, 2.0f, 6.48f, 2.0f, 12.0f)
-    cubicTo(2.0f, 17.52f, 6.48f, 22.0f, 12.0f, 22.0f)
-    cubicTo(17.52f, 22.0f, 22.0f, 17.52f, 22.0f, 12.0f)
-    cubicTo(22.0f, 6.4799995f, 17.52f, 2.0f, 12.0f, 2.0f)
-    close()
-    moveTo(12.0f, 20.0f)
-    cubicTo(7.59f, 20.0f, 4.0f, 16.41f, 4.0f, 12.0f)
-    cubicTo(4.0f, 7.59f, 7.59f, 4.0f, 12.0f, 4.0f)
-    cubicTo(16.41f, 4.0f, 20.0f, 7.59f, 20.0f, 12.0f)
-    cubicTo(20.0f, 16.41f, 16.41f, 20.0f, 12.0f, 20.0f)
-    close()
-    moveTo(12.0f, 6.0f)
-    cubicTo(9.79f, 6.0f, 8.0f, 7.79f, 8.0f, 10.0f)
-    lineTo(10.0f, 10.0f)
-    cubicTo(10.0f, 8.9f, 10.9f, 8.0f, 12.0f, 8.0f)
-    cubicTo(13.1f, 8.0f, 14.0f, 8.9f, 14.0f, 10.0f)
-    cubicTo(14.0f, 12.0f, 11.0f, 11.75f, 11.0f, 15.0f)
-    lineTo(13.0f, 15.0f)
-    cubicTo(13.0f, 12.75f, 16.0f, 12.5f, 16.0f, 10.0f)
-    cubicTo(16.0f, 7.79f, 14.21f, 6.0f, 12.0f, 6.0f)
+    moveTo(12.0f, 13.0f)
+    cubicTo(9.33f, 13.0f, 4.0f, 14.34f, 4.0f, 17.0f)
+    lineTo(4.0f, 20.0f)
+    lineTo(20.0f, 20.0f)
+    lineTo(20.0f, 17.0f)
+    cubicTo(20.0f, 14.34f, 14.67f, 13.0f, 12.0f, 13.0f)
     close()
 }
 shape = Outline.Generic(generalPath!!)
@@ -120,7 +116,7 @@ blendMode = blendModeStack.removeAt(0)
          * @return The X of the bounding box of the original SVG image.
          */
         fun getOrigX(): Double {
-            return 2.0
+            return 4.0
         }
 
         /**
@@ -129,7 +125,7 @@ blendMode = blendModeStack.removeAt(0)
          * @return The Y of the bounding box of the original SVG image.
          */
         fun getOrigY(): Double {
-            return 2.0
+            return 4.0
         }
 
         /**
@@ -138,7 +134,7 @@ blendMode = blendModeStack.removeAt(0)
          * @return The width of the bounding box of the original SVG image.
          */
         fun getOrigWidth(): Double {
-            return 20.0
+            return 16.0
         }
 
         /**
@@ -147,7 +143,7 @@ blendMode = blendModeStack.removeAt(0)
          * @return The height of the bounding box of the original SVG image.
          */
         fun getOrigHeight(): Double {
-            return 20.0
+            return 16.0
         }
 
         

@@ -31,9 +31,9 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.IconProjection
 import org.pushingpixels.aurora.component.projection.TextFieldStringProjection
-import org.pushingpixels.aurora.demo.svg.material.ic_chat_black_24px
-import org.pushingpixels.aurora.demo.svg.material.ic_help_outline_black_24px
-import org.pushingpixels.aurora.demo.svg.material.ic_person_black_24px
+import org.pushingpixels.aurora.demo.svg.material.chat_black_24dp
+import org.pushingpixels.aurora.demo.svg.material.help_outline_black_24dp
+import org.pushingpixels.aurora.demo.svg.material.person_black_24dp
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.window.*
 
@@ -93,7 +93,7 @@ fun AuroraWindowScope.ChatFrameContent(
                 Spacer(modifier = Modifier.weight(1.0f))
 
                 IconProjection(
-                    contentModel = IconContentModel(icon = ic_chat_black_24px()),
+                    contentModel = IconContentModel(icon = chat_black_24dp()),
                     presentationModel = IconPresentationModel(iconDimension = 16.dp)
                 ).project()
                 AuroraWindowTitlePaneTitleText(title = "Chat")
@@ -114,14 +114,14 @@ fun AuroraWindowScope.ChatFrameContent(
                 Spacer(modifier = Modifier.width(12.dp))
 
                 IconProjection(
-                    contentModel = IconContentModel(icon = ic_help_outline_black_24px()),
+                    contentModel = IconContentModel(icon = help_outline_black_24dp()),
                     presentationModel = IconPresentationModel(iconDimension = 18.dp)
                 ).project()
 
                 Spacer(modifier = Modifier.width(12.dp))
 
                 IconProjection(
-                    contentModel = IconContentModel(icon = ic_person_black_24px()),
+                    contentModel = IconContentModel(icon = person_black_24dp()),
                     presentationModel = IconPresentationModel(iconDimension = 16.dp)
                 ).project()
 

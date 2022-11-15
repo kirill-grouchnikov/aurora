@@ -17,7 +17,7 @@ import kotlin.math.min
  * This class has been automatically generated using
  * <a href="https://github.com/kirill-grouchnikov/aurora">Aurora SVG transcoder</a>.
  */
-class ic_person_black_24px : Painter() {
+class alarm_black_24dp : Painter() {
     @Suppress("UNUSED_VARIABLE") private var shape: Outline? = null
     @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
@@ -46,29 +46,6 @@ alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
 // _0_0
-if (generalPath == null) {
-   generalPath = Path()
-} else {
-   generalPath!!.reset()
-}
-generalPath?.run {
-    moveTo(12.0f, 12.0f)
-    cubicTo(14.21f, 12.0f, 16.0f, 10.21f, 16.0f, 8.0f)
-    cubicTo(16.0f, 5.79f, 14.21f, 4.0f, 12.0f, 4.0f)
-    cubicTo(9.79f, 4.0f, 8.0f, 5.79f, 8.0f, 8.0f)
-    cubicTo(8.0f, 10.21f, 9.79f, 12.0f, 12.0f, 12.0f)
-    close()
-    moveTo(12.0f, 14.0f)
-    cubicTo(9.33f, 14.0f, 4.0f, 15.34f, 4.0f, 18.0f)
-    lineTo(4.0f, 20.0f)
-    lineTo(20.0f, 20.0f)
-    lineTo(20.0f, 18.0f)
-    cubicTo(20.0f, 15.34f, 14.67f, 14.0f, 12.0f, 14.0f)
-    close()
-}
-shape = Outline.Generic(generalPath!!)
-brush = SolidColor(Color(0, 0, 0, 255))
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
@@ -76,6 +53,45 @@ alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
 // _0_1
+if (generalPath == null) {
+   generalPath = Path()
+} else {
+   generalPath!!.reset()
+}
+generalPath?.run {
+    moveTo(12.5f, 8.0f)
+    lineTo(11.0f, 8.0f)
+    lineTo(11.0f, 14.0f)
+    lineTo(15.75f, 16.85f)
+    lineTo(16.5f, 15.620001f)
+    lineTo(12.5f, 13.250001f)
+    close()
+    moveTo(17.337f, 1.81f)
+    lineTo(21.944f, 5.6549997f)
+    lineTo(20.664f, 7.1899996f)
+    lineTo(16.053999f, 3.3469996f)
+    close()
+    moveTo(6.663f, 1.81f)
+    lineTo(7.945f, 3.346f)
+    lineTo(3.337f, 7.19f)
+    lineTo(2.057f, 5.6540003f)
+    close()
+    moveTo(12.0f, 4.0f)
+    cubicTo(7.03f, 4.0f, 3.0f, 8.030001f, 3.0f, 13.0f)
+    cubicTo(3.0f, 17.97f, 7.03f, 22.0f, 12.0f, 22.0f)
+    cubicTo(16.97f, 22.0f, 21.0f, 17.97f, 21.0f, 13.0f)
+    cubicTo(21.0f, 8.030001f, 16.97f, 4.0f, 12.0f, 4.0f)
+    close()
+    moveTo(12.0f, 20.0f)
+    cubicTo(8.14f, 20.0f, 5.0f, 16.86f, 5.0f, 13.0f)
+    cubicTo(5.0f, 9.139999f, 8.14f, 6.0f, 12.0f, 6.0f)
+    cubicTo(15.86f, 6.0f, 19.0f, 9.14f, 19.0f, 13.0f)
+    cubicTo(19.0f, 16.86f, 15.86f, 20.0f, 12.0f, 20.0f)
+    close()
+}
+shape = Outline.Generic(generalPath!!)
+brush = SolidColor(Color(0, 0, 0, 255))
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
 alpha = alphaStack.removeAt(0)
@@ -105,7 +121,7 @@ blendMode = blendModeStack.removeAt(0)
          * @return The X of the bounding box of the original SVG image.
          */
         fun getOrigX(): Double {
-            return 4.0
+            return 2.056999921798706
         }
 
         /**
@@ -114,7 +130,7 @@ blendMode = blendModeStack.removeAt(0)
          * @return The Y of the bounding box of the original SVG image.
          */
         fun getOrigY(): Double {
-            return 4.0
+            return 1.809999942779541
         }
 
         /**
@@ -123,7 +139,7 @@ blendMode = blendModeStack.removeAt(0)
          * @return The width of the bounding box of the original SVG image.
          */
         fun getOrigWidth(): Double {
-            return 16.0
+            return 19.887001037597656
         }
 
         /**
@@ -132,7 +148,7 @@ blendMode = blendModeStack.removeAt(0)
          * @return The height of the bounding box of the original SVG image.
          */
         fun getOrigHeight(): Double {
-            return 16.0
+            return 20.190000534057617
         }
 
         
