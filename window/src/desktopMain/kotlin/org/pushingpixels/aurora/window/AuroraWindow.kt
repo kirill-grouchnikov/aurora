@@ -97,7 +97,8 @@ private val TitlePaneButtonPresentationModel = CommandButtonPresentationModel(
     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
     contentPadding = WindowTitlePaneSizingConstants.TitlePaneButtonContentPadding,
     horizontalGapScaleFactor = 1.0f,
-    verticalGapScaleFactor = 1.0f
+    verticalGapScaleFactor = 1.0f,
+    iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
 )
 
 @Composable

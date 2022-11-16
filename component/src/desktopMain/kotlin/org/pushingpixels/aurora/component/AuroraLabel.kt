@@ -69,6 +69,8 @@ private fun LabelTextContent(
     val resolvedTextStyle = resolveDefaults(textStyle, layoutDirection)
 
     if (presentationModel.inheritStateFromParent) {
+        // Take the resolved text style and unset its color before passing it to the text
+        // composable. The text color will be determined based on the parent's state.
         AuroraText(
             text = contentModel.text,
             style = resolvedTextStyle.copy(color = Color.Unspecified),

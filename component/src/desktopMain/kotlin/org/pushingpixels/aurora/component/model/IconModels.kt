@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.component.model
 
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -31,6 +32,7 @@ object IconSizingConstants {
 
 data class IconPresentationModel(
     val iconDimension: Dp = IconSizingConstants.DefaultIconSize,
+    val iconColorFilter: ColorFilter? = null,
     val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val inheritStateFromParent: Boolean = false,

@@ -16,9 +16,11 @@
 package org.pushingpixels.aurora.component
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.IconContentModel
 import org.pushingpixels.aurora.component.model.IconPresentationModel
@@ -43,6 +45,11 @@ internal fun AuroraIcon(
                 disabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
                 enabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
                 activeFilterStrategy = presentationModel.iconEnabledFilterStrategy
+            )
+        } else if (presentationModel.iconColorFilter != null) {
+            Box(
+                modifier.size(presentationModel.iconDimension)
+                    .paint(painter = contentModel.icon, colorFilter = presentationModel.iconColorFilter)
             )
         } else {
             val decorationAreaType = AuroraSkin.decorationAreaType
