@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
@@ -63,9 +64,14 @@ private fun LabelTextContent(
     presentationModel: LabelPresentationModel,
     state: ComponentState
 ) {
+    val layoutDirection = LocalLayoutDirection.current
+    val textStyle = presentationModel.textStyle ?: LocalTextStyle.current
+    val resolvedTextStyle = resolveDefaults(textStyle, layoutDirection)
+
     if (presentationModel.inheritStateFromParent) {
         AuroraText(
             text = contentModel.text,
+            style = resolvedTextStyle.copy(color = Color.Unspecified),
             overflow = presentationModel.textOverflow,
             softWrap = presentationModel.textSoftWrap,
             maxLines = presentationModel.textMaxLines
@@ -73,7 +79,6 @@ private fun LabelTextContent(
     } else {
         val decorationAreaType = AuroraSkin.decorationAreaType
         val skinColors = AuroraSkin.colors
-        val layoutDirection = LocalLayoutDirection.current
 
         // If the presentation model specifies a text style with a color, use that. Otherwise
         // use the foreground color that matches the decoration area type of this label
@@ -83,9 +88,6 @@ private fun LabelTextContent(
                 decorationAreaType,
                 state
             ).foregroundColor
-
-        val textStyle = presentationModel.textStyle ?: LocalTextStyle.current
-        val resolvedTextStyle = resolveDefaults(textStyle, layoutDirection)
 
         // Pass our text color and synthesized model state snapshot to the children
         CompositionLocalProvider(
