@@ -227,7 +227,7 @@ fun AuroraBoxWithHighlights(
         val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
         val borderIsDark = drawingCache.colorScheme.isDark
 
-        val fillPainter = AuroraSkin.painters.fillPainter
+        val fillPainter = AuroraSkin.painters.highlightFillPainter
         val borderPainter = AuroraSkin.painters.borderPainter
 
         val alpha = 1.0f

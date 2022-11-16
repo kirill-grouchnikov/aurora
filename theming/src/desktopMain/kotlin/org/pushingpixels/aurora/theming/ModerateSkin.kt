@@ -21,6 +21,7 @@ import org.pushingpixels.aurora.theming.colorscheme.MetallicColorScheme
 import org.pushingpixels.aurora.theming.colorscheme.SteelBlueColorScheme
 import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
+import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.GlassFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
@@ -66,7 +67,8 @@ fun moderateSkin(): AuroraSkinDefinition {
     val painters = AuroraPainters(
         fillPainter = SpecularRectangularFillPainter(GlassFillPainter(), 0.5f),
         borderPainter = ClassicBorderPainter(),
-        decorationPainter = MatteDecorationPainter()
+        decorationPainter = MatteDecorationPainter(),
+        highlightFillPainter = ClassicFillPainter()
     )
     // add an overlay painter to paint a drop shadow along the top
     // edge of toolbars

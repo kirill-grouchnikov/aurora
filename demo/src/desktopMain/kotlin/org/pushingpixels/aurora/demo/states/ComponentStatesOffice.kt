@@ -45,6 +45,7 @@ import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.DelegateFractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.FractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
+import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.getColorSchemes
@@ -212,7 +213,8 @@ private fun officeSkin(): AuroraSkinDefinition {
                     delegate = outerBorderPainter,
                     masks = longArrayOf(0xFFFFFFFFL, 0xFFFFFFFFL, 0xFFFFFFFFL),
                 ) { it.tint(0.5f) }),
-            decorationPainter = MatteDecorationPainter()
+            decorationPainter = MatteDecorationPainter(),
+            highlightFillPainter = ClassicFillPainter()
         ),
         buttonShaper = ClassicButtonShaper()
     )

@@ -23,6 +23,7 @@ import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.DelegateFractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.FractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
+import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomShadowOverlayPainter
@@ -269,7 +270,8 @@ fun geminiSkin(): AuroraSkinDefinition {
                 masks = longArrayOf(0x60FFFFFFL, 0x40FFFFFFL, 0x20FFFFFFL),
                 transform = { it.tint(0.7f) }
             )),
-        decorationPainter = MatteDecorationPainter()
+        decorationPainter = MatteDecorationPainter(),
+        highlightFillPainter = ClassicFillPainter()
     )
 
     // add an overlay painter to paint a bezel line along the top

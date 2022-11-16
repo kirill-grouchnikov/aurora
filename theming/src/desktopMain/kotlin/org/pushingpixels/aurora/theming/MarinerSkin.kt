@@ -20,6 +20,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colorscheme.composite
 import org.pushingpixels.aurora.theming.painter.border.FractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
+import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomShadowOverlayPainter
@@ -208,7 +209,8 @@ fun marinerSkin(): AuroraSkinDefinition {
             1.0f to { it.midColor },
             displayName = "Mariner"
         ),
-        decorationPainter = MatteDecorationPainter()
+        decorationPainter = MatteDecorationPainter(),
+        highlightFillPainter = ClassicFillPainter()
     )
 
     // add an overlay painter to paint a bezel line along the top

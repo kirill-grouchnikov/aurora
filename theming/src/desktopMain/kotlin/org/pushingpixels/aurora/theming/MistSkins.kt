@@ -20,6 +20,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
+import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.MatteFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
 import org.pushingpixels.aurora.theming.shaper.PillButtonShaper
@@ -88,7 +89,8 @@ private fun mistBasePainters(): AuroraPainters {
     return AuroraPainters(
         fillPainter = SpecularRectangularFillPainter(MatteFillPainter(), 0.5f),
         borderPainter = ClassicBorderPainter(),
-        decorationPainter = MatteDecorationPainter()
+        decorationPainter = MatteDecorationPainter(),
+        highlightFillPainter = ClassicFillPainter()
     )
 }
 

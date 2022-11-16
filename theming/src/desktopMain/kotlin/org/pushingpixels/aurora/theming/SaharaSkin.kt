@@ -59,7 +59,8 @@ fun saharaSkin(): AuroraSkinDefinition {
     val painters = AuroraPainters(
         fillPainter = SpecularRectangularFillPainter(ClassicFillPainter(), 0.6f),
         borderPainter = ClassicBorderPainter(),
-        decorationPainter = MatteDecorationPainter()
+        decorationPainter = MatteDecorationPainter(),
+        highlightFillPainter = ClassicFillPainter()
     )
     // add an overlay painter to paint a drop shadow along the top
     // edge of toolbars

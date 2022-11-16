@@ -218,7 +218,8 @@ fun sentinelSkin(): AuroraSkinDefinition {
     val painters = AuroraPainters(
         fillPainter = ClassicFillPainter(),
         borderPainter = ClassicBorderPainter(),
-        decorationPainter = MatteDecorationPainter()
+        decorationPainter = MatteDecorationPainter(),
+        highlightFillPainter = ClassicFillPainter()
     )
 
     // Add overlay painters to paint drop shadow and a dark line along the bottom

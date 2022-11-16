@@ -24,7 +24,10 @@ import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.DelegateBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.FlatDecorationPainter
+import org.pushingpixels.aurora.theming.painter.fill.AuroraFillPainter
+import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
+import org.pushingpixels.aurora.theming.painter.fill.GlassFillPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopLineOverlayPainter
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
@@ -158,7 +161,10 @@ private fun graphiteBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColo
     return result
 }
 
-private fun graphiteBasePainters(borderPainter: AuroraBorderPainter? = null): AuroraPainters {
+private fun graphiteBasePainters(
+    borderPainter: AuroraBorderPainter? = null,
+    highlightFillPainter: AuroraFillPainter? = null
+): AuroraPainters {
     return AuroraPainters(
         fillPainter = FractionBasedFillPainter(
             0.0f to { it.ultraLightColor },
@@ -182,7 +188,8 @@ private fun graphiteBasePainters(borderPainter: AuroraBorderPainter? = null): Au
                 midMask = 0x90FFFFFF,
                 bottomMask = 0xA0FFFFFF
             ) { it.tint(0.25f) }),
-        decorationPainter = FlatDecorationPainter()
+        decorationPainter = FlatDecorationPainter(),
+        highlightFillPainter = highlightFillPainter ?: ClassicFillPainter()
     )
 }
 
@@ -403,18 +410,24 @@ fun graphiteGlassSkin(): AuroraSkinDefinition {
                 DecorationAreaType.TitlePane, DecorationAreaType.Header
             )
         },
-        painters = graphiteBasePainters(borderPainter = ClassicBorderPainter()).also {
+        painters = graphiteBasePainters(
+            borderPainter = ClassicBorderPainter(),
+            highlightFillPainter = GlassFillPainter()
+        ).also {
             // add two overlay painters to create a bezel line between
             // menu bar and toolbars
             it.addOverlayPainter(
                 BottomLineOverlayPainter(colorSchemeQuery = { scheme -> scheme.midColor }),
-                DecorationAreaType.Header)
-            it.addOverlayPainter(TopLineOverlayPainter(
-                composite(
-                    { scheme -> scheme.foregroundColor },
-                    ColorTransforms.alpha(0.125f)
-                )
-            ), DecorationAreaType.Toolbar)
+                DecorationAreaType.Header
+            )
+            it.addOverlayPainter(
+                TopLineOverlayPainter(
+                    composite(
+                        { scheme -> scheme.foregroundColor },
+                        ColorTransforms.alpha(0.125f)
+                    )
+                ), DecorationAreaType.Toolbar
+            )
 
         },
         buttonShaper = ClassicButtonShaper()

@@ -20,6 +20,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colorscheme.composite
 import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
+import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomShadowOverlayPainter
@@ -68,7 +69,8 @@ fun greenMagicSkin(): AuroraSkinDefinition {
             displayName = "Green Magic"
         ),
         borderPainter = ClassicBorderPainter(),
-        decorationPainter = ArcDecorationPainter()
+        decorationPainter = ArcDecorationPainter(),
+        highlightFillPainter = ClassicFillPainter()
     )
 
     // Add overlay painters to paint drop shadow and a dark line along the bottom

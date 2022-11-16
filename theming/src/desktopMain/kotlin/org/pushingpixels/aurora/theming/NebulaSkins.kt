@@ -19,6 +19,7 @@ import org.pushingpixels.aurora.theming.colorscheme.*
 import org.pushingpixels.aurora.theming.painter.border.FlatBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MarbleNoiseDecorationPainter
+import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.SubduedFillPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
@@ -131,7 +132,8 @@ private fun nebulaBasePainters(): AuroraPainters {
         decorationPainter = MarbleNoiseDecorationPainter(
             textureAlpha = 0.2f,
             baseDecorationPainter = ArcDecorationPainter()
-        )
+        ),
+        highlightFillPainter = ClassicFillPainter()
     )
 
     // add an overlay painter to paint a drop shadow along the top edge of toolbars

@@ -20,6 +20,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.painter.border.GlassBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
+import org.pushingpixels.aurora.theming.painter.fill.GlassFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
@@ -178,7 +179,8 @@ fun ceruleanSkin(): AuroraSkinDefinition {
     val painters = AuroraPainters(
         fillPainter = SpecularRectangularFillPainter(ClassicFillPainter(), 0.5f),
         borderPainter = GlassBorderPainter(),
-        decorationPainter = ArcDecorationPainter()
+        decorationPainter = ArcDecorationPainter(),
+        highlightFillPainter = GlassFillPainter()
     )
 
     // Add an overlay painter to paint a drop shadow along the top

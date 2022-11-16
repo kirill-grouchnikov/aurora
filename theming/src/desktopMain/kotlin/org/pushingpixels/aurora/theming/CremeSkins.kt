@@ -22,6 +22,7 @@ import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.DelegateBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
+import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.MatteFillPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomShadowOverlayPainter
@@ -67,7 +68,8 @@ private fun cremeBasePainters(): AuroraPainters {
             inner = DelegateBorderPainter(
                 displayName = "Creme Inner", delegate = ClassicBorderPainter()
             ) { it.tint(0.9f) }),
-        decorationPainter = ArcDecorationPainter()
+        decorationPainter = ArcDecorationPainter(),
+        highlightFillPainter = ClassicFillPainter()
     )
 
     // Add overlay painters to paint drop shadows along the bottom edges of toolbars

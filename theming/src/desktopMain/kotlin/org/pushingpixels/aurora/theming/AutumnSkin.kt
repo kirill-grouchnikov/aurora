@@ -21,6 +21,7 @@ import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.DelegateBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MarbleNoiseDecorationPainter
+import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.MatteFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
@@ -113,6 +114,7 @@ fun autumnSkin(): AuroraSkinDefinition {
             inner = DelegateBorderPainter(
                 displayName = "Autumn Inner", delegate = ClassicBorderPainter()
             ) { it.tint(0.8f) }),
+        highlightFillPainter = ClassicFillPainter(),
         decorationPainter = MarbleNoiseDecorationPainter(textureAlpha = 0.7f)
     )
     // add an overlay painter to paint a drop shadow along the top

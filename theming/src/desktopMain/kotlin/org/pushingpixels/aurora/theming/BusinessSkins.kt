@@ -89,7 +89,8 @@ private fun businessBasePainters(): AuroraPainters {
     val painters = AuroraPainters(
         fillPainter = SpecularRectangularFillPainter(ClassicFillPainter(), 0.5f),
         borderPainter = ClassicBorderPainter(),
-        decorationPainter = BrushedMetalDecorationPainter()
+        decorationPainter = BrushedMetalDecorationPainter(),
+        highlightFillPainter = ClassicFillPainter()
     )
 
     // add an overlay painter to paint a drop shadow along the top edge of toolbars
