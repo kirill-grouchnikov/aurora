@@ -39,6 +39,7 @@ Aurora is a collection of libraries for writing modern, elegant and fast [deskto
   * [Fill painters](docs/theming/painters/fill.md)
   * [Border painters](docs/theming/painters/border.md)
   * [Decoration painters](docs/theming/painters/decoration.md)
+  * [Highlight painters](docs/theming/painters/highlight.md)
   * [Overlay painters](docs/theming/painters/overlay.md)
 * [Themed states](docs/theming/themed-states.md)
 
