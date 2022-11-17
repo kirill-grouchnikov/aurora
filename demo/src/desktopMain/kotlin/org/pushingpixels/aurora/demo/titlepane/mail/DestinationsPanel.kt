@@ -80,7 +80,7 @@ fun AuroraWindowScope.DestinationsPanel(modifier: Modifier) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize().padding(horizontal = 2.dp), state = lazyListState
                 ) {
-                    itemsIndexed(DestinationsList) { index, item ->
+                    itemsIndexed(DestinationsList) { _, item ->
                         AuroraBoxWithHighlights(modifier = Modifier.fillMaxWidth().height(32.dp),
                             selected = (stateSelection.value == item),
                             onClick = { stateSelection.value = item },
