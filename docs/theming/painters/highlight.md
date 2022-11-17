@@ -21,7 +21,7 @@ The yellow highlights in the leftmost pane and the blue highlights in the middle
 
 ### Management API
 
-If you wish to use the fill painter of the current skin to provide additional custom painting in your application, call:
+If you wish to use the highlight painter of the current skin to provide additional custom painting in your application, call:
 
 * `AuroraSkin.painters` to retrieve the painters associated with the current skin.
 * `AuroraPainters.highlightFillPainter` to retrieve the highlight painter of the current skin.
