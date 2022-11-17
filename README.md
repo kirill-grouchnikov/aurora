@@ -20,6 +20,7 @@ Aurora is a collection of libraries for writing modern, elegant and fast [deskto
 * [Hello World](docs/window/HelloWorld.md)
 * [Aurora Application](docs/window/Application.md)
 * [Aurora Window](docs/window/Window.md)
+* [Window title panes](docs/window/TitlePane.md)
 * [Radiance interoperability](docs/window/RadianceInterop.md)
 
 ### Theming

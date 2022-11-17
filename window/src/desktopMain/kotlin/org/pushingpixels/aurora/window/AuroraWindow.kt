@@ -1134,6 +1134,9 @@ object AuroraWindowTitlePaneConfigurations {
      *
      * Optionally, use [AuroraWindowTitlePaneTitleText] for creating a title label that is
      * styled consistently with the current Aurora skin.
+     *
+     * Optionally, use [AuroraWindowTitlePaneButton] for creating a control button that is
+     * styled consistently with the title pane control buttons provided by Aurora.
      */
     data class AuroraIntegrated(
         val titleControlButtonGroupHorizontalGravity: HorizontalGravity = HorizontalGravity.Trailing,
