@@ -38,7 +38,7 @@ fun main() = auroraApplication {
         skin = marinerSkin(),
         title = "Aurora Demo",
         state = state,
-        undecorated = true,
+        windowTitlePaneConfiguration = AuroraWindowTitlePaneConfigurations.AuroraPlain(),
         onCloseRequest = ::exitApplication
     ) {
         var text by remember { mutableStateOf("Hello, World!") }

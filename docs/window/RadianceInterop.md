@@ -7,7 +7,7 @@ To start, add a dependency on the latest Radiance binaries:
 ```kotlin
 dependencies {
   ...
-  implementation("org.pushing-pixels:radiance-theming:5.0.0")
+  implementation("org.pushing-pixels:radiance-theming:6.0.1")
 }
 ```
 

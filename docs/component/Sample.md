@@ -24,7 +24,7 @@ fun main() = auroraApplication {
       icon = radiance_menu(),
       iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
       state = state,
-      undecorated = true,
+      windowTitlePaneConfiguration = AuroraWindowTitlePaneConfigurations.AuroraPlain(),
       onCloseRequest = ::exitApplication,
   ) {
       // Here we'll have our data models

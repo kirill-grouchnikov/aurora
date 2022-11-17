@@ -7,6 +7,7 @@ Every Aurora-powered window is created using the `AuroraWindow` API. The signatu
 | **skin** | AuroraSkinDefinition | [Skin](../theming/skins/overview.md) for the window content. Use `remember { mutableStateOf(...) }` to dynamically update the skin at runtime, which will then cause recomposition of the window content based on the new skin. |
 | **iconFilterStrategy** | IconFilterStrategy | Icon filter strategy to apply on the window icon, if present |
 | **menuCommands** | CommandGroup | If present, is used to create the menu bar of this window |
+| **windowTitlePaneConfiguration** | AuroraWindowTitlePaneConfiguration | The configuration of the window title pane |
 
 ### Setting window skin
 
@@ -104,7 +105,7 @@ And the code skeleton:
 AuroraWindow(
   skin = skin,
   title = "Aurora skeleton",
-  undecorated = true,
+  windowTitlePaneConfiguration = AuroraWindowTitlePaneConfigurations.AuroraPlain(),
   ...
   menuCommands = CommandGroup(
     commands = listOf(
