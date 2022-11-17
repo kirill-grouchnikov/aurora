@@ -27,19 +27,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.ExperimentalUnitApi
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.component.AuroraBoxWithHighlights
-import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.model.Command
+import org.pushingpixels.aurora.component.model.HorizontalAlignment
+import org.pushingpixels.aurora.component.model.LabelContentModel
+import org.pushingpixels.aurora.component.model.LabelPresentationModel
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.demo.svg.material.*
-import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.IconFilterStrategy
+import org.pushingpixels.aurora.theming.Side
+import org.pushingpixels.aurora.theming.Sides
+import org.pushingpixels.aurora.theming.auroraBackground
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindowScope
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneButton
 
-@OptIn(ExperimentalUnitApi::class)
 @Composable
 fun AuroraWindowScope.DestinationsPanel(modifier: Modifier) {
     AuroraDecorationArea(decorationAreaType = VisorDecorations.Destinations) {
