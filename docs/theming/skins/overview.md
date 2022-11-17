@@ -30,6 +30,7 @@ The skin definition consists of the following:
   * [Fill painter](../painters/fill.md).
   * [Border painter](../painters/border.md).
   * [Decoration painter](../painters/decoration.md).
+  * [Highlight painter](../painters/highlight.md)
 * Miscellaneous:
   * Button shaper.
   * Optional [overlay painters](../painters/overlay.md) for some decoration areas.
@@ -233,7 +234,8 @@ fun marinerSkin(): AuroraSkinDefinition {
             1.0f to { it.midColor },
             displayName = "Mariner"
         ),
-        decorationPainter = MatteDecorationPainter()
+        decorationPainter = MatteDecorationPainter(),
+        highlightFillPainter = ClassicFillPainter()
     )
 
     // add an overlay painter to paint a bezel line along the top
