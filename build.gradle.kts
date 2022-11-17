@@ -46,7 +46,7 @@ allprojects {
         // Force class file format for Java 11
         kotlinOptions {
             jvmTarget = "11"
-            freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+            freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
         }
     }
 
