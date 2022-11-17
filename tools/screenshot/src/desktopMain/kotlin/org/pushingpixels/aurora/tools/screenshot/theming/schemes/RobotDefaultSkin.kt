@@ -35,7 +35,8 @@ fun robotDefaultSkin(accentColorScheme: AuroraColorScheme) : AuroraSkinDefinitio
         decorationPainter = MarbleNoiseDecorationPainter(
             textureAlpha = 0.3f,
             baseDecorationPainter = ArcDecorationPainter()
-        )
+        ),
+        highlightFillPainter = ClassicFillPainter()
     )
     painters.addOverlayPainter(BottomLineOverlayPainter(colorSchemeQuery = { it.midColor }),
         DecorationAreaType.TitlePane,
