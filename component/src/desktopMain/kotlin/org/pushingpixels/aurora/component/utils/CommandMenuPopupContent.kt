@@ -241,6 +241,9 @@ internal fun showPopupContent(
     val initialAnchorX = if (layoutDirection == LayoutDirection.Ltr)
         (popupOriginatorLocationOnScreen.x + anchorBoundsInWindow.left).toInt() else
         (popupOriginatorLocationOnScreen.x + anchorBoundsInWindow.left + anchorBoundsInWindow.width).toInt() - fullPopupWidth
+    // Initial anchor corresponds to the on-screen location of the top-left corner of the
+    // popup window under the default PopupPlacementStrategy.Downward.HAlignStart placement
+    // strategy
     val initialAnchor = IntOffset(
         x = initialAnchorX,
         y = (popupOriginatorLocationOnScreen.y + anchorBoundsInWindow.top).toInt()

@@ -1206,9 +1206,14 @@ fun AuroraApplicationScope.AuroraWindow(
         onPreviewKeyEvent = onPreviewKeyEvent,
         onKeyEvent = onKeyEvent
     ) {
+        val swingComponentOrientation = ComponentOrientation.getOrientation(applicationLocale)
+        val composeLayoutDirection = if (swingComponentOrientation.isLeftToRight)
+            LayoutDirection.Ltr else LayoutDirection.Rtl
+        // Get the current composition context
         CompositionLocalProvider(
             LocalWindow provides window,
-            LocalWindowSize provides state.size
+            LocalWindowSize provides state.size,
+            LocalLayoutDirection provides composeLayoutDirection
         ) {
             val auroraWindowScope = AuroraWindowScopeImpl(this@AuroraWindow, this, windowTitlePaneConfiguration)
             AuroraSkin(

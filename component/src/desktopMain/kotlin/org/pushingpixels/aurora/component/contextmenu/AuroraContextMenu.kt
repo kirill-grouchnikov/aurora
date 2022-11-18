@@ -32,10 +32,7 @@ import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.model.CommandMenuContentModel
 import org.pushingpixels.aurora.component.model.CommandPopupMenuPresentationModel
 import org.pushingpixels.aurora.component.utils.showPopupContent
-import org.pushingpixels.aurora.theming.AuroraSkin
-import org.pushingpixels.aurora.theming.LocalPopupMenu
-import org.pushingpixels.aurora.theming.LocalTextStyle
-import org.pushingpixels.aurora.theming.LocalWindow
+import org.pushingpixels.aurora.theming.*
 
 @OptIn(AuroraInternalApi::class)
 @Composable
@@ -49,7 +46,9 @@ fun Modifier.auroraContextMenu(
     val enabledState = rememberUpdatedState(enabled)
 
     val density = LocalDensity.current
-    val layoutDirection = LocalLayoutDirection.current
+    // This needs to use rememberUpdatedState. Otherwise switching locale to RTL will
+    // not properly propagate in here.
+    val layoutDirection by rememberUpdatedState(LocalLayoutDirection.current)
     val mergedTextStyle = LocalTextStyle.current
     val fontFamilyResolver = LocalFontFamilyResolver.current
     val skinColors = AuroraSkin.colors

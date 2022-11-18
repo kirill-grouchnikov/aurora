@@ -52,50 +52,50 @@ fun getPlacementAwarePopupShift(
     val popupWidth = popupDimension.width
     val popupHeight = popupDimension.height
 
+    // Compute horizontal / vertical offsets relative to the placement of the popup
+    // under the default PopupPlacementStrategy.Downward.HAlignStart
     when (popupPlacementStrategy) {
         PopupPlacementStrategy.Upward.HAlignStart -> {
             // Popup above the component, horizontally aligned to the start edge
             dy = -popupHeight - anchorHeight
-            if (!ltr) {
-                dx = anchorWidth - popupWidth
-            }
         }
 
         PopupPlacementStrategy.Upward.HAlignEnd -> {
             // Popup above the component, horizontally aligned to the end edge
             dy = -popupHeight - anchorHeight
-            if (ltr) {
-                dx = -(popupWidth - anchorWidth)
+            dx = if (ltr) {
+                anchorWidth - popupWidth
+            } else {
+                popupWidth - anchorWidth
             }
+
         }
 
         PopupPlacementStrategy.Downward.HAlignStart -> {
             // Popup below the component, horizontally aligned to the start edge
-            if (!ltr) {
-                dx = anchorWidth - popupWidth
-            }
         }
 
         PopupPlacementStrategy.Downward.HAlignEnd -> {
             // Popup below the component, horizontally aligned to the end edge
-            if (ltr) {
-                dx = -(popupWidth - anchorWidth)
+            dx = if (ltr) {
+                anchorWidth - popupWidth
+            } else {
+                popupWidth - anchorWidth
             }
         }
 
         PopupPlacementStrategy.CenteredVertically.HAlignStart -> {
             // Popup centered vertically, horizontally aligned to the start edge
             dy = -popupHeight / 2 - anchorHeight / 2
-            if (!ltr) {
-                dx = anchorWidth - popupWidth
-            }
         }
 
         PopupPlacementStrategy.CenteredVertically.HAlignEnd -> {
             // Popup centered vertically, horizontally aligned to the end edge
             dy = -popupHeight / 2 - anchorHeight / 2
-            if (ltr) {
-                dx = -(popupWidth - anchorWidth)
+            dx = if (ltr) {
+                anchorWidth - popupWidth
+            } else {
+                popupWidth - anchorWidth
             }
         }
 
@@ -113,13 +113,13 @@ fun getPlacementAwarePopupShift(
 
         PopupPlacementStrategy.Endward.VAlignTop -> {
             // Popup next to the end edge of the component, vertically aligned to the top edge
-            dx = if (ltr) anchorWidth else -popupWidth
+            dx = if (ltr) anchorWidth else -anchorWidth
             dy = -anchorHeight
         }
 
         PopupPlacementStrategy.Endward.VAlignBottom -> {
             // Popup next to the end edge of the component, vertically aligned to the bottom edge
-            dx = if (ltr) anchorWidth else -popupWidth
+            dx = if (ltr) anchorWidth else -anchorWidth
             dy = -popupHeight
         }
     }
