@@ -453,7 +453,6 @@ internal fun <E> AuroraComboBox(
             LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value)
         ) {
             Layout(
-                // TODO - revisit this maybe
                 modifier = Modifier.padding(
                     PaddingValues(
                         start = ComboBoxSizingConstants.DefaultComboBoxContentPadding.calculateStartPadding(

@@ -17,7 +17,6 @@ package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
@@ -47,7 +46,6 @@ import org.pushingpixels.aurora.common.byAlpha
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.TextFieldPresentationModel
-import org.pushingpixels.aurora.component.model.TextFieldSizingConstants
 import org.pushingpixels.aurora.component.model.TextFieldStringContentModel
 import org.pushingpixels.aurora.component.model.TextFieldValueContentModel
 import org.pushingpixels.aurora.component.utils.*
@@ -55,7 +53,6 @@ import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
 import kotlin.math.max
-import kotlin.math.roundToInt
 
 @Immutable
 private class TextFieldDrawingCache(

@@ -16,7 +16,6 @@
 package org.pushingpixels.aurora.component.utils
 
 import androidx.compose.runtime.MutableState
-import androidx.compose.ui.state.ToggleableState
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.theming.ComponentState
 import org.pushingpixels.aurora.theming.ComponentStateFacet
