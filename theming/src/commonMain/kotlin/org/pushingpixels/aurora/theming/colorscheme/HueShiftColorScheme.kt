@@ -27,9 +27,7 @@ class HueShiftColorScheme(
     origScheme: AuroraColorScheme,
     hueShiftFactor: Float
 ) : BaseColorScheme(
-    displayName =
-    "Hue-shift " + origScheme.displayName + " "
-            + (100 * hueShiftFactor).toInt() + "%",
+    displayName = "Hue-shift ${origScheme.displayName} ${(100 * hueShiftFactor).toInt()}%",
     isDark = origScheme.isDark,
     ultraLight = origScheme.ultraLightColor.withHueShift(hueShiftFactor),
     extraLight = origScheme.extraLightColor.withHueShift(hueShiftFactor),

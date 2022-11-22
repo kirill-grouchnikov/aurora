@@ -26,7 +26,7 @@ import org.pushingpixels.aurora.common.inverted
  */
 class InvertedColorScheme(origScheme: AuroraColorScheme) :
     BaseColorScheme(
-        displayName = "Negated " + origScheme.displayName,
+        displayName = "Negated ${origScheme.displayName}",
         isDark = origScheme.isDark,
         ultraLight = origScheme.ultraDarkColor.inverted(),
         extraLight = origScheme.darkColor.inverted(),

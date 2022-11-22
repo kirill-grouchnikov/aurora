@@ -29,9 +29,7 @@ class ClassicBorderPainter : StandardBorderPainter() {
         get() = "Classic"
 
     override fun getTopBorderColor(borderScheme: AuroraColorScheme): Color {
-        return super.getTopBorderColor(borderScheme).interpolateTowards(
-            super.getMidBorderColor(borderScheme), 0.0f
-        )
+        return super.getMidBorderColor(borderScheme);
     }
 
     override fun getMidBorderColor(borderScheme: AuroraColorScheme): Color {

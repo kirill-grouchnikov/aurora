@@ -1277,7 +1277,7 @@ fun AuroraDecorationArea(
 
 @OptIn(AuroraInternalApi::class)
 @Composable
-internal fun AuroraSkin(
+private fun AuroraSkin(
     displayName: String = AuroraSkin.displayName,
     decorationAreaType: DecorationAreaType,
     colors: AuroraSkinColors = AuroraSkin.colors,

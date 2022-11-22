@@ -42,14 +42,14 @@ class AuroraColorSchemeBundle(
      * This map doesn't have to contain entries for all [ComponentState]
      * instances.
      */
-    private var stateAlphaMap: MutableMap<ComponentState, Float>
+    private val stateAlphaMap: MutableMap<ComponentState, Float> = hashMapOf()
 
     /**
      * Maps from component state to the alpha channel applied on highlight color
      * scheme. This map doesn't have to contain entries for all
      * [ComponentState] instances.
      */
-    private var stateHighlightSchemeAlphaMap: MutableMap<ComponentState, Float>
+    private val stateHighlightSchemeAlphaMap: MutableMap<ComponentState, Float> = hashMapOf()
 
     /**
      * If there is no explicitly registered color scheme for pressed component
@@ -57,7 +57,6 @@ class AuroraColorSchemeBundle(
      * state.
      *
      * @see ComponentState.PressedSelected
-     *
      * @see ComponentState.PressedUnselected
      */
     private var pressedScheme: AuroraColorScheme? = null
@@ -96,17 +95,17 @@ class AuroraColorSchemeBundle(
      * use a light orange scheme for the gradient fill and a dark gray scheme
      * for the border. In this case, this map will have:
      *
-     *
      *  * An entry with key [ColorSchemeAssociationKind.Fill]. This entry
      * has a map entry with key [ComponentState.Selected] and value that
      * points to the light orange scheme.
      *  * An entry with key [ColorSchemeAssociationKind.Border]. This
      * entry has a map entry with key [ComponentState.Selected] and value
      * that points to the dark gray scheme.
-     *
      */
-    private val colorSchemeMap: MutableMap<ColorSchemeAssociationKind, MutableMap<ComponentState, AuroraColorScheme>>
-    private val bestFillMap: MutableMap<ColorSchemeAssociationKind, MutableMap<ComponentState, ComponentState?>>
+    private val colorSchemeMap: MutableMap<ColorSchemeAssociationKind, MutableMap<ComponentState, AuroraColorScheme>> =
+        hashMapOf()
+    private val bestFillMap: MutableMap<ColorSchemeAssociationKind, MutableMap<ComponentState, ComponentState?>> =
+        hashMapOf()
 
     /**
      * Returns the color scheme of the specified component in the specified
@@ -204,14 +203,9 @@ class AuroraColorSchemeBundle(
      * scheme has to be used for gradient fill for rollover selected and rollover
      * controls, the parameters would be:
      *
-     *
-     *  * `scheme`=light orange scheme
-     *  *
+     * `scheme`=light orange scheme
      * `associationKind`=[ColorSchemeAssociationKind.Fill]
-     *  *
-     * `states`=[ComponentState.RolloverSelected],
-     * [ComponentState.RolloverUnselected]
-     *
+     * `states`=[ComponentState.RolloverSelected], [ComponentState.RolloverUnselected]
      *
      * @param scheme          Color scheme.
      * @param associationKind Color scheme association kind that specifies the visual areas
@@ -413,10 +407,10 @@ class AuroraColorSchemeBundle(
         }
 
         // alphas are the same
-        result.stateAlphaMap = HashMap(stateAlphaMap)
+        result.stateAlphaMap.putAll(this.stateAlphaMap)
 
         // highlight alphas are the same
-        result.stateHighlightSchemeAlphaMap = HashMap(stateHighlightSchemeAlphaMap)
+        result.stateHighlightSchemeAlphaMap.putAll(this.stateHighlightSchemeAlphaMap)
         return result
     }
 
@@ -424,14 +418,9 @@ class AuroraColorSchemeBundle(
      * Creates a new color scheme bundle.
      */
     init {
-        stateAlphaMap = HashMap()
-        stateHighlightSchemeAlphaMap = HashMap()
-
-        colorSchemeMap = HashMap()
         for (associationKind in ColorSchemeAssociationKind.values()) {
             colorSchemeMap[associationKind] = HashMap()
         }
-        bestFillMap = HashMap()
         for (associationKind in ColorSchemeAssociationKind.values()) {
             bestFillMap[associationKind] = HashMap()
         }
@@ -443,12 +432,12 @@ class AuroraSkinColors {
      * Maps decoration area type to the color scheme bundles. Must contain an
      * entry for [DecorationAreaType.None].
      */
-    private val colorSchemeBundleMap: MutableMap<DecorationAreaType, AuroraColorSchemeBundle>
+    private val colorSchemeBundleMap: MutableMap<DecorationAreaType, AuroraColorSchemeBundle> = hashMapOf()
 
     /**
      * Maps decoration area type to the background color schemes.
      */
-    private val backgroundColorSchemeMap: MutableMap<DecorationAreaType, AuroraColorScheme>
+    private val backgroundColorSchemeMap: MutableMap<DecorationAreaType, AuroraColorScheme> = hashMapOf()
 
     /**
      * Set of all decoration area types that are not explicitly registered in
@@ -456,22 +445,12 @@ class AuroraSkinColors {
      * areas in this skin. Controls in such areas will have their background painted by
      * [AuroraDecorationPainter.paintDecorationArea] instead of a simple background fill.
      */
-    private val decoratedAreaSet: MutableSet<DecorationAreaType>
+    private val decoratedAreaSet: MutableSet<DecorationAreaType> = hashSetOf(DecorationAreaType.TitlePane)
 
     /**
      * All component states that have associated non-trivial alpha values.
      */
-    private val statesWithAlpha: MutableSet<ComponentState>
-
-    init {
-        colorSchemeBundleMap = HashMap()
-        backgroundColorSchemeMap = HashMap()
-
-        decoratedAreaSet = HashSet()
-        decoratedAreaSet.add(DecorationAreaType.TitlePane)
-
-        statesWithAlpha = HashSet()
-    }
+    private val statesWithAlpha: MutableSet<ComponentState> = hashSetOf()
 
     /**
      * Returns the color scheme that matches the decoration area type and

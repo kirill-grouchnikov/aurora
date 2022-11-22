@@ -26,29 +26,13 @@ class BlendBiColorScheme(
     firstScheme: AuroraColorScheme,
     secondScheme: AuroraColorScheme, firstSchemeLikeness: Float
 ) : BaseColorScheme(
-    displayName =
-    "Blended " + firstScheme.displayName + " & "
-            + secondScheme.displayName + " " + firstSchemeLikeness,
+    displayName = "Blended ${firstScheme.displayName} & ${secondScheme.displayName} $firstSchemeLikeness",
     isDark = firstScheme.isDark,
-    ultraLight = firstScheme.ultraLightColor.interpolateTowards(
-        secondScheme.ultraLightColor, firstSchemeLikeness
-    ),
-    extraLight = firstScheme.extraLightColor.interpolateTowards(
-        secondScheme.extraLightColor, firstSchemeLikeness
-    ),
-    light = firstScheme.lightColor.interpolateTowards(
-        secondScheme.lightColor, firstSchemeLikeness
-    ),
-    mid = firstScheme.midColor.interpolateTowards(
-        secondScheme.midColor, firstSchemeLikeness
-    ),
-    dark = firstScheme.darkColor.interpolateTowards(
-        secondScheme.darkColor, firstSchemeLikeness
-    ),
-    ultraDark = firstScheme.ultraDarkColor.interpolateTowards(
-        secondScheme.ultraDarkColor, firstSchemeLikeness
-    ),
-    foreground = firstScheme.foregroundColor.interpolateTowards(
-        secondScheme.foregroundColor, firstSchemeLikeness
-    )
+    ultraLight = firstScheme.ultraLightColor.interpolateTowards(secondScheme.ultraLightColor, firstSchemeLikeness),
+    extraLight = firstScheme.extraLightColor.interpolateTowards(secondScheme.extraLightColor, firstSchemeLikeness),
+    light = firstScheme.lightColor.interpolateTowards(secondScheme.lightColor, firstSchemeLikeness),
+    mid = firstScheme.midColor.interpolateTowards(secondScheme.midColor, firstSchemeLikeness),
+    dark = firstScheme.darkColor.interpolateTowards(secondScheme.darkColor, firstSchemeLikeness),
+    ultraDark = firstScheme.ultraDarkColor.interpolateTowards(secondScheme.ultraDarkColor, firstSchemeLikeness),
+    foreground = firstScheme.foregroundColor.interpolateTowards(secondScheme.foregroundColor, firstSchemeLikeness)
 )

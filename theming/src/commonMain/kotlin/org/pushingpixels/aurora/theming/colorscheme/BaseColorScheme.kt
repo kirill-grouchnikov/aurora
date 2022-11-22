@@ -18,7 +18,7 @@ package org.pushingpixels.aurora.theming.colorscheme
 import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.common.hexadecimal
 
-open class BaseColorScheme(
+sealed class BaseColorScheme(
     override val displayName: String,
     override val isDark: Boolean,
     val ultraLight: Color = Color.White,
@@ -32,8 +32,9 @@ open class BaseColorScheme(
     /**
      * Resolver for the derived colors.
      */
-    private val derivedColorsResolver: SchemeDerivedColors =
+    private val derivedColorsResolver: SchemeDerivedColors by lazy {
         if (isDark) DerivedColorsResolverDark(this) else DerivedColorsResolverLight(this)
+    }
 
     override val ultraLightColor: Color
         get() = ultraLight
@@ -136,3 +137,15 @@ $displayName {
         """
     }
 }
+
+/**
+ * Base class for light color schemes.
+ */
+abstract class BaseLightColorScheme(displayName: String) :
+    BaseColorScheme(displayName = displayName, isDark = false)
+
+/**
+ * Base class for dark color schemes.
+ */
+abstract class BaseDarkColorScheme(displayName: String) :
+    BaseColorScheme(displayName = displayName, isDark = true)

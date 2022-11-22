@@ -20,13 +20,10 @@ import org.pushingpixels.aurora.theming.AuroraTrait
 
 interface AuroraColorScheme : SchemeBaseColors, SchemeDerivedColors, AuroraTrait {
     /**
-     * Returns indication whether this color scheme uses dark colors. Note that
-     * this method may be removed in the future. It is highly recommended to use
+     * Indication whether this color scheme uses dark colors. Note that
+     * this attribute may be removed in the future. It is highly recommended to use
      * one of the colors from the parent [SchemeBaseColors] and [SchemeDerivedColors]
      * interfaces instead.
-     *
-     * @return `true` if this color scheme uses dark colors,
-     * `false` otherwise.
      */
     val isDark: Boolean
 
@@ -127,6 +124,10 @@ interface AuroraColorScheme : SchemeBaseColors, SchemeDerivedColors, AuroraTrait
     fun blendWith(otherScheme: AuroraColorScheme, likenessToThisScheme: Float): AuroraColorScheme
 }
 
+/**
+ * Applies a color query on the passed scheme, and then a chain of transformations on the
+ * color. This can be used to get something like foreground color with 25% alpha.
+ */
 fun composite(
     base: (AuroraColorScheme) -> Color,
     vararg transforms: (Color) -> Color

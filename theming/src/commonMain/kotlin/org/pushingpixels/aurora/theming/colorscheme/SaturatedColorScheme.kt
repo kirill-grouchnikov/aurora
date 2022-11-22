@@ -25,8 +25,7 @@ import org.pushingpixels.aurora.common.withSaturation
  * @see ShiftColorScheme
  */
 class SaturatedColorScheme(origScheme: AuroraColorScheme, saturationFactor: Float) : BaseColorScheme(
-    displayName = "Saturated (" + (100 * saturationFactor).toInt() + "%) "
-            + origScheme.displayName,
+    displayName = "Saturated (${(100 * saturationFactor).toInt()}%) ${origScheme.displayName}",
     isDark = origScheme.isDark,
     ultraLight = origScheme.ultraLightColor.withSaturation(saturationFactor),
     extraLight = origScheme.extraLightColor.withSaturation(saturationFactor),
