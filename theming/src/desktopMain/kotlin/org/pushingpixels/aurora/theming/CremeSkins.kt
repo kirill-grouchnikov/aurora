@@ -24,6 +24,7 @@ import org.pushingpixels.aurora.theming.painter.border.DelegateBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.MatteFillPainter
+import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomShadowOverlayPainter
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
@@ -61,7 +62,7 @@ private fun cremeBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors 
 
 private fun cremeBasePainters(): AuroraPainters {
     val painters = AuroraPainters(
-        fillPainter = MatteFillPainter(),
+        fillPainter = SpecularRectangularFillPainter(MatteFillPainter(), 0.7f),
         borderPainter = CompositeBorderPainter(
             displayName = "Creme",
             outer = ClassicBorderPainter(),

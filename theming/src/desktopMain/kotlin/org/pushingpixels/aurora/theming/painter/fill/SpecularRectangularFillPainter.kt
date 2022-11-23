@@ -28,7 +28,7 @@ class SpecularRectangularFillPainter(base: AuroraFillPainter, val baseAlpha: Flo
         runtimeEffect = getSpecularRectangularEffect(),
         baseFillPainter = base
     ) {
-    override val displayName = "Specular Rectangular"
+    override val displayName = "Specular Rectangular ${baseFillPainter.displayName}"
 
     override fun getShaderData(
         density: Density,
