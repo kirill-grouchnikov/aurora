@@ -1,7 +1,8 @@
 
 # Aurora libraries
 
-Aurora is a collection of libraries for writing modern, elegant and fast [desktop Compose](https://github.com/JetBrains/compose-jb) applications.
+**Aurora** is a collection of libraries for writing modern, elegant and fast [desktop Compose](https://github.com/JetBrains/compose-jb) applications based on
+the [Ephemeral](https://github.com/kirill-grouchnikov/ephemeral) design system. It is built with Java 11, and runs on Java 11 and later.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/nebula.png" width="340" height="280" border=0>
