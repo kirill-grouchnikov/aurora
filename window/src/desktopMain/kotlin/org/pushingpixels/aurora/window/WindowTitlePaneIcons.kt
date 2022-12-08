@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.unit.Dp
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
+import kotlin.math.roundToInt
 
 internal fun drawCloseIcon(
     drawScope: DrawScope,
@@ -51,12 +52,12 @@ internal fun drawCloseIcon(
 
 internal fun drawMinimizeIcon(drawScope: DrawScope, iconSize: Dp, scheme: AuroraColorScheme) {
     with(drawScope) {
-        val start = iconSize.toPx() * 0.25f
-        val end = iconSize.toPx() * 0.75f
+        val start = (iconSize.toPx() * 0.25f).roundToInt().toFloat()
+        val end = (iconSize.toPx() * 0.75f).roundToInt().toFloat()
         drawRect(
             color = scheme.markColor,
-            topLeft = Offset(start, end - 1.5f * density),
-            size = Size(end - start, 2.5f * density),
+            topLeft = Offset(start, (end - 1.5f * density).toInt().toFloat()),
+            size = Size(end - start, (2.5f * density).toInt().toFloat()),
             style = Fill
         )
     }
@@ -68,9 +69,9 @@ internal fun drawRestoreIcon(
     scheme: AuroraColorScheme
 ) {
     with(drawScope) {
-        val start = iconSize.toPx() / 4.0f - density
-        val end = iconSize.toPx() - start
-        val smallSquareSize = end - start - 3.0f * density
+        val start = (iconSize.toPx() / 4.0f - density).roundToInt().toFloat()
+        val end = (iconSize.toPx() - start).roundToInt().toFloat()
+        val smallSquareSize = (end - start - 3.0f * density).roundToInt().toFloat()
 
         // "Main" rectangle
         val mainStartX = start
@@ -80,7 +81,7 @@ internal fun drawRestoreIcon(
         drawRect(
             color = scheme.markColor,
             topLeft = Offset(mainStartX, mainStartY),
-            size = Size(smallSquareSize, 2.0f * density),
+            size = Size(smallSquareSize, (2.0f * density).toInt().toFloat()),
             style = Fill
         )
         // left
@@ -93,32 +94,32 @@ internal fun drawRestoreIcon(
         // right
         drawRect(
             color = scheme.markColor,
-            topLeft = Offset(mainStartX + smallSquareSize - density, mainStartY),
+            topLeft = Offset((mainStartX + smallSquareSize - density).toInt().toFloat(), mainStartY),
             size = Size(density, smallSquareSize),
             style = Fill
         )
         // bottom
         drawRect(
             color = scheme.markColor,
-            topLeft = Offset(mainStartX, mainStartY + smallSquareSize - density),
-            size = Size(smallSquareSize, density),
+            topLeft = Offset(mainStartX, (mainStartY + smallSquareSize - density).toInt().toFloat()),
+            size = Size(smallSquareSize, density.toInt().toFloat()),
             style = Fill
         )
 
         // "Secondary rectangle"
-        val secondaryStartX = mainStartX + 3.0f * density
-        val secondaryStartY = mainStartY - 3.0f * density
+        val secondaryStartX = (mainStartX + 3.0f * density).toInt().toFloat()
+        val secondaryStartY = (mainStartY - 3.0f * density).toInt().toFloat()
         // top (thicker)
         drawRect(
             color = scheme.markColor,
             topLeft = Offset(secondaryStartX, secondaryStartY),
-            size = Size(smallSquareSize, 2.0f * density),
+            size = Size(smallSquareSize, (2.0f * density).toInt().toFloat()),
             style = Fill
         )
         // right
         drawRect(
             color = scheme.markColor,
-            topLeft = Offset(secondaryStartX + smallSquareSize - density, secondaryStartY),
+            topLeft = Offset((secondaryStartX + smallSquareSize - density).toInt().toFloat(), secondaryStartY),
             size = Size(density, smallSquareSize),
             style = Fill
         )
@@ -126,10 +127,10 @@ internal fun drawRestoreIcon(
         drawRect(
             color = scheme.markColor,
             topLeft = Offset(
-                mainStartX + smallSquareSize + density,
-                secondaryStartY + smallSquareSize - density
+                (mainStartX + smallSquareSize + density).toInt().toFloat(),
+                (secondaryStartY + smallSquareSize - density).toInt().toFloat()
             ),
-            size = Size(2.0f * density, density),
+            size = Size((2.0f * density).toInt().toFloat(), density.toInt().toFloat()),
             style = Fill
         )
     }
@@ -142,8 +143,8 @@ internal fun drawMaximizeIcon(
 ) {
     with(drawScope) {
 
-        val start = iconSize.toPx() / 4.0f - density
-        val end = iconSize.toPx() - start
+        val start = (iconSize.toPx() / 4.0f - density).roundToInt().toFloat()
+        val end = (iconSize.toPx() - start).roundToInt().toFloat()
 
         // top (thicker)
         drawRect(
