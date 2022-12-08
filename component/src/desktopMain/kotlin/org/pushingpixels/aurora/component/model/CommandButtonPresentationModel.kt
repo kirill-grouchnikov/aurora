@@ -93,9 +93,12 @@ data class CommandButtonPresentationModel(
         val actionFireTrigger: ActionFireTrigger? = null,
         val popupMenuPresentationModel: CommandPopupMenuPresentationModel? = null,
         val textClick: TextClick? = null,
+        val actionRichTooltipPresentationModel: RichTooltipPresentationModel? = null,
+        val popupRichTooltipPresentationModel: RichTooltipPresentationModel? = null,
         val contentPadding: PaddingValues? = null,
         val horizontalGapScaleFactor: Float? = null,
         val verticalGapScaleFactor: Float? = null,
+        val minWidth: Dp? = null,
         val isMenu: Boolean? = null,
         val sides : Sides? = null
     )
@@ -121,9 +124,12 @@ data class CommandButtonPresentationModel(
             actionFireTrigger = overlay.actionFireTrigger ?: this.actionFireTrigger,
             popupMenuPresentationModel = overlay.popupMenuPresentationModel ?: this.popupMenuPresentationModel,
             textClick = overlay.textClick ?: this.textClick,
+            actionRichTooltipPresentationModel = overlay.actionRichTooltipPresentationModel ?: this.actionRichTooltipPresentationModel,
+            popupRichTooltipPresentationModel = overlay.popupRichTooltipPresentationModel ?: this.popupRichTooltipPresentationModel,
             contentPadding = overlay.contentPadding ?: this.contentPadding,
             horizontalGapScaleFactor = overlay.horizontalGapScaleFactor ?: this.horizontalGapScaleFactor,
             verticalGapScaleFactor = overlay.verticalGapScaleFactor ?: this.verticalGapScaleFactor,
+            minWidth = overlay.minWidth ?: this.minWidth,
             isMenu = overlay.isMenu ?: this.isMenu,
             sides = overlay.sides ?: this.sides
         )
