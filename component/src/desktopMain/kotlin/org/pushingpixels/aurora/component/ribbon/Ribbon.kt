@@ -136,7 +136,8 @@ data class RibbonTask(
 data class RibbonContextualTaskGroup(
     val title: String,
     val hueColor: Color,
-    val tasks: List<RibbonTask>
+    val tasks: List<RibbonTask>,
+    val isActive: Boolean = false
 )
 
 data class RibbonTaskbarCommandButtonPresentationModel(
@@ -188,6 +189,16 @@ class RibbonTaskbarCommandButtonProjection(
     val presentationModel: RibbonTaskbarCommandButtonPresentationModel
 ): Projection<Command, RibbonTaskbarCommandButtonPresentationModel>()
 
+data class RibbonApplicationMenuCommandButtonPresentationModel(
+    val popupKeyTip: String? = null
+) : PresentationModel
+
+class RibbonApplicationMenuCommandButtonProjection(
+    val contentModel: Command,
+    val presentationModel: RibbonApplicationMenuCommandButtonPresentationModel,
+    val secondaryLevelCommandPresentationStates: Map<Command, CommandButtonPresentationState>
+): Projection<Command, RibbonApplicationMenuCommandButtonPresentationModel>()
+
 data class Ribbon(
     val tasks: List<RibbonTask>,
     val selectedTask: RibbonTask,
@@ -198,6 +209,7 @@ data class Ribbon(
     val taskbarComponentProjections: List<RibbonComponentProjection> = emptyList(),
     val taskbarGalleryProjections: List<RibbonGalleryProjection> = emptyList(),
     val taskbarKeyTipPolicy: RibbonTaskbarKeyTipPolicy,
+    val applicationMenuCommandButtonProjection: RibbonApplicationMenuCommandButtonProjection,
     val isMinimized: Boolean = false,
     val onShowContextualMenuListener: OnShowContextualMenuListener?
 )
