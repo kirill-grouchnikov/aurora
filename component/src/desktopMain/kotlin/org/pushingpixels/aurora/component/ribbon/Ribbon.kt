@@ -34,10 +34,10 @@ enum class PresentationPriority {
     Low
 }
 
-sealed class AbstractRibbonBand(
-    val title: String,
-    val icon: Painter? = null
-)
+sealed interface AbstractRibbonBand {
+    val title: String
+    val icon: Painter?
+}
 
 data class RibbonCommandButtonPresentationModel(
     val presentationPriority: PresentationPriority,
@@ -54,7 +54,7 @@ data class RibbonComponentPresentationModel(
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Leading,
     val keyTip: String? = null,
     val isResizingAware: Boolean = false,
-)
+): PresentationModel
 
 fun PresentationModel.inRibbon(
     horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Leading,
@@ -87,21 +87,29 @@ class RibbonGalleryProjection(
     val presentationModel: RibbonGalleryPresentationModel
 ): Projection<RibbonGalleryContentModel, RibbonGalleryPresentationModel>()
 
-public class RibbonBand(
-    title: String,
-    icon: Painter? = null
-) : AbstractRibbonBand(title, icon) {
-    public fun addRibbonCommand(command: Command, presentationModel: RibbonCommandButtonPresentationModel) {}
-    public fun addRibbonComponent(contentModel: ContentModel, presentationModel: RibbonComponentPresentationModel) {}
-    public fun addRibbonGallery(contentModel: RibbonGalleryContentModel, presentationModel: RibbonGalleryPresentationModel) {}
-}
+class RibbonCommandButtonProjection(
+    val contentModel: Command,
+    val presentationModel: RibbonCommandButtonPresentationModel
+): Projection<Command, RibbonCommandButtonPresentationModel>()
 
-public class FlowRibbonBand(
-    title: String,
-    icon: Painter? = null
-) : AbstractRibbonBand(title, icon) {
-    public fun addFlowComponent(contentModel: ContentModel, presentationModel: RibbonComponentPresentationModel) {}
-}
+class RibbonComponentProjection(
+    val contentModel: Command,
+    val presentationModel: RibbonComponentPresentationModel
+): Projection<Command, RibbonComponentPresentationModel>()
+
+data class RibbonBand(
+    override val title: String,
+    override val icon: Painter? = null,
+    val commandProjections: List<RibbonCommandButtonProjection> = emptyList(),
+    val componentProjections: List<RibbonComponentProjection> = emptyList(),
+    val galleryProjections: List<RibbonGalleryProjection> = emptyList()
+) : AbstractRibbonBand
+
+data class FlowRibbonBand(
+    override val title: String,
+    override val icon: Painter? = null,
+    val flowComponentProjections: List<RibbonComponentProjection> = emptyList()
+) : AbstractRibbonBand
 
 interface RibbonBandResizeSequencingPolicy {
     /**
@@ -118,17 +126,17 @@ interface RibbonBandResizeSequencingPolicy {
     operator fun next(): AbstractRibbonBand
 }
 
-public class RibbonTask(
-    title: String,
-    bands: List<AbstractRibbonBand>,
-    resizeSequencingPolicy: RibbonBandResizeSequencingPolicy,
-    keyTip: String? = null
+data class RibbonTask(
+    val title: String,
+    val bands: List<AbstractRibbonBand>,
+    val resizeSequencingPolicy: RibbonBandResizeSequencingPolicy,
+    val keyTip: String? = null
 )
 
-public class RibbonContextualTaskGroup(
-    title: String,
-    hueColor: Color,
-    tasks: List<RibbonTask>
+data class RibbonContextualTaskGroup(
+    val title: String,
+    val hueColor: Color,
+    val tasks: List<RibbonTask>
 )
 
 data class RibbonTaskbarCommandButtonPresentationModel(
@@ -136,7 +144,7 @@ data class RibbonTaskbarCommandButtonPresentationModel(
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val popupMenuPresentationModel: CommandPopupMenuPresentationModel = CommandPopupMenuPresentationModel()
-)
+): PresentationModel
 
 interface RibbonTaskbarKeyTipPolicy {
     /**
@@ -158,7 +166,8 @@ interface RibbonTaskbarKeyTipPolicy {
 
 interface OnShowContextualMenuListener {
     fun getContextualMenuContentModel(
-        ribbon: Ribbon, galleryProjection: RibbonGalleryProjection
+        ribbon: Ribbon,
+        galleryProjection: RibbonGalleryProjection
     ): CommandMenuContentModel
 
     fun <C: ContentModel, P: PresentationModel> getContextualMenuContentModel(
@@ -174,26 +183,21 @@ interface OnShowContextualMenuListener {
     fun getContextualMenuContentModel(ribbon: Ribbon): CommandMenuContentModel
 }
 
-public class Ribbon {
-    public fun addTask(task: RibbonTask) {}
-    public fun addContextualTaskGroup(contextualTaskGroup: RibbonContextualTaskGroup) {}
-    public fun setSelectedTask(task: RibbonTask) {}
+class RibbonTaskbarCommandButtonProjection(
+    val contentModel: Command,
+    val presentationModel: RibbonTaskbarCommandButtonPresentationModel
+): Projection<Command, RibbonTaskbarCommandButtonPresentationModel>()
 
-    public fun addAnchoredCommand(commandButtonProjection: CommandButtonProjection) {}
-    public fun removeAnchoredCommand(commandButtonProjection: CommandButtonProjection) {}
-
-    public fun addTaskbarCommand(command: Command, presentationModel: RibbonTaskbarCommandButtonPresentationModel) {}
-    public fun <C: ContentModel, P: PresentationModel> addTaskbarComponent(projection: Projection<C, P>) {}
-    public fun addTaskbarGalleryDropdown(contentModel: RibbonGalleryContentModel, presentationModel: RibbonGalleryPresentationModel) {}
-    public fun removeTaskbarCommand(command: Command) {}
-    public fun removeTaskbarComponent(contentModel: ContentModel) {}
-    public fun removeTaskbarGallery(contentModel: RibbonGalleryContentModel) {}
-    public fun isShowingInTaskbar(command: Command): Boolean = false
-    public fun isShowingInTaskbar(contentModel: ContentModel): Boolean = false
-    public fun isShowingInTaskbar(contentModel: RibbonGalleryContentModel): Boolean = false
-
-    public fun setTaskbarKeyTipPolicy(policy: RibbonTaskbarKeyTipPolicy) {}
-
-    public fun setMinimized(isMinimized: Boolean) {}
-    public fun setOnShowContextualMenuListener(onShowContextualMenuListener: OnShowContextualMenuListener) {}
-}
+data class Ribbon(
+    val tasks: List<RibbonTask>,
+    val selectedTask: RibbonTask,
+    val onTaskClick: () -> Unit,
+    val contextualTaskGroups: List<RibbonContextualTaskGroup>?,
+    val anchoredCommands: List<CommandButtonProjection>?,
+    val taskbarCommandProjections: List<RibbonTaskbarCommandButtonProjection> = emptyList(),
+    val taskbarComponentProjections: List<RibbonComponentProjection> = emptyList(),
+    val taskbarGalleryProjections: List<RibbonGalleryProjection> = emptyList(),
+    val taskbarKeyTipPolicy: RibbonTaskbarKeyTipPolicy,
+    val isMinimized: Boolean = false,
+    val onShowContextualMenuListener: OnShowContextualMenuListener?
+)
