@@ -37,24 +37,52 @@ enum class PresentationPriority {
 sealed interface AbstractRibbonBand {
     val title: String
     val icon: Painter?
+    val expandCommand: Command?
+    val expandCommandKeyTip: String?
+    val collapsedStateKeyTip: String?
 }
 
 data class RibbonCommandButtonPresentationModel(
     val presentationPriority: PresentationPriority,
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
+    val popupMenuPresentationModel: CommandPopupMenuPresentationModel = CommandPopupMenuPresentationModel(),
     val textClick: TextClick = TextClick.Action,
     val actionRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),
     val popupRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),
     val actionKeyTip: String? = null,
     val popupKeyTip: String? = null
-) : PresentationModel
+) : PresentationModel {
+    data class Overlay(
+        val presentationPriority: PresentationPriority? = null,
+        val popupPlacementStrategy: PopupPlacementStrategy? = null,
+        val textClick: TextClick? = null,
+        val actionRichTooltipPresentationModel: RichTooltipPresentationModel? = null,
+        val popupRichTooltipPresentationModel: RichTooltipPresentationModel? = null,
+        val actionKeyTip: String? = null,
+        val popupKeyTip: String? = null
+    )
+
+    fun overlayWith(overlay: Overlay): RibbonCommandButtonPresentationModel {
+        return RibbonCommandButtonPresentationModel(
+            presentationPriority = overlay.presentationPriority ?: this.presentationPriority,
+            popupPlacementStrategy = overlay.popupPlacementStrategy ?: this.popupPlacementStrategy,
+            textClick = overlay.textClick ?: this.textClick,
+            actionRichTooltipPresentationModel = overlay.actionRichTooltipPresentationModel
+                ?: this.actionRichTooltipPresentationModel,
+            popupRichTooltipPresentationModel = overlay.popupRichTooltipPresentationModel
+                ?: this.popupRichTooltipPresentationModel,
+            actionKeyTip = overlay.actionKeyTip ?: this.actionKeyTip,
+            popupKeyTip = overlay.popupKeyTip ?: this.popupKeyTip
+        )
+    }
+}
 
 data class RibbonComponentPresentationModel(
     val basePresentationModel: PresentationModel,
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Leading,
     val keyTip: String? = null,
     val isResizingAware: Boolean = false,
-): PresentationModel
+) : PresentationModel
 
 fun PresentationModel.inRibbon(
     horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Leading,
@@ -74,40 +102,47 @@ data class RibbonGalleryContentModel(
     val extraPopupGroups: List<CommandGroup>,
     val commandAction: (() -> Unit)? = null,
     val commandActionPreview: CommandActionPreview? = null,
-): ContentModel
+) : ContentModel
 
 data class RibbonGalleryPresentationModel(
     val popupLayoutSpec: MenuPopupPanelLayoutSpec,
     val expandKeyTip: String? = null,
     val policies: Map<PresentationPriority, Int>
-): PresentationModel
+) : PresentationModel
 
 class RibbonGalleryProjection(
     val contentModel: RibbonGalleryContentModel,
     val presentationModel: RibbonGalleryPresentationModel
-): Projection<RibbonGalleryContentModel, RibbonGalleryPresentationModel>()
+) : Projection<RibbonGalleryContentModel, RibbonGalleryPresentationModel>()
 
 class RibbonCommandButtonProjection(
     val contentModel: Command,
-    val presentationModel: RibbonCommandButtonPresentationModel
-): Projection<Command, RibbonCommandButtonPresentationModel>()
+    val presentationModel: RibbonCommandButtonPresentationModel,
+    val overlays: Map<Command, RibbonCommandButtonPresentationModel.Overlay>? = null
+) : Projection<Command, RibbonCommandButtonPresentationModel>()
 
 class RibbonComponentProjection(
     val contentModel: Command,
     val presentationModel: RibbonComponentPresentationModel
-): Projection<Command, RibbonComponentPresentationModel>()
+) : Projection<Command, RibbonComponentPresentationModel>()
 
 data class RibbonBand(
     override val title: String,
     override val icon: Painter? = null,
+    override val expandCommand: Command? = null,
+    override val expandCommandKeyTip: String? = null,
+    override val collapsedStateKeyTip: String? = null,
     val commandProjections: List<RibbonCommandButtonProjection> = emptyList(),
     val componentProjections: List<RibbonComponentProjection> = emptyList(),
-    val galleryProjections: List<RibbonGalleryProjection> = emptyList()
+    val galleryProjections: List<RibbonGalleryProjection> = emptyList(),
 ) : AbstractRibbonBand
 
 data class FlowRibbonBand(
     override val title: String,
     override val icon: Painter? = null,
+    override val expandCommand: Command? = null,
+    override val expandCommandKeyTip: String? = null,
+    override val collapsedStateKeyTip: String? = null,
     val flowComponentProjections: List<RibbonComponentProjection> = emptyList()
 ) : AbstractRibbonBand
 
@@ -116,14 +151,14 @@ interface RibbonBandResizeSequencingPolicy {
      * Resets this policy. Note that this method is for internal use only and
      * should not be called by the application code.
      */
-    fun reset()
+    fun reset(ribbonTask: RibbonTask)
 
     /**
      * Returns the next ribbon band for collapse.
      *
      * @return The next ribbon band for collapse.
      */
-    operator fun next(): AbstractRibbonBand
+    fun next(ribbonTask: RibbonTask): AbstractRibbonBand
 }
 
 data class RibbonTask(
@@ -132,6 +167,31 @@ data class RibbonTask(
     val resizeSequencingPolicy: RibbonBandResizeSequencingPolicy,
     val keyTip: String? = null
 )
+
+object CoreRibbonResizeSequencingPolicies {
+    /**
+     * The round robin resize sequencing policy. Under this policy the ribbon
+     * bands are being collapsed in a cyclic fashion, distributing the collapsed
+     * pixels between the different bands.
+     *
+     * @author Kirill Grouchnikov
+     */
+    class RoundRobin() : RibbonBandResizeSequencingPolicy {
+        // The index of the next ribbon task for collapsing.
+        private var nextIndex = 0
+
+        override fun reset(ribbonTask: RibbonTask) {
+            nextIndex = ribbonTask.bands.size - 1
+        }
+
+        override fun next(ribbonTask: RibbonTask): AbstractRibbonBand {
+            val result: AbstractRibbonBand = ribbonTask.bands[nextIndex]
+            nextIndex--
+            if (nextIndex < 0) nextIndex = ribbonTask.bands.size - 1
+            return result
+        }
+    }
+}
 
 data class RibbonContextualTaskGroup(
     val title: String,
@@ -145,7 +205,7 @@ data class RibbonTaskbarCommandButtonPresentationModel(
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val popupMenuPresentationModel: CommandPopupMenuPresentationModel = CommandPopupMenuPresentationModel()
-): PresentationModel
+) : PresentationModel
 
 interface RibbonTaskbarKeyTipPolicy {
     /**
@@ -171,7 +231,7 @@ interface OnShowContextualMenuListener {
         galleryProjection: RibbonGalleryProjection
     ): CommandMenuContentModel
 
-    fun <C: ContentModel, P: PresentationModel> getContextualMenuContentModel(
+    fun <C : ContentModel, P : PresentationModel> getContextualMenuContentModel(
         ribbon: Ribbon,
         componentProjection: Projection<C, P>
     ): CommandMenuContentModel
@@ -187,7 +247,7 @@ interface OnShowContextualMenuListener {
 class RibbonTaskbarCommandButtonProjection(
     val contentModel: Command,
     val presentationModel: RibbonTaskbarCommandButtonPresentationModel
-): Projection<Command, RibbonTaskbarCommandButtonPresentationModel>()
+) : Projection<Command, RibbonTaskbarCommandButtonPresentationModel>()
 
 data class RibbonApplicationMenuCommandButtonPresentationModel(
     val popupKeyTip: String? = null
@@ -197,7 +257,7 @@ class RibbonApplicationMenuCommandButtonProjection(
     val contentModel: Command,
     val presentationModel: RibbonApplicationMenuCommandButtonPresentationModel,
     val secondaryLevelCommandPresentationStates: Map<Command, CommandButtonPresentationState>
-): Projection<Command, RibbonApplicationMenuCommandButtonPresentationModel>()
+) : Projection<Command, RibbonApplicationMenuCommandButtonPresentationModel>()
 
 data class Ribbon(
     val tasks: List<RibbonTask>,
