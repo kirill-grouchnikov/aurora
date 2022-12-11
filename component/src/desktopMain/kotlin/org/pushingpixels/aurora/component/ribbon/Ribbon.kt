@@ -15,12 +15,10 @@
  */
 package org.pushingpixels.aurora.component.ribbon
 
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.Projection
-import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 
 enum class PresentationPriority {
@@ -32,14 +30,6 @@ enum class PresentationPriority {
 
     /** Low priority */
     Low
-}
-
-sealed interface AbstractRibbonBand {
-    val title: String
-    val icon: Painter?
-    val expandCommand: Command?
-    val expandCommandKeyTip: String?
-    val collapsedStateKeyTip: String?
 }
 
 data class RibbonCommandButtonPresentationModel(
@@ -126,105 +116,6 @@ class RibbonComponentProjection(
     val presentationModel: RibbonComponentPresentationModel
 ) : Projection<Command, RibbonComponentPresentationModel>()
 
-data class RibbonBand(
-    override val title: String,
-    override val icon: Painter? = null,
-    override val expandCommand: Command? = null,
-    override val expandCommandKeyTip: String? = null,
-    override val collapsedStateKeyTip: String? = null,
-    val commandProjections: List<RibbonCommandButtonProjection> = emptyList(),
-    val componentProjections: List<RibbonComponentProjection> = emptyList(),
-    val galleryProjections: List<RibbonGalleryProjection> = emptyList(),
-) : AbstractRibbonBand
-
-data class FlowRibbonBand(
-    override val title: String,
-    override val icon: Painter? = null,
-    override val expandCommand: Command? = null,
-    override val expandCommandKeyTip: String? = null,
-    override val collapsedStateKeyTip: String? = null,
-    val flowComponentProjections: List<RibbonComponentProjection> = emptyList()
-) : AbstractRibbonBand
-
-interface RibbonBandResizeSequencingPolicy {
-    /**
-     * Resets this policy. Note that this method is for internal use only and
-     * should not be called by the application code.
-     */
-    fun reset(ribbonTask: RibbonTask)
-
-    /**
-     * Returns the next ribbon band for collapse.
-     *
-     * @return The next ribbon band for collapse.
-     */
-    fun next(ribbonTask: RibbonTask): AbstractRibbonBand
-}
-
-data class RibbonTask(
-    val title: String,
-    val bands: List<AbstractRibbonBand>,
-    val resizeSequencingPolicy: RibbonBandResizeSequencingPolicy,
-    val keyTip: String? = null
-)
-
-object CoreRibbonResizeSequencingPolicies {
-    /**
-     * The round robin resize sequencing policy. Under this policy the ribbon
-     * bands are being collapsed in a cyclic fashion, distributing the collapsed
-     * pixels between the different bands.
-     *
-     * @author Kirill Grouchnikov
-     */
-    class RoundRobin() : RibbonBandResizeSequencingPolicy {
-        // The index of the next ribbon task for collapsing.
-        private var nextIndex = 0
-
-        override fun reset(ribbonTask: RibbonTask) {
-            nextIndex = ribbonTask.bands.size - 1
-        }
-
-        override fun next(ribbonTask: RibbonTask): AbstractRibbonBand {
-            val result: AbstractRibbonBand = ribbonTask.bands[nextIndex]
-            nextIndex--
-            if (nextIndex < 0) nextIndex = ribbonTask.bands.size - 1
-            return result
-        }
-    }
-}
-
-data class RibbonContextualTaskGroup(
-    val title: String,
-    val hueColor: Color,
-    val tasks: List<RibbonTask>,
-    val isActive: Boolean = false
-)
-
-data class RibbonTaskbarCommandButtonPresentationModel(
-    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
-    val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
-    val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
-    val popupMenuPresentationModel: CommandPopupMenuPresentationModel = CommandPopupMenuPresentationModel()
-) : PresentationModel
-
-interface RibbonTaskbarKeyTipPolicy {
-    /**
-     * Returns the keytip for the task bar content (command, component, gallery, menu link)
-     * at the specified index.
-     *
-     * @param contentIndex Index of the task bar content. Content index starts at 1.
-     * @return Keytip for the specified content.
-     */
-    fun getContentKeyTip(contentIndex: Int): String
-
-    /**
-     * Returns the keytip for the overflow button of the task bar.
-     *
-     * @return Keytip for the overflow button of the task bar.
-     */
-    val overflowButtonKeyTip: String
-}
-
 interface OnShowContextualMenuListener {
     fun getContextualMenuContentModel(
         ribbon: Ribbon,
@@ -243,11 +134,6 @@ interface OnShowContextualMenuListener {
 
     fun getContextualMenuContentModel(ribbon: Ribbon): CommandMenuContentModel
 }
-
-class RibbonTaskbarCommandButtonProjection(
-    val contentModel: Command,
-    val presentationModel: RibbonTaskbarCommandButtonPresentationModel
-) : Projection<Command, RibbonTaskbarCommandButtonPresentationModel>()
 
 data class RibbonApplicationMenuCommandButtonPresentationModel(
     val popupKeyTip: String? = null

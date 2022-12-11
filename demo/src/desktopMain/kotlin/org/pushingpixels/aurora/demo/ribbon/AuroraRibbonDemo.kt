@@ -25,6 +25,7 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.ribbon.*
+import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizeSequencingPolicies
 import org.pushingpixels.aurora.demo.ColorAuroraIcon
 import org.pushingpixels.aurora.demo.getQuickStylesContentModel
 import org.pushingpixels.aurora.demo.svg.tango.*
