@@ -20,7 +20,7 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.demo.svg.flags.il
 import org.pushingpixels.aurora.demo.svg.flags.us
-import org.pushingpixels.aurora.demo.svg.tango.preferences_desktop_locale_2
+import org.pushingpixels.aurora.demo.svg.tango.preferences_desktop_locale
 import org.pushingpixels.aurora.window.AuroraLocaleScope
 import java.awt.ComponentOrientation
 import java.awt.Window
@@ -58,7 +58,7 @@ fun AuroraLocaleScope.AuroraLocaleSwitcher(
     )
     val localeCommand = Command(
         text = resourceBundle.getString("Language.select"),
-        icon = preferences_desktop_locale_2(),
+        icon = preferences_desktop_locale(),
         secondaryContentModel = CommandMenuContentModel(
             group = CommandGroup(
                 commands = arrayListOf(englishLocale, hebrewLocale)

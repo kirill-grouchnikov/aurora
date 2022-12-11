@@ -16,7 +16,14 @@
 package org.pushingpixels.aurora.component.ribbon
 
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
+import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
+import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManagerBig
 import org.pushingpixels.aurora.component.model.Command
+import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicies
 import org.pushingpixels.aurora.component.ribbon.resize.RibbonBandResizePolicy
 
@@ -53,4 +60,29 @@ data class FlowRibbonBand(
     val flowComponentProjections: List<RibbonComponentProjection> = emptyList()
 ) : AbstractRibbonBand
 
+object RibbonBandCommandButtonPresentationStates {
+    val BigFixed: CommandButtonPresentationState =
+        object : CommandButtonPresentationState("Big Fixed") {
+            override fun createLayoutManager(
+                layoutDirection: LayoutDirection,
+                density: Density,
+                textStyle: TextStyle,
+                fontFamilyResolver: FontFamily.Resolver
+            ): CommandButtonLayoutManager {
+                throw UnsupportedOperationException()
+            }
+        }
 
+    val BigFixedLandscape: CommandButtonPresentationState =
+        object : CommandButtonPresentationState("Big Fixed Landscape") {
+            override fun createLayoutManager(
+                layoutDirection: LayoutDirection,
+                density: Density,
+                textStyle: TextStyle,
+                fontFamilyResolver: FontFamily.Resolver
+            ): CommandButtonLayoutManager {
+                throw UnsupportedOperationException()
+            }
+        }
+
+}

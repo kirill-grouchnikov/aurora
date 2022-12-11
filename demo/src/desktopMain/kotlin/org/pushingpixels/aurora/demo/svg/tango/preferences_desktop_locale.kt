@@ -17,7 +17,7 @@ import kotlin.math.min
  * This class has been automatically generated using
  * <a href="https://github.com/kirill-grouchnikov/aurora">Aurora SVG transcoder</a>.
  */
-class preferences_desktop_locale_2 : Painter() {
+class preferences_desktop_locale : Painter() {
     @Suppress("UNUSED_VARIABLE") private var shape: Outline? = null
     @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
@@ -190,24 +190,37 @@ alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
+withTransform({
+transform(
+Matrix(values=floatArrayOf(
+1.0f, 0.0f, 0.0f, 0.0f,
+0.0f, 1.0f, 0.0f, 0.0f,
+0.0f, 0.0f, 1.0f, 0.0f,
+2.1213181018829346f, 2.0329320430755615f, 0.0f, 1.0f)
+))}){
 // _0_0_2
+alphaStack.add(0, alpha)
+alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
+// _0_0_2_0
 if (generalPath == null) {
    generalPath = Path()
 } else {
    generalPath!!.reset()
 }
 generalPath?.run {
-    moveTo(3.6234345f, 6.1923113f)
-    cubicTo(12.805777f, -0.3484262f, 29.264694f, 8.136855f, 38.62029f, 6.1923113f)
-    lineTo(38.62029f, 31.294603f)
-    cubicTo(29.611198f, 34.29981f, 14.01854f, 24.930641f, 3.6234345f, 31.294603f)
-    lineTo(3.6234345f, 6.1923113f)
+    moveTo(1.5021164f, 4.1593795f)
+    cubicTo(10.684459f, -2.3813581f, 27.143377f, 6.1039233f, 36.498974f, 4.1593795f)
+    lineTo(36.498974f, 29.261671f)
+    cubicTo(27.489882f, 32.266876f, 11.897222f, 22.89771f, 1.5021164f, 29.261671f)
+    lineTo(1.5021164f, 4.1593795f)
     close()
 }
 shape = Outline.Generic(generalPath!!)
-brush = Brush.linearGradient(0.0f to Color(117, 80, 123, 255), 0.25709054f to Color(169, 132, 175, 255), 0.5655992f to Color(81, 55, 85, 255), 1.0f to Color(135, 92, 142, 255), start = Offset(3.1234348f, 17.789515f), end = Offset(39.12029f, 17.789515f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to Color(255, 255, 255, 255), 0.42424244f to Color(190, 190, 190, 255), 1.0f to Color(235, 235, 235, 255), start = Offset(1.0120871f, 16.710526f), end = Offset(36.989002f, 16.710526f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
-brush = SolidColor(Color(92, 53, 102, 255))
+brush = SolidColor(Color(85, 87, 83, 255))
 stroke = Stroke(width=0.9999994f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -215,35 +228,11 @@ if (generalPath == null) {
    generalPath!!.reset()
 }
 generalPath?.run {
-    moveTo(3.6234345f, 6.1923113f)
-    cubicTo(12.805777f, -0.3484262f, 29.264694f, 8.136855f, 38.62029f, 6.1923113f)
-    lineTo(38.62029f, 31.294603f)
-    cubicTo(29.611198f, 34.29981f, 14.01854f, 24.930641f, 3.6234345f, 31.294603f)
-    lineTo(3.6234345f, 6.1923113f)
-    close()
-}
-shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
-alpha = alphaStack.removeAt(0)
-blendMode = blendModeStack.removeAt(0)
-alphaStack.add(0, alpha)
-alpha *= 0.62921345f
-blendModeStack.add(0, BlendMode.SrcOver)
-blendMode = BlendMode.SrcOver
-// _0_0_3
-brush = Brush.linearGradient(0.0f to Color(255, 255, 255, 112), 0.5f to Color(255, 255, 255, 255), 1.0f to Color(255, 255, 255, 0), start = Offset(4.121318f, 24.253414f), end = Offset(33.066338f, 25.661276f), tileMode = TileMode.Clamp)
-stroke = Stroke(width=0.9999999f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
-if (generalPath == null) {
-   generalPath = Path()
-} else {
-   generalPath!!.reset()
-}
-generalPath?.run {
-    moveTo(4.621318f, 6.8032613f)
-    cubicTo(12.598466f, 1.0750242f, 28.454912f, 8.747806f, 37.656868f, 7.3032613f)
-    lineTo(37.531868f, 30.593054f)
-    cubicTo(30.717024f, 32.785755f, 14.794159f, 24.888617f, 4.683818f, 29.468054f)
-    lineTo(4.621318f, 6.8032613f)
+    moveTo(1.5021164f, 4.1593795f)
+    cubicTo(10.684459f, -2.3813581f, 27.143377f, 6.1039233f, 36.498974f, 4.1593795f)
+    lineTo(36.498974f, 29.261671f)
+    cubicTo(27.489882f, 32.266876f, 11.897222f, 22.89771f, 1.5021164f, 29.261671f)
+    lineTo(1.5021164f, 4.1593795f)
     close()
 }
 shape = Outline.Generic(generalPath!!)
@@ -254,48 +243,100 @@ alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
-// _0_0_4
+// _0_0_2_1
 if (generalPath == null) {
    generalPath = Path()
 } else {
    generalPath!!.reset()
 }
 generalPath?.run {
-    moveTo(10.529842f, 17.09872f)
-    cubicTo(19.712185f, 10.557982f, 36.171104f, 19.043262f, 45.5267f, 17.09872f)
-    lineTo(45.5267f, 42.20101f)
-    cubicTo(36.51761f, 45.206215f, 20.924948f, 35.83705f, 10.529842f, 42.20101f)
-    lineTo(10.529842f, 17.09872f)
+    moveTo(2.0f, 26.0f)
+    cubicTo(11.0625f, 19.9375f, 29.8125f, 29.25f, 36.0f, 26.0f)
+    lineTo(36.0f, 23.0f)
+    cubicTo(29.3125f, 26.4375f, 11.0f, 16.8125f, 2.0f, 23.0f)
+    lineTo(2.0f, 26.0f)
     close()
 }
 shape = Outline.Generic(generalPath!!)
-brush = Brush.linearGradient(0.0f to Color(115, 210, 22, 255), 0.2556818f to Color(156, 237, 75, 255), 0.59400827f to Color(100, 184, 19, 255), 1.0f to Color(142, 234, 52, 255), start = Offset(10.029842f, 28.695923f), end = Offset(46.0267f, 28.695923f), tileMode = TileMode.Clamp)
+brush = Brush.linearGradient(0.0f to Color(204, 0, 0, 255), 0.15151516f to Color(255, 55, 55, 255), 0.57575756f to Color(180, 20, 20, 255), 1.0f to Color(255, 76, 76, 255), start = Offset(2.0f, 23.791155f), end = Offset(36.0f, 23.791155f), tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
-brush = SolidColor(Color(78, 154, 6, 255))
-stroke = Stroke(width=0.9999994f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
-if (generalPath == null) {
-   generalPath = Path()
-} else {
-   generalPath!!.reset()
-}
-generalPath?.run {
-    moveTo(10.529842f, 17.09872f)
-    cubicTo(19.712185f, 10.557982f, 36.171104f, 19.043262f, 45.5267f, 17.09872f)
-    lineTo(45.5267f, 42.20101f)
-    cubicTo(36.51761f, 45.206215f, 20.924948f, 35.83705f, 10.529842f, 42.20101f)
-    lineTo(10.529842f, 17.09872f)
-    close()
-}
-shape = Outline.Generic(generalPath!!)
-drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
-alpha *= 0.62921345f
+alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
-// _0_0_5
-brush = Brush.linearGradient(0.0f to Color(255, 255, 255, 112), 0.5f to Color(255, 255, 255, 255), 1.0f to Color(255, 255, 255, 0), start = Offset(10.964451f, 28.712873f), end = Offset(36.33661f, 27.445059f), tileMode = TileMode.Clamp)
+// _0_0_2_2
+if (generalPath == null) {
+   generalPath = Path()
+} else {
+   generalPath!!.reset()
+}
+generalPath?.run {
+    moveTo(2.0f, 14.751733f)
+    cubicTo(11.0625f, 8.689233f, 29.8125f, 18.001734f, 36.0f, 14.751733f)
+    lineTo(36.0f, 11.751733f)
+    cubicTo(29.3125f, 15.189233f, 11.0f, 5.5642333f, 2.0f, 11.751733f)
+    lineTo(2.0f, 14.751733f)
+    close()
+}
+shape = Outline.Generic(generalPath!!)
+brush = Brush.linearGradient(0.0f to Color(204, 0, 0, 255), 0.15151516f to Color(255, 55, 55, 255), 0.57575756f to Color(180, 20, 20, 255), 1.0f to Color(255, 76, 76, 255), start = Offset(2.0f, 12.542885f), end = Offset(36.0f, 12.542885f), tileMode = TileMode.Clamp)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
+alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
+alphaStack.add(0, alpha)
+alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
+// _0_0_2_3
+if (generalPath == null) {
+   generalPath = Path()
+} else {
+   generalPath!!.reset()
+}
+generalPath?.run {
+    moveTo(2.0f, 20.375868f)
+    cubicTo(11.0625f, 14.313367f, 29.8125f, 23.625868f, 36.0f, 20.375868f)
+    lineTo(36.0f, 17.375868f)
+    cubicTo(29.3125f, 20.813368f, 11.0f, 11.188367f, 2.0f, 17.375868f)
+    lineTo(2.0f, 20.375868f)
+    close()
+}
+shape = Outline.Generic(generalPath!!)
+brush = Brush.linearGradient(0.0f to Color(204, 0, 0, 255), 0.15151516f to Color(255, 55, 55, 255), 0.57575756f to Color(180, 20, 20, 255), 1.0f to Color(255, 76, 76, 255), start = Offset(2.0f, 18.167023f), end = Offset(36.0f, 18.167023f), tileMode = TileMode.Clamp)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
+alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
+alphaStack.add(0, alpha)
+alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
+// _0_0_2_4
+if (generalPath == null) {
+   generalPath = Path()
+} else {
+   generalPath!!.reset()
+}
+generalPath?.run {
+    moveTo(2.0f, 9.127602f)
+    cubicTo(11.0625f, 3.0651011f, 29.8125f, 12.377601f, 36.0f, 9.127602f)
+    lineTo(36.0f, 6.1276016f)
+    cubicTo(29.3125f, 9.565102f, 11.0f, -0.0598988f, 2.0f, 6.1276016f)
+    lineTo(2.0f, 9.127602f)
+    close()
+}
+shape = Outline.Generic(generalPath!!)
+brush = Brush.linearGradient(0.0f to Color(204, 0, 0, 255), 0.15151516f to Color(255, 55, 55, 255), 0.57575756f to Color(180, 20, 20, 255), 1.0f to Color(255, 76, 76, 255), start = Offset(2.0f, 6.9187546f), end = Offset(36.0f, 6.9187546f), tileMode = TileMode.Clamp)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
+alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
+alphaStack.add(0, alpha)
+alpha *= 0.5f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
+// _0_0_2_5
+brush = SolidColor(Color(255, 255, 255, 255))
 stroke = Stroke(width=0.9999999f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -303,15 +344,167 @@ if (generalPath == null) {
    generalPath!!.reset()
 }
 generalPath?.run {
-    moveTo(11.464451f, 17.654135f)
-    cubicTo(19.441599f, 11.925898f, 35.298046f, 19.598679f, 44.5f, 18.154135f)
-    lineTo(44.375f, 41.532314f)
-    cubicTo(37.560158f, 43.725018f, 21.637293f, 35.82788f, 11.526951f, 40.407314f)
-    lineTo(11.464451f, 17.654135f)
+    moveTo(2.5f, 4.7703295f)
+    cubicTo(10.477148f, -0.9579077f, 26.333595f, 6.7148733f, 35.53555f, 5.2703295f)
+    lineTo(35.41055f, 28.560122f)
+    cubicTo(28.595705f, 30.752825f, 12.672841f, 22.855684f, 2.5625f, 27.435122f)
+    lineTo(2.5f, 4.7703295f)
     close()
 }
 shape = Outline.Generic(generalPath!!)
 drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
+alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
+alphaStack.add(0, alpha)
+alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
+// _0_0_2_6
+if (generalPath == null) {
+   generalPath = Path()
+} else {
+   generalPath!!.reset()
+}
+generalPath?.run {
+    moveTo(2.0f, 4.5f)
+    cubicTo(2.0f, 4.5f, 2.0f, 14.875f, 2.0f, 14.875f)
+    cubicTo(4.125f, 13.0f, 9.8125f, 11.625f, 19.0f, 13.5f)
+    lineTo(19.0f, 3.0f)
+    cubicTo(15.375f, 2.125f, 5.5f, 1.0624999f, 2.0f, 4.5f)
+    close()
+}
+shape = Outline.Generic(generalPath!!)
+brush = Brush.linearGradient(0.0f to Color(32, 74, 135, 255), 0.21212122f to Color(63, 123, 210, 255), 1.0f to Color(32, 74, 135, 255), start = Offset(2.0f, 8.501786f), end = Offset(19.0f, 8.501786f), tileMode = TileMode.Clamp)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
+alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
+}
+alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
+alphaStack.add(0, alpha)
+alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
+withTransform({
+transform(
+Matrix(values=floatArrayOf(
+1.0f, 0.0f, 0.0f, 0.0f,
+0.0f, 1.0f, 0.0f, 0.0f,
+0.0f, 0.0f, 1.0f, 0.0f,
+-0.9722740054130554f, -1.0606600046157837f, 0.0f, 1.0f)
+))}){
+// _0_0_3
+alphaStack.add(0, alpha)
+alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
+// _0_0_3_0
+if (generalPath == null) {
+   generalPath = Path()
+} else {
+   generalPath!!.reset()
+}
+generalPath?.run {
+    moveTo(11.502116f, 18.15938f)
+    cubicTo(20.68446f, 11.618642f, 37.143375f, 20.103924f, 46.498974f, 18.15938f)
+    lineTo(46.498974f, 43.26167f)
+    cubicTo(37.48988f, 46.266876f, 21.897223f, 36.89771f, 11.502116f, 43.26167f)
+    lineTo(11.502116f, 18.15938f)
+    close()
+}
+shape = Outline.Generic(generalPath!!)
+brush = Brush.linearGradient(0.0f to Color(237, 212, 0, 255), 0.27272728f to Color(255, 244, 145, 255), 1.0f to Color(237, 212, 0, 255), start = Offset(11.002116f, 29.756582f), end = Offset(46.998974f, 29.756582f), tileMode = TileMode.Clamp)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
+brush = SolidColor(Color(85, 87, 83, 255))
+stroke = Stroke(width=0.9999994f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
+if (generalPath == null) {
+   generalPath = Path()
+} else {
+   generalPath!!.reset()
+}
+generalPath?.run {
+    moveTo(11.502116f, 18.15938f)
+    cubicTo(20.68446f, 11.618642f, 37.143375f, 20.103924f, 46.498974f, 18.15938f)
+    lineTo(46.498974f, 43.26167f)
+    cubicTo(37.48988f, 46.266876f, 21.897223f, 36.89771f, 11.502116f, 43.26167f)
+    lineTo(11.502116f, 18.15938f)
+    close()
+}
+shape = Outline.Generic(generalPath!!)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
+alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
+alphaStack.add(0, alpha)
+alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
+// _0_0_3_1
+if (generalPath == null) {
+   generalPath = Path()
+} else {
+   generalPath!!.reset()
+}
+generalPath?.run {
+    moveTo(11.976621f, 18.478292f)
+    lineTo(12.020815f, 26.61002f)
+    cubicTo(19.975765f, 21.612175f, 38.890873f, 29.350058f, 46.05033f, 26.963573f)
+    lineTo(46.05033f, 18.522486f)
+    cubicTo(38.09538f, 20.599611f, 19.666407f, 12.202719f, 11.976621f, 18.478292f)
+    close()
+}
+shape = Outline.Generic(generalPath!!)
+brush = Brush.linearGradient(0.0f to Color(46, 52, 54, 255), 0.27272728f to Color(80, 90, 93, 255), 0.6363636f to Color(20, 23, 23, 255), 1.0f to Color(46, 52, 54, 255), start = Offset(11.976621f, 21.723522f), end = Offset(46.138718f, 21.723522f), tileMode = TileMode.Clamp)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
+alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
+alphaStack.add(0, alpha)
+alpha *= 1.0f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
+// _0_0_3_2
+if (generalPath == null) {
+   generalPath = Path()
+} else {
+   generalPath!!.reset()
+}
+generalPath?.run {
+    moveTo(11.976621f, 26.61002f)
+    lineTo(12.020815f, 34.564972f)
+    cubicTo(20.682873f, 27.759068f, 37.476658f, 38.719223f, 46.050327f, 35.095303f)
+    lineTo(46.050327f, 26.830992f)
+    cubicTo(37.918602f, 29.084894f, 20.73963f, 19.831844f, 11.976621f, 26.61002f)
+    close()
+}
+shape = Outline.Generic(generalPath!!)
+brush = Brush.linearGradient(0.0f to Color(204, 0, 0, 255), 0.24242425f to Color(255, 71, 71, 255), 0.6097337f to Color(155, 18, 18, 255), 1.0f to Color(204, 0, 0, 255), start = Offset(11.976621f, 29.74867f), end = Offset(46.138718f, 29.74867f), tileMode = TileMode.Clamp)
+drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
+alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
+alphaStack.add(0, alpha)
+alpha *= 0.62921345f
+blendModeStack.add(0, BlendMode.SrcOver)
+blendMode = BlendMode.SrcOver
+// _0_0_3_3
+brush = Brush.linearGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(255, 255, 255, 0), start = Offset(29.017775f, 40.347282f), end = Offset(29.017775f, 17.189533f), tileMode = TileMode.Clamp)
+stroke = Stroke(width=0.9999999f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
+if (generalPath == null) {
+   generalPath = Path()
+} else {
+   generalPath!!.reset()
+}
+generalPath?.run {
+    moveTo(12.5f, 18.68194f)
+    cubicTo(20.477148f, 12.953704f, 36.333595f, 20.626486f, 45.53555f, 19.18194f)
+    lineTo(45.41055f, 42.56012f)
+    cubicTo(38.595703f, 44.752827f, 22.67284f, 36.855686f, 12.5625f, 41.43512f)
+    lineTo(12.5f, 18.68194f)
+    close()
+}
+shape = Outline.Generic(generalPath!!)
+drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
+alpha = alphaStack.removeAt(0)
+blendMode = blendModeStack.removeAt(0)
+}
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
 alpha = alphaStack.removeAt(0)

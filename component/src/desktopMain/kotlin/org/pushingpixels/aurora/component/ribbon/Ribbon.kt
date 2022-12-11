@@ -89,15 +89,17 @@ fun PresentationModel.inRibbon(
 data class RibbonGalleryContentModel(
     val icon: Painter? = null,
     val commandGroups: List<CommandGroup>,
+    val selectedCommand: Command? = null,
     val extraPopupGroups: List<CommandGroup>,
-    val commandAction: (() -> Unit)? = null,
+    val commandAction: ((Command?) -> Unit)? = null,
     val commandActionPreview: CommandActionPreview? = null,
 ) : ContentModel
 
 data class RibbonGalleryPresentationModel(
+    val preferredVisibleCommandCounts: Map<PresentationPriority, Int>,
     val popupLayoutSpec: MenuPopupPanelLayoutSpec,
+    val commandButtonPresentationState: CommandButtonPresentationState,
     val expandKeyTip: String? = null,
-    val policies: Map<PresentationPriority, Int>
 ) : PresentationModel
 
 class RibbonGalleryProjection(

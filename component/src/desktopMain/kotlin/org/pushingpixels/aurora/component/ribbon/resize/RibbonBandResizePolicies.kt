@@ -118,6 +118,10 @@ object CoreRibbonResizePolicies {
         return emptyList()
     }
 
+    public fun getCorePoliciesRestrictive(): List<RibbonBandResizePolicy> {
+        return emptyList()
+    }
+
     public fun getCoreFlowPoliciesRestrictive(stepsToRepeat: Int): List<RibbonBandResizePolicy> {
         return emptyList()
     }

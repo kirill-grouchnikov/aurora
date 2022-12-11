@@ -25,6 +25,7 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.ribbon.*
+import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicies
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizeSequencingPolicies
 import org.pushingpixels.aurora.demo.ColorAuroraIcon
 import org.pushingpixels.aurora.demo.getQuickStylesContentModel
@@ -47,9 +48,11 @@ fun main() = auroraApplication {
 
     val builder = RibbonBuilder(resourceBundle)
     val clipboardBand = builder.getClipboardBand()
+    val quickStylesBand = builder.getQuickStylesBand()
+
     val pageLayoutTask = RibbonTask(
         title = resourceBundle.getString("PageLayout.textTaskTitle"),
-        bands = listOf(clipboardBand),
+        bands = listOf(clipboardBand, quickStylesBand),
         resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
         keyTip = "P"
     )
@@ -132,6 +135,53 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
         text = resourceBundle.getString("Format.applyStyles.text"),
         icon = ColorAuroraIcon(Color(red = 0xF5, green = 0x7C, blue = 0x00)),
         action = { println("Apply Styles activated") }
+    )
+
+    var mfButtonText = MessageFormat(
+        resourceBundle.getString("StylesGallery.textButton")
+    )
+    val stylesGalleryCommandList = CommandGroup(
+        title = resourceBundle.getString("StylesGallery.textGroupTitle1"),
+        commands = (0..10).map {
+            Command(
+                text = mfButtonText.format(arrayOf(it)),
+                icon = font_x_generic(),
+                isActionToggle = true
+            )
+        }
+    )
+    val stylesGalleryCommandList2 = CommandGroup(
+        title = resourceBundle.getString("StylesGallery.textGroupTitle1"),
+        commands = (11..30).map {
+            Command(
+                text = mfButtonText.format(arrayOf(it)),
+                icon = font_x_generic(),
+                isActionToggle = true
+            )
+        }
+    )
+
+    val styleGalleryContentModel = RibbonGalleryContentModel(
+        icon = font_x_generic(),
+        commandGroups = listOf(stylesGalleryCommandList, stylesGalleryCommandList2),
+        selectedCommand = stylesGalleryCommandList.commands[1],
+        extraPopupGroups = listOf(
+            CommandGroup(commands = listOf(this.menuSaveSelection, this.menuClearSelection)),
+            CommandGroup(commands = listOf(this.applyStyles))
+        ),
+        commandAction = {
+            val text = it?.text ?: "[null]"
+            println("Command '$text' activated!")
+        },
+        commandActionPreview = object: CommandActionPreview {
+            override fun onCommandPreviewActivated(command: Command) {
+                println("Preview activated for '${command.text}'")
+            }
+
+            override fun onCommandPreviewCanceled(command: Command) {
+                println("Preview canceled for '${command.text}'")
+            }
+        }
     )
 
     fun getSimpleMenuModel(): CommandMenuContentModel {
@@ -233,6 +283,56 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
                         this.menuSaveSelection to RibbonCommandButtonPresentationModel.Overlay(actionKeyTip = "SS"),
                         this.menuClearSelection to RibbonCommandButtonPresentationModel.Overlay(actionKeyTip = "SC"),
                         this.applyStyles to RibbonCommandButtonPresentationModel.Overlay(actionKeyTip = "SA")
+                    )
+                )
+            )
+        )
+    }
+
+    fun getQuickStylesBand(): RibbonBand {
+        return RibbonBand(
+            title = resourceBundle.getString("QuickStyles.textBandTitle"),
+            icon = preferences_desktop_theme(),
+            collapsedStateKeyTip = "ZS",
+            resizePolicies = CoreRibbonResizePolicies.getCorePoliciesRestrictive(),
+            commandProjections = listOf(
+                RibbonCommandButtonProjection(
+                    contentModel = Command(
+                        text = resourceBundle.getString("Styles1.text"),
+                        icon = font_x_generic(),
+                        action = { println("Generic activated") }
+                    ),
+                    presentationModel = RibbonCommandButtonPresentationModel(
+                        presentationPriority = PresentationPriority.Medium,
+                        actionKeyTip = "SA"
+                    )
+                ),
+                RibbonCommandButtonProjection(
+                    contentModel = Command(
+                        text = resourceBundle.getString("Styles2.text"),
+                        icon = image_x_generic(),
+                        action = { println("Image activated") }
+                    ),
+                    presentationModel = RibbonCommandButtonPresentationModel(
+                        presentationPriority = PresentationPriority.Medium,
+                        actionKeyTip = "SB"
+                    )
+                )
+            ),
+            galleryProjections = listOf(
+                RibbonGalleryProjection(
+                    contentModel = styleGalleryContentModel,
+                    presentationModel = RibbonGalleryPresentationModel(
+                        preferredVisibleCommandCounts = mapOf(
+                            PresentationPriority.Low to 1,
+                            PresentationPriority.Medium to 2,
+                            PresentationPriority.Top to 2
+                        ),
+                        popupLayoutSpec = MenuPopupPanelLayoutSpec(
+                            columnCount = 3, visibleRowCount = 3
+                        ),
+                        commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixedLandscape,
+                        expandKeyTip = "L"
                     )
                 )
             )
