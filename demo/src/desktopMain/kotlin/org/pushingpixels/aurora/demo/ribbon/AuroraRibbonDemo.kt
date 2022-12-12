@@ -17,17 +17,29 @@ package org.pushingpixels.aurora.demo.ribbon
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.PaintingStyle
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import org.jetbrains.skia.Color4f
+import org.jetbrains.skia.Font
+import org.jetbrains.skia.TextLine
+import org.jetbrains.skia.Typeface
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.ribbon.*
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicies
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizeSequencingPolicies
-import org.pushingpixels.aurora.demo.ColorAuroraIcon
+import org.pushingpixels.aurora.demo.ColorSolidIcon
+import org.pushingpixels.aurora.demo.DecoratedIcon
 import org.pushingpixels.aurora.demo.getQuickStylesContentModel
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.marinerSkin
@@ -62,27 +74,27 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
     val mf = MessageFormat(resourceBundle.getString("TestMenuItem.text"))
     val popupCommand1 = Command(
         text = mf.format(arrayOf("1")),
-        icon = ColorAuroraIcon(Color(red = 0x80, green = 0xDE, blue = 0xEA)),
+        icon = ColorSolidIcon(Color(red = 0x80, green = 0xDE, blue = 0xEA)),
         action = { println("Test menu item 1 activated") }
     )
     val popupCommand2 = Command(
         text = mf.format(arrayOf("1")),
-        icon = ColorAuroraIcon(Color(red = 0x80, green = 0xDE, blue = 0xEA)),
+        icon = ColorSolidIcon(Color(red = 0x80, green = 0xDE, blue = 0xEA)),
         action = { println("Test menu item 1 activated") }
     )
     val popupCommand3 = Command(
         text = mf.format(arrayOf("1")),
-        icon = ColorAuroraIcon(Color(red = 0x80, green = 0xDE, blue = 0xEA)),
+        icon = ColorSolidIcon(Color(red = 0x80, green = 0xDE, blue = 0xEA)),
         action = { println("Test menu item 1 activated") }
     )
     val popupCommand4 = Command(
         text = mf.format(arrayOf("1")),
-        icon = ColorAuroraIcon(Color(red = 0x80, green = 0xDE, blue = 0xEA)),
+        icon = ColorSolidIcon(Color(red = 0x80, green = 0xDE, blue = 0xEA)),
         action = { println("Test menu item 1 activated") }
     )
     val popupCommand5 = Command(
         text = mf.format(arrayOf("1")),
-        icon = ColorAuroraIcon(Color(red = 0x80, green = 0xDE, blue = 0xEA)),
+        icon = ColorSolidIcon(Color(red = 0x80, green = 0xDE, blue = 0xEA)),
         action = { println("Test menu item 1 activated") }
     )
 
@@ -121,19 +133,19 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
 
     val menuSaveSelection = Command(
         text = resourceBundle.getString("Format.menuSaveSelection.text"),
-        icon = ColorAuroraIcon(Color(red = 0xFB, green = 0xC0, blue = 0x2D)),
+        icon = ColorSolidIcon(Color(red = 0xFB, green = 0xC0, blue = 0x2D)),
         action = { println("Save Selection activated") }
     )
 
     val menuClearSelection = Command(
         text = resourceBundle.getString("Format.menuClearSelection.text"),
-        icon = ColorAuroraIcon(Color(red = 0xFF, green = 0xA0, blue = 0x00)),
+        icon = ColorSolidIcon(Color(red = 0xFF, green = 0xA0, blue = 0x00)),
         action = { println("Clear Selection activated") }
     )
 
     val applyStyles = Command(
         text = resourceBundle.getString("Format.applyStyles.text"),
-        icon = ColorAuroraIcon(Color(red = 0xF5, green = 0x7C, blue = 0x00)),
+        icon = ColorSolidIcon(Color(red = 0xF5, green = 0x7C, blue = 0x00)),
         action = { println("Apply Styles activated") }
     )
 
@@ -142,20 +154,70 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
     )
     val stylesGalleryCommandList = CommandGroup(
         title = resourceBundle.getString("StylesGallery.textGroupTitle1"),
-        commands = (0..10).map {
+        commands = (0..10).map { index ->
             Command(
-                text = mfButtonText.format(arrayOf(it)),
-                icon = font_x_generic(),
+                text = mfButtonText.format(arrayOf(index)),
+                icon = DecoratedIcon(main = font_x_generic(),
+                    decoration = object : Painter() {
+                        override val intrinsicSize: Size = Size.Unspecified
+
+                        override fun DrawScope.onDraw() {
+                            this.drawIntoCanvas { canvas ->
+                                val nativeCanvas = canvas.nativeCanvas
+                                nativeCanvas.drawTextLine(
+                                    line = TextLine.make(
+                                        text = "$index",
+                                        font = Font(Typeface.makeDefault())
+                                    ),
+                                    x = 2.0f,
+                                    y = size.height - 12.0f,
+                                    paint = org.jetbrains.skia.Paint().also { skiaPaint ->
+                                        skiaPaint.color4f = Color4f(
+                                            r = 0f,
+                                            g = 0f,
+                                            b = 0f,
+                                            a = 1.0f
+                                        )
+                                    }
+                                )
+                            }
+                        }
+                    }),
                 isActionToggle = true
             )
         }
     )
     val stylesGalleryCommandList2 = CommandGroup(
         title = resourceBundle.getString("StylesGallery.textGroupTitle1"),
-        commands = (11..30).map {
+        commands = (11..30).map { index ->
             Command(
-                text = mfButtonText.format(arrayOf(it)),
-                icon = font_x_generic(),
+                text = mfButtonText.format(arrayOf(index)),
+                icon = DecoratedIcon(main = font_x_generic(),
+                    decoration = object : Painter() {
+                        override val intrinsicSize: Size = Size.Unspecified
+
+                        override fun DrawScope.onDraw() {
+                            this.drawIntoCanvas { canvas ->
+                                val nativeCanvas = canvas.nativeCanvas
+                                nativeCanvas.drawTextLine(
+                                    line = TextLine.make(
+                                        text = "$index",
+                                        font = Font(Typeface.makeDefault())
+                                    ),
+                                    x = 2.0f,
+                                    y = size.height - 12.0f,
+                                    paint = org.jetbrains.skia.Paint().also { skiaPaint ->
+                                        skiaPaint.color4f = Color4f(
+                                            r = 0f,
+                                            g = 0f,
+                                            b = 0f,
+                                            a = 1.0f
+                                        )
+                                    }
+                                )
+                            }
+                        }
+                    }),
                 isActionToggle = true
             )
         }
@@ -173,7 +235,7 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
             val text = it?.text ?: "[null]"
             println("Command '$text' activated!")
         },
-        commandActionPreview = object: CommandActionPreview {
+        commandActionPreview = object : CommandActionPreview {
             override fun onCommandPreviewActivated(command: Command) {
                 println("Preview activated for '${command.text}'")
             }

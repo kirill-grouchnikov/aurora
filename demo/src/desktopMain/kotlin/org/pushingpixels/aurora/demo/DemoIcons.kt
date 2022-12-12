@@ -60,3 +60,18 @@ class ColorGradientIcon(
         )
     }
 }
+
+class DecoratedIcon(val main: Painter, val decoration: Painter) : Painter() {
+    override val intrinsicSize: Size
+        get() = Size.Unspecified
+
+    override fun DrawScope.onDraw() {
+        with (main) {
+            draw(size, 1.0f, null)
+        }
+        with (decoration) {
+            draw(size, 1.0f, null)
+        }
+    }
+}
+
