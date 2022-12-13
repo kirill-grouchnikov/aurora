@@ -21,9 +21,11 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
-import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManagerBig
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
+import org.pushingpixels.aurora.component.model.ContentModel
+import org.pushingpixels.aurora.component.model.PresentationModel
+import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicies
 import org.pushingpixels.aurora.component.ribbon.resize.RibbonBandResizePolicy
 
@@ -36,6 +38,16 @@ sealed interface AbstractRibbonBand {
     val resizePolicies: List<RibbonBandResizePolicy>
 }
 
+infix fun RibbonGalleryProjection.at(that: PresentationPriority):
+        Pair<RibbonGalleryProjection, PresentationPriority> = Pair(this, that)
+
+data class RibbonBandGroup(
+   val title: String? = null,
+   val commandProjections: List<Pair<CommandButtonProjection, PresentationPriority>> = emptyList(),
+   val componentProjections: List<RibbonComponentProjection<ContentModel, PresentationModel>> = emptyList(),
+   val galleryProjections: List<Pair<RibbonGalleryProjection, PresentationPriority>> = emptyList(),
+)
+
 data class RibbonBand(
     override val title: String,
     override val icon: Painter? = null,
@@ -44,9 +56,7 @@ data class RibbonBand(
     override val collapsedStateKeyTip: String? = null,
     override val resizePolicies: List<RibbonBandResizePolicy> =
         CoreRibbonResizePolicies.getCorePoliciesPermissive(),
-    val commandProjections: List<RibbonCommandButtonProjection> = emptyList(),
-    val componentProjections: List<RibbonComponentProjection> = emptyList(),
-    val galleryProjections: List<RibbonGalleryProjection> = emptyList(),
+    val groups: List<RibbonBandGroup> = emptyList()
 ) : AbstractRibbonBand
 
 data class FlowRibbonBand(
@@ -57,7 +67,7 @@ data class FlowRibbonBand(
     override val collapsedStateKeyTip: String? = null,
     override val resizePolicies: List<RibbonBandResizePolicy> =
         CoreRibbonResizePolicies.getCoreFlowPoliciesRestrictive(3),
-    val flowComponentProjections: List<RibbonComponentProjection> = emptyList()
+    val flowComponentProjections: List<RibbonComponentProjection<ContentModel, PresentationModel>> = emptyList()
 ) : AbstractRibbonBand
 
 object RibbonBandCommandButtonPresentationStates {

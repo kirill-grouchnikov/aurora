@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.Projection
-import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 
 enum class PresentationPriority {
     /** Top priority */
@@ -32,59 +31,16 @@ enum class PresentationPriority {
     Low
 }
 
-data class RibbonCommandButtonPresentationModel(
-    val presentationPriority: PresentationPriority,
-    val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
-    val popupMenuPresentationModel: CommandPopupMenuPresentationModel = CommandPopupMenuPresentationModel(),
-    val textClick: TextClick = TextClick.Action,
-    val actionRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),
-    val popupRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),
-    val actionKeyTip: String? = null,
-    val popupKeyTip: String? = null
-) : PresentationModel {
-    data class Overlay(
-        val presentationPriority: PresentationPriority? = null,
-        val popupPlacementStrategy: PopupPlacementStrategy? = null,
-        val textClick: TextClick? = null,
-        val actionRichTooltipPresentationModel: RichTooltipPresentationModel? = null,
-        val popupRichTooltipPresentationModel: RichTooltipPresentationModel? = null,
-        val actionKeyTip: String? = null,
-        val popupKeyTip: String? = null
-    )
-
-    fun overlayWith(overlay: Overlay): RibbonCommandButtonPresentationModel {
-        return RibbonCommandButtonPresentationModel(
-            presentationPriority = overlay.presentationPriority ?: this.presentationPriority,
-            popupPlacementStrategy = overlay.popupPlacementStrategy ?: this.popupPlacementStrategy,
-            textClick = overlay.textClick ?: this.textClick,
-            actionRichTooltipPresentationModel = overlay.actionRichTooltipPresentationModel
-                ?: this.actionRichTooltipPresentationModel,
-            popupRichTooltipPresentationModel = overlay.popupRichTooltipPresentationModel
-                ?: this.popupRichTooltipPresentationModel,
-            actionKeyTip = overlay.actionKeyTip ?: this.actionKeyTip,
-            popupKeyTip = overlay.popupKeyTip ?: this.popupKeyTip
-        )
-    }
-}
+infix fun CommandButtonProjection.at(that: PresentationPriority):
+        Pair<CommandButtonProjection, PresentationPriority> = Pair(this, that)
 
 data class RibbonComponentPresentationModel(
-    val basePresentationModel: PresentationModel,
+    val caption: String? = null,
+    val icon: Painter? = null,
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Leading,
     val keyTip: String? = null,
     val isResizingAware: Boolean = false,
 ) : PresentationModel
-
-fun PresentationModel.inRibbon(
-    horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Leading,
-    keyTip: String? = null,
-    isResizingAware: Boolean = false
-): RibbonComponentPresentationModel =
-    RibbonComponentPresentationModel(
-        basePresentationModel = this,
-        horizontalAlignment = horizontalAlignment,
-        keyTip = keyTip,
-        isResizingAware = isResizingAware
-    )
 
 data class RibbonGalleryContentModel(
     val icon: Painter? = null,
@@ -107,16 +63,10 @@ class RibbonGalleryProjection(
     val presentationModel: RibbonGalleryPresentationModel
 ) : Projection<RibbonGalleryContentModel, RibbonGalleryPresentationModel>()
 
-class RibbonCommandButtonProjection(
-    val contentModel: Command,
-    val presentationModel: RibbonCommandButtonPresentationModel,
-    val overlays: Map<Command, RibbonCommandButtonPresentationModel.Overlay>? = null
-) : Projection<Command, RibbonCommandButtonPresentationModel>()
-
-class RibbonComponentProjection(
-    val contentModel: Command,
-    val presentationModel: RibbonComponentPresentationModel
-) : Projection<Command, RibbonComponentPresentationModel>()
+class RibbonComponentProjection<out C: ContentModel, out P: PresentationModel>(
+    val projection: Projection<C, P>,
+    val ribbonComponentPresentationModel: RibbonComponentPresentationModel = RibbonComponentPresentationModel()
+)
 
 interface OnShowContextualMenuListener {
     fun getContextualMenuContentModel(
@@ -154,7 +104,7 @@ data class Ribbon(
     val contextualTaskGroups: List<RibbonContextualTaskGroup>?,
     val anchoredCommands: List<CommandButtonProjection>?,
     val taskbarCommandProjections: List<RibbonTaskbarCommandButtonProjection> = emptyList(),
-    val taskbarComponentProjections: List<RibbonComponentProjection> = emptyList(),
+    val taskbarComponentProjections: List<RibbonComponentProjection<ContentModel, PresentationModel>> = emptyList(),
     val taskbarGalleryProjections: List<RibbonGalleryProjection> = emptyList(),
     val taskbarKeyTipPolicy: RibbonTaskbarKeyTipPolicy,
     val applicationMenuCommandButtonProjection: RibbonApplicationMenuCommandButtonProjection,
