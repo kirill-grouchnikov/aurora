@@ -86,22 +86,24 @@ enum class TextClick {
 
 enum class HorizontalAlignment {
     Leading {
-        override var arrangement = Arrangement.Start
+        override val arrangement = Arrangement.Start
     },
 
     Trailing {
-        override var arrangement = Arrangement.End
+        override val arrangement = Arrangement.End
     },
 
     Center {
-        override var arrangement: Arrangement.Horizontal = Arrangement.Center
+        override val arrangement: Arrangement.Horizontal = Arrangement.Center
     },
 
     Fill {
-        override var arrangement: Arrangement.Horizontal = throw UnsupportedOperationException()
+        override val arrangement: Arrangement.Horizontal by lazy {
+            throw UnsupportedOperationException()
+        }
     };
 
-    internal abstract var arrangement: Arrangement.Horizontal
+    internal abstract val arrangement: Arrangement.Horizontal
 }
 
 
