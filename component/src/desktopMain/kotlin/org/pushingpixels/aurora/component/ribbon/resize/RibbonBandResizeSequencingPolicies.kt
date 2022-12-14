@@ -41,7 +41,7 @@ object CoreRibbonResizeSequencingPolicies {
      *
      * @author Kirill Grouchnikov
      */
-    class RoundRobin() : RibbonBandResizeSequencingPolicy {
+    class RoundRobin : RibbonBandResizeSequencingPolicy {
         // The index of the next ribbon task for collapsing.
         private var nextIndex = 0
 
@@ -53,6 +53,28 @@ object CoreRibbonResizeSequencingPolicies {
             val result: AbstractRibbonBand = ribbonTask.bands[nextIndex]
             nextIndex--
             if (nextIndex < 0) nextIndex = ribbonTask.bands.size - 1
+            return result
+        }
+    }
+
+    class CollapseFromLast: RibbonBandResizeSequencingPolicy {
+        // The index of the next ribbon task for collapsing.
+        private var nextIndex = 0
+
+        override fun reset(ribbonTask: RibbonTask) {
+            nextIndex = ribbonTask.bands.size - 1
+        }
+
+        override fun next(ribbonTask: RibbonTask): AbstractRibbonBand {
+            val result: AbstractRibbonBand = ribbonTask.bands[nextIndex]
+
+            // check whether the current resize policy on the returned ribbon
+            // band is the last
+            val resizePolicies: List<RibbonBandResizePolicy> = result.resizePolicies
+//            if (result.getCurrentResizePolicy() === resizePolicies[resizePolicies.size - 1]) {
+//                nextIndex--
+//                if (nextIndex < 0) nextIndex = 0
+//            }
             return result
         }
     }

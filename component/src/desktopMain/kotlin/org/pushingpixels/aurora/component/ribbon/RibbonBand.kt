@@ -26,6 +26,7 @@ import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
 import org.pushingpixels.aurora.component.model.ContentModel
 import org.pushingpixels.aurora.component.model.PresentationModel
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
+import org.pushingpixels.aurora.component.projection.Projection
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicies
 import org.pushingpixels.aurora.component.ribbon.resize.RibbonBandResizePolicy
 
@@ -41,10 +42,13 @@ sealed interface AbstractRibbonBand {
 infix fun RibbonGalleryProjection.at(that: PresentationPriority):
         Pair<RibbonGalleryProjection, PresentationPriority> = Pair(this, that)
 
+infix fun <C: ContentModel, P: PresentationModel> Projection<C, P>.with(that: RibbonComponentPresentationModel):
+        Pair<Projection<C, P>, RibbonComponentPresentationModel> = Pair(this, that)
+
 data class RibbonBandGroup(
    val title: String? = null,
    val commandProjections: List<Pair<CommandButtonProjection, PresentationPriority>> = emptyList(),
-   val componentProjections: List<RibbonComponentProjection<ContentModel, PresentationModel>> = emptyList(),
+   val componentProjections: List<Pair<Projection<ContentModel, PresentationModel>, RibbonComponentPresentationModel>> = emptyList(),
    val galleryProjections: List<Pair<RibbonGalleryProjection, PresentationPriority>> = emptyList(),
 )
 
@@ -67,7 +71,7 @@ data class FlowRibbonBand(
     override val collapsedStateKeyTip: String? = null,
     override val resizePolicies: List<RibbonBandResizePolicy> =
         CoreRibbonResizePolicies.getCoreFlowPoliciesRestrictive(3),
-    val flowComponentProjections: List<RibbonComponentProjection<ContentModel, PresentationModel>> = emptyList()
+    val flowComponentProjections: List<Pair<Projection<ContentModel, PresentationModel>, RibbonComponentPresentationModel>> = emptyList()
 ) : AbstractRibbonBand
 
 object RibbonBandCommandButtonPresentationStates {

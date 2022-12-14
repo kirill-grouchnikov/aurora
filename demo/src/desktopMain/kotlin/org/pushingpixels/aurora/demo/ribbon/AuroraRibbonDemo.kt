@@ -41,7 +41,6 @@ import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicies
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizeSequencingPolicies
 import org.pushingpixels.aurora.demo.ColorSolidIcon
 import org.pushingpixels.aurora.demo.DecoratedIcon
-import org.pushingpixels.aurora.demo.DemoAlignment
 import org.pushingpixels.aurora.demo.getQuickStylesContentModel
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.marinerSkin
@@ -72,6 +71,17 @@ fun main() = auroraApplication {
         bands = listOf(clipboardBand, quickStylesBand, fontBand, documentBand, findBand),
         resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
         keyTip = "P"
+    )
+
+    val actionBand = builder.getActionBand()
+    val preferencesBand = builder.getPreferencesBand()
+    val applicationsBand = builder.getApplicationsBand()
+
+    val writeTask = RibbonTask(
+        title = resourceBundle.getString("Write.textTaskTitle"),
+        bands = listOf(actionBand, preferencesBand, applicationsBand),
+        resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+        keyTip = "W"
     )
 }
 
@@ -336,6 +346,14 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
 
     val fontSizeComboBoxEntries = listOf(11, 12, 13, 14, 16)
 
+    val applicationGamesEntries = listOf("Tetris", "Minesweeper", "Doom")
+    val applicationInternetEntries = listOf("Firefox", "Opera", "Konqueror")
+    val applicationMultimediaEntries = listOf(
+        resourceBundle.getString("Pictures.text"),
+        resourceBundle.getString("Video.text"),
+        resourceBundle.getString("Audio.text")
+    )
+
     fun getSimpleMenuModel(): CommandMenuContentModel {
         return CommandMenuContentModel(
             groups = listOf(
@@ -538,70 +556,58 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
                 action = { println("Expand button clicked! ") }
             ),
             flowComponentProjections = listOf(
-                RibbonComponentProjection(
-                    projection = ComboBoxProjection(
-                        contentModel = fontFamilyComboBoxContentModel,
-                        presentationModel = ComboBoxPresentationModel(displayConverter = { "+ Minor ($it)   " }),
+                ComboBoxProjection(
+                    contentModel = fontFamilyComboBoxContentModel,
+                    presentationModel = ComboBoxPresentationModel(displayConverter = { "+ Minor ($it)   " }),
+                ) with RibbonComponentPresentationModel(keyTip = "SF"),
+                ComboBoxProjection(
+                    contentModel = fontSizeComboBoxContentModel,
+                    presentationModel = ComboBoxPresentationModel(displayConverter = { "$it   " }),
+                ) with RibbonComponentPresentationModel(keyTip = "SS"),
+                CommandButtonStripProjection(
+                    contentModel = CommandGroup(commands = listOf(indentLeft, indentRight)),
+                    presentationModel = CommandStripPresentationModel(
+                        orientation = StripOrientation.Horizontal
                     ),
-                    ribbonComponentPresentationModel = RibbonComponentPresentationModel(keyTip = "SF")
-                ),
-                RibbonComponentProjection(
-                    projection = ComboBoxProjection(
-                        contentModel = fontSizeComboBoxContentModel,
-                        presentationModel = ComboBoxPresentationModel(displayConverter = { "$it   " }),
+                    overlays = mapOf(
+                        indentLeft to CommandButtonPresentationModel.Overlay(actionKeyTip = "AO"),
+                        indentRight to CommandButtonPresentationModel.Overlay(actionKeyTip = "AI")
+                    )
+                ) with RibbonComponentPresentationModel(),
+                CommandButtonStripProjection(
+                    contentModel = CommandGroup(
+                        commands = listOf(
+                            styleBoldCommand, styleItalicCommand,
+                            styleUnderlineCommand, styleStrikethroughCommand
+                        )
                     ),
-                    ribbonComponentPresentationModel = RibbonComponentPresentationModel(keyTip = "SS")
-                ),
-                RibbonComponentProjection(
-                    projection = CommandButtonStripProjection(
-                        contentModel = CommandGroup(commands = listOf(indentLeft, indentRight)),
-                        presentationModel = CommandStripPresentationModel(
-                            orientation = StripOrientation.Horizontal
-                        ),
-                        overlays = mapOf(
-                            indentLeft to CommandButtonPresentationModel.Overlay(actionKeyTip = "AO"),
-                            indentRight to CommandButtonPresentationModel.Overlay(actionKeyTip = "AI")
-                        )
+                    presentationModel = CommandStripPresentationModel(
+                        orientation = StripOrientation.Horizontal
+                    ),
+                    overlays = mapOf(
+                        styleBoldCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "1"),
+                        styleItalicCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "2"),
+                        styleUnderlineCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "3"),
+                        styleStrikethroughCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "4")
                     )
-                ),
-                RibbonComponentProjection(
-                    projection = CommandButtonStripProjection(
-                        contentModel = CommandGroup(
-                            commands = listOf(
-                                styleBoldCommand, styleItalicCommand,
-                                styleUnderlineCommand, styleStrikethroughCommand
-                            )
-                        ),
-                        presentationModel = CommandStripPresentationModel(
-                            orientation = StripOrientation.Horizontal
-                        ),
-                        overlays = mapOf(
-                            styleBoldCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "1"),
-                            styleItalicCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "2"),
-                            styleUnderlineCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "3"),
-                            styleStrikethroughCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "4")
+                ) with RibbonComponentPresentationModel(),
+                CommandButtonStripProjection(
+                    contentModel = CommandGroup(
+                        commands = listOf(
+                            alignLeftCommand, alignCenterCommand,
+                            alignRightCommand, alignFillCommand
                         )
+                    ),
+                    presentationModel = CommandStripPresentationModel(
+                        orientation = StripOrientation.Horizontal
+                    ),
+                    overlays = mapOf(
+                        alignLeftCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "AL"),
+                        alignCenterCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "AC"),
+                        alignRightCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "AR"),
+                        alignFillCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "AF")
                     )
-                ),
-                RibbonComponentProjection(
-                    projection = CommandButtonStripProjection(
-                        contentModel = CommandGroup(
-                            commands = listOf(
-                                alignLeftCommand, alignCenterCommand,
-                                alignRightCommand, alignFillCommand
-                            )
-                        ),
-                        presentationModel = CommandStripPresentationModel(
-                            orientation = StripOrientation.Horizontal
-                        ),
-                        overlays = mapOf(
-                            alignLeftCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "AL"),
-                            alignCenterCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "AC"),
-                            alignRightCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "AR"),
-                            alignFillCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "AF")
-                        )
-                    )
-                )
+                ) with RibbonComponentPresentationModel()
             )
         )
     }
@@ -746,7 +752,8 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
                             contentModel = Command(
                                 text = resourceBundle.getString("FindReplace.text"),
                                 icon = edit_find_replace(),
-                                action = { println("Find Replace activated") }
+                                action = { println("Find Replace activated") },
+                                isActionEnabled = false
                             )
                         ) at PresentationPriority.Medium,
                         CommandButtonProjection(
@@ -756,6 +763,209 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
                                 action = { println("Select All activated") }
                             )
                         ) at PresentationPriority.Medium
+                    )
+                )
+            )
+        )
+    }
+
+    fun getActionBand(): RibbonBand {
+        return RibbonBand(
+            title = resourceBundle.getString("Action.textBandTitle"),
+            icon = document_new(),
+            expandCommand = Command(
+                text = "",
+                icon = null,
+                action = { println("Expand button clicked! ") }
+            ),
+            // TODO - custom list
+            resizePolicies = CoreRibbonResizePolicies.getCorePoliciesRestrictive(),
+            groups = listOf(
+                RibbonBandGroup(
+                    commandProjections = listOf(
+                        CommandButtonProjection(
+                            contentModel = Command(text = resourceBundle.getString("AddressBook.text"),
+                                icon = address_book_new(),
+                                action = { println("Address Book activated") }),
+                            presentationModel = CommandButtonPresentationModel(actionKeyTip = "NA")
+                        ) at PresentationPriority.Top
+                    )
+                ),
+                RibbonBandGroup(
+                    commandProjections = listOf(
+                        CommandButtonProjection(
+                            contentModel = Command(text = resourceBundle.getString("Document.text"),
+                                icon = document_new(),
+                                action = { println("Document activated") }),
+                            presentationModel = CommandButtonPresentationModel(actionKeyTip = "ND")
+                        ) at PresentationPriority.Top,
+                        CommandButtonProjection(
+                            contentModel = Command(text = resourceBundle.getString("Appointment.text"),
+                                icon = appointment_new(),
+                                action = { println("Appointment activated") }),
+                            presentationModel = CommandButtonPresentationModel(actionKeyTip = "NP")
+                        ) at PresentationPriority.Medium,
+                        CommandButtonProjection(
+                            contentModel = Command(text = resourceBundle.getString("Bookmark.text"),
+                                icon = bookmark_new(),
+                                action = { println("Bookmark activated") }),
+                            presentationModel = CommandButtonPresentationModel(actionKeyTip = "NB")
+                        ) at PresentationPriority.Medium,
+                        CommandButtonProjection(
+                            contentModel = Command(text = resourceBundle.getString("Contact.text"),
+                                icon = contact_new(),
+                                action = { println("Contact activated") }),
+                            presentationModel = CommandButtonPresentationModel(actionKeyTip = "NC")
+                        ) at PresentationPriority.Medium
+                    )
+                )
+            )
+        )
+    }
+
+    fun getPreferencesBand(): RibbonBand {
+        return RibbonBand(
+            title = resourceBundle.getString("Preferences.textBandTitle"),
+            icon = preferences_desktop_font(),
+            expandCommand = Command(
+                text = "",
+                icon = null,
+                action = { println("Expand button clicked! ") }
+            ),
+            resizePolicies = CoreRibbonResizePolicies.getCorePoliciesRestrictive(),
+            groups = listOf(
+                RibbonBandGroup(
+                    commandProjections = listOf(
+                        CommandButtonProjection(
+                            contentModel = Command(text = resourceBundle.getString("Accessibility.text"),
+                                icon = preferences_desktop_accessibility(),
+                                action = { println("Accessibility activated") }),
+                            presentationModel = CommandButtonPresentationModel(actionKeyTip = "Y")
+                        ) at PresentationPriority.Medium,
+                        CommandButtonProjection(
+                            contentModel = Command(text = resourceBundle.getString("Assistive.text"),
+                                icon = preferences_desktop_assistive_technology(),
+                                action = { println("Assistive activated") }),
+                            presentationModel = CommandButtonPresentationModel(actionKeyTip = "E")
+                        ) at PresentationPriority.Medium,
+                        CommandButtonProjection(
+                            contentModel = Command(
+                                text = resourceBundle.getString("KeyboardShortcuts.text"),
+                                icon = preferences_desktop_keyboard_shortcuts(),
+                                secondaryContentModel = getSimpleMenuModel()
+                            ),
+                            presentationModel = CommandButtonPresentationModel(popupKeyTip = "H")
+                        ) at PresentationPriority.Medium
+                    )
+                ),
+                RibbonBandGroup(
+                    commandProjections = listOf(
+                        CommandButtonProjection(
+                            contentModel = Command(text = resourceBundle.getString("Font.text"),
+                                icon = preferences_desktop_font(),
+                                action = { println("Font activated") }),
+                            presentationModel = CommandButtonPresentationModel(actionKeyTip = "Z")
+                        ) at PresentationPriority.Top,
+                        CommandButtonProjection(
+                            contentModel = Command(text = resourceBundle.getString("Locale.text"),
+                                icon = preferences_desktop_locale(),
+                                action = { println("Locale activated") }),
+                            presentationModel = CommandButtonPresentationModel(actionKeyTip = "L")
+                        ) at PresentationPriority.Top
+                    )
+                ),
+                RibbonBandGroup(
+                    commandProjections = listOf(
+                        CommandButtonProjection(
+                            contentModel = Command(text = resourceBundle.getString("Screensaver.text"),
+                                icon = preferences_desktop_screensaver(),
+                                action = { println("Screensaver activated") }),
+                            presentationModel = CommandButtonPresentationModel(actionKeyTip = "V")
+                        ) at PresentationPriority.Medium,
+                        CommandButtonProjection(
+                            contentModel = Command(text = resourceBundle.getString("Themes.text"),
+                                icon = preferences_desktop_locale(),
+                                action = { println("Themes activated") }),
+                            presentationModel = CommandButtonPresentationModel(actionKeyTip = "T")
+                        ) at PresentationPriority.Medium
+                    )
+                )
+            )
+        )
+    }
+
+    @Composable
+    fun getApplicationsBand(): RibbonBand {
+        val gamesComboSelectedItem = remember { mutableStateOf(this.applicationGamesEntries[0]) }
+        val gamesComboBoxContentModel = ComboBoxContentModel(
+            items = this.applicationGamesEntries,
+            selectedItem = gamesComboSelectedItem.value,
+            onTriggerItemSelectedChange = {
+                gamesComboSelectedItem.value = it
+                println("New game selection -> $it")
+            }
+        )
+
+        val internetComboSelectedItem = remember { mutableStateOf(this.applicationInternetEntries[0]) }
+        val internetComboBoxContentModel = ComboBoxContentModel(
+            items = this.applicationInternetEntries,
+            selectedItem = internetComboSelectedItem.value,
+            onTriggerItemSelectedChange = {
+                internetComboSelectedItem.value = it
+                println("New Internet selection -> $it")
+            }
+        )
+
+        val multimediaComboSelectedItem = remember { mutableStateOf(this.applicationMultimediaEntries[0]) }
+        val multimediaComboBoxContentModel = ComboBoxContentModel(
+            items = this.applicationMultimediaEntries,
+            selectedItem = multimediaComboSelectedItem.value,
+            onTriggerItemSelectedChange = {
+                multimediaComboSelectedItem.value = it
+                println("New multimedia selection -> $it")
+            }
+        )
+
+        return RibbonBand(
+            title = resourceBundle.getString("Applications.textBandTitle"),
+            icon = office_calendar_modified(),
+            expandCommand = Command(
+                text = "",
+                icon = null,
+                action = { println("Expand button clicked! ") }
+            ),
+            groups = listOf(
+                RibbonBandGroup(
+                    componentProjections = listOf(
+                        ComboBoxProjection(
+                            contentModel = gamesComboBoxContentModel,
+                            presentationModel = ComboBoxPresentationModel(displayConverter = { it }),
+                        ) with RibbonComponentPresentationModel(
+                            caption = resourceBundle.getString("Games.text"),
+                            icon = applications_games(),
+                            keyTip = "AG",
+                            isResizingAware = true,
+                            horizontalAlignment = HorizontalAlignment.Leading
+                        ),
+                        ComboBoxProjection(
+                            contentModel = internetComboBoxContentModel,
+                            presentationModel = ComboBoxPresentationModel(displayConverter = { it }),
+                        ) with RibbonComponentPresentationModel(
+                            caption = resourceBundle.getString("Internet.text"),
+                            icon = applications_internet(),
+                            keyTip = "AI",
+                            isResizingAware = true,
+                            horizontalAlignment = HorizontalAlignment.Leading
+                        ),
+                        ComboBoxProjection(
+                            contentModel = multimediaComboBoxContentModel,
+                            presentationModel = ComboBoxPresentationModel(displayConverter = { it }),
+                        ) with RibbonComponentPresentationModel(
+                            caption = resourceBundle.getString("Multimedia.text"),
+                            keyTip = "AM",
+                            isResizingAware = true,
+                            horizontalAlignment = HorizontalAlignment.Leading
+                        )
                     )
                 )
             )
