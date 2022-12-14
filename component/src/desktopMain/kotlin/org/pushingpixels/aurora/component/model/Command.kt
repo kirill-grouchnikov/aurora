@@ -84,9 +84,26 @@ enum class TextClick {
     Popup
 }
 
-enum class HorizontalAlignment(var arrangement: Arrangement.Horizontal) {
-    Leading(Arrangement.Start), Center(Arrangement.Center), Trailing(Arrangement.End)
+enum class HorizontalAlignment {
+    Leading {
+        override var arrangement = Arrangement.Start
+    },
+
+    Trailing {
+        override var arrangement = Arrangement.End
+    },
+
+    Center {
+        override var arrangement: Arrangement.Horizontal = Arrangement.Center
+    },
+
+    Fill {
+        override var arrangement: Arrangement.Horizontal = throw UnsupportedOperationException()
+    };
+
+    internal abstract var arrangement: Arrangement.Horizontal
 }
+
 
 /**
  * Enumerates the available command button kinds.

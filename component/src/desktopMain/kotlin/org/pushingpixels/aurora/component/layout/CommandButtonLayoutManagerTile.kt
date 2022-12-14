@@ -192,7 +192,8 @@ internal open class CommandButtonLayoutManagerTile(
                         // shift everything to the right
                         shiftX = finalWidth - preferredSize.width
                     }
-                    HorizontalAlignment.Center ->
+                    HorizontalAlignment.Center,
+                    HorizontalAlignment.Fill ->
                         // shift everything to be centered horizontally
                         shiftX = (finalWidth - preferredSize.width) / 2
                     HorizontalAlignment.Trailing -> if (ltr) {

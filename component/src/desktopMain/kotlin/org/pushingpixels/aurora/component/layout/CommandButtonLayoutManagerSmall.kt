@@ -154,7 +154,8 @@ internal open class CommandButtonLayoutManagerSmall(
                 when (presentationModel.horizontalAlignment) {
                     HorizontalAlignment.Leading ->
                         shiftX = 0.0f
-                    HorizontalAlignment.Center ->
+                    HorizontalAlignment.Center,
+                    HorizontalAlignment.Fill ->
                         // shift everything to be centered horizontally
                         shiftX = (finalWidth - preferredSize.width) / 2
                     HorizontalAlignment.Trailing -> if (ltr) {

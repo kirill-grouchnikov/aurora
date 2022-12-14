@@ -945,7 +945,7 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
                             icon = applications_games(),
                             keyTip = "AG",
                             isResizingAware = true,
-                            horizontalAlignment = HorizontalAlignment.Leading
+                            horizontalAlignment = HorizontalAlignment.Fill
                         ),
                         ComboBoxProjection(
                             contentModel = internetComboBoxContentModel,
@@ -955,7 +955,7 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
                             icon = applications_internet(),
                             keyTip = "AI",
                             isResizingAware = true,
-                            horizontalAlignment = HorizontalAlignment.Leading
+                            horizontalAlignment = HorizontalAlignment.Fill
                         ),
                         ComboBoxProjection(
                             contentModel = multimediaComboBoxContentModel,
@@ -964,7 +964,7 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
                             caption = resourceBundle.getString("Multimedia.text"),
                             keyTip = "AM",
                             isResizingAware = true,
-                            horizontalAlignment = HorizontalAlignment.Leading
+                            horizontalAlignment = HorizontalAlignment.Fill
                         )
                     )
                 )
