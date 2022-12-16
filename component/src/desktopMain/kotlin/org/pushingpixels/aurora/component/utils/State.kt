@@ -62,6 +62,10 @@ class ModelStateInfo(startModelState: ComponentState) {
                 activeStrength += value.contribution
             }
         }
+        if (activeStrength > 1.0f) {
+            // Can happen due to floating point rounding errors
+            activeStrength = 1.0f
+        }
     }
 
     fun strength(facet: ComponentStateFacet): Float {
