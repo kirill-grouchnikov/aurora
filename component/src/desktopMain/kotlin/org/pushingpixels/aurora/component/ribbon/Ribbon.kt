@@ -100,14 +100,14 @@ class RibbonApplicationMenuCommandButtonProjection(
 data class Ribbon(
     val tasks: List<RibbonTask>,
     val selectedTask: RibbonTask,
-    val onTaskClick: () -> Unit,
-    val contextualTaskGroups: List<RibbonContextualTaskGroup>?,
-    val anchoredCommands: List<CommandButtonProjection>?,
+    val onTaskClick: (RibbonTask) -> Unit,
+    val contextualTaskGroups: List<RibbonContextualTaskGroup> = emptyList(),
+    val anchoredCommands: List<CommandButtonProjection> = emptyList(),
     val taskbarCommandProjections: List<RibbonTaskbarCommandButtonProjection> = emptyList(),
     val taskbarComponentProjections: List<RibbonComponentProjection<ContentModel, PresentationModel>> = emptyList(),
     val taskbarGalleryProjections: List<RibbonGalleryProjection> = emptyList(),
     val taskbarKeyTipPolicy: RibbonTaskbarKeyTipPolicy,
-    val applicationMenuCommandButtonProjection: RibbonApplicationMenuCommandButtonProjection,
+    val applicationMenuCommandButtonProjection: RibbonApplicationMenuCommandButtonProjection? = null,
     val isMinimized: Boolean = false,
-    val onShowContextualMenuListener: OnShowContextualMenuListener?
+    val onShowContextualMenuListener: OnShowContextualMenuListener? = null
 )

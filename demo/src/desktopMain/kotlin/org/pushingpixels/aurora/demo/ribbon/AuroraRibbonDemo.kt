@@ -43,10 +43,12 @@ import org.pushingpixels.aurora.demo.ColorSolidIcon
 import org.pushingpixels.aurora.demo.DecoratedIcon
 import org.pushingpixels.aurora.demo.getQuickStylesContentModel
 import org.pushingpixels.aurora.demo.svg.tango.*
+import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.window.auroraApplication
 import java.text.MessageFormat
 import java.util.*
+import javax.swing.JOptionPane
 
 fun main() = auroraApplication {
     val state = rememberWindowState(
@@ -82,6 +84,73 @@ fun main() = auroraApplication {
         bands = listOf(actionBand, preferencesBand, applicationsBand),
         resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
         keyTip = "W"
+    )
+
+    var selectedTask by remember { mutableStateOf(pageLayoutTask) }
+
+    // "Share" anchored menu
+    val shareEntrySendMail = Command(
+        text = resourceBundle.getString("AppMenuSend.email.text"),
+        action = { println("Shared to email") }
+    )
+    val shareEntrySendHtml = Command(
+        text = resourceBundle.getString("AppMenuSend.html.text"),
+        action = { println("Shared to browser") }
+    )
+    val shareEntrySendDoc = Command(
+        text = resourceBundle.getString("AppMenuSend.word.text"),
+        action = { println("Shared to Word") }
+    )
+
+    val anchoredCommands = listOf(
+        CommandButtonProjection(
+            contentModel = Command(
+                text = resourceBundle.getString("Share.title"),
+                icon = internet_mail(),
+                secondaryContentModel = CommandMenuContentModel(
+                    group = CommandGroup(
+                        commands = listOf(shareEntrySendMail, shareEntrySendHtml, shareEntrySendDoc)
+                    )
+                )
+            ),
+            presentationModel = CommandButtonPresentationModel(
+                popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignEnd,
+                popupKeyTip = "GS"
+            )
+        ),
+        CommandButtonProjection(
+            contentModel = Command(
+                text = "",
+                icon = internet_group_chat(),
+                action = { println("Chat button clicked!") },
+                isActionToggle = true
+            ),
+            presentationModel = CommandButtonPresentationModel(
+                popupKeyTip = "GC"
+            )
+        ),
+        CommandButtonProjection(
+            contentModel = Command(
+                text = "",
+                icon = help_browser(),
+                action = { println("Help button clicked!") },
+                actionRichTooltip = RichTooltip(
+                    title = resourceBundle.getString("Help.tooltip.title"),
+                    descriptionSections = listOf(resourceBundle.getString("Help.tooltip.actionParagraph"))
+                )
+            ),
+            presentationModel = CommandButtonPresentationModel(
+                popupKeyTip = "GH"
+            )
+        )
+    )
+
+    val ribbon = Ribbon(
+        tasks = listOf(pageLayoutTask, writeTask),
+        selectedTask = selectedTask,
+        onTaskClick = { selectedTask = it },
+        taskbarKeyTipPolicy = DefaultRibbonTaskbarKeyTipPolicy(),
+        anchoredCommands = anchoredCommands
     )
 }
 
