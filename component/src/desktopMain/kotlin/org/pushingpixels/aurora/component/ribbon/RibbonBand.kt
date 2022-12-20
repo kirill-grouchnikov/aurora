@@ -21,10 +21,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
-import org.pushingpixels.aurora.component.model.Command
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
-import org.pushingpixels.aurora.component.model.ContentModel
-import org.pushingpixels.aurora.component.model.PresentationModel
+import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.Projection
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicies
@@ -46,10 +44,10 @@ infix fun <C: ContentModel, P: PresentationModel> Projection<C, P>.with(that: Ri
         Pair<Projection<C, P>, RibbonComponentPresentationModel> = Pair(this, that)
 
 data class RibbonBandGroup(
-   val title: String? = null,
-   val commandProjections: List<Pair<CommandButtonProjection, PresentationPriority>> = emptyList(),
-   val componentProjections: List<Pair<Projection<ContentModel, PresentationModel>, RibbonComponentPresentationModel>> = emptyList(),
-   val galleryProjections: List<Pair<RibbonGalleryProjection, PresentationPriority>> = emptyList(),
+    val title: String? = null,
+    val commandProjections: List<Pair<BaseCommandButtonProjection<BaseCommandMenuContentModel, BaseCommand<BaseCommandMenuContentModel>>, PresentationPriority>> = emptyList(),
+    val componentProjections: List<Pair<Projection<ContentModel, PresentationModel>, RibbonComponentPresentationModel>> = emptyList(),
+    val galleryProjections: List<Pair<RibbonGalleryProjection, PresentationPriority>> = emptyList(),
 )
 
 data class RibbonBand(

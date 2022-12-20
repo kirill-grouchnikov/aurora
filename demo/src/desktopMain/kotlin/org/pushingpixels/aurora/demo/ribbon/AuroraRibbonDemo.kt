@@ -33,6 +33,7 @@ import org.jetbrains.skia.Font
 import org.jetbrains.skia.TextLine
 import org.jetbrains.skia.Typeface
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.ColorSelectorCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.ComboBoxProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonStripProjection
@@ -48,7 +49,7 @@ import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.window.auroraApplication
 import java.text.MessageFormat
 import java.util.*
-import javax.swing.JOptionPane
+import javax.swing.JColorChooser
 
 fun main() = auroraApplication {
     val state = rememberWindowState(
@@ -88,7 +89,6 @@ fun main() = auroraApplication {
 
     var selectedTask by remember { mutableStateOf(pageLayoutTask) }
 
-
     val ribbon = Ribbon(
         tasks = listOf(pageLayoutTask, writeTask),
         selectedTask = selectedTask,
@@ -127,34 +127,34 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
     )
 
     val cutCommand = Command(
-        text = resourceBundle.getString("Cut.text"),
+        text = resourceBundle.getString("Edit.cut.text"),
         icon = edit_cut(),
         action = { println("Cut!") },
         actionRichTooltip = RichTooltip(
-            title = resourceBundle.getString("Cut.text"),
+            title = resourceBundle.getString("Edit.cut.text"),
             descriptionSections = listOf(resourceBundle.getString("Cut.tooltip.actionParagraph1"))
         ),
         secondaryContentModel = getSimpleMenuModel()
     )
 
     val copyCommand = Command(
-        text = resourceBundle.getString("Copy.text"),
+        text = resourceBundle.getString("Edit.copy.text"),
         icon = edit_copy(),
         action = { println("Copy!") },
         secondaryContentModel = getSimpleMenuModel()
     )
 
     val pasteCommand = Command(
-        text = resourceBundle.getString("Paste.text"),
+        text = resourceBundle.getString("Edit.paste.text"),
         icon = edit_paste(),
         action = { println("Pasted!") },
         actionRichTooltip = RichTooltip(
-            title = resourceBundle.getString("Paste.text"),
+            title = resourceBundle.getString("Edit.paste.text"),
             descriptionSections = listOf(resourceBundle.getString("Paste.tooltip.actionParagraph1"))
         ),
         secondaryContentModel = getSimpleMenuModel(),
         secondaryRichTooltip = RichTooltip(
-            title = resourceBundle.getString("Paste.text"),
+            title = resourceBundle.getString("Edit.paste.text"),
             descriptionSections = listOf(resourceBundle.getString("Paste.tooltip.popupParagraph1"))
         ),
     )
@@ -211,7 +211,7 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
         isActionToggle = true,
         action = {},
         actionRichTooltip = RichTooltip(
-            title = resourceBundle.getString("FontBold.tooltip.textActionTitle"),
+            title = resourceBundle.getString("FontStyle.bold.title"),
             descriptionSections = listOf(resourceBundle.getString("FontBold.tooltip.textActionParagraph1"))
         )
     )
@@ -222,7 +222,7 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
         isActionToggle = true,
         action = {},
         actionRichTooltip = RichTooltip(
-            title = resourceBundle.getString("FontItalic.tooltip.textActionTitle"),
+            title = resourceBundle.getString("FontStyle.italic.title"),
             descriptionSections = listOf(resourceBundle.getString("FontItalic.tooltip.textActionParagraph1"))
         )
     )
@@ -233,7 +233,7 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
         isActionToggle = true,
         action = {},
         actionRichTooltip = RichTooltip(
-            title = resourceBundle.getString("FontUnderline.tooltip.textActionTitle"),
+            title = resourceBundle.getString("FontStyle.underline.title"),
             descriptionSections = listOf(resourceBundle.getString("FontUnderline.tooltip.textActionParagraph1"))
         )
     )
@@ -244,7 +244,7 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
         isActionToggle = true,
         action = {},
         actionRichTooltip = RichTooltip(
-            title = resourceBundle.getString("FontStrikethrough.tooltip.textActionTitle"),
+            title = resourceBundle.getString("FontStyle.strikethrough.title"),
             descriptionSections = listOf(resourceBundle.getString("FontStrikethrough.tooltip.textActionParagraph1"))
         )
     )
@@ -473,6 +473,88 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
     }
 
     fun getQuickStylesBand(): RibbonBand {
+        val colorPreviewListener: ColorPreviewListener = object : ColorPreviewListener {
+            override fun onColorPreviewActivated(color: Color) {
+                println("Preview activated color $color")
+            }
+
+            override fun onColorPreviewCanceled() {
+                println("Preview canceled color")
+            }
+        }
+        val colorActivationListener: (Color) -> Unit = {
+            println("Activated color $it")
+        }
+        val defaultColor = Color(240, 240, 240, 255)
+
+        val colorSelectorMenuCommands: List<ColorSelectorPopupMenuEntry> = listOf(
+            ColorSelectorPopupMenuCommand(
+                command = Command(
+                    text = resourceBundle.getString("ColorSelector.textAutomatic"),
+                    icon = ColorSolidIcon(defaultColor),
+                    action = {
+                        colorActivationListener.invoke(defaultColor)
+                        RecentlyUsed.addColorToRecentlyUsed(defaultColor)
+                    },
+                    actionPreview = object : CommandActionPreview {
+                        override fun onCommandPreviewActivated(command: Command) {
+                            colorPreviewListener.onColorPreviewActivated(
+                                defaultColor
+                            )
+                        }
+
+                        override fun onCommandPreviewCanceled(command: Command) {
+                            colorPreviewListener.onColorPreviewCanceled()
+                        }
+                    }
+                )
+            ),
+            ColorSelectorPopupMenuSectionWithDerived(
+                colorSectionModel = ColorSectionModel(
+                    title = resourceBundle.getString("ColorSelector.textThemeCaption"),
+                    colors = listOf(
+                        Color(255, 255, 255), Color(0, 0, 0),
+                        Color(160, 160, 160), Color(16, 64, 128),
+                        Color(80, 128, 192), Color(180, 80, 80),
+                        Color(160, 192, 80), Color(128, 92, 160),
+                        Color(80, 160, 208), Color(255, 144, 64)
+                    )
+                )
+            ),
+            ColorSelectorPopupMenuSection(
+                colorSectionModel = ColorSectionModel(
+                    title = resourceBundle.getString("ColorSelector.textStandardCaption"),
+                    colors = listOf(
+                        Color(140, 0, 0), Color(253, 0, 0),
+                        Color(255, 160, 0), Color(255, 255, 0),
+                        Color(144, 240, 144), Color(0, 128, 0),
+                        Color(160, 224, 224), Color(0, 0, 255),
+                        Color(0, 0, 128), Color(128, 0, 128)
+                    )
+                )
+            ),
+            ColorSelectorPopupMenuRecentsSection(colorSectionModel = ColorSectionModel(
+                title = resourceBundle.getString("ColorSelector.textRecentCaption"),
+                colors = listOf()
+            )),
+            ColorSelectorPopupMenuCommand(
+                command = Command(
+                    text = resourceBundle.getString("ColorSelector.textMoreColor"),
+                    action = {
+                        val awtColor = JColorChooser.showDialog(
+                            null,
+                            "Color chooser", java.awt.Color(defaultColor.red, defaultColor.green, defaultColor.blue)
+                        )
+                        if (awtColor != null) {
+                            val composeColor = Color(awtColor.red, awtColor.green, awtColor.blue, awtColor.alpha)
+                            colorActivationListener.invoke(composeColor)
+                            RecentlyUsed.addColorToRecentlyUsed(composeColor)
+                        }
+                    }
+                )
+            )
+        )
+
         return RibbonBand(
             title = resourceBundle.getString("QuickStyles.textBandTitle"),
             icon = preferences_desktop_theme(),
@@ -499,6 +581,22 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
                             ),
                             presentationModel = CommandButtonPresentationModel(
                                 actionKeyTip = "SB"
+                            )
+                        ) at PresentationPriority.Medium,
+                        ColorSelectorCommandButtonProjection(
+                            contentModel = ColorSelectorCommand(
+                                text = resourceBundle.getString("Styles3.text"),
+                                icon = x_office_drawing(),
+                                secondaryContentModel = ColorSelectorPopupMenuContentModel(
+                                    menuGroups = listOf(
+                                        ColorSelectorPopupMenuGroupModel(content = colorSelectorMenuCommands)
+                                    ),
+                                    onColorPreviewActivated = colorPreviewListener,
+                                    onColorActivated = colorActivationListener
+                                )
+                            ),
+                            presentationModel = CommandButtonPresentationModel(
+                                actionKeyTip = "SC"
                             )
                         ) at PresentationPriority.Medium
                     ),
@@ -771,7 +869,7 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
                         ) at PresentationPriority.Medium,
                         CommandButtonProjection(
                             contentModel = Command(
-                                text = resourceBundle.getString("SelectAll.text"),
+                                text = resourceBundle.getString("Edit.selectAll.text"),
                                 icon = edit_select_all(),
                                 action = { println("Select All activated") }
                             )

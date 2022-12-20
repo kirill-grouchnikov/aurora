@@ -39,10 +39,19 @@ interface CommandActionPreview {
     fun onCommandPreviewCanceled(command: Command)
 }
 
+sealed interface BaseCommand<out M: BaseCommandMenuContentModel>: ContentModel {
+    val text: String
+    val extraText: String?
+    val icon: Painter?
+    val secondaryContentModel: M?
+    val isSecondaryEnabled: Boolean
+    val secondaryRichTooltip: RichTooltip?
+}
+
 data class Command(
-    val text: String,
-    val extraText: String? = null,
-    val icon: Painter? = null,
+    override val text: String,
+    override val extraText: String? = null,
+    override val icon: Painter? = null,
     val action: (() -> Unit)? = null,
     val actionPreview: CommandActionPreview? = null,
     val isActionEnabled: Boolean = true,
@@ -50,21 +59,32 @@ data class Command(
     val isActionToggleSelected: Boolean = false,
     val actionRichTooltip: RichTooltip? = null,
     val onTriggerActionToggleSelectedChange: ((Boolean) -> Unit)? = null,
-    val secondaryContentModel: CommandMenuContentModel? = null,
-    val isSecondaryEnabled: Boolean = true,
-    val secondaryRichTooltip: RichTooltip? = null
-) : ContentModel
+    override val secondaryContentModel: CommandMenuContentModel? = null,
+    override val isSecondaryEnabled: Boolean = true,
+    override val secondaryRichTooltip: RichTooltip? = null
+) : BaseCommand<CommandMenuContentModel>
+
+data class ColorSelectorCommand(
+    override val text: String,
+    override val extraText: String? = null,
+    override val icon: Painter? = null,
+    override val secondaryContentModel: ColorSelectorPopupMenuContentModel,
+    override val isSecondaryEnabled: Boolean = true,
+    override val secondaryRichTooltip: RichTooltip? = null
+) : BaseCommand<ColorSelectorPopupMenuContentModel>
 
 data class CommandGroup(
     val title: String? = null,
     val commands: List<Command>
 ) : ContentModel
 
+interface BaseCommandMenuContentModel
+
 data class CommandMenuContentModel(
     val groups: List<CommandGroup>,
     val panelContentModel: CommandPanelContentModel? = null,
     val highlightedCommand: Command? = null
-) {
+): BaseCommandMenuContentModel {
     constructor(
         group: CommandGroup,
         panelContentModel: CommandPanelContentModel? = null,

@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.component.ribbon
 
 import androidx.compose.ui.graphics.painter.Painter
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.Projection
 
@@ -31,8 +32,8 @@ enum class PresentationPriority {
     Low
 }
 
-infix fun CommandButtonProjection.at(that: PresentationPriority):
-        Pair<CommandButtonProjection, PresentationPriority> = Pair(this, that)
+infix fun <P : BaseCommandMenuContentModel, M : BaseCommand<P>> BaseCommandButtonProjection<P, M>.at(
+    that: PresentationPriority): Pair<BaseCommandButtonProjection<P, M>, PresentationPriority> = Pair(this, that)
 
 data class RibbonComponentPresentationModel(
     val caption: String? = null,
