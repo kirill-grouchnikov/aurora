@@ -53,8 +53,8 @@ data class RibbonGalleryContentModel(
 ) : ContentModel
 
 data class RibbonGalleryPresentationModel(
-    val preferredVisibleCommandCounts: Map<PresentationPriority, Int>,
     val popupLayoutSpec: MenuPopupPanelLayoutSpec,
+    val preferredVisibleCommandCounts: Map<PresentationPriority, Int> = emptyMap(),
     val commandButtonPresentationState: CommandButtonPresentationState,
     val expandKeyTip: String? = null,
 ) : PresentationModel
@@ -98,15 +98,19 @@ class RibbonApplicationMenuCommandButtonProjection(
     val secondaryLevelCommandPresentationStates: Map<Command, CommandButtonPresentationState>
 ) : Projection<Command, RibbonApplicationMenuCommandButtonPresentationModel>()
 
+sealed interface RibbonTaskbarElement
+
+data class RibbonTaskbarCommandProjection(val commandProjection: BaseCommandButtonProjection<BaseCommandMenuContentModel, BaseCommand<BaseCommandMenuContentModel>>) : RibbonTaskbarElement
+data class RibbonTaskbarComponentProjection(val componentProjection: Projection<ContentModel, PresentationModel>) : RibbonTaskbarElement
+data class RibbonTaskbarGalleryProjection(val galleryProjection: RibbonGalleryProjection) : RibbonTaskbarElement
+
 data class Ribbon(
     val tasks: List<RibbonTask>,
     val selectedTask: RibbonTask,
     val onTaskClick: (RibbonTask) -> Unit,
     val contextualTaskGroups: List<RibbonContextualTaskGroup> = emptyList(),
     val anchoredCommands: List<CommandButtonProjection> = emptyList(),
-    val taskbarCommandProjections: List<RibbonTaskbarCommandButtonProjection> = emptyList(),
-    val taskbarComponentProjections: List<RibbonComponentProjection<ContentModel, PresentationModel>> = emptyList(),
-    val taskbarGalleryProjections: List<RibbonGalleryProjection> = emptyList(),
+    val taskbarElements: List<RibbonTaskbarElement> = emptyList(),
     val taskbarKeyTipPolicy: RibbonTaskbarKeyTipPolicy,
     val applicationMenuCommandButtonProjection: RibbonApplicationMenuCommandButtonProjection? = null,
     val isMinimized: Boolean = false,

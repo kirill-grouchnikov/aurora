@@ -15,19 +15,6 @@
  */
 package org.pushingpixels.aurora.component.ribbon
 
-import org.pushingpixels.aurora.component.model.Command
-import org.pushingpixels.aurora.component.model.CommandPopupMenuPresentationModel
-import org.pushingpixels.aurora.component.model.PresentationModel
-import org.pushingpixels.aurora.component.projection.Projection
-import org.pushingpixels.aurora.theming.IconFilterStrategy
-
-data class RibbonTaskbarCommandButtonPresentationModel(
-    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
-    val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
-    val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
-    val popupMenuPresentationModel: CommandPopupMenuPresentationModel = CommandPopupMenuPresentationModel()
-) : PresentationModel
-
 interface RibbonTaskbarKeyTipPolicy {
     /**
      * Returns the keytip for the task bar content (command, component, gallery, menu link)
@@ -65,9 +52,3 @@ class DefaultRibbonTaskbarKeyTipPolicy : RibbonTaskbarKeyTipPolicy {
         private const val LETTERS = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     }
 }
-
-class RibbonTaskbarCommandButtonProjection(
-    val contentModel: Command,
-    val presentationModel: RibbonTaskbarCommandButtonPresentationModel
-) : Projection<Command, RibbonTaskbarCommandButtonPresentationModel>()
-

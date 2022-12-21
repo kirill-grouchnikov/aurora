@@ -33,10 +33,7 @@ import org.jetbrains.skia.Font
 import org.jetbrains.skia.TextLine
 import org.jetbrains.skia.Typeface
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.component.projection.ColorSelectorCommandButtonProjection
-import org.pushingpixels.aurora.component.projection.ComboBoxProjection
-import org.pushingpixels.aurora.component.projection.CommandButtonProjection
-import org.pushingpixels.aurora.component.projection.CommandButtonStripProjection
+import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.component.ribbon.*
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicies
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizeSequencingPolicies
@@ -63,9 +60,15 @@ fun main() = auroraApplication {
     }
 
     val builder = RibbonBuilder(resourceBundle)
+
+    var fontFamilyComboSelectedItem by remember { mutableStateOf(builder.fontFamilyComboBoxEntries[0]) }
+
     val clipboardBand = builder.getClipboardBand()
     val quickStylesBand = builder.getQuickStylesBand()
-    val fontBand = builder.getFontBand()
+    val fontBand = builder.getFontBand(
+        selectedFontFamily = fontFamilyComboSelectedItem,
+        onFontFamilySelected = { fontFamilyComboSelectedItem = it }
+    )
     val documentBand = builder.getDocumentBand()
     val findBand = builder.getFindBand()
 
@@ -87,12 +90,62 @@ fun main() = auroraApplication {
         keyTip = "W"
     )
 
+    val taskbarElements: List<RibbonTaskbarElement> =
+        listOf(
+            RibbonTaskbarCommandProjection(
+                CommandButtonProjection(
+                    contentModel = builder.pasteCommand,
+                    presentationModel = CommandButtonPresentationModel()
+                )
+            ),
+            RibbonTaskbarCommandProjection(
+                CommandButtonProjection(
+                    contentModel = Command(
+                        text = "",
+                        icon = edit_clear(),
+                        action = { println("Taskbat Clear activated") },
+                        isActionEnabled = false
+                    ),
+                    presentationModel = CommandButtonPresentationModel()
+                )
+            ),
+            RibbonTaskbarComponentProjection(
+                ComboBoxProjection(
+                    contentModel = ComboBoxContentModel(
+                        items = builder.fontFamilyComboBoxEntries,
+                        selectedItem = fontFamilyComboSelectedItem,
+                        onTriggerItemSelectedChange = {
+                            fontFamilyComboSelectedItem = it
+                            println("New font family selection -> $it")
+                        },
+                        richTooltip = RichTooltip(title = resourceBundle.getString("Fonts.tooltip.title")),
+                    ),
+                    presentationModel = ComboBoxPresentationModel(displayConverter = { it }),
+                )
+            ),
+            // Add the same gallery we have in the first ribbon task to the taskbar, configuring
+            // its popup presentation with a 4x2 grid of slightly smaller buttons (instead of a 3x3
+            // grid of slightly larger ones in the in-task gallery popup).
+            // Content preview and selection is controlled by the same model and is kept in sync
+            // along all usages of the gallery content model in our ribbon.
+            RibbonTaskbarGalleryProjection(
+                RibbonGalleryProjection(
+                    contentModel = builder.styleGalleryContentModel,
+                    presentationModel = RibbonGalleryPresentationModel(
+                        popupLayoutSpec = MenuPopupPanelLayoutSpec(columnCount = 4, visibleRowCount = 2),
+                        commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixed
+                    )
+                )
+            )
+        )
+
     var selectedTask by remember { mutableStateOf(pageLayoutTask) }
 
     val ribbon = Ribbon(
         tasks = listOf(pageLayoutTask, writeTask),
         selectedTask = selectedTask,
         onTaskClick = { selectedTask = it },
+        taskbarElements = taskbarElements,
         taskbarKeyTipPolicy = DefaultRibbonTaskbarKeyTipPolicy(),
         anchoredCommands = builder.getAnchoredCommands()
     )
@@ -533,10 +586,12 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
                     )
                 )
             ),
-            ColorSelectorPopupMenuRecentsSection(colorSectionModel = ColorSectionModel(
-                title = resourceBundle.getString("ColorSelector.textRecentCaption"),
-                colors = listOf()
-            )),
+            ColorSelectorPopupMenuRecentsSection(
+                colorSectionModel = ColorSectionModel(
+                    title = resourceBundle.getString("ColorSelector.textRecentCaption"),
+                    colors = listOf()
+                )
+            ),
             ColorSelectorPopupMenuCommand(
                 command = Command(
                     text = resourceBundle.getString("ColorSelector.textMoreColor"),
@@ -623,13 +678,15 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
     }
 
     @Composable
-    fun getFontBand(): FlowRibbonBand {
-        val fontFamilyComboSelectedItem = remember { mutableStateOf(this.fontFamilyComboBoxEntries[0]) }
+    fun getFontBand(
+        selectedFontFamily: String,
+        onFontFamilySelected: (String) -> Unit
+    ): FlowRibbonBand {
         val fontFamilyComboBoxContentModel = ComboBoxContentModel(
             items = this.fontFamilyComboBoxEntries,
-            selectedItem = fontFamilyComboSelectedItem.value,
+            selectedItem = selectedFontFamily,
             onTriggerItemSelectedChange = {
-                fontFamilyComboSelectedItem.value = it
+                onFontFamilySelected(it)
                 println("New font family selection -> $it")
             },
             richTooltip = RichTooltip(title = resourceBundle.getString("Fonts.tooltip.title")),
