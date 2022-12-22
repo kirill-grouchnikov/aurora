@@ -41,6 +41,7 @@ import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntSize
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
@@ -536,7 +537,7 @@ private fun TabButtonTextContent(
 @Composable
 private fun TabButtonIconContent(
     command: Command, presentationModel: CommandButtonPresentationModel,
-    iconSize: Dp, modelStateInfo: ModelStateInfo, currState: ComponentState,
+    iconSize: DpSize, modelStateInfo: ModelStateInfo, currState: ComponentState,
     drawingCache: TabButtonDrawingCache
 ) {
     // Compute the combined strength of all the

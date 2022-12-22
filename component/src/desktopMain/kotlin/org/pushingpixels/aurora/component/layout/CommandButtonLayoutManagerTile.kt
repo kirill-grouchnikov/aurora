@@ -38,8 +38,8 @@ internal open class CommandButtonLayoutManagerTile(
     override fun getPreferredIconSize(
         command: Command,
         presentationModel: CommandButtonPresentationModel
-    ): Dp {
-        return 32.dp
+    ): DpSize {
+        return DpSize(32.dp, 32.dp)
     }
 
     override fun getPreferredSize(
@@ -57,7 +57,8 @@ internal open class CommandButtonLayoutManagerTile(
         val hasIcon = (command.icon != null) || presentationModel.forceAllocateSpaceForIcon
         val hasText = buttonText.isNotEmpty() or (extraText != null)
         val hasPopupIcon = (command.secondaryContentModel != null)
-        val prefIconSize = getPreferredIconSize(command, presentationModel).toPx()
+        val prefIconWidth = getPreferredIconSize(command, presentationModel).width.toPx()
+        val prefIconHeight = getPreferredIconSize(command, presentationModel).height.toPx()
 
         // start with the left insets
         var width = presentationModel.horizontalGapScaleFactor *
@@ -67,7 +68,7 @@ internal open class CommandButtonLayoutManagerTile(
             // padding before the icon
             width += layoutHGap
             // icon width
-            width += prefIconSize
+            width += prefIconWidth
             // padding after the icon
             width += layoutHGap
         }
@@ -120,7 +121,7 @@ internal open class CommandButtonLayoutManagerTile(
 
         // and remove the padding before the first and after the last elements
         width -= 2 * layoutHGap
-        return Size(width, by + max(prefIconSize, textHeight))
+        return Size(width, by + max(prefIconHeight, textHeight))
     }
 
     override fun getPreLayoutInfo(
@@ -167,7 +168,8 @@ internal open class CommandButtonLayoutManagerTile(
         val hasIcon = (command.icon != null) || presentationModel.forceAllocateSpaceForIcon
         val hasText = buttonText.isNotEmpty() or (buttonExtraText != null)
         val hasPopup = (command.secondaryContentModel != null)
-        val iconSize = getPreferredIconSize(command, presentationModel).toPx()
+        val iconWidth = getPreferredIconSize(command, presentationModel).width.toPx()
+        val iconHeight = getPreferredIconSize(command, presentationModel).height.toPx()
 
         val ltr = (layoutDirection == LayoutDirection.Ltr)
 
@@ -227,11 +229,11 @@ internal open class CommandButtonLayoutManagerTile(
                 x += layoutHGap
                 iconRect = Rect(
                     left = x,
-                    right = x + iconSize,
-                    top = (finalHeight - iconSize) / 2,
-                    bottom = (finalHeight - iconSize) / 2 + iconSize
+                    right = x + iconWidth,
+                    top = (finalHeight - iconHeight) / 2,
+                    bottom = (finalHeight - iconHeight) / 2 + iconHeight
                 )
-                x += iconSize + layoutHGap
+                x += iconWidth + layoutHGap
             }
 
             // text
@@ -482,12 +484,12 @@ internal open class CommandButtonLayoutManagerTile(
             if (hasIcon) {
                 x -= layoutHGap
                 iconRect = Rect(
-                    left = x - iconSize,
+                    left = x - iconWidth,
                     right = x,
-                    top = (finalHeight - iconSize) / 2,
-                    bottom = (finalHeight - iconSize) / 2 + iconSize
+                    top = (finalHeight - iconHeight) / 2,
+                    bottom = (finalHeight - iconHeight) / 2 + iconHeight
                 )
-                x -= iconSize + layoutHGap
+                x -= iconWidth + layoutHGap
             }
 
             // text
@@ -750,7 +752,7 @@ internal class CommandButtonLayoutManagerTileFitToIcon(
     override fun getPreferredIconSize(
         command: Command,
         presentationModel: CommandButtonPresentationModel
-    ): Dp {
+    ): DpSize {
         return presentationModel.iconDimension ?: super.getPreferredIconSize(
             command,
             presentationModel

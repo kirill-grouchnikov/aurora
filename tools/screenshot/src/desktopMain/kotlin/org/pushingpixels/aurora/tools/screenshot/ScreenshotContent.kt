@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowScope
 import androidx.compose.ui.window.WindowState
@@ -221,7 +222,7 @@ private fun ScreenshotToolbar(
     val commandPresentationModel = CommandButtonPresentationModel(
         presentationState = CommandButtonPresentationState.SmallFitToIcon,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-        iconDimension = 22.dp,
+        iconDimension = DpSize(22.dp, 22.dp),
         iconEnabledFilterStrategy = iconEnabledFilterStrategy
     )
     Row(

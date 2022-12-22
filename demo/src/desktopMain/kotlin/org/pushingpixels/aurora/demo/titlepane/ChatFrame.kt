@@ -99,7 +99,7 @@ fun AuroraWindowScope.ChatFrameContent(
 
                     IconProjection(
                         contentModel = IconContentModel(icon = chat_black_24dp()),
-                        presentationModel = IconPresentationModel(iconDimension = 16.dp)
+                        presentationModel = IconPresentationModel(iconDimension = DpSize(16.dp, 16.dp))
                     ).project()
                     AuroraWindowTitlePaneTitleText(title = "Chat")
 
@@ -120,14 +120,14 @@ fun AuroraWindowScope.ChatFrameContent(
 
                     IconProjection(
                         contentModel = IconContentModel(icon = help_outline_black_24dp()),
-                        presentationModel = IconPresentationModel(iconDimension = 18.dp)
+                        presentationModel = IconPresentationModel(iconDimension = DpSize(18.dp, 18.dp))
                     ).project()
 
                     Spacer(modifier = Modifier.width(12.dp))
 
                     IconProjection(
                         contentModel = IconContentModel(icon = person_black_24dp()),
-                        presentationModel = IconPresentationModel(iconDimension = 16.dp)
+                        presentationModel = IconPresentationModel(iconDimension = DpSize(16.dp, 16.dp))
                     ).project()
 
                     Spacer(modifier = Modifier.width(2.dp))

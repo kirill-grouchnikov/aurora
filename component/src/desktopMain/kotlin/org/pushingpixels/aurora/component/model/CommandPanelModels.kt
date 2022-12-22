@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
@@ -75,7 +76,7 @@ data class CommandPanelPresentationModel(
     val contentGap: Dp = CommandPanelSizingConstants.DefaultGap,
     val showGroupLabels: Boolean = true,
     val commandPresentationState: CommandButtonPresentationState,
-    val commandIconDimension: Dp = 0.dp,
+    val commandIconDimension: DpSize = DpSize.Zero,
     val commandContentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
     val commandTextStyle: TextStyle? = null,
     val commandTextOverflow: TextOverflow = TextOverflow.Clip,
@@ -98,7 +99,7 @@ data class CommandPopupMenuPanelPresentationModel(
     val contentGap: Dp = CommandPanelSizingConstants.DefaultGap,
     val showGroupLabels: Boolean = true,
     val commandPresentationState: CommandButtonPresentationState,
-    val commandIconDimension: Dp = 0.dp,
+    val commandIconDimension: DpSize = DpSize.Zero,
     val commandContentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
     val commandTextStyle: TextStyle? = null,
     val commandTextOverflow: TextOverflow = TextOverflow.Clip,

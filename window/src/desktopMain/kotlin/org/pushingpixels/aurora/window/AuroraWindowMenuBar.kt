@@ -47,8 +47,8 @@ private object WindowMenuBarLayout {
         override fun getPreferredIconSize(
             command: Command,
             presentationModel: CommandButtonPresentationModel
-        ): Dp {
-            return 0.dp
+        ): DpSize {
+            return DpSize.Zero
         }
 
         override fun getPreferredSize(

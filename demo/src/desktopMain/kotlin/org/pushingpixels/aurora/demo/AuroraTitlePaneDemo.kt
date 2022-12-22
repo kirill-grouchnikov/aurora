@@ -364,7 +364,7 @@ fun AuroraWindowScope.DemoTitlePaneContent(
                 alignmentCommands = alignmentCommands,
                 styleCommands = styleCommands,
                 resourceBundle = resourceBundle,
-                iconDimension = 20.dp
+                iconDimension = DpSize(20.dp, 20.dp),
             )
         }
         Spacer(modifier = Modifier.weight(weight = 1.0f, fill = true))

@@ -35,7 +35,7 @@ Command button presentation models are created by populating attributes on the `
 | --- | --- | --- |
 | **Visuals** | backgroundAppearanceStrategy | BackgroundAppearanceStrategy |
 |  | presentationState | CommandButtonPresentationState |
-|  | iconDimension | Dp
+|  | iconDimension | DpSize
 |  | iconActiveFilterStrategy | IconFilterStrategy
 |  | iconEnabledFilterStrategy | IconFilterStrategy
 |  | iconDisabledFilterStrategy | IconFilterStrategy

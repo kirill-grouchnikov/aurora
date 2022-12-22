@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.component.layout.*
+import org.pushingpixels.aurora.component.ribbon.RibbonApplicationMenuContentModel
 
 interface CommandActionPreview {
     /**
@@ -43,6 +44,13 @@ sealed interface BaseCommand<out M: BaseCommandMenuContentModel>: ContentModel {
     val text: String
     val extraText: String?
     val icon: Painter?
+    val action: (() -> Unit)?
+    val actionPreview: CommandActionPreview?
+    val isActionEnabled: Boolean
+    val isActionToggle: Boolean
+    val isActionToggleSelected: Boolean
+    val actionRichTooltip: RichTooltip?
+    val onTriggerActionToggleSelectedChange: ((Boolean) -> Unit)?
     val secondaryContentModel: M?
     val isSecondaryEnabled: Boolean
     val secondaryRichTooltip: RichTooltip?
@@ -52,13 +60,13 @@ data class Command(
     override val text: String,
     override val extraText: String? = null,
     override val icon: Painter? = null,
-    val action: (() -> Unit)? = null,
-    val actionPreview: CommandActionPreview? = null,
-    val isActionEnabled: Boolean = true,
-    val isActionToggle: Boolean = false,
-    val isActionToggleSelected: Boolean = false,
-    val actionRichTooltip: RichTooltip? = null,
-    val onTriggerActionToggleSelectedChange: ((Boolean) -> Unit)? = null,
+    override val action: (() -> Unit)? = null,
+    override val actionPreview: CommandActionPreview? = null,
+    override val isActionEnabled: Boolean = true,
+    override val isActionToggle: Boolean = false,
+    override val isActionToggleSelected: Boolean = false,
+    override val actionRichTooltip: RichTooltip? = null,
+    override val onTriggerActionToggleSelectedChange: ((Boolean) -> Unit)? = null,
     override val secondaryContentModel: CommandMenuContentModel? = null,
     override val isSecondaryEnabled: Boolean = true,
     override val secondaryRichTooltip: RichTooltip? = null
@@ -71,7 +79,32 @@ data class ColorSelectorCommand(
     override val secondaryContentModel: ColorSelectorPopupMenuContentModel,
     override val isSecondaryEnabled: Boolean = true,
     override val secondaryRichTooltip: RichTooltip? = null
-) : BaseCommand<ColorSelectorPopupMenuContentModel>
+) : BaseCommand<ColorSelectorPopupMenuContentModel> {
+    override val action: (() -> Unit)? = null
+    override val actionPreview: CommandActionPreview? = null
+    override val isActionEnabled: Boolean = false
+    override val isActionToggle: Boolean = false
+    override val isActionToggleSelected: Boolean = false
+    override val actionRichTooltip: RichTooltip? = null
+    override val onTriggerActionToggleSelectedChange: ((Boolean) -> Unit)? = null
+}
+
+data class RibbonApplicationMenuCommand(
+    override val text: String,
+    override val secondaryContentModel: RibbonApplicationMenuContentModel,
+    override val secondaryRichTooltip: RichTooltip? = null
+) : BaseCommand<RibbonApplicationMenuContentModel> {
+    override val extraText: String? = null
+    override val icon: Painter? = null
+    override val action: (() -> Unit)? = null
+    override val actionPreview: CommandActionPreview? = null
+    override val isActionEnabled: Boolean = false
+    override val isActionToggle: Boolean = false
+    override val isActionToggleSelected: Boolean = false
+    override val actionRichTooltip: RichTooltip? = null
+    override val onTriggerActionToggleSelectedChange: ((Boolean) -> Unit)? = null
+    override val isSecondaryEnabled: Boolean = false
+}
 
 data class CommandGroup(
     val title: String? = null,

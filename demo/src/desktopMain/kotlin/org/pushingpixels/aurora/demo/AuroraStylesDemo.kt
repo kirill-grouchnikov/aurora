@@ -322,7 +322,7 @@ fun CommandDemoEditStrip(
                         contentPadding = PaddingValues(0.dp),
                         showGroupLabels = true,
                         commandPresentationState = CommandButtonPresentationState.BigFitToIcon,
-                        commandIconDimension = 36.dp,
+                        commandIconDimension = DpSize(36.dp, 36.dp),
                         commandTextStyle = smallerTextStyle,
                         commandHorizontalGapScaleFactor = 0.25f,
                         iconActiveFilterStrategy = IconFilterStrategy.Original,

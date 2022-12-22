@@ -15,6 +15,19 @@
  */
 package org.pushingpixels.aurora.component.ribbon
 
+import org.pushingpixels.aurora.component.model.BaseCommand
+import org.pushingpixels.aurora.component.model.BaseCommandMenuContentModel
+import org.pushingpixels.aurora.component.model.ContentModel
+import org.pushingpixels.aurora.component.model.PresentationModel
+import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
+import org.pushingpixels.aurora.component.projection.Projection
+
+sealed interface RibbonTaskbarElement
+
+data class RibbonTaskbarCommandProjection(val commandProjection: BaseCommandButtonProjection<BaseCommandMenuContentModel, BaseCommand<BaseCommandMenuContentModel>>) : RibbonTaskbarElement
+data class RibbonTaskbarComponentProjection(val componentProjection: Projection<ContentModel, PresentationModel>) : RibbonTaskbarElement
+data class RibbonTaskbarGalleryProjection(val galleryProjection: RibbonGalleryProjection) : RibbonTaskbarElement
+
 interface RibbonTaskbarKeyTipPolicy {
     /**
      * Returns the keytip for the task bar content (command, component, gallery, menu link)

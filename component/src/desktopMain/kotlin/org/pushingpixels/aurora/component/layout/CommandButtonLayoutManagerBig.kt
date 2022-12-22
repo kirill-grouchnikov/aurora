@@ -39,8 +39,8 @@ internal open class CommandButtonLayoutManagerBig(
     override fun getPreferredIconSize(
         command: Command,
         presentationModel: CommandButtonPresentationModel
-    ): Dp {
-        return 32.dp
+    ): DpSize {
+        return DpSize(32.dp, 32.dp)
     }
 
     protected open fun getCurrentIconWidth(
@@ -48,7 +48,7 @@ internal open class CommandButtonLayoutManagerBig(
         presentationModel: CommandButtonPresentationModel
     ): Dp {
         return if ((command.icon != null) || presentationModel.forceAllocateSpaceForIcon)
-            getPreferredIconSize(command, presentationModel) else 0.dp
+            getPreferredIconSize(command, presentationModel).width else 0.dp
     }
 
     protected open fun getCurrentIconHeight(
@@ -56,7 +56,7 @@ internal open class CommandButtonLayoutManagerBig(
         presentationModel: CommandButtonPresentationModel
     ): Dp {
         return if ((command.icon != null) || presentationModel.forceAllocateSpaceForIcon)
-            getPreferredIconSize(command, presentationModel) else 0.dp
+            getPreferredIconSize(command, presentationModel).height else 0.dp
     }
 
     private fun getTitleStrings(
@@ -441,7 +441,7 @@ internal class CommandButtonLayoutManagerBigFitToIcon(
     override fun getPreferredIconSize(
         command: Command,
         presentationModel: CommandButtonPresentationModel
-    ): Dp {
+    ): DpSize {
         return presentationModel.iconDimension ?: super.getPreferredIconSize(
             command,
             presentationModel

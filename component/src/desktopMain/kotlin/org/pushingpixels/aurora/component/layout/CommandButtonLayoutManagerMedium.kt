@@ -40,8 +40,8 @@ internal open class CommandButtonLayoutManagerMedium(
     override fun getPreferredIconSize(
         command: Command,
         presentationModel: CommandButtonPresentationModel
-    ): Dp {
-        return 16.dp
+    ): DpSize {
+        return DpSize(16.dp, 16.dp)
     }
 
     internal open fun hasIcon(
@@ -65,7 +65,8 @@ internal open class CommandButtonLayoutManagerMedium(
         val hasIcon = hasIcon(command, presentationModel)
         val hasText = buttonText.isNotEmpty()
         val hasPopup = (command.secondaryContentModel != null)
-        val prefIconSize = getPreferredIconSize(command, presentationModel).toPx()
+        val prefIconWidth = getPreferredIconSize(command, presentationModel).width.toPx()
+        val prefIconHeight = getPreferredIconSize(command, presentationModel).height.toPx()
 
         // start with the left insets
         var width = presentationModel.horizontalGapScaleFactor *
@@ -75,7 +76,7 @@ internal open class CommandButtonLayoutManagerMedium(
             // padding before the icon
             width += layoutHGap
             // icon width
-            width += prefIconSize
+            width += prefIconWidth
             // padding after the icon
             width += layoutHGap
         }
@@ -122,7 +123,7 @@ internal open class CommandButtonLayoutManagerMedium(
 
         // and remove the padding before the first and after the last elements
         width -= 2 * layoutHGap
-        return Size(width, by + max(prefIconSize, textHeight))
+        return Size(width, by + max(prefIconHeight, textHeight))
     }
 
     override fun getPreLayoutInfo(
@@ -172,7 +173,8 @@ internal open class CommandButtonLayoutManagerMedium(
         val hasIcon = hasIcon(command, presentationModel)
         val hasText = buttonText.isNotEmpty()
         val hasPopup = (command.secondaryContentModel != null)
-        val iconSize = getPreferredIconSize(command, presentationModel).toPx()
+        val iconWidth = getPreferredIconSize(command, presentationModel).width.toPx()
+        val iconHeight = getPreferredIconSize(command, presentationModel).height.toPx()
 
         val ltr = (layoutDirection == LayoutDirection.Ltr)
 
@@ -228,14 +230,14 @@ internal open class CommandButtonLayoutManagerMedium(
             // icon
             if (hasIcon) {
                 x += layoutHGap
-                val iconTop = paddingTop + (finalHeight - iconSize - paddingTop - paddingBottom) / 2
+                val iconTop = paddingTop + (finalHeight - iconHeight - paddingTop - paddingBottom) / 2
                 iconRect = Rect(
                     left = x,
-                    right = x + iconSize,
+                    right = x + iconWidth,
                     top = iconTop,
-                    bottom = iconTop + iconSize
+                    bottom = iconTop + iconHeight
                 )
-                x += iconSize + layoutHGap
+                x += iconWidth + layoutHGap
             }
 
             // text
@@ -435,14 +437,14 @@ internal open class CommandButtonLayoutManagerMedium(
             // icon
             if (hasIcon) {
                 x -= layoutHGap
-                val iconTop = paddingTop + (finalHeight - iconSize - paddingTop - paddingBottom) / 2
+                val iconTop = paddingTop + (finalHeight - iconHeight - paddingTop - paddingBottom) / 2
                 iconRect = Rect(
-                    left = x - iconSize,
+                    left = x - iconWidth,
                     right = x,
                     top = iconTop,
-                    bottom = iconTop + iconSize
+                    bottom = iconTop + iconHeight
                 )
-                x -= iconSize + layoutHGap
+                x -= iconWidth + layoutHGap
             }
 
             // text
@@ -657,7 +659,7 @@ internal class CommandButtonLayoutManagerMediumFitToIcon(
     override fun getPreferredIconSize(
         command: Command,
         presentationModel: CommandButtonPresentationModel
-    ): Dp {
+    ): DpSize {
         return presentationModel.iconDimension ?: super.getPreferredIconSize(
             command,
             presentationModel

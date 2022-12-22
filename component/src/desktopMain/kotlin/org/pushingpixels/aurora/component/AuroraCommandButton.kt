@@ -49,10 +49,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.*
 import kotlinx.coroutines.*
 import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
@@ -1373,7 +1370,7 @@ private fun CommandButtonExtraTextContent(
 @Composable
 private fun CommandButtonIconContent(
     command: Command, presentationModel: CommandButtonPresentationModel,
-    iconSize: Dp, modelStateInfo: ModelStateInfo, currState: ComponentState,
+    iconSize: DpSize, modelStateInfo: ModelStateInfo, currState: ComponentState,
     drawingCache: CommandButtonDrawingCache
 ) {
     // Compute the combined strength of all the

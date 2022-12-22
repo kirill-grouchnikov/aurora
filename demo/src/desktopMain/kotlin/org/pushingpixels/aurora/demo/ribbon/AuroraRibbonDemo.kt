@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
@@ -39,14 +40,21 @@ import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicies
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizeSequencingPolicies
 import org.pushingpixels.aurora.demo.ColorSolidIcon
 import org.pushingpixels.aurora.demo.DecoratedIcon
+import org.pushingpixels.aurora.demo.EmptyIcon
 import org.pushingpixels.aurora.demo.getQuickStylesContentModel
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.window.auroraApplication
+import java.awt.Component
+import java.awt.Dimension
+import java.awt.Graphics
+import java.awt.image.BufferedImage
 import java.text.MessageFormat
 import java.util.*
+import javax.imageio.ImageIO
 import javax.swing.JColorChooser
+import kotlin.system.exitProcess
 
 fun main() = auroraApplication {
     val state = rememberWindowState(
@@ -147,7 +155,8 @@ fun main() = auroraApplication {
         onTaskClick = { selectedTask = it },
         taskbarElements = taskbarElements,
         taskbarKeyTipPolicy = DefaultRibbonTaskbarKeyTipPolicy(),
-        anchoredCommands = builder.getAnchoredCommands()
+        anchoredCommands = builder.getAnchoredCommands(),
+        applicationMenuCommandButtonProjection = builder.getApplicationMenuCommandButtonProjection()
     )
 }
 
@@ -420,6 +429,123 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
         resourceBundle.getString("Audio.text")
     )
 
+    val amEntryPrintMemo = Command(
+        text = resourceBundle.getString("AppMenuPrint.memo.text"),
+        icon = text_x_generic(),
+        action = { println("Invoked memo") }
+    )
+
+    val amEntryPrintCustom = Command(
+        text = resourceBundle.getString("AppMenuPrint.custom.text"),
+        icon = text_x_generic(),
+        action = { println("Invoked custom") }
+    )
+
+    val amEntrySendMail = Command(
+        text = resourceBundle.getString("AppMenuSend.email.text"),
+        extraText = resourceBundle.getString("AppMenuSend.email.description"),
+        icon = mail_message_new(),
+        action = { println("Invoked email") }
+    )
+
+    val amEntrySendHtml = Command(
+        text = resourceBundle.getString("AppMenuSend.html.text"),
+        icon = text_x_generic(),
+        extraText = resourceBundle.getString("AppMenuSend.html.description"),
+        action = { println("Invoked HTML") }
+    )
+
+    val amEntrySendDoc = Command(
+        text = resourceBundle.getString("AppMenuSend.word.text"),
+        icon = x_office_document(),
+        extraText = resourceBundle.getString("AppMenuSend.word.description"),
+        action = { println("Invoked Word") }
+    )
+
+    val amWirelessWiFi = Command(
+        text = resourceBundle.getString("AppMenuSend.wireless.wifi.text"),
+        icon = EmptyIcon(),
+        action = { println("WiFi activated") }
+    )
+
+    val amWirelessBluetooth = Command(
+        text = resourceBundle.getString("AppMenuSend.wireless.bluetooth.text"),
+        icon = network_wireless(),
+        action = { println("Bluetooth activated") }
+    )
+
+    val wirelessPopupMenuContentModel = CommandMenuContentModel(
+        CommandGroup(commands = listOf(amWirelessWiFi, amWirelessBluetooth))
+    )
+
+    val amEntrySendWireless = Command(
+        text = resourceBundle.getString("AppMenuSend.wireless.text"),
+        icon = network_wireless(),
+        extraText = resourceBundle.getString("AppMenuSend.wireless.description"),
+        secondaryContentModel = wirelessPopupMenuContentModel
+    )
+
+    val sendMenu = CommandMenuContentModel(
+        CommandGroup(
+            title = resourceBundle.getString("AppMenuSend.secondary.textGroupTitle1"),
+            commands = listOf(amEntrySendMail, amEntrySendHtml, amEntrySendDoc, amEntrySendWireless)
+        )
+    )
+
+    val amEntrySend = Command(
+        text = resourceBundle.getString("AppMenuSend.text"),
+        icon = mail_forward(),
+        secondaryContentModel = sendMenu
+    )
+
+    val amEntrySaveAsWord = Command(
+        text = resourceBundle.getString("AppMenuSaveAs.word.text"),
+        icon = x_office_document(),
+        extraText = resourceBundle.getString("AppMenuSaveAs.word.description"),
+        action = { println("Invoked saved as Word") }
+    )
+
+    val amEntrySaveAsHtml = Command(
+        text = resourceBundle.getString("AppMenuSaveAs.html.text"),
+        icon = text_x_generic(),
+        extraText = resourceBundle.getString("AppMenuSaveAs.html.description"),
+        action = { println("Invoked saved as HTML") },
+        isActionEnabled = false
+    )
+
+    val amEntrySaveAsOtherFormats = Command(
+        text = resourceBundle.getString("AppMenuSaveAs.other.text"),
+        icon = document_save_as(),
+        extraText = resourceBundle.getString("AppMenuSaveAs.other.description"),
+        action = { println("Invoked saved as other") }
+    )
+
+    var saveAsMenu = CommandMenuContentModel(
+        CommandGroup(
+            title = resourceBundle.getString("AppMenuSaveAs.secondary.textGroupTitle1"),
+            commands = listOf(amEntrySaveAsWord, amEntrySaveAsHtml, amEntrySaveAsOtherFormats)
+        )
+    )
+
+    val amEntrySaveAs = Command(
+        text = resourceBundle.getString("AppMenuSaveAs.text"),
+        icon = document_save_as(),
+        action = { println("Invoked saving document as") },
+        secondaryContentModel = saveAsMenu
+    )
+
+    val amEntryExit = Command(
+        text = resourceBundle.getString("AppMenuExit.text"),
+        icon = system_log_out(),
+        action = { exitProcess(0) }
+    )
+
+    val amFooterProps = Command(
+        text = resourceBundle.getString("AppMenuOptions.text"),
+        icon = document_properties(),
+        action = { println("Invoked Options") }
+    )
+
     fun getSimpleMenuModel(): CommandMenuContentModel {
         return CommandMenuContentModel(
             groups = listOf(
@@ -509,7 +635,7 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
                                         layoutSpec = MenuPopupPanelLayoutSpec(columnCount = 5, visibleRowCount = 3),
                                         showGroupLabels = false,
                                         commandPresentationState = CommandButtonPresentationState.BigFitToIcon,
-                                        commandIconDimension = 48.dp
+                                        commandIconDimension = DpSize(48.dp, 48.dp),
                                     )
                                 )
                             ),
@@ -1196,6 +1322,211 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
                     popupKeyTip = "GH"
                 )
             )
+        )
+    }
+
+    @Composable
+    fun getApplicationMenuCommandButtonProjection(): RibbonApplicationMenuCommandButtonProjection {
+        val overlays = hashMapOf<Command, CommandButtonPresentationModel.Overlay>()
+        val secondaryStates = hashMapOf<Command, CommandButtonPresentationState>()
+
+        val mf = MessageFormat(resourceBundle.getString("TestMenuItem.text"))
+        val popupCommand1 = Command(
+            text = mf.format(arrayOf("1")),
+            icon = ColorSolidIcon(Color(red = 0x80, green = 0xDE, blue = 0xEA)),
+            action = { println("Test menu item 1 activated") }
+        )
+
+        // "Create new" primary
+        val defaultCommands: MutableList<Command> = mutableListOf()
+        val mfDefault = MessageFormat(resourceBundle.getString("AppMenu.default.textButton"))
+        for (i in 0..4) {
+            val command = Command(
+                text = mfDefault.format(arrayOf("$i")),
+                icon = text_x_generic(),
+                action = { println("Creating $i") }
+            )
+            defaultCommands.add(command)
+        }
+
+        val newMenu = CommandMenuContentModel(
+            CommandGroup(
+                title = resourceBundle.getString("AppMenu.default.textGroupTitle1"),
+                commands = defaultCommands
+            )
+        )
+
+        val amEntryNew = Command(
+            text = resourceBundle.getString("AppMenuNew.text"),
+            icon = document_new(),
+            action = { println("Invoked creating new document") },
+            secondaryContentModel = newMenu
+        )
+
+        overlays[amEntryNew] = CommandButtonPresentationModel.Overlay(
+            actionKeyTip = "N",
+            textClick = TextClick.Action
+        )
+        secondaryStates[amEntryNew] = CommandButtonPresentationState.Medium
+
+        // "Open" primary
+        val historyCommands: MutableList<Command> = mutableListOf()
+        val mfOpen = MessageFormat(resourceBundle.getString("AppMenuOpen.secondary.textButton"))
+        for (i in 0..4) {
+            val command = Command(
+                text = mfOpen.format(arrayOf("$i")),
+                icon = text_x_generic(),
+                action = { println("Opening $i") }
+            )
+            historyCommands.add(command)
+        }
+
+        val historyOpenMenu = CommandMenuContentModel(
+            CommandGroup(
+                resourceBundle.getString("AppMenuOpen.secondary.textGroupTitle1"),
+                historyCommands
+            )
+        )
+
+        val amEntryOpen = Command(
+            text = resourceBundle.getString("AppMenuOpen.text"),
+            icon = document_open(),
+            action = { println("Invoked opening document") },
+            secondaryContentModel = historyOpenMenu
+        )
+
+        overlays[amEntryOpen] = CommandButtonPresentationModel.Overlay(
+            presentationState = CommandButtonPresentationState.Medium,
+            actionKeyTip = "O",
+            textClick = TextClick.Action
+        )
+        secondaryStates[amEntryOpen] = CommandButtonPresentationState.Medium
+
+        // "Save" primary
+        val amEntrySave = Command(
+            text = resourceBundle.getString("AppMenuSave.text"),
+            icon = document_save(),
+            action = { println("Invoked saving document") },
+            isActionEnabled = false
+        )
+        overlays[amEntrySave] = CommandButtonPresentationModel.Overlay(actionKeyTip = "S")
+
+        // "Save as" primary + secondaries
+        overlays[amEntrySaveAsWord] = CommandButtonPresentationModel.Overlay(actionKeyTip = "W")
+        overlays[amEntrySaveAsHtml] = CommandButtonPresentationModel.Overlay(actionKeyTip = "H")
+        overlays[amEntrySaveAsOtherFormats] = CommandButtonPresentationModel.Overlay(actionKeyTip = "O")
+        overlays[amEntrySaveAs] = CommandButtonPresentationModel.Overlay(
+            actionKeyTip = "W",
+            popupKeyTip = "F",
+            textClick = TextClick.Action,
+        )
+        secondaryStates[amEntrySaveAs] = RibbonApplicationMenuButtonPresentationStates.RibbonAppMenuSecondaryLevel
+
+        // "Print" primary + secondaries
+        val amEntryPrintSelect = Command(
+            text = resourceBundle.getString("AppMenuPrint.print.text"),
+            icon = printer(),
+            extraText = resourceBundle.getString("AppMenuPrint.print.description"),
+            action = { println("Invoked print") }
+        )
+
+        val amEntryPrintDefault = Command(
+            text = resourceBundle.getString("AppMenuPrint.quick.text"),
+            icon = printer(),
+            extraText = resourceBundle.getString("AppMenuPrint.quick.description"),
+            action = { println("Invoked quick") }
+        )
+
+        val amEntryPrintPreview = Command(
+            text = resourceBundle.getString("AppMenuPrint.preview.text"),
+            icon = document_print_preview(),
+            extraText = resourceBundle.getString("AppMenuPrint.preview.description"),
+            action = { println("Invoked preview") }
+        )
+
+        overlays[amEntryPrintSelect] = CommandButtonPresentationModel.Overlay(actionKeyTip = "P")
+        overlays[amEntryPrintDefault] = CommandButtonPresentationModel.Overlay(actionKeyTip = "Q")
+        overlays[amEntryPrintPreview] = CommandButtonPresentationModel.Overlay(actionKeyTip = "V")
+        overlays[amEntryPrintMemo] = CommandButtonPresentationModel.Overlay(actionKeyTip = "M")
+        overlays[amEntryPrintCustom] = CommandButtonPresentationModel.Overlay(actionKeyTip = "C")
+
+        val printMenu = CommandMenuContentModel(
+            groups = listOf(
+                CommandGroup(
+                    title = resourceBundle.getString("AppMenuPrint.secondary.textGroupTitle1"),
+                    commands = listOf(amEntryPrintSelect, amEntryPrintDefault, amEntryPrintPreview)
+                ),
+                CommandGroup(
+                    title = resourceBundle.getString("AppMenuPrint.secondary.textGroupTitle2"),
+                    commands = listOf(amEntryPrintMemo, amEntryPrintCustom)
+                )
+            )
+        )
+
+        val amEntryPrint = Command(
+            text = resourceBundle.getString("AppMenuPrint.text"),
+            icon = document_print(),
+            action = { println("Invoked printing as") },
+            secondaryContentModel = printMenu
+        )
+
+        secondaryStates[amEntryPrint] = RibbonApplicationMenuButtonPresentationStates.RibbonAppMenuSecondaryLevel
+        overlays[amEntryPrint] = CommandButtonPresentationModel.Overlay(
+            actionKeyTip = "P",
+            popupKeyTip = "W",
+            textClick = TextClick.Action
+        )
+
+        // "Send" primary + secondaries
+        overlays[amEntrySendMail] = CommandButtonPresentationModel.Overlay(actionKeyTip = "E")
+        overlays[amEntrySendHtml] = CommandButtonPresentationModel.Overlay(actionKeyTip = "H")
+        overlays[amEntrySendDoc] = CommandButtonPresentationModel.Overlay(actionKeyTip = "W")
+
+        overlays[amWirelessWiFi] = CommandButtonPresentationModel.Overlay(actionKeyTip = "W")
+        overlays[amWirelessBluetooth] = CommandButtonPresentationModel.Overlay(actionKeyTip = "B")
+
+        secondaryStates[amEntrySendWireless] = RibbonApplicationMenuButtonPresentationStates.RibbonAppMenuSecondaryLevel
+        overlays[amEntrySendWireless] = CommandButtonPresentationModel.Overlay(popupKeyTip = "X")
+
+        secondaryStates[amEntrySend] = RibbonApplicationMenuButtonPresentationStates.RibbonAppMenuSecondaryLevel
+        overlays[amEntrySend] = CommandButtonPresentationModel.Overlay(popupKeyTip = "D")
+
+        overlays[amEntryExit] = CommandButtonPresentationModel.Overlay(popupKeyTip = "X")
+
+        val applicationMenu = RibbonApplicationMenuContentModel(
+            groups = listOf(
+                CommandGroup(commands = listOf(amEntryNew, amEntryOpen, amEntrySave, amEntrySaveAs)),
+                CommandGroup(commands = listOf(amEntryPrint, amEntrySend)),
+                CommandGroup(commands = listOf(amEntryExit))
+            ),
+            footerCommands = CommandGroup(commands = listOf(amFooterProps))
+        )
+
+        overlays[amFooterProps] = CommandButtonPresentationModel.Overlay(actionKeyTip = "T")
+
+        val tooltipImage = painterResource("/org/pushingpixels/aurora/demo/appmenubutton-tooltip-main.png")
+        val tooltipImageRatio =
+            tooltipImage.intrinsicSize.width / tooltipImage.intrinsicSize.height
+        val tooltipImageScaledSize = DpSize(160.dp, 160.dp / tooltipImageRatio)
+
+        return RibbonApplicationMenuCommandButtonProjection(
+            contentModel = RibbonApplicationMenuCommand(
+                text = resourceBundle.getString("AppMenu.title"),
+                secondaryRichTooltip = RichTooltip(
+                    title = resourceBundle.getString("AppMenu.tooltip.title"),
+                    descriptionSections = listOf(resourceBundle.getString("AppMenu.tooltip.paragraph1")),
+                    mainIcon = null,
+                    footerIcon = help_browser(),
+                    footerSections = listOf(resourceBundle.getString("AppMenu.tooltip.footer1"))
+                ),
+                secondaryContentModel = applicationMenu
+            ),
+            presentationModel = CommandButtonPresentationModel(popupKeyTip = "F",
+                popupRichTooltipPresentationModel = RichTooltipPresentationModel(
+                    mainIconSize = tooltipImageScaledSize
+                )),
+            overlays = overlays,
+            secondaryStates = secondaryStates
         )
     }
 }

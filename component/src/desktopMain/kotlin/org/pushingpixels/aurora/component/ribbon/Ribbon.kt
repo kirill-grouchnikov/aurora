@@ -15,11 +15,22 @@
  */
 package org.pushingpixels.aurora.component.ribbon
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
+import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.Projection
+import org.pushingpixels.aurora.component.projection.RibbonApplicationMenuCommandButtonProjection
 
 enum class PresentationPriority {
     /** Top priority */
@@ -88,21 +99,24 @@ interface OnShowContextualMenuListener {
     fun getContextualMenuContentModel(ribbon: Ribbon): CommandMenuContentModel
 }
 
-data class RibbonApplicationMenuCommandButtonPresentationModel(
-    val popupKeyTip: String? = null
-) : PresentationModel
+data class RibbonApplicationMenuContentModel(
+    val groups: List<CommandGroup>,
+    val footerCommands: CommandGroup
+): BaseCommandMenuContentModel
 
-class RibbonApplicationMenuCommandButtonProjection(
-    val contentModel: Command,
-    val presentationModel: RibbonApplicationMenuCommandButtonPresentationModel,
-    val secondaryLevelCommandPresentationStates: Map<Command, CommandButtonPresentationState>
-) : Projection<Command, RibbonApplicationMenuCommandButtonPresentationModel>()
-
-sealed interface RibbonTaskbarElement
-
-data class RibbonTaskbarCommandProjection(val commandProjection: BaseCommandButtonProjection<BaseCommandMenuContentModel, BaseCommand<BaseCommandMenuContentModel>>) : RibbonTaskbarElement
-data class RibbonTaskbarComponentProjection(val componentProjection: Projection<ContentModel, PresentationModel>) : RibbonTaskbarElement
-data class RibbonTaskbarGalleryProjection(val galleryProjection: RibbonGalleryProjection) : RibbonTaskbarElement
+object RibbonApplicationMenuButtonPresentationStates {
+    val RibbonAppMenuSecondaryLevel: CommandButtonPresentationState =
+        object : CommandButtonPresentationState("Ribbon application menu tile level 2") {
+            override fun createLayoutManager(
+                layoutDirection: LayoutDirection,
+                density: Density,
+                textStyle: TextStyle,
+                fontFamilyResolver: FontFamily.Resolver
+            ): CommandButtonLayoutManager {
+                throw UnsupportedOperationException()
+            }
+        }
+}
 
 data class Ribbon(
     val tasks: List<RibbonTask>,

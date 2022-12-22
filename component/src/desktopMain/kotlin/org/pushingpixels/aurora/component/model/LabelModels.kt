@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 
@@ -31,12 +32,12 @@ data class LabelContentModel(
 
 object LabelSizingConstants {
     val DefaultLabelContentPadding = PaddingValues(start = 5.dp, top = 4.dp, end = 5.dp, bottom = 4.dp)
-    val DefaultLabelIconSize = 16.dp
+    val DefaultLabelIconSize = DpSize(16.dp, 16.dp)
 }
 
 data class LabelPresentationModel(
     val contentPadding: PaddingValues = LabelSizingConstants.DefaultLabelContentPadding,
-    val iconDimension: Dp = LabelSizingConstants.DefaultLabelIconSize,
+    val iconDimension: DpSize = LabelSizingConstants.DefaultLabelIconSize,
     val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val inheritStateFromParent: Boolean = false,

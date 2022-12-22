@@ -20,6 +20,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonKind
@@ -117,7 +118,7 @@ interface CommandButtonLayoutManager : MeasureScope {
     fun getPreferredIconSize(
         command: Command,
         presentationModel: CommandButtonPresentationModel
-    ): Dp
+    ): DpSize
 
     /**
      * Returns the pre-layout information for the specified parameters.

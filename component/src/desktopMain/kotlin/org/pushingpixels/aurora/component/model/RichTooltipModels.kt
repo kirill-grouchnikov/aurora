@@ -18,12 +18,13 @@ package org.pushingpixels.aurora.component.model
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 
 object RichTooltipSizingConstants {
     val MaxWidth = 264.dp
-    val SmallIconSize = 16.dp
-    val LargeIconSize = 32.dp
+    val SmallIconSize = DpSize(16.dp, 16.dp)
+    val LargeIconSize = DpSize(32.dp, 32.dp)
     val DefaultContentPadding = PaddingValues(6.dp)
     val HorizontalContentLayoutGap = 6.dp
     val VerticalContentLayoutGap = 6.dp
@@ -135,7 +136,7 @@ data class RichTooltip(
 )
 
 data class RichTooltipPresentationModel(
-    val mainIconSize: Dp = RichTooltipSizingConstants.LargeIconSize,
-    val footerIconSize: Dp = RichTooltipSizingConstants.SmallIconSize,
+    val mainIconSize: DpSize = RichTooltipSizingConstants.LargeIconSize,
+    val footerIconSize: DpSize = RichTooltipSizingConstants.SmallIconSize,
     val contentPadding: PaddingValues = RichTooltipSizingConstants.DefaultContentPadding
 ) : PresentationModel

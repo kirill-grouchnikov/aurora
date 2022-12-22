@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
@@ -50,7 +51,7 @@ data class CommandButtonPresentationModel(
     val presentationState: CommandButtonPresentationState = CommandButtonPresentationState.Medium,
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
-    val iconDimension: Dp? = null,
+    val iconDimension: DpSize? = null,
     val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
@@ -80,7 +81,7 @@ data class CommandButtonPresentationModel(
         val presentationState: CommandButtonPresentationState? = null,
         val backgroundAppearanceStrategy: BackgroundAppearanceStrategy? = null,
         val horizontalAlignment: HorizontalAlignment? = null,
-        val iconDimension: Dp? = null,
+        val iconDimension: DpSize? = null,
         val iconDisabledFilterStrategy: IconFilterStrategy? = null,
         val iconEnabledFilterStrategy: IconFilterStrategy? = null,
         val iconActiveFilterStrategy: IconFilterStrategy? = null,

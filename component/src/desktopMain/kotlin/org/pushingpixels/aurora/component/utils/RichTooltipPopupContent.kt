@@ -134,8 +134,10 @@ internal fun displayRichTooltipContent(
     }
 
     // Main icon - under the title
-    val mainIconSize = if (richTooltip.mainIcon == null) 0.0f else
-        presentationModel.mainIconSize.value * density.density
+    val mainIconWidth = if (richTooltip.mainIcon == null) 0.0f else
+        presentationModel.mainIconSize.width.value * density.density
+    val mainIconHeight = if (richTooltip.mainIcon == null) 0.0f else
+        presentationModel.mainIconSize.height.value * density.density
 
     // Description section(s)
     val descriptionSizes = ArrayList<Size>()
@@ -150,7 +152,7 @@ internal fun displayRichTooltipContent(
         // If we're showing the icon, that eats into the horizontal space available to the
         // description sections
         val maxDescriptionWidthPx = if (richTooltip.mainIcon == null) maxContentWidthPx
-        else maxContentWidthPx - mainIconSize - horizontalGapPx
+        else maxContentWidthPx - mainIconWidth - horizontalGapPx
 
         for (descriptionSection in richTooltip.descriptionSections) {
             // Create the description paragraph with the available horizontal space.
@@ -173,10 +175,10 @@ internal fun displayRichTooltipContent(
     }
 
     // Content height so far is the max of icon height and title / descriptions height
-    if ((mainIconSize > 0) || (descriptionTextHeightPx > 0)) {
+    if ((mainIconHeight > 0) || (descriptionTextHeightPx > 0)) {
         // Gap between title and icon / description
         fullContentHeight += verticalGapPx
-        fullContentHeight += kotlin.math.max(mainIconSize, descriptionTextHeightPx)
+        fullContentHeight += kotlin.math.max(mainIconHeight, descriptionTextHeightPx)
     }
 
     if (richTooltip.hasFooterContent) {
@@ -188,8 +190,10 @@ internal fun displayRichTooltipContent(
         fullContentHeight += verticalGapPx
     }
 
-    val footerIconSize = if (richTooltip.footerIcon == null) 0.0f else
-        presentationModel.footerIconSize.value * density.density
+    val footerIconWidth = if (richTooltip.footerIcon == null) 0.0f else
+        presentationModel.footerIconSize.width.value * density.density
+    val footerIconHeight = if (richTooltip.footerIcon == null) 0.0f else
+        presentationModel.footerIconSize.height.value * density.density
 
     // Footer section(s)
     val footerSizes = ArrayList<Size>()
@@ -204,7 +208,7 @@ internal fun displayRichTooltipContent(
         // If we're showing the footer icon, that eats into the horizontal space available to the
         // footer sections
         val maxFooterWidthPx = if (richTooltip.footerIcon == null) maxContentWidthPx
-        else maxContentWidthPx - footerIconSize - horizontalGapPx
+        else maxContentWidthPx - footerIconWidth - horizontalGapPx
 
         for (footerSection in richTooltip.footerSections) {
             // Create the footer paragraph with the available horizontal space.
@@ -226,7 +230,7 @@ internal fun displayRichTooltipContent(
         }
     }
 
-    fullContentHeight += kotlin.math.max(footerIconSize, footerTextHeightPx)
+    fullContentHeight += kotlin.math.max(footerIconHeight, footerTextHeightPx)
 
     // Account for content paddings
     fullContentWidth += horizontalPaddingPx
@@ -239,8 +243,8 @@ internal fun displayRichTooltipContent(
         ),
         titleSize = Size(titleWidth, titleParagraph.height),
         mainIconSize = if (richTooltip.mainIcon == null) Size.Zero else Size(
-            presentationModel.mainIconSize.value * density.density,
-            presentationModel.mainIconSize.value * density.density
+            presentationModel.mainIconSize.width.value * density.density,
+            presentationModel.mainIconSize.height.value * density.density
         ),
         descriptionSizes = descriptionSizes,
         footerSeparatorSize = if (!richTooltip.hasFooterContent) Size.Zero else Size(
@@ -248,8 +252,8 @@ internal fun displayRichTooltipContent(
             SeparatorSizingConstants.Thickness.value * density.density
         ),
         footerIconSize = if (richTooltip.footerIcon == null) Size.Zero else Size(
-            presentationModel.footerIconSize.value * density.density,
-            presentationModel.footerIconSize.value * density.density
+            presentationModel.footerIconSize.width.value * density.density,
+            presentationModel.footerIconSize.height.value * density.density
         ),
         footerSizes = footerSizes
     )

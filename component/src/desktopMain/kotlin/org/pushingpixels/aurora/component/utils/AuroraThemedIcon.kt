@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.theming.*
@@ -105,7 +106,7 @@ private class IconDrawingCache(
 @Composable
 internal fun AuroraThemedIcon(
     icon: Painter,
-    size: Dp,
+    size: DpSize,
     disabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
     enabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     activeFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,

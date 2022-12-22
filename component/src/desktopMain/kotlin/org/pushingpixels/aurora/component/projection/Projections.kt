@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.ribbon.RibbonApplicationMenuContentModel
 import org.pushingpixels.aurora.theming.LocalPopupMenu
 
 abstract class Projection<out C : ContentModel, out P : PresentationModel>
@@ -67,6 +68,23 @@ class ColorSelectorCommandButtonProjection(
     presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel(),
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
 ) : BaseCommandButtonProjection<ColorSelectorPopupMenuContentModel, ColorSelectorCommand>(
+    contentModel, presentationModel, overlays
+) {
+    @OptIn(AuroraInternalApi::class)
+    @Composable
+    fun project(
+        modifier: Modifier = Modifier,
+        popupInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    ) {
+    }
+}
+
+class RibbonApplicationMenuCommandButtonProjection(
+    contentModel: RibbonApplicationMenuCommand,
+    presentationModel: CommandButtonPresentationModel,
+    overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null,
+    secondaryStates: Map<Command, CommandButtonPresentationState>? = null
+) : BaseCommandButtonProjection<RibbonApplicationMenuContentModel, RibbonApplicationMenuCommand>(
     contentModel, presentationModel, overlays
 ) {
     @OptIn(AuroraInternalApi::class)

@@ -75,3 +75,11 @@ class DecoratedIcon(val main: Painter, val decoration: Painter) : Painter() {
     }
 }
 
+class EmptyIcon: Painter() {
+    override val intrinsicSize: Size
+        get() = Size.Unspecified
+
+    override fun DrawScope.onDraw() {
+    }
+}
+

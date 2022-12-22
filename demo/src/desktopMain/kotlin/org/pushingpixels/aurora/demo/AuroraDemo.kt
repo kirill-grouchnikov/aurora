@@ -166,7 +166,7 @@ fun DemoProgress(enabled: Boolean) {
                 action = { progress -= 0.1f }),
             presentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.Small,
-                iconDimension = 14.dp,
+                iconDimension = DpSize(14.dp, 14.dp),
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
                 iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                 iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -188,7 +188,7 @@ fun DemoProgress(enabled: Boolean) {
                 action = { progress += 0.1f }),
             presentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.Small,
-                iconDimension = 14.dp,
+                iconDimension = DpSize(14.dp, 14.dp),
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
                 iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                 iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -204,7 +204,7 @@ fun DemoToolbar(
     alignmentCommands: CommandGroup,
     styleCommands: CommandGroup,
     resourceBundle: ResourceBundle,
-    iconDimension: Dp = 16.dp
+    iconDimension: DpSize = DpSize(16.dp, 16.dp)
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -388,7 +388,7 @@ fun DemoFooter(
             contentModel = alignmentCommands,
             presentationModel = CommandStripPresentationModel(
                 orientation = StripOrientation.Horizontal,
-                iconDimension = 14.dp
+                iconDimension = DpSize(14.dp, 14.dp)
             )
         ).project()
     }
@@ -425,7 +425,7 @@ fun DemoHeader(
             ),
             presentationModel = LabelPresentationModel(
                 textStyle = textStyle,
-                iconDimension = 10.dp,
+                iconDimension = DpSize(10.dp, 10.dp),
                 iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                 iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
             )
@@ -498,7 +498,7 @@ fun AuroraApplicationScope.DemoArea(
                         }
                     ),
                     presentationModel = CommandButtonPresentationModel(
-                        iconDimension = 20.dp,
+                        iconDimension = DpSize(20.dp, 20.dp),
                         // This is a full-color icon. Use original colors for enabled and active
                         // states, and color scheme based filtering for disabled states
                         iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
@@ -518,7 +518,7 @@ fun AuroraApplicationScope.DemoArea(
                         action = {}
                     ),
                     presentationModel = CommandButtonPresentationModel(
-                        iconDimension = 20.dp,
+                        iconDimension = DpSize(20.dp, 20.dp),
                         iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -538,7 +538,7 @@ fun AuroraApplicationScope.DemoArea(
                     ),
                     presentationModel = CommandButtonPresentationModel(
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                        iconDimension = 20.dp,
+                        iconDimension = DpSize(20.dp, 20.dp),
                         iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -552,7 +552,7 @@ fun AuroraApplicationScope.DemoArea(
                     contentModel = styleCommands,
                     presentationModel = CommandStripPresentationModel(
                         orientation = StripOrientation.Horizontal,
-                        iconDimension = 20.dp
+                        iconDimension = DpSize(20.dp, 20.dp)
                     )
                 ).project()
 
@@ -574,7 +574,7 @@ fun AuroraApplicationScope.DemoArea(
                     ),
                     presentationModel = CommandButtonPresentationModel(
                         presentationState = CommandButtonPresentationState.Small,
-                        iconDimension = 24.dp,
+                        iconDimension = DpSize(24.dp, 24.dp),
                         iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -600,7 +600,7 @@ fun AuroraApplicationScope.DemoArea(
                     ),
                     presentationModel = CommandButtonPresentationModel(
                         presentationState = CommandButtonPresentationState.Small,
-                        iconDimension = 24.dp,
+                        iconDimension = DpSize(24.dp, 24.dp),
                         iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -644,8 +644,8 @@ fun AuroraApplicationScope.DemoArea(
                         displayConverter = { it },
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
                         richTooltipPresentationModel = RichTooltipPresentationModel(
-                            mainIconSize = 36.dp,
-                            footerIconSize = 20.dp
+                            mainIconSize = DpSize(36.dp, 36.dp),
+                            footerIconSize = DpSize(20.dp, 20.dp)
                         )
                     )
                 ).project()

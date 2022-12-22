@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -60,35 +61,35 @@ fun AuroraWindowScope.ThreadPanel(modifier: Modifier) {
                 IconProjection(
                     contentModel = IconContentModel(icon = close_black_24dp()),
                     presentationModel = IconPresentationModel(
-                        iconDimension = 22.dp,
+                        iconDimension = DpSize(22.dp, 22.dp),
                         iconColorFilter = iconColorFilter
                     )
                 ).project()
                 IconProjection(
                     contentModel = IconContentModel(icon = view_list_black_24dp()),
                     presentationModel = IconPresentationModel(
-                        iconDimension = 22.dp,
+                        iconDimension = DpSize(22.dp, 22.dp),
                         iconColorFilter = iconColorFilter
                     )
                 ).project()
                 IconProjection(
                     contentModel = IconContentModel(icon = alarm_black_24dp()),
                     presentationModel = IconPresentationModel(
-                        iconDimension = 22.dp,
+                        iconDimension = DpSize(22.dp, 22.dp),
                         iconColorFilter = iconColorFilter
                     )
                 ).project()
                 IconProjection(
                     contentModel = IconContentModel(icon = archive_black_24dp()),
                     presentationModel = IconPresentationModel(
-                        iconDimension = 22.dp,
+                        iconDimension = DpSize(22.dp, 22.dp),
                         iconColorFilter = iconColorFilter
                     )
                 ).project()
                 IconProjection(
                     contentModel = IconContentModel(icon = delete_black_24dp()),
                     presentationModel = IconPresentationModel(
-                        iconDimension = 22.dp,
+                        iconDimension = DpSize(22.dp, 22.dp),
                         iconColorFilter = iconColorFilter
                     )
                 ).project()
@@ -270,7 +271,7 @@ private fun ExpandedMessagePanel(
                 IconProjection(
                     contentModel = IconContentModel(icon = reply_black_24dp()),
                     presentationModel = IconPresentationModel(
-                        iconDimension = 16.dp,
+                        iconDimension = DpSize(16.dp, 16.dp),
                         iconColorFilter = iconColorFilter
                     )
                 ).project()
@@ -280,7 +281,7 @@ private fun ExpandedMessagePanel(
                 IconProjection(
                     contentModel = IconContentModel(icon = more_horiz_black_24dp()),
                     presentationModel = IconPresentationModel(
-                        iconDimension = 16.dp,
+                        iconDimension = DpSize(16.dp, 16.dp),
                         iconColorFilter = iconColorFilter
                     )
                 ).project()
@@ -321,7 +322,7 @@ private fun ExpandedMessagePanel(
                 IconProjection(
                     contentModel = IconContentModel(icon = refresh_black_24dp()),
                     presentationModel = IconPresentationModel(
-                        iconDimension = 16.dp,
+                        iconDimension = DpSize(16.dp, 16.dp),
                         iconColorFilter = ColorFilter.tint(color = historyColor)
                     )
                 ).project()
