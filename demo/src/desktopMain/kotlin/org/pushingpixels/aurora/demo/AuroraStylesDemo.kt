@@ -151,7 +151,7 @@ fun getStylesContentModel(
             extraText = color.shorthexa,
             icon = ColorSolidIcon(color),
             actionPreview = object : CommandActionPreview {
-                override fun onCommandPreviewActivated(command: Command) {
+                override fun onCommandPreviewActivated(command: BaseCommand) {
                     onStyleDataChanged.invoke(
                         styleData.copy(
                             isInPreview = true,
@@ -161,7 +161,7 @@ fun getStylesContentModel(
                     )
                 }
 
-                override fun onCommandPreviewCanceled(command: Command) {
+                override fun onCommandPreviewCanceled(command: BaseCommand) {
                     onStyleDataChanged.invoke(styleData.copy(isInPreview = false))
                 }
             },
@@ -192,7 +192,7 @@ fun getStylesContentModel(
             extraText = colorTop.shorthexa,
             icon = ColorGradientIcon(colorTop, colorBottom),
             actionPreview = object : CommandActionPreview {
-                override fun onCommandPreviewActivated(command: Command) {
+                override fun onCommandPreviewActivated(command: BaseCommand) {
                     onStyleDataChanged.invoke(
                         styleData.copy(
                             isInPreview = true,
@@ -202,7 +202,7 @@ fun getStylesContentModel(
                     )
                 }
 
-                override fun onCommandPreviewCanceled(command: Command) {
+                override fun onCommandPreviewCanceled(command: BaseCommand) {
                     onStyleDataChanged.invoke(styleData.copy(isInPreview = false))
                 }
             },

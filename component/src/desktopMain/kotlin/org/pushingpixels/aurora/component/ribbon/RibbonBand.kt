@@ -45,7 +45,7 @@ infix fun <C: ContentModel, P: PresentationModel> Projection<C, P>.with(that: Ri
 
 data class RibbonBandGroup(
     val title: String? = null,
-    val commandProjections: List<Pair<BaseCommandButtonProjection<BaseCommandMenuContentModel, BaseCommand<BaseCommandMenuContentModel>>, PresentationPriority>> = emptyList(),
+    val commandProjections: List<Pair<BaseCommandButtonProjection<BaseCommand>, PresentationPriority>> = emptyList(),
     val componentProjections: List<Pair<Projection<ContentModel, PresentationModel>, RibbonComponentPresentationModel>> = emptyList(),
     val galleryProjections: List<Pair<RibbonGalleryProjection, PresentationPriority>> = emptyList(),
 )

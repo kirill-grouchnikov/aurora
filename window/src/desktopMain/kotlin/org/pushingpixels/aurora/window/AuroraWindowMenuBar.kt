@@ -45,14 +45,14 @@ private object WindowMenuBarLayout {
         override val fontScale = _density.fontScale
 
         override fun getPreferredIconSize(
-            command: Command,
+            command: BaseCommand,
             presentationModel: CommandButtonPresentationModel
         ): DpSize {
             return DpSize.Zero
         }
 
         override fun getPreferredSize(
-            command: Command,
+            command: BaseCommand,
             presentationModel: CommandButtonPresentationModel,
             preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
         ): Size {
@@ -75,7 +75,7 @@ private object WindowMenuBarLayout {
         }
 
         override fun getPreLayoutInfo(
-            command: Command,
+            command: BaseCommand,
             presentationModel: CommandButtonPresentationModel
         ): CommandButtonLayoutManager.CommandButtonPreLayoutInfo {
             val hasAction = (command.action != null)
@@ -103,7 +103,7 @@ private object WindowMenuBarLayout {
 
         override fun getLayoutInfo(
             constraints: Constraints,
-            command: Command,
+            command: BaseCommand,
             presentationModel: CommandButtonPresentationModel,
             preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
         ): CommandButtonLayoutManager.CommandButtonLayoutInfo {

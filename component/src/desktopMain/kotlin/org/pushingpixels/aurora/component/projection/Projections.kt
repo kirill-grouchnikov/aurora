@@ -29,7 +29,7 @@ import org.pushingpixels.aurora.theming.LocalPopupMenu
 
 abstract class Projection<out C : ContentModel, out P : PresentationModel>
 
-sealed class BaseCommandButtonProjection<out P : BaseCommandMenuContentModel, out M : BaseCommand<P>>(
+sealed class BaseCommandButtonProjection<out M : BaseCommand>(
     open val contentModel: M,
     open val presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel(),
     open val overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
@@ -39,7 +39,7 @@ class CommandButtonProjection(
     contentModel: Command,
     presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel(),
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
-) : BaseCommandButtonProjection<CommandMenuContentModel, Command>(
+) : BaseCommandButtonProjection<Command>(
     contentModel, presentationModel, overlays
 ) {
     @OptIn(AuroraInternalApi::class)
@@ -67,7 +67,7 @@ class ColorSelectorCommandButtonProjection(
     contentModel: ColorSelectorCommand,
     presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel(),
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
-) : BaseCommandButtonProjection<ColorSelectorPopupMenuContentModel, ColorSelectorCommand>(
+) : BaseCommandButtonProjection<ColorSelectorCommand>(
     contentModel, presentationModel, overlays
 ) {
     @OptIn(AuroraInternalApi::class)
@@ -84,7 +84,7 @@ class RibbonApplicationMenuCommandButtonProjection(
     presentationModel: CommandButtonPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null,
     secondaryStates: Map<Command, CommandButtonPresentationState>? = null
-) : BaseCommandButtonProjection<RibbonApplicationMenuContentModel, RibbonApplicationMenuCommand>(
+) : BaseCommandButtonProjection<RibbonApplicationMenuCommand>(
     contentModel, presentationModel, overlays
 ) {
     @OptIn(AuroraInternalApi::class)

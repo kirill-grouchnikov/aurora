@@ -36,14 +36,14 @@ internal open class CommandButtonLayoutManagerTile(
     override val fontScale = _density.fontScale
 
     override fun getPreferredIconSize(
-        command: Command,
+        command: BaseCommand,
         presentationModel: CommandButtonPresentationModel
     ): DpSize {
         return DpSize(32.dp, 32.dp)
     }
 
     override fun getPreferredSize(
-        command: Command,
+        command: BaseCommand,
         presentationModel: CommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): Size {
@@ -125,7 +125,7 @@ internal open class CommandButtonLayoutManagerTile(
     }
 
     override fun getPreLayoutInfo(
-        command: Command,
+        command: BaseCommand,
         presentationModel: CommandButtonPresentationModel
     ): CommandButtonLayoutManager.CommandButtonPreLayoutInfo {
         val hasAction = (command.action != null)
@@ -145,7 +145,7 @@ internal open class CommandButtonLayoutManagerTile(
             commandButtonKind = commandButtonKind,
             showIcon = (command.icon != null) || presentationModel.forceAllocateSpaceForIcon,
             texts = listOf(command.text),
-            extraTexts = if (command.extraText != null) listOf(command.extraText) else emptyList(),
+            extraTexts = if (command.extraText != null) listOf(command.extraText!!) else emptyList(),
             isTextInActionArea = (hasAction or command.isActionToggle) &&
                     (presentationModel.textClick == TextClick.Action),
             separatorOrientation = CommandButtonLayoutManager.CommandButtonSeparatorOrientation.Vertical,
@@ -155,7 +155,7 @@ internal open class CommandButtonLayoutManagerTile(
 
     override fun getLayoutInfo(
         constraints: Constraints,
-        command: Command,
+        command: BaseCommand,
         presentationModel: CommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
@@ -261,7 +261,7 @@ internal open class CommandButtonLayoutManagerTile(
 
                 if (command.extraText != null) {
                     val extraParagraph = Paragraph(
-                        text = command.extraText,
+                        text = command.extraText!!,
                         style = textStyle,
                         constraints = Constraints(maxWidth = Int.MAX_VALUE),
                         density = _density,
@@ -270,7 +270,7 @@ internal open class CommandButtonLayoutManagerTile(
                     )
 
                     val extraLineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
-                        text = command.extraText,
+                        text = command.extraText!!,
                         textRect = Rect(
                             left = x,
                             right = x + extraParagraph.maxIntrinsicWidth,
@@ -517,7 +517,7 @@ internal open class CommandButtonLayoutManagerTile(
 
                 if (command.extraText != null) {
                     val extraParagraph = Paragraph(
-                        text = command.extraText,
+                        text = command.extraText!!,
                         style = textStyle,
                         constraints = Constraints(maxWidth = Int.MAX_VALUE),
                         density = _density,
@@ -526,7 +526,7 @@ internal open class CommandButtonLayoutManagerTile(
                     )
 
                     val extraLineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
-                        text = command.extraText,
+                        text = command.extraText!!,
                         textRect = Rect(
                             left = x - extraParagraph.maxIntrinsicWidth,
                             right = x,
@@ -750,7 +750,7 @@ internal class CommandButtonLayoutManagerTileFitToIcon(
     fontFamilyResolver: FontFamily.Resolver
 ) : CommandButtonLayoutManagerTile(layoutDirection, _density, textStyle, fontFamilyResolver) {
     override fun getPreferredIconSize(
-        command: Command,
+        command: BaseCommand,
         presentationModel: CommandButtonPresentationModel
     ): DpSize {
         return presentationModel.iconDimension ?: super.getPreferredIconSize(

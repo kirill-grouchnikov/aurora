@@ -328,7 +328,7 @@ internal fun AuroraCommandButton(
     modifier: Modifier,
     actionInteractionSource: MutableInteractionSource,
     popupInteractionSource: MutableInteractionSource,
-    command: Command,
+    command: BaseCommand,
     parentPopupMenu: AuroraSwingPopupMenu?,
     extraAction: (() -> Unit)? = null,
     extraActionPreview: CommandActionPreview? = null,
@@ -336,7 +336,8 @@ internal fun AuroraCommandButton(
     presentationModel: CommandButtonPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>
 ) {
-    val secondaryContentModel = rememberUpdatedState(command.secondaryContentModel)
+    val secondaryContentModel =  
+        rememberUpdatedState(command.secondaryContentModel as CommandMenuContentModel?)
     val drawingCache = remember { CommandButtonDrawingCache() }
 
     var wasActionRollover by remember { mutableStateOf(false) }
@@ -614,7 +615,7 @@ internal fun AuroraCommandButton(
         }
     }
 
-    val layoutManager =
+    val layoutManager: CommandButtonLayoutManager =
         presentationModel.presentationState.createLayoutManager(
             layoutDirection = layoutDirection,
             density = density,
@@ -1369,7 +1370,8 @@ private fun CommandButtonExtraTextContent(
 @OptIn(AuroraInternalApi::class)
 @Composable
 private fun CommandButtonIconContent(
-    command: Command, presentationModel: CommandButtonPresentationModel,
+    command: BaseCommand,
+    presentationModel: CommandButtonPresentationModel,
     iconSize: DpSize, modelStateInfo: ModelStateInfo, currState: ComponentState,
     drawingCache: CommandButtonDrawingCache
 ) {
@@ -1486,7 +1488,7 @@ private fun CommandButtonIconContent(
             }
         } else {
             val icon = if (command.icon is TransitionAwarePainterDelegate)
-                command.icon.createNewIcon(modelStateInfo.getSnapshot(currState))
+                (command.icon as TransitionAwarePainterDelegate).createNewIcon(modelStateInfo.getSnapshot(currState))
             else
                 command.icon
 
@@ -1507,7 +1509,7 @@ private fun CommandButtonIconContent(
                 LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currState)
             ) {
                 AuroraThemedIcon(
-                    icon = icon,
+                    icon = icon!!,
                     size = iconSize,
                     disabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
                     enabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,

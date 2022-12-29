@@ -34,14 +34,14 @@ internal open class CommandButtonLayoutManagerSmall(
     override val fontScale = _density.fontScale
 
     override fun getPreferredIconSize(
-        command: Command,
+        command: BaseCommand,
         presentationModel: CommandButtonPresentationModel
     ): DpSize {
         return DpSize(16.dp, 16.dp)
     }
 
     override fun getPreferredSize(
-        command: Command,
+        command: BaseCommand,
         presentationModel: CommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): Size {
@@ -92,7 +92,7 @@ internal open class CommandButtonLayoutManagerSmall(
     }
 
     override fun getPreLayoutInfo(
-        command: Command,
+        command: BaseCommand,
         presentationModel: CommandButtonPresentationModel
     ): CommandButtonLayoutManager.CommandButtonPreLayoutInfo {
         val hasAction = (command.action != null)
@@ -122,7 +122,7 @@ internal open class CommandButtonLayoutManagerSmall(
 
     override fun getLayoutInfo(
         constraints: Constraints,
-        command: Command,
+        command: BaseCommand,
         presentationModel: CommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
@@ -381,7 +381,7 @@ internal class CommandButtonLayoutManagerSmallFitToIcon(
     fontFamilyResolver: FontFamily.Resolver
 ) : CommandButtonLayoutManagerSmall(layoutDirection, _density, textStyle, fontFamilyResolver) {
     override fun getPreferredIconSize(
-        command: Command,
+        command: BaseCommand,
         presentationModel: CommandButtonPresentationModel
     ): DpSize {
         return presentationModel.iconDimension ?: super.getPreferredIconSize(

@@ -80,11 +80,11 @@ fun getCommandPanelContentModel(
 
     return CommandPanelContentModel(commandGroups = commandGroups,
         commandActionPreview = object : CommandActionPreview {
-            override fun onCommandPreviewActivated(command: Command) {
+            override fun onCommandPreviewActivated(command: BaseCommand) {
                 println("Action preview activated for ${command.text}!")
             }
 
-            override fun onCommandPreviewCanceled(command: Command) {
+            override fun onCommandPreviewCanceled(command: BaseCommand) {
                 println("Action preview canceled for ${command.text}!")
             }
         }

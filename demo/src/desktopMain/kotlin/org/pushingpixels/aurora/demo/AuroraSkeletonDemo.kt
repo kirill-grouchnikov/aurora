@@ -25,10 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import org.pushingpixels.aurora.component.model.Command
-import org.pushingpixels.aurora.component.model.CommandActionPreview
-import org.pushingpixels.aurora.component.model.CommandGroup
-import org.pushingpixels.aurora.component.model.CommandMenuContentModel
+import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.*
@@ -149,11 +146,11 @@ fun AuroraWindowScope.DemoSkeletonContent(
                     if (it) alignment = DemoAlignment.Center
                 },
                 actionPreview = object : CommandActionPreview {
-                    override fun onCommandPreviewActivated(command: Command) {
+                    override fun onCommandPreviewActivated(command: BaseCommand) {
                         println("Center justify preview activated!")
                     }
 
-                    override fun onCommandPreviewCanceled(command: Command) {
+                    override fun onCommandPreviewCanceled(command: BaseCommand) {
                         println("Center justify preview canceled!")
                     }
                 }
@@ -168,11 +165,11 @@ fun AuroraWindowScope.DemoSkeletonContent(
                     if (it) alignment = DemoAlignment.Left
                 },
                 actionPreview = object : CommandActionPreview {
-                    override fun onCommandPreviewActivated(command: Command) {
+                    override fun onCommandPreviewActivated(command: BaseCommand) {
                         println("Left justify preview activated!")
                     }
 
-                    override fun onCommandPreviewCanceled(command: Command) {
+                    override fun onCommandPreviewCanceled(command: BaseCommand) {
                         println("Left justify preview canceled!")
                     }
                 }
@@ -187,11 +184,11 @@ fun AuroraWindowScope.DemoSkeletonContent(
                     if (it) alignment = DemoAlignment.Right
                 },
                 actionPreview = object : CommandActionPreview {
-                    override fun onCommandPreviewActivated(command: Command) {
+                    override fun onCommandPreviewActivated(command: BaseCommand) {
                         println("Right justify preview activated!")
                     }
 
-                    override fun onCommandPreviewCanceled(command: Command) {
+                    override fun onCommandPreviewCanceled(command: BaseCommand) {
                         println("Right justify preview canceled!")
                     }
                 }
@@ -206,11 +203,11 @@ fun AuroraWindowScope.DemoSkeletonContent(
                     if (it) alignment = DemoAlignment.Fill
                 },
                 actionPreview = object : CommandActionPreview {
-                    override fun onCommandPreviewActivated(command: Command) {
+                    override fun onCommandPreviewActivated(command: BaseCommand) {
                         println("Fill justify preview activated!")
                     }
 
-                    override fun onCommandPreviewCanceled(command: Command) {
+                    override fun onCommandPreviewCanceled(command: BaseCommand) {
                         println("Fill justify preview canceled!")
                     }
                 }

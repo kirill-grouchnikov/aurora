@@ -30,17 +30,17 @@ interface CommandActionPreview {
      *
      * @param command Command for which the preview has been activated.
      */
-    fun onCommandPreviewActivated(command: Command)
+    fun onCommandPreviewActivated(command: BaseCommand)
 
     /**
      * Invoked when a command preview has been canceled.
      *
      * @param command Command for which the preview has been canceled.
      */
-    fun onCommandPreviewCanceled(command: Command)
+    fun onCommandPreviewCanceled(command: BaseCommand)
 }
 
-sealed interface BaseCommand<out M: BaseCommandMenuContentModel>: ContentModel {
+sealed interface BaseCommand: ContentModel {
     val text: String
     val extraText: String?
     val icon: Painter?
@@ -51,7 +51,7 @@ sealed interface BaseCommand<out M: BaseCommandMenuContentModel>: ContentModel {
     val isActionToggleSelected: Boolean
     val actionRichTooltip: RichTooltip?
     val onTriggerActionToggleSelectedChange: ((Boolean) -> Unit)?
-    val secondaryContentModel: M?
+    val secondaryContentModel: BaseCommandMenuContentModel?
     val isSecondaryEnabled: Boolean
     val secondaryRichTooltip: RichTooltip?
 }
@@ -70,7 +70,7 @@ data class Command(
     override val secondaryContentModel: CommandMenuContentModel? = null,
     override val isSecondaryEnabled: Boolean = true,
     override val secondaryRichTooltip: RichTooltip? = null
-) : BaseCommand<CommandMenuContentModel>
+) : BaseCommand
 
 data class ColorSelectorCommand(
     override val text: String,
@@ -79,7 +79,7 @@ data class ColorSelectorCommand(
     override val secondaryContentModel: ColorSelectorPopupMenuContentModel,
     override val isSecondaryEnabled: Boolean = true,
     override val secondaryRichTooltip: RichTooltip? = null
-) : BaseCommand<ColorSelectorPopupMenuContentModel> {
+) : BaseCommand {
     override val action: (() -> Unit)? = null
     override val actionPreview: CommandActionPreview? = null
     override val isActionEnabled: Boolean = false
@@ -93,7 +93,7 @@ data class RibbonApplicationMenuCommand(
     override val text: String,
     override val secondaryContentModel: RibbonApplicationMenuContentModel,
     override val secondaryRichTooltip: RichTooltip? = null
-) : BaseCommand<RibbonApplicationMenuContentModel> {
+) : BaseCommand {
     override val extraText: String? = null
     override val icon: Painter? = null
     override val action: (() -> Unit)? = null

@@ -1152,11 +1152,11 @@ fun AuroraApplicationScope.DemoContent(
                     if (it) alignment = DemoAlignment.Center
                 },
                 actionPreview = object : CommandActionPreview {
-                    override fun onCommandPreviewActivated(command: Command) {
+                    override fun onCommandPreviewActivated(command: BaseCommand) {
                         println("Center justify preview activated!")
                     }
 
-                    override fun onCommandPreviewCanceled(command: Command) {
+                    override fun onCommandPreviewCanceled(command: BaseCommand) {
                         println("Center justify preview canceled!")
                     }
                 }
@@ -1171,11 +1171,11 @@ fun AuroraApplicationScope.DemoContent(
                     if (it) alignment = DemoAlignment.Left
                 },
                 actionPreview = object : CommandActionPreview {
-                    override fun onCommandPreviewActivated(command: Command) {
+                    override fun onCommandPreviewActivated(command: BaseCommand) {
                         println("Left justify preview activated!")
                     }
 
-                    override fun onCommandPreviewCanceled(command: Command) {
+                    override fun onCommandPreviewCanceled(command: BaseCommand) {
                         println("Left justify preview canceled!")
                     }
                 }
@@ -1190,11 +1190,11 @@ fun AuroraApplicationScope.DemoContent(
                     if (it) alignment = DemoAlignment.Right
                 },
                 actionPreview = object : CommandActionPreview {
-                    override fun onCommandPreviewActivated(command: Command) {
+                    override fun onCommandPreviewActivated(command: BaseCommand) {
                         println("Right justify preview activated!")
                     }
 
-                    override fun onCommandPreviewCanceled(command: Command) {
+                    override fun onCommandPreviewCanceled(command: BaseCommand) {
                         println("Right justify preview canceled!")
                     }
                 }
@@ -1209,11 +1209,11 @@ fun AuroraApplicationScope.DemoContent(
                     if (it) alignment = DemoAlignment.Fill
                 },
                 actionPreview = object : CommandActionPreview {
-                    override fun onCommandPreviewActivated(command: Command) {
+                    override fun onCommandPreviewActivated(command: BaseCommand) {
                         println("Fill justify preview activated!")
                     }
 
-                    override fun onCommandPreviewCanceled(command: Command) {
+                    override fun onCommandPreviewCanceled(command: BaseCommand) {
                         println("Fill justify preview canceled!")
                     }
                 }

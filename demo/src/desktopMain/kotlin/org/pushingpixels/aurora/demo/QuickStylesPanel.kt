@@ -15,10 +15,7 @@
  */
 package org.pushingpixels.aurora.demo
 
-import org.pushingpixels.aurora.component.model.Command
-import org.pushingpixels.aurora.component.model.CommandActionPreview
-import org.pushingpixels.aurora.component.model.CommandGroup
-import org.pushingpixels.aurora.component.model.CommandPanelContentModel
+import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.demo.svg.material.*
 import java.text.MessageFormat
 import java.util.*
@@ -57,11 +54,11 @@ fun getQuickStylesContentModel(resourceBundle: ResourceBundle): CommandPanelCont
     }
     return CommandPanelContentModel(commandGroups = commandGroups,
         commandActionPreview = object : CommandActionPreview {
-            override fun onCommandPreviewActivated(command: Command) {
+            override fun onCommandPreviewActivated(command: BaseCommand) {
                 println("Action preview activated for ${command.text}!")
             }
 
-            override fun onCommandPreviewCanceled(command: Command) {
+            override fun onCommandPreviewCanceled(command: BaseCommand) {
                 println("Action preview canceled for ${command.text}!")
             }
         })

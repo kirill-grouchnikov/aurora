@@ -422,11 +422,11 @@ fun AuroraWindowScope.DemoCommandContent(
             action = { println("Action activated!") },
             isActionEnabled = actionEnabled,
             actionPreview = object : CommandActionPreview {
-                override fun onCommandPreviewActivated(command: Command) {
+                override fun onCommandPreviewActivated(command: BaseCommand) {
                     println("Action preview activated!")
                 }
 
-                override fun onCommandPreviewCanceled(command: Command) {
+                override fun onCommandPreviewCanceled(command: BaseCommand) {
                     println("Action preview canceled!")
                 }
             },
@@ -451,11 +451,11 @@ fun AuroraWindowScope.DemoCommandContent(
             action = { println("Action 2 activated!") },
             isActionEnabled = actionEnabled,
             actionPreview = object : CommandActionPreview {
-                override fun onCommandPreviewActivated(command: Command) {
+                override fun onCommandPreviewActivated(command: BaseCommand) {
                     println("Action 2 preview activated!")
                 }
 
-                override fun onCommandPreviewCanceled(command: Command) {
+                override fun onCommandPreviewCanceled(command: BaseCommand) {
                     println("Action 2 preview canceled!")
                 }
             }
@@ -620,11 +620,11 @@ fun AuroraWindowScope.DemoCommandContent(
             icon = computer(),
             action = { println("Split activated!") },
             actionPreview = object : CommandActionPreview {
-                override fun onCommandPreviewActivated(command: Command) {
+                override fun onCommandPreviewActivated(command: BaseCommand) {
                     println("Both preview activated!")
                 }
 
-                override fun onCommandPreviewCanceled(command: Command) {
+                override fun onCommandPreviewCanceled(command: BaseCommand) {
                     println("Both preview canceled!")
                 }
             },

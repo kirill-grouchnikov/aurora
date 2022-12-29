@@ -22,9 +22,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.component.model.Command
-import org.pushingpixels.aurora.component.model.CommandButtonKind
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
+import org.pushingpixels.aurora.component.model.*
 
 object CommandButtonSizingConstants {
     val PopupIconWidth = 6.0.dp
@@ -116,7 +114,7 @@ interface CommandButtonLayoutManager : MeasureScope {
      * may use fixed icon size, while some may respect the icon size set in [.presentationModel]
      */
     fun getPreferredIconSize(
-        command: Command,
+        command: BaseCommand,
         presentationModel: CommandButtonPresentationModel
     ): DpSize
 
@@ -124,7 +122,7 @@ interface CommandButtonLayoutManager : MeasureScope {
      * Returns the pre-layout information for the specified parameters.
      */
     fun getPreLayoutInfo(
-        command: Command,
+        command: BaseCommand,
         presentationModel: CommandButtonPresentationModel
     ): CommandButtonPreLayoutInfo
 
@@ -132,7 +130,7 @@ interface CommandButtonLayoutManager : MeasureScope {
      * Returns the preferred size of a projected button for the specified parameters.
      */
     fun getPreferredSize(
-        command: Command,
+        command: BaseCommand,
         presentationModel: CommandButtonPresentationModel,
         preLayoutInfo: CommandButtonPreLayoutInfo
     ): Size
@@ -142,7 +140,7 @@ interface CommandButtonLayoutManager : MeasureScope {
      */
     fun getLayoutInfo(
         constraints: Constraints,
-        command: Command,
+        command: BaseCommand,
         presentationModel: CommandButtonPresentationModel,
         preLayoutInfo: CommandButtonPreLayoutInfo
     ): CommandButtonLayoutInfo

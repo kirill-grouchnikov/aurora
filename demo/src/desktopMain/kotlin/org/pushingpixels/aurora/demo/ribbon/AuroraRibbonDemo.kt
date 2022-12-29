@@ -46,13 +46,8 @@ import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.window.auroraApplication
-import java.awt.Component
-import java.awt.Dimension
-import java.awt.Graphics
-import java.awt.image.BufferedImage
 import java.text.MessageFormat
 import java.util.*
-import javax.imageio.ImageIO
 import javax.swing.JColorChooser
 import kotlin.system.exitProcess
 
@@ -433,11 +428,11 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
             println("Command '$text' activated!")
         },
         commandActionPreview = object : CommandActionPreview {
-            override fun onCommandPreviewActivated(command: Command) {
+            override fun onCommandPreviewActivated(command: BaseCommand) {
                 println("Preview activated for '${command.text}'")
             }
 
-            override fun onCommandPreviewCanceled(command: Command) {
+            override fun onCommandPreviewCanceled(command: BaseCommand) {
                 println("Preview canceled for '${command.text}'")
             }
         }
@@ -710,13 +705,13 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
                         RecentlyUsed.addColorToRecentlyUsed(defaultColor)
                     },
                     actionPreview = object : CommandActionPreview {
-                        override fun onCommandPreviewActivated(command: Command) {
+                        override fun onCommandPreviewActivated(command: BaseCommand) {
                             colorPreviewListener.onColorPreviewActivated(
                                 defaultColor
                             )
                         }
 
-                        override fun onCommandPreviewCanceled(command: Command) {
+                        override fun onCommandPreviewCanceled(command: BaseCommand) {
                             colorPreviewListener.onColorPreviewCanceled()
                         }
                     }
