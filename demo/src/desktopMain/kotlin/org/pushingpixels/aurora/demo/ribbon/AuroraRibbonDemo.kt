@@ -98,6 +98,39 @@ fun main() = auroraApplication {
         keyTip = "W"
     )
 
+    val contextualTaskGroup1 = RibbonContextualTaskGroup(
+        title = resourceBundle.getString("Group1.textTaskGroupTitle"),
+        hueColor = Color.Red,
+        tasks = listOf(
+            RibbonTask(
+                title = resourceBundle.getString("Task11.textTaskTitle"),
+                bands = listOf(builder.getActionBand(), builder.getApplicationsBand()),
+                resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+                keyTip = "XA"
+            ),
+            RibbonTask(
+                title = resourceBundle.getString("Task12.textTaskTitle"),
+                bands = listOf(builder.getActionBand(), builder.getApplicationsBand()),
+                resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+                keyTip = "XB"
+            )
+        ),
+        isActive = false
+    )
+    val contextualTaskGroup2 = RibbonContextualTaskGroup(
+        title = resourceBundle.getString("Group2.textTaskGroupTitle"),
+        hueColor = Color.Green,
+        tasks = listOf(
+            RibbonTask(
+                title = resourceBundle.getString("Task21.textTaskTitle"),
+                bands = listOf(builder.getActionBand(), builder.getApplicationsBand()),
+                resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+                keyTip = "YA"
+            )
+        ),
+        isActive = false
+    )
+
     val taskbarElements: List<RibbonTaskbarElement> =
         listOf(
             RibbonTaskbarCommandProjection(
@@ -153,6 +186,7 @@ fun main() = auroraApplication {
         tasks = listOf(pageLayoutTask, writeTask),
         selectedTask = selectedTask,
         onTaskClick = { selectedTask = it },
+        contextualTaskGroups = listOf(contextualTaskGroup1, contextualTaskGroup2),
         taskbarElements = taskbarElements,
         taskbarKeyTipPolicy = DefaultRibbonTaskbarKeyTipPolicy(),
         anchoredCommands = builder.getAnchoredCommands(),
