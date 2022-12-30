@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.component.ribbon.RibbonApplicationMenuContentModel
 import org.pushingpixels.aurora.theming.LocalPopupMenu
 
 abstract class Projection<out C : ContentModel, out P : PresentationModel>

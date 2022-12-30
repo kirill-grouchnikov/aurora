@@ -99,11 +99,6 @@ interface OnShowContextualMenuListener {
     fun getContextualMenuContentModel(ribbon: Ribbon): CommandMenuContentModel
 }
 
-data class RibbonApplicationMenuContentModel(
-    val groups: List<CommandGroup>,
-    val footerCommands: CommandGroup
-): BaseCommandMenuContentModel
-
 object RibbonApplicationMenuButtonPresentationStates {
     val RibbonAppMenuSecondaryLevel: CommandButtonPresentationState =
         object : CommandButtonPresentationState("Ribbon application menu tile level 2") {

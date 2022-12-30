@@ -16,13 +16,13 @@
 package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.component.layout.*
-import org.pushingpixels.aurora.component.ribbon.RibbonApplicationMenuContentModel
 
 interface CommandActionPreview {
     /**
@@ -111,7 +111,7 @@ data class CommandGroup(
     val commands: List<Command>
 ) : ContentModel
 
-interface BaseCommandMenuContentModel
+sealed interface BaseCommandMenuContentModel
 
 data class CommandMenuContentModel(
     val groups: List<CommandGroup>,
@@ -128,6 +128,17 @@ data class CommandMenuContentModel(
         highlightedCommand = highlightedCommand
     )
 }
+
+data class ColorSelectorPopupMenuContentModel(
+    val menuGroups: List<ColorSelectorPopupMenuGroupModel>,
+    val onColorPreviewActivated: ColorPreviewListener,
+    val onColorActivated: (Color) -> Unit
+) : BaseCommandMenuContentModel
+
+data class RibbonApplicationMenuContentModel(
+    val groups: List<CommandGroup>,
+    val footerCommands: CommandGroup
+): BaseCommandMenuContentModel
 
 enum class TextClick {
     /** Clicking command text will activate the command action. */

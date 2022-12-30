@@ -52,12 +52,6 @@ interface ColorPreviewListener {
     fun onColorPreviewCanceled()
 }
 
-data class ColorSelectorPopupMenuContentModel(
-    val menuGroups: List<ColorSelectorPopupMenuGroupModel>,
-    val onColorPreviewActivated: ColorPreviewListener,
-    val onColorActivated: (Color) -> Unit
-) : BaseCommandMenuContentModel
-
 object RecentlyUsed {
     private val recentlySelected = LinkedList<Color>()
 
