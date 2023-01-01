@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2022 Aurora, Kirill Grouchnikov
+ * Copyright 2020-2023 Aurora, Kirill Grouchnikov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
