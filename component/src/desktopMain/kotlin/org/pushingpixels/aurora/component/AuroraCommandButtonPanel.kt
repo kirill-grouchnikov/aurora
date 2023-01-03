@@ -46,6 +46,7 @@ import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.LabelProjection
+import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import kotlin.math.max
@@ -89,6 +90,7 @@ private fun LazyListScope.rowOfItems(
                     extraAction = extraAction,
                     extraActionPreview = commandActionPreview,
                     presentationModel = commandPresentation,
+                    popupHandler = GeneralCommandMenuPopupHandler(),
                     overlays = overlays
                 )
                 if (index != (indexRowEnd - 1)) {
@@ -138,6 +140,7 @@ private fun LazyListScope.columnOfItems(
                     extraAction = extraAction,
                     extraActionPreview = commandActionPreview,
                     presentationModel = commandPresentation,
+                    popupHandler = GeneralCommandMenuPopupHandler(),
                     overlays = overlays
                 )
                 if (index != (indexColumnEnd - 1)) {

@@ -43,6 +43,7 @@ import org.pushingpixels.aurora.component.utils.ArrowSizingConstants
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
 import org.pushingpixels.aurora.component.utils.drawDoubleArrow
+import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
 
 @OptIn(AuroraInternalApi::class)
@@ -234,6 +235,7 @@ fun AuroraBreadcrumbBar(
                             command = command,
                             parentPopupMenu = popupMenu,
                             extraAction = null,
+                            popupHandler = GeneralCommandMenuPopupHandler(),
                             popupPlacementStrategyProvider = { modelStateInfo ->
                                 if (modelStateInfo.activeStrength > 0.0f) PopupPlacementStrategy.Downward.HAlignStart
                                 else PopupPlacementStrategy.Endward.VAlignTop

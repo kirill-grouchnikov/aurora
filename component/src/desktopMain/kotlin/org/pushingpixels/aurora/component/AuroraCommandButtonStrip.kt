@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.LocalPopupMenu
 import org.pushingpixels.aurora.theming.Side
 import org.pushingpixels.aurora.theming.Sides
@@ -72,6 +73,7 @@ private fun CommandButtonStripContent(
             parentPopupMenu = popup,
             extraAction = null,
             presentationModel = currentPresentationModel,
+            popupHandler = GeneralCommandMenuPopupHandler(),
             overlays = overlays
         )
     }

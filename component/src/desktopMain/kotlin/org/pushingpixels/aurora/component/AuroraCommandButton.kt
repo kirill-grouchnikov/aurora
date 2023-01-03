@@ -57,7 +57,6 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 import java.awt.event.KeyEvent
@@ -325,7 +324,7 @@ private fun Modifier.commandButtonActionClickable(
 
 @OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
 @Composable
-internal fun AuroraCommandButton(
+internal fun <M : BaseCommandMenuContentModel, L : CommandMenuPopupLayoutInfo> AuroraCommandButton(
     modifier: Modifier,
     actionInteractionSource: MutableInteractionSource,
     popupInteractionSource: MutableInteractionSource,
@@ -333,12 +332,13 @@ internal fun AuroraCommandButton(
     parentPopupMenu: AuroraSwingPopupMenu?,
     extraAction: (() -> Unit)? = null,
     extraActionPreview: CommandActionPreview? = null,
+    popupHandler: CommandMenuHandler<M, L>,
     popupPlacementStrategyProvider: ((ModelStateInfo) -> PopupPlacementStrategy)? = null,
     presentationModel: CommandButtonPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>
 ) {
     val secondaryContentModel =  
-        rememberUpdatedState(command.secondaryContentModel as CommandMenuContentModel?)
+        rememberUpdatedState(command.secondaryContentModel as M?)
     val drawingCache = remember { CommandButtonDrawingCache() }
 
     var wasActionRollover by remember { mutableStateOf(false) }
@@ -895,7 +895,7 @@ internal fun AuroraCommandButton(
                                 ),
                                 contentModel = secondaryContentModel,
                                 presentationModel = presentationModel.popupMenuPresentationModel,
-                                popupHandler =  GeneralCommandMenuPopupHandler(),
+                                popupHandler = popupHandler,
                                 toDismissPopupsOnActivation = presentationModel.toDismissPopupsOnActivation,
                                 toUseBackgroundStriping = false,
                                 popupPlacementStrategy = presentationModel.popupPlacementStrategy,

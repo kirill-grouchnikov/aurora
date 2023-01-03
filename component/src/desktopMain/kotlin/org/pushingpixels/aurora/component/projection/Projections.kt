@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.LocalPopupMenu
 
 abstract class Projection<out C : ContentModel, out P : PresentationModel>
@@ -57,6 +58,7 @@ class CommandButtonProjection(
             parentPopupMenu = popupMenu,
             extraAction = null,
             presentationModel = this.presentationModel,
+            popupHandler = GeneralCommandMenuPopupHandler(),
             overlays = this.overlays ?: mapOf()
         )
     }
