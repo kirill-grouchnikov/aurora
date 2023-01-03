@@ -36,6 +36,9 @@ import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import org.pushingpixels.aurora.window.auroraApplication
 import java.util.*
+import javax.swing.JColorChooser
+
+private val DefaultColor = Color.DarkGray
 
 @ExperimentalUnitApi
 fun main() = auroraApplication {
@@ -74,28 +77,101 @@ fun ColorSelectorButton(
     onColorDataChanged: (ColorData) -> Unit,
     resourceBundle: ResourceBundle
 ) {
-    val selectorModel = ColorSelectorMenuContentModel(
-        menuGroups = listOf(),
-        onColorActivated = {
-            colorData.copy(
-                isInPreview = false,
-                permanentColor = it
-            )
-        },
-        onColorPreviewActivated = object: ColorPreviewListener {
-            override fun onColorPreviewActivated(color: Color) {
-                onColorDataChanged.invoke(
-                    colorData.copy(
-                        isInPreview = true,
-                        previewColor = color
-                    )
+    val colorActivationListener: (Color) -> Unit = {
+        colorData.copy(
+            isInPreview = false,
+            permanentColor = it
+        )
+    }
+    val colorPreviewListener = object : ColorPreviewListener {
+        override fun onColorPreviewActivated(color: Color) {
+            onColorDataChanged.invoke(
+                colorData.copy(
+                    isInPreview = true,
+                    previewColor = color
                 )
+            )
+        }
+
+        override fun onColorPreviewCanceled() {
+            onColorDataChanged.invoke(colorData.copy(isInPreview = false))
+        }
+    }
+
+    val defaultColorCommand = Command(
+        text = resourceBundle.getString("ColorSelector.textAutomatic"),
+        icon = ColorSolidIcon(DefaultColor),
+        action = {
+            colorActivationListener.invoke(DefaultColor)
+            RecentlyUsed.addColorToRecentlyUsed(DefaultColor)
+        },
+        actionPreview = object : CommandActionPreview {
+            override fun onCommandPreviewActivated(command: BaseCommand) {
+                colorPreviewListener.onColorPreviewActivated(DefaultColor)
             }
 
-            override fun onColorPreviewCanceled() {
-                onColorDataChanged.invoke(colorData.copy(isInPreview = false))
+            override fun onCommandPreviewCanceled(command: BaseCommand) {
+                colorPreviewListener.onColorPreviewCanceled()
             }
         }
+    )
+
+    val selectorModel = ColorSelectorMenuContentModel(
+        menuGroups = listOf(
+            ColorSelectorMenuGroupModel(
+                content = listOf(
+                    ColorSelectorPopupMenuCommand(defaultColorCommand),
+                    ColorSelectorPopupMenuSectionWithDerived(
+                        colorSectionModel = ColorSectionModel(
+                            title = resourceBundle.getString("ColorSelector.textThemeCaption"),
+                            colors = listOf(
+                                Color(255, 255, 255), Color(0, 0, 0),
+                                Color(160, 160, 160), Color(16, 64, 128),
+                                Color(80, 128, 192), Color(180, 80, 80),
+                                Color(160, 192, 80), Color(128, 92, 160),
+                                Color(80, 160, 208), Color(255, 144, 64)
+                            )
+                        )
+                    ),
+                    ColorSelectorPopupMenuSection(
+                        colorSectionModel = ColorSectionModel(
+                            title = resourceBundle.getString("ColorSelector.textStandardCaption"),
+                            colors = listOf(
+                                Color(140, 0, 0), Color(253, 0, 0),
+                                Color(255, 160, 0), Color(255, 255, 0),
+                                Color(144, 240, 144), Color(0, 128, 0),
+                                Color(160, 224, 224), Color(0, 0, 255),
+                                Color(0, 0, 128), Color(128, 0, 128)
+                            )
+                        )
+                    ),
+                    ColorSelectorPopupMenuRecentsSection(
+                        colorSectionModel = ColorSectionModel(
+                            title = resourceBundle.getString("ColorSelector.textRecentCaption"),
+                            colors = emptyList()
+                        )
+                    ),
+                    ColorSelectorPopupMenuCommand(
+                        command = Command(
+                            text = resourceBundle.getString("ColorSelector.textMoreColor"),
+                            action = {
+                                val awtColor = JColorChooser.showDialog(
+                                    null,
+                                    "Color chooser", java.awt.Color(DefaultColor.red, DefaultColor.green, DefaultColor.blue)
+                                )
+                                if (awtColor != null) {
+                                    val composeColor = Color(awtColor.red, awtColor.green, awtColor.blue, awtColor.alpha)
+                                    colorActivationListener.invoke(composeColor)
+                                    RecentlyUsed.addColorToRecentlyUsed(composeColor)
+                                }
+                            }
+                        )
+                    )
+                )
+            )
+        ),
+        onColorActivated = colorActivationListener,
+        onColorPreviewActivated = colorPreviewListener
     )
 
     val colorSelectorCommand = ColorSelectorCommand(
