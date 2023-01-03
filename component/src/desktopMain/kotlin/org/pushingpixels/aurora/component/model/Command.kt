@@ -130,7 +130,7 @@ data class CommandMenuContentModel(
 }
 
 data class ColorSelectorMenuContentModel(
-    val menuGroups: List<ColorSelectorMenuGroupModel>,
+    val entries: List<ColorSelectorPopupMenuEntry>,
     val onColorPreviewActivated: ColorPreviewListener,
     val onColorActivated: (Color) -> Unit
 ) : BaseCommandMenuContentModel

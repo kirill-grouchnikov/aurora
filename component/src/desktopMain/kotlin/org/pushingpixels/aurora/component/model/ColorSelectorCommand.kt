@@ -32,8 +32,6 @@ data class ColorSelectorPopupMenuSectionWithDerived(val colorSectionModel: Color
 
 data class ColorSelectorPopupMenuRecentsSection(val colorSectionModel: ColorSectionModel) : ColorSelectorPopupMenuEntry
 
-data class ColorSelectorMenuGroupModel(val content: List<ColorSelectorPopupMenuEntry>)
-
 /**
  * Listener for tracking color preview events.
  */

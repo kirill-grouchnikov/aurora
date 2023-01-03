@@ -695,7 +695,7 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
         }
         val defaultColor = Color(240, 240, 240, 255)
 
-        val colorSelectorMenuCommands: List<ColorSelectorPopupMenuEntry> = listOf(
+        val colorSelectorMenuEntries: List<ColorSelectorPopupMenuEntry> = listOf(
             ColorSelectorPopupMenuCommand(
                 command = Command(
                     text = resourceBundle.getString("ColorSelector.textAutomatic"),
@@ -798,9 +798,7 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
                                 text = resourceBundle.getString("Styles3.text"),
                                 icon = x_office_drawing(),
                                 secondaryContentModel = ColorSelectorMenuContentModel(
-                                    menuGroups = listOf(
-                                        ColorSelectorMenuGroupModel(content = colorSelectorMenuCommands)
-                                    ),
+                                    entries = colorSelectorMenuEntries,
                                     onColorPreviewActivated = colorPreviewListener,
                                     onColorActivated = colorActivationListener
                                 )
@@ -1550,10 +1548,12 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
                 ),
                 secondaryContentModel = applicationMenu
             ),
-            presentationModel = CommandButtonPresentationModel(popupKeyTip = "F",
+            presentationModel = CommandButtonPresentationModel(
+                popupKeyTip = "F",
                 popupRichTooltipPresentationModel = RichTooltipPresentationModel(
                     mainIconSize = tooltipImageScaledSize
-                )),
+                )
+            ),
             overlays = overlays,
             secondaryStates = secondaryStates
         )
