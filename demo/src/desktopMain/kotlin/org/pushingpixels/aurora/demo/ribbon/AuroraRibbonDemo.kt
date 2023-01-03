@@ -797,9 +797,9 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
                             contentModel = ColorSelectorCommand(
                                 text = resourceBundle.getString("Styles3.text"),
                                 icon = x_office_drawing(),
-                                secondaryContentModel = ColorSelectorPopupMenuContentModel(
+                                secondaryContentModel = ColorSelectorMenuContentModel(
                                     menuGroups = listOf(
-                                        ColorSelectorPopupMenuGroupModel(content = colorSelectorMenuCommands)
+                                        ColorSelectorMenuGroupModel(content = colorSelectorMenuCommands)
                                     ),
                                     onColorPreviewActivated = colorPreviewListener,
                                     onColorActivated = colorActivationListener

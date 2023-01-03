@@ -76,7 +76,7 @@ data class ColorSelectorCommand(
     override val text: String,
     override val extraText: String? = null,
     override val icon: Painter? = null,
-    override val secondaryContentModel: ColorSelectorPopupMenuContentModel,
+    override val secondaryContentModel: ColorSelectorMenuContentModel,
     override val isSecondaryEnabled: Boolean = true,
     override val secondaryRichTooltip: RichTooltip? = null
 ) : BaseCommand {
@@ -129,8 +129,8 @@ data class CommandMenuContentModel(
     )
 }
 
-data class ColorSelectorPopupMenuContentModel(
-    val menuGroups: List<ColorSelectorPopupMenuGroupModel>,
+data class ColorSelectorMenuContentModel(
+    val menuGroups: List<ColorSelectorMenuGroupModel>,
     val onColorPreviewActivated: ColorPreviewListener,
     val onColorActivated: (Color) -> Unit
 ) : BaseCommandMenuContentModel
