@@ -31,6 +31,7 @@ import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.model.CommandMenuContentModel
 import org.pushingpixels.aurora.component.model.CommandPopupMenuPresentationModel
+import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.component.utils.showPopupContent
 import org.pushingpixels.aurora.theming.*
 
@@ -84,6 +85,7 @@ fun Modifier.auroraContextMenu(
                     popupTriggerAreaInWindow = Rect.Zero,
                     contentModel = contentModelState,
                     presentationModel = presentationModel,
+                    popupHandler =  GeneralCommandMenuPopupHandler(),
                     toDismissPopupsOnActivation = presentationModel.toDismissOnCommandActivation,
                     toUseBackgroundStriping = false,
                     popupPlacementStrategy = presentationModel.popupPlacementStrategy,

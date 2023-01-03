@@ -44,6 +44,7 @@ import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
+import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 import kotlin.math.max
@@ -258,6 +259,7 @@ internal fun <E> AuroraComboBox(
                             maxVisibleMenuCommands = presentationModel.popupMaxVisibleItems,
                             popupPlacementStrategy = presentationModel.popupPlacementStrategy
                         ),
+                        popupHandler =  GeneralCommandMenuPopupHandler(),
                         toDismissPopupsOnActivation = true,
                         toUseBackgroundStriping = true,
                         popupPlacementStrategy = presentationModel.popupPlacementStrategy,

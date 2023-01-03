@@ -27,14 +27,12 @@ import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import java.awt.*
 import java.awt.geom.Rectangle2D
 import javax.swing.JPopupMenu
 import javax.swing.border.Border
-import kotlin.math.ceil
 
 internal val Color.awtColor: java.awt.Color
     get() = java.awt.Color(
@@ -68,7 +66,7 @@ internal interface CommandMenuHandler<M : BaseCommandMenuContentModel, L : Comma
 }
 
 @OptIn(AuroraInternalApi::class)
-internal fun showPopupContent(
+internal fun <M : BaseCommandMenuContentModel, L : CommandMenuPopupLayoutInfo> showPopupContent(
     popupOriginator: Component,
     layoutDirection: LayoutDirection,
     density: Density,
@@ -80,16 +78,15 @@ internal fun showPopupContent(
     compositionLocalContext: CompositionLocalContext,
     anchorBoundsInWindow: Rect,
     popupTriggerAreaInWindow: Rect,
-    contentModel: State<CommandMenuContentModel?>,
+    contentModel: State<M?>,
     presentationModel: CommandPopupMenuPresentationModel,
+    popupHandler: CommandMenuHandler<M, L>,
     toDismissPopupsOnActivation: Boolean,
     toUseBackgroundStriping: Boolean,
     popupPlacementStrategy: PopupPlacementStrategy,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>
 ) {
     val popupOriginatorLocationOnScreen = popupOriginator.locationOnScreen
-
-    val popupHandler =  GeneralCommandMenuPopupHandler()
     val popupContentLayoutInfo = popupHandler.getPopupContentLayoutInfo(
         menuContentModel = contentModel.value!!,
         menuPresentationModel = presentationModel,
@@ -99,9 +96,8 @@ internal fun showPopupContent(
         fontFamilyResolver = fontFamilyResolver
     )
 
-    // Full size of the popup accounts for extra pixel (in DP units) on each side for the popup border
-    val fullPopupWidth = ceil(popupContentLayoutInfo.fullSize.width / density.density).toInt() + 2
-    val fullPopupHeight = ceil(popupContentLayoutInfo.fullSize.height / density.density).toInt() + 2
+    val fullPopupWidth = popupContentLayoutInfo.popupSize.width
+    val fullPopupHeight = popupContentLayoutInfo.popupSize.height
 
     // From this point, all coordinates are in Swing display units - which are density independent.
     // This is why the popup width and height was converted from pixels.

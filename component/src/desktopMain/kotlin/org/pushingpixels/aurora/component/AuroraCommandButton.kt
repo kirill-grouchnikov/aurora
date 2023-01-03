@@ -57,6 +57,7 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.utils.*
+import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 import java.awt.event.KeyEvent
@@ -894,6 +895,7 @@ internal fun AuroraCommandButton(
                                 ),
                                 contentModel = secondaryContentModel,
                                 presentationModel = presentationModel.popupMenuPresentationModel,
+                                popupHandler =  GeneralCommandMenuPopupHandler(),
                                 toDismissPopupsOnActivation = presentationModel.toDismissPopupsOnActivation,
                                 toUseBackgroundStriping = false,
                                 popupPlacementStrategy = presentationModel.popupPlacementStrategy,
