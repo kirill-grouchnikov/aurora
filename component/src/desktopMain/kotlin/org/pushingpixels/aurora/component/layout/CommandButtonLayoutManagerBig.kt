@@ -38,14 +38,14 @@ internal open class CommandButtonLayoutManagerBig(
 
     override fun getPreferredIconSize(
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel
+        presentationModel: BaseCommandButtonPresentationModel
     ): DpSize {
         return DpSize(32.dp, 32.dp)
     }
 
     protected open fun getCurrentIconWidth(
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel
+        presentationModel: BaseCommandButtonPresentationModel
     ): Dp {
         return if ((command.icon != null) || presentationModel.forceAllocateSpaceForIcon)
             getPreferredIconSize(command, presentationModel).width else 0.dp
@@ -53,7 +53,7 @@ internal open class CommandButtonLayoutManagerBig(
 
     protected open fun getCurrentIconHeight(
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel
+        presentationModel: BaseCommandButtonPresentationModel
     ): Dp {
         return if ((command.icon != null) || presentationModel.forceAllocateSpaceForIcon)
             getPreferredIconSize(command, presentationModel).height else 0.dp
@@ -61,7 +61,7 @@ internal open class CommandButtonLayoutManagerBig(
 
     private fun getTitleStrings(
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel
+        presentationModel: BaseCommandButtonPresentationModel
     ): Pair<String, String> {
         // Break the title in two parts (the second part may be empty),
         // finding the "inflection" point. The inflection point is a space
@@ -115,7 +115,7 @@ internal open class CommandButtonLayoutManagerBig(
 
     override fun getPreferredSize(
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel,
+        presentationModel: BaseCommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): Size {
         val paddingValues = presentationModel.contentPadding
@@ -196,7 +196,7 @@ internal open class CommandButtonLayoutManagerBig(
 
     override fun getPreLayoutInfo(
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel
+        presentationModel: BaseCommandButtonPresentationModel
     ): CommandButtonLayoutManager.CommandButtonPreLayoutInfo {
         val hasAction = (command.action != null)
         val hasPopup = (command.secondaryContentModel != null)
@@ -228,7 +228,7 @@ internal open class CommandButtonLayoutManagerBig(
     override fun getLayoutInfo(
         constraints: Constraints,
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel,
+        presentationModel: BaseCommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
         val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo)
@@ -440,7 +440,7 @@ internal class CommandButtonLayoutManagerBigFitToIcon(
 ) : CommandButtonLayoutManagerBig(layoutDirection, _density, textStyle, fontFamilyResolver) {
     override fun getPreferredIconSize(
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel
+        presentationModel: BaseCommandButtonPresentationModel
     ): DpSize {
         return presentationModel.iconDimension ?: super.getPreferredIconSize(
             command,

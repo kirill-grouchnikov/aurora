@@ -39,21 +39,21 @@ internal open class CommandButtonLayoutManagerMedium(
 
     override fun getPreferredIconSize(
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel
+        presentationModel: BaseCommandButtonPresentationModel
     ): DpSize {
         return DpSize(16.dp, 16.dp)
     }
 
     internal open fun hasIcon(
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel
+        presentationModel: BaseCommandButtonPresentationModel
     ): Boolean {
         return (command.icon != null) || presentationModel.forceAllocateSpaceForIcon
     }
 
     override fun getPreferredSize(
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel,
+        presentationModel: BaseCommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): Size {
         val paddingValues = presentationModel.contentPadding
@@ -128,7 +128,7 @@ internal open class CommandButtonLayoutManagerMedium(
 
     override fun getPreLayoutInfo(
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel
+        presentationModel: BaseCommandButtonPresentationModel
     ): CommandButtonLayoutManager.CommandButtonPreLayoutInfo {
         val hasAction = (command.action != null)
         val hasPopup = (command.secondaryContentModel != null)
@@ -158,7 +158,7 @@ internal open class CommandButtonLayoutManagerMedium(
     override fun getLayoutInfo(
         constraints: Constraints,
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel,
+        presentationModel: BaseCommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
         val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo)
@@ -658,7 +658,7 @@ internal class CommandButtonLayoutManagerMediumFitToIcon(
 ) : CommandButtonLayoutManagerMedium(layoutDirection, _density, textStyle, fontFamilyResolver) {
     override fun getPreferredIconSize(
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel
+        presentationModel: BaseCommandButtonPresentationModel
     ): DpSize {
         return presentationModel.iconDimension ?: super.getPreferredIconSize(
             command,

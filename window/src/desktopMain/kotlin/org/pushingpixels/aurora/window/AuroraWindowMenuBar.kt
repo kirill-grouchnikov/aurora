@@ -46,14 +46,14 @@ private object WindowMenuBarLayout {
 
         override fun getPreferredIconSize(
             command: BaseCommand,
-            presentationModel: CommandButtonPresentationModel
+            presentationModel: BaseCommandButtonPresentationModel
         ): DpSize {
             return DpSize.Zero
         }
 
         override fun getPreferredSize(
             command: BaseCommand,
-            presentationModel: CommandButtonPresentationModel,
+            presentationModel: BaseCommandButtonPresentationModel,
             preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
         ): Size {
             val paddingValues = presentationModel.contentPadding
@@ -76,7 +76,7 @@ private object WindowMenuBarLayout {
 
         override fun getPreLayoutInfo(
             command: BaseCommand,
-            presentationModel: CommandButtonPresentationModel
+            presentationModel: BaseCommandButtonPresentationModel
         ): CommandButtonLayoutManager.CommandButtonPreLayoutInfo {
             val hasAction = (command.action != null)
             val hasPopup = (command.secondaryContentModel != null)
@@ -104,7 +104,7 @@ private object WindowMenuBarLayout {
         override fun getLayoutInfo(
             constraints: Constraints,
             command: BaseCommand,
-            presentationModel: CommandButtonPresentationModel,
+            presentationModel: BaseCommandButtonPresentationModel,
             preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
         ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
             val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo)

@@ -178,7 +178,7 @@ fun ColorSelectorButton(
 
     ColorSelectorCommandButtonProjection(
         contentModel = colorSelectorCommand,
-        presentationModel = CommandButtonPresentationModel(
+        presentationModel = ColorSelectorCommandButtonPresentationModel(
             presentationState = CommandButtonPresentationState.Medium
         )
     ).project()

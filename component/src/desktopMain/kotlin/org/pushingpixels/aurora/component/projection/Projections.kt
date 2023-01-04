@@ -26,13 +26,14 @@ import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.popup.ColorSelectorCommandMenuPopupHandler
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
+import org.pushingpixels.aurora.component.utils.popup.GeneralPopupContentLayoutInfo
 import org.pushingpixels.aurora.theming.LocalPopupMenu
 
 abstract class Projection<out C : ContentModel, out P : PresentationModel>
 
 sealed class BaseCommandButtonProjection<out M : BaseCommand>(
     open val contentModel: M,
-    open val presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel(),
+    open val presentationModel: BaseCommandButtonPresentationModel,
     open val overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
 ) : Projection<M, CommandButtonPresentationModel>()
 
@@ -59,7 +60,7 @@ class CommandButtonProjection(
             parentPopupMenu = popupMenu,
             extraAction = null,
             presentationModel = this.presentationModel,
-            popupHandler = GeneralCommandMenuPopupHandler(),
+            popupHandler = GeneralCommandMenuPopupHandler,
             overlays = this.overlays ?: mapOf()
         )
     }
@@ -67,7 +68,7 @@ class CommandButtonProjection(
 
 class ColorSelectorCommandButtonProjection(
     contentModel: ColorSelectorCommand,
-    presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel(),
+    presentationModel: ColorSelectorCommandButtonPresentationModel = ColorSelectorCommandButtonPresentationModel(),
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
 ) : BaseCommandButtonProjection<ColorSelectorCommand>(
     contentModel, presentationModel, overlays

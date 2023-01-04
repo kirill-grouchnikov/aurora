@@ -90,7 +90,7 @@ private fun LazyListScope.rowOfItems(
                     extraAction = extraAction,
                     extraActionPreview = commandActionPreview,
                     presentationModel = commandPresentation,
-                    popupHandler = GeneralCommandMenuPopupHandler(),
+                    popupHandler = GeneralCommandMenuPopupHandler,
                     overlays = overlays
                 )
                 if (index != (indexRowEnd - 1)) {
@@ -140,7 +140,7 @@ private fun LazyListScope.columnOfItems(
                     extraAction = extraAction,
                     extraActionPreview = commandActionPreview,
                     presentationModel = commandPresentation,
-                    popupHandler = GeneralCommandMenuPopupHandler(),
+                    popupHandler = GeneralCommandMenuPopupHandler,
                     overlays = overlays
                 )
                 if (index != (indexColumnEnd - 1)) {

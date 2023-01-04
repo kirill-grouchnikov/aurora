@@ -47,36 +47,67 @@ enum class ActionFireTrigger {
     OnPressReleased
 }
 
+sealed interface BaseCommandButtonPresentationModel: PresentationModel {
+    val presentationState: CommandButtonPresentationState
+    val backgroundAppearanceStrategy: BackgroundAppearanceStrategy
+    val horizontalAlignment: HorizontalAlignment
+    val iconDimension: DpSize?
+    val iconDisabledFilterStrategy: IconFilterStrategy
+    val iconEnabledFilterStrategy: IconFilterStrategy
+    val iconActiveFilterStrategy: IconFilterStrategy
+    val forceAllocateSpaceForIcon: Boolean
+    val textStyle: TextStyle?
+    val textOverflow: TextOverflow
+    val popupPlacementStrategy: PopupPlacementStrategy
+    val toDismissPopupsOnActivation: Boolean
+    val actionKeyTip: String?
+    val popupKeyTip: String?
+    val autoRepeatAction: Boolean
+    val autoRepeatInitialInterval: Long
+    val autoRepeatSubsequentInterval: Long
+    val actionFireTrigger: ActionFireTrigger
+    val popupMenuPresentationModel: BaseCommandPopupMenuPresentationModel
+    val textClick: TextClick
+    val actionRichTooltipPresentationModel: RichTooltipPresentationModel
+    val popupRichTooltipPresentationModel: RichTooltipPresentationModel
+    val contentPadding: PaddingValues
+    val horizontalGapScaleFactor: Float
+    val verticalGapScaleFactor: Float
+    val minWidth: Dp
+    val isMenu: Boolean
+    val sides: Sides
+}
+
 data class CommandButtonPresentationModel(
-    val presentationState: CommandButtonPresentationState = CommandButtonPresentationState.Medium,
-    val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-    val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
-    val iconDimension: DpSize? = null,
-    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
-    val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
-    val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
-    val forceAllocateSpaceForIcon: Boolean = false,
-    val textStyle: TextStyle? = null,
-    val textOverflow: TextOverflow = TextOverflow.Clip,
-    val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
-    val toDismissPopupsOnActivation: Boolean = true,
-    val actionKeyTip: String? = null,
-    val popupKeyTip: String? = null,
-    val autoRepeatAction: Boolean = false,
-    val autoRepeatInitialInterval: Long = CommandButtonInteractionConstants.DefaultAutoRepeatInitialIntervalMillis,
-    val autoRepeatSubsequentInterval: Long = CommandButtonInteractionConstants.DefaultAutoRepeatSubsequentIntervalMillis,
-    val actionFireTrigger: ActionFireTrigger = ActionFireTrigger.OnPressReleased,
-    val popupMenuPresentationModel: CommandPopupMenuPresentationModel = CommandPopupMenuPresentationModel(),
-    val textClick: TextClick = TextClick.Action,
-    val actionRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),
-    val popupRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),
-    val contentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
-    val horizontalGapScaleFactor: Float = 1.0f,
-    val verticalGapScaleFactor: Float = 1.0f,
-    val minWidth: Dp = 0.dp,
-    val isMenu: Boolean = false,
-    val sides : Sides = Sides()
-): PresentationModel {
+    override val presentationState: CommandButtonPresentationState = CommandButtonPresentationState.Medium,
+    override val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+    override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
+    override val iconDimension: DpSize? = null,
+    override val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    override val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    override val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    override val forceAllocateSpaceForIcon: Boolean = false,
+    override val textStyle: TextStyle? = null,
+    override val textOverflow: TextOverflow = TextOverflow.Clip,
+    override val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
+    override val toDismissPopupsOnActivation: Boolean = true,
+    override val actionKeyTip: String? = null,
+    override val popupKeyTip: String? = null,
+    override val autoRepeatAction: Boolean = false,
+    override val autoRepeatInitialInterval: Long = CommandButtonInteractionConstants.DefaultAutoRepeatInitialIntervalMillis,
+    override val autoRepeatSubsequentInterval: Long = CommandButtonInteractionConstants.DefaultAutoRepeatSubsequentIntervalMillis,
+    override val actionFireTrigger: ActionFireTrigger = ActionFireTrigger.OnPressReleased,
+    override val popupMenuPresentationModel: BaseCommandPopupMenuPresentationModel = CommandPopupMenuPresentationModel(),
+    override val textClick: TextClick = TextClick.Action,
+    override val actionRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),
+    override val popupRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),
+    override val contentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
+    override val horizontalGapScaleFactor: Float = 1.0f,
+    override val verticalGapScaleFactor: Float = 1.0f,
+    override val minWidth: Dp = 0.dp,
+    override val isMenu: Boolean = false,
+    override val sides : Sides = Sides()
+): BaseCommandButtonPresentationModel {
     data class Overlay(
         val presentationState: CommandButtonPresentationState? = null,
         val backgroundAppearanceStrategy: BackgroundAppearanceStrategy? = null,
@@ -142,3 +173,34 @@ data class CommandButtonPresentationModel(
         )
     }
 }
+
+data class ColorSelectorCommandButtonPresentationModel(
+    override val presentationState: CommandButtonPresentationState = CommandButtonPresentationState.Medium,
+    override val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+    override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
+    override val iconDimension: DpSize? = null,
+    override val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    override val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    override val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    override val forceAllocateSpaceForIcon: Boolean = false,
+    override val textStyle: TextStyle? = null,
+    override val textOverflow: TextOverflow = TextOverflow.Clip,
+    override val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
+    override val toDismissPopupsOnActivation: Boolean = true,
+    override val actionKeyTip: String? = null,
+    override val popupKeyTip: String? = null,
+    override val autoRepeatAction: Boolean = false,
+    override val autoRepeatInitialInterval: Long = CommandButtonInteractionConstants.DefaultAutoRepeatInitialIntervalMillis,
+    override val autoRepeatSubsequentInterval: Long = CommandButtonInteractionConstants.DefaultAutoRepeatSubsequentIntervalMillis,
+    override val actionFireTrigger: ActionFireTrigger = ActionFireTrigger.OnPressReleased,
+    override val popupMenuPresentationModel: BaseCommandPopupMenuPresentationModel = ColorSelectorCommandPopupMenuPresentationModel(colorColumns = 10),
+    override val textClick: TextClick = TextClick.Action,
+    override val actionRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),
+    override val popupRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),
+    override val contentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
+    override val horizontalGapScaleFactor: Float = 1.0f,
+    override val verticalGapScaleFactor: Float = 1.0f,
+    override val minWidth: Dp = 0.dp,
+    override val isMenu: Boolean = false,
+    override val sides : Sides = Sides()
+): BaseCommandButtonPresentationModel

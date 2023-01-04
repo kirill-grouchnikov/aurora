@@ -37,14 +37,14 @@ internal open class CommandButtonLayoutManagerTile(
 
     override fun getPreferredIconSize(
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel
+        presentationModel: BaseCommandButtonPresentationModel
     ): DpSize {
         return DpSize(32.dp, 32.dp)
     }
 
     override fun getPreferredSize(
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel,
+        presentationModel: BaseCommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): Size {
         val paddingValues = presentationModel.contentPadding
@@ -126,7 +126,7 @@ internal open class CommandButtonLayoutManagerTile(
 
     override fun getPreLayoutInfo(
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel
+        presentationModel: BaseCommandButtonPresentationModel
     ): CommandButtonLayoutManager.CommandButtonPreLayoutInfo {
         val hasAction = (command.action != null)
         val hasPopup = (command.secondaryContentModel != null)
@@ -156,7 +156,7 @@ internal open class CommandButtonLayoutManagerTile(
     override fun getLayoutInfo(
         constraints: Constraints,
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel,
+        presentationModel: BaseCommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
         val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo)
@@ -751,7 +751,7 @@ internal class CommandButtonLayoutManagerTileFitToIcon(
 ) : CommandButtonLayoutManagerTile(layoutDirection, _density, textStyle, fontFamilyResolver) {
     override fun getPreferredIconSize(
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel
+        presentationModel: BaseCommandButtonPresentationModel
     ): DpSize {
         return presentationModel.iconDimension ?: super.getPreferredIconSize(
             command,

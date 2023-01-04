@@ -76,7 +76,7 @@ private fun Modifier.commandButtonActionHoverable(
     interactionSource: MutableInteractionSource,
     enabled: Boolean = true,
     onClickState: State<() -> Unit>,
-    presentationModel: CommandButtonPresentationModel
+    presentationModel: BaseCommandButtonPresentationModel
 ): Modifier = composed(
     inspectorInfo = debugInspectorInfo {
         name = "hoverable"
@@ -164,7 +164,7 @@ internal suspend fun PressGestureScope.auroraHandlePressInteraction(
     pressedInteraction: MutableState<PressInteraction.Press?>,
     onClickState: State<() -> Unit>,
     invokeOnClickOnPress: Boolean,
-    presentationModel: CommandButtonPresentationModel,
+    presentationModel: BaseCommandButtonPresentationModel,
     scope: CoroutineScope,
     clickJob: MutableState<Job?>
 ) {
@@ -220,7 +220,7 @@ internal suspend fun PressGestureScope.auroraHandlePressInteraction(
 private fun Modifier.commandButtonActionClickable(
     interactionSource: MutableInteractionSource,
     enabled: Boolean = true,
-    presentationModel: CommandButtonPresentationModel,
+    presentationModel: BaseCommandButtonPresentationModel,
     onClick: () -> Unit
 ) = composed(
     factory = {
@@ -324,7 +324,9 @@ private fun Modifier.commandButtonActionClickable(
 
 @OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
 @Composable
-internal fun <M : BaseCommandMenuContentModel, L : CommandMenuPopupLayoutInfo> AuroraCommandButton(
+internal fun <M : BaseCommandMenuContentModel,
+        P : BaseCommandPopupMenuPresentationModel,
+        L : CommandMenuPopupLayoutInfo> AuroraCommandButton(
     modifier: Modifier,
     actionInteractionSource: MutableInteractionSource,
     popupInteractionSource: MutableInteractionSource,
@@ -332,9 +334,9 @@ internal fun <M : BaseCommandMenuContentModel, L : CommandMenuPopupLayoutInfo> A
     parentPopupMenu: AuroraSwingPopupMenu?,
     extraAction: (() -> Unit)? = null,
     extraActionPreview: CommandActionPreview? = null,
-    popupHandler: CommandMenuHandler<M, L>,
+    popupHandler: CommandMenuHandler<M, P, L>,
     popupPlacementStrategyProvider: ((ModelStateInfo) -> PopupPlacementStrategy)? = null,
-    presentationModel: CommandButtonPresentationModel,
+    presentationModel: BaseCommandButtonPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>
 ) {
     val secondaryContentModel =  
@@ -872,7 +874,7 @@ internal fun <M : BaseCommandMenuContentModel, L : CommandMenuPopupLayoutInfo> A
                             AuroraPopupManager.hidePopups(originator = parentPopupMenu)
                         } else {
                             // Display our popup content.
-                            showPopupContent(
+                            popupHandler.showPopupContent(
                                 popupOriginator = popupOriginator,
                                 layoutDirection = layoutDirection,
                                 density = density,
@@ -894,8 +896,7 @@ internal fun <M : BaseCommandMenuContentModel, L : CommandMenuPopupLayoutInfo> A
                                     size = popupAreaSize.value.asSize(density)
                                 ),
                                 contentModel = secondaryContentModel,
-                                presentationModel = presentationModel.popupMenuPresentationModel,
-                                popupHandler = popupHandler,
+                                presentationModel = presentationModel.popupMenuPresentationModel as P,
                                 toDismissPopupsOnActivation = presentationModel.toDismissPopupsOnActivation,
                                 toUseBackgroundStriping = false,
                                 popupPlacementStrategy = presentationModel.popupPlacementStrategy,
@@ -1373,7 +1374,7 @@ private fun CommandButtonExtraTextContent(
 @Composable
 private fun CommandButtonIconContent(
     command: BaseCommand,
-    presentationModel: CommandButtonPresentationModel,
+    presentationModel: BaseCommandButtonPresentationModel,
     iconSize: DpSize, modelStateInfo: ModelStateInfo, currState: ComponentState,
     drawingCache: CommandButtonDrawingCache
 ) {

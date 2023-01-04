@@ -32,7 +32,6 @@ import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.model.CommandMenuContentModel
 import org.pushingpixels.aurora.component.model.CommandPopupMenuPresentationModel
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
-import org.pushingpixels.aurora.component.utils.showPopupContent
 import org.pushingpixels.aurora.theming.*
 
 @OptIn(AuroraInternalApi::class)
@@ -65,7 +64,7 @@ fun Modifier.auroraContextMenu(
             val lastMouseEvent = awaitPointerEventScope { awaitPointerEvent() }.awtEventOrNull
 
             if (enabledState.value && (lastMouseEvent?.isPopupTrigger == true)) {
-                showPopupContent(
+                GeneralCommandMenuPopupHandler.showPopupContent(
                     popupOriginator = popupOriginator,
                     layoutDirection = layoutDirection,
                     density = density,
@@ -85,7 +84,6 @@ fun Modifier.auroraContextMenu(
                     popupTriggerAreaInWindow = Rect.Zero,
                     contentModel = contentModelState,
                     presentationModel = presentationModel,
-                    popupHandler =  GeneralCommandMenuPopupHandler(),
                     toDismissPopupsOnActivation = presentationModel.toDismissOnCommandActivation,
                     toUseBackgroundStriping = false,
                     popupPlacementStrategy = presentationModel.popupPlacementStrategy,

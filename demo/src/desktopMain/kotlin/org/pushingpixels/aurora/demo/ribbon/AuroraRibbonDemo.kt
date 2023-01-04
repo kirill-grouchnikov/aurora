@@ -803,7 +803,7 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
                                     onColorActivated = colorActivationListener
                                 )
                             ),
-                            presentationModel = CommandButtonPresentationModel(
+                            presentationModel = ColorSelectorCommandButtonPresentationModel(
                                 actionKeyTip = "SC"
                             )
                         ) at PresentationPriority.Medium

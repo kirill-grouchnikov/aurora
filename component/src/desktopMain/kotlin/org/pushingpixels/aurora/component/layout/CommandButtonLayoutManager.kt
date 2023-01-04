@@ -115,7 +115,7 @@ interface CommandButtonLayoutManager : MeasureScope {
      */
     fun getPreferredIconSize(
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel
+        presentationModel: BaseCommandButtonPresentationModel
     ): DpSize
 
     /**
@@ -123,7 +123,7 @@ interface CommandButtonLayoutManager : MeasureScope {
      */
     fun getPreLayoutInfo(
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel
+        presentationModel: BaseCommandButtonPresentationModel
     ): CommandButtonPreLayoutInfo
 
     /**
@@ -131,7 +131,7 @@ interface CommandButtonLayoutManager : MeasureScope {
      */
     fun getPreferredSize(
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel,
+        presentationModel: BaseCommandButtonPresentationModel,
         preLayoutInfo: CommandButtonPreLayoutInfo
     ): Size
 
@@ -141,7 +141,7 @@ interface CommandButtonLayoutManager : MeasureScope {
     fun getLayoutInfo(
         constraints: Constraints,
         command: BaseCommand,
-        presentationModel: CommandButtonPresentationModel,
+        presentationModel: BaseCommandButtonPresentationModel,
         preLayoutInfo: CommandButtonPreLayoutInfo
     ): CommandButtonLayoutInfo
 }

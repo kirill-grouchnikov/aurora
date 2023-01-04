@@ -25,10 +25,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
-import org.pushingpixels.aurora.component.model.ColorSelectorMenuContentModel
-import org.pushingpixels.aurora.component.model.Command
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
-import org.pushingpixels.aurora.component.model.CommandPopupMenuPresentationModel
+import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.CommandMenuHandler
 import org.pushingpixels.aurora.component.utils.CommandMenuPopupLayoutInfo
 
@@ -36,10 +33,12 @@ internal data class ColorSelectorPopupContentLayoutInfo(
     override val popupSize: IntSize,
 ) : CommandMenuPopupLayoutInfo
 
-internal class ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<ColorSelectorMenuContentModel, ColorSelectorPopupContentLayoutInfo> {
+internal class ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
+        ColorSelectorMenuContentModel, ColorSelectorCommandPopupMenuPresentationModel,
+        ColorSelectorPopupContentLayoutInfo> {
     override fun getPopupContentLayoutInfo(
         menuContentModel: ColorSelectorMenuContentModel,
-        menuPresentationModel: CommandPopupMenuPresentationModel,
+        menuPresentationModel: ColorSelectorCommandPopupMenuPresentationModel,
         layoutDirection: LayoutDirection,
         density: Density,
         textStyle: TextStyle,
@@ -55,7 +54,7 @@ internal class ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<ColorSe
     override fun generatePopupContent(
         popupMenu: AuroraSwingPopupMenu,
         menuContentModel: ColorSelectorMenuContentModel,
-        menuPresentationModel: CommandPopupMenuPresentationModel,
+        menuPresentationModel: ColorSelectorCommandPopupMenuPresentationModel,
         toDismissPopupsOnActivation: Boolean,
         toUseBackgroundStriping: Boolean,
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>,

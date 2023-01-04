@@ -73,7 +73,7 @@ private fun CommandButtonStripContent(
             parentPopupMenu = popup,
             extraAction = null,
             presentationModel = currentPresentationModel,
-            popupHandler = GeneralCommandMenuPopupHandler(),
+            popupHandler = GeneralCommandMenuPopupHandler,
             overlays = overlays
         )
     }

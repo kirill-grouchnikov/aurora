@@ -235,7 +235,7 @@ internal fun <E> AuroraComboBox(
                     AuroraPopupManager.hidePopups(originator = popupOriginator)
                 } else {
                     // Display our popup content.
-                    showPopupContent(
+                    GeneralCommandMenuPopupHandler.showPopupContent(
                         popupOriginator = popupOriginator,
                         layoutDirection = layoutDirection,
                         density = density,
@@ -259,7 +259,6 @@ internal fun <E> AuroraComboBox(
                             maxVisibleMenuCommands = presentationModel.popupMaxVisibleItems,
                             popupPlacementStrategy = presentationModel.popupPlacementStrategy
                         ),
-                        popupHandler =  GeneralCommandMenuPopupHandler(),
                         toDismissPopupsOnActivation = true,
                         toUseBackgroundStriping = true,
                         popupPlacementStrategy = presentationModel.popupPlacementStrategy,

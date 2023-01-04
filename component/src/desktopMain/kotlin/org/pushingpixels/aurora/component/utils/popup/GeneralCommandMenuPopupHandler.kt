@@ -58,7 +58,8 @@ internal data class GeneralPopupContentLayoutInfo(
     val generalVerticalScrollbarSize: Size
 ) : CommandMenuPopupLayoutInfo
 
-internal class GeneralCommandMenuPopupHandler : CommandMenuHandler<CommandMenuContentModel, GeneralPopupContentLayoutInfo> {
+internal object GeneralCommandMenuPopupHandler : CommandMenuHandler<
+        CommandMenuContentModel, CommandPopupMenuPresentationModel, GeneralPopupContentLayoutInfo> {
     override fun getPopupContentLayoutInfo(
         menuContentModel: CommandMenuContentModel,
         menuPresentationModel: CommandPopupMenuPresentationModel,
