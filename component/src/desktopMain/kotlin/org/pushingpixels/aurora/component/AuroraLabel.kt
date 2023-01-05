@@ -51,7 +51,11 @@ internal fun AuroraLabel(
     ) {
         if (contentModel.icon != null) {
             LabelIconContent(contentModel, presentationModel, state)
-            Spacer(modifier = Modifier.requiredWidth(4.dp * presentationModel.horizontalGapScaleFactor))
+            Spacer(
+                modifier = Modifier.requiredWidth(
+                    presentationModel.iconTextGap * presentationModel.horizontalGapScaleFactor
+                )
+            )
         }
         LabelTextContent(contentModel, presentationModel, state)
     }

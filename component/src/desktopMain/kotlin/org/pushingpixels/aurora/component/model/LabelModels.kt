@@ -33,6 +33,7 @@ data class LabelContentModel(
 object LabelSizingConstants {
     val DefaultLabelContentPadding = PaddingValues(start = 5.dp, top = 4.dp, end = 5.dp, bottom = 4.dp)
     val DefaultLabelIconSize = DpSize(16.dp, 16.dp)
+    val DefaultIconTextGap = 4.dp
 }
 
 data class LabelPresentationModel(
@@ -46,5 +47,6 @@ data class LabelPresentationModel(
     val textSoftWrap: Boolean = true,
     val textMaxLines: Int = Int.MAX_VALUE,
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
+    val iconTextGap: Dp = LabelSizingConstants.DefaultIconTextGap,
     val horizontalGapScaleFactor: Float = 1.0f
 ): PresentationModel

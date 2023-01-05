@@ -46,6 +46,7 @@ import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.LabelProjection
+import org.pushingpixels.aurora.component.utils.TitleLabel
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
@@ -298,7 +299,7 @@ internal fun AuroraCommandButtonPanel(
                             for ((groupIndex, commandGroup) in contentModel.commandGroups.withIndex()) {
                                 if (presentationModel.showGroupLabels && (commandGroup.title != null)) {
                                     item {
-                                        CommandButtonGroupTitle(groupIndex, commandGroup)
+                                        CommandButtonGroupTitle(commandGroup)
                                     }
                                 }
 
@@ -338,6 +339,7 @@ internal fun AuroraCommandButtonPanel(
                     }
                 }.first().measure(constraints)
             }
+
             is PanelLayoutSpec.ColumnFill -> {
                 val rowCount: Int = when (presentationModel.layoutSpec.columnFillSpec) {
                     is PanelColumnFillSpec.Fixed -> presentationModel.layoutSpec.columnFillSpec.rowCount
@@ -474,98 +476,16 @@ internal fun getPreferredCommandPopupMenuPanelSize(
 }
 
 @Composable
-private fun CommandButtonGroupTitle(groupModelIndex: Int, groupModel: CommandGroup) {
+private fun CommandButtonGroupTitle(groupModel: CommandGroup) {
     require(groupModel.title != null) {
         "This composable should not be called on a command group with no title"
     }
 
-    val decorationAreaType = AuroraSkin.decorationAreaType
-    val skinColors = AuroraSkin.colors
-    val buttonShaper = remember { ClassicButtonShaper() }
-    val borderPainter = AuroraSkin.painters.borderPainter
-
-    Box(modifier = Modifier.fillMaxWidth()) {
-        Canvas(modifier = Modifier.matchParentSize()) {
-            val width = this.size.width
-            val height = this.size.height
-
-            withTransform({
-                clipRect(
-                    left = 0.0f,
-                    top = 0.0f,
-                    right = width,
-                    bottom = height,
-                    clipOp = ClipOp.Intersect
-                )
-            }) {
-                // Fill the background with accented fill color
-                drawRect(
-                    color = skinColors.getBackgroundColorScheme(decorationAreaType)
-                        .accentedBackgroundFillColor,
-                    topLeft = Offset.Zero,
-                    size = this.size,
-                    style = Fill
-                )
-
-                val bump = 4.dp.toPx()
-                val horizontalExtra = 2 * bump
-                val verticalExtra = if (groupModelIndex == 0) bump else 0.0f
-
-                val borderOutline = buttonShaper.getButtonOutline(
-                    width = width + horizontalExtra,
-                    height = height + verticalExtra,
-                    extraInsets = 0.5f,
-                    isInner = false,
-                    sides = Sides(straightSides = Side.values().toSet()),
-                    outlineKind = OutlineKind.Border,
-                    density = this
-                )
-
-                val outlineBoundingRect = borderOutline.bounds
-                if (outlineBoundingRect.isEmpty) {
-                    return@withTransform
-                }
-
-                val borderColorScheme = skinColors.getColorScheme(
-                    decorationAreaType = decorationAreaType,
-                    associationKind = ColorSchemeAssociationKind.Border,
-                    componentState = ComponentState.Enabled
-                )
-
-                val innerBorderOutline = if (borderPainter.isPaintingInnerOutline)
-                    buttonShaper.getButtonOutline(
-                        width = width + horizontalExtra,
-                        height = height + verticalExtra,
-                        extraInsets = 1.0f,
-                        isInner = true,
-                        sides = Sides(straightSides = Side.values().toSet()),
-                        outlineKind = OutlineKind.Border,
-                        density = this
-                    ) else null
-
-                withTransform({
-                    translate(
-                        left = -bump,
-                        top = -verticalExtra
-                    )
-                }) {
-                    borderPainter.paintBorder(
-                        this,
-                        Size(width = width + horizontalExtra, height = height + verticalExtra),
-                        borderOutline,
-                        innerBorderOutline,
-                        borderColorScheme,
-                        1.0f
-                    )
-                }
-            }
-        }
-        // The title of the current command group
-        LabelProjection(
-            contentModel = LabelContentModel(text = groupModel.title),
-            presentationModel = LabelPresentationModel(
-                horizontalAlignment = HorizontalAlignment.Leading
-            )
-        ).project()
-    }
+    TitleLabel(
+        modifier = Modifier.fillMaxWidth(),
+        title = groupModel.title,
+        presentationModel = LabelPresentationModel(
+            horizontalAlignment = HorizontalAlignment.Leading
+        )
+    )
 }

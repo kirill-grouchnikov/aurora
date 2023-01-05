@@ -47,6 +47,7 @@ data class ColorSelectorCommandPopupMenuPresentationModel(
     override val menuPresentationState: CommandButtonPresentationState =
         DefaultCommandPopupMenuPresentationState,
     val colorColumns: Int,
+    val sectionTitleTextStyle: TextStyle? = null
 ): BaseCommandPopupMenuPresentationModel
 
 private class PopupMenuCommandButtonLayoutManager(

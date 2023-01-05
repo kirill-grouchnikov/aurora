@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
@@ -31,8 +32,11 @@ import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.component.AuroraCommandButton
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.utils.CommandMenuHandler
 import org.pushingpixels.aurora.component.utils.CommandMenuPopupLayoutInfo
+import org.pushingpixels.aurora.component.utils.TitleLabel
+import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.theming.*
 import kotlin.math.max
 
@@ -92,6 +96,9 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                 fontFamilyResolver = fontFamilyResolver
             )
 
+        // First pass - go over all the entries to determine the width of the popup
+        // as the max of preferred widths of commands and section selectors. Here we
+        // also compute how much height the commands need.
         var maxWidth = 0.0f
         var combinedHeight = 0.0f
         for (entry in menuContentModel.entries) {
@@ -109,10 +116,74 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                     combinedHeight += preferredSize.height
                 }
 
-                else -> {}
+                is ColorSelectorPopupMenuSection -> {
+
+                }
+
+                is ColorSelectorPopupMenuSectionWithDerived -> {
+
+                }
+
+                is ColorSelectorPopupMenuRecentsSection -> {
+
+                }
             }
         }
 
+        // Second pass - go over all section entries to determine how much height their
+        // titles need under the computed popup width. This is where we complete the
+        // computation of the overall popup height.
+        val titleLabelPresentationModel = LabelPresentationModel(
+            horizontalAlignment = HorizontalAlignment.Leading,
+            textStyle = menuPresentationModel.sectionTitleTextStyle
+        )
+        val resolvedTitleTextStyle = resolveDefaults(
+            textStyle.merge(menuPresentationModel.sectionTitleTextStyle),
+            layoutDirection
+        )
+
+        for (entry in menuContentModel.entries) {
+            when (entry) {
+                is ColorSelectorPopupMenuCommand -> {
+                }
+
+                is ColorSelectorPopupMenuSection -> {
+                    combinedHeight += getLabelPreferredHeight(
+                        contentModel = LabelContentModel(text = entry.colorSectionModel.title),
+                        presentationModel = titleLabelPresentationModel,
+                        resolvedTextStyle = resolvedTitleTextStyle,
+                        layoutDirection = layoutDirection,
+                        density = density,
+                        fontFamilyResolver = fontFamilyResolver,
+                        availableWidth = maxWidth
+                    )
+                }
+
+                is ColorSelectorPopupMenuSectionWithDerived -> {
+                    combinedHeight += getLabelPreferredHeight(
+                        contentModel = LabelContentModel(text = entry.colorSectionModel.title),
+                        presentationModel = titleLabelPresentationModel,
+                        resolvedTextStyle = resolvedTitleTextStyle,
+                        layoutDirection = layoutDirection,
+                        density = density,
+                        fontFamilyResolver = fontFamilyResolver,
+                        availableWidth = maxWidth
+                    )
+                }
+
+                is ColorSelectorPopupMenuRecentsSection -> {
+                    combinedHeight += getLabelPreferredHeight(
+                        contentModel = LabelContentModel(text = entry.colorSectionModel.title),
+                        presentationModel = titleLabelPresentationModel,
+                        resolvedTextStyle = resolvedTitleTextStyle,
+                        layoutDirection = layoutDirection,
+                        density = density,
+                        fontFamilyResolver = fontFamilyResolver,
+                        availableWidth = maxWidth
+                    )
+                }
+            }
+        }
 
         return ColorSelectorPopupContentLayoutInfo(
             popupSize = DpSize(
@@ -134,35 +205,11 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
         popupContentLayoutInfo: ColorSelectorPopupContentLayoutInfo
     ) {
-        // If at least one secondary command in this popup menu has icon factory
-        // we force all command buttons to allocate space for the icon (for overall
-        // alignment of content across the entire popup menu)
-        var atLeastOneButtonHasIcon = false
-        for (entry in menuContentModel.entries) {
-            if (entry is ColorSelectorPopupMenuCommand) {
-                if (entry.command.icon != null) {
-                    atLeastOneButtonHasIcon = true
-                }
-                if (entry.command.isActionToggle) {
-                    atLeastOneButtonHasIcon = true
-                }
-            }
-        }
+        val menuButtonPresentationModel = popupContentLayoutInfo.menuButtonPresentationModel
 
-        // Command presentation for menu content, taking some values from
-        // the popup menu presentation model configured on the top-level presentation model
-        val menuButtonPresentationModel = CommandButtonPresentationModel(
-            presentationState = menuPresentationModel.menuPresentationState,
-            iconActiveFilterStrategy = IconFilterStrategy.Original,
-            iconEnabledFilterStrategy = IconFilterStrategy.Original,
-            iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
-            forceAllocateSpaceForIcon = atLeastOneButtonHasIcon,
-            popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
-            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-            horizontalAlignment = HorizontalAlignment.Leading,
-            contentPadding = CommandButtonSizingConstants.CompactButtonContentPadding,
-            isMenu = true,
-            sides = Sides(straightSides = Side.values().toSet())
+        val sectionTitlePresentationModel = LabelPresentationModel(
+            textStyle = menuPresentationModel.sectionTitleTextStyle,
+            horizontalAlignment = HorizontalAlignment.Leading
         )
 
         Column(modifier = Modifier.fillMaxSize()) {
@@ -196,7 +243,29 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                         )
                     }
 
-                    else -> {}
+                    is ColorSelectorPopupMenuSection -> {
+                        TitleLabel(
+                            modifier = Modifier.fillMaxWidth(),
+                            title = entry.colorSectionModel.title,
+                            presentationModel = sectionTitlePresentationModel
+                        )
+                    }
+
+                    is ColorSelectorPopupMenuSectionWithDerived -> {
+                        TitleLabel(
+                            modifier = Modifier.fillMaxWidth(),
+                            title = entry.colorSectionModel.title,
+                            presentationModel = sectionTitlePresentationModel
+                        )
+                    }
+
+                    is ColorSelectorPopupMenuRecentsSection -> {
+                        TitleLabel(
+                            modifier = Modifier.fillMaxWidth(),
+                            title = entry.colorSectionModel.title,
+                            presentationModel = sectionTitlePresentationModel
+                        )
+                    }
                 }
             }
         }
