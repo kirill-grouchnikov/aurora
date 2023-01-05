@@ -78,9 +78,11 @@ fun ColorSelectorButton(
     resourceBundle: ResourceBundle
 ) {
     val colorActivationListener: (Color) -> Unit = {
-        colorData.copy(
-            isInPreview = false,
-            permanentColor = it
+        onColorDataChanged.invoke(
+            colorData.copy(
+                isInPreview = false,
+                permanentColor = it
+            )
         )
     }
     val colorPreviewListener = object : ColorPreviewListener {

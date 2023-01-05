@@ -88,7 +88,7 @@ class ColorSelectorCommandButtonProjection(
             parentPopupMenu = popupMenu,
             extraAction = null,
             presentationModel = this.presentationModel,
-            popupHandler = ColorSelectorCommandMenuPopupHandler(),
+            popupHandler = ColorSelectorCommandMenuPopupHandler,
             overlays = this.overlays ?: mapOf()
         )
     }

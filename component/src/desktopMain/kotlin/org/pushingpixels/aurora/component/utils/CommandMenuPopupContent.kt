@@ -40,7 +40,7 @@ internal val Color.awtColor: java.awt.Color
     )
 
 internal interface CommandMenuPopupLayoutInfo {
-    val popupSize: IntSize
+    val popupSize: DpSize
 }
 
 internal interface CommandMenuHandler<in M : BaseCommandMenuContentModel,
@@ -96,11 +96,12 @@ internal interface CommandMenuHandler<in M : BaseCommandMenuContentModel,
             fontFamilyResolver = fontFamilyResolver
         )
 
-        val fullPopupWidth = popupContentLayoutInfo.popupSize.width
-        val fullPopupHeight = popupContentLayoutInfo.popupSize.height
+        val fullPopupWidth = popupContentLayoutInfo.popupSize.width.value.toInt()
+        val fullPopupHeight = popupContentLayoutInfo.popupSize.height.value.toInt()
 
         // From this point, all coordinates are in Swing display units - which are density independent.
-        // This is why the popup width and height was converted from pixels.
+        // This is why the popup width and height was converted from pixels into dp, and now we're
+        // passing those as is (the numeric value) to Swing / AWT
         val initialAnchorX = if (layoutDirection == LayoutDirection.Ltr)
             (popupOriginatorLocationOnScreen.x + anchorBoundsInWindow.left).toInt() else
             (popupOriginatorLocationOnScreen.x + anchorBoundsInWindow.left + anchorBoundsInWindow.width).toInt() - fullPopupWidth
