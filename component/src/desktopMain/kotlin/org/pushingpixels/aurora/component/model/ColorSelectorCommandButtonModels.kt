@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.component.model
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
@@ -70,20 +71,21 @@ object RecentlyUsed {
         if (recentlySelected.contains(color)) {
             // Bump up to the top of the most recent
             recentlySelected.remove(color)
-            recentlySelected.addLast(color)
+            recentlySelected.addFirst(color)
             return
         }
         if (recentlySelected.size == 100) {
             // Too many in history, bump out the least recently used or added
-            recentlySelected.removeFirst()
+            recentlySelected.removeLast()
         }
-        recentlySelected.addLast(color)
+        recentlySelected.addFirst(color)
     }
 }
 
 object ColorSelectorCommandButtonSizingConstants {
     val DefaultColorCellSize = 12.dp
     val DefaultColorCellGap = 4.dp
+    val DefaultSectionContentPadding = PaddingValues(all = 4.dp)
 }
 
 data class ColorSelectorCommandPopupMenuPresentationModel(
@@ -92,7 +94,8 @@ data class ColorSelectorCommandPopupMenuPresentationModel(
     val colorColumns: Int,
     val colorCellSize: Dp = ColorSelectorCommandButtonSizingConstants.DefaultColorCellSize,
     val colorCellGap: Dp = ColorSelectorCommandButtonSizingConstants.DefaultColorCellGap,
-    val sectionTitleTextStyle: TextStyle? = null
+    val sectionTitleTextStyle: TextStyle? = null,
+    val sectionContentPadding: PaddingValues = ColorSelectorCommandButtonSizingConstants.DefaultSectionContentPadding
 ): BaseCommandPopupMenuPresentationModel
 
 data class ColorSelectorCommand(

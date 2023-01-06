@@ -15,16 +15,22 @@
  */
 package org.pushingpixels.aurora.component.utils.popup
 
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.resolveDefaults
@@ -32,17 +38,18 @@ import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
+import org.pushingpixels.aurora.common.RGBtoHSB
 import org.pushingpixels.aurora.component.AuroraCommandButton
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.utils.CommandMenuHandler
 import org.pushingpixels.aurora.component.utils.CommandMenuPopupLayoutInfo
 import org.pushingpixels.aurora.component.utils.TitleLabel
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.theming.*
-import kotlin.math.ceil
+import org.pushingpixels.aurora.theming.utils.getBaseOutline
 import kotlin.math.max
+import kotlin.math.min
 
 internal data class ColorSelectorPopupContentLayoutInfo(
     override val popupSize: Size,
@@ -120,15 +127,18 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                     combinedHeight += preferredSize.height
                 }
 
-                is ColorSelectorPopupMenuSection -> {
-
+                is ColorSelectorPopupMenuSection,
+                is ColorSelectorPopupMenuRecentsSection -> {
+                    val cellCount = menuPresentationModel.colorColumns
+                    val sectionWidthDp =
+                        menuPresentationModel.sectionContentPadding.calculateLeftPadding(layoutDirection) +
+                                cellCount * menuPresentationModel.colorCellSize +
+                                (cellCount - 1) * menuPresentationModel.colorCellGap +
+                                menuPresentationModel.sectionContentPadding.calculateRightPadding(layoutDirection)
+                    maxWidth = max(maxWidth, sectionWidthDp.value * density.density)
                 }
 
                 is ColorSelectorPopupMenuSectionWithDerived -> {
-
-                }
-
-                is ColorSelectorPopupMenuRecentsSection -> {
 
                 }
             }
@@ -161,6 +171,10 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                         fontFamilyResolver = fontFamilyResolver,
                         availableWidth = maxWidth
                     )
+                    combinedHeight += (menuPresentationModel.sectionContentPadding.calculateTopPadding() +
+                            menuPresentationModel.colorCellSize +
+                            menuPresentationModel.sectionContentPadding.calculateBottomPadding()).value *
+                            density.density
                 }
 
                 is ColorSelectorPopupMenuSectionWithDerived -> {
@@ -185,6 +199,11 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                         fontFamilyResolver = fontFamilyResolver,
                         availableWidth = maxWidth
                     )
+                    // Account for one row of cells, even when there are no recent colors to show yet
+                    combinedHeight += (menuPresentationModel.sectionContentPadding.calculateTopPadding() +
+                            menuPresentationModel.colorCellSize +
+                            menuPresentationModel.sectionContentPadding.calculateBottomPadding()).value *
+                            density.density
                 }
             }
         }
@@ -248,10 +267,12 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                     }
 
                     is ColorSelectorPopupMenuSection -> {
-                        TitleLabel(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = entry.title,
-                            presentationModel = sectionTitlePresentationModel
+                        ColorSelectorSection(
+                            menuContentModel = menuContentModel,
+                            menuPresentationModel = menuPresentationModel,
+                            sectionTitle = entry.title,
+                            sectionColors = entry.colors,
+                            sectionTitlePresentationModel = sectionTitlePresentationModel
                         )
                     }
 
@@ -264,12 +285,147 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                     }
 
                     is ColorSelectorPopupMenuRecentsSection -> {
-                        TitleLabel(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = entry.title,
-                            presentationModel = sectionTitlePresentationModel
+                        val fullRecentColors = RecentlyUsed.getRecentlyUsedColors()
+                        val recentColors = fullRecentColors.subList(
+                            fromIndex = 0,
+                            toIndex = min(menuPresentationModel.colorColumns, fullRecentColors.size)
+                        )
+                        ColorSelectorSection(
+                            menuContentModel = menuContentModel,
+                            menuPresentationModel = menuPresentationModel,
+                            sectionTitle = entry.title,
+                            sectionColors = recentColors,
+                            sectionTitlePresentationModel = sectionTitlePresentationModel
                         )
                     }
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun ColorSelectorSection(
+        menuContentModel: ColorSelectorMenuContentModel,
+        menuPresentationModel: ColorSelectorCommandPopupMenuPresentationModel,
+        sectionTitle: String,
+        sectionColors: List<Color>,
+        sectionTitlePresentationModel: LabelPresentationModel
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            TitleLabel(
+                modifier = Modifier.fillMaxWidth(),
+                title = sectionTitle,
+                presentationModel = sectionTitlePresentationModel
+            )
+
+            if (sectionColors.isNotEmpty()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(menuPresentationModel.sectionContentPadding),
+                    horizontalArrangement = Arrangement.spacedBy(menuPresentationModel.colorCellGap)
+                ) {
+                    for (color in sectionColors) {
+                        ColorSelectorCell(
+                            menuContentModel = menuContentModel,
+                            menuPresentationModel = menuPresentationModel,
+                            color = color,
+                            sides = Sides(straightSides = Side.values().toSet())
+                        )
+                    }
+                }
+            } else {
+                // Reserve vertical space even if there are no recent colors to show
+                Box(modifier = Modifier.fillMaxWidth().padding(menuPresentationModel.sectionContentPadding)
+                    .height(menuPresentationModel.colorCellSize))
+            }
+        }
+    }
+
+    @Composable
+    private fun ColorSelectorCell(
+        menuContentModel: ColorSelectorMenuContentModel,
+        menuPresentationModel: ColorSelectorCommandPopupMenuPresentationModel,
+        color: Color,
+        sides: Sides
+    ) {
+        val skinColors = AuroraSkin.colors
+        val decorationAreaType = AuroraSkin.decorationAreaType
+
+        var wasRollover by remember { mutableStateOf(false) }
+
+        val interactionSource = remember { MutableInteractionSource() }
+        val rollover by interactionSource.collectIsHoveredAsState()
+        val rolloverTransition = updateTransition(rollover)
+        val rolloverFraction by rolloverTransition.animateFloat(
+            transitionSpec = {
+                tween(durationMillis = AuroraSkin.animationConfig.regular)
+            }
+        ) {
+            when (it) {
+                false -> 0.0f
+                true -> 1.0f
+            }
+        }
+
+
+        if (!wasRollover && rollover) {
+            SideEffect {
+                menuContentModel.onColorPreviewActivated.onColorPreviewActivated(color)
+            }
+        }
+        if (wasRollover && !rollover) {
+            SideEffect {
+                menuContentModel.onColorPreviewActivated.onColorPreviewCanceled()
+            }
+        }
+        wasRollover = rollover
+
+        Box(
+            modifier = Modifier.size(size = menuPresentationModel.colorCellSize)
+                .clickable(interactionSource = interactionSource,
+                    indication = null,
+                    onClick = {
+                        menuContentModel.onColorActivated.invoke(color)
+                        RecentlyUsed.addColorToRecentlyUsed(color)
+                        AuroraPopupManager.hidePopups(null)
+                    })
+        ) {
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val width = this.size.width
+                val height = this.size.height
+
+                drawRect(color = color)
+
+                val hsb = RGBtoHSB(from = color)
+                val brightness = hsb[2] * 0.7f
+                val borderColor = Color(brightness, brightness, brightness)
+
+                val borderOutline = getBaseOutline(width, height, 0.0f, sides, 0.0f, OutlineKind.Border)
+                drawOutline(
+                    outline = borderOutline,
+                    color = borderColor,
+                    style = Stroke(1.0f)
+                )
+
+                if (rolloverFraction > 0.0f) {
+                    val highlightBorderScheme = skinColors.getColorScheme(
+                        decorationAreaType = decorationAreaType,
+                        associationKind = ColorSchemeAssociationKind.HighlightBorder,
+                        componentState = ComponentState.RolloverUnselected
+                    )
+
+                    drawRect(
+                        color = highlightBorderScheme.midColor,
+                        style = Stroke(1.0f),
+                        alpha = rolloverFraction
+                    )
+
+                    drawRect(
+                        color = highlightBorderScheme.ultraDarkColor,
+                        style = Stroke(1.0f),
+                        topLeft = Offset(1.0f, 1.0f),
+                        size = Size(width - 2.0f, height - 2.0f),
+                        alpha = rolloverFraction
+                    )
                 }
             }
         }
