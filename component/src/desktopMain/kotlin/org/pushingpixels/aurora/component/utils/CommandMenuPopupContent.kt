@@ -18,6 +18,7 @@ package org.pushingpixels.aurora.component.utils
 import androidx.compose.runtime.*
 import androidx.compose.ui.awt.ComposePanel
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -41,7 +42,7 @@ internal val Color.awtColor: java.awt.Color
     )
 
 internal interface CommandMenuPopupLayoutInfo {
-    val popupSize: DpSize
+    val popupSize: Size
 }
 
 internal interface CommandMenuHandler<in M : BaseCommandMenuContentModel,
@@ -97,13 +98,14 @@ internal interface CommandMenuHandler<in M : BaseCommandMenuContentModel,
             fontFamilyResolver = fontFamilyResolver
         )
 
-        // Full size of the popup accounts for extra pixel (in DP units) on each side for the popup border
-        val fullPopupWidth = ceil((popupContentLayoutInfo.popupSize.width + 2.dp).value).toInt()
-        val fullPopupHeight = ceil((popupContentLayoutInfo.popupSize.height + 2.dp).value).toInt()
-
         // From this point, all coordinates are in Swing display units - which are density independent.
-        // This is why the popup width and height was converted from pixels into dp, and now we're
-        // passing those as is (the numeric value) to Swing / AWT
+        // The popup width and height is converted from pixels into dp (density-independent units),
+        // and then passed those as is (the numeric value) to Swing / AWT
+
+        // Full size of the popup accounts for extra pixel on each side for the popup border
+        val fullPopupWidth = ceil(popupContentLayoutInfo.popupSize.width / density.density).toInt() + 2
+        val fullPopupHeight = ceil(popupContentLayoutInfo.popupSize.height / density.density).toInt() + 2
+
         val initialAnchorX = if (layoutDirection == LayoutDirection.Ltr)
             (popupOriginatorLocationOnScreen.x + anchorBoundsInWindow.left).toInt() else
             (popupOriginatorLocationOnScreen.x + anchorBoundsInWindow.left + anchorBoundsInWindow.width).toInt() - fullPopupWidth

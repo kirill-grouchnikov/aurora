@@ -49,7 +49,7 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 internal data class GeneralPopupContentLayoutInfo(
-    override val popupSize: DpSize,
+    override val popupSize: Size,
     val fullSize: Size,
     val buttonPanelSize: Size,
     val separatorSize: Size,
@@ -193,11 +193,8 @@ internal object GeneralCommandMenuPopupHandler : CommandMenuHandler<
 
         val offset = ceil(density.density).toInt()
 
-        val fullPopupWidthDp = (ceil(fullContentWidth / density.density).toInt()).dp
-        val fullPopupHeightDp = (ceil(fullContentHeight / density.density).toInt()).dp
-
         return GeneralPopupContentLayoutInfo(
-            popupSize = DpSize(fullPopupWidthDp, fullPopupHeightDp),
+            popupSize = Size(fullContentWidth, fullContentHeight),
             fullSize = Size(
                 width = fullContentWidth + 2 * offset,
                 height = fullContentHeight + 2 * offset

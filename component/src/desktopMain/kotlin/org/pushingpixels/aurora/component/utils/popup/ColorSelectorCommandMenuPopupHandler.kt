@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -44,7 +45,7 @@ import kotlin.math.ceil
 import kotlin.math.max
 
 internal data class ColorSelectorPopupContentLayoutInfo(
-    override val popupSize: DpSize,
+    override val popupSize: Size,
     val menuButtonPresentationModel: CommandButtonPresentationModel
 ) : CommandMenuPopupLayoutInfo
 
@@ -189,9 +190,9 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
         }
 
         return ColorSelectorPopupContentLayoutInfo(
-            popupSize = DpSize(
-                width = (ceil(maxWidth / density.density).toInt()).dp,
-                height = (ceil(combinedHeight / density.density).toInt()).dp
+            popupSize = Size(
+                width = maxWidth,
+                height = combinedHeight
             ),
             menuButtonPresentationModel = menuButtonPresentationModel
         )
@@ -215,7 +216,7 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
             horizontalAlignment = HorizontalAlignment.Leading
         )
 
-        Column(modifier = Modifier.fillMaxSize().padding(all = LocalDensity.current.density.dp)) {
+        Column(modifier = Modifier.fillMaxSize().padding(all = 1.0.dp)) {
             for (entry in menuContentModel.entries) {
                 when (entry) {
                     is ColorSelectorPopupMenuCommand -> {
