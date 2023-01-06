@@ -33,6 +33,7 @@ import java.awt.*
 import java.awt.geom.Rectangle2D
 import javax.swing.JPopupMenu
 import javax.swing.border.Border
+import kotlin.math.ceil
 
 internal val Color.awtColor: java.awt.Color
     get() = java.awt.Color(
@@ -96,8 +97,9 @@ internal interface CommandMenuHandler<in M : BaseCommandMenuContentModel,
             fontFamilyResolver = fontFamilyResolver
         )
 
-        val fullPopupWidth = popupContentLayoutInfo.popupSize.width.value.toInt()
-        val fullPopupHeight = popupContentLayoutInfo.popupSize.height.value.toInt()
+        // Full size of the popup accounts for extra pixel (in DP units) on each side for the popup border
+        val fullPopupWidth = ceil((popupContentLayoutInfo.popupSize.width + 2.dp).value).toInt()
+        val fullPopupHeight = ceil((popupContentLayoutInfo.popupSize.height + 2.dp).value).toInt()
 
         // From this point, all coordinates are in Swing display units - which are density independent.
         // This is why the popup width and height was converted from pixels into dp, and now we're

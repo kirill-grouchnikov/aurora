@@ -193,9 +193,8 @@ internal object GeneralCommandMenuPopupHandler : CommandMenuHandler<
 
         val offset = ceil(density.density).toInt()
 
-        // Full size of the popup accounts for extra pixel (in DP units) on each side for the popup border
-        val fullPopupWidthDp = (ceil(fullContentWidth / density.density).toInt() + 2).dp
-        val fullPopupHeightDp = (ceil(fullContentHeight / density.density).toInt() + 2).dp
+        val fullPopupWidthDp = (ceil(fullContentWidth / density.density).toInt()).dp
+        val fullPopupHeightDp = (ceil(fullContentHeight / density.density).toInt()).dp
 
         return GeneralPopupContentLayoutInfo(
             popupSize = DpSize(fullPopupWidthDp, fullPopupHeightDp),

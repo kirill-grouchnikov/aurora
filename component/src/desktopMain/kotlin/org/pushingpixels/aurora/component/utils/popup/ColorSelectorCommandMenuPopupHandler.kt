@@ -19,9 +19,11 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.resolveDefaults
@@ -38,6 +40,7 @@ import org.pushingpixels.aurora.component.utils.CommandMenuPopupLayoutInfo
 import org.pushingpixels.aurora.component.utils.TitleLabel
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.theming.*
+import kotlin.math.ceil
 import kotlin.math.max
 
 internal data class ColorSelectorPopupContentLayoutInfo(
@@ -187,8 +190,8 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
 
         return ColorSelectorPopupContentLayoutInfo(
             popupSize = DpSize(
-                width = (maxWidth / density.density).dp,
-                height = (combinedHeight / density.density).dp
+                width = (ceil(maxWidth / density.density).toInt()).dp,
+                height = (ceil(combinedHeight / density.density).toInt()).dp
             ),
             menuButtonPresentationModel = menuButtonPresentationModel
         )
@@ -212,7 +215,7 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
             horizontalAlignment = HorizontalAlignment.Leading
         )
 
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize().padding(all = LocalDensity.current.density.dp)) {
             for (entry in menuContentModel.entries) {
                 when (entry) {
                     is ColorSelectorPopupMenuCommand -> {
