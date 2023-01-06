@@ -54,7 +54,7 @@ interface ColorPreviewListener {
     /**
      * Invoked when the color preview has been canceled.
      */
-    fun onColorPreviewCanceled()
+    fun onColorPreviewCanceled(color: Color)
 }
 
 object RecentlyUsed {

@@ -686,7 +686,7 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
                 println("Preview activated color $color")
             }
 
-            override fun onColorPreviewCanceled() {
+            override fun onColorPreviewCanceled(color: Color) {
                 println("Preview canceled color")
             }
         }
@@ -706,13 +706,11 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
                     },
                     actionPreview = object : CommandActionPreview {
                         override fun onCommandPreviewActivated(command: BaseCommand) {
-                            colorPreviewListener.onColorPreviewActivated(
-                                defaultColor
-                            )
+                            colorPreviewListener.onColorPreviewActivated(defaultColor)
                         }
 
                         override fun onCommandPreviewCanceled(command: BaseCommand) {
-                            colorPreviewListener.onColorPreviewCanceled()
+                            colorPreviewListener.onColorPreviewCanceled(defaultColor)
                         }
                     }
                 )

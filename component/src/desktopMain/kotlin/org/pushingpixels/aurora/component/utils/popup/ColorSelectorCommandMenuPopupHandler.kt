@@ -477,7 +477,6 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
             }
         }
 
-
         if (!wasRollover && rollover) {
             SideEffect {
                 menuContentModel.onColorPreviewActivated.onColorPreviewActivated(color)
@@ -485,7 +484,7 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
         }
         if (wasRollover && !rollover) {
             SideEffect {
-                menuContentModel.onColorPreviewActivated.onColorPreviewCanceled()
+                menuContentModel.onColorPreviewActivated.onColorPreviewCanceled(color)
             }
         }
         wasRollover = rollover

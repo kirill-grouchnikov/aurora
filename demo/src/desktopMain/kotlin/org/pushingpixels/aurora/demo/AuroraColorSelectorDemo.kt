@@ -73,32 +73,11 @@ data class ColorData(
 @ExperimentalUnitApi
 @Composable
 fun ColorSelectorButton(
-    colorData: ColorData,
-    onColorDataChanged: (ColorData) -> Unit,
+    permanentColor: Color,
+    colorActivationListener: (Color) -> Unit,
+    colorPreviewListener : ColorPreviewListener,
     resourceBundle: ResourceBundle
 ) {
-    val colorActivationListener: (Color) -> Unit = {
-        onColorDataChanged.invoke(
-            colorData.copy(
-                isInPreview = false,
-                permanentColor = it
-            )
-        )
-    }
-    val colorPreviewListener = object : ColorPreviewListener {
-        override fun onColorPreviewActivated(color: Color) {
-            onColorDataChanged.invoke(
-                colorData.copy(
-                    isInPreview = true,
-                    previewColor = color
-                )
-            )
-        }
-
-        override fun onColorPreviewCanceled() {
-            onColorDataChanged.invoke(colorData.copy(isInPreview = false))
-        }
-    }
 
     val defaultColorCommand = Command(
         text = resourceBundle.getString("ColorSelector.textAutomatic"),
@@ -113,7 +92,7 @@ fun ColorSelectorButton(
             }
 
             override fun onCommandPreviewCanceled(command: BaseCommand) {
-                colorPreviewListener.onColorPreviewCanceled()
+                colorPreviewListener.onColorPreviewCanceled(DefaultColor)
             }
         }
     )
@@ -168,7 +147,7 @@ fun ColorSelectorButton(
 
     val colorSelectorCommand = ColorSelectorCommand(
         text = "",
-        icon = ColorSolidIcon(colorData.permanentColor),
+        icon = ColorSolidIcon(permanentColor),
         secondaryContentModel = selectorModel
     )
 
@@ -196,6 +175,34 @@ fun AuroraApplicationScope.ColorSelectorDemoContent(
         )
     }
 
+    val colorActivationListener: (Color) -> Unit = {
+        colorData =
+            colorData.copy(
+                isInPreview = false,
+                permanentColor = it
+            )
+    }
+    val colorPreviewListener = object : ColorPreviewListener {
+        override fun onColorPreviewActivated(color: Color) {
+            colorData =
+                colorData.copy(
+                    isInPreview = true,
+                    previewColor = color
+                )
+        }
+
+        override fun onColorPreviewCanceled(color: Color) {
+            // Handle the case where the user moves the mouse between color cells,
+            // and we get color preview cancel on the old cell after color preview
+            // activation on the new cell. Detect this by looking at the color we are
+            // getting in this cancellation and comparing it with the current preview
+            // color in our data model. If they don't match, don't do anything.
+            if (colorData.isInPreview && (colorData.previewColor == color)) {
+                colorData = colorData.copy(isInPreview = false)
+            }
+        }
+    }
+
     Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
         Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
             AuroraSkinSwitcher(onSkinChange)
@@ -207,8 +214,9 @@ fun AuroraApplicationScope.ColorSelectorDemoContent(
             Spacer(modifier = Modifier.width(8.dp))
 
             ColorSelectorButton(
-                colorData = colorData,
-                onColorDataChanged = { colorData = it },
+                permanentColor = colorData.permanentColor,
+                colorActivationListener = colorActivationListener,
+                colorPreviewListener = colorPreviewListener,
                 resourceBundle = resourceBundle
             )
         }
