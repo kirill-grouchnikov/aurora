@@ -19,7 +19,6 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
@@ -31,14 +30,12 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.*
-import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.common.AuroraPopupManager
-import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
-import org.pushingpixels.aurora.common.RGBtoHSB
+import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.component.AuroraCommandButton
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
@@ -50,6 +47,7 @@ import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.pow
 
 internal data class ColorSelectorPopupContentLayoutInfo(
     override val popupSize: Size,
@@ -114,6 +112,8 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
         var combinedHeight = 0.0f
         for (entry in menuContentModel.entries) {
             when (entry) {
+                // For the command section, their width is determined by the command itself
+                // (icon, title, presentation model)
                 is ColorSelectorPopupMenuCommand -> {
                     val preferredSize = layoutManager.getPreferredSize(
                         command = entry.command,
@@ -127,8 +127,9 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                     combinedHeight += preferredSize.height
                 }
 
-                is ColorSelectorPopupMenuSection,
-                is ColorSelectorPopupMenuRecentsSection -> {
+                // For the rest of the sections, their width is determined by how many color
+                // cells they display in a single row
+                else -> {
                     val cellCount = menuPresentationModel.colorColumns
                     val sectionWidthDp =
                         menuPresentationModel.sectionContentPadding.calculateLeftPadding(layoutDirection) +
@@ -136,10 +137,6 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                                 (cellCount - 1) * menuPresentationModel.colorCellGap +
                                 menuPresentationModel.sectionContentPadding.calculateRightPadding(layoutDirection)
                     maxWidth = max(maxWidth, sectionWidthDp.value * density.density)
-                }
-
-                is ColorSelectorPopupMenuSectionWithDerived -> {
-
                 }
             }
         }
@@ -159,6 +156,8 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
         for (entry in menuContentModel.entries) {
             when (entry) {
                 is ColorSelectorPopupMenuCommand -> {
+                    // We already processed preferred width and height in the first pass.
+                    // Nothing more to do here.
                 }
 
                 is ColorSelectorPopupMenuSection -> {
@@ -187,6 +186,16 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                         fontFamilyResolver = fontFamilyResolver,
                         availableWidth = maxWidth
                     )
+                    // One row of seed colors, and multiple rows of derived colors. We also have content
+                    // padding around the whole content, and a vertical gap between the seed colors and the
+                    // block of derived colors rows (no gaps between inside that block)
+                    combinedHeight += (menuPresentationModel.sectionContentPadding.calculateTopPadding() +
+                            menuPresentationModel.colorCellSize +
+                            menuPresentationModel.colorCellGap +
+                            menuPresentationModel.colorCellSize * entry.derivedCount +
+                            menuPresentationModel.sectionContentPadding.calculateBottomPadding()).value *
+                            density.density
+
                 }
 
                 is ColorSelectorPopupMenuRecentsSection -> {
@@ -277,10 +286,13 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                     }
 
                     is ColorSelectorPopupMenuSectionWithDerived -> {
-                        TitleLabel(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = entry.title,
-                            presentationModel = sectionTitlePresentationModel
+                        ColorSelectorSectionWithDerived(
+                            menuContentModel = menuContentModel,
+                            menuPresentationModel = menuPresentationModel,
+                            sectionTitle = entry.title,
+                            sectionColors = entry.colors,
+                            sectionDerivedCount = entry.derivedCount,
+                            sectionTitlePresentationModel = sectionTitlePresentationModel
                         )
                     }
 
@@ -300,6 +312,103 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                     }
                 }
             }
+        }
+    }
+
+    @Composable
+    private fun ColorSelectorSectionWithDerived(
+        menuContentModel: ColorSelectorMenuContentModel,
+        menuPresentationModel: ColorSelectorCommandPopupMenuPresentationModel,
+        sectionTitle: String,
+        sectionColors: List<Color>,
+        sectionDerivedCount: Int,
+        sectionTitlePresentationModel: LabelPresentationModel
+    ) {
+        val layoutDirection = LocalLayoutDirection.current
+
+        Column(modifier = Modifier.fillMaxWidth()) {
+            TitleLabel(
+                modifier = Modifier.fillMaxWidth(),
+                title = sectionTitle,
+                presentationModel = sectionTitlePresentationModel
+            )
+
+            Spacer(
+                modifier = Modifier.fillMaxWidth()
+                    .height(menuPresentationModel.sectionContentPadding.calculateTopPadding())
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(
+                    start = menuPresentationModel.sectionContentPadding.calculateStartPadding(layoutDirection),
+                    end = menuPresentationModel.sectionContentPadding.calculateEndPadding(layoutDirection)
+                ),
+                horizontalArrangement = Arrangement.spacedBy(menuPresentationModel.colorCellGap)
+            ) {
+                for (color in sectionColors) {
+                    ColorSelectorCell(
+                        menuContentModel = menuContentModel,
+                        menuPresentationModel = menuPresentationModel,
+                        color = color,
+                        sides = Sides(straightSides = Side.values().toSet())
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.fillMaxWidth().height(menuPresentationModel.colorCellGap))
+
+            for (derivedRow in 1..sectionDerivedCount) {
+                val openSides = hashSetOf<Side>()
+                if (derivedRow > 1) {
+                    openSides.add(Side.Top)
+                }
+                if (derivedRow < sectionDerivedCount) {
+                    openSides.add(Side.Bottom)
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(
+                        start = menuPresentationModel.sectionContentPadding.calculateStartPadding(layoutDirection),
+                        end = menuPresentationModel.sectionContentPadding.calculateEndPadding(layoutDirection)
+                    ),
+                    horizontalArrangement = Arrangement.spacedBy(menuPresentationModel.colorCellGap)
+                ) {
+                    for (color in sectionColors) {
+                        val primaryHsb = RGBtoHSB(from = color)
+
+                        var bFactor: Float = (derivedRow - 1).toFloat() / sectionDerivedCount.toFloat()
+                        bFactor = bFactor.toDouble().pow(1.5).toFloat()
+                        var brightness = 1.0f - bFactor
+
+                        if (primaryHsb[1] == 0.0f) {
+                            // special handling for gray scale
+                            val max: Float = 0.5f + 0.5f * primaryHsb[2]
+                            brightness = max * (sectionDerivedCount - derivedRow + 1) / sectionDerivedCount
+                        }
+
+                        val secondary = HSBtoRGB(
+                            floatArrayOf(
+                                primaryHsb[0],
+                                primaryHsb[1] * (derivedRow + 1) / (sectionDerivedCount + 1),
+                                brightness
+                            )
+                        )
+
+                        ColorSelectorCell(
+                            menuContentModel = menuContentModel,
+                            menuPresentationModel = menuPresentationModel,
+                            color = secondary,
+                            sides = Sides(straightSides = Side.values().toSet(), openSides = openSides)
+                        )
+                    }
+                }
+            }
+
+            Spacer(
+                modifier = Modifier.fillMaxWidth()
+                    .height(menuPresentationModel.sectionContentPadding.calculateBottomPadding())
+            )
+
         }
     }
 
@@ -334,8 +443,10 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                 }
             } else {
                 // Reserve vertical space even if there are no recent colors to show
-                Box(modifier = Modifier.fillMaxWidth().padding(menuPresentationModel.sectionContentPadding)
-                    .height(menuPresentationModel.colorCellSize))
+                Box(
+                    modifier = Modifier.fillMaxWidth().padding(menuPresentationModel.sectionContentPadding)
+                        .height(menuPresentationModel.colorCellSize)
+                )
             }
         }
     }
