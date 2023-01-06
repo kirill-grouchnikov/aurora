@@ -16,7 +16,6 @@
 package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -40,7 +39,7 @@ interface CommandActionPreview {
     fun onCommandPreviewCanceled(command: BaseCommand)
 }
 
-sealed interface BaseCommand: ContentModel {
+interface BaseCommand: ContentModel {
     val text: String
     val extraText: String?
     val icon: Painter?
@@ -72,23 +71,6 @@ data class Command(
     override val secondaryRichTooltip: RichTooltip? = null
 ) : BaseCommand
 
-data class ColorSelectorCommand(
-    override val text: String,
-    override val extraText: String? = null,
-    override val icon: Painter? = null,
-    override val secondaryContentModel: ColorSelectorMenuContentModel,
-    override val isSecondaryEnabled: Boolean = true,
-    override val secondaryRichTooltip: RichTooltip? = null
-) : BaseCommand {
-    override val action: (() -> Unit)? = null
-    override val actionPreview: CommandActionPreview? = null
-    override val isActionEnabled: Boolean = false
-    override val isActionToggle: Boolean = false
-    override val isActionToggleSelected: Boolean = false
-    override val actionRichTooltip: RichTooltip? = null
-    override val onTriggerActionToggleSelectedChange: ((Boolean) -> Unit)? = null
-}
-
 data class RibbonApplicationMenuCommand(
     override val text: String,
     override val secondaryContentModel: RibbonApplicationMenuContentModel,
@@ -111,7 +93,7 @@ data class CommandGroup(
     val commands: List<Command>
 ) : ContentModel
 
-sealed interface BaseCommandMenuContentModel
+interface BaseCommandMenuContentModel
 
 data class CommandMenuContentModel(
     val groups: List<CommandGroup>,
@@ -128,12 +110,6 @@ data class CommandMenuContentModel(
         highlightedCommand = highlightedCommand
     )
 }
-
-data class ColorSelectorMenuContentModel(
-    val entries: List<ColorSelectorPopupMenuEntry>,
-    val onColorPreviewActivated: ColorPreviewListener,
-    val onColorActivated: (Color) -> Unit
-) : BaseCommandMenuContentModel
 
 data class RibbonApplicationMenuContentModel(
     val groups: List<CommandGroup>,

@@ -153,7 +153,7 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
 
                 is ColorSelectorPopupMenuSection -> {
                     combinedHeight += getLabelPreferredHeight(
-                        contentModel = LabelContentModel(text = entry.colorSectionModel.title),
+                        contentModel = LabelContentModel(text = entry.title),
                         presentationModel = titleLabelPresentationModel,
                         resolvedTextStyle = resolvedTitleTextStyle,
                         layoutDirection = layoutDirection,
@@ -165,7 +165,7 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
 
                 is ColorSelectorPopupMenuSectionWithDerived -> {
                     combinedHeight += getLabelPreferredHeight(
-                        contentModel = LabelContentModel(text = entry.colorSectionModel.title),
+                        contentModel = LabelContentModel(text = entry.title),
                         presentationModel = titleLabelPresentationModel,
                         resolvedTextStyle = resolvedTitleTextStyle,
                         layoutDirection = layoutDirection,
@@ -250,7 +250,7 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                     is ColorSelectorPopupMenuSection -> {
                         TitleLabel(
                             modifier = Modifier.fillMaxWidth(),
-                            title = entry.colorSectionModel.title,
+                            title = entry.title,
                             presentationModel = sectionTitlePresentationModel
                         )
                     }
@@ -258,7 +258,7 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                     is ColorSelectorPopupMenuSectionWithDerived -> {
                         TitleLabel(
                             modifier = Modifier.fillMaxWidth(),
-                            title = entry.colorSectionModel.title,
+                            title = entry.title,
                             presentationModel = sectionTitlePresentationModel
                         )
                     }

@@ -25,7 +25,7 @@ import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManagerMediu
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 
-sealed interface BaseCommandPopupMenuPresentationModel {
+interface BaseCommandPopupMenuPresentationModel {
     val menuPresentationState: CommandButtonPresentationState
 }
 
@@ -41,13 +41,6 @@ data class CommandPopupMenuPresentationModel(
     val maxVisibleMenuCommands: Int = 0,
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignTop,
     val toDismissOnCommandActivation: Boolean = true
-): BaseCommandPopupMenuPresentationModel
-
-data class ColorSelectorCommandPopupMenuPresentationModel(
-    override val menuPresentationState: CommandButtonPresentationState =
-        DefaultCommandPopupMenuPresentationState,
-    val colorColumns: Int,
-    val sectionTitleTextStyle: TextStyle? = null
 ): BaseCommandPopupMenuPresentationModel
 
 private class PopupMenuCommandButtonLayoutManager(

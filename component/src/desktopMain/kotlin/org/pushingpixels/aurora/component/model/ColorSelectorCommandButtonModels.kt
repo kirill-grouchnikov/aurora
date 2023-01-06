@@ -16,19 +16,25 @@
 package org.pushingpixels.aurora.component.model
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import java.util.*
-
-data class ColorSectionModel(
-    val title: String,
-    val colors: List<Color>
-)
 
 sealed interface ColorSelectorPopupMenuEntry
 
 data class ColorSelectorPopupMenuCommand(val command: Command) : ColorSelectorPopupMenuEntry
-data class ColorSelectorPopupMenuSection(val colorSectionModel: ColorSectionModel) : ColorSelectorPopupMenuEntry
-data class ColorSelectorPopupMenuSectionWithDerived(val colorSectionModel: ColorSectionModel) :
-    ColorSelectorPopupMenuEntry
+data class ColorSelectorPopupMenuSection(
+    val title: String,
+    val colors: List<Color>
+) : ColorSelectorPopupMenuEntry
+
+data class ColorSelectorPopupMenuSectionWithDerived(
+    val title: String,
+    val colors: List<Color>,
+    val derivedCount: Int
+) : ColorSelectorPopupMenuEntry
 
 data class ColorSelectorPopupMenuRecentsSection(val title: String) : ColorSelectorPopupMenuEntry
 
@@ -74,3 +80,40 @@ object RecentlyUsed {
         recentlySelected.addLast(color)
     }
 }
+
+object ColorSelectorCommandButtonSizingConstants {
+    val DefaultColorCellSize = 12.dp
+    val DefaultColorCellGap = 4.dp
+}
+
+data class ColorSelectorCommandPopupMenuPresentationModel(
+    override val menuPresentationState: CommandButtonPresentationState =
+        DefaultCommandPopupMenuPresentationState,
+    val colorColumns: Int,
+    val colorCellSize: Dp = ColorSelectorCommandButtonSizingConstants.DefaultColorCellSize,
+    val colorCellGap: Dp = ColorSelectorCommandButtonSizingConstants.DefaultColorCellGap,
+    val sectionTitleTextStyle: TextStyle? = null
+): BaseCommandPopupMenuPresentationModel
+
+data class ColorSelectorCommand(
+    override val text: String,
+    override val extraText: String? = null,
+    override val icon: Painter? = null,
+    override val secondaryContentModel: ColorSelectorMenuContentModel,
+    override val isSecondaryEnabled: Boolean = true,
+    override val secondaryRichTooltip: RichTooltip? = null
+) : BaseCommand {
+    override val action: (() -> Unit)? = null
+    override val actionPreview: CommandActionPreview? = null
+    override val isActionEnabled: Boolean = false
+    override val isActionToggle: Boolean = false
+    override val isActionToggleSelected: Boolean = false
+    override val actionRichTooltip: RichTooltip? = null
+    override val onTriggerActionToggleSelectedChange: ((Boolean) -> Unit)? = null
+}
+
+data class ColorSelectorMenuContentModel(
+    val entries: List<ColorSelectorPopupMenuEntry>,
+    val onColorPreviewActivated: ColorPreviewListener,
+    val onColorActivated: (Color) -> Unit
+) : BaseCommandMenuContentModel

@@ -81,12 +81,21 @@ class ColorSelectorCommandButtonProjection(
     ) {
         require(contentModel.secondaryContentModel.entries.all {
             when (it) {
-                is ColorSelectorPopupMenuSection -> it.colorSectionModel.colors.size == (presentationModel.popupMenuPresentationModel as ColorSelectorCommandPopupMenuPresentationModel).colorColumns
-                is ColorSelectorPopupMenuSectionWithDerived -> it.colorSectionModel.colors.size == (presentationModel.popupMenuPresentationModel as ColorSelectorCommandPopupMenuPresentationModel).colorColumns
+                is ColorSelectorPopupMenuSection -> it.colors.size == (presentationModel.popupMenuPresentationModel as ColorSelectorCommandPopupMenuPresentationModel).colorColumns
+                is ColorSelectorPopupMenuSectionWithDerived -> it.colors.size == (presentationModel.popupMenuPresentationModel as ColorSelectorCommandPopupMenuPresentationModel).colorColumns
                 else -> true
             }
         }) {
             "Color section in the secondary content model does not match the column count in popup presentation model"
+        }
+
+        require(contentModel.secondaryContentModel.entries.all {
+            when (it) {
+                is ColorSelectorPopupMenuSectionWithDerived -> it.derivedCount >= 1
+                else -> true
+            }
+        }) {
+            "Needs to pass a non-trivial number of derived colors"
         }
 
         val popupMenu = LocalPopupMenu.current
