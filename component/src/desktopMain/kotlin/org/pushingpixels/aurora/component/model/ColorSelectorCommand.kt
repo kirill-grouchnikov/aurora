@@ -30,7 +30,7 @@ data class ColorSelectorPopupMenuSection(val colorSectionModel: ColorSectionMode
 data class ColorSelectorPopupMenuSectionWithDerived(val colorSectionModel: ColorSectionModel) :
     ColorSelectorPopupMenuEntry
 
-data class ColorSelectorPopupMenuRecentsSection(val colorSectionModel: ColorSectionModel) : ColorSelectorPopupMenuEntry
+data class ColorSelectorPopupMenuRecentsSection(val title: String) : ColorSelectorPopupMenuEntry
 
 /**
  * Listener for tracking color preview events.

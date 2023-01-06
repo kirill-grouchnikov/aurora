@@ -146,10 +146,7 @@ fun ColorSelectorButton(
                 )
             ),
             ColorSelectorPopupMenuRecentsSection(
-                colorSectionModel = ColorSectionModel(
-                    title = resourceBundle.getString("ColorSelector.textRecentCaption"),
-                    colors = emptyList()
-                )
+                title = resourceBundle.getString("ColorSelector.textRecentCaption")
             ),
             ColorSelectorPopupMenuCommand(
                 command = Command(

@@ -177,7 +177,7 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
 
                 is ColorSelectorPopupMenuRecentsSection -> {
                     combinedHeight += getLabelPreferredHeight(
-                        contentModel = LabelContentModel(text = entry.colorSectionModel.title),
+                        contentModel = LabelContentModel(text = entry.title),
                         presentationModel = titleLabelPresentationModel,
                         resolvedTextStyle = resolvedTitleTextStyle,
                         layoutDirection = layoutDirection,
@@ -266,7 +266,7 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                     is ColorSelectorPopupMenuRecentsSection -> {
                         TitleLabel(
                             modifier = Modifier.fillMaxWidth(),
-                            title = entry.colorSectionModel.title,
+                            title = entry.title,
                             presentationModel = sectionTitlePresentationModel
                         )
                     }

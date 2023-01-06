@@ -742,10 +742,7 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
                 )
             ),
             ColorSelectorPopupMenuRecentsSection(
-                colorSectionModel = ColorSectionModel(
-                    title = resourceBundle.getString("ColorSelector.textRecentCaption"),
-                    colors = listOf()
-                )
+                title = resourceBundle.getString("ColorSelector.textRecentCaption")
             ),
             ColorSelectorPopupMenuCommand(
                 command = Command(

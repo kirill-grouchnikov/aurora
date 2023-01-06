@@ -79,6 +79,16 @@ class ColorSelectorCommandButtonProjection(
         modifier: Modifier = Modifier,
         popupInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() }
     ) {
+        require(contentModel.secondaryContentModel.entries.all {
+            when (it) {
+                is ColorSelectorPopupMenuSection -> it.colorSectionModel.colors.size == (presentationModel.popupMenuPresentationModel as ColorSelectorCommandPopupMenuPresentationModel).colorColumns
+                is ColorSelectorPopupMenuSectionWithDerived -> it.colorSectionModel.colors.size == (presentationModel.popupMenuPresentationModel as ColorSelectorCommandPopupMenuPresentationModel).colorColumns
+                else -> true
+            }
+        }) {
+            "Color section in the secondary content model does not match the column count in popup presentation model"
+        }
+
         val popupMenu = LocalPopupMenu.current
         AuroraCommandButton(
             modifier = modifier,
