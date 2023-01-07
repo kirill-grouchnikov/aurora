@@ -26,4 +26,4 @@ Here is the list of all component projections provided by Aurora
 
 ### Next
 
-Continue to [box with highlights](BoxWithHighlights.md).
+Continue to [command strip](CommandStrip.md).
