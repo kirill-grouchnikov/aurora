@@ -75,7 +75,7 @@ data class ColorData(
 fun ColorSelectorButton(
     permanentColor: Color,
     colorActivationListener: (Color) -> Unit,
-    colorPreviewListener : ColorPreviewListener,
+    colorPreviewListener: ColorPreviewListener,
     resourceBundle: ResourceBundle
 ) {
 
@@ -176,19 +176,17 @@ fun AuroraApplicationScope.ColorSelectorDemoContent(
     }
 
     val colorActivationListener: (Color) -> Unit = {
-        colorData =
-            colorData.copy(
-                isInPreview = false,
-                permanentColor = it
-            )
+        colorData = colorData.copy(
+            isInPreview = false,
+            permanentColor = it
+        )
     }
     val colorPreviewListener = object : ColorPreviewListener {
         override fun onColorPreviewActivated(color: Color) {
-            colorData =
-                colorData.copy(
-                    isInPreview = true,
-                    previewColor = color
-                )
+            colorData = colorData.copy(
+                isInPreview = true,
+                previewColor = color
+            )
         }
 
         override fun onColorPreviewCanceled(color: Color) {

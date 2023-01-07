@@ -19,6 +19,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
@@ -51,7 +52,8 @@ import kotlin.math.pow
 
 internal data class ColorSelectorPopupContentLayoutInfo(
     override val popupSize: Size,
-    val menuButtonPresentationModel: CommandButtonPresentationModel
+    val menuButtonPresentationModel: CommandButtonPresentationModel,
+    val showTrailingSeparator: BooleanArray
 ) : CommandMenuPopupLayoutInfo
 
 internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
@@ -217,12 +219,27 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
             }
         }
 
+        // Third pass (technically can combine with the first, but splitting for clarity) -
+        // which entries should show a trailing horizontal separator? We show a separator for
+        // every entry that has title and is followed directly by a command entry
+        val showTrailingSeparator = BooleanArray(menuContentModel.entries.size)
+        for ((index, entry) in menuContentModel.entries.withIndex()) {
+            showTrailingSeparator[index] = (index < (menuContentModel.entries.size - 1) &&
+                    (entry !is ColorSelectorPopupMenuCommand) &&
+                    (menuContentModel.entries[index + 1] is ColorSelectorPopupMenuCommand))
+            if (showTrailingSeparator[index]) {
+                // horizontal separator is 1dp tall
+                combinedHeight += density.density
+            }
+        }
+
         return ColorSelectorPopupContentLayoutInfo(
             popupSize = Size(
                 width = maxWidth,
                 height = combinedHeight
             ),
-            menuButtonPresentationModel = menuButtonPresentationModel
+            menuButtonPresentationModel = menuButtonPresentationModel,
+            showTrailingSeparator = showTrailingSeparator
         )
     }
 
@@ -244,8 +261,12 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
             horizontalAlignment = HorizontalAlignment.Leading
         )
 
-        Column(modifier = Modifier.fillMaxSize().padding(all = 1.0.dp)) {
-            for (entry in menuContentModel.entries) {
+        val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
+            decorationAreaType = AuroraSkin.decorationAreaType
+        )
+        Column(modifier = Modifier.fillMaxSize().background(color = backgroundColorScheme.backgroundFillColor)
+            .padding(all = 1.0.dp)) {
+            for ((index, entry) in menuContentModel.entries.withIndex()) {
                 when (entry) {
                     is ColorSelectorPopupMenuCommand -> {
                         // Check if we have a presentation overlay for this secondary command
@@ -281,7 +302,8 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                             menuPresentationModel = menuPresentationModel,
                             sectionTitle = entry.title,
                             sectionColors = entry.colors,
-                            sectionTitlePresentationModel = sectionTitlePresentationModel
+                            sectionTitlePresentationModel = sectionTitlePresentationModel,
+                            showTrailingSeparator = popupContentLayoutInfo.showTrailingSeparator[index]
                         )
                     }
 
@@ -292,7 +314,8 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                             sectionTitle = entry.title,
                             sectionColors = entry.colors,
                             sectionDerivedCount = entry.derivedCount,
-                            sectionTitlePresentationModel = sectionTitlePresentationModel
+                            sectionTitlePresentationModel = sectionTitlePresentationModel,
+                            showTrailingSeparator = popupContentLayoutInfo.showTrailingSeparator[index]
                         )
                     }
 
@@ -307,7 +330,8 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                             menuPresentationModel = menuPresentationModel,
                             sectionTitle = entry.title,
                             sectionColors = recentColors,
-                            sectionTitlePresentationModel = sectionTitlePresentationModel
+                            sectionTitlePresentationModel = sectionTitlePresentationModel,
+                            showTrailingSeparator = popupContentLayoutInfo.showTrailingSeparator[index]
                         )
                     }
                 }
@@ -322,7 +346,8 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
         sectionTitle: String,
         sectionColors: List<Color>,
         sectionDerivedCount: Int,
-        sectionTitlePresentationModel: LabelPresentationModel
+        sectionTitlePresentationModel: LabelPresentationModel,
+        showTrailingSeparator: Boolean
     ) {
         val layoutDirection = LocalLayoutDirection.current
 
@@ -404,6 +429,10 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                 }
             }
 
+            if (showTrailingSeparator) {
+                BottomLine()
+            }
+
             Spacer(
                 modifier = Modifier.fillMaxWidth()
                     .height(menuPresentationModel.sectionContentPadding.calculateBottomPadding())
@@ -418,7 +447,8 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
         menuPresentationModel: ColorSelectorCommandPopupMenuPresentationModel,
         sectionTitle: String,
         sectionColors: List<Color>,
-        sectionTitlePresentationModel: LabelPresentationModel
+        sectionTitlePresentationModel: LabelPresentationModel,
+        showTrailingSeparator: Boolean
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             TitleLabel(
@@ -446,6 +476,35 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                 Box(
                     modifier = Modifier.fillMaxWidth().padding(menuPresentationModel.sectionContentPadding)
                         .height(menuPresentationModel.colorCellSize)
+                )
+            }
+
+            if (showTrailingSeparator) {
+                BottomLine()
+            }
+        }
+    }
+
+    @Composable
+    private fun BottomLine() {
+        val skinColors = AuroraSkin.colors
+        val decorationAreaType = AuroraSkin.decorationAreaType
+        val borderColorScheme = skinColors.getColorScheme(
+            decorationAreaType = decorationAreaType,
+            associationKind = ColorSchemeAssociationKind.HighlightBorder,
+            componentState = ComponentState.Enabled
+        )
+        val borderColor = borderColorScheme.lineColor
+
+        Box(modifier = Modifier.fillMaxWidth().height(1.0.dp)) {
+            Canvas(modifier = Modifier.matchParentSize()) {
+                val width = this.size.width
+
+                drawLine(
+                    color = borderColor,
+                    start = Offset(0.5f, 0.5f),
+                    end = Offset(width - 0.5f, 0.5f),
+                    strokeWidth = 1.0f
                 )
             }
         }
@@ -536,6 +595,17 @@ internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
                         size = Size(width - 2.0f, height - 2.0f),
                         alpha = rolloverFraction
                     )
+                }
+            }
+        }
+
+        DisposableEffect(interactionSource) {
+            onDispose {
+                // This is to handle the case where the popup is canceled (with Escape key,
+                // for example) while the mouse is hovering over this cell. We need to tell
+                // the application code to cancel color preview.
+                if (rollover) {
+                    menuContentModel.onColorPreviewActivated.onColorPreviewCanceled(color)
                 }
             }
         }
