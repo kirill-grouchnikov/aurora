@@ -5,6 +5,7 @@ Here is the list of all component projections provided by Aurora
 | Component | Content model | Presentation model | Projection |
 | --- | --- | --- | --- |
 | **Command button** | Command | CommandButtonPresentationModel | CommandButtonProjection |
+| **Color selector command button** | ColorSelectorCommand | ColorSelectorCommandButtonPresentationModel | ColorSelectorCommandButtonProjection |
 | **Command button strip** | CommandGroup | CommandStripPresentationModel | CommandButtonStripProjection |
 | **Command button panel** | CommandPanelContentModel | CommandPanelPresentationModel | CommandButtonPanelProjection |
 | **Combobox** | ComboBoxContentModel | ComboBoxPresentationModel | ComboBoxProjection |
