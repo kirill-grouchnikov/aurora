@@ -40,8 +40,8 @@ import org.pushingpixels.aurora.component.AuroraCommandButtonPanel
 import org.pushingpixels.aurora.component.getPreferredCommandPopupMenuPanelSize
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
-import org.pushingpixels.aurora.component.popup.CommandMenuHandler
-import org.pushingpixels.aurora.component.popup.CommandMenuPopupLayoutInfo
+import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
+import org.pushingpixels.aurora.component.popup.BaseCommandMenuPopupLayoutInfo
 import org.pushingpixels.aurora.theming.*
 import kotlin.math.ceil
 import kotlin.math.max
@@ -56,9 +56,9 @@ internal data class GeneralPopupContentLayoutInfo(
     val generalContentSize: Size,
     val generalContentItemHeights: FloatArray,
     val generalVerticalScrollbarSize: Size
-) : CommandMenuPopupLayoutInfo
+) : BaseCommandMenuPopupLayoutInfo
 
-internal object GeneralCommandMenuPopupHandler : CommandMenuHandler<
+internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
         CommandMenuContentModel, CommandPopupMenuPresentationModel, GeneralPopupContentLayoutInfo> {
     override fun getPopupContentLayoutInfo(
         menuContentModel: CommandMenuContentModel,

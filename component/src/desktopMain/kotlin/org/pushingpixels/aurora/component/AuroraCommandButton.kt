@@ -54,8 +54,8 @@ import kotlinx.coroutines.*
 import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.component.popup.CommandMenuHandler
-import org.pushingpixels.aurora.component.popup.CommandMenuPopupLayoutInfo
+import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
+import org.pushingpixels.aurora.component.popup.BaseCommandMenuPopupLayoutInfo
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.utils.*
@@ -328,7 +328,7 @@ private fun Modifier.commandButtonActionClickable(
 @Composable
 internal fun <M : BaseCommandMenuContentModel,
         P : BaseCommandPopupMenuPresentationModel,
-        L : CommandMenuPopupLayoutInfo> AuroraCommandButton(
+        L : BaseCommandMenuPopupLayoutInfo> AuroraCommandButton(
     modifier: Modifier,
     actionInteractionSource: MutableInteractionSource,
     popupInteractionSource: MutableInteractionSource,
@@ -336,7 +336,7 @@ internal fun <M : BaseCommandMenuContentModel,
     parentPopupMenu: AuroraSwingPopupMenu?,
     extraAction: (() -> Unit)? = null,
     extraActionPreview: CommandActionPreview? = null,
-    popupHandler: CommandMenuHandler<M, P, L>,
+    popupHandler: BaseCommandMenuHandler<M, P, L>,
     popupPlacementStrategyProvider: ((ModelStateInfo) -> PopupPlacementStrategy)? = null,
     presentationModel: BaseCommandButtonPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>

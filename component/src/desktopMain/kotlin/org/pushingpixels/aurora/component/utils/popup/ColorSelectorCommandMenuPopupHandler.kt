@@ -40,8 +40,8 @@ import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.component.AuroraCommandButton
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.component.popup.CommandMenuHandler
-import org.pushingpixels.aurora.component.popup.CommandMenuPopupLayoutInfo
+import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
+import org.pushingpixels.aurora.component.popup.BaseCommandMenuPopupLayoutInfo
 import org.pushingpixels.aurora.component.utils.TitleLabel
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.theming.*
@@ -54,9 +54,9 @@ internal data class ColorSelectorPopupContentLayoutInfo(
     override val popupSize: Size,
     val menuButtonPresentationModel: CommandButtonPresentationModel,
     val showTrailingSeparator: BooleanArray
-) : CommandMenuPopupLayoutInfo
+) : BaseCommandMenuPopupLayoutInfo
 
-internal object ColorSelectorCommandMenuPopupHandler : CommandMenuHandler<
+internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
         ColorSelectorMenuContentModel, ColorSelectorCommandPopupMenuPresentationModel,
         ColorSelectorPopupContentLayoutInfo> {
     override fun getPopupContentLayoutInfo(
