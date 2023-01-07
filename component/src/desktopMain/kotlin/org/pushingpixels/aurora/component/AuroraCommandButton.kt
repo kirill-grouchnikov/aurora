@@ -54,6 +54,8 @@ import kotlinx.coroutines.*
 import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.popup.CommandMenuHandler
+import org.pushingpixels.aurora.component.popup.CommandMenuPopupLayoutInfo
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.utils.*

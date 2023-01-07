@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.pushingpixels.aurora.component.utils
+package org.pushingpixels.aurora.component.popup
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.awt.ComposePanel
@@ -28,6 +28,7 @@ import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.utils.getPlacementAwarePopupShift
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import java.awt.*
@@ -41,11 +42,11 @@ internal val Color.awtColor: java.awt.Color
         this.red, this.green, this.blue, this.alpha
     )
 
-internal interface CommandMenuPopupLayoutInfo {
+interface CommandMenuPopupLayoutInfo {
     val popupSize: Size
 }
 
-internal interface CommandMenuHandler<in M : BaseCommandMenuContentModel,
+interface CommandMenuHandler<in M : BaseCommandMenuContentModel,
         in P : BaseCommandPopupMenuPresentationModel,
         L : CommandMenuPopupLayoutInfo> {
     fun getPopupContentLayoutInfo(

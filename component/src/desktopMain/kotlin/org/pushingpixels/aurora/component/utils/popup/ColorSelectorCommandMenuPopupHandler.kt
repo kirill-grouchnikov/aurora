@@ -40,8 +40,8 @@ import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.component.AuroraCommandButton
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.component.utils.CommandMenuHandler
-import org.pushingpixels.aurora.component.utils.CommandMenuPopupLayoutInfo
+import org.pushingpixels.aurora.component.popup.CommandMenuHandler
+import org.pushingpixels.aurora.component.popup.CommandMenuPopupLayoutInfo
 import org.pushingpixels.aurora.component.utils.TitleLabel
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.theming.*

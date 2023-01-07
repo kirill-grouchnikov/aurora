@@ -40,8 +40,8 @@ import org.pushingpixels.aurora.component.AuroraCommandButtonPanel
 import org.pushingpixels.aurora.component.getPreferredCommandPopupMenuPanelSize
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
-import org.pushingpixels.aurora.component.utils.CommandMenuHandler
-import org.pushingpixels.aurora.component.utils.CommandMenuPopupLayoutInfo
+import org.pushingpixels.aurora.component.popup.CommandMenuHandler
+import org.pushingpixels.aurora.component.popup.CommandMenuPopupLayoutInfo
 import org.pushingpixels.aurora.theming.*
 import kotlin.math.ceil
 import kotlin.math.max
