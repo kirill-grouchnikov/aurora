@@ -74,4 +74,4 @@ Let's take a closer look at all the parts:
 
 ### Next
 
-Continue to [command strips](CommandStrip.md).
+Continue to [context menu](ContextMenu.md).

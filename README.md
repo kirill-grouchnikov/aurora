@@ -55,13 +55,13 @@ the [Ephemeral](https://github.com/kirill-grouchnikov/ephemeral) design system. 
   * [Command overview](docs/component/Command.md)
   * [Command projections](docs/component/CommandProjections.md)
   * [Command button presentation models](docs/component/CommandButtonPresentation.md)
+  * [Command popup menus](docs/component/CommandPopupMenu.md)
 * Projections
   * [Model and projection overview](docs/component/ModelProjectionOverview.md)
   * [All component projections](docs/component/ComponentProjections.md)
 * More components
   * [Command strips](docs/component/CommandStrip.md)
   * [Command panels](docs/component/CommandPanel.md)
-  * [Command popup menus](docs/component/CommandPopupMenu.md)
   * [Breadcrumb bars](docs/component/BreadcrumbBar.md)
   * [Box with highlights](docs/component/BoxWithHighlights.md)
 * Miscellaneous

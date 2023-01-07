@@ -66,7 +66,7 @@ val breadcrumbBarContentProvider =
     }
 ```
 
-Note that this particular implementation does not track dynamic changes to the underlying file system like adding, removing or renaming folders and files. 
+Note that this particular implementation does not track dynamic changes to the underlying file system like adding, removing or renaming folders and files.
 
 ### Working with breadcrumb bar
 
@@ -130,3 +130,8 @@ Let's take a look at what we're doing here:
 - Pass this callback to the `BreadcrumbBarContentModel` function so that it gets wired to any user-initiated changes as the user interacts with the breadcrumb bar content.
 - Call `BreadcrumbBarContentProvider.getLeaves()` off the UI thread (using `scope.launch(Dispatchers.Default)` in the callback) so that the UI remains responsive during this potentially blocking I/O operation.
 - When the list of files is loaded, create a `CommandPanelContentModel` that maps each file in the currently selected folder to a command.
+
+
+### Next
+
+Continue to [box with highlights](BoxWithHighlights.md).
