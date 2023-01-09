@@ -62,13 +62,13 @@ data class ColorSelectorCommand(
     override val isSecondaryEnabled: Boolean = true,
     override val secondaryRichTooltip: RichTooltip? = null
 ) : BaseCommand {
-    override val action: (() -> Unit)? = null
-    override val actionPreview: CommandActionPreview? = null
-    override val isActionEnabled: Boolean = false
-    override val isActionToggle: Boolean = false
-    override val isActionToggleSelected: Boolean = false
-    override val actionRichTooltip: RichTooltip? = null
-    override val onTriggerActionToggleSelectedChange: ((Boolean) -> Unit)? = null
+    override val action = null
+    override val actionPreview = null
+    override val isActionEnabled = false
+    override val isActionToggle = false
+    override val isActionToggleSelected = false
+    override val actionRichTooltip = null
+    override val onTriggerActionToggleSelectedChange = null
 }
 ```
 
