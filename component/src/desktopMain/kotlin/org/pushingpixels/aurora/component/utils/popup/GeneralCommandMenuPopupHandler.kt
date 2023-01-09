@@ -380,7 +380,6 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
                     actionInteractionSource = remember { MutableInteractionSource() },
                     popupInteractionSource = remember { MutableInteractionSource() },
                     command = secondaryCommand,
-                    popupPlacementStrategyProvider = null,
                     presentationModel = currSecondaryPresentationModel,
                     popupHandler = this,
                     overlays = overlays

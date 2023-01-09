@@ -18,11 +18,10 @@ package org.pushingpixels.aurora.component
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.painter.Painter
@@ -227,17 +226,20 @@ fun AuroraBreadcrumbBar(
             Box(modifier = Modifier.horizontalScroll(horizontalScrollState)) {
                 Row(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
                     for (command in contentModel) {
+                        val popupInteractionSource = remember(command) { MutableInteractionSource() }
+                        val isPopupRollover by popupInteractionSource.collectIsHoveredAsState()
                         AuroraCommandButton(
                             modifier = Modifier,
                             actionInteractionSource = remember { MutableInteractionSource() },
-                            popupInteractionSource = remember { MutableInteractionSource() },
+                            popupInteractionSource = popupInteractionSource,
                             command = command,
                             popupHandler = GeneralCommandMenuPopupHandler,
-                            popupPlacementStrategyProvider = { modelStateInfo ->
-                                if (modelStateInfo.activeStrength > 0.0f) PopupPlacementStrategy.Downward.HAlignStart
-                                else PopupPlacementStrategy.Endward.VAlignTop
-                            },
-                            presentationModel = contentPresentationModel,
+                            presentationModel = contentPresentationModel.overlayWith(
+                                CommandButtonPresentationModel.Overlay(
+                                    popupPlacementStrategy = if (isPopupRollover) PopupPlacementStrategy.Downward.HAlignStart
+                                    else PopupPlacementStrategy.Endward.VAlignTop
+                                )
+                            ),
                             overlays = mapOf()
                         )
                     }

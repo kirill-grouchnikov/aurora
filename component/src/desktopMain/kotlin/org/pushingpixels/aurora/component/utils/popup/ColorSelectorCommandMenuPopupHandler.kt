@@ -279,7 +279,6 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
                             actionInteractionSource = remember { MutableInteractionSource() },
                             popupInteractionSource = remember { MutableInteractionSource() },
                             command = entry.command,
-                            popupPlacementStrategyProvider = null,
                             presentationModel = currSecondaryPresentationModel,
                             popupHandler = this@ColorSelectorCommandMenuPopupHandler,
                             overlays = overlays

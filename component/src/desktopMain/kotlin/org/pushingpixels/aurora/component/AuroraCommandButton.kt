@@ -335,7 +335,6 @@ internal fun <M : BaseCommandMenuContentModel,
     popupInteractionSource: MutableInteractionSource,
     command: BaseCommand,
     popupHandler: BaseCommandMenuHandler<M, P, L>,
-    popupPlacementStrategyProvider: ((ModelStateInfo) -> PopupPlacementStrategy)? = null,
     presentationModel: BaseCommandButtonPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>
 ) {
@@ -1135,9 +1134,7 @@ internal fun <M : BaseCommandMenuContentModel,
             // Popup action (arrow) if we need one
             if (preLayoutInfo.showPopupIcon) {
                 CommandButtonPopupIconContent(
-                    popupPlacementStrategy =
-                    popupPlacementStrategyProvider?.invoke(popupModelStateInfo)
-                        ?: presentationModel.popupPlacementStrategy,
+                    popupPlacementStrategy = presentationModel.popupPlacementStrategy,
                     modelStateInfo = popupModelStateInfo,
                     currState = currentPopupState.value
                 )
