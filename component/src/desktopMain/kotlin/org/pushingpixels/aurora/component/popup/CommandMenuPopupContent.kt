@@ -62,7 +62,6 @@ interface BaseCommandMenuHandler<in M : BaseCommandMenuContentModel,
     fun generatePopupContent(
         menuContentModel: M,
         menuPresentationModel: P,
-        toDismissPopupsOnActivation: Boolean,
         toUseBackgroundStriping: Boolean,
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
         popupContentLayoutInfo: L
@@ -217,7 +216,7 @@ interface BaseCommandMenuHandler<in M : BaseCommandMenuContentModel,
         // This line is needed to ensure that each popup is displayed in its own heavyweight window
         JPopupMenu.setDefaultLightWeightPopupEnabled(false)
 
-        val popupMenu = AuroraSwingPopupMenu()
+        val popupMenu = AuroraSwingPopupMenu(toDismissPopupsOnActivation)
         popupContent.setContent {
             // Get the current composition context
             CompositionLocalProvider(compositionLocalContext) {
@@ -229,7 +228,6 @@ interface BaseCommandMenuHandler<in M : BaseCommandMenuContentModel,
                     generatePopupContent(
                         menuContentModel = contentModel.value!!,
                         menuPresentationModel = presentationModel,
-                        toDismissPopupsOnActivation = toDismissPopupsOnActivation,
                         toUseBackgroundStriping = toUseBackgroundStriping,
                         overlays = overlays,
                         popupContentLayoutInfo = popupContentLayoutInfo

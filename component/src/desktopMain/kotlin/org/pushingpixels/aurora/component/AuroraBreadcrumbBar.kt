@@ -232,7 +232,6 @@ fun AuroraBreadcrumbBar(
                             actionInteractionSource = remember { MutableInteractionSource() },
                             popupInteractionSource = remember { MutableInteractionSource() },
                             command = command,
-                            extraAction = null,
                             popupHandler = GeneralCommandMenuPopupHandler,
                             popupPlacementStrategyProvider = { modelStateInfo ->
                                 if (modelStateInfo.activeStrength > 0.0f) PopupPlacementStrategy.Downward.HAlignStart

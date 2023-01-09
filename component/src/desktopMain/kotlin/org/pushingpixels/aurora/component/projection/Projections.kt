@@ -54,7 +54,6 @@ abstract class BaseCommandButtonProjection<out C : BaseCommand,
             actionInteractionSource = actionInteractionSource,
             popupInteractionSource = popupInteractionSource,
             command = this.contentModel,
-            extraAction = null,
             presentationModel = this.presentationModel,
             popupHandler = popupHandler,
             overlays = this.overlays ?: mapOf()

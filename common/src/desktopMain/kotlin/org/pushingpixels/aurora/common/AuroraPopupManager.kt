@@ -25,7 +25,7 @@ import javax.swing.JPopupMenu
 import javax.swing.SwingUtilities
 import javax.swing.border.EmptyBorder
 
-class AuroraSwingPopupMenu : JPopupMenu() {
+class AuroraSwingPopupMenu(val toDismissPopupsOnActivation: Boolean) : JPopupMenu() {
     init {
         layout = BorderLayout()
         border = EmptyBorder(1, 1, 1, 1)

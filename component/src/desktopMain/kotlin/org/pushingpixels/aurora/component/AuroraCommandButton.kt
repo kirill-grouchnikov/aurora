@@ -334,7 +334,6 @@ internal fun <M : BaseCommandMenuContentModel,
     actionInteractionSource: MutableInteractionSource,
     popupInteractionSource: MutableInteractionSource,
     command: BaseCommand,
-    extraAction: (() -> Unit)? = null,
     popupHandler: BaseCommandMenuHandler<M, P, L>,
     popupPlacementStrategyProvider: ((ModelStateInfo) -> PopupPlacementStrategy)? = null,
     presentationModel: BaseCommandButtonPresentationModel,
@@ -658,14 +657,20 @@ internal fun <M : BaseCommandMenuContentModel,
                     indication = null,
                     onValueChange = {
                         command.onTriggerActionToggleSelectedChange?.invoke(it)
-                        extraAction?.invoke()
+                        val shouldDismissFromPopupLevel = popupMenu?.toDismissPopupsOnActivation ?: false
+                        if (shouldDismissFromPopupLevel and presentationModel.toDismissPopupsOnActivation) {
+                            AuroraPopupManager.hidePopups(null)
+                        }
                     })
             } else {
                 modifierAction = Modifier.commandButtonActionClickable(
                     enabled = isActionEnabled,
                     onClick = {
                         command.action?.invoke()
-                        extraAction?.invoke()
+                        val shouldDismissFromPopupLevel = popupMenu?.toDismissPopupsOnActivation ?: false
+                        if (shouldDismissFromPopupLevel and presentationModel.toDismissPopupsOnActivation) {
+                            AuroraPopupManager.hidePopups(null)
+                        }
                     },
                     interactionSource = actionInteractionSource,
                     presentationModel = presentationModel

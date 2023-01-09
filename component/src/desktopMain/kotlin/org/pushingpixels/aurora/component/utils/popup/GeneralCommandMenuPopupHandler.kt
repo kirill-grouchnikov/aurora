@@ -32,7 +32,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
@@ -216,7 +215,6 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
     override fun generatePopupContent(
         menuContentModel: CommandMenuContentModel,
         menuPresentationModel: CommandPopupMenuPresentationModel,
-        toDismissPopupsOnActivation: Boolean,
         toUseBackgroundStriping: Boolean,
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
         popupContentLayoutInfo: GeneralPopupContentLayoutInfo
@@ -224,7 +222,6 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
         TopLevelPopupContent(
             menuContentModel = menuContentModel,
             menuPresentationModel = menuPresentationModel,
-            toDismissPopupsOnActivation = toDismissPopupsOnActivation,
             toUseBackgroundStriping = toUseBackgroundStriping,
             overlays = overlays,
             contentLayoutInfo = popupContentLayoutInfo
@@ -235,7 +232,6 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
     private fun TopLevelPopupContent(
         menuContentModel: CommandMenuContentModel,
         menuPresentationModel: CommandPopupMenuPresentationModel,
-        toDismissPopupsOnActivation: Boolean,
         toUseBackgroundStriping: Boolean,
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
         contentLayoutInfo: GeneralPopupContentLayoutInfo
@@ -252,11 +248,6 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
                 AuroraCommandButtonPanel(
                     contentModel = menuContentModel.panelContentModel!!,
                     presentationModel = menuPresentationModel.panelPresentationModel!!.toCommandPanelPresentationModel(),
-                    extraAction = {
-                        if (toDismissPopupsOnActivation) {
-                            AuroraPopupManager.hidePopups(null)
-                        }
-                    },
                     overlays = overlays
                 )
                 HorizontalSeparatorProjection(
@@ -271,7 +262,6 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
                 PopupGeneralContent(
                     menuContentModel = menuContentModel,
                     menuPresentationModel = menuPresentationModel,
-                    toDismissPopupsOnActivation = toDismissPopupsOnActivation,
                     toUseBackgroundStriping = toUseBackgroundStriping,
                     overlays = overlays
                 )
@@ -320,7 +310,6 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
     private fun PopupGeneralContent(
         menuContentModel: CommandMenuContentModel,
         menuPresentationModel: CommandPopupMenuPresentationModel,
-        toDismissPopupsOnActivation: Boolean,
         toUseBackgroundStriping: Boolean,
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>
     ) {
@@ -391,13 +380,6 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
                     actionInteractionSource = remember { MutableInteractionSource() },
                     popupInteractionSource = remember { MutableInteractionSource() },
                     command = secondaryCommand,
-                    extraAction = {
-                        if (toDismissPopupsOnActivation and
-                            currSecondaryPresentationModel.toDismissPopupsOnActivation
-                        ) {
-                            AuroraPopupManager.hidePopups(null)
-                        }
-                    },
                     popupPlacementStrategyProvider = null,
                     presentationModel = currSecondaryPresentationModel,
                     popupHandler = this,

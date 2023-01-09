@@ -42,7 +42,6 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.TitleLabel
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
-import javax.swing.JPopupMenu
 import kotlin.math.max
 
 @OptIn(AuroraInternalApi::class)
@@ -50,7 +49,6 @@ private fun LazyListScope.rowOfItems(
     backgroundColor: Color,
     gap: Dp,
     commandGroup: CommandGroup,
-    extraAction: (() -> Unit)? = null,
     indexRowStart: Int,
     indexRowEnd: Int,
     itemWidth: Dp,
@@ -78,7 +76,6 @@ private fun LazyListScope.rowOfItems(
                     actionInteractionSource = remember { MutableInteractionSource() },
                     popupInteractionSource = remember { MutableInteractionSource() },
                     command = command,
-                    extraAction = extraAction,
                     presentationModel = commandPresentation,
                     popupHandler = GeneralCommandMenuPopupHandler,
                     overlays = overlays
@@ -96,7 +93,6 @@ private fun LazyListScope.columnOfItems(
     backgroundColor: Color,
     gap: Dp,
     commandGroup: CommandGroup,
-    extraAction: (() -> Unit)? = null,
     indexColumnStart: Int,
     indexColumnEnd: Int,
     itemHeight: Dp,
@@ -124,7 +120,6 @@ private fun LazyListScope.columnOfItems(
                     actionInteractionSource = remember { MutableInteractionSource() },
                     popupInteractionSource = remember { MutableInteractionSource() },
                     command = command,
-                    extraAction = extraAction,
                     presentationModel = commandPresentation,
                     popupHandler = GeneralCommandMenuPopupHandler,
                     overlays = overlays
@@ -203,12 +198,10 @@ private fun LazyListScope.columnOfItems(
  * scrolling the content left and right.
  * </p>
  */
-@OptIn(AuroraInternalApi::class)
 @Composable
 internal fun AuroraCommandButtonPanel(
     modifier: Modifier = Modifier,
     contentModel: CommandPanelContentModel,
-    extraAction: (() -> Unit)? = null,
     presentationModel: CommandPanelPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay> = mapOf()
 ) {
@@ -294,7 +287,6 @@ internal fun AuroraCommandButtonPanel(
                                         backgroundColor = if (groupIndex % 2 == 0) backgroundEvenGroups else backgroundOddGroups,
                                         gap = gap,
                                         commandGroup = commandGroup,
-                                        extraAction = extraAction,
                                         indexRowStart = indexRowStart,
                                         indexRowEnd = indexRowEnd,
                                         itemWidth = itemWidth.toDp(),
@@ -354,7 +346,6 @@ internal fun AuroraCommandButtonPanel(
                                         backgroundColor = if (groupIndex % 2 == 0) backgroundEvenGroups else backgroundOddGroups,
                                         gap = gap,
                                         commandGroup = commandGroup,
-                                        extraAction = extraAction,
                                         indexColumnStart = indexColumnStart,
                                         indexColumnEnd = indexColumnEnd,
                                         itemHeight = itemHeight.toDp(),

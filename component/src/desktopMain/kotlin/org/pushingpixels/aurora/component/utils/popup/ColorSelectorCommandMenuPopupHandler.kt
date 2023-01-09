@@ -248,7 +248,6 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
     override fun generatePopupContent(
         menuContentModel: ColorSelectorMenuContentModel,
         menuPresentationModel: ColorSelectorCommandPopupMenuPresentationModel,
-        toDismissPopupsOnActivation: Boolean,
         toUseBackgroundStriping: Boolean,
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
         popupContentLayoutInfo: ColorSelectorPopupContentLayoutInfo
@@ -280,13 +279,6 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
                             actionInteractionSource = remember { MutableInteractionSource() },
                             popupInteractionSource = remember { MutableInteractionSource() },
                             command = entry.command,
-                            extraAction = {
-                                if (toDismissPopupsOnActivation and
-                                    currSecondaryPresentationModel.toDismissPopupsOnActivation
-                                ) {
-                                    AuroraPopupManager.hidePopups(null)
-                                }
-                            },
                             popupPlacementStrategyProvider = null,
                             presentationModel = currSecondaryPresentationModel,
                             popupHandler = this@ColorSelectorCommandMenuPopupHandler,

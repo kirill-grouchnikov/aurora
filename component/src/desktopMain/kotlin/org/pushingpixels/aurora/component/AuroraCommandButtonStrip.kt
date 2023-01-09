@@ -69,7 +69,6 @@ private fun CommandButtonStripContent(
             actionInteractionSource = remember { MutableInteractionSource() },
             popupInteractionSource = remember { MutableInteractionSource() },
             command = command,
-            extraAction = null,
             presentationModel = currentPresentationModel,
             popupHandler = GeneralCommandMenuPopupHandler,
             overlays = overlays

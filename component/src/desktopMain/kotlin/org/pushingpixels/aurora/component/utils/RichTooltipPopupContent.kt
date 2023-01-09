@@ -376,7 +376,7 @@ internal fun displayRichTooltipContent(
     // This line is needed to ensure that each popup is displayed in its own heavyweight window
     JPopupMenu.setDefaultLightWeightPopupEnabled(false)
 
-    val popupMenu = AuroraSwingPopupMenu()
+    val popupMenu = AuroraSwingPopupMenu(true)
     popupContent.setContent {
         // Get the current composition context
         CompositionLocalProvider(compositionLocalContext) {
