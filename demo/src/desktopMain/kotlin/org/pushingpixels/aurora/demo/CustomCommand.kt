@@ -58,11 +58,6 @@ data class CustomMenuContentModel(
     val entries: List<Command>
 ) : BaseCommandMenuContentModel
 
-data class CustomCommandPopupMenuPresentationModel(
-    override val menuPresentationState: CommandButtonPresentationState =
-        DefaultCommandPopupMenuPresentationState
-) : BaseCommandPopupMenuPresentationModel
-
 class CommandButtonLayoutManagerCustom(
     override val layoutDirection: LayoutDirection,
     private val _density: Density
@@ -217,6 +212,11 @@ val CustomPresentationState: CommandButtonPresentationState =
         }
     }
 
+data class CustomCommandPopupMenuPresentationModel(
+    override val menuPresentationState: CommandButtonPresentationState =
+        DefaultCommandPopupMenuPresentationState
+) : BaseCommandPopupMenuPresentationModel
+
 data class CustomCommandButtonPresentationModel(
     override val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
     override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
@@ -364,7 +364,6 @@ object CustomCommandMenuPopupHandler : BaseCommandMenuHandler<
                     popupInteractionSource = remember { MutableInteractionSource() }
                 )
             }
-
         }
     }
 }

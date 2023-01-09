@@ -59,6 +59,9 @@ the [Ephemeral](https://github.com/kirill-grouchnikov/ephemeral) design system. 
 * Projections
   * [Model and projection overview](docs/component/ModelProjectionOverview.md)
   * [All component projections](docs/component/ComponentProjections.md)
+* Revisiting commands
+  * [More on commands](docs/component/MoreCommands.md)
+  * [Custom command projections](docs/component/CustomCommandProjections.md)
 * More components
   * [Command strips](docs/component/CommandStrip.md)
   * [Command panels](docs/component/CommandPanel.md)

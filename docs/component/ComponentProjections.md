@@ -27,4 +27,4 @@ Here is the list of all component projections provided by Aurora
 
 ### Next
 
-Continue to [command strip](CommandStrip.md).
+Continue to [more on commands](MoreCommands.md).
