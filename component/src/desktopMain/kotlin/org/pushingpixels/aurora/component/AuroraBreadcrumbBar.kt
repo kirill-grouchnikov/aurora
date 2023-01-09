@@ -46,8 +46,8 @@ import org.pushingpixels.aurora.theming.*
 
 @OptIn(AuroraInternalApi::class)
 @Composable
-fun AuroraBreadcrumbBar(
-    contentModel: List<Command>,
+internal fun AuroraBreadcrumbBar(
+    contentModel: BreadcrumbBarContentModel,
     presentationModel: BreadcrumbBarPresentationModel = BreadcrumbBarPresentationModel(),
     horizontalScrollState: ScrollState = rememberScrollState(0),
     modifier: Modifier
@@ -224,7 +224,7 @@ fun AuroraBreadcrumbBar(
 
             Box(modifier = Modifier.horizontalScroll(horizontalScrollState)) {
                 Row(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
-                    for (command in contentModel) {
+                    for (command in contentModel.commands) {
                         val popupInteractionSource = remember(command) { MutableInteractionSource() }
                         val isPopupRollover by popupInteractionSource.collectIsHoveredAsState()
 
@@ -290,8 +290,8 @@ fun AuroraBreadcrumbBar(
             // How much space does the scrollable content need?
             var boxRequiredWidth = 0.0f
             var boxHeight = 0
-            if (contentModel.isNotEmpty()) {
-                for (command in contentModel) {
+            if (contentModel.commands.isNotEmpty()) {
+                for (command in contentModel.commands) {
                     val commandPreLayoutInfo =
                         contentLayoutManager.getPreLayoutInfo(
                             command,

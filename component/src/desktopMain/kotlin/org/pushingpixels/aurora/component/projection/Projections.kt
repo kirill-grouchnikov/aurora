@@ -178,6 +178,23 @@ class CommandButtonPanelProjection(
     }
 }
 
+class BreadcrumbBarProjection(
+    val contentModel: BreadcrumbBarContentModel,
+    val presentationModel: BreadcrumbBarPresentationModel = BreadcrumbBarPresentationModel()
+) : Projection<BreadcrumbBarContentModel, BreadcrumbBarPresentationModel>() {
+    @Composable
+    fun project(
+        modifier: Modifier = Modifier,
+        horizontalScrollState: ScrollState = rememberScrollState(0)
+    ) {
+        AuroraBreadcrumbBar(
+            modifier = modifier,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel
+        )
+    }
+}
+
 class ComboBoxProjection<E>(
     val contentModel: ComboBoxContentModel<E>,
     val presentationModel: ComboBoxPresentationModel<E>

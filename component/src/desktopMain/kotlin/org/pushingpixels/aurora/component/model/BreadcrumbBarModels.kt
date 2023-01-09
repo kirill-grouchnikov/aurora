@@ -146,6 +146,8 @@ fun <T> BreadcrumbBarContentModel(
     return commands
 }
 
+data class BreadcrumbBarContentModel(val commands: SnapshotStateList<Command>): ContentModel
+
 data class BreadcrumbBarPresentationModel(
     val presentationState: CommandButtonPresentationState = CommandButtonPresentationState.Medium,
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,

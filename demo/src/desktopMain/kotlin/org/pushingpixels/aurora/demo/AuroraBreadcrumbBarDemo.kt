@@ -30,8 +30,8 @@ import androidx.compose.ui.window.rememberWindowState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.pushingpixels.aurora.component.AuroraBreadcrumbBar
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.BreadcrumbBarProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonPanelProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.demo.svg.material.folder_open_black_24dp
@@ -153,23 +153,25 @@ fun AuroraWindowScope.BreadcrumbContent(onSkinChange: (AuroraSkinDefinition) -> 
         }
     }
 
-    val breadcrumbBarContentModel = BreadcrumbBarContentModel(
+    val breadcrumbBarCommands = BreadcrumbBarContentModel(
         contentProvider = breadcrumbBarContentProvider,
         onItemSelected = onBreadcrumbItemSelected
     )
+    val breadcrumbBarContentModel = BreadcrumbBarContentModel(breadcrumbBarCommands)
 
     Column(modifier = Modifier.fillMaxSize()) {
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
-            AuroraBreadcrumbBar(
+            BreadcrumbBarProjection(
                 contentModel = breadcrumbBarContentModel,
                 presentationModel = BreadcrumbBarPresentationModel(
                     iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                     iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                     iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText
-                ),
-                horizontalScrollState = breadcrumbBarHorizontalScrollState,
+                )
+            ).project(
                 modifier = Modifier.fillMaxWidth().auroraBackground()
-                    .padding(horizontal = 2.dp, vertical = 4.dp)
+                    .padding(horizontal = 2.dp, vertical = 4.dp),
+                horizontalScrollState = breadcrumbBarHorizontalScrollState
             )
         }
 
@@ -217,12 +219,12 @@ fun AuroraWindowScope.BreadcrumbContent(onSkinChange: (AuroraSkinDefinition) -> 
                                         currentFile = fileSystemView.getParentDirectory(currentFile)
                                     }
                                     // Convert to list of commands and set as content model
-                                    breadcrumbBarContentModel.clear()
+                                    breadcrumbBarContentModel.commands.clear()
                                     for ((index, file) in filePath.withIndex()) {
-                                        breadcrumbBarContentModel.add(
+                                        breadcrumbBarContentModel.commands.add(
                                             breadcrumbBarContentProvider.getPathCommand(
                                                 scope = scope,
-                                                commands = breadcrumbBarContentModel,
+                                                commands = breadcrumbBarContentModel.commands,
                                                 item = file,
                                                 onItemSelected = onBreadcrumbItemSelected,
                                                 level = index + 1
