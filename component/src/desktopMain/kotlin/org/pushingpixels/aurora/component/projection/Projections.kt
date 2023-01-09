@@ -24,6 +24,8 @@ import androidx.compose.ui.Modifier
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
+import org.pushingpixels.aurora.component.popup.BaseCommandMenuPopupLayoutInfo
 import org.pushingpixels.aurora.component.utils.popup.ColorSelectorCommandMenuPopupHandler
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.component.utils.popup.GeneralPopupContentLayoutInfo
@@ -31,25 +33,21 @@ import org.pushingpixels.aurora.theming.LocalPopupMenu
 
 abstract class Projection<out C : ContentModel, out P : PresentationModel>
 
-sealed class BaseCommandButtonProjection<out M : BaseCommand>(
-    open val contentModel: M,
-    open val presentationModel: BaseCommandButtonPresentationModel,
+abstract class BaseCommandButtonProjection<out C : BaseCommand,
+        out P: BaseCommandButtonPresentationModel>(
+    open val contentModel: C,
+    open val presentationModel: P,
     open val overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
-) : Projection<M, CommandButtonPresentationModel>()
-
-class CommandButtonProjection(
-    contentModel: Command,
-    presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel(),
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
-) : BaseCommandButtonProjection<Command>(
-    contentModel, presentationModel, overlays
-) {
+) : Projection<C, P>() {
     @OptIn(AuroraInternalApi::class)
     @Composable
-    fun project(
+    protected fun <MC : BaseCommandMenuContentModel,
+            MP : BaseCommandPopupMenuPresentationModel,
+            ML : BaseCommandMenuPopupLayoutInfo> project(
         modifier: Modifier = Modifier,
         actionInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-        popupInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+        popupInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+        popupHandler: BaseCommandMenuHandler<MC, MP, ML>
     ) {
         val popupMenu = LocalPopupMenu.current
         AuroraCommandButton(
@@ -60,8 +58,30 @@ class CommandButtonProjection(
             parentPopupMenu = popupMenu,
             extraAction = null,
             presentationModel = this.presentationModel,
-            popupHandler = GeneralCommandMenuPopupHandler,
+            popupHandler = popupHandler,
             overlays = this.overlays ?: mapOf()
+        )
+    }
+}
+
+class CommandButtonProjection(
+    contentModel: Command,
+    presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel(),
+    overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
+) : BaseCommandButtonProjection<Command, CommandButtonPresentationModel>(
+    contentModel, presentationModel, overlays
+) {
+    @Composable
+    fun project(
+        modifier: Modifier = Modifier,
+        actionInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+        popupInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    ) {
+        super.project(
+            modifier = modifier,
+            actionInteractionSource = actionInteractionSource,
+            popupInteractionSource = popupInteractionSource,
+            popupHandler = GeneralCommandMenuPopupHandler,
         )
     }
 }
@@ -70,10 +90,9 @@ class ColorSelectorCommandButtonProjection(
     contentModel: ColorSelectorCommand,
     presentationModel: ColorSelectorCommandButtonPresentationModel = ColorSelectorCommandButtonPresentationModel(),
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
-) : BaseCommandButtonProjection<ColorSelectorCommand>(
+) : BaseCommandButtonProjection<ColorSelectorCommand, ColorSelectorCommandButtonPresentationModel>(
     contentModel, presentationModel, overlays
 ) {
-    @OptIn(AuroraInternalApi::class)
     @Composable
     fun project(
         modifier: Modifier = Modifier,
@@ -98,17 +117,11 @@ class ColorSelectorCommandButtonProjection(
             "Needs to pass a non-trivial number of derived colors"
         }
 
-        val popupMenu = LocalPopupMenu.current
-        AuroraCommandButton(
+        super.project(
             modifier = modifier,
             actionInteractionSource = remember { MutableInteractionSource() },
             popupInteractionSource = popupInteractionSource,
-            command = this.contentModel,
-            parentPopupMenu = popupMenu,
-            extraAction = null,
-            presentationModel = this.presentationModel,
             popupHandler = ColorSelectorCommandMenuPopupHandler,
-            overlays = this.overlays ?: mapOf()
         )
     }
 }
@@ -118,7 +131,7 @@ class RibbonApplicationMenuCommandButtonProjection(
     presentationModel: CommandButtonPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null,
     secondaryStates: Map<Command, CommandButtonPresentationState>? = null
-) : BaseCommandButtonProjection<RibbonApplicationMenuCommand>(
+) : BaseCommandButtonProjection<RibbonApplicationMenuCommand, CommandButtonPresentationModel>(
     contentModel, presentationModel, overlays
 ) {
     @OptIn(AuroraInternalApi::class)

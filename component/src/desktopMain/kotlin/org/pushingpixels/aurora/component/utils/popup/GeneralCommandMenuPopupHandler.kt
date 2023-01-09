@@ -263,7 +263,8 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
                         if (toDismissPopupsOnActivation) {
                             AuroraPopupManager.hidePopups(null)
                         }
-                    }
+                    },
+                    overlays = overlays
                 )
                 HorizontalSeparatorProjection(
                     presentationModel = SeparatorPresentationModel(
