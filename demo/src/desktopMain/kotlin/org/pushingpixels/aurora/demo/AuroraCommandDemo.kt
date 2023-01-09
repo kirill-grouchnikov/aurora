@@ -707,12 +707,16 @@ fun AuroraWindowScope.DemoCommandContent(
     )
 
     var alignment by remember { mutableStateOf(CommandDemoAlignment.Center) }
-    var style by remember { mutableStateOf(CommandDemoStyle(
-        bold = false,
-        italic  = true,
-        underline  = false,
-        strikethrough  = false
-    )) }
+    var style by remember {
+        mutableStateOf(
+            CommandDemoStyle(
+                bold = false,
+                italic = true,
+                underline = false,
+                strikethrough = false
+            )
+        )
+    }
 
     Row(modifier = Modifier.fillMaxSize().padding(4.dp)) {
         Box(modifier = Modifier.padding(8.dp)) {
@@ -810,6 +814,35 @@ fun AuroraWindowScope.DemoCommandContent(
                     horizontalGapScaleFactor = CommandStripSizingConstants.DefaultGapScaleFactorPrimaryAxis,
                     resourceBundle = resourceBundle
                 )
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                val entrySimpleMf = MessageFormat(resourceBundle.getString("Group.entrySimple"))
+                CustomCommandButtonProjection(
+                    contentModel = CustomCommand(
+                        icon = menu_black_24dp(),
+                        secondaryContentModel = CustomMenuContentModel(
+                            entries = listOf(
+                                Command(
+                                    text = entrySimpleMf.format(arrayOf<Any>(1)),
+                                    icon = computer(),
+                                    action = { println("secondary 1 activated!") },
+                                    isActionEnabled = actionEnabled
+                                ), Command(
+                                    text = entrySimpleMf.format(arrayOf<Any>(2)),
+                                    icon = computer(),
+                                    action = { println("secondary 2 activated!") },
+                                    isActionEnabled = actionEnabled
+                                ), Command(
+                                    text = entrySimpleMf.format(arrayOf<Any>(3)),
+                                    icon = computer(),
+                                    action = { println("secondary 3 activated!") },
+                                    isActionEnabled = actionEnabled
+                                )
+                            )
+                        )
+                    )
+                ).project()
             }
 
             DemoCommandRow(

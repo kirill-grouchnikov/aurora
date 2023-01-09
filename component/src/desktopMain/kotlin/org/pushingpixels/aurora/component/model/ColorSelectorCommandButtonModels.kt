@@ -19,8 +19,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.theming.IconFilterStrategy
+import org.pushingpixels.aurora.theming.PopupPlacementStrategy
+import org.pushingpixels.aurora.theming.Sides
 import java.util.*
 
 sealed interface ColorSelectorPopupMenuEntry
@@ -96,7 +102,7 @@ data class ColorSelectorCommandPopupMenuPresentationModel(
     val colorCellGap: Dp = ColorSelectorCommandButtonSizingConstants.DefaultColorCellGap,
     val sectionTitleTextStyle: TextStyle? = null,
     val sectionContentPadding: PaddingValues = ColorSelectorCommandButtonSizingConstants.DefaultSectionContentPadding
-): BaseCommandPopupMenuPresentationModel
+) : BaseCommandPopupMenuPresentationModel
 
 data class ColorSelectorCommand(
     override val text: String,
@@ -120,3 +126,35 @@ data class ColorSelectorMenuContentModel(
     val onColorPreviewActivated: ColorPreviewListener,
     val onColorActivated: (Color) -> Unit
 ) : BaseCommandMenuContentModel
+
+data class ColorSelectorCommandButtonPresentationModel(
+    override val presentationState: CommandButtonPresentationState = CommandButtonPresentationState.Medium,
+    override val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+    override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
+    override val iconDimension: DpSize? = null,
+    override val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    override val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    override val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    override val forceAllocateSpaceForIcon: Boolean = false,
+    override val textStyle: TextStyle? = null,
+    override val textOverflow: TextOverflow = TextOverflow.Clip,
+    override val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
+    override val toDismissPopupsOnActivation: Boolean = true,
+    override val actionKeyTip: String? = null,
+    override val popupKeyTip: String? = null,
+    override val autoRepeatAction: Boolean = false,
+    override val autoRepeatInitialInterval: Long = CommandButtonInteractionConstants.DefaultAutoRepeatInitialIntervalMillis,
+    override val autoRepeatSubsequentInterval: Long = CommandButtonInteractionConstants.DefaultAutoRepeatSubsequentIntervalMillis,
+    override val actionFireTrigger: ActionFireTrigger = ActionFireTrigger.OnPressReleased,
+    override val popupMenuPresentationModel: BaseCommandPopupMenuPresentationModel =
+        ColorSelectorCommandPopupMenuPresentationModel(colorColumns = 10),
+    override val textClick: TextClick = TextClick.Action,
+    override val actionRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),
+    override val popupRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),
+    override val contentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
+    override val horizontalGapScaleFactor: Float = 1.0f,
+    override val verticalGapScaleFactor: Float = 1.0f,
+    override val minWidth: Dp = 0.dp,
+    override val isMenu: Boolean = false,
+    override val sides: Sides = Sides()
+) : BaseCommandButtonPresentationModel
