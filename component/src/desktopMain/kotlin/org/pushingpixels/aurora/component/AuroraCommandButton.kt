@@ -334,7 +334,6 @@ internal fun <M : BaseCommandMenuContentModel,
     actionInteractionSource: MutableInteractionSource,
     popupInteractionSource: MutableInteractionSource,
     command: BaseCommand,
-    parentPopupMenu: JPopupMenu?,
     extraAction: (() -> Unit)? = null,
     popupHandler: BaseCommandMenuHandler<M, P, L>,
     popupPlacementStrategyProvider: ((ModelStateInfo) -> PopupPlacementStrategy)? = null,
@@ -408,7 +407,8 @@ internal fun <M : BaseCommandMenuContentModel,
     val layoutDirection = LocalLayoutDirection.current
     val mergedTextStyle = LocalTextStyle.current.merge(presentationModel.textStyle)
     val fontFamilyResolver = LocalFontFamilyResolver.current
-    val popupOriginator = parentPopupMenu ?: LocalWindow.current.rootPane
+    val popupMenu = LocalPopupMenu.current
+    val popupOriginator = popupMenu ?: LocalWindow.current.rootPane
 
     val resolvedTextStyle = remember { resolveDefaults(mergedTextStyle, layoutDirection) }
 
@@ -871,7 +871,7 @@ internal fun <M : BaseCommandMenuContentModel,
                                 ).asOffset(density)
                         )) {
                             // We're showing a popup that originates from this popup area. Hide it.
-                            AuroraPopupManager.hidePopups(originator = parentPopupMenu)
+                            AuroraPopupManager.hidePopups(originator = popupMenu)
                         } else {
                             // Display our popup content.
                             popupHandler.showPopupContent(

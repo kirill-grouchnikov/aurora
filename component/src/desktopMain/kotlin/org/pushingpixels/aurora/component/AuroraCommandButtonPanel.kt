@@ -47,7 +47,6 @@ import kotlin.math.max
 
 @OptIn(AuroraInternalApi::class)
 private fun LazyListScope.rowOfItems(
-    popupMenu: JPopupMenu?,
     backgroundColor: Color,
     gap: Dp,
     commandGroup: CommandGroup,
@@ -79,7 +78,6 @@ private fun LazyListScope.rowOfItems(
                     actionInteractionSource = remember { MutableInteractionSource() },
                     popupInteractionSource = remember { MutableInteractionSource() },
                     command = command,
-                    parentPopupMenu = popupMenu,
                     extraAction = extraAction,
                     presentationModel = commandPresentation,
                     popupHandler = GeneralCommandMenuPopupHandler,
@@ -95,7 +93,6 @@ private fun LazyListScope.rowOfItems(
 
 @OptIn(AuroraInternalApi::class)
 private fun LazyListScope.columnOfItems(
-    popupMenu: JPopupMenu?,
     backgroundColor: Color,
     gap: Dp,
     commandGroup: CommandGroup,
@@ -127,7 +124,6 @@ private fun LazyListScope.columnOfItems(
                     actionInteractionSource = remember { MutableInteractionSource() },
                     popupInteractionSource = remember { MutableInteractionSource() },
                     command = command,
-                    parentPopupMenu = popupMenu,
                     extraAction = extraAction,
                     presentationModel = commandPresentation,
                     popupHandler = GeneralCommandMenuPopupHandler,
@@ -217,7 +213,6 @@ internal fun AuroraCommandButtonPanel(
     overlays: Map<Command, CommandButtonPresentationModel.Overlay> = mapOf()
 ) {
     val layoutDirection = LocalLayoutDirection.current
-    val popupMenu = LocalPopupMenu.current
 
     val baseCommandButtonPresentationModel =
         CommandButtonPresentationModel(
@@ -296,7 +291,6 @@ internal fun AuroraCommandButtonPanel(
                                     val indexRowEnd =
                                         (indexRowStart + columnCount).coerceAtMost(commandGroup.commands.size)
                                     rowOfItems(
-                                        popupMenu = popupMenu,
                                         backgroundColor = if (groupIndex % 2 == 0) backgroundEvenGroups else backgroundOddGroups,
                                         gap = gap,
                                         commandGroup = commandGroup,
@@ -357,7 +351,6 @@ internal fun AuroraCommandButtonPanel(
                                     val indexColumnEnd =
                                         (indexColumnStart + rowCount).coerceAtMost(commandGroup.commands.size)
                                     columnOfItems(
-                                        popupMenu = popupMenu,
                                         backgroundColor = if (groupIndex % 2 == 0) backgroundEvenGroups else backgroundOddGroups,
                                         gap = gap,
                                         commandGroup = commandGroup,

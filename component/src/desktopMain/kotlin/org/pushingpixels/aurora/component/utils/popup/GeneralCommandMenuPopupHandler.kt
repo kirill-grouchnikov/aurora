@@ -33,17 +33,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
-import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.component.*
-import org.pushingpixels.aurora.component.AuroraCommandButton
-import org.pushingpixels.aurora.component.AuroraCommandButtonPanel
-import org.pushingpixels.aurora.component.getPreferredCommandPopupMenuPanelSize
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuPopupLayoutInfo
+import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.theming.*
-import javax.swing.JPopupMenu
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
@@ -219,7 +214,6 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
 
     @Composable
     override fun generatePopupContent(
-        popupMenu: JPopupMenu,
         menuContentModel: CommandMenuContentModel,
         menuPresentationModel: CommandPopupMenuPresentationModel,
         toDismissPopupsOnActivation: Boolean,
@@ -228,7 +222,6 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
         popupContentLayoutInfo: GeneralPopupContentLayoutInfo
     ) {
         TopLevelPopupContent(
-            popupMenu = popupMenu,
             menuContentModel = menuContentModel,
             menuPresentationModel = menuPresentationModel,
             toDismissPopupsOnActivation = toDismissPopupsOnActivation,
@@ -240,7 +233,6 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
 
     @Composable
     private fun TopLevelPopupContent(
-        popupMenu: JPopupMenu,
         menuContentModel: CommandMenuContentModel,
         menuPresentationModel: CommandPopupMenuPresentationModel,
         toDismissPopupsOnActivation: Boolean,
@@ -277,7 +269,6 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
 
             Layout(modifier = Modifier.verticalScroll(stateVertical), content = {
                 PopupGeneralContent(
-                    popupMenu = popupMenu,
                     menuContentModel = menuContentModel,
                     menuPresentationModel = menuPresentationModel,
                     toDismissPopupsOnActivation = toDismissPopupsOnActivation,
@@ -327,7 +318,6 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
     @OptIn(AuroraInternalApi::class)
     @Composable
     private fun PopupGeneralContent(
-        popupMenu: JPopupMenu,
         menuContentModel: CommandMenuContentModel,
         menuPresentationModel: CommandPopupMenuPresentationModel,
         toDismissPopupsOnActivation: Boolean,
@@ -401,7 +391,6 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
                     actionInteractionSource = remember { MutableInteractionSource() },
                     popupInteractionSource = remember { MutableInteractionSource() },
                     command = secondaryCommand,
-                    parentPopupMenu = popupMenu,
                     extraAction = {
                         if (toDismissPopupsOnActivation and
                             currSecondaryPresentationModel.toDismissPopupsOnActivation

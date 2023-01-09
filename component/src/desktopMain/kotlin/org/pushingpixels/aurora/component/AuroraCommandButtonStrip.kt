@@ -38,7 +38,6 @@ private fun CommandButtonStripContent(
     commandButtonPresentationModel: CommandButtonPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay> = mapOf()
 ) {
-    val popup = LocalPopupMenu.current
     val ltr = (LocalLayoutDirection.current == LayoutDirection.Ltr)
 
     val commandCount = commandGroup.commands.size
@@ -70,7 +69,6 @@ private fun CommandButtonStripContent(
             actionInteractionSource = remember { MutableInteractionSource() },
             popupInteractionSource = remember { MutableInteractionSource() },
             command = command,
-            parentPopupMenu = popup,
             extraAction = null,
             presentationModel = currentPresentationModel,
             popupHandler = GeneralCommandMenuPopupHandler,

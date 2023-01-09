@@ -46,7 +46,6 @@ import org.pushingpixels.aurora.component.utils.TitleLabel
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
-import javax.swing.JPopupMenu
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
@@ -247,7 +246,6 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
     @OptIn(AuroraInternalApi::class)
     @Composable
     override fun generatePopupContent(
-        popupMenu: JPopupMenu,
         menuContentModel: ColorSelectorMenuContentModel,
         menuPresentationModel: ColorSelectorCommandPopupMenuPresentationModel,
         toDismissPopupsOnActivation: Boolean,
@@ -282,7 +280,6 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
                             actionInteractionSource = remember { MutableInteractionSource() },
                             popupInteractionSource = remember { MutableInteractionSource() },
                             command = entry.command,
-                            parentPopupMenu = popupMenu,
                             extraAction = {
                                 if (toDismissPopupsOnActivation and
                                     currSecondaryPresentationModel.toDismissPopupsOnActivation

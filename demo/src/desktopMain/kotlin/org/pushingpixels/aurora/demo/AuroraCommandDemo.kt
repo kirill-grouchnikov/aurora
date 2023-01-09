@@ -539,7 +539,9 @@ fun AuroraWindowScope.DemoCommandContent(
         isActionEnabled = actionEnabled
     )
     val entryMf = MessageFormat(resourceBundle.getString("Group.entry"))
+    val entry2Mf = MessageFormat(resourceBundle.getString("Group.entry2"))
     val entryExtraMf = MessageFormat(resourceBundle.getString("Group.entryExtra"))
+    val entryExtra2Mf = MessageFormat(resourceBundle.getString("Group.entryExtra2"))
     val secondaryCommand4 = Command(
         text = entrySimpleMf.format(arrayOf<Any>(4)),
         icon = computer(),
@@ -554,7 +556,34 @@ fun AuroraWindowScope.DemoCommandContent(
                         extraText = entryExtraMf.format(arrayOf<Any>(4, 1)),
                         icon = computer(),
                         action = { println("secondary 4/1 activated!") },
-                        isActionEnabled = actionEnabled
+                        isActionEnabled = actionEnabled,
+                        secondaryContentModel = CommandMenuContentModel(
+                            group = CommandGroup(
+                                commands = listOf(
+                                    Command(
+                                        text = entry2Mf.format(arrayOf<Any>(4, 1, 1)),
+                                        extraText = entryExtra2Mf.format(arrayOf<Any>(4, 1, 1)),
+                                        icon = computer(),
+                                        action = { println("tertiary 4/1/1 activated!") },
+                                        isActionEnabled = actionEnabled
+                                    ),
+                                    Command(
+                                        text = entry2Mf.format(arrayOf<Any>(4, 1, 2)),
+                                        extraText = entryExtra2Mf.format(arrayOf<Any>(4, 1, 2)),
+                                        icon = computer(),
+                                        action = { println("tertiary 4/1/2 activated!") },
+                                        isActionEnabled = actionEnabled
+                                    ),
+                                    Command(
+                                        text = entry2Mf.format(arrayOf<Any>(4, 1, 3)),
+                                        extraText = entryExtra2Mf.format(arrayOf<Any>(4, 1, 3)),
+                                        icon = computer(),
+                                        action = { println("tertiary 4/1/3 activated!") },
+                                        isActionEnabled = actionEnabled
+                                    )
+                                )
+                            )
+                        )
                     ),
                     Command(
                         text = entryMf.format(arrayOf<Any>(4, 2)),

@@ -60,7 +60,6 @@ interface BaseCommandMenuHandler<in M : BaseCommandMenuContentModel,
 
     @Composable
     fun generatePopupContent(
-        popupMenu: JPopupMenu,
         menuContentModel: M,
         menuPresentationModel: P,
         toDismissPopupsOnActivation: Boolean,
@@ -228,7 +227,6 @@ interface BaseCommandMenuHandler<in M : BaseCommandMenuContentModel,
                     LocalWindowSize provides popupDpSize
                 ) {
                     generatePopupContent(
-                        popupMenu = popupMenu,
                         menuContentModel = contentModel.value!!,
                         menuPresentationModel = presentationModel,
                         toDismissPopupsOnActivation = toDismissPopupsOnActivation,

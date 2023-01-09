@@ -49,13 +49,11 @@ abstract class BaseCommandButtonProjection<out C : BaseCommand,
         popupInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() },
         popupHandler: BaseCommandMenuHandler<MC, MP, ML>
     ) {
-        val popupMenu = LocalPopupMenu.current
         AuroraCommandButton(
             modifier = modifier,
             actionInteractionSource = actionInteractionSource,
             popupInteractionSource = popupInteractionSource,
             command = this.contentModel,
-            parentPopupMenu = popupMenu,
             extraAction = null,
             presentationModel = this.presentationModel,
             popupHandler = popupHandler,
