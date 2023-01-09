@@ -41,17 +41,17 @@ data class CustomCommand(
     override val icon: Painter,
     override val secondaryContentModel: CustomMenuContentModel,
 ) : BaseCommand {
-    override val text: String = ""
-    override val extraText: String? = null
-    override val action: (() -> Unit)? = null
-    override val actionPreview: CommandActionPreview? = null
-    override val isSecondaryEnabled: Boolean = true
-    override val secondaryRichTooltip: RichTooltip? = null
-    override val isActionEnabled: Boolean = false
-    override val isActionToggle: Boolean = false
-    override val isActionToggleSelected: Boolean = false
-    override val actionRichTooltip: RichTooltip? = null
-    override val onTriggerActionToggleSelectedChange: ((Boolean) -> Unit)? = null
+    override val text = ""
+    override val extraText = null
+    override val action = null
+    override val actionPreview = null
+    override val isSecondaryEnabled = true
+    override val secondaryRichTooltip = null
+    override val isActionEnabled = false
+    override val isActionToggle = false
+    override val isActionToggleSelected = false
+    override val actionRichTooltip = null
+    override val onTriggerActionToggleSelectedChange = null
 }
 
 data class CustomMenuContentModel(
@@ -217,7 +217,7 @@ val CustomPresentationState: CommandButtonPresentationState =
         }
     }
 
-data class ColorSelectorCommandButtonPresentationModel(
+data class CustomCommandButtonPresentationModel(
     override val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
     override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
     override val iconDimension: DpSize? = null,
@@ -234,21 +234,21 @@ data class ColorSelectorCommandButtonPresentationModel(
     override val minWidth: Dp = 0.dp,
     override val sides: Sides = Sides()
 ) : BaseCommandButtonPresentationModel {
-    override val presentationState: CommandButtonPresentationState = CustomPresentationState
-    override val forceAllocateSpaceForIcon: Boolean = false
-    override val actionKeyTip: String? = null
-    override val autoRepeatAction: Boolean = false
-    override val autoRepeatInitialInterval: Long =
+    override val presentationState = CustomPresentationState
+    override val forceAllocateSpaceForIcon = false
+    override val actionKeyTip = null
+    override val autoRepeatAction = false
+    override val autoRepeatInitialInterval =
         CommandButtonInteractionConstants.DefaultAutoRepeatInitialIntervalMillis
-    override val autoRepeatSubsequentInterval: Long =
+    override val autoRepeatSubsequentInterval =
         CommandButtonInteractionConstants.DefaultAutoRepeatSubsequentIntervalMillis
-    override val actionFireTrigger: ActionFireTrigger = ActionFireTrigger.OnPressReleased
-    override val textClick: TextClick = TextClick.Action
-    override val actionRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel()
-    override val popupRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel()
-    override val horizontalGapScaleFactor: Float = 1.0f
-    override val verticalGapScaleFactor: Float = 1.0f
-    override val isMenu: Boolean = false
+    override val actionFireTrigger = ActionFireTrigger.OnPressReleased
+    override val textClick = TextClick.Action
+    override val actionRichTooltipPresentationModel = RichTooltipPresentationModel()
+    override val popupRichTooltipPresentationModel = RichTooltipPresentationModel()
+    override val horizontalGapScaleFactor = 1.0f
+    override val verticalGapScaleFactor = 1.0f
+    override val isMenu = false
 }
 
 data class CustomPopupContentLayoutInfo(
@@ -371,9 +371,9 @@ object CustomCommandMenuPopupHandler : BaseCommandMenuHandler<
 
 class CustomCommandButtonProjection(
     contentModel: CustomCommand,
-    presentationModel: ColorSelectorCommandButtonPresentationModel = ColorSelectorCommandButtonPresentationModel(),
+    presentationModel: CustomCommandButtonPresentationModel = CustomCommandButtonPresentationModel(),
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
-) : BaseCommandButtonProjection<CustomCommand, ColorSelectorCommandButtonPresentationModel>(
+) : BaseCommandButtonProjection<CustomCommand, CustomCommandButtonPresentationModel>(
     contentModel, presentationModel, overlays
 ) {
     @Composable

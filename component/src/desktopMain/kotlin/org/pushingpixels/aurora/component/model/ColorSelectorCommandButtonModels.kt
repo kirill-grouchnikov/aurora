@@ -112,13 +112,13 @@ data class ColorSelectorCommand(
     override val isSecondaryEnabled: Boolean = true,
     override val secondaryRichTooltip: RichTooltip? = null
 ) : BaseCommand {
-    override val action: (() -> Unit)? = null
-    override val actionPreview: CommandActionPreview? = null
-    override val isActionEnabled: Boolean = false
-    override val isActionToggle: Boolean = false
-    override val isActionToggleSelected: Boolean = false
-    override val actionRichTooltip: RichTooltip? = null
-    override val onTriggerActionToggleSelectedChange: ((Boolean) -> Unit)? = null
+    override val action = null
+    override val actionPreview = null
+    override val isActionEnabled = false
+    override val isActionToggle = false
+    override val isActionToggleSelected = false
+    override val actionRichTooltip = null
+    override val onTriggerActionToggleSelectedChange = null
 }
 
 data class ColorSelectorMenuContentModel(
@@ -151,11 +151,11 @@ data class ColorSelectorCommandButtonPresentationModel(
     override val isMenu: Boolean = false,
     override val sides: Sides = Sides()
 ) : BaseCommandButtonPresentationModel {
-    override val actionKeyTip: String? = null
-    override val autoRepeatAction: Boolean = false
-    override val autoRepeatInitialInterval: Long = CommandButtonInteractionConstants.DefaultAutoRepeatInitialIntervalMillis
-    override val autoRepeatSubsequentInterval: Long = CommandButtonInteractionConstants.DefaultAutoRepeatSubsequentIntervalMillis
-    override val actionFireTrigger: ActionFireTrigger = ActionFireTrigger.OnPressReleased
-    override val textClick: TextClick = TextClick.Action
-    override val actionRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel()
+    override val actionKeyTip = null
+    override val autoRepeatAction = false
+    override val autoRepeatInitialInterval = CommandButtonInteractionConstants.DefaultAutoRepeatInitialIntervalMillis
+    override val autoRepeatSubsequentInterval = CommandButtonInteractionConstants.DefaultAutoRepeatSubsequentIntervalMillis
+    override val actionFireTrigger = ActionFireTrigger.OnPressReleased
+    override val textClick = TextClick.Action
+    override val actionRichTooltipPresentationModel = RichTooltipPresentationModel()
 }
