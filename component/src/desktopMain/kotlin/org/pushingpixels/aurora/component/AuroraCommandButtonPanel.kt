@@ -62,7 +62,6 @@ private fun LazyListScope.rowOfItems(
     indexRowStart: Int,
     indexRowEnd: Int,
     itemWidth: Dp,
-    commandActionPreview: CommandActionPreview?,
     baseCommandButtonPresentationModel: CommandButtonPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>
 ) {
@@ -89,7 +88,6 @@ private fun LazyListScope.rowOfItems(
                     command = command,
                     parentPopupMenu = popupMenu,
                     extraAction = extraAction,
-                    extraActionPreview = commandActionPreview,
                     presentationModel = commandPresentation,
                     popupHandler = GeneralCommandMenuPopupHandler,
                     overlays = overlays
@@ -112,7 +110,6 @@ private fun LazyListScope.columnOfItems(
     indexColumnStart: Int,
     indexColumnEnd: Int,
     itemHeight: Dp,
-    commandActionPreview: CommandActionPreview?,
     baseCommandButtonPresentationModel: CommandButtonPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>
 ) {
@@ -139,7 +136,6 @@ private fun LazyListScope.columnOfItems(
                     command = command,
                     parentPopupMenu = popupMenu,
                     extraAction = extraAction,
-                    extraActionPreview = commandActionPreview,
                     presentationModel = commandPresentation,
                     popupHandler = GeneralCommandMenuPopupHandler,
                     overlays = overlays
@@ -264,7 +260,6 @@ internal fun AuroraCommandButtonPanel(
     )
     val backgroundEvenGroups = backgroundColorScheme.backgroundFillColor
     val backgroundOddGroups = backgroundColorScheme.accentedBackgroundFillColor
-    val commandPreviewListener = contentModel.commandActionPreview
 
     SubcomposeLayout(modifier = modifier.fillMaxSize()) { constraints ->
         val gap = presentationModel.contentGap
@@ -316,7 +311,6 @@ internal fun AuroraCommandButtonPanel(
                                         indexRowStart = indexRowStart,
                                         indexRowEnd = indexRowEnd,
                                         itemWidth = itemWidth.toDp(),
-                                        commandActionPreview = commandPreviewListener,
                                         baseCommandButtonPresentationModel = baseCommandButtonPresentationModel,
                                         overlays = overlays
                                     )
@@ -378,7 +372,6 @@ internal fun AuroraCommandButtonPanel(
                                         indexColumnStart = indexColumnStart,
                                         indexColumnEnd = indexColumnEnd,
                                         itemHeight = itemHeight.toDp(),
-                                        commandActionPreview = commandPreviewListener,
                                         baseCommandButtonPresentationModel = baseCommandButtonPresentationModel,
                                         overlays = overlays
                                     )

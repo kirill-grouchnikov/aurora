@@ -25,10 +25,7 @@ import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 
-data class CommandPanelContentModel(
-    val commandGroups: List<CommandGroup>,
-    val commandActionPreview: CommandActionPreview? = null
-) : ContentModel
+data class CommandPanelContentModel(val commandGroups: List<CommandGroup>) : ContentModel
 
 object CommandPanelSizingConstants {
     val DefaultContentPadding = PaddingValues(6.dp)

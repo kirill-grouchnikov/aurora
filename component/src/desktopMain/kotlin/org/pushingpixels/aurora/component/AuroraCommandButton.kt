@@ -335,7 +335,6 @@ internal fun <M : BaseCommandMenuContentModel,
     command: BaseCommand,
     parentPopupMenu: AuroraSwingPopupMenu?,
     extraAction: (() -> Unit)? = null,
-    extraActionPreview: CommandActionPreview? = null,
     popupHandler: BaseCommandMenuHandler<M, P, L>,
     popupPlacementStrategyProvider: ((ModelStateInfo) -> PopupPlacementStrategy)? = null,
     presentationModel: BaseCommandButtonPresentationModel,
@@ -351,13 +350,11 @@ internal fun <M : BaseCommandMenuContentModel,
     if (!wasActionRollover && actionRollover) {
         SideEffect {
             command.actionPreview?.onCommandPreviewActivated(command)
-            extraActionPreview?.onCommandPreviewActivated(command)
         }
     }
     if (wasActionRollover && !actionRollover) {
         SideEffect {
             command.actionPreview?.onCommandPreviewCanceled(command)
-            extraActionPreview?.onCommandPreviewCanceled(command)
         }
     }
     wasActionRollover = actionRollover

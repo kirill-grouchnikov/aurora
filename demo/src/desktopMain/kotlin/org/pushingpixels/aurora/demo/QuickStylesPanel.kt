@@ -46,20 +46,20 @@ fun getQuickStylesContentModel(resourceBundle: ResourceBundle): CommandPanelCont
             val command = Command(
                 text = commandMf.format(arrayOf<Any>(i, 15)),
                 icon = icons[i % icons.size],
-                action = { println("Invoked action on $i") }
+                action = { println("Invoked action on $i") },
+                actionPreview = object : CommandActionPreview {
+                    override fun onCommandPreviewActivated(command: BaseCommand) {
+                        println("Action preview activated for ${command.text}!")
+                    }
+
+                    override fun onCommandPreviewCanceled(command: BaseCommand) {
+                        println("Action preview canceled for ${command.text}!")
+                    }
+                }
             )
             commands.add(command)
         }
         commandGroups.add(CommandGroup(groupMf.format(arrayOf<Any>(groupIndex)), commands))
     }
-    return CommandPanelContentModel(commandGroups = commandGroups,
-        commandActionPreview = object : CommandActionPreview {
-            override fun onCommandPreviewActivated(command: BaseCommand) {
-                println("Action preview activated for ${command.text}!")
-            }
-
-            override fun onCommandPreviewCanceled(command: BaseCommand) {
-                println("Action preview canceled for ${command.text}!")
-            }
-        })
+    return CommandPanelContentModel(commandGroups = commandGroups)
 }

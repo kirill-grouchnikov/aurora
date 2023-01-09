@@ -67,8 +67,17 @@ fun getCommandPanelContentModel(
             commandList.add(
                 Command(
                     text = commandMf.format(arrayOf<Any>(index, groupSize)),
+                    icon = icons[index % icons.size],
                     action = { println("test $index/$groupSize activated!") },
-                    icon = icons[index % icons.size]
+                    actionPreview = object : CommandActionPreview {
+                        override fun onCommandPreviewActivated(command: BaseCommand) {
+                            println("Action preview activated for ${command.text}!")
+                        }
+
+                        override fun onCommandPreviewCanceled(command: BaseCommand) {
+                            println("Action preview canceled for ${command.text}!")
+                        }
+                    }
                 )
             )
         }
@@ -78,17 +87,7 @@ fun getCommandPanelContentModel(
         groupIndex++
     }
 
-    return CommandPanelContentModel(commandGroups = commandGroups,
-        commandActionPreview = object : CommandActionPreview {
-            override fun onCommandPreviewActivated(command: BaseCommand) {
-                println("Action preview activated for ${command.text}!")
-            }
-
-            override fun onCommandPreviewCanceled(command: BaseCommand) {
-                println("Action preview canceled for ${command.text}!")
-            }
-        }
-    )
+    return CommandPanelContentModel(commandGroups = commandGroups)
 }
 
 fun main() = auroraApplication {
