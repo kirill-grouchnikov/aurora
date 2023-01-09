@@ -60,7 +60,7 @@ interface BaseCommandMenuHandler<in M : BaseCommandMenuContentModel,
 
     @Composable
     fun generatePopupContent(
-        popupMenu: AuroraSwingPopupMenu,
+        popupMenu: JPopupMenu,
         menuContentModel: M,
         menuPresentationModel: P,
         toDismissPopupsOnActivation: Boolean,

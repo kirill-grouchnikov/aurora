@@ -62,6 +62,7 @@ import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 import java.awt.event.KeyEvent
+import javax.swing.JPopupMenu
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -333,7 +334,7 @@ internal fun <M : BaseCommandMenuContentModel,
     actionInteractionSource: MutableInteractionSource,
     popupInteractionSource: MutableInteractionSource,
     command: BaseCommand,
-    parentPopupMenu: AuroraSwingPopupMenu?,
+    parentPopupMenu: JPopupMenu?,
     extraAction: (() -> Unit)? = null,
     popupHandler: BaseCommandMenuHandler<M, P, L>,
     popupPlacementStrategyProvider: ((ModelStateInfo) -> PopupPlacementStrategy)? = null,

@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.component
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -28,12 +27,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -42,19 +37,17 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.utils.TitleLabel
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import javax.swing.JPopupMenu
 import kotlin.math.max
 
 @OptIn(AuroraInternalApi::class)
 private fun LazyListScope.rowOfItems(
-    popupMenu: AuroraSwingPopupMenu?,
+    popupMenu: JPopupMenu?,
     backgroundColor: Color,
     gap: Dp,
     commandGroup: CommandGroup,
@@ -102,7 +95,7 @@ private fun LazyListScope.rowOfItems(
 
 @OptIn(AuroraInternalApi::class)
 private fun LazyListScope.columnOfItems(
-    popupMenu: AuroraSwingPopupMenu?,
+    popupMenu: JPopupMenu?,
     backgroundColor: Color,
     gap: Dp,
     commandGroup: CommandGroup,

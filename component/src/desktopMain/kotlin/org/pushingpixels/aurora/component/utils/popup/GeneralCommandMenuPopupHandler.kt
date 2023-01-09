@@ -43,6 +43,7 @@ import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjecti
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuPopupLayoutInfo
 import org.pushingpixels.aurora.theming.*
+import javax.swing.JPopupMenu
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
@@ -218,7 +219,7 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
 
     @Composable
     override fun generatePopupContent(
-        popupMenu: AuroraSwingPopupMenu,
+        popupMenu: JPopupMenu,
         menuContentModel: CommandMenuContentModel,
         menuPresentationModel: CommandPopupMenuPresentationModel,
         toDismissPopupsOnActivation: Boolean,
@@ -239,7 +240,7 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
 
     @Composable
     private fun TopLevelPopupContent(
-        popupMenu: AuroraSwingPopupMenu,
+        popupMenu: JPopupMenu,
         menuContentModel: CommandMenuContentModel,
         menuPresentationModel: CommandPopupMenuPresentationModel,
         toDismissPopupsOnActivation: Boolean,
@@ -326,7 +327,7 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
     @OptIn(AuroraInternalApi::class)
     @Composable
     private fun PopupGeneralContent(
-        popupMenu: AuroraSwingPopupMenu,
+        popupMenu: JPopupMenu,
         menuContentModel: CommandMenuContentModel,
         menuPresentationModel: CommandPopupMenuPresentationModel,
         toDismissPopupsOnActivation: Boolean,
