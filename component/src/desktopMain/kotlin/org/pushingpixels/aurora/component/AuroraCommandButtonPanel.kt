@@ -36,15 +36,15 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.utils.TitleLabel
-import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
-import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.AuroraSkin
+import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 import kotlin.math.max
 
-@OptIn(AuroraInternalApi::class)
 private fun LazyListScope.rowOfItems(
     backgroundColor: Color,
     gap: Dp,
@@ -71,15 +71,16 @@ private fun LazyListScope.rowOfItems(
 
                 // Propagate command overlays so that key tips are properly displayed
                 // on secondary content of the current command's projection
-                AuroraCommandButton(
+                CommandButtonProjection(
+                    contentModel = command,
+                    presentationModel = commandPresentation,
+                    overlays = overlays
+                ).project(
                     modifier = Modifier.width(itemWidth),
                     actionInteractionSource = remember { MutableInteractionSource() },
-                    popupInteractionSource = remember { MutableInteractionSource() },
-                    command = command,
-                    presentationModel = commandPresentation,
-                    popupHandler = GeneralCommandMenuPopupHandler,
-                    overlays = overlays
+                    popupInteractionSource = remember { MutableInteractionSource() }
                 )
+
                 if (index != (indexRowEnd - 1)) {
                     Spacer(modifier = Modifier.width(gap))
                 }
@@ -88,7 +89,6 @@ private fun LazyListScope.rowOfItems(
     }
 }
 
-@OptIn(AuroraInternalApi::class)
 private fun LazyListScope.columnOfItems(
     backgroundColor: Color,
     gap: Dp,
@@ -115,15 +115,16 @@ private fun LazyListScope.columnOfItems(
 
                 // Propagate command overlays so that key tips are properly displayed
                 // on secondary content of the current command's projection
-                AuroraCommandButton(
+                CommandButtonProjection(
+                    contentModel = command,
+                    presentationModel = commandPresentation,
+                    overlays = overlays
+                ).project(
                     modifier = Modifier.height(itemHeight),
                     actionInteractionSource = remember { MutableInteractionSource() },
-                    popupInteractionSource = remember { MutableInteractionSource() },
-                    command = command,
-                    presentationModel = commandPresentation,
-                    popupHandler = GeneralCommandMenuPopupHandler,
-                    overlays = overlays
+                    popupInteractionSource = remember { MutableInteractionSource() }
                 )
+
                 if (index != (indexColumnEnd - 1)) {
                     Spacer(modifier = Modifier.height(gap))
                 }

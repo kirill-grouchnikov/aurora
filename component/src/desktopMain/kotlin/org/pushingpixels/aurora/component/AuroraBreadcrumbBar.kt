@@ -42,7 +42,6 @@ import org.pushingpixels.aurora.component.utils.ArrowSizingConstants
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
 import org.pushingpixels.aurora.component.utils.drawDoubleArrow
-import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
 
 @OptIn(AuroraInternalApi::class)
@@ -228,12 +227,10 @@ fun AuroraBreadcrumbBar(
                     for (command in contentModel) {
                         val popupInteractionSource = remember(command) { MutableInteractionSource() }
                         val isPopupRollover by popupInteractionSource.collectIsHoveredAsState()
-                        AuroraCommandButton(
-                            modifier = Modifier,
-                            actionInteractionSource = remember { MutableInteractionSource() },
-                            popupInteractionSource = popupInteractionSource,
-                            command = command,
-                            popupHandler = GeneralCommandMenuPopupHandler,
+
+                        // Project a command button for each command
+                        CommandButtonProjection(
+                            contentModel = command,
                             presentationModel = contentPresentationModel.overlayWith(
                                 CommandButtonPresentationModel.Overlay(
                                     popupPlacementStrategy = if (isPopupRollover) PopupPlacementStrategy.Downward.HAlignStart
@@ -241,6 +238,10 @@ fun AuroraBreadcrumbBar(
                                 )
                             ),
                             overlays = mapOf()
+                        ).project(
+                            modifier = Modifier.fillMaxWidth(),
+                            actionInteractionSource = remember { MutableInteractionSource() },
+                            popupInteractionSource = popupInteractionSource
                         )
                     }
                 }

@@ -36,6 +36,8 @@ import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuPopupLayoutInfo
+import org.pushingpixels.aurora.component.projection.CommandButtonPanelProjection
+import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.theming.*
 import kotlin.math.ceil
@@ -245,11 +247,11 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
             contentLayoutInfo = contentLayoutInfo
         ) {
             if (hasPanel) {
-                AuroraCommandButtonPanel(
+                CommandButtonPanelProjection(
                     contentModel = menuContentModel.panelContentModel!!,
                     presentationModel = menuPresentationModel.panelPresentationModel!!.toCommandPanelPresentationModel(),
                     overlays = overlays
-                )
+                ).project()
                 HorizontalSeparatorProjection(
                     presentationModel = SeparatorPresentationModel(
                         startGradientAmount = 0.dp,
@@ -370,19 +372,19 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
                         )
                 }
 
-                // Create a command button for each secondary command, passing the same
+                // Project a command button for each secondary command, passing the same
                 // overlays into it.
-                AuroraCommandButton(
+                CommandButtonProjection(
+                    contentModel = secondaryCommand,
+                    presentationModel = currSecondaryPresentationModel,
+                    overlays = overlays
+                ).project(
                     modifier = if (toUseBackgroundStriping)
                         Modifier.background(
                             color = if ((runningCommandIndex % 2) == 0) backgroundEvenRows else backgroundOddRows
                         ) else Modifier,
                     actionInteractionSource = remember { MutableInteractionSource() },
-                    popupInteractionSource = remember { MutableInteractionSource() },
-                    command = secondaryCommand,
-                    presentationModel = currSecondaryPresentationModel,
-                    popupHandler = this,
-                    overlays = overlays
+                    popupInteractionSource = remember { MutableInteractionSource() }
                 )
                 runningCommandIndex++
             }
