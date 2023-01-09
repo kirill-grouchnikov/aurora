@@ -65,9 +65,7 @@ data class CustomCommandPopupMenuPresentationModel(
 
 class CommandButtonLayoutManagerCustom(
     override val layoutDirection: LayoutDirection,
-    private val _density: Density,
-    private val textStyle: TextStyle,
-    private val fontFamilyResolver: FontFamily.Resolver
+    private val _density: Density
 ) : CommandButtonLayoutManager {
     override val density = _density.density
     override val fontScale = _density.fontScale
@@ -215,12 +213,7 @@ val CustomPresentationState: CommandButtonPresentationState =
             textStyle: TextStyle,
             fontFamilyResolver: FontFamily.Resolver
         ): CommandButtonLayoutManager {
-            return CommandButtonLayoutManagerCustom(
-                layoutDirection,
-                density,
-                textStyle,
-                fontFamilyResolver
-            )
+            return CommandButtonLayoutManagerCustom(layoutDirection, density)
         }
     }
 

@@ -796,7 +796,7 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
                                 )
                             ),
                             presentationModel = ColorSelectorCommandButtonPresentationModel(
-                                actionKeyTip = "SC"
+                                popupKeyTip = "SC"
                             )
                         ) at PresentationPriority.Medium
                     ),
