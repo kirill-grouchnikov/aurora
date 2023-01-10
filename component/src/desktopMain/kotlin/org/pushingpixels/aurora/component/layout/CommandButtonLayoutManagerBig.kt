@@ -15,8 +15,6 @@
  */
 package org.pushingpixels.aurora.component.layout
 
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.Paragraph
@@ -120,8 +118,8 @@ internal open class CommandButtonLayoutManagerBig(
     ): Size {
         val paddingValues = presentationModel.contentPadding
         val bx = presentationModel.horizontalGapScaleFactor *
-                (paddingValues.calculateStartPadding(layoutDirection) +
-                        paddingValues.calculateEndPadding(layoutDirection)).toPx()
+                (paddingValues.startPadding +
+                        paddingValues.endPadding).toPx()
         val buttonText = command.text
         val layoutHGap = (CommandButtonSizingConstants.DefaultHorizontalContentLayoutGap *
                 presentationModel.horizontalGapScaleFactor).toPx()
@@ -150,8 +148,7 @@ internal open class CommandButtonLayoutManagerBig(
         val width = max(getCurrentIconWidth(command, presentationModel).toPx(), titleWidth)
 
         // start height with the top inset
-        var height = presentationModel.verticalGapScaleFactor *
-                paddingValues.calculateTopPadding().toPx()
+        var height = presentationModel.verticalGapScaleFactor * paddingValues.topPadding.toPx()
         // icon?
         if (hasIcon) {
             // padding above the icon
@@ -186,8 +183,7 @@ internal open class CommandButtonLayoutManagerBig(
         height += SeparatorSizingConstants.Thickness.toPx()
 
         // bottom insets
-        height += presentationModel.verticalGapScaleFactor *
-                paddingValues.calculateBottomPadding().toPx()
+        height += presentationModel.verticalGapScaleFactor * paddingValues.bottomPadding.toPx()
 
         // and remove the padding above the first and below the last elements
         height -= 2 * layoutVGap
@@ -235,9 +231,9 @@ internal open class CommandButtonLayoutManagerBig(
 
         val paddingValues = presentationModel.contentPadding
         val startInset = presentationModel.horizontalGapScaleFactor *
-                paddingValues.calculateStartPadding(layoutDirection).toPx()
+                paddingValues.startPadding.toPx()
         val endInset = presentationModel.horizontalGapScaleFactor *
-                paddingValues.calculateEndPadding(layoutDirection).toPx()
+                paddingValues.endPadding.toPx()
         val layoutHGap = (CommandButtonSizingConstants.DefaultHorizontalContentLayoutGap *
                 presentationModel.horizontalGapScaleFactor).toPx()
         val layoutVGap = (CommandButtonSizingConstants.DefaultVerticalContentLayoutGap *
@@ -276,7 +272,7 @@ internal open class CommandButtonLayoutManagerBig(
         }
 
         var y = presentationModel.verticalGapScaleFactor *
-                paddingValues.calculateTopPadding().toPx() + shiftY - layoutVGap
+                paddingValues.topPadding.toPx() + shiftY - layoutVGap
 
         // icon
         if (hasIcon) {

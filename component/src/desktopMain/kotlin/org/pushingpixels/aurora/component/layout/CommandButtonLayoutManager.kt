@@ -15,6 +15,9 @@
  */
 package org.pushingpixels.aurora.component.layout
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.MeasureScope
@@ -108,6 +111,19 @@ interface CommandButtonLayoutManager : MeasureScope {
         val extraTextLayoutInfoList: List<TextLayoutInfo>,
         val popupActionRect: Rect,
     )
+
+    val PaddingValues.startPadding: Dp
+        get() = this.calculateStartPadding(layoutDirection)
+    val PaddingValues.endPadding: Dp
+        get() = this.calculateEndPadding(layoutDirection)
+    val PaddingValues.topPadding: Dp
+        get() = this.calculateTopPadding()
+    val PaddingValues.bottomPadding: Dp
+        get() = this.calculateBottomPadding()
+    val PaddingValues.horizontalPaddings: Dp
+        get() = this.startPadding + this.endPadding
+    val PaddingValues.verticalPaddings: Dp
+        get() = this.topPadding + this.bottomPadding
 
     /**
      * Returns the preferred icon size under this layout manager. Note that some layout managers

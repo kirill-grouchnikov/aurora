@@ -180,18 +180,14 @@ override fun getPreferredSize(
     presentationModel: BaseCommandButtonPresentationModel,
     preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
 ): Size {
-    val paddingValues = presentationModel.contentPadding
-    val by = presentationModel.verticalGapScaleFactor *
-            (paddingValues.calculateTopPadding() + paddingValues.calculateBottomPadding()).toPx()
     val prefIconWidth = getPreferredIconSize(command, presentationModel).width.toPx()
     val prefIconHeight = getPreferredIconSize(command, presentationModel).height.toPx()
 
-    val width = presentationModel.horizontalGapScaleFactor *
-            paddingValues.calculateStartPadding(layoutDirection).toPx() + prefIconWidth +
-            presentationModel.horizontalGapScaleFactor *
-            paddingValues.calculateEndPadding(layoutDirection).toPx()
+    val paddingValues = presentationModel.contentPadding
+    val by = presentationModel.verticalGapScaleFactor * paddingValues.verticalPaddings.toPx()
+    val bx = presentationModel.horizontalGapScaleFactor * paddingValues.horizontalPaddings.toPx()
 
-    return Size(width, by + prefIconHeight)
+    return Size(bx + prefIconWidth, by + prefIconHeight)
 }
 ```
 
@@ -206,9 +202,9 @@ override fun getLayoutInfo(
 ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
     val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo)
     val paddingTop = presentationModel.verticalGapScaleFactor *
-            presentationModel.contentPadding.calculateTopPadding().toPx()
+            presentationModel.contentPadding.topPadding.toPx()
     val paddingBottom = presentationModel.verticalGapScaleFactor *
-            presentationModel.contentPadding.calculateBottomPadding().toPx()
+            presentationModel.contentPadding.bottomPadding.toPx()
 
     val iconWidth = getPreferredIconSize(command, presentationModel).width.toPx()
     val iconHeight = getPreferredIconSize(command, presentationModel).height.toPx()
@@ -228,7 +224,7 @@ override fun getLayoutInfo(
 
     val iconTop = paddingTop + (finalHeight - iconHeight - paddingTop - paddingBottom) / 2
     val iconRect = if (ltr) {
-        val x = paddingValues.calculateStartPadding(layoutDirection).toPx() + shiftX
+        val x = paddingValues.startPadding.toPx() + shiftX
 
         Rect(
             left = x,
@@ -237,7 +233,7 @@ override fun getLayoutInfo(
             bottom = iconTop + iconHeight
         )
     } else {
-        val x = finalWidth - paddingValues.calculateStartPadding(layoutDirection).toPx() - shiftX
+        val x = finalWidth - paddingValues.startPadding.toPx() - shiftX
 
         Rect(
             left = x - iconWidth,

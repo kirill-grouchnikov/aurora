@@ -15,8 +15,6 @@
  */
 package org.pushingpixels.aurora.component.layout
 
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.Paragraph
@@ -57,8 +55,7 @@ internal open class CommandButtonLayoutManagerMedium(
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): Size {
         val paddingValues = presentationModel.contentPadding
-        val by = presentationModel.verticalGapScaleFactor *
-                (paddingValues.calculateTopPadding() + paddingValues.calculateBottomPadding()).toPx()
+        val by = presentationModel.verticalGapScaleFactor * paddingValues.verticalPaddings.toPx()
         val buttonText = command.text
         val layoutHGap = (CommandButtonSizingConstants.DefaultHorizontalContentLayoutGap *
                 presentationModel.horizontalGapScaleFactor).toPx()
@@ -69,8 +66,7 @@ internal open class CommandButtonLayoutManagerMedium(
         val prefIconHeight = getPreferredIconSize(command, presentationModel).height.toPx()
 
         // start with the left insets
-        var width = presentationModel.horizontalGapScaleFactor *
-                paddingValues.calculateStartPadding(layoutDirection).toPx()
+        var width = presentationModel.horizontalGapScaleFactor * paddingValues.startPadding.toPx()
         // icon?
         if (hasIcon) {
             // padding before the icon
@@ -119,7 +115,7 @@ internal open class CommandButtonLayoutManagerMedium(
 
         // right insets
         width += presentationModel.horizontalGapScaleFactor *
-                paddingValues.calculateEndPadding(layoutDirection).toPx()
+                paddingValues.endPadding.toPx()
 
         // and remove the padding before the first and after the last elements
         width -= 2 * layoutHGap
@@ -163,9 +159,9 @@ internal open class CommandButtonLayoutManagerMedium(
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
         val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo)
         val paddingTop = presentationModel.verticalGapScaleFactor *
-                presentationModel.contentPadding.calculateTopPadding().toPx()
+                presentationModel.contentPadding.topPadding.toPx()
         val paddingBottom = presentationModel.verticalGapScaleFactor *
-                presentationModel.contentPadding.calculateBottomPadding().toPx()
+                presentationModel.contentPadding.bottomPadding.toPx()
 
         val buttonText = command.text
         val layoutHGap = (CommandButtonSizingConstants.DefaultHorizontalContentLayoutGap *
@@ -224,7 +220,7 @@ internal open class CommandButtonLayoutManagerMedium(
 
         if (ltr) {
             var x = presentationModel.horizontalGapScaleFactor *
-                    paddingValues.calculateStartPadding(layoutDirection)
+                    paddingValues.startPadding
                         .toPx() + shiftX - layoutHGap
 
             // icon
@@ -292,7 +288,7 @@ internal open class CommandButtonLayoutManagerMedium(
             // scenario).
             if (hasText || hasPopup) {
                 val paddingEnd = presentationModel.horizontalGapScaleFactor *
-                        paddingValues.calculateEndPadding(layoutDirection).toPx()
+                        paddingValues.endPadding.toPx()
                 if (hasPopup) {
                     if (popupActionRect.right > (finalWidth - paddingEnd)) {
                         shiftX = popupActionRect.right - (finalWidth - paddingEnd)
@@ -431,7 +427,7 @@ internal open class CommandButtonLayoutManagerMedium(
             }
         } else {
             var x = finalWidth - presentationModel.horizontalGapScaleFactor *
-                    paddingValues.calculateStartPadding(layoutDirection)
+                    paddingValues.startPadding
                         .toPx() - shiftX + layoutHGap
 
             // icon
@@ -499,7 +495,7 @@ internal open class CommandButtonLayoutManagerMedium(
             // scenario).
             if (hasText || hasPopup) {
                 val paddingEnd = presentationModel.horizontalGapScaleFactor *
-                        paddingValues.calculateEndPadding(layoutDirection).toPx()
+                        paddingValues.endPadding.toPx()
                 if (hasPopup) {
                     if (popupActionRect.left < paddingEnd) {
                         shiftX = paddingEnd - popupActionRect.left

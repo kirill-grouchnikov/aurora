@@ -17,8 +17,6 @@
 package org.pushingpixels.aurora.window
 
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,7 +26,10 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.Paragraph
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.unit.*
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
@@ -57,11 +58,8 @@ private object WindowMenuBarLayout {
             preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
         ): Size {
             val paddingValues = presentationModel.contentPadding
-            val by = presentationModel.verticalGapScaleFactor *
-                    (paddingValues.calculateTopPadding() + paddingValues.calculateBottomPadding()).toPx()
-            val bx = presentationModel.horizontalGapScaleFactor *
-                    (paddingValues.calculateStartPadding(layoutDirection) +
-                            paddingValues.calculateEndPadding(layoutDirection)).toPx()
+            val by = presentationModel.verticalGapScaleFactor * paddingValues.verticalPaddings.toPx()
+            val bx = presentationModel.horizontalGapScaleFactor * paddingValues.horizontalPaddings.toPx()
 
             val paragraph = Paragraph(
                 text = command.text, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
@@ -110,8 +108,7 @@ private object WindowMenuBarLayout {
             val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo)
 
             val paddingValues = presentationModel.contentPadding
-            val top = presentationModel.verticalGapScaleFactor *
-                    paddingValues.calculateTopPadding().toPx()
+            val top = presentationModel.verticalGapScaleFactor * paddingValues.topPadding.toPx()
             val left = presentationModel.horizontalGapScaleFactor *
                     paddingValues.calculateLeftPadding(layoutDirection).toPx()
 
