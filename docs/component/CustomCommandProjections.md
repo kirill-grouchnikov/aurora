@@ -9,7 +9,7 @@ As detailed in the [overview documentation](MoreCommands.md), Aurora commands ar
 
 Let's take a look at all the pieces that participate in creating a custom application command button projection that looks like this:
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-custom-popup-simple.png" width="112" height="127" border=0/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-custom-popup-simple.png" width="112" height="123" border=0/>
 
 The requirements are:
 
