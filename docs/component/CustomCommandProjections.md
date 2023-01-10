@@ -9,7 +9,7 @@ As detailed in the [overview documentation](MoreCommands.md), Aurora commands ar
 
 Let's take a look at all the pieces that participate in creating a custom application command button projection that looks like this:
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-custom-popup-simple.png" width="116" height="126" border=0/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-custom-popup-simple.png" width="112" height="127" border=0/>
 
 The requirements are:
 
@@ -201,10 +201,10 @@ override fun getLayoutInfo(
     preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
 ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
     val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo)
-    val paddingTop = presentationModel.verticalGapScaleFactor *
-            presentationModel.contentPadding.topPadding.toPx()
-    val paddingBottom = presentationModel.verticalGapScaleFactor *
-            presentationModel.contentPadding.bottomPadding.toPx()
+
+    val paddingValues = presentationModel.contentPadding
+    val paddingTop = presentationModel.verticalGapScaleFactor * paddingValues.topPadding.toPx()
+    val paddingBottom = presentationModel.verticalGapScaleFactor * paddingValues.bottomPadding.toPx()
 
     val iconWidth = getPreferredIconSize(command, presentationModel).width.toPx()
     val iconHeight = getPreferredIconSize(command, presentationModel).height.toPx()
@@ -219,8 +219,6 @@ override fun getLayoutInfo(
     var shiftX = ...
     var finalWidth = ...
     var finalHeight = ...
-
-    val paddingValues = presentationModel.contentPadding
 
     val iconTop = paddingTop + (finalHeight - iconHeight - paddingTop - paddingBottom) / 2
     val iconRect = if (ltr) {

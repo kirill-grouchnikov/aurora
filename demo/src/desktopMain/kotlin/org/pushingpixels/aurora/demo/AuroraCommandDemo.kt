@@ -830,12 +830,12 @@ fun AuroraWindowScope.DemoCommandContent(
                                     isActionEnabled = actionEnabled
                                 ), Command(
                                     text = entrySimpleMf.format(arrayOf<Any>(2)),
-                                    icon = computer(),
+                                    icon = network_wireless(),
                                     action = { println("secondary 2 activated!") },
                                     isActionEnabled = actionEnabled
                                 ), Command(
                                     text = entrySimpleMf.format(arrayOf<Any>(3)),
-                                    icon = computer(),
+                                    icon = media_floppy(),
                                     action = { println("secondary 3 activated!") },
                                     isActionEnabled = actionEnabled
                                 )

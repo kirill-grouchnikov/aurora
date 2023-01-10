@@ -60,7 +60,7 @@ data class CustomMenuContentModel(
 
 class CommandButtonLayoutManagerCustom(
     override val layoutDirection: LayoutDirection,
-    private val _density: Density
+    _density: Density
 ) : CommandButtonLayoutManager {
     override val density = _density.density
     override val fontScale = _density.fontScale
@@ -98,7 +98,7 @@ class CommandButtonLayoutManagerCustom(
             texts = emptyList(),
             extraTexts = emptyList(),
             isTextInActionArea = false,
-            separatorOrientation = CommandButtonLayoutManager.CommandButtonSeparatorOrientation.Vertical,
+            separatorOrientation = null,
             showPopupIcon = false
         )
     }
@@ -110,10 +110,10 @@ class CommandButtonLayoutManagerCustom(
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
         val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo)
-        val paddingTop = presentationModel.verticalGapScaleFactor *
-                presentationModel.contentPadding.topPadding.toPx()
-        val paddingBottom = presentationModel.verticalGapScaleFactor *
-                presentationModel.contentPadding.bottomPadding.toPx()
+
+        val paddingValues = presentationModel.contentPadding
+        val paddingTop = presentationModel.verticalGapScaleFactor * paddingValues.topPadding.toPx()
+        val paddingBottom = presentationModel.verticalGapScaleFactor * paddingValues.bottomPadding.toPx()
 
         val iconWidth = getPreferredIconSize(command, presentationModel).width.toPx()
         val iconHeight = getPreferredIconSize(command, presentationModel).height.toPx()
@@ -152,8 +152,6 @@ class CommandButtonLayoutManagerCustom(
         if (constraints.hasFixedHeight && (constraints.maxHeight > 0)) {
             finalHeight = constraints.maxHeight.toFloat()
         }
-
-        val paddingValues = presentationModel.contentPadding
 
         val iconTop = paddingTop + (finalHeight - iconHeight - paddingTop - paddingBottom) / 2
         val iconRect = if (ltr) {
