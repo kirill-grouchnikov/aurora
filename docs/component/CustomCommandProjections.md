@@ -19,6 +19,14 @@ The requirements are:
 * The popup arranges its content in a single column
 * The popup content is a list of Aurora commands
 
+To make a fully custom command button projection, we are going to make:
+
+* Content models for the command and its menu
+* Presentation models for the command button and its popup menu
+* Layout manager for the button
+* Menu handler for the popup
+* Projection
+
 ### Content models
 
 We start by defining our content models, one for the command, and one for the secondary content:
@@ -66,7 +74,7 @@ data class CustomCommandButtonPresentationModel(
     override val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
     override val toDismissPopupsOnActivation: Boolean = true,
     override val popupKeyTip: String? = null,
-    override val popupMenuPresentationModel: BaseCommandPopupMenuPresentationModel = CustomCommandPopupMenuPresentationModel(),
+    override val popupMenuPresentationModel: CustomCommandPopupMenuPresentationModel = CustomCommandPopupMenuPresentationModel(),
     override val contentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
     override val minWidth: Dp = 0.dp,
     override val sides: Sides = Sides()

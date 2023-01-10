@@ -229,7 +229,7 @@ data class CustomCommandButtonPresentationModel(
     override val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
     override val toDismissPopupsOnActivation: Boolean = true,
     override val popupKeyTip: String? = null,
-    override val popupMenuPresentationModel: BaseCommandPopupMenuPresentationModel = CustomCommandPopupMenuPresentationModel(),
+    override val popupMenuPresentationModel: CustomCommandPopupMenuPresentationModel = CustomCommandPopupMenuPresentationModel(),
     override val contentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
     override val minWidth: Dp = 0.dp,
     override val sides: Sides = Sides()

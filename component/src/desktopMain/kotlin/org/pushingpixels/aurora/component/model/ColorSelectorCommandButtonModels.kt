@@ -141,7 +141,7 @@ data class ColorSelectorCommandButtonPresentationModel(
     override val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
     override val toDismissPopupsOnActivation: Boolean = true,
     override val popupKeyTip: String? = null,
-    override val popupMenuPresentationModel: BaseCommandPopupMenuPresentationModel =
+    override val popupMenuPresentationModel: ColorSelectorCommandPopupMenuPresentationModel =
         ColorSelectorCommandPopupMenuPresentationModel(colorColumns = 10),
     override val popupRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),
     override val contentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,

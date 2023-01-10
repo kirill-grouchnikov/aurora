@@ -97,7 +97,7 @@ data class CommandButtonPresentationModel(
     override val autoRepeatInitialInterval: Long = CommandButtonInteractionConstants.DefaultAutoRepeatInitialIntervalMillis,
     override val autoRepeatSubsequentInterval: Long = CommandButtonInteractionConstants.DefaultAutoRepeatSubsequentIntervalMillis,
     override val actionFireTrigger: ActionFireTrigger = ActionFireTrigger.OnPressReleased,
-    override val popupMenuPresentationModel: BaseCommandPopupMenuPresentationModel = CommandPopupMenuPresentationModel(),
+    override val popupMenuPresentationModel: CommandPopupMenuPresentationModel = CommandPopupMenuPresentationModel(),
     override val textClick: TextClick = TextClick.Action,
     override val actionRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),
     override val popupRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),
