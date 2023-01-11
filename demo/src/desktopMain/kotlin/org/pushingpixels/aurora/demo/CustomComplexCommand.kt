@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.demo
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -23,19 +24,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuPopupLayoutInfo
-import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
-import org.pushingpixels.aurora.component.projection.CommandButtonProjection
-import org.pushingpixels.aurora.component.projection.LabelProjection
+import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.component.utils.getLabelPreferredSingleLineWidth
 import org.pushingpixels.aurora.theming.*
 import kotlin.math.max
@@ -79,10 +81,18 @@ data class CustomComplexPopupMenuHeader(
     val title: String,
     val commandSignIn: Command,
     val colors: List<Color>
+) : CustomComplexPopupMenuEntry
+
+data class CustomComplexPopupMenuFooter(
+    val commandFooter: Command,
+) : CustomComplexPopupMenuEntry
+
+data class CustomComplexMenuContentSection(
+    val entries: List<CustomComplexPopupMenuEntry>
 )
 
 data class CustomComplexMenuContentModel(
-    val entries: List<CustomComplexPopupMenuEntry>
+    val sections: List<CustomComplexMenuContentSection>
 ) : BaseCommandMenuContentModel
 
 class CommandButtonLayoutManagerCustomComplex(
@@ -240,6 +250,8 @@ data class CustomComplexCommandPopupMenuPresentationModel(
     val menuIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val menuIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
     val menuContentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
+    val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignTop,
+    val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Fill,
     val zoomPresentationModel: CommandButtonPresentationModel =
         CommandButtonPresentationModel(
             presentationState = CommandButtonPresentationState.Medium,
@@ -263,6 +275,35 @@ data class CustomComplexCommandPopupMenuPresentationModel(
             iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
             sides = Sides(straightSides = Side.values().toSet()),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp)
+        ),
+    val editPresentationModel: CommandButtonPresentationModel =
+        CommandButtonPresentationModel(
+            presentationState = CommandButtonPresentationState.Medium,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+            sides = Sides(straightSides = Side.values().toSet()),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp)
+        ),
+    val headerTitlePresentationModel: LabelPresentationModel =
+        LabelPresentationModel(
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
+            textMaxLines = 1,
+            textStyle = TextStyle(fontWeight = FontWeight.Bold)
+        ),
+    val headerSignInPresentationModel: CommandButtonPresentationModel =
+        CommandButtonPresentationModel(
+            presentationState = CommandButtonPresentationState.Medium,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+            sides = Sides(straightSides = Side.values().toSet()),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp)
+        ),
+    val headerSeparatorHeight: Dp = 2.0.dp,
+    val footerPresentationModel: CommandButtonPresentationModel =
+        CommandButtonPresentationModel(
+            presentationState = CommandButtonPresentationState.Medium,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+            sides = Sides(straightSides = Side.values().toSet()),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
+            horizontalAlignment = HorizontalAlignment.Leading
         )
 ) : BaseCommandPopupMenuPresentationModel
 
@@ -302,7 +343,8 @@ data class CustomComplexCommandButtonPresentationModel(
 
 data class CustomComplexPopupContentLayoutInfo(
     override val popupSize: Size,
-    val menuButtonPresentationModel: CommandButtonPresentationModel
+    val menuButtonPresentationModel: CommandButtonPresentationModel,
+    val entryHeights: FloatArray
 ) : BaseCommandMenuPopupLayoutInfo
 
 object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
@@ -324,9 +366,9 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
             iconEnabledFilterStrategy = menuPresentationModel.menuIconEnabledFilterStrategy,
             iconDisabledFilterStrategy = menuPresentationModel.menuIconDisabledFilterStrategy,
             forceAllocateSpaceForIcon = false,
-            popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
+            popupPlacementStrategy = menuPresentationModel.popupPlacementStrategy,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-            horizontalAlignment = HorizontalAlignment.Leading,
+            horizontalAlignment = menuPresentationModel.horizontalAlignment,
             contentPadding = menuPresentationModel.menuContentPadding,
             isMenu = true,
             sides = Sides(straightSides = Side.values().toSet())
@@ -340,6 +382,8 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
                 fontFamilyResolver = fontFamilyResolver
             )
 
+        val entryHeights = FloatArray(menuContentModel.sections.sumOf { it.entries.size })
+
         // Rows such as zoom, edit and header have two areas: title and actions.
         // Treat the title area separately to be aligned with the command-based
         // rows. That is, do not allow the action area of any such row to vertically
@@ -347,97 +391,214 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
         var maxPrimaryWidth = 0.0f
         var maxActionWidth = 0.0f
         var combinedHeight = 0.0f
-        for (entry in menuContentModel.entries) {
-            when (entry) {
-                is CustomComplexPopupMenuCommand -> {
-                    val preferredSize = layoutManager.getPreferredSize(
-                        command = entry.command,
-                        presentationModel = menuButtonPresentationModel,
-                        preLayoutInfo = layoutManager.getPreLayoutInfo(
+
+        var entryIndex = 0
+
+        for (section in menuContentModel.sections) {
+            for (entry in section.entries) {
+                when (entry) {
+                    is CustomComplexPopupMenuCommand -> {
+                        val preferredSize = layoutManager.getPreferredSize(
                             command = entry.command,
-                            presentationModel = menuButtonPresentationModel
+                            presentationModel = menuButtonPresentationModel,
+                            preLayoutInfo = layoutManager.getPreLayoutInfo(
+                                command = entry.command,
+                                presentationModel = menuButtonPresentationModel
+                            )
                         )
-                    )
-                    maxPrimaryWidth = max(maxPrimaryWidth, preferredSize.width)
-                    combinedHeight += preferredSize.height
-                }
+                        maxPrimaryWidth = max(maxPrimaryWidth, preferredSize.width)
+                        combinedHeight += preferredSize.height
+                        entryHeights[entryIndex] = preferredSize.height
+                    }
 
-                is CustomComplexPopupMenuZoom -> {
-                    val titleWidth = getLabelPreferredSingleLineWidth(
-                        contentModel = LabelContentModel(text = entry.title),
-                        presentationModel = LabelPresentationModel(
-                            contentPadding = menuPresentationModel.menuContentPadding,
-                            textMaxLines = 1
-                        ),
-                        resolvedTextStyle = textStyle,
-                        layoutDirection = layoutDirection,
-                        density = density,
-                        fontFamilyResolver = fontFamilyResolver
-                    )
-
-                    maxPrimaryWidth = max(maxPrimaryWidth, titleWidth)
-
-                    val zoomLayoutManager =
-                        menuPresentationModel.zoomPresentationModel.presentationState.createLayoutManager(
-                            layoutDirection, density, textStyle, fontFamilyResolver
+                    is CustomComplexPopupMenuZoom -> {
+                        val titleWidth = getLabelPreferredSingleLineWidth(
+                            contentModel = LabelContentModel(text = entry.title),
+                            presentationModel = LabelPresentationModel(
+                                contentPadding = menuPresentationModel.menuContentPadding,
+                                textMaxLines = 1
+                            ),
+                            resolvedTextStyle = textStyle,
+                            layoutDirection = layoutDirection,
+                            density = density,
+                            fontFamilyResolver = fontFamilyResolver
                         )
-                    val zoomOutPreferredSize = zoomLayoutManager.getPreferredSize(
-                        command = entry.commandZoomOut,
-                        presentationModel = menuPresentationModel.zoomPresentationModel,
-                        preLayoutInfo = zoomLayoutManager.getPreLayoutInfo(
+
+                        maxPrimaryWidth = max(maxPrimaryWidth, titleWidth)
+
+                        val zoomLayoutManager =
+                            menuPresentationModel.zoomPresentationModel.presentationState.createLayoutManager(
+                                layoutDirection, density, textStyle, fontFamilyResolver
+                            )
+                        val zoomOutPreferredSize = zoomLayoutManager.getPreferredSize(
                             command = entry.commandZoomOut,
-                            presentationModel = menuPresentationModel.zoomPresentationModel
+                            presentationModel = menuPresentationModel.zoomPresentationModel,
+                            preLayoutInfo = zoomLayoutManager.getPreLayoutInfo(
+                                command = entry.commandZoomOut,
+                                presentationModel = menuPresentationModel.zoomPresentationModel
+                            )
                         )
-                    )
-                    val zoomLabelWidth = getLabelPreferredSingleLineWidth(
-                        contentModel = LabelContentModel(text = "${entry.zoom}%"),
-                        presentationModel = menuPresentationModel.zoomLabelPresentationModel,
-                        resolvedTextStyle = textStyle,
-                        layoutDirection = layoutDirection,
-                        density = density,
-                        fontFamilyResolver = fontFamilyResolver
-                    )
-                    val zoomInPreferredSize = zoomLayoutManager.getPreferredSize(
-                        command = entry.commandZoomIn,
-                        presentationModel = menuPresentationModel.zoomPresentationModel,
-                        preLayoutInfo = zoomLayoutManager.getPreLayoutInfo(
+                        val zoomLabelWidth = getLabelPreferredSingleLineWidth(
+                            contentModel = LabelContentModel(text = "${entry.zoom}%"),
+                            presentationModel = menuPresentationModel.zoomLabelPresentationModel,
+                            resolvedTextStyle = textStyle,
+                            layoutDirection = layoutDirection,
+                            density = density,
+                            fontFamilyResolver = fontFamilyResolver
+                        )
+                        val zoomInPreferredSize = zoomLayoutManager.getPreferredSize(
                             command = entry.commandZoomIn,
-                            presentationModel = menuPresentationModel.zoomPresentationModel
+                            presentationModel = menuPresentationModel.zoomPresentationModel,
+                            preLayoutInfo = zoomLayoutManager.getPreLayoutInfo(
+                                command = entry.commandZoomIn,
+                                presentationModel = menuPresentationModel.zoomPresentationModel
+                            )
                         )
-                    )
 
-                    val fullScreenLayoutManager =
-                        menuPresentationModel.fullScreenPresentationModel.presentationState.createLayoutManager(
-                            layoutDirection, density, textStyle, fontFamilyResolver
-                        )
-                    val fullScreenPreferredSize = fullScreenLayoutManager.getPreferredSize(
-                        command = entry.commandFullScreen,
-                        presentationModel = menuPresentationModel.fullScreenPresentationModel,
-                        preLayoutInfo = fullScreenLayoutManager.getPreLayoutInfo(
+                        val fullScreenLayoutManager =
+                            menuPresentationModel.fullScreenPresentationModel.presentationState.createLayoutManager(
+                                layoutDirection, density, textStyle, fontFamilyResolver
+                            )
+                        val fullScreenPreferredSize = fullScreenLayoutManager.getPreferredSize(
                             command = entry.commandFullScreen,
-                            presentationModel = menuPresentationModel.fullScreenPresentationModel
+                            presentationModel = menuPresentationModel.fullScreenPresentationModel,
+                            preLayoutInfo = fullScreenLayoutManager.getPreLayoutInfo(
+                                command = entry.commandFullScreen,
+                                presentationModel = menuPresentationModel.fullScreenPresentationModel
+                            )
                         )
-                    )
 
-                    maxActionWidth = max(
-                        maxActionWidth,
-                        zoomOutPreferredSize.width + zoomLabelWidth + zoomInPreferredSize.width + fullScreenPreferredSize.width
-                    )
+                        maxActionWidth = max(
+                            maxActionWidth,
+                            zoomOutPreferredSize.width + zoomLabelWidth + zoomInPreferredSize.width
+                                    + fullScreenPreferredSize.width
+                                    + 2.0f * SeparatorSizingConstants.Thickness.value * density.density
+                        )
+                        combinedHeight += fullScreenPreferredSize.height
+                        entryHeights[entryIndex] = fullScreenPreferredSize.height
+                    }
 
-                    combinedHeight += fullScreenPreferredSize.height
+                    is CustomComplexPopupMenuEdit -> {
+                        val titleWidth = getLabelPreferredSingleLineWidth(
+                            contentModel = LabelContentModel(text = entry.title),
+                            presentationModel = LabelPresentationModel(
+                                contentPadding = menuPresentationModel.menuContentPadding,
+                                textMaxLines = 1
+                            ),
+                            resolvedTextStyle = textStyle,
+                            layoutDirection = layoutDirection,
+                            density = density,
+                            fontFamilyResolver = fontFamilyResolver
+                        )
+
+                        maxPrimaryWidth = max(maxPrimaryWidth, titleWidth)
+
+                        val editLayoutManager =
+                            menuPresentationModel.editPresentationModel.presentationState.createLayoutManager(
+                                layoutDirection, density, textStyle, fontFamilyResolver
+                            )
+                        val cutPreferredSize = editLayoutManager.getPreferredSize(
+                            command = entry.commandCut,
+                            presentationModel = menuPresentationModel.editPresentationModel,
+                            preLayoutInfo = editLayoutManager.getPreLayoutInfo(
+                                command = entry.commandCut,
+                                presentationModel = menuPresentationModel.editPresentationModel
+                            )
+                        )
+                        val copyPreferredSize = editLayoutManager.getPreferredSize(
+                            command = entry.commandCopy,
+                            presentationModel = menuPresentationModel.editPresentationModel,
+                            preLayoutInfo = editLayoutManager.getPreLayoutInfo(
+                                command = entry.commandCopy,
+                                presentationModel = menuPresentationModel.editPresentationModel
+                            )
+                        )
+                        val pastePreferredSize = editLayoutManager.getPreferredSize(
+                            command = entry.commandPaste,
+                            presentationModel = menuPresentationModel.editPresentationModel,
+                            preLayoutInfo = editLayoutManager.getPreLayoutInfo(
+                                command = entry.commandPaste,
+                                presentationModel = menuPresentationModel.editPresentationModel
+                            )
+                        )
+
+                        maxActionWidth = max(
+                            maxActionWidth,
+                            cutPreferredSize.width + copyPreferredSize.width + pastePreferredSize.width
+                                    + 3.0f * SeparatorSizingConstants.Thickness.value * density.density
+                        )
+
+                        combinedHeight += cutPreferredSize.height
+                        entryHeights[entryIndex] = cutPreferredSize.height
+                    }
+
+                    is CustomComplexPopupMenuHeader -> {
+                        val titleWidth = getLabelPreferredSingleLineWidth(
+                            contentModel = LabelContentModel(text = entry.title),
+                            presentationModel = menuPresentationModel.headerTitlePresentationModel,
+                            resolvedTextStyle = textStyle,
+                            layoutDirection = layoutDirection,
+                            density = density,
+                            fontFamilyResolver = fontFamilyResolver
+                        )
+
+                        maxPrimaryWidth = max(maxPrimaryWidth, titleWidth)
+
+                        val signInLayoutManager =
+                            menuPresentationModel.editPresentationModel.presentationState.createLayoutManager(
+                                layoutDirection, density, textStyle, fontFamilyResolver
+                            )
+                        val signInPreferredSize = signInLayoutManager.getPreferredSize(
+                            command = entry.commandSignIn,
+                            presentationModel = menuPresentationModel.headerSignInPresentationModel,
+                            preLayoutInfo = signInLayoutManager.getPreLayoutInfo(
+                                command = entry.commandSignIn,
+                                presentationModel = menuPresentationModel.editPresentationModel
+                            )
+                        )
+
+                        maxActionWidth = max(maxActionWidth, signInPreferredSize.width)
+
+                        val entryHeight =
+                            signInPreferredSize.height + menuPresentationModel.headerSeparatorHeight.value * density.density
+
+                        combinedHeight += entryHeight
+                        entryHeights[entryIndex] = entryHeight
+                    }
+
+                    is CustomComplexPopupMenuFooter -> {
+                        val footerLayoutManager =
+                            menuPresentationModel.footerPresentationModel.presentationState.createLayoutManager(
+                                layoutDirection, density, textStyle, fontFamilyResolver
+                            )
+                        val preferredSize = footerLayoutManager.getPreferredSize(
+                            command = entry.commandFooter,
+                            presentationModel = menuPresentationModel.footerPresentationModel,
+                            preLayoutInfo = footerLayoutManager.getPreLayoutInfo(
+                                command = entry.commandFooter,
+                                presentationModel = menuPresentationModel.footerPresentationModel
+                            )
+                        )
+                        maxPrimaryWidth = max(maxPrimaryWidth, preferredSize.width)
+                        combinedHeight += preferredSize.height
+                        entryHeights[entryIndex] = preferredSize.height
+                    }
                 }
-
-                else -> {}
+                entryIndex++
             }
-
         }
+
+        // account for horizontal separators
+        combinedHeight += (menuContentModel.sections.size - 1) *
+                (SeparatorSizingConstants.Thickness + 1.0.dp).value * density.density
 
         return CustomComplexPopupContentLayoutInfo(
             popupSize = Size(
                 width = maxPrimaryWidth + 32 * density.density + maxActionWidth,
                 height = combinedHeight
             ),
-            menuButtonPresentationModel = menuButtonPresentationModel
+            menuButtonPresentationModel = menuButtonPresentationModel,
+            entryHeights = entryHeights
         )
     }
 
@@ -449,6 +610,7 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
         popupContentLayoutInfo: CustomComplexPopupContentLayoutInfo
     ) {
+        val density = LocalDensity.current
         val menuButtonPresentationModel = popupContentLayoutInfo.menuButtonPresentationModel
 
         val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
@@ -458,60 +620,204 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
             modifier = Modifier.fillMaxSize().background(color = backgroundColorScheme.backgroundFillColor)
                 .padding(all = 1.0.dp)
         ) {
-            for (entry in menuContentModel.entries) {
-                when (entry) {
-                    is CustomComplexPopupMenuCommand -> {
-                        // Check if we have a presentation overlay for this secondary command
-                        val hasOverlay = overlays.containsKey(entry.command)
-                        val currSecondaryPresentationModel = if (hasOverlay)
-                            menuButtonPresentationModel.overlayWith(overlays[entry.command]!!)
-                        else menuButtonPresentationModel
-                        // Project a command button for each secondary command, passing the same
-                        // overlays into it.
-                        CommandButtonProjection(
-                            contentModel = entry.command,
-                            presentationModel = currSecondaryPresentationModel,
-                            overlays = overlays
-                        ).project(
-                            modifier = Modifier.fillMaxWidth(),
-                            actionInteractionSource = remember { MutableInteractionSource() },
-                            popupInteractionSource = remember { MutableInteractionSource() }
-                        )
-                    }
+            var entryIndex = 0
+            for ((sectionIndex, section) in menuContentModel.sections.withIndex()) {
+                for (entry in section.entries) {
+                    when (entry) {
+                        is CustomComplexPopupMenuCommand -> {
+                            // Check if we have a presentation overlay for this secondary command
+                            val hasOverlay = overlays.containsKey(entry.command)
+                            val currSecondaryPresentationModel = if (hasOverlay)
+                                menuButtonPresentationModel.overlayWith(overlays[entry.command]!!)
+                            else menuButtonPresentationModel
+                            // Project a command button for each secondary command, passing the same
+                            // overlays into it.
+                            CommandButtonProjection(
+                                contentModel = entry.command,
+                                presentationModel = currSecondaryPresentationModel,
+                                overlays = overlays
+                            ).project(
+                                modifier = Modifier.fillMaxWidth(),
+                                actionInteractionSource = remember { MutableInteractionSource() },
+                                popupInteractionSource = remember { MutableInteractionSource() }
+                            )
+                        }
 
-                    is CustomComplexPopupMenuZoom -> {
-                        Row(modifier = Modifier.fillMaxWidth()) {
-                            LabelProjection(
-                                contentModel = LabelContentModel(text = entry.title),
-                                presentationModel = LabelPresentationModel(
-                                    textMaxLines = 1,
-                                    contentPadding = menuPresentationModel.menuContentPadding
+                        is CustomComplexPopupMenuZoom -> {
+                            Row(
+                                modifier = Modifier.fillMaxWidth().height(
+                                    (popupContentLayoutInfo.entryHeights[entryIndex] / density.density).dp
                                 )
-                            ).project()
+                            ) {
+                                LabelProjection(
+                                    contentModel = LabelContentModel(text = entry.title),
+                                    presentationModel = LabelPresentationModel(
+                                        textMaxLines = 1,
+                                        contentPadding = menuPresentationModel.menuContentPadding
+                                    )
+                                ).project()
 
-                            Spacer(modifier = Modifier.weight(1.0f))
+                                Spacer(modifier = Modifier.weight(1.0f))
 
-                            CommandButtonProjection(
-                                contentModel = entry.commandZoomOut,
-                                presentationModel = menuPresentationModel.zoomPresentationModel
-                            ).project()
-                            LabelProjection(
-                                contentModel = LabelContentModel(text = "${entry.zoom}%"),
-                                presentationModel = menuPresentationModel.zoomLabelPresentationModel
-                            ).project()
-                            CommandButtonProjection(
-                                contentModel = entry.commandZoomIn,
-                                presentationModel = menuPresentationModel.zoomPresentationModel
-                            ).project()
+                                VerticalSeparatorProjection(
+                                    contentModel = SeparatorContentModel(),
+                                    presentationModel = SeparatorPresentationModel(
+                                        startGradientAmount = 0.dp,
+                                        endGradientAmount = 0.dp
+                                    )
+                                ).project(modifier = Modifier.fillMaxHeight())
+                                CommandButtonProjection(
+                                    contentModel = entry.commandZoomOut,
+                                    presentationModel = menuPresentationModel.zoomPresentationModel
+                                ).project()
+                                LabelProjection(
+                                    contentModel = LabelContentModel(text = "${entry.zoom}%"),
+                                    presentationModel = menuPresentationModel.zoomLabelPresentationModel
+                                ).project()
+                                CommandButtonProjection(
+                                    contentModel = entry.commandZoomIn,
+                                    presentationModel = menuPresentationModel.zoomPresentationModel
+                                ).project()
 
-                            CommandButtonProjection(
-                                contentModel = entry.commandFullScreen,
-                                presentationModel = menuPresentationModel.fullScreenPresentationModel
-                            ).project()
+                                VerticalSeparatorProjection(
+                                    contentModel = SeparatorContentModel(),
+                                    presentationModel = SeparatorPresentationModel(
+                                        startGradientAmount = 0.dp,
+                                        endGradientAmount = 0.dp
+                                    )
+                                ).project(modifier = Modifier.fillMaxHeight())
+                                CommandButtonProjection(
+                                    contentModel = entry.commandFullScreen,
+                                    presentationModel = menuPresentationModel.fullScreenPresentationModel
+                                ).project()
+                            }
+                        }
+
+                        is CustomComplexPopupMenuEdit -> {
+                            Row(
+                                modifier = Modifier.fillMaxWidth().height(
+                                    (popupContentLayoutInfo.entryHeights[entryIndex] / density.density).dp
+                                )
+                            ) {
+                                LabelProjection(
+                                    contentModel = LabelContentModel(text = entry.title),
+                                    presentationModel = LabelPresentationModel(
+                                        textMaxLines = 1,
+                                        contentPadding = menuPresentationModel.menuContentPadding
+                                    )
+                                ).project()
+
+                                Spacer(modifier = Modifier.weight(1.0f))
+
+                                VerticalSeparatorProjection(
+                                    contentModel = SeparatorContentModel(),
+                                    presentationModel = SeparatorPresentationModel(
+                                        startGradientAmount = 0.dp,
+                                        endGradientAmount = 0.dp
+                                    )
+                                ).project(modifier = Modifier.fillMaxHeight())
+
+                                CommandButtonProjection(
+                                    contentModel = entry.commandCut,
+                                    presentationModel = menuPresentationModel.editPresentationModel
+                                ).project()
+
+                                VerticalSeparatorProjection(
+                                    contentModel = SeparatorContentModel(),
+                                    presentationModel = SeparatorPresentationModel(
+                                        startGradientAmount = 0.dp,
+                                        endGradientAmount = 0.dp
+                                    )
+                                ).project(modifier = Modifier.fillMaxHeight())
+
+                                CommandButtonProjection(
+                                    contentModel = entry.commandCopy,
+                                    presentationModel = menuPresentationModel.editPresentationModel
+                                ).project()
+
+                                VerticalSeparatorProjection(
+                                    contentModel = SeparatorContentModel(),
+                                    presentationModel = SeparatorPresentationModel(
+                                        startGradientAmount = 0.dp,
+                                        endGradientAmount = 0.dp
+                                    )
+                                ).project(modifier = Modifier.fillMaxHeight())
+
+                                CommandButtonProjection(
+                                    contentModel = entry.commandPaste,
+                                    presentationModel = menuPresentationModel.editPresentationModel
+                                ).project()
+                            }
+                        }
+
+                        is CustomComplexPopupMenuHeader -> {
+                            Column(
+                                modifier = Modifier.fillMaxWidth().height(
+                                    (popupContentLayoutInfo.entryHeights[entryIndex] / density.density).dp
+                                )
+                            ) {
+                                Row(modifier = Modifier.fillMaxWidth().weight(1.0f)) {
+                                    LabelProjection(
+                                        contentModel = LabelContentModel(text = entry.title),
+                                        presentationModel = menuPresentationModel.headerTitlePresentationModel
+                                    ).project(modifier = Modifier.fillMaxHeight())
+
+                                    Spacer(modifier = Modifier.weight(1.0f))
+
+                                    Box(
+                                        modifier = Modifier.background(
+                                            backgroundColorScheme.accentedBackgroundFillColor
+                                        )
+                                    ) {
+                                        CommandButtonProjection(
+                                            contentModel = entry.commandSignIn,
+                                            presentationModel = menuPresentationModel.headerSignInPresentationModel
+                                        ).project()
+                                    }
+                                }
+                                Canvas(
+                                    modifier = Modifier.fillMaxWidth()
+                                        .height(menuPresentationModel.headerSeparatorHeight)
+                                ) {
+                                    drawRect(
+                                        brush = Brush.horizontalGradient(
+                                            colors = entry.colors
+                                        )
+                                    )
+                                }
+                            }
+                        }
+
+                        is CustomComplexPopupMenuFooter -> {
+                            Box(
+                                modifier = Modifier.fillMaxWidth()
+                                    .height((popupContentLayoutInfo.entryHeights[entryIndex] / density.density).dp)
+                                    .background(backgroundColorScheme.accentedBackgroundFillColor)
+                            ) {
+                                CommandButtonProjection(
+                                    contentModel = entry.commandFooter,
+                                    presentationModel = menuPresentationModel.footerPresentationModel,
+                                    overlays = overlays
+                                ).project(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    actionInteractionSource = remember { MutableInteractionSource() },
+                                    popupInteractionSource = remember { MutableInteractionSource() }
+                                )
+                            }
                         }
                     }
+                    entryIndex++
+                }
 
-                    else -> {}
+                if (sectionIndex < (menuContentModel.sections.size - 1)) {
+                    Spacer(modifier = Modifier.fillMaxWidth().height(1.0.dp))
+                    HorizontalSeparatorProjection(
+                        contentModel = SeparatorContentModel(),
+                        presentationModel = SeparatorPresentationModel(
+                            startGradientAmount = 0.dp,
+                            endGradientAmount = 0.dp
+                        )
+                    ).project(modifier = Modifier.fillMaxWidth())
                 }
             }
         }

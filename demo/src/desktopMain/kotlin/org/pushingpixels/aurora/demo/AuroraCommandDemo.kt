@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
@@ -426,35 +427,136 @@ fun DemoCommandComplex(resourceBundle: ResourceBundle) {
         contentModel = CustomComplexCommand(
             icon = menu_black_24dp(),
             secondaryContentModel = CustomComplexMenuContentModel(
-                entries = listOf(
-                    CustomComplexPopupMenuZoom(
-                        title = resourceBundle.getString("Menu.zoom"),
-                        zoom = currentZoomLevel,
-                        commandZoomOut = zoomOut,
-                        commandZoomIn = zoomIn,
-                        commandFullScreen = Command(
-                            text = "",
-                            icon = fullscreen_black_24dp(),
-                            action = { println("Full screen!") }
+                sections = listOf(
+                    CustomComplexMenuContentSection(
+                        entries = listOf(
+                            CustomComplexPopupMenuHeader(
+                                title = "Sync and save data",
+                                commandSignIn = Command(
+                                    text = "Sign In",
+                                    action = { println("Sign In") }
+                                ),
+                                colors = listOf(Color(167, 130, 245), Color(240, 128, 180), Color(248, 206, 136))
+                            ),
+                            CustomComplexPopupMenuCommand(
+                                Command(
+                                    text = resourceBundle.getString("Menu.history"),
+                                    action = { println("History") }
+                                )
+                            ),
+                            CustomComplexPopupMenuCommand(
+                                Command(
+                                    text = resourceBundle.getString("Menu.downloads"),
+                                    action = { println("Downloads") },
+                                )
+                            ),
+                            CustomComplexPopupMenuCommand(
+                                Command(
+                                    text = resourceBundle.getString("Menu.bookmarks"),
+                                    action = { println("Bookmarks") },
+                                )
+                            )
                         )
                     ),
-                    CustomComplexPopupMenuCommand(
-                        Command(
-                            text = resourceBundle.getString("Menu.print"),
-                            action = { println("Print") }
-                        )),
-                    CustomComplexPopupMenuCommand(
-                        Command(
-                            text = resourceBundle.getString("Menu.cast"),
-                            action = { println("Cast") },
+                    CustomComplexMenuContentSection(
+                        entries = listOf(
+                            CustomComplexPopupMenuZoom(
+                                title = resourceBundle.getString("Menu.zoom"),
+                                zoom = currentZoomLevel,
+                                commandZoomOut = zoomOut,
+                                commandZoomIn = zoomIn,
+                                commandFullScreen = Command(
+                                    text = "",
+                                    icon = fullscreen_black_24dp(),
+                                    action = { println("Full screen!") }
+                                )
+                            )
                         )
                     ),
-                    CustomComplexPopupMenuCommand(
-                        Command(
-                            text = resourceBundle.getString("Menu.find"),
-                            action = { println("Find") },
+                    CustomComplexMenuContentSection(
+                        entries = listOf(
+                            CustomComplexPopupMenuCommand(
+                                Command(
+                                    text = resourceBundle.getString("Menu.print"),
+                                    action = { println("Print") }
+                                )
+                            ),
+                            CustomComplexPopupMenuCommand(
+                                Command(
+                                    text = resourceBundle.getString("Menu.cast"),
+                                    action = { println("Cast") },
+                                )
+                            ),
+                            CustomComplexPopupMenuCommand(
+                                Command(
+                                    text = resourceBundle.getString("Menu.find"),
+                                    action = { println("Find") },
+                                )
+                            )
                         )
                     ),
+                    CustomComplexMenuContentSection(
+                        entries = listOf(
+                            CustomComplexPopupMenuEdit(
+                                title = resourceBundle.getString("Menu.edit"),
+                                commandCut = Command(
+                                    text = resourceBundle.getString("Edit.cut.text"),
+                                    action = { println("Cut") }
+                                ),
+                                commandCopy = Command(
+                                    text = resourceBundle.getString("Edit.copy.text"),
+                                    action = { println("Copy") }
+                                ),
+                                commandPaste = Command(
+                                    text = resourceBundle.getString("Edit.paste.text"),
+                                    action = { println("Paste") }
+                                )
+                            )
+                        )
+                    ),
+                    CustomComplexMenuContentSection(
+                        entries = listOf(
+                            CustomComplexPopupMenuCommand(
+                                Command(
+                                    text = resourceBundle.getString("Menu.settings"),
+                                    action = { println("Settings") }
+                                )
+                            ),
+                            CustomComplexPopupMenuCommand(
+                                Command(
+                                    text = resourceBundle.getString("Menu.help"),
+                                    secondaryContentModel = CommandMenuContentModel(
+                                        group = CommandGroup(
+                                            commands = listOf(
+                                                Command(
+                                                    text = resourceBundle.getString("Menu.help.about"),
+                                                    action = { println("About") },
+                                                ),
+                                                Command(
+                                                    text = resourceBundle.getString("Menu.help.whatsNew"),
+                                                    action = { println("What's New") },
+                                                ),
+                                                Command(
+                                                    text = resourceBundle.getString("Menu.help.helpCenter"),
+                                                    action = { println("Help Center") },
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    ),
+                    CustomComplexMenuContentSection(
+                        entries = listOf(
+                            CustomComplexPopupMenuFooter(
+                                commandFooter = Command(
+                                    text = "Managed by Acme.com",
+                                    action = { println("Manage") }
+                                )
+                            )
+                        )
+                    )
                 )
             )
         ),
