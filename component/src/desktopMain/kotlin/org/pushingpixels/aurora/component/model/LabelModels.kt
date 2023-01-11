@@ -48,5 +48,6 @@ data class LabelPresentationModel(
     val textMaxLines: Int = Int.MAX_VALUE,
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
     val iconTextGap: Dp = LabelSizingConstants.DefaultIconTextGap,
-    val horizontalGapScaleFactor: Float = 1.0f
+    val horizontalGapScaleFactor: Float = 1.0f,
+    val singleLineDisplayPrototype: String? = null
 ): PresentationModel

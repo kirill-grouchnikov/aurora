@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -25,6 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.isSpecified
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.dp
@@ -33,8 +36,10 @@ import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.model.LabelPresentationModel
 import org.pushingpixels.aurora.component.utils.AuroraText
 import org.pushingpixels.aurora.component.utils.AuroraThemedIcon
+import org.pushingpixels.aurora.component.utils.getLabelPreferredSingleLineWidth
 import org.pushingpixels.aurora.theming.*
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 internal fun AuroraLabel(
     modifier: Modifier,
@@ -44,8 +49,35 @@ internal fun AuroraLabel(
     val state =
         if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
 
+    val widthModifier =
+        if ((presentationModel.textMaxLines > 1) || (presentationModel.singleLineDisplayPrototype == null)) {
+            Modifier
+        } else {
+            val layoutDirection = LocalLayoutDirection.current
+            val textStyle = presentationModel.textStyle ?: LocalTextStyle.current
+            val resolvedTextStyle = resolveDefaults(textStyle, layoutDirection)
+            val density = LocalDensity.current
+
+            val prototypeDisplayWidth = getLabelPreferredSingleLineWidth(
+                contentModel = LabelContentModel(text = presentationModel.singleLineDisplayPrototype),
+                presentationModel = presentationModel,
+                resolvedTextStyle = resolvedTextStyle,
+                layoutDirection = layoutDirection,
+                density = density,
+                fontFamilyResolver = LocalFontFamilyResolver.current
+            )
+
+            var requiredWidth = (prototypeDisplayWidth / density.density).dp
+            if (contentModel.icon != null) {
+                requiredWidth += presentationModel.iconDimension.width
+                requiredWidth += presentationModel.iconTextGap * presentationModel.horizontalGapScaleFactor
+            }
+
+            Modifier.requiredWidth(width = requiredWidth)
+        }
+
     Row(
-        modifier = modifier.padding(presentationModel.contentPadding),
+        modifier = modifier.padding(presentationModel.contentPadding).then(widthModifier),
         horizontalArrangement = presentationModel.horizontalAlignment.arrangement,
         verticalAlignment = Alignment.CenterVertically
     ) {

@@ -248,7 +248,12 @@ data class CustomComplexCommandPopupMenuPresentationModel(
             sides = Sides(straightSides = Side.values().toSet()),
             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp)
         ),
-    val zoomValueContentPadding: PaddingValues = PaddingValues(horizontal = 4.dp, vertical = 6.dp),
+    val zoomLabelPresentationModel: LabelPresentationModel = LabelPresentationModel(
+        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 6.dp),
+        textMaxLines = 1,
+        singleLineDisplayPrototype = "999%",
+        horizontalAlignment = HorizontalAlignment.Center
+    ),
     val fullScreenPresentationModel: CommandButtonPresentationModel =
         CommandButtonPresentationModel(
             presentationState = CommandButtonPresentationState.Small,
@@ -372,9 +377,10 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
 
                     maxPrimaryWidth = max(maxPrimaryWidth, titleWidth)
 
-                    val zoomLayoutManager = menuPresentationModel.zoomPresentationModel.presentationState.createLayoutManager(
-                        layoutDirection, density, textStyle, fontFamilyResolver
-                    )
+                    val zoomLayoutManager =
+                        menuPresentationModel.zoomPresentationModel.presentationState.createLayoutManager(
+                            layoutDirection, density, textStyle, fontFamilyResolver
+                        )
                     val zoomOutPreferredSize = zoomLayoutManager.getPreferredSize(
                         command = entry.commandZoomOut,
                         presentationModel = menuPresentationModel.zoomPresentationModel,
@@ -385,10 +391,7 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
                     )
                     val zoomLabelWidth = getLabelPreferredSingleLineWidth(
                         contentModel = LabelContentModel(text = "${entry.zoom}%"),
-                        presentationModel = LabelPresentationModel(
-                            contentPadding = menuPresentationModel.zoomValueContentPadding,
-                            textMaxLines = 1
-                        ),
+                        presentationModel = menuPresentationModel.zoomLabelPresentationModel,
                         resolvedTextStyle = textStyle,
                         layoutDirection = layoutDirection,
                         density = density,
@@ -403,9 +406,10 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
                         )
                     )
 
-                    val fullScreenLayoutManager = menuPresentationModel.fullScreenPresentationModel.presentationState.createLayoutManager(
-                        layoutDirection, density, textStyle, fontFamilyResolver
-                    )
+                    val fullScreenLayoutManager =
+                        menuPresentationModel.fullScreenPresentationModel.presentationState.createLayoutManager(
+                            layoutDirection, density, textStyle, fontFamilyResolver
+                        )
                     val fullScreenPreferredSize = fullScreenLayoutManager.getPreferredSize(
                         command = entry.commandFullScreen,
                         presentationModel = menuPresentationModel.fullScreenPresentationModel,
@@ -493,10 +497,7 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
                             ).project()
                             LabelProjection(
                                 contentModel = LabelContentModel(text = "${entry.zoom}%"),
-                                presentationModel = LabelPresentationModel(
-                                    textMaxLines = 1,
-                                    contentPadding = menuPresentationModel.zoomValueContentPadding
-                                )
+                                presentationModel = menuPresentationModel.zoomLabelPresentationModel
                             ).project()
                             CommandButtonProjection(
                                 contentModel = entry.commandZoomIn,
