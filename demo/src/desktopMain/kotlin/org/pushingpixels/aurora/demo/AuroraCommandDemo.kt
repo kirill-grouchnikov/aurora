@@ -399,6 +399,74 @@ fun CommandDemoStyleStrip2(
     ).project()
 }
 
+private val ZoomLevels = listOf(
+    30, 50, 67, 80, 90, 100, 110, 120, 133, 150, 170, 200, 240, 300, 400, 500
+)
+
+@Composable
+fun DemoCommandComplex(resourceBundle: ResourceBundle) {
+    var currentZoomLevel by remember { mutableStateOf(100) }
+
+    val zoomOut = Command(
+        text = "-",
+        action = {
+            currentZoomLevel = ZoomLevels[ZoomLevels.indexOf(currentZoomLevel) - 1]
+        },
+        isActionEnabled = (ZoomLevels.indexOf(currentZoomLevel) > 0)
+    )
+    val zoomIn = Command(
+        text = "+",
+        action = {
+            currentZoomLevel = ZoomLevels[ZoomLevels.indexOf(currentZoomLevel) + 1]
+        },
+        isActionEnabled = (ZoomLevels.indexOf(currentZoomLevel) < (ZoomLevels.size - 1))
+    )
+
+    CustomComplexCommandButtonProjection(
+        contentModel = CustomComplexCommand(
+            icon = menu_black_24dp(),
+            secondaryContentModel = CustomComplexMenuContentModel(
+                entries = listOf(
+                    CustomComplexPopupMenuZoom(
+                        title = resourceBundle.getString("Menu.zoom"),
+                        zoom = currentZoomLevel,
+                        commandZoomOut = zoomOut,
+                        commandZoomIn = zoomIn,
+                        commandFullScreen = Command(
+                            text = "",
+                            icon = fullscreen_black_24dp(),
+                            action = { println("Full screen!") }
+                        )
+                    ),
+                    CustomComplexPopupMenuCommand(
+                        Command(
+                            text = resourceBundle.getString("Menu.print"),
+                            action = { println("Print") }
+                        )),
+                    CustomComplexPopupMenuCommand(
+                        Command(
+                            text = resourceBundle.getString("Menu.cast"),
+                            action = { println("Cast") },
+                        )
+                    ),
+                    CustomComplexPopupMenuCommand(
+                        Command(
+                            text = resourceBundle.getString("Menu.find"),
+                            action = { println("Find") },
+                        )
+                    ),
+                )
+            )
+        ),
+        presentationModel = CustomComplexCommandButtonPresentationModel(
+            popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignEnd,
+            iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+            iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+        )
+    ).project()
+
+}
+
 @Composable
 fun AuroraWindowScope.DemoCommandContent(
     onSkinChange: (AuroraSkinDefinition) -> Unit,
@@ -749,6 +817,10 @@ fun AuroraWindowScope.DemoCommandContent(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 AuroraLocaleSwitcher(resourceBundle)
+
+                Spacer(modifier = Modifier.weight(1.0f))
+
+                DemoCommandComplex(resourceBundle)
             }
 
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
@@ -841,6 +913,10 @@ fun AuroraWindowScope.DemoCommandContent(
                                 )
                             )
                         )
+                    ),
+                    presentationModel = CustomCommandButtonPresentationModel(
+                        iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
                     )
                 ).project()
             }

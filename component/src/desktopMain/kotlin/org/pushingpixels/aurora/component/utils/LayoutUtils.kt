@@ -15,6 +15,8 @@
  */
 package org.pushingpixels.aurora.component.utils
 
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.ui.text.Paragraph
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -57,5 +59,26 @@ fun getLabelPreferredHeight(
     // Account for vertical content padding
     return paragraph.height +
             (presentationModel.contentPadding.calculateTopPadding() + presentationModel.contentPadding.calculateBottomPadding()).value *
+            density.density
+}
+
+fun getLabelPreferredSingleLineWidth(
+    contentModel: LabelContentModel,
+    presentationModel: LabelPresentationModel,
+    resolvedTextStyle: TextStyle,
+    layoutDirection: LayoutDirection,
+    density: Density,
+    fontFamilyResolver: FontFamily.Resolver
+): Float {
+    val paragraph = Paragraph(
+        text = contentModel.text, style = resolvedTextStyle,
+        constraints = Constraints(maxWidth = Int.MAX_VALUE),
+        density = density, maxLines = 1,
+        fontFamilyResolver = fontFamilyResolver
+    )
+
+    // Account for horizontal content padding
+    return paragraph.maxIntrinsicWidth + (presentationModel.contentPadding.calculateStartPadding(layoutDirection)
+            + presentationModel.contentPadding.calculateEndPadding(layoutDirection)).value *
             density.density
 }
