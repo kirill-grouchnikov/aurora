@@ -353,7 +353,6 @@ The second function composes the popup menu content, which is in this particular
 override fun generatePopupContent(
     menuContentModel: CustomMenuContentModel,
     menuPresentationModel: CustomCommandPopupMenuPresentationModel,
-    toUseBackgroundStriping: Boolean,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
     popupContentLayoutInfo: CustomPopupContentLayoutInfo
 ) {

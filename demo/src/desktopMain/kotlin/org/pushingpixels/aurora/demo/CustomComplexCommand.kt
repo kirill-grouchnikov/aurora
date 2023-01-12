@@ -606,7 +606,6 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
     override fun generatePopupContent(
         menuContentModel: CustomComplexMenuContentModel,
         menuPresentationModel: CustomComplexCommandPopupMenuPresentationModel,
-        toUseBackgroundStriping: Boolean,
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
         popupContentLayoutInfo: CustomComplexPopupContentLayoutInfo
     ) {

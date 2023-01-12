@@ -80,6 +80,32 @@ LabelProjection(
 )
 ```
 
+### Background fill on popup menus
+
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-content-menu-backgrounds.png" width="127" border=0/>
+
+Use `Modifier.auroraPopupMenuRowBackground()` to configure background fill of individual popup menu rows, as well as the optional background fill of the popup menu icon gutter.
+
+```kotlin
+// Earlier in the flow of a custom popup menu handler
+// the gutter width was computed and set on the popup
+// content layout info
+
+CommandButtonProjection(
+    contentModel = command,
+    presentationModel = menuButtonPresentationModel,
+    overlays = overlays
+).project(
+    modifier = Modifier.fillMaxWidth()
+        .auroraPopupMenuRowBackground(
+            backgroundFillColorQuery = { _, scheme -> scheme.backgroundFillColor },
+            iconGutterFillColorQuery = { it.accentedBackgroundFillColor },
+            gutterWidth = popupContentLayoutInfo.gutterWidth),
+    actionInteractionSource = remember { MutableInteractionSource() },
+    popupInteractionSource = remember { MutableInteractionSource() }
+)
+```
+
 ### Displaying rich tooltips
 
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-tooltips.png" width="657" border=0/>

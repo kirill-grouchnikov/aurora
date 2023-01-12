@@ -267,7 +267,6 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
     override fun generatePopupContent(
         menuContentModel: ColorSelectorMenuContentModel,
         menuPresentationModel: ColorSelectorCommandPopupMenuPresentationModel,
-        toUseBackgroundStriping: Boolean,
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
         popupContentLayoutInfo: ColorSelectorPopupContentLayoutInfo
     ) {
@@ -300,7 +299,11 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
                             presentationModel = currSecondaryPresentationModel,
                             overlays = overlays
                         ).project(
-                            modifier = Modifier.fillMaxWidth().auroraPopupMenuRowBackground(gutterWidth = popupContentLayoutInfo.gutterWidth),
+                            modifier = Modifier.fillMaxWidth()
+                                .auroraPopupMenuRowBackground(
+                                    backgroundFillColorQuery = { _, scheme -> scheme.backgroundFillColor },
+                                    iconGutterFillColorQuery = { it.accentedBackgroundFillColor },
+                                    gutterWidth = popupContentLayoutInfo.gutterWidth),
                             actionInteractionSource = remember { MutableInteractionSource() },
                             popupInteractionSource = remember { MutableInteractionSource() }
                         )

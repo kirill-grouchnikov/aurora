@@ -16,7 +16,6 @@
 package org.pushingpixels.aurora.component.utils.popup
 
 import androidx.compose.foundation.ScrollbarAdapter
-import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.rememberScrollState
@@ -28,23 +27,27 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.*
-import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.component.*
-import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.component.AuroraVerticalScrollbar
+import org.pushingpixels.aurora.component.ScrollBarSizingConstants
+import org.pushingpixels.aurora.component.getPreferredCommandPopupMenuPanelSize
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuPopupLayoutInfo
 import org.pushingpixels.aurora.component.popup.auroraPopupMenuRowBackground
-import org.pushingpixels.aurora.component.popup.auroraPopupMenuRowStripeBackground
 import org.pushingpixels.aurora.component.projection.CommandButtonPanelProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
-import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.theming.Side
+import org.pushingpixels.aurora.theming.Sides
+import org.pushingpixels.aurora.theming.auroraBackground
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
@@ -231,14 +234,12 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
     override fun generatePopupContent(
         menuContentModel: CommandMenuContentModel,
         menuPresentationModel: CommandPopupMenuPresentationModel,
-        toUseBackgroundStriping: Boolean,
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
         popupContentLayoutInfo: GeneralPopupContentLayoutInfo
     ) {
         TopLevelPopupContent(
             menuContentModel = menuContentModel,
             menuPresentationModel = menuPresentationModel,
-            toUseBackgroundStriping = toUseBackgroundStriping,
             overlays = overlays,
             contentLayoutInfo = popupContentLayoutInfo
         )
@@ -248,7 +249,6 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
     private fun TopLevelPopupContent(
         menuContentModel: CommandMenuContentModel,
         menuPresentationModel: CommandPopupMenuPresentationModel,
-        toUseBackgroundStriping: Boolean,
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
         contentLayoutInfo: GeneralPopupContentLayoutInfo
     ) {
@@ -278,7 +278,6 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
                 PopupGeneralContent(
                     menuContentModel = menuContentModel,
                     menuPresentationModel = menuPresentationModel,
-                    toUseBackgroundStriping = toUseBackgroundStriping,
                     gutterWidth = contentLayoutInfo.gutterWidth,
                     overlays = overlays
                 )
@@ -326,7 +325,6 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
     private fun PopupGeneralContent(
         menuContentModel: CommandMenuContentModel,
         menuPresentationModel: CommandPopupMenuPresentationModel,
-        toUseBackgroundStriping: Boolean,
         gutterWidth: Float,
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>
     ) {
@@ -389,13 +387,12 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
                     presentationModel = currSecondaryPresentationModel,
                     overlays = overlays
                 ).project(
-                    modifier = if (toUseBackgroundStriping)
-                        Modifier.auroraPopupMenuRowStripeBackground(
-                            rowIndex = runningCommandIndex,
-                            gutterWidth = gutterWidth
-                        )
-                    else
-                        Modifier.auroraPopupMenuRowBackground(gutterWidth = gutterWidth),
+                    modifier = Modifier.auroraPopupMenuRowBackground(
+                        backgroundFillColorQuery = menuPresentationModel.backgroundFillColorQuery,
+                        iconGutterFillColorQuery = menuPresentationModel.iconGutterFillColorQuery,
+                        rowIndex = runningCommandIndex,
+                        gutterWidth = gutterWidth
+                    ),
                     actionInteractionSource = remember { MutableInteractionSource() },
                     popupInteractionSource = remember { MutableInteractionSource() }
                 )

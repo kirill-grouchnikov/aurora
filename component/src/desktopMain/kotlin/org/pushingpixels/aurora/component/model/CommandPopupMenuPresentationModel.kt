@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Density
@@ -25,6 +26,7 @@ import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManagerMedium
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
+import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 
 interface BaseCommandPopupMenuPresentationModel {
     val menuPresentationState: CommandButtonPresentationState
@@ -40,6 +42,8 @@ data class CommandPopupMenuPresentationModel(
     val menuContentPadding: PaddingValues =
         CommandButtonSizingConstants.CompactButtonContentPadding,
     val maxVisibleMenuCommands: Int = 0,
+    val iconGutterFillColorQuery: ((AuroraColorScheme) -> Color)? = null,
+    val backgroundFillColorQuery: ((Int, AuroraColorScheme) -> Color) = { _, scheme -> scheme.backgroundFillColor },
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignTop,
     val toDismissOnCommandActivation: Boolean = true
 ): BaseCommandPopupMenuPresentationModel

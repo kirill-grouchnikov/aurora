@@ -257,10 +257,12 @@ internal fun <E> AuroraComboBox(
                         presentationModel = CommandPopupMenuPresentationModel(
                             menuPresentationState = DefaultCommandPopupMenuPresentationState,
                             maxVisibleMenuCommands = presentationModel.popupMaxVisibleItems,
-                            popupPlacementStrategy = presentationModel.popupPlacementStrategy
+                            popupPlacementStrategy = presentationModel.popupPlacementStrategy,
+                            backgroundFillColorQuery = { rowIndex, colorScheme ->
+                                if ((rowIndex % 2) == 0) colorScheme.backgroundFillColor else colorScheme.accentedBackgroundFillColor
+                            }
                         ),
                         toDismissPopupsOnActivation = true,
-                        toUseBackgroundStriping = true,
                         popupPlacementStrategy = presentationModel.popupPlacementStrategy,
                         overlays = emptyMap()
                     )

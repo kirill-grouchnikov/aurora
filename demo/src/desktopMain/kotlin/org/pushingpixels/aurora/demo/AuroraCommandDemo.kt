@@ -120,7 +120,13 @@ fun DemoCommandRow(
                 presentationModel = CommandButtonPresentationModel(
                     presentationState = presentationState,
                     backgroundAppearanceStrategy = backgroundAppearanceStrategy,
-                    textClick = TextClick.Action
+                    textClick = TextClick.Action,
+                    popupMenuPresentationModel = CommandPopupMenuPresentationModel(
+                        backgroundFillColorQuery = { rowIndex, colorScheme ->
+                            if ((rowIndex % 2) == 0) colorScheme.backgroundFillColor else colorScheme.accentedBackgroundFillColor
+                        },
+                        iconGutterFillColorQuery = { it.accentedBackgroundFillColor }
+                    )
                 )
             ).project()
 
@@ -698,13 +704,13 @@ fun AuroraWindowScope.DemoCommandContent(
     )
     val secondaryCommand2 = Command(
         text = entrySimpleMf.format(arrayOf<Any>(2)),
-        icon = computer(),
+        icon = network_wireless(),
         action = { println("secondary 2 activated!") },
         isActionEnabled = actionEnabled
     )
     val secondaryCommand3 = Command(
         text = entrySimpleMf.format(arrayOf<Any>(3)),
-        icon = computer(),
+        icon = address_book_new(),
         action = { println("secondary 3 activated!") },
         isActionEnabled = actionEnabled
     )
@@ -714,7 +720,7 @@ fun AuroraWindowScope.DemoCommandContent(
     val entryExtra2Mf = MessageFormat(resourceBundle.getString("Group.entryExtra2"))
     val secondaryCommand4 = Command(
         text = entrySimpleMf.format(arrayOf<Any>(4)),
-        icon = computer(),
+        icon = printer(),
         action = { println("secondary 4 activated!") },
         isActionEnabled = actionEnabled,
         secondaryContentModel = CommandMenuContentModel(
@@ -777,7 +783,7 @@ fun AuroraWindowScope.DemoCommandContent(
 
     val secondaryCommand5 = Command(
         text = entrySimpleMf.format(arrayOf<Any>(5)),
-        icon = computer(),
+        icon = user_home(),
         action = { println("secondary 5 activated!") },
         isActionEnabled = actionEnabled,
         secondaryContentModel = CommandMenuContentModel(
