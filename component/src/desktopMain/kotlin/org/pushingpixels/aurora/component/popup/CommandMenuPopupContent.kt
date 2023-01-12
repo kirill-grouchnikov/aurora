@@ -15,17 +15,29 @@
  */
 package org.pushingpixels.aurora.component.popup
 
+import androidx.compose.foundation.background
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposePanel
+import androidx.compose.ui.draw.DrawModifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.drawscope.ContentDrawScope
+import androidx.compose.ui.platform.InspectorInfo
+import androidx.compose.ui.platform.InspectorValueInfo
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.getPlacementAwarePopupShift
@@ -251,3 +263,67 @@ interface BaseCommandMenuHandler<in M : BaseCommandMenuContentModel,
     }
 }
 
+@Composable
+fun Modifier.auroraPopupMenuRowBackground(
+    gutterWidth: Float = 0.0f,
+): Modifier {
+    val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
+        decorationAreaType = AuroraSkin.decorationAreaType
+    )
+
+    val backgroundFill = backgroundColorScheme.backgroundFillColor
+    val gutterFill = if (gutterWidth > 0) backgroundColorScheme.accentedBackgroundFillColor else Color.Unspecified
+
+    return this.then(
+        PopupMenuRowBackground(
+            backgroundFill = backgroundFill,
+            gutterFill = gutterFill,
+            gutterWidth = gutterWidth,
+        )
+    )
+}
+
+@Composable
+fun Modifier.auroraPopupMenuRowStripeBackground(
+    rowIndex: Int,
+    gutterWidth: Float = 0.0f,
+): Modifier {
+    val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
+        decorationAreaType = AuroraSkin.decorationAreaType
+    )
+
+    val backgroundFill = if ((rowIndex % 2) == 0) backgroundColorScheme.backgroundFillColor else backgroundColorScheme.accentedBackgroundFillColor
+    val gutterFill = if (gutterWidth > 0) backgroundColorScheme.accentedBackgroundFillColor else Color.Unspecified
+
+    return this.then(
+        PopupMenuRowBackground(
+            backgroundFill = backgroundFill,
+            gutterFill = gutterFill,
+            gutterWidth = gutterWidth,
+        )
+    )
+}
+
+private class PopupMenuRowBackground constructor(
+    private val backgroundFill: Color,
+    private val gutterFill: Color?,
+    private val gutterWidth: Float,
+) : DrawModifier {
+    override fun ContentDrawScope.draw() {
+        drawRect(color = backgroundFill)
+
+        // Have gutter?
+        if (gutterWidth > 0) {
+            if (layoutDirection == LayoutDirection.Ltr) {
+                drawRect(color = gutterFill!!,
+                    topLeft = Offset.Zero,
+                    size = Size(width = gutterWidth, height = size.height))
+            } else {
+                drawRect(color = gutterFill!!,
+                    topLeft = Offset(x = size.width - gutterWidth, y = 0.0f),
+                    size = Size(width = gutterWidth, height = size.height))
+            }
+        }
+        drawContent()
+    }
+}

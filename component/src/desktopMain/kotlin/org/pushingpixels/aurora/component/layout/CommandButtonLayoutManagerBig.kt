@@ -57,6 +57,11 @@ internal open class CommandButtonLayoutManagerBig(
             getPreferredIconSize(command, presentationModel).height else 0.dp
     }
 
+    override fun getIconTextGap(presentationModel: BaseCommandButtonPresentationModel): Dp {
+        return CommandButtonSizingConstants.DefaultVerticalIconTextLayoutGap *
+                presentationModel.verticalGapScaleFactor
+    }
+
     private fun getTitleStrings(
         command: BaseCommand,
         presentationModel: BaseCommandButtonPresentationModel
@@ -156,7 +161,7 @@ internal open class CommandButtonLayoutManagerBig(
             // icon height
             height += getCurrentIconHeight(command, presentationModel).toPx()
             // padding below the icon
-            height += layoutVGap
+            height += getIconTextGap(presentationModel).toPx()
         }
         // text?
         if (hasText) {
@@ -287,7 +292,7 @@ internal open class CommandButtonLayoutManagerBig(
                 bottom = y + iconHeight
             )
 
-            y += (iconHeight + layoutVGap)
+            y += (iconHeight + getIconTextGap(presentationModel).toPx())
         }
 
         // always account for a separator for consistent visuals across

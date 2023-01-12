@@ -40,6 +40,11 @@ internal open class CommandButtonLayoutManagerTile(
         return DpSize(32.dp, 32.dp)
     }
 
+    override fun getIconTextGap(presentationModel: BaseCommandButtonPresentationModel): Dp {
+        // Bigger icon needs larger gap
+        return super.getIconTextGap(presentationModel) * 2.0f
+    }
+
     override fun getPreferredSize(
         command: BaseCommand,
         presentationModel: BaseCommandButtonPresentationModel,
@@ -68,11 +73,16 @@ internal open class CommandButtonLayoutManagerTile(
             // padding after the icon
             width += layoutHGap
         }
+
         // text?
         var textHeight = 0f
         if (hasText) {
-            // padding before the text
-            width += layoutHGap
+            // space before the text
+            if (hasIcon) {
+                width = width - layoutHGap + getIconTextGap(presentationModel).toPx()
+            } else {
+                width += layoutHGap
+            }
 
             // text width
             var textWidth = 0.0f
@@ -235,7 +245,11 @@ internal open class CommandButtonLayoutManagerTile(
             // text
             val textHeight : Float
             if (hasText) {
-                x += layoutHGap
+                if (hasIcon) {
+                    x = x - layoutHGap + getIconTextGap(presentationModel).toPx()
+                } else {
+                    x += layoutHGap
+                }
                 val hasExtraText = (buttonExtraText != null)
 
                 val paragraph = Paragraph(
@@ -485,13 +499,17 @@ internal open class CommandButtonLayoutManagerTile(
                     top = (finalHeight - iconHeight) / 2,
                     bottom = (finalHeight - iconHeight) / 2 + iconHeight
                 )
-                x -= iconWidth + layoutHGap
+                x -= (iconWidth + layoutHGap)
             }
 
             // text
             val textHeight : Float
             if (hasText) {
-                x -= layoutHGap
+                if (hasIcon) {
+                    x = x + layoutHGap - getIconTextGap(presentationModel).toPx()
+                } else {
+                    x -= layoutHGap
+                }
                 val hasExtraText = (buttonExtraText != null)
 
                 val paragraph = Paragraph(

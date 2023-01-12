@@ -33,8 +33,6 @@ internal open class CommandButtonLayoutManagerMedium(
     override val density = _density.density
     override val fontScale = _density.fontScale
 
-    protected open val iconTextGapFactor: Float = 1.0f
-
     override fun getPreferredIconSize(
         command: BaseCommand,
         presentationModel: BaseCommandButtonPresentationModel
@@ -79,11 +77,11 @@ internal open class CommandButtonLayoutManagerMedium(
         // text?
         var textHeight = 0f
         if (hasText) {
-            // padding before the text
-            width += if (hasIcon) {
-                (layoutHGap * iconTextGapFactor)
+            // space before the text
+            if (hasIcon) {
+                width = width - layoutHGap + getIconTextGap(presentationModel).toPx()
             } else {
-                layoutHGap
+                width += layoutHGap
             }
 
             val paragraph = Paragraph(
@@ -237,10 +235,10 @@ internal open class CommandButtonLayoutManagerMedium(
 
             // text
             if (hasText) {
-                x += if (hasIcon) {
-                    layoutHGap * iconTextGapFactor
+                if (hasIcon) {
+                    x = x - layoutHGap + getIconTextGap(presentationModel).toPx()
                 } else {
-                    layoutHGap
+                    x += layoutHGap
                 }
 
                 val paragraph = Paragraph(
@@ -447,16 +445,16 @@ internal open class CommandButtonLayoutManagerMedium(
                     top = iconTop,
                     bottom = iconTop + iconHeight
                 )
-                x -= iconWidth + layoutHGap
+                x -= (iconWidth + layoutHGap)
             }
 
             // text
             val textHeight: Float
             if (hasText) {
-                x -= if (hasIcon) {
-                    layoutHGap * iconTextGapFactor
+                if (hasIcon) {
+                    x = x + layoutHGap - getIconTextGap(presentationModel).toPx()
                 } else {
-                    layoutHGap
+                    x -= layoutHGap
                 }
 
                 val paragraph = Paragraph(

@@ -29,6 +29,13 @@ import org.pushingpixels.aurora.theming.Sides
 object CommandButtonSizingConstants {
     val WideButtonContentPadding = PaddingValues(start = 10.dp, top = 3.dp, end = 10.dp, bottom = 4.dp)
     val CompactButtonContentPadding = PaddingValues(start = 6.dp, top = 3.dp, end = 6.dp, bottom = 4.dp)
+
+    val PopupIconWidth = 6.0.dp
+    val PopupIconHeight = 4.0.dp
+    val DefaultHorizontalContentLayoutGap = 2.0.dp
+    val DefaultVerticalContentLayoutGap = 2.0.dp
+    val DefaultHorizontalIconTextLayoutGap = 4.0.dp
+    val DefaultVerticalIconTextLayoutGap = 4.0.dp
 }
 
 object CommandButtonInteractionConstants {

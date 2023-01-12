@@ -18,6 +18,7 @@ package org.pushingpixels.aurora.component.utils.popup
 import androidx.compose.foundation.ScrollbarAdapter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -27,15 +28,19 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.*
+import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuPopupLayoutInfo
+import org.pushingpixels.aurora.component.popup.auroraPopupMenuRowBackground
+import org.pushingpixels.aurora.component.popup.auroraPopupMenuRowStripeBackground
 import org.pushingpixels.aurora.component.projection.CommandButtonPanelProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
@@ -52,7 +57,8 @@ internal data class GeneralPopupContentLayoutInfo(
     val separatorSize: Size,
     val generalContentSize: Size,
     val generalContentItemHeights: FloatArray,
-    val generalVerticalScrollbarSize: Size
+    val generalVerticalScrollbarSize: Size,
+    val gutterWidth: Float
 ) : BaseCommandMenuPopupLayoutInfo
 
 internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
@@ -105,14 +111,21 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
                 fontFamilyResolver = fontFamilyResolver
             )
 
+        var gutterWidth = 0.0f
         var atLeastOneRegularButtonHasIcon = false
         for (commandGroup in menuContentModel.groups) {
             for (secondaryCommand in commandGroup.commands) {
-                if (secondaryCommand.icon != null) {
+                if ((secondaryCommand.icon != null) || (secondaryCommand.isActionToggle)) {
                     atLeastOneRegularButtonHasIcon = true
-                }
-                if (secondaryCommand.isActionToggle) {
-                    atLeastOneRegularButtonHasIcon = true
+                    if (gutterWidth == 0.0f) {
+                        gutterWidth =
+                            (menuPresentationModel.menuContentPadding.calculateStartPadding(layoutDirection) +
+                                    regularButtonLayoutManager.getPreferredIconSize(
+                                        command = secondaryCommand,
+                                        presentationModel = regularButtonPresentationModel
+                                    ).width +
+                                    regularButtonLayoutManager.getIconTextGap(regularButtonPresentationModel) / 2.0f).value * density.density
+                    }
                 }
             }
         }
@@ -209,7 +222,8 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
             generalVerticalScrollbarSize = Size(
                 width = generalVerticalScrollbarWidth,
                 height = regularButtonColumnHeight
-            )
+            ),
+            gutterWidth = gutterWidth
         )
     }
 
@@ -265,6 +279,7 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
                     menuContentModel = menuContentModel,
                     menuPresentationModel = menuPresentationModel,
                     toUseBackgroundStriping = toUseBackgroundStriping,
+                    gutterWidth = contentLayoutInfo.gutterWidth,
                     overlays = overlays
                 )
             }) { measurables, _ ->
@@ -307,12 +322,12 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
         }
     }
 
-    @OptIn(AuroraInternalApi::class)
     @Composable
     private fun PopupGeneralContent(
         menuContentModel: CommandMenuContentModel,
         menuPresentationModel: CommandPopupMenuPresentationModel,
         toUseBackgroundStriping: Boolean,
+        gutterWidth: Float,
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>
     ) {
         // If at least one secondary command in this popup menu has icon factory
@@ -347,11 +362,6 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
         )
 
         var runningCommandIndex = 0
-        val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
-            decorationAreaType = AuroraSkin.decorationAreaType
-        )
-        val backgroundEvenRows = backgroundColorScheme.backgroundFillColor
-        val backgroundOddRows = backgroundColorScheme.accentedBackgroundFillColor
         for ((commandGroupIndex, commandGroup) in menuContentModel.groups.withIndex()) {
             for (secondaryCommand in commandGroup.commands) {
                 // Check if we have a presentation overlay for this secondary command
@@ -380,9 +390,12 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
                     overlays = overlays
                 ).project(
                     modifier = if (toUseBackgroundStriping)
-                        Modifier.background(
-                            color = if ((runningCommandIndex % 2) == 0) backgroundEvenRows else backgroundOddRows
-                        ) else Modifier,
+                        Modifier.auroraPopupMenuRowStripeBackground(
+                            rowIndex = runningCommandIndex,
+                            gutterWidth = gutterWidth
+                        )
+                    else
+                        Modifier.auroraPopupMenuRowBackground(gutterWidth = gutterWidth),
                     actionInteractionSource = remember { MutableInteractionSource() },
                     popupInteractionSource = remember { MutableInteractionSource() }
                 )

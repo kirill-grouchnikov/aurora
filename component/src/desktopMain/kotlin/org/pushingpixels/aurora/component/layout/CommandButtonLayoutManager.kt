@@ -24,15 +24,7 @@ import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.component.model.*
-
-object CommandButtonSizingConstants {
-    val PopupIconWidth = 6.0.dp
-    val PopupIconHeight = 4.0.dp
-    val DefaultHorizontalContentLayoutGap = 2.0.dp
-    val DefaultVerticalContentLayoutGap = 2.0.dp
-}
 
 /**
  * Definition of a layout manager for command buttons.
@@ -133,6 +125,14 @@ interface CommandButtonLayoutManager : MeasureScope {
         command: BaseCommand,
         presentationModel: BaseCommandButtonPresentationModel
     ): DpSize
+
+    /**
+     * Returns the gap between the icon and the text
+     */
+    fun getIconTextGap(presentationModel: BaseCommandButtonPresentationModel): Dp {
+        return CommandButtonSizingConstants.DefaultHorizontalIconTextLayoutGap *
+                presentationModel.horizontalGapScaleFactor
+    }
 
     /**
      * Returns the pre-layout information for the specified parameters.

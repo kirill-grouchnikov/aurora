@@ -31,9 +31,11 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.*
@@ -41,6 +43,7 @@ import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuPopupLayoutInfo
+import org.pushingpixels.aurora.component.popup.auroraPopupMenuRowBackground
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.utils.TitleLabel
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
@@ -53,7 +56,8 @@ import kotlin.math.pow
 internal data class ColorSelectorPopupContentLayoutInfo(
     override val popupSize: Size,
     val menuButtonPresentationModel: CommandButtonPresentationModel,
-    val showTrailingSeparator: BooleanArray
+    val showTrailingSeparator: BooleanArray,
+    val gutterWidth: Float
 ) : BaseCommandMenuPopupLayoutInfo
 
 internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
@@ -67,22 +71,6 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
         textStyle: TextStyle,
         fontFamilyResolver: FontFamily.Resolver
     ): ColorSelectorPopupContentLayoutInfo {
-
-        // If at least one secondary command in this popup menu has icon factory
-        // we force all command buttons to allocate space for the icon (for overall
-        // alignment of content across the entire popup menu)
-        var atLeastOneButtonHasIcon = false
-        for (entry in menuContentModel.entries) {
-            if (entry is ColorSelectorPopupMenuCommand) {
-                if (entry.command.icon != null) {
-                    atLeastOneButtonHasIcon = true
-                }
-                if (entry.command.isActionToggle) {
-                    atLeastOneButtonHasIcon = true
-                }
-            }
-        }
-
         // Command presentation for menu content, taking some values from
         // the popup menu presentation model configured on the top-level presentation model
         val menuButtonPresentationModel = CommandButtonPresentationModel(
@@ -90,7 +78,6 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
             iconActiveFilterStrategy = IconFilterStrategy.Original,
             iconEnabledFilterStrategy = IconFilterStrategy.Original,
             iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
-            forceAllocateSpaceForIcon = atLeastOneButtonHasIcon,
             popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             horizontalAlignment = HorizontalAlignment.Leading,
@@ -107,6 +94,38 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
                 fontFamilyResolver = fontFamilyResolver
             )
 
+        // If at least one secondary command in this popup menu has icon factory
+        // we force all command buttons to allocate space for the icon (for overall
+        // alignment of content across the entire popup menu)
+        var gutterWidth = 0.0f
+        var atLeastOneButtonHasIcon = false
+        for (entry in menuContentModel.entries) {
+            if (entry is ColorSelectorPopupMenuCommand) {
+                if ((entry.command.icon != null) || (entry.command.isActionToggle)) {
+                    atLeastOneButtonHasIcon = true
+                    if (gutterWidth == 0.0f) {
+                        gutterWidth =
+                            (menuButtonPresentationModel.contentPadding.calculateStartPadding(layoutDirection) +
+                                    layoutManager.getPreferredIconSize(
+                                        command = entry.command,
+                                        presentationModel = menuButtonPresentationModel
+                                    ).width +
+                                    layoutManager.getIconTextGap(menuButtonPresentationModel) / 2.0f).value * density.density
+                    }
+                }
+            }
+        }
+
+        val menuButtonPresentationModelOverlay =
+            CommandButtonPresentationModel.Overlay(
+                forceAllocateSpaceForIcon = atLeastOneButtonHasIcon,
+                textStyle = TextStyle(fontWeight = FontWeight.Bold)
+            )
+        val menuButtonPresentationModelWithOverlay =
+            menuButtonPresentationModel.overlayWith(
+                menuButtonPresentationModelOverlay
+            )
+
         // First pass - go over all the entries to determine the width of the popup
         // as the max of preferred widths of commands and section selectors. Here we
         // also compute how much height the commands need.
@@ -119,10 +138,10 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
                 is ColorSelectorPopupMenuCommand -> {
                     val preferredSize = layoutManager.getPreferredSize(
                         command = entry.command,
-                        presentationModel = menuButtonPresentationModel,
+                        presentationModel = menuButtonPresentationModelWithOverlay,
                         preLayoutInfo = layoutManager.getPreLayoutInfo(
                             command = entry.command,
-                            presentationModel = menuButtonPresentationModel
+                            presentationModel = menuButtonPresentationModelWithOverlay
                         )
                     )
                     maxWidth = max(maxWidth, preferredSize.width)
@@ -238,12 +257,12 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
                 width = maxWidth,
                 height = combinedHeight
             ),
-            menuButtonPresentationModel = menuButtonPresentationModel,
-            showTrailingSeparator = showTrailingSeparator
+            menuButtonPresentationModel = menuButtonPresentationModelWithOverlay,
+            showTrailingSeparator = showTrailingSeparator,
+            gutterWidth = gutterWidth
         )
     }
 
-    @OptIn(AuroraInternalApi::class)
     @Composable
     override fun generatePopupContent(
         menuContentModel: ColorSelectorMenuContentModel,
@@ -262,8 +281,10 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
         val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
             decorationAreaType = AuroraSkin.decorationAreaType
         )
-        Column(modifier = Modifier.fillMaxSize().background(color = backgroundColorScheme.backgroundFillColor)
-            .padding(all = 1.0.dp)) {
+        Column(
+            modifier = Modifier.fillMaxSize().background(color = backgroundColorScheme.backgroundFillColor)
+                .padding(all = 1.0.dp)
+        ) {
             for ((index, entry) in menuContentModel.entries.withIndex()) {
                 when (entry) {
                     is ColorSelectorPopupMenuCommand -> {
@@ -279,7 +300,7 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
                             presentationModel = currSecondaryPresentationModel,
                             overlays = overlays
                         ).project(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth().auroraPopupMenuRowBackground(gutterWidth = popupContentLayoutInfo.gutterWidth),
                             actionInteractionSource = remember { MutableInteractionSource() },
                             popupInteractionSource = remember { MutableInteractionSource() }
                         )

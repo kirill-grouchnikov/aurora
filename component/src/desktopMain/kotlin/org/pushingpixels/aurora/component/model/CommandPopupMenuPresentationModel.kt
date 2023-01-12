@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManagerMedium
@@ -49,7 +50,9 @@ private class PopupMenuCommandButtonLayoutManager(
     textStyle: TextStyle,
     fontFamilyResolver: FontFamily.Resolver
 ) : CommandButtonLayoutManagerMedium(layoutDirection, density, textStyle, fontFamilyResolver) {
-    override val iconTextGapFactor: Float = 2.0f
+    override fun getIconTextGap(presentationModel: BaseCommandButtonPresentationModel): Dp {
+        return super.getIconTextGap(presentationModel) * 2.0f
+    }
 
     companion object {
         fun getLayoutManager(
