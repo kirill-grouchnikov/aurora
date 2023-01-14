@@ -1115,7 +1115,7 @@ internal fun <M : BaseCommandMenuContentModel,
                 if (command.isActionToggle && presentationModel.isMenu) currentActionNoSelectionState.value
                 else currentActionState.value
             } else {
-                currentActionState.value
+                currentPopupState.value
             }
 
             for (text in preLayoutInfo.texts) {

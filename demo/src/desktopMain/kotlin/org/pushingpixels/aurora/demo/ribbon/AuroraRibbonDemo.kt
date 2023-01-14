@@ -1540,7 +1540,7 @@ private class RibbonBuilder(val resourceBundle: ResourceBundle) {
                 ),
                 secondaryContentModel = applicationMenu
             ),
-            presentationModel = CommandButtonPresentationModel(
+            presentationModel = RibbonApplicationMenuCommandButtonPresentationModel(
                 popupKeyTip = "F",
                 popupRichTooltipPresentationModel = RichTooltipPresentationModel(
                     mainIconSize = tooltipImageScaledSize

@@ -71,23 +71,6 @@ data class Command(
     override val secondaryRichTooltip: RichTooltip? = null
 ) : BaseCommand
 
-data class RibbonApplicationMenuCommand(
-    override val text: String,
-    override val secondaryContentModel: RibbonApplicationMenuContentModel,
-    override val secondaryRichTooltip: RichTooltip? = null
-) : BaseCommand {
-    override val extraText = null
-    override val icon = null
-    override val action = null
-    override val actionPreview = null
-    override val isActionEnabled = false
-    override val isActionToggle = false
-    override val isActionToggleSelected = false
-    override val actionRichTooltip = null
-    override val onTriggerActionToggleSelectedChange = null
-    override val isSecondaryEnabled = false
-}
-
 data class CommandGroup(
     val title: String? = null,
     val commands: List<Command>

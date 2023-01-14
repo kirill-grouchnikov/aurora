@@ -123,23 +123,6 @@ class ColorSelectorCommandButtonProjection(
     }
 }
 
-class RibbonApplicationMenuCommandButtonProjection(
-    contentModel: RibbonApplicationMenuCommand,
-    presentationModel: CommandButtonPresentationModel,
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null,
-    secondaryStates: Map<Command, CommandButtonPresentationState>? = null
-) : BaseCommandButtonProjection<RibbonApplicationMenuCommand, CommandButtonPresentationModel>(
-    contentModel, presentationModel, overlays
-) {
-    @OptIn(AuroraInternalApi::class)
-    @Composable
-    fun project(
-        modifier: Modifier = Modifier,
-        popupInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() }
-    ) {
-    }
-}
-
 class CommandButtonStripProjection(
     val contentModel: CommandGroup,
     val presentationModel: CommandStripPresentationModel,

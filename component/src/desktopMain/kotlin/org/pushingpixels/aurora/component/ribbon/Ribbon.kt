@@ -30,7 +30,8 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.Projection
-import org.pushingpixels.aurora.component.projection.RibbonApplicationMenuCommandButtonProjection
+import org.pushingpixels.aurora.component.utils.popup.ColorSelectorCommandMenuPopupHandler
+import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 
 enum class PresentationPriority {
     /** Top priority */
@@ -97,20 +98,6 @@ interface OnShowContextualMenuListener {
     ): CommandMenuContentModel
 
     fun getContextualMenuContentModel(ribbon: Ribbon): CommandMenuContentModel
-}
-
-object RibbonApplicationMenuButtonPresentationStates {
-    val RibbonAppMenuSecondaryLevel: CommandButtonPresentationState =
-        object : CommandButtonPresentationState("Ribbon application menu tile level 2") {
-            override fun createLayoutManager(
-                layoutDirection: LayoutDirection,
-                density: Density,
-                textStyle: TextStyle,
-                fontFamilyResolver: FontFamily.Resolver
-            ): CommandButtonLayoutManager {
-                throw UnsupportedOperationException()
-            }
-        }
 }
 
 data class Ribbon(
