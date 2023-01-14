@@ -189,7 +189,7 @@ fun main() = auroraApplication {
     )
 }
 
-private class RibbonBuilder(val resourceBundle: ResourceBundle) {
+internal class RibbonBuilder(val resourceBundle: ResourceBundle) {
     val mf = MessageFormat(resourceBundle.getString("TestMenuItem.text"))
     val popupCommand1 = Command(
         text = mf.format(arrayOf("1")),

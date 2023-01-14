@@ -181,7 +181,6 @@ data class RibbonApplicationMenuCommandButtonPresentationModel(
     override val textOverflow: TextOverflow = TextOverflow.Clip,
     override val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
     override val popupKeyTip: String? = null,
-    override val popupMenuPresentationModel: CommandPopupMenuPresentationModel = CommandPopupMenuPresentationModel(),
     override val popupRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),
     override val contentPadding: PaddingValues = CommandButtonSizingConstants.WideButtonContentPadding,
     override val sides: Sides = Sides()
@@ -203,6 +202,8 @@ data class RibbonApplicationMenuCommandButtonPresentationModel(
     override val textClick = TextClick.Action
     override val actionRichTooltipPresentationModel = RichTooltipPresentationModel()
     override val toDismissPopupsOnActivation: Boolean = true
+    override val popupMenuPresentationModel: CommandPopupMenuPresentationModel =
+        CommandPopupMenuPresentationModel(menuPresentationState = CommandButtonPresentationState.Tile)
     override val horizontalGapScaleFactor: Float = 1.0f
     override val verticalGapScaleFactor: Float = 1.0f
     override val minWidth: Dp = 0.dp
