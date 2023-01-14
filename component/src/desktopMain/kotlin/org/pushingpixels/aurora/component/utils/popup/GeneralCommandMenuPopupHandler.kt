@@ -69,6 +69,7 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
     override fun getPopupContentLayoutInfo(
         menuContentModel: CommandMenuContentModel,
         menuPresentationModel: CommandPopupMenuPresentationModel,
+        displayPrototypeCommand: BaseCommand?,
         layoutDirection: LayoutDirection,
         density: Density,
         textStyle: TextStyle,
@@ -169,6 +170,20 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
                 }
             }
         }
+
+        // Have display prototype?
+        if (displayPrototypeCommand != null) {
+            val displayPrototypePreferredSize = regularButtonLayoutManager.getPreferredSize(
+                command = displayPrototypeCommand,
+                presentationModel = regularButtonPresentationModelWithOverlay,
+                preLayoutInfo = regularButtonLayoutManager.getPreLayoutInfo(
+                    command = displayPrototypeCommand,
+                    presentationModel = regularButtonPresentationModelWithOverlay
+                )
+            )
+            regularButtonColumnWidth = max(regularButtonColumnWidth, displayPrototypePreferredSize.width)
+        }
+
         val separatorHeight = SeparatorSizingConstants.Thickness.value * density.density
         var index = 0
         val itemHeights = FloatArray(regularButtonCount + menuContentModel.groups.size - 1)

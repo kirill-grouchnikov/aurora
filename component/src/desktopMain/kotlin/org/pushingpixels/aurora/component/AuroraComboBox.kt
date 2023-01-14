@@ -234,6 +234,15 @@ internal fun <E> AuroraComboBox(
                     AuroraPopupManager.hidePopups(originator = popupOriginator)
                 } else {
                     // Display our popup content.
+                    val displayPrototypeCommand: Command? = presentationModel.popupDisplayPrototype?.let {
+                        val displayPrototype = it.invoke(contentModel.items)
+                        Command(
+                            text = presentationModel.displayConverter.invoke(displayPrototype),
+                            icon = presentationModel.displayIconConverter?.invoke(displayPrototype),
+                            isActionEnabled = true,
+                            action = { }
+                        )
+                    }
                     GeneralCommandMenuPopupHandler.showPopupContent(
                         popupOriginator = popupOriginator,
                         layoutDirection = layoutDirection,
@@ -261,6 +270,7 @@ internal fun <E> AuroraComboBox(
                                 if ((rowIndex % 2) == 0) colorScheme.backgroundFillColor else colorScheme.accentedBackgroundFillColor
                             },
                         ),
+                        displayPrototypeCommand = displayPrototypeCommand,
                         toDismissPopupsOnActivation = true,
                         popupPlacementStrategy = presentationModel.popupPlacementStrategy,
                         overlays = emptyMap()

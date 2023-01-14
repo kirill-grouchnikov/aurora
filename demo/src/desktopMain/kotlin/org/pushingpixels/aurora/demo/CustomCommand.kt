@@ -256,6 +256,7 @@ object CustomCommandMenuPopupHandler : BaseCommandMenuHandler<
     override fun getPopupContentLayoutInfo(
         menuContentModel: CustomMenuContentModel,
         menuPresentationModel: CustomCommandPopupMenuPresentationModel,
+        displayPrototypeCommand: BaseCommand?,
         layoutDirection: LayoutDirection,
         density: Density,
         textStyle: TextStyle,

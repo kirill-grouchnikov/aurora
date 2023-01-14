@@ -645,6 +645,7 @@ fun AuroraApplicationScope.DemoArea(
                     presentationModel = ComboBoxPresentationModel(
                         displayConverter = { it },
                         displayPrototype = { "Longer item"},
+                        popupDisplayPrototype = { "Longer item"},
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
                         richTooltipPresentationModel = RichTooltipPresentationModel(
                             mainIconSize = DpSize(36.dp, 36.dp),
@@ -676,6 +677,7 @@ fun AuroraApplicationScope.DemoArea(
                     presentationModel = ComboBoxPresentationModel(
                         displayConverter = { it.lastName + ", " + it.firstName },
                         displayPrototype = { Person("Frederick", "Rumpelstilt") },
+                        popupDisplayPrototype = { Person("Frederick", "Rumpelstiltskin Jr.") },
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )
                 ).project()

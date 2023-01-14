@@ -353,6 +353,7 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
     override fun getPopupContentLayoutInfo(
         menuContentModel: CustomComplexMenuContentModel,
         menuPresentationModel: CustomComplexCommandPopupMenuPresentationModel,
+        displayPrototypeCommand: BaseCommand?,
         layoutDirection: LayoutDirection,
         density: Density,
         textStyle: TextStyle,

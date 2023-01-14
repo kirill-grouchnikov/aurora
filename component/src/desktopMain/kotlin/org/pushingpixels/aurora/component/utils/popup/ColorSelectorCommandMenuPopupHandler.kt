@@ -66,6 +66,7 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
     override fun getPopupContentLayoutInfo(
         menuContentModel: ColorSelectorMenuContentModel,
         menuPresentationModel: ColorSelectorCommandPopupMenuPresentationModel,
+        displayPrototypeCommand: BaseCommand?,
         layoutDirection: LayoutDirection,
         density: Density,
         textStyle: TextStyle,

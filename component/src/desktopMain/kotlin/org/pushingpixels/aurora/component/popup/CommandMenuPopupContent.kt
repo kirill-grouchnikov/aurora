@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.component.popup
 
-import androidx.compose.foundation.background
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposePanel
@@ -25,19 +24,13 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
-import androidx.compose.ui.platform.InspectorInfo
-import androidx.compose.ui.platform.InspectorValueInfo
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
-import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.getPlacementAwarePopupShift
@@ -65,6 +58,7 @@ interface BaseCommandMenuHandler<in M : BaseCommandMenuContentModel,
     fun getPopupContentLayoutInfo(
         menuContentModel: M,
         menuPresentationModel: P,
+        displayPrototypeCommand: BaseCommand?,
         layoutDirection: LayoutDirection,
         density: Density,
         textStyle: TextStyle,
@@ -94,6 +88,7 @@ interface BaseCommandMenuHandler<in M : BaseCommandMenuContentModel,
         popupTriggerAreaInWindow: Rect,
         contentModel: State<M?>,
         presentationModel: P,
+        displayPrototypeCommand: BaseCommand?,
         toDismissPopupsOnActivation: Boolean,
         popupPlacementStrategy: PopupPlacementStrategy,
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>
@@ -102,6 +97,7 @@ interface BaseCommandMenuHandler<in M : BaseCommandMenuContentModel,
         val popupContentLayoutInfo = getPopupContentLayoutInfo(
             menuContentModel = contentModel.value!!,
             menuPresentationModel = presentationModel,
+            displayPrototypeCommand = displayPrototypeCommand,
             layoutDirection = layoutDirection,
             density = density,
             textStyle = textStyle,

@@ -901,6 +901,7 @@ internal fun <M : BaseCommandMenuContentModel,
                                 ),
                                 contentModel = secondaryContentModel,
                                 presentationModel = presentationModel.popupMenuPresentationModel as P,
+                                displayPrototypeCommand = null,
                                 toDismissPopupsOnActivation = presentationModel.toDismissPopupsOnActivation,
                                 popupPlacementStrategy = presentationModel.popupPlacementStrategy,
                                 overlays = overlays
