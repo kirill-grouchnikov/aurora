@@ -371,7 +371,7 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
             horizontalAlignment = HorizontalAlignment.Leading,
             contentPadding = menuPresentationModel.menuContentPadding,
             isMenu = true,
-            sides = Sides(straightSides = Side.values().toSet())
+            sides = Sides.ClosedRectangle
         )
 
         var runningCommandIndex = 0

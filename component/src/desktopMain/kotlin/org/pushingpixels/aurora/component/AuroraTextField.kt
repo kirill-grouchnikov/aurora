@@ -299,7 +299,7 @@ internal fun AuroraTextField(
                     width = size.width,
                     height = size.height,
                     radius = 0.0f,
-                    sides = Sides(straightSides = Side.values().toSet()),
+                    sides = Sides.ClosedRectangle,
                     insets = borderStrokeWidth
                 )
 
@@ -325,7 +325,7 @@ internal fun AuroraTextField(
                         width = size.width,
                         height = size.height,
                         radius = 0.0f,
-                        sides = Sides(straightSides = Side.values().toSet()),
+                        sides = Sides.ClosedRectangle,
                         insets = 1.0f
                     ),
                     outlineInner = null,

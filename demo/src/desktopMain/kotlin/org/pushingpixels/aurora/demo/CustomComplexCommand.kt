@@ -257,7 +257,7 @@ data class CustomComplexCommandPopupMenuPresentationModel(
             presentationState = CommandButtonPresentationState.Medium,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             toDismissPopupsOnActivation = false,
-            sides = Sides(straightSides = Side.values().toSet()),
+            sides = Sides.ClosedRectangle,
             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp)
         ),
     val zoomLabelPresentationModel: LabelPresentationModel = LabelPresentationModel(
@@ -273,14 +273,14 @@ data class CustomComplexCommandPopupMenuPresentationModel(
             iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
             iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
             iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
-            sides = Sides(straightSides = Side.values().toSet()),
+            sides = Sides.ClosedRectangle,
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp)
         ),
     val editPresentationModel: CommandButtonPresentationModel =
         CommandButtonPresentationModel(
             presentationState = CommandButtonPresentationState.Medium,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-            sides = Sides(straightSides = Side.values().toSet()),
+            sides = Sides.ClosedRectangle,
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp)
         ),
     val headerTitlePresentationModel: LabelPresentationModel =
@@ -293,7 +293,7 @@ data class CustomComplexCommandPopupMenuPresentationModel(
         CommandButtonPresentationModel(
             presentationState = CommandButtonPresentationState.Medium,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-            sides = Sides(straightSides = Side.values().toSet()),
+            sides = Sides.ClosedRectangle,
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp)
         ),
     val headerSeparatorHeight: Dp = 2.0.dp,
@@ -301,7 +301,7 @@ data class CustomComplexCommandPopupMenuPresentationModel(
         CommandButtonPresentationModel(
             presentationState = CommandButtonPresentationState.Medium,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-            sides = Sides(straightSides = Side.values().toSet()),
+            sides = Sides.ClosedRectangle,
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
             horizontalAlignment = HorizontalAlignment.Leading
         )
@@ -372,7 +372,7 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
             horizontalAlignment = menuPresentationModel.horizontalAlignment,
             contentPadding = menuPresentationModel.menuContentPadding,
             isMenu = true,
-            sides = Sides(straightSides = Side.values().toSet())
+            sides = Sides.ClosedRectangle
         )
 
         val layoutManager: CommandButtonLayoutManager =

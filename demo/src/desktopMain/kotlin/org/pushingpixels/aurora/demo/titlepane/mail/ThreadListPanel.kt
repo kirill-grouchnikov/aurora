@@ -126,7 +126,7 @@ fun AuroraWindowScope.ThreadListPanel(modifier: Modifier) {
                                 modifier = Modifier.fillMaxWidth(),
                                 selected = (stateSelection.value == item),
                                 onClick = { stateSelection.value = item },
-                                sides = Sides(straightSides = Side.values().toSet()),
+                                sides = Sides.ClosedRectangle,
                                 content = {
                                     ThreadListEntry(item)
                                 })

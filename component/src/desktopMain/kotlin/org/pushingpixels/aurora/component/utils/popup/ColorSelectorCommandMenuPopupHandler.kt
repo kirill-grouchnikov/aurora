@@ -84,7 +84,7 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
             horizontalAlignment = HorizontalAlignment.Leading,
             contentPadding = CommandButtonSizingConstants.CompactButtonContentPadding,
             isMenu = true,
-            sides = Sides(straightSides = Side.values().toSet())
+            sides = Sides.ClosedRectangle
         )
 
         val layoutManager: CommandButtonLayoutManager =
@@ -389,7 +389,7 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
                         menuContentModel = menuContentModel,
                         menuPresentationModel = menuPresentationModel,
                         color = color,
-                        sides = Sides(straightSides = Side.values().toSet())
+                        sides = Sides.ClosedRectangle
                     )
                 }
             }
@@ -481,7 +481,7 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
                             menuContentModel = menuContentModel,
                             menuPresentationModel = menuPresentationModel,
                             color = color,
-                            sides = Sides(straightSides = Side.values().toSet())
+                            sides = Sides.ClosedRectangle
                         )
                     }
                 }

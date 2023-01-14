@@ -200,7 +200,7 @@ fun main() = auroraApplication {
                                 .background(if (index % 2 == 0) backgroundEvenRows else backgroundOddRows),
                             selected = (stateSelection.value == item),
                             onClick = { stateSelection.value = item },
-                            sides = Sides(straightSides = Side.values().toSet()),
+                            sides = Sides.ClosedRectangle,
                             content = {
                                 LabelProjection(
                                     contentModel = LabelContentModel(

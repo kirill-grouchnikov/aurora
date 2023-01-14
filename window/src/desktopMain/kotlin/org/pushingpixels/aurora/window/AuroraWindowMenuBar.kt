@@ -198,7 +198,7 @@ internal fun AuroraWindowScope.AuroraWindowMenuBar(menuCommands: CommandGroup) {
                         presentationState = WindowMenuBarLayout.MenuBar,
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                         contentPadding = CommandButtonSizingConstants.WideButtonContentPadding,
-                        sides = Sides(straightSides = Side.values().toSet()),
+                        sides = Sides.ClosedRectangle,
                         isMenu = true
                     )
                 ).project()

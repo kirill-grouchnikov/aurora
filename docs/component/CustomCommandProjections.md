@@ -308,7 +308,7 @@ override fun getPopupContentLayoutInfo(
         horizontalAlignment = HorizontalAlignment.Leading,
         contentPadding = CommandButtonSizingConstants.CompactButtonContentPadding,
         isMenu = true,
-        sides = Sides(straightSides = Side.values().toSet())
+        sides = Sides.ClosedRectangle
     )
 
     val layoutManager: CommandButtonLayoutManager =

@@ -16,6 +16,8 @@
 package org.pushingpixels.aurora.theming
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
+import androidx.compose.ui.geometry.Rect
 
 /**
  * Defines a single facet of core and custom [ComponentState]s. See Javadocs of the
@@ -805,7 +807,12 @@ enum class Side {
 data class Sides(
     val openSides: Set<Side> = emptySet(),
     val straightSides: Set<Side> = emptySet()
-)
+) {
+    companion object {
+        @Stable
+        val ClosedRectangle: Sides = Sides(straightSides = Side.values().toSet())
+    }
+}
 
 enum class OutlineKind {
     Fill,

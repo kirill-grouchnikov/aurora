@@ -87,7 +87,7 @@ fun AuroraWindowScope.DestinationsPanel(modifier: Modifier) {
                         AuroraBoxWithHighlights(modifier = Modifier.fillMaxWidth().height(32.dp),
                             selected = (stateSelection.value == item),
                             onClick = { stateSelection.value = item },
-                            sides = Sides(straightSides = Side.values().toSet()),
+                            sides = Sides.ClosedRectangle,
                             content = {
                                 Row(modifier = Modifier.padding(horizontal = 6.dp)) {
                                     LabelProjection(
