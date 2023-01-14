@@ -30,15 +30,13 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
-import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.withAlpha
@@ -46,8 +44,8 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
-import kotlin.math.max
 
 @Immutable
 private class ComboBoxDrawingCache(
@@ -101,7 +99,7 @@ internal fun <E> AuroraComboBox(
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
     val painters = AuroraSkin.painters
-    val buttonShaper = AuroraSkin.buttonShaper
+    val buttonShaper = ClassicButtonShaper.Instance
     val popupOriginator = LocalPopupMenu.current ?: LocalWindow.current.rootPane
 
     val comboBoxTopLeftOffset = AuroraOffset(0.0f, 0.0f)
@@ -230,7 +228,8 @@ internal fun <E> AuroraComboBox(
                             x = comboBoxTopLeftOffset.x + comboBoxSize.value.width / 2.0f,
                             y = comboBoxTopLeftOffset.y + comboBoxSize.value.height / 2.0f
                         ).asOffset(density)
-                    )) {
+                    )
+                ) {
                     // We're showing a popup that originates from this combo. Hide it.
                     AuroraPopupManager.hidePopups(originator = popupOriginator)
                 } else {
@@ -255,12 +254,12 @@ internal fun <E> AuroraComboBox(
                         ),
                         contentModel = contentModelState,
                         presentationModel = CommandPopupMenuPresentationModel(
-                            menuPresentationState = DefaultCommandPopupMenuPresentationState,
+                            menuPresentationState = CommandButtonPresentationState.Medium,
                             maxVisibleMenuCommands = presentationModel.popupMaxVisibleItems,
                             popupPlacementStrategy = presentationModel.popupPlacementStrategy,
                             backgroundFillColorQuery = { rowIndex, colorScheme ->
                                 if ((rowIndex % 2) == 0) colorScheme.backgroundFillColor else colorScheme.accentedBackgroundFillColor
-                            }
+                            },
                         ),
                         toDismissPopupsOnActivation = true,
                         popupPlacementStrategy = presentationModel.popupPlacementStrategy,
@@ -450,71 +449,80 @@ internal fun <E> AuroraComboBox(
             }
         }
 
+        var prototypeDisplayFullWidth : Dp = 0.0.dp
+        val displayPrototype = presentationModel.displayPrototype?.invoke(contentModel.items)
+        if (displayPrototype != null) {
+            val prototypeDisplayLabelWidth = getLabelPreferredSingleLineWidth(
+                contentModel = LabelContentModel(text = presentationModel.displayConverter.invoke(displayPrototype)),
+                presentationModel = LabelPresentationModel(
+                    textStyle = presentationModel.textStyle ?: LocalTextStyle.current,
+                    textMaxLines = 1,
+                    textOverflow = presentationModel.textOverflow
+                ),
+                resolvedTextStyle = resolvedTextStyle,
+                layoutDirection = layoutDirection,
+                density = density,
+                fontFamilyResolver = LocalFontFamilyResolver.current
+            )
+
+            val prototypeIcon = presentationModel.displayIconConverter?.invoke(displayPrototype)
+
+            // Full display width - content start padding, icon + gap if icon is present, text,
+            // arrow gap + arrow, content end padding
+            prototypeDisplayFullWidth = presentationModel.contentPadding.calculateStartPadding(layoutDirection)
+            if (prototypeIcon != null) {
+                prototypeDisplayFullWidth += (16.dp + ComboBoxSizingConstants.DefaultComboBoxIconTextLayoutGap * presentationModel.horizontalGapScaleFactor)
+            }
+            prototypeDisplayFullWidth += (ComboBoxSizingConstants.DefaultComboBoxContentArrowGap
+                    + ComboBoxSizingConstants.DefaultComboBoxArrowWidth)
+            prototypeDisplayFullWidth += (prototypeDisplayLabelWidth / density.density).dp
+            prototypeDisplayFullWidth += presentationModel.contentPadding.calculateEndPadding(layoutDirection)
+        }
+
         // Pass our text color and model state snapshot to the children
         CompositionLocalProvider(
             LocalTextColor provides textColor,
             LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value)
         ) {
-            Layout(
-                modifier = Modifier.padding(
+            Row(
+                modifier = Modifier.defaultMinSize(
+                    minWidth = max(presentationModel.defaultMinSize.width, prototypeDisplayFullWidth),
+                    minHeight = presentationModel.defaultMinSize.height
+                ).padding(
                     PaddingValues(
-                        start = ComboBoxSizingConstants.DefaultComboBoxContentPadding.calculateStartPadding(
-                            layoutDirection
-                        ),
-                        end = ComboBoxSizingConstants.DefaultComboBoxContentPadding.calculateEndPadding(
-                            layoutDirection
-                        ) + ComboBoxSizingConstants.DefaultComboBoxContentArrowGap
+                        start = presentationModel.contentPadding.calculateStartPadding(layoutDirection),
+                        end = presentationModel.contentPadding.calculateEndPadding(layoutDirection)
+                                + ComboBoxSizingConstants.DefaultComboBoxContentArrowGap
                                 + ComboBoxSizingConstants.DefaultComboBoxArrowWidth,
-                        top = ComboBoxSizingConstants.DefaultComboBoxContentPadding.calculateTopPadding(),
-                        bottom = ComboBoxSizingConstants.DefaultComboBoxContentPadding.calculateBottomPadding()
+                        top = presentationModel.contentPadding.calculateTopPadding(),
+                        bottom = presentationModel.contentPadding.calculateBottomPadding()
                     )
                 ),
-                content = {
-                    AuroraText(presentationModel.displayConverter.invoke(contentModel.selectedItem))
-                }
-            ) { measurables, constraints ->
-                // Measure each child so that we know how much space they need
-                val placeables = measurables.map { measurable ->
-                    // Measure each child
-                    measurable.measure(constraints)
-                }
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                val icon = presentationModel.displayIconConverter?.invoke(contentModel.selectedItem)
+                if (icon != null) {
+                    AuroraThemedIcon(
+                        icon = icon,
+                        size = DpSize(16.dp, 16.dp),
+                        disabledFilterStrategy = presentationModel.displayIconDisabledFilterStrategy,
+                        enabledFilterStrategy = presentationModel.displayIconEnabledFilterStrategy,
+                        activeFilterStrategy = presentationModel.displayIconActiveFilterStrategy
+                    )
 
-                // The children are laid out in a row
-                val contentTotalWidth = placeables.sumOf { it.width }
-                // And the height of the row is determined by the height of the tallest child
-                val contentMaxHeight = placeables.maxOf { it.height }
-
-                // Get the preferred size
-                var uiPreferredWidth = contentTotalWidth
-                var uiPreferredHeight = contentMaxHeight
-
-                // Bump up to default minimums if necessary
-                uiPreferredWidth = max(
-                    uiPreferredWidth,
-                    ComboBoxSizingConstants.DefaultComboBoxContentWidth.roundToPx()
-                )
-                uiPreferredHeight = max(
-                    uiPreferredHeight,
-                    ComboBoxSizingConstants.DefaultComboBoxContentHeight.roundToPx()
-                )
-
-                // And ask the button shaper for the final sizing
-                val finalSize = buttonShaper.getPreferredSize(
-                    uiPreferredWidth.toFloat(), uiPreferredHeight.toFloat()
-                )
-
-                // Center children vertically within the vertical space
-                layout(width = finalSize.width.toInt(), height = finalSize.height.toInt()) {
-                    var xPosition = 0
-
-                    placeables.forEach { placeable ->
-                        placeable.placeRelative(
-                            x = xPosition,
-                            y = (finalSize.height.toInt() - placeable.height) / 2
+                    Spacer(
+                        modifier = Modifier.width(
+                            ComboBoxSizingConstants.DefaultComboBoxIconTextLayoutGap * presentationModel.horizontalGapScaleFactor
                         )
-                        xPosition += placeable.width
-                    }
+                    )
                 }
+
+                AuroraText(
+                    text = presentationModel.displayConverter.invoke(contentModel.selectedItem),
+                    style = presentationModel.textStyle ?: LocalTextStyle.current,
+                    overflow = presentationModel.textOverflow,
+                    maxLines = 1
+                )
             }
         }
     }

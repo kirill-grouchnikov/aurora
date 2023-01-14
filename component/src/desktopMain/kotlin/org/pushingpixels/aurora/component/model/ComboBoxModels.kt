@@ -17,8 +17,12 @@ package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 
 data class ComboBoxContentModel<E>(
@@ -34,7 +38,8 @@ object ComboBoxSizingConstants {
     val DefaultComboBoxArrowHeight = 7.dp
     val DefaultComboBoxContentArrowGap = 6.dp
     val DefaultComboBoxContentPadding =
-        PaddingValues(start = 8.dp, top = 3.dp, end = 8.dp, bottom = 4.dp)
+        PaddingValues(start = 6.dp, top = 3.dp, end = 6.dp, bottom = 4.dp)
+    val DefaultComboBoxIconTextLayoutGap = 4.dp
     val DefaultComboBoxContentWidth = 60.dp
     val DefaultComboBoxContentHeight = 16.dp
 }
@@ -43,10 +48,19 @@ data class ComboBoxPresentationModel<E>(
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
     val displayConverter: (E) -> String,
     val displayIconConverter: ((E) -> Painter)? = null,
+    val displayIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    val displayIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    val displayIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    val displayPrototype: ((List<E>) -> E)? = null,
     val contentPadding: PaddingValues = ComboBoxSizingConstants.DefaultComboBoxContentPadding,
+    val defaultMinSize: DpSize = DpSize(width = ComboBoxSizingConstants.DefaultComboBoxContentWidth,
+        ComboBoxSizingConstants.DefaultComboBoxContentHeight),
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Leading,
     val horizontalGapScaleFactor: Float = 1.0f,
+    val textStyle: TextStyle? = null,
+    val textOverflow: TextOverflow = TextOverflow.Clip,
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
     val popupMaxVisibleItems: Int = 8,
+    val popupDisplayPrototype: ((List<E>) -> E)? = null,
     val richTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel()
 ): PresentationModel

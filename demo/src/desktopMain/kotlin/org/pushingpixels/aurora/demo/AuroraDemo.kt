@@ -138,6 +138,8 @@ fun main() = auroraApplication {
 }
 
 data class Person(val firstName: String, val lastName: String)
+data class SaveAs(val title: String, val icon: Painter)
+
 enum class DemoAlignment {
     Center, Left, Right, Fill
 }
@@ -544,9 +546,9 @@ fun AuroraApplicationScope.DemoArea(
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                     )
                 ).project()
-            }
 
-            Row(modifier = Modifier.fillMaxWidth()) {
+                Spacer(modifier = Modifier.width(16.dp))
+
                 // Example of a command button strip
                 CommandButtonStripProjection(
                     contentModel = styleCommands,
@@ -607,9 +609,9 @@ fun AuroraApplicationScope.DemoArea(
                         contentPadding = PaddingValues(8.dp)
                     )
                 ).project()
+            }
 
-                Spacer(modifier = Modifier.width(20.dp))
-
+            Row(modifier = Modifier.fillMaxWidth()) {
                 // Example of a simple combobox
                 val simpleComboItems =
                     listOf(
@@ -642,6 +644,7 @@ fun AuroraApplicationScope.DemoArea(
                     ),
                     presentationModel = ComboBoxPresentationModel(
                         displayConverter = { it },
+                        displayPrototype = { "Longer item"},
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
                         richTooltipPresentationModel = RichTooltipPresentationModel(
                             mainIconSize = DpSize(36.dp, 36.dp),
@@ -672,6 +675,34 @@ fun AuroraApplicationScope.DemoArea(
                     ),
                     presentationModel = ComboBoxPresentationModel(
                         displayConverter = { it.lastName + ", " + it.firstName },
+                        displayPrototype = { Person("Frederick", "Rumpelstilt") },
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
+                    )
+                ).project()
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                // Another example of a combobox with display converter for more complex data
+                val saveAsComboItems =
+                    listOf(
+                        SaveAs(resourceBundle.getString("AppMenuSaveAs.word.text"),  x_office_document()),
+                        SaveAs(resourceBundle.getString("AppMenuSaveAs.html.text"),  text_x_generic()),
+                        SaveAs(resourceBundle.getString("AppMenuSaveAs.other.text"),  document_save_as()),
+                    )
+                val saveAsComboSelectedItem = remember { mutableStateOf(saveAsComboItems[0]) }
+                ComboBoxProjection(
+                    contentModel = ComboBoxContentModel(
+                        enabled = contentEnabled,
+                        items = saveAsComboItems,
+                        selectedItem = saveAsComboSelectedItem.value,
+                        onTriggerItemSelectedChange = {
+                            saveAsComboSelectedItem.value = it
+                            println("$it selected!")
+                        }
+                    ),
+                    presentationModel = ComboBoxPresentationModel(
+                        displayConverter = { it.title },
+                        displayIconConverter = { it.icon },
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )
                 ).project()
