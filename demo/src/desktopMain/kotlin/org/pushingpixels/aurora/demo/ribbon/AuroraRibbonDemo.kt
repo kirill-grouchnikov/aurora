@@ -1415,7 +1415,6 @@ internal class RibbonBuilder(val resourceBundle: ResourceBundle) {
         )
 
         overlays[amEntryOpen] = CommandButtonPresentationModel.Overlay(
-            presentationState = CommandButtonPresentationState.Medium,
             actionKeyTip = "O",
             textClick = TextClick.Action
         )

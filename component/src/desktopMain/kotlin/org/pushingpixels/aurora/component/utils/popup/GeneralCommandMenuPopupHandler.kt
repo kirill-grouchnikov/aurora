@@ -103,7 +103,7 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
             iconDisabledFilterStrategy = menuPresentationModel.menuIconDisabledFilterStrategy,
             popupPlacementStrategy = menuPresentationModel.popupPlacementStrategy,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-            horizontalAlignment = HorizontalAlignment.Leading,
+            horizontalAlignment = menuPresentationModel.menuHorizontalAlignment,
             contentPadding = menuPresentationModel.menuContentPadding,
             isMenu = true
         )
@@ -368,7 +368,7 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
             forceAllocateSpaceForIcon = atLeastOneButtonHasIcon,
             popupPlacementStrategy = menuPresentationModel.popupPlacementStrategy,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-            horizontalAlignment = HorizontalAlignment.Leading,
+            horizontalAlignment = menuPresentationModel.menuHorizontalAlignment,
             contentPadding = menuPresentationModel.menuContentPadding,
             isMenu = true,
             sides = Sides.ClosedRectangle

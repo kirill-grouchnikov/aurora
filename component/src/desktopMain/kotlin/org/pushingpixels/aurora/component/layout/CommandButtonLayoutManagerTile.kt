@@ -196,12 +196,12 @@ internal open class CommandButtonLayoutManagerTile(
                 // Consult the horizontal alignment attribute of the command button to see
                 // how we should shift the content horizontally.
                 when (presentationModel.horizontalAlignment) {
-                    HorizontalAlignment.Leading -> if (!ltr) {
+                    HorizontalAlignment.Leading,
+                    HorizontalAlignment.Fill -> if (!ltr) {
                         // shift everything to the right
                         shiftX = finalWidth - preferredSize.width
                     }
-                    HorizontalAlignment.Center,
-                    HorizontalAlignment.Fill ->
+                    HorizontalAlignment.Center ->
                         // shift everything to be centered horizontally
                         shiftX = (finalWidth - preferredSize.width) / 2
                     HorizontalAlignment.Trailing -> if (ltr) {
@@ -302,11 +302,19 @@ internal open class CommandButtonLayoutManagerTile(
                 x += layoutHGap
             }
             if (hasPopup) {
-                if (hasText && hasIcon) {
-                    x += 2 * layoutHGap
-                }
                 val popupIconWidth = CommandButtonSizingConstants.PopupIconWidth.toPx()
                 val popupIconHeight = CommandButtonSizingConstants.PopupIconHeight.toPx()
+                if (hasText || hasIcon) {
+                    if (presentationModel.horizontalAlignment == HorizontalAlignment.Fill) {
+                        // Under Fill alignment, popup icon goes all the way to the right edge
+                        x = finalWidth - presentationModel.horizontalGapScaleFactor *
+                                paddingValues.endPadding.toPx() -
+                                popupIconWidth - 4
+                    } else {
+                        // Otherwise, the popup icon is to the right of the texts
+                        x += 2 * layoutHGap
+                    }
+                }
                 popupActionRect = Rect(
                     left = x,
                     right = x + 4 + popupIconWidth,
@@ -562,11 +570,18 @@ internal open class CommandButtonLayoutManagerTile(
                 x -= layoutHGap
             }
             if (hasPopup) {
-                if (hasText && hasIcon) {
-                    x -= 2 * layoutHGap
-                }
                 val popupIconWidth = CommandButtonSizingConstants.PopupIconWidth.toPx()
                 val popupIconHeight = CommandButtonSizingConstants.PopupIconHeight.toPx()
+                if (hasText || hasIcon) {
+                    if (presentationModel.horizontalAlignment == HorizontalAlignment.Fill) {
+                        // Under Fill alignment, popup icon goes all the way to the left edge
+                        x = presentationModel.horizontalGapScaleFactor *
+                                paddingValues.endPadding.toPx() + 4
+                    } else {
+                        // Otherwise, the popup icon is to the left of the texts
+                        x -= 2 * layoutHGap
+                    }
+                }
                 popupActionRect = Rect(
                     left = x - 4 - popupIconWidth,
                     right = x,

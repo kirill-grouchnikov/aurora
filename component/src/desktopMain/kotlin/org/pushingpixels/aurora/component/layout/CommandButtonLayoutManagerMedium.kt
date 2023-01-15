@@ -188,8 +188,10 @@ internal open class CommandButtonLayoutManagerMedium(
                 // how we should shift the content horizontally.
                 when (presentationModel.horizontalAlignment) {
                     HorizontalAlignment.Leading,
-                    HorizontalAlignment.Fill ->
-                        shiftX = 0.0f
+                    HorizontalAlignment.Fill -> if (!ltr) {
+                        // shift everything to the right
+                        shiftX = finalWidth - preferredSize.width
+                    }
 
                     HorizontalAlignment.Center ->
                         // shift everything to be centered horizontally

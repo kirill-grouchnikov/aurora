@@ -39,8 +39,8 @@ data class CommandPopupMenuPresentationModel(
     val menuIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val menuIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val menuIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
-    val menuContentPadding: PaddingValues =
-        CommandButtonSizingConstants.CompactButtonContentPadding,
+    val menuContentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
+    val menuHorizontalAlignment: HorizontalAlignment = HorizontalAlignment.Fill,
     val maxVisibleMenuCommands: Int = 0,
     val iconGutterFillColorQuery: ((AuroraColorScheme) -> Color)? = null,
     val backgroundFillColorQuery: ((Int, AuroraColorScheme) -> Color) = { _, scheme -> scheme.backgroundFillColor },

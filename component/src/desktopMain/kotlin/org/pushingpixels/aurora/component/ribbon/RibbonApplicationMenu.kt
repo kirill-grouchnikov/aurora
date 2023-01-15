@@ -185,7 +185,8 @@ data class RibbonApplicationMenuCommandButtonPresentationModel(
     override val contentPadding: PaddingValues = CommandButtonSizingConstants.WideButtonContentPadding,
     override val sides: Sides = Sides()
 ) : BaseCommandButtonPresentationModel {
-    override val presentationState: CommandButtonPresentationState = RibbonApplicationMenuButtonPresentationStates.AppMenuButtonState
+    override val presentationState: CommandButtonPresentationState =
+        RibbonApplicationMenuButtonPresentationStates.AppMenuButtonState
     override val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
     override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center
     override val iconDimension: DpSize? = null
@@ -203,7 +204,10 @@ data class RibbonApplicationMenuCommandButtonPresentationModel(
     override val actionRichTooltipPresentationModel = RichTooltipPresentationModel()
     override val toDismissPopupsOnActivation: Boolean = true
     override val popupMenuPresentationModel: CommandPopupMenuPresentationModel =
-        CommandPopupMenuPresentationModel(menuPresentationState = CommandButtonPresentationState.Tile)
+        CommandPopupMenuPresentationModel(
+            menuPresentationState = CommandButtonPresentationState.Tile,
+            menuContentPadding = PaddingValues(horizontal = 6.dp, vertical = 8.dp)
+        )
     override val horizontalGapScaleFactor: Float = 1.0f
     override val verticalGapScaleFactor: Float = 1.0f
     override val minWidth: Dp = 0.dp
@@ -251,10 +255,10 @@ private object RibbonApplicationMenuPopupHandler : BaseCommandMenuHandler<
             iconEnabledFilterStrategy = IconFilterStrategy.Original,
             iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
             forceAllocateSpaceForIcon = atLeastOneButtonHasIcon,
-            popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
+            popupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignTop,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-            horizontalAlignment = HorizontalAlignment.Leading,
-            contentPadding = CommandButtonSizingConstants.CompactButtonContentPadding,
+            horizontalAlignment = HorizontalAlignment.Fill,
+            contentPadding = menuPresentationModel.menuContentPadding,
             isMenu = true,
             sides = Sides.ClosedRectangle
         )
