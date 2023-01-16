@@ -45,7 +45,6 @@ import org.pushingpixels.aurora.component.projection.CommandButtonPanelProjectio
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
-import org.pushingpixels.aurora.theming.Side
 import org.pushingpixels.aurora.theming.Sides
 import org.pushingpixels.aurora.theming.auroraBackground
 import kotlin.math.ceil
@@ -97,18 +96,18 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
         // Command presentation for menu content, taking some values from
         // the popup menu presentation model configured on the top-level presentation model
         val regularButtonPresentationModel = CommandButtonPresentationModel(
-            presentationState = menuPresentationModel.menuPresentationState,
-            iconActiveFilterStrategy = menuPresentationModel.menuIconActiveFilterStrategy,
-            iconEnabledFilterStrategy = menuPresentationModel.menuIconEnabledFilterStrategy,
-            iconDisabledFilterStrategy = menuPresentationModel.menuIconDisabledFilterStrategy,
+            presentationState = menuPresentationModel.itemPresentationState,
+            iconActiveFilterStrategy = menuPresentationModel.itemIconActiveFilterStrategy,
+            iconEnabledFilterStrategy = menuPresentationModel.itemIconEnabledFilterStrategy,
+            iconDisabledFilterStrategy = menuPresentationModel.itemIconDisabledFilterStrategy,
             popupPlacementStrategy = menuPresentationModel.popupPlacementStrategy,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-            horizontalAlignment = menuPresentationModel.menuHorizontalAlignment,
-            contentPadding = menuPresentationModel.menuContentPadding,
+            horizontalAlignment = menuPresentationModel.itemHorizontalAlignment,
+            contentPadding = menuPresentationModel.itemContentPadding,
             isMenu = true
         )
         val regularButtonLayoutManager =
-            menuPresentationModel.menuPresentationState.createLayoutManager(
+            menuPresentationModel.itemPresentationState.createLayoutManager(
                 layoutDirection = layoutDirection,
                 density = density,
                 textStyle = textStyle,
@@ -123,7 +122,7 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
                     atLeastOneRegularButtonHasIcon = true
                     if (gutterWidth == 0.0f) {
                         gutterWidth =
-                            (menuPresentationModel.menuContentPadding.calculateStartPadding(layoutDirection) +
+                            (menuPresentationModel.itemContentPadding.calculateStartPadding(layoutDirection) +
                                     regularButtonLayoutManager.getPreferredIconSize(
                                         command = secondaryCommand,
                                         presentationModel = regularButtonPresentationModel
@@ -164,7 +163,7 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
                 regularButtonHeight = max(regularButtonHeight, preferredSize.height)
 
                 regularButtonCount++
-                if (menuPresentationModel.maxVisibleMenuCommands == regularButtonCount) {
+                if (menuPresentationModel.maxVisibleItems == regularButtonCount) {
                     // This is the maximum number of menu commands that we should show
                     showingVerticalRegularContentScrollBar = true
                 }
@@ -196,8 +195,8 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
             }
         }
 
-        val visibleCommands = if (menuPresentationModel.maxVisibleMenuCommands == 0) regularButtonCount
-        else min(menuPresentationModel.maxVisibleMenuCommands, regularButtonCount)
+        val visibleCommands = if (menuPresentationModel.maxVisibleItems == 0) regularButtonCount
+        else min(menuPresentationModel.maxVisibleItems, regularButtonCount)
         val regularButtonColumnHeight = visibleCommands * regularButtonHeight +
                 (menuContentModel.groups.size - 1) * separatorHeight
 
@@ -360,16 +359,16 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
 
         // Command presentation for menu content, taking some values from
         // the popup menu presentation model configured on the top-level presentation model
-        val menuButtonPresentationModel = CommandButtonPresentationModel(
-            presentationState = menuPresentationModel.menuPresentationState,
-            iconActiveFilterStrategy = menuPresentationModel.menuIconActiveFilterStrategy,
-            iconEnabledFilterStrategy = menuPresentationModel.menuIconEnabledFilterStrategy,
-            iconDisabledFilterStrategy = menuPresentationModel.menuIconDisabledFilterStrategy,
+        val itemButtonPresentationModel = CommandButtonPresentationModel(
+            presentationState = menuPresentationModel.itemPresentationState,
+            iconActiveFilterStrategy = menuPresentationModel.itemIconActiveFilterStrategy,
+            iconEnabledFilterStrategy = menuPresentationModel.itemIconEnabledFilterStrategy,
+            iconDisabledFilterStrategy = menuPresentationModel.itemIconDisabledFilterStrategy,
             forceAllocateSpaceForIcon = atLeastOneButtonHasIcon,
             popupPlacementStrategy = menuPresentationModel.popupPlacementStrategy,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-            horizontalAlignment = menuPresentationModel.menuHorizontalAlignment,
-            contentPadding = menuPresentationModel.menuContentPadding,
+            horizontalAlignment = menuPresentationModel.itemHorizontalAlignment,
+            contentPadding = menuPresentationModel.itemContentPadding,
             isMenu = true,
             sides = Sides.ClosedRectangle
         )
@@ -380,8 +379,8 @@ internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
                 // Check if we have a presentation overlay for this secondary command
                 val hasOverlay = overlays.containsKey(secondaryCommand)
                 var currSecondaryPresentationModel = if (hasOverlay)
-                    menuButtonPresentationModel.overlayWith(overlays[secondaryCommand]!!)
-                else menuButtonPresentationModel
+                    itemButtonPresentationModel.overlayWith(overlays[secondaryCommand]!!)
+                else itemButtonPresentationModel
                 if (secondaryCommand == menuContentModel.highlightedCommand) {
                     // If our secondary content model has a highlighted command, pass bold
                     // font weight to the text style of the matching command button.

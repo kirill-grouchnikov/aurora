@@ -29,19 +29,19 @@ import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 
 interface BaseCommandPopupMenuPresentationModel {
-    val menuPresentationState: CommandButtonPresentationState
+    val itemPresentationState: CommandButtonPresentationState
 }
 
 data class CommandPopupMenuPresentationModel(
-    override val menuPresentationState: CommandButtonPresentationState =
+    override val itemPresentationState: CommandButtonPresentationState =
         DefaultCommandPopupMenuPresentationState,
     val panelPresentationModel: CommandPopupMenuPanelPresentationModel? = null,
-    val menuIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
-    val menuIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
-    val menuIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
-    val menuContentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
-    val menuHorizontalAlignment: HorizontalAlignment = HorizontalAlignment.Fill,
-    val maxVisibleMenuCommands: Int = 0,
+    val itemIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    val itemIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    val itemIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    val itemContentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
+    val itemHorizontalAlignment: HorizontalAlignment = HorizontalAlignment.Fill,
+    val maxVisibleItems: Int = 0,
     val iconGutterFillColorQuery: ((AuroraColorScheme) -> Color)? = null,
     val backgroundFillColorQuery: ((Int, AuroraColorScheme) -> Color) = { _, scheme -> scheme.backgroundFillColor },
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignTop,

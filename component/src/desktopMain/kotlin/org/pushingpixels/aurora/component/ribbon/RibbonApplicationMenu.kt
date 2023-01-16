@@ -205,8 +205,8 @@ data class RibbonApplicationMenuCommandButtonPresentationModel(
     override val toDismissPopupsOnActivation: Boolean = true
     override val popupMenuPresentationModel: CommandPopupMenuPresentationModel =
         CommandPopupMenuPresentationModel(
-            menuPresentationState = CommandButtonPresentationState.Tile,
-            menuContentPadding = PaddingValues(horizontal = 6.dp, vertical = 8.dp)
+            itemPresentationState = CommandButtonPresentationState.Tile,
+            itemContentPadding = PaddingValues(horizontal = 6.dp, vertical = 8.dp)
         )
     override val horizontalGapScaleFactor: Float = 1.0f
     override val verticalGapScaleFactor: Float = 1.0f
@@ -216,7 +216,7 @@ data class RibbonApplicationMenuCommandButtonPresentationModel(
 
 private data class RibbonApplicationMenuPopupContentLayoutInfo(
     override val popupSize: Size,
-    val menuButtonPresentationModel: CommandButtonPresentationModel,
+    val itemButtonPresentationModel: CommandButtonPresentationModel,
 ) : BaseCommandMenuPopupLayoutInfo
 
 private object RibbonApplicationMenuPopupHandler : BaseCommandMenuHandler<
@@ -249,8 +249,8 @@ private object RibbonApplicationMenuPopupHandler : BaseCommandMenuHandler<
 
         // Command presentation for menu content, taking some values from
         // the popup menu presentation model configured on the top-level presentation model
-        val menuButtonPresentationModel = CommandButtonPresentationModel(
-            presentationState = menuPresentationModel.menuPresentationState,
+        val itemButtonPresentationModel = CommandButtonPresentationModel(
+            presentationState = menuPresentationModel.itemPresentationState,
             iconActiveFilterStrategy = IconFilterStrategy.Original,
             iconEnabledFilterStrategy = IconFilterStrategy.Original,
             iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
@@ -258,13 +258,13 @@ private object RibbonApplicationMenuPopupHandler : BaseCommandMenuHandler<
             popupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignTop,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             horizontalAlignment = HorizontalAlignment.Fill,
-            contentPadding = menuPresentationModel.menuContentPadding,
+            contentPadding = menuPresentationModel.itemContentPadding,
             isMenu = true,
             sides = Sides.ClosedRectangle
         )
 
         val layoutManager: CommandButtonLayoutManager =
-            menuButtonPresentationModel.presentationState.createLayoutManager(
+            itemButtonPresentationModel.presentationState.createLayoutManager(
                 layoutDirection = layoutDirection,
                 density = density,
                 textStyle = textStyle,
@@ -277,10 +277,10 @@ private object RibbonApplicationMenuPopupHandler : BaseCommandMenuHandler<
             for (secondaryCommand in commandGroup.commands) {
                 val preferredSize = layoutManager.getPreferredSize(
                     command = secondaryCommand,
-                    presentationModel = menuButtonPresentationModel,
+                    presentationModel = itemButtonPresentationModel,
                     preLayoutInfo = layoutManager.getPreLayoutInfo(
                         command = secondaryCommand,
-                        presentationModel = menuButtonPresentationModel
+                        presentationModel = itemButtonPresentationModel
                     )
                 )
                 maxWidth = kotlin.math.max(maxWidth, preferredSize.width)
@@ -293,7 +293,7 @@ private object RibbonApplicationMenuPopupHandler : BaseCommandMenuHandler<
                 width = maxWidth,
                 height = combinedHeight
             ),
-            menuButtonPresentationModel = menuButtonPresentationModel
+            itemButtonPresentationModel = itemButtonPresentationModel
         )
     }
 
@@ -304,7 +304,7 @@ private object RibbonApplicationMenuPopupHandler : BaseCommandMenuHandler<
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
         popupContentLayoutInfo: RibbonApplicationMenuPopupContentLayoutInfo
     ) {
-        val menuButtonPresentationModel = popupContentLayoutInfo.menuButtonPresentationModel
+        val itemButtonPresentationModel = popupContentLayoutInfo.itemButtonPresentationModel
 
         val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
             decorationAreaType = AuroraSkin.decorationAreaType
@@ -318,8 +318,8 @@ private object RibbonApplicationMenuPopupHandler : BaseCommandMenuHandler<
                     // Check if we have a presentation overlay for this secondary command
                     val hasOverlay = overlays.containsKey(secondaryCommand)
                     val currSecondaryPresentationModel = if (hasOverlay)
-                        menuButtonPresentationModel.overlayWith(overlays[secondaryCommand]!!)
-                    else menuButtonPresentationModel
+                        itemButtonPresentationModel.overlayWith(overlays[secondaryCommand]!!)
+                    else itemButtonPresentationModel
                     // Project a command button for each secondary command, passing the same
                     // overlays into it.
                     CommandButtonProjection(

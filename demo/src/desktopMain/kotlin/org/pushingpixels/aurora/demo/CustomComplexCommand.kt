@@ -244,12 +244,12 @@ val CustomComplexPresentationState: CommandButtonPresentationState =
     }
 
 data class CustomComplexCommandPopupMenuPresentationModel(
-    override val menuPresentationState: CommandButtonPresentationState =
+    override val itemPresentationState: CommandButtonPresentationState =
         DefaultCommandPopupMenuPresentationState,
-    val menuIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
-    val menuIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
-    val menuIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
-    val menuContentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
+    val itemIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    val itemIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    val itemIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    val itemContentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignTop,
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Fill,
     val zoomPresentationModel: CommandButtonPresentationModel =
@@ -343,8 +343,8 @@ data class CustomComplexCommandButtonPresentationModel(
 
 data class CustomComplexPopupContentLayoutInfo(
     override val popupSize: Size,
-    val menuButtonPresentationModel: CommandButtonPresentationModel,
-    val entryHeights: FloatArray
+    val itemButtonPresentationModel: CommandButtonPresentationModel,
+    val itemHeights: FloatArray
 ) : BaseCommandMenuPopupLayoutInfo
 
 object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
@@ -361,29 +361,29 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
     ): CustomComplexPopupContentLayoutInfo {
         // Command presentation for menu content, taking some values from
         // the popup menu presentation model configured on the top-level presentation model
-        val menuButtonPresentationModel = CommandButtonPresentationModel(
-            presentationState = menuPresentationModel.menuPresentationState,
-            iconActiveFilterStrategy = menuPresentationModel.menuIconActiveFilterStrategy,
-            iconEnabledFilterStrategy = menuPresentationModel.menuIconEnabledFilterStrategy,
-            iconDisabledFilterStrategy = menuPresentationModel.menuIconDisabledFilterStrategy,
+        val itemButtonPresentationModel = CommandButtonPresentationModel(
+            presentationState = menuPresentationModel.itemPresentationState,
+            iconActiveFilterStrategy = menuPresentationModel.itemIconActiveFilterStrategy,
+            iconEnabledFilterStrategy = menuPresentationModel.itemIconEnabledFilterStrategy,
+            iconDisabledFilterStrategy = menuPresentationModel.itemIconDisabledFilterStrategy,
             forceAllocateSpaceForIcon = false,
             popupPlacementStrategy = menuPresentationModel.popupPlacementStrategy,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             horizontalAlignment = menuPresentationModel.horizontalAlignment,
-            contentPadding = menuPresentationModel.menuContentPadding,
+            contentPadding = menuPresentationModel.itemContentPadding,
             isMenu = true,
             sides = Sides.ClosedRectangle
         )
 
         val layoutManager: CommandButtonLayoutManager =
-            menuButtonPresentationModel.presentationState.createLayoutManager(
+            itemButtonPresentationModel.presentationState.createLayoutManager(
                 layoutDirection = layoutDirection,
                 density = density,
                 textStyle = textStyle,
                 fontFamilyResolver = fontFamilyResolver
             )
 
-        val entryHeights = FloatArray(menuContentModel.sections.sumOf { it.entries.size })
+        val itemHeights = FloatArray(menuContentModel.sections.sumOf { it.entries.size })
 
         // Rows such as zoom, edit and header have two areas: title and actions.
         // Treat the title area separately to be aligned with the command-based
@@ -401,22 +401,22 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
                     is CustomComplexPopupMenuCommand -> {
                         val preferredSize = layoutManager.getPreferredSize(
                             command = entry.command,
-                            presentationModel = menuButtonPresentationModel,
+                            presentationModel = itemButtonPresentationModel,
                             preLayoutInfo = layoutManager.getPreLayoutInfo(
                                 command = entry.command,
-                                presentationModel = menuButtonPresentationModel
+                                presentationModel = itemButtonPresentationModel
                             )
                         )
                         maxPrimaryWidth = max(maxPrimaryWidth, preferredSize.width)
                         combinedHeight += preferredSize.height
-                        entryHeights[entryIndex] = preferredSize.height
+                        itemHeights[entryIndex] = preferredSize.height
                     }
 
                     is CustomComplexPopupMenuZoom -> {
                         val titleWidth = getLabelPreferredSingleLineWidth(
                             contentModel = LabelContentModel(text = entry.title),
                             presentationModel = LabelPresentationModel(
-                                contentPadding = menuPresentationModel.menuContentPadding,
+                                contentPadding = menuPresentationModel.itemContentPadding,
                                 textMaxLines = 1
                             ),
                             resolvedTextStyle = textStyle,
@@ -476,14 +476,14 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
                                     + 2.0f * SeparatorSizingConstants.Thickness.value * density.density
                         )
                         combinedHeight += fullScreenPreferredSize.height
-                        entryHeights[entryIndex] = fullScreenPreferredSize.height
+                        itemHeights[entryIndex] = fullScreenPreferredSize.height
                     }
 
                     is CustomComplexPopupMenuEdit -> {
                         val titleWidth = getLabelPreferredSingleLineWidth(
                             contentModel = LabelContentModel(text = entry.title),
                             presentationModel = LabelPresentationModel(
-                                contentPadding = menuPresentationModel.menuContentPadding,
+                                contentPadding = menuPresentationModel.itemContentPadding,
                                 textMaxLines = 1
                             ),
                             resolvedTextStyle = textStyle,
@@ -530,7 +530,7 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
                         )
 
                         combinedHeight += cutPreferredSize.height
-                        entryHeights[entryIndex] = cutPreferredSize.height
+                        itemHeights[entryIndex] = cutPreferredSize.height
                     }
 
                     is CustomComplexPopupMenuHeader -> {
@@ -560,11 +560,11 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
 
                         maxActionWidth = max(maxActionWidth, signInPreferredSize.width)
 
-                        val entryHeight =
+                        val itemHeight =
                             signInPreferredSize.height + menuPresentationModel.headerSeparatorHeight.value * density.density
 
-                        combinedHeight += entryHeight
-                        entryHeights[entryIndex] = entryHeight
+                        combinedHeight += itemHeight
+                        itemHeights[entryIndex] = itemHeight
                     }
 
                     is CustomComplexPopupMenuFooter -> {
@@ -582,7 +582,7 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
                         )
                         maxPrimaryWidth = max(maxPrimaryWidth, preferredSize.width)
                         combinedHeight += preferredSize.height
-                        entryHeights[entryIndex] = preferredSize.height
+                        itemHeights[entryIndex] = preferredSize.height
                     }
                 }
                 entryIndex++
@@ -598,8 +598,8 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
                 width = maxPrimaryWidth + 32 * density.density + maxActionWidth,
                 height = combinedHeight
             ),
-            menuButtonPresentationModel = menuButtonPresentationModel,
-            entryHeights = entryHeights
+            itemButtonPresentationModel = itemButtonPresentationModel,
+            itemHeights = itemHeights
         )
     }
 
@@ -611,7 +611,7 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
         popupContentLayoutInfo: CustomComplexPopupContentLayoutInfo
     ) {
         val density = LocalDensity.current
-        val menuButtonPresentationModel = popupContentLayoutInfo.menuButtonPresentationModel
+        val itemButtonPresentationModel = popupContentLayoutInfo.itemButtonPresentationModel
 
         val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
             decorationAreaType = AuroraSkin.decorationAreaType
@@ -628,8 +628,8 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
                             // Check if we have a presentation overlay for this secondary command
                             val hasOverlay = overlays.containsKey(entry.command)
                             val currSecondaryPresentationModel = if (hasOverlay)
-                                menuButtonPresentationModel.overlayWith(overlays[entry.command]!!)
-                            else menuButtonPresentationModel
+                                itemButtonPresentationModel.overlayWith(overlays[entry.command]!!)
+                            else itemButtonPresentationModel
                             // Project a command button for each secondary command, passing the same
                             // overlays into it.
                             CommandButtonProjection(
@@ -646,14 +646,14 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
                         is CustomComplexPopupMenuZoom -> {
                             Row(
                                 modifier = Modifier.fillMaxWidth().height(
-                                    (popupContentLayoutInfo.entryHeights[entryIndex] / density.density).dp
+                                    (popupContentLayoutInfo.itemHeights[entryIndex] / density.density).dp
                                 )
                             ) {
                                 LabelProjection(
                                     contentModel = LabelContentModel(text = entry.title),
                                     presentationModel = LabelPresentationModel(
                                         textMaxLines = 1,
-                                        contentPadding = menuPresentationModel.menuContentPadding
+                                        contentPadding = menuPresentationModel.itemContentPadding
                                     )
                                 ).project()
 
@@ -696,14 +696,14 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
                         is CustomComplexPopupMenuEdit -> {
                             Row(
                                 modifier = Modifier.fillMaxWidth().height(
-                                    (popupContentLayoutInfo.entryHeights[entryIndex] / density.density).dp
+                                    (popupContentLayoutInfo.itemHeights[entryIndex] / density.density).dp
                                 )
                             ) {
                                 LabelProjection(
                                     contentModel = LabelContentModel(text = entry.title),
                                     presentationModel = LabelPresentationModel(
                                         textMaxLines = 1,
-                                        contentPadding = menuPresentationModel.menuContentPadding
+                                        contentPadding = menuPresentationModel.itemContentPadding
                                     )
                                 ).project()
 
@@ -753,7 +753,7 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
                         is CustomComplexPopupMenuHeader -> {
                             Column(
                                 modifier = Modifier.fillMaxWidth().height(
-                                    (popupContentLayoutInfo.entryHeights[entryIndex] / density.density).dp
+                                    (popupContentLayoutInfo.itemHeights[entryIndex] / density.density).dp
                                 )
                             ) {
                                 Row(modifier = Modifier.fillMaxWidth().weight(1.0f)) {
@@ -791,7 +791,7 @@ object CustomComplexCommandMenuPopupHandler : BaseCommandMenuHandler<
                         is CustomComplexPopupMenuFooter -> {
                             Box(
                                 modifier = Modifier.fillMaxWidth()
-                                    .height((popupContentLayoutInfo.entryHeights[entryIndex] / density.density).dp)
+                                    .height((popupContentLayoutInfo.itemHeights[entryIndex] / density.density).dp)
                                     .background(backgroundColorScheme.accentedBackgroundFillColor)
                             ) {
                                 CommandButtonProjection(

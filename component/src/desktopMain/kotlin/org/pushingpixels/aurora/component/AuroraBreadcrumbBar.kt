@@ -91,10 +91,10 @@ internal fun AuroraBreadcrumbBar(
         iconEnabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
         iconDisabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
         popupMenuPresentationModel = CommandPopupMenuPresentationModel(
-            menuIconActiveFilterStrategy = presentationModel.iconActiveFilterStrategy,
-            menuIconEnabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
-            menuIconDisabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
-            maxVisibleMenuCommands = presentationModel.maxVisibleChoiceCommands
+            itemIconActiveFilterStrategy = presentationModel.iconActiveFilterStrategy,
+            itemIconEnabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
+            itemIconDisabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
+            maxVisibleItems = presentationModel.maxVisibleChoiceCommands
         )
     )
     val contentLayoutManager = contentPresentationModel.presentationState.createLayoutManager(

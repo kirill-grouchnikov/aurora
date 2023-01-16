@@ -58,7 +58,7 @@ data class CustomMenuContentModel(
 
 ```
 data class CustomCommandPopupMenuPresentationModel(
-    override val menuPresentationState: CommandButtonPresentationState =
+    override val itemPresentationState: CommandButtonPresentationState =
         DefaultCommandPopupMenuPresentationState
 ) : BaseCommandPopupMenuPresentationModel
 
@@ -297,7 +297,7 @@ override fun getPopupContentLayoutInfo(
 
     // Command presentation for menu content, taking some values from
     // the popup menu presentation model configured on the top-level presentation model
-    val menuButtonPresentationModel = CommandButtonPresentationModel(
+    val itemButtonPresentationModel = CommandButtonPresentationModel(
         presentationState = menuPresentationModel.menuPresentationState,
         iconActiveFilterStrategy = IconFilterStrategy.Original,
         iconEnabledFilterStrategy = IconFilterStrategy.Original,
@@ -312,7 +312,7 @@ override fun getPopupContentLayoutInfo(
     )
 
     val layoutManager: CommandButtonLayoutManager =
-        menuButtonPresentationModel.presentationState.createLayoutManager(
+        itemButtonPresentationModel.presentationState.createLayoutManager(
             layoutDirection = layoutDirection,
             density = density,
             textStyle = textStyle,
@@ -356,7 +356,7 @@ override fun generatePopupContent(
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
     popupContentLayoutInfo: CustomPopupContentLayoutInfo
 ) {
-    val menuButtonPresentationModel = popupContentLayoutInfo.menuButtonPresentationModel
+    val itemButtonPresentationModel = popupContentLayoutInfo.menuButtonPresentationModel
 
     val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
         decorationAreaType = AuroraSkin.decorationAreaType
@@ -369,8 +369,8 @@ override fun generatePopupContent(
             // Check if we have a presentation overlay for this secondary command
             val hasOverlay = overlays.containsKey(entry)
             val currSecondaryPresentationModel = if (hasOverlay)
-                menuButtonPresentationModel.overlayWith(overlays[entry]!!)
-            else menuButtonPresentationModel
+                itemButtonPresentationModel.overlayWith(overlays[entry]!!)
+            else itemButtonPresentationModel
             // Project a command button for each secondary command, passing the same
             // overlays into it.
             CommandButtonProjection(

@@ -31,7 +31,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -55,7 +54,7 @@ import kotlin.math.pow
 
 internal data class ColorSelectorPopupContentLayoutInfo(
     override val popupSize: Size,
-    val menuButtonPresentationModel: CommandButtonPresentationModel,
+    val itemButtonPresentationModel: CommandButtonPresentationModel,
     val showTrailingSeparator: BooleanArray,
     val gutterWidth: Float
 ) : BaseCommandMenuPopupLayoutInfo
@@ -74,8 +73,8 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
     ): ColorSelectorPopupContentLayoutInfo {
         // Command presentation for menu content, taking some values from
         // the popup menu presentation model configured on the top-level presentation model
-        val menuButtonPresentationModel = CommandButtonPresentationModel(
-            presentationState = menuPresentationModel.menuPresentationState,
+        val itemButtonPresentationModel = CommandButtonPresentationModel(
+            presentationState = menuPresentationModel.itemPresentationState,
             iconActiveFilterStrategy = IconFilterStrategy.Original,
             iconEnabledFilterStrategy = IconFilterStrategy.Original,
             iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
@@ -88,7 +87,7 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
         )
 
         val layoutManager: CommandButtonLayoutManager =
-            menuButtonPresentationModel.presentationState.createLayoutManager(
+            itemButtonPresentationModel.presentationState.createLayoutManager(
                 layoutDirection = layoutDirection,
                 density = density,
                 textStyle = textStyle,
@@ -106,25 +105,25 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
                     atLeastOneButtonHasIcon = true
                     if (gutterWidth == 0.0f) {
                         gutterWidth =
-                            (menuButtonPresentationModel.contentPadding.calculateStartPadding(layoutDirection) +
+                            (itemButtonPresentationModel.contentPadding.calculateStartPadding(layoutDirection) +
                                     layoutManager.getPreferredIconSize(
                                         command = entry.command,
-                                        presentationModel = menuButtonPresentationModel
+                                        presentationModel = itemButtonPresentationModel
                                     ).width +
-                                    layoutManager.getIconTextGap(menuButtonPresentationModel) / 2.0f).value * density.density
+                                    layoutManager.getIconTextGap(itemButtonPresentationModel) / 2.0f).value * density.density
                     }
                 }
             }
         }
 
-        val menuButtonPresentationModelOverlay =
+        val itemButtonPresentationModelOverlay =
             CommandButtonPresentationModel.Overlay(
                 forceAllocateSpaceForIcon = atLeastOneButtonHasIcon,
                 textStyle = TextStyle(fontWeight = FontWeight.Bold)
             )
-        val menuButtonPresentationModelWithOverlay =
-            menuButtonPresentationModel.overlayWith(
-                menuButtonPresentationModelOverlay
+        val itemButtonPresentationModelWithOverlay =
+            itemButtonPresentationModel.overlayWith(
+                itemButtonPresentationModelOverlay
             )
 
         // First pass - go over all the entries to determine the width of the popup
@@ -139,10 +138,10 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
                 is ColorSelectorPopupMenuCommand -> {
                     val preferredSize = layoutManager.getPreferredSize(
                         command = entry.command,
-                        presentationModel = menuButtonPresentationModelWithOverlay,
+                        presentationModel = itemButtonPresentationModelWithOverlay,
                         preLayoutInfo = layoutManager.getPreLayoutInfo(
                             command = entry.command,
-                            presentationModel = menuButtonPresentationModelWithOverlay
+                            presentationModel = itemButtonPresentationModelWithOverlay
                         )
                     )
                     maxWidth = max(maxWidth, preferredSize.width)
@@ -258,7 +257,7 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
                 width = maxWidth,
                 height = combinedHeight
             ),
-            menuButtonPresentationModel = menuButtonPresentationModelWithOverlay,
+            itemButtonPresentationModel = itemButtonPresentationModelWithOverlay,
             showTrailingSeparator = showTrailingSeparator,
             gutterWidth = gutterWidth
         )
@@ -271,7 +270,7 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
         popupContentLayoutInfo: ColorSelectorPopupContentLayoutInfo
     ) {
-        val menuButtonPresentationModel = popupContentLayoutInfo.menuButtonPresentationModel
+        val itemButtonPresentationModel = popupContentLayoutInfo.itemButtonPresentationModel
 
         val sectionTitlePresentationModel = LabelPresentationModel(
             textStyle = menuPresentationModel.sectionTitleTextStyle,
@@ -291,8 +290,8 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
                         // Check if we have a presentation overlay for this secondary command
                         val hasOverlay = overlays.containsKey(entry.command)
                         val currSecondaryPresentationModel = if (hasOverlay)
-                            menuButtonPresentationModel.overlayWith(overlays[entry.command]!!)
-                        else menuButtonPresentationModel
+                            itemButtonPresentationModel.overlayWith(overlays[entry.command]!!)
+                        else itemButtonPresentationModel
                         // Project a command button for each secondary command, passing the same
                         // overlays into it.
                         CommandButtonProjection(

@@ -207,7 +207,7 @@ val CustomPresentationState: CommandButtonPresentationState =
     }
 
 data class CustomCommandPopupMenuPresentationModel(
-    override val menuPresentationState: CommandButtonPresentationState =
+    override val itemPresentationState: CommandButtonPresentationState =
         DefaultCommandPopupMenuPresentationState
 ) : BaseCommandPopupMenuPresentationModel
 
@@ -247,7 +247,7 @@ data class CustomCommandButtonPresentationModel(
 
 data class CustomPopupContentLayoutInfo(
     override val popupSize: Size,
-    val menuButtonPresentationModel: CommandButtonPresentationModel,
+    val itemButtonPresentationModel: CommandButtonPresentationModel,
 ) : BaseCommandMenuPopupLayoutInfo
 
 object CustomCommandMenuPopupHandler : BaseCommandMenuHandler<
@@ -278,8 +278,8 @@ object CustomCommandMenuPopupHandler : BaseCommandMenuHandler<
 
         // Command presentation for menu content, taking some values from
         // the popup menu presentation model configured on the top-level presentation model
-        val menuButtonPresentationModel = CommandButtonPresentationModel(
-            presentationState = menuPresentationModel.menuPresentationState,
+        val itemButtonPresentationModel = CommandButtonPresentationModel(
+            presentationState = menuPresentationModel.itemPresentationState,
             iconActiveFilterStrategy = IconFilterStrategy.Original,
             iconEnabledFilterStrategy = IconFilterStrategy.Original,
             iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
@@ -293,7 +293,7 @@ object CustomCommandMenuPopupHandler : BaseCommandMenuHandler<
         )
 
         val layoutManager: CommandButtonLayoutManager =
-            menuButtonPresentationModel.presentationState.createLayoutManager(
+            itemButtonPresentationModel.presentationState.createLayoutManager(
                 layoutDirection = layoutDirection,
                 density = density,
                 textStyle = textStyle,
@@ -305,10 +305,10 @@ object CustomCommandMenuPopupHandler : BaseCommandMenuHandler<
         for (entry in menuContentModel.entries) {
             val preferredSize = layoutManager.getPreferredSize(
                 command = entry,
-                presentationModel = menuButtonPresentationModel,
+                presentationModel = itemButtonPresentationModel,
                 preLayoutInfo = layoutManager.getPreLayoutInfo(
                     command = entry,
-                    presentationModel = menuButtonPresentationModel
+                    presentationModel = itemButtonPresentationModel
                 )
             )
             maxWidth = max(maxWidth, preferredSize.width)
@@ -320,7 +320,7 @@ object CustomCommandMenuPopupHandler : BaseCommandMenuHandler<
                 width = maxWidth,
                 height = combinedHeight
             ),
-            menuButtonPresentationModel = menuButtonPresentationModel
+            itemButtonPresentationModel = itemButtonPresentationModel
         )
     }
 
@@ -331,7 +331,7 @@ object CustomCommandMenuPopupHandler : BaseCommandMenuHandler<
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
         popupContentLayoutInfo: CustomPopupContentLayoutInfo
     ) {
-        val menuButtonPresentationModel = popupContentLayoutInfo.menuButtonPresentationModel
+        val itemButtonPresentationModel = popupContentLayoutInfo.itemButtonPresentationModel
 
         val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
             decorationAreaType = AuroraSkin.decorationAreaType
@@ -344,8 +344,8 @@ object CustomCommandMenuPopupHandler : BaseCommandMenuHandler<
                 // Check if we have a presentation overlay for this secondary command
                 val hasOverlay = overlays.containsKey(entry)
                 val currSecondaryPresentationModel = if (hasOverlay)
-                    menuButtonPresentationModel.overlayWith(overlays[entry]!!)
-                else menuButtonPresentationModel
+                    itemButtonPresentationModel.overlayWith(overlays[entry]!!)
+                else itemButtonPresentationModel
                 // Project a command button for each secondary command, passing the same
                 // overlays into it.
                 CommandButtonProjection(

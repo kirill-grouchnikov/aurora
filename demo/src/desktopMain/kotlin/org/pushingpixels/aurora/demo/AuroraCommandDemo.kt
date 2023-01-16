@@ -878,7 +878,7 @@ fun AuroraWindowScope.DemoCommandContent(
     // for its popup menu content
     overlays[secondaryCommand5] = CommandButtonPresentationModel.Overlay(
         popupMenuPresentationModel = CommandPopupMenuPresentationModel(
-            menuPresentationState = CommandButtonPresentationState.Tile
+            itemPresentationState = CommandButtonPresentationState.Tile
         )
     )
 

@@ -263,8 +263,8 @@ internal fun <E> AuroraComboBox(
                         ),
                         contentModel = contentModelState,
                         presentationModel = CommandPopupMenuPresentationModel(
-                            menuPresentationState = CommandButtonPresentationState.Medium,
-                            maxVisibleMenuCommands = presentationModel.popupMaxVisibleItems,
+                            itemPresentationState = CommandButtonPresentationState.Medium,
+                            maxVisibleItems = presentationModel.popupMaxVisibleItems,
                             popupPlacementStrategy = presentationModel.popupPlacementStrategy,
                             backgroundFillColorQuery = { rowIndex, colorScheme ->
                                 if ((rowIndex % 2) == 0) colorScheme.backgroundFillColor else colorScheme.accentedBackgroundFillColor
