@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.painter.Painter
@@ -25,8 +26,10 @@ class font_x_generic : Painter() {
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var blendMode = DrawScope.DefaultBlendMode
+    private var blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
     private var alphaStack = mutableListOf(1.0f)
     private var blendModeStack = mutableListOf(DrawScope.DefaultBlendMode)
+    private var blendModeSkiaStack = mutableListOf(org.jetbrains.skia.BlendMode.SRC_OVER)
 
 	@Suppress("UNUSED_VARIABLE", "UNUSED_VALUE", "VARIABLE_WITH_REDUNDANT_INITIALIZER", "UNNECESSARY_NOT_NULL_ASSERTION")
 private fun _paint0(drawScope : DrawScope) {
@@ -34,22 +37,29 @@ var shapeText: Outline?
 var generalPathText: Path? = null
 var alphaText = 0.0f
 var blendModeText = DrawScope.DefaultBlendMode
+var blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 with(drawScope) {
 // 
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 // _0
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 // _0_0
 alphaStack.add(0, alpha)
 alpha *= 0.5f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -75,15 +85,25 @@ generalPath?.run {
     close()
 }
 shape = Outline.Generic(generalPath!!)
-brush = Brush.radialGradient(0.0f to Color(46, 52, 54, 255), 1.0f to Color(46, 52, 54, 0), center = Offset(22.403002f, 44.931835f), radius = 22.900167f, tileMode = TileMode.Clamp)
-drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
+drawIntoCanvas {
+   val nativeCanvas = it.nativeCanvas
+val shader = org.jetbrains.skia.Shader.makeRadialGradient(x = 22.403002f, y = 44.931835f, r = 22.900167f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 255, r = 46, g = 52, b = 54), org.jetbrains.skia.Color.makeARGB(a = 0, r = 46, g = 52, b = 54), ), positions = floatArrayOf(0.0f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null))
+   nativeCanvas.drawPath(generalPath!!.asSkiaPath(), org.jetbrains.skia.Paint().also { skiaPaint ->
+      skiaPaint.shader = shader
+      skiaPaint.alpha = (alpha * 255).toInt()
+      skiaPaint.blendMode = org.jetbrains.skia.BlendMode.SRC_OVER
+      skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL
+   })
+}
 }
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 // _0_0_1
 shape = Outline.Rounded(roundRect = RoundRect(left = 3.488370418548584f, top = 2.512193202972412f, right = 44.49984121322632f, bottom = 45.4994330406189f,radiusX = 1.9981215000152588f, radiusY = 1.9982975721359253f))
 brush = Brush.linearGradient(0.0f to Color(238, 238, 236, 255), 1.0f to Color(255, 255, 255, 255), start = Offset(36.668537f, 36.383247f), end = Offset(10.303555f, 7.492883f), tileMode = TileMode.Clamp)
@@ -97,7 +117,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 // _0_0_2
 if (generalPath == null) {
    generalPath = Path()
@@ -137,7 +159,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -171,7 +195,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -205,7 +231,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -239,7 +267,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -273,7 +303,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -307,7 +339,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -341,7 +375,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -375,7 +411,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -409,7 +447,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -443,7 +483,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -477,7 +519,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -511,7 +555,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -545,7 +591,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -579,7 +627,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -613,7 +663,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -647,7 +699,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -681,7 +735,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -715,7 +771,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -749,7 +807,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -783,7 +843,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -817,7 +879,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -851,7 +915,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -885,7 +951,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -919,7 +987,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -953,7 +1023,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -987,7 +1059,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1021,7 +1095,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1055,7 +1131,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1089,7 +1167,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1123,7 +1203,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1157,7 +1239,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1191,7 +1275,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1225,7 +1311,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1259,7 +1347,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1293,7 +1383,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1327,7 +1419,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -1361,7 +1455,9 @@ blendMode = blendModeStack.removeAt(0)
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 // _0_0_39
 brush = SolidColor(Color(255, 255, 255, 255))
 stroke = Stroke(width=1.0249996f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)

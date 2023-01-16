@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.tools.svgtranscoder
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Matrix
+import androidx.compose.ui.graphics.asSkiaPath
 import org.apache.batik.bridge.SVGPatternElementBridge
 import org.apache.batik.bridge.TextNode
 import org.apache.batik.ext.awt.LinearGradientPaint
@@ -163,6 +164,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                         "var generalPathText: Path? = null\n" +
                         "var alphaText = 0.0f\n" +
                         "var blendModeText = DrawScope.DefaultBlendMode\n" +
+                        "var blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER\n" +
                         "with(drawScope) {\n" + paintingCode + "\n}\n}"
             combinedPaintingCode.append(paintingCodeMethod)
             combinedPaintingCode.append("\n\n")
@@ -431,6 +433,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         printWriterManager!!.println("             var shapeTile: Outline?")
         printWriterManager!!.println("             var alphaTile = alpha")
         printWriterManager!!.println("             var blendModeTile = blendMode")
+        printWriterManager!!.println("             var blendModeTileSkia = blendModeSkia")
 
         // Since PatternGraphicsNode does not (yet?) expose its content, we ask it to
         // paint itself to a custom extension of Graphics2D that tracks all relevant
@@ -470,6 +473,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                 val alpha = comp.alpha
                 printWriterManager!!.println("alphaTile = alpha * ${alpha}f")
                 printWriterManager!!.println("blendModeTile = ${blendModeToCompose(rule)}")
+                printWriterManager!!.println("blendModeTileSkia = ${blendModeToSkia(rule)}")
             }
 
             override fun getComposite(): Composite? {
@@ -723,6 +727,132 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         printWriterManager!!.println("tileMode = $tileModeRep)")
     }
 
+
+    /**
+     * Transcodes the specified radial gradient paint.
+     *
+     * @param paint Radial gradient paint.
+     * @throws IllegalArgumentException if the fractions are not strictly increasing.
+     */
+    @Throws(IllegalArgumentException::class)
+    private fun transcodeRadialGradientPaintSkia(paint: RadialGradientPaint) {
+        val centerPoint = paint.centerPoint
+        val radius = paint.radius
+        val focusPoint = paint.focusPoint
+        val fractions = paint.fractions
+        val colors = paint.colors
+        val cycleMethod = paint.cycleMethod
+        val transform = paint.transform
+
+        // Check validity of fractions
+        var previousFraction = -1.0f
+        for (currentFraction in fractions!!) {
+            require(!(currentFraction < 0f || currentFraction > 1f)) { "Fraction values must be in the range 0 to 1: $currentFraction" }
+            require(currentFraction >= previousFraction) { "Keyframe fractions must be non-decreasing: $currentFraction" }
+            previousFraction = currentFraction
+        }
+        // Correct fractions so that we don't have two consecutive identical
+        // fraction values (since that would not sit well with color stop
+        // handling in Compose)
+        val correctedFractions = mutableListOf<Float>()
+        previousFraction = -1.0f
+        for (currentFraction in fractions) {
+            var fraction = currentFraction
+            if (fraction == previousFraction) fraction += 0.000000001f
+            correctedFractions.add(fraction)
+            previousFraction = fraction
+        }
+
+        // Apply the affine transform of the paint to center point
+        val transfMatrix = DoubleArray(6)
+        transform.getMatrix(transfMatrix)
+        val matrix = Matrix(
+            values = floatArrayOf(
+                transfMatrix[0].toFloat(),
+                transfMatrix[1].toFloat(),
+                0.0f,
+                0.0f,
+                transfMatrix[2].toFloat(),
+                transfMatrix[3].toFloat(),
+                0.0f,
+                0.0f,
+                0.0f,
+                0.0f,
+                1.0f,
+                0.0f,
+                transfMatrix[4].toFloat(),
+                transfMatrix[5].toFloat(),
+                0.0f,
+                1.0f
+            )
+        )
+        val transformedCenter =
+            matrix.map(Offset(x = centerPoint.x.toFloat(), y = centerPoint.y.toFloat()))
+        val transformedFocus =
+            matrix.map(Offset(x = focusPoint.x.toFloat(), y = focusPoint.y.toFloat()))
+        val transformedEdge =
+            matrix.map(Offset(x = (centerPoint.x + radius).toFloat(), y = centerPoint.y.toFloat()))
+        val dx = transformedEdge.x - transformedCenter.x
+        val dy = transformedEdge.y - transformedCenter.y
+        val transformedRadius = sqrt(dx * dx + dy * dy)
+
+        val tileMode = when (cycleMethod) {
+            MultipleGradientPaint.NO_CYCLE -> "org.jetbrains.skia.FilterTileMode.CLAMP"
+            MultipleGradientPaint.REFLECT -> "org.jetbrains.skia.FilterTileMode.MIRROR"
+            else -> "org.jetbrains.skia.FilterTileMode.REPEAT"
+        }
+
+        if (focusPoint.equals(centerPoint)) {
+            // Transcode as radial gradient
+            printWriterManager!!.print("val shader = org.jetbrains.skia.Shader.makeRadialGradient(")
+
+            printWriterManager!!.print("x = ${transformedCenter.x}f, y = ${transformedCenter.y}f, ")
+            printWriterManager!!.print("r = ${transformedRadius}f, ")
+
+            val stopCount = correctedFractions.size
+            printWriterManager!!.print("colors = intArrayOf(")
+            for (stop in 0 until stopCount) {
+                printWriterManager!!.print("org.jetbrains.skia.Color.makeARGB(a = ${colors[stop].alpha}, r = ${colors[stop].red}, g = ${colors[stop].green}, b = ${colors[stop].blue}), ")
+            }
+            printWriterManager!!.print("), ")
+
+            printWriterManager!!.print("positions = floatArrayOf(")
+            for (stop in 0 until stopCount) {
+                printWriterManager!!.print("${correctedFractions[stop]}f, ")
+            }
+            printWriterManager!!.print("), ")
+
+            printWriterManager!!.print("style = org.jetbrains.skia.GradientStyle(tileMode = $tileMode, isPremul = true, localMatrix = null)")
+
+            printWriterManager!!.println(")")
+        } else {
+            // Transcode as two-point conical gradient
+            printWriterManager!!.print("val shader = org.jetbrains.skia.Shader.makeTwoPointConicalGradient(")
+
+            printWriterManager!!.print("x0 = ${transformedFocus.x}f, y0 = ${transformedFocus.y}f, ")
+            printWriterManager!!.print("r0 = 0.0f, ")
+            printWriterManager!!.print("x1 = ${transformedCenter.x}f, y1 = ${transformedCenter.y}f, ")
+            printWriterManager!!.print("r1 = ${transformedRadius}f, ")
+
+            val stopCount = correctedFractions.size
+            printWriterManager!!.print("colors = intArrayOf(")
+            for (stop in 0 until stopCount) {
+                printWriterManager!!.print("org.jetbrains.skia.Color.makeARGB(a = ${colors[stop].alpha}, r = ${colors[stop].red}, g = ${colors[stop].green}, b = ${colors[stop].blue}), ")
+            }
+            printWriterManager!!.print("), ")
+
+            printWriterManager!!.print("positions = floatArrayOf(")
+            for (stop in 0 until stopCount) {
+                printWriterManager!!.print("${correctedFractions[stop]}f, ")
+            }
+            printWriterManager!!.print("), ")
+
+            printWriterManager!!.print("style = org.jetbrains.skia.GradientStyle(tileMode = $tileMode, isPremul = true, localMatrix = null)")
+
+            printWriterManager!!.println(")")
+        }
+    }
+
     /**
      * Transcodes the specified paint.
      *
@@ -768,8 +898,16 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             return
         }
         if (paint is RadialGradientPaint) {
-            transcodeRadialGradientPaint(paint)
-            printWriterManager!!.println("drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)")
+            printWriterManager!!.println("drawIntoCanvas {")
+            printWriterManager!!.println("   val nativeCanvas = it.nativeCanvas")
+            transcodeRadialGradientPaintSkia(paint)
+            printWriterManager!!.println("   nativeCanvas.drawPath(generalPath!!.asSkiaPath(), org.jetbrains.skia.Paint().also { skiaPaint ->")
+            printWriterManager!!.println("      skiaPaint.shader = shader")
+            printWriterManager!!.println("      skiaPaint.alpha = (alpha * 255).toInt()")
+            printWriterManager!!.println("      skiaPaint.blendMode = org.jetbrains.skia.BlendMode.SRC_OVER")
+            printWriterManager!!.println("      skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL")
+            printWriterManager!!.println("   })")
+            printWriterManager!!.println("}")
             return
         }
         if (paint is LinearGradientPaint) {
@@ -1065,6 +1203,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                 val alpha = comp.alpha
                 printWriterManager!!.println("alphaText = alpha * ${alpha}f")
                 printWriterManager!!.println("blendModeText = ${blendModeToCompose(rule)}")
+                printWriterManager!!.println("blendModeTextSkia = ${blendModeToSkia(rule)}")
             }
 
             override fun setPaint(paint: Paint) {
@@ -1216,7 +1355,9 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             printWriterManager!!.println("alphaStack.add(0, alpha)")
             printWriterManager!!.println("alpha *= ${composite.alpha}f")
             printWriterManager!!.println("blendModeStack.add(0, ${blendModeToCompose(composite.rule)})")
+            printWriterManager!!.println("blendModeSkiaStack.add(0, ${blendModeToSkia(composite.rule)})")
             printWriterManager!!.println("blendMode = ${blendModeToCompose(composite.rule)}")
+            printWriterManager!!.println("blendModeSkia = ${blendModeToSkia(composite.rule)}")
         }
         val transform = node.transform
         if (isNonIdentityTransform(transform)) {
@@ -1295,6 +1436,30 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             }
         }
 
+        private fun blendModeToSkia(blendModeJava2D: Int): String {
+            return when (blendModeJava2D) {
+                AlphaComposite.CLEAR -> "org.jetbrains.skia.BlendMode.CLEAR"
+                AlphaComposite.DST -> "org.jetbrains.skia.BlendMode.DST"
+                AlphaComposite.DST_ATOP -> "org.jetbrains.skia.BlendMode.DST_ATOP"
+                AlphaComposite.DST_IN -> "org.jetbrains.skia.BlendMode.DST_IN"
+                AlphaComposite.DST_OUT -> "org.jetbrains.skia.BlendMode.DST_OUT"
+                AlphaComposite.DST_OVER -> "org.jetbrains.skia.BlendMode.DST_OVER"
+                AlphaComposite.SRC -> "org.jetbrains.skia.BlendMode.SRC"
+                AlphaComposite.SRC_ATOP -> "org.jetbrains.skia.BlendMode.SRC_ATOP"
+                AlphaComposite.SRC_IN -> "org.jetbrains.skia.BlendMode.SRC_IN"
+                AlphaComposite.SRC_OUT -> "org.jetbrains.skia.BlendMode.SRC_OUT"
+                AlphaComposite.SRC_OVER -> "org.jetbrains.skia.BlendMode.SRC_OVER"
+                AlphaComposite.XOR -> "org.jetbrains.skia.BlendMode.XOR"
+                else -> "org.jetbrains.skia.BlendMode.SRC_OVER"
+            }
+        }
+
+        private fun styleToSkia(isFill: Boolean): String {
+            return when (isFill) {
+                true -> "org.jetbrains.skia.PaintMode.FILL"
+                false -> "org.jetbrains.skia.PaintMode..STROKE"
+            }
+        }
 
         private fun isNonIdentityTransform(transform: AffineTransform?): Boolean {
             return if (transform == null) {

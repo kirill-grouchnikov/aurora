@@ -36,14 +36,8 @@ import org.pushingpixels.aurora.demo.svg.material.account_box_24px
 import org.pushingpixels.aurora.demo.svg.material.battery_full_24px
 import org.pushingpixels.aurora.demo.svg.material.perm_device_information_24px
 import org.pushingpixels.aurora.demo.svg.material.waves_24px
-import org.pushingpixels.aurora.demo.svg.random.kirill
-import org.pushingpixels.aurora.demo.svg.random.marker
-import org.pushingpixels.aurora.demo.svg.random.pattern
-import org.pushingpixels.aurora.demo.svg.random.text
-import org.pushingpixels.aurora.demo.svg.tango.drive_harddisk
-import org.pushingpixels.aurora.demo.svg.tango.help_browser
-import org.pushingpixels.aurora.demo.svg.tango.media_floppy
-import org.pushingpixels.aurora.demo.svg.tango.x_office_document_template
+import org.pushingpixels.aurora.demo.svg.random.*
+import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
 import org.pushingpixels.aurora.window.AuroraDecorationArea
@@ -225,6 +219,10 @@ fun IconDemoArea() {
             Column(modifier = Modifier.wrapContentHeight()) {
                 Box(modifier = Modifier.size(128.dp).paint(painter = text()))
                 LabelProjection(contentModel = LabelContentModel(text = "text")).project()
+            }
+            Column(modifier = Modifier.wrapContentHeight()) {
+                Box(modifier = Modifier.size(128.dp).paint(painter = face_kiss()))
+                LabelProjection(contentModel = LabelContentModel(text = "radial")).project()
             }
         }
         Row(
