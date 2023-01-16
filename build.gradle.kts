@@ -29,6 +29,7 @@ allprojects {
     tasks.withType<Jar>().configureEach {
         isPreserveFileTimestamps = false
         isReproducibleFileOrder = true
+        version = "${project.property("VERSION_NAME")}"
         archiveBaseName.set("${rootProject.name}-${project.name}")
 
         manifest {
