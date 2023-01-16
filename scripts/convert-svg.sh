@@ -66,3 +66,9 @@ java -Djava.awt.headless=true -cp $CLASSPATH \
     sourceFolder=../demo/src/desktopMain/kotlin/org/pushingpixels/aurora/demo/svg/vaadin \
     outputPackageName=org.pushingpixels.aurora.demo.svg.vaadin \
     templateFile=/org/pushingpixels/aurora/tools/svgtranscoder/AuroraSvgTranscoderTemplate.templ
+
+java -Djava.awt.headless=true -cp $CLASSPATH \
+    org.pushingpixels.aurora.tools.svgtranscoder.SvgDeepBatchConverter \
+    sourceRootFolder=../tools/screenshot/src/desktopMain/kotlin/org/pushingpixels/aurora/tools/screenshot/svg \
+    outputRootPackageName=org.pushingpixels.aurora.tools.screenshot.svg \
+    templateFile=/org/pushingpixels/aurora/tools/svgtranscoder/AuroraSvgTranscoderTemplate.templ

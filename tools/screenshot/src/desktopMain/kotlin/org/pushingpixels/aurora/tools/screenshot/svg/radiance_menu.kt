@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.painter.Painter
@@ -25,29 +26,33 @@ class radiance_menu : Painter() {
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var blendMode = DrawScope.DefaultBlendMode
+    private var blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
     private var alphaStack = mutableListOf(1.0f)
     private var blendModeStack = mutableListOf(DrawScope.DefaultBlendMode)
+    private var blendModeSkiaStack = mutableListOf(org.jetbrains.skia.BlendMode.SRC_OVER)
 
-	private fun _paint0(drawScope : DrawScope) {
+	@Suppress("UNUSED_VARIABLE", "UNUSED_VALUE", "VARIABLE_WITH_REDUNDANT_INITIALIZER", "UNNECESSARY_NOT_NULL_ASSERTION")
+private fun _paint0(drawScope : DrawScope) {
+var shapeText: Outline?
+var generalPathText: Path? = null
+var alphaText = 0.0f
+var blendModeText = DrawScope.DefaultBlendMode
+var blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 with(drawScope) {
 // 
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
-withTransform({
-transform(
-Matrix(values=floatArrayOf(
-1.0f, 0.0f, 0.0f, 0.0f,
-0.0f, 1.0f, 0.0f, 0.0f,
-0.0f, 0.0f, 1.0f, 0.0f,
--0.0f, -0.0f, 0.0f, 1.0f)
-))}){
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 // _0
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
+blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
+blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -62,41 +67,42 @@ if (generalPath == null) {
 } else {
    generalPath!!.reset()
 }
-generalPath!!.moveTo(10.0f, 0.0f)
-generalPath!!.lineTo(20.0f, 10.0f)
-generalPath!!.lineTo(10.0f, 20.0f)
-generalPath!!.lineTo(0.0f, 10.0f)
-generalPath!!.lineTo(10.0f, 0.0f)
-generalPath!!.close()
-generalPath!!.moveTo(5.70703f, 7.12131f)
-generalPath!!.lineTo(2.82861f, 10.0f)
-generalPath!!.lineTo(5.70703f, 12.8787f)
-generalPath!!.lineTo(7.17188f, 11.4141f)
-generalPath!!.lineTo(8.58594f, 12.8282f)
-generalPath!!.lineTo(7.12109f, 14.2928f)
-generalPath!!.lineTo(10.0f, 17.1716f)
-generalPath!!.lineTo(12.8789f, 14.2928f)
-generalPath!!.lineTo(11.4141f, 12.8282f)
-generalPath!!.lineTo(12.8281f, 11.4141f)
-generalPath!!.lineTo(14.293f, 12.8787f)
-generalPath!!.lineTo(17.1714f, 10.0f)
-generalPath!!.lineTo(14.293f, 7.12131f)
-generalPath!!.lineTo(10.0f, 11.4141f)
-generalPath!!.lineTo(5.70703f, 7.12131f)
-generalPath!!.close()
-generalPath!!.moveTo(7.12158f, 5.70715f)
-generalPath!!.lineTo(10.0f, 8.58591f)
-generalPath!!.lineTo(12.8789f, 5.70718f)
-generalPath!!.lineTo(10.0f, 2.82843f)
-generalPath!!.lineTo(7.12158f, 5.70715f)
-generalPath!!.close()
+generalPath?.run {
+    moveTo(10.0f, 0.0f)
+    lineTo(20.0f, 10.0f)
+    lineTo(10.0f, 20.0f)
+    lineTo(0.0f, 10.0f)
+    lineTo(10.0f, 0.0f)
+    close()
+    moveTo(5.70703f, 7.12131f)
+    lineTo(2.82861f, 10.0f)
+    lineTo(5.70703f, 12.8787f)
+    lineTo(7.17188f, 11.4141f)
+    lineTo(8.58594f, 12.8282f)
+    lineTo(7.12109f, 14.2928f)
+    lineTo(10.0f, 17.1716f)
+    lineTo(12.8789f, 14.2928f)
+    lineTo(11.4141f, 12.8282f)
+    lineTo(12.8281f, 11.4141f)
+    lineTo(14.293f, 12.8787f)
+    lineTo(17.1714f, 10.0f)
+    lineTo(14.293f, 7.12131f)
+    lineTo(10.0f, 11.4141f)
+    lineTo(5.70703f, 7.12131f)
+    close()
+    moveTo(7.12158f, 5.70715f)
+    lineTo(10.0f, 8.58591f)
+    lineTo(12.8789f, 5.70718f)
+    lineTo(10.0f, 2.82843f)
+    lineTo(7.12158f, 5.70715f)
+    close()
+}
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 }
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
-}
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
 
