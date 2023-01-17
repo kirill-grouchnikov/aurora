@@ -237,6 +237,10 @@ fun IconDemoArea() {
                 Box(modifier = Modifier.size(128.dp).paint(painter = kirill()))
                 LabelProjection(contentModel = LabelContentModel(text = "raster")).project()
             }
+            Column(modifier = Modifier.wrapContentHeight()) {
+                Box(modifier = Modifier.size(128.dp).paint(painter = sample()))
+                LabelProjection(contentModel = LabelContentModel(text = "radial")).project()
+            }
         }
     }
 }

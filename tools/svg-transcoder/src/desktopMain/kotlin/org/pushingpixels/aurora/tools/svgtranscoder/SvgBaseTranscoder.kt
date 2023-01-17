@@ -865,10 +865,6 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             transcodePatternPaint(paint)
             return
         }
-        if (paint is RadialGradientPaint) {
-            transcodeRadialGradientPaint(paint)
-            return
-        }
         if (paint is LinearGradientPaint) {
             transcodeLinearGradientPaint(paint)
             return
@@ -904,7 +900,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             printWriterManager!!.println("   nativeCanvas.drawPath(generalPath!!.asSkiaPath(), org.jetbrains.skia.Paint().also { skiaPaint ->")
             printWriterManager!!.println("      skiaPaint.shader = shader")
             printWriterManager!!.println("      skiaPaint.alpha = (alpha * 255).toInt()")
-            printWriterManager!!.println("      skiaPaint.blendMode = org.jetbrains.skia.BlendMode.SRC_OVER")
+            printWriterManager!!.println("      skiaPaint.blendMode = blendModeSkia")
             printWriterManager!!.println("      skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL")
             printWriterManager!!.println("   })")
             printWriterManager!!.println("}")
@@ -988,7 +984,6 @@ abstract class SvgBaseTranscoder(private val classname: String) {
     private fun transcodeStrokeShapePainter(painter: StrokeShapePainter) {
         val shape = painter.shape
         val paint = painter.paint ?: return
-        transcodePaint(paint)
         val stroke = painter.stroke
         val bStroke = stroke as BasicStroke
         val width = bStroke.lineWidth
@@ -997,6 +992,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         val miterlimit = bStroke.miterLimit
         val dash = bStroke.dashArray
         val dash_phase = bStroke.dashPhase
+
         val dashRep = StringBuffer()
         if (dash == null) {
             dashRep.append("null")
@@ -1010,32 +1006,70 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             }
             dashRep.append(")")
         }
-        val strokeCap = when (cap) {
-            BasicStroke.CAP_BUTT -> "StrokeCap.Butt"
-            BasicStroke.CAP_ROUND -> "StrokeCap.Round"
-            BasicStroke.CAP_SQUARE -> "StrokeCap.Square"
-            else -> throw UnsupportedOperationException("Unsupported stroke cap $cap")
-        }
-        val strokeJoin = when (join) {
-            BasicStroke.JOIN_BEVEL -> "StrokeJoin.Bevel"
-            BasicStroke.JOIN_MITER -> "StrokeJoin.Miter"
-            BasicStroke.JOIN_ROUND -> "StrokeJoin.Round"
-            else -> throw UnsupportedOperationException("Unsupported stroke join $join")
-        }
-        if (dash == null) {
-            printWriterManager!!.println(
-                "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f)"
-            )
+
+        val useSkia = (paint is RadialGradientPaint)
+        if (useSkia) {
+            val strokeCapSkia = when (cap) {
+                BasicStroke.CAP_BUTT -> "org.jetbrains.skia.PaintStrokeCap.BUTT"
+                BasicStroke.CAP_ROUND -> "org.jetbrains.skia.PaintStrokeCap.ROUND"
+                BasicStroke.CAP_SQUARE -> "org.jetbrains.skia.PaintStrokeCap.SQUARE"
+                else -> throw UnsupportedOperationException("Unsupported stroke cap $cap")
+            }
+            val strokeJoinSkia = when (join) {
+                BasicStroke.JOIN_BEVEL -> "org.jetbrains.skia.PaintStrokeJoin.BEVEL"
+                BasicStroke.JOIN_MITER -> "org.jetbrains.skia.PaintStrokeJoin.MITER"
+                BasicStroke.JOIN_ROUND -> "org.jetbrains.skia.PaintStrokeJoin.ROUND"
+                else -> throw UnsupportedOperationException("Unsupported stroke join $join")
+            }
+
+            printWriterManager!!.println("drawIntoCanvas {")
+            printWriterManager!!.println("   val nativeCanvas = it.nativeCanvas")
+            transcodeRadialGradientPaintSkia(paint as RadialGradientPaint)
+            printWriterManager!!.println("   nativeCanvas.drawPath(generalPath!!.asSkiaPath(), org.jetbrains.skia.Paint().also { skiaPaint ->")
+            printWriterManager!!.println("      skiaPaint.shader = shader")
+            printWriterManager!!.println("      skiaPaint.alpha = (alpha * 255).toInt()")
+            printWriterManager!!.println("      skiaPaint.blendMode = blendModeSkia")
+            printWriterManager!!.println("      skiaPaint.strokeWidth = ${width}f")
+            printWriterManager!!.println("      skiaPaint.strokeCap = $strokeCapSkia")
+            printWriterManager!!.println("      skiaPaint.strokeJoin = $strokeJoinSkia")
+            printWriterManager!!.println("      skiaPaint.strokeMiter = ${miterlimit}f")
+            if (dash != null) {
+                printWriterManager!!.println(
+                    "skiaPaint.pathEffect = PathEffect.dashPathEffect($dashRep, ${dash_phase}f).asSkiaPathEffect()"
+                )
+            }
+            printWriterManager!!.println("      skiaPaint.mode = org.jetbrains.skia.PaintMode.STROKE")
+            printWriterManager!!.println("   })")
+            printWriterManager!!.println("}")
         } else {
+            transcodePaint(paint)
+            val strokeCap = when (cap) {
+                BasicStroke.CAP_BUTT -> "StrokeCap.Butt"
+                BasicStroke.CAP_ROUND -> "StrokeCap.Round"
+                BasicStroke.CAP_SQUARE -> "StrokeCap.Square"
+                else -> throw UnsupportedOperationException("Unsupported stroke cap $cap")
+            }
+            val strokeJoin = when (join) {
+                BasicStroke.JOIN_BEVEL -> "StrokeJoin.Bevel"
+                BasicStroke.JOIN_MITER -> "StrokeJoin.Miter"
+                BasicStroke.JOIN_ROUND -> "StrokeJoin.Round"
+                else -> throw UnsupportedOperationException("Unsupported stroke join $join")
+            }
+            if (dash == null) {
+                printWriterManager!!.println(
+                    "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f)"
+                )
+            } else {
+                printWriterManager!!.println(
+                    "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f, " +
+                            "pathEffect=PathEffect.dashPathEffect($dashRep, ${dash_phase}f))"
+                )
+            }
+            transcodeShape(shape, "")
             printWriterManager!!.println(
-                "stroke = Stroke(width=${width}f, cap=$strokeCap, join=$strokeJoin, miter=${miterlimit}f, " +
-                        "pathEffect=PathEffect.dashPathEffect($dashRep, ${dash_phase}f))"
+                "drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)"
             )
         }
-        transcodeShape(shape, "")
-        printWriterManager!!.println(
-            "drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)"
-        )
     }
 
     /**

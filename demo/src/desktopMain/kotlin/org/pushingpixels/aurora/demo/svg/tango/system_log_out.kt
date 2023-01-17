@@ -68,7 +68,7 @@ val shader = org.jetbrains.skia.Shader.makeRadialGradient(x = 44.636215f, y = 44
    nativeCanvas.drawPath(generalPath!!.asSkiaPath(), org.jetbrains.skia.Paint().also { skiaPaint ->
       skiaPaint.shader = shader
       skiaPaint.alpha = (alpha * 255).toInt()
-      skiaPaint.blendMode = org.jetbrains.skia.BlendMode.SRC_OVER
+      skiaPaint.blendMode = blendModeSkia
       skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL
    })
 }
@@ -165,7 +165,7 @@ val shader = org.jetbrains.skia.Shader.makeRadialGradient(x = 24.837126f, y = 36
    nativeCanvas.drawPath(generalPath!!.asSkiaPath(), org.jetbrains.skia.Paint().also { skiaPaint ->
       skiaPaint.shader = shader
       skiaPaint.alpha = (alpha * 255).toInt()
-      skiaPaint.blendMode = org.jetbrains.skia.BlendMode.SRC_OVER
+      skiaPaint.blendMode = blendModeSkia
       skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL
    })
 }
@@ -248,7 +248,7 @@ val shader = org.jetbrains.skia.Shader.makeRadialGradient(x = 9.215158f, y = 14.
    nativeCanvas.drawPath(generalPath!!.asSkiaPath(), org.jetbrains.skia.Paint().also { skiaPaint ->
       skiaPaint.shader = shader
       skiaPaint.alpha = (alpha * 255).toInt()
-      skiaPaint.blendMode = org.jetbrains.skia.BlendMode.SRC_OVER
+      skiaPaint.blendMode = blendModeSkia
       skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL
    })
 }
@@ -310,7 +310,7 @@ val shader = org.jetbrains.skia.Shader.makeRadialGradient(x = 33.764343f, y = 0.
    nativeCanvas.drawPath(generalPath!!.asSkiaPath(), org.jetbrains.skia.Paint().also { skiaPaint ->
       skiaPaint.shader = shader
       skiaPaint.alpha = (alpha * 255).toInt()
-      skiaPaint.blendMode = org.jetbrains.skia.BlendMode.SRC_OVER
+      skiaPaint.blendMode = blendModeSkia
       skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL
    })
 }
