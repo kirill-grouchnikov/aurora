@@ -103,6 +103,5 @@ The second pass for `RasterImageNode` is in `SvgBaseTranscoder`. Every supported
 
 Compose's `Brush.radialGradient` does not support the variant with two circles (start and end). To work around this current limitation, the transcoded code goes a level lower into the underlying Skia (available through the Skiko bindings available in Compose Desktop distribution). The generated code uses a combination of:
 
-* `DrawScope.drawIntoCanvas` that gives access to `Canvas.nativeCanvas` which is the Skia canvas
-* `Paint` from Skia and its various attributes
 * `Shader.makeTwoPointConicalGradient` for two-point conical gradient which is the Skia's equivalent of the two-point radial gradient in SVG
+* Wrapped in a `ShaderBrush`
