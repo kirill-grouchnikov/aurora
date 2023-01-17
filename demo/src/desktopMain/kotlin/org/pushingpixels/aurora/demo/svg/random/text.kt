@@ -108,7 +108,25 @@ generalPathText?.run {
     close()
 }
 shapeText = Outline.Generic(generalPathText!!)
-drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
+if (shaderSkia != null) {
+   drawIntoCanvas {
+      val nativeCanvas = it.nativeCanvas
+      val nativePaint = org.jetbrains.skia.Paint().also { skiaPaint ->
+         skiaPaint.shader = shaderSkia
+         skiaPaint.alpha = (alphaText * 255).toInt()
+         skiaPaint.blendMode = blendModeTextSkia
+         skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL
+      }
+      when (shapeText) {
+          is Outline.Rectangle -> nativeCanvas.drawRect((shapeText as Outline.Rectangle).rect.toSkiaRect(), nativePaint)
+          is Outline.Rounded -> nativeCanvas.drawRRect((shapeText as Outline.Rounded).roundRect.toSkiaRRect(), nativePaint)
+          is Outline.Generic -> nativeCanvas.drawPath((shapeText as Outline.Generic).path.asSkiaPath(), nativePaint)
+          else -> {}
+      }
+   }
+} else {
+  drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
+}
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
 blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
@@ -203,7 +221,25 @@ generalPathText?.run {
     close()
 }
 shapeText = Outline.Generic(generalPathText!!)
-drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
+if (shaderSkia != null) {
+   drawIntoCanvas {
+      val nativeCanvas = it.nativeCanvas
+      val nativePaint = org.jetbrains.skia.Paint().also { skiaPaint ->
+         skiaPaint.shader = shaderSkia
+         skiaPaint.alpha = (alphaText * 255).toInt()
+         skiaPaint.blendMode = blendModeTextSkia
+         skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL
+      }
+      when (shapeText) {
+          is Outline.Rectangle -> nativeCanvas.drawRect((shapeText as Outline.Rectangle).rect.toSkiaRect(), nativePaint)
+          is Outline.Rounded -> nativeCanvas.drawRRect((shapeText as Outline.Rounded).roundRect.toSkiaRRect(), nativePaint)
+          is Outline.Generic -> nativeCanvas.drawPath((shapeText as Outline.Generic).path.asSkiaPath(), nativePaint)
+          else -> {}
+      }
+   }
+} else {
+  drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
+}
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
 blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
@@ -271,7 +307,25 @@ generalPathText?.run {
     close()
 }
 shapeText = Outline.Generic(generalPathText!!)
-drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
+if (shaderSkia != null) {
+   drawIntoCanvas {
+      val nativeCanvas = it.nativeCanvas
+      val nativePaint = org.jetbrains.skia.Paint().also { skiaPaint ->
+         skiaPaint.shader = shaderSkia
+         skiaPaint.alpha = (alphaText * 255).toInt()
+         skiaPaint.blendMode = blendModeTextSkia
+         skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL
+      }
+      when (shapeText) {
+          is Outline.Rectangle -> nativeCanvas.drawRect((shapeText as Outline.Rectangle).rect.toSkiaRect(), nativePaint)
+          is Outline.Rounded -> nativeCanvas.drawRRect((shapeText as Outline.Rounded).roundRect.toSkiaRRect(), nativePaint)
+          is Outline.Generic -> nativeCanvas.drawPath((shapeText as Outline.Generic).path.asSkiaPath(), nativePaint)
+          else -> {}
+      }
+   }
+} else {
+  drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
+}
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
 blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
@@ -565,7 +619,25 @@ generalPathText?.run {
     close()
 }
 shapeText = Outline.Generic(generalPathText!!)
-drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
+if (shaderSkia != null) {
+   drawIntoCanvas {
+      val nativeCanvas = it.nativeCanvas
+      val nativePaint = org.jetbrains.skia.Paint().also { skiaPaint ->
+         skiaPaint.shader = shaderSkia
+         skiaPaint.alpha = (alphaText * 255).toInt()
+         skiaPaint.blendMode = blendModeTextSkia
+         skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL
+      }
+      when (shapeText) {
+          is Outline.Rectangle -> nativeCanvas.drawRect((shapeText as Outline.Rectangle).rect.toSkiaRect(), nativePaint)
+          is Outline.Rounded -> nativeCanvas.drawRRect((shapeText as Outline.Rounded).roundRect.toSkiaRRect(), nativePaint)
+          is Outline.Generic -> nativeCanvas.drawPath((shapeText as Outline.Generic).path.asSkiaPath(), nativePaint)
+          else -> {}
+      }
+   }
+} else {
+  drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
+}
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
 blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER

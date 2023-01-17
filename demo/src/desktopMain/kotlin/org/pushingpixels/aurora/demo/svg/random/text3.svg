@@ -1,0 +1,13 @@
+<svg viewBox="0 0 150 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="Gradient2" cx="50%" cy="55%" r="50%" fx="20%" fy="35%">
+      <stop offset="60%" style="stop-color:rgb(131, 75, 198); stop-opacity: .5"/>
+      <stop offset="100%" style="stop-color:rgb(61, 211, 60); stop-opacity: .5"/>
+    </radialGradient>
+  </defs>
+  <text fill="url(#Gradient2)">
+    <tspan font-size="25" font-weight="bold" x="0" y="30">GRADIENT</tspan>
+    <tspan font-size="50" font-weight="bold" x="0" dy="60">TEXT</tspan>
+    <tspan font-size="18" font-weight="bold" x="0" dy="30">EVERYWHERE</tspan>
+  </text>
+</svg>

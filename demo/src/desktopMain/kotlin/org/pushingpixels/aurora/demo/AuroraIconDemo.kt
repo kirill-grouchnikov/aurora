@@ -217,16 +217,20 @@ fun IconDemoArea() {
                 LabelProjection(contentModel = LabelContentModel(text = "pattern")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
+                Box(modifier = Modifier.size(128.dp).paint(painter = pattern2()))
+                LabelProjection(contentModel = LabelContentModel(text = "pattern radial")).project()
+            }
+            Column(modifier = Modifier.wrapContentHeight()) {
                 Box(modifier = Modifier.size(128.dp).paint(painter = text()))
                 LabelProjection(contentModel = LabelContentModel(text = "text")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                Box(modifier = Modifier.size(128.dp).paint(painter = face_kiss()))
-                LabelProjection(contentModel = LabelContentModel(text = "radial")).project()
+                Box(modifier = Modifier.size(128.dp).paint(painter = text2()))
+                LabelProjection(contentModel = LabelContentModel(text = "text gradient linear")).project()
             }
             Column(modifier = Modifier.wrapContentHeight()) {
-                Box(modifier = Modifier.size(128.dp).paint(painter = pattern2()))
-                LabelProjection(contentModel = LabelContentModel(text = "pattern radial")).project()
+                Box(modifier = Modifier.size(128.dp).paint(painter = text3()))
+                LabelProjection(contentModel = LabelContentModel(text = "text gradient radial")).project()
             }
         }
         Row(
@@ -243,7 +247,11 @@ fun IconDemoArea() {
             }
             Column(modifier = Modifier.wrapContentHeight()) {
                 Box(modifier = Modifier.size(128.dp).paint(painter = sample()))
-                LabelProjection(contentModel = LabelContentModel(text = "radial")).project()
+                LabelProjection(contentModel = LabelContentModel(text = "gradient radial stroke")).project()
+            }
+            Column(modifier = Modifier.wrapContentHeight()) {
+                Box(modifier = Modifier.size(128.dp).paint(painter = face_kiss()))
+                LabelProjection(contentModel = LabelContentModel(text = "gradient radial fill")).project()
             }
         }
     }

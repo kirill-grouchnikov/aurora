@@ -1,0 +1,17 @@
+<svg viewBox="0 0 150 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="rainbow" x1="0" x2="0" y1="0" y2="100%" gradientUnits="userSpaceOnUse" >
+      <stop stop-color="#FF5B99" offset="0%"/>
+      <stop stop-color="#FF5447" offset="20%"/>
+      <stop stop-color="#FF7B21" offset="40%"/>
+      <stop stop-color="#EAFC37" offset="60%"/>
+      <stop stop-color="#4FCB6B" offset="80%"/>
+      <stop stop-color="#51F7FE" offset="100%"/>
+    </linearGradient>
+  </defs>
+  <text fill="url(#rainbow)">
+    <tspan font-size="25" font-weight="bold" x="0" y="30">GRADIENT</tspan>
+    <tspan font-size="50" font-weight="bold" x="0" dy="60">TEXT</tspan>
+    <tspan font-size="18" font-weight="bold" x="0" dy="30">EVERYWHERE</tspan>
+  </text>
+</svg>
