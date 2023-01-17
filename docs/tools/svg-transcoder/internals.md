@@ -98,3 +98,11 @@ A few points to note:
 * The static function that transcoding generates for retrieving the `BufferedImage` that corresponds to the decoded/encoded/decoded-again image content uses an internal `WeakReference` based on the MD5 hash-sum of the original encoded string. This is done for performance optimizations. For example, doing Base64-decoding + image parsing on every single loop of a `PatternPaint` might result in prohibitively expensive runtime performance.
 
 The second pass for `RasterImageNode` is in `SvgBaseTranscoder`. Every supported node that may use raster data - such as `PatternNode` for example - computes the MD5 hash-sum of the underlying `RenderedImage`, and then calls the matching method to retrieve the corresponding `BufferedImage` (each such method has been generated in the first pass as detailed above).
+
+### Addendum D - handling two-point `RadialGradientPaint`
+
+Compose's `Brush.radialGradient` does not support the variant with two circles (start and end). To work around this current limitation, the transcoded code goes a level lower into the underlying Skia (available through the Skiko bindings available in Compose Desktop distribution). The generated code uses a combination of:
+
+* `DrawScope.drawIntoCanvas` that gives access to `Canvas.nativeCanvas` which is the Skia canvas
+* `Paint` from Skia and its various attributes
+* `Shader.makeTwoPointConicalGradient` for two-point conical gradient which is the Skia's equivalent of the two-point radial gradient in SVG
