@@ -18,7 +18,7 @@ import kotlin.math.min
  * This class has been automatically generated using
  * <a href="https://github.com/kirill-grouchnikov/aurora">Aurora SVG transcoder</a>.
  */
-class pattern : Painter() {
+class pattern2 : Painter() {
     @Suppress("UNUSED_VARIABLE") private var shape: Outline? = null
     @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
@@ -66,7 +66,7 @@ withTransform({
         clipPath(Path().also { it.addPath((shape as Outline.Generic).path) })
     }
 }) {
-    val rect2D = Rect(left=0.0f, top=0.0f, right=50.0f, bottom=50.0f)
+    val rect2D = Rect(left=-1.6708927154541016f, top=-2.4904184341430664f, right=49.99999809265137f, bottom=51.403841972351074f)
     val tTiled = Matrix(values=floatArrayOf(
 1.0f, 0.0f, 0.0f, 0.0f,
 0.0f, 1.0f, 0.0f, 0.0f,
@@ -118,6 +118,43 @@ blendModeTileSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 brush = Brush.linearGradient(0.05f to Color(255, 255, 255, 128), 0.95f to Color(0, 0, 255, 128), start = Offset(5.0f, 5.0f), end = Offset(45.0f, 5.0f), tileMode = TileMode.Clamp)
 shapeTile = Outline.Generic(path = Path().also { it.addOval(oval=Rect(left = 5.0f, top = 5.0f, right = 45.0f, bottom = 45.0f))})
 drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile, blendMode = blendModeTile)
+alphaTile = alpha * 1.0f
+blendModeTile = BlendMode.SrcOver
+blendModeTileSkia = org.jetbrains.skia.BlendMode.SRC_OVER
+alphaTile = alpha * 1.0f
+blendModeTile = BlendMode.SrcOver
+blendModeTileSkia = org.jetbrains.skia.BlendMode.SRC_OVER
+brush = SolidColor(Color(0, 0, 0, 0))
+if (generalPathTile == null) {
+   generalPathTile = Path()
+} else {
+   generalPathTile!!.reset()
+}
+generalPathTile?.run {
+    moveTo(30.0f, 5.0f)
+    cubicTo(21.776237f, 2.8811646f, 13.111074f, 6.1868696f, 8.388181f, 13.244773f)
+    cubicTo(3.6652865f, 20.302677f, 3.914604f, 29.57363f, 9.010004f, 36.367496f)
+    cubicTo(14.105404f, 43.161366f, 22.93571f, 45.996574f, 31.033709f, 43.43881f)
+    cubicTo(39.131706f, 40.881046f, 44.73143f, 33.488087f, 45.0f, 25.0f)
+}
+shapeTile = Outline.Generic(generalPathTile!!)
+drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile, blendMode = blendModeTile)
+brush = Brush.radialGradient(0.9f to Color(31, 175, 198, 128), 1.0f to Color(161, 211, 60, 128), center = Offset(24.332644f, 26.59464f), radius = 20.667356f, tileMode = TileMode.Clamp)
+stroke = Stroke(width=10.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
+if (generalPathTile == null) {
+   generalPathTile = Path()
+} else {
+   generalPathTile!!.reset()
+}
+generalPathTile?.run {
+    moveTo(30.0f, 5.0f)
+    cubicTo(21.776237f, 2.8811646f, 13.111074f, 6.1868696f, 8.388181f, 13.244773f)
+    cubicTo(3.6652865f, 20.302677f, 3.914604f, 29.57363f, 9.010004f, 36.367496f)
+    cubicTo(14.105404f, 43.161366f, 22.93571f, 45.996574f, 31.033709f, 43.43881f)
+    cubicTo(39.131706f, 40.881046f, 44.73143f, 33.488087f, 45.0f, 25.0f)
+}
+shapeTile = Outline.Generic(generalPathTile!!)
+drawOutline(outline = shapeTile!!, style = stroke!!, brush=brush!!, alpha = alphaTile, blendMode = blendModeTile)
 alphaTile = alpha * 1.0f
 blendModeTile = BlendMode.SrcOver
 blendModeTileSkia = org.jetbrains.skia.BlendMode.SRC_OVER

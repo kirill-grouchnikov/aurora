@@ -95,12 +95,18 @@ shape = Outline.Generic(generalPath!!)
 drawIntoCanvas {
    val nativeCanvas = it.nativeCanvas
 val shader = org.jetbrains.skia.Shader.makeRadialGradient(x = 30.453064f, y = 38.130978f, r = 32.764153f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 255, r = 160, g = 160, b = 160), org.jetbrains.skia.Color.makeARGB(a = 255, r = 168, g = 168, b = 168), ), positions = floatArrayOf(0.0f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null))
-   nativeCanvas.drawPath(generalPath!!.asSkiaPath(), org.jetbrains.skia.Paint().also { skiaPaint ->
+   val nativePaint = org.jetbrains.skia.Paint().also { skiaPaint ->
       skiaPaint.shader = shader
       skiaPaint.alpha = (alpha * 255).toInt()
       skiaPaint.blendMode = blendModeSkia
       skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL
-   })
+   }
+   when (shape) {
+       is Outline.Rectangle -> nativeCanvas.drawRect((shape as Outline.Rectangle).rect.toSkiaRect(), nativePaint)
+       is Outline.Rounded -> nativeCanvas.drawRRect((shape as Outline.Rounded).roundRect.toSkiaRRect(), nativePaint)
+       is Outline.Generic -> nativeCanvas.drawPath((shape as Outline.Generic).path.asSkiaPath(), nativePaint)
+       else -> {}
+   }
 }
 brush = SolidColor(Color(90, 90, 90, 255))
 stroke = Stroke(width=1.0f, cap=StrokeCap.Round, join=StrokeJoin.Round, miter=4.0f)
@@ -281,12 +287,18 @@ shape = Outline.Generic(generalPath!!)
 drawIntoCanvas {
    val nativeCanvas = it.nativeCanvas
 val shader = org.jetbrains.skia.Shader.makeRadialGradient(x = -211.146f, y = 85.66791f, r = 325.0f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 255, r = 0, g = 0, b = 0), org.jetbrains.skia.Color.makeARGB(a = 0, r = 0, g = 0, b = 0), ), positions = floatArrayOf(0.0f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null))
-   nativeCanvas.drawPath(generalPath!!.asSkiaPath(), org.jetbrains.skia.Paint().also { skiaPaint ->
+   val nativePaint = org.jetbrains.skia.Paint().also { skiaPaint ->
       skiaPaint.shader = shader
       skiaPaint.alpha = (alpha * 255).toInt()
       skiaPaint.blendMode = blendModeSkia
       skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL
-   })
+   }
+   when (shape) {
+       is Outline.Rectangle -> nativeCanvas.drawRect((shape as Outline.Rectangle).rect.toSkiaRect(), nativePaint)
+       is Outline.Rounded -> nativeCanvas.drawRRect((shape as Outline.Rounded).roundRect.toSkiaRRect(), nativePaint)
+       is Outline.Generic -> nativeCanvas.drawPath((shape as Outline.Generic).path.asSkiaPath(), nativePaint)
+       else -> {}
+   }
 }
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -313,12 +325,18 @@ shape = Outline.Generic(generalPath!!)
 drawIntoCanvas {
    val nativeCanvas = it.nativeCanvas
 val shader = org.jetbrains.skia.Shader.makeRadialGradient(x = -1567.7247f, y = 85.66791f, r = 325.0f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 255, r = 0, g = 0, b = 0), org.jetbrains.skia.Color.makeARGB(a = 0, r = 0, g = 0, b = 0), ), positions = floatArrayOf(0.0f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null))
-   nativeCanvas.drawPath(generalPath!!.asSkiaPath(), org.jetbrains.skia.Paint().also { skiaPaint ->
+   val nativePaint = org.jetbrains.skia.Paint().also { skiaPaint ->
       skiaPaint.shader = shader
       skiaPaint.alpha = (alpha * 255).toInt()
       skiaPaint.blendMode = blendModeSkia
       skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL
-   })
+   }
+   when (shape) {
+       is Outline.Rectangle -> nativeCanvas.drawRect((shape as Outline.Rectangle).rect.toSkiaRect(), nativePaint)
+       is Outline.Rounded -> nativeCanvas.drawRRect((shape as Outline.Rounded).roundRect.toSkiaRRect(), nativePaint)
+       is Outline.Generic -> nativeCanvas.drawPath((shape as Outline.Generic).path.asSkiaPath(), nativePaint)
+       else -> {}
+   }
 }
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -941,7 +959,7 @@ drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode
 drawIntoCanvas {
    val nativeCanvas = it.nativeCanvas
 val shader = org.jetbrains.skia.Shader.makeRadialGradient(x = 52.908974f, y = -13.075683f, r = 36.553963f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 255, r = 163, g = 163, b = 163), org.jetbrains.skia.Color.makeARGB(a = 255, r = 76, g = 76, b = 76), ), positions = floatArrayOf(0.0f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null))
-   nativeCanvas.drawPath(generalPath!!.asSkiaPath(), org.jetbrains.skia.Paint().also { skiaPaint ->
+   val nativePaint = org.jetbrains.skia.Paint().also { skiaPaint ->
       skiaPaint.shader = shader
       skiaPaint.alpha = (alpha * 255).toInt()
       skiaPaint.blendMode = blendModeSkia
@@ -950,7 +968,13 @@ val shader = org.jetbrains.skia.Shader.makeRadialGradient(x = 52.908974f, y = -1
       skiaPaint.strokeJoin = org.jetbrains.skia.PaintStrokeJoin.MITER
       skiaPaint.strokeMiter = 4.0f
       skiaPaint.mode = org.jetbrains.skia.PaintMode.STROKE
-   })
+   }
+   when (shape) {
+       is Outline.Rectangle -> nativeCanvas.drawRect((shape as Outline.Rectangle).rect.toSkiaRect(), nativePaint)
+       is Outline.Rounded -> nativeCanvas.drawRRect((shape as Outline.Rounded).roundRect.toSkiaRRect(), nativePaint)
+       is Outline.Generic -> nativeCanvas.drawPath((shape as Outline.Generic).path.asSkiaPath(), nativePaint)
+       else -> {}
+   }
 }
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)

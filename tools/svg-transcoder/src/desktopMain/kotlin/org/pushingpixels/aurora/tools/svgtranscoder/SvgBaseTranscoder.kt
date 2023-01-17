@@ -16,8 +16,7 @@
 package org.pushingpixels.aurora.tools.svgtranscoder
 
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Matrix
-import androidx.compose.ui.graphics.asSkiaPath
+import androidx.compose.ui.graphics.*
 import org.apache.batik.bridge.SVGPatternElementBridge
 import org.apache.batik.bridge.TextNode
 import org.apache.batik.ext.awt.LinearGradientPaint
@@ -28,6 +27,9 @@ import org.apache.batik.gvt.*
 import org.pushingpixels.aurora.tools.svgtranscoder.utils.McCrashyGraphics2D
 import org.pushingpixels.aurora.tools.svgtranscoder.utils.RasterScanner
 import java.awt.*
+import java.awt.Color
+import java.awt.Paint
+import java.awt.Shape
 import java.awt.geom.*
 import java.awt.image.ImageObserver
 import java.awt.image.RenderedImage
@@ -431,6 +433,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
 
         printWriterManager!!.println("             translate(left = startX, top = startY) {")
         printWriterManager!!.println("             var shapeTile: Outline?")
+        printWriterManager!!.println("             var generalPathTile: Path? = null")
         printWriterManager!!.println("             var alphaTile = alpha")
         printWriterManager!!.println("             var blendModeTile = blendMode")
         printWriterManager!!.println("             var blendModeTileSkia = blendModeSkia")
@@ -865,6 +868,10 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             transcodePatternPaint(paint)
             return
         }
+        if (paint is RadialGradientPaint) {
+            transcodeRadialGradientPaint(paint)
+            return
+        }
         if (paint is LinearGradientPaint) {
             transcodeLinearGradientPaint(paint)
             return
@@ -897,12 +904,18 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             printWriterManager!!.println("drawIntoCanvas {")
             printWriterManager!!.println("   val nativeCanvas = it.nativeCanvas")
             transcodeRadialGradientPaintSkia(paint)
-            printWriterManager!!.println("   nativeCanvas.drawPath(generalPath!!.asSkiaPath(), org.jetbrains.skia.Paint().also { skiaPaint ->")
+            printWriterManager!!.println("   val nativePaint = org.jetbrains.skia.Paint().also { skiaPaint ->")
             printWriterManager!!.println("      skiaPaint.shader = shader")
             printWriterManager!!.println("      skiaPaint.alpha = (alpha * 255).toInt()")
             printWriterManager!!.println("      skiaPaint.blendMode = blendModeSkia")
             printWriterManager!!.println("      skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL")
-            printWriterManager!!.println("   })")
+            printWriterManager!!.println("   }")
+            printWriterManager!!.println("   when (shape) {")
+            printWriterManager!!.println("       is Outline.Rectangle -> nativeCanvas.drawRect((shape as Outline.Rectangle).rect.toSkiaRect(), nativePaint)")
+            printWriterManager!!.println("       is Outline.Rounded -> nativeCanvas.drawRRect((shape as Outline.Rounded).roundRect.toSkiaRRect(), nativePaint)")
+            printWriterManager!!.println("       is Outline.Generic -> nativeCanvas.drawPath((shape as Outline.Generic).path.asSkiaPath(), nativePaint)")
+            printWriterManager!!.println("       else -> {}")
+            printWriterManager!!.println("   }")
             printWriterManager!!.println("}")
             return
         }
@@ -1025,7 +1038,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             printWriterManager!!.println("drawIntoCanvas {")
             printWriterManager!!.println("   val nativeCanvas = it.nativeCanvas")
             transcodeRadialGradientPaintSkia(paint as RadialGradientPaint)
-            printWriterManager!!.println("   nativeCanvas.drawPath(generalPath!!.asSkiaPath(), org.jetbrains.skia.Paint().also { skiaPaint ->")
+            printWriterManager!!.println("   val nativePaint = org.jetbrains.skia.Paint().also { skiaPaint ->")
             printWriterManager!!.println("      skiaPaint.shader = shader")
             printWriterManager!!.println("      skiaPaint.alpha = (alpha * 255).toInt()")
             printWriterManager!!.println("      skiaPaint.blendMode = blendModeSkia")
@@ -1039,7 +1052,13 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                 )
             }
             printWriterManager!!.println("      skiaPaint.mode = org.jetbrains.skia.PaintMode.STROKE")
-            printWriterManager!!.println("   })")
+            printWriterManager!!.println("   }")
+            printWriterManager!!.println("   when (shape) {")
+            printWriterManager!!.println("       is Outline.Rectangle -> nativeCanvas.drawRect((shape as Outline.Rectangle).rect.toSkiaRect(), nativePaint)")
+            printWriterManager!!.println("       is Outline.Rounded -> nativeCanvas.drawRRect((shape as Outline.Rounded).roundRect.toSkiaRRect(), nativePaint)")
+            printWriterManager!!.println("       is Outline.Generic -> nativeCanvas.drawPath((shape as Outline.Generic).path.asSkiaPath(), nativePaint)")
+            printWriterManager!!.println("       else -> {}")
+            printWriterManager!!.println("   }")
             printWriterManager!!.println("}")
         } else {
             transcodePaint(paint)
