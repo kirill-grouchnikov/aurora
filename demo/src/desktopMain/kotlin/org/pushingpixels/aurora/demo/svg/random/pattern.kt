@@ -6,7 +6,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.painter.Painter
@@ -27,10 +26,8 @@ class pattern : Painter() {
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var blendMode = DrawScope.DefaultBlendMode
-    private var blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
     private var alphaStack = mutableListOf(1.0f)
     private var blendModeStack = mutableListOf(DrawScope.DefaultBlendMode)
-    private var blendModeSkiaStack = mutableListOf(org.jetbrains.skia.BlendMode.SRC_OVER)
 
 	@Suppress("UNUSED_VARIABLE", "UNUSED_VALUE", "VARIABLE_WITH_REDUNDANT_INITIALIZER", "UNNECESSARY_NOT_NULL_ASSERTION")
 private fun _paint0(drawScope : DrawScope) {
@@ -38,22 +35,17 @@ var shapeText: Outline?
 var generalPathText: Path? = null
 var alphaText = 0.0f
 var blendModeText = DrawScope.DefaultBlendMode
-var blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 with(drawScope) {
 // 
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
-blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
-blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 // _0
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
-blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
-blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 // _0_0
 shape = Outline.Rectangle(rect = Rect(left = 0.0f, top = 0.0f, right = 200.0f, bottom = 200.0f))
 withTransform({
@@ -97,88 +89,28 @@ withTransform({transform(tTiled)}){
              var generalPathTile: Path? = null
              var alphaTile = alpha
              var blendModeTile = blendMode
-             var blendModeTileSkia = blendModeSkia
 alphaTile = alpha * 1.0f
 blendModeTile = BlendMode.SrcOver
-blendModeTileSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 brush = SolidColor(Color(135, 206, 235, 255))
 shaderSkia = null
 shapeTile = Outline.Rectangle(rect = Rect(left = 0.0f, top = 0.0f, right = 50.0f, bottom = 50.0f))
-if (shaderSkia != null) {
-   drawIntoCanvas {
-      val nativeCanvas = it.nativeCanvas
-      val nativePaint = org.jetbrains.skia.Paint().also { skiaPaint ->
-         skiaPaint.shader = shaderSkia
-         skiaPaint.alpha = (alphaTile * 255).toInt()
-         skiaPaint.blendMode = blendModeTileSkia
-         skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL
-      }
-      when (shapeTile) {
-          is Outline.Rectangle -> nativeCanvas.drawRect((shapeTile as Outline.Rectangle).rect.toSkiaRect(), nativePaint)
-          is Outline.Rounded -> nativeCanvas.drawRRect((shapeTile as Outline.Rounded).roundRect.toSkiaRRect(), nativePaint)
-          is Outline.Generic -> nativeCanvas.drawPath((shapeTile as Outline.Generic).path.asSkiaPath(), nativePaint)
-          else -> {}
-      }
-   }
-} else {
-  drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile, blendMode = blendModeTile)
-}
+drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile, blendMode = blendModeTile)
 alphaTile = alpha * 1.0f
 blendModeTile = BlendMode.SrcOver
-blendModeTileSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 brush = Brush.linearGradient(0.05f to Color(255, 0, 0, 255), 0.95f to Color(255, 165, 0, 255), start = Offset(0.0f, 0.0f), end = Offset(0.0f, 25.0f), tileMode = TileMode.Clamp)
 shaderSkia = null
 shapeTile = Outline.Rectangle(rect = Rect(left = 0.0f, top = 0.0f, right = 25.0f, bottom = 25.0f))
-if (shaderSkia != null) {
-   drawIntoCanvas {
-      val nativeCanvas = it.nativeCanvas
-      val nativePaint = org.jetbrains.skia.Paint().also { skiaPaint ->
-         skiaPaint.shader = shaderSkia
-         skiaPaint.alpha = (alphaTile * 255).toInt()
-         skiaPaint.blendMode = blendModeTileSkia
-         skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL
-      }
-      when (shapeTile) {
-          is Outline.Rectangle -> nativeCanvas.drawRect((shapeTile as Outline.Rectangle).rect.toSkiaRect(), nativePaint)
-          is Outline.Rounded -> nativeCanvas.drawRRect((shapeTile as Outline.Rounded).roundRect.toSkiaRRect(), nativePaint)
-          is Outline.Generic -> nativeCanvas.drawPath((shapeTile as Outline.Generic).path.asSkiaPath(), nativePaint)
-          else -> {}
-      }
-   }
-} else {
-  drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile, blendMode = blendModeTile)
-}
+drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile, blendMode = blendModeTile)
 alphaTile = alpha * 1.0f
 blendModeTile = BlendMode.SrcOver
-blendModeTileSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 alphaTile = alpha * 1.0f
 blendModeTile = BlendMode.SrcOver
-blendModeTileSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 brush = Brush.linearGradient(0.05f to Color(255, 255, 255, 128), 0.95f to Color(0, 0, 255, 128), start = Offset(5.0f, 5.0f), end = Offset(45.0f, 5.0f), tileMode = TileMode.Clamp)
 shaderSkia = null
 shapeTile = Outline.Generic(path = Path().also { it.addOval(oval=Rect(left = 5.0f, top = 5.0f, right = 45.0f, bottom = 45.0f))})
-if (shaderSkia != null) {
-   drawIntoCanvas {
-      val nativeCanvas = it.nativeCanvas
-      val nativePaint = org.jetbrains.skia.Paint().also { skiaPaint ->
-         skiaPaint.shader = shaderSkia
-         skiaPaint.alpha = (alphaTile * 255).toInt()
-         skiaPaint.blendMode = blendModeTileSkia
-         skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL
-      }
-      when (shapeTile) {
-          is Outline.Rectangle -> nativeCanvas.drawRect((shapeTile as Outline.Rectangle).rect.toSkiaRect(), nativePaint)
-          is Outline.Rounded -> nativeCanvas.drawRRect((shapeTile as Outline.Rounded).roundRect.toSkiaRRect(), nativePaint)
-          is Outline.Generic -> nativeCanvas.drawPath((shapeTile as Outline.Generic).path.asSkiaPath(), nativePaint)
-          else -> {}
-      }
-   }
-} else {
-  drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile, blendMode = blendModeTile)
-}
+drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile, blendMode = blendModeTile)
 alphaTile = alpha * 1.0f
 blendModeTile = BlendMode.SrcOver
-blendModeTileSkia = org.jetbrains.skia.BlendMode.SRC_OVER
             }
             startY += rect2D.height
             src = Offset(x = startX, y = startY)

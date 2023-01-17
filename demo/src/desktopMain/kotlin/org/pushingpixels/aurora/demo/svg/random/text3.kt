@@ -6,7 +6,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.painter.Painter
@@ -27,10 +26,8 @@ class text3 : Painter() {
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var blendMode = DrawScope.DefaultBlendMode
-    private var blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
     private var alphaStack = mutableListOf(1.0f)
     private var blendModeStack = mutableListOf(DrawScope.DefaultBlendMode)
-    private var blendModeSkiaStack = mutableListOf(org.jetbrains.skia.BlendMode.SRC_OVER)
 
 	@Suppress("UNUSED_VARIABLE", "UNUSED_VALUE", "VARIABLE_WITH_REDUNDANT_INITIALIZER", "UNNECESSARY_NOT_NULL_ASSERTION")
 private fun _paint0(drawScope : DrawScope) {
@@ -38,15 +35,12 @@ var shapeText: Outline?
 var generalPathText: Path? = null
 var alphaText = 0.0f
 var blendModeText = DrawScope.DefaultBlendMode
-var blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 with(drawScope) {
 // 
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
-blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
-blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 withTransform({
 transform(
 Matrix(values=floatArrayOf(
@@ -59,49 +53,34 @@ Matrix(values=floatArrayOf(
 alphaStack.add(0, alpha)
 alpha *= 1.0f
 blendModeStack.add(0, BlendMode.SrcOver)
-blendModeSkiaStack.add(0, org.jetbrains.skia.BlendMode.SRC_OVER)
 blendMode = BlendMode.SrcOver
-blendModeSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 // _0_0
             generalPathText = null
             alphaText = alpha
             blendModeText = blendMode
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
-shaderSkia = org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 26.867676f, y0 = 49.669556f, r0 = 0.0f, x1 = 65.55786f, y1 = 71.30969f, r1 = 64.48364f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 128, r = 131, g = 75, b = 198), org.jetbrains.skia.Color.makeARGB(a = 128, r = 61, g = 211, b = 60), ), positions = floatArrayOf(0.6f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null))
-brush = null
-stroke = null
+brush = ShaderBrush(org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 26.867676f, y0 = 49.669556f, r0 = 0.0f, x1 = 65.55786f, y1 = 71.30969f, r1 = 64.48364f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 128, r = 131, g = 75, b = 198), org.jetbrains.skia.Color.makeARGB(a = 128, r = 61, g = 211, b = 60), ), positions = floatArrayOf(0.6f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null)))
 if (generalPathText == null) {
    generalPathText = Path()
 } else {
@@ -239,31 +218,10 @@ generalPathText?.run {
     close()
 }
 shapeText = Outline.Generic(generalPathText!!)
-if (shaderSkia != null) {
-   drawIntoCanvas {
-      val nativeCanvas = it.nativeCanvas
-      val nativePaint = org.jetbrains.skia.Paint().also { skiaPaint ->
-         skiaPaint.shader = shaderSkia
-         skiaPaint.alpha = (alphaText * 255).toInt()
-         skiaPaint.blendMode = blendModeTextSkia
-         skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL
-      }
-      when (shapeText) {
-          is Outline.Rectangle -> nativeCanvas.drawRect((shapeText as Outline.Rectangle).rect.toSkiaRect(), nativePaint)
-          is Outline.Rounded -> nativeCanvas.drawRRect((shapeText as Outline.Rounded).roundRect.toSkiaRRect(), nativePaint)
-          is Outline.Generic -> nativeCanvas.drawPath((shapeText as Outline.Generic).path.asSkiaPath(), nativePaint)
-          else -> {}
-      }
-   }
-} else {
-  drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
-}
+drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
-shaderSkia = org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 26.867676f, y0 = 49.669556f, r0 = 0.0f, x1 = 65.55786f, y1 = 71.30969f, r1 = 64.48364f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 128, r = 131, g = 75, b = 198), org.jetbrains.skia.Color.makeARGB(a = 128, r = 61, g = 211, b = 60), ), positions = floatArrayOf(0.6f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null))
-brush = null
-stroke = null
+brush = ShaderBrush(org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 26.867676f, y0 = 49.669556f, r0 = 0.0f, x1 = 65.55786f, y1 = 71.30969f, r1 = 64.48364f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 128, r = 131, g = 75, b = 198), org.jetbrains.skia.Color.makeARGB(a = 128, r = 61, g = 211, b = 60), ), positions = floatArrayOf(0.6f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null)))
 if (generalPathText == null) {
    generalPathText = Path()
 } else {
@@ -272,31 +230,10 @@ if (generalPathText == null) {
 generalPathText?.run {
 }
 shapeText = Outline.Generic(generalPathText!!)
-if (shaderSkia != null) {
-   drawIntoCanvas {
-      val nativeCanvas = it.nativeCanvas
-      val nativePaint = org.jetbrains.skia.Paint().also { skiaPaint ->
-         skiaPaint.shader = shaderSkia
-         skiaPaint.alpha = (alphaText * 255).toInt()
-         skiaPaint.blendMode = blendModeTextSkia
-         skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL
-      }
-      when (shapeText) {
-          is Outline.Rectangle -> nativeCanvas.drawRect((shapeText as Outline.Rectangle).rect.toSkiaRect(), nativePaint)
-          is Outline.Rounded -> nativeCanvas.drawRRect((shapeText as Outline.Rounded).roundRect.toSkiaRRect(), nativePaint)
-          is Outline.Generic -> nativeCanvas.drawPath((shapeText as Outline.Generic).path.asSkiaPath(), nativePaint)
-          else -> {}
-      }
-   }
-} else {
-  drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
-}
+drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
-shaderSkia = org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 26.867676f, y0 = 49.669556f, r0 = 0.0f, x1 = 65.55786f, y1 = 71.30969f, r1 = 64.48364f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 128, r = 131, g = 75, b = 198), org.jetbrains.skia.Color.makeARGB(a = 128, r = 61, g = 211, b = 60), ), positions = floatArrayOf(0.6f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null))
-brush = null
-stroke = null
+brush = ShaderBrush(org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 26.867676f, y0 = 49.669556f, r0 = 0.0f, x1 = 65.55786f, y1 = 71.30969f, r1 = 64.48364f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 128, r = 131, g = 75, b = 198), org.jetbrains.skia.Color.makeARGB(a = 128, r = 61, g = 211, b = 60), ), positions = floatArrayOf(0.6f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null)))
 if (generalPathText == null) {
    generalPathText = Path()
 } else {
@@ -349,31 +286,10 @@ generalPathText?.run {
     close()
 }
 shapeText = Outline.Generic(generalPathText!!)
-if (shaderSkia != null) {
-   drawIntoCanvas {
-      val nativeCanvas = it.nativeCanvas
-      val nativePaint = org.jetbrains.skia.Paint().also { skiaPaint ->
-         skiaPaint.shader = shaderSkia
-         skiaPaint.alpha = (alphaText * 255).toInt()
-         skiaPaint.blendMode = blendModeTextSkia
-         skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL
-      }
-      when (shapeText) {
-          is Outline.Rectangle -> nativeCanvas.drawRect((shapeText as Outline.Rectangle).rect.toSkiaRect(), nativePaint)
-          is Outline.Rounded -> nativeCanvas.drawRRect((shapeText as Outline.Rounded).roundRect.toSkiaRRect(), nativePaint)
-          is Outline.Generic -> nativeCanvas.drawPath((shapeText as Outline.Generic).path.asSkiaPath(), nativePaint)
-          else -> {}
-      }
-   }
-} else {
-  drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
-}
+drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
-shaderSkia = org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 26.867676f, y0 = 49.669556f, r0 = 0.0f, x1 = 65.55786f, y1 = 71.30969f, r1 = 64.48364f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 128, r = 131, g = 75, b = 198), org.jetbrains.skia.Color.makeARGB(a = 128, r = 61, g = 211, b = 60), ), positions = floatArrayOf(0.6f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null))
-brush = null
-stroke = null
+brush = ShaderBrush(org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 26.867676f, y0 = 49.669556f, r0 = 0.0f, x1 = 65.55786f, y1 = 71.30969f, r1 = 64.48364f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 128, r = 131, g = 75, b = 198), org.jetbrains.skia.Color.makeARGB(a = 128, r = 61, g = 211, b = 60), ), positions = floatArrayOf(0.6f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null)))
 if (generalPathText == null) {
    generalPathText = Path()
 } else {
@@ -382,31 +298,10 @@ if (generalPathText == null) {
 generalPathText?.run {
 }
 shapeText = Outline.Generic(generalPathText!!)
-if (shaderSkia != null) {
-   drawIntoCanvas {
-      val nativeCanvas = it.nativeCanvas
-      val nativePaint = org.jetbrains.skia.Paint().also { skiaPaint ->
-         skiaPaint.shader = shaderSkia
-         skiaPaint.alpha = (alphaText * 255).toInt()
-         skiaPaint.blendMode = blendModeTextSkia
-         skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL
-      }
-      when (shapeText) {
-          is Outline.Rectangle -> nativeCanvas.drawRect((shapeText as Outline.Rectangle).rect.toSkiaRect(), nativePaint)
-          is Outline.Rounded -> nativeCanvas.drawRRect((shapeText as Outline.Rounded).roundRect.toSkiaRRect(), nativePaint)
-          is Outline.Generic -> nativeCanvas.drawPath((shapeText as Outline.Generic).path.asSkiaPath(), nativePaint)
-          else -> {}
-      }
-   }
-} else {
-  drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
-}
+drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
-shaderSkia = org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 26.867676f, y0 = 49.669556f, r0 = 0.0f, x1 = 65.55786f, y1 = 71.30969f, r1 = 64.48364f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 128, r = 131, g = 75, b = 198), org.jetbrains.skia.Color.makeARGB(a = 128, r = 61, g = 211, b = 60), ), positions = floatArrayOf(0.6f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null))
-brush = null
-stroke = null
+brush = ShaderBrush(org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 26.867676f, y0 = 49.669556f, r0 = 0.0f, x1 = 65.55786f, y1 = 71.30969f, r1 = 64.48364f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 128, r = 131, g = 75, b = 198), org.jetbrains.skia.Color.makeARGB(a = 128, r = 61, g = 211, b = 60), ), positions = floatArrayOf(0.6f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null)))
 if (generalPathText == null) {
    generalPathText = Path()
 } else {
@@ -570,40 +465,17 @@ generalPathText?.run {
     close()
 }
 shapeText = Outline.Generic(generalPathText!!)
-if (shaderSkia != null) {
-   drawIntoCanvas {
-      val nativeCanvas = it.nativeCanvas
-      val nativePaint = org.jetbrains.skia.Paint().also { skiaPaint ->
-         skiaPaint.shader = shaderSkia
-         skiaPaint.alpha = (alphaText * 255).toInt()
-         skiaPaint.blendMode = blendModeTextSkia
-         skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL
-      }
-      when (shapeText) {
-          is Outline.Rectangle -> nativeCanvas.drawRect((shapeText as Outline.Rectangle).rect.toSkiaRect(), nativePaint)
-          is Outline.Rounded -> nativeCanvas.drawRRect((shapeText as Outline.Rounded).roundRect.toSkiaRRect(), nativePaint)
-          is Outline.Generic -> nativeCanvas.drawPath((shapeText as Outline.Generic).path.asSkiaPath(), nativePaint)
-          else -> {}
-      }
-   }
-} else {
-  drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
-}
+drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-blendModeTextSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
 }
