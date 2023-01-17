@@ -464,12 +464,62 @@ abstract class SvgBaseTranscoder(private val classname: String) {
 
             override fun draw(s: Shape) {
                 transcodeShape(s, "Tile")
-                printWriterManager!!.println("drawOutline(outline = shapeTile!!, style = stroke!!, brush=brush!!, alpha = alphaTile, blendMode = blendModeTile)")
+                printWriterManager!!.println("if (shaderSkia != null) {")
+                printWriterManager!!.println("   drawIntoCanvas {")
+                printWriterManager!!.println("      val nativeCanvas = it.nativeCanvas")
+                printWriterManager!!.println("      val strokeJoinSkia = when (stroke!!.join) {")
+                printWriterManager!!.println("          StrokeJoin.Round -> org.jetbrains.skia.PaintStrokeJoin.ROUND")
+                printWriterManager!!.println("          StrokeJoin.Bevel -> org.jetbrains.skia.PaintStrokeJoin.BEVEL")
+                printWriterManager!!.println("          else -> org.jetbrains.skia.PaintStrokeJoin.MITER")
+                printWriterManager!!.println("      }")
+                printWriterManager!!.println("      val strokeCapSkia = when (stroke!!.cap) {")
+                printWriterManager!!.println("          StrokeCap.Round -> org.jetbrains.skia.PaintStrokeCap.ROUND")
+                printWriterManager!!.println("          StrokeCap.Square -> org.jetbrains.skia.PaintStrokeCap.SQUARE")
+                printWriterManager!!.println("          else -> org.jetbrains.skia.PaintStrokeCap.BUTT")
+                printWriterManager!!.println("      }")
+                printWriterManager!!.println("      val nativePaint = org.jetbrains.skia.Paint().also { skiaPaint ->")
+                printWriterManager!!.println("         skiaPaint.shader = shaderSkia")
+                printWriterManager!!.println("         skiaPaint.alpha = (alphaTile * 255).toInt()")
+                printWriterManager!!.println("         skiaPaint.blendMode = blendModeTileSkia")
+                printWriterManager!!.println("         skiaPaint.strokeWidth = stroke!!.width")
+                printWriterManager!!.println("         skiaPaint.strokeCap = strokeCapSkia")
+                printWriterManager!!.println("         skiaPaint.strokeJoin = strokeJoinSkia")
+                printWriterManager!!.println("         skiaPaint.strokeMiter = stroke!!.miter")
+                printWriterManager!!.println("         skiaPaint.mode = org.jetbrains.skia.PaintMode.STROKE")
+                printWriterManager!!.println("      }")
+                printWriterManager!!.println("      when (shapeTile) {")
+                printWriterManager!!.println("          is Outline.Rectangle -> nativeCanvas.drawRect((shapeTile as Outline.Rectangle).rect.toSkiaRect(), nativePaint)")
+                printWriterManager!!.println("          is Outline.Rounded -> nativeCanvas.drawRRect((shapeTile as Outline.Rounded).roundRect.toSkiaRRect(), nativePaint)")
+                printWriterManager!!.println("          is Outline.Generic -> nativeCanvas.drawPath((shapeTile as Outline.Generic).path.asSkiaPath(), nativePaint)")
+                printWriterManager!!.println("          else -> {}")
+                printWriterManager!!.println("      }")
+                printWriterManager!!.println("   }")
+                printWriterManager!!.println("} else {")
+                printWriterManager!!.println("  drawOutline(outline = shapeTile!!, style = stroke!!, brush=brush!!, alpha = alphaTile, blendMode = blendModeTile)")
+                printWriterManager!!.println("}")
             }
 
             override fun fill(s: Shape) {
                 transcodeShape(s, "Tile")
-                printWriterManager!!.println("drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile, blendMode = blendModeTile)")
+                printWriterManager!!.println("if (shaderSkia != null) {")
+                printWriterManager!!.println("   drawIntoCanvas {")
+                printWriterManager!!.println("      val nativeCanvas = it.nativeCanvas")
+                printWriterManager!!.println("      val nativePaint = org.jetbrains.skia.Paint().also { skiaPaint ->")
+                printWriterManager!!.println("         skiaPaint.shader = shaderSkia")
+                printWriterManager!!.println("         skiaPaint.alpha = (alphaTile * 255).toInt()")
+                printWriterManager!!.println("         skiaPaint.blendMode = blendModeTileSkia")
+                printWriterManager!!.println("         skiaPaint.mode = org.jetbrains.skia.PaintMode.FILL")
+                printWriterManager!!.println("      }")
+                printWriterManager!!.println("      when (shapeTile) {")
+                printWriterManager!!.println("          is Outline.Rectangle -> nativeCanvas.drawRect((shapeTile as Outline.Rectangle).rect.toSkiaRect(), nativePaint)")
+                printWriterManager!!.println("          is Outline.Rounded -> nativeCanvas.drawRRect((shapeTile as Outline.Rounded).roundRect.toSkiaRRect(), nativePaint)")
+                printWriterManager!!.println("          is Outline.Generic -> nativeCanvas.drawPath((shapeTile as Outline.Generic).path.asSkiaPath(), nativePaint)")
+                printWriterManager!!.println("          else -> {}")
+                printWriterManager!!.println("      }")
+                printWriterManager!!.println("   }")
+                printWriterManager!!.println("} else {")
+                printWriterManager!!.println("  drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile, blendMode = blendModeTile)")
+                printWriterManager!!.println("}")
             }
 
             override fun setComposite(comp: Composite) {
@@ -486,7 +536,11 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             }
 
             override fun setPaint(paint: Paint) {
-                transcodePaint(paint)
+                if (paint is RadialGradientPaint) {
+                    transcodeRadialGradientPaintSkia(paint)
+                } else {
+                    transcodePaint(paint)
+                }
             }
 
             override fun setStroke(s: Stroke) {

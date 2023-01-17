@@ -224,6 +224,10 @@ fun IconDemoArea() {
                 Box(modifier = Modifier.size(128.dp).paint(painter = face_kiss()))
                 LabelProjection(contentModel = LabelContentModel(text = "radial")).project()
             }
+            Column(modifier = Modifier.wrapContentHeight()) {
+                Box(modifier = Modifier.size(128.dp).paint(painter = pattern2()))
+                LabelProjection(contentModel = LabelContentModel(text = "pattern radial")).project()
+            }
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
