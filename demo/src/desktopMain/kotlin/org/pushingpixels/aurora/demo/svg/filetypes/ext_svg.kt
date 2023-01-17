@@ -23,6 +23,7 @@ class ext_svg : Painter() {
     @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
     @Suppress("UNUSED_VARIABLE") private var stroke: Stroke? = null
+    @Suppress("UNUSED_VARIABLE") private var shaderSkia: org.jetbrains.skia.Shader? = null
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var blendMode = DrawScope.DefaultBlendMode
@@ -78,6 +79,7 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = Brush.linearGradient(0.0f to Color(248, 176, 184, 255), 0.211f to Color(246, 172, 181, 255), 0.37f to Color(242, 163, 173, 255), 0.512f to Color(237, 149, 161, 255), 0.645f to Color(231, 130, 146, 255), 0.77f to Color(224, 105, 128, 255), 0.889f to Color(215, 72, 107, 255), 1.0f to Color(206, 7, 87, 255), start = Offset(36.0f, 1.0f), end = Offset(36.0f, 98.996f), tileMode = TileMode.Clamp)
+shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -104,8 +106,10 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 0))
+shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(212, 28, 92, 255))
+shaderSkia = null
 stroke = Stroke(width=2.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -208,6 +212,7 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(255, 255, 255, 255))
+shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -249,6 +254,7 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = Brush.linearGradient(0.0f to Color(238, 40, 104, 255), 1.0f to Color(188, 2, 79, 255), start = Offset(44.996216f, 45.965942f), end = Offset(25.40857f, 31.79712f), tileMode = TileMode.Clamp)
+shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -270,8 +276,10 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 0))
+shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(248, 182, 187, 255))
+shaderSkia = null
 stroke = Stroke(width=1.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -307,6 +315,7 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = Brush.linearGradient(0.0f to Color(255, 254, 238, 255), 0.265f to Color(255, 250, 236, 255), 0.402f to Color(254, 242, 230, 255), 0.51f to Color(252, 231, 220, 255), 0.604f to Color(250, 215, 207, 255), 0.687f to Color(246, 195, 191, 255), 0.763f to Color(242, 171, 172, 255), 0.834f to Color(238, 143, 151, 255), 0.901f to Color(234, 111, 130, 255), 0.962f to Color(229, 68, 109, 255), 1.0f to Color(227, 14, 96, 255), start = Offset(45.178f, 27.841003f), end = Offset(58.772f, 14.247002f), tileMode = TileMode.Clamp)
+shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -331,8 +340,10 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 0))
+shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(212, 28, 92, 255))
+shaderSkia = null
 stroke = Stroke(width=2.0f, cap=StrokeCap.Butt, join=StrokeJoin.Bevel, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -367,6 +378,7 @@ blendMode = blendModeStack.removeAt(0)
 	    generalPath = null
 	    brush = null
 	    stroke = null
+	    shaderSkia = null
 	    clip = null
 	    alpha = 1.0f
 	}

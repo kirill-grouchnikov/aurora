@@ -23,6 +23,7 @@ class pattern : Painter() {
     @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
     @Suppress("UNUSED_VARIABLE") private var stroke: Stroke? = null
+    @Suppress("UNUSED_VARIABLE") private var shaderSkia: org.jetbrains.skia.Shader? = null
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var blendMode = DrawScope.DefaultBlendMode
@@ -101,12 +102,14 @@ alphaTile = alpha * 1.0f
 blendModeTile = BlendMode.SrcOver
 blendModeTileSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 brush = SolidColor(Color(135, 206, 235, 255))
+shaderSkia = null
 shapeTile = Outline.Rectangle(rect = Rect(left = 0.0f, top = 0.0f, right = 50.0f, bottom = 50.0f))
 drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile, blendMode = blendModeTile)
 alphaTile = alpha * 1.0f
 blendModeTile = BlendMode.SrcOver
 blendModeTileSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 brush = Brush.linearGradient(0.05f to Color(255, 0, 0, 255), 0.95f to Color(255, 165, 0, 255), start = Offset(0.0f, 0.0f), end = Offset(0.0f, 25.0f), tileMode = TileMode.Clamp)
+shaderSkia = null
 shapeTile = Outline.Rectangle(rect = Rect(left = 0.0f, top = 0.0f, right = 25.0f, bottom = 25.0f))
 drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile, blendMode = blendModeTile)
 alphaTile = alpha * 1.0f
@@ -116,6 +119,7 @@ alphaTile = alpha * 1.0f
 blendModeTile = BlendMode.SrcOver
 blendModeTileSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 brush = Brush.linearGradient(0.05f to Color(255, 255, 255, 128), 0.95f to Color(0, 0, 255, 128), start = Offset(5.0f, 5.0f), end = Offset(45.0f, 5.0f), tileMode = TileMode.Clamp)
+shaderSkia = null
 shapeTile = Outline.Generic(path = Path().also { it.addOval(oval=Rect(left = 5.0f, top = 5.0f, right = 45.0f, bottom = 45.0f))})
 drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile, blendMode = blendModeTile)
 alphaTile = alpha * 1.0f
@@ -139,6 +143,7 @@ blendModeTileSkia = org.jetbrains.skia.BlendMode.SRC_OVER
 }
 }
 brush = SolidColor(Color(0, 0, 0, 255))
+shaderSkia = null
 stroke = Stroke(width=1.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 shape = Outline.Rectangle(rect = Rect(left = 0.0f, top = 0.0f, right = 200.0f, bottom = 200.0f))
 drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
@@ -160,6 +165,7 @@ blendMode = blendModeStack.removeAt(0)
 	    generalPath = null
 	    brush = null
 	    stroke = null
+	    shaderSkia = null
 	    clip = null
 	    alpha = 1.0f
 	}

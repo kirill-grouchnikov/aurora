@@ -1,24 +1,19 @@
 <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="Gradient1">
-      <stop offset="5%" stop-color="white"/>
-      <stop offset="95%" stop-color="blue"/>
-    </linearGradient>
-    <linearGradient id="Gradient2" x1="0" x2="0" y1="0" y2="1">
-      <stop offset="5%" stop-color="red"/>
-      <stop offset="95%" stop-color="orange"/>
-    </linearGradient>
-    <radialGradient id="Gradient3" cx="50%" cy="55%" r="50%" fx="50%" fy="55%">
+    <radialGradient id="Gradient1" cx="50%" cy="55%" r="50%" fx="50%" fy="55%">
       <stop offset="90%" style="stop-color:rgb(31, 175, 198); stop-opacity: .5"/>
       <stop offset="100%" style="stop-color:rgb(161, 211, 60); stop-opacity: .5"/>
     </radialGradient>
 
-    <pattern id="Pattern" x="0" y="0" width=".25" height=".25">
-      <rect x="0" y="0" width="50" height="50" fill="skyblue"/>
-      <rect x="0" y="0" width="25" height="25" fill="url(#Gradient2)"/>
-      <circle cx="25" cy="25" r="20" fill="url(#Gradient1)" fill-opacity="0.5"/>
+    <radialGradient id="Gradient2" cx="50%" cy="55%" r="50%" fx="50%" fy="55%">
+      <stop offset="60%" style="stop-color:rgb(131, 75, 198); stop-opacity: .5"/>
+      <stop offset="100%" style="stop-color:rgb(61, 211, 60); stop-opacity: .5"/>
+    </radialGradient>
+
+    <pattern id="Pattern" x="0" y="0" width=".5" height=".5">
       <path d="M30 5  A20 20 0 1 0 45 25"
-            stroke="url(#Gradient3)" stroke-width="10" fill="transparent" fill-opacity="0"/>
+            stroke="url(#Gradient1)" stroke-width="10" fill="transparent" fill-opacity="0"/>
+      <rect x="50" y="50" width="50" height="50" fill="url(#Gradient2)"/>
     </pattern>
   </defs>
 

@@ -23,6 +23,7 @@ class ext_xlsx : Painter() {
     @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
     @Suppress("UNUSED_VARIABLE") private var stroke: Stroke? = null
+    @Suppress("UNUSED_VARIABLE") private var shaderSkia: org.jetbrains.skia.Shader? = null
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var blendMode = DrawScope.DefaultBlendMode
@@ -78,6 +79,7 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = Brush.linearGradient(0.0f to Color(81, 132, 42, 255), 0.102f to Color(96, 150, 49, 255), 0.222f to Color(109, 167, 55, 255), 0.355f to Color(119, 179, 59, 255), 0.506f to Color(126, 187, 62, 255), 0.69f to Color(131, 193, 64, 255), 1.0f to Color(133, 196, 65, 255), start = Offset(36.0f, 99.25f), end = Offset(36.0f, 0.75f), tileMode = TileMode.Clamp)
+shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -104,8 +106,10 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 0))
+shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(82, 130, 40, 255))
+shaderSkia = null
 stroke = Stroke(width=2.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -209,6 +213,7 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(255, 255, 255, 255))
+shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -289,6 +294,7 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = Brush.linearGradient(0.005f to Color(97, 149, 48, 255), 0.267f to Color(96, 148, 47, 255), 0.443f to Color(91, 142, 45, 255), 0.594f to Color(83, 132, 41, 255), 0.731f to Color(72, 119, 35, 255), 0.858f to Color(58, 103, 27, 255), 0.976f to Color(41, 82, 15, 255), 1.0f to Color(36, 77, 11, 255), start = Offset(16.371f, 63.013f), end = Offset(55.488f, 23.897003f), tileMode = TileMode.Clamp)
+shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -313,6 +319,7 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = Brush.linearGradient(0.0f to Color(242, 245, 213, 255), 0.312f to Color(240, 244, 210, 255), 0.458f to Color(232, 238, 202, 255), 0.569f to Color(221, 231, 189, 255), 0.663f to Color(207, 221, 173, 255), 0.745f to Color(190, 210, 152, 255), 0.82f to Color(169, 196, 129, 255), 0.889f to Color(145, 181, 102, 255), 0.951f to Color(120, 166, 71, 255), 1.0f to Color(97, 153, 50, 255), start = Offset(45.034f, 27.648003f), end = Offset(58.534f, 14.148003f), tileMode = TileMode.Clamp)
+shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -337,8 +344,10 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 0))
+shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(82, 130, 40, 255))
+shaderSkia = null
 stroke = Stroke(width=2.0f, cap=StrokeCap.Butt, join=StrokeJoin.Bevel, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -373,6 +382,7 @@ blendMode = blendModeStack.removeAt(0)
 	    generalPath = null
 	    brush = null
 	    stroke = null
+	    shaderSkia = null
 	    clip = null
 	    alpha = 1.0f
 	}
