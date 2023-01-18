@@ -279,7 +279,8 @@ private fun Scrollbar(
                 adapter,
                 containerSize,
                 minimalHeight,
-                orientationAwareReverseLayoutDirection
+                orientationAwareReverseLayoutDirection,
+                isVertical
             )
         }
 
@@ -303,11 +304,7 @@ private fun Scrollbar(
                     .scrollbarDrag(
                         interactionSource = interactionSource,
                         draggedInteraction = dragInteraction,
-                        onStarted = { sliderAdapter.rawPosition = sliderAdapter.position },
-                        onDelta = { offset ->
-                            sliderAdapter.rawPosition += if (isVertical) offset.y else offset.x
-                        },
-                        onFinished = { sliderAdapter.rawPosition = sliderAdapter.position }
+                        sliderAdapter = sliderAdapter,
                     )
             ) {
                 // Populate the cached color scheme for filling the component
@@ -423,15 +420,11 @@ private fun Scrollbar(
 private fun Modifier.scrollbarDrag(
     interactionSource: MutableInteractionSource,
     draggedInteraction: MutableState<DragInteraction.Start?>,
-    onStarted: () -> Unit,
-    onDelta: (Offset) -> Unit,
-    onFinished: () -> Unit
+    sliderAdapter: SliderAdapter,
 ): Modifier = composed {
     val currentInteractionSource by rememberUpdatedState(interactionSource)
     val currentDraggedInteraction by rememberUpdatedState(draggedInteraction)
-    val currentOnStarted by rememberUpdatedState(onStarted)
-    val currentOnDelta by rememberUpdatedState(onDelta)
-    val currentOnFinished by rememberUpdatedState(onFinished)
+    val currentSliderAdapter by rememberUpdatedState(sliderAdapter)
     pointerInput(Unit) {
         forEachGesture {
             awaitPointerEventScope {
@@ -439,9 +432,9 @@ private fun Modifier.scrollbarDrag(
                 val interaction = DragInteraction.Start()
                 currentInteractionSource.tryEmit(interaction)
                 currentDraggedInteraction.value = interaction
-                currentOnStarted.invoke()
+                currentSliderAdapter.onDragStarted()
                 val isSuccess = drag(down.id) { change ->
-                    currentOnDelta.invoke(change.positionChange())
+                    currentSliderAdapter.onDragDelta(change.positionChange())
                     change.consume()
                 }
                 val finishInteraction = if (isSuccess) {
@@ -451,7 +444,6 @@ private fun Modifier.scrollbarDrag(
                 }
                 currentInteractionSource.tryEmit(finishInteraction)
                 currentDraggedInteraction.value = null
-                currentOnFinished.invoke()
             }
         }
     }
@@ -503,7 +495,8 @@ private class SliderAdapter(
     val adapter: ScrollbarAdapter,
     val containerSize: Int,
     val minHeight: Float,
-    val reverseLayout: Boolean
+    val reverseLayout: Boolean,
+    val isVertical: Boolean,
 ) {
     private val contentSize get() = adapter.maxScrollOffset(containerSize) + containerSize
     private val visiblePart get() = containerSize.toFloat() / contentSize
@@ -520,19 +513,7 @@ private class SliderAdapter(
             return if (extraContentSpace == 0f) 1f else extraScrollbarSpace / extraContentSpace
         }
 
-    /**
-     * A position with cumulative offset, may be out of the container when dragging
-     */
-    var rawPosition: Float = position
-        set(value) {
-            field = value
-            position = value
-        }
-
-    /**
-     * Actual scroll of content regarding slider layout
-     */
-    private var scrollPosition: Float
+    private var rawPosition: Float
         get() = scrollScale * adapter.scrollOffset
         set(value) {
             runBlocking {
@@ -540,13 +521,10 @@ private class SliderAdapter(
             }
         }
 
-    /**
-     * Actual position of a thumb within slider container
-     */
     var position: Float
-        get() = if (reverseLayout) containerSize - size - scrollPosition else scrollPosition
+        get() = if (reverseLayout) containerSize - size - rawPosition else rawPosition
         set(value) {
-            scrollPosition = if (reverseLayout) {
+            rawPosition = if (reverseLayout) {
                 containerSize - size - value
             } else {
                 value
@@ -554,6 +532,25 @@ private class SliderAdapter(
         }
 
     val bounds get() = position..position + size
+
+    // Stores the unrestricted position during a dragging gesture
+    private var positionDuringDrag = 0f
+
+    /** Called when the thumb dragging starts */
+    fun onDragStarted() {
+        positionDuringDrag = position
+    }
+
+    /** Called on every movement while dragging the thumb */
+    fun onDragDelta(offset: Offset) {
+        val dragDelta = if (isVertical) offset.y else offset.x
+        val maxScrollPosition = adapter.maxScrollOffset(containerSize) * scrollScale
+        val sliderDelta =
+            (positionDuringDrag + dragDelta).coerceIn(0f, maxScrollPosition) -
+                    positionDuringDrag.coerceIn(0f, maxScrollPosition)
+        position += sliderDelta  // Have to add to position for smooth content scroll if the items are of different size
+        positionDuringDrag += dragDelta
+    }
 }
 
 private fun verticalMeasurePolicy(
