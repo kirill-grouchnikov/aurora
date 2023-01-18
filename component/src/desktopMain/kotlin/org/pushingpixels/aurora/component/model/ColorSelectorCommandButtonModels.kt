@@ -63,28 +63,28 @@ interface ColorPreviewListener {
     fun onColorPreviewCanceled(color: Color)
 }
 
-object RecentlyUsed {
-    private val recentlySelected = LinkedList<Color>()
+object RecentlyUsedColors {
+    private val recentlyUsedList = LinkedList<Color>()
 
     @Synchronized
-    fun getRecentlyUsedColors(): List<Color> {
-        return Collections.unmodifiableList(recentlySelected)
+    fun getRecentlyUsed(): List<Color> {
+        return Collections.unmodifiableList(recentlyUsedList)
     }
 
     @Synchronized
-    fun addColorToRecentlyUsed(color: Color) {
+    fun addToRecentlyUsed(color: Color) {
         // Is it already in?
-        if (recentlySelected.contains(color)) {
+        if (recentlyUsedList.contains(color)) {
             // Bump up to the top of the most recent
-            recentlySelected.remove(color)
-            recentlySelected.addFirst(color)
+            recentlyUsedList.remove(color)
+            recentlyUsedList.addFirst(color)
             return
         }
-        if (recentlySelected.size == 100) {
+        if (recentlyUsedList.size == 100) {
             // Too many in history, bump out the least recently used or added
-            recentlySelected.removeLast()
+            recentlyUsedList.removeLast()
         }
-        recentlySelected.addFirst(color)
+        recentlyUsedList.addFirst(color)
     }
 }
 

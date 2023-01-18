@@ -702,7 +702,7 @@ internal class RibbonBuilder(val resourceBundle: ResourceBundle) {
                     icon = ColorSolidIcon(defaultColor),
                     action = {
                         colorActivationListener.invoke(defaultColor)
-                        RecentlyUsed.addColorToRecentlyUsed(defaultColor)
+                        RecentlyUsedColors.addToRecentlyUsed(defaultColor)
                     },
                     actionPreview = object : CommandActionPreview {
                         override fun onCommandPreviewActivated(command: BaseCommand) {
@@ -750,7 +750,7 @@ internal class RibbonBuilder(val resourceBundle: ResourceBundle) {
                         if (awtColor != null) {
                             val composeColor = Color(awtColor.red, awtColor.green, awtColor.blue, awtColor.alpha)
                             colorActivationListener.invoke(composeColor)
-                            RecentlyUsed.addColorToRecentlyUsed(composeColor)
+                            RecentlyUsedColors.addToRecentlyUsed(composeColor)
                         }
                     }
                 )

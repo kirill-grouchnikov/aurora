@@ -333,7 +333,7 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
                     }
 
                     is ColorSelectorPopupMenuRecentsSection -> {
-                        val fullRecentColors = RecentlyUsed.getRecentlyUsedColors()
+                        val fullRecentColors = RecentlyUsedColors.getRecentlyUsed()
                         val recentColors = fullRecentColors.subList(
                             fromIndex = 0,
                             toIndex = min(menuPresentationModel.colorColumns, fullRecentColors.size)
@@ -567,7 +567,7 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
                     indication = null,
                     onClick = {
                         menuContentModel.onColorActivated.invoke(color)
-                        RecentlyUsed.addColorToRecentlyUsed(color)
+                        RecentlyUsedColors.addToRecentlyUsed(color)
                         AuroraPopupManager.hidePopups(null)
                     })
         ) {

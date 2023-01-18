@@ -84,7 +84,7 @@ fun ColorSelectorButton(
         icon = ColorSolidIcon(DefaultColor),
         action = {
             colorActivationListener.invoke(DefaultColor)
-            RecentlyUsed.addColorToRecentlyUsed(DefaultColor)
+            RecentlyUsedColors.addToRecentlyUsed(DefaultColor)
         },
         actionPreview = object : CommandActionPreview {
             override fun onCommandPreviewActivated(command: BaseCommand) {
@@ -135,7 +135,7 @@ fun ColorSelectorButton(
                         if (awtColor != null) {
                             val composeColor = Color(awtColor.red, awtColor.green, awtColor.blue, awtColor.alpha)
                             colorActivationListener.invoke(composeColor)
-                            RecentlyUsed.addColorToRecentlyUsed(composeColor)
+                            RecentlyUsedColors.addToRecentlyUsed(composeColor)
                         }
                     }
                 )
