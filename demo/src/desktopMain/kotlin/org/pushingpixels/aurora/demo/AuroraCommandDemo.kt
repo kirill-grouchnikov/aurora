@@ -412,21 +412,22 @@ private val ZoomLevels = listOf(
 
 @Composable
 fun DemoCommandComplex(resourceBundle: ResourceBundle) {
-    var currentZoomLevel by remember { mutableStateOf(100) }
+    var currentZoomLevelIndex by remember { mutableStateOf(ZoomLevels.indexOf(100)) }
+    val currentZoomLevel by remember { derivedStateOf { ZoomLevels[currentZoomLevelIndex] }}
 
     val zoomOut = Command(
         text = "-",
         action = {
-            currentZoomLevel = ZoomLevels[ZoomLevels.indexOf(currentZoomLevel) - 1]
+            currentZoomLevelIndex--
         },
-        isActionEnabled = (ZoomLevels.indexOf(currentZoomLevel) > 0)
+        isActionEnabled = (currentZoomLevelIndex > 0)
     )
     val zoomIn = Command(
         text = "+",
         action = {
-            currentZoomLevel = ZoomLevels[ZoomLevels.indexOf(currentZoomLevel) + 1]
+            currentZoomLevelIndex++
         },
-        isActionEnabled = (ZoomLevels.indexOf(currentZoomLevel) < (ZoomLevels.size - 1))
+        isActionEnabled = (currentZoomLevelIndex < (ZoomLevels.size - 1))
     )
 
     CustomComplexCommandButtonProjection(
