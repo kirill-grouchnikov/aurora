@@ -1260,9 +1260,10 @@ fun AuroraApplicationScope.AuroraWindow(
 @Composable
 fun AuroraDecorationArea(
     decorationAreaType: DecorationAreaType,
+    buttonShaper: AuroraButtonShaper? = null,
     content: @Composable () -> Unit
 ) {
-    val buttonShaper = when (decorationAreaType) {
+    val buttonShaperToUse = buttonShaper ?: when (decorationAreaType) {
         DecorationAreaType.TitlePane,
         DecorationAreaType.Header,
         DecorationAreaType.Toolbar,
@@ -1270,7 +1271,7 @@ fun AuroraDecorationArea(
 
         else -> AuroraSkin.buttonShaper
     }
-    AuroraSkin(decorationAreaType = decorationAreaType, buttonShaper = buttonShaper) {
+    AuroraSkin(decorationAreaType = decorationAreaType, buttonShaper = buttonShaperToUse) {
         content()
     }
 }

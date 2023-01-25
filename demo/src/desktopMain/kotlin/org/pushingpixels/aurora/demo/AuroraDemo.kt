@@ -38,6 +38,7 @@ import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.demo.svg.vaadin.*
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.window.*
 import java.text.MessageFormat
 import java.util.*
@@ -453,7 +454,10 @@ fun AuroraApplicationScope.DemoArea(
             .fillMaxWidth()
             .auroraBackground()
     ) {
-        AuroraDecorationArea(decorationAreaType = DecorationAreaType.ControlPane) {
+        AuroraDecorationArea(
+            decorationAreaType = DecorationAreaType.ControlPane,
+            buttonShaper = ClassicButtonShaper.Instance
+        ) {
             Column(
                 modifier = Modifier.fillMaxHeight().auroraBackground()
                     .padding(vertical = 8.dp, horizontal = 12.dp),
@@ -644,8 +648,8 @@ fun AuroraApplicationScope.DemoArea(
                     ),
                     presentationModel = ComboBoxPresentationModel(
                         displayConverter = { it },
-                        displayPrototype = { "Longer item"},
-                        popupDisplayPrototype = { "Longer item"},
+                        displayPrototype = { "Longer item" },
+                        popupDisplayPrototype = { "Longer item" },
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
                         richTooltipPresentationModel = RichTooltipPresentationModel(
                             mainIconSize = DpSize(36.dp, 36.dp),
@@ -687,9 +691,9 @@ fun AuroraApplicationScope.DemoArea(
                 // Another example of a combobox with display converter for more complex data
                 val saveAsComboItems =
                     listOf(
-                        SaveAs(resourceBundle.getString("AppMenuSaveAs.word.text"),  x_office_document()),
-                        SaveAs(resourceBundle.getString("AppMenuSaveAs.html.text"),  text_x_generic()),
-                        SaveAs(resourceBundle.getString("AppMenuSaveAs.other.text"),  document_save_as()),
+                        SaveAs(resourceBundle.getString("AppMenuSaveAs.word.text"), x_office_document()),
+                        SaveAs(resourceBundle.getString("AppMenuSaveAs.html.text"), text_x_generic()),
+                        SaveAs(resourceBundle.getString("AppMenuSaveAs.other.text"), document_save_as()),
                     )
                 val saveAsComboSelectedItem = remember { mutableStateOf(saveAsComboItems[0]) }
                 ComboBoxProjection(

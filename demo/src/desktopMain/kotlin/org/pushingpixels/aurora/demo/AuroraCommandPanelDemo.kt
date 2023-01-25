@@ -28,8 +28,11 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonPanelProjection
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.businessSkin
+import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import org.pushingpixels.aurora.window.auroraApplication
@@ -110,11 +113,16 @@ fun main() = auroraApplication {
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
-                AuroraSkinSwitcher({ skin = it })
+                AuroraDecorationArea(
+                    decorationAreaType = DecorationAreaType.None,
+                    buttonShaper = ClassicButtonShaper.Instance
+                ) {
+                    AuroraSkinSwitcher({ skin = it })
 
-                Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
 
-                AuroraLocaleSwitcher(resourceBundle)
+                    AuroraLocaleSwitcher(resourceBundle)
+                }
             }
 
             val commandPanelContentModel =

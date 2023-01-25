@@ -38,6 +38,7 @@ import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.window.*
 import java.text.MessageFormat
 import java.util.*
@@ -921,15 +922,20 @@ fun AuroraWindowScope.DemoCommandContent(
 
         Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth()) {
-                AuroraSkinSwitcher(onSkinChange = onSkinChange)
+                AuroraDecorationArea(
+                    decorationAreaType = DecorationAreaType.None,
+                    buttonShaper = ClassicButtonShaper.Instance
+                ) {
+                    AuroraSkinSwitcher(onSkinChange = onSkinChange)
 
-                Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
 
-                AuroraLocaleSwitcher(resourceBundle)
+                    AuroraLocaleSwitcher(resourceBundle)
 
-                Spacer(modifier = Modifier.weight(1.0f))
+                    Spacer(modifier = Modifier.weight(1.0f))
 
-                DemoCommandComplex(resourceBundle)
+                    DemoCommandComplex(resourceBundle)
+                }
             }
 
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {

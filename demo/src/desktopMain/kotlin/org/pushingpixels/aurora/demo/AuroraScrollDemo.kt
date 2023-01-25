@@ -47,6 +47,8 @@ import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjecti
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import org.pushingpixels.aurora.window.auroraApplication
@@ -135,6 +137,7 @@ fun main() = auroraApplication {
                         }
                         handled = true
                     }
+
                     Key.DirectionUp -> {
                         if (stateSelection.value < 0) {
                             stateSelection.value = itemCount - 1
@@ -155,11 +158,16 @@ fun main() = auroraApplication {
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
-                AuroraSkinSwitcher({ skin = it })
+                AuroraDecorationArea(
+                    decorationAreaType = DecorationAreaType.None,
+                    buttonShaper = ClassicButtonShaper.Instance
+                ) {
+                    AuroraSkinSwitcher({ skin = it })
 
-                Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
 
-                AuroraLocaleSwitcher(resourceBundle)
+                    AuroraLocaleSwitcher(resourceBundle)
+                }
             }
 
             val selectedMf = MessageFormat(resourceBundle.getString("Selected.entry"))

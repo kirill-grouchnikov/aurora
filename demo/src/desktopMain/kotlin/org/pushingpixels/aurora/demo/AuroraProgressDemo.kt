@@ -37,6 +37,7 @@ import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.window.*
 import java.util.*
 
@@ -122,9 +123,16 @@ fun AuroraWindowScope.DemoProgressArea(
                     .padding(vertical = 8.dp, horizontal = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                AuroraSkinSwitcher(onSkinChange = onSkinChange)
+                AuroraDecorationArea(
+                    decorationAreaType = DecorationAreaType.None,
+                    buttonShaper = ClassicButtonShaper.Instance
+                ) {
+                    AuroraSkinSwitcher(onSkinChange)
 
-                AuroraLocaleSwitcher(resourceBundle)
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    AuroraLocaleSwitcher(resourceBundle)
+                }
             }
         }
 

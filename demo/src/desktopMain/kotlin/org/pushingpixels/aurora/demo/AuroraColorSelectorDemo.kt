@@ -30,11 +30,10 @@ import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.ColorSelectorCommandButtonProjection
 import org.pushingpixels.aurora.theming.AuroraSkinDefinition
+import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.marinerSkin
-import org.pushingpixels.aurora.window.AuroraApplicationScope
-import org.pushingpixels.aurora.window.AuroraWindow
-import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
-import org.pushingpixels.aurora.window.auroraApplication
+import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.window.*
 import java.util.*
 import javax.swing.JColorChooser
 
@@ -203,20 +202,25 @@ fun AuroraApplicationScope.ColorSelectorDemoContent(
 
     Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
         Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
-            AuroraSkinSwitcher(onSkinChange)
+            AuroraDecorationArea(
+                decorationAreaType = DecorationAreaType.None,
+                buttonShaper = ClassicButtonShaper.Instance
+            ) {
+                AuroraSkinSwitcher(onSkinChange)
 
-            Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(8.dp))
 
-            AuroraLocaleSwitcher(resourceBundle)
+                AuroraLocaleSwitcher(resourceBundle)
 
-            Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(8.dp))
 
-            ColorSelectorButton(
-                permanentColor = colorData.permanentColor,
-                colorActivationListener = colorActivationListener,
-                colorPreviewListener = colorPreviewListener,
-                resourceBundle = resourceBundle
-            )
+                ColorSelectorButton(
+                    permanentColor = colorData.permanentColor,
+                    colorActivationListener = colorActivationListener,
+                    colorPreviewListener = colorPreviewListener,
+                    resourceBundle = resourceBundle
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(12.dp))

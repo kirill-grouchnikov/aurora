@@ -32,12 +32,11 @@ import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.AuroraSkinDefinition
+import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
-import org.pushingpixels.aurora.window.AuroraApplicationScope
-import org.pushingpixels.aurora.window.AuroraWindow
-import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
-import org.pushingpixels.aurora.window.auroraApplication
+import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.window.*
 import java.text.MessageFormat
 import java.util.*
 
@@ -475,11 +474,16 @@ fun AuroraApplicationScope.OrientationCommandContent(
 
         Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth()) {
-                AuroraSkinSwitcher(onSkinChange = onSkinChange)
+                AuroraDecorationArea(
+                    decorationAreaType = DecorationAreaType.None,
+                    buttonShaper = ClassicButtonShaper.Instance
+                ) {
+                    AuroraSkinSwitcher(onSkinChange)
 
-                Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
 
-                AuroraLocaleSwitcher(resourceBundle)
+                    AuroraLocaleSwitcher(resourceBundle)
+                }
             }
 
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
