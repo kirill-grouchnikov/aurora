@@ -45,7 +45,7 @@ private class BoxWithHighlightsDrawingCache(
  * <ul>
  *     <li>[LabelProjection] content should have [LabelPresentationModel.inheritStateFromParent]
  *     set to true.</li>
- *     <li>By design, this box does not support [ComponentStateFacet.PRESSED] transitions.</li>
+ *     <li>By design, this box does not support [ComponentStateFacet.Press] transitions.</li>
  * </ul>
  */
 @OptIn(AuroraInternalApi::class)
