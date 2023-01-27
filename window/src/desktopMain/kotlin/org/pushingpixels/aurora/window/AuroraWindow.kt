@@ -348,209 +348,208 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
         remember { mutableStateOf(((extendedState != null) && ((extendedState and Frame.MAXIMIZED_BOTH) != 0))) }
     val skinColors = AuroraSkin.colors
 
-    CompositionLocalProvider(
-        LocalButtonShaper provides ClassicButtonShaper()
+    AuroraDecorationArea(
+        decorationAreaType = DecorationAreaType.TitlePane,
+        buttonShaper = ClassicButtonShaper.Instance
     ) {
-        AuroraDecorationArea(decorationAreaType = DecorationAreaType.TitlePane) {
-            Layout(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(WindowTitlePaneSizingConstants.MinimumTitlePaneHeight)
-                    .auroraBackground()
-                    .padding(WindowTitlePaneSizingConstants.TitlePaneContentPadding),
-                content = {
-                    WindowDraggableArea(modifier = Modifier.padding(top = 1.dp, bottom = 1.dp)) {
-                        WindowTitlePaneTextAndIcon(
-                            title = title,
-                            icon = icon,
-                            iconFilterStrategy = iconFilterStrategy,
-                            windowConfiguration = windowConfiguration
-                        )
-                    }
+        Layout(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(WindowTitlePaneSizingConstants.MinimumTitlePaneHeight)
+                .auroraBackground()
+                .padding(WindowTitlePaneSizingConstants.TitlePaneContentPadding),
+            content = {
+                WindowDraggableArea(modifier = Modifier.padding(top = 1.dp, bottom = 1.dp)) {
+                    WindowTitlePaneTextAndIcon(
+                        title = title,
+                        icon = icon,
+                        iconFilterStrategy = iconFilterStrategy,
+                        windowConfiguration = windowConfiguration
+                    )
+                }
 
-                    // Minimize button
-                    AuroraWindowTitlePaneButton(titlePaneCommand = Command(
-                        text = "",
-                        action = {
-                            (window as? Frame)?.extendedState = JFrame.ICONIFIED
-                        },
-                        icon = object : TransitionAwarePainterDelegate() {
-                            override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
-                                return TransitionAwarePainter(
-                                    iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
-                                    decorationAreaType = DecorationAreaType.TitlePane,
-                                    skinColors = skinColors,
-                                    modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                    paintDelegate = { drawScope, iconSize, colorScheme ->
-                                        drawMinimizeIcon(drawScope, iconSize, colorScheme)
-                                    },
-                                    density = density
-                                )
-                            }
-                        }
-                    ))
-
-                    // Maximize / Unmaximize button
-                    AuroraWindowTitlePaneButton(titlePaneCommand = Command(
-                        text = "",
-                        action = {
-                            val current = (window as? Frame)
-                            if (current != null) {
-                                if (current.extendedState == JFrame.MAXIMIZED_BOTH) {
-                                    current.extendedState = JFrame.NORMAL
-                                } else {
-                                    // Workaround for https://bugs.java.com/bugdatabase/view_bug.do?bug_id=4737788
-                                    // to explicitly compute maximized bounds so that our window
-                                    // does not overlap the taskbar0
-                                    val screenBounds = current.graphicsConfiguration.bounds
-                                    // Prior to Java 15, we need to account for screen resolution which is given as
-                                    // scaleX and scaleY on default transform of the window's graphics configuration.
-                                    // See https://bugs.openjdk.java.net/browse/JDK-8176359,
-                                    // https://bugs.openjdk.java.net/browse/JDK-8231564 and
-                                    // https://bugs.openjdk.java.net/browse/JDK-8243925 that went into Java 15.
-                                    val isWindows = System.getProperty("os.name")?.startsWith("Windows")
-                                    val maximizedWindowBounds =
-                                        if ((isWindows == true) && (Runtime.version().feature() < 15))
-                                            Rectangle(
-                                                0, 0,
-                                                (screenBounds.width * current.graphicsConfiguration.defaultTransform.scaleX).toInt(),
-                                                (screenBounds.height * current.graphicsConfiguration.defaultTransform.scaleY).toInt(),
-                                            ) else screenBounds
-                                    // Now account for screen insets (taskbar and anything else that should not be
-                                    // interfered with by maximized windows)
-                                    val screenInsets = current.toolkit.getScreenInsets(current.graphicsConfiguration)
-                                    // Set maximized bounds of our window
-                                    current.maximizedBounds = Rectangle(
-                                        maximizedWindowBounds.x + screenInsets.left,
-                                        maximizedWindowBounds.y + screenInsets.top,
-                                        maximizedWindowBounds.width - screenInsets.left - screenInsets.right,
-                                        maximizedWindowBounds.height - screenInsets.top - screenInsets.bottom
-                                    )
-                                    // And now we can set our extended state
-                                    current.extendedState = JFrame.MAXIMIZED_BOTH
-                                }
-                                isMaximized.value = !isMaximized.value
-                            }
-                        },
-                        icon = object : TransitionAwarePainterDelegate() {
-                            override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
-                                return if (isMaximized.value) {
-                                    TransitionAwarePainter(
-                                        iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
-                                        decorationAreaType = DecorationAreaType.TitlePane,
-                                        skinColors = skinColors,
-                                        modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                        paintDelegate = { drawScope, iconSize, colorScheme ->
-                                            drawRestoreIcon(drawScope, iconSize, colorScheme)
-                                        },
-                                        density = density,
-                                    )
-                                } else {
-                                    TransitionAwarePainter(
-                                        iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
-                                        decorationAreaType = DecorationAreaType.TitlePane,
-                                        skinColors = skinColors,
-                                        modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                        paintDelegate = { drawScope, iconSize, colorScheme ->
-                                            drawMaximizeIcon(drawScope, iconSize, colorScheme)
-                                        },
-                                        density = density,
-                                    )
-                                }
-                            }
-                        }
-                    ))
-
-                    // Close button
-                    AuroraWindowTitlePaneButton(titlePaneCommand = Command(
-                        text = "",
-                        action = {
-                            (window as? Frame)?.dispatchEvent(
-                                WindowEvent(
-                                    window,
-                                    WindowEvent.WINDOW_CLOSING
-                                )
+                // Minimize button
+                AuroraWindowTitlePaneButton(titlePaneCommand = Command(
+                    text = "",
+                    action = {
+                        (window as? Frame)?.extendedState = JFrame.ICONIFIED
+                    },
+                    icon = object : TransitionAwarePainterDelegate() {
+                        override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
+                            return TransitionAwarePainter(
+                                iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
+                                decorationAreaType = DecorationAreaType.TitlePane,
+                                skinColors = skinColors,
+                                modelStateInfoSnapshot = modelStateInfoSnapshot,
+                                paintDelegate = { drawScope, iconSize, colorScheme ->
+                                    drawMinimizeIcon(drawScope, iconSize, colorScheme)
+                                },
+                                density = density
                             )
-                        },
-                        icon = object : TransitionAwarePainterDelegate() {
-                            override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
-                                return TransitionAwarePainter(
+                        }
+                    }
+                ))
+
+                // Maximize / Unmaximize button
+                AuroraWindowTitlePaneButton(titlePaneCommand = Command(
+                    text = "",
+                    action = {
+                        val current = (window as? Frame)
+                        if (current != null) {
+                            if (current.extendedState == JFrame.MAXIMIZED_BOTH) {
+                                current.extendedState = JFrame.NORMAL
+                            } else {
+                                // Workaround for https://bugs.java.com/bugdatabase/view_bug.do?bug_id=4737788
+                                // to explicitly compute maximized bounds so that our window
+                                // does not overlap the taskbar0
+                                val screenBounds = current.graphicsConfiguration.bounds
+                                // Prior to Java 15, we need to account for screen resolution which is given as
+                                // scaleX and scaleY on default transform of the window's graphics configuration.
+                                // See https://bugs.openjdk.java.net/browse/JDK-8176359,
+                                // https://bugs.openjdk.java.net/browse/JDK-8231564 and
+                                // https://bugs.openjdk.java.net/browse/JDK-8243925 that went into Java 15.
+                                val isWindows = System.getProperty("os.name")?.startsWith("Windows")
+                                val maximizedWindowBounds =
+                                    if ((isWindows == true) && (Runtime.version().feature() < 15))
+                                        Rectangle(
+                                            0, 0,
+                                            (screenBounds.width * current.graphicsConfiguration.defaultTransform.scaleX).toInt(),
+                                            (screenBounds.height * current.graphicsConfiguration.defaultTransform.scaleY).toInt(),
+                                        ) else screenBounds
+                                // Now account for screen insets (taskbar and anything else that should not be
+                                // interfered with by maximized windows)
+                                val screenInsets = current.toolkit.getScreenInsets(current.graphicsConfiguration)
+                                // Set maximized bounds of our window
+                                current.maximizedBounds = Rectangle(
+                                    maximizedWindowBounds.x + screenInsets.left,
+                                    maximizedWindowBounds.y + screenInsets.top,
+                                    maximizedWindowBounds.width - screenInsets.left - screenInsets.right,
+                                    maximizedWindowBounds.height - screenInsets.top - screenInsets.bottom
+                                )
+                                // And now we can set our extended state
+                                current.extendedState = JFrame.MAXIMIZED_BOTH
+                            }
+                            isMaximized.value = !isMaximized.value
+                        }
+                    },
+                    icon = object : TransitionAwarePainterDelegate() {
+                        override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
+                            return if (isMaximized.value) {
+                                TransitionAwarePainter(
                                     iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = skinColors,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                                     paintDelegate = { drawScope, iconSize, colorScheme ->
-                                        drawCloseIcon(drawScope, iconSize, colorScheme)
+                                        drawRestoreIcon(drawScope, iconSize, colorScheme)
+                                    },
+                                    density = density,
+                                )
+                            } else {
+                                TransitionAwarePainter(
+                                    iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
+                                    decorationAreaType = DecorationAreaType.TitlePane,
+                                    skinColors = skinColors,
+                                    modelStateInfoSnapshot = modelStateInfoSnapshot,
+                                    paintDelegate = { drawScope, iconSize, colorScheme ->
+                                        drawMaximizeIcon(drawScope, iconSize, colorScheme)
                                     },
                                     density = density,
                                 )
                             }
                         }
-                    ))
-                }) { measurables, constraints ->
-                val width = constraints.maxWidth
-                val height = constraints.maxHeight
-
-                val buttonSizePx = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize.toPx().roundToInt()
-
-                val buttonMeasureSpec = Constraints.fixed(width = buttonSizePx, height = buttonSizePx)
-
-                var childIndex = 0
-
-                val titleBoxMeasurable = measurables[childIndex++]
-                val minimizeButtonMeasurable = measurables[childIndex++]
-                val maximizeButtonMeasurable = measurables[childIndex++]
-                val closeButtonMeasurable = measurables[childIndex]
-
-                val minimizeButtonPlaceable = minimizeButtonMeasurable.measure(buttonMeasureSpec)
-                val maximizeButtonPlaceable = maximizeButtonMeasurable.measure(buttonMeasureSpec)
-                val closeButtonPlaceable = closeButtonMeasurable.measure(buttonMeasureSpec)
-
-                val regularGapPx = WindowTitlePaneSizingConstants.TitlePaneButtonIconRegularGap.toPx().roundToInt()
-                val largeGapPx = WindowTitlePaneSizingConstants.TitlePaneButtonIconLargeGap.toPx().roundToInt()
-
-                val titleWidth = width -
-                        (minimizeButtonPlaceable.width + regularGapPx +
-                                maximizeButtonPlaceable.width + largeGapPx +
-                                closeButtonPlaceable.width)
-
-                val titleBoxPlaceable = titleBoxMeasurable.measure(
-                    Constraints.fixed(width = titleWidth, height = height)
-                )
-
-                layout(width = width, height = height) {
-                    val controlButtonsOnRight = windowConfiguration.areTitlePaneControlButtonsOnRight(layoutDirection)
-
-                    val buttonY = (height - buttonSizePx) / 2
-
-                    var x = if (controlButtonsOnRight) width else 0
-                    if (controlButtonsOnRight) {
-                        x -= buttonSizePx
                     }
-                    closeButtonPlaceable.place(x = x, y = buttonY)
+                ))
 
-                    if (!controlButtonsOnRight) {
-                        x += buttonSizePx
+                // Close button
+                AuroraWindowTitlePaneButton(titlePaneCommand = Command(
+                    text = "",
+                    action = {
+                        (window as? Frame)?.dispatchEvent(
+                            WindowEvent(
+                                window,
+                                WindowEvent.WINDOW_CLOSING
+                            )
+                        )
+                    },
+                    icon = object : TransitionAwarePainterDelegate() {
+                        override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
+                            return TransitionAwarePainter(
+                                iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
+                                decorationAreaType = DecorationAreaType.TitlePane,
+                                skinColors = skinColors,
+                                modelStateInfoSnapshot = modelStateInfoSnapshot,
+                                paintDelegate = { drawScope, iconSize, colorScheme ->
+                                    drawCloseIcon(drawScope, iconSize, colorScheme)
+                                },
+                                density = density,
+                            )
+                        }
                     }
+                ))
+            }) { measurables, constraints ->
+            val width = constraints.maxWidth
+            val height = constraints.maxHeight
 
-                    x += if (controlButtonsOnRight) (-largeGapPx - buttonSizePx) else largeGapPx
-                    maximizeButtonPlaceable.place(x = x, y = buttonY)
+            val buttonSizePx = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize.toPx().roundToInt()
 
-                    if (!controlButtonsOnRight) {
-                        x += buttonSizePx
-                    }
+            val buttonMeasureSpec = Constraints.fixed(width = buttonSizePx, height = buttonSizePx)
 
-                    x += if (controlButtonsOnRight) (-regularGapPx - buttonSizePx) else regularGapPx
-                    minimizeButtonPlaceable.place(x = x, y = buttonY)
-                    if (!controlButtonsOnRight) {
-                        x += buttonSizePx
-                    }
+            var childIndex = 0
 
-                    if (controlButtonsOnRight) {
-                        titleBoxPlaceable.place(0, 0)
-                    } else {
-                        titleBoxPlaceable.place(x, 0)
-                    }
+            val titleBoxMeasurable = measurables[childIndex++]
+            val minimizeButtonMeasurable = measurables[childIndex++]
+            val maximizeButtonMeasurable = measurables[childIndex++]
+            val closeButtonMeasurable = measurables[childIndex]
+
+            val minimizeButtonPlaceable = minimizeButtonMeasurable.measure(buttonMeasureSpec)
+            val maximizeButtonPlaceable = maximizeButtonMeasurable.measure(buttonMeasureSpec)
+            val closeButtonPlaceable = closeButtonMeasurable.measure(buttonMeasureSpec)
+
+            val regularGapPx = WindowTitlePaneSizingConstants.TitlePaneButtonIconRegularGap.toPx().roundToInt()
+            val largeGapPx = WindowTitlePaneSizingConstants.TitlePaneButtonIconLargeGap.toPx().roundToInt()
+
+            val titleWidth = width -
+                    (minimizeButtonPlaceable.width + regularGapPx +
+                            maximizeButtonPlaceable.width + largeGapPx +
+                            closeButtonPlaceable.width)
+
+            val titleBoxPlaceable = titleBoxMeasurable.measure(
+                Constraints.fixed(width = titleWidth, height = height)
+            )
+
+            layout(width = width, height = height) {
+                val controlButtonsOnRight = windowConfiguration.areTitlePaneControlButtonsOnRight(layoutDirection)
+
+                val buttonY = (height - buttonSizePx) / 2
+
+                var x = if (controlButtonsOnRight) width else 0
+                if (controlButtonsOnRight) {
+                    x -= buttonSizePx
+                }
+                closeButtonPlaceable.place(x = x, y = buttonY)
+
+                if (!controlButtonsOnRight) {
+                    x += buttonSizePx
+                }
+
+                x += if (controlButtonsOnRight) (-largeGapPx - buttonSizePx) else largeGapPx
+                maximizeButtonPlaceable.place(x = x, y = buttonY)
+
+                if (!controlButtonsOnRight) {
+                    x += buttonSizePx
+                }
+
+                x += if (controlButtonsOnRight) (-regularGapPx - buttonSizePx) else regularGapPx
+                minimizeButtonPlaceable.place(x = x, y = buttonY)
+                if (!controlButtonsOnRight) {
+                    x += buttonSizePx
+                }
+
+                if (controlButtonsOnRight) {
+                    titleBoxPlaceable.place(0, 0)
+                } else {
+                    titleBoxPlaceable.place(x, 0)
                 }
             }
         }
@@ -570,205 +569,204 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
         remember { mutableStateOf(((extendedState != null) && ((extendedState and Frame.MAXIMIZED_BOTH) != 0))) }
     val skinColors = AuroraSkin.colors
 
-    CompositionLocalProvider(
-        LocalButtonShaper provides ClassicButtonShaper()
+    AuroraDecorationArea(
+        decorationAreaType = DecorationAreaType.TitlePane,
+        buttonShaper = ClassicButtonShaper.Instance
     ) {
-        AuroraDecorationArea(decorationAreaType = DecorationAreaType.TitlePane) {
-            Layout(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(windowConfiguration.titlePaneHeight)
-                    .padding(WindowTitlePaneSizingConstants.TitlePaneContentPadding),
-                content = {
-                    Box(modifier = Modifier.padding(top = 1.dp, bottom = 1.dp)) {}
+        Layout(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(windowConfiguration.titlePaneHeight)
+                .padding(WindowTitlePaneSizingConstants.TitlePaneContentPadding),
+            content = {
+                Box(modifier = Modifier.padding(top = 1.dp, bottom = 1.dp)) {}
 
-                    // Minimize button
-                    AuroraWindowTitlePaneButton(titlePaneCommand = Command(
-                        text = "",
-                        action = {
-                            (window as? Frame)?.extendedState = JFrame.ICONIFIED
-                        },
-                        icon = object : TransitionAwarePainterDelegate() {
-                            override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
-                                return TransitionAwarePainter(
-                                    iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
-                                    decorationAreaType = DecorationAreaType.TitlePane,
-                                    skinColors = skinColors,
-                                    modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                    paintDelegate = { drawScope, iconSize, colorScheme ->
-                                        drawMinimizeIcon(drawScope, iconSize, colorScheme)
-                                    },
-                                    density = density
-                                )
-                            }
-                        }
-                    ))
-
-                    // Maximize / Unmaximize button
-                    AuroraWindowTitlePaneButton(titlePaneCommand = Command(
-                        text = "",
-                        action = {
-                            val current = (window as? Frame)
-                            if (current != null) {
-                                if (current.extendedState == JFrame.MAXIMIZED_BOTH) {
-                                    current.extendedState = JFrame.NORMAL
-                                } else {
-                                    // Workaround for https://bugs.java.com/bugdatabase/view_bug.do?bug_id=4737788
-                                    // to explicitly compute maximized bounds so that our window
-                                    // does not overlap the taskbar0
-                                    val screenBounds = current.graphicsConfiguration.bounds
-                                    // Prior to Java 15, we need to account for screen resolution which is given as
-                                    // scaleX and scaleY on default transform of the window's graphics configuration.
-                                    // See https://bugs.openjdk.java.net/browse/JDK-8176359,
-                                    // https://bugs.openjdk.java.net/browse/JDK-8231564 and
-                                    // https://bugs.openjdk.java.net/browse/JDK-8243925 that went into Java 15.
-                                    val isWindows = System.getProperty("os.name")?.startsWith("Windows")
-                                    val maximizedWindowBounds =
-                                        if ((isWindows == true) && (Runtime.version().feature() < 15))
-                                            Rectangle(
-                                                0, 0,
-                                                (screenBounds.width * current.graphicsConfiguration.defaultTransform.scaleX).toInt(),
-                                                (screenBounds.height * current.graphicsConfiguration.defaultTransform.scaleY).toInt(),
-                                            ) else screenBounds
-                                    // Now account for screen insets (taskbar and anything else that should not be
-                                    // interfered with by maximized windows)
-                                    val screenInsets = current.toolkit.getScreenInsets(current.graphicsConfiguration)
-                                    // Set maximized bounds of our window
-                                    current.maximizedBounds = Rectangle(
-                                        maximizedWindowBounds.x + screenInsets.left,
-                                        maximizedWindowBounds.y + screenInsets.top,
-                                        maximizedWindowBounds.width - screenInsets.left - screenInsets.right,
-                                        maximizedWindowBounds.height - screenInsets.top - screenInsets.bottom
-                                    )
-                                    // And now we can set our extended state
-                                    current.extendedState = JFrame.MAXIMIZED_BOTH
-                                }
-                                isMaximized.value = !isMaximized.value
-                            }
-                        },
-                        icon = object : TransitionAwarePainterDelegate() {
-                            override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
-                                return if (isMaximized.value) {
-                                    TransitionAwarePainter(
-                                        iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
-                                        decorationAreaType = DecorationAreaType.TitlePane,
-                                        skinColors = skinColors,
-                                        modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                        paintDelegate = { drawScope, iconSize, colorScheme ->
-                                            drawRestoreIcon(drawScope, iconSize, colorScheme)
-                                        },
-                                        density = density,
-                                    )
-                                } else {
-                                    TransitionAwarePainter(
-                                        iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
-                                        decorationAreaType = DecorationAreaType.TitlePane,
-                                        skinColors = skinColors,
-                                        modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                        paintDelegate = { drawScope, iconSize, colorScheme ->
-                                            drawMaximizeIcon(drawScope, iconSize, colorScheme)
-                                        },
-                                        density = density,
-                                    )
-                                }
-                            }
-                        }
-                    ))
-
-                    // Close button
-                    AuroraWindowTitlePaneButton(titlePaneCommand = Command(
-                        text = "",
-                        action = {
-                            (window as? Frame)?.dispatchEvent(
-                                WindowEvent(
-                                    window,
-                                    WindowEvent.WINDOW_CLOSING
-                                )
+                // Minimize button
+                AuroraWindowTitlePaneButton(titlePaneCommand = Command(
+                    text = "",
+                    action = {
+                        (window as? Frame)?.extendedState = JFrame.ICONIFIED
+                    },
+                    icon = object : TransitionAwarePainterDelegate() {
+                        override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
+                            return TransitionAwarePainter(
+                                iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
+                                decorationAreaType = DecorationAreaType.TitlePane,
+                                skinColors = skinColors,
+                                modelStateInfoSnapshot = modelStateInfoSnapshot,
+                                paintDelegate = { drawScope, iconSize, colorScheme ->
+                                    drawMinimizeIcon(drawScope, iconSize, colorScheme)
+                                },
+                                density = density
                             )
-                        },
-                        icon = object : TransitionAwarePainterDelegate() {
-                            override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
-                                return TransitionAwarePainter(
+                        }
+                    }
+                ))
+
+                // Maximize / Unmaximize button
+                AuroraWindowTitlePaneButton(titlePaneCommand = Command(
+                    text = "",
+                    action = {
+                        val current = (window as? Frame)
+                        if (current != null) {
+                            if (current.extendedState == JFrame.MAXIMIZED_BOTH) {
+                                current.extendedState = JFrame.NORMAL
+                            } else {
+                                // Workaround for https://bugs.java.com/bugdatabase/view_bug.do?bug_id=4737788
+                                // to explicitly compute maximized bounds so that our window
+                                // does not overlap the taskbar0
+                                val screenBounds = current.graphicsConfiguration.bounds
+                                // Prior to Java 15, we need to account for screen resolution which is given as
+                                // scaleX and scaleY on default transform of the window's graphics configuration.
+                                // See https://bugs.openjdk.java.net/browse/JDK-8176359,
+                                // https://bugs.openjdk.java.net/browse/JDK-8231564 and
+                                // https://bugs.openjdk.java.net/browse/JDK-8243925 that went into Java 15.
+                                val isWindows = System.getProperty("os.name")?.startsWith("Windows")
+                                val maximizedWindowBounds =
+                                    if ((isWindows == true) && (Runtime.version().feature() < 15))
+                                        Rectangle(
+                                            0, 0,
+                                            (screenBounds.width * current.graphicsConfiguration.defaultTransform.scaleX).toInt(),
+                                            (screenBounds.height * current.graphicsConfiguration.defaultTransform.scaleY).toInt(),
+                                        ) else screenBounds
+                                // Now account for screen insets (taskbar and anything else that should not be
+                                // interfered with by maximized windows)
+                                val screenInsets = current.toolkit.getScreenInsets(current.graphicsConfiguration)
+                                // Set maximized bounds of our window
+                                current.maximizedBounds = Rectangle(
+                                    maximizedWindowBounds.x + screenInsets.left,
+                                    maximizedWindowBounds.y + screenInsets.top,
+                                    maximizedWindowBounds.width - screenInsets.left - screenInsets.right,
+                                    maximizedWindowBounds.height - screenInsets.top - screenInsets.bottom
+                                )
+                                // And now we can set our extended state
+                                current.extendedState = JFrame.MAXIMIZED_BOTH
+                            }
+                            isMaximized.value = !isMaximized.value
+                        }
+                    },
+                    icon = object : TransitionAwarePainterDelegate() {
+                        override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
+                            return if (isMaximized.value) {
+                                TransitionAwarePainter(
                                     iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = skinColors,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                                     paintDelegate = { drawScope, iconSize, colorScheme ->
-                                        drawCloseIcon(drawScope, iconSize, colorScheme)
+                                        drawRestoreIcon(drawScope, iconSize, colorScheme)
+                                    },
+                                    density = density,
+                                )
+                            } else {
+                                TransitionAwarePainter(
+                                    iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
+                                    decorationAreaType = DecorationAreaType.TitlePane,
+                                    skinColors = skinColors,
+                                    modelStateInfoSnapshot = modelStateInfoSnapshot,
+                                    paintDelegate = { drawScope, iconSize, colorScheme ->
+                                        drawMaximizeIcon(drawScope, iconSize, colorScheme)
                                     },
                                     density = density,
                                 )
                             }
                         }
-                    ))
-                }) { measurables, constraints ->
-                val width = constraints.maxWidth
-                val height = constraints.maxHeight
-
-                val buttonSizePx = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize.toPx().roundToInt()
-
-                val buttonMeasureSpec = Constraints.fixed(width = buttonSizePx, height = buttonSizePx)
-
-                var childIndex = 0
-
-                val titleBoxMeasurable = measurables[childIndex++]
-                val minimizeButtonMeasurable = measurables[childIndex++]
-                val maximizeButtonMeasurable = measurables[childIndex++]
-                val closeButtonMeasurable = measurables[childIndex]
-
-                val minimizeButtonPlaceable = minimizeButtonMeasurable.measure(buttonMeasureSpec)
-                val maximizeButtonPlaceable = maximizeButtonMeasurable.measure(buttonMeasureSpec)
-                val closeButtonPlaceable = closeButtonMeasurable.measure(buttonMeasureSpec)
-
-                val regularGapPx = WindowTitlePaneSizingConstants.TitlePaneButtonIconRegularGap.toPx().roundToInt()
-                val largeGapPx = WindowTitlePaneSizingConstants.TitlePaneButtonIconLargeGap.toPx().roundToInt()
-
-                val titleWidth = width -
-                        (minimizeButtonPlaceable.width + regularGapPx +
-                                maximizeButtonPlaceable.width + largeGapPx +
-                                closeButtonPlaceable.width)
-
-                val titleBoxPlaceable = titleBoxMeasurable.measure(
-                    Constraints.fixed(width = titleWidth, height = height)
-                )
-
-                layout(width = width, height = height) {
-                    val controlButtonsOnRight = windowConfiguration.areTitlePaneControlButtonsOnRight(layoutDirection)
-
-                    val buttonY = when (windowConfiguration.titleControlButtonGroupVerticalGravity) {
-                        VerticalGravity.Top -> 0
-                        VerticalGravity.Bottom -> height - buttonSizePx
-                        VerticalGravity.Centered -> (height - buttonSizePx) / 2
                     }
+                ))
 
-                    var x = if (controlButtonsOnRight) width else 0
-                    if (controlButtonsOnRight) {
-                        x -= buttonSizePx
+                // Close button
+                AuroraWindowTitlePaneButton(titlePaneCommand = Command(
+                    text = "",
+                    action = {
+                        (window as? Frame)?.dispatchEvent(
+                            WindowEvent(
+                                window,
+                                WindowEvent.WINDOW_CLOSING
+                            )
+                        )
+                    },
+                    icon = object : TransitionAwarePainterDelegate() {
+                        override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
+                            return TransitionAwarePainter(
+                                iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
+                                decorationAreaType = DecorationAreaType.TitlePane,
+                                skinColors = skinColors,
+                                modelStateInfoSnapshot = modelStateInfoSnapshot,
+                                paintDelegate = { drawScope, iconSize, colorScheme ->
+                                    drawCloseIcon(drawScope, iconSize, colorScheme)
+                                },
+                                density = density,
+                            )
+                        }
                     }
-                    closeButtonPlaceable.place(x = x, y = buttonY)
+                ))
+            }) { measurables, constraints ->
+            val width = constraints.maxWidth
+            val height = constraints.maxHeight
 
-                    if (!controlButtonsOnRight) {
-                        x += buttonSizePx
-                    }
+            val buttonSizePx = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize.toPx().roundToInt()
 
-                    x += if (controlButtonsOnRight) (-largeGapPx - buttonSizePx) else largeGapPx
-                    maximizeButtonPlaceable.place(x = x, y = buttonY)
+            val buttonMeasureSpec = Constraints.fixed(width = buttonSizePx, height = buttonSizePx)
 
-                    if (!controlButtonsOnRight) {
-                        x += buttonSizePx
-                    }
+            var childIndex = 0
 
-                    x += if (controlButtonsOnRight) (-regularGapPx - buttonSizePx) else regularGapPx
-                    minimizeButtonPlaceable.place(x = x, y = buttonY)
-                    if (!controlButtonsOnRight) {
-                        x += buttonSizePx
-                    }
+            val titleBoxMeasurable = measurables[childIndex++]
+            val minimizeButtonMeasurable = measurables[childIndex++]
+            val maximizeButtonMeasurable = measurables[childIndex++]
+            val closeButtonMeasurable = measurables[childIndex]
 
-                    if (controlButtonsOnRight) {
-                        titleBoxPlaceable.place(0, 0)
-                    } else {
-                        titleBoxPlaceable.place(x, 0)
-                    }
+            val minimizeButtonPlaceable = minimizeButtonMeasurable.measure(buttonMeasureSpec)
+            val maximizeButtonPlaceable = maximizeButtonMeasurable.measure(buttonMeasureSpec)
+            val closeButtonPlaceable = closeButtonMeasurable.measure(buttonMeasureSpec)
+
+            val regularGapPx = WindowTitlePaneSizingConstants.TitlePaneButtonIconRegularGap.toPx().roundToInt()
+            val largeGapPx = WindowTitlePaneSizingConstants.TitlePaneButtonIconLargeGap.toPx().roundToInt()
+
+            val titleWidth = width -
+                    (minimizeButtonPlaceable.width + regularGapPx +
+                            maximizeButtonPlaceable.width + largeGapPx +
+                            closeButtonPlaceable.width)
+
+            val titleBoxPlaceable = titleBoxMeasurable.measure(
+                Constraints.fixed(width = titleWidth, height = height)
+            )
+
+            layout(width = width, height = height) {
+                val controlButtonsOnRight = windowConfiguration.areTitlePaneControlButtonsOnRight(layoutDirection)
+
+                val buttonY = when (windowConfiguration.titleControlButtonGroupVerticalGravity) {
+                    VerticalGravity.Top -> 0
+                    VerticalGravity.Bottom -> height - buttonSizePx
+                    VerticalGravity.Centered -> (height - buttonSizePx) / 2
+                }
+
+                var x = if (controlButtonsOnRight) width else 0
+                if (controlButtonsOnRight) {
+                    x -= buttonSizePx
+                }
+                closeButtonPlaceable.place(x = x, y = buttonY)
+
+                if (!controlButtonsOnRight) {
+                    x += buttonSizePx
+                }
+
+                x += if (controlButtonsOnRight) (-largeGapPx - buttonSizePx) else largeGapPx
+                maximizeButtonPlaceable.place(x = x, y = buttonY)
+
+                if (!controlButtonsOnRight) {
+                    x += buttonSizePx
+                }
+
+                x += if (controlButtonsOnRight) (-regularGapPx - buttonSizePx) else regularGapPx
+                minimizeButtonPlaceable.place(x = x, y = buttonY)
+                if (!controlButtonsOnRight) {
+                    x += buttonSizePx
+                }
+
+                if (controlButtonsOnRight) {
+                    titleBoxPlaceable.place(0, 0)
+                } else {
+                    titleBoxPlaceable.place(x, 0)
                 }
             }
         }
