@@ -99,7 +99,7 @@ fun Modifier.auroraRichTooltip(
     fun startShowing() {
         job?.cancel()
         job = scope.launch {
-            delay(500)
+            delay(750)
             displayRichTooltipContent(
                 popupOriginator = popupOriginator,
                 layoutDirection = layoutDirection,

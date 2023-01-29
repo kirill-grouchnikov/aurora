@@ -62,7 +62,6 @@ import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 import java.awt.event.KeyEvent
-import javax.swing.JPopupMenu
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -78,7 +77,7 @@ private class CommandButtonDrawingCache(
 private fun Modifier.commandButtonActionHoverable(
     interactionSource: MutableInteractionSource,
     enabled: Boolean = true,
-    onClickState: State<() -> Unit>,
+    onActivateActionState: State<() -> Unit>,
     presentationModel: BaseCommandButtonPresentationModel
 ): Modifier = composed(
     inspectorInfo = debugInspectorInfo {
@@ -102,12 +101,12 @@ private fun Modifier.commandButtonActionHoverable(
                 clickJob = scope.launch {
                     delay(presentationModel.autoRepeatInitialInterval)
                     while (isActive) {
-                        onClickState.value.invoke()
+                        onActivateActionState.value.invoke()
                         delay(presentationModel.autoRepeatSubsequentInterval)
                     }
                 }
             } else {
-                onClickState.value.invoke()
+                onActivateActionState.value.invoke()
             }
         }
     }
@@ -161,12 +160,90 @@ private fun Modifier.commandButtonActionHoverable(
     }
 }
 
-internal suspend fun PressGestureScope.auroraHandlePressInteraction(
+private fun Modifier.commandButtonPopupHoverable(
+    interactionSource: MutableInteractionSource,
+    enabled: Boolean = true,
+    onActivatePopupState: State<() -> Unit>,
+    onDeactivatePopup: State<() -> Unit>,
+    presentationModel: BaseCommandButtonPresentationModel
+): Modifier = composed(
+    inspectorInfo = debugInspectorInfo {
+        name = "hoverable"
+        properties["interactionSource"] = interactionSource
+        properties["enabled"] = enabled
+    }
+) {
+    var hoverInteraction by remember { mutableStateOf<HoverInteraction.Enter?>(null) }
+
+    suspend fun emitEnter() {
+        if (hoverInteraction == null) {
+            val interaction = HoverInteraction.Enter()
+            interactionSource.emit(interaction)
+            hoverInteraction = interaction
+
+            if (presentationModel.isMenu) {
+                onActivatePopupState.value.invoke()
+            }
+        }
+    }
+
+    suspend fun emitExit() {
+        hoverInteraction?.let { oldValue ->
+            val interaction = HoverInteraction.Exit(oldValue)
+            interactionSource.emit(interaction)
+            hoverInteraction = null
+
+            if (presentationModel.isMenu) {
+                onDeactivatePopup.value.invoke()
+            }
+        }
+    }
+
+    fun tryEmitExit() {
+        hoverInteraction?.let { oldValue ->
+            val interaction = HoverInteraction.Exit(oldValue)
+            interactionSource.tryEmit(interaction)
+            hoverInteraction = null
+        }
+    }
+
+    DisposableEffect(interactionSource) {
+        onDispose { tryEmitExit() }
+    }
+    LaunchedEffect(enabled) {
+        if (!enabled) {
+            emitExit()
+        }
+    }
+
+    if (enabled) {
+        Modifier
+            .pointerInput(interactionSource) {
+                coroutineScope {
+                    val currentContext = currentCoroutineContext()
+                    val outerScope = this
+                    awaitPointerEventScope {
+                        while (currentContext.isActive) {
+                            val event = awaitPointerEvent()
+                            when (event.type) {
+                                PointerEventType.Enter -> outerScope.launch { emitEnter() }
+                                PointerEventType.Exit -> outerScope.launch { emitExit() }
+                            }
+                        }
+                    }
+                }
+            }
+    } else {
+        Modifier
+    }
+}
+
+internal suspend fun PressGestureScope.auroraHandleActionPressInteraction(
     pressPoint: Offset,
     interactionSource: MutableInteractionSource,
     pressedInteraction: MutableState<PressInteraction.Press?>,
-    onClickState: State<() -> Unit>,
-    invokeOnClickOnPress: Boolean,
+    onActivateActionState: State<() -> Unit>,
+    invokeOnActivateActionOnPress: Boolean,
     presentationModel: BaseCommandButtonPresentationModel,
     scope: CoroutineScope,
     clickJob: MutableState<Job?>
@@ -177,18 +254,18 @@ internal suspend fun PressGestureScope.auroraHandlePressInteraction(
             val pressInteraction = PressInteraction.Press(pressPoint)
             interactionSource.emit(pressInteraction)
             pressedInteraction.value = pressInteraction
-            if (invokeOnClickOnPress) {
+            if (invokeOnActivateActionOnPress) {
                 if (presentationModel.autoRepeatAction) {
                     clickJob.value?.cancel()
                     clickJob.value = scope.launch {
                         delay(presentationModel.autoRepeatInitialInterval)
                         while (isActive) {
-                            onClickState.value.invoke()
+                            onActivateActionState.value.invoke()
                             delay(presentationModel.autoRepeatSubsequentInterval)
                         }
                     }
                 } else {
-                    onClickState.value.invoke()
+                    onActivateActionState.value.invoke()
                 }
             }
         }
@@ -220,11 +297,58 @@ internal suspend fun PressGestureScope.auroraHandlePressInteraction(
     }
 }
 
-private fun Modifier.commandButtonActionClickable(
+internal suspend fun PressGestureScope.auroraHandlePopupPressInteraction(
+    pressPoint: Offset,
+    interactionSource: MutableInteractionSource,
+    pressedInteraction: MutableState<PressInteraction.Press?>,
+    onActivatePopupState: State<() -> Unit>,
+    presentationModel: BaseCommandButtonPresentationModel,
+    scope: CoroutineScope,
+    clickJob: MutableState<Job?>
+) {
+    coroutineScope {
+        val delayJob = launch {
+            delay(0L)
+            val pressInteraction = PressInteraction.Press(pressPoint)
+            interactionSource.emit(pressInteraction)
+            pressedInteraction.value = pressInteraction
+            if (!presentationModel.isMenu) {
+                onActivatePopupState.value.invoke()
+            }
+        }
+        val success = tryAwaitRelease()
+        if (delayJob.isActive) {
+            delayJob.cancelAndJoin()
+            // The press released successfully, before the timeout duration - emit the press
+            // interaction instantly. No else branch - if the press was cancelled before the
+            // timeout, we don't want to emit a press interaction.
+            if (success) {
+                val pressInteraction = PressInteraction.Press(pressPoint)
+                val releaseInteraction = PressInteraction.Release(pressInteraction)
+                interactionSource.emit(pressInteraction)
+                interactionSource.emit(releaseInteraction)
+                clickJob.value?.cancel()
+            }
+        } else {
+            pressedInteraction.value?.let { pressInteraction ->
+                val endInteraction = if (success) {
+                    PressInteraction.Release(pressInteraction)
+                } else {
+                    PressInteraction.Cancel(pressInteraction)
+                }
+                interactionSource.emit(endInteraction)
+                clickJob.value?.cancel()
+            }
+        }
+        pressedInteraction.value = null
+    }
+}
+
+private fun Modifier.commandButtonActionModifier(
     interactionSource: MutableInteractionSource,
     enabled: Boolean = true,
     presentationModel: BaseCommandButtonPresentationModel,
-    onClick: () -> Unit
+    onActivateAction: () -> Unit
 ) = composed(
     factory = {
         // Start building the chain. First the semantics role
@@ -234,14 +358,14 @@ private fun Modifier.commandButtonActionClickable(
         // Then treating "Enter" key up event to fire the action
         result = result.then(onKeyEvent {
             if (enabled && (it.type == KeyEventType.KeyUp) && (it.key.nativeKeyCode == KeyEvent.VK_ENTER)) {
-                onClick()
+                onActivateAction()
                 true
             } else {
                 false
             }
         })
 
-        val onClickState = rememberUpdatedState(onClick)
+        val onActivateActionState = rememberUpdatedState(onActivateAction)
         val pressedInteraction = remember { mutableStateOf<PressInteraction.Press?>(null) }
         val scope = rememberCoroutineScope()
         val clickJob: MutableState<Job?> = mutableStateOf(null)
@@ -255,7 +379,7 @@ private fun Modifier.commandButtonActionClickable(
                 Modifier.commandButtonActionHoverable(
                     interactionSource,
                     enabled,
-                    onClickState,
+                    onActivateActionState,
                     presentationModel
                 )
             )
@@ -266,9 +390,9 @@ private fun Modifier.commandButtonActionClickable(
                 detectTapAndPress(
                     onPress = { offset ->
                         if (enabled) {
-                            auroraHandlePressInteraction(
+                            auroraHandleActionPressInteraction(
                                 offset, interactionSource, pressedInteraction,
-                                onClickState, false, presentationModel,
+                                onActivateActionState, false, presentationModel,
                                 scope, clickJob
                             )
                         }
@@ -294,9 +418,9 @@ private fun Modifier.commandButtonActionClickable(
                 detectTapAndPress(
                     onPress = { offset ->
                         if (enabled) {
-                            auroraHandlePressInteraction(
+                            auroraHandleActionPressInteraction(
                                 offset, interactionSource, pressedInteraction,
-                                onClickState,
+                                onActivateActionState,
                                 presentationModel.actionFireTrigger == ActionFireTrigger.OnPressed,
                                 presentationModel,
                                 scope,
@@ -306,7 +430,7 @@ private fun Modifier.commandButtonActionClickable(
                     },
                     onTap = {
                         if (enabled && (presentationModel.actionFireTrigger == ActionFireTrigger.OnPressReleased)) {
-                            onClickState.value.invoke()
+                            onActivateActionState.value.invoke()
                         }
                     }
                 )
@@ -319,7 +443,110 @@ private fun Modifier.commandButtonActionClickable(
         properties["enabled"] = enabled
         properties["onClickLabel"] = null
         properties["role"] = Role.Button
-        properties["onClick"] = onClick
+        properties["onClick"] = onActivateAction
+        properties["indication"] = null
+        properties["interactionSource"] = interactionSource
+    }
+)
+
+private fun Modifier.commandButtonPopupModifier(
+    interactionSource: MutableInteractionSource,
+    enabled: Boolean = true,
+    presentationModel: BaseCommandButtonPresentationModel,
+    onActivatePopup: () -> Unit,
+    onDeactivatePopup: () -> Unit
+) = composed(
+    factory = {
+        // Start building the chain. First the semantics role
+        var result = this.semantics(mergeDescendants = true) {
+            // TODO - use Role.DropdownList after upgrading to Compose that has it
+            this.role = Role.Button
+        }
+        // Then treating "Enter" key up event to fire the popup
+        result = result.then(onKeyEvent {
+            if (enabled && (it.type == KeyEventType.KeyUp) && (it.key.nativeKeyCode == KeyEvent.VK_ENTER)) {
+                onActivatePopup()
+                true
+            } else {
+                false
+            }
+        })
+
+        val onActivatePopupState = rememberUpdatedState(onActivatePopup)
+        val onDeactivatePopupState = rememberUpdatedState(onDeactivatePopup)
+        val pressedInteraction = remember { mutableStateOf<PressInteraction.Press?>(null) }
+        val scope = rememberCoroutineScope()
+        val clickJob: MutableState<Job?> = mutableStateOf(null)
+
+        // Now for the mouse interaction part
+        if (presentationModel.isMenu) {
+            // Activate popup on rollover in menu buttons
+
+            // Start with the hover
+            result = result.then(
+                Modifier.commandButtonPopupHoverable(
+                    interactionSource,
+                    enabled,
+                    onActivatePopupState,
+                    onDeactivatePopupState,
+                    presentationModel
+                )
+            )
+
+            // And add press detector, but without invoking onClick in onPress or onTap,
+            // since we are invoking onClick on PointerEventType.Enter
+            result = result.then(Modifier.pointerInput(interactionSource, enabled) {
+                detectTapAndPress(
+                    onPress = { offset ->
+                        if (enabled) {
+                            auroraHandlePopupPressInteraction(
+                                offset, interactionSource, pressedInteraction,
+                                onActivatePopupState, presentationModel,
+                                scope, clickJob
+                            )
+                        }
+                    },
+                    onTap = {}
+                )
+            })
+        } else {
+            // Otherwise track hover state
+            result = result.hoverable(enabled = enabled, interactionSource = interactionSource)
+
+            // And finally add our custom tap-and-press detector
+            DisposableEffect(interactionSource) {
+                onDispose {
+                    pressedInteraction.value?.let { oldValue ->
+                        val interaction = PressInteraction.Cancel(oldValue)
+                        interactionSource.tryEmit(interaction)
+                        pressedInteraction.value = null
+                    }
+                }
+            }
+            result = result.then(Modifier.pointerInput(interactionSource, enabled) {
+                detectTapAndPress(
+                    onPress = { offset ->
+                        if (enabled) {
+                            auroraHandlePopupPressInteraction(
+                                offset, interactionSource, pressedInteraction,
+                                onActivatePopupState,
+                                presentationModel,
+                                scope,
+                                clickJob
+                            )
+                        }
+                    }
+                )
+            })
+        }
+        result
+    },
+    inspectorInfo = debugInspectorInfo {
+        name = "clickable"
+        properties["enabled"] = enabled
+        properties["onClickLabel"] = null
+        properties["role"] = Role.Button
+        properties["onClick"] = onActivatePopup
         properties["indication"] = null
         properties["interactionSource"] = interactionSource
     }
@@ -338,7 +565,7 @@ internal fun <M : BaseCommandMenuContentModel,
     presentationModel: BaseCommandButtonPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>
 ) {
-    val secondaryContentModel =  
+    val secondaryContentModel =
         rememberUpdatedState(command.secondaryContentModel as M?)
     val drawingCache = remember { CommandButtonDrawingCache() }
 
@@ -400,7 +627,7 @@ internal fun <M : BaseCommandMenuContentModel,
     val painters = AuroraSkin.painters
 
     val buttonTopLeftOffset = remember { AuroraOffset(0.0f, 0.0f) }
-    val buttonSize = remember { mutableStateOf(IntSize(0, 0))}
+    val buttonSize = remember { mutableStateOf(IntSize(0, 0)) }
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     val mergedTextStyle = LocalTextStyle.current.merge(presentationModel.textStyle)
@@ -662,9 +889,9 @@ internal fun <M : BaseCommandMenuContentModel,
                         }
                     })
             } else {
-                modifierAction = Modifier.commandButtonActionClickable(
+                modifierAction = Modifier.commandButtonActionModifier(
                     enabled = isActionEnabled,
-                    onClick = {
+                    onActivateAction = {
                         command.action?.invoke()
                         val shouldDismissFromPopupLevel = popupMenu?.toDismissPopupsOnActivation ?: false
                         if (shouldDismissFromPopupLevel and presentationModel.toDismissPopupsOnActivation) {
@@ -864,19 +1091,17 @@ internal fun <M : BaseCommandMenuContentModel,
             }
 
             Box(
-                modifier = Modifier.clickable(
+                modifier = Modifier.commandButtonPopupModifier(
                     enabled = isPopupEnabled,
-                    onClick = {
-                        if (AuroraPopupManager.isShowingPopupFrom(
-                                originator = popupOriginator,
-                                pointInOriginator = AuroraOffset(
-                                    x = buttonTopLeftOffset.x + popupAreaOffset.x + popupAreaSize.value.width / 2.0f,
-                                    y = buttonTopLeftOffset.y + popupAreaOffset.y + popupAreaSize.value.height / 2.0f
-                                ).asOffset(density)
-                        )) {
-                            // We're showing a popup that originates from this popup area. Hide it.
-                            AuroraPopupManager.hidePopups(originator = popupMenu)
-                        } else {
+                    onActivatePopup = {
+                        val isShowingPopupFromHere = AuroraPopupManager.isShowingPopupFrom(
+                            originator = popupOriginator,
+                            pointInOriginator = AuroraOffset(
+                                x = buttonTopLeftOffset.x + popupAreaOffset.x + popupAreaSize.value.width / 2.0f,
+                                y = buttonTopLeftOffset.y + popupAreaOffset.y + popupAreaSize.value.height / 2.0f
+                            ).asOffset(density)
+                        )
+                        if (!isShowingPopupFromHere) {
                             // Display our popup content.
                             popupHandler.showPopupContent(
                                 popupOriginator = popupOriginator,
@@ -908,8 +1133,22 @@ internal fun <M : BaseCommandMenuContentModel,
                             )
                         }
                     },
+                    onDeactivatePopup = {
+                        val isShowingPopupFromHere = AuroraPopupManager.isShowingPopupFrom(
+                            originator = popupOriginator,
+                            pointInOriginator = AuroraOffset(
+                                x = buttonTopLeftOffset.x + popupAreaOffset.x + popupAreaSize.value.width / 2.0f,
+                                y = buttonTopLeftOffset.y + popupAreaOffset.y + popupAreaSize.value.height / 2.0f
+                            ).asOffset(density)
+                        )
+                        if (!isShowingPopupFromHere) {
+                            // We're not showing a popup that originates from the popup area of this
+                            // command button. Hide all popups that originate from our originator.
+                            AuroraPopupManager.hidePopups(originator = popupOriginator)
+                        }
+                    },
                     interactionSource = popupInteractionSource,
-                    indication = null
+                    presentationModel = presentationModel
                 ).onPointerEvent(PointerEventType.Enter) {
                     if (isPopupEnabled) {
                         popupRollover = true
@@ -1150,6 +1389,7 @@ internal fun <M : BaseCommandMenuContentModel,
                                 endGradientAmount = 4.dp
                             )
                         ).project(modifier = Modifier.alpha(combinedRolloverFraction))
+
                     CommandButtonLayoutManager.CommandButtonSeparatorOrientation.Horizontal ->
                         HorizontalSeparatorProjection(
                             presentationModel = SeparatorPresentationModel(
@@ -1157,7 +1397,25 @@ internal fun <M : BaseCommandMenuContentModel,
                                 endGradientAmount = 4.dp
                             )
                         ).project(modifier = Modifier.alpha(combinedRolloverFraction))
+
                     else -> {}
+                }
+            }
+
+            SideEffect {
+                if (actionRollover) {
+                    val isShowingPopupFromHere = AuroraPopupManager.isShowingPopupFrom(
+                        originator = popupOriginator,
+                        pointInOriginator = AuroraOffset(
+                            x = buttonTopLeftOffset.x + popupAreaOffset.x + popupAreaSize.value.width / 2.0f,
+                            y = buttonTopLeftOffset.y + popupAreaOffset.y + popupAreaSize.value.height / 2.0f
+                        ).asOffset(density)
+                    )
+                    if (!isShowingPopupFromHere) {
+                        // We're not showing a popup that originates from the popup area of this
+                        // command button. Hide all popups that originate from our originator.
+                        AuroraPopupManager.hidePopups(originator = popupOriginator)
+                    }
                 }
             }
         }) { measurables, constraints ->

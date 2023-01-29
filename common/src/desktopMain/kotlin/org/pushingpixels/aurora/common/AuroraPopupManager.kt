@@ -133,9 +133,16 @@ object AuroraPopupManager {
         pointInOriginator: Offset
     ): Boolean {
         val match = shownPath.reversed().find {
-            (it.popup == originator) &&
+            (it.originatorPopup == originator) &&
                     (it.popupTriggerAreaInOriginatorWindow.contains(pointInOriginator))
         }
         return match != null
+    }
+
+    fun dump() {
+        println("Popups")
+        for (link in shownPath) {
+            println("\tOriginator ${link.originatorPopup.javaClass.simpleName}@${link.originatorPopup.hashCode()}")
+        }
     }
 }
