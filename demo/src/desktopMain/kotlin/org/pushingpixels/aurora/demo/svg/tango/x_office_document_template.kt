@@ -22,7 +22,6 @@ class x_office_document_template : Painter() {
     @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
     @Suppress("UNUSED_VARIABLE") private var stroke: Stroke? = null
-    @Suppress("UNUSED_VARIABLE") private var shaderSkia: org.jetbrains.skia.Shader? = null
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var blendMode = DrawScope.DefaultBlendMode
@@ -74,7 +73,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_0_0
 shape = Outline.Rectangle(rect = Rect(left = -1559.2523193359375f, top = -150.6968536376953f, right = -219.6187744140625f, bottom = 327.6603240966797f))
 brush = Brush.linearGradient(0.0f to Color(0, 0, 0, 0), 0.5f to Color(0, 0, 0, 255), 1.0f to Color(0, 0, 0, 0), start = Offset(-1051.9354f, -150.69684f), end = Offset(-1051.9354f, 327.6604f), tileMode = TileMode.Clamp)
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -209,7 +207,6 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(255, 255, 255, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -233,7 +230,6 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(255, 255, 255, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -295,7 +291,6 @@ blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
 // _0_1_1_3
 brush = SolidColor(Color(0, 0, 0, 4))
-shaderSkia = null
 stroke = Stroke(width=0.9885531f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -316,7 +311,6 @@ blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
 // _0_1_1_4
 brush = SolidColor(Color(255, 255, 255, 52))
-shaderSkia = null
 stroke = Stroke(width=1.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -338,7 +332,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_1_5
 shape = Outline.Rounded(roundRect = RoundRect(left = 15.999985694885254f, top = 31.0f, right = 35.99999141693115f, bottom = 32.0f,radiusX = 0.27557262778282166f, radiusY = 0.13078175485134125f))
 brush = SolidColor(Color(155, 155, 155, 140))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -349,7 +342,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_1_6
 shape = Outline.Rounded(roundRect = RoundRect(left = 15.999985694885254f, top = 33.0f, right = 35.99999141693115f, bottom = 34.0f,radiusX = 0.27557262778282166f, radiusY = 0.13078175485134125f))
 brush = SolidColor(Color(155, 155, 155, 140))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -360,7 +352,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_1_7
 shape = Outline.Rounded(roundRect = RoundRect(left = 15.999985694885254f, top = 35.0f, right = 35.99999141693115f, bottom = 36.0f,radiusX = 0.27557262778282166f, radiusY = 0.13078175485134125f))
 brush = SolidColor(Color(155, 155, 155, 140))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -371,7 +362,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_1_8
 shape = Outline.Rounded(roundRect = RoundRect(left = 15.999985694885254f, top = 37.0f, right = 30.0f, bottom = 38.0f,radiusX = 0.19290097057819366f, radiusY = 0.13078175485134125f))
 brush = SolidColor(Color(155, 155, 155, 140))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -413,7 +403,6 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = Brush.linearGradient(0.0f to Color(133, 149, 188, 255), 1.0f to Color(4, 26, 59, 255), start = Offset(22.149822f, 17.67732f), end = Offset(22.149822f, 31.652668f), tileMode = TileMode.Clamp)
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -437,7 +426,6 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(114, 159, 207, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -479,7 +467,6 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(232, 245, 47, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -504,7 +491,6 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(236, 247, 81, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -529,7 +515,6 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(240, 249, 114, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -553,7 +538,6 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(244, 250, 149, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -578,7 +562,6 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(247, 252, 183, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -602,7 +585,6 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(251, 253, 219, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -627,7 +609,6 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(255, 255, 255, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -663,7 +644,6 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -687,7 +667,6 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -718,7 +697,6 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(81, 81, 81, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -741,7 +719,6 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(81, 81, 81, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -754,7 +731,6 @@ blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
 // _0_1_1_9_1
 brush = SolidColor(Color(158, 158, 158, 255))
-shaderSkia = null
 stroke = Stroke(width=0.9999986f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 shape = Outline.Rectangle(rect = Rect(left = 16.508501052856445f, top = 14.48575210571289f, right = 36.50400352478027f, bottom = 28.48321533203125f))
 drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
@@ -769,7 +745,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_1_10
 shape = Outline.Rounded(roundRect = RoundRect(left = 15.999985694885254f, top = 9.0f, right = 35.99999141693115f, bottom = 10.0f,radiusX = 0.27557262778282166f, radiusY = 0.13078175485134125f))
 brush = SolidColor(Color(155, 155, 155, 140))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -780,7 +755,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_1_11
 shape = Outline.Rounded(roundRect = RoundRect(left = 15.999985694885254f, top = 11.0f, right = 30.0f, bottom = 12.0f,radiusX = 0.19290097057819366f, radiusY = 0.13078175485134125f))
 brush = SolidColor(Color(155, 155, 155, 140))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -791,7 +765,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_1_12
 shape = Outline.Rounded(roundRect = RoundRect(left = 7.666053771972656f, top = 4.583946228027344f, right = 40.44194030761719f, bottom = 43.530330657958984f,radiusX = 0.2980971336364746f, radiusY = 0.2980971336364746f))
 brush = Brush.linearGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(255, 255, 255, 0), start = Offset(40.041054f, 26.432138f), end = Offset(9.691683f, 26.432138f), tileMode = TileMode.Clamp)
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = Brush.radialGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(248, 248, 248, 255), center = Offset(11.238739f, 8.152492f), radius = 36.948036f, tileMode = TileMode.Clamp)
 stroke = Stroke(width=1.0f, cap=StrokeCap.Round, join=StrokeJoin.Round, miter=4.0f)
@@ -808,7 +781,6 @@ blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
 // _0_1_2
 brush = SolidColor(Color(0, 0, 0, 255))
-shaderSkia = null
 stroke = Stroke(width=1.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f, pathEffect=PathEffect.dashPathEffect(floatArrayOf(1.0f,1.0f), 0.7f))
 shape = Outline.Rounded(roundRect = RoundRect(left = 0.6035537719726562f, top = 3.5214462280273438f, right = 35.478553771972656f, bottom = 44.44194030761719f,radiusX = 0.1730971336364746f, radiusY = 0.1730971336364746f))
 drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
@@ -820,7 +792,6 @@ blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
 // _0_1_3
 brush = SolidColor(Color(255, 255, 255, 255))
-shaderSkia = null
 stroke = Stroke(width=1.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f, pathEffect=PathEffect.dashPathEffect(floatArrayOf(1.0f,1.0f), 1.7f))
 shape = Outline.Rounded(roundRect = RoundRect(left = 0.6035537719726562f, top = 3.5214462280273438f, right = 35.478553771972656f, bottom = 44.44194030761719f,radiusX = 0.1730971336364746f, radiusY = 0.1730971336364746f))
 drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
@@ -833,10 +804,8 @@ blendMode = BlendMode.SrcOver
 // _0_1_4
 shape = Outline.Rounded(roundRect = RoundRect(left = 38.51368713378906f, top = 1.5136923789978027f, right = 47.48630142211914f, bottom = 45.48631048202515f,radiusX = 0.16270096600055695f, radiusY = 0.1794055849313736f))
 brush = Brush.linearGradient(0.0f to Color(196, 160, 0, 255), 1.0f to Color(252, 233, 79, 255), start = Offset(34.44042f, 60.05567f), end = Offset(24.969315f, 16.815905f), tileMode = TileMode.Clamp)
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(196, 160, 0, 255))
-shaderSkia = null
 stroke = Stroke(width=1.0273849f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 shape = Outline.Rounded(roundRect = RoundRect(left = 38.51368713378906f, top = 1.5136923789978027f, right = 47.48630142211914f, bottom = 45.48631048202515f,radiusX = 0.16270096600055695f, radiusY = 0.1794055849313736f))
 drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
@@ -848,7 +817,6 @@ blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
 // _0_1_5
 brush = Brush.linearGradient(0.0f to Color(255, 255, 255, 255), 1.0f to Color(255, 255, 255, 0), start = Offset(40.999996f, 6.374996f), end = Offset(43.000004f, 62.124996f), tileMode = TileMode.Clamp)
-shaderSkia = null
 stroke = Stroke(width=1.027f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 shape = Outline.Rectangle(rect = Rect(left = 39.51349639892578f, top = 2.513693332672119f, right = 46.48650932312012f, bottom = 44.486299991607666f))
 drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)
@@ -861,7 +829,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_6
 shape = Outline.Rectangle(rect = Rect(left = 39.0f, top = 3.0554542541503906f, right = 41.9402711391449f, bottom = 4.055454254150391f))
 brush = SolidColor(Color(196, 160, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -872,7 +839,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_7
 shape = Outline.Rectangle(rect = Rect(left = 39.0f, top = 15.05545425415039f, right = 41.9402711391449f, bottom = 16.05545425415039f))
 brush = SolidColor(Color(196, 160, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -883,7 +849,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_8
 shape = Outline.Rectangle(rect = Rect(left = 39.0f, top = 27.05545425415039f, right = 41.9402711391449f, bottom = 28.05545425415039f))
 brush = SolidColor(Color(196, 160, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -894,7 +859,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_9
 shape = Outline.Rectangle(rect = Rect(left = 39.0f, top = 39.05549621582031f, right = 41.9402711391449f, bottom = 40.05549621582031f))
 brush = SolidColor(Color(196, 160, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -905,7 +869,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_10
 shape = Outline.Rectangle(rect = Rect(left = 39.0f, top = 5.055454254150391f, right = 41.0f, bottom = 6.055454254150391f))
 brush = SolidColor(Color(196, 160, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -916,7 +879,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_11
 shape = Outline.Rectangle(rect = Rect(left = 39.0f, top = 7.055454254150391f, right = 41.0f, bottom = 8.05545425415039f))
 brush = SolidColor(Color(196, 160, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -927,7 +889,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_12
 shape = Outline.Rectangle(rect = Rect(left = 39.0f, top = 9.05545425415039f, right = 41.0f, bottom = 10.05545425415039f))
 brush = SolidColor(Color(196, 160, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -938,7 +899,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_13
 shape = Outline.Rectangle(rect = Rect(left = 39.0f, top = 11.05545425415039f, right = 41.0f, bottom = 12.05545425415039f))
 brush = SolidColor(Color(196, 160, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -949,7 +909,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_14
 shape = Outline.Rectangle(rect = Rect(left = 39.0f, top = 13.05545425415039f, right = 41.0f, bottom = 14.05545425415039f))
 brush = SolidColor(Color(196, 160, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -960,7 +919,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_15
 shape = Outline.Rectangle(rect = Rect(left = 39.0f, top = 17.05545425415039f, right = 41.0f, bottom = 18.05545425415039f))
 brush = SolidColor(Color(196, 160, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -971,7 +929,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_16
 shape = Outline.Rectangle(rect = Rect(left = 39.0f, top = 19.05545425415039f, right = 41.0f, bottom = 20.05545425415039f))
 brush = SolidColor(Color(196, 160, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -982,7 +939,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_17
 shape = Outline.Rectangle(rect = Rect(left = 39.0f, top = 21.05545425415039f, right = 41.0f, bottom = 22.05545425415039f))
 brush = SolidColor(Color(196, 160, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -993,7 +949,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_18
 shape = Outline.Rectangle(rect = Rect(left = 39.0f, top = 23.05545425415039f, right = 41.0f, bottom = 24.05545425415039f))
 brush = SolidColor(Color(196, 160, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -1004,7 +959,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_19
 shape = Outline.Rectangle(rect = Rect(left = 39.0f, top = 25.05545425415039f, right = 41.0f, bottom = 26.05545425415039f))
 brush = SolidColor(Color(196, 160, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -1015,7 +969,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_20
 shape = Outline.Rectangle(rect = Rect(left = 39.0f, top = 29.05545425415039f, right = 41.0f, bottom = 30.05545425415039f))
 brush = SolidColor(Color(196, 160, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -1026,7 +979,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_21
 shape = Outline.Rectangle(rect = Rect(left = 39.0f, top = 31.05547523498535f, right = 41.0f, bottom = 32.05547523498535f))
 brush = SolidColor(Color(196, 160, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -1037,7 +989,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_22
 shape = Outline.Rectangle(rect = Rect(left = 39.0f, top = 33.05549621582031f, right = 41.0f, bottom = 34.05549621582031f))
 brush = SolidColor(Color(196, 160, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -1048,7 +999,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_23
 shape = Outline.Rectangle(rect = Rect(left = 39.0f, top = 35.05549621582031f, right = 41.0f, bottom = 36.05549621582031f))
 brush = SolidColor(Color(196, 160, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -1059,7 +1009,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_24
 shape = Outline.Rectangle(rect = Rect(left = 39.0f, top = 37.05549621582031f, right = 41.0f, bottom = 38.05549621582031f))
 brush = SolidColor(Color(196, 160, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -1070,7 +1019,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_25
 shape = Outline.Rectangle(rect = Rect(left = 39.0f, top = 41.05549621582031f, right = 41.0f, bottom = 42.05549621582031f))
 brush = SolidColor(Color(196, 160, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -1081,7 +1029,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_26
 shape = Outline.Rectangle(rect = Rect(left = 39.0f, top = 43.05549621582031f, right = 41.0f, bottom = 44.05549621582031f))
 brush = SolidColor(Color(196, 160, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)

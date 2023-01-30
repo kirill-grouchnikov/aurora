@@ -22,7 +22,6 @@ class sample : Painter() {
     @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
     @Suppress("UNUSED_VARIABLE") private var stroke: Stroke? = null
-    @Suppress("UNUSED_VARIABLE") private var shaderSkia: org.jetbrains.skia.Shader? = null
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var blendMode = DrawScope.DefaultBlendMode
@@ -60,7 +59,6 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 0))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = ShaderBrush(org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 66.0f, y0 = 74.0f, r0 = 0.0f, x1 = 50.0f, y1 = 54.0f, r1 = 40.0f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 128, r = 31, g = 175, b = 198), org.jetbrains.skia.Color.makeARGB(a = 128, r = 161, g = 211, b = 60), ), positions = floatArrayOf(0.9f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null)))
 stroke = Stroke(width=10.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)

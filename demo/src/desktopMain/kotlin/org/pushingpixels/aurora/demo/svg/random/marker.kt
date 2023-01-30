@@ -22,7 +22,6 @@ class marker : Painter() {
     @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
     @Suppress("UNUSED_VARIABLE") private var stroke: Stroke? = null
-    @Suppress("UNUSED_VARIABLE") private var shaderSkia: org.jetbrains.skia.Shader? = null
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var blendMode = DrawScope.DefaultBlendMode
@@ -56,7 +55,6 @@ blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
 // _0_0
 brush = SolidColor(Color(0, 0, 0, 255))
-shaderSkia = null
 stroke = Stroke(width=1.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -101,7 +99,6 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -138,7 +135,6 @@ generalPath?.run {
 }
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -152,7 +148,6 @@ blendModeStack.add(0, BlendMode.SrcOver)
 blendMode = BlendMode.SrcOver
 // _0_1
 brush = SolidColor(Color(128, 128, 128, 255))
-shaderSkia = null
 stroke = Stroke(width=1.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -189,7 +184,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_m0_0_0
 shape = Outline.Generic(path = Path().also { it.addOval(oval=Rect(left = 0.0f, top = 0.0f, right = 10.0f, bottom = 10.0f))})
 brush = SolidColor(Color(255, 0, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -215,7 +209,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_m1_0_0
 shape = Outline.Generic(path = Path().also { it.addOval(oval=Rect(left = 0.0f, top = 0.0f, right = 10.0f, bottom = 10.0f))})
 brush = SolidColor(Color(255, 0, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -241,7 +234,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_m2_0_0
 shape = Outline.Generic(path = Path().also { it.addOval(oval=Rect(left = 0.0f, top = 0.0f, right = 10.0f, bottom = 10.0f))})
 brush = SolidColor(Color(255, 0, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -267,7 +259,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_m3_0_0
 shape = Outline.Generic(path = Path().also { it.addOval(oval=Rect(left = 0.0f, top = 0.0f, right = 10.0f, bottom = 10.0f))})
 brush = SolidColor(Color(255, 0, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -293,7 +284,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_m4_0_0
 shape = Outline.Generic(path = Path().also { it.addOval(oval=Rect(left = 0.0f, top = 0.0f, right = 10.0f, bottom = 10.0f))})
 brush = SolidColor(Color(255, 0, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)
@@ -319,7 +309,6 @@ blendMode = BlendMode.SrcOver
 // _0_1_m5_0_0
 shape = Outline.Generic(path = Path().also { it.addOval(oval=Rect(left = 0.0f, top = 0.0f, right = 10.0f, bottom = 10.0f))})
 brush = SolidColor(Color(255, 0, 0, 255))
-shaderSkia = null
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 alpha = alphaStack.removeAt(0)
 blendMode = blendModeStack.removeAt(0)

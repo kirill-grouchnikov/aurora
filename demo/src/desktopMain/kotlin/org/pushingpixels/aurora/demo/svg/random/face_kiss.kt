@@ -22,7 +22,6 @@ class face_kiss : Painter() {
     @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
     @Suppress("UNUSED_VARIABLE") private var stroke: Stroke? = null
-    @Suppress("UNUSED_VARIABLE") private var shaderSkia: org.jetbrains.skia.Shader? = null
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var blendMode = DrawScope.DefaultBlendMode
@@ -104,7 +103,6 @@ shape = Outline.Generic(generalPath!!)
 brush = ShaderBrush(org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 29.158466f, y0 = 15.755712f, r0 = 0.0f, x1 = 29.28807f, y1 = 15.720984f, r1 = 8.902081f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 255, r = 255, g = 252, b = 222), org.jetbrains.skia.Color.makeARGB(a = 255, r = 246, g = 231, b = 106), org.jetbrains.skia.Color.makeARGB(a = 255, r = 255, g = 183, b = 56), ), positions = floatArrayOf(0.0f, 0.6448598f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null)))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(156, 140, 10, 255))
-shaderSkia = null
 stroke = Stroke(width=0.48004404f, cap=StrokeCap.Round, join=StrokeJoin.Round, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -140,7 +138,6 @@ Matrix(values=floatArrayOf(
 ))}){
 // _0_0_2
 brush = SolidColor(Color(255, 255, 255, 255))
-shaderSkia = null
 stroke = Stroke(width=0.5051063f, cap=StrokeCap.Round, join=StrokeJoin.Round, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -176,7 +173,6 @@ Matrix(values=floatArrayOf(
 ))}){
 // _0_0_3
 brush = SolidColor(Color(85, 87, 83, 255))
-shaderSkia = null
 stroke = Stroke(width=1.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -207,7 +203,6 @@ Matrix(values=floatArrayOf(
 ))}){
 // _0_0_4
 brush = SolidColor(Color(85, 87, 83, 255))
-shaderSkia = null
 stroke = Stroke(width=1.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -271,7 +266,6 @@ shape = Outline.Generic(generalPath!!)
 brush = Brush.radialGradient(0.0f to Color(252, 194, 194, 255), 1.0f to Color(204, 0, 0, 255), center = Offset(24.604174f, 21.365164f), radius = 2.457037f, tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(164, 0, 0, 255))
-shaderSkia = null
 stroke = Stroke(width=0.9999997f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -314,7 +308,6 @@ shape = Outline.Generic(generalPath!!)
 brush = Brush.radialGradient(0.0f to Color(250, 146, 146, 255), 1.0f to Color(204, 0, 0, 255), center = Offset(25.054567f, 26.943333f), radius = 2.892928f, tileMode = TileMode.Clamp)
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
 brush = SolidColor(Color(164, 0, 0, 255))
-shaderSkia = null
 stroke = Stroke(width=1.0000005f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -349,7 +342,6 @@ Matrix(values=floatArrayOf(
 ))}){
 // _0_0_8
 brush = SolidColor(Color(85, 87, 83, 255))
-shaderSkia = null
 stroke = Stroke(width=1.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -380,7 +372,6 @@ Matrix(values=floatArrayOf(
 ))}){
 // _0_0_9
 brush = SolidColor(Color(85, 87, 83, 255))
-shaderSkia = null
 stroke = Stroke(width=1.2905844f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -411,7 +402,6 @@ Matrix(values=floatArrayOf(
 ))}){
 // _0_0_10
 brush = SolidColor(Color(85, 87, 83, 255))
-shaderSkia = null
 stroke = Stroke(width=1.2905844f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -441,7 +431,6 @@ Matrix(values=floatArrayOf(
 ))}){
 // _0_0_11
 brush = SolidColor(Color(85, 87, 83, 255))
-shaderSkia = null
 stroke = Stroke(width=1.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -472,7 +461,6 @@ Matrix(values=floatArrayOf(
 ))}){
 // _0_0_12
 brush = SolidColor(Color(85, 87, 83, 255))
-shaderSkia = null
 stroke = Stroke(width=1.2905844f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
@@ -503,7 +491,6 @@ Matrix(values=floatArrayOf(
 ))}){
 // _0_0_13
 brush = SolidColor(Color(85, 87, 83, 255))
-shaderSkia = null
 stroke = Stroke(width=1.2905844f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()

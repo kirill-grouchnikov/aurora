@@ -22,7 +22,6 @@ class pattern2 : Painter() {
     @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
     @Suppress("UNUSED_VARIABLE") private var stroke: Stroke? = null
-    @Suppress("UNUSED_VARIABLE") private var shaderSkia: org.jetbrains.skia.Shader? = null
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var blendMode = DrawScope.DefaultBlendMode
@@ -92,7 +91,6 @@ withTransform({transform(tTiled)}){
 alphaTile = alpha * 1.0f
 blendModeTile = BlendMode.SrcOver
 brush = SolidColor(Color(0, 0, 0, 0))
-shaderSkia = null
 if (generalPathTile == null) {
    generalPathTile = Path()
 } else {
@@ -148,7 +146,6 @@ blendModeTile = BlendMode.SrcOver
 }
 }
 brush = SolidColor(Color(0, 0, 0, 255))
-shaderSkia = null
 stroke = Stroke(width=1.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 shape = Outline.Rectangle(rect = Rect(left = 0.0f, top = 0.0f, right = 200.0f, bottom = 200.0f))
 drawOutline(outline = shape!!, style = stroke!!, brush=brush!!, alpha = alpha, blendMode = blendMode)

@@ -22,7 +22,6 @@ class text2 : Painter() {
     @Suppress("UNUSED_VARIABLE") private var generalPath: Path? = null
     @Suppress("UNUSED_VARIABLE") private var brush: Brush? = null
     @Suppress("UNUSED_VARIABLE") private var stroke: Stroke? = null
-    @Suppress("UNUSED_VARIABLE") private var shaderSkia: org.jetbrains.skia.Shader? = null
     @Suppress("UNUSED_VARIABLE") private var clip: Shape? = null
     private var alpha = 1.0f
     private var blendMode = DrawScope.DefaultBlendMode
@@ -81,7 +80,6 @@ blendModeText = BlendMode.SrcOver
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
 brush = Brush.linearGradient(0.0f to Color(255, 91, 153, 255), 0.2f to Color(255, 84, 71, 255), 0.4f to Color(255, 123, 33, 255), 0.6f to Color(234, 252, 55, 255), 0.8f to Color(79, 203, 107, 255), 1.0f to Color(81, 247, 254, 255), start = Offset(0.0f, 0.0f), end = Offset(0.0f, 120.0f), tileMode = TileMode.Clamp)
-shaderSkia = null
 if (generalPathText == null) {
    generalPathText = Path()
 } else {
@@ -223,7 +221,6 @@ drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaTex
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
 brush = Brush.linearGradient(0.0f to Color(255, 91, 153, 255), 0.2f to Color(255, 84, 71, 255), 0.4f to Color(255, 123, 33, 255), 0.6f to Color(234, 252, 55, 255), 0.8f to Color(79, 203, 107, 255), 1.0f to Color(81, 247, 254, 255), start = Offset(0.0f, 0.0f), end = Offset(0.0f, 120.0f), tileMode = TileMode.Clamp)
-shaderSkia = null
 if (generalPathText == null) {
    generalPathText = Path()
 } else {
@@ -236,7 +233,6 @@ drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaTex
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
 brush = Brush.linearGradient(0.0f to Color(255, 91, 153, 255), 0.2f to Color(255, 84, 71, 255), 0.4f to Color(255, 123, 33, 255), 0.6f to Color(234, 252, 55, 255), 0.8f to Color(79, 203, 107, 255), 1.0f to Color(81, 247, 254, 255), start = Offset(0.0f, 0.0f), end = Offset(0.0f, 120.0f), tileMode = TileMode.Clamp)
-shaderSkia = null
 if (generalPathText == null) {
    generalPathText = Path()
 } else {
@@ -293,7 +289,6 @@ drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaTex
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
 brush = Brush.linearGradient(0.0f to Color(255, 91, 153, 255), 0.2f to Color(255, 84, 71, 255), 0.4f to Color(255, 123, 33, 255), 0.6f to Color(234, 252, 55, 255), 0.8f to Color(79, 203, 107, 255), 1.0f to Color(81, 247, 254, 255), start = Offset(0.0f, 0.0f), end = Offset(0.0f, 120.0f), tileMode = TileMode.Clamp)
-shaderSkia = null
 if (generalPathText == null) {
    generalPathText = Path()
 } else {
@@ -306,7 +301,6 @@ drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaTex
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
 brush = Brush.linearGradient(0.0f to Color(255, 91, 153, 255), 0.2f to Color(255, 84, 71, 255), 0.4f to Color(255, 123, 33, 255), 0.6f to Color(234, 252, 55, 255), 0.8f to Color(79, 203, 107, 255), 1.0f to Color(81, 247, 254, 255), start = Offset(0.0f, 0.0f), end = Offset(0.0f, 120.0f), tileMode = TileMode.Clamp)
-shaderSkia = null
 if (generalPathText == null) {
    generalPathText = Path()
 } else {
