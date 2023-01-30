@@ -49,7 +49,7 @@ class AuroraSwingPopupMenu(val toDismissPopupsOnActivation: Boolean) : JPopupMen
 
 object AuroraPopupManager {
     enum class PopupKind {
-        POPUP, RICH_TOOLTIP
+        Popup, RichTooltip
     }
 
     private data class PopupInfo(

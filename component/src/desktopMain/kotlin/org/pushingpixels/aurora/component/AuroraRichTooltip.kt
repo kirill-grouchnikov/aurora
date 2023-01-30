@@ -125,7 +125,7 @@ fun Modifier.auroraRichTooltip(
         job?.cancel()
         AuroraPopupManager.hidePopups(
             originator = popupOriginator,
-            popupKind = AuroraPopupManager.PopupKind.RICH_TOOLTIP
+            popupKind = AuroraPopupManager.PopupKind.RichTooltip
         )
     }
 

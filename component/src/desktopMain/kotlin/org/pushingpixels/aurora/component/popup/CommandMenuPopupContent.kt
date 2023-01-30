@@ -22,7 +22,6 @@ import androidx.compose.ui.draw.DrawModifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.text.TextStyle
@@ -31,7 +30,6 @@ import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
-import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.getPlacementAwarePopupShift
 import org.pushingpixels.aurora.theming.*
@@ -252,7 +250,7 @@ interface BaseCommandMenuHandler<in M : BaseCommandMenuContentModel,
             popup = popupMenu,
             popupContent = popupContent,
             popupRectOnScreen = popupRect,
-            popupKind = AuroraPopupManager.PopupKind.POPUP
+            popupKind = AuroraPopupManager.PopupKind.Popup
         )
     }
 }
