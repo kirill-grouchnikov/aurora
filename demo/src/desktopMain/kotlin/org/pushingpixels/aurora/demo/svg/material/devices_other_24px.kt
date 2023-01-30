@@ -127,7 +127,6 @@ blendMode = blendModeStack.removeAt(0)
 	    generalPath = null
 	    brush = null
 	    stroke = null
-	    shaderSkia = null
 	    clip = null
 	    alpha = 1.0f
 	}
