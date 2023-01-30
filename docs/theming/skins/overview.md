@@ -7,13 +7,13 @@ A **skin** is a set of visual settings that gives your application a polished an
 [Light skins](toneddown.md) use predominantly light colors for painting the UI controls and containers. [Business skin](toneddown.md#business) is an example of a light skin:
 
 <p>
-<img alt="Business" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/business.png" width="340" height="280">
+<img alt="Business" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/business.png" width="350" height="280">
 </p>
 
 [Dark skins](dark.md) use predominantly dark colors for painting the UI controls and containers. [Graphite Chalk](dark.md#graphite-chalk) skin is an example of a dark skin:
 
 <p>
-<img alt="GraphiteChalk" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/graphitechalk.png" width="340" height="280">
+<img alt="GraphiteChalk" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/graphitechalk.png" width="350" height="280">
 </p>
 
 The core Aurora skins are in the `org.pushingpixels.aurora.theming` package, and the `AuroraSkinDefinition` class contains all the APIs officially supported by Aurora skins. It is possible to use different Aurora skins on different `AuroraWindow`s in the same application.
@@ -42,8 +42,8 @@ In order to define a valid skin, you need to specify all its mandatory parameter
 The documentation on [decoration painters](../painters/decoration.md) explains the notion of a decoration area type. While a valid skin must define a color scheme bundle for `DecorationAreaType.None`, all other decoration area types are optional. Different skins have different sets of decoration areas that are painted. For example, the [Moderate skin](toneddown.md#moderate) decorates `DecorationAreaType.TitlePane` and `DecorationAreaType.Header`, while the [Nebula Amethyst skin](toneddown.md#nebula-amethyst) also decorates `DecorationAreaType.Toolbar`:
 
 <p>
-<img alt="Moderate" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/moderate.png" width="340" height="280">
-<img alt="Nebula Amethyst" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/nebulaamethyst.png" width="340" height="280">
+<img alt="Moderate" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/moderate.png" width="350" height="280">
+<img alt="Nebula Amethyst" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/nebulaamethyst.png" width="350" height="280">
 </p>
 
 In order to register a custom color scheme bundle and an optional background color scheme on the specific decoration area type(s), use the following APIs:
@@ -213,7 +213,7 @@ painters.addOverlayPainter(
 
 and here is how it looks like:
 
-<img alt="Nebula" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/nebula.png" width="340" height="280">
+<img alt="Nebula" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/nebula.png" width="350" height="280">
 
 ### Additional settings
 
@@ -289,8 +289,8 @@ Such skins "declare" themselves to support one particular, narrowly scoped kind 
 For example, here are two `Creme` skins that extend the core `CremeAccentedSkin` class:
 
 <p>
-<img alt="Creme" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/creme.png" width="340" height="280">
-<img alt="Creme Coffee" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/cremecoffee.png" width="340" height="280">
+<img alt="Creme" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/creme.png" width="350" height="280">
+<img alt="Creme Coffee" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/cremecoffee.png" width="350" height="280">
 </p>
 
 The first passes a light blue color scheme as the accent for active controls and cell highlights, while the second passes a light brown scheme as the accent for the same parts of the UI. This particular accented skin family uses these two accent types for selected tabs, checkboxes, radio buttons, default buttons, scroll bars and active cells in tables, trees, and lists.
@@ -298,8 +298,8 @@ The first passes a light blue color scheme as the accent for active controls and
 As another example, here are two `Nebula` skins that extend the core `NebulaAccentedSkin` class:
 
 <p>
-<img alt="Nebula" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/nebula.png" width="340" height="280">
-<img alt="Nebula Brick Wall" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/nebulabrickwall.png" width="340" height="280">
+<img alt="Nebula" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/nebula.png" width="350" height="280">
+<img alt="Nebula Brick Wall" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/nebulabrickwall.png" width="350" height="280">
 </p>
 
 The first passes a light silver scheme as the window chrome accent, while the second passes an orange scheme as the window chrome accent. This particular accented skin family uses the window chrome accent on the root pane border, the title pane and the menu bar - while maintaining the overall consistency of its visual "language", such as decoration painter, fill painter, color scheme for active controls in the main UI area, etc.

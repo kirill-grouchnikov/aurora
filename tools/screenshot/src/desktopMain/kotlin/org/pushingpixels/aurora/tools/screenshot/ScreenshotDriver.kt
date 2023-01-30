@@ -50,7 +50,7 @@ fun AuroraApplicationScope.screenshot(
 ) {
     val title = "Aurora"
     val icon = radiance_menu()
-    val size = DpSize(340.dp, 280.dp)
+    val size = DpSize(350.dp, 280.dp)
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
