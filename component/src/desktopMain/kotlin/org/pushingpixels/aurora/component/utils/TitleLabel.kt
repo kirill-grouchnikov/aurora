@@ -65,13 +65,14 @@ internal fun TitleLabel(
                 )
 
                 val borderOutline = buttonShaper.getButtonOutline(
+                    layoutDirection = layoutDirection,
                     width = width,
                     height = height,
                     extraInsets = 0.5f,
                     isInner = false,
                     sides = Sides(
                         straightSides = Side.values().toSet(),
-                        openSides = setOf(Side.Left, Side.Right)
+                        openSides = setOf(Side.Leading, Side.Trailing)
                     ),
                     outlineKind = OutlineKind.Border,
                     density = this
@@ -90,13 +91,14 @@ internal fun TitleLabel(
 
                 val innerBorderOutline = if (borderPainter.isPaintingInnerOutline)
                     buttonShaper.getButtonOutline(
+                        layoutDirection = layoutDirection,
                         width = width,
                         height = height,
                         extraInsets = 1.0f,
                         isInner = true,
                         sides = Sides(
                             straightSides = Side.values().toSet(),
-                            openSides = setOf(Side.Left, Side.Right)
+                            openSides = setOf(Side.Leading, Side.Trailing)
                         ),
                         outlineKind = OutlineKind.Border,
                         density = this

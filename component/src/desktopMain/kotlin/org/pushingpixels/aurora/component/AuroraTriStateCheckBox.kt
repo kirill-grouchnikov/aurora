@@ -322,6 +322,7 @@ internal fun AuroraTriStateCheckBox(
             val height = this.size.height
 
             val outline = getBaseOutline(
+                layoutDirection = layoutDirection,
                 width = this.size.width,
                 height = this.size.height,
                 radius = 3.0f.dp.toPx(),
@@ -353,6 +354,7 @@ internal fun AuroraTriStateCheckBox(
             drawingCache.colorScheme.foreground = textColor
 
             val outlineInner = if (borderPainter.isPaintingInnerOutline) getBaseOutline(
+                layoutDirection = layoutDirection,
                 width = this.size.width,
                 height = this.size.height,
                 radius = 3.0f.dp.toPx() - 1,

@@ -581,7 +581,7 @@ internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
                 val brightness = hsb[2] * 0.7f
                 val borderColor = Color(brightness, brightness, brightness)
 
-                val borderOutline = getBaseOutline(width, height, 0.0f, sides, 0.0f, OutlineKind.Border)
+                val borderOutline = getBaseOutline(layoutDirection, width, height, 0.0f, sides, 0.0f, OutlineKind.Border)
                 drawOutline(
                     outline = borderOutline,
                     color = borderColor,

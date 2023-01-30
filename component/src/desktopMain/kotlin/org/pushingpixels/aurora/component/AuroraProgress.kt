@@ -229,6 +229,7 @@ internal fun AuroraIndeterminateLinearProgress(
             }
         }
         val outline = getBaseOutline(
+            layoutDirection = layoutDirection,
             width = size.width,
             height = size.height,
             radius = radius,
@@ -333,6 +334,7 @@ internal fun AuroraDeterminateLinearProgress(
             }
         }
         val outline = getBaseOutline(
+            layoutDirection = layoutDirection,
             width = size.width,
             height = size.height,
             radius = radius,

@@ -260,6 +260,7 @@ internal fun AuroraSwitch(
 
         Canvas(Modifier.wrapContentSize(Alignment.Center).size(presentationModel.trackSize)) {
             val trackOutline = getBaseOutline(
+                layoutDirection = layoutDirection,
                 width = this.size.width,
                 height = this.size.height,
                 radius = this.size.height / 2.0f,
@@ -291,6 +292,7 @@ internal fun AuroraSwitch(
             drawingCache.colorScheme.foreground = textColor
 
             val trackOutlineInner = if (borderPainter.isPaintingInnerOutline) getBaseOutline(
+                layoutDirection = layoutDirection,
                 width = this.size.width,
                 height = this.size.height,
                 radius = this.size.height / 2.0f - 1.0f,

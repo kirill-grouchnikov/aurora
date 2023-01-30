@@ -18,6 +18,7 @@ package org.pushingpixels.aurora.theming.shaper
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.theming.AuroraTrait
 import org.pushingpixels.aurora.theming.OutlineKind
 import org.pushingpixels.aurora.theming.Sides
@@ -32,7 +33,7 @@ interface AuroraButtonShaper : AuroraTrait {
     fun getButtonOutline(
         width: Float, height: Float, extraInsets: Float,
         isInner: Boolean, sides: Sides, outlineKind: OutlineKind,
-        density: Density
+        layoutDirection: LayoutDirection, density: Density
     ): Outline
 
     /**

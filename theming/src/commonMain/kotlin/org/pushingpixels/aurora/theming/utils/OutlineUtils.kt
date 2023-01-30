@@ -20,6 +20,8 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.theming.OutlineKind
 import org.pushingpixels.aurora.theming.Side
 import org.pushingpixels.aurora.theming.Sides
@@ -32,19 +34,23 @@ import org.pushingpixels.aurora.theming.Sides
  * with "jumps" that correspond to the open side(s).
  */
 fun getBaseOutline(
+    layoutDirection: LayoutDirection,
     width: Float, height: Float,
     radius: Float, sides: Sides? = null,
     insets: Float = 0.0f, outlineKind: OutlineKind = OutlineKind.Border
 ): Outline {
+    val leftSide = if (layoutDirection == LayoutDirection.Ltr) Side.Leading else Side.Trailing
+    val rightSide = if (layoutDirection == LayoutDirection.Ltr) Side.Trailing else Side.Leading
+
     val straightSides = sides?.straightSides
     val isTopLeftCorner = (straightSides != null
-            && (straightSides.contains(Side.Left) || straightSides.contains(Side.Top)))
+            && (straightSides.contains(leftSide) || straightSides.contains(Side.Top)))
     val isTopRightCorner = (straightSides != null
-            && (straightSides.contains(Side.Right) || straightSides.contains(Side.Top)))
+            && (straightSides.contains(rightSide) || straightSides.contains(Side.Top)))
     val isBottomRightCorner = (straightSides != null
-            && (straightSides.contains(Side.Right) || straightSides.contains(Side.Bottom)))
+            && (straightSides.contains(rightSide) || straightSides.contains(Side.Bottom)))
     val isBottomLeftCorner = (straightSides != null
-            && (straightSides.contains(Side.Left) || straightSides.contains(Side.Bottom)))
+            && (straightSides.contains(leftSide) || straightSides.contains(Side.Bottom)))
 
     val openSides = sides?.openSides
     val hasOpenSides = (openSides != null) && openSides.isNotEmpty()
@@ -79,8 +85,8 @@ fun getBaseOutline(
     // respect the open sides, using moveTo instead of lineTo for the relevant side(s).
     val isTopOpen = openSides!!.contains(Side.Top) && (outlineKind == OutlineKind.Border)
     val isBottomOpen = openSides.contains(Side.Bottom) && (outlineKind == OutlineKind.Border)
-    val isLeftOpen = openSides.contains(Side.Left) && (outlineKind == OutlineKind.Border)
-    val isRightOpen = openSides.contains(Side.Right) && (outlineKind == OutlineKind.Border)
+    val isLeftOpen = openSides.contains(leftSide) && (outlineKind == OutlineKind.Border)
+    val isRightOpen = openSides.contains(rightSide) && (outlineKind == OutlineKind.Border)
 
     val path = Path()
     // Start in top left

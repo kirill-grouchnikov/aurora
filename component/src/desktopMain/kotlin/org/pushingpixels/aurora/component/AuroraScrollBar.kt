@@ -362,6 +362,7 @@ private fun Scrollbar(
                     val radius = (size.width - 2 * insets) / 2.0f
 
                     val outline = getBaseOutline(
+                        layoutDirection = layoutDirection,
                         width = width,
                         height = height,
                         radius = radius,

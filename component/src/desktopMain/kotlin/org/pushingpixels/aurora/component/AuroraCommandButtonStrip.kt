@@ -41,8 +41,8 @@ private fun CommandButtonStripContent(
 
     val commandCount = commandGroup.commands.size
     val isHorizontal = (presentationModel.orientation == StripOrientation.Horizontal)
-    val leadingSide = if (isHorizontal) (if (ltr) Side.Left else Side.Right) else Side.Top
-    val trailingSide = if (isHorizontal) (if (ltr) Side.Right else Side.Left) else Side.Bottom
+    val leadingSide = if (isHorizontal) Side.Leading else Side.Top
+    val trailingSide = if (isHorizontal) Side.Trailing else Side.Bottom
     for ((index, command) in commandGroup.commands.withIndex()) {
         val straightSides = when {
             (commandCount <= 1) -> emptySet()

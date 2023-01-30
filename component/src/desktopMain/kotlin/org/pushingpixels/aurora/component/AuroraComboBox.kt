@@ -362,6 +362,7 @@ internal fun <E> AuroraComboBox(
                     )
                 }) {
                     val fillOutline = buttonShaper.getButtonOutline(
+                        layoutDirection = layoutDirection,
                         width = width,
                         height = height,
                         extraInsets = 0.5f,
@@ -400,6 +401,7 @@ internal fun <E> AuroraComboBox(
                     drawingCache.colorScheme.foreground = textColor
 
                     val borderOutline = buttonShaper.getButtonOutline(
+                        layoutDirection = layoutDirection,
                         width = width,
                         height = height,
                         extraInsets = 0.5f,
@@ -411,6 +413,7 @@ internal fun <E> AuroraComboBox(
 
                     val innerBorderOutline = if (borderPainter.isPaintingInnerOutline)
                         buttonShaper.getButtonOutline(
+                            layoutDirection = layoutDirection,
                             width = width,
                             height = height,
                             extraInsets = 1.0f,

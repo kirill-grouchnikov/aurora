@@ -18,6 +18,7 @@ package org.pushingpixels.aurora.theming.shaper
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.theming.OutlineKind
 import org.pushingpixels.aurora.theming.Sides
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
@@ -38,6 +39,7 @@ class PillButtonShaper : AuroraButtonShaper, RectangularButtonShaper {
         isInner: Boolean,
         sides: Sides,
         outlineKind: OutlineKind,
+        layoutDirection: LayoutDirection,
         density: Density
     ): Outline {
         var radius = getCornerRadius(width, height, extraInsets, density)
@@ -46,7 +48,7 @@ class PillButtonShaper : AuroraButtonShaper, RectangularButtonShaper {
             if (radius < 0.0f) radius = 0.0f
         }
 
-        return getBaseOutline(width, height, radius, sides, extraInsets, outlineKind)
+        return getBaseOutline(layoutDirection, width, height, radius, sides, extraInsets, outlineKind)
     }
 
     override fun getCornerRadius(width: Float, height: Float, insets: Float, density: Density): Float {

@@ -432,6 +432,7 @@ internal fun AuroraSlider(
                 )
             }) {
                 val trackOutline = getBaseOutline(
+                    layoutDirection = layoutDirection,
                     width = drawingCache.trackRect.width,
                     height = drawingCache.trackRect.height,
                     radius = radius,
@@ -497,10 +498,11 @@ internal fun AuroraSlider(
                         )
                     }) {
                         val selectionOutline = getBaseOutline(
+                            layoutDirection = layoutDirection,
                             width = selectionCenterX - drawingCache.trackRect.x,
                             height = drawingCache.trackRect.height,
                             radius = radius,
-                            sides = Sides(straightSides = setOf(Side.Right)),
+                            sides = Sides(straightSides = setOf(Side.Trailing)),
                             insets = 0.5f
                         )
                         drawOutline(
@@ -518,10 +520,11 @@ internal fun AuroraSlider(
                         )
                     }) {
                         val selectionOutline = getBaseOutline(
+                            layoutDirection = layoutDirection,
                             width = drawingCache.trackRect.x + drawingCache.trackRect.width - selectionCenterX,
                             height = drawingCache.trackRect.height,
                             radius = radius,
-                            sides = Sides(straightSides = setOf(Side.Right)),
+                            sides = Sides(straightSides = setOf(Side.Trailing)),
                             insets = 0.5f
                         )
                         drawOutline(

@@ -1016,6 +1016,7 @@ internal fun <M : BaseCommandMenuContentModel,
                             )
                         }) {
                             val fillOutline = buttonShaper.getButtonOutline(
+                                layoutDirection = layoutDirection,
                                 width = width,
                                 height = height,
                                 extraInsets = 0.5f,
@@ -1058,6 +1059,7 @@ internal fun <M : BaseCommandMenuContentModel,
                             drawingCache.colorScheme.foreground = Color.Black
 
                             val borderOutline = buttonShaper.getButtonOutline(
+                                layoutDirection = layoutDirection,
                                 width = width,
                                 height = height,
                                 extraInsets = 0.5f,
@@ -1068,6 +1070,7 @@ internal fun <M : BaseCommandMenuContentModel,
                             )
                             val innerBorderOutline =
                                 if (borderPainter.isPaintingInnerOutline) buttonShaper.getButtonOutline(
+                                    layoutDirection = layoutDirection,
                                     width = width,
                                     height = height,
                                     extraInsets = 1.0f,
@@ -1251,6 +1254,7 @@ internal fun <M : BaseCommandMenuContentModel,
                             )
                         }) {
                             val fillOutline = buttonShaper.getButtonOutline(
+                                layoutDirection = layoutDirection,
                                 width = width,
                                 height = height,
                                 extraInsets = 0.5f,
@@ -1293,6 +1297,7 @@ internal fun <M : BaseCommandMenuContentModel,
                             drawingCache.colorScheme.foreground = Color.Black
 
                             val borderOutline = buttonShaper.getButtonOutline(
+                                layoutDirection = layoutDirection,
                                 width = width,
                                 height = height,
                                 extraInsets = 0.5f,
@@ -1303,6 +1308,7 @@ internal fun <M : BaseCommandMenuContentModel,
                             )
                             val innerBorderOutline =
                                 if (borderPainter.isPaintingInnerOutline) buttonShaper.getButtonOutline(
+                                    layoutDirection = layoutDirection,
                                     width = width,
                                     height = height,
                                     extraInsets = 1.0f,

@@ -296,6 +296,7 @@ internal fun AuroraTextField(
 
             if (presentationModel.showBorder) {
                 val outline = getBaseOutline(
+                    layoutDirection = layoutDirection,
                     width = size.width,
                     height = size.height,
                     radius = 0.0f,
@@ -322,6 +323,7 @@ internal fun AuroraTextField(
                     drawScope = this,
                     size = size,
                     outline = getBaseOutline(
+                        layoutDirection = layoutDirection,
                         width = size.width,
                         height = size.height,
                         radius = 0.0f,

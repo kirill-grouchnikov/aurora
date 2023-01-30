@@ -246,6 +246,7 @@ fun AuroraBoxWithHighlights(
                 )
             }) {
                 val fillOutline = buttonShaper.getButtonOutline(
+                    layoutDirection = layoutDirection,
                     width = width,
                     height = height,
                     extraInsets = 0.5f,
@@ -284,6 +285,7 @@ fun AuroraBoxWithHighlights(
                 drawingCache.colorScheme.foreground = textColor
 
                 val borderOutline = buttonShaper.getButtonOutline(
+                    layoutDirection = layoutDirection,
                     width = width,
                     height = height,
                     extraInsets = 0.5f,
@@ -295,6 +297,7 @@ fun AuroraBoxWithHighlights(
 
                 val innerBorderOutline = if (borderPainter.isPaintingInnerOutline)
                     buttonShaper.getButtonOutline(
+                        layoutDirection = layoutDirection,
                         width = width,
                         height = height,
                         extraInsets = 1.0f,

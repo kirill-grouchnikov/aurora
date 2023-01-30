@@ -213,11 +213,7 @@ internal fun AuroraBreadcrumbBar(
                 contentModel = leftScrollerCommand,
                 presentationModel = scrollerPresentationModel.overlayWith(
                     overlay = CommandButtonPresentationModel.Overlay(
-                        sides = Sides(
-                            straightSides = hashSetOf(
-                                if (layoutDirection == LayoutDirection.Ltr) Side.Right else Side.Left
-                            )
-                        )
+                        sides = Sides(straightSides = hashSetOf(Side.Trailing))
                     )
                 )
             ).project()
@@ -252,11 +248,7 @@ internal fun AuroraBreadcrumbBar(
                 contentModel = rightScrollerCommand,
                 presentationModel = scrollerPresentationModel.overlayWith(
                     overlay = CommandButtonPresentationModel.Overlay(
-                        sides = Sides(
-                            straightSides = hashSetOf(
-                                if (layoutDirection == LayoutDirection.Ltr) Side.Left else Side.Right
-                            )
-                        )
+                        sides = Sides(straightSides = hashSetOf(Side.Leading))
                     )
                 )
             ).project()

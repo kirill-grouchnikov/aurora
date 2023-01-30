@@ -314,6 +314,7 @@ internal fun AuroraTabButton(
                             )
                         }) {
                             val fillOutline = buttonShaper.getButtonOutline(
+                                layoutDirection = layoutDirection,
                                 width = width,
                                 height = height,
                                 extraInsets = 0.5f,
@@ -385,6 +386,7 @@ internal fun AuroraTabButton(
                             drawingCache.colorScheme.foreground = Color.Black
 
                             val borderOutline = buttonShaper.getButtonOutline(
+                                layoutDirection = layoutDirection,
                                 width = width,
                                 height = height,
                                 extraInsets = 0.5f,
@@ -395,6 +397,7 @@ internal fun AuroraTabButton(
                             )
                             val innerBorderOutline =
                                 if (borderPainter.isPaintingInnerOutline) buttonShaper.getButtonOutline(
+                                    layoutDirection = layoutDirection,
                                     width = width,
                                     height = height,
                                     extraInsets = 1.0f,

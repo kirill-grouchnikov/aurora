@@ -217,16 +217,12 @@ internal fun AuroraTabs(
 
     Layout(modifier = modifier.fillMaxWidth().padding(top = presentationModel.topPadding),
         content = {
-            // Leftwards scroller
+            // Startwards scroller
             CommandButtonProjection(
                 contentModel = leftScrollerCommand,
                 presentationModel = scrollerPresentationModel.overlayWith(
                     overlay = CommandButtonPresentationModel.Overlay(
-                        sides = Sides(
-                            straightSides = hashSetOf(
-                                if (layoutDirection == LayoutDirection.Ltr) Side.Right else Side.Left
-                            )
-                        )
+                        sides = Sides(straightSides = hashSetOf(Side.Trailing))
                     )
                 )
             ).project()
@@ -325,16 +321,12 @@ internal fun AuroraTabs(
                 )
             }
 
-            // Rightwards scroller
+            // Endwards scroller
             CommandButtonProjection(
                 contentModel = rightScrollerCommand,
                 presentationModel = scrollerPresentationModel.overlayWith(
                     overlay = CommandButtonPresentationModel.Overlay(
-                        sides = Sides(
-                            straightSides = hashSetOf(
-                                if (layoutDirection == LayoutDirection.Ltr) Side.Left else Side.Right
-                            )
-                        )
+                        sides = Sides(straightSides = hashSetOf(Side.Leading))
                     )
                 )
             ).project()
