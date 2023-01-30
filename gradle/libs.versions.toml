@@ -6,7 +6,7 @@ dokka = "1.7.20"
 batik = "1.16"
 
 versionchecker = "0.44.0"
-mavenpublish = "0.23.2"
+mavenpublish = "0.24.0"
 
 [libraries]
 compose-desktop = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose" }
