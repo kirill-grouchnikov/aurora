@@ -35,47 +35,30 @@ As mentioned above, the [Nebula](../skins/toneddown.md#nebula) skin defines cust
 
 ```kotlin
 // for progress bars
-val determinateState = ComponentState(
-    "determinate", arrayOf(
-        ComponentStateFacet.Enable,
-        ComponentStateFacet.Determinate
-    ), null
-)
-val indeterminateState =
-    ComponentState("indeterminate", arrayOf(ComponentStateFacet.Enable), arrayOf(ComponentStateFacet.Determinate))
 val determinateScheme = schemes["Nebula Determinate"]
 val determinateBorderScheme = schemes["Nebula Determinate Border"]
 defaultSchemeBundle.registerColorScheme(
     determinateScheme,
     ColorSchemeAssociationKind.Fill,
-    determinateState, indeterminateState
+    ComponentState.Determinate, ComponentState.Indeterminate
 )
 defaultSchemeBundle.registerColorScheme(
     determinateBorderScheme,
     ColorSchemeAssociationKind.Border, determinateState,
-    indeterminateState
+    ComponentState.Determinate, ComponentState.Indeterminate
 )
 
-val determinateDisabledState = ComponentState(
-    "determinate disabled", arrayOf(ComponentStateFacet.Determinate), arrayOf(ComponentStateFacet.Enable)
-)
-val indeterminateDisabledState = ComponentState(
-    "indeterminate disabled", null, arrayOf(
-        ComponentStateFacet.Enable,
-        ComponentStateFacet.Determinate
-    )
-)
 val determinateDisabledScheme = schemes["Nebula Determinate Disabled"]
 val determinateDisabledBorderScheme = schemes["Nebula Determinate Disabled Border"]
 defaultSchemeBundle.registerColorScheme(
     determinateDisabledScheme,
     ColorSchemeAssociationKind.Fill,
-    determinateDisabledState, indeterminateDisabledState
+    ComponentState.DisabledDeterminate, ComponentState.DisabledIndeterminate
 )
 defaultSchemeBundle.registerColorScheme(
     determinateDisabledBorderScheme,
-    ColorSchemeAssociationKind.Border, determinateDisabledState,
-    indeterminateDisabledState
+    ColorSchemeAssociationKind.Border,
+    ComponentState.DisabledDeterminate, ComponentState.DisabledIndeterminate
 )
 ```
 
