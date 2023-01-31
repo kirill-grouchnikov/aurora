@@ -88,6 +88,9 @@ internal fun displayRichTooltipContent(
     popupPlacementStrategy: PopupPlacementStrategy,
 ) {
     val popupOriginatorLocationOnScreen = popupOriginator.locationOnScreen
+    val currentScreenBounds = popupOriginator.graphicsConfiguration.bounds
+    popupOriginatorLocationOnScreen.translate(-currentScreenBounds.x, -currentScreenBounds.y)
+
     val offset = ceil(density.density).toInt()
 
     // Create our own text style with bold weight for the title

@@ -78,6 +78,9 @@ object AuroraPopupManager {
         )
 
         val invokerLocOnScreen = originator.locationOnScreen
+        val currentScreenBounds = originator.graphicsConfiguration.bounds
+        invokerLocOnScreen.translate(-currentScreenBounds.x, -currentScreenBounds.y)
+
         popupContent.invalidate()
         popupContent.revalidate()
         popup.show(

@@ -92,6 +92,9 @@ interface BaseCommandMenuHandler<in M : BaseCommandMenuContentModel,
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>
     ) {
         val popupOriginatorLocationOnScreen = popupOriginator.locationOnScreen
+        val currentScreenBounds = popupOriginator.graphicsConfiguration.bounds
+        popupOriginatorLocationOnScreen.translate(-currentScreenBounds.x, -currentScreenBounds.y)
+
         val popupContentLayoutInfo = getPopupContentLayoutInfo(
             menuContentModel = contentModel.value!!,
             menuPresentationModel = presentationModel,
