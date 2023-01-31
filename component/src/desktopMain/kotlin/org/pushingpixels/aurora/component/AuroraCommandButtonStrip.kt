@@ -37,8 +37,6 @@ private fun CommandButtonStripContent(
     commandButtonPresentationModel: CommandButtonPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay> = mapOf()
 ) {
-    val ltr = (LocalLayoutDirection.current == LayoutDirection.Ltr)
-
     val commandCount = commandGroup.commands.size
     val isHorizontal = (presentationModel.orientation == StripOrientation.Horizontal)
     val leadingSide = if (isHorizontal) Side.Leading else Side.Top

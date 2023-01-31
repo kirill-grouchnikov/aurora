@@ -1004,7 +1004,6 @@ fun AuroraWindowScope.DemoCommandContent(
 
                 Spacer(modifier = Modifier.width(12.dp))
 
-                val entrySimpleMf = MessageFormat(resourceBundle.getString("Group.entrySimple"))
                 CustomCommandButtonProjection(
                     contentModel = CustomCommand(
                         icon = menu_black_24dp(),

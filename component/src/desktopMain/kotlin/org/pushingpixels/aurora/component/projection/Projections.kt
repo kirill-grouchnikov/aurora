@@ -97,8 +97,8 @@ class ColorSelectorCommandButtonProjection(
     ) {
         require(contentModel.secondaryContentModel.entries.all {
             when (it) {
-                is ColorSelectorPopupMenuSection -> it.colors.size == (presentationModel.popupMenuPresentationModel as ColorSelectorCommandPopupMenuPresentationModel).colorColumns
-                is ColorSelectorPopupMenuSectionWithDerived -> it.colors.size == (presentationModel.popupMenuPresentationModel as ColorSelectorCommandPopupMenuPresentationModel).colorColumns
+                is ColorSelectorPopupMenuSection -> it.colors.size == presentationModel.popupMenuPresentationModel.colorColumns
+                is ColorSelectorPopupMenuSectionWithDerived -> it.colors.size == presentationModel.popupMenuPresentationModel.colorColumns
                 else -> true
             }
         }) {
@@ -173,7 +173,8 @@ class BreadcrumbBarProjection(
         AuroraBreadcrumbBar(
             modifier = modifier,
             contentModel = this.contentModel,
-            presentationModel = this.presentationModel
+            presentationModel = this.presentationModel,
+            horizontalScrollState = horizontalScrollState
         )
     }
 }
