@@ -97,7 +97,7 @@ In a nutshell:
 
 Bringing it all together, here is a sample Aurora's combobox:
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/combo-dropdown.png" width="156" border=0/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/combo-dropdown.png" width="234" border=0/>
 
 ```kotlin
 // Example of a combobox with display converter for more complex data

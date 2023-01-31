@@ -4,7 +4,7 @@
 
 ### Example
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/box-with-highlights.png" width="300" border=0/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/box-with-highlights.png" width="296" border=0/>
 
 Every row in this vertical list is an `AuroraBoxWithHighlights`. Selection and rollover state facets are applied on the label - compare the light-on-dark visuals of unselected rows vs the dark-on-light visuals of the selected one.
 

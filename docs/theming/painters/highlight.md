@@ -4,7 +4,7 @@ The highlight painter is used to paint special highlightable areas of applicatio
 
 Aurora uses the highlight painter on its [box with highlights](../component/BoxWithHighlights.md) in the `AuroraBoxWithHighlights` composable container:
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/box-with-highlights.png" width="300" border=0/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/box-with-highlights.png" width="296" border=0/>
 
 This allows the application code to provide different highlight visuals for elements in repeatable collection-based containers such as lists and grids.
 
