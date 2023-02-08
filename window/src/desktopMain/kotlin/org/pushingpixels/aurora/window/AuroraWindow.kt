@@ -399,34 +399,16 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                             if (current.extendedState == JFrame.MAXIMIZED_BOTH) {
                                 current.extendedState = JFrame.NORMAL
                             } else {
-                                // Workaround for https://bugs.java.com/bugdatabase/view_bug.do?bug_id=4737788
-                                // to explicitly compute maximized bounds so that our window
-                                // does not overlap the taskbar0
-                                val screenBounds = current.graphicsConfiguration.bounds
-                                // Prior to Java 15, we need to account for screen resolution which is given as
-                                // scaleX and scaleY on default transform of the window's graphics configuration.
-                                // See https://bugs.openjdk.java.net/browse/JDK-8176359,
+                                // Note that on some older releases of Java, maximizing a custom-decorated frame
+                                // results in that frame overlapping the system taskbar. This behavior has been
+                                // fixed in Java 15 with https://bugs.openjdk.java.net/browse/JDK-8176359,
                                 // https://bugs.openjdk.java.net/browse/JDK-8231564 and
-                                // https://bugs.openjdk.java.net/browse/JDK-8243925 that went into Java 15.
-                                val isWindows = System.getProperty("os.name")?.startsWith("Windows")
-                                val maximizedWindowBounds =
-                                    if ((isWindows == true) && (Runtime.version().feature() < 15))
-                                        Rectangle(
-                                            0, 0,
-                                            (screenBounds.width * current.graphicsConfiguration.defaultTransform.scaleX).toInt(),
-                                            (screenBounds.height * current.graphicsConfiguration.defaultTransform.scaleY).toInt(),
-                                        ) else screenBounds
-                                // Now account for screen insets (taskbar and anything else that should not be
-                                // interfered with by maximized windows)
-                                val screenInsets = current.toolkit.getScreenInsets(current.graphicsConfiguration)
-                                // Set maximized bounds of our window
-                                current.maximizedBounds = Rectangle(
-                                    maximizedWindowBounds.x + screenInsets.left,
-                                    maximizedWindowBounds.y + screenInsets.top,
-                                    maximizedWindowBounds.width - screenInsets.left - screenInsets.right,
-                                    maximizedWindowBounds.height - screenInsets.top - screenInsets.bottom
-                                )
-                                // And now we can set our extended state
+                                // https://bugs.openjdk.java.net/browse/JDK-8243925.
+                                // In addition, https://bugs.openjdk.org/browse/JDK-8231564 backported it to
+                                // earlier Java versions.
+                                // Since there is no reliable way to detect whether the current runtime has a fix
+                                // for this issue, do not try to work around it. If your application is running
+                                // into this issue, you will need to use a version of Java that has the fix for it.
                                 current.extendedState = JFrame.MAXIMIZED_BOTH
                             }
                             isMaximized.value = !isMaximized.value
