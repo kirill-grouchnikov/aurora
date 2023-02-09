@@ -16,7 +16,9 @@
 package org.pushingpixels.aurora.component.utils
 
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
@@ -66,6 +68,16 @@ class TransitionAwarePainter(
             decorationAreaType = decorationAreaType,
             associationKind = ColorSchemeAssociationKind.Mark
         )
-        paintDelegate.invoke(this, iconSize, mutableColorScheme)
+        this.withTransform({
+            clipRect(
+                left = 0.0f,
+                top = 0.0f,
+                right = intrinsicSize.width,
+                bottom = intrinsicSize.height,
+                clipOp = ClipOp.Intersect
+            )
+        }) {
+            paintDelegate.invoke(this, iconSize, mutableColorScheme)
+        }
     }
 }
