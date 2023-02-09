@@ -27,6 +27,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
@@ -52,9 +53,9 @@ import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
 import java.awt.*
 import java.awt.event.*
-import java.lang.IllegalArgumentException
 import java.util.*
 import javax.swing.JFrame
+import javax.swing.JRootPane
 import javax.swing.SwingUtilities
 import kotlin.math.roundToInt
 
@@ -332,7 +333,6 @@ private fun AuroraWindowScope.WindowTitlePaneTextAndIcon(
     }
 }
 
-@OptIn(AuroraInternalApi::class)
 @Composable
 private fun AuroraWindowScope.WindowPlainTitlePane(
     title: String,
@@ -382,7 +382,8 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                 skinColors = skinColors,
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
                                 paintDelegate = { drawScope, iconSize, colorScheme ->
-                                    drawMinimizeIcon(drawScope, iconSize, colorScheme)
+                                    windowConfiguration.titlePaneButtonsProvider.iconifyButtonProvider.drawIcon(
+                                        drawScope, iconSize, colorScheme)
                                 },
                                 density = density
                             )
@@ -423,7 +424,8 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                     skinColors = skinColors,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                                     paintDelegate = { drawScope, iconSize, colorScheme ->
-                                        drawRestoreIcon(drawScope, iconSize, colorScheme)
+                                        windowConfiguration.titlePaneButtonsProvider.restoreButtonProvider.drawIcon(
+                                            drawScope, iconSize, colorScheme)
                                     },
                                     density = density,
                                 )
@@ -434,7 +436,8 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                     skinColors = skinColors,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                                     paintDelegate = { drawScope, iconSize, colorScheme ->
-                                        drawMaximizeIcon(drawScope, iconSize, colorScheme)
+                                        windowConfiguration.titlePaneButtonsProvider.maximizeButtonProvider.drawIcon(
+                                            drawScope, iconSize, colorScheme)
                                     },
                                     density = density,
                                 )
@@ -462,7 +465,8 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                 skinColors = skinColors,
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
                                 paintDelegate = { drawScope, iconSize, colorScheme ->
-                                    drawCloseIcon(drawScope, iconSize, colorScheme)
+                                    windowConfiguration.titlePaneButtonsProvider.closeButtonProvider.drawIcon(
+                                        drawScope, iconSize, colorScheme)
                                 },
                                 density = density,
                             )
@@ -538,7 +542,6 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
     }
 }
 
-@OptIn(AuroraInternalApi::class)
 @Composable
 private fun AuroraWindowScope.WindowIntegratedTitlePane(
     windowConfiguration: AuroraWindowTitlePaneConfigurations.AuroraIntegrated
@@ -577,7 +580,8 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                 skinColors = skinColors,
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
                                 paintDelegate = { drawScope, iconSize, colorScheme ->
-                                    drawMinimizeIcon(drawScope, iconSize, colorScheme)
+                                    windowConfiguration.titlePaneButtonsProvider.iconifyButtonProvider.drawIcon(
+                                        drawScope, iconSize, colorScheme)
                                 },
                                 density = density
                             )
@@ -636,7 +640,8 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                     skinColors = skinColors,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                                     paintDelegate = { drawScope, iconSize, colorScheme ->
-                                        drawRestoreIcon(drawScope, iconSize, colorScheme)
+                                        windowConfiguration.titlePaneButtonsProvider.restoreButtonProvider.drawIcon(
+                                            drawScope, iconSize, colorScheme)
                                     },
                                     density = density,
                                 )
@@ -647,7 +652,8 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                     skinColors = skinColors,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                                     paintDelegate = { drawScope, iconSize, colorScheme ->
-                                        drawMaximizeIcon(drawScope, iconSize, colorScheme)
+                                        windowConfiguration.titlePaneButtonsProvider.maximizeButtonProvider.drawIcon(
+                                            drawScope, iconSize, colorScheme)
                                     },
                                     density = density,
                                 )
@@ -675,7 +681,8 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                 skinColors = skinColors,
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
                                 paintDelegate = { drawScope, iconSize, colorScheme ->
-                                    drawCloseIcon(drawScope, iconSize, colorScheme)
+                                    windowConfiguration.titlePaneButtonsProvider.closeButtonProvider.drawIcon(
+                                        drawScope, iconSize, colorScheme)
                                 },
                                 density = density,
                             )
@@ -1041,6 +1048,48 @@ object AuroraWindowTitlePaneConfigurations {
      */
     object None : AuroraWindowTitlePaneConfiguration()
 
+    interface TitlePaneButtonProvider {
+        /** Draws the icon for this button. */
+        fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorScheme: AuroraColorScheme)
+    }
+
+    interface TitlePaneButtonsProvider {
+        val closeButtonProvider: TitlePaneButtonProvider
+        val restoreButtonProvider: TitlePaneButtonProvider
+        val iconifyButtonProvider: TitlePaneButtonProvider
+        val maximizeButtonProvider: TitlePaneButtonProvider
+    }
+
+    open class DefaultTitlePaneButtonsProvider: TitlePaneButtonsProvider {
+        override val closeButtonProvider: TitlePaneButtonProvider
+            get() = object: TitlePaneButtonProvider {
+                override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorScheme: AuroraColorScheme) {
+                    drawCloseIcon(drawScope, iconSize, colorScheme)
+                }
+            }
+
+        override val restoreButtonProvider: TitlePaneButtonProvider
+            get() = object: TitlePaneButtonProvider {
+                override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorScheme: AuroraColorScheme) {
+                    drawRestoreIcon(drawScope, iconSize, colorScheme)
+                }
+            }
+
+        override val iconifyButtonProvider: TitlePaneButtonProvider
+            get() = object: TitlePaneButtonProvider {
+                override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorScheme: AuroraColorScheme) {
+                    drawMinimizeIcon(drawScope, iconSize, colorScheme)
+                }
+            }
+
+        override val maximizeButtonProvider: TitlePaneButtonProvider
+            get() = object: TitlePaneButtonProvider {
+                override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorScheme: AuroraColorScheme) {
+                    drawMaximizeIcon(drawScope, iconSize, colorScheme)
+                }
+            }
+    }
+
     /**
      * Plain title pane provided by Aurora with application icon, application title and
      * three control buttons: minimize, maximize / restore and close. Use the gravity attributes
@@ -1049,7 +1098,8 @@ object AuroraWindowTitlePaneConfigurations {
     data class AuroraPlain(
         val titleTextHorizontalGravity: HorizontalGravity = HorizontalGravity.Leading,
         val titleControlButtonGroupHorizontalGravity: HorizontalGravity = HorizontalGravity.Trailing,
-        val titleIconHorizontalGravity: TitleIconHorizontalGravity = TitleIconHorizontalGravity.OppositeControlButtons
+        val titleIconHorizontalGravity: TitleIconHorizontalGravity = TitleIconHorizontalGravity.OppositeControlButtons,
+        val titlePaneButtonsProvider: TitlePaneButtonsProvider = DefaultTitlePaneButtonsProvider()
     ) : AuroraWindowTitlePaneConfiguration() {
         @OptIn(AuroraInternalApi::class)
         internal fun areTitlePaneControlButtonsOnRight(layoutDirection: LayoutDirection): Boolean {
@@ -1121,7 +1171,8 @@ object AuroraWindowTitlePaneConfigurations {
     data class AuroraIntegrated(
         val titleControlButtonGroupHorizontalGravity: HorizontalGravity = HorizontalGravity.Trailing,
         val titleControlButtonGroupVerticalGravity: VerticalGravity = VerticalGravity.Centered,
-        val titlePaneHeight: Dp = WindowTitlePaneSizingConstants.MinimumTitlePaneHeight
+        val titlePaneHeight: Dp = WindowTitlePaneSizingConstants.MinimumTitlePaneHeight,
+        val titlePaneButtonsProvider: TitlePaneButtonsProvider = DefaultTitlePaneButtonsProvider()
     ) : AuroraWindowTitlePaneConfiguration() {
         @OptIn(AuroraInternalApi::class)
         internal fun areTitlePaneControlButtonsOnRight(layoutDirection: LayoutDirection): Boolean {
