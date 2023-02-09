@@ -38,6 +38,7 @@ The `AuroraPlain` configuration provides further control over where each part of
 | **titleTextHorizontalGravity** | **Leading** | Horizontal gravity for the title |
 | **titleControlButtonGroupHorizontalGravity** | **Trailing** | Horizontal gravity for the control buttons |
 | **titleIconHorizontalGravity** | **OppositeControlButtons** | Horizontal gravity for the icon |
+| **titlePaneButtonsProvider** | **DefaultTitlePaneButtonsProvider** | Icon provider for the buttons |
 
 The default values for these parameters result in the layout that places:
 
@@ -92,6 +93,7 @@ The first step in configuring the integrated mode is to configure the `AuroraInt
 | **titleControlButtonGroupHorizontalGravity** | **Trailing** | Horizontal gravity for the control buttons |
 | **titleControlButtonGroupVerticalGravity** | **Centered** | Vertical gravity for the control buttons |
 | **titlePaneHeight** | **WindowTitlePaneSizingConstants. MinimumTitlePaneHeight** | Title pane height, cannot be less than `MinimumTitlePaneHeight` |
+| **titlePaneButtonsProvider** | **DefaultTitlePaneButtonsProvider** | Icon provider for the buttons |
 
 In the screenshot above, the title pane is configured with:
 
@@ -187,3 +189,18 @@ Let's take a look at another example of an integrated title pane and the moving 
 * Each one of the three vertical panes uses `WindowDraggableArea` to wrap the part of their content that is integrated into the title pane - the refresh button in the left pane, the search box in the middle, and the row of icons in the right.
 * There is no "unified" visual appearance to the title pane area, so none of these panes use `AuroraDecorationArea` with `DecorationAreaType.TitlePane` or the `Modifier.auroraBackground`. Instead, each individual pane is wrapped in its own `AuroraDecorationArea` that is used to apply a separate styling on all the elements in that pane (bluish-grey with yellow highlights in the left, metal grey with blue highlights in the middle).
 * `AuroraWindowTitlePaneButton` for the refresh button placed into the top-right corner of the left pane.
+
+### Customizing title pane buttons
+
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/titlepane/titlepane-button-icons.png" border=0>
+
+**Aurora Plain** and **Aurora Integrated** modes also support an additional parameter that allows controlling the visual appearance of the icons used on the title pane buttons.
+
+The **TitlePaneButtonsProvider** and **TitlePaneButtonProvider** define the app-facing APIs for providing the icons for these four actions:
+
+* Close the window
+* Maximize the window
+* Restore the maximized window to its previous state
+* Iconify / minimize the window
+
+You can either implement the **TitlePaneButtonsProvider** interface, or extend the **DefaultTitlePaneButtonsProvider** implementation to tweak the visuals of these four icons based on your design needs.
