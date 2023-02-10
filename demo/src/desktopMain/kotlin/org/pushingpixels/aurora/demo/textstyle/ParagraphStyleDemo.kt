@@ -38,7 +38,8 @@ import org.pushingpixels.aurora.demo.svg.tango.format_justify_left
 import org.pushingpixels.aurora.demo.svg.tango.format_justify_right
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
-import org.pushingpixels.aurora.window.*
+import org.pushingpixels.aurora.window.AuroraWindow
+import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import org.pushingpixels.aurora.window.auroraApplication
 
 fun main() = auroraApplication {

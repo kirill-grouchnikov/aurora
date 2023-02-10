@@ -37,7 +37,10 @@ import org.pushingpixels.aurora.demo.svg.material.battery_full_24px
 import org.pushingpixels.aurora.demo.svg.material.perm_device_information_24px
 import org.pushingpixels.aurora.demo.svg.material.waves_24px
 import org.pushingpixels.aurora.demo.svg.random.*
-import org.pushingpixels.aurora.demo.svg.tango.*
+import org.pushingpixels.aurora.demo.svg.tango.drive_harddisk
+import org.pushingpixels.aurora.demo.svg.tango.help_browser
+import org.pushingpixels.aurora.demo.svg.tango.media_floppy
+import org.pushingpixels.aurora.demo.svg.tango.x_office_document_template
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
 import org.pushingpixels.aurora.window.AuroraDecorationArea
