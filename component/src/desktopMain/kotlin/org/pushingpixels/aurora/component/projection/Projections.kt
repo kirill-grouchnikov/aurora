@@ -21,15 +21,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuPopupLayoutInfo
 import org.pushingpixels.aurora.component.utils.popup.ColorSelectorCommandMenuPopupHandler
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
-import org.pushingpixels.aurora.component.utils.popup.GeneralPopupContentLayoutInfo
-import org.pushingpixels.aurora.theming.LocalPopupMenu
 
 abstract class Projection<out C : ContentModel, out P : PresentationModel>
 
@@ -39,7 +36,6 @@ abstract class BaseCommandButtonProjection<out C : BaseCommand,
     open val presentationModel: P,
     open val overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
 ) : Projection<C, P>() {
-    @OptIn(AuroraInternalApi::class)
     @Composable
     protected fun <MC : BaseCommandMenuContentModel,
             MP : BaseCommandPopupMenuPresentationModel,

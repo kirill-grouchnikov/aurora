@@ -32,6 +32,7 @@ import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuPopupLayoutInfo
+import org.pushingpixels.aurora.component.popup.CascadingCommandMenuHandler
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.theming.*
@@ -250,7 +251,7 @@ data class CustomPopupContentLayoutInfo(
     val itemButtonPresentationModel: CommandButtonPresentationModel,
 ) : BaseCommandMenuPopupLayoutInfo
 
-object CustomCommandMenuPopupHandler : BaseCommandMenuHandler<
+object CustomCommandMenuPopupHandler : CascadingCommandMenuHandler<
         CustomMenuContentModel, CustomCommandPopupMenuPresentationModel,
         CustomPopupContentLayoutInfo> {
     override fun getPopupContentLayoutInfo(

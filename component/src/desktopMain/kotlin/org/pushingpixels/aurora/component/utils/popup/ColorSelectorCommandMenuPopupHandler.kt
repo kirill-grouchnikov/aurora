@@ -42,6 +42,7 @@ import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuPopupLayoutInfo
+import org.pushingpixels.aurora.component.popup.CascadingCommandMenuHandler
 import org.pushingpixels.aurora.component.popup.auroraPopupMenuRowBackground
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.utils.TitleLabel
@@ -59,7 +60,7 @@ internal data class ColorSelectorPopupContentLayoutInfo(
     val gutterWidth: Float
 ) : BaseCommandMenuPopupLayoutInfo
 
-internal object ColorSelectorCommandMenuPopupHandler : BaseCommandMenuHandler<
+internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandler<
         ColorSelectorMenuContentModel, ColorSelectorCommandPopupMenuPresentationModel,
         ColorSelectorPopupContentLayoutInfo> {
     override fun getPopupContentLayoutInfo(

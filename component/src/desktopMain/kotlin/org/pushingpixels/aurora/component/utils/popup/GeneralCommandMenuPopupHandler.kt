@@ -40,6 +40,7 @@ import org.pushingpixels.aurora.component.getPreferredCommandPopupMenuPanelSize
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuPopupLayoutInfo
+import org.pushingpixels.aurora.component.popup.CascadingCommandMenuHandler
 import org.pushingpixels.aurora.component.popup.auroraPopupMenuRowBackground
 import org.pushingpixels.aurora.component.projection.CommandButtonPanelProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
@@ -63,7 +64,7 @@ internal data class GeneralPopupContentLayoutInfo(
     val gutterWidth: Float
 ) : BaseCommandMenuPopupLayoutInfo
 
-internal object GeneralCommandMenuPopupHandler : BaseCommandMenuHandler<
+internal object GeneralCommandMenuPopupHandler : CascadingCommandMenuHandler<
         CommandMenuContentModel, CommandPopupMenuPresentationModel, GeneralPopupContentLayoutInfo> {
     override fun getPopupContentLayoutInfo(
         menuContentModel: CommandMenuContentModel,
