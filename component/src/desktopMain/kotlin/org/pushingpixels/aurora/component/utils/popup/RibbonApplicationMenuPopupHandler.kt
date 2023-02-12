@@ -17,10 +17,7 @@ package org.pushingpixels.aurora.component.utils.popup
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposePanel
@@ -37,6 +34,7 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
 import org.pushingpixels.aurora.component.popup.awtColor
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
+import org.pushingpixels.aurora.component.ribbon.RibbonApplicationMenuCommandPopupMenuPresentationModel
 import org.pushingpixels.aurora.component.ribbon.RibbonApplicationMenuContentModel
 import org.pushingpixels.aurora.component.utils.getPlacementAwarePopupShift
 import org.pushingpixels.aurora.theming.*
@@ -47,22 +45,27 @@ import javax.swing.JPopupMenu
 import javax.swing.border.Border
 import kotlin.math.ceil
 
-internal data class RibbonApplicationMenuPopupContentLayoutInfo(
-    val popupSize: Size,
+internal data class RibbonApplicationMenuLevel1ContentLayoutInfo(
+    val fullSize: Size,
     val itemButtonPresentationModel: CommandButtonPresentationModel,
 )
 
+internal data class RibbonApplicationMenuFooterContentLayoutInfo(
+    val fullHeight: Float,
+    val footerButtonPresentationModel: CommandButtonPresentationModel,
+)
+
 internal object RibbonApplicationMenuPopupHandler : BaseCommandMenuHandler<
-        RibbonApplicationMenuContentModel, CommandPopupMenuPresentationModel> {
-    fun getPopupContentLayoutInfo(
+        RibbonApplicationMenuContentModel, RibbonApplicationMenuCommandPopupMenuPresentationModel> {
+    private fun getLevel1ContentLayoutInfo(
         menuContentModel: RibbonApplicationMenuContentModel,
-        menuPresentationModel: CommandPopupMenuPresentationModel,
+        menuPresentationModel: RibbonApplicationMenuCommandPopupMenuPresentationModel,
         displayPrototypeCommand: BaseCommand?,
         layoutDirection: LayoutDirection,
         density: Density,
         textStyle: TextStyle,
         fontFamilyResolver: FontFamily.Resolver
-    ): RibbonApplicationMenuPopupContentLayoutInfo {
+    ): RibbonApplicationMenuLevel1ContentLayoutInfo {
 
         // If at least one secondary command in this popup menu has icon factory
         // we force all command buttons to allocate space for the icon (for overall
@@ -120,8 +123,8 @@ internal object RibbonApplicationMenuPopupHandler : BaseCommandMenuHandler<
             }
         }
 
-        return RibbonApplicationMenuPopupContentLayoutInfo(
-            popupSize = Size(
+        return RibbonApplicationMenuLevel1ContentLayoutInfo(
+            fullSize = Size(
                 width = maxWidth,
                 height = combinedHeight
             ),
@@ -129,14 +132,68 @@ internal object RibbonApplicationMenuPopupHandler : BaseCommandMenuHandler<
         )
     }
 
-    @Composable
-    fun generatePopupContent(
+    private fun getFooterContentLayoutInfo(
         menuContentModel: RibbonApplicationMenuContentModel,
-        menuPresentationModel: CommandPopupMenuPresentationModel,
+        menuPresentationModel: RibbonApplicationMenuCommandPopupMenuPresentationModel,
+        layoutDirection: LayoutDirection,
+        density: Density,
+        textStyle: TextStyle,
+        fontFamilyResolver: FontFamily.Resolver
+    ): RibbonApplicationMenuFooterContentLayoutInfo {
+        // Footer command presentation for menu content
+        val footerButtonPresentationModel = CommandButtonPresentationModel(
+            presentationState = CommandButtonPresentationState.Medium,
+            iconActiveFilterStrategy = IconFilterStrategy.Original,
+            iconEnabledFilterStrategy = IconFilterStrategy.Original,
+            iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+            isMenu = true
+        )
+
+        if (menuContentModel.footerCommands.commands.isEmpty()) {
+            return RibbonApplicationMenuFooterContentLayoutInfo(
+                fullHeight = 0.0f,
+                footerButtonPresentationModel = footerButtonPresentationModel
+            )
+        }
+
+        val layoutManager: CommandButtonLayoutManager =
+            footerButtonPresentationModel.presentationState.createLayoutManager(
+                layoutDirection = layoutDirection,
+                density = density,
+                textStyle = textStyle,
+                fontFamilyResolver = fontFamilyResolver
+            )
+
+        var maxHeight = 0.0f
+        for (footerCommand in menuContentModel.footerCommands.commands) {
+            val preferredSize = layoutManager.getPreferredSize(
+                command = footerCommand,
+                presentationModel = footerButtonPresentationModel,
+                preLayoutInfo = layoutManager.getPreLayoutInfo(
+                    command = footerCommand,
+                    presentationModel = footerButtonPresentationModel
+                )
+            )
+            maxHeight = kotlin.math.max(maxHeight, preferredSize.height)
+        }
+
+        val footerTopPadding = menuPresentationModel.footerContentPadding.calculateTopPadding()
+        val footerBottomPadding = menuPresentationModel.footerContentPadding.calculateBottomPadding()
+        return RibbonApplicationMenuFooterContentLayoutInfo(
+            fullHeight = maxHeight + (footerTopPadding + footerBottomPadding).value * density.density,
+            footerButtonPresentationModel = footerButtonPresentationModel
+        )
+    }
+
+    @Composable
+    private fun generateLevel1Content(
+        menuContentModel: RibbonApplicationMenuContentModel,
+        menuPresentationModel: RibbonApplicationMenuCommandPopupMenuPresentationModel,
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
-        popupContentLayoutInfo: RibbonApplicationMenuPopupContentLayoutInfo
+        level1ContentLayoutInfo: RibbonApplicationMenuLevel1ContentLayoutInfo
     ) {
-        val itemButtonPresentationModel = popupContentLayoutInfo.itemButtonPresentationModel
+        val itemButtonPresentationModel = level1ContentLayoutInfo.itemButtonPresentationModel
 
         val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
             decorationAreaType = AuroraSkin.decorationAreaType
@@ -168,6 +225,44 @@ internal object RibbonApplicationMenuPopupHandler : BaseCommandMenuHandler<
         }
     }
 
+    @Composable
+    private fun generateFooterContent(
+        menuContentModel: RibbonApplicationMenuContentModel,
+        menuPresentationModel: RibbonApplicationMenuCommandPopupMenuPresentationModel,
+        overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
+        footerContentLayoutInfo: RibbonApplicationMenuFooterContentLayoutInfo
+    ) {
+        val footerButtonPresentationModel = footerContentLayoutInfo.footerButtonPresentationModel
+        val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
+            decorationAreaType = AuroraSkin.decorationAreaType
+        )
+        Row(
+            modifier = Modifier.fillMaxSize()
+                .background(color = backgroundColorScheme.accentedBackgroundFillColor)
+                .padding(menuPresentationModel.footerContentPadding),
+            horizontalArrangement = Arrangement.End
+        ) {
+            for (footerCommand in menuContentModel.footerCommands.commands) {
+                // Check if we have a presentation overlay for this footer command
+                val hasOverlay = overlays.containsKey(footerCommand)
+                val currFooterPresentationModel = if (hasOverlay)
+                    footerButtonPresentationModel.overlayWith(overlays[footerCommand]!!)
+                else footerButtonPresentationModel
+                // Project a command button for each footer command, passing the same
+                // overlays into it.
+                CommandButtonProjection(
+                    contentModel = footerCommand,
+                    presentationModel = currFooterPresentationModel,
+                    overlays = overlays
+                ).project(
+                    modifier = Modifier.fillMaxWidth(),
+                    actionInteractionSource = remember { MutableInteractionSource() },
+                    popupInteractionSource = remember { MutableInteractionSource() }
+                )
+            }
+        }
+    }
+
     @OptIn(AuroraInternalApi::class)
     override fun showPopupContent(
         popupOriginator: Component,
@@ -182,7 +277,7 @@ internal object RibbonApplicationMenuPopupHandler : BaseCommandMenuHandler<
         anchorBoundsInWindow: Rect,
         popupTriggerAreaInWindow: Rect,
         contentModel: State<RibbonApplicationMenuContentModel?>,
-        presentationModel: CommandPopupMenuPresentationModel,
+        presentationModel: RibbonApplicationMenuCommandPopupMenuPresentationModel,
         displayPrototypeCommand: BaseCommand?,
         toDismissPopupsOnActivation: Boolean,
         popupPlacementStrategy: PopupPlacementStrategy,
@@ -192,10 +287,18 @@ internal object RibbonApplicationMenuPopupHandler : BaseCommandMenuHandler<
         val currentScreenBounds = popupOriginator.graphicsConfiguration.bounds
         popupOriginatorLocationOnScreen.translate(-currentScreenBounds.x, -currentScreenBounds.y)
 
-        val popupContentLayoutInfo = getPopupContentLayoutInfo(
+        val level1ContentLayoutInfo = getLevel1ContentLayoutInfo(
             menuContentModel = contentModel.value!!,
             menuPresentationModel = presentationModel,
             displayPrototypeCommand = displayPrototypeCommand,
+            layoutDirection = layoutDirection,
+            density = density,
+            textStyle = textStyle,
+            fontFamilyResolver = fontFamilyResolver
+        )
+        val footerContentLayoutInfo = getFooterContentLayoutInfo(
+            menuContentModel = contentModel.value!!,
+            menuPresentationModel = presentationModel,
             layoutDirection = layoutDirection,
             density = density,
             textStyle = textStyle,
@@ -207,8 +310,9 @@ internal object RibbonApplicationMenuPopupHandler : BaseCommandMenuHandler<
         // and then passed those as is (the numeric value) to Swing / AWT
 
         // Full size of the popup accounts for extra pixel on each side for the popup border
-        val fullPopupWidth = ceil(popupContentLayoutInfo.popupSize.width / density.density).toInt() + 2
-        val fullPopupHeight = ceil(popupContentLayoutInfo.popupSize.height / density.density).toInt() + 2
+        val fullPopupWidth = ceil(level1ContentLayoutInfo.fullSize.width / density.density).toInt() + 2
+        val fullPopupHeight = ceil((level1ContentLayoutInfo.fullSize.height + footerContentLayoutInfo.fullHeight)
+                / density.density).toInt() + 2
 
         val initialAnchorX = if (layoutDirection == LayoutDirection.Ltr)
             (popupOriginatorLocationOnScreen.x + anchorBoundsInWindow.left).toInt() else
@@ -330,12 +434,23 @@ internal object RibbonApplicationMenuPopupHandler : BaseCommandMenuHandler<
                     LocalPopupMenu provides popupMenu,
                     LocalWindowSize provides popupDpSize
                 ) {
-                    generatePopupContent(
-                        menuContentModel = contentModel.value!!,
-                        menuPresentationModel = presentationModel,
-                        overlays = overlays,
-                        popupContentLayoutInfo = popupContentLayoutInfo
-                    )
+                    Column {
+                        Row(modifier = Modifier.fillMaxWidth(1.0f)
+                            .height(height = (level1ContentLayoutInfo.fullSize.height / density.density).dp)) {
+                            generateLevel1Content(
+                                menuContentModel = contentModel.value!!,
+                                menuPresentationModel = presentationModel,
+                                overlays = overlays,
+                                level1ContentLayoutInfo = level1ContentLayoutInfo
+                            )
+                        }
+                        generateFooterContent(
+                            menuContentModel = contentModel.value!!,
+                            menuPresentationModel = presentationModel,
+                            overlays = overlays,
+                            footerContentLayoutInfo = footerContentLayoutInfo
+                        )
+                    }
                 }
             }
         }

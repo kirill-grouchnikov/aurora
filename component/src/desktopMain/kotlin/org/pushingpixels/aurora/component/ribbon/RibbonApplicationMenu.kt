@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.Paragraph
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -32,11 +33,12 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.utils.popup.RibbonApplicationMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 
 data class RibbonApplicationMenuContentModel(
     val groups: List<CommandGroup>,
     val footerCommands: CommandGroup
-): BaseCommandMenuContentModel
+) : BaseCommandMenuContentModel
 
 data class RibbonApplicationMenuCommand(
     override val text: String,
@@ -178,9 +180,31 @@ object RibbonApplicationMenuButtonPresentationStates {
         }
 }
 
+object RibbonApplicationMenuSizingConstants {
+    val DefaultFooterContentPadding = PaddingValues(start = 12.dp, top = 6.dp, end = 12.dp, bottom = 6.dp)
+    val DefaultLevel2PanelWidth = 180.dp
+}
+
+data class RibbonApplicationMenuCommandPopupMenuPresentationModel(
+    override val itemPresentationState: CommandButtonPresentationState =
+        DefaultCommandPopupMenuPresentationState,
+    val itemIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    val itemIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
+    val itemIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    val itemContentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
+    val itemHorizontalAlignment: HorizontalAlignment = HorizontalAlignment.Fill,
+    val footerContentPadding: PaddingValues = RibbonApplicationMenuSizingConstants.DefaultFooterContentPadding,
+    val level2PanelWidth: Dp = RibbonApplicationMenuSizingConstants.DefaultLevel2PanelWidth
+) : BaseCommandPopupMenuPresentationModel
+
 data class RibbonApplicationMenuCommandButtonPresentationModel(
     override val textStyle: TextStyle? = null,
     override val textOverflow: TextOverflow = TextOverflow.Clip,
+    override val popupMenuPresentationModel: RibbonApplicationMenuCommandPopupMenuPresentationModel =
+        RibbonApplicationMenuCommandPopupMenuPresentationModel(
+            itemPresentationState = CommandButtonPresentationState.Tile,
+            itemContentPadding = PaddingValues(horizontal = 6.dp, vertical = 8.dp)
+        ),
     override val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
     override val popupKeyTip: String? = null,
     override val popupRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),
@@ -205,11 +229,6 @@ data class RibbonApplicationMenuCommandButtonPresentationModel(
     override val textClick = TextClick.Action
     override val actionRichTooltipPresentationModel = RichTooltipPresentationModel()
     override val toDismissPopupsOnActivation: Boolean = true
-    override val popupMenuPresentationModel: CommandPopupMenuPresentationModel =
-        CommandPopupMenuPresentationModel(
-            itemPresentationState = CommandButtonPresentationState.Tile,
-            itemContentPadding = PaddingValues(horizontal = 6.dp, vertical = 8.dp)
-        )
     override val horizontalGapScaleFactor: Float = 1.0f
     override val verticalGapScaleFactor: Float = 1.0f
     override val minWidth: Dp = 0.dp
