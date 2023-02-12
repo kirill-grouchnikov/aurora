@@ -35,8 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
-import org.pushingpixels.aurora.component.popup.BaseCommandMenuPopupLayoutInfo
+import org.pushingpixels.aurora.component.popup.BaseCascadingCommandMenuPopupLayoutInfo
 import org.pushingpixels.aurora.component.popup.CascadingCommandMenuHandler
 import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.component.utils.getLabelPreferredSingleLineWidth
@@ -346,7 +345,7 @@ data class CustomComplexPopupContentLayoutInfo(
     override val popupSize: Size,
     val itemButtonPresentationModel: CommandButtonPresentationModel,
     val itemHeights: FloatArray
-) : BaseCommandMenuPopupLayoutInfo
+) : BaseCascadingCommandMenuPopupLayoutInfo
 
 object CustomComplexCommandMenuPopupHandler : CascadingCommandMenuHandler<
         CustomComplexMenuContentModel, CustomComplexCommandPopupMenuPresentationModel,

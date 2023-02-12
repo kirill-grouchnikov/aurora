@@ -17,7 +17,6 @@ package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.PressGestureScope
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.*
@@ -55,7 +54,6 @@ import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
-import org.pushingpixels.aurora.component.popup.BaseCommandMenuPopupLayoutInfo
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.utils.*
@@ -555,13 +553,12 @@ private fun Modifier.commandButtonPopupModifier(
 @OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
 @Composable
 internal fun <M : BaseCommandMenuContentModel,
-        P : BaseCommandPopupMenuPresentationModel,
-        L : BaseCommandMenuPopupLayoutInfo> AuroraCommandButton(
+        P : BaseCommandPopupMenuPresentationModel> AuroraCommandButton(
     modifier: Modifier,
     actionInteractionSource: MutableInteractionSource,
     popupInteractionSource: MutableInteractionSource,
     command: BaseCommand,
-    popupHandler: BaseCommandMenuHandler<M, P, L>,
+    popupHandler: BaseCommandMenuHandler<M, P>,
     presentationModel: BaseCommandButtonPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>
 ) {

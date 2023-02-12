@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.component.ribbon
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
@@ -30,11 +29,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
-import org.pushingpixels.aurora.component.popup.BaseCommandMenuPopupLayoutInfo
-import org.pushingpixels.aurora.component.popup.CascadingCommandMenuHandler
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
-import org.pushingpixels.aurora.component.projection.CommandButtonProjection
+import org.pushingpixels.aurora.component.utils.popup.RibbonApplicationMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
 
 data class RibbonApplicationMenuCommand(
@@ -213,129 +209,6 @@ data class RibbonApplicationMenuCommandButtonPresentationModel(
     override val verticalGapScaleFactor: Float = 1.0f
     override val minWidth: Dp = 0.dp
     override val isMenu: Boolean = false
-}
-
-private data class RibbonApplicationMenuPopupContentLayoutInfo(
-    override val popupSize: Size,
-    val itemButtonPresentationModel: CommandButtonPresentationModel,
-) : BaseCommandMenuPopupLayoutInfo
-
-private object RibbonApplicationMenuPopupHandler : CascadingCommandMenuHandler<
-        RibbonApplicationMenuContentModel, CommandPopupMenuPresentationModel,
-        RibbonApplicationMenuPopupContentLayoutInfo> {
-    override fun getPopupContentLayoutInfo(
-        menuContentModel: RibbonApplicationMenuContentModel,
-        menuPresentationModel: CommandPopupMenuPresentationModel,
-        displayPrototypeCommand: BaseCommand?,
-        layoutDirection: LayoutDirection,
-        density: Density,
-        textStyle: TextStyle,
-        fontFamilyResolver: FontFamily.Resolver
-    ): RibbonApplicationMenuPopupContentLayoutInfo {
-
-        // If at least one secondary command in this popup menu has icon factory
-        // we force all command buttons to allocate space for the icon (for overall
-        // alignment of content across the entire popup menu)
-        var atLeastOneButtonHasIcon = false
-        for (commandGroup in menuContentModel.groups) {
-            for (secondaryCommand in commandGroup.commands) {
-                if (secondaryCommand.icon != null) {
-                    atLeastOneButtonHasIcon = true
-                }
-                if (secondaryCommand.isActionToggle) {
-                    atLeastOneButtonHasIcon = true
-                }
-            }
-        }
-
-        // Command presentation for menu content, taking some values from
-        // the popup menu presentation model configured on the top-level presentation model
-        val itemButtonPresentationModel = CommandButtonPresentationModel(
-            presentationState = menuPresentationModel.itemPresentationState,
-            iconActiveFilterStrategy = IconFilterStrategy.Original,
-            iconEnabledFilterStrategy = IconFilterStrategy.Original,
-            iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
-            forceAllocateSpaceForIcon = atLeastOneButtonHasIcon,
-            popupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignTop,
-            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-            horizontalAlignment = HorizontalAlignment.Fill,
-            contentPadding = menuPresentationModel.itemContentPadding,
-            isMenu = true,
-            sides = Sides.ClosedRectangle
-        )
-
-        val layoutManager: CommandButtonLayoutManager =
-            itemButtonPresentationModel.presentationState.createLayoutManager(
-                layoutDirection = layoutDirection,
-                density = density,
-                textStyle = textStyle,
-                fontFamilyResolver = fontFamilyResolver
-            )
-
-        var maxWidth = 0.0f
-        var combinedHeight = 0.0f
-        for (commandGroup in menuContentModel.groups) {
-            for (secondaryCommand in commandGroup.commands) {
-                val preferredSize = layoutManager.getPreferredSize(
-                    command = secondaryCommand,
-                    presentationModel = itemButtonPresentationModel,
-                    preLayoutInfo = layoutManager.getPreLayoutInfo(
-                        command = secondaryCommand,
-                        presentationModel = itemButtonPresentationModel
-                    )
-                )
-                maxWidth = kotlin.math.max(maxWidth, preferredSize.width)
-                combinedHeight += preferredSize.height
-            }
-        }
-
-        return RibbonApplicationMenuPopupContentLayoutInfo(
-            popupSize = Size(
-                width = maxWidth,
-                height = combinedHeight
-            ),
-            itemButtonPresentationModel = itemButtonPresentationModel
-        )
-    }
-
-    @Composable
-    override fun generatePopupContent(
-        menuContentModel: RibbonApplicationMenuContentModel,
-        menuPresentationModel: CommandPopupMenuPresentationModel,
-        overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
-        popupContentLayoutInfo: RibbonApplicationMenuPopupContentLayoutInfo
-    ) {
-        val itemButtonPresentationModel = popupContentLayoutInfo.itemButtonPresentationModel
-
-        val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
-            decorationAreaType = AuroraSkin.decorationAreaType
-        )
-        Column(
-            modifier = Modifier.fillMaxSize().background(color = backgroundColorScheme.backgroundFillColor)
-                .padding(all = 1.0.dp)
-        ) {
-            for (commandGroup in menuContentModel.groups) {
-                for (secondaryCommand in commandGroup.commands) {
-                    // Check if we have a presentation overlay for this secondary command
-                    val hasOverlay = overlays.containsKey(secondaryCommand)
-                    val currSecondaryPresentationModel = if (hasOverlay)
-                        itemButtonPresentationModel.overlayWith(overlays[secondaryCommand]!!)
-                    else itemButtonPresentationModel
-                    // Project a command button for each secondary command, passing the same
-                    // overlays into it.
-                    CommandButtonProjection(
-                        contentModel = secondaryCommand,
-                        presentationModel = currSecondaryPresentationModel,
-                        overlays = overlays
-                    ).project(
-                        modifier = Modifier.fillMaxWidth(),
-                        actionInteractionSource = remember { MutableInteractionSource() },
-                        popupInteractionSource = remember { MutableInteractionSource() }
-                    )
-                }
-            }
-        }
-    }
 }
 
 class RibbonApplicationMenuCommandButtonProjection(

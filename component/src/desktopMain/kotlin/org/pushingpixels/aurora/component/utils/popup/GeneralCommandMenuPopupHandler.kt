@@ -38,8 +38,7 @@ import org.pushingpixels.aurora.component.AuroraVerticalScrollbar
 import org.pushingpixels.aurora.component.ScrollBarSizingConstants
 import org.pushingpixels.aurora.component.getPreferredCommandPopupMenuPanelSize
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
-import org.pushingpixels.aurora.component.popup.BaseCommandMenuPopupLayoutInfo
+import org.pushingpixels.aurora.component.popup.BaseCascadingCommandMenuPopupLayoutInfo
 import org.pushingpixels.aurora.component.popup.CascadingCommandMenuHandler
 import org.pushingpixels.aurora.component.popup.auroraPopupMenuRowBackground
 import org.pushingpixels.aurora.component.projection.CommandButtonPanelProjection
@@ -62,7 +61,7 @@ internal data class GeneralPopupContentLayoutInfo(
     val generalContentItemHeights: FloatArray,
     val generalVerticalScrollbarSize: Size,
     val gutterWidth: Float
-) : BaseCommandMenuPopupLayoutInfo
+) : BaseCascadingCommandMenuPopupLayoutInfo
 
 internal object GeneralCommandMenuPopupHandler : CascadingCommandMenuHandler<
         CommandMenuContentModel, CommandPopupMenuPresentationModel, GeneralPopupContentLayoutInfo> {

@@ -43,13 +43,8 @@ internal val Color.awtColor: java.awt.Color
         this.red, this.green, this.blue, this.alpha
     )
 
-interface BaseCommandMenuPopupLayoutInfo {
-    val popupSize: Size
-}
-
 interface BaseCommandMenuHandler<in M : BaseCommandMenuContentModel,
-        in P : BaseCommandPopupMenuPresentationModel,
-        L : BaseCommandMenuPopupLayoutInfo> {
+        in P : BaseCommandPopupMenuPresentationModel> {
     fun showPopupContent(
         popupOriginator: Component,
         layoutDirection: LayoutDirection,

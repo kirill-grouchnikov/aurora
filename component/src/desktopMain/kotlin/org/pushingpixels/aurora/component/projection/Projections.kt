@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
-import org.pushingpixels.aurora.component.popup.BaseCommandMenuPopupLayoutInfo
 import org.pushingpixels.aurora.component.utils.popup.ColorSelectorCommandMenuPopupHandler
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 
@@ -38,12 +37,11 @@ abstract class BaseCommandButtonProjection<out C : BaseCommand,
 ) : Projection<C, P>() {
     @Composable
     protected fun <MC : BaseCommandMenuContentModel,
-            MP : BaseCommandPopupMenuPresentationModel,
-            ML : BaseCommandMenuPopupLayoutInfo> project(
+            MP : BaseCommandPopupMenuPresentationModel> project(
         modifier: Modifier = Modifier,
         actionInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() },
         popupInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-        popupHandler: BaseCommandMenuHandler<MC, MP, ML>
+        popupHandler: BaseCommandMenuHandler<MC, MP>
     ) {
         AuroraCommandButton(
             modifier = modifier,

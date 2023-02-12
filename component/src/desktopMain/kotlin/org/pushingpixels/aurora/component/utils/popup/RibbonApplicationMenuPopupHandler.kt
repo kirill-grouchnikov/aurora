@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.pushingpixels.aurora.component.popup
+package org.pushingpixels.aurora.component.utils.popup
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalContext
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.State
+import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposePanel
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -28,7 +32,12 @@ import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
+import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
+import org.pushingpixels.aurora.component.popup.BaseCascadingCommandMenuPopupLayoutInfo
+import org.pushingpixels.aurora.component.popup.awtColor
+import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.utils.getPlacementAwarePopupShift
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
@@ -38,35 +47,126 @@ import javax.swing.JPopupMenu
 import javax.swing.border.Border
 import kotlin.math.ceil
 
-interface BaseCascadingCommandMenuPopupLayoutInfo {
-    val popupSize: Size
-}
+internal data class RibbonApplicationMenuPopupContentLayoutInfo(
+    val popupSize: Size,
+    val itemButtonPresentationModel: CommandButtonPresentationModel,
+)
 
-/**
- * This extension of [BaseCommandMenuHandler] should be used for cascading popup menus,
- * where each next level of secondary content is displayed in a separate popup menu, while
- * keeping the parent popup menu(s) visible on the screen.
- */
-interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
-        in P : BaseCommandPopupMenuPresentationModel,
-        L : BaseCascadingCommandMenuPopupLayoutInfo> : BaseCommandMenuHandler<M, P> {
+internal object RibbonApplicationMenuPopupHandler : BaseCommandMenuHandler<
+        RibbonApplicationMenuContentModel, CommandPopupMenuPresentationModel> {
     fun getPopupContentLayoutInfo(
-        menuContentModel: M,
-        menuPresentationModel: P,
+        menuContentModel: RibbonApplicationMenuContentModel,
+        menuPresentationModel: CommandPopupMenuPresentationModel,
         displayPrototypeCommand: BaseCommand?,
         layoutDirection: LayoutDirection,
         density: Density,
         textStyle: TextStyle,
         fontFamilyResolver: FontFamily.Resolver
-    ): L
+    ): RibbonApplicationMenuPopupContentLayoutInfo {
+
+        // If at least one secondary command in this popup menu has icon factory
+        // we force all command buttons to allocate space for the icon (for overall
+        // alignment of content across the entire popup menu)
+        var atLeastOneButtonHasIcon = false
+        for (commandGroup in menuContentModel.groups) {
+            for (secondaryCommand in commandGroup.commands) {
+                if (secondaryCommand.icon != null) {
+                    atLeastOneButtonHasIcon = true
+                }
+                if (secondaryCommand.isActionToggle) {
+                    atLeastOneButtonHasIcon = true
+                }
+            }
+        }
+
+        // Command presentation for menu content, taking some values from
+        // the popup menu presentation model configured on the top-level presentation model
+        val itemButtonPresentationModel = CommandButtonPresentationModel(
+            presentationState = menuPresentationModel.itemPresentationState,
+            iconActiveFilterStrategy = IconFilterStrategy.Original,
+            iconEnabledFilterStrategy = IconFilterStrategy.Original,
+            iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+            forceAllocateSpaceForIcon = atLeastOneButtonHasIcon,
+            popupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignTop,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+            horizontalAlignment = HorizontalAlignment.Fill,
+            contentPadding = menuPresentationModel.itemContentPadding,
+            isMenu = true,
+            sides = Sides.ClosedRectangle
+        )
+
+        val layoutManager: CommandButtonLayoutManager =
+            itemButtonPresentationModel.presentationState.createLayoutManager(
+                layoutDirection = layoutDirection,
+                density = density,
+                textStyle = textStyle,
+                fontFamilyResolver = fontFamilyResolver
+            )
+
+        var maxWidth = 0.0f
+        var combinedHeight = 0.0f
+        for (commandGroup in menuContentModel.groups) {
+            for (secondaryCommand in commandGroup.commands) {
+                val preferredSize = layoutManager.getPreferredSize(
+                    command = secondaryCommand,
+                    presentationModel = itemButtonPresentationModel,
+                    preLayoutInfo = layoutManager.getPreLayoutInfo(
+                        command = secondaryCommand,
+                        presentationModel = itemButtonPresentationModel
+                    )
+                )
+                maxWidth = kotlin.math.max(maxWidth, preferredSize.width)
+                combinedHeight += preferredSize.height
+            }
+        }
+
+        return RibbonApplicationMenuPopupContentLayoutInfo(
+            popupSize = Size(
+                width = maxWidth,
+                height = combinedHeight
+            ),
+            itemButtonPresentationModel = itemButtonPresentationModel
+        )
+    }
 
     @Composable
     fun generatePopupContent(
-        menuContentModel: M,
-        menuPresentationModel: P,
+        menuContentModel: RibbonApplicationMenuContentModel,
+        menuPresentationModel: CommandPopupMenuPresentationModel,
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
-        popupContentLayoutInfo: L
-    )
+        popupContentLayoutInfo: RibbonApplicationMenuPopupContentLayoutInfo
+    ) {
+        val itemButtonPresentationModel = popupContentLayoutInfo.itemButtonPresentationModel
+
+        val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
+            decorationAreaType = AuroraSkin.decorationAreaType
+        )
+        Column(
+            modifier = Modifier.fillMaxSize().background(color = backgroundColorScheme.backgroundFillColor)
+                .padding(all = 1.0.dp)
+        ) {
+            for (commandGroup in menuContentModel.groups) {
+                for (secondaryCommand in commandGroup.commands) {
+                    // Check if we have a presentation overlay for this secondary command
+                    val hasOverlay = overlays.containsKey(secondaryCommand)
+                    val currSecondaryPresentationModel = if (hasOverlay)
+                        itemButtonPresentationModel.overlayWith(overlays[secondaryCommand]!!)
+                    else itemButtonPresentationModel
+                    // Project a command button for each secondary command, passing the same
+                    // overlays into it.
+                    CommandButtonProjection(
+                        contentModel = secondaryCommand,
+                        presentationModel = currSecondaryPresentationModel,
+                        overlays = overlays
+                    ).project(
+                        modifier = Modifier.fillMaxWidth(),
+                        actionInteractionSource = remember { MutableInteractionSource() },
+                        popupInteractionSource = remember { MutableInteractionSource() }
+                    )
+                }
+            }
+        }
+    }
 
     @OptIn(AuroraInternalApi::class)
     override fun showPopupContent(
@@ -81,8 +181,8 @@ interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
         compositionLocalContext: CompositionLocalContext,
         anchorBoundsInWindow: Rect,
         popupTriggerAreaInWindow: Rect,
-        contentModel: State<M?>,
-        presentationModel: P,
+        contentModel: State<RibbonApplicationMenuContentModel?>,
+        presentationModel: CommandPopupMenuPresentationModel,
         displayPrototypeCommand: BaseCommand?,
         toDismissPopupsOnActivation: Boolean,
         popupPlacementStrategy: PopupPlacementStrategy,
