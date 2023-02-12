@@ -33,6 +33,11 @@ import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.utils.popup.RibbonApplicationMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
 
+data class RibbonApplicationMenuContentModel(
+    val groups: List<CommandGroup>,
+    val footerCommands: CommandGroup
+): BaseCommandMenuContentModel
+
 data class RibbonApplicationMenuCommand(
     override val text: String,
     override val secondaryContentModel: RibbonApplicationMenuContentModel,
@@ -232,4 +237,3 @@ class RibbonApplicationMenuCommandButtonProjection(
         )
     }
 }
-

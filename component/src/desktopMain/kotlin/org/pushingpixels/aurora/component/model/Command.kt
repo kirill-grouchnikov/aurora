@@ -94,11 +94,6 @@ data class CommandMenuContentModel(
     )
 }
 
-data class RibbonApplicationMenuContentModel(
-    val groups: List<CommandGroup>,
-    val footerCommands: CommandGroup
-): BaseCommandMenuContentModel
-
 enum class TextClick {
     /** Clicking command text will activate the command action. */
     Action,
