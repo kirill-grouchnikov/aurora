@@ -182,7 +182,7 @@ object RibbonApplicationMenuButtonPresentationStates {
 
 object RibbonApplicationMenuSizingConstants {
     val DefaultFooterContentPadding = PaddingValues(start = 12.dp, top = 6.dp, end = 12.dp, bottom = 6.dp)
-    val DefaultLevel2PanelWidth = 180.dp
+    val DefaultLevel2PanelWidth = 240.dp
 }
 
 data class RibbonApplicationMenuCommandPopupMenuPresentationModel(
@@ -239,7 +239,7 @@ class RibbonApplicationMenuCommandButtonProjection(
     contentModel: RibbonApplicationMenuCommand,
     presentationModel: RibbonApplicationMenuCommandButtonPresentationModel,
     overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null,
-    secondaryStates: Map<Command, CommandButtonPresentationState>? = null
+    val secondaryStates: Map<Command, CommandButtonPresentationState>? = null
 ) : BaseCommandButtonProjection<RibbonApplicationMenuCommand, RibbonApplicationMenuCommandButtonPresentationModel>(
     contentModel, presentationModel, overlays
 ) {
@@ -252,7 +252,7 @@ class RibbonApplicationMenuCommandButtonProjection(
             modifier = modifier,
             actionInteractionSource = remember { MutableInteractionSource() },
             popupInteractionSource = popupInteractionSource,
-            popupHandler = RibbonApplicationMenuPopupHandler,
+            popupHandler = RibbonApplicationMenuPopupHandler(secondaryStates = secondaryStates),
         )
     }
 }
