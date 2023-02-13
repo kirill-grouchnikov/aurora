@@ -38,6 +38,7 @@ import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.RibbonApplicationMenuCommandPopupMenuPresentationModel
 import org.pushingpixels.aurora.component.ribbon.RibbonApplicationMenuContentModel
+import org.pushingpixels.aurora.component.utils.TitleLabel
 import org.pushingpixels.aurora.component.utils.getPlacementAwarePopupShift
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
@@ -219,7 +220,6 @@ internal class RibbonApplicationMenuPopupHandler(
         menuContentModel: RibbonApplicationMenuContentModel,
         menuPresentationModel: RibbonApplicationMenuCommandPopupMenuPresentationModel,
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
-        popupHandler: BaseCommandMenuHandler<CommandMenuContentModel, CommandPopupMenuPresentationModel>,
         onLevel1ActionRollover: (Command) -> Unit,
         level1ContentLayoutInfo: RibbonApplicationMenuLevel1ContentLayoutInfo
     ) {
@@ -240,6 +240,32 @@ internal class RibbonApplicationMenuPopupHandler(
                     val currSecondaryPresentationModel = if (hasOverlay)
                         itemButtonPresentationModel.overlayWith(overlays[secondaryCommand]!!)
                     else itemButtonPresentationModel
+
+                    val level2PopupHandler =
+                        object : BaseCommandMenuHandler<CommandMenuContentModel, CommandPopupMenuPresentationModel> {
+                            override fun showPopupContent(
+                                popupOriginator: Component,
+                                layoutDirection: LayoutDirection,
+                                density: Density,
+                                textStyle: TextStyle,
+                                fontFamilyResolver: FontFamily.Resolver,
+                                skinColors: AuroraSkinColors,
+                                skinPainters: AuroraPainters,
+                                decorationAreaType: DecorationAreaType,
+                                compositionLocalContext: CompositionLocalContext,
+                                anchorBoundsInWindow: Rect,
+                                popupTriggerAreaInWindow: Rect,
+                                contentModel: State<CommandMenuContentModel?>,
+                                presentationModel: CommandPopupMenuPresentationModel,
+                                displayPrototypeCommand: BaseCommand?,
+                                toDismissPopupsOnActivation: Boolean,
+                                popupPlacementStrategy: PopupPlacementStrategy,
+                                overlays: Map<Command, CommandButtonPresentationModel.Overlay>
+                            ) {
+                                onLevel1ActionRollover.invoke(secondaryCommand)
+                            }
+                        }
+
                     // Project a command button for each level 1 command, passing the same
                     // overlays into it.
                     val actionInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() }
@@ -247,7 +273,7 @@ internal class RibbonApplicationMenuPopupHandler(
                         contentModel = secondaryCommand,
                         presentationModel = currSecondaryPresentationModel,
                         overlays = overlays,
-                        popupHandler = popupHandler
+                        popupHandler = level2PopupHandler
                     ).project(
                         modifier = Modifier.fillMaxWidth(),
                         actionInteractionSource = actionInteractionSource,
@@ -269,7 +295,7 @@ internal class RibbonApplicationMenuPopupHandler(
     @Composable
     private fun generateLevel2Content(
         modifier: Modifier,
-        menuContentModel: CommandMenuContentModel?,
+        level1Command: Command?,
         itemPresentationState: CommandButtonPresentationState,
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>
     ) {
@@ -290,8 +316,18 @@ internal class RibbonApplicationMenuPopupHandler(
                 .background(color = backgroundColorScheme.backgroundFillColor)
                 .padding(all = 1.0.dp)
         ) {
-            if (menuContentModel != null) {
-                for (commandGroup in menuContentModel.groups) {
+            if (level1Command?.secondaryContentModel != null) {
+                for (commandGroup in level1Command.secondaryContentModel.groups) {
+                    if (commandGroup.title != null) {
+                        TitleLabel(
+                            modifier = Modifier.fillMaxWidth(),
+                            title = commandGroup.title,
+                            presentationModel = LabelPresentationModel(
+                                horizontalAlignment = HorizontalAlignment.Leading
+                            )
+                        )
+                    }
+
                     for (secondaryCommand in commandGroup.commands) {
                         // Check if we have a presentation overlay for this level 2 command
                         val hasOverlay = overlays.containsKey(secondaryCommand)
@@ -519,33 +555,7 @@ internal class RibbonApplicationMenuPopupHandler(
 
         val popupMenu = AuroraSwingPopupMenu(toDismissPopupsOnActivation)
         popupContent.setContent {
-            var currentLevel2Model by remember { mutableStateOf<CommandMenuContentModel?>(null) }
-            val level2PopupHandler =
-                object : BaseCommandMenuHandler<CommandMenuContentModel, CommandPopupMenuPresentationModel> {
-                    override fun showPopupContent(
-                        popupOriginator: Component,
-                        layoutDirection: LayoutDirection,
-                        density: Density,
-                        textStyle: TextStyle,
-                        fontFamilyResolver: FontFamily.Resolver,
-                        skinColors: AuroraSkinColors,
-                        skinPainters: AuroraPainters,
-                        decorationAreaType: DecorationAreaType,
-                        compositionLocalContext: CompositionLocalContext,
-                        anchorBoundsInWindow: Rect,
-                        popupTriggerAreaInWindow: Rect,
-                        contentModel: State<CommandMenuContentModel?>,
-                        presentationModel: CommandPopupMenuPresentationModel,
-                        displayPrototypeCommand: BaseCommand?,
-                        toDismissPopupsOnActivation: Boolean,
-                        popupPlacementStrategy: PopupPlacementStrategy,
-                        overlays: Map<Command, CommandButtonPresentationModel.Overlay>
-                    ) {
-                        currentLevel2Model = contentModel.value
-                        val commandCount = currentLevel2Model?.groups?.sumOf { it.commands.size } ?: 0
-                        println("Level2 with $commandCount commands")
-                    }
-                }
+            var activeLevel1Command by remember { mutableStateOf<Command?>(null) }
 
             // Get the current composition context
             CompositionLocalProvider(compositionLocalContext) {
@@ -568,19 +578,18 @@ internal class RibbonApplicationMenuPopupHandler(
                                 menuContentModel = contentModel.value!!,
                                 menuPresentationModel = presentationModel,
                                 overlays = overlays,
-                                popupHandler = level2PopupHandler,
-                                onLevel1ActionRollover = { command ->
-                                    if (command.secondaryContentModel == null) {
-                                        currentLevel2Model = null
-                                        println("Level2 clearing")
-                                    }
+                                onLevel1ActionRollover = {
+                                    activeLevel1Command = it
                                 },
                                 level1ContentLayoutInfo = level1ContentLayoutInfo
                             )
+                            val level2PresentationState = if ((secondaryStates != null) && (activeLevel1Command != null))
+                                secondaryStates.getOrDefault(activeLevel1Command!!, CommandButtonPresentationState.Medium)
+                                    else CommandButtonPresentationState.Medium
                             generateLevel2Content(
                                 modifier = Modifier.weight(1.0f, true),
-                                menuContentModel = currentLevel2Model,
-                                itemPresentationState = CommandButtonPresentationState.Medium,
+                                level1Command = activeLevel1Command,
+                                itemPresentationState = level2PresentationState,
                                 overlays = overlays
                             )
                         }

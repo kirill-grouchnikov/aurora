@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
+import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManagerTile
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.utils.popup.RibbonApplicationMenuPopupHandler
@@ -175,7 +176,12 @@ object RibbonApplicationMenuButtonPresentationStates {
                 textStyle: TextStyle,
                 fontFamilyResolver: FontFamily.Resolver
             ): CommandButtonLayoutManager {
-                throw UnsupportedOperationException()
+                return CommandButtonLayoutManagerTile(
+                    layoutDirection,
+                    density,
+                    textStyle,
+                    fontFamilyResolver
+                )
             }
         }
 }
