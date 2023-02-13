@@ -52,7 +52,7 @@ internal open class CommandButtonLayoutManagerSmall(
         val prefIconWidth = getPreferredIconSize(command, presentationModel).width.toPx()
         val prefIconHeight = getPreferredIconSize(command, presentationModel).height.toPx()
 
-        // start with the left insets
+        // start with the start insets
         var width = presentationModel.horizontalGapScaleFactor * paddingValues.startPadding.toPx()
         // icon?
         if (hasIcon) {
@@ -78,7 +78,7 @@ internal open class CommandButtonLayoutManagerSmall(
             width += SeparatorSizingConstants.Thickness.toPx()
         }
 
-        // right insets
+        // end insets
         width += presentationModel.horizontalGapScaleFactor * paddingValues.endPadding.toPx()
 
         // and remove the padding before the first and after the last elements

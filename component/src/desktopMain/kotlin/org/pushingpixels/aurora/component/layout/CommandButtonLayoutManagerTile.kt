@@ -62,7 +62,7 @@ internal open class CommandButtonLayoutManagerTile(
         val prefIconWidth = getPreferredIconSize(command, presentationModel).width.toPx()
         val prefIconHeight = getPreferredIconSize(command, presentationModel).height.toPx()
 
-        // start with the left insets
+        // start with the start insets
         var width = presentationModel.horizontalGapScaleFactor * paddingValues.startPadding.toPx()
         // icon?
         if (hasIcon) {
@@ -121,7 +121,7 @@ internal open class CommandButtonLayoutManagerTile(
             width += SeparatorSizingConstants.Thickness.toPx()
         }
 
-        // right insets
+        // end insets
         width += presentationModel.horizontalGapScaleFactor *
                 paddingValues.endPadding.toPx()
 
@@ -201,9 +201,11 @@ internal open class CommandButtonLayoutManagerTile(
                         // shift everything to the right
                         shiftX = finalWidth - preferredSize.width
                     }
+
                     HorizontalAlignment.Center ->
                         // shift everything to be centered horizontally
                         shiftX = (finalWidth - preferredSize.width) / 2
+
                     HorizontalAlignment.Trailing -> if (ltr) {
                         // shift everything to the right
                         shiftX = finalWidth - preferredSize.width
@@ -243,7 +245,7 @@ internal open class CommandButtonLayoutManagerTile(
             }
 
             // text
-            val textHeight : Float
+            val textHeight: Float
             if (hasText) {
                 if (hasIcon) {
                     x = x - layoutHGap + getIconTextGap(presentationModel).toPx()
@@ -326,36 +328,39 @@ internal open class CommandButtonLayoutManagerTile(
             // Account for content overflowing the available horizontal space (constrained width
             // scenario).
             if (hasText || hasPopup) {
+                val extra: String? = command.extraText
                 val paddingEnd = presentationModel.horizontalGapScaleFactor *
                         paddingValues.endPadding.toPx()
                 if (hasPopup) {
+                    // Shift the popup action rectangle if necessary
                     if (popupActionRect.right > (finalWidth - paddingEnd)) {
                         shiftX = popupActionRect.right - (finalWidth - paddingEnd)
                         // Shift the popup action rectangle to the left
                         popupActionRect =
                             popupActionRect.translate(translateX = -shiftX, translateY = 0.0f)
-                        if (hasText) {
-                            // And shift the right coordinate of the text rectangle if needed
-                            textLayoutInfoList[0].textRect = Rect(
-                                left = textLayoutInfoList[0].textRect.left,
-                                top = textLayoutInfoList[0].textRect.top,
-                                right = textLayoutInfoList[0].textRect.right.coerceAtMost(
-                                    popupActionRect.left - 2 * layoutHGap
-                                ),
-                                bottom = textLayoutInfoList[0].textRect.bottom
-                            )
-                        }
-                        if (command.extraText != null) {
-                            // And shift the right coordinate of the extra text rectangle if needed
-                            extraTextLayoutInfoList[0].textRect = Rect(
-                                left = extraTextLayoutInfoList[0].textRect.left,
-                                top = extraTextLayoutInfoList[0].textRect.top,
-                                right = extraTextLayoutInfoList[0].textRect.right.coerceAtMost(
-                                    popupActionRect.left - 2 * layoutHGap
-                                ),
-                                bottom = extraTextLayoutInfoList[0].textRect.bottom
-                            )
-                        }
+                    }
+                    // And shift the right coordinate of the text rectangles if needed
+                    if (hasText) {
+                        // Shift the right coordinate of the text rectangle if needed
+                        textLayoutInfoList[0].textRect = Rect(
+                            left = textLayoutInfoList[0].textRect.left,
+                            top = textLayoutInfoList[0].textRect.top,
+                            right = textLayoutInfoList[0].textRect.right.coerceAtMost(
+                                popupActionRect.left - 2 * layoutHGap
+                            ),
+                            bottom = textLayoutInfoList[0].textRect.bottom
+                        )
+                    }
+                    if (command.extraText != null) {
+                        // Shift the right coordinate of the extra text rectangle if needed
+                        extraTextLayoutInfoList[0].textRect = Rect(
+                            left = extraTextLayoutInfoList[0].textRect.left,
+                            top = extraTextLayoutInfoList[0].textRect.top,
+                            right = extraTextLayoutInfoList[0].textRect.right.coerceAtMost(
+                                popupActionRect.left - 2 * layoutHGap
+                            ),
+                            bottom = extraTextLayoutInfoList[0].textRect.bottom
+                        )
                     }
                 } else {
                     // We have no popup, but guaranteed to have text in here
@@ -381,7 +386,7 @@ internal open class CommandButtonLayoutManagerTile(
                 }
             }
 
-            val xBorderBetweenActionAndPopup : Float
+            val xBorderBetweenActionAndPopup: Float
             when (preLayoutInfo.commandButtonKind) {
                 CommandButtonKind.ActionOnly -> {
                     actionClickArea = Rect(
@@ -391,6 +396,7 @@ internal open class CommandButtonLayoutManagerTile(
                         bottom = finalHeight
                     )
                 }
+
                 CommandButtonKind.PopupOnly -> {
                     popupClickArea = Rect(
                         left = 0.0f,
@@ -399,6 +405,7 @@ internal open class CommandButtonLayoutManagerTile(
                         bottom = finalHeight
                     )
                 }
+
                 CommandButtonKind.ActionAndPopupMainAction -> {
                     // 1. break before popup icon if button has text or icon
                     // 2. no break (all popup) if button has no text and no icon
@@ -440,6 +447,7 @@ internal open class CommandButtonLayoutManagerTile(
                         )
                     }
                 }
+
                 CommandButtonKind.ActionAndPopupMainPopup -> {
                     // 1. break after icon if button has icon
                     // 2. no break (all popup) if button has no icon
@@ -511,7 +519,7 @@ internal open class CommandButtonLayoutManagerTile(
             }
 
             // text
-            val textHeight : Float
+            val textHeight: Float
             if (hasText) {
                 if (hasIcon) {
                     x = x + layoutHGap - getIconTextGap(presentationModel).toPx()
@@ -601,27 +609,27 @@ internal open class CommandButtonLayoutManagerTile(
                         // Shift the popup action rectangle to the right
                         popupActionRect =
                             popupActionRect.translate(translateX = shiftX, translateY = 0.0f)
-                        if (hasText) {
-                            // And shift the left coordinate of the text rectangle if needed
-                            textLayoutInfoList[0].textRect = Rect(
-                                left = textLayoutInfoList[0].textRect.left.coerceAtLeast(
+                    }
+                    if (hasText) {
+                        // Shift the left coordinate of the text rectangle if needed
+                        textLayoutInfoList[0].textRect = Rect(
+                            left = textLayoutInfoList[0].textRect.left.coerceAtLeast(
+                                popupActionRect.right + 2 * layoutHGap
+                            ),
+                            top = textLayoutInfoList[0].textRect.top,
+                            right = textLayoutInfoList[0].textRect.right,
+                            bottom = textLayoutInfoList[0].textRect.bottom
+                        )
+                        if (command.extraText != null) {
+                            // Shift the right coordinate of the extra text rectangle if needed
+                            extraTextLayoutInfoList[0].textRect = Rect(
+                                left = extraTextLayoutInfoList[0].textRect.left.coerceAtLeast(
                                     popupActionRect.right + 2 * layoutHGap
                                 ),
-                                top = textLayoutInfoList[0].textRect.top,
-                                right = textLayoutInfoList[0].textRect.right,
-                                bottom = textLayoutInfoList[0].textRect.bottom
+                                top = extraTextLayoutInfoList[0].textRect.top,
+                                right = extraTextLayoutInfoList[0].textRect.right,
+                                bottom = extraTextLayoutInfoList[0].textRect.bottom
                             )
-                            if (command.extraText != null) {
-                                // And shift the right coordinate of the extra text rectangle if needed
-                                extraTextLayoutInfoList[0].textRect = Rect(
-                                    left = extraTextLayoutInfoList[0].textRect.left.coerceAtLeast(
-                                        popupActionRect.right + 2 * layoutHGap
-                                    ),
-                                    top = extraTextLayoutInfoList[0].textRect.top,
-                                    right = extraTextLayoutInfoList[0].textRect.right,
-                                    bottom = extraTextLayoutInfoList[0].textRect.bottom
-                                )
-                            }
                         }
                     }
                 } else {
@@ -644,7 +652,7 @@ internal open class CommandButtonLayoutManagerTile(
                 }
             }
 
-            val xBorderBetweenActionAndPopup : Float
+            val xBorderBetweenActionAndPopup: Float
             when (preLayoutInfo.commandButtonKind) {
                 CommandButtonKind.ActionOnly -> {
                     actionClickArea = Rect(
@@ -654,6 +662,7 @@ internal open class CommandButtonLayoutManagerTile(
                         bottom = finalHeight
                     )
                 }
+
                 CommandButtonKind.PopupOnly -> {
                     popupClickArea = Rect(
                         left = 0.0f,
@@ -662,6 +671,7 @@ internal open class CommandButtonLayoutManagerTile(
                         bottom = finalHeight
                     )
                 }
+
                 CommandButtonKind.ActionAndPopupMainAction -> {
                     // 1. break before popup icon if button has text or icon
                     // 2. no break (all popup) if button has no text and no icon
@@ -703,6 +713,7 @@ internal open class CommandButtonLayoutManagerTile(
                         )
                     }
                 }
+
                 CommandButtonKind.ActionAndPopupMainPopup -> {
                     // 1. break after icon if button has icon
                     // 2. no break (all popup) if button has no icon
