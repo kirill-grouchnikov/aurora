@@ -1369,7 +1369,7 @@ internal fun <M : BaseCommandMenuContentModel,
             for (extraText in preLayoutInfo.extraTexts) {
                 CommandButtonExtraTextContent(
                     extraText, modelStateInfoForText, currStateForText, resolvedTextStyle,
-                    presentationModel.textOverflow
+                    presentationModel.textOverflow, layoutManager.getExtraTextMaxLines()
                 )
             }
 
@@ -1581,7 +1581,7 @@ private fun CommandButtonTextContent(
 @Composable
 private fun CommandButtonExtraTextContent(
     text: String, modelStateInfo: ModelStateInfo, currState: ComponentState,
-    style: TextStyle, overflow: TextOverflow
+    style: TextStyle, overflow: TextOverflow, maxLines: Int
 ) {
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
@@ -1627,7 +1627,7 @@ private fun CommandButtonExtraTextContent(
             text = text,
             color = disabledFgColor,
             style = style,
-            maxLines = 1,
+            maxLines = maxLines,
             overflow = overflow
         )
     }

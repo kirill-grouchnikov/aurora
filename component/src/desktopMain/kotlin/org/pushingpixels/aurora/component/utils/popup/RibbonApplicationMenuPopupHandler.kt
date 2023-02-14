@@ -121,7 +121,7 @@ internal class RibbonApplicationMenuPopupHandler(
             popupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignTop,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             horizontalAlignment = HorizontalAlignment.Fill,
-            contentPadding = menuPresentationModel.itemContentPadding,
+            contentPadding = menuPresentationModel.level1ItemContentPadding,
             isMenu = true,
             sides = Sides.ClosedRectangle
         )
@@ -297,6 +297,7 @@ internal class RibbonApplicationMenuPopupHandler(
         modifier: Modifier,
         level1Command: Command?,
         itemPresentationState: CommandButtonPresentationState,
+        menuPresentationModel: RibbonApplicationMenuCommandPopupMenuPresentationModel,
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>
     ) {
         val itemButtonPresentationModel = CommandButtonPresentationModel(
@@ -305,6 +306,7 @@ internal class RibbonApplicationMenuPopupHandler(
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             sides = Sides.ClosedRectangle,
             horizontalAlignment = HorizontalAlignment.Fill,
+            contentPadding = menuPresentationModel.level2ItemContentPadding,
             isMenu = true
         )
 
@@ -590,6 +592,7 @@ internal class RibbonApplicationMenuPopupHandler(
                                 modifier = Modifier.weight(1.0f, true),
                                 level1Command = activeLevel1Command,
                                 itemPresentationState = level2PresentationState,
+                                menuPresentationModel = presentationModel,
                                 overlays = overlays
                             )
                         }

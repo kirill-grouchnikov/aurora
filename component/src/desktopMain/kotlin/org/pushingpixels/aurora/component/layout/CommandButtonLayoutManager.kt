@@ -142,6 +142,8 @@ interface CommandButtonLayoutManager : MeasureScope {
         presentationModel: BaseCommandButtonPresentationModel
     ): CommandButtonPreLayoutInfo
 
+    fun getExtraTextMaxLines() : Int = 1
+
     /**
      * Returns the preferred size of a projected button for the specified parameters.
      */
