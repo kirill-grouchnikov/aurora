@@ -32,6 +32,7 @@ import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManagerTile
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
+import org.pushingpixels.aurora.component.utils.appmenu.CommandButtonLayoutManagerRibbonApplicationMenuButton
 import org.pushingpixels.aurora.component.utils.popup.RibbonApplicationMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
@@ -59,101 +60,6 @@ data class RibbonApplicationMenuCommand(
 }
 
 object RibbonApplicationMenuButtonPresentationStates {
-    private class CommandButtonLayoutManagerRibbonApplicationMenuButton(
-        override val layoutDirection: LayoutDirection,
-        private val _density: Density,
-        private val textStyle: TextStyle,
-        private val fontFamilyResolver: FontFamily.Resolver
-    ) : CommandButtonLayoutManager {
-        override val density = _density.density
-        override val fontScale = _density.fontScale
-
-        override fun getPreferredIconSize(
-            command: BaseCommand,
-            presentationModel: BaseCommandButtonPresentationModel
-        ): DpSize {
-            return DpSize.Zero
-        }
-
-        override fun getPreferredSize(
-            command: BaseCommand,
-            presentationModel: BaseCommandButtonPresentationModel,
-            preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
-        ): Size {
-            val paddingValues = presentationModel.contentPadding
-            val by = presentationModel.verticalGapScaleFactor * paddingValues.verticalPaddings.toPx()
-            val bx = presentationModel.horizontalGapScaleFactor * paddingValues.horizontalPaddings.toPx()
-
-            val paragraph = Paragraph(
-                text = command.text, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
-                density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
-            )
-
-            return Size(
-                width = bx + paragraph.maxIntrinsicWidth,
-                height = by + paragraph.height
-            )
-        }
-
-        override fun getPreLayoutInfo(
-            command: BaseCommand,
-            presentationModel: BaseCommandButtonPresentationModel
-        ): CommandButtonLayoutManager.CommandButtonPreLayoutInfo {
-            return CommandButtonLayoutManager.CommandButtonPreLayoutInfo(
-                commandButtonKind = CommandButtonKind.PopupOnly,
-                showIcon = false,
-                texts = listOf(command.text),
-                extraTexts = emptyList(),
-                isTextInActionArea = true,
-                separatorOrientation = null,
-                showPopupIcon = false
-            )
-        }
-
-        override fun getLayoutInfo(
-            constraints: Constraints,
-            command: BaseCommand,
-            presentationModel: BaseCommandButtonPresentationModel,
-            preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
-        ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
-            val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo)
-
-            val paddingValues = presentationModel.contentPadding
-            val top = presentationModel.verticalGapScaleFactor * paddingValues.topPadding.toPx()
-            val left = presentationModel.horizontalGapScaleFactor *
-                    paddingValues.calculateLeftPadding(layoutDirection).toPx()
-
-            val paragraph = Paragraph(
-                text = command.text, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
-                density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
-            )
-
-            return CommandButtonLayoutManager.CommandButtonLayoutInfo(
-                fullSize = preferredSize,
-                actionClickArea = Rect.Zero,
-                popupClickArea = Rect(
-                    left = 0.0f,
-                    right = preferredSize.width,
-                    top = 0.0f,
-                    bottom = preferredSize.height
-                ),
-                separatorArea = Rect.Zero,
-                iconRect = Rect.Zero,
-                textLayoutInfoList = listOf(
-                    CommandButtonLayoutManager.TextLayoutInfo(
-                        text = command.text,
-                        textRect = Rect(
-                            left = left, right = left + paragraph.maxIntrinsicWidth,
-                            top = top, bottom = top + paragraph.height
-                        )
-                    )
-                ),
-                extraTextLayoutInfoList = emptyList(),
-                popupActionRect = Rect.Zero
-            )
-        }
-    }
-
     val AppMenuButtonState: CommandButtonPresentationState =
         object : CommandButtonPresentationState("Ribbon Application Menu Button") {
             override fun createLayoutManager(
