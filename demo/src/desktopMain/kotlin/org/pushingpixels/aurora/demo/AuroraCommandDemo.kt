@@ -110,7 +110,8 @@ fun DemoCommandRow(
                 contentModel = commandSecondaryOnly,
                 presentationModel = CommandButtonPresentationModel(
                     presentationState = presentationState,
-                    backgroundAppearanceStrategy = backgroundAppearanceStrategy
+                    backgroundAppearanceStrategy = backgroundAppearanceStrategy,
+                    popupMenuPresentationModel = CommandPopupMenuPresentationModel(maxVisibleItems = 6)
                 )
             ).project()
 
@@ -662,26 +663,14 @@ fun AuroraWindowScope.DemoCommandContent(
             secondaryContentModel = CommandMenuContentModel(
                 CommandGroup(
                     title = resourceBundle.getString("Group.titleSimple"),
-                    commands = listOf(
+                    commands = (1..10).map {
                         Command(
-                            text = entrySimpleMf.format(arrayOf<Any>(1)),
+                            text = entrySimpleMf.format(arrayOf<Any>(it)),
                             icon = computer(),
-                            action = { println("popup1 activated!") },
-                            isActionEnabled = actionEnabled
-                        ),
-                        Command(
-                            text = entrySimpleMf.format(arrayOf<Any>(2)),
-                            icon = computer(),
-                            action = { println("popup2 activated!") },
-                            isActionEnabled = actionEnabled
-                        ),
-                        Command(
-                            text = entrySimpleMf.format(arrayOf<Any>(3)),
-                            icon = computer(),
-                            action = { println("popup3 activated!") },
+                            action = { println("popup$it activated!") },
                             isActionEnabled = actionEnabled
                         )
-                    )
+                    }
                 )
             ),
             secondaryRichTooltip = RichTooltip(

@@ -39,6 +39,8 @@ import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.RibbonApplicationMenuCommandPopupMenuPresentationModel
 import org.pushingpixels.aurora.component.ribbon.RibbonApplicationMenuContentModel
 import org.pushingpixels.aurora.component.utils.TitleLabel
+import org.pushingpixels.aurora.component.utils.appmenu.CommandButtonLayoutManagerAppMenuLevel2
+import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.component.utils.getPlacementAwarePopupShift
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
@@ -47,6 +49,7 @@ import java.awt.geom.Rectangle2D
 import javax.swing.JPopupMenu
 import javax.swing.border.Border
 import kotlin.math.ceil
+import kotlin.math.max
 
 internal data class RibbonApplicationMenuLevel1ContentLayoutInfo(
     val fullSize: Size,
@@ -295,6 +298,11 @@ internal class RibbonApplicationMenuPopupHandler(
     @Composable
     private fun generateLevel2Content(
         modifier: Modifier,
+        dpSize: DpSize,
+        layoutDirection: LayoutDirection,
+        density: Density,
+        textStyle: TextStyle,
+        fontFamilyResolver: FontFamily.Resolver,
         level1Command: Command?,
         itemPresentationState: CommandButtonPresentationState,
         menuPresentationModel: RibbonApplicationMenuCommandPopupMenuPresentationModel,
@@ -319,6 +327,58 @@ internal class RibbonApplicationMenuPopupHandler(
                 .padding(all = 1.0.dp)
         ) {
             if (level1Command?.secondaryContentModel != null) {
+                // Determine the height of the tallest button
+                var maxButtonHeight = 0.0f
+                val regularButtonLayoutManager = itemPresentationState.createLayoutManager(
+                    layoutDirection = layoutDirection,
+                    density = density,
+                    textStyle = textStyle,
+                    fontFamilyResolver = fontFamilyResolver
+                )
+                for (commandGroup in level1Command.secondaryContentModel.groups) {
+                    for (secondaryCommand in commandGroup.commands) {
+                        val preferredSize = regularButtonLayoutManager.getPreferredSize(
+                            command = secondaryCommand,
+                            presentationModel = itemButtonPresentationModel,
+                            preLayoutInfo = regularButtonLayoutManager.getPreLayoutInfo(
+                                command = secondaryCommand,
+                                presentationModel = itemButtonPresentationModel
+                            )
+                        )
+                        maxButtonHeight = max(maxButtonHeight, preferredSize.height)
+                        if (regularButtonLayoutManager is CommandButtonLayoutManagerAppMenuLevel2) {
+                            maxButtonHeight = max(
+                                maxButtonHeight,
+                                regularButtonLayoutManager.getPreferredHeight(
+                                    fixedWidth = dpSize.width,
+                                    command = secondaryCommand,
+                                    presentationModel = itemButtonPresentationModel
+                                )
+                            )
+                        }
+                    }
+                }
+
+                var combinedHeight = 0.0f
+                for (commandGroup in level1Command.secondaryContentModel.groups) {
+                    if (commandGroup.title != null) {
+                        combinedHeight += getLabelPreferredHeight(
+                            contentModel = LabelContentModel(text = commandGroup.title),
+                            presentationModel = LabelPresentationModel(
+                                horizontalAlignment = HorizontalAlignment.Leading
+                            ),
+                            resolvedTextStyle = textStyle,
+                            layoutDirection = layoutDirection,
+                            density = density,
+                            fontFamilyResolver = fontFamilyResolver,
+                            availableWidth = dpSize.width.value * density.density
+                        )
+                    }
+
+                    combinedHeight += (commandGroup.commands.size * maxButtonHeight)
+                }
+                println("Combined height is $combinedHeight vs available ${dpSize.height.value * density.density}")
+
                 for (commandGroup in level1Command.secondaryContentModel.groups) {
                     if (commandGroup.title != null) {
                         TitleLabel(
@@ -343,7 +403,7 @@ internal class RibbonApplicationMenuPopupHandler(
                             presentationModel = currSecondaryPresentationModel,
                             overlays = overlays
                         ).project(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth().height(height = (maxButtonHeight / density.density).dp),
                             actionInteractionSource = remember { MutableInteractionSource() },
                             popupInteractionSource = remember { MutableInteractionSource() }
                         )
@@ -569,14 +629,17 @@ internal class RibbonApplicationMenuPopupHandler(
                     val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
                         decorationAreaType = AuroraSkin.decorationAreaType
                     )
+                    val level1PanelWidthDp = (level1ContentLayoutInfo.fullSize.width / density.density).dp
+                    val level2PanelWidthDp = presentationModel.level2PanelWidth
+                    val panelHeightDp = (level1ContentLayoutInfo.fullSize.height / density.density).dp
                     Column {
                         Row(
                             modifier = Modifier.fillMaxWidth(1.0f)
-                                .height(height = (level1ContentLayoutInfo.fullSize.height / density.density).dp)
+                                .height(height = panelHeightDp)
                                 .background(color = backgroundColorScheme.backgroundFillColor)
                         ) {
                             generateLevel1Content(
-                                modifier = Modifier.width(width = (level1ContentLayoutInfo.fullSize.width / density.density).dp),
+                                modifier = Modifier.width(width = level1PanelWidthDp),
                                 menuContentModel = contentModel.value!!,
                                 menuPresentationModel = presentationModel,
                                 overlays = overlays,
@@ -585,11 +648,20 @@ internal class RibbonApplicationMenuPopupHandler(
                                 },
                                 level1ContentLayoutInfo = level1ContentLayoutInfo
                             )
-                            val level2PresentationState = if ((secondaryStates != null) && (activeLevel1Command != null))
-                                secondaryStates.getOrDefault(activeLevel1Command!!, CommandButtonPresentationState.Medium)
-                                    else CommandButtonPresentationState.Medium
+                            val level2PresentationState =
+                                if ((secondaryStates != null) && (activeLevel1Command != null))
+                                    secondaryStates.getOrDefault(
+                                        activeLevel1Command!!,
+                                        CommandButtonPresentationState.Medium
+                                    )
+                                else CommandButtonPresentationState.Medium
                             generateLevel2Content(
                                 modifier = Modifier.weight(1.0f, true),
+                                dpSize = DpSize(width = level2PanelWidthDp, height = panelHeightDp),
+                                layoutDirection = layoutDirection,
+                                density = density,
+                                textStyle = textStyle,
+                                fontFamilyResolver = fontFamilyResolver,
                                 level1Command = activeLevel1Command,
                                 itemPresentationState = level2PresentationState,
                                 menuPresentationModel = presentationModel,

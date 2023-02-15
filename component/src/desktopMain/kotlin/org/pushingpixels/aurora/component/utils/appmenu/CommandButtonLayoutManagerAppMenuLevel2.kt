@@ -282,7 +282,11 @@ internal class CommandButtonLayoutManagerAppMenuLevel2(
         var separatorArea = Rect.Zero
         val verticalSeparatorWidth = SeparatorSizingConstants.Thickness.toPx()
 
-        val iconTop = presentationModel.verticalGapScaleFactor * paddingValues.topPadding.toPx()
+        val iconTop = if (buttonExtraText != null) {
+            presentationModel.verticalGapScaleFactor * paddingValues.topPadding.toPx()
+        } else {
+            (finalHeight - iconHeight) / 2.0f
+        }
         if (ltr) {
             var x = presentationModel.horizontalGapScaleFactor *
                     paddingValues.startPadding.toPx() + shiftX - layoutHGap
@@ -323,7 +327,11 @@ internal class CommandButtonLayoutManagerAppMenuLevel2(
                 )
 
                 textHeight = paragraph.height
-                val textTop = presentationModel.verticalGapScaleFactor * paddingValues.topPadding.toPx()
+                val textTop = if (buttonExtraText != null) {
+                    presentationModel.verticalGapScaleFactor * paddingValues.topPadding.toPx()
+                } else {
+                    (finalHeight - paragraph.height) / 2.0f
+                }
                 val lineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
                     text = command.text,
                     textRect = Rect(
@@ -543,7 +551,11 @@ internal class CommandButtonLayoutManagerAppMenuLevel2(
                 )
 
                 textHeight = paragraph.height
-                val textTop = presentationModel.verticalGapScaleFactor * paddingValues.topPadding.toPx()
+                val textTop = if (buttonExtraText != null) {
+                    presentationModel.verticalGapScaleFactor * paddingValues.topPadding.toPx()
+                } else {
+                    (finalHeight - paragraph.height) / 2.0f
+                }
                 val lineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
                     text = command.text,
                     textRect = Rect(
