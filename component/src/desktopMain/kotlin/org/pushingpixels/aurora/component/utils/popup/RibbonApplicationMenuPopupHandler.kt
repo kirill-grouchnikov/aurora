@@ -19,6 +19,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.HoverInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposePanel
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
+import org.pushingpixels.aurora.component.AuroraVerticallyScrollableBox
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
@@ -359,56 +361,66 @@ internal class RibbonApplicationMenuPopupHandler(
                     }
                 }
 
-                var combinedHeight = 0.0f
-                for (commandGroup in level1Command.secondaryContentModel.groups) {
-                    if (commandGroup.title != null) {
-                        combinedHeight += getLabelPreferredHeight(
-                            contentModel = LabelContentModel(text = commandGroup.title),
-                            presentationModel = LabelPresentationModel(
-                                horizontalAlignment = HorizontalAlignment.Leading
-                            ),
-                            resolvedTextStyle = textStyle,
-                            layoutDirection = layoutDirection,
-                            density = density,
-                            fontFamilyResolver = fontFamilyResolver,
-                            availableWidth = dpSize.width.value * density.density
-                        )
-                    }
+                AuroraVerticallyScrollableBox(
+                    modifier = Modifier.fillMaxWidth(),
+                    width = dpSize.width,
+                    contentHeight = {
+                        var combinedHeight = 0.0f
+                        for (commandGroup in level1Command.secondaryContentModel.groups) {
+                            if (commandGroup.title != null) {
+                                combinedHeight += getLabelPreferredHeight(
+                                    contentModel = LabelContentModel(text = commandGroup.title),
+                                    presentationModel = LabelPresentationModel(
+                                        horizontalAlignment = HorizontalAlignment.Leading
+                                    ),
+                                    resolvedTextStyle = textStyle,
+                                    layoutDirection = layoutDirection,
+                                    density = density,
+                                    fontFamilyResolver = fontFamilyResolver,
+                                    availableWidth = dpSize.width.value * density.density
+                                )
+                            }
 
-                    combinedHeight += (commandGroup.commands.size * maxButtonHeight)
-                }
-                println("Combined height is $combinedHeight vs available ${dpSize.height.value * density.density}")
+                            combinedHeight += (commandGroup.commands.size * maxButtonHeight)
+                        }
+                        combinedHeight.toInt()
+                    },
+                    verticalScrollState = rememberScrollState(0),
+                    scrollAmount = 12.dp,
+                    content = {
+                        for (commandGroup in level1Command.secondaryContentModel.groups) {
+                            if (commandGroup.title != null) {
+                                TitleLabel(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    title = commandGroup.title,
+                                    presentationModel = LabelPresentationModel(
+                                        horizontalAlignment = HorizontalAlignment.Leading
+                                    )
+                                )
+                            }
 
-                for (commandGroup in level1Command.secondaryContentModel.groups) {
-                    if (commandGroup.title != null) {
-                        TitleLabel(
-                            modifier = Modifier.fillMaxWidth(),
-                            title = commandGroup.title,
-                            presentationModel = LabelPresentationModel(
-                                horizontalAlignment = HorizontalAlignment.Leading
-                            )
-                        )
+                            for (secondaryCommand in commandGroup.commands) {
+                                // Check if we have a presentation overlay for this level 2 command
+                                val hasOverlay = overlays.containsKey(secondaryCommand)
+                                val currSecondaryPresentationModel = if (hasOverlay)
+                                    itemButtonPresentationModel.overlayWith(overlays[secondaryCommand]!!)
+                                else itemButtonPresentationModel
+                                // Project a command button for each level 2 command, passing the same
+                                // overlays into it.
+                                CommandButtonProjection(
+                                    contentModel = secondaryCommand,
+                                    presentationModel = currSecondaryPresentationModel,
+                                    overlays = overlays
+                                ).project(
+                                    modifier = Modifier.fillMaxWidth()
+                                        .height(height = (maxButtonHeight / density.density).dp),
+                                    actionInteractionSource = remember { MutableInteractionSource() },
+                                    popupInteractionSource = remember { MutableInteractionSource() }
+                                )
+                            }
+                        }
                     }
-
-                    for (secondaryCommand in commandGroup.commands) {
-                        // Check if we have a presentation overlay for this level 2 command
-                        val hasOverlay = overlays.containsKey(secondaryCommand)
-                        val currSecondaryPresentationModel = if (hasOverlay)
-                            itemButtonPresentationModel.overlayWith(overlays[secondaryCommand]!!)
-                        else itemButtonPresentationModel
-                        // Project a command button for each level 2 command, passing the same
-                        // overlays into it.
-                        CommandButtonProjection(
-                            contentModel = secondaryCommand,
-                            presentationModel = currSecondaryPresentationModel,
-                            overlays = overlays
-                        ).project(
-                            modifier = Modifier.fillMaxWidth().height(height = (maxButtonHeight / density.density).dp),
-                            actionInteractionSource = remember { MutableInteractionSource() },
-                            popupInteractionSource = remember { MutableInteractionSource() }
-                        )
-                    }
-                }
+                )
             }
         }
     }
