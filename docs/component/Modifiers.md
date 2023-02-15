@@ -50,6 +50,41 @@ fun DemoSkeletonFooter(
 }
 ```
 
+### Drawing container borders
+
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/borders.png" width="493"/>
+
+In this screenshot, the ribbon application menu has three areas:
+
+* Level 1 content - New, Open, Save, etc menus, displayed on the left
+* Level 2 content - secondary content (E-mail, Wireless, etc) for the active level 1 item, displayed on the right
+* Footer content - Options button, displayed at the bottom
+
+For visual delineation, in this case, we display a slightly rounded border around the combined Level 1 + Level 2 content areas.
+
+Here is the layout skeleton:
+
+```kotlin
+Row(
+  modifier = Modifier.fillMaxWidth(1.0f)
+    .height(height = panelHeightDp + 2.dp)
+    .background(color = backgroundColorScheme.backgroundFillColor)
+    .auroraBorder()
+    .padding(all = 1.dp)
+) {
+  Level1Content(...)
+  VerticalSeparatorProjection(...)
+  Level2Content(...)
+}
+```
+
+The order of the modifiers on the `Row` that contains the Level 1 and Level 2 content areas is important:
+
+* Start with the height, accounting for extra 2 dp vertical space needed for border vertical paddings
+* Next, the `background` modifier to fill the whole row with a single color
+* Next, the `auroraBorder` modifier to draw the slightly rounder border
+* Finally, `padding(all = 1.dp)` modifier to prevent the content from overlapping with the border visuals
+
 ### Showing context menus
 
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-context-menu.png" width="342" border=0/>
