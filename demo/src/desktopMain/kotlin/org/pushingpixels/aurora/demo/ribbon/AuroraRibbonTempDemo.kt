@@ -15,9 +15,7 @@
  */
 package org.pushingpixels.aurora.demo.ribbon
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -77,10 +75,12 @@ fun main() = auroraApplication {
         windowTitlePaneConfiguration = AuroraWindowTitlePaneConfigurations.AuroraPlain(),
         onCloseRequest = ::exitApplication,
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
             Row {
                builder.getApplicationMenuCommandButtonProjection().project()
             }
+            Spacer(Modifier.weight(weight = 1.0f, fill = true))
+            AuroraSkinSwitcher({ skin = it }, PopupPlacementStrategy.Upward.HAlignStart)
         }
     }
 

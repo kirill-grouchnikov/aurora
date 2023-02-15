@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.component.utils.popup
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.HoverInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -23,6 +24,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposePanel
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.TextStyle
@@ -31,6 +33,7 @@ import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
+import org.pushingpixels.aurora.component.AuroraVerticalSeparator
 import org.pushingpixels.aurora.component.AuroraVerticallyScrollableBox
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
@@ -38,6 +41,8 @@ import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
 import org.pushingpixels.aurora.component.popup.awtColor
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
+import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
+import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.ribbon.RibbonApplicationMenuCommandPopupMenuPresentationModel
 import org.pushingpixels.aurora.component.ribbon.RibbonApplicationMenuContentModel
 import org.pushingpixels.aurora.component.utils.TitleLabel
@@ -508,13 +513,15 @@ internal class RibbonApplicationMenuPopupHandler(
         // The popup width and height is converted from pixels into dp (density-independent units),
         // and then passed those as is (the numeric value) to Swing / AWT
 
-        // Full size of the popup accounts for extra pixel on each side for the popup border
+        // Full size of the popup accounts for extra pixel on each side for the popup border,
+        // as well as the extra paddings for the main panel border and the vertical separator between
+        // level 1 and level 2 panels
         val fullPopupWidth = ceil(level1ContentLayoutInfo.fullSize.width / density.density).toInt() +
-                presentationModel.level2PanelWidth.value.toInt() + 2
+                presentationModel.level2PanelWidth.value.toInt() + 4
         val fullPopupHeight = ceil(
             (level1ContentLayoutInfo.fullSize.height + footerContentLayoutInfo.fullHeight)
                     / density.density
-        ).toInt() + 2
+        ).toInt() + 3
 
         val initialAnchorX = if (layoutDirection == LayoutDirection.Ltr)
             (popupOriginatorLocationOnScreen.x + anchorBoundsInWindow.left).toInt() else
@@ -647,8 +654,10 @@ internal class RibbonApplicationMenuPopupHandler(
                     Column {
                         Row(
                             modifier = Modifier.fillMaxWidth(1.0f)
-                                .height(height = panelHeightDp)
+                                .height(height = panelHeightDp + 2.dp)
                                 .background(color = backgroundColorScheme.backgroundFillColor)
+                                .auroraBorder()
+                                .padding(all = 1.dp)
                         ) {
                             generateLevel1Content(
                                 modifier = Modifier.width(width = level1PanelWidthDp),
@@ -667,8 +676,14 @@ internal class RibbonApplicationMenuPopupHandler(
                                         CommandButtonPresentationState.Medium
                                     )
                                 else CommandButtonPresentationState.Medium
+                            VerticalSeparatorProjection(
+                                presentationModel = SeparatorPresentationModel(
+                                    startGradientAmount = 0.dp,
+                                    endGradientAmount = 0.dp
+                                )
+                            ).project(modifier = Modifier.size(width = 1.dp, height = panelHeightDp))
                             generateLevel2Content(
-                                modifier = Modifier.weight(1.0f, true),
+                                modifier = Modifier.size(width = level2PanelWidthDp, height = panelHeightDp),
                                 dpSize = DpSize(width = level2PanelWidthDp, height = panelHeightDp),
                                 layoutDirection = layoutDirection,
                                 density = density,
