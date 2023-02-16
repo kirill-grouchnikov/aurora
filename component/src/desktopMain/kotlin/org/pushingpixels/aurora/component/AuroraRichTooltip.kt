@@ -100,24 +100,33 @@ fun Modifier.auroraRichTooltip(
         job?.cancel()
         job = scope.launch {
             delay(750)
-            displayRichTooltipContent(
-                popupOriginator = popupOriginator,
-                layoutDirection = layoutDirection,
-                density = density,
-                textStyle = resolvedTextStyle,
-                fontFamilyResolver = fontFamilyResolver,
-                skinColors = skinColors,
-                skinPainters = painters,
-                decorationAreaType = decorationAreaType,
-                compositionLocalContext = compositionLocalContext,
-                anchorBoundsInWindow = Rect(
-                    offset = topLeftOffset.asOffset(density),
-                    size = size.value.asSize(density)
-                ),
-                richTooltip = richTooltip,
-                presentationModel = presentationModel,
-                popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart
+            val isShowingPopupFromHere = AuroraPopupManager.isShowingPopupFrom(
+                originator = popupOriginator,
+                pointInOriginator = AuroraOffset(
+                    x = topLeftOffset.x + size.value.width / 2.0f,
+                    y = topLeftOffset.y + size.value.height / 2.0f
+                ).asOffset(density)
             )
+            if (!isShowingPopupFromHere) {
+                displayRichTooltipContent(
+                    popupOriginator = popupOriginator,
+                    layoutDirection = layoutDirection,
+                    density = density,
+                    textStyle = resolvedTextStyle,
+                    fontFamilyResolver = fontFamilyResolver,
+                    skinColors = skinColors,
+                    skinPainters = painters,
+                    decorationAreaType = decorationAreaType,
+                    compositionLocalContext = compositionLocalContext,
+                    anchorBoundsInWindow = Rect(
+                        offset = topLeftOffset.asOffset(density),
+                        size = size.value.asSize(density)
+                    ),
+                    richTooltip = richTooltip,
+                    presentationModel = presentationModel,
+                    popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart
+                )
+            }
         }
     }
 
@@ -138,6 +147,7 @@ fun Modifier.auroraRichTooltip(
                         PointerEventType.Enter -> {
                             startShowing()
                         }
+
                         PointerEventType.Exit -> {
                             hide()
                         }
