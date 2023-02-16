@@ -15,7 +15,8 @@
  */
 package org.pushingpixels.aurora.component.ribbon
 
-import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.model.ContentModel
+import org.pushingpixels.aurora.component.model.PresentationModel
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.Projection
 

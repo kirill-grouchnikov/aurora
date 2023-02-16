@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.component.model
 
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy

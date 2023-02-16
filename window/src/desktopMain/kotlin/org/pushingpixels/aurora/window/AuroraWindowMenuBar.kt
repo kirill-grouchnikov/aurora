@@ -33,7 +33,10 @@ import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
-import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.theming.DecorationAreaType
+import org.pushingpixels.aurora.theming.Sides
+import org.pushingpixels.aurora.theming.auroraBackground
 
 private object WindowMenuBarLayout {
     private class CommandButtonLayoutManagerMenuBar(

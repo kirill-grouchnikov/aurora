@@ -52,10 +52,12 @@ import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
 import java.awt.*
-import java.awt.event.*
+import java.awt.event.AWTEventListener
+import java.awt.event.KeyEvent
+import java.awt.event.MouseEvent
+import java.awt.event.WindowEvent
 import java.util.*
 import javax.swing.JFrame
-import javax.swing.JRootPane
 import javax.swing.SwingUtilities
 import kotlin.math.roundToInt
 

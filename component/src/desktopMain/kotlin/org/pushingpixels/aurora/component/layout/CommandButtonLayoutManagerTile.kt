@@ -328,7 +328,6 @@ internal open class CommandButtonLayoutManagerTile(
             // Account for content overflowing the available horizontal space (constrained width
             // scenario).
             if (hasText || hasPopup) {
-                val extra: String? = command.extraText
                 val paddingEnd = presentationModel.horizontalGapScaleFactor *
                         paddingValues.endPadding.toPx()
                 if (hasPopup) {

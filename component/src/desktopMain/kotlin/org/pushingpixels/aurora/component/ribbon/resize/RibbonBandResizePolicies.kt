@@ -15,9 +15,9 @@
  */
 package org.pushingpixels.aurora.component.ribbon.resize
 
-import org.pushingpixels.aurora.component.ribbon.RibbonTask
-import org.pushingpixels.aurora.component.ribbon.RibbonBand
 import org.pushingpixels.aurora.component.ribbon.FlowRibbonBand
+import org.pushingpixels.aurora.component.ribbon.RibbonBand
+import org.pushingpixels.aurora.component.ribbon.RibbonTask
 
 /**
  * Defines the resize policies for the [RibbonBand]s and [FlowRibbonBand]s.

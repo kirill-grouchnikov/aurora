@@ -34,7 +34,10 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.component.model.RichTooltip
 import org.pushingpixels.aurora.component.model.RichTooltipPresentationModel
-import org.pushingpixels.aurora.component.utils.*
+import org.pushingpixels.aurora.component.utils.AuroraOffset
+import org.pushingpixels.aurora.component.utils.asOffset
+import org.pushingpixels.aurora.component.utils.asSize
+import org.pushingpixels.aurora.component.utils.displayRichTooltipContent
 import org.pushingpixels.aurora.theming.*
 
 // Rich tooltip tracking code based on code in TooltipArea.desktop.kt

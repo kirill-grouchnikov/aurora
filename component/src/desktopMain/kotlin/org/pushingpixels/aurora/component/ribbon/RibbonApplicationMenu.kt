@@ -16,7 +16,7 @@
 package org.pushingpixels.aurora.component.ribbon
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -30,7 +30,10 @@ import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.utils.appmenu.CommandButtonLayoutManagerAppMenuLevel2
 import org.pushingpixels.aurora.component.utils.appmenu.CommandButtonLayoutManagerRibbonApplicationMenuButton
 import org.pushingpixels.aurora.component.utils.popup.RibbonApplicationMenuPopupHandler
-import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.theming.IconFilterStrategy
+import org.pushingpixels.aurora.theming.PopupPlacementStrategy
+import org.pushingpixels.aurora.theming.Sides
 
 data class RibbonApplicationMenuContentModel(
     val groups: List<CommandGroup>,

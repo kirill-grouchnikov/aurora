@@ -26,7 +26,6 @@ import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.common.withBrightness
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
-import kotlin.jvm.Synchronized
 
 /**
  * Overlay painter that paints a few pixel-high drop shadow at the top edge of

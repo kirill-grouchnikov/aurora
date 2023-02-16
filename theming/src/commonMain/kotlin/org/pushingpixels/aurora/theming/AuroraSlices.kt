@@ -17,7 +17,6 @@ package org.pushingpixels.aurora.theming
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
-import androidx.compose.ui.geometry.Rect
 
 /**
  * Defines a single facet of core and custom [ComponentState]s. See Javadocs of the

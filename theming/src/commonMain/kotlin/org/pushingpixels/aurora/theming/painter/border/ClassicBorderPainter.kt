@@ -16,7 +16,6 @@
 package org.pushingpixels.aurora.theming.painter.border
 
 import androidx.compose.ui.graphics.Color
-import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 
 /**

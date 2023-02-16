@@ -35,7 +35,6 @@ import java.awt.image.ImageObserver
 import java.awt.image.RenderedImage
 import java.io.*
 import java.util.*
-import kotlin.math.abs
 import kotlin.math.sqrt
 
 /**
