@@ -47,6 +47,8 @@ import kotlin.math.roundToInt
 
 object ScrollableBoxConstants {
     val DefaultScrollAmount = 12.dp
+    const val DefaultInitialScrollInterval = 200L
+    const val DefaultSubsequentScrollInterval = 50L
 }
 
 @OptIn(AuroraInternalApi::class)
@@ -57,6 +59,8 @@ fun AuroraHorizontallyScrollableBox(
     contentWidth: () -> Int,
     horizontalScrollState: ScrollState,
     scrollAmount: Dp = ScrollableBoxConstants.DefaultScrollAmount,
+    initialScrollInterval: Long = ScrollableBoxConstants.DefaultInitialScrollInterval,
+    subsequentScrollInterval: Long = ScrollableBoxConstants.DefaultSubsequentScrollInterval,
     content: @Composable () -> Unit
 ) {
     val colors = AuroraSkin.colors
@@ -81,8 +85,8 @@ fun AuroraHorizontallyScrollableBox(
         toDismissPopupsOnActivation = false,
         actionFireTrigger = ActionFireTrigger.OnRollover,
         autoRepeatAction = true,
-        autoRepeatInitialInterval = 200L,
-        autoRepeatSubsequentInterval = 50L
+        autoRepeatInitialInterval = initialScrollInterval,
+        autoRepeatSubsequentInterval = subsequentScrollInterval
     )
     val scrollerLayoutManager = scrollerPresentationModel.presentationState.createLayoutManager(
         layoutDirection = layoutDirection,
@@ -249,7 +253,7 @@ fun AuroraHorizontallyScrollableBox(
             // Do we need to show the scrollers? If available width from constraints is enough
             // to fully display all scrollable content, we don't need to show the scrollers.
             val needScrollers = (contentRequiredWidth > constraints.maxWidth)
-            val contentWidth = if (needScrollers) constraints.maxWidth -
+            val contentAvailableWidth = if (needScrollers) constraints.maxWidth -
                     leftScrollerSize.width - rightScrollerSize.width
             else constraints.maxWidth
 
@@ -267,7 +271,7 @@ fun AuroraHorizontallyScrollableBox(
                 )
             )
             val contentPlaceable = contentMeasurable.measure(
-                Constraints.fixed(contentWidth.toInt(), contentHeightPx)
+                Constraints.fixed(contentAvailableWidth.toInt(), contentHeightPx)
             )
 
             layout(width = constraints.maxWidth, height = contentHeightPx) {
@@ -293,6 +297,8 @@ fun AuroraVerticallyScrollableBox(
     contentHeight: () -> Int,
     verticalScrollState: ScrollState,
     scrollAmount: Dp = ScrollableBoxConstants.DefaultScrollAmount,
+    initialScrollInterval: Long = ScrollableBoxConstants.DefaultInitialScrollInterval,
+    subsequentScrollInterval: Long = ScrollableBoxConstants.DefaultSubsequentScrollInterval,
     content: @Composable () -> Unit
 ) {
     val colors = AuroraSkin.colors
@@ -317,8 +323,8 @@ fun AuroraVerticallyScrollableBox(
         toDismissPopupsOnActivation = false,
         actionFireTrigger = ActionFireTrigger.OnRollover,
         autoRepeatAction = true,
-        autoRepeatInitialInterval = 200L,
-        autoRepeatSubsequentInterval = 50L
+        autoRepeatInitialInterval = initialScrollInterval,
+        autoRepeatSubsequentInterval = subsequentScrollInterval
     )
     val scrollerLayoutManager = scrollerPresentationModel.presentationState.createLayoutManager(
         layoutDirection = layoutDirection,
@@ -485,7 +491,7 @@ fun AuroraVerticallyScrollableBox(
             // Do we need to show the scrollers? If available height from constraints is enough
             // to fully display all scrollable content, we don't need to show the scrollers.
             val needScrollers = (contentRequiredHeight > constraints.maxHeight)
-            val contentHeight = if (needScrollers) constraints.maxHeight -
+            val contentAvailableHeight = if (needScrollers) constraints.maxHeight -
                     topScrollerSize.height - bottomScrollerSize.height
             else constraints.maxWidth
 
@@ -503,7 +509,7 @@ fun AuroraVerticallyScrollableBox(
                 )
             )
             val contentPlaceable = contentMeasurable.measure(
-                Constraints.fixed(contentWidthPx, contentHeight.toInt())
+                Constraints.fixed(contentWidthPx, contentAvailableHeight.toInt())
             )
 
             layout(width = contentWidthPx, height = constraints.maxHeight) {
