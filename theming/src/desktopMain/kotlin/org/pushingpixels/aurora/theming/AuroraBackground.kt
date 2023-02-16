@@ -37,8 +37,8 @@ fun Modifier.auroraBackground() = this.then(
     // TODO - is there another way to get window size in here without our own composition local?
     AuroraBackground(
         rootSize = Size(
-            width = LocalWindowSize.current.width.value * LocalDensity.current.density,
-            height = LocalWindowSize.current.height.value * LocalDensity.current.density
+            width = LocalTopWindowSize.current.width.value * LocalDensity.current.density,
+            height = LocalTopWindowSize.current.height.value * LocalDensity.current.density
         ),
         decorationAreaType = AuroraSkin.decorationAreaType,
         colors = AuroraSkin.colors,

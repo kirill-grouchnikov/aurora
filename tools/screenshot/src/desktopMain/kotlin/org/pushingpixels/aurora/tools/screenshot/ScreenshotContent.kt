@@ -65,6 +65,7 @@ private fun AuroraApplicationScope.ScreenshotWindow(
     val screenshotScope = ScreenshotScope(this@ScreenshotWindow, windowScope, windowTitlePaneConfiguration)
     CompositionLocalProvider(
         LocalWindowSize provides state.size,
+        LocalTopWindowSize provides state.size,
         LocalDensity provides density,
         LocalDecorationAreaType provides DecorationAreaType.None,
         LocalDisplayName provides skin.displayName,

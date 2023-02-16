@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.component.utils.popup
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.HoverInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -24,7 +23,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposePanel
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.TextStyle
@@ -33,7 +31,6 @@ import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
-import org.pushingpixels.aurora.component.AuroraVerticalSeparator
 import org.pushingpixels.aurora.component.AuroraVerticallyScrollableBox
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
@@ -41,7 +38,6 @@ import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
 import org.pushingpixels.aurora.component.popup.awtColor
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
-import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.ribbon.RibbonApplicationMenuCommandPopupMenuPresentationModel
 import org.pushingpixels.aurora.component.ribbon.RibbonApplicationMenuContentModel
@@ -156,7 +152,7 @@ internal class RibbonApplicationMenuPopupHandler(
                         presentationModel = itemButtonPresentationModel
                     )
                 )
-                maxWidth = kotlin.math.max(maxWidth, preferredSize.width)
+                maxWidth = max(maxWidth, preferredSize.width)
                 combinedHeight += preferredSize.height
             }
         }
@@ -213,7 +209,7 @@ internal class RibbonApplicationMenuPopupHandler(
                     presentationModel = footerButtonPresentationModel
                 )
             )
-            maxHeight = kotlin.math.max(maxHeight, preferredSize.height)
+            maxHeight = max(maxHeight, preferredSize.height)
         }
 
         val footerTopPadding = menuPresentationModel.footerContentPadding.calculateTopPadding()
@@ -235,14 +231,7 @@ internal class RibbonApplicationMenuPopupHandler(
     ) {
         val itemButtonPresentationModel = level1ContentLayoutInfo.itemButtonPresentationModel
 
-        val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
-            decorationAreaType = AuroraSkin.decorationAreaType
-        )
-        Column(
-            modifier = modifier
-                .background(color = backgroundColorScheme.backgroundFillColor)
-                .padding(all = 1.0.dp)
-        ) {
+        Column(modifier = modifier.padding(all = 1.0.dp)) {
             for (commandGroup in menuContentModel.groups) {
                 for (secondaryCommand in commandGroup.commands) {
                     // Check if we have a presentation overlay for this level 1 command
@@ -325,14 +314,7 @@ internal class RibbonApplicationMenuPopupHandler(
             isMenu = true
         )
 
-        val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
-            decorationAreaType = AuroraSkin.decorationAreaType
-        )
-        Column(
-            modifier = modifier
-                .background(color = backgroundColorScheme.backgroundFillColor)
-                .padding(all = 1.0.dp)
-        ) {
+        Column(modifier = modifier.padding(all = 1.0.dp)) {
             if (level1Command?.secondaryContentModel != null) {
                 // Determine the height of the tallest button
                 var maxButtonHeight = 0.0f
@@ -643,19 +625,16 @@ internal class RibbonApplicationMenuPopupHandler(
                 // And add the composition locals for the new popup
                 CompositionLocalProvider(
                     LocalPopupMenu provides popupMenu,
-                    LocalWindowSize provides popupDpSize
+                    LocalWindowSize provides popupDpSize,
+                    LocalTopWindowSize provides LocalTopWindowSize.current
                 ) {
-                    val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
-                        decorationAreaType = AuroraSkin.decorationAreaType
-                    )
                     val level1PanelWidthDp = (level1ContentLayoutInfo.fullSize.width / density.density).dp
                     val level2PanelWidthDp = presentationModel.level2PanelWidth
                     val panelHeightDp = (level1ContentLayoutInfo.fullSize.height / density.density).dp
-                    Column {
+                    Column(modifier = Modifier.auroraBackground()) {
                         Row(
                             modifier = Modifier.fillMaxWidth(1.0f)
                                 .height(height = panelHeightDp + 2.dp)
-                                .background(color = backgroundColorScheme.backgroundFillColor)
                                 .auroraBorder()
                                 .padding(all = 1.dp)
                         ) {

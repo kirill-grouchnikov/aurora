@@ -43,9 +43,8 @@ import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizeSequenci
 import org.pushingpixels.aurora.demo.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
-import org.pushingpixels.aurora.theming.IconFilterStrategy
-import org.pushingpixels.aurora.theming.PopupPlacementStrategy
-import org.pushingpixels.aurora.theming.marinerSkin
+import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import org.pushingpixels.aurora.window.auroraApplication
@@ -60,7 +59,7 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(800.dp, 480.dp)
     )
-    var skin by remember { mutableStateOf(marinerSkin()) }
+    var skin by remember { mutableStateOf(nebulaSkin()) }
     val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
@@ -75,12 +74,16 @@ fun main() = auroraApplication {
         windowTitlePaneConfiguration = AuroraWindowTitlePaneConfigurations.AuroraPlain(),
         onCloseRequest = ::exitApplication,
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            Row {
-               builder.getApplicationMenuCommandButtonProjection().project()
+        Column {
+            AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
+                Row(modifier = Modifier.fillMaxWidth().auroraBackground().padding(12.dp)) {
+                    builder.getApplicationMenuCommandButtonProjection().project()
+                }
             }
             Spacer(Modifier.weight(weight = 1.0f, fill = true))
-            AuroraSkinSwitcher({ skin = it }, PopupPlacementStrategy.Upward.HAlignStart)
+            Row(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
+                AuroraSkinSwitcher({ skin = it }, PopupPlacementStrategy.Upward.HAlignStart)
+            }
         }
     }
 

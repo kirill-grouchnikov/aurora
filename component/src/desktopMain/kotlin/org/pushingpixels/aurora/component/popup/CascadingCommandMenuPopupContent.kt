@@ -228,7 +228,8 @@ interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
                 // And add the composition locals for the new popup
                 CompositionLocalProvider(
                     LocalPopupMenu provides popupMenu,
-                    LocalWindowSize provides popupDpSize
+                    LocalWindowSize provides popupDpSize,
+                    LocalTopWindowSize provides LocalTopWindowSize.current
                 ) {
                     generatePopupContent(
                         menuContentModel = contentModel.value!!,

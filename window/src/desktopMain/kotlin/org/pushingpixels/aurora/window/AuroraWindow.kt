@@ -1244,6 +1244,7 @@ fun AuroraApplicationScope.AuroraWindow(
         CompositionLocalProvider(
             LocalWindow provides window,
             LocalWindowSize provides state.size,
+            LocalTopWindowSize provides state.size,
             LocalLayoutDirection provides composeLayoutDirection
         ) {
             val auroraWindowScope = AuroraWindowScopeImpl(this@AuroraWindow, this, windowTitlePaneConfiguration)

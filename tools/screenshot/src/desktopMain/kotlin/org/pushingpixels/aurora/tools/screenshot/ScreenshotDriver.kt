@@ -73,6 +73,7 @@ fun AuroraApplicationScope.screenshot(
             CompositionLocalProvider(
                 LocalWindow provides (window as ComposeWindow),
                 LocalWindowSize provides size,
+                LocalTopWindowSize provides size,
                 LocalDensity provides density,
                 LocalDecorationAreaType provides DecorationAreaType.None,
                 LocalDisplayName provides skin.displayName,

@@ -85,6 +85,10 @@ val LocalWindowSize = staticCompositionLocalOf<DpSize> {
     error("LocalWindowSize not provided")
 }
 @AuroraInternalApi
+val LocalTopWindowSize = staticCompositionLocalOf<DpSize> {
+    error("LocalTopWindowSize not provided")
+}
+@AuroraInternalApi
 val LocalPopupMenu = staticCompositionLocalOf<AuroraSwingPopupMenu?> {
     null
 }
