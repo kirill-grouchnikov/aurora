@@ -19,11 +19,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import org.pushingpixels.aurora.component.model.MenuPopupPanelLayoutSpec
+import org.pushingpixels.aurora.component.ribbon.PresentationPriority
+import org.pushingpixels.aurora.component.ribbon.RibbonBandCommandButtonPresentationStates
+import org.pushingpixels.aurora.component.ribbon.RibbonGalleryPresentationModel
+import org.pushingpixels.aurora.component.ribbon.RibbonGalleryProjection
 import org.pushingpixels.aurora.demo.AuroraSkinSwitcher
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.theming.*
@@ -43,7 +49,7 @@ fun main() = auroraApplication {
     val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
-    val builder = RibbonBuilder(resourceBundle)
+    val builder = RibbonBuilder(resourceBundle, LocalDensity.current.density)
 
     AuroraWindow(
         skin = skin,
@@ -60,6 +66,25 @@ fun main() = auroraApplication {
                     builder.getApplicationMenuCommandButtonProjection().project()
                 }
             }
+
+            Row(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
+                RibbonGalleryProjection(
+                    contentModel = builder.styleGalleryContentModel,
+                    presentationModel = RibbonGalleryPresentationModel(
+                        preferredVisibleCommandCounts = mapOf(
+                            PresentationPriority.Low to 1,
+                            PresentationPriority.Medium to 2,
+                            PresentationPriority.Top to 2
+                        ),
+                        popupLayoutSpec = MenuPopupPanelLayoutSpec(
+                            columnCount = 3, visibleRowCount = 3
+                        ),
+                        commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixedLandscape,
+                        expandKeyTip = "L"
+                    )
+                ).project(presentationPriority = PresentationPriority.Top)
+            }
+
             Spacer(Modifier.weight(weight = 1.0f, fill = true))
             Row(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
                 AuroraSkinSwitcher({ skin = it }, PopupPlacementStrategy.Upward.HAlignStart)

@@ -15,11 +15,17 @@
  */
 package org.pushingpixels.aurora.component.ribbon
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import org.pushingpixels.aurora.component.AuroraCheckBox
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.Projection
+import org.pushingpixels.aurora.component.ribbon.impl.RibbonGallery
 
 enum class PresentationPriority {
     /** Top priority */
@@ -62,7 +68,20 @@ data class RibbonGalleryPresentationModel(
 class RibbonGalleryProjection(
     val contentModel: RibbonGalleryContentModel,
     val presentationModel: RibbonGalleryPresentationModel
-) : Projection<RibbonGalleryContentModel, RibbonGalleryPresentationModel>()
+) : Projection<RibbonGalleryContentModel, RibbonGalleryPresentationModel>() {
+    @Composable
+    fun project(
+        modifier: Modifier = Modifier,
+        presentationPriority: PresentationPriority
+    ) {
+        RibbonGallery(
+            modifier = modifier,
+            presentationPriority = presentationPriority,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel
+        )
+    }
+}
 
 class RibbonComponentProjection<out C: ContentModel, out P: PresentationModel>(
     val projection: Projection<C, P>,

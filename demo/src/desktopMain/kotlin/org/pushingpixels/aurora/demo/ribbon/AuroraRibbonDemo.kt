@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -65,7 +66,7 @@ fun main() = auroraApplication {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
 
-    val builder = RibbonBuilder(resourceBundle)
+    val builder = RibbonBuilder(resourceBundle, LocalDensity.current.density)
 
     var fontFamilyComboSelectedItem by remember { mutableStateOf(builder.fontFamilyComboBoxEntries[0]) }
 
@@ -192,7 +193,7 @@ fun main() = auroraApplication {
     )
 }
 
-internal class RibbonBuilder(val resourceBundle: ResourceBundle) {
+internal class RibbonBuilder(val resourceBundle: ResourceBundle, val density: Float) {
     val mf = MessageFormat(resourceBundle.getString("TestMenuItem.text"))
     val popupCommand1 = Command(
         text = mf.format(arrayOf("1")),
@@ -346,7 +347,9 @@ internal class RibbonBuilder(val resourceBundle: ResourceBundle) {
     var mfButtonText = MessageFormat(
         resourceBundle.getString("StylesGallery.textButton")
     )
-    val overlayFont = Font(Typeface.makeDefault())
+    val overlayFont = Font(Typeface.makeDefault()).also {
+        it.size = it.size * density
+    }
     val stylesGalleryCommandList = CommandGroup(
         title = resourceBundle.getString("StylesGallery.textGroupTitle1"),
         commands = (0..10).map { index ->
@@ -365,7 +368,7 @@ internal class RibbonBuilder(val resourceBundle: ResourceBundle) {
                                         font = overlayFont
                                     ),
                                     x = 2.0f,
-                                    y = size.height - overlayFont.metrics.height - 2.0f,
+                                    y = size.height - 4.0f,
                                     paint = org.jetbrains.skia.Paint().also { skiaPaint ->
                                         skiaPaint.color4f = Color4f(
                                             r = 0f,

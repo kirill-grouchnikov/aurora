@@ -123,8 +123,7 @@ internal open class CommandButtonLayoutManagerBig(
     ): Size {
         val paddingValues = presentationModel.contentPadding
         val bx = presentationModel.horizontalGapScaleFactor *
-                (paddingValues.startPadding +
-                        paddingValues.endPadding).toPx()
+                (paddingValues.startPadding + paddingValues.endPadding).toPx()
         val buttonText = command.text
         val layoutHGap = (CommandButtonSizingConstants.DefaultHorizontalContentLayoutGap *
                 presentationModel.horizontalGapScaleFactor).toPx()
