@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
@@ -82,11 +83,12 @@ fun main() = auroraApplication {
                             columnCount = 3, visibleRowCount = 3
                         ),
                         commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixedLandscape,
+                        commandButtonTextOverflow = TextOverflow.Ellipsis,
                         expandKeyTip = "L"
                     )
                 ).project(
                     modifier = Modifier.background(Color(0xFFFFA0A0)),
-                    presentationPriority = PresentationPriority.Top
+                    presentationPriority = PresentationPriority.Top,
                 )
             }
 

@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.component.model.*
@@ -67,6 +68,7 @@ data class RibbonGalleryPresentationModel(
     val popupLayoutSpec: MenuPopupPanelLayoutSpec,
     val preferredVisibleCommandCounts: Map<PresentationPriority, Int> = emptyMap(),
     val commandButtonPresentationState: CommandButtonPresentationState,
+    val commandButtonTextOverflow: TextOverflow = TextOverflow.Clip,
     val contentPadding: PaddingValues = RibbonGallerySizingConstants.DefaultContentPadding,
     val layoutGap: Dp = RibbonGallerySizingConstants.DefaultContentLayoutGap,
     val expandKeyTip: String? = null,

@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
+import org.pushingpixels.aurora.component.model.HorizontalAlignment
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.PresentationPriority
 import org.pushingpixels.aurora.component.ribbon.RibbonGalleryContentModel
@@ -28,7 +30,9 @@ internal fun RibbonGallery(
                 contentModel = contentModel.commandGroups[0].commands[index],
                 presentationModel = CommandButtonPresentationModel(
                     presentationState = presentationModel.commandButtonPresentationState,
-                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                    horizontalAlignment = HorizontalAlignment.Center,
+                    textOverflow = presentationModel.commandButtonTextOverflow
                 )
             ).project()
         }

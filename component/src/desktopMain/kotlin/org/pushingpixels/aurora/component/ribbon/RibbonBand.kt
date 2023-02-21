@@ -28,7 +28,7 @@ import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.Projection
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicies
 import org.pushingpixels.aurora.component.ribbon.resize.RibbonBandResizePolicy
-import kotlin.math.max
+import kotlin.math.min
 
 sealed interface AbstractRibbonBand {
     val title: String
@@ -80,7 +80,7 @@ object RibbonBandCommandButtonPresentationStates {
         private val _density: Density,
         private val textStyle: TextStyle,
         private val fontFamilyResolver: FontFamily.Resolver,
-        val targetAspectRatio: Float
+        val fixedAspectRatio: Float
     ) : CommandButtonLayoutManager {
         override val density = _density.density
         override val fontScale = _density.fontScale
@@ -132,26 +132,17 @@ object RibbonBandCommandButtonPresentationStates {
             preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
         ): Size {
             val paddingValues = presentationModel.contentPadding
-            val bx = presentationModel.horizontalGapScaleFactor *
-                    (paddingValues.startPadding + paddingValues.endPadding).toPx()
             val buttonText = command.text
-            val layoutHGap = (CommandButtonSizingConstants.DefaultHorizontalContentLayoutGap *
-                    presentationModel.horizontalGapScaleFactor).toPx()
             val layoutVGap = (CommandButtonSizingConstants.DefaultVerticalContentLayoutGap *
                     presentationModel.verticalGapScaleFactor).toPx()
             val hasIcon = (command.icon != null) || presentationModel.forceAllocateSpaceForIcon
             val hasText = buttonText.isNotEmpty()
-            val hasPopupIcon = (command.secondaryContentModel != null)
 
             val titleLine = Paragraph(
                 text = preLayoutInfo.texts[0], style = textStyle,
                 constraints = Constraints(maxWidth = Int.MAX_VALUE),
                 density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
             )
-
-            val titleWidth = titleLine.maxIntrinsicWidth + (if (hasPopupIcon) 4 * layoutHGap +
-                    CommandButtonSizingConstants.PopupIconWidth.toPx() else 0).toInt()
-            val width = max(getPreferredIconSize(command, presentationModel).width.toPx(), titleWidth)
 
             // start height with the top inset
             var height = presentationModel.verticalGapScaleFactor * paddingValues.topPadding.toPx()
@@ -173,8 +164,8 @@ object RibbonBandCommandButtonPresentationStates {
             // bottom insets
             height += presentationModel.verticalGapScaleFactor * paddingValues.bottomPadding.toPx()
 
-            // Bump up the width if necessary based on the target aspect ratio
-            return Size(max(bx + width, height * targetAspectRatio), height)
+            // Width is height times the fixed aspect ratio
+            return Size(height * fixedAspectRatio, height)
         }
 
         override fun getLayoutInfo(
@@ -249,10 +240,11 @@ object RibbonBandCommandButtonPresentationStates {
                 density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
             )
 
-            val textLineWidth = titleLine.maxIntrinsicWidth
             val popupIconWidth = CommandButtonSizingConstants.PopupIconWidth.toPx()
             val popupIconHeight = CommandButtonSizingConstants.PopupIconHeight.toPx()
             val extraWidth = if (hasPopupIcon) 4 * layoutHGap + popupIconWidth else 0
+            val textLineWidth = min(titleLine.maxIntrinsicWidth,
+                finalWidth - startInset - endInset - extraWidth.toFloat())
 
             val titleLineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
                 text = preLayoutInfo.texts[0],
