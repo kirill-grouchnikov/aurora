@@ -1,6 +1,8 @@
 package org.pushingpixels.aurora.component.ribbon.impl
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,7 +21,8 @@ internal fun RibbonGallery(
     presentationModel: RibbonGalleryPresentationModel
 ) {
     val visibleCount = presentationModel.preferredVisibleCommandCounts[presentationPriority]!!
-    Row(modifier = modifier.wrapContentWidth()) {
+    Row(modifier = modifier.wrapContentWidth().padding(presentationModel.contentPadding),
+        horizontalArrangement = Arrangement.spacedBy(presentationModel.layoutGap)) {
         for (index in 0 until visibleCount) {
             CommandButtonProjection(
                 contentModel = contentModel.commandGroups[0].commands[index],

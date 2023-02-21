@@ -75,23 +75,12 @@ data class FlowRibbonBand(
 ) : AbstractRibbonBand
 
 object RibbonBandCommandButtonPresentationStates {
-    val BigFixed: CommandButtonPresentationState =
-        object : CommandButtonPresentationState("Big Fixed") {
-            override fun createLayoutManager(
-                layoutDirection: LayoutDirection,
-                density: Density,
-                textStyle: TextStyle,
-                fontFamilyResolver: FontFamily.Resolver
-            ): CommandButtonLayoutManager {
-                throw UnsupportedOperationException()
-            }
-        }
-
-    private class CommandButtonLayoutManagerBigFixedLandscape(
+    private class CommandButtonLayoutManagerBigFixed(
         override val layoutDirection: LayoutDirection,
         private val _density: Density,
         private val textStyle: TextStyle,
-        private val fontFamilyResolver: FontFamily.Resolver
+        private val fontFamilyResolver: FontFamily.Resolver,
+        val targetAspectRatio: Float
     ) : CommandButtonLayoutManager {
         override val density = _density.density
         override val fontScale = _density.fontScale
@@ -184,8 +173,8 @@ object RibbonBandCommandButtonPresentationStates {
             // bottom insets
             height += presentationModel.verticalGapScaleFactor * paddingValues.bottomPadding.toPx()
 
-            // Bump up the width if necessary to be at least 125% of the button height
-            return Size(max(bx + width, height * 5 / 4), height)
+            // Bump up the width if necessary based on the target aspect ratio
+            return Size(max(bx + width, height * targetAspectRatio), height)
         }
 
         override fun getLayoutInfo(
@@ -211,10 +200,8 @@ object RibbonBandCommandButtonPresentationStates {
             val ltr = (layoutDirection == LayoutDirection.Ltr)
 
             var iconRect = Rect.Zero
-            var separatorArea = Rect.Zero
             var popupActionRect = Rect.Zero
             val textLayoutInfoList: MutableList<CommandButtonLayoutManager.TextLayoutInfo> = arrayListOf()
-            val extraTextLayoutInfoList: List<CommandButtonLayoutManager.TextLayoutInfo> = emptyList()
 
             var shiftY = 0.0f
             var finalWidth = preferredSize.width
@@ -321,14 +308,32 @@ object RibbonBandCommandButtonPresentationStates {
                 fullSize = Size(finalWidth, finalHeight),
                 actionClickArea = actionClickArea,
                 popupClickArea = popupClickArea,
-                separatorArea = separatorArea,
+                separatorArea = Rect.Zero,
                 iconRect = iconRect,
                 textLayoutInfoList = textLayoutInfoList,
-                extraTextLayoutInfoList = extraTextLayoutInfoList,
+                extraTextLayoutInfoList = emptyList(),
                 popupActionRect = popupActionRect
             )
         }
     }
+
+    val BigFixed: CommandButtonPresentationState =
+        object : CommandButtonPresentationState("Big Fixed") {
+            override fun createLayoutManager(
+                layoutDirection: LayoutDirection,
+                density: Density,
+                textStyle: TextStyle,
+                fontFamilyResolver: FontFamily.Resolver
+            ): CommandButtonLayoutManager {
+                return CommandButtonLayoutManagerBigFixed(
+                    layoutDirection,
+                    density,
+                    textStyle,
+                    fontFamilyResolver,
+                    1.0f
+                )
+            }
+        }
 
     val BigFixedLandscape: CommandButtonPresentationState =
         object : CommandButtonPresentationState("Big Fixed Landscape") {
@@ -338,13 +343,13 @@ object RibbonBandCommandButtonPresentationStates {
                 textStyle: TextStyle,
                 fontFamilyResolver: FontFamily.Resolver
             ): CommandButtonLayoutManager {
-                return CommandButtonLayoutManagerBigFixedLandscape(
+                return CommandButtonLayoutManagerBigFixed(
                     layoutDirection,
                     density,
                     textStyle,
-                    fontFamilyResolver
+                    fontFamilyResolver,
+                    1.25f
                 )
             }
         }
-
 }

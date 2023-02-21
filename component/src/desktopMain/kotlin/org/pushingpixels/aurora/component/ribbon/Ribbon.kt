@@ -15,12 +15,12 @@
  */
 package org.pushingpixels.aurora.component.ribbon
 
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
-import org.pushingpixels.aurora.component.AuroraCheckBox
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
@@ -58,10 +58,17 @@ data class RibbonGalleryContentModel(
     val commandActionPreview: CommandActionPreview? = null,
 ) : ContentModel
 
+object RibbonGallerySizingConstants {
+    val DefaultContentPadding = PaddingValues(all = 4.dp)
+    val DefaultContentLayoutGap: Dp = 4.dp
+}
+
 data class RibbonGalleryPresentationModel(
     val popupLayoutSpec: MenuPopupPanelLayoutSpec,
     val preferredVisibleCommandCounts: Map<PresentationPriority, Int> = emptyMap(),
     val commandButtonPresentationState: CommandButtonPresentationState,
+    val contentPadding: PaddingValues = RibbonGallerySizingConstants.DefaultContentPadding,
+    val layoutGap: Dp = RibbonGallerySizingConstants.DefaultContentLayoutGap,
     val expandKeyTip: String? = null,
 ) : PresentationModel
 
@@ -74,6 +81,12 @@ class RibbonGalleryProjection(
         modifier: Modifier = Modifier,
         presentationPriority: PresentationPriority
     ) {
+        require((presentationModel.commandButtonPresentationState == CommandButtonPresentationState.Small) ||
+                (presentationModel.commandButtonPresentationState == RibbonBandCommandButtonPresentationStates.BigFixed) ||
+                (presentationModel.commandButtonPresentationState == RibbonBandCommandButtonPresentationStates.BigFixedLandscape)) {
+            "Unsupported command button presentation state ${presentationModel.commandButtonPresentationState}"
+        }
+
         RibbonGallery(
             modifier = modifier,
             presentationPriority = presentationPriority,

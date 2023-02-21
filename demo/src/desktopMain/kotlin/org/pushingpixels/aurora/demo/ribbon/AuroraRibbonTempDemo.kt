@@ -15,10 +15,12 @@
  */
 package org.pushingpixels.aurora.demo.ribbon
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -82,7 +84,10 @@ fun main() = auroraApplication {
                         commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixedLandscape,
                         expandKeyTip = "L"
                     )
-                ).project(presentationPriority = PresentationPriority.Top)
+                ).project(
+                    modifier = Modifier.background(Color(0xFFFFA0A0)),
+                    presentationPriority = PresentationPriority.Top
+                )
             }
 
             Spacer(Modifier.weight(weight = 1.0f, fill = true))
