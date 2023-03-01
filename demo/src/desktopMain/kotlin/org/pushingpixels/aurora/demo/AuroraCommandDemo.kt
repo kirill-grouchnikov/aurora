@@ -1160,7 +1160,7 @@ internal fun generateColorSchemeBundle(
 
     val tweakedEnabled = if (foregroundSourceEnabled != null) {
         ShiftColorScheme(
-            origScheme = active,
+            origScheme = enabled,
             backgroundShiftColor = Color.White,
             backgroundShiftFactor = 0.0f,
             foregroundShiftColor = foregroundSourceEnabled.invoke(active),

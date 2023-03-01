@@ -1124,8 +1124,8 @@ fun AuroraApplicationScope.DemoColorsContent(
 
 private fun demoSchemeBundle(): AuroraColorSchemeBundle {
     return generateColorSchemeBundle(
-        active = LimeGreenColorScheme(),
-        enabled = LimeGreenColorScheme(),
+        active = LimeGreenColorScheme().hueShift(0.03f),
+        enabled = LimeGreenColorScheme().saturate(-0.2f),
         foregroundSourceActive = { it.darkColor },
         foregroundSourceEnabled = { it.darkColor }
     )
