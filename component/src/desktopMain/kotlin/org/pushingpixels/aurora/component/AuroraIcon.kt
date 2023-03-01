@@ -39,13 +39,17 @@ internal fun AuroraIcon(
 
     Box(modifier = modifier) {
         if (presentationModel.inheritStateFromParent) {
-            AuroraThemedIcon(
-                icon = contentModel.icon,
-                size = presentationModel.iconDimension,
-                disabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
-                enabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
-                activeFilterStrategy = presentationModel.iconEnabledFilterStrategy
-            )
+            CompositionLocalProvider(
+                LocalColorSchemeBundle provides presentationModel.colorSchemeBundle
+            ) {
+                AuroraThemedIcon(
+                    icon = contentModel.icon,
+                    size = presentationModel.iconDimension,
+                    disabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
+                    enabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
+                    activeFilterStrategy = presentationModel.iconEnabledFilterStrategy
+                )
+            }
         } else if (presentationModel.iconColorFilter != null) {
             Box(
                 modifier.size(presentationModel.iconDimension)
@@ -64,7 +68,8 @@ internal fun AuroraIcon(
                     currModelState = state,
                     stateContributionMap = mapOf(state to 1.0f),
                     activeStrength = 1.0f
-                )
+                ),
+                LocalColorSchemeBundle provides presentationModel.colorSchemeBundle
             ) {
                 AuroraThemedIcon(
                     icon = contentModel.icon,

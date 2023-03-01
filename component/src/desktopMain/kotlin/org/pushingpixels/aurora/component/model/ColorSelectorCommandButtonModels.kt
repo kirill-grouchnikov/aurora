@@ -27,6 +27,7 @@ import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 import org.pushingpixels.aurora.theming.Sides
+import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import java.util.*
 
 sealed interface ColorSelectorPopupMenuEntry
@@ -129,6 +130,7 @@ data class ColorSelectorMenuContentModel(
 
 data class ColorSelectorCommandButtonPresentationModel(
     override val presentationState: CommandButtonPresentationState = CommandButtonPresentationState.Medium,
+    override val colorSchemeBundle: AuroraColorSchemeBundle? = null,
     override val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
     override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
     override val iconDimension: DpSize? = null,

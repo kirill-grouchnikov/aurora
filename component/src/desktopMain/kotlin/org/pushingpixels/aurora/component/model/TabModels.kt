@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.TabContentSeparatorKind
+import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 
 object TabConstants {
     val LeadingMargin = 2.dp
@@ -44,6 +45,7 @@ data class TabsContentModel(
 ) : ContentModel
 
 data class TabsPresentationModel(
+    val colorSchemeBundle: AuroraColorSchemeBundle? = null,
     val leadingMargin: Dp = TabConstants.LeadingMargin,
     val trailingMargin: Dp = TabConstants.TrailingMargin,
     val interTabMargin: Dp = TabConstants.InterTabMargin,

@@ -206,15 +206,22 @@ internal fun AuroraSwitch(
     ) {
         // Get the thumb fill color (flat)
         val thumbColor = getStateAwareColor(
-            modelStateInfo, currentState.value,
-            decorationAreaType, ColorSchemeAssociationKind.Mark
+            modelStateInfo = modelStateInfo,
+            currState = currentState.value,
+            colorSchemeBundle = presentationModel.colorSchemeBundle,
+            decorationAreaType = decorationAreaType,
+            associationKind = ColorSchemeAssociationKind.Mark
         ) { it.markColor }
 
         // Populate the cached color scheme for filling the track
         // based on the current model state info
         populateColorScheme(
-            drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-            ColorSchemeAssociationKind.MarkBox
+            colorScheme = drawingCache.colorScheme,
+            modelStateInfo = modelStateInfo,
+            currState = currentState.value,
+            colorSchemeBundle = presentationModel.colorSchemeBundle,
+            decorationAreaType = decorationAreaType,
+            associationKind = ColorSchemeAssociationKind.MarkBox
         )
 
         // And retrieve the track fill colors
@@ -229,8 +236,12 @@ internal fun AuroraSwitch(
         // Populate the cached color scheme for drawing the track border
         // based on the current model state info
         populateColorScheme(
-            drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-            ColorSchemeAssociationKind.Border
+            colorScheme = drawingCache.colorScheme,
+            modelStateInfo = modelStateInfo,
+            currState = currentState.value,
+            colorSchemeBundle = presentationModel.colorSchemeBundle,
+            decorationAreaType = decorationAreaType,
+            associationKind = ColorSchemeAssociationKind.Border
         )
         // And retrieve the mark box border colors
         val borderUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -255,6 +266,7 @@ internal fun AuroraSwitch(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             skinColors = AuroraSkin.colors,
+            colorSchemeBundle = presentationModel.colorSchemeBundle,
             decorationAreaType = decorationAreaType,
             colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
             isTextInFilledArea = false

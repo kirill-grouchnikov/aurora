@@ -161,13 +161,17 @@ private fun LabelIconContent(
     }
 
     if (presentationModel.inheritStateFromParent) {
-        AuroraThemedIcon(
-            icon = contentModel.icon,
-            size = presentationModel.iconDimension,
-            disabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
-            enabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
-            activeFilterStrategy = presentationModel.iconEnabledFilterStrategy
-        )
+        CompositionLocalProvider(
+            LocalColorSchemeBundle provides presentationModel.colorSchemeBundle
+        ) {
+            AuroraThemedIcon(
+                icon = contentModel.icon,
+                size = presentationModel.iconDimension,
+                disabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
+                enabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
+                activeFilterStrategy = presentationModel.iconEnabledFilterStrategy
+            )
+        }
     } else {
         val decorationAreaType = AuroraSkin.decorationAreaType
         val skinColors = AuroraSkin.colors
@@ -181,7 +185,8 @@ private fun LabelIconContent(
                 currModelState = currState,
                 stateContributionMap = mapOf(currState to 1.0f),
                 activeStrength = 1.0f
-            )
+            ),
+            LocalColorSchemeBundle provides presentationModel.colorSchemeBundle
         ) {
             AuroraThemedIcon(
                 icon = contentModel.icon,

@@ -123,6 +123,7 @@ internal fun AuroraTabs(
                     iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
                     decorationAreaType = decorationAreaType,
                     skinColors = colors,
+                    colorSchemeBundle = presentationModel.colorSchemeBundle,
                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                     paintDelegate = { drawScope, iconSize, colorScheme ->
                         with(drawScope) {
@@ -171,6 +172,7 @@ internal fun AuroraTabs(
                     iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
                     decorationAreaType = decorationAreaType,
                     skinColors = colors,
+                    colorSchemeBundle = presentationModel.colorSchemeBundle,
                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                     paintDelegate = { drawScope, iconSize, colorScheme ->
                         with(drawScope) {

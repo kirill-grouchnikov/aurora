@@ -108,6 +108,7 @@ fun AuroraHorizontallyScrollableBox(
                     iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
                     decorationAreaType = decorationAreaType,
                     skinColors = colors,
+                    colorSchemeBundle = null,
                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                     paintDelegate = { drawScope, iconSize, colorScheme ->
                         with(drawScope) {
@@ -154,6 +155,7 @@ fun AuroraHorizontallyScrollableBox(
                     iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
                     decorationAreaType = decorationAreaType,
                     skinColors = colors,
+                    colorSchemeBundle = null,
                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                     paintDelegate = { drawScope, iconSize, colorScheme ->
                         with(drawScope) {
@@ -346,6 +348,7 @@ fun AuroraVerticallyScrollableBox(
                     iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
                     decorationAreaType = decorationAreaType,
                     skinColors = colors,
+                    colorSchemeBundle = null,
                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                     paintDelegate = { drawScope, iconSize, colorScheme ->
                         with(drawScope) {
@@ -392,6 +395,7 @@ fun AuroraVerticallyScrollableBox(
                     iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
                     decorationAreaType = decorationAreaType,
                     skinColors = colors,
+                    colorSchemeBundle = null,
                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                     paintDelegate = { drawScope, iconSize, colorScheme ->
                         with(drawScope) {

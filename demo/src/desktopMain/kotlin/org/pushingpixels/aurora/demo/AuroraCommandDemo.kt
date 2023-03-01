@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CheckBoxProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
@@ -38,6 +39,7 @@ import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.colorscheme.*
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.window.*
 import java.text.MessageFormat
@@ -47,7 +49,7 @@ fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
-        size = DpSize(800.dp, 480.dp)
+        size = DpSize(800.dp, 540.dp)
     )
     var skin by remember { mutableStateOf(marinerSkin()) }
     val resourceBundle by derivedStateOf {
@@ -415,7 +417,7 @@ private val ZoomLevels = listOf(
 @Composable
 fun DemoCommandComplex(resourceBundle: ResourceBundle) {
     var currentZoomLevelIndex by remember { mutableStateOf(ZoomLevels.indexOf(100)) }
-    val currentZoomLevel by remember { derivedStateOf { ZoomLevels[currentZoomLevelIndex] }}
+    val currentZoomLevel by remember { derivedStateOf { ZoomLevels[currentZoomLevelIndex] } }
 
     val zoomOut = Command(
         text = "-",
@@ -991,35 +993,105 @@ fun AuroraWindowScope.DemoCommandContent(
                     resourceBundle = resourceBundle
                 )
 
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(20.dp))
 
+                val customSecondary1 = Command(
+                    text = entrySimpleMf.format(arrayOf<Any>(1)),
+                    icon = computer(),
+                    action = { println("secondary 1 activated!") },
+                    isActionEnabled = actionEnabled
+                )
+                val customSecondary2 = Command(
+                    text = entrySimpleMf.format(arrayOf<Any>(2)),
+                    icon = network_wireless(),
+                    action = { println("secondary 2 activated!") },
+                    isActionEnabled = actionEnabled
+                )
+                val customSecondary3 = Command(
+                    text = entrySimpleMf.format(arrayOf<Any>(3)),
+                    icon = media_floppy(),
+                    action = { println("secondary 3 activated!") },
+                    isActionEnabled = actionEnabled
+                )
                 CustomCommandButtonProjection(
                     contentModel = CustomCommand(
                         icon = menu_black_24dp(),
                         secondaryContentModel = CustomMenuContentModel(
-                            entries = listOf(
-                                Command(
-                                    text = entrySimpleMf.format(arrayOf<Any>(1)),
-                                    icon = computer(),
-                                    action = { println("secondary 1 activated!") },
-                                    isActionEnabled = actionEnabled
-                                ), Command(
-                                    text = entrySimpleMf.format(arrayOf<Any>(2)),
-                                    icon = network_wireless(),
-                                    action = { println("secondary 2 activated!") },
-                                    isActionEnabled = actionEnabled
-                                ), Command(
-                                    text = entrySimpleMf.format(arrayOf<Any>(3)),
-                                    icon = media_floppy(),
-                                    action = { println("secondary 3 activated!") },
-                                    isActionEnabled = actionEnabled
-                                )
-                            )
+                            entries = listOf(customSecondary1, customSecondary2, customSecondary3)
                         )
                     ),
                     presentationModel = CustomCommandButtonPresentationModel(
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                    ),
+                    overlays = hashMapOf(
+                        customSecondary3 to CommandButtonPresentationModel.Overlay(
+                            colorSchemeBundle = generateColorSchemeBundle(
+                                active = SunfireRedColorScheme(),
+                                enabled = AuroraSkin.colors.getEnabledColorScheme(DecorationAreaType.None),
+                                foregroundSourceActive = { Color.White },
+                                foregroundSourceEnabled = null
+                            )
+                        )
+                    )
+                ).project()
+            }
+
+            Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
+                CommandButtonProjection(
+                    contentModel = Command(text = "green",
+                        icon = history_black_24dp(),
+                        action = { println("Green!") },
+                        isActionEnabled = actionEnabled),
+                    presentationModel = CommandButtonPresentationModel(
+                        colorSchemeBundle = generateColorSchemeBundle(
+                            active = LimeGreenColorScheme(),
+                            enabled = LimeGreenColorScheme(),
+                            foregroundSourceActive = { it.darkColor },
+                            foregroundSourceEnabled = { it.darkColor }
+                        ),
+                        backgroundAppearanceStrategy = backgroundAppearanceStrategy,
+                        iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                    )
+                ).project()
+                Spacer(modifier = Modifier.width(8.dp))
+                CommandButtonProjection(
+                    contentModel = Command(text = "yellow",
+                        icon = storage_24px(),
+                        action = { println("Yellow!") },
+                        isActionEnabled = actionEnabled),
+                    presentationModel = CommandButtonPresentationModel(
+                        colorSchemeBundle = generateColorSchemeBundle(
+                            active = SunGlareColorScheme(),
+                            enabled = SunGlareColorScheme(),
+                            foregroundSourceActive = { it.darkColor },
+                            foregroundSourceEnabled = { it.darkColor }
+                        ),
+                        backgroundAppearanceStrategy = backgroundAppearanceStrategy,
+                        iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                    )
+                ).project()
+                Spacer(modifier = Modifier.width(8.dp))
+                CommandButtonProjection(
+                    contentModel = Command(text = "red",
+                        icon = mail_outline_black_24dp(),
+                        action = { println("Red!") },
+                        isActionEnabled = actionEnabled),
+                    presentationModel = CommandButtonPresentationModel(
+                        colorSchemeBundle = generateColorSchemeBundle(
+                            active = SunfireRedColorScheme(),
+                            enabled = SunfireRedColorScheme(),
+                            foregroundSourceActive = { Color.White },
+                            foregroundSourceEnabled = { Color.White }
+                        ),
+                        backgroundAppearanceStrategy = backgroundAppearanceStrategy,
+                        iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText
                     )
                 ).project()
             }
@@ -1067,5 +1139,57 @@ fun AuroraWindowScope.DemoCommandContent(
     }
 }
 
+internal fun generateColorSchemeBundle(
+    active: AuroraColorScheme,
+    enabled: AuroraColorScheme,
+    foregroundSourceActive: (AuroraColorScheme) -> Color,
+    foregroundSourceEnabled: ((AuroraColorScheme) -> Color)?
+): AuroraColorSchemeBundle {
+    // Use a few of Aurora APIs to tweak the colors of the incoming color schemes. In the real application
+    // it is highly recommended to use the getColorSchemes API and define custom color schemes from
+    // explicitly-stated RGB values and roles.
+    val tweakedActive = ShiftColorScheme(
+        origScheme = active,
+        backgroundShiftColor = Color.White,
+        backgroundShiftFactor = 0.0f,
+        foregroundShiftColor = foregroundSourceActive.invoke(active),
+        foregroundShiftFactor = 1.0f,
+        shiftByBrightness = false
+    )
+    val saturatedActive = tweakedActive.saturate(0.4f)
+
+    val tweakedEnabled = if (foregroundSourceEnabled != null) {
+        ShiftColorScheme(
+            origScheme = active,
+            backgroundShiftColor = Color.White,
+            backgroundShiftFactor = 0.0f,
+            foregroundShiftColor = foregroundSourceEnabled.invoke(active),
+            foregroundShiftFactor = 1.0f,
+            shiftByBrightness = false
+        )
+    } else {
+        enabled
+    }
+    val result = AuroraColorSchemeBundle(
+        activeColorScheme = saturatedActive,
+        enabledColorScheme = tweakedEnabled,
+        disabledColorScheme = tweakedEnabled
+    )
+    // Translucent for disabled state
+    result.registerAlpha(0.5f, ComponentState.DisabledSelected, ComponentState.DisabledUnselected)
+    result.registerColorScheme(
+        tweakedEnabled, ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledUnselected
+    )
+    result.registerColorScheme(
+        saturatedActive,
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected
+    )
+
+    // Darker borders
+    result.registerColorScheme(tweakedActive.shade(0.5f), associationKind = ColorSchemeAssociationKind.Border)
+    return result
+}
 
 

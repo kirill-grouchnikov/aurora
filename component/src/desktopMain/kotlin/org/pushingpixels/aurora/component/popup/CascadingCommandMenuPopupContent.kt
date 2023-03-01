@@ -31,6 +31,7 @@ import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.getPlacementAwarePopupShift
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import java.awt.*
 import java.awt.geom.Rectangle2D
@@ -76,6 +77,7 @@ interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
         textStyle: TextStyle,
         fontFamilyResolver: FontFamily.Resolver,
         skinColors: AuroraSkinColors,
+        colorSchemeBundle: AuroraColorSchemeBundle?,
         skinPainters: AuroraPainters,
         decorationAreaType: DecorationAreaType,
         compositionLocalContext: CompositionLocalContext,

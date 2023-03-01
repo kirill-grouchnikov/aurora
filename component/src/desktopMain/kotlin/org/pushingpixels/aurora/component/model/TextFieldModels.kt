@@ -23,6 +23,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 
 data class TextFieldValueContentModel(
     val value: TextFieldValue,
@@ -47,6 +48,7 @@ object TextFieldSizingConstants {
 }
 
 data class TextFieldPresentationModel(
+    val colorSchemeBundle: AuroraColorSchemeBundle? = null,
     val keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     val keyboardActions: KeyboardActions = KeyboardActions(),
     val contentPadding: PaddingValues = TextFieldSizingConstants.DefaultTextFieldContentPadding,

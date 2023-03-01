@@ -67,13 +67,15 @@ internal fun AuroraCircularProgress(
     // TODO - not ideal, but will do for now
     val prevArcSpan = remember { mutableStateOf(arcSpan) }
 
-    val color = AuroraSkin.colors.getColorScheme(
+    val componentState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
+    val color =
+        (presentationModel.colorSchemeBundle?.getColorScheme(componentState) ?: AuroraSkin.colors.getColorScheme(
+            decorationAreaType = AuroraSkin.decorationAreaType,
+            componentState = componentState
+        )).foregroundColor
+    val alpha = presentationModel.colorSchemeBundle?.getAlpha(componentState) ?: AuroraSkin.colors.getAlpha(
         decorationAreaType = AuroraSkin.decorationAreaType,
-        componentState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
-    ).foregroundColor
-    val alpha = AuroraSkin.colors.getAlpha(
-        decorationAreaType = AuroraSkin.decorationAreaType,
-        componentState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
+        componentState = componentState
     )
 
     Canvas(
@@ -113,7 +115,6 @@ internal fun AuroraCircularProgress(
     }
 }
 
-
 private val progressFillPainter = FractionBasedFillPainter(
     0.0f to { it.extraLightColor },
     0.5f to { it.lightColor },
@@ -148,15 +149,20 @@ internal fun AuroraIndeterminateLinearProgress(
 
     // install state-aware alpha channel (support for skins
     // that use translucency on disabled states).
-    val stateAlpha = AuroraSkin.colors.getAlpha(
+    val stateAlpha = presentationModel.colorSchemeBundle?.getAlpha(progressState) ?: AuroraSkin.colors.getAlpha(
         decorationAreaType = AuroraSkin.decorationAreaType,
         componentState = progressState
     )
-    val colorScheme = AuroraSkin.colors.getColorScheme(
-        decorationAreaType = AuroraSkin.decorationAreaType,
-        componentState = progressState
-    )
-    val borderColorScheme = AuroraSkin.colors.getColorScheme(
+    val colorScheme =
+        presentationModel.colorSchemeBundle?.getColorScheme(progressState) ?: AuroraSkin.colors.getColorScheme(
+            decorationAreaType = AuroraSkin.decorationAreaType,
+            componentState = progressState
+        )
+    val borderColorScheme = presentationModel.colorSchemeBundle?.getColorScheme(
+        associationKind = ColorSchemeAssociationKind.Border,
+        componentState = borderState,
+        allowFallback = true
+    ) ?: AuroraSkin.colors.getColorScheme(
         decorationAreaType = AuroraSkin.decorationAreaType,
         associationKind = ColorSchemeAssociationKind.Border,
         componentState = borderState
@@ -262,19 +268,24 @@ internal fun AuroraDeterminateLinearProgress(
 
     // install state-aware alpha channel (support for skins
     // that use translucency on disabled states).
-    val stateAlpha = AuroraSkin.colors.getAlpha(
+    val stateAlpha = presentationModel.colorSchemeBundle?.getAlpha(fillState) ?: AuroraSkin.colors.getAlpha(
         decorationAreaType = AuroraSkin.decorationAreaType,
         componentState = fillState
     )
-    val fillScheme = AuroraSkin.colors.getColorScheme(
+    val fillScheme = presentationModel.colorSchemeBundle?.getColorScheme(fillState) ?: AuroraSkin.colors.getColorScheme(
         decorationAreaType = AuroraSkin.decorationAreaType,
         componentState = fillState
     )
-    val progressColorScheme = AuroraSkin.colors.getColorScheme(
-        decorationAreaType = AuroraSkin.decorationAreaType,
-        componentState = progressState
-    )
-    val borderColorScheme = AuroraSkin.colors.getColorScheme(
+    val progressColorScheme =
+        presentationModel.colorSchemeBundle?.getColorScheme(progressState) ?: AuroraSkin.colors.getColorScheme(
+            decorationAreaType = AuroraSkin.decorationAreaType,
+            componentState = progressState
+        )
+    val borderColorScheme = presentationModel.colorSchemeBundle?.getColorScheme(
+        associationKind = ColorSchemeAssociationKind.Border,
+        componentState = borderState,
+        allowFallback = true
+    ) ?: AuroraSkin.colors.getColorScheme(
         decorationAreaType = AuroraSkin.decorationAreaType,
         associationKind = ColorSchemeAssociationKind.Border,
         componentState = borderState

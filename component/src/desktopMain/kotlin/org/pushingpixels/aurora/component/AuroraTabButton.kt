@@ -235,11 +235,12 @@ internal fun AuroraTabButton(
                     // Populate the cached color scheme for filling the action area
                     // based on the current model state info
                     populateColorScheme(
-                        drawingCache.colorScheme,
-                        actionModelStateInfo,
-                        currentActionState.value,
-                        decorationAreaType,
-                        ColorSchemeAssociationKind.Fill
+                        colorScheme = drawingCache.colorScheme,
+                        modelStateInfo = actionModelStateInfo,
+                        currState = currentActionState.value,
+                        colorSchemeBundle = presentationModel.colorSchemeBundle,
+                        decorationAreaType = decorationAreaType,
+                        associationKind = ColorSchemeAssociationKind.Fill
                     )
                     // And retrieve the container fill colors
                     val fillUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -253,11 +254,12 @@ internal fun AuroraTabButton(
                     // Populate the cached color scheme for drawing the button border
                     // based on the current model state info
                     populateColorScheme(
-                        drawingCache.colorScheme,
-                        actionModelStateInfo,
-                        currentActionState.value,
-                        decorationAreaType,
-                        ColorSchemeAssociationKind.Border
+                        colorScheme = drawingCache.colorScheme,
+                        modelStateInfo = actionModelStateInfo,
+                        currState = currentActionState.value,
+                        colorSchemeBundle = presentationModel.colorSchemeBundle,
+                        decorationAreaType = decorationAreaType,
+                        associationKind = ColorSchemeAssociationKind.Border
                     )
                     // And retrieve the border colors
                     val borderUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -431,11 +433,10 @@ internal fun AuroraTabButton(
             }
 
             val currentStateForText = if (command.isActionEnabled) ComponentState.Enabled
-                else ComponentState.DisabledUnselected
+            else ComponentState.DisabledUnselected
             for (text in preLayoutInfo.texts) {
                 TabButtonTextContent(
-                    text, null, currentStateForText, resolvedTextStyle,
-                    presentationModel.textOverflow
+                    text, presentationModel, null, currentStateForText, resolvedTextStyle
                 )
             }
         }) { measurables, constraints ->
@@ -508,8 +509,9 @@ internal fun AuroraTabButton(
 @OptIn(AuroraInternalApi::class)
 @Composable
 private fun TabButtonTextContent(
-    text: String, modelStateInfo: ModelStateInfo?, currState: ComponentState,
-    style: TextStyle, overflow: TextOverflow
+    text: String, presentationModel: CommandButtonPresentationModel,
+    modelStateInfo: ModelStateInfo?, currState: ComponentState,
+    style: TextStyle
 ) {
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
@@ -520,6 +522,7 @@ private fun TabButtonTextContent(
         modelStateInfo = modelStateInfo,
         currState = currState,
         skinColors = skinColors,
+        colorSchemeBundle = presentationModel.colorSchemeBundle,
         decorationAreaType = decorationAreaType,
         colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
         isTextInFilledArea = true
@@ -531,7 +534,13 @@ private fun TabButtonTextContent(
     ) {
         // Since we're passing the resolved style that has the default color,
         // also explicitly pass our text color to override the one set in the style
-        AuroraText(text = text, color = textColor, style = style, maxLines = 1, overflow = overflow)
+        AuroraText(
+            text = text,
+            color = textColor,
+            style = style,
+            maxLines = 1,
+            overflow = presentationModel.textOverflow
+        )
     }
 }
 
@@ -614,8 +623,11 @@ private fun TabButtonIconContent(
 
             // Checkmark color
             val markColor = getStateAwareColor(
-                modelStateInfo, currState,
-                decorationAreaType, ColorSchemeAssociationKind.Mark
+                modelStateInfo = modelStateInfo,
+                currState = currState,
+                colorSchemeBundle = presentationModel.colorSchemeBundle,
+                decorationAreaType = decorationAreaType,
+                associationKind = ColorSchemeAssociationKind.Mark
             ) { it.markColor }
 
             val stateForMark = if (currState.isDisabled) ComponentState.DisabledSelected
@@ -665,6 +677,7 @@ private fun TabButtonIconContent(
                 modelStateInfo = modelStateInfo,
                 currState = currState,
                 skinColors = skinColors,
+                colorSchemeBundle = presentationModel.colorSchemeBundle,
                 decorationAreaType = decorationAreaType,
                 colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
                 isTextInFilledArea = true
@@ -673,7 +686,8 @@ private fun TabButtonIconContent(
             // Pass our text color and model state snapshot to the children
             CompositionLocalProvider(
                 LocalTextColor provides textColor,
-                LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currState)
+                LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currState),
+                LocalColorSchemeBundle provides presentationModel.colorSchemeBundle
             ) {
                 AuroraThemedIcon(
                     icon = icon,

@@ -346,6 +346,10 @@ class AuroraColorSchemeBundle(
         }
     }
 
+    fun hasHighlightAlphaFor(componentState: ComponentState) : Boolean {
+        return stateHighlightSchemeAlphaMap.containsKey(componentState)
+    }
+
     /**
      * Returns the alpha channel of the highlight color schemes for the specified component state.
      *
@@ -354,7 +358,11 @@ class AuroraColorSchemeBundle(
      */
     fun getHighlightAlpha(componentState: ComponentState): Float {
         val registered = stateHighlightSchemeAlphaMap[componentState]
-        return registered ?: -1.0f
+        return registered ?: 1.0f
+    }
+
+    fun hasAlphaFor(componentState: ComponentState) : Boolean {
+        return stateAlphaMap.containsKey(componentState)
     }
 
     /**
@@ -365,7 +373,7 @@ class AuroraColorSchemeBundle(
      */
     fun getAlpha(componentState: ComponentState): Float {
         val registered = stateAlphaMap[componentState]
-        return registered ?: -1.0f
+        return registered ?: 1.0f
     }
 
     /**
@@ -490,17 +498,13 @@ class AuroraSkinColors {
         // are decoration-specific scheme bundles.
         if (colorSchemeBundleMap.size > 1) {
             if (colorSchemeBundleMap.containsKey(decorationAreaType)) {
-                val registered = colorSchemeBundleMap[decorationAreaType]!!
-                    .getHighlightAlpha(componentState)
-                if (registered >= 0.0) {
-                    return registered
+                if (colorSchemeBundleMap[decorationAreaType]!!.hasHighlightAlphaFor(componentState)) {
+                    return colorSchemeBundleMap[decorationAreaType]!!.getHighlightAlpha(componentState)
                 }
             }
         }
-        val registered = colorSchemeBundleMap[DecorationAreaType.None]!!
-            .getHighlightAlpha(componentState)
-        if (registered >= 0.0) {
-            return registered
+        if (colorSchemeBundleMap[DecorationAreaType.None]!!.hasHighlightAlphaFor(componentState)) {
+            return colorSchemeBundleMap[DecorationAreaType.None]!!.getHighlightAlpha(componentState)
         }
         val isRollover = componentState.isFacetActive(ComponentStateFacet.Rollover)
         val isSelected = componentState.isFacetActive(ComponentStateFacet.Selection)
@@ -534,16 +538,15 @@ class AuroraSkinColors {
         // are decoration-specific scheme bundles.
         if (colorSchemeBundleMap.size > 1) {
             if (colorSchemeBundleMap.containsKey(decorationAreaType)) {
-                val registered = colorSchemeBundleMap[decorationAreaType]!!.getAlpha(componentState)
-                if (registered >= 0.0) {
-                    return registered
+                if (colorSchemeBundleMap[decorationAreaType]!!.hasAlphaFor(componentState)) {
+                    return colorSchemeBundleMap[decorationAreaType]!!.getAlpha(componentState)
                 }
             }
         }
-        val registered = colorSchemeBundleMap[DecorationAreaType.None]!!.getAlpha(componentState)
-        return if (registered >= 0.0) {
-            registered
-        } else fallback?.let { getAlpha(decorationAreaType, it) } ?: 1.0f
+        if (colorSchemeBundleMap[DecorationAreaType.None]!!.hasAlphaFor(componentState)) {
+            return colorSchemeBundleMap[DecorationAreaType.None]!!.getAlpha(componentState)
+        }
+        return fallback?.let { getAlpha(decorationAreaType, it) } ?: 1.0f
     }
 
     /**

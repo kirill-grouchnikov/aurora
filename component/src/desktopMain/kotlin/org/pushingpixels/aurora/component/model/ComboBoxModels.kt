@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
+import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 
 data class ComboBoxContentModel<E>(
     val items: List<E>,
@@ -45,6 +46,7 @@ object ComboBoxSizingConstants {
 }
 
 data class ComboBoxPresentationModel<E>(
+    val colorSchemeBundle: AuroraColorSchemeBundle? = null,
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
     val displayConverter: (E) -> String,
     val displayIconConverter: ((E) -> Painter)? = null,

@@ -35,6 +35,7 @@ import org.pushingpixels.aurora.theming.AuroraSkin
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
+import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import java.awt.Component
 
@@ -52,6 +53,7 @@ interface BaseCommandMenuHandler<in M : BaseCommandMenuContentModel,
         textStyle: TextStyle,
         fontFamilyResolver: FontFamily.Resolver,
         skinColors: AuroraSkinColors,
+        colorSchemeBundle: AuroraColorSchemeBundle?,
         skinPainters: AuroraPainters,
         decorationAreaType: DecorationAreaType,
         compositionLocalContext: CompositionLocalContext,

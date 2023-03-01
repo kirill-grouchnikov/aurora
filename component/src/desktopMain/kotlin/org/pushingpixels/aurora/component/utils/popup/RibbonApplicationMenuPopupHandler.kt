@@ -46,6 +46,7 @@ import org.pushingpixels.aurora.component.utils.appmenu.CommandButtonLayoutManag
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.component.utils.getPlacementAwarePopupShift
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import java.awt.*
 import java.awt.geom.Rectangle2D
@@ -249,6 +250,7 @@ internal class RibbonApplicationMenuPopupHandler(
                                 textStyle: TextStyle,
                                 fontFamilyResolver: FontFamily.Resolver,
                                 skinColors: AuroraSkinColors,
+                                colorSchemeBundle: AuroraColorSchemeBundle?,
                                 skinPainters: AuroraPainters,
                                 decorationAreaType: DecorationAreaType,
                                 compositionLocalContext: CompositionLocalContext,
@@ -457,6 +459,7 @@ internal class RibbonApplicationMenuPopupHandler(
         textStyle: TextStyle,
         fontFamilyResolver: FontFamily.Resolver,
         skinColors: AuroraSkinColors,
+        colorSchemeBundle: AuroraColorSchemeBundle?,
         skinPainters: AuroraPainters,
         decorationAreaType: DecorationAreaType,
         compositionLocalContext: CompositionLocalContext,

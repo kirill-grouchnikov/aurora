@@ -111,29 +111,43 @@ internal fun AuroraSlider(
 
     // install state-aware alpha channel (support for skins
     // that use translucency on disabled states).
-    val stateAlpha = skinColors.getAlpha(
+    val stateAlpha = presentationModel.colorSchemeBundle?.getAlpha(trackFillState) ?: skinColors.getAlpha(
         decorationAreaType = decorationAreaType,
         componentState = trackFillState
     )
-    val fillScheme = skinColors.getColorScheme(
+    val fillScheme = presentationModel.colorSchemeBundle?.getColorScheme(trackFillState) ?: skinColors.getColorScheme(
         decorationAreaType = decorationAreaType,
         componentState = trackFillState
     )
-    val selectionColorScheme = skinColors.getColorScheme(
-        decorationAreaType = decorationAreaType,
-        componentState = trackSelectedState
-    )
-    val borderFillColorScheme = skinColors.getColorScheme(
+    val selectionColorScheme =
+        presentationModel.colorSchemeBundle?.getColorScheme(trackSelectedState) ?: skinColors.getColorScheme(
+            decorationAreaType = decorationAreaType,
+            componentState = trackSelectedState
+        )
+    val borderFillColorScheme = presentationModel.colorSchemeBundle?.getColorScheme(
+        associationKind = ColorSchemeAssociationKind.Border,
+        componentState = trackFillState,
+        allowFallback = true
+    ) ?: skinColors.getColorScheme(
         decorationAreaType = decorationAreaType,
         associationKind = ColorSchemeAssociationKind.Border,
         componentState = trackFillState
     )
-    val borderSelectionColorScheme = skinColors.getColorScheme(
-        decorationAreaType = decorationAreaType,
-        associationKind = ColorSchemeAssociationKind.Border,
-        componentState = trackSelectedState
-    )
-    val tickScheme = skinColors.getColorScheme(
+    val borderSelectionColorScheme =
+        presentationModel.colorSchemeBundle?.getColorScheme(
+            associationKind = ColorSchemeAssociationKind.Border,
+            componentState = trackSelectedState,
+            allowFallback = true
+        ) ?: skinColors.getColorScheme(
+            decorationAreaType = decorationAreaType,
+            associationKind = ColorSchemeAssociationKind.Border,
+            componentState = trackSelectedState
+        )
+    val tickScheme = presentationModel.colorSchemeBundle?.getColorScheme(
+        associationKind = ColorSchemeAssociationKind.Separator,
+        componentState = trackFillState,
+        allowFallback = true
+    ) ?: skinColors.getColorScheme(
         decorationAreaType = decorationAreaType,
         associationKind = ColorSchemeAssociationKind.Separator,
         componentState = trackFillState
@@ -320,15 +334,20 @@ internal fun AuroraSlider(
             if (contentModel.enabled) {
                 // Rollover is only "active" in the thumb rectangle
                 rollover = drawingCache.thumbRect.contains(
-                    it.changes.first().position.x, it.changes.first().position.y)
+                    it.changes.first().position.x, it.changes.first().position.y
+                )
             }
         }.then(drag)
     ) {
         // Populate the cached color scheme for filling the thumb
         // based on the current model state info
         populateColorScheme(
-            drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-            ColorSchemeAssociationKind.Fill
+            colorScheme = drawingCache.colorScheme,
+            modelStateInfo = modelStateInfo,
+            currState = currentState.value,
+            colorSchemeBundle = presentationModel.colorSchemeBundle,
+            decorationAreaType = decorationAreaType,
+            associationKind = ColorSchemeAssociationKind.Fill
         )
 
         // And retrieve the thumb fill colors
@@ -343,8 +362,12 @@ internal fun AuroraSlider(
         // Populate the cached color scheme for drawing the thumb border
         // based on the current model state info
         populateColorScheme(
-            drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-            ColorSchemeAssociationKind.Border
+            colorScheme = drawingCache.colorScheme,
+            modelStateInfo = modelStateInfo,
+            currState = currentState.value,
+            colorSchemeBundle = presentationModel.colorSchemeBundle,
+            decorationAreaType = decorationAreaType,
+            associationKind = ColorSchemeAssociationKind.Border
         )
         // And retrieve the border colors
         val thumbBorderUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -366,6 +389,7 @@ internal fun AuroraSlider(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             skinColors = skinColors,
+            colorSchemeBundle = presentationModel.colorSchemeBundle,
             decorationAreaType = decorationAreaType,
             colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
             isTextInFilledArea = true

@@ -250,6 +250,7 @@ internal fun <E> AuroraComboBox(
                         textStyle = resolvedTextStyle,
                         fontFamilyResolver = fontFamilyResolver,
                         skinColors = skinColors,
+                        colorSchemeBundle = null,
                         skinPainters = painters,
                         decorationAreaType = decorationAreaType,
                         compositionLocalContext = compositionLocalContext,
@@ -287,22 +288,30 @@ internal fun <E> AuroraComboBox(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             skinColors = skinColors,
+            colorSchemeBundle = presentationModel.colorSchemeBundle,
             decorationAreaType = decorationAreaType,
             colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
             isTextInFilledArea = true
         )
         // And the arrow color
         val arrowColor = getStateAwareColor(
-            modelStateInfo, currentState.value,
-            decorationAreaType, ColorSchemeAssociationKind.Mark
+            modelStateInfo = modelStateInfo,
+            currState = currentState.value,
+            colorSchemeBundle = presentationModel.colorSchemeBundle,
+            decorationAreaType = decorationAreaType,
+            associationKind = ColorSchemeAssociationKind.Mark
         ) { it.markColor }
 
         if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.Never) {
             // Populate the cached color scheme for filling the combobox
             // based on the current model state info
             populateColorScheme(
-                drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-                ColorSchemeAssociationKind.Fill
+                colorScheme = drawingCache.colorScheme,
+                modelStateInfo = modelStateInfo,
+                currState = currentState.value,
+                colorSchemeBundle = presentationModel.colorSchemeBundle,
+                decorationAreaType = decorationAreaType,
+                associationKind = ColorSchemeAssociationKind.Fill
             )
             // And retrieve the container fill colors
             val fillUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -316,8 +325,12 @@ internal fun <E> AuroraComboBox(
             // Populate the cached color scheme for drawing the border
             // based on the current model state info
             populateColorScheme(
-                drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-                ColorSchemeAssociationKind.Border
+                colorScheme = drawingCache.colorScheme,
+                modelStateInfo = modelStateInfo,
+                currState = currentState.value,
+                colorSchemeBundle = presentationModel.colorSchemeBundle,
+                decorationAreaType = decorationAreaType,
+                associationKind = ColorSchemeAssociationKind.Border
             )
             // And retrieve the border colors
             val borderUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -495,7 +508,8 @@ internal fun <E> AuroraComboBox(
         // Pass our text color and model state snapshot to the children
         CompositionLocalProvider(
             LocalTextColor provides textColor,
-            LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value)
+            LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value),
+            LocalColorSchemeBundle provides presentationModel.colorSchemeBundle
         ) {
             Row(
                 modifier = Modifier.defaultMinSize(

@@ -197,8 +197,12 @@ internal fun AuroraCheckBox(
         // Populate the cached color scheme for filling the markbox
         // based on the current model state info
         populateColorScheme(
-            drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-            ColorSchemeAssociationKind.MarkBox
+            colorScheme = drawingCache.colorScheme,
+            modelStateInfo = modelStateInfo,
+            currState = currentState.value,
+            colorSchemeBundle = presentationModel.colorSchemeBundle,
+            decorationAreaType = decorationAreaType,
+            associationKind = ColorSchemeAssociationKind.MarkBox
         )
 
         // And retrieve the mark box colors
@@ -213,8 +217,12 @@ internal fun AuroraCheckBox(
         // Populate the cached color scheme for drawing the markbox border
         // based on the current model state info
         populateColorScheme(
-            drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-            ColorSchemeAssociationKind.Border
+            colorScheme = drawingCache.colorScheme,
+            modelStateInfo = modelStateInfo,
+            currState = currentState.value,
+            colorSchemeBundle = presentationModel.colorSchemeBundle,
+            decorationAreaType = decorationAreaType,
+            associationKind = ColorSchemeAssociationKind.Border
         )
         // And retrieve the mark box border colors
         val borderUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -227,8 +235,11 @@ internal fun AuroraCheckBox(
 
         // Mark color
         val markColor = getStateAwareColor(
-            modelStateInfo, currentState.value,
-            decorationAreaType, ColorSchemeAssociationKind.Mark
+            modelStateInfo = modelStateInfo,
+            currState = currentState.value,
+            colorSchemeBundle = presentationModel.colorSchemeBundle,
+            decorationAreaType = decorationAreaType,
+            associationKind = ColorSchemeAssociationKind.Mark
         ) { it.markColor }
 
         // Checkmark alpha is the combined strength of all the
@@ -245,6 +256,7 @@ internal fun AuroraCheckBox(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             skinColors = AuroraSkin.colors,
+            colorSchemeBundle = presentationModel.colorSchemeBundle,
             decorationAreaType = decorationAreaType,
             colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
             isTextInFilledArea = false

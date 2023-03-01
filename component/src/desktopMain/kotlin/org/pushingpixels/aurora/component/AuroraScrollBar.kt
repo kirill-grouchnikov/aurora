@@ -311,11 +311,12 @@ private fun Scrollbar(
                 // based on the current model state info. Note that enabled scroll bar
                 // is filled as active
                 populateColorScheme(
-                    drawingCache.colorScheme,
-                    modelStateInfo,
-                    currentState.value,
-                    decorationAreaType,
-                    ColorSchemeAssociationKind.Fill,
+                    colorScheme = drawingCache.colorScheme,
+                    modelStateInfo = modelStateInfo,
+                    currState = currentState.value,
+                    colorSchemeBundle = null,
+                    decorationAreaType = decorationAreaType,
+                    associationKind = ColorSchemeAssociationKind.Fill,
                     treatEnabledAsActive = true
                 )
                 // And retrieve the container fill colors
@@ -330,11 +331,12 @@ private fun Scrollbar(
                 // Populate the cached color scheme for drawing the border
                 // based on the current model state info.
                 populateColorScheme(
-                    drawingCache.colorScheme,
-                    modelStateInfo,
-                    currentState.value,
-                    decorationAreaType,
-                    ColorSchemeAssociationKind.Border,
+                    colorScheme = drawingCache.colorScheme,
+                    modelStateInfo = modelStateInfo,
+                    currState = currentState.value,
+                    colorSchemeBundle = null,
+                    decorationAreaType = decorationAreaType,
+                    associationKind = ColorSchemeAssociationKind.Border,
                     treatEnabledAsActive = false
                 )
                 // And retrieve the border colors

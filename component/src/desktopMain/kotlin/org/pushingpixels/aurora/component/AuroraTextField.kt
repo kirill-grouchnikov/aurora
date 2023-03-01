@@ -222,11 +222,12 @@ internal fun AuroraTextField(
     // Populate the cached color scheme for drawing the text field border
     // based on the current model state info
     populateColorScheme(
-        drawingCache.colorScheme,
-        modelStateInfo,
-        currentState.value,
-        decorationAreaType,
-        ColorSchemeAssociationKind.Border
+        colorScheme = drawingCache.colorScheme,
+        modelStateInfo = modelStateInfo,
+        currState = currentState.value,
+        colorSchemeBundle = presentationModel.colorSchemeBundle,
+        decorationAreaType = decorationAreaType,
+        associationKind = ColorSchemeAssociationKind.Border
     )
     // And retrieve the border colors
     val borderUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -244,6 +245,7 @@ internal fun AuroraTextField(
         modelStateInfo = modelStateInfo,
         currState = currentState.value,
         skinColors = AuroraSkin.colors,
+        colorSchemeBundle = presentationModel.colorSchemeBundle,
         decorationAreaType = decorationAreaType,
         colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
         isTextInFilledArea = false
@@ -256,12 +258,14 @@ internal fun AuroraTextField(
         modelStateInfo = modelStateInfo,
         currState = currentState.value,
         skinColors = AuroraSkin.colors,
+        colorSchemeBundle = presentationModel.colorSchemeBundle,
         decorationAreaType = decorationAreaType,
         colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
         isTextInFilledArea = false
     ).byAlpha(placeholderAlpha)
 
-    val placeholderStyle = LocalTextStyle.current.merge(presentationModel.textStyle).merge(TextStyle(color = placeholderColor))
+    val placeholderStyle =
+        LocalTextStyle.current.merge(presentationModel.textStyle).merge(TextStyle(color = placeholderColor))
 
     val cursorColor = textColor
 
@@ -276,15 +280,20 @@ internal fun AuroraTextField(
             // Read-only text fields use the regular background fill. Editable text fields
             // use text background fill (with rollover and focused transitions)
             val backgroundFillColor = if (contentModel.readOnly)
-                skinColors.getColorScheme(
+                (presentationModel.colorSchemeBundle?.getColorScheme(
+                    associationKind = ColorSchemeAssociationKind.Fill,
+                    componentState = currentState.value,
+                    allowFallback = true
+                ) ?: skinColors.getColorScheme(
                     decorationAreaType = decorationAreaType,
                     associationKind = ColorSchemeAssociationKind.Fill,
                     componentState = currentState.value
-                ).backgroundFillColor
+                )).backgroundFillColor
             else getTextFillBackground(
                 modelStateInfo = modelStateInfo,
                 currState = currentState.value,
                 skinColors = skinColors,
+                colorSchemeBundle = presentationModel.colorSchemeBundle,
                 decorationAreaType = decorationAreaType
             )
 
@@ -337,7 +346,11 @@ internal fun AuroraTextField(
 
                 if (!contentModel.readOnly) {
                     // Get the base border color
-                    val baseBorderScheme = skinColors.getColorScheme(
+                    val baseBorderScheme = presentationModel.colorSchemeBundle?.getColorScheme(
+                        associationKind = ColorSchemeAssociationKind.Border,
+                        componentState = currentState.value,
+                        allowFallback = true
+                    ) ?: skinColors.getColorScheme(
                         decorationAreaType = decorationAreaType,
                         associationKind = ColorSchemeAssociationKind.Border,
                         componentState = currentState.value
@@ -357,12 +370,19 @@ internal fun AuroraTextField(
                                 continue
                             }
                             val activeStateAlpha =
-                                skinColors.getAlpha(decorationAreaType, activeState)
+                                presentationModel.colorSchemeBundle?.getAlpha(activeState) ?: skinColors.getAlpha(
+                                    decorationAreaType,
+                                    activeState
+                                )
                             if (activeStateAlpha == 0.0f) {
                                 continue
                             }
                             val activeBorderScheme =
-                                skinColors.getColorScheme(
+                                presentationModel.colorSchemeBundle?.getColorScheme(
+                                    associationKind = ColorSchemeAssociationKind.Border,
+                                    componentState = activeState,
+                                    allowFallback = true
+                                ) ?: skinColors.getColorScheme(
                                     decorationAreaType = decorationAreaType,
                                     associationKind = ColorSchemeAssociationKind.Border,
                                     componentState = activeState
@@ -402,8 +422,8 @@ internal fun AuroraTextField(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             skinColors = skinColors,
+            colorSchemeBundle = presentationModel.colorSchemeBundle,
             decorationAreaType = decorationAreaType
-
         )
         CompositionLocalProvider(
             LocalTextSelectionColors provides TextSelectionColors(

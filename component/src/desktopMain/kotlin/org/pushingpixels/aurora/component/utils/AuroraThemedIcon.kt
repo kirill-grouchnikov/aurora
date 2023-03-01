@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.DpSize
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
@@ -40,6 +41,7 @@ private class CombinedIconModifier(
     val enabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val activeFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val skinColors: AuroraSkinColors,
+    val colorSchemeBundle: AuroraColorSchemeBundle?,
     val decorationAreaType: DecorationAreaType,
     val modelStateInfoSnapshot: ModelStateInfoSnapshot,
     val currModelState: ComponentState,
@@ -57,6 +59,7 @@ private class CombinedIconModifier(
                         componentState = currModelState
                     )
                 )
+
                 IconFilterStrategy.Original -> null
             }
         with(icon) {
@@ -78,6 +81,7 @@ private class CombinedIconModifier(
                             modelStateInfoSnapshot,
                             currModelState,
                             skinColors,
+                            colorSchemeBundle,
                             decorationAreaType
                         )
                         getColorSchemeFilter(
@@ -118,6 +122,7 @@ internal fun AuroraThemedIcon(
 
     val textColor = LocalTextColor.current
     val colors = AuroraSkin.colors
+    val colorSchemeBundle = LocalColorSchemeBundle.current
     val decorationAreaType = AuroraSkin.decorationAreaType
 
     if (currModelState.isDisabled) {
@@ -125,6 +130,7 @@ internal fun AuroraThemedIcon(
         when (disabledFilterStrategy) {
             IconFilterStrategy.Original ->
                 Box(modifier.size(size).paint(painter = icon))
+
             IconFilterStrategy.ThemedFollowText -> {
                 // For disabled states, the text color already accounts for the
                 // disabled state alpha under the current skin configuration
@@ -133,6 +139,7 @@ internal fun AuroraThemedIcon(
                         .paint(painter = icon, colorFilter = ColorFilter.tint(color = textColor))
                 )
             }
+
             IconFilterStrategy.ThemedFollowColorScheme -> {
                 Box(
                     modifier.size(size).paint(
@@ -161,6 +168,7 @@ internal fun AuroraThemedIcon(
                         enabledFilterStrategy,
                         activeFilterStrategy,
                         colors,
+                        colorSchemeBundle,
                         decorationAreaType,
                         modelStateInfoSnapshot,
                         currModelState,
@@ -178,9 +186,10 @@ internal fun populateColorScheme(
     modelStateInfoSnapshot: ModelStateInfoSnapshot,
     currState: ComponentState,
     skinColors: AuroraSkinColors,
+    colorSchemeBundle: AuroraColorSchemeBundle? = null,
     decorationAreaType: DecorationAreaType
 ) {
-    val currStateScheme = skinColors.getColorScheme(
+    val currStateScheme = colorSchemeBundle?.getColorScheme(currState) ?: skinColors.getColorScheme(
         decorationAreaType = decorationAreaType,
         componentState = currState
     )
@@ -217,7 +226,7 @@ internal fun populateColorScheme(
             continue
         }
         // Get the color scheme that matches the contribution state
-        val contributionScheme = skinColors.getColorScheme(
+        val contributionScheme = colorSchemeBundle?.getColorScheme(contribution.key) ?: skinColors.getColorScheme(
             decorationAreaType = decorationAreaType,
             componentState = contribution.key
         )

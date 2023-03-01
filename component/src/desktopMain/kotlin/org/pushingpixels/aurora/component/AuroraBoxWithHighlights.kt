@@ -192,6 +192,7 @@ fun AuroraBoxWithHighlights(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             skinColors = skinColors,
+            colorSchemeBundle = null,
             decorationAreaType = decorationAreaType,
             colorSchemeAssociationKind = ColorSchemeAssociationKind.Highlight,
             isTextInFilledArea = true
@@ -200,8 +201,12 @@ fun AuroraBoxWithHighlights(
         // Populate the cached color scheme for filling the combobox
         // based on the current model state info
         populateColorSchemeWithHighlightAlpha(
-            drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-            ColorSchemeAssociationKind.Highlight
+            colorScheme = drawingCache.colorScheme,
+            modelStateInfo = modelStateInfo,
+            currState = currentState.value,
+            colorSchemeBundle = null,
+            decorationAreaType = decorationAreaType,
+            associationKind = ColorSchemeAssociationKind.Highlight
         )
         // And retrieve the container fill colors
         val fillUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -215,8 +220,12 @@ fun AuroraBoxWithHighlights(
         // Populate the cached color scheme for drawing the border
         // based on the current model state info
         populateColorSchemeWithHighlightAlpha(
-            drawingCache.colorScheme, modelStateInfo, currentState.value, decorationAreaType,
-            ColorSchemeAssociationKind.HighlightBorder
+            colorScheme = drawingCache.colorScheme,
+            modelStateInfo = modelStateInfo,
+            currState = currentState.value,
+            colorSchemeBundle = null,
+            decorationAreaType = decorationAreaType,
+            associationKind = ColorSchemeAssociationKind.HighlightBorder
         )
         // And retrieve the border colors
         val borderUltraLight = drawingCache.colorScheme.ultraLightColor

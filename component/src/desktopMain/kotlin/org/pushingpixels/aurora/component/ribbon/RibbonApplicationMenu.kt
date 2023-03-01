@@ -34,6 +34,7 @@ import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 import org.pushingpixels.aurora.theming.Sides
+import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 
 data class RibbonApplicationMenuContentModel(
     val groups: List<CommandGroup>,
@@ -126,6 +127,7 @@ data class RibbonApplicationMenuCommandButtonPresentationModel(
 ) : BaseCommandButtonPresentationModel {
     override val presentationState: CommandButtonPresentationState =
         RibbonApplicationMenuButtonPresentationStates.AppMenuButtonState
+    override val colorSchemeBundle: AuroraColorSchemeBundle? = null
     override val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
     override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center
     override val iconDimension: DpSize? = null

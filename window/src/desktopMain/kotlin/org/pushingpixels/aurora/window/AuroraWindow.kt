@@ -382,6 +382,7 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                 iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                 decorationAreaType = DecorationAreaType.TitlePane,
                                 skinColors = skinColors,
+                                colorSchemeBundle = null,
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
                                 paintDelegate = { drawScope, iconSize, colorScheme ->
                                     windowConfiguration.titlePaneButtonsProvider.iconifyButtonProvider.drawIcon(
@@ -424,6 +425,7 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                     iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = skinColors,
+                                    colorSchemeBundle = null,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                                     paintDelegate = { drawScope, iconSize, colorScheme ->
                                         windowConfiguration.titlePaneButtonsProvider.restoreButtonProvider.drawIcon(
@@ -436,6 +438,7 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                     iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = skinColors,
+                                    colorSchemeBundle = null,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                                     paintDelegate = { drawScope, iconSize, colorScheme ->
                                         windowConfiguration.titlePaneButtonsProvider.maximizeButtonProvider.drawIcon(
@@ -465,6 +468,7 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                 iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                 decorationAreaType = DecorationAreaType.TitlePane,
                                 skinColors = skinColors,
+                                colorSchemeBundle = null,
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
                                 paintDelegate = { drawScope, iconSize, colorScheme ->
                                     windowConfiguration.titlePaneButtonsProvider.closeButtonProvider.drawIcon(
@@ -580,6 +584,7 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                 iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                 decorationAreaType = DecorationAreaType.TitlePane,
                                 skinColors = skinColors,
+                                colorSchemeBundle = null,
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
                                 paintDelegate = { drawScope, iconSize, colorScheme ->
                                     windowConfiguration.titlePaneButtonsProvider.iconifyButtonProvider.drawIcon(
@@ -640,6 +645,7 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                     iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = skinColors,
+                                    colorSchemeBundle = null,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                                     paintDelegate = { drawScope, iconSize, colorScheme ->
                                         windowConfiguration.titlePaneButtonsProvider.restoreButtonProvider.drawIcon(
@@ -652,6 +658,7 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                     iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = skinColors,
+                                    colorSchemeBundle = null,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                                     paintDelegate = { drawScope, iconSize, colorScheme ->
                                         windowConfiguration.titlePaneButtonsProvider.maximizeButtonProvider.drawIcon(
@@ -681,6 +688,7 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                 iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                 decorationAreaType = DecorationAreaType.TitlePane,
                                 skinColors = skinColors,
+                                colorSchemeBundle = null,
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
                                 paintDelegate = { drawScope, iconSize, colorScheme ->
                                     windowConfiguration.titlePaneButtonsProvider.closeButtonProvider.drawIcon(

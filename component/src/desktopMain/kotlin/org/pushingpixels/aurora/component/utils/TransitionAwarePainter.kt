@@ -26,6 +26,7 @@ import org.pushingpixels.aurora.theming.ColorSchemeAssociationKind
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.ModelStateInfoSnapshot
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
+import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 
@@ -47,6 +48,7 @@ class TransitionAwarePainter(
     val iconSize: Dp,
     val decorationAreaType: DecorationAreaType,
     val skinColors: AuroraSkinColors,
+    val colorSchemeBundle: AuroraColorSchemeBundle?,
     val modelStateInfoSnapshot: ModelStateInfoSnapshot,
     val paintDelegate: (drawScope: DrawScope, iconSize: Dp, colorScheme: AuroraColorScheme) -> Unit,
     val density: Density
@@ -65,6 +67,7 @@ class TransitionAwarePainter(
             colorScheme = mutableColorScheme,
             modelStateInfo = modelStateInfoSnapshot,
             skinColors = skinColors,
+            colorSchemeBundle = colorSchemeBundle,
             decorationAreaType = decorationAreaType,
             associationKind = ColorSchemeAssociationKind.Mark
         )

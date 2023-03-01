@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 
 data class SliderContentModel(
     val value: Float,
@@ -36,6 +37,7 @@ object SliderSizingConstants {
 }
 
 data class SliderPresentationModel(
+    val colorSchemeBundle: AuroraColorSchemeBundle? = null,
     val tickSteps: Int = 0, // Zero means continuous slider value range
     val snapToTicks: Boolean = false,
     val drawTicks: Boolean = false
