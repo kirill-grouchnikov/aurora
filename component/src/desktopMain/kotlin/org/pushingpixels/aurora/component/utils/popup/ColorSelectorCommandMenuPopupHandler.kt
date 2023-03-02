@@ -88,7 +88,7 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
             horizontalAlignment = HorizontalAlignment.Leading,
             contentPadding = CommandButtonSizingConstants.CompactButtonContentPadding,
             isMenu = true,
-            sides = Sides.ClosedRectangle
+            sides = menuPresentationModel.itemSides
         )
 
         val layoutManager: CommandButtonLayoutManager =

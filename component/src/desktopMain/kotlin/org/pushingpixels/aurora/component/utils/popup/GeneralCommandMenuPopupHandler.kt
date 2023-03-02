@@ -370,7 +370,7 @@ internal object GeneralCommandMenuPopupHandler : CascadingCommandMenuHandler<
             horizontalAlignment = menuPresentationModel.itemHorizontalAlignment,
             contentPadding = menuPresentationModel.itemContentPadding,
             isMenu = true,
-            sides = Sides.ClosedRectangle
+            sides = menuPresentationModel.itemSides
         )
 
         var runningCommandIndex = 0

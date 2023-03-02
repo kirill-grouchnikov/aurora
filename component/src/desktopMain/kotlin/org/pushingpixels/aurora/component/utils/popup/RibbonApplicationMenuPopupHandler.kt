@@ -130,7 +130,7 @@ internal class RibbonApplicationMenuPopupHandler(
             horizontalAlignment = HorizontalAlignment.Fill,
             contentPadding = menuPresentationModel.level1ItemContentPadding,
             isMenu = true,
-            sides = Sides.ClosedRectangle
+            sides = menuPresentationModel.itemSides
         )
 
         val layoutManager: CommandButtonLayoutManager =
@@ -310,7 +310,7 @@ internal class RibbonApplicationMenuPopupHandler(
             presentationState = itemPresentationState,
             popupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignTop,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-            sides = Sides.ClosedRectangle,
+            sides = menuPresentationModel.itemSides,
             horizontalAlignment = HorizontalAlignment.Fill,
             contentPadding = menuPresentationModel.level2ItemContentPadding,
             isMenu = true

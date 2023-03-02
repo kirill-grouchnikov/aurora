@@ -98,6 +98,7 @@ object ColorSelectorCommandButtonSizingConstants {
 data class ColorSelectorCommandPopupMenuPresentationModel(
     override val itemPresentationState: CommandButtonPresentationState =
         DefaultCommandPopupMenuPresentationState,
+    val itemSides: Sides = Sides.ClosedRectangle,
     val colorColumns: Int,
     val colorCellSize: Dp = ColorSelectorCommandButtonSizingConstants.DefaultColorCellSize,
     val colorCellGap: Dp = ColorSelectorCommandButtonSizingConstants.DefaultColorCellGap,

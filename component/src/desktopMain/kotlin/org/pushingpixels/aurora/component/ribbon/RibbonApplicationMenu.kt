@@ -104,6 +104,7 @@ data class RibbonApplicationMenuCommandPopupMenuPresentationModel(
     val itemIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val itemIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val itemIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    val itemSides: Sides = Sides.ClosedRectangle,
     val itemHorizontalAlignment: HorizontalAlignment = HorizontalAlignment.Fill,
     val footerContentPadding: PaddingValues = RibbonApplicationMenuSizingConstants.DefaultFooterContentPadding,
     val level2PanelWidth: Dp = RibbonApplicationMenuSizingConstants.DefaultLevel2PanelWidth,

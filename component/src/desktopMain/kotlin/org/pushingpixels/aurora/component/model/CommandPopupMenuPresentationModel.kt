@@ -26,6 +26,7 @@ import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManagerMedium
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
+import org.pushingpixels.aurora.theming.Sides
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 
 interface BaseCommandPopupMenuPresentationModel {
@@ -40,6 +41,7 @@ data class CommandPopupMenuPresentationModel(
     val itemIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val itemIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
     val itemContentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
+    val itemSides: Sides = Sides.ClosedRectangle,
     val itemHorizontalAlignment: HorizontalAlignment = HorizontalAlignment.Fill,
     val maxVisibleItems: Int = 0,
     val iconGutterFillColorQuery: ((AuroraColorScheme) -> Color)? = null,
