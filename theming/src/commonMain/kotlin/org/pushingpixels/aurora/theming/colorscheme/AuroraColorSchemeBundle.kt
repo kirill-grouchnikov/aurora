@@ -49,7 +49,7 @@ class AuroraColorSchemeBundle(
      * scheme. This map doesn't have to contain entries for all
      * [ComponentState] instances.
      */
-    private val stateHighlightSchemeAlphaMap: MutableMap<ComponentState, Float> = hashMapOf()
+    private val stateHighlightAlphaMap: MutableMap<ComponentState, Float> = hashMapOf()
 
     /**
      * If there is no explicitly registered color scheme for pressed component
@@ -337,17 +337,17 @@ class AuroraColorSchemeBundle(
     fun registerHighlightAlpha(alpha: Float, vararg states: ComponentState) {
         if (states.isEmpty()) {
             for (state in ComponentState.getAllStates()) {
-                stateHighlightSchemeAlphaMap[state] = alpha
+                stateHighlightAlphaMap[state] = alpha
             }
         } else {
             for (state in states) {
-                stateHighlightSchemeAlphaMap[state] = alpha
+                stateHighlightAlphaMap[state] = alpha
             }
         }
     }
 
     fun hasHighlightAlphaFor(componentState: ComponentState) : Boolean {
-        return stateHighlightSchemeAlphaMap.containsKey(componentState)
+        return stateHighlightAlphaMap.containsKey(componentState)
     }
 
     /**
@@ -357,7 +357,7 @@ class AuroraColorSchemeBundle(
      * @return Highlight color scheme alpha channel.
      */
     fun getHighlightAlpha(componentState: ComponentState): Float {
-        val registered = stateHighlightSchemeAlphaMap[componentState]
+        val registered = stateHighlightAlphaMap[componentState]
         return registered ?: 1.0f
     }
 
@@ -418,7 +418,7 @@ class AuroraColorSchemeBundle(
         result.stateAlphaMap.putAll(this.stateAlphaMap)
 
         // highlight alphas are the same
-        result.stateHighlightSchemeAlphaMap.putAll(this.stateHighlightSchemeAlphaMap)
+        result.stateHighlightAlphaMap.putAll(this.stateHighlightAlphaMap)
         return result
     }
 
