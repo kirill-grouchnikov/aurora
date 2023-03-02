@@ -640,7 +640,6 @@ class AuroraSkinColors {
         )
     }
 
-
     /**
      * Returns indication whether the specified decoration area type should have
      * their background painted by [AuroraDecorationPainter.paintDecorationArea]

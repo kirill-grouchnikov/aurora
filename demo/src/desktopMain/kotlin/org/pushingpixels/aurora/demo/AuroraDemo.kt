@@ -985,7 +985,6 @@ fun AuroraApplicationScope.DemoArea(
                     )
                 ).project()
 
-
                 Spacer(modifier = Modifier.width(16.dp))
 
                 ComboBoxProjection(

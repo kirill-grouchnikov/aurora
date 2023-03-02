@@ -292,7 +292,6 @@ internal class RibbonApplicationMenuPopupHandler(
         }
     }
 
-
     @Composable
     private fun generateLevel2Content(
         modifier: Modifier,
