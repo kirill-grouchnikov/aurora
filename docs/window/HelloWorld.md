@@ -1,6 +1,6 @@
 ## Window - introduction
 
-Note: Before starting with Aurora window APIs, make yourself comfortable with Desktop Compose [window APIs](https://github.com/JetBrains/compose-jb/tree/master/tutorials/Window_API_new).
+Note: Before starting with Aurora window APIs, make yourself comfortable with Desktop Compose [window APIs](https://github.com/JetBrains/compose-multiplatform/tree/master/tutorials/Window_API_new).
 
 At the most basic level, Desktop Compose application skeleton looks like this:
 
