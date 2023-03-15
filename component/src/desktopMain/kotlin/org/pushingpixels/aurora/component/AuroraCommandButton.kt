@@ -1847,12 +1847,12 @@ private fun CommandButtonPopupIconContent(
     Box {
         Canvas(modifier = Modifier.matchParentSize()) {
             val arrowWidth = if (popupPlacementStrategy.isHorizontal)
-                ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx() else
-                ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx()
+                ArrowSizingConstants.DefaultSingleArrowHeight.toPx() else
+                ArrowSizingConstants.DefaultSingleArrowWidth.toPx()
             val arrowHeight =
                 if (popupPlacementStrategy.isHorizontal)
-                    ComboBoxSizingConstants.DefaultComboBoxArrowWidth.toPx() else
-                    ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx()
+                    ArrowSizingConstants.DefaultSingleArrowWidth.toPx() else
+                    ArrowSizingConstants.DefaultSingleArrowHeight.toPx()
             translate(
                 left = (size.width - arrowWidth) / 2.0f,
                 top = (size.height - arrowHeight) / 2.0f

@@ -21,6 +21,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.component.utils.ArrowSizingConstants
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
@@ -35,8 +36,8 @@ data class ComboBoxContentModel<E>(
 ): ContentModel
 
 object ComboBoxSizingConstants {
-    val DefaultComboBoxArrowWidth = 10.dp
-    val DefaultComboBoxArrowHeight = 7.dp
+    val DefaultComboBoxArrowWidth = ArrowSizingConstants.DefaultSingleArrowWidth
+    val DefaultComboBoxArrowHeight = ArrowSizingConstants.DefaultSingleArrowHeight
     val DefaultComboBoxContentArrowGap = 6.dp
     val DefaultComboBoxContentPadding =
         PaddingValues(start = 6.dp, top = 3.dp, end = 6.dp, bottom = 4.dp)

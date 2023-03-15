@@ -500,7 +500,7 @@ internal fun <E> AuroraComboBox(
                 prototypeDisplayFullWidth += (16.dp + ComboBoxSizingConstants.DefaultComboBoxIconTextLayoutGap * presentationModel.horizontalGapScaleFactor)
             }
             prototypeDisplayFullWidth += (ComboBoxSizingConstants.DefaultComboBoxContentArrowGap
-                    + ComboBoxSizingConstants.DefaultComboBoxArrowWidth)
+                    + ArrowSizingConstants.DefaultSingleArrowHeight)
             prototypeDisplayFullWidth += (prototypeDisplayLabelWidth / density.density).dp
             prototypeDisplayFullWidth += presentationModel.contentPadding.calculateEndPadding(layoutDirection)
         }

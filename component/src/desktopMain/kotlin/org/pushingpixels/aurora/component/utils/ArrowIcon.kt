@@ -29,6 +29,8 @@ import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 
 internal object ArrowSizingConstants {
     val DefaultArrowStroke = 2.0.dp
+    val DefaultSingleArrowWidth = 10.dp
+    val DefaultSingleArrowHeight = 7.dp
     val DefaultDoubleArrowWidth = 8.dp
     val DefaultDoubleArrowHeight = 5.dp
     val DefaultDoubleArrowStroke = 1.5.dp

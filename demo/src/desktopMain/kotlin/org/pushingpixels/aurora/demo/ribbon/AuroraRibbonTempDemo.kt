@@ -87,7 +87,6 @@ fun main() = auroraApplication {
                         expandKeyTip = "L"
                     )
                 ).project(
-                    modifier = Modifier.background(Color(0xFFFFA0A0)),
                     presentationPriority = PresentationPriority.Top,
                 )
             }

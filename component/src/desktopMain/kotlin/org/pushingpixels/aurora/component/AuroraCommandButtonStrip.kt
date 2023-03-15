@@ -21,13 +21,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.theming.Side
 import org.pushingpixels.aurora.theming.Sides
 
-@OptIn(AuroraInternalApi::class)
 @Composable
 private fun CommandButtonStripContent(
     commandGroup: CommandGroup,

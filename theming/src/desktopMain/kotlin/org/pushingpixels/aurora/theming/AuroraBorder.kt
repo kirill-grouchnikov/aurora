@@ -22,9 +22,12 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.painter.border.AuroraBorderPainter
+import org.pushingpixels.aurora.theming.utils.getBaseOutline
 
 @Composable
 fun Modifier.auroraBorder(): Modifier = this.then(
@@ -32,6 +35,17 @@ fun Modifier.auroraBorder(): Modifier = this.then(
         decorationAreaType = AuroraSkin.decorationAreaType,
         colors = AuroraSkin.colors,
         borderPainter = AuroraSkin.painters.borderPainter
+    )
+)
+
+@Composable
+fun Modifier.auroraBorder(sides: Sides): Modifier = this.then(
+    AuroraBorderWithSides(
+        decorationAreaType = AuroraSkin.decorationAreaType,
+        colors = AuroraSkin.colors,
+        borderPainter = AuroraSkin.painters.borderPainter,
+        layoutDirection = LocalLayoutDirection.current,
+        sides = sides
     )
 )
 
@@ -71,6 +85,50 @@ private class AuroraBorder(
                     bottomLeftCornerRadius = innerRadius
                 )
             ) else null
+
+        borderPainter.paintBorder(
+            this, size, borderOutline, innerBorderOutline, borderScheme, 1.0f
+        )
+
+        // And don't forget to draw the content
+        drawContent()
+    }
+}
+
+private class AuroraBorderWithSides(
+    private val decorationAreaType: DecorationAreaType,
+    private val colors: AuroraSkinColors,
+    private val borderPainter: AuroraBorderPainter,
+    private val layoutDirection: LayoutDirection,
+    private val sides: Sides
+) : DrawModifier {
+    override fun ContentDrawScope.draw() {
+        val borderScheme = colors.getColorScheme(
+            decorationAreaType = decorationAreaType,
+            associationKind = ColorSchemeAssociationKind.Border,
+            componentState = ComponentState.Enabled
+        )
+
+        val borderOutline = getBaseOutline(
+            layoutDirection = layoutDirection,
+            width = size.width,
+            height = size.height,
+            radius = 2.0f.dp.toPx(),
+            sides = sides,
+            insets = 0.5f,
+            outlineKind = OutlineKind.Border
+        )
+
+        val innerBorderOutline = if (borderPainter.isPaintingInnerOutline)
+            getBaseOutline(
+                layoutDirection = layoutDirection,
+                width = size.width,
+                height = size.height,
+                radius = 1.0f.dp.toPx(),
+                sides = sides,
+                insets = 1.0f,
+                outlineKind = OutlineKind.Border
+            )  else null
 
         borderPainter.paintBorder(
             this, size, borderOutline, innerBorderOutline, borderScheme, 1.0f
