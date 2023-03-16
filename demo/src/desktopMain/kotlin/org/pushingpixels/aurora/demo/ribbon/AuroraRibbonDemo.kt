@@ -403,7 +403,7 @@ internal class RibbonBuilder(val resourceBundle: ResourceBundle, val density: Fl
                                         font = overlayFont
                                     ),
                                     x = 2.0f,
-                                    y = size.height - overlayFont.metrics.height - 2.0f,
+                                    y = size.height - 4.0f,
                                     paint = org.jetbrains.skia.Paint().also { skiaPaint ->
                                         skiaPaint.color4f = Color4f(
                                             r = 0f,

@@ -2,8 +2,11 @@ package org.pushingpixels.aurora.component.ribbon.impl
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.Layout
@@ -14,6 +17,7 @@ import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.common.hexadecimal
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
@@ -26,6 +30,7 @@ import org.pushingpixels.aurora.component.utils.drawArrow
 import org.pushingpixels.aurora.component.utils.drawDoubleArrow
 import org.pushingpixels.aurora.theming.*
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 @OptIn(AuroraInternalApi::class)
@@ -45,7 +50,13 @@ internal fun RibbonGallery(
     val colors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
 
+    val flatCommandList = contentModel.commandGroups.map { it.commands }.flatten()
+
     val visibleCount = presentationModel.preferredVisibleCommandCounts[presentationPriority]!!
+    val fullCount = flatCommandList.size
+    val firstVisibleIndex = remember { mutableStateOf(0) }
+    val lastVisibleIndex = derivedStateOf { min(firstVisibleIndex.value + visibleCount - 1, fullCount - 1) }
+    println("Showing [${firstVisibleIndex.value} - ${lastVisibleIndex.value}] out of $fullCount")
 
     val buttonPresentationModel = CommandButtonPresentationModel(
         presentationState = presentationModel.commandButtonPresentationState,
@@ -54,8 +65,13 @@ internal fun RibbonGallery(
         textOverflow = presentationModel.commandButtonTextOverflow
     )
 
+    // Note usage of Original icon filter strategy since we're using TransitionAwarePainterDelegate
+    // to draw the arrows
     val scrollerButtonPresentationModel = CommandButtonPresentationModel(
         presentationState = CommandButtonPresentationState.Small,
+        iconActiveFilterStrategy = IconFilterStrategy.Original,
+        iconEnabledFilterStrategy = IconFilterStrategy.Original,
+        iconDisabledFilterStrategy = IconFilterStrategy.Original,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
         contentPadding = PaddingValues(all = 0.dp)
     )
@@ -97,9 +113,9 @@ internal fun RibbonGallery(
                 )
             }
         },
-        isActionEnabled = true,
+        isActionEnabled = (firstVisibleIndex.value > 0),
         action = {
-            println("Scroll up!")
+            firstVisibleIndex.value = firstVisibleIndex.value - visibleCount
         })
     val bottomScrollerCommand = Command(text = "",
         icon = object : TransitionAwarePainterDelegate() {
@@ -138,9 +154,9 @@ internal fun RibbonGallery(
                 )
             }
         },
-        isActionEnabled = true,
+        isActionEnabled = (lastVisibleIndex.value != (fullCount - 1)),
         action = {
-            println("Scroll down!")
+            firstVisibleIndex.value = firstVisibleIndex.value + visibleCount
         })
     val showFullGalleryInPopupCommand = Command(text = "",
         icon = object : TransitionAwarePainterDelegate() {
@@ -199,9 +215,9 @@ internal fun RibbonGallery(
             ).padding(presentationModel.contentPadding),
             horizontalArrangement = Arrangement.spacedBy(presentationModel.layoutGap)
         ) {
-            for (index in 0 until visibleCount) {
+            for (index in firstVisibleIndex.value .. lastVisibleIndex.value) {
                 CommandButtonProjection(
-                    contentModel = contentModel.commandGroups[0].commands[index],
+                    contentModel = flatCommandList[index],
                     presentationModel = buttonPresentationModel
                 ).project()
             }
