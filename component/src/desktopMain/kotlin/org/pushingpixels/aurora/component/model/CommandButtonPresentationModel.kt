@@ -69,6 +69,7 @@ interface BaseCommandButtonPresentationModel: PresentationModel {
     val textOverflow: TextOverflow
     val popupPlacementStrategy: PopupPlacementStrategy
     val toDismissPopupsOnActivation: Boolean
+    val showPopupIcon: Boolean
     val actionKeyTip: String?
     val popupKeyTip: String?
     val autoRepeatAction: Boolean
@@ -101,6 +102,7 @@ data class CommandButtonPresentationModel(
     override val textOverflow: TextOverflow = TextOverflow.Clip,
     override val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
     override val toDismissPopupsOnActivation: Boolean = true,
+    override val showPopupIcon: Boolean = true,
     override val actionKeyTip: String? = null,
     override val popupKeyTip: String? = null,
     override val autoRepeatAction: Boolean = false,

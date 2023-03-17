@@ -143,6 +143,7 @@ data class ColorSelectorCommandButtonPresentationModel(
     override val textOverflow: TextOverflow = TextOverflow.Clip,
     override val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
     override val toDismissPopupsOnActivation: Boolean = true,
+    override val showPopupIcon: Boolean = true,
     override val popupKeyTip: String? = null,
     override val popupMenuPresentationModel: ColorSelectorCommandPopupMenuPresentationModel =
         ColorSelectorCommandPopupMenuPresentationModel(colorColumns = 10),

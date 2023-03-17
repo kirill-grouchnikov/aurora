@@ -64,7 +64,7 @@ internal open class CommandButtonLayoutManagerSmall(
             width += layoutHGap
         }
         // popup icon?
-        if (hasPopup) {
+        if (hasPopup && presentationModel.showPopupIcon) {
             // padding before the popup icon
             width += 2 * layoutHGap
             // popup icon width
@@ -111,7 +111,7 @@ internal open class CommandButtonLayoutManagerSmall(
             isTextInActionArea = (hasAction or command.isActionToggle) &&
                     (presentationModel.textClick == TextClick.Action),
             separatorOrientation = CommandButtonLayoutManager.CommandButtonSeparatorOrientation.Vertical,
-            showPopupIcon = commandButtonKind.hasPopup
+            showPopupIcon = commandButtonKind.hasPopup && presentationModel.showPopupIcon
         )
     }
 
@@ -192,7 +192,7 @@ internal open class CommandButtonLayoutManagerSmall(
                 )
                 x += iconWidth + layoutHGap
             }
-            if (hasPopup) {
+            if (hasPopup && presentationModel.showPopupIcon) {
                 x += 2 * layoutHGap
                 val popupIconWidth = CommandButtonSizingConstants.PopupIconWidth.toPx()
                 val popupIconHeight = CommandButtonSizingConstants.PopupIconHeight.toPx()
@@ -280,7 +280,7 @@ internal open class CommandButtonLayoutManagerSmall(
                 )
                 x -= iconWidth + layoutHGap
             }
-            if (hasPopup) {
+            if (hasPopup && presentationModel.showPopupIcon) {
                 x -= 2 * layoutHGap
                 val popupIconWidth = CommandButtonSizingConstants.PopupIconWidth.toPx()
                 val popupIconHeight = CommandButtonSizingConstants.PopupIconHeight.toPx()

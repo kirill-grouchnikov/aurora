@@ -21,14 +21,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.*
-import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
-import org.pushingpixels.aurora.component.utils.appmenu.CommandButtonLayoutManagerAppMenuLevel2
-import org.pushingpixels.aurora.component.utils.appmenu.CommandButtonLayoutManagerRibbonApplicationMenuButton
 import org.pushingpixels.aurora.component.utils.popup.RibbonApplicationMenuPopupHandler
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
@@ -56,39 +54,6 @@ data class RibbonApplicationMenuCommand(
     override val actionRichTooltip = null
     override val onTriggerActionToggleSelectedChange = null
     override val isSecondaryEnabled = true
-}
-
-object RibbonApplicationMenuButtonPresentationStates {
-    val AppMenuButtonState: CommandButtonPresentationState =
-        object : CommandButtonPresentationState("Ribbon Application Menu Button") {
-            override fun createLayoutManager(
-                layoutDirection: LayoutDirection,
-                density: Density,
-                textStyle: TextStyle,
-                fontFamilyResolver: FontFamily.Resolver
-            ): CommandButtonLayoutManager {
-                return CommandButtonLayoutManagerRibbonApplicationMenuButton(
-                    layoutDirection, density, textStyle, fontFamilyResolver
-                )
-            }
-        }
-
-    val RibbonAppMenuSecondaryLevel: CommandButtonPresentationState =
-        object : CommandButtonPresentationState("Ribbon application menu tile level 2") {
-            override fun createLayoutManager(
-                layoutDirection: LayoutDirection,
-                density: Density,
-                textStyle: TextStyle,
-                fontFamilyResolver: FontFamily.Resolver
-            ): CommandButtonLayoutManager {
-                return CommandButtonLayoutManagerAppMenuLevel2(
-                    layoutDirection,
-                    density,
-                    textStyle,
-                    fontFamilyResolver
-                )
-            }
-        }
 }
 
 object RibbonApplicationMenuSizingConstants {
@@ -120,14 +85,13 @@ data class RibbonApplicationMenuCommandButtonPresentationModel(
             itemPresentationState = CommandButtonPresentationState.Tile,
             level1ItemContentPadding = PaddingValues(horizontal = 6.dp, vertical = 8.dp)
         ),
-    override val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
     override val popupKeyTip: String? = null,
     override val popupRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),
     override val contentPadding: PaddingValues = CommandButtonSizingConstants.WideButtonContentPadding,
     override val sides: Sides = Sides()
 ) : BaseCommandButtonPresentationModel {
-    override val presentationState: CommandButtonPresentationState =
-        RibbonApplicationMenuButtonPresentationStates.AppMenuButtonState
+    override val presentationState: CommandButtonPresentationState = CommandButtonPresentationState.Medium
+//        RibbonApplicationMenuButtonPresentationStates.AppMenuButtonState
     override val colorSchemeBundle: AuroraColorSchemeBundle? = null
     override val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
     override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center
@@ -136,6 +100,8 @@ data class RibbonApplicationMenuCommandButtonPresentationModel(
     override val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original
     override val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original
     override val forceAllocateSpaceForIcon: Boolean = false
+    override val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart
+    override val showPopupIcon: Boolean = false
     override val actionKeyTip = null
     override val autoRepeatAction = false
     override val autoRepeatInitialInterval = CommandButtonInteractionConstants.DefaultAutoRepeatInitialIntervalMillis

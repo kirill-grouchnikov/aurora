@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
@@ -59,154 +58,6 @@ data class CustomMenuContentModel(
     val entries: List<Command>
 ) : BaseCommandMenuContentModel
 
-class CommandButtonLayoutManagerCustom(
-    override val layoutDirection: LayoutDirection,
-    _density: Density
-) : CommandButtonLayoutManager {
-    override val density = _density.density
-    override val fontScale = _density.fontScale
-
-    override fun getPreferredIconSize(
-        command: BaseCommand,
-        presentationModel: BaseCommandButtonPresentationModel
-    ): DpSize {
-        return DpSize(16.dp, 16.dp)
-    }
-
-    override fun getPreferredSize(
-        command: BaseCommand,
-        presentationModel: BaseCommandButtonPresentationModel,
-        preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
-    ): Size {
-        val prefIconWidth = getPreferredIconSize(command, presentationModel).width.toPx()
-        val prefIconHeight = getPreferredIconSize(command, presentationModel).height.toPx()
-
-        val paddingValues = presentationModel.contentPadding
-        val by = presentationModel.verticalGapScaleFactor * paddingValues.verticalPaddings.toPx()
-        val bx = presentationModel.horizontalGapScaleFactor * paddingValues.horizontalPaddings.toPx()
-
-        return Size(bx + prefIconWidth, by + prefIconHeight)
-    }
-
-    override fun getPreLayoutInfo(
-        command: BaseCommand,
-        presentationModel: BaseCommandButtonPresentationModel
-    ): CommandButtonLayoutManager.CommandButtonPreLayoutInfo {
-        // Popup only button with no popup (arrow) icon
-        return CommandButtonLayoutManager.CommandButtonPreLayoutInfo(
-            commandButtonKind = CommandButtonKind.PopupOnly,
-            showIcon = true,
-            texts = emptyList(),
-            extraTexts = emptyList(),
-            isTextInActionArea = false,
-            separatorOrientation = null,
-            showPopupIcon = false
-        )
-    }
-
-    override fun getLayoutInfo(
-        constraints: Constraints,
-        command: BaseCommand,
-        presentationModel: BaseCommandButtonPresentationModel,
-        preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
-    ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
-        val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo)
-
-        val paddingValues = presentationModel.contentPadding
-        val paddingTop = presentationModel.verticalGapScaleFactor * paddingValues.topPadding.toPx()
-        val paddingBottom = presentationModel.verticalGapScaleFactor * paddingValues.bottomPadding.toPx()
-
-        val iconWidth = getPreferredIconSize(command, presentationModel).width.toPx()
-        val iconHeight = getPreferredIconSize(command, presentationModel).height.toPx()
-
-        val ltr = (layoutDirection == LayoutDirection.Ltr)
-
-        var shiftX = 0.0f
-        var finalWidth = preferredSize.width
-        var finalHeight = preferredSize.height
-        if (constraints.hasFixedWidth && (constraints.maxWidth > 0)) {
-            finalWidth = constraints.maxWidth.toFloat()
-            if (finalWidth > preferredSize.width) {
-                // We have more horizontal space than needed to display the content.
-                // Consult the horizontal alignment attribute of the command button to see
-                // how we should shift the content horizontally.
-                when (presentationModel.horizontalAlignment) {
-                    HorizontalAlignment.Leading ->
-                        shiftX = 0.0f
-
-                    HorizontalAlignment.Center,
-                    HorizontalAlignment.Fill ->
-                        // shift everything to be centered horizontally
-                        shiftX = (finalWidth - preferredSize.width) / 2
-
-                    HorizontalAlignment.Trailing -> if (ltr) {
-                        // shift everything to the right
-                        shiftX = finalWidth - preferredSize.width
-                    }
-                }
-            }
-        }
-        if (finalWidth < presentationModel.minWidth.toPx()) {
-            shiftX += (presentationModel.minWidth.toPx() - finalWidth) / 2.0f
-            finalWidth = presentationModel.minWidth.toPx()
-        }
-        if (constraints.hasFixedHeight && (constraints.maxHeight > 0)) {
-            finalHeight = constraints.maxHeight.toFloat()
-        }
-
-        val iconTop = paddingTop + (finalHeight - iconHeight - paddingTop - paddingBottom) / 2
-        val iconRect = if (ltr) {
-            val x = paddingValues.startPadding.toPx() + shiftX
-
-            Rect(
-                left = x,
-                right = x + iconWidth,
-                top = iconTop,
-                bottom = iconTop + iconHeight
-            )
-        } else {
-            val x = finalWidth - paddingValues.startPadding.toPx() - shiftX
-
-            Rect(
-                left = x - iconWidth,
-                right = x,
-                top = iconTop,
-                bottom = iconTop + iconHeight
-            )
-        }
-
-        val popupClickArea = Rect(
-            left = 0.0f,
-            right = finalWidth,
-            top = 0.0f,
-            bottom = finalHeight
-        )
-
-        return CommandButtonLayoutManager.CommandButtonLayoutInfo(
-            fullSize = Size(finalWidth, finalHeight),
-            actionClickArea = Rect.Zero,
-            popupClickArea = popupClickArea,
-            separatorArea = Rect.Zero,
-            iconRect = iconRect,
-            textLayoutInfoList = emptyList(),
-            extraTextLayoutInfoList = emptyList(),
-            popupActionRect = Rect.Zero
-        )
-    }
-}
-
-val CustomPresentationState: CommandButtonPresentationState =
-    object : CommandButtonPresentationState("Custom") {
-        override fun createLayoutManager(
-            layoutDirection: LayoutDirection,
-            density: Density,
-            textStyle: TextStyle,
-            fontFamilyResolver: FontFamily.Resolver
-        ): CommandButtonLayoutManager {
-            return CommandButtonLayoutManagerCustom(layoutDirection, density)
-        }
-    }
-
 data class CustomCommandPopupMenuPresentationModel(
     override val itemPresentationState: CommandButtonPresentationState =
         DefaultCommandPopupMenuPresentationState
@@ -230,7 +81,7 @@ data class CustomCommandButtonPresentationModel(
     override val minWidth: Dp = 0.dp,
     override val sides: Sides = Sides()
 ) : BaseCommandButtonPresentationModel {
-    override val presentationState = CustomPresentationState
+    override val presentationState = CommandButtonPresentationState.Small
     override val forceAllocateSpaceForIcon = false
     override val actionKeyTip = null
     override val autoRepeatAction = false
@@ -244,6 +95,7 @@ data class CustomCommandButtonPresentationModel(
     override val popupRichTooltipPresentationModel = RichTooltipPresentationModel()
     override val horizontalGapScaleFactor = 1.0f
     override val verticalGapScaleFactor = 1.0f
+    override val showPopupIcon: Boolean = false
     override val isMenu = false
 }
 

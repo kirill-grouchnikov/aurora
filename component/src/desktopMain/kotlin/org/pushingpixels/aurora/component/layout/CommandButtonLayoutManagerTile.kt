@@ -58,7 +58,7 @@ internal open class CommandButtonLayoutManagerTile(
                 presentationModel.horizontalGapScaleFactor).toPx()
         val hasIcon = (command.icon != null) || presentationModel.forceAllocateSpaceForIcon
         val hasText = buttonText.isNotEmpty() or (extraText != null)
-        val hasPopupIcon = (command.secondaryContentModel != null)
+        val hasPopup = (command.secondaryContentModel != null)
         val prefIconWidth = getPreferredIconSize(command, presentationModel).width.toPx()
         val prefIconHeight = getPreferredIconSize(command, presentationModel).height.toPx()
 
@@ -107,7 +107,7 @@ internal open class CommandButtonLayoutManagerTile(
             width += layoutHGap
         }
         // popup icon?
-        if (hasPopupIcon) {
+        if (hasPopup && presentationModel.showPopupIcon) {
             // padding before the popup icon
             width += 2 * layoutHGap
             // popup icon width
@@ -155,7 +155,7 @@ internal open class CommandButtonLayoutManagerTile(
             isTextInActionArea = (hasAction or command.isActionToggle) &&
                     (presentationModel.textClick == TextClick.Action),
             separatorOrientation = CommandButtonLayoutManager.CommandButtonSeparatorOrientation.Vertical,
-            showPopupIcon = commandButtonKind.hasPopup
+            showPopupIcon = commandButtonKind.hasPopup && presentationModel.showPopupIcon
         )
     }
 
@@ -303,7 +303,7 @@ internal open class CommandButtonLayoutManagerTile(
 
                 x += layoutHGap
             }
-            if (hasPopup) {
+            if (hasPopup && presentationModel.showPopupIcon) {
                 val popupIconWidth = CommandButtonSizingConstants.PopupIconWidth.toPx()
                 val popupIconHeight = CommandButtonSizingConstants.PopupIconHeight.toPx()
                 if (hasText || hasIcon) {
@@ -576,7 +576,7 @@ internal open class CommandButtonLayoutManagerTile(
 
                 x -= layoutHGap
             }
-            if (hasPopup) {
+            if (hasPopup && presentationModel.showPopupIcon) {
                 val popupIconWidth = CommandButtonSizingConstants.PopupIconWidth.toPx()
                 val popupIconHeight = CommandButtonSizingConstants.PopupIconHeight.toPx()
                 if (hasText || hasIcon) {
