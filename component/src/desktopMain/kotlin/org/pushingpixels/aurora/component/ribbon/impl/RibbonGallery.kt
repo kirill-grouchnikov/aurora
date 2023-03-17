@@ -199,11 +199,12 @@ internal fun RibbonGallery(
                 )
             }
         },
-        isActionEnabled = true,
-        action = {
-            println("Show popup gallery!")
-        })
-
+        secondaryContentModel = CommandMenuContentModel(
+            panelContentModel = CommandPanelContentModel(commandGroups = contentModel.commandGroups),
+            groups = contentModel.extraPopupGroups
+        ),
+        isSecondaryEnabled = true,
+    )
 
     Layout(content = {
         Row(
@@ -260,6 +261,15 @@ internal fun RibbonGallery(
                                 Side.Top,
                                 Side.Leading
                             ), openSides = setOf(Side.Top)
+                        ),
+                        showPopupIcon = false,
+                        popupMenuPresentationModel = CommandPopupMenuPresentationModel(
+                            panelPresentationModel = CommandPopupMenuPanelPresentationModel(
+                                layoutSpec = presentationModel.popupLayoutSpec,
+                                contentPadding = PaddingValues(0.dp),
+                                showGroupLabels = contentModel.commandGroups.all { !it.title.isNullOrEmpty() },
+                                commandPresentationState = presentationModel.commandButtonPresentationState
+                            )
                         )
                     )
                 )

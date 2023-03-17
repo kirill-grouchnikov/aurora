@@ -21,12 +21,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.*
+import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
+import org.pushingpixels.aurora.component.utils.appmenu.CommandButtonLayoutManagerAppMenuLevel2
 import org.pushingpixels.aurora.component.utils.popup.RibbonApplicationMenuPopupHandler
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
@@ -54,6 +55,25 @@ data class RibbonApplicationMenuCommand(
     override val actionRichTooltip = null
     override val onTriggerActionToggleSelectedChange = null
     override val isSecondaryEnabled = true
+}
+
+object RibbonApplicationMenuButtonPresentationStates {
+    val RibbonAppMenuSecondaryLevel: CommandButtonPresentationState =
+        object : CommandButtonPresentationState("Ribbon application menu tile level 2") {
+            override fun createLayoutManager(
+                layoutDirection: LayoutDirection,
+                density: Density,
+                textStyle: TextStyle,
+                fontFamilyResolver: FontFamily.Resolver
+            ): CommandButtonLayoutManager {
+                return CommandButtonLayoutManagerAppMenuLevel2(
+                    layoutDirection,
+                    density,
+                    textStyle,
+                    fontFamilyResolver
+                )
+            }
+        }
 }
 
 object RibbonApplicationMenuSizingConstants {
