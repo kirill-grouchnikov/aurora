@@ -216,8 +216,8 @@ interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
         popupContent.preferredSize = Dimension(popupRect.width, popupRect.height)
 
         val popupDpSize = DpSize(
-            width = (popupRect.width / density.density).dp,
-            height = (popupRect.height / density.density).dp
+            width = popupRect.width.dp,
+            height = popupRect.height.dp
         )
 
         // This line is needed to ensure that each popup is displayed in its own heavyweight window

@@ -113,7 +113,7 @@ fun Modifier.auroraPopupMenuRowBackground(
     )
 }
 
-private class PopupMenuRowBackground constructor(
+private class PopupMenuRowBackground(
     private val backgroundFill: Color,
     private val gutterFill: Color?,
     private val gutterWidth: Float,
