@@ -1,20 +1,23 @@
 package org.pushingpixels.aurora.component.ribbon.impl
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.hexadecimal
@@ -158,7 +161,8 @@ internal fun RibbonGallery(
         action = {
             firstVisibleIndex.value = firstVisibleIndex.value + visibleCount
         })
-    val showFullGalleryInPopupCommand = Command(text = "",
+    val showFullGalleryInPopupCommand = Command(
+        text = "",
         icon = object : TransitionAwarePainterDelegate() {
             override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
                 return TransitionAwarePainter(
@@ -206,76 +210,88 @@ internal fun RibbonGallery(
         isSecondaryEnabled = true,
     )
 
-    Layout(content = {
-        Row(
-            modifier = modifier.auroraBorder(
-                sides = Sides(
-                    openSides = setOf(Side.Trailing),
-                    straightSides = setOf(Side.Trailing)
-                )
-            ).padding(presentationModel.contentPadding),
-            horizontalArrangement = Arrangement.spacedBy(presentationModel.layoutGap)
-        ) {
-            for (index in firstVisibleIndex.value .. lastVisibleIndex.value) {
-                CommandButtonProjection(
-                    contentModel = flatCommandList[index],
-                    presentationModel = buttonPresentationModel
-                ).project()
-            }
-        }
+    val galleryTopLeftOffset = remember { AuroraOffset(0.0f, 0.0f) }
+    val gallerySize = remember { mutableStateOf(IntSize(0, 0)) }
 
-        Column {
-            CommandButtonProjection(
-                contentModel = topScrollerCommand,
-                presentationModel = scrollerButtonPresentationModel.overlayWith(
-                    CommandButtonPresentationModel.Overlay(
-                        sides = Sides(
-                            straightSides = setOf(
-                                Side.Bottom,
-                                Side.Leading
+    Layout(modifier = Modifier.galleryLocator(topLeftOffset = galleryTopLeftOffset, size = gallerySize),
+        content = {
+            Row(
+                modifier = modifier.auroraBorder(
+                    sides = Sides(
+                        openSides = setOf(Side.Trailing),
+                        straightSides = setOf(Side.Trailing)
+                    )
+                ).padding(presentationModel.contentPadding),
+                horizontalArrangement = Arrangement.spacedBy(presentationModel.layoutGap)
+            ) {
+                for (index in firstVisibleIndex.value..lastVisibleIndex.value) {
+                    CommandButtonProjection(
+                        contentModel = flatCommandList[index],
+                        presentationModel = buttonPresentationModel
+                    ).project()
+                }
+            }
+
+            Column {
+                CommandButtonProjection(
+                    contentModel = topScrollerCommand,
+                    presentationModel = scrollerButtonPresentationModel.overlayWith(
+                        CommandButtonPresentationModel.Overlay(
+                            sides = Sides(
+                                straightSides = setOf(
+                                    Side.Bottom,
+                                    Side.Leading
+                                )
                             )
                         )
                     )
-                )
-            ).project(modifier = Modifier.weight(1.0f / 3.0f))
-            CommandButtonProjection(
-                contentModel = bottomScrollerCommand,
-                presentationModel = scrollerButtonPresentationModel.overlayWith(
-                    CommandButtonPresentationModel.Overlay(
-                        sides = Sides(
-                            straightSides = setOf(
-                                Side.Bottom,
-                                Side.Top,
-                                Side.Leading
-                            ), openSides = setOf(Side.Top)
-                        )
-                    )
-                )
-            ).project(modifier = Modifier.weight(1.0f / 3.0f))
-            CommandButtonProjection(
-                contentModel = showFullGalleryInPopupCommand,
-                presentationModel = scrollerButtonPresentationModel.overlayWith(
-                    CommandButtonPresentationModel.Overlay(
-                        sides = Sides(
-                            straightSides = setOf(
-                                Side.Top,
-                                Side.Leading
-                            ), openSides = setOf(Side.Top)
-                        ),
-                        showPopupIcon = false,
-                        popupMenuPresentationModel = CommandPopupMenuPresentationModel(
-                            panelPresentationModel = CommandPopupMenuPanelPresentationModel(
-                                layoutSpec = presentationModel.popupLayoutSpec,
-                                contentPadding = PaddingValues(0.dp),
-                                showGroupLabels = contentModel.commandGroups.all { !it.title.isNullOrEmpty() },
-                                commandPresentationState = presentationModel.commandButtonPresentationState
+                ).project(modifier = Modifier.weight(1.0f / 3.0f))
+                CommandButtonProjection(
+                    contentModel = bottomScrollerCommand,
+                    presentationModel = scrollerButtonPresentationModel.overlayWith(
+                        CommandButtonPresentationModel.Overlay(
+                            sides = Sides(
+                                straightSides = setOf(
+                                    Side.Bottom,
+                                    Side.Top,
+                                    Side.Leading
+                                ), openSides = setOf(Side.Top)
                             )
                         )
                     )
-                )
-            ).project(modifier = Modifier.weight(1.0f / 3.0f))
-        }
-    },
+                ).project(modifier = Modifier.weight(1.0f / 3.0f))
+                CommandButtonProjection(
+                    contentModel = showFullGalleryInPopupCommand,
+                    presentationModel = scrollerButtonPresentationModel.overlayWith(
+                        CommandButtonPresentationModel.Overlay(
+                            sides = Sides(
+                                straightSides = setOf(
+                                    Side.Top,
+                                    Side.Leading
+                                ), openSides = setOf(Side.Top)
+                            ),
+                            showPopupIcon = false,
+                            popupMenuPresentationModel = CommandPopupMenuPresentationModel(
+                                panelPresentationModel = CommandPopupMenuPanelPresentationModel(
+                                    layoutSpec = presentationModel.popupLayoutSpec,
+                                    contentPadding = PaddingValues(0.dp),
+                                    showGroupLabels = contentModel.commandGroups.all { !it.title.isNullOrEmpty() },
+                                    commandPresentationState = presentationModel.commandButtonPresentationState,
+                                )
+                            ),
+                            popupAnchorBoundsProvider = {
+                                // Passing zero height as the anchor bounds is needed to vertically align
+                                // the top edge of the popup with the top edge of our gallery
+                                Rect(
+                                    offset = galleryTopLeftOffset.asOffset(density),
+                                    size = Size(width = gallerySize.value.width / density.density, height = 0.0f)
+                                )
+                            }
+                        )
+                    )
+                ).project(modifier = Modifier.weight(1.0f / 3.0f))
+            }
+        },
         measurePolicy = { measurables, constraints ->
             val buttonRow = measurables[0]
             val scrollerColumn = measurables[1]
@@ -346,3 +362,22 @@ internal fun RibbonGallery(
             }
         })
 }
+
+private class GalleryLocator(val topLeftOffset: AuroraOffset, val size: MutableState<IntSize>) :
+    OnGloballyPositionedModifier {
+    override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
+        // Convert the top left corner of the component to the root coordinates
+        val converted = coordinates.localToRoot(Offset.Zero)
+        topLeftOffset.x = converted.x
+        topLeftOffset.y = converted.y
+
+        // And store the component size
+        size.value = coordinates.size
+    }
+}
+
+@Composable
+private fun Modifier.galleryLocator(topLeftOffset: AuroraOffset, size: MutableState<IntSize>) =
+    this.then(
+        GalleryLocator(topLeftOffset, size)
+    )
