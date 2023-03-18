@@ -44,7 +44,6 @@ import org.pushingpixels.aurora.component.ribbon.RibbonApplicationMenuContentMod
 import org.pushingpixels.aurora.component.utils.TitleLabel
 import org.pushingpixels.aurora.component.utils.appmenu.CommandButtonLayoutManagerAppMenuLevel2
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
-import org.pushingpixels.aurora.component.utils.getPlacementAwarePopupShift
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
@@ -518,8 +517,8 @@ internal class RibbonApplicationMenuPopupHandler(
             y = (popupOriginatorLocationOnScreen.y + anchorBoundsInWindow.top).toInt()
         )
 
-        val popupShift = getPlacementAwarePopupShift(
-            ltr = (layoutDirection == LayoutDirection.Ltr),
+        val popupShift = BaseCommandMenuHandler.getPlacementAwarePopupShift(
+            layoutDirection = layoutDirection,
             anchorDimension = IntSize(
                 width = anchorBoundsInWindow.width.toInt(),
                 height = anchorBoundsInWindow.height.toInt()

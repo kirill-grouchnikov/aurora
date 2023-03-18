@@ -42,6 +42,7 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
 import org.pushingpixels.aurora.component.popup.awtColor
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.component.projection.IconProjection
@@ -279,8 +280,8 @@ internal fun displayRichTooltipContent(
         y = (popupOriginatorLocationOnScreen.y + anchorBoundsInWindow.top).toInt()
     )
 
-    val popupShift = getPlacementAwarePopupShift(
-        ltr = (layoutDirection == LayoutDirection.Ltr),
+    val popupShift = BaseCommandMenuHandler.getPlacementAwarePopupShift(
+        layoutDirection = layoutDirection,
         anchorDimension = IntSize(
             width = anchorBoundsInWindow.width.toInt(),
             height = anchorBoundsInWindow.height.toInt()
