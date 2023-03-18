@@ -87,6 +87,7 @@ interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
         displayPrototypeCommand: BaseCommand?,
         toDismissPopupsOnActivation: Boolean,
         popupPlacementStrategy: PopupPlacementStrategy,
+        popupAnchorBoundsProvider: (() -> Rect)?,
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>
     ) {
         val popupContentLayoutInfo = getPopupContentLayoutInfo(
@@ -112,7 +113,7 @@ interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
         val popupRect = BaseCommandMenuHandler.getPopupRectangleOnScreen(
             popupOriginator = popupOriginator,
             layoutDirection = layoutDirection,
-            anchorBoundsInWindow = anchorBoundsInWindow,
+            anchorBoundsInWindow = popupAnchorBoundsProvider?.invoke() ?: anchorBoundsInWindow,
             popupPlacementStrategy = popupPlacementStrategy,
             fullPopupSize = fullPopupSize
         )

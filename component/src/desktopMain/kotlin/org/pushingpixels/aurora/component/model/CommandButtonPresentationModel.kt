@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -80,6 +81,7 @@ interface BaseCommandButtonPresentationModel: PresentationModel {
     val textClick: TextClick
     val actionRichTooltipPresentationModel: RichTooltipPresentationModel
     val popupRichTooltipPresentationModel: RichTooltipPresentationModel
+    val popupAnchorBoundsProvider: (() -> Rect)?
     val contentPadding: PaddingValues
     val horizontalGapScaleFactor: Float
     val verticalGapScaleFactor: Float
@@ -101,6 +103,7 @@ data class CommandButtonPresentationModel(
     override val textStyle: TextStyle? = null,
     override val textOverflow: TextOverflow = TextOverflow.Clip,
     override val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
+    override val popupAnchorBoundsProvider: (() -> Rect)? = null,
     override val toDismissPopupsOnActivation: Boolean = true,
     override val showPopupIcon: Boolean = true,
     override val actionKeyTip: String? = null,
@@ -133,6 +136,7 @@ data class CommandButtonPresentationModel(
         val textStyle: TextStyle? = null,
         val textOverflow: TextOverflow? = null,
         val popupPlacementStrategy: PopupPlacementStrategy? = null,
+        val popupAnchorBoundsProvider: (() -> Rect)? = null,
         val toDismissPopupsOnActivation: Boolean? = null,
         val showPopupIcon: Boolean? = null,
         val actionKeyTip: String? = null,
@@ -168,6 +172,7 @@ data class CommandButtonPresentationModel(
             textStyle = overlay.textStyle ?: this.textStyle,
             textOverflow = overlay.textOverflow ?: this.textOverflow,
             popupPlacementStrategy = overlay.popupPlacementStrategy ?: this.popupPlacementStrategy,
+            popupAnchorBoundsProvider = overlay.popupAnchorBoundsProvider ?: this.popupAnchorBoundsProvider,
             toDismissPopupsOnActivation = overlay.toDismissPopupsOnActivation ?: this.toDismissPopupsOnActivation,
             showPopupIcon = overlay.showPopupIcon ?: this.showPopupIcon,
             actionKeyTip = overlay.actionKeyTip ?: this.actionKeyTip,

@@ -260,6 +260,7 @@ internal class RibbonApplicationMenuPopupHandler(
                                 displayPrototypeCommand: BaseCommand?,
                                 toDismissPopupsOnActivation: Boolean,
                                 popupPlacementStrategy: PopupPlacementStrategy,
+                                popupAnchorBoundsProvider: (() -> Rect)?,
                                 overlays: Map<Command, CommandButtonPresentationModel.Overlay>
                             ) {
                                 onLevel1ActionRollover.invoke(secondaryCommand)
@@ -468,12 +469,9 @@ internal class RibbonApplicationMenuPopupHandler(
         displayPrototypeCommand: BaseCommand?,
         toDismissPopupsOnActivation: Boolean,
         popupPlacementStrategy: PopupPlacementStrategy,
+        popupAnchorBoundsProvider: (() -> Rect)?,
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>
     ) {
-        val popupOriginatorLocationOnScreen = popupOriginator.locationOnScreen
-        val currentScreenBounds = popupOriginator.graphicsConfiguration.bounds
-        popupOriginatorLocationOnScreen.translate(-currentScreenBounds.x, -currentScreenBounds.y)
-
         val level1ContentLayoutInfo = getLevel1ContentLayoutInfo(
             menuContentModel = contentModel.value!!,
             menuPresentationModel = presentationModel,
@@ -506,53 +504,15 @@ internal class RibbonApplicationMenuPopupHandler(
                     / density.density
         ).toInt() + 3
 
-        val initialAnchorX = if (layoutDirection == LayoutDirection.Ltr)
-            (popupOriginatorLocationOnScreen.x + anchorBoundsInWindow.left).toInt() else
-            (popupOriginatorLocationOnScreen.x + anchorBoundsInWindow.left + anchorBoundsInWindow.width).toInt() - fullPopupWidth
-        // Initial anchor corresponds to the on-screen location of the top-left corner of the
-        // popup window under the default PopupPlacementStrategy.Downward.HAlignStart placement
-        // strategy
-        val initialAnchor = IntOffset(
-            x = initialAnchorX,
-            y = (popupOriginatorLocationOnScreen.y + anchorBoundsInWindow.top).toInt()
-        )
+        val fullPopupSize = IntSize(width = fullPopupWidth, height = fullPopupHeight)
 
-        val popupShift = BaseCommandMenuHandler.getPlacementAwarePopupShift(
+        val popupRect = BaseCommandMenuHandler.getPopupRectangleOnScreen(
+            popupOriginator = popupOriginator,
             layoutDirection = layoutDirection,
-            anchorDimension = IntSize(
-                width = anchorBoundsInWindow.width.toInt(),
-                height = anchorBoundsInWindow.height.toInt()
-            ),
-            popupDimension = IntSize(fullPopupWidth, fullPopupHeight),
-            popupPlacementStrategy = popupPlacementStrategy
+            anchorBoundsInWindow = anchorBoundsInWindow,
+            popupPlacementStrategy = popupPlacementStrategy,
+            fullPopupSize = fullPopupSize
         )
-        val popupRect = Rectangle(
-            initialAnchor.x + popupShift.width,
-            initialAnchor.y + anchorBoundsInWindow.height.toInt() + popupShift.height,
-            fullPopupWidth,
-            fullPopupHeight
-        )
-
-        // Make sure the popup stays in screen bounds
-        val screenBounds = popupOriginator.graphicsConfiguration.bounds
-        if (popupRect.x < 0) {
-            popupRect.translate(-popupRect.x, 0)
-        }
-        if ((popupRect.x + popupRect.width) > screenBounds.width) {
-            popupRect.translate(
-                screenBounds.width - popupRect.x - popupRect.width,
-                0
-            )
-        }
-        if (popupRect.y < 0) {
-            popupRect.translate(0, -popupRect.y)
-        }
-        if ((popupRect.y + popupRect.height) > screenBounds.height) {
-            popupRect.translate(
-                0,
-                screenBounds.height - popupRect.y - popupRect.height
-            )
-        }
 
         val popupContent = ComposePanel()
         val fillColor = skinColors.getBackgroundColorScheme(decorationAreaType).backgroundFillColor

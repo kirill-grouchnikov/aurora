@@ -67,6 +67,7 @@ interface BaseCommandMenuHandler<in M : BaseCommandMenuContentModel,
         displayPrototypeCommand: BaseCommand?,
         toDismissPopupsOnActivation: Boolean,
         popupPlacementStrategy: PopupPlacementStrategy,
+        popupAnchorBoundsProvider: (() -> Rect)?,
         overlays: Map<Command, CommandButtonPresentationModel.Overlay>
     )
 

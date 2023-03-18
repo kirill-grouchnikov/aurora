@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
@@ -142,6 +143,7 @@ data class ColorSelectorCommandButtonPresentationModel(
     override val textStyle: TextStyle? = null,
     override val textOverflow: TextOverflow = TextOverflow.Clip,
     override val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
+    override val popupAnchorBoundsProvider: (() -> Rect)? = null,
     override val toDismissPopupsOnActivation: Boolean = true,
     override val showPopupIcon: Boolean = true,
     override val popupKeyTip: String? = null,

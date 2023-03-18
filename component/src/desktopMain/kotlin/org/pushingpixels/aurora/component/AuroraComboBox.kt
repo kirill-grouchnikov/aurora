@@ -274,6 +274,7 @@ internal fun <E> AuroraComboBox(
                         displayPrototypeCommand = displayPrototypeCommand,
                         toDismissPopupsOnActivation = true,
                         popupPlacementStrategy = presentationModel.popupPlacementStrategy,
+                        popupAnchorBoundsProvider = null,
                         overlays = emptyMap()
                     )
                 }

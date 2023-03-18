@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
@@ -93,6 +94,7 @@ data class CustomCommandButtonPresentationModel(
     override val textClick = TextClick.Action
     override val actionRichTooltipPresentationModel = RichTooltipPresentationModel()
     override val popupRichTooltipPresentationModel = RichTooltipPresentationModel()
+    override val popupAnchorBoundsProvider: (() -> Rect)? = null
     override val horizontalGapScaleFactor = 1.0f
     override val verticalGapScaleFactor = 1.0f
     override val showPopupIcon: Boolean = false

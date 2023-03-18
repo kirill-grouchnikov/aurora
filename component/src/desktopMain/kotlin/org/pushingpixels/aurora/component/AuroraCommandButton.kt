@@ -1140,6 +1140,7 @@ internal fun <M : BaseCommandMenuContentModel,
                                 displayPrototypeCommand = null,
                                 toDismissPopupsOnActivation = presentationModel.toDismissPopupsOnActivation,
                                 popupPlacementStrategy = presentationModel.popupPlacementStrategy,
+                                popupAnchorBoundsProvider = presentationModel.popupAnchorBoundsProvider,
                                 overlays = overlays
                             )
                         }

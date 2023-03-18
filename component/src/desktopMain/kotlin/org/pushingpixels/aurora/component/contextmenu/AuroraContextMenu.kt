@@ -91,6 +91,7 @@ fun Modifier.auroraContextMenu(
                     displayPrototypeCommand = null,
                     toDismissPopupsOnActivation = presentationModel.toDismissOnCommandActivation,
                     popupPlacementStrategy = presentationModel.popupPlacementStrategy,
+                    popupAnchorBoundsProvider = null,
                     overlays = overlays
                 )
             }

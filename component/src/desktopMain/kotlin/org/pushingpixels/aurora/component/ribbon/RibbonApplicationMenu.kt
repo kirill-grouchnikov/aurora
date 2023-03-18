@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
@@ -111,7 +112,6 @@ data class RibbonApplicationMenuCommandButtonPresentationModel(
     override val sides: Sides = Sides()
 ) : BaseCommandButtonPresentationModel {
     override val presentationState: CommandButtonPresentationState = CommandButtonPresentationState.Medium
-//        RibbonApplicationMenuButtonPresentationStates.AppMenuButtonState
     override val colorSchemeBundle: AuroraColorSchemeBundle? = null
     override val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
     override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center
@@ -121,6 +121,7 @@ data class RibbonApplicationMenuCommandButtonPresentationModel(
     override val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original
     override val forceAllocateSpaceForIcon: Boolean = false
     override val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart
+    override val popupAnchorBoundsProvider: (() -> Rect)? = null
     override val showPopupIcon: Boolean = false
     override val actionKeyTip = null
     override val autoRepeatAction = false
