@@ -47,7 +47,6 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.resolveDefaults
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntSize
@@ -67,6 +66,7 @@ import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 import java.awt.event.KeyEvent
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 @Immutable
@@ -979,7 +979,7 @@ internal fun <M : BaseCommandMenuContentModel,
                     val fillPainter = painters.fillPainter
                     val borderPainter = painters.borderPainter
 
-                    val actionAlpha = max(combinedRolloverFraction,
+                    var actionAlpha = max(combinedRolloverFraction,
                         if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat) {
                             if (currentActionStateToUse.value == ComponentState.DisabledSelected) {
                                 // Respect the alpha in disabled+selected state
@@ -1004,6 +1004,8 @@ internal fun <M : BaseCommandMenuContentModel,
                                     ) else 1.0f
                         }
                     )
+                    actionAlpha = min(actionAlpha, 1.0f)
+                    actionAlpha = max(actionAlpha, 0.0f)
 
                     Canvas(modifier = Modifier.matchParentSize()) {
                         val width = buttonSize.value.width.toFloat()
@@ -1226,7 +1228,7 @@ internal fun <M : BaseCommandMenuContentModel,
                     val fillPainter = painters.fillPainter
                     val borderPainter = painters.borderPainter
 
-                    val popupAlpha = max(combinedRolloverFraction,
+                    var popupAlpha = max(combinedRolloverFraction,
                         if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat) {
                             if (currentPopupState.value == ComponentState.DisabledSelected) {
                                 // Respect the alpha in disabled+selected state
@@ -1248,6 +1250,8 @@ internal fun <M : BaseCommandMenuContentModel,
                                     ) else 1.0f
                         }
                     )
+                    popupAlpha = min(popupAlpha, 1.0f)
+                    popupAlpha = max(popupAlpha, 0.0f)
 
                     Canvas(modifier = Modifier.matchParentSize()) {
                         val width = buttonSize.value.width.toFloat()
