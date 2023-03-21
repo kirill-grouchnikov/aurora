@@ -17,7 +17,7 @@ package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ScrollbarAdapter
+import androidx.compose.foundation.v2.ScrollbarAdapter
 import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -53,6 +53,7 @@ import org.pushingpixels.aurora.theming.ComponentState
 import org.pushingpixels.aurora.theming.auroraBackground
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
+import kotlin.math.roundToInt
 import kotlin.math.sign
 
 object ScrollBarSizingConstants {
@@ -295,7 +296,8 @@ private fun Scrollbar(
         }
     }
 
-    val isVisible = sliderAdapter.size < containerSize
+    val (position, size) = computeSliderPositionAndSize(sliderAdapter)
+    val isVisible = size < containerSize
 
     Layout(
         content = {
@@ -361,7 +363,7 @@ private fun Scrollbar(
                     val insets = 0.5f
                     val width = if (isVertical) this.size.height else this.size.width
                     val height = if (isVertical) this.size.width else this.size.height
-                    val radius = (size.width - 2 * insets) / 2.0f
+                    val radius = (size - 2 * insets) / 2.0f
 
                     val outline = getBaseOutline(
                         layoutDirection = layoutDirection,
@@ -378,9 +380,10 @@ private fun Scrollbar(
                             // appearance of fill + border
                             rotate(
                                 degrees = 90.0f,
-                                pivot = Offset(x = size.width, y = 0.0f)
+                                pivot = Offset(x = 0.0f, y = 0.0f)
                             )
-                            translate(left = size.width, top = 0.0f)
+                            val thumbOffset = (position.toFloat() * (this.size.height - size.toFloat())) / containerSize
+                            translate(left = thumbOffset, top = -this.size.width)
                         }
                     }) {
 
@@ -468,7 +471,6 @@ private fun Modifier.scrollOnPressOutsideSlider(
             while (targetPosition !in sliderAdapter.bounds) {
                 val oldSign = sign(targetPosition - sliderAdapter.position)
                 scrollbarAdapter.scrollTo(
-                    containerSize,
                     scrollbarAdapter.scrollOffset + oldSign * containerSize
                 )
                 val newSign = sign(targetPosition - sliderAdapter.position)
@@ -494,66 +496,90 @@ private fun Modifier.scrollOnPressOutsideSlider(
     }
 }
 
+/**
+ * The maximum scroll offset of the scrollable content.
+ */
+val ScrollbarAdapter.maxScrollOffset: Double
+    get() = (contentSize - viewportSize).coerceAtLeast(0.0)
+
 private class SliderAdapter(
     val adapter: ScrollbarAdapter,
-    val containerSize: Int,
-    val minHeight: Float,
-    val reverseLayout: Boolean,
-    val isVertical: Boolean,
+    private val trackSize: Int,
+    private val minHeight: Float,
+    private val reverseLayout: Boolean,
+    private val isVertical: Boolean,
 ) {
-    private val contentSize get() = adapter.maxScrollOffset(containerSize) + containerSize
-    private val visiblePart get() = containerSize.toFloat() / contentSize
 
-    val size
-        get() = (containerSize * visiblePart)
-            .coerceAtLeast(minHeight)
-            .coerceAtMost(containerSize.toFloat())
-
-    private val scrollScale: Float
+    private val contentSize get() = adapter.contentSize
+    private val visiblePart: Double
         get() {
-            val extraScrollbarSpace = containerSize - size
-            val extraContentSpace = contentSize - containerSize
-            return if (extraContentSpace == 0f) 1f else extraScrollbarSpace / extraContentSpace
+            val contentSize = contentSize
+            return if (contentSize == 0.0)
+                1.0
+            else
+                (adapter.viewportSize / contentSize).coerceAtMost(1.0)
         }
 
-    private var rawPosition: Float
+    val thumbSize
+        get() = (trackSize * visiblePart).coerceAtLeast(minHeight.toDouble())
+
+    private val scrollScale: Double
+        get() {
+            val extraScrollbarSpace = trackSize - thumbSize
+            val extraContentSpace = adapter.maxScrollOffset  // == contentSize - viewportSize
+            return if (extraContentSpace == 0.0) 1.0 else extraScrollbarSpace / extraContentSpace
+        }
+
+    private var rawPosition: Double
         get() = scrollScale * adapter.scrollOffset
         set(value) {
             runBlocking {
-                adapter.scrollTo(containerSize, value / scrollScale)
+                adapter.scrollTo(value / scrollScale)
             }
         }
 
-    var position: Float
-        get() = if (reverseLayout) containerSize - size - rawPosition else rawPosition
+    var position: Double
+        get() = if (reverseLayout) trackSize - thumbSize - rawPosition else rawPosition
         set(value) {
             rawPosition = if (reverseLayout) {
-                containerSize - size - value
+                trackSize - thumbSize - value
             } else {
                 value
             }
         }
 
-    val bounds get() = position..position + size
+    val bounds get() = position..position + thumbSize
 
-    // Stores the unrestricted position during a dragging gesture
-    private var positionDuringDrag = 0f
+    // How much of the current drag was ignored because we've reached the end of the scrollbar area
+    private var unscrolledDragDistance = 0.0
 
     /** Called when the thumb dragging starts */
     fun onDragStarted() {
-        positionDuringDrag = position
+        unscrolledDragDistance = 0.0
     }
 
     /** Called on every movement while dragging the thumb */
     fun onDragDelta(offset: Offset) {
         val dragDelta = if (isVertical) offset.y else offset.x
-        val maxScrollPosition = adapter.maxScrollOffset(containerSize) * scrollScale
-        val sliderDelta =
-            (positionDuringDrag + dragDelta).coerceIn(0f, maxScrollPosition) -
-                    positionDuringDrag.coerceIn(0f, maxScrollPosition)
-        position += sliderDelta  // Have to add to position for smooth content scroll if the items are of different size
-        positionDuringDrag += dragDelta
+        val maxScrollPosition = adapter.maxScrollOffset * scrollScale
+        val currentPosition = position
+        val targetPosition =
+            (currentPosition + dragDelta + unscrolledDragDistance).coerceIn(0.0, maxScrollPosition)
+        val sliderDelta = targetPosition - currentPosition
+
+        // Have to add to position for smooth content scroll if the items are of different size
+        position += sliderDelta
+
+        unscrolledDragDistance += dragDelta - sliderDelta
     }
+}
+
+private fun computeSliderPositionAndSize(sliderAdapter: SliderAdapter): Pair<Int, Int> {
+    val adapterPosition = sliderAdapter.position
+    val position = adapterPosition.roundToInt()
+    val size = (sliderAdapter.thumbSize + adapterPosition - position).roundToInt()
+
+    return Pair(position, size)
 }
 
 private fun verticalMeasurePolicy(
@@ -562,7 +588,7 @@ private fun verticalMeasurePolicy(
     scrollThickness: Int
 ) = MeasurePolicy { measurables, constraints ->
     setContainerSize(constraints.maxHeight)
-    val height = sliderAdapter.size.toInt()
+    val (position, height) = computeSliderPositionAndSize(sliderAdapter)
     val placeable = measurables.first().measure(
         Constraints.fixed(
             constraints.constrainWidth(scrollThickness),
@@ -570,7 +596,7 @@ private fun verticalMeasurePolicy(
         )
     )
     layout(placeable.width, constraints.maxHeight) {
-        placeable.place(0, sliderAdapter.position.toInt())
+        placeable.place(0, position)
     }
 }
 
@@ -580,7 +606,8 @@ private fun horizontalMeasurePolicy(
     scrollThickness: Int
 ) = MeasurePolicy { measurables, constraints ->
     setContainerSize(constraints.maxWidth)
-    val width = sliderAdapter.size.toInt()
+    val (position, width) = computeSliderPositionAndSize(sliderAdapter)
+
     val placeable = measurables.first().measure(
         Constraints.fixed(
             width,
@@ -588,7 +615,7 @@ private fun horizontalMeasurePolicy(
         )
     )
     layout(constraints.maxWidth, placeable.height) {
-        placeable.place(sliderAdapter.position.toInt(), 0)
+        placeable.place(position, 0)
     }
 }
 
