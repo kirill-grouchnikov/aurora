@@ -397,7 +397,7 @@ internal fun getPreferredCommandPopupMenuPanelSize(
             contentPadding = presentationModel.commandContentPadding,
             presentationState = presentationModel.commandPresentationState,
             iconDimension = presentationModel.commandIconDimension,
-            isMenu = true,
+            isMenu = presentationModel.commandIsMenu,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             textStyle = presentationModel.commandTextStyle,
             textOverflow = presentationModel.commandTextOverflow,

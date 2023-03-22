@@ -53,10 +53,7 @@ data class RibbonComponentPresentationModel(
 data class RibbonGalleryContentModel(
     val icon: Painter? = null,
     val commandGroups: List<CommandGroup>,
-    val selectedCommand: Command? = null,
     val extraPopupGroups: List<CommandGroup>,
-    val commandAction: ((Command?) -> Unit)? = null,
-    val commandActionPreview: CommandActionPreview? = null,
 ) : ContentModel
 
 object RibbonGallerySizingConstants {

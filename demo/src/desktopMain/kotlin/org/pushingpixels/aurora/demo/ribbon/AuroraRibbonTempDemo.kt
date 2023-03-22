@@ -15,12 +15,10 @@
  */
 package org.pushingpixels.aurora.demo.ribbon
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
@@ -52,7 +50,20 @@ fun main() = auroraApplication {
     val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
-    val builder = RibbonBuilder(resourceBundle, LocalDensity.current.density)
+
+    var ribbonState by remember {
+        mutableStateOf(
+            RibbonState(documentStyle = DocumentStyle.Style2)
+        )
+    }
+    val builder = RibbonBuilder(
+        resourceBundle = resourceBundle,
+        density = LocalDensity.current.density,
+        ribbonState = ribbonState,
+        onRibbonStateUpdate = { newState ->
+            println("New state is ${newState.documentStyle.name}")
+            ribbonState = newState
+        })
 
     AuroraWindow(
         skin = skin,

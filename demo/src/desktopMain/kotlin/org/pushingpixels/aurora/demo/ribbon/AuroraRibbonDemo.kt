@@ -42,10 +42,7 @@ import org.pushingpixels.aurora.component.projection.CommandButtonStripProjectio
 import org.pushingpixels.aurora.component.ribbon.*
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicies
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizeSequencingPolicies
-import org.pushingpixels.aurora.demo.ColorSolidIcon
-import org.pushingpixels.aurora.demo.DecoratedIcon
-import org.pushingpixels.aurora.demo.EmptyIcon
-import org.pushingpixels.aurora.demo.getQuickStylesContentModel
+import org.pushingpixels.aurora.demo.*
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
@@ -66,7 +63,16 @@ fun main() = auroraApplication {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
 
-    val builder = RibbonBuilder(resourceBundle, LocalDensity.current.density)
+    var ribbonState by remember {
+        mutableStateOf(
+            RibbonState(documentStyle = DocumentStyle.Style2)
+        )
+    }
+    val builder = RibbonBuilder(
+        resourceBundle = resourceBundle,
+        density = LocalDensity.current.density,
+        ribbonState = ribbonState,
+        onRibbonStateUpdate = { newState -> ribbonState = newState })
 
     var fontFamilyComboSelectedItem by remember { mutableStateOf(builder.fontFamilyComboBoxEntries[0]) }
 
@@ -193,7 +199,11 @@ fun main() = auroraApplication {
     )
 }
 
-internal class RibbonBuilder(val resourceBundle: ResourceBundle, val density: Float) {
+internal class RibbonBuilder(
+    val resourceBundle: ResourceBundle, val density: Float,
+    val ribbonState: RibbonState,
+    val onRibbonStateUpdate: (RibbonState) -> Unit
+) {
     val mf = MessageFormat(resourceBundle.getString("TestMenuItem.text"))
     val popupCommand1 = Command(
         text = mf.format(arrayOf("1")),
@@ -350,9 +360,20 @@ internal class RibbonBuilder(val resourceBundle: ResourceBundle, val density: Fl
     val overlayFont = Font(Typeface.makeDefault()).also {
         it.size = it.size * density
     }
+
+    val styleGalleryCommandPreview = object : CommandActionPreview {
+        override fun onCommandPreviewActivated(command: BaseCommand) {
+            println("Preview activated for '${command.text}'")
+        }
+
+        override fun onCommandPreviewCanceled(command: BaseCommand) {
+            println("Preview canceled for '${command.text}'")
+        }
+    }
+
     val stylesGalleryCommandList = CommandGroup(
         title = resourceBundle.getString("StylesGallery.textGroupTitle1"),
-        commands = (0..10).map { index ->
+        commands = (1..10).map { index ->
             Command(
                 text = mfButtonText.format(arrayOf(index)),
                 icon = DecoratedIcon(main = font_x_generic(),
@@ -381,7 +402,15 @@ internal class RibbonBuilder(val resourceBundle: ResourceBundle, val density: Fl
                             }
                         }
                     }),
-                isActionToggle = true
+                isActionToggle = true,
+                isActionToggleSelected = (ribbonState.documentStyle == DocumentStyle.values()[index - 1]),
+                onTriggerActionToggleSelectedChange = {
+                    if (it) {
+                        println("Activating $index")
+                        onRibbonStateUpdate.invoke(ribbonState.copy(documentStyle = DocumentStyle.values()[index - 1]))
+                    }
+                },
+                actionPreview = styleGalleryCommandPreview
             )
         }
     )
@@ -416,7 +445,14 @@ internal class RibbonBuilder(val resourceBundle: ResourceBundle, val density: Fl
                             }
                         }
                     }),
-                isActionToggle = true
+                isActionToggle = true,
+                isActionToggleSelected = (ribbonState.documentStyle == DocumentStyle.values()[index - 1]),
+                onTriggerActionToggleSelectedChange = {
+                    if (it) {
+                        onRibbonStateUpdate.invoke(ribbonState.copy(documentStyle = DocumentStyle.values()[index - 1]))
+                    }
+                },
+                actionPreview = styleGalleryCommandPreview
             )
         }
     )
@@ -424,24 +460,10 @@ internal class RibbonBuilder(val resourceBundle: ResourceBundle, val density: Fl
     val styleGalleryContentModel = RibbonGalleryContentModel(
         icon = font_x_generic(),
         commandGroups = listOf(stylesGalleryCommandList, stylesGalleryCommandList2),
-        selectedCommand = stylesGalleryCommandList.commands[1],
         extraPopupGroups = listOf(
             CommandGroup(commands = listOf(this.menuSaveSelection, this.menuClearSelection)),
             CommandGroup(commands = listOf(this.applyStyles))
-        ),
-        commandAction = {
-            val text = it?.text ?: "[null]"
-            println("Command '$text' activated!")
-        },
-        commandActionPreview = object : CommandActionPreview {
-            override fun onCommandPreviewActivated(command: BaseCommand) {
-                println("Preview activated for '${command.text}'")
-            }
-
-            override fun onCommandPreviewCanceled(command: BaseCommand) {
-                println("Preview canceled for '${command.text}'")
-            }
-        }
+        )
     )
 
     val fontFamilyComboBoxEntries = listOf(

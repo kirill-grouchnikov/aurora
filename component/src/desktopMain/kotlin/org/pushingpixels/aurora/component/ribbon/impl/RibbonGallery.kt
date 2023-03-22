@@ -6,7 +6,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.Layout
@@ -20,7 +19,6 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.common.hexadecimal
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
@@ -28,9 +26,6 @@ import org.pushingpixels.aurora.component.ribbon.PresentationPriority
 import org.pushingpixels.aurora.component.ribbon.RibbonGalleryContentModel
 import org.pushingpixels.aurora.component.ribbon.RibbonGalleryPresentationModel
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.component.utils.ArrowSizingConstants
-import org.pushingpixels.aurora.component.utils.drawArrow
-import org.pushingpixels.aurora.component.utils.drawDoubleArrow
 import org.pushingpixels.aurora.theming.*
 import kotlin.math.max
 import kotlin.math.min
@@ -277,6 +272,7 @@ internal fun RibbonGallery(
                                     contentPadding = PaddingValues(0.dp),
                                     showGroupLabels = contentModel.commandGroups.all { !it.title.isNullOrEmpty() },
                                     commandPresentationState = presentationModel.commandButtonPresentationState,
+                                    commandIsMenu = false
                                 )
                             ),
                             popupAnchorBoundsProvider = {

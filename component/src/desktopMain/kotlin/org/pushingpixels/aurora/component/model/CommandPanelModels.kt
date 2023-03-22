@@ -103,6 +103,7 @@ data class CommandPopupMenuPanelPresentationModel(
     val commandHorizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
     val commandHorizontalGapScaleFactor: Float = 1.0f,
     val commandVerticalGapScaleFactor: Float = 1.0f,
+    val commandIsMenu: Boolean = true,
     val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original
@@ -125,7 +126,7 @@ data class CommandPopupMenuPanelPresentationModel(
             iconDisabledFilterStrategy = this.iconDisabledFilterStrategy,
             iconEnabledFilterStrategy = this.iconEnabledFilterStrategy,
             iconActiveFilterStrategy = this.iconActiveFilterStrategy,
-            isMenu = true
+            isMenu = this.commandIsMenu
         )
     }
 }
