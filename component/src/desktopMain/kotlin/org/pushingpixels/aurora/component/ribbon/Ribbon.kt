@@ -16,7 +16,7 @@
 package org.pushingpixels.aurora.component.ribbon
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.style.TextOverflow
@@ -27,6 +27,7 @@ import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.Projection
 import org.pushingpixels.aurora.component.ribbon.impl.RibbonGallery
+import kotlin.math.min
 
 enum class PresentationPriority {
     /** Top priority */
@@ -39,8 +40,9 @@ enum class PresentationPriority {
     Low
 }
 
-infix fun <C : BaseCommand, P: BaseCommandButtonPresentationModel> BaseCommandButtonProjection<C, P>.at(
-    that: PresentationPriority): Pair<BaseCommandButtonProjection<C, P>, PresentationPriority> = Pair(this, that)
+infix fun <C : BaseCommand, P : BaseCommandButtonPresentationModel> BaseCommandButtonProjection<C, P>.at(
+    that: PresentationPriority
+): Pair<BaseCommandButtonProjection<C, P>, PresentationPriority> = Pair(this, that)
 
 data class RibbonComponentPresentationModel(
     val caption: String? = null,
@@ -71,18 +73,62 @@ data class RibbonGalleryPresentationModel(
     val expandKeyTip: String? = null,
 ) : PresentationModel
 
+class RibbonGalleryInlineState(
+    val contentModel: RibbonGalleryContentModel,
+    val presentationModel: RibbonGalleryPresentationModel,
+    val presentationPriority: PresentationPriority
+) {
+    private val fullCount: Int
+        get() = contentModel.commandGroups.sumOf { it.commands.size }
+    private val visibleCount: Int
+        get() = presentationModel.preferredVisibleCommandCounts[presentationPriority]!!
+    var firstVisibleIndex by mutableStateOf(0)
+    val lastVisibleIndex: Int
+        get() = min(firstVisibleIndex + visibleCount - 1, fullCount - 1)
+
+    fun revealAt(index: Int) {
+        if ((index < 0) || (index >= fullCount)) {
+            // out of bounds
+            return
+        }
+        if ((index >= firstVisibleIndex) && (index <= lastVisibleIndex)) {
+            // already shown
+            return
+        }
+        if (index > lastVisibleIndex) {
+            while (index > lastVisibleIndex) {
+                firstVisibleIndex += visibleCount
+            }
+            return
+        }
+        if (index < firstVisibleIndex) {
+            while (index < firstVisibleIndex) {
+                firstVisibleIndex -= visibleCount
+            }
+        }
+    }
+}
+
 class RibbonGalleryProjection(
     val contentModel: RibbonGalleryContentModel,
-    val presentationModel: RibbonGalleryPresentationModel
+    val presentationModel: RibbonGalleryPresentationModel,
 ) : Projection<RibbonGalleryContentModel, RibbonGalleryPresentationModel>() {
     @Composable
     fun project(
         modifier: Modifier = Modifier,
-        presentationPriority: PresentationPriority
+        presentationPriority: PresentationPriority,
+        inlineState: RibbonGalleryInlineState =
+            RibbonGalleryInlineState(
+                contentModel = contentModel,
+                presentationModel = presentationModel,
+                presentationPriority = presentationPriority
+            )
     ) {
-        require((presentationModel.commandButtonPresentationState == CommandButtonPresentationState.Small) ||
-                (presentationModel.commandButtonPresentationState == RibbonBandCommandButtonPresentationStates.BigFixed) ||
-                (presentationModel.commandButtonPresentationState == RibbonBandCommandButtonPresentationStates.BigFixedLandscape)) {
+        require(
+            (presentationModel.commandButtonPresentationState == CommandButtonPresentationState.Small) ||
+                    (presentationModel.commandButtonPresentationState == RibbonBandCommandButtonPresentationStates.BigFixed) ||
+                    (presentationModel.commandButtonPresentationState == RibbonBandCommandButtonPresentationStates.BigFixedLandscape)
+        ) {
             "Unsupported command button presentation state ${presentationModel.commandButtonPresentationState}"
         }
 
@@ -90,12 +136,13 @@ class RibbonGalleryProjection(
             modifier = modifier,
             presentationPriority = presentationPriority,
             contentModel = this.contentModel,
-            presentationModel = this.presentationModel
+            presentationModel = this.presentationModel,
+            inlineState = remember { inlineState }
         )
     }
 }
 
-class RibbonComponentProjection<out C: ContentModel, out P: PresentationModel>(
+class RibbonComponentProjection<out C : ContentModel, out P : PresentationModel>(
     val projection: Projection<C, P>,
     val ribbonComponentPresentationModel: RibbonComponentPresentationModel = RibbonComponentPresentationModel()
 )

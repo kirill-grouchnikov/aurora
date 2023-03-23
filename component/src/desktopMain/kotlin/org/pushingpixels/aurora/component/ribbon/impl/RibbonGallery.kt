@@ -24,6 +24,7 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.PresentationPriority
 import org.pushingpixels.aurora.component.ribbon.RibbonGalleryContentModel
+import org.pushingpixels.aurora.component.ribbon.RibbonGalleryInlineState
 import org.pushingpixels.aurora.component.ribbon.RibbonGalleryPresentationModel
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
@@ -37,7 +38,8 @@ internal fun RibbonGallery(
     modifier: Modifier,
     presentationPriority: PresentationPriority,
     contentModel: RibbonGalleryContentModel,
-    presentationModel: RibbonGalleryPresentationModel
+    presentationModel: RibbonGalleryPresentationModel,
+    inlineState: RibbonGalleryInlineState
 ) {
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -52,9 +54,7 @@ internal fun RibbonGallery(
 
     val visibleCount = presentationModel.preferredVisibleCommandCounts[presentationPriority]!!
     val fullCount = flatCommandList.size
-    val firstVisibleIndex = remember { mutableStateOf(0) }
-    val lastVisibleIndex = derivedStateOf { min(firstVisibleIndex.value + visibleCount - 1, fullCount - 1) }
-    println("Showing [${firstVisibleIndex.value} - ${lastVisibleIndex.value}] out of $fullCount")
+    println("Showing [${inlineState.firstVisibleIndex} - ${inlineState.lastVisibleIndex}] out of $fullCount")
 
     val buttonPresentationModel = CommandButtonPresentationModel(
         presentationState = presentationModel.commandButtonPresentationState,
@@ -111,9 +111,9 @@ internal fun RibbonGallery(
                 )
             }
         },
-        isActionEnabled = (firstVisibleIndex.value > 0),
+        isActionEnabled = (inlineState.firstVisibleIndex > 0),
         action = {
-            firstVisibleIndex.value = firstVisibleIndex.value - visibleCount
+            inlineState.firstVisibleIndex = inlineState.firstVisibleIndex - visibleCount
         })
     val bottomScrollerCommand = Command(text = "",
         icon = object : TransitionAwarePainterDelegate() {
@@ -152,9 +152,9 @@ internal fun RibbonGallery(
                 )
             }
         },
-        isActionEnabled = (lastVisibleIndex.value != (fullCount - 1)),
+        isActionEnabled = (inlineState.lastVisibleIndex != (fullCount - 1)),
         action = {
-            firstVisibleIndex.value = firstVisibleIndex.value + visibleCount
+            inlineState.firstVisibleIndex = inlineState.firstVisibleIndex + visibleCount
         })
     val showFullGalleryInPopupCommand = Command(
         text = "",
@@ -219,7 +219,7 @@ internal fun RibbonGallery(
                 ).padding(presentationModel.contentPadding),
                 horizontalArrangement = Arrangement.spacedBy(presentationModel.layoutGap)
             ) {
-                for (index in firstVisibleIndex.value..lastVisibleIndex.value) {
+                for (index in inlineState.firstVisibleIndex..inlineState.lastVisibleIndex) {
                     CommandButtonProjection(
                         contentModel = flatCommandList[index],
                         presentationModel = buttonPresentationModel
