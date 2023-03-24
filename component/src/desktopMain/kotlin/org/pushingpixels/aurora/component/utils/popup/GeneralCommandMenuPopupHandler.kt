@@ -45,7 +45,6 @@ import org.pushingpixels.aurora.component.projection.CommandButtonPanelProjectio
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
-import org.pushingpixels.aurora.theming.Sides
 import org.pushingpixels.aurora.theming.auroraBackground
 import kotlin.math.ceil
 import kotlin.math.max

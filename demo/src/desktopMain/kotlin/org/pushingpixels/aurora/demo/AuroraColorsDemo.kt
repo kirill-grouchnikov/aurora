@@ -22,19 +22,13 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.state.ToggleableState
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.ExperimentalUnitApi
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import org.pushingpixels.aurora.component.contextmenu.auroraContextMenu
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.demo.svg.material.*
@@ -44,12 +38,9 @@ import org.pushingpixels.aurora.demo.svg.vaadin.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.LimeGreenColorScheme
-import org.pushingpixels.aurora.theming.colorscheme.SunfireRedColorScheme
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.window.*
-import java.text.MessageFormat
 import java.util.*
-import kotlin.system.exitProcess
 
 @ExperimentalUnitApi
 fun main() = auroraApplication {
