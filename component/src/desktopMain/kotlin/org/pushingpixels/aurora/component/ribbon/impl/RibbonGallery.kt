@@ -29,7 +29,6 @@ import org.pushingpixels.aurora.component.ribbon.RibbonGalleryPresentationModel
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.roundToInt
 
 @OptIn(AuroraInternalApi::class)
@@ -54,8 +53,15 @@ internal fun RibbonGallery(
 
     val visibleCount = presentationModel.preferredVisibleCommandCounts[presentationPriority]!!
     val fullCount = flatCommandList.size
-    println("Showing [${inlineState.firstVisibleIndex} - ${inlineState.lastVisibleIndex}] out of $fullCount")
-
+    if (inlineState.getAndClearRevealSelected()) {
+        // The inline state has been marked to have the latest selected command button to be revealed
+        for ((index, command) in flatCommandList.withIndex()) {
+            if (command.isActionToggleSelected) {
+                inlineState.revealAt(index)
+                break
+            }
+        }
+    }
     val buttonPresentationModel = CommandButtonPresentationModel(
         presentationState = presentationModel.commandButtonPresentationState,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
@@ -199,6 +205,10 @@ internal fun RibbonGallery(
             }
         },
         secondaryContentModel = CommandMenuContentModel(
+            onDeactivatePopup = {
+                // Mark the inline state to have the latest selected command button to be revealed
+                inlineState.revealSelected()
+            },
             panelContentModel = CommandPanelContentModel(commandGroups = contentModel.commandGroups),
             groups = contentModel.extraPopupGroups
         ),
