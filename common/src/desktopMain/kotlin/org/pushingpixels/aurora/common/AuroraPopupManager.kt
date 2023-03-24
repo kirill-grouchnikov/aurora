@@ -57,7 +57,9 @@ object AuroraPopupManager {
         val popupTriggerAreaInOriginatorWindow: Rect,
         val popup: AuroraSwingPopupMenu,
         val popupContent: ComposePanel,
-        val popupKind: PopupKind
+        val popupKind: PopupKind,
+        val onActivatePopup: (() -> Unit)?,
+        val onDeactivatePopup: (() -> Unit)?
     )
 
     private val shownPath = arrayListOf<PopupInfo>()
@@ -68,12 +70,15 @@ object AuroraPopupManager {
         popup: AuroraSwingPopupMenu,
         popupContent: ComposePanel,
         popupRectOnScreen: Rectangle,
-        popupKind: PopupKind
+        popupKind: PopupKind,
+        onActivatePopup: (() -> Unit)? = null,
+        onDeactivatePopup: (() -> Unit)? = null
     ) {
         shownPath.add(
             PopupInfo(
                 originator, popupTriggerAreaInOriginatorWindow,
-                popup, popupContent, popupKind
+                popup, popupContent, popupKind,
+                onActivatePopup, onDeactivatePopup
             )
         )
 
@@ -87,6 +92,7 @@ object AuroraPopupManager {
             originator, popupRectOnScreen.x - invokerLocOnScreen.x,
             popupRectOnScreen.y - invokerLocOnScreen.y
         )
+        onActivatePopup?.invoke()
     }
 
     fun hideLastPopup() {
@@ -100,6 +106,7 @@ object AuroraPopupManager {
         // display of the next popup content
         val popupWindow = SwingUtilities.getWindowAncestor(last.popupContent)
         popupWindow.dispose()
+        last.onDeactivatePopup?.invoke()
 
         lastPopup.isVisible = false
     }
@@ -126,6 +133,7 @@ object AuroraPopupManager {
             // display of the next popup content
             val popupWindow = SwingUtilities.getWindowAncestor(last.popupContent)
             popupWindow.dispose()
+            last.onDeactivatePopup?.invoke()
 
             lastPopup.isVisible = false
         }

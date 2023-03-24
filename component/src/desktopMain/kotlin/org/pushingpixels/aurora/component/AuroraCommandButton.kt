@@ -168,7 +168,7 @@ private fun Modifier.commandButtonPopupHoverable(
     interactionSource: MutableInteractionSource,
     enabled: Boolean = true,
     onActivatePopupState: State<() -> Unit>,
-    onDeactivatePopup: State<() -> Unit>,
+    onDeactivatePopupState: State<() -> Unit>,
     presentationModel: BaseCommandButtonPresentationModel
 ): Modifier = composed(
     inspectorInfo = debugInspectorInfo {
@@ -198,7 +198,7 @@ private fun Modifier.commandButtonPopupHoverable(
             hoverInteraction = null
 
             if (presentationModel.isMenu) {
-                onDeactivatePopup.value.invoke()
+                onDeactivatePopupState.value.invoke()
             }
         }
     }

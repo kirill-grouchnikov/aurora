@@ -56,6 +56,8 @@ data class CustomCommand(
 }
 
 data class CustomMenuContentModel(
+    override val onActivatePopup: (() -> Unit)? = null,
+    override val onDeactivatePopup: (() -> Unit)? = null,
     val entries: List<Command>
 ) : BaseCommandMenuContentModel
 

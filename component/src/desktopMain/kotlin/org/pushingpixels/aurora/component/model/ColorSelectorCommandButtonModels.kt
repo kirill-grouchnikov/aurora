@@ -125,6 +125,8 @@ data class ColorSelectorCommand(
 }
 
 data class ColorSelectorMenuContentModel(
+    override val onActivatePopup: (() -> Unit)? = null,
+    override val onDeactivatePopup: (() -> Unit)? = null,
     val entries: List<ColorSelectorPopupMenuEntry>,
     val onColorPreviewActivated: ColorPreviewListener,
     val onColorActivated: (Color) -> Unit

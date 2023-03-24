@@ -93,6 +93,8 @@ data class CustomComplexMenuContentSection(
 )
 
 data class CustomComplexMenuContentModel(
+    override val onActivatePopup: (() -> Unit)? = null,
+    override val onDeactivatePopup: (() -> Unit)? = null,
     val sections: List<CustomComplexMenuContentSection>
 ) : BaseCommandMenuContentModel
 

@@ -409,7 +409,9 @@ internal fun displayRichTooltipContent(
         popup = popupMenu,
         popupContent = popupContent,
         popupRectOnScreen = popupRect,
-        popupKind = AuroraPopupManager.PopupKind.RichTooltip
+        popupKind = AuroraPopupManager.PopupKind.RichTooltip,
+        onActivatePopup = null,
+        onDeactivatePopup = null
     )
 }
 

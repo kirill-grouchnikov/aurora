@@ -76,9 +76,14 @@ data class CommandGroup(
     val commands: List<Command>
 ) : ContentModel
 
-interface BaseCommandMenuContentModel
+interface BaseCommandMenuContentModel {
+    val onActivatePopup: (() -> Unit)?
+    val onDeactivatePopup: (() -> Unit)?
+}
 
 data class CommandMenuContentModel(
+    override val onActivatePopup: (() -> Unit)? = null,
+    override val onDeactivatePopup: (() -> Unit)? = null,
     val groups: List<CommandGroup>,
     val panelContentModel: CommandPanelContentModel? = null,
     val highlightedCommand: Command? = null

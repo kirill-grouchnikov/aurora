@@ -656,7 +656,9 @@ internal class RibbonApplicationMenuPopupHandler(
             popup = popupMenu,
             popupContent = popupContent,
             popupRectOnScreen = popupRect,
-            popupKind = AuroraPopupManager.PopupKind.Popup
+            popupKind = AuroraPopupManager.PopupKind.Popup,
+            onActivatePopup = contentModel.value?.onActivatePopup,
+            onDeactivatePopup = contentModel.value?.onDeactivatePopup
         )
     }
 }

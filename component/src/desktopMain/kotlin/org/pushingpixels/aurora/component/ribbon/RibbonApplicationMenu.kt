@@ -37,6 +37,8 @@ import org.pushingpixels.aurora.theming.Sides
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 
 data class RibbonApplicationMenuContentModel(
+    override val onActivatePopup: (() -> Unit)? = null,
+    override val onDeactivatePopup: (() -> Unit)? = null,
     val groups: List<CommandGroup>,
     val footerCommands: CommandGroup
 ) : BaseCommandMenuContentModel
