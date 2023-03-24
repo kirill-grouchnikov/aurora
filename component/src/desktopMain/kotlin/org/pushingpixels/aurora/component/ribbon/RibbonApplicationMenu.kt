@@ -89,6 +89,7 @@ object RibbonApplicationMenuSizingConstants {
 data class RibbonApplicationMenuCommandPopupMenuPresentationModel(
     override val itemPresentationState: CommandButtonPresentationState =
         DefaultCommandPopupMenuPresentationState,
+    override val itemPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
     val itemIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val itemIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val itemIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
@@ -110,6 +111,7 @@ data class RibbonApplicationMenuCommandButtonPresentationModel(
         ),
     override val popupKeyTip: String? = null,
     override val popupRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),
+    override val popupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnPressed,
     override val contentPadding: PaddingValues = CommandButtonSizingConstants.WideButtonContentPadding,
     override val sides: Sides = Sides()
 ) : BaseCommandButtonPresentationModel {

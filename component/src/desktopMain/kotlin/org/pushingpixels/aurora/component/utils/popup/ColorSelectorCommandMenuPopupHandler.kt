@@ -84,6 +84,7 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
             iconEnabledFilterStrategy = IconFilterStrategy.Original,
             iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
             popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
+            popupFireTrigger = menuPresentationModel.itemPopupFireTrigger,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             horizontalAlignment = HorizontalAlignment.Leading,
             contentPadding = CommandButtonSizingConstants.CompactButtonContentPadding,

@@ -99,8 +99,8 @@ data class CustomComplexMenuContentModel(
 ) : BaseCommandMenuContentModel
 
 data class CustomComplexCommandPopupMenuPresentationModel(
-    override val itemPresentationState: CommandButtonPresentationState =
-        DefaultCommandPopupMenuPresentationState,
+    override val itemPresentationState: CommandButtonPresentationState = DefaultCommandPopupMenuPresentationState,
+    override val itemPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
     val itemIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val itemIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val itemIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
@@ -189,6 +189,7 @@ data class CustomComplexCommandButtonPresentationModel(
     override val autoRepeatSubsequentInterval =
         CommandButtonInteractionConstants.DefaultAutoRepeatSubsequentIntervalMillis
     override val actionFireTrigger = ActionFireTrigger.OnPressReleased
+    override val popupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnPressed
     override val textClick = TextClick.Action
     override val actionRichTooltipPresentationModel = RichTooltipPresentationModel()
     override val popupRichTooltipPresentationModel = RichTooltipPresentationModel()
@@ -226,6 +227,7 @@ object CustomComplexCommandMenuPopupHandler : CascadingCommandMenuHandler<
             iconDisabledFilterStrategy = menuPresentationModel.itemIconDisabledFilterStrategy,
             forceAllocateSpaceForIcon = false,
             popupPlacementStrategy = menuPresentationModel.popupPlacementStrategy,
+            popupFireTrigger = menuPresentationModel.itemPopupFireTrigger,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             horizontalAlignment = menuPresentationModel.horizontalAlignment,
             contentPadding = menuPresentationModel.itemContentPadding,

@@ -62,8 +62,8 @@ data class CustomMenuContentModel(
 ) : BaseCommandMenuContentModel
 
 data class CustomCommandPopupMenuPresentationModel(
-    override val itemPresentationState: CommandButtonPresentationState =
-        DefaultCommandPopupMenuPresentationState
+    override val itemPresentationState: CommandButtonPresentationState = DefaultCommandPopupMenuPresentationState,
+    override val itemPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover
 ) : BaseCommandPopupMenuPresentationModel
 
 data class CustomCommandButtonPresentationModel(
@@ -93,6 +93,7 @@ data class CustomCommandButtonPresentationModel(
     override val autoRepeatSubsequentInterval =
         CommandButtonInteractionConstants.DefaultAutoRepeatSubsequentIntervalMillis
     override val actionFireTrigger = ActionFireTrigger.OnPressReleased
+    override val popupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnPressed
     override val textClick = TextClick.Action
     override val actionRichTooltipPresentationModel = RichTooltipPresentationModel()
     override val popupRichTooltipPresentationModel = RichTooltipPresentationModel()
@@ -143,6 +144,7 @@ object CustomCommandMenuPopupHandler : CascadingCommandMenuHandler<
             iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
             forceAllocateSpaceForIcon = atLeastOneButtonHasIcon,
             popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
+            popupFireTrigger = menuPresentationModel.itemPopupFireTrigger,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             horizontalAlignment = HorizontalAlignment.Leading,
             contentPadding = CommandButtonSizingConstants.CompactButtonContentPadding,

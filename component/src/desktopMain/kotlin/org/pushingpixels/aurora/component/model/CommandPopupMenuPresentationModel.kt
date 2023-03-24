@@ -31,11 +31,13 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 
 interface BaseCommandPopupMenuPresentationModel {
     val itemPresentationState: CommandButtonPresentationState
+    val itemPopupFireTrigger: PopupFireTrigger
 }
 
 data class CommandPopupMenuPresentationModel(
     override val itemPresentationState: CommandButtonPresentationState =
         DefaultCommandPopupMenuPresentationState,
+    override val itemPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
     val panelPresentationModel: CommandPopupMenuPanelPresentationModel? = null,
     val itemIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val itemIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,

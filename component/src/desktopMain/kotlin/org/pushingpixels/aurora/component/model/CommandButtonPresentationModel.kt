@@ -56,6 +56,14 @@ enum class ActionFireTrigger {
     OnPressReleased
 }
 
+enum class PopupFireTrigger {
+    /** Activate popup on rollover */
+    OnRollover,
+
+    /** Activate popup on press. */
+    OnPressed
+}
+
 interface BaseCommandButtonPresentationModel: PresentationModel {
     val presentationState: CommandButtonPresentationState
     val colorSchemeBundle: AuroraColorSchemeBundle?
@@ -77,6 +85,7 @@ interface BaseCommandButtonPresentationModel: PresentationModel {
     val autoRepeatInitialInterval: Long
     val autoRepeatSubsequentInterval: Long
     val actionFireTrigger: ActionFireTrigger
+    val popupFireTrigger: PopupFireTrigger
     val popupMenuPresentationModel: BaseCommandPopupMenuPresentationModel
     val textClick: TextClick
     val actionRichTooltipPresentationModel: RichTooltipPresentationModel
@@ -112,6 +121,7 @@ data class CommandButtonPresentationModel(
     override val autoRepeatInitialInterval: Long = CommandButtonInteractionConstants.DefaultAutoRepeatInitialIntervalMillis,
     override val autoRepeatSubsequentInterval: Long = CommandButtonInteractionConstants.DefaultAutoRepeatSubsequentIntervalMillis,
     override val actionFireTrigger: ActionFireTrigger = ActionFireTrigger.OnPressReleased,
+    override val popupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnPressed,
     override val popupMenuPresentationModel: CommandPopupMenuPresentationModel = CommandPopupMenuPresentationModel(),
     override val textClick: TextClick = TextClick.Action,
     override val actionRichTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel(),

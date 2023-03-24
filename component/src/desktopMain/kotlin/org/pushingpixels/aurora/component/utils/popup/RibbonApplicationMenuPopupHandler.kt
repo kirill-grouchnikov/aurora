@@ -125,6 +125,7 @@ internal class RibbonApplicationMenuPopupHandler(
             iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
             forceAllocateSpaceForIcon = atLeastOneButtonHasIcon,
             popupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignTop,
+            popupFireTrigger = menuPresentationModel.itemPopupFireTrigger,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             horizontalAlignment = HorizontalAlignment.Fill,
             contentPadding = menuPresentationModel.level1ItemContentPadding,

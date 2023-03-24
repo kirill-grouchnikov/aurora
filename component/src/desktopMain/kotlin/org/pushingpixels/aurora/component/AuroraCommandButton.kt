@@ -185,7 +185,7 @@ private fun Modifier.commandButtonPopupHoverable(
             interactionSource.emit(interaction)
             hoverInteraction = interaction
 
-            if (presentationModel.isMenu) {
+            if (presentationModel.popupFireTrigger == PopupFireTrigger.OnRollover) {
                 onActivatePopupState.value.invoke()
             }
         }
@@ -197,7 +197,7 @@ private fun Modifier.commandButtonPopupHoverable(
             interactionSource.emit(interaction)
             hoverInteraction = null
 
-            if (presentationModel.isMenu) {
+            if (presentationModel.popupFireTrigger == PopupFireTrigger.OnRollover) {
                 onDeactivatePopupState.value.invoke()
             }
         }
@@ -316,7 +316,7 @@ internal suspend fun PressGestureScope.auroraHandlePopupPressInteraction(
             val pressInteraction = PressInteraction.Press(pressPoint)
             interactionSource.emit(pressInteraction)
             pressedInteraction.value = pressInteraction
-            if (!presentationModel.isMenu) {
+            if (presentationModel.popupFireTrigger == PopupFireTrigger.OnPressed) {
                 onActivatePopupState.value.invoke()
             }
         }
@@ -483,8 +483,8 @@ private fun Modifier.commandButtonPopupModifier(
         val clickJob: MutableState<Job?> = mutableStateOf(null)
 
         // Now for the mouse interaction part
-        if (presentationModel.isMenu) {
-            // Activate popup on rollover in menu buttons
+        if (presentationModel.popupFireTrigger == PopupFireTrigger.OnRollover) {
+            // Activate popup on rollover
 
             // Start with the hover
             result = result.then(
