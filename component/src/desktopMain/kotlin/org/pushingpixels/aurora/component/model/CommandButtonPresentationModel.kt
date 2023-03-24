@@ -173,7 +173,6 @@ data class CommandButtonPresentationModel(
         val verticalGapScaleFactor: Float? = null,
         val selectedStateHighlight: SelectedStateHighlight? = null,
         val minWidth: Dp? = null,
-        val isMenu: Boolean? = null,
         val sides: Sides? = null
     )
 
