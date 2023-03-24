@@ -19,8 +19,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.LayoutDirection
-import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 
 internal data class AuroraOffset(var x: Float, var y: Float)
 internal data class AuroraRect(var x: Float, var y: Float, var width: Float, var height: Float)
