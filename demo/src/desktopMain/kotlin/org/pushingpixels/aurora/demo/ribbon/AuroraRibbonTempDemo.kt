@@ -27,10 +27,7 @@ import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.component.model.MenuPopupPanelLayoutSpec
-import org.pushingpixels.aurora.component.ribbon.PresentationPriority
-import org.pushingpixels.aurora.component.ribbon.RibbonBandCommandButtonPresentationStates
-import org.pushingpixels.aurora.component.ribbon.RibbonGalleryPresentationModel
-import org.pushingpixels.aurora.component.ribbon.RibbonGalleryProjection
+import org.pushingpixels.aurora.component.ribbon.*
 import org.pushingpixels.aurora.demo.AuroraSkinSwitcher
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.theming.*
@@ -81,24 +78,34 @@ fun main() = auroraApplication {
                 }
             }
 
+            val styleGalleryContentModel = builder.styleGalleryContentModel
+            val styleGalleryPresentationModel = RibbonGalleryPresentationModel(
+                preferredVisibleCommandCounts = mapOf(
+                    PresentationPriority.Low to 1,
+                    PresentationPriority.Medium to 2,
+                    PresentationPriority.Top to 2
+                ),
+                popupLayoutSpec = MenuPopupPanelLayoutSpec(
+                    columnCount = 3, visibleRowCount = 3
+                ),
+                commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixedLandscape,
+                commandButtonTextOverflow = TextOverflow.Ellipsis,
+                expandKeyTip = "L"
+            )
+            val styleGalleryInlineState = remember {
+                RibbonGalleryInlineState(
+                    contentModel = styleGalleryContentModel,
+                    presentationModel = styleGalleryPresentationModel,
+                    presentationPriority = PresentationPriority.Top
+                )
+            }
             Row(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
                 RibbonGalleryProjection(
-                    contentModel = builder.styleGalleryContentModel,
-                    presentationModel = RibbonGalleryPresentationModel(
-                        preferredVisibleCommandCounts = mapOf(
-                            PresentationPriority.Low to 1,
-                            PresentationPriority.Medium to 2,
-                            PresentationPriority.Top to 2
-                        ),
-                        popupLayoutSpec = MenuPopupPanelLayoutSpec(
-                            columnCount = 3, visibleRowCount = 3
-                        ),
-                        commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixedLandscape,
-                        commandButtonTextOverflow = TextOverflow.Ellipsis,
-                        expandKeyTip = "L"
-                    )
+                    contentModel = styleGalleryContentModel,
+                    presentationModel = styleGalleryPresentationModel
                 ).project(
                     presentationPriority = PresentationPriority.Top,
+                    inlineState = styleGalleryInlineState
                 )
             }
 

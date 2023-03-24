@@ -85,6 +85,17 @@ class RibbonGalleryInlineState(
     var firstVisibleIndex by mutableStateOf(0)
     val lastVisibleIndex: Int
         get() = min(firstVisibleIndex + visibleCount - 1, fullCount - 1)
+    private var shouldRevealSelected: Boolean = false
+
+    fun revealSelected() {
+        shouldRevealSelected = true
+    }
+
+    fun getAndClearRevealSelected(): Boolean {
+        val result = shouldRevealSelected
+        shouldRevealSelected = false
+        return result
+    }
 
     fun revealAt(index: Int) {
         if ((index < 0) || (index >= fullCount)) {
@@ -117,12 +128,7 @@ class RibbonGalleryProjection(
     fun project(
         modifier: Modifier = Modifier,
         presentationPriority: PresentationPriority,
-        inlineState: RibbonGalleryInlineState =
-            RibbonGalleryInlineState(
-                contentModel = contentModel,
-                presentationModel = presentationModel,
-                presentationPriority = presentationPriority
-            )
+        inlineState: RibbonGalleryInlineState
     ) {
         require(
             (presentationModel.commandButtonPresentationState == CommandButtonPresentationState.Small) ||
@@ -137,7 +143,7 @@ class RibbonGalleryProjection(
             presentationPriority = presentationPriority,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel,
-            inlineState = remember { inlineState }
+            inlineState = inlineState
         )
     }
 }
