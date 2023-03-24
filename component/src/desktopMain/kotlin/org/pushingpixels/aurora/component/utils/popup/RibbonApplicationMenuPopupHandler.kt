@@ -130,7 +130,6 @@ internal class RibbonApplicationMenuPopupHandler(
             horizontalAlignment = HorizontalAlignment.Fill,
             contentPadding = menuPresentationModel.level1ItemContentPadding,
             selectedStateHighlight = menuPresentationModel.itemSelectedStateHighlight,
-            isMenu = true,
             sides = menuPresentationModel.itemSides
         )
 
@@ -183,7 +182,8 @@ internal class RibbonApplicationMenuPopupHandler(
             iconEnabledFilterStrategy = IconFilterStrategy.Original,
             iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-            isMenu = true
+            popupFireTrigger = PopupFireTrigger.OnRollover,
+            selectedStateHighlight = SelectedStateHighlight.FullSize
         )
 
         if (menuContentModel.footerCommands.commands.isEmpty()) {
@@ -314,7 +314,8 @@ internal class RibbonApplicationMenuPopupHandler(
             sides = menuPresentationModel.itemSides,
             horizontalAlignment = HorizontalAlignment.Fill,
             contentPadding = menuPresentationModel.level2ItemContentPadding,
-            isMenu = true
+            popupFireTrigger = PopupFireTrigger.OnRollover,
+            selectedStateHighlight = SelectedStateHighlight.FullSize
         )
 
         Column(modifier = modifier.padding(all = 1.0.dp)) {

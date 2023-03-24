@@ -160,7 +160,6 @@ data class ColorSelectorCommandButtonPresentationModel(
     override val popupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnPressed,
     override val selectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize,
     override val minWidth: Dp = 0.dp,
-    override val isMenu: Boolean = false,
     override val sides: Sides = Sides()
 ) : BaseCommandButtonPresentationModel {
     override val actionKeyTip = null

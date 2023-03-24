@@ -80,12 +80,13 @@ data class CommandPanelPresentationModel(
     val commandHorizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
     val commandHorizontalGapScaleFactor: Float = 1.0f,
     val commandVerticalGapScaleFactor: Float = 1.0f,
+    val commandPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnPressed,
+    val commandSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize,
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
     val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
-    val isMenu: Boolean = false
 ) : PresentationModel
 
 data class MenuPopupPanelLayoutSpec(val columnCount: Int, val visibleRowCount: Int)
@@ -103,7 +104,8 @@ data class CommandPopupMenuPanelPresentationModel(
     val commandHorizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
     val commandHorizontalGapScaleFactor: Float = 1.0f,
     val commandVerticalGapScaleFactor: Float = 1.0f,
-    val commandIsMenu: Boolean = true,
+    val commandPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnPressed,
+    val commandSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize,
     val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original
@@ -122,11 +124,12 @@ data class CommandPopupMenuPanelPresentationModel(
             commandHorizontalAlignment = this.commandHorizontalAlignment,
             commandHorizontalGapScaleFactor = this.commandHorizontalGapScaleFactor,
             commandVerticalGapScaleFactor = this.commandVerticalGapScaleFactor,
+            commandPopupFireTrigger = this.commandPopupFireTrigger,
+            commandSelectedStateHighlight = this.commandSelectedStateHighlight,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             iconDisabledFilterStrategy = this.iconDisabledFilterStrategy,
             iconEnabledFilterStrategy = this.iconEnabledFilterStrategy,
-            iconActiveFilterStrategy = this.iconActiveFilterStrategy,
-            isMenu = this.commandIsMenu
+            iconActiveFilterStrategy = this.iconActiveFilterStrategy
         )
     }
 }

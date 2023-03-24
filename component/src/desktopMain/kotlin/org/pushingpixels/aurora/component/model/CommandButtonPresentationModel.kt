@@ -104,7 +104,6 @@ interface BaseCommandButtonPresentationModel : PresentationModel {
     val verticalGapScaleFactor: Float
     val selectedStateHighlight: SelectedStateHighlight
     val minWidth: Dp
-    val isMenu: Boolean
     val sides: Sides
 }
 
@@ -140,7 +139,6 @@ data class CommandButtonPresentationModel(
     override val verticalGapScaleFactor: Float = 1.0f,
     override val selectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize,
     override val minWidth: Dp = 0.dp,
-    override val isMenu: Boolean = false,
     override val sides: Sides = Sides()
 ) : BaseCommandButtonPresentationModel {
     data class Overlay(
@@ -215,7 +213,6 @@ data class CommandButtonPresentationModel(
             verticalGapScaleFactor = overlay.verticalGapScaleFactor ?: this.verticalGapScaleFactor,
             selectedStateHighlight = overlay.selectedStateHighlight ?: this.selectedStateHighlight,
             minWidth = overlay.minWidth ?: this.minWidth,
-            isMenu = overlay.isMenu ?: this.isMenu,
             sides = overlay.sides ?: this.sides
         )
     }

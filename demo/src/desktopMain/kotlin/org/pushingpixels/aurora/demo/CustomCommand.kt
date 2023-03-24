@@ -103,7 +103,6 @@ data class CustomCommandButtonPresentationModel(
     override val verticalGapScaleFactor = 1.0f
     override val selectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize
     override val showPopupIcon: Boolean = false
-    override val isMenu = false
 }
 
 data class CustomPopupContentLayoutInfo(
@@ -151,7 +150,6 @@ object CustomCommandMenuPopupHandler : CascadingCommandMenuHandler<
             horizontalAlignment = HorizontalAlignment.Leading,
             contentPadding = CommandButtonSizingConstants.CompactButtonContentPadding,
             selectedStateHighlight = menuPresentationModel.itemSelectedStateHighlight,
-            isMenu = true,
             sides = Sides.ClosedRectangle
         )
 

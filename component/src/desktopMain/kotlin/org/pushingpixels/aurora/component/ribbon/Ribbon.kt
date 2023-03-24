@@ -68,6 +68,8 @@ data class RibbonGalleryPresentationModel(
     val preferredVisibleCommandCounts: Map<PresentationPriority, Int> = emptyMap(),
     val commandButtonPresentationState: CommandButtonPresentationState,
     val commandButtonTextOverflow: TextOverflow = TextOverflow.Clip,
+    val commandPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
+    val commandSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize,
     val contentPadding: PaddingValues = RibbonGallerySizingConstants.DefaultContentPadding,
     val layoutGap: Dp = RibbonGallerySizingConstants.DefaultContentLayoutGap,
     val expandKeyTip: String? = null,

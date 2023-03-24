@@ -141,7 +141,6 @@ data class RibbonApplicationMenuCommandButtonPresentationModel(
     override val verticalGapScaleFactor: Float = 1.0f
     override val selectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize
     override val minWidth: Dp = 0.dp
-    override val isMenu: Boolean = false
 }
 
 class RibbonApplicationMenuCommandButtonProjection(

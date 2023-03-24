@@ -54,5 +54,6 @@ data class CommandStripPresentationModel(
     val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
     val textClick: TextClick = TextClick.Action,
-    val isMenu: Boolean = false
+    val popupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnPressed,
+    val selectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize
 ): PresentationModel

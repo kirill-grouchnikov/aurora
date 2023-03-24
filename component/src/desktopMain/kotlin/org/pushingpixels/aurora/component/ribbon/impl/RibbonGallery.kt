@@ -282,7 +282,8 @@ internal fun RibbonGallery(
                                     contentPadding = PaddingValues(0.dp),
                                     showGroupLabels = contentModel.commandGroups.all { !it.title.isNullOrEmpty() },
                                     commandPresentationState = presentationModel.commandButtonPresentationState,
-                                    commandIsMenu = false
+                                    commandPopupFireTrigger = presentationModel.commandPopupFireTrigger,
+                                    commandSelectedStateHighlight = presentationModel.commandSelectedStateHighlight
                                 )
                             ),
                             popupAnchorBoundsProvider = {
@@ -298,7 +299,7 @@ internal fun RibbonGallery(
                 ).project(modifier = Modifier.weight(1.0f / 3.0f))
             }
         },
-        measurePolicy = { measurables, constraints ->
+        measurePolicy = { measurables, _ ->
             val buttonRow = measurables[0]
             val scrollerColumn = measurables[1]
 

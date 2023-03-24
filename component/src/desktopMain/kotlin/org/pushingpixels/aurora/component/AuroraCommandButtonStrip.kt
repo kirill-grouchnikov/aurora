@@ -87,7 +87,8 @@ internal fun AuroraCommandButtonStrip(
         popupPlacementStrategy = presentationModel.popupPlacementStrategy,
         horizontalGapScaleFactor = presentationModel.horizontalGapScaleFactor,
         verticalGapScaleFactor = presentationModel.verticalGapScaleFactor,
-        isMenu = presentationModel.isMenu
+        popupFireTrigger = presentationModel.popupFireTrigger,
+        selectedStateHighlight = presentationModel.selectedStateHighlight
     )
     if (presentationModel.orientation == StripOrientation.Horizontal) {
         Row(modifier = modifier) {

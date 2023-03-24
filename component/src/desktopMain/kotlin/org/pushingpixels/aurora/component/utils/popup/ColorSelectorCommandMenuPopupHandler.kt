@@ -89,7 +89,6 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
             horizontalAlignment = HorizontalAlignment.Leading,
             contentPadding = CommandButtonSizingConstants.CompactButtonContentPadding,
             selectedStateHighlight = menuPresentationModel.itemSelectedStateHighlight,
-            isMenu = true,
             sides = menuPresentationModel.itemSides
         )
 

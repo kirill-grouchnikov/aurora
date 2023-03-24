@@ -202,7 +202,7 @@ internal fun AuroraWindowScope.AuroraWindowMenuBar(menuCommands: CommandGroup) {
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                         contentPadding = CommandButtonSizingConstants.WideButtonContentPadding,
                         sides = Sides.ClosedRectangle,
-                        isMenu = true
+                        selectedStateHighlight = SelectedStateHighlight.IconOnly
                     )
                 ).project()
             }
