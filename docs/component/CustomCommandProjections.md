@@ -58,8 +58,9 @@ data class CustomMenuContentModel(
 
 ```
 data class CustomCommandPopupMenuPresentationModel(
-    override val itemPresentationState: CommandButtonPresentationState =
-        DefaultCommandPopupMenuPresentationState
+  override val itemPresentationState: CommandButtonPresentationState = DefaultCommandPopupMenuPresentationState,
+  override val itemPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
+  override val itemSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.IconOnly,
 ) : BaseCommandPopupMenuPresentationModel
 
 data class CustomCommandButtonPresentationModel(
@@ -88,12 +89,13 @@ data class CustomCommandButtonPresentationModel(
     override val autoRepeatSubsequentInterval =
         CommandButtonInteractionConstants.DefaultAutoRepeatSubsequentIntervalMillis
     override val actionFireTrigger = ActionFireTrigger.OnPressReleased
+    override val popupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnPressed
     override val textClick = TextClick.Action
     override val actionRichTooltipPresentationModel = RichTooltipPresentationModel()
     override val popupRichTooltipPresentationModel = RichTooltipPresentationModel()
     override val horizontalGapScaleFactor = 1.0f
     override val verticalGapScaleFactor = 1.0f
-    override val isMenu = false
+    override val selectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize
 }
 ```
 
@@ -304,10 +306,11 @@ override fun getPopupContentLayoutInfo(
         iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
         forceAllocateSpaceForIcon = atLeastOneButtonHasIcon,
         popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
+        popupFireTrigger = menuPresentationModel.itemPopupFireTrigger,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
         horizontalAlignment = HorizontalAlignment.Leading,
         contentPadding = CommandButtonSizingConstants.CompactButtonContentPadding,
-        isMenu = true,
+        selectedStateHighlight = menuPresentationModel.itemSelectedStateHighlight,
         sides = Sides.ClosedRectangle
     )
 
