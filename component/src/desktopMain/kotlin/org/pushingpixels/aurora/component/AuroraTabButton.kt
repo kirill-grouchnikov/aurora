@@ -38,7 +38,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.resolveDefaults
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntSize
@@ -46,6 +45,7 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
+import org.pushingpixels.aurora.component.model.SelectedStateHighlight
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
@@ -558,7 +558,8 @@ private fun TabButtonIconContent(
         .map { it.value }
         .sumOf { it.contribution.toDouble() }
         .toFloat()
-    val isSelectedMenu = presentationModel.isMenu && (selectionAlpha > 0.0f)
+    val showSelectionAroundIcon = (presentationModel.selectedStateHighlight == SelectedStateHighlight.IconOnly)
+            && (selectionAlpha > 0.0f)
 
     val skinColors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
@@ -566,7 +567,7 @@ private fun TabButtonIconContent(
     val fillPainter = AuroraSkin.painters.fillPainter
 
     Box {
-        if (isSelectedMenu) {
+        if (showSelectionAroundIcon) {
             Canvas(modifier = Modifier.matchParentSize()) {
                 // Background fill / border for selected toggle menu commands
                 val stateForBackground =

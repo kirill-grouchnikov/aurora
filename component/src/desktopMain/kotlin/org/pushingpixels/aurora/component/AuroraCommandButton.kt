@@ -929,13 +929,14 @@ internal fun <M : BaseCommandMenuContentModel,
                 }
             ) {
                 if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.Never) {
-                    // Ignore the selected bit on toggle menu commands
-                    val isActionToggleMenu = command.isActionToggle && presentationModel.isMenu
+                    // Ignore the selected bit?
+                    val ignoreSelectedState = command.isActionToggle &&
+                            (presentationModel.selectedStateHighlight == SelectedStateHighlight.IconOnly)
                     val actionModelStateInfoToUse =
-                        if (isActionToggleMenu) actionModelNoSelectionStateInfo
+                        if (ignoreSelectedState) actionModelNoSelectionStateInfo
                         else actionModelStateInfo
                     val currentActionStateToUse =
-                        if (isActionToggleMenu) currentActionNoSelectionState
+                        if (ignoreSelectedState) currentActionNoSelectionState
                         else currentActionState
 
                     // Populate the cached color scheme for filling the action area
@@ -1367,14 +1368,16 @@ internal fun <M : BaseCommandMenuContentModel,
 
             // Text content can be in action or popup area. Use the matching model
             // to determine the text color
+            val ignoreSelectedState = command.isActionToggle &&
+                    (presentationModel.selectedStateHighlight == SelectedStateHighlight.IconOnly)
             val modelStateInfoForText = if (isTextInActionArea) {
-                if (command.isActionToggle && presentationModel.isMenu) actionModelNoSelectionStateInfo
+                if (ignoreSelectedState) actionModelNoSelectionStateInfo
                 else actionModelStateInfo
             } else {
                 popupModelStateInfo
             }
             val currStateForText = if (isTextInActionArea) {
-                if (command.isActionToggle && presentationModel.isMenu) currentActionNoSelectionState.value
+                if (ignoreSelectedState) currentActionNoSelectionState.value
                 else currentActionState.value
             } else {
                 currentPopupState.value
@@ -1679,7 +1682,8 @@ private fun CommandButtonIconContent(
         .map { it.value }
         .sumOf { it.contribution.toDouble() }
         .toFloat()
-    val isSelectedMenu = presentationModel.isMenu && (selectionAlpha > 0.0f)
+    val showSelectionAroundIcon = (presentationModel.selectedStateHighlight == SelectedStateHighlight.IconOnly)
+            && (selectionAlpha > 0.0f)
 
     val skinColors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
@@ -1687,7 +1691,7 @@ private fun CommandButtonIconContent(
     val fillPainter = AuroraSkin.painters.fillPainter
 
     Box {
-        if (isSelectedMenu) {
+        if (showSelectionAroundIcon) {
             Canvas(modifier = Modifier.matchParentSize()) {
                 // Background fill / border for selected toggle menu commands
                 val stateForBackground =

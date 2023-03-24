@@ -64,7 +64,15 @@ enum class PopupFireTrigger {
     OnPressed
 }
 
-interface BaseCommandButtonPresentationModel: PresentationModel {
+enum class SelectedStateHighlight {
+    /** Selected state highlight is displayed around the button icon */
+    IconOnly,
+
+    /** Selected state highlight is displayed over the full button area */
+    FullSize
+}
+
+interface BaseCommandButtonPresentationModel : PresentationModel {
     val presentationState: CommandButtonPresentationState
     val colorSchemeBundle: AuroraColorSchemeBundle?
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy
@@ -94,6 +102,7 @@ interface BaseCommandButtonPresentationModel: PresentationModel {
     val contentPadding: PaddingValues
     val horizontalGapScaleFactor: Float
     val verticalGapScaleFactor: Float
+    val selectedStateHighlight: SelectedStateHighlight
     val minWidth: Dp
     val isMenu: Boolean
     val sides: Sides
@@ -129,10 +138,11 @@ data class CommandButtonPresentationModel(
     override val contentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
     override val horizontalGapScaleFactor: Float = 1.0f,
     override val verticalGapScaleFactor: Float = 1.0f,
+    override val selectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize,
     override val minWidth: Dp = 0.dp,
     override val isMenu: Boolean = false,
-    override val sides : Sides = Sides()
-): BaseCommandButtonPresentationModel {
+    override val sides: Sides = Sides()
+) : BaseCommandButtonPresentationModel {
     data class Overlay(
         val presentationState: CommandButtonPresentationState? = null,
         val colorSchemeBundle: AuroraColorSchemeBundle? = null,
@@ -155,6 +165,7 @@ data class CommandButtonPresentationModel(
         val autoRepeatInitialInterval: Long? = null,
         val autoRepeatSubsequentInterval: Long? = null,
         val actionFireTrigger: ActionFireTrigger? = null,
+        val popupFireTrigger: PopupFireTrigger? = null,
         val popupMenuPresentationModel: CommandPopupMenuPresentationModel? = null,
         val textClick: TextClick? = null,
         val actionRichTooltipPresentationModel: RichTooltipPresentationModel? = null,
@@ -162,9 +173,10 @@ data class CommandButtonPresentationModel(
         val contentPadding: PaddingValues? = null,
         val horizontalGapScaleFactor: Float? = null,
         val verticalGapScaleFactor: Float? = null,
+        val selectedStateHighlight: SelectedStateHighlight? = null,
         val minWidth: Dp? = null,
         val isMenu: Boolean? = null,
-        val sides : Sides? = null
+        val sides: Sides? = null
     )
 
     fun overlayWith(overlay: Overlay): CommandButtonPresentationModel {
@@ -191,13 +203,17 @@ data class CommandButtonPresentationModel(
             autoRepeatInitialInterval = overlay.autoRepeatInitialInterval ?: this.autoRepeatInitialInterval,
             autoRepeatSubsequentInterval = overlay.autoRepeatSubsequentInterval ?: this.autoRepeatSubsequentInterval,
             actionFireTrigger = overlay.actionFireTrigger ?: this.actionFireTrigger,
+            popupFireTrigger = overlay.popupFireTrigger ?: this.popupFireTrigger,
             popupMenuPresentationModel = overlay.popupMenuPresentationModel ?: this.popupMenuPresentationModel,
             textClick = overlay.textClick ?: this.textClick,
-            actionRichTooltipPresentationModel = overlay.actionRichTooltipPresentationModel ?: this.actionRichTooltipPresentationModel,
-            popupRichTooltipPresentationModel = overlay.popupRichTooltipPresentationModel ?: this.popupRichTooltipPresentationModel,
+            actionRichTooltipPresentationModel = overlay.actionRichTooltipPresentationModel
+                ?: this.actionRichTooltipPresentationModel,
+            popupRichTooltipPresentationModel = overlay.popupRichTooltipPresentationModel
+                ?: this.popupRichTooltipPresentationModel,
             contentPadding = overlay.contentPadding ?: this.contentPadding,
             horizontalGapScaleFactor = overlay.horizontalGapScaleFactor ?: this.horizontalGapScaleFactor,
             verticalGapScaleFactor = overlay.verticalGapScaleFactor ?: this.verticalGapScaleFactor,
+            selectedStateHighlight = overlay.selectedStateHighlight ?: this.selectedStateHighlight,
             minWidth = overlay.minWidth ?: this.minWidth,
             isMenu = overlay.isMenu ?: this.isMenu,
             sides = overlay.sides ?: this.sides

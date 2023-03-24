@@ -129,6 +129,7 @@ internal class RibbonApplicationMenuPopupHandler(
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             horizontalAlignment = HorizontalAlignment.Fill,
             contentPadding = menuPresentationModel.level1ItemContentPadding,
+            selectedStateHighlight = menuPresentationModel.itemSelectedStateHighlight,
             isMenu = true,
             sides = menuPresentationModel.itemSides
         )

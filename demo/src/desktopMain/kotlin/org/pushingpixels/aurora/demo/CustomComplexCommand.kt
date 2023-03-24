@@ -101,6 +101,7 @@ data class CustomComplexMenuContentModel(
 data class CustomComplexCommandPopupMenuPresentationModel(
     override val itemPresentationState: CommandButtonPresentationState = DefaultCommandPopupMenuPresentationState,
     override val itemPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
+    override val itemSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.IconOnly,
     val itemIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val itemIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val itemIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
@@ -197,6 +198,7 @@ data class CustomComplexCommandButtonPresentationModel(
     override val horizontalGapScaleFactor = 1.0f
     override val verticalGapScaleFactor = 1.0f
     override val showPopupIcon: Boolean = false
+    override val selectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize
     override val isMenu = false
 }
 
@@ -231,6 +233,7 @@ object CustomComplexCommandMenuPopupHandler : CascadingCommandMenuHandler<
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             horizontalAlignment = menuPresentationModel.horizontalAlignment,
             contentPadding = menuPresentationModel.itemContentPadding,
+            selectedStateHighlight = menuPresentationModel.itemSelectedStateHighlight,
             isMenu = true,
             sides = Sides.ClosedRectangle
         )

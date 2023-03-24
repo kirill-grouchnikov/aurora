@@ -63,7 +63,8 @@ data class CustomMenuContentModel(
 
 data class CustomCommandPopupMenuPresentationModel(
     override val itemPresentationState: CommandButtonPresentationState = DefaultCommandPopupMenuPresentationState,
-    override val itemPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover
+    override val itemPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
+    override val itemSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.IconOnly,
 ) : BaseCommandPopupMenuPresentationModel
 
 data class CustomCommandButtonPresentationModel(
@@ -100,6 +101,7 @@ data class CustomCommandButtonPresentationModel(
     override val popupAnchorBoundsProvider: (() -> Rect)? = null
     override val horizontalGapScaleFactor = 1.0f
     override val verticalGapScaleFactor = 1.0f
+    override val selectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize
     override val showPopupIcon: Boolean = false
     override val isMenu = false
 }
@@ -148,6 +150,7 @@ object CustomCommandMenuPopupHandler : CascadingCommandMenuHandler<
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             horizontalAlignment = HorizontalAlignment.Leading,
             contentPadding = CommandButtonSizingConstants.CompactButtonContentPadding,
+            selectedStateHighlight = menuPresentationModel.itemSelectedStateHighlight,
             isMenu = true,
             sides = Sides.ClosedRectangle
         )

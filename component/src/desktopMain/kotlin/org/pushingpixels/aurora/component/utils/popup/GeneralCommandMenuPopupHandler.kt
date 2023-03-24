@@ -105,6 +105,7 @@ internal object GeneralCommandMenuPopupHandler : CascadingCommandMenuHandler<
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             horizontalAlignment = menuPresentationModel.itemHorizontalAlignment,
             contentPadding = menuPresentationModel.itemContentPadding,
+            selectedStateHighlight = menuPresentationModel.itemSelectedStateHighlight,
             isMenu = true
         )
         val regularButtonLayoutManager =
@@ -371,6 +372,7 @@ internal object GeneralCommandMenuPopupHandler : CascadingCommandMenuHandler<
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             horizontalAlignment = menuPresentationModel.itemHorizontalAlignment,
             contentPadding = menuPresentationModel.itemContentPadding,
+            selectedStateHighlight = menuPresentationModel.itemSelectedStateHighlight,
             isMenu = true,
             sides = menuPresentationModel.itemSides
         )

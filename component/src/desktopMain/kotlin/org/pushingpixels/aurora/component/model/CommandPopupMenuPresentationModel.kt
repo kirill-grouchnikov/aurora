@@ -32,12 +32,14 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 interface BaseCommandPopupMenuPresentationModel {
     val itemPresentationState: CommandButtonPresentationState
     val itemPopupFireTrigger: PopupFireTrigger
+    val itemSelectedStateHighlight: SelectedStateHighlight
 }
 
 data class CommandPopupMenuPresentationModel(
     override val itemPresentationState: CommandButtonPresentationState =
         DefaultCommandPopupMenuPresentationState,
     override val itemPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
+    override val itemSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.IconOnly,
     val panelPresentationModel: CommandPopupMenuPanelPresentationModel? = null,
     val itemIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val itemIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
@@ -49,7 +51,7 @@ data class CommandPopupMenuPresentationModel(
     val iconGutterFillColorQuery: ((AuroraColorScheme) -> Color)? = null,
     val backgroundFillColorQuery: ((Int, AuroraColorScheme) -> Color) = { _, scheme -> scheme.backgroundFillColor },
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignTop,
-    val toDismissOnCommandActivation: Boolean = true
+    val toDismissOnCommandActivation: Boolean = true,
 ): BaseCommandPopupMenuPresentationModel
 
 private class PopupMenuCommandButtonLayoutManager(

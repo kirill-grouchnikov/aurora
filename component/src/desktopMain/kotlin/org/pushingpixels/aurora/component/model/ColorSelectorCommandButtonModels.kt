@@ -100,6 +100,7 @@ data class ColorSelectorCommandPopupMenuPresentationModel(
     override val itemPresentationState: CommandButtonPresentationState =
         DefaultCommandPopupMenuPresentationState,
     override val itemPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
+    override val itemSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.IconOnly,
     val itemSides: Sides = Sides.ClosedRectangle,
     val colorColumns: Int,
     val colorCellSize: Dp = ColorSelectorCommandButtonSizingConstants.DefaultColorCellSize,
@@ -157,6 +158,7 @@ data class ColorSelectorCommandButtonPresentationModel(
     override val horizontalGapScaleFactor: Float = 1.0f,
     override val verticalGapScaleFactor: Float = 1.0f,
     override val popupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnPressed,
+    override val selectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize,
     override val minWidth: Dp = 0.dp,
     override val isMenu: Boolean = false,
     override val sides: Sides = Sides()

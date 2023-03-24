@@ -90,6 +90,7 @@ data class RibbonApplicationMenuCommandPopupMenuPresentationModel(
     override val itemPresentationState: CommandButtonPresentationState =
         DefaultCommandPopupMenuPresentationState,
     override val itemPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
+    override val itemSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize,
     val itemIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val itemIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val itemIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
@@ -138,6 +139,7 @@ data class RibbonApplicationMenuCommandButtonPresentationModel(
     override val toDismissPopupsOnActivation: Boolean = true
     override val horizontalGapScaleFactor: Float = 1.0f
     override val verticalGapScaleFactor: Float = 1.0f
+    override val selectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize
     override val minWidth: Dp = 0.dp
     override val isMenu: Boolean = false
 }
