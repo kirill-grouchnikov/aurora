@@ -197,12 +197,12 @@ fun DemoTitlePaneFooter(
             .auroraBackground()
             .padding(horizontal = 8.dp, vertical = 6.dp)
     ) {
-        Spacer(modifier.weight(weight = 1.0f, fill = true))
+        Spacer(Modifier.weight(weight = 1.0f, fill = true))
         AuroraTitlePaneHorizontalConfigSelector(
             windowTitlePaneConfiguration, onWindowTitlePaneConfigurationChange,
             PopupPlacementStrategy.Upward.HAlignStart
         )
-        Spacer(modifier.width(12.dp))
+        Spacer(Modifier.width(12.dp))
         AuroraSkinSwitcher(onSkinChange, PopupPlacementStrategy.Upward.HAlignStart)
     }
 }
