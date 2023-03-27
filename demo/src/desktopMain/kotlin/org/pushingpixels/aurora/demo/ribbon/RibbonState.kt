@@ -21,6 +21,14 @@ enum class DocumentStyle {
     Style21, Style22, Style23, Style24, Style25, Style26, Style27, Style28, Style29, Style30
 }
 
+enum class FontFamily {
+    Calibri, Columbus, Consolas, Cornelius,
+    Cleopatra, Cornucopia, California, Calendula,
+    Coriander, Callisto, Cajun, Congola,
+    Candella, Cambria
+}
+
 data class RibbonState(
-    val documentStyle: DocumentStyle
+    val documentStyle: DocumentStyle,
+    val fontFamily: FontFamily
 )

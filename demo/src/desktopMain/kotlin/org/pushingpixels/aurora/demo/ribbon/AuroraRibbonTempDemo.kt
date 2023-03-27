@@ -26,10 +26,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import org.pushingpixels.aurora.component.model.MenuPopupPanelLayoutSpec
+import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.ComboBoxProjection
+import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.*
 import org.pushingpixels.aurora.demo.AuroraSkinSwitcher
 import org.pushingpixels.aurora.demo.svg.radiance_menu
+import org.pushingpixels.aurora.demo.svg.tango.edit_clear
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
@@ -50,7 +53,10 @@ fun main() = auroraApplication {
 
     var ribbonState by remember {
         mutableStateOf(
-            RibbonState(documentStyle = DocumentStyle.Style2)
+            RibbonState(
+                documentStyle = DocumentStyle.Style2,
+                fontFamily = FontFamily.Calibri
+            )
         )
     }
     val builder = RibbonBuilder(
@@ -78,36 +84,15 @@ fun main() = auroraApplication {
                 }
             }
 
-            val styleGalleryContentModel = builder.styleGalleryContentModel
-            val styleGalleryPresentationModel = RibbonGalleryPresentationModel(
-                preferredVisibleCommandCounts = mapOf(
-                    PresentationPriority.Low to 1,
-                    PresentationPriority.Medium to 2,
-                    PresentationPriority.Top to 2
-                ),
-                popupLayoutSpec = MenuPopupPanelLayoutSpec(
-                    columnCount = 3, visibleRowCount = 3
-                ),
-                commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixedLandscape,
-                commandButtonTextOverflow = TextOverflow.Ellipsis,
-                expandKeyTip = "L"
+            SampleGallery(builder = builder)
+            TaskBar(
+                builder = builder,
+                resourceBundle = resourceBundle,
+                ribbonState = ribbonState,
+                onRibbonStateChange = {
+                    ribbonState = it
+                }
             )
-            val styleGalleryInlineState = remember {
-                RibbonGalleryInlineState(
-                    contentModel = styleGalleryContentModel,
-                    presentationModel = styleGalleryPresentationModel,
-                    presentationPriority = PresentationPriority.Top
-                )
-            }
-            Row(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
-                RibbonGalleryProjection(
-                    contentModel = styleGalleryContentModel,
-                    presentationModel = styleGalleryPresentationModel
-                ).project(
-                    presentationPriority = PresentationPriority.Top,
-                    inlineState = styleGalleryInlineState
-                )
-            }
 
             Spacer(Modifier.weight(weight = 1.0f, fill = true))
             Row(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
@@ -115,7 +100,97 @@ fun main() = auroraApplication {
             }
         }
     }
+}
 
+@Composable
+private fun SampleGallery(builder: RibbonBuilder) {
+    val styleGalleryContentModel = builder.styleGalleryContentModel
+    val styleGalleryPresentationModel = RibbonGalleryPresentationModel(
+        preferredVisibleCommandCounts = mapOf(
+            PresentationPriority.Low to 1,
+            PresentationPriority.Medium to 2,
+            PresentationPriority.Top to 2
+        ),
+        popupLayoutSpec = MenuPopupPanelLayoutSpec(
+            columnCount = 3, visibleRowCount = 3
+        ),
+        commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixedLandscape,
+        commandButtonTextOverflow = TextOverflow.Ellipsis,
+        expandKeyTip = "L"
+    )
+    val styleGalleryInlineState = remember {
+        RibbonGalleryInlineState(
+            contentModel = styleGalleryContentModel,
+            presentationModel = styleGalleryPresentationModel,
+            presentationPriority = PresentationPriority.Top
+        )
+    }
+    Row(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
+        RibbonGalleryProjection(
+            contentModel = styleGalleryContentModel,
+            presentationModel = styleGalleryPresentationModel
+        ).project(
+            presentationPriority = PresentationPriority.Top,
+            inlineState = styleGalleryInlineState
+        )
+    }
+}
+
+@Composable
+private fun TaskBar(
+    builder: RibbonBuilder,
+    ribbonState: RibbonState,
+    onRibbonStateChange: (RibbonState) -> Unit,
+    resourceBundle: ResourceBundle
+) {
+    val taskbarElements: List<RibbonTaskbarElement> =
+        listOf(
+            RibbonTaskbarCommandProjection(
+                CommandButtonProjection(
+                    contentModel = builder.pasteCommand,
+                    presentationModel = CommandButtonPresentationModel()
+                )
+            ),
+            RibbonTaskbarCommandProjection(
+                CommandButtonProjection(
+                    contentModel = Command(
+                        text = "",
+                        icon = edit_clear(),
+                        action = { println("Taskbat Clear activated") },
+                        isActionEnabled = false
+                    ),
+                    presentationModel = CommandButtonPresentationModel()
+                )
+            ),
+            RibbonTaskbarComponentProjection(
+                ComboBoxProjection(
+                    contentModel = ComboBoxContentModel(
+                        items = FontFamily.values().toList(),
+                        selectedItem = ribbonState.fontFamily,
+                        onTriggerItemSelectedChange = {
+                            onRibbonStateChange(ribbonState.copy(fontFamily = it))
+                            println("New font family selection -> ${it.name}")
+                        },
+                        richTooltip = RichTooltip(title = resourceBundle.getString("Fonts.tooltip.title")),
+                    ),
+                    presentationModel = ComboBoxPresentationModel(displayConverter = { it.name }),
+                )
+            ),
+            // Add the same gallery we have in the first ribbon task to the taskbar, configuring
+            // its popup presentation with a 4x2 grid of slightly smaller buttons (instead of a 3x3
+            // grid of slightly larger ones in the in-task gallery popup).
+            // Content preview and selection is controlled by the same model and is kept in sync
+            // along all usages of the gallery content model in our ribbon.
+            RibbonTaskbarGalleryProjection(
+                RibbonGalleryProjection(
+                    contentModel = builder.styleGalleryContentModel,
+                    presentationModel = RibbonGalleryPresentationModel(
+                        popupLayoutSpec = MenuPopupPanelLayoutSpec(columnCount = 4, visibleRowCount = 2),
+                        commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixed
+                    )
+                )
+            )
+        )
 }
 
 

@@ -68,7 +68,10 @@ fun main() = auroraApplication {
 
     var ribbonState by remember {
         mutableStateOf(
-            RibbonState(documentStyle = DocumentStyle.Style2)
+            RibbonState(
+                documentStyle = DocumentStyle.Style2,
+                fontFamily = FontFamily.Calibri
+            )
         )
     }
     val builder = RibbonBuilder(
@@ -77,13 +80,13 @@ fun main() = auroraApplication {
         ribbonState = ribbonState,
         onRibbonStateUpdate = { newState -> ribbonState = newState })
 
-    var fontFamilyComboSelectedItem by remember { mutableStateOf(builder.fontFamilyComboBoxEntries[0]) }
-
     val clipboardBand = builder.getClipboardBand()
     val quickStylesBand = builder.getQuickStylesBand()
     val fontBand = builder.getFontBand(
-        selectedFontFamily = fontFamilyComboSelectedItem,
-        onFontFamilySelected = { fontFamilyComboSelectedItem = it }
+        selectedFontFamily = ribbonState.fontFamily,
+        onFontFamilySelected = {
+            ribbonState = ribbonState.copy(fontFamily = it)
+        }
     )
     val documentBand = builder.getDocumentBand()
     val findBand = builder.getFindBand()
@@ -161,15 +164,15 @@ fun main() = auroraApplication {
             RibbonTaskbarComponentProjection(
                 ComboBoxProjection(
                     contentModel = ComboBoxContentModel(
-                        items = builder.fontFamilyComboBoxEntries,
-                        selectedItem = fontFamilyComboSelectedItem,
+                        items = FontFamily.values().toList(),
+                        selectedItem = ribbonState.fontFamily,
                         onTriggerItemSelectedChange = {
-                            fontFamilyComboSelectedItem = it
-                            println("New font family selection -> $it")
+                            ribbonState = ribbonState.copy(fontFamily = it)
+                            println("New font family selection -> ${it.name}")
                         },
                         richTooltip = RichTooltip(title = resourceBundle.getString("Fonts.tooltip.title")),
                     ),
-                    presentationModel = ComboBoxPresentationModel(displayConverter = { it }),
+                    presentationModel = ComboBoxPresentationModel(displayConverter = { it.name }),
                 )
             ),
             // Add the same gallery we have in the first ribbon task to the taskbar, configuring
@@ -467,16 +470,6 @@ internal class RibbonBuilder(
             CommandGroup(commands = listOf(this.menuSaveSelection, this.menuClearSelection)),
             CommandGroup(commands = listOf(this.applyStyles))
         )
-    )
-
-    val fontFamilyComboBoxEntries = listOf(
-        "Calibri", "Columbus",
-        "Consolas", "Cornelius",
-        "Cleopatra", "Cornucopia",
-        "California", "Calendula",
-        "Coriander", "Callisto",
-        "Cajun", "Congola",
-        "Candella", "Cambria"
     )
 
     val fontSizeComboBoxEntries = listOf(11, 12, 13, 14, 16)
@@ -855,11 +848,11 @@ internal class RibbonBuilder(
 
     @Composable
     fun getFontBand(
-        selectedFontFamily: String,
-        onFontFamilySelected: (String) -> Unit
+        selectedFontFamily: FontFamily,
+        onFontFamilySelected: (FontFamily) -> Unit
     ): FlowRibbonBand {
         val fontFamilyComboBoxContentModel = ComboBoxContentModel(
-            items = this.fontFamilyComboBoxEntries,
+            items = FontFamily.values().toList(),
             selectedItem = selectedFontFamily,
             onTriggerItemSelectedChange = {
                 onFontFamilySelected(it)
