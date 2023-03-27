@@ -68,9 +68,9 @@ abstract class BaseCommandButtonProjection<out C : BaseCommand,
 class CommandButtonProjection(
     contentModel: Command,
     presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel(),
-    overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
+    secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
 ) : BaseCommandButtonProjection<Command, CommandButtonPresentationModel>(
-    contentModel, presentationModel, overlays
+    contentModel, presentationModel, secondaryOverlays
 ) {
     @Composable
     fun project(
@@ -107,9 +107,9 @@ class CommandButtonProjection(
 class ColorSelectorCommandButtonProjection(
     contentModel: ColorSelectorCommand,
     presentationModel: ColorSelectorCommandButtonPresentationModel = ColorSelectorCommandButtonPresentationModel(),
-    overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
+    secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
 ) : BaseCommandButtonProjection<ColorSelectorCommand, ColorSelectorCommandButtonPresentationModel>(
-    contentModel, presentationModel, overlays
+    contentModel, presentationModel, secondaryOverlays
 ) {
     private fun checkModel() {
         require(contentModel.secondaryContentModel.entries.all {

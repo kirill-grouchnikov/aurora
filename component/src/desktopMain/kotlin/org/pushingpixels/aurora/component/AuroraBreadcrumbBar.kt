@@ -113,7 +113,7 @@ internal fun AuroraBreadcrumbBar(
                             else PopupPlacementStrategy.Endward.VAlignTop
                         )
                     ),
-                    overlays = mapOf()
+                    secondaryOverlays = mapOf()
                 ).project(
                     modifier = Modifier.fillMaxWidth(),
                     actionInteractionSource = remember { MutableInteractionSource() },

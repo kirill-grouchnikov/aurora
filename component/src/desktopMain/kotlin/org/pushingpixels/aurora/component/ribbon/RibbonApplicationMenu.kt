@@ -161,10 +161,10 @@ data class RibbonApplicationMenuCommandButtonPresentationModel(
 class RibbonApplicationMenuCommandButtonProjection(
     contentModel: RibbonApplicationMenuCommand,
     presentationModel: RibbonApplicationMenuCommandButtonPresentationModel,
-    overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null,
+    secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null,
     val secondaryStates: Map<Command, CommandButtonPresentationState>? = null
 ) : BaseCommandButtonProjection<RibbonApplicationMenuCommand, RibbonApplicationMenuCommandButtonPresentationModel>(
-    contentModel, presentationModel, overlays
+    contentModel, presentationModel, secondaryOverlays
 ) {
     @Composable
     fun project(

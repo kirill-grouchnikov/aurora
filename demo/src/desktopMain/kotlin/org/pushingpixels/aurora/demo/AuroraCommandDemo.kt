@@ -142,7 +142,7 @@ fun DemoCommandRow(
                     backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                     textClick = TextClick.Popup
                 ),
-                overlays = overlays
+                secondaryOverlays = overlays
             ).project()
         }
     }
@@ -1023,7 +1023,7 @@ fun AuroraWindowScope.DemoCommandContent(
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
                     ),
-                    overlays = hashMapOf(
+                    secondaryOverlays = hashMapOf(
                         customSecondary3 to BaseCommandButtonPresentationModel.Overlay(
                             colorSchemeBundle = generateColorSchemeBundle(
                                 active = SunfireRedColorScheme(),

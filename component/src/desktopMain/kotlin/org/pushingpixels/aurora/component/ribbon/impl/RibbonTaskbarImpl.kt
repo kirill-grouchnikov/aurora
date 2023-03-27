@@ -16,12 +16,14 @@
 package org.pushingpixels.aurora.component.ribbon.impl
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import org.pushingpixels.aurora.component.model.BaseCommandButtonPresentationModel
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
+import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarCommandProjection
 import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarComponentProjection
 import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarElement
@@ -48,7 +50,44 @@ fun RibbonTaskbar(
                     )
                 }
 
-                is RibbonTaskbarGalleryProjection -> {}
+                is RibbonTaskbarGalleryProjection -> {
+                    val galleryContentModel = element.galleryProjection.contentModel
+                    val galleryPresentationModel = element.galleryProjection.presentationModel
+
+                    val galleryCommand = Command(
+                        text = "",
+                        icon = galleryContentModel.icon,
+                        secondaryContentModel = CommandMenuContentModel(
+                            onDeactivatePopup = {
+                                // Mark the inline state to have the latest selected command button to be revealed
+                                element.galleryInlineState.revealSelected()
+                            },
+                            panelContentModel = CommandPanelContentModel(
+                                commandGroups = galleryContentModel.commandGroups
+                            ),
+                            groups = galleryContentModel.extraPopupGroups
+                        ),
+                        isSecondaryEnabled = true,
+                    )
+                    CommandButtonProjection(
+                        contentModel = galleryCommand,
+                        presentationModel = CommandButtonPresentationModel(
+                            presentationState = CommandButtonPresentationState.Small,
+                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                            popupMenuPresentationModel = CommandPopupMenuPresentationModel(
+                                panelPresentationModel = CommandPopupMenuPanelPresentationModel(
+                                    layoutSpec = galleryPresentationModel.popupLayoutSpec,
+                                    contentPadding = PaddingValues(0.dp),
+                                    showGroupLabels = galleryContentModel.commandGroups.all { !it.title.isNullOrEmpty() },
+                                    commandPresentationState = galleryPresentationModel.commandButtonPresentationState,
+                                    commandPopupFireTrigger = galleryPresentationModel.commandPopupFireTrigger,
+                                    commandSelectedStateHighlight = galleryPresentationModel.commandSelectedStateHighlight
+                                )
+                            )
+                        ),
+                        secondaryOverlays = element.galleryProjection.secondaryOverlays
+                    ).project()
+                }
 
                 is RibbonTaskbarComponentProjection -> {}
             }

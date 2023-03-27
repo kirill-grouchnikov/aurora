@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
@@ -80,8 +81,35 @@ fun main() = auroraApplication {
         ribbonState = ribbonState,
         onRibbonStateUpdate = { newState -> ribbonState = newState })
 
+    val styleGalleryContentModel = builder.styleGalleryContentModel
+    val styleGalleryInlinePresentationModel = RibbonGalleryPresentationModel(
+        preferredVisibleCommandCounts = mapOf(
+            PresentationPriority.Low to 1,
+            PresentationPriority.Medium to 2,
+            PresentationPriority.Top to 2
+        ),
+        popupLayoutSpec = MenuPopupPanelLayoutSpec(
+            columnCount = 3, visibleRowCount = 3
+        ),
+        commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixedLandscape,
+        commandButtonTextOverflow = TextOverflow.Ellipsis,
+        expandKeyTip = "L"
+    )
+    val styleGalleryInlineState = remember {
+        RibbonGalleryInlineState(
+            contentModel = styleGalleryContentModel,
+            presentationModel = styleGalleryInlinePresentationModel,
+            presentationPriority = PresentationPriority.Top
+        )
+    }
+
+    val styleGalleryTaskbarPresentationModel = RibbonGalleryPresentationModel(
+        popupLayoutSpec = MenuPopupPanelLayoutSpec(columnCount = 4, visibleRowCount = 2),
+        commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixed
+    )
+
     val clipboardBand = builder.getClipboardBand()
-    val quickStylesBand = builder.getQuickStylesBand()
+    val quickStylesBand = builder.getQuickStylesBand(styleGalleryInlinePresentationModel)
     val fontBand = builder.getFontBand(
         selectedFontFamily = ribbonState.fontFamily,
         onFontFamilySelected = {
@@ -181,13 +209,11 @@ fun main() = auroraApplication {
             // Content preview and selection is controlled by the same model and is kept in sync
             // along all usages of the gallery content model in our ribbon.
             RibbonTaskbarGalleryProjection(
-                RibbonGalleryProjection(
-                    contentModel = builder.styleGalleryContentModel,
-                    presentationModel = RibbonGalleryPresentationModel(
-                        popupLayoutSpec = MenuPopupPanelLayoutSpec(columnCount = 4, visibleRowCount = 2),
-                        commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixed
-                    )
-                )
+                galleryProjection = RibbonGalleryProjection(
+                    contentModel = styleGalleryContentModel,
+                    presentationModel = styleGalleryTaskbarPresentationModel
+                ),
+                galleryInlineState = styleGalleryInlineState
             )
         )
 
@@ -657,7 +683,7 @@ internal class RibbonBuilder(
                                 popupKeyTip = "V",
                                 textClick = TextClick.Action
                             ),
-                            overlays = mapOf(
+                            secondaryOverlays = mapOf(
                                 popupCommand1 to BaseCommandButtonPresentationModel.Overlay(popupKeyTip = "1"),
                                 popupCommand2 to BaseCommandButtonPresentationModel.Overlay(popupKeyTip = "2"),
                                 popupCommand3 to BaseCommandButtonPresentationModel.Overlay(popupKeyTip = "3"),
@@ -692,7 +718,7 @@ internal class RibbonBuilder(
                                     )
                                 )
                             ),
-                            overlays = mapOf(
+                            secondaryOverlays = mapOf(
                                 this.menuSaveSelection to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "SS"),
                                 this.menuClearSelection to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "SC"),
                                 this.applyStyles to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "SA")
@@ -704,7 +730,7 @@ internal class RibbonBuilder(
         )
     }
 
-    fun getQuickStylesBand(): RibbonBand {
+    fun getQuickStylesBand(stylesInlinePresentationModel: RibbonGalleryPresentationModel): RibbonBand {
         val colorPreviewListener: ColorPreviewListener = object : ColorPreviewListener {
             override fun onColorPreviewActivated(color: Color) {
                 println("Preview activated color $color")
@@ -827,18 +853,7 @@ internal class RibbonBuilder(
                     galleryProjections = listOf(
                         RibbonGalleryProjection(
                             contentModel = styleGalleryContentModel,
-                            presentationModel = RibbonGalleryPresentationModel(
-                                preferredVisibleCommandCounts = mapOf(
-                                    PresentationPriority.Low to 1,
-                                    PresentationPriority.Medium to 2,
-                                    PresentationPriority.Top to 2
-                                ),
-                                popupLayoutSpec = MenuPopupPanelLayoutSpec(
-                                    columnCount = 3, visibleRowCount = 3
-                                ),
-                                commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixedLandscape,
-                                expandKeyTip = "L"
-                            )
+                            presentationModel = stylesInlinePresentationModel
                         ) at PresentationPriority.Top
                     )
                 )
@@ -1569,7 +1584,7 @@ internal class RibbonBuilder(
                     mainIconSize = tooltipImageScaledSize
                 )
             ),
-            overlays = overlays,
+            secondaryOverlays = overlays,
             secondaryStates = secondaryStates
         )
     }

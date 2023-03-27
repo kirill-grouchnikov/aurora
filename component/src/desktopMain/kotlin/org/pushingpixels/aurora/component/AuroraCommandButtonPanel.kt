@@ -74,7 +74,7 @@ private fun LazyListScope.rowOfItems(
                 CommandButtonProjection(
                     contentModel = command,
                     presentationModel = commandPresentation,
-                    overlays = overlays
+                    secondaryOverlays = overlays
                 ).project(
                     modifier = Modifier.width(itemWidth),
                     actionInteractionSource = remember { MutableInteractionSource() },
@@ -118,7 +118,7 @@ private fun LazyListScope.columnOfItems(
                 CommandButtonProjection(
                     contentModel = command,
                     presentationModel = commandPresentation,
-                    overlays = overlays
+                    secondaryOverlays = overlays
                 ).project(
                     modifier = Modifier.height(itemHeight),
                     actionInteractionSource = remember { MutableInteractionSource() },

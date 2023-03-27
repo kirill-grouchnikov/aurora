@@ -303,7 +303,7 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
                         CommandButtonProjection(
                             contentModel = entry.command,
                             presentationModel = currSecondaryPresentationModel,
-                            overlays = overlays
+                            secondaryOverlays = overlays
                         ).project(
                             modifier = Modifier.fillMaxWidth()
                                 .auroraPopupMenuRowBackground(

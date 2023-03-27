@@ -24,7 +24,8 @@ sealed interface RibbonTaskbarElement
 
 data class RibbonTaskbarCommandProjection(val commandProjection: BaseCommandButtonProjection<*, *>) : RibbonTaskbarElement
 data class RibbonTaskbarComponentProjection(val componentProjection: Projection<ContentModel, PresentationModel>) : RibbonTaskbarElement
-data class RibbonTaskbarGalleryProjection(val galleryProjection: RibbonGalleryProjection) : RibbonTaskbarElement
+data class RibbonTaskbarGalleryProjection(val galleryProjection: RibbonGalleryProjection,
+    val galleryInlineState: RibbonGalleryInlineState) : RibbonTaskbarElement
 
 interface RibbonTaskbarKeyTipPolicy {
     /**

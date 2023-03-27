@@ -235,7 +235,7 @@ object CustomCommandMenuPopupHandler : CascadingCommandMenuHandler<
                 CommandButtonProjection(
                     contentModel = entry,
                     presentationModel = currSecondaryPresentationModel,
-                    overlays = overlays
+                    secondaryOverlays = overlays
                 ).project(
                     modifier = Modifier.fillMaxWidth(),
                     actionInteractionSource = remember { MutableInteractionSource() },
@@ -249,9 +249,9 @@ object CustomCommandMenuPopupHandler : CascadingCommandMenuHandler<
 class CustomCommandButtonProjection(
     contentModel: CustomCommand,
     presentationModel: CustomCommandButtonPresentationModel = CustomCommandButtonPresentationModel(),
-    overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
+    secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
 ) : BaseCommandButtonProjection<CustomCommand, CustomCommandButtonPresentationModel>(
-    contentModel, presentationModel, overlays
+    contentModel, presentationModel, secondaryOverlays
 ) {
     @Composable
     fun project(

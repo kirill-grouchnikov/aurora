@@ -87,14 +87,48 @@ fun main() = auroraApplication {
                 }
             }
 
-            SampleGallery(builder = builder)
+            val styleGalleryContentModel = builder.styleGalleryContentModel
+            val styleGalleryInlinePresentationModel = RibbonGalleryPresentationModel(
+                preferredVisibleCommandCounts = mapOf(
+                    PresentationPriority.Low to 1,
+                    PresentationPriority.Medium to 2,
+                    PresentationPriority.Top to 2
+                ),
+                popupLayoutSpec = MenuPopupPanelLayoutSpec(
+                    columnCount = 3, visibleRowCount = 3
+                ),
+                commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixedLandscape,
+                commandButtonTextOverflow = TextOverflow.Ellipsis,
+                expandKeyTip = "L"
+            )
+            val styleGalleryInlineState = remember {
+                RibbonGalleryInlineState(
+                    contentModel = styleGalleryContentModel,
+                    presentationModel = styleGalleryInlinePresentationModel,
+                    presentationPriority = PresentationPriority.Top
+                )
+            }
+
+            val styleGalleryTaskbarPresentationModel = RibbonGalleryPresentationModel(
+                popupLayoutSpec = MenuPopupPanelLayoutSpec(columnCount = 4, visibleRowCount = 2),
+                commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixed
+            )
+
+            SampleGallery(
+                contentModel = styleGalleryContentModel,
+                presentationModel = styleGalleryInlinePresentationModel,
+                inlineState = styleGalleryInlineState
+            )
             TaskBar(
                 builder = builder,
                 resourceBundle = resourceBundle,
                 ribbonState = ribbonState,
                 onRibbonStateChange = {
                     ribbonState = it
-                }
+                },
+                galleryContentModel = styleGalleryContentModel,
+                galleryPresentationModel = styleGalleryTaskbarPresentationModel,
+                galleryInlineState = styleGalleryInlineState
             )
 
             Spacer(Modifier.weight(weight = 1.0f, fill = true))
@@ -106,35 +140,18 @@ fun main() = auroraApplication {
 }
 
 @Composable
-private fun SampleGallery(builder: RibbonBuilder) {
-    val styleGalleryContentModel = builder.styleGalleryContentModel
-    val styleGalleryPresentationModel = RibbonGalleryPresentationModel(
-        preferredVisibleCommandCounts = mapOf(
-            PresentationPriority.Low to 1,
-            PresentationPriority.Medium to 2,
-            PresentationPriority.Top to 2
-        ),
-        popupLayoutSpec = MenuPopupPanelLayoutSpec(
-            columnCount = 3, visibleRowCount = 3
-        ),
-        commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixedLandscape,
-        commandButtonTextOverflow = TextOverflow.Ellipsis,
-        expandKeyTip = "L"
-    )
-    val styleGalleryInlineState = remember {
-        RibbonGalleryInlineState(
-            contentModel = styleGalleryContentModel,
-            presentationModel = styleGalleryPresentationModel,
-            presentationPriority = PresentationPriority.Top
-        )
-    }
+private fun SampleGallery(
+    contentModel: RibbonGalleryContentModel,
+    presentationModel: RibbonGalleryPresentationModel,
+    inlineState: RibbonGalleryInlineState
+) {
     Row(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
         RibbonGalleryProjection(
-            contentModel = styleGalleryContentModel,
-            presentationModel = styleGalleryPresentationModel
+            contentModel = contentModel,
+            presentationModel = presentationModel
         ).project(
             presentationPriority = PresentationPriority.Top,
-            inlineState = styleGalleryInlineState
+            inlineState = inlineState
         )
     }
 }
@@ -144,7 +161,10 @@ private fun TaskBar(
     builder: RibbonBuilder,
     ribbonState: RibbonState,
     onRibbonStateChange: (RibbonState) -> Unit,
-    resourceBundle: ResourceBundle
+    resourceBundle: ResourceBundle,
+    galleryContentModel: RibbonGalleryContentModel,
+    galleryPresentationModel: RibbonGalleryPresentationModel,
+    galleryInlineState: RibbonGalleryInlineState
 ) {
     val taskbarElements: List<RibbonTaskbarElement> =
         listOf(
@@ -185,13 +205,11 @@ private fun TaskBar(
             // Content preview and selection is controlled by the same model and is kept in sync
             // along all usages of the gallery content model in our ribbon.
             RibbonTaskbarGalleryProjection(
-                RibbonGalleryProjection(
-                    contentModel = builder.styleGalleryContentModel,
-                    presentationModel = RibbonGalleryPresentationModel(
-                        popupLayoutSpec = MenuPopupPanelLayoutSpec(columnCount = 4, visibleRowCount = 2),
-                        commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixed
-                    )
-                )
+                galleryProjection = RibbonGalleryProjection(
+                    contentModel = galleryContentModel,
+                    presentationModel = galleryPresentationModel
+                ),
+                galleryInlineState = galleryInlineState
             )
         )
 

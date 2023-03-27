@@ -67,10 +67,10 @@ internal data class RibbonApplicationMenuFooterContentLayoutInfo(
 private class RibbonApplicationMenuLevel1ButtonProjection(
     contentModel: Command,
     presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel(),
-    overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null,
+    secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null,
     val popupHandler: BaseCommandMenuHandler<CommandMenuContentModel, CommandPopupMenuPresentationModel>
 ) : BaseCommandButtonProjection<Command, CommandButtonPresentationModel>(
-    contentModel, presentationModel, overlays
+    contentModel, presentationModel, secondaryOverlays
 ) {
     @Composable
     fun project(
@@ -292,7 +292,7 @@ internal class RibbonApplicationMenuPopupHandler(
                     RibbonApplicationMenuLevel1ButtonProjection(
                         contentModel = secondaryCommand,
                         presentationModel = currSecondaryPresentationModel,
-                        overlays = overlays,
+                        secondaryOverlays = overlays,
                         popupHandler = level2PopupHandler
                     ).project(
                         modifier = Modifier.fillMaxWidth(),
@@ -418,7 +418,7 @@ internal class RibbonApplicationMenuPopupHandler(
                                 CommandButtonProjection(
                                     contentModel = secondaryCommand,
                                     presentationModel = currSecondaryPresentationModel,
-                                    overlays = overlays
+                                    secondaryOverlays = overlays
                                 ).project(
                                     modifier = Modifier.fillMaxWidth()
                                         .height(height = (maxButtonHeight / density.density).dp),
@@ -461,7 +461,7 @@ internal class RibbonApplicationMenuPopupHandler(
                 CommandButtonProjection(
                     contentModel = footerCommand,
                     presentationModel = currFooterPresentationModel,
-                    overlays = overlays
+                    secondaryOverlays = overlays
                 ).project(
                     actionInteractionSource = remember { MutableInteractionSource() },
                     popupInteractionSource = remember { MutableInteractionSource() }

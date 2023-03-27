@@ -61,7 +61,7 @@ private fun CommandButtonStripContent(
         CommandButtonProjection(
             contentModel = command,
             presentationModel = currentPresentationModel,
-            overlays = overlays
+            secondaryOverlays = overlays
         ).project(
             actionInteractionSource = remember { MutableInteractionSource() },
             popupInteractionSource = remember { MutableInteractionSource() }

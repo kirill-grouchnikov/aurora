@@ -128,6 +128,7 @@ class RibbonGalleryInlineState(
 class RibbonGalleryProjection(
     val contentModel: RibbonGalleryContentModel,
     val presentationModel: RibbonGalleryPresentationModel,
+    val secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
 ) : Projection<RibbonGalleryContentModel, RibbonGalleryPresentationModel>() {
     @Composable
     fun project(

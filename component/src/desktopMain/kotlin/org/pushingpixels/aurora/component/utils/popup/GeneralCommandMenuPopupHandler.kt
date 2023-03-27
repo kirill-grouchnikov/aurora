@@ -400,7 +400,7 @@ internal object GeneralCommandMenuPopupHandler : CascadingCommandMenuHandler<
                 CommandButtonProjection(
                     contentModel = secondaryCommand,
                     presentationModel = currSecondaryPresentationModel,
-                    overlays = overlays
+                    secondaryOverlays = overlays
                 ).project(
                     modifier = Modifier.auroraPopupMenuRowBackground(
                         backgroundFillColorQuery = menuPresentationModel.backgroundFillColorQuery,
