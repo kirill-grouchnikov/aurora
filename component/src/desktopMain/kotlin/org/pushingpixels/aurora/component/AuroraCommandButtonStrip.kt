@@ -31,7 +31,7 @@ private fun CommandButtonStripContent(
     commandGroup: CommandGroup,
     presentationModel: CommandStripPresentationModel,
     commandButtonPresentationModel: CommandButtonPresentationModel,
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay> = mapOf()
+    overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay> = mapOf()
 ) {
     val commandCount = commandGroup.commands.size
     val isHorizontal = (presentationModel.orientation == StripOrientation.Horizontal)
@@ -50,7 +50,7 @@ private fun CommandButtonStripContent(
             else -> setOf(leadingSide)
         }
         var currentPresentationModel = commandButtonPresentationModel.overlayWith(
-            overlay = CommandButtonPresentationModel.Overlay(
+            overlay = BaseCommandButtonPresentationModel.Overlay(
                 sides = Sides(openSides = openSides, straightSides = straightSides)
             )
         )
@@ -74,7 +74,7 @@ internal fun AuroraCommandButtonStrip(
     modifier: Modifier = Modifier,
     commandGroup: CommandGroup,
     presentationModel: CommandStripPresentationModel = CommandStripPresentationModel(),
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay> = mapOf()
+    overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay> = mapOf()
 ) {
     val commandButtonPresentationModel = CommandButtonPresentationModel(
         presentationState = presentationModel.commandPresentationState,

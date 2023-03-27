@@ -307,10 +307,10 @@ fun CommandDemoEditStrip(
             iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText
         ),
         overlays = mapOf(
-            commandPasteTextOnly to CommandButtonPresentationModel.Overlay(
+            commandPasteTextOnly to BaseCommandButtonPresentationModel.Overlay(
                 toDismissPopupsOnActivation = false
             ),
-            commandPaste to CommandButtonPresentationModel.Overlay(
+            commandPaste to BaseCommandButtonPresentationModel.Overlay(
                 popupMenuPresentationModel = CommandPopupMenuPresentationModel(
                     panelPresentationModel = CommandPopupMenuPanelPresentationModel(
                         layoutSpec = MenuPopupPanelLayoutSpec(columnCount = 5, visibleRowCount = 3),

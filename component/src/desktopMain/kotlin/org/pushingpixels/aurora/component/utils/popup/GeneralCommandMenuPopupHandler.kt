@@ -134,7 +134,7 @@ internal object GeneralCommandMenuPopupHandler : CascadingCommandMenuHandler<
         }
 
         val regularButtonPresentationModelOverlay =
-            CommandButtonPresentationModel.Overlay(
+            BaseCommandButtonPresentationModel.Overlay(
                 forceAllocateSpaceForIcon = atLeastOneRegularButtonHasIcon,
                 textStyle = TextStyle(fontWeight = FontWeight.Bold)
             )
@@ -248,7 +248,7 @@ internal object GeneralCommandMenuPopupHandler : CascadingCommandMenuHandler<
     override fun generatePopupContent(
         menuContentModel: CommandMenuContentModel,
         menuPresentationModel: CommandPopupMenuPresentationModel,
-        overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
+        overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>,
         popupContentLayoutInfo: GeneralPopupContentLayoutInfo
     ) {
         TopLevelPopupContent(
@@ -263,7 +263,7 @@ internal object GeneralCommandMenuPopupHandler : CascadingCommandMenuHandler<
     private fun TopLevelPopupContent(
         menuContentModel: CommandMenuContentModel,
         menuPresentationModel: CommandPopupMenuPresentationModel,
-        overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
+        overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>,
         contentLayoutInfo: GeneralPopupContentLayoutInfo
     ) {
         val stateVertical = rememberScrollState(0)
@@ -340,7 +340,7 @@ internal object GeneralCommandMenuPopupHandler : CascadingCommandMenuHandler<
         menuContentModel: CommandMenuContentModel,
         menuPresentationModel: CommandPopupMenuPresentationModel,
         gutterWidth: Float,
-        overlays: Map<Command, CommandButtonPresentationModel.Overlay>
+        overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>
     ) {
         // If at least one secondary command in this popup menu has icon factory
         // we force all command buttons to allocate space for the icon (for overall
@@ -387,7 +387,7 @@ internal object GeneralCommandMenuPopupHandler : CascadingCommandMenuHandler<
                     // font weight to the text style of the matching command button.
                     currSecondaryPresentationModel =
                         currSecondaryPresentationModel.overlayWith(
-                            CommandButtonPresentationModel.Overlay(
+                            BaseCommandButtonPresentationModel.Overlay(
                                 textStyle = TextStyle(
                                     fontWeight = FontWeight.Bold
                                 )

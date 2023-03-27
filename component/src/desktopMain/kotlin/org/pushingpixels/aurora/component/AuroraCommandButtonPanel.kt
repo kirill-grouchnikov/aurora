@@ -53,7 +53,7 @@ private fun LazyListScope.rowOfItems(
     indexRowEnd: Int,
     itemWidth: Dp,
     baseCommandButtonPresentationModel: CommandButtonPresentationModel,
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay>
+    overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>
 ) {
     item {
         Row(
@@ -97,7 +97,7 @@ private fun LazyListScope.columnOfItems(
     indexColumnEnd: Int,
     itemHeight: Dp,
     baseCommandButtonPresentationModel: CommandButtonPresentationModel,
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay>
+    overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>
 ) {
     item {
         Column(
@@ -204,7 +204,7 @@ internal fun AuroraCommandButtonPanel(
     modifier: Modifier = Modifier,
     contentModel: CommandPanelContentModel,
     presentationModel: CommandPanelPresentationModel,
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay> = mapOf()
+    overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay> = mapOf()
 ) {
     val layoutDirection = LocalLayoutDirection.current
 

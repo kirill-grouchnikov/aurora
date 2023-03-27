@@ -141,12 +141,27 @@ data class RibbonApplicationMenuCommandButtonPresentationModel(
     override val verticalGapScaleFactor: Float = 1.0f
     override val selectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize
     override val minWidth: Dp = 0.dp
+
+    override fun overlayWith(overlay: BaseCommandButtonPresentationModel.Overlay): RibbonApplicationMenuCommandButtonPresentationModel {
+        return RibbonApplicationMenuCommandButtonPresentationModel(
+            textStyle = overlay.textStyle ?: this.textStyle,
+            textOverflow = overlay.textOverflow ?: this.textOverflow,
+            popupKeyTip = overlay.popupKeyTip ?: this.popupKeyTip,
+            popupFireTrigger = overlay.popupFireTrigger ?: this.popupFireTrigger,
+            popupMenuPresentationModel = (overlay.popupMenuPresentationModel as? RibbonApplicationMenuCommandPopupMenuPresentationModel)
+                ?: this.popupMenuPresentationModel,
+            popupRichTooltipPresentationModel = overlay.popupRichTooltipPresentationModel
+                ?: this.popupRichTooltipPresentationModel,
+            contentPadding = overlay.contentPadding ?: this.contentPadding,
+            sides = overlay.sides ?: this.sides
+        )
+    }
 }
 
 class RibbonApplicationMenuCommandButtonProjection(
     contentModel: RibbonApplicationMenuCommand,
     presentationModel: RibbonApplicationMenuCommandButtonPresentationModel,
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null,
+    overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null,
     val secondaryStates: Map<Command, CommandButtonPresentationState>? = null
 ) : BaseCommandButtonProjection<RibbonApplicationMenuCommand, RibbonApplicationMenuCommandButtonPresentationModel>(
     contentModel, presentationModel, overlays
@@ -158,6 +173,23 @@ class RibbonApplicationMenuCommandButtonProjection(
     ) {
         super.project(
             modifier = modifier,
+            primaryOverlay = null,
+            actionInteractionSource = remember { MutableInteractionSource() },
+            popupInteractionSource = popupInteractionSource,
+            popupHandler = RibbonApplicationMenuPopupHandler(secondaryStates = secondaryStates),
+        )
+    }
+
+    @Composable
+    override fun reproject(
+        modifier: Modifier,
+        primaryOverlay: BaseCommandButtonPresentationModel.Overlay,
+        actionInteractionSource: MutableInteractionSource,
+        popupInteractionSource: MutableInteractionSource
+    ) {
+        super.project(
+            modifier = modifier,
+            primaryOverlay = primaryOverlay,
             actionInteractionSource = remember { MutableInteractionSource() },
             popupInteractionSource = popupInteractionSource,
             popupHandler = RibbonApplicationMenuPopupHandler(secondaryStates = secondaryStates),

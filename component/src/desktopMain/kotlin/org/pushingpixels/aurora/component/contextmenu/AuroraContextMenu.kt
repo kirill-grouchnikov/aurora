@@ -27,10 +27,7 @@ import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.component.model.Command
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
-import org.pushingpixels.aurora.component.model.CommandMenuContentModel
-import org.pushingpixels.aurora.component.model.CommandPopupMenuPresentationModel
+import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.AuroraSkin
 import org.pushingpixels.aurora.theming.LocalPopupMenu
@@ -43,7 +40,7 @@ fun Modifier.auroraContextMenu(
     enabled: Boolean = true,
     contentModel: CommandMenuContentModel,
     presentationModel: CommandPopupMenuPresentationModel = CommandPopupMenuPresentationModel(),
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay> = mapOf()
+    overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay> = mapOf()
 ): Modifier {
     val contentModelState = rememberUpdatedState(contentModel)
     val enabledState = rememberUpdatedState(enabled)

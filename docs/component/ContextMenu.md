@@ -16,7 +16,7 @@ fun Modifier.auroraContextMenu(
     enabled: Boolean = true,
     contentModel: CommandMenuContentModel,
     presentationModel: CommandPopupMenuPresentationModel = CommandPopupMenuPresentationModel(),
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay> = mapOf()
+    overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay> = mapOf()
 ): Modifier
 ```
 

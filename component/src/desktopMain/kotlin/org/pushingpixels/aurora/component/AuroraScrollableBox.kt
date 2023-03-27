@@ -36,10 +36,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.component.model.ActionFireTrigger
-import org.pushingpixels.aurora.component.model.Command
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
+import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.utils.ArrowSizingConstants
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
@@ -204,7 +201,7 @@ fun AuroraHorizontallyScrollableBox(
             CommandButtonProjection(
                 contentModel = leftScrollerCommand,
                 presentationModel = scrollerPresentationModel.overlayWith(
-                    overlay = CommandButtonPresentationModel.Overlay(
+                    overlay = BaseCommandButtonPresentationModel.Overlay(
                         sides = Sides(straightSides = hashSetOf(Side.Trailing))
                     )
                 )
@@ -220,7 +217,7 @@ fun AuroraHorizontallyScrollableBox(
             CommandButtonProjection(
                 contentModel = rightScrollerCommand,
                 presentationModel = scrollerPresentationModel.overlayWith(
-                    overlay = CommandButtonPresentationModel.Overlay(
+                    overlay = BaseCommandButtonPresentationModel.Overlay(
                         sides = Sides(straightSides = hashSetOf(Side.Leading))
                     )
                 )
@@ -444,7 +441,7 @@ fun AuroraVerticallyScrollableBox(
             CommandButtonProjection(
                 contentModel = topScrollerCommand,
                 presentationModel = scrollerPresentationModel.overlayWith(
-                    overlay = CommandButtonPresentationModel.Overlay(
+                    overlay = BaseCommandButtonPresentationModel.Overlay(
                         sides = Sides(straightSides = hashSetOf(Side.Bottom))
                     )
                 )
@@ -460,7 +457,7 @@ fun AuroraVerticallyScrollableBox(
             CommandButtonProjection(
                 contentModel = bottomScrollerCommand,
                 presentationModel = scrollerPresentationModel.overlayWith(
-                    overlay = CommandButtonPresentationModel.Overlay(
+                    overlay = BaseCommandButtonPresentationModel.Overlay(
                         sides = Sides(straightSides = hashSetOf(Side.Top))
                     )
                 )

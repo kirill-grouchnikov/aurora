@@ -155,7 +155,7 @@ fun main() = auroraApplication {
                     contentModel = Command(
                         text = "",
                         icon = edit_clear(),
-                        action = { println("Taskbat Clear activated") },
+                        action = { println("Taskbar Clear activated") },
                         isActionEnabled = false
                     ),
                     presentationModel = CommandButtonPresentationModel()
@@ -658,11 +658,11 @@ internal class RibbonBuilder(
                                 textClick = TextClick.Action
                             ),
                             overlays = mapOf(
-                                popupCommand1 to CommandButtonPresentationModel.Overlay(popupKeyTip = "1"),
-                                popupCommand2 to CommandButtonPresentationModel.Overlay(popupKeyTip = "2"),
-                                popupCommand3 to CommandButtonPresentationModel.Overlay(popupKeyTip = "3"),
-                                popupCommand4 to CommandButtonPresentationModel.Overlay(popupKeyTip = "4"),
-                                popupCommand5 to CommandButtonPresentationModel.Overlay(popupKeyTip = "5"),
+                                popupCommand1 to BaseCommandButtonPresentationModel.Overlay(popupKeyTip = "1"),
+                                popupCommand2 to BaseCommandButtonPresentationModel.Overlay(popupKeyTip = "2"),
+                                popupCommand3 to BaseCommandButtonPresentationModel.Overlay(popupKeyTip = "3"),
+                                popupCommand4 to BaseCommandButtonPresentationModel.Overlay(popupKeyTip = "4"),
+                                popupCommand5 to BaseCommandButtonPresentationModel.Overlay(popupKeyTip = "5"),
                             )
                         ) at PresentationPriority.Top,
                         CommandButtonProjection(
@@ -693,9 +693,9 @@ internal class RibbonBuilder(
                                 )
                             ),
                             overlays = mapOf(
-                                this.menuSaveSelection to CommandButtonPresentationModel.Overlay(actionKeyTip = "SS"),
-                                this.menuClearSelection to CommandButtonPresentationModel.Overlay(actionKeyTip = "SC"),
-                                this.applyStyles to CommandButtonPresentationModel.Overlay(actionKeyTip = "SA")
+                                this.menuSaveSelection to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "SS"),
+                                this.menuClearSelection to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "SC"),
+                                this.applyStyles to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "SA")
                             )
                         ) at PresentationPriority.Medium
                     )
@@ -907,8 +907,8 @@ internal class RibbonBuilder(
                         orientation = StripOrientation.Horizontal
                     ),
                     overlays = mapOf(
-                        indentLeft to CommandButtonPresentationModel.Overlay(actionKeyTip = "AO"),
-                        indentRight to CommandButtonPresentationModel.Overlay(actionKeyTip = "AI")
+                        indentLeft to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "AO"),
+                        indentRight to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "AI")
                     )
                 ) with RibbonComponentPresentationModel(),
                 CommandButtonStripProjection(
@@ -922,10 +922,10 @@ internal class RibbonBuilder(
                         orientation = StripOrientation.Horizontal
                     ),
                     overlays = mapOf(
-                        styleBoldCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "1"),
-                        styleItalicCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "2"),
-                        styleUnderlineCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "3"),
-                        styleStrikethroughCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "4")
+                        styleBoldCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "1"),
+                        styleItalicCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "2"),
+                        styleUnderlineCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "3"),
+                        styleStrikethroughCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "4")
                     )
                 ) with RibbonComponentPresentationModel(),
                 CommandButtonStripProjection(
@@ -939,10 +939,10 @@ internal class RibbonBuilder(
                         orientation = StripOrientation.Horizontal
                     ),
                     overlays = mapOf(
-                        alignLeftCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "AL"),
-                        alignCenterCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "AC"),
-                        alignRightCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "AR"),
-                        alignFillCommand to CommandButtonPresentationModel.Overlay(actionKeyTip = "AF")
+                        alignLeftCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "AL"),
+                        alignCenterCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "AC"),
+                        alignRightCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "AR"),
+                        alignFillCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "AF")
                     )
                 ) with RibbonComponentPresentationModel()
             )
@@ -1370,7 +1370,7 @@ internal class RibbonBuilder(
 
     @Composable
     fun getApplicationMenuCommandButtonProjection(): RibbonApplicationMenuCommandButtonProjection {
-        val overlays = hashMapOf<Command, CommandButtonPresentationModel.Overlay>()
+        val overlays = hashMapOf<Command, BaseCommandButtonPresentationModel.Overlay>()
         val secondaryStates = hashMapOf<Command, CommandButtonPresentationState>()
 
         val mf = MessageFormat(resourceBundle.getString("TestMenuItem.text"))
@@ -1406,7 +1406,7 @@ internal class RibbonBuilder(
             secondaryContentModel = newMenu
         )
 
-        overlays[amEntryNew] = CommandButtonPresentationModel.Overlay(
+        overlays[amEntryNew] = BaseCommandButtonPresentationModel.Overlay(
             actionKeyTip = "N",
             textClick = TextClick.Action
         )
@@ -1438,7 +1438,7 @@ internal class RibbonBuilder(
             secondaryContentModel = historyOpenMenu
         )
 
-        overlays[amEntryOpen] = CommandButtonPresentationModel.Overlay(
+        overlays[amEntryOpen] = BaseCommandButtonPresentationModel.Overlay(
             actionKeyTip = "O",
             textClick = TextClick.Action
         )
@@ -1451,13 +1451,13 @@ internal class RibbonBuilder(
             action = { println("Invoked saving document") },
             isActionEnabled = false
         )
-        overlays[amEntrySave] = CommandButtonPresentationModel.Overlay(actionKeyTip = "S")
+        overlays[amEntrySave] = BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "S")
 
         // "Save as" primary + secondaries
-        overlays[amEntrySaveAsWord] = CommandButtonPresentationModel.Overlay(actionKeyTip = "W")
-        overlays[amEntrySaveAsHtml] = CommandButtonPresentationModel.Overlay(actionKeyTip = "H")
-        overlays[amEntrySaveAsOtherFormats] = CommandButtonPresentationModel.Overlay(actionKeyTip = "O")
-        overlays[amEntrySaveAs] = CommandButtonPresentationModel.Overlay(
+        overlays[amEntrySaveAsWord] = BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "W")
+        overlays[amEntrySaveAsHtml] = BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "H")
+        overlays[amEntrySaveAsOtherFormats] = BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "O")
+        overlays[amEntrySaveAs] = BaseCommandButtonPresentationModel.Overlay(
             actionKeyTip = "W",
             popupKeyTip = "F",
             textClick = TextClick.Action,
@@ -1486,11 +1486,11 @@ internal class RibbonBuilder(
             action = { println("Invoked preview") }
         )
 
-        overlays[amEntryPrintSelect] = CommandButtonPresentationModel.Overlay(actionKeyTip = "P")
-        overlays[amEntryPrintDefault] = CommandButtonPresentationModel.Overlay(actionKeyTip = "Q")
-        overlays[amEntryPrintPreview] = CommandButtonPresentationModel.Overlay(actionKeyTip = "V")
-        overlays[amEntryPrintMemo] = CommandButtonPresentationModel.Overlay(actionKeyTip = "M")
-        overlays[amEntryPrintCustom] = CommandButtonPresentationModel.Overlay(actionKeyTip = "C")
+        overlays[amEntryPrintSelect] = BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "P")
+        overlays[amEntryPrintDefault] = BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "Q")
+        overlays[amEntryPrintPreview] = BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "V")
+        overlays[amEntryPrintMemo] = BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "M")
+        overlays[amEntryPrintCustom] = BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "C")
 
         val printMenu = CommandMenuContentModel(
             groups = listOf(
@@ -1513,27 +1513,27 @@ internal class RibbonBuilder(
         )
 
         secondaryStates[amEntryPrint] = RibbonApplicationMenuButtonPresentationStates.RibbonAppMenuSecondaryLevel
-        overlays[amEntryPrint] = CommandButtonPresentationModel.Overlay(
+        overlays[amEntryPrint] = BaseCommandButtonPresentationModel.Overlay(
             actionKeyTip = "P",
             popupKeyTip = "W",
             textClick = TextClick.Action
         )
 
         // "Send" primary + secondaries
-        overlays[amEntrySendMail] = CommandButtonPresentationModel.Overlay(actionKeyTip = "E")
-        overlays[amEntrySendHtml] = CommandButtonPresentationModel.Overlay(actionKeyTip = "H")
-        overlays[amEntrySendDoc] = CommandButtonPresentationModel.Overlay(actionKeyTip = "W")
+        overlays[amEntrySendMail] = BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "E")
+        overlays[amEntrySendHtml] = BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "H")
+        overlays[amEntrySendDoc] = BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "W")
 
-        overlays[amWirelessWiFi] = CommandButtonPresentationModel.Overlay(actionKeyTip = "W")
-        overlays[amWirelessBluetooth] = CommandButtonPresentationModel.Overlay(actionKeyTip = "B")
+        overlays[amWirelessWiFi] = BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "W")
+        overlays[amWirelessBluetooth] = BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "B")
 
         secondaryStates[amEntrySendWireless] = RibbonApplicationMenuButtonPresentationStates.RibbonAppMenuSecondaryLevel
-        overlays[amEntrySendWireless] = CommandButtonPresentationModel.Overlay(popupKeyTip = "X")
+        overlays[amEntrySendWireless] = BaseCommandButtonPresentationModel.Overlay(popupKeyTip = "X")
 
         secondaryStates[amEntrySend] = RibbonApplicationMenuButtonPresentationStates.RibbonAppMenuSecondaryLevel
-        overlays[amEntrySend] = CommandButtonPresentationModel.Overlay(popupKeyTip = "D")
+        overlays[amEntrySend] = BaseCommandButtonPresentationModel.Overlay(popupKeyTip = "D")
 
-        overlays[amEntryExit] = CommandButtonPresentationModel.Overlay(popupKeyTip = "X")
+        overlays[amEntryExit] = BaseCommandButtonPresentationModel.Overlay(popupKeyTip = "X")
 
         val applicationMenu = RibbonApplicationMenuContentModel(
             groups = listOf(
@@ -1544,7 +1544,7 @@ internal class RibbonBuilder(
             footerCommands = CommandGroup(commands = listOf(amFooterProps))
         )
 
-        overlays[amFooterProps] = CommandButtonPresentationModel.Overlay(actionKeyTip = "T")
+        overlays[amFooterProps] = BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "T")
 
         val tooltipImage = painterResource("/org/pushingpixels/aurora/demo/appmenubutton-tooltip-main.png")
         val tooltipImageRatio =

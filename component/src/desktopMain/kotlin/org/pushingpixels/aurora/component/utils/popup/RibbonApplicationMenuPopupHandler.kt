@@ -67,7 +67,7 @@ internal data class RibbonApplicationMenuFooterContentLayoutInfo(
 private class RibbonApplicationMenuLevel1ButtonProjection(
     contentModel: Command,
     presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel(),
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null,
+    overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null,
     val popupHandler: BaseCommandMenuHandler<CommandMenuContentModel, CommandPopupMenuPresentationModel>
 ) : BaseCommandButtonProjection<Command, CommandButtonPresentationModel>(
     contentModel, presentationModel, overlays
@@ -80,6 +80,23 @@ private class RibbonApplicationMenuLevel1ButtonProjection(
     ) {
         super.project(
             modifier = modifier,
+            primaryOverlay = null,
+            actionInteractionSource = actionInteractionSource,
+            popupInteractionSource = popupInteractionSource,
+            popupHandler = popupHandler,
+        )
+    }
+
+    @Composable
+    override fun reproject(
+        modifier: Modifier,
+        primaryOverlay: BaseCommandButtonPresentationModel.Overlay,
+        actionInteractionSource: MutableInteractionSource,
+        popupInteractionSource: MutableInteractionSource
+    ) {
+        super.project(
+            modifier = modifier,
+            primaryOverlay = primaryOverlay,
             actionInteractionSource = actionInteractionSource,
             popupInteractionSource = popupInteractionSource,
             popupHandler = popupHandler,
@@ -227,7 +244,7 @@ internal class RibbonApplicationMenuPopupHandler(
         modifier: Modifier,
         menuContentModel: RibbonApplicationMenuContentModel,
         menuPresentationModel: RibbonApplicationMenuCommandPopupMenuPresentationModel,
-        overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
+        overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>,
         onLevel1ActionRollover: (Command) -> Unit,
         level1ContentLayoutInfo: RibbonApplicationMenuLevel1ContentLayoutInfo
     ) {
@@ -263,7 +280,7 @@ internal class RibbonApplicationMenuPopupHandler(
                                 toDismissPopupsOnActivation: Boolean,
                                 popupPlacementStrategy: PopupPlacementStrategy,
                                 popupAnchorBoundsProvider: (() -> Rect)?,
-                                overlays: Map<Command, CommandButtonPresentationModel.Overlay>
+                                overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>
                             ) {
                                 onLevel1ActionRollover.invoke(secondaryCommand)
                             }
@@ -305,7 +322,7 @@ internal class RibbonApplicationMenuPopupHandler(
         level1Command: Command?,
         itemPresentationState: CommandButtonPresentationState,
         menuPresentationModel: RibbonApplicationMenuCommandPopupMenuPresentationModel,
-        overlays: Map<Command, CommandButtonPresentationModel.Overlay>
+        overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>
     ) {
         val itemButtonPresentationModel = CommandButtonPresentationModel(
             presentationState = itemPresentationState,
@@ -420,7 +437,7 @@ internal class RibbonApplicationMenuPopupHandler(
     private fun generateFooterContent(
         menuContentModel: RibbonApplicationMenuContentModel,
         menuPresentationModel: RibbonApplicationMenuCommandPopupMenuPresentationModel,
-        overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
+        overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>,
         footerContentLayoutInfo: RibbonApplicationMenuFooterContentLayoutInfo
     ) {
         val footerButtonPresentationModel = footerContentLayoutInfo.footerButtonPresentationModel
@@ -473,7 +490,7 @@ internal class RibbonApplicationMenuPopupHandler(
         toDismissPopupsOnActivation: Boolean,
         popupPlacementStrategy: PopupPlacementStrategy,
         popupAnchorBoundsProvider: (() -> Rect)?,
-        overlays: Map<Command, CommandButtonPresentationModel.Overlay>
+        overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>
     ) {
         val level1ContentLayoutInfo = getLevel1ContentLayoutInfo(
             menuContentModel = contentModel.value!!,

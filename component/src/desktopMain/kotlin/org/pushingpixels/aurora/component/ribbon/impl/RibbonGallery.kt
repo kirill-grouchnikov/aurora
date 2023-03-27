@@ -244,7 +244,7 @@ internal fun RibbonGallery(
                 CommandButtonProjection(
                     contentModel = topScrollerCommand,
                     presentationModel = scrollerButtonPresentationModel.overlayWith(
-                        CommandButtonPresentationModel.Overlay(
+                        BaseCommandButtonPresentationModel.Overlay(
                             sides = Sides(
                                 straightSides = setOf(
                                     Side.Bottom,
@@ -257,7 +257,7 @@ internal fun RibbonGallery(
                 CommandButtonProjection(
                     contentModel = bottomScrollerCommand,
                     presentationModel = scrollerButtonPresentationModel.overlayWith(
-                        CommandButtonPresentationModel.Overlay(
+                        BaseCommandButtonPresentationModel.Overlay(
                             sides = Sides(
                                 straightSides = setOf(
                                     Side.Bottom,
@@ -271,7 +271,7 @@ internal fun RibbonGallery(
                 CommandButtonProjection(
                     contentModel = showFullGalleryInPopupCommand,
                     presentationModel = scrollerButtonPresentationModel.overlayWith(
-                        CommandButtonPresentationModel.Overlay(
+                        BaseCommandButtonPresentationModel.Overlay(
                             sides = Sides(
                                 straightSides = setOf(
                                     Side.Top,

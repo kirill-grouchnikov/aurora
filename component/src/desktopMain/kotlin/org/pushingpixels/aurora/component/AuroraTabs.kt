@@ -223,7 +223,7 @@ internal fun AuroraTabs(
             CommandButtonProjection(
                 contentModel = leftScrollerCommand,
                 presentationModel = scrollerPresentationModel.overlayWith(
-                    overlay = CommandButtonPresentationModel.Overlay(
+                    overlay = BaseCommandButtonPresentationModel.Overlay(
                         sides = Sides(straightSides = hashSetOf(Side.Trailing))
                     )
                 )
@@ -327,7 +327,7 @@ internal fun AuroraTabs(
             CommandButtonProjection(
                 contentModel = rightScrollerCommand,
                 presentationModel = scrollerPresentationModel.overlayWith(
-                    overlay = CommandButtonPresentationModel.Overlay(
+                    overlay = BaseCommandButtonPresentationModel.Overlay(
                         sides = Sides(straightSides = hashSetOf(Side.Leading))
                     )
                 )

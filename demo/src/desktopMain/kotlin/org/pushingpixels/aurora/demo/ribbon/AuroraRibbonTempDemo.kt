@@ -15,10 +15,12 @@
  */
 package org.pushingpixels.aurora.demo.ribbon
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
@@ -30,6 +32,7 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.ComboBoxProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.*
+import org.pushingpixels.aurora.component.ribbon.impl.RibbonTaskbar
 import org.pushingpixels.aurora.demo.AuroraSkinSwitcher
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.edit_clear
@@ -156,7 +159,7 @@ private fun TaskBar(
                     contentModel = Command(
                         text = "",
                         icon = edit_clear(),
-                        action = { println("Taskbat Clear activated") },
+                        action = { println("Taskbar Clear activated") },
                         isActionEnabled = false
                     ),
                     presentationModel = CommandButtonPresentationModel()
@@ -191,6 +194,11 @@ private fun TaskBar(
                 )
             )
         )
+
+    RibbonTaskbar(
+        modifier = Modifier.background(Color(0xFFFFDAB3)).padding(horizontal = 12.dp),
+        elements = taskbarElements
+    )
 }
 
 

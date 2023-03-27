@@ -64,7 +64,7 @@ interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
     fun generatePopupContent(
         menuContentModel: M,
         menuPresentationModel: P,
-        overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
+        overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>,
         popupContentLayoutInfo: L
     )
 
@@ -88,7 +88,7 @@ interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
         toDismissPopupsOnActivation: Boolean,
         popupPlacementStrategy: PopupPlacementStrategy,
         popupAnchorBoundsProvider: (() -> Rect)?,
-        overlays: Map<Command, CommandButtonPresentationModel.Overlay>
+        overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>
     ) {
         val popupContentLayoutInfo = getPopupContentLayoutInfo(
             menuContentModel = contentModel.value!!,

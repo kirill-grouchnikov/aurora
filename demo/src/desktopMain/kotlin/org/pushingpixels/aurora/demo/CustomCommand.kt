@@ -103,6 +103,29 @@ data class CustomCommandButtonPresentationModel(
     override val verticalGapScaleFactor = 1.0f
     override val selectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize
     override val showPopupIcon: Boolean = false
+
+    override fun overlayWith(overlay: BaseCommandButtonPresentationModel.Overlay): CustomCommandButtonPresentationModel {
+        return CustomCommandButtonPresentationModel(
+            colorSchemeBundle = overlay.colorSchemeBundle ?: this.colorSchemeBundle,
+            backgroundAppearanceStrategy = overlay.backgroundAppearanceStrategy
+                ?: this.backgroundAppearanceStrategy,
+            horizontalAlignment = overlay.horizontalAlignment ?: this.horizontalAlignment,
+            iconDimension = overlay.iconDimension ?: this.iconDimension,
+            iconDisabledFilterStrategy = overlay.iconDisabledFilterStrategy ?: this.iconDisabledFilterStrategy,
+            iconEnabledFilterStrategy = overlay.iconEnabledFilterStrategy ?: this.iconEnabledFilterStrategy,
+            iconActiveFilterStrategy = overlay.iconActiveFilterStrategy ?: this.iconActiveFilterStrategy,
+            textStyle = overlay.textStyle ?: this.textStyle,
+            textOverflow = overlay.textOverflow ?: this.textOverflow,
+            popupPlacementStrategy = overlay.popupPlacementStrategy ?: this.popupPlacementStrategy,
+            toDismissPopupsOnActivation = overlay.toDismissPopupsOnActivation ?: this.toDismissPopupsOnActivation,
+            popupKeyTip = overlay.popupKeyTip ?: this.popupKeyTip,
+            popupMenuPresentationModel = (overlay.popupMenuPresentationModel as? CustomCommandPopupMenuPresentationModel)
+                ?: this.popupMenuPresentationModel,
+            contentPadding = overlay.contentPadding ?: this.contentPadding,
+            minWidth = overlay.minWidth ?: this.minWidth,
+            sides = overlay.sides ?: this.sides
+        )
+    }
 }
 
 data class CustomPopupContentLayoutInfo(
@@ -189,7 +212,7 @@ object CustomCommandMenuPopupHandler : CascadingCommandMenuHandler<
     override fun generatePopupContent(
         menuContentModel: CustomMenuContentModel,
         menuPresentationModel: CustomCommandPopupMenuPresentationModel,
-        overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
+        overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>,
         popupContentLayoutInfo: CustomPopupContentLayoutInfo
     ) {
         val itemButtonPresentationModel = popupContentLayoutInfo.itemButtonPresentationModel
@@ -226,7 +249,7 @@ object CustomCommandMenuPopupHandler : CascadingCommandMenuHandler<
 class CustomCommandButtonProjection(
     contentModel: CustomCommand,
     presentationModel: CustomCommandButtonPresentationModel = CustomCommandButtonPresentationModel(),
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
+    overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
 ) : BaseCommandButtonProjection<CustomCommand, CustomCommandButtonPresentationModel>(
     contentModel, presentationModel, overlays
 ) {
@@ -237,6 +260,23 @@ class CustomCommandButtonProjection(
     ) {
         super.project(
             modifier = modifier,
+            primaryOverlay = null,
+            actionInteractionSource = remember { MutableInteractionSource() },
+            popupInteractionSource = popupInteractionSource,
+            popupHandler = CustomCommandMenuPopupHandler,
+        )
+    }
+
+    @Composable
+    override fun reproject(
+        modifier: Modifier,
+        primaryOverlay: BaseCommandButtonPresentationModel.Overlay,
+        actionInteractionSource: MutableInteractionSource,
+        popupInteractionSource: MutableInteractionSource
+    ) {
+        super.project(
+            modifier = modifier,
+            primaryOverlay = primaryOverlay,
             actionInteractionSource = remember { MutableInteractionSource() },
             popupInteractionSource = popupInteractionSource,
             popupHandler = CustomCommandMenuPopupHandler,

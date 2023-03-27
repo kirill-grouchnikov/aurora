@@ -566,7 +566,7 @@ internal fun <M : BaseCommandMenuContentModel,
     command: BaseCommand,
     popupHandler: BaseCommandMenuHandler<M, P>,
     presentationModel: BaseCommandButtonPresentationModel,
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay>
+    secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>
 ) {
     val secondaryContentModel =
         rememberUpdatedState(command.secondaryContentModel as M?)
@@ -1144,7 +1144,7 @@ internal fun <M : BaseCommandMenuContentModel,
                                 toDismissPopupsOnActivation = presentationModel.toDismissPopupsOnActivation,
                                 popupPlacementStrategy = presentationModel.popupPlacementStrategy,
                                 popupAnchorBoundsProvider = presentationModel.popupAnchorBoundsProvider,
-                                overlays = overlays
+                                overlays = secondaryOverlays
                             )
                         }
                     },

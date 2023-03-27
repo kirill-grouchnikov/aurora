@@ -108,7 +108,7 @@ internal fun AuroraBreadcrumbBar(
                 CommandButtonProjection(
                     contentModel = command,
                     presentationModel = contentPresentationModel.overlayWith(
-                        CommandButtonPresentationModel.Overlay(
+                        BaseCommandButtonPresentationModel.Overlay(
                             popupPlacementStrategy = if (isPopupRollover) PopupPlacementStrategy.Downward.HAlignStart
                             else PopupPlacementStrategy.Endward.VAlignTop
                         )

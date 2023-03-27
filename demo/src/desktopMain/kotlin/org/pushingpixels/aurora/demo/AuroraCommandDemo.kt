@@ -77,7 +77,7 @@ fun DemoCommandRow(
     commandActionAndSecondary: Command,
     presentationState: CommandButtonPresentationState,
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay>
+    overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>
 ) {
     // Resolve the default text style to get the default font size
     val resolvedTextStyle = resolveAuroraDefaults()
@@ -310,10 +310,10 @@ fun CommandDemoEditStrip(
             backgroundAppearanceStrategy = backgroundAppearanceStrategy
         ),
         overlays = mapOf(
-            commandPasteTextOnly to CommandButtonPresentationModel.Overlay(
+            commandPasteTextOnly to BaseCommandButtonPresentationModel.Overlay(
                 toDismissPopupsOnActivation = false
             ),
-            commandPaste to CommandButtonPresentationModel.Overlay(
+            commandPaste to BaseCommandButtonPresentationModel.Overlay(
                 popupMenuPresentationModel = CommandPopupMenuPresentationModel(
                     panelPresentationModel = CommandPopupMenuPanelPresentationModel(
                         layoutSpec = MenuPopupPanelLayoutSpec(columnCount = 5, visibleRowCount = 3),
@@ -865,10 +865,10 @@ fun AuroraWindowScope.DemoCommandContent(
             )
         )
 
-    val overlays = hashMapOf<Command, CommandButtonPresentationModel.Overlay>()
+    val overlays = hashMapOf<Command, BaseCommandButtonPresentationModel.Overlay>()
     // Configure one of our secondary commands to use a different presentation state
     // for its popup menu content
-    overlays[secondaryCommand5] = CommandButtonPresentationModel.Overlay(
+    overlays[secondaryCommand5] = BaseCommandButtonPresentationModel.Overlay(
         popupMenuPresentationModel = CommandPopupMenuPresentationModel(
             itemPresentationState = CommandButtonPresentationState.Tile
         )
@@ -1024,7 +1024,7 @@ fun AuroraWindowScope.DemoCommandContent(
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
                     ),
                     overlays = hashMapOf(
-                        customSecondary3 to CommandButtonPresentationModel.Overlay(
+                        customSecondary3 to BaseCommandButtonPresentationModel.Overlay(
                             colorSchemeBundle = generateColorSchemeBundle(
                                 active = SunfireRedColorScheme(),
                                 enabled = AuroraSkin.colors.getEnabledColorScheme(DecorationAreaType.None),

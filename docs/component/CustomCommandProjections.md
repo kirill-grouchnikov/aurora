@@ -356,7 +356,7 @@ The second function composes the popup menu content, which is in this particular
 override fun generatePopupContent(
     menuContentModel: CustomMenuContentModel,
     menuPresentationModel: CustomCommandPopupMenuPresentationModel,
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
+    overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>,
     popupContentLayoutInfo: CustomPopupContentLayoutInfo
 ) {
     val itemButtonPresentationModel = popupContentLayoutInfo.menuButtonPresentationModel
@@ -398,7 +398,7 @@ And the last, much smaller piece to bring it all together is the projection:
 class CustomCommandButtonProjection(
     contentModel: CustomCommand,
     presentationModel: CustomCommandButtonPresentationModel = CustomCommandButtonPresentationModel(),
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
+    overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
 ) : BaseCommandButtonProjection<CustomCommand, CustomCommandButtonPresentationModel>(
     contentModel, presentationModel, overlays
 ) {

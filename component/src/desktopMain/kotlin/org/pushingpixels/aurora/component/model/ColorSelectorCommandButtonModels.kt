@@ -169,4 +169,37 @@ data class ColorSelectorCommandButtonPresentationModel(
     override val actionFireTrigger = ActionFireTrigger.OnPressReleased
     override val textClick = TextClick.Action
     override val actionRichTooltipPresentationModel = RichTooltipPresentationModel()
+
+    override fun overlayWith(overlay: BaseCommandButtonPresentationModel.Overlay): ColorSelectorCommandButtonPresentationModel {
+        return ColorSelectorCommandButtonPresentationModel(
+            presentationState = overlay.presentationState ?: this.presentationState,
+            colorSchemeBundle = overlay.colorSchemeBundle ?: this.colorSchemeBundle,
+            backgroundAppearanceStrategy = overlay.backgroundAppearanceStrategy
+                ?: this.backgroundAppearanceStrategy,
+            horizontalAlignment = overlay.horizontalAlignment ?: this.horizontalAlignment,
+            iconDimension = overlay.iconDimension ?: this.iconDimension,
+            iconDisabledFilterStrategy = overlay.iconDisabledFilterStrategy ?: this.iconDisabledFilterStrategy,
+            iconEnabledFilterStrategy = overlay.iconEnabledFilterStrategy ?: this.iconEnabledFilterStrategy,
+            iconActiveFilterStrategy = overlay.iconActiveFilterStrategy ?: this.iconActiveFilterStrategy,
+            forceAllocateSpaceForIcon = overlay.forceAllocateSpaceForIcon ?: this.forceAllocateSpaceForIcon,
+            textStyle = overlay.textStyle ?: this.textStyle,
+            textOverflow = overlay.textOverflow ?: this.textOverflow,
+            popupPlacementStrategy = overlay.popupPlacementStrategy ?: this.popupPlacementStrategy,
+            popupAnchorBoundsProvider = overlay.popupAnchorBoundsProvider ?: this.popupAnchorBoundsProvider,
+            toDismissPopupsOnActivation = overlay.toDismissPopupsOnActivation ?: this.toDismissPopupsOnActivation,
+            showPopupIcon = overlay.showPopupIcon ?: this.showPopupIcon,
+            popupKeyTip = overlay.popupKeyTip ?: this.popupKeyTip,
+            popupFireTrigger = overlay.popupFireTrigger ?: this.popupFireTrigger,
+            popupMenuPresentationModel = (overlay.popupMenuPresentationModel as? ColorSelectorCommandPopupMenuPresentationModel)
+                ?: this.popupMenuPresentationModel,
+            popupRichTooltipPresentationModel = overlay.popupRichTooltipPresentationModel
+                ?: this.popupRichTooltipPresentationModel,
+            contentPadding = overlay.contentPadding ?: this.contentPadding,
+            horizontalGapScaleFactor = overlay.horizontalGapScaleFactor ?: this.horizontalGapScaleFactor,
+            verticalGapScaleFactor = overlay.verticalGapScaleFactor ?: this.verticalGapScaleFactor,
+            selectedStateHighlight = overlay.selectedStateHighlight ?: this.selectedStateHighlight,
+            minWidth = overlay.minWidth ?: this.minWidth,
+            sides = overlay.sides ?: this.sides
+        )
+    }
 }

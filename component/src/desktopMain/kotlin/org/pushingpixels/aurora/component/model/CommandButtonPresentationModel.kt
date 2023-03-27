@@ -105,6 +105,43 @@ interface BaseCommandButtonPresentationModel : PresentationModel {
     val selectedStateHighlight: SelectedStateHighlight
     val minWidth: Dp
     val sides: Sides
+
+    data class Overlay(
+        val presentationState: CommandButtonPresentationState? = null,
+        val colorSchemeBundle: AuroraColorSchemeBundle? = null,
+        val backgroundAppearanceStrategy: BackgroundAppearanceStrategy? = null,
+        val horizontalAlignment: HorizontalAlignment? = null,
+        val iconDimension: DpSize? = null,
+        val iconDisabledFilterStrategy: IconFilterStrategy? = null,
+        val iconEnabledFilterStrategy: IconFilterStrategy? = null,
+        val iconActiveFilterStrategy: IconFilterStrategy? = null,
+        val forceAllocateSpaceForIcon: Boolean? = null,
+        val textStyle: TextStyle? = null,
+        val textOverflow: TextOverflow? = null,
+        val popupPlacementStrategy: PopupPlacementStrategy? = null,
+        val popupAnchorBoundsProvider: (() -> Rect)? = null,
+        val toDismissPopupsOnActivation: Boolean? = null,
+        val showPopupIcon: Boolean? = null,
+        val actionKeyTip: String? = null,
+        val popupKeyTip: String? = null,
+        val autoRepeatAction: Boolean? = null,
+        val autoRepeatInitialInterval: Long? = null,
+        val autoRepeatSubsequentInterval: Long? = null,
+        val actionFireTrigger: ActionFireTrigger? = null,
+        val popupFireTrigger: PopupFireTrigger? = null,
+        val popupMenuPresentationModel: BaseCommandPopupMenuPresentationModel? = null,
+        val textClick: TextClick? = null,
+        val actionRichTooltipPresentationModel: RichTooltipPresentationModel? = null,
+        val popupRichTooltipPresentationModel: RichTooltipPresentationModel? = null,
+        val contentPadding: PaddingValues? = null,
+        val horizontalGapScaleFactor: Float? = null,
+        val verticalGapScaleFactor: Float? = null,
+        val selectedStateHighlight: SelectedStateHighlight? = null,
+        val minWidth: Dp? = null,
+        val sides: Sides? = null
+    )
+
+    fun overlayWith(overlay: Overlay): BaseCommandButtonPresentationModel
 }
 
 data class CommandButtonPresentationModel(
@@ -141,42 +178,7 @@ data class CommandButtonPresentationModel(
     override val minWidth: Dp = 0.dp,
     override val sides: Sides = Sides()
 ) : BaseCommandButtonPresentationModel {
-    data class Overlay(
-        val presentationState: CommandButtonPresentationState? = null,
-        val colorSchemeBundle: AuroraColorSchemeBundle? = null,
-        val backgroundAppearanceStrategy: BackgroundAppearanceStrategy? = null,
-        val horizontalAlignment: HorizontalAlignment? = null,
-        val iconDimension: DpSize? = null,
-        val iconDisabledFilterStrategy: IconFilterStrategy? = null,
-        val iconEnabledFilterStrategy: IconFilterStrategy? = null,
-        val iconActiveFilterStrategy: IconFilterStrategy? = null,
-        val forceAllocateSpaceForIcon: Boolean? = null,
-        val textStyle: TextStyle? = null,
-        val textOverflow: TextOverflow? = null,
-        val popupPlacementStrategy: PopupPlacementStrategy? = null,
-        val popupAnchorBoundsProvider: (() -> Rect)? = null,
-        val toDismissPopupsOnActivation: Boolean? = null,
-        val showPopupIcon: Boolean? = null,
-        val actionKeyTip: String? = null,
-        val popupKeyTip: String? = null,
-        val autoRepeatAction: Boolean? = null,
-        val autoRepeatInitialInterval: Long? = null,
-        val autoRepeatSubsequentInterval: Long? = null,
-        val actionFireTrigger: ActionFireTrigger? = null,
-        val popupFireTrigger: PopupFireTrigger? = null,
-        val popupMenuPresentationModel: CommandPopupMenuPresentationModel? = null,
-        val textClick: TextClick? = null,
-        val actionRichTooltipPresentationModel: RichTooltipPresentationModel? = null,
-        val popupRichTooltipPresentationModel: RichTooltipPresentationModel? = null,
-        val contentPadding: PaddingValues? = null,
-        val horizontalGapScaleFactor: Float? = null,
-        val verticalGapScaleFactor: Float? = null,
-        val selectedStateHighlight: SelectedStateHighlight? = null,
-        val minWidth: Dp? = null,
-        val sides: Sides? = null
-    )
-
-    fun overlayWith(overlay: Overlay): CommandButtonPresentationModel {
+    override fun overlayWith(overlay: BaseCommandButtonPresentationModel.Overlay): CommandButtonPresentationModel {
         return CommandButtonPresentationModel(
             presentationState = overlay.presentationState ?: this.presentationState,
             colorSchemeBundle = overlay.colorSchemeBundle ?: this.colorSchemeBundle,
@@ -201,7 +203,8 @@ data class CommandButtonPresentationModel(
             autoRepeatSubsequentInterval = overlay.autoRepeatSubsequentInterval ?: this.autoRepeatSubsequentInterval,
             actionFireTrigger = overlay.actionFireTrigger ?: this.actionFireTrigger,
             popupFireTrigger = overlay.popupFireTrigger ?: this.popupFireTrigger,
-            popupMenuPresentationModel = overlay.popupMenuPresentationModel ?: this.popupMenuPresentationModel,
+            popupMenuPresentationModel = (overlay.popupMenuPresentationModel as? CommandPopupMenuPresentationModel)
+                ?: this.popupMenuPresentationModel,
             textClick = overlay.textClick ?: this.textClick,
             actionRichTooltipPresentationModel = overlay.actionRichTooltipPresentationModel
                 ?: this.actionRichTooltipPresentationModel,

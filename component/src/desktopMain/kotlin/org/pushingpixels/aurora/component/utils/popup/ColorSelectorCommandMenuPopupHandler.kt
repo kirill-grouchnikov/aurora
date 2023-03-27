@@ -123,7 +123,7 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
         }
 
         val itemButtonPresentationModelOverlay =
-            CommandButtonPresentationModel.Overlay(
+            BaseCommandButtonPresentationModel.Overlay(
                 forceAllocateSpaceForIcon = atLeastOneButtonHasIcon,
                 textStyle = TextStyle(fontWeight = FontWeight.Bold)
             )
@@ -273,7 +273,7 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
     override fun generatePopupContent(
         menuContentModel: ColorSelectorMenuContentModel,
         menuPresentationModel: ColorSelectorCommandPopupMenuPresentationModel,
-        overlays: Map<Command, CommandButtonPresentationModel.Overlay>,
+        overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>,
         popupContentLayoutInfo: ColorSelectorPopupContentLayoutInfo
     ) {
         val itemButtonPresentationModel = popupContentLayoutInfo.itemButtonPresentationModel

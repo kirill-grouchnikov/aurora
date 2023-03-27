@@ -33,12 +33,13 @@ abstract class BaseCommandButtonProjection<out C : BaseCommand,
         out P: BaseCommandButtonPresentationModel>(
     open val contentModel: C,
     open val presentationModel: P,
-    open val overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
+    open val secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
 ) : Projection<C, P>() {
     @Composable
     protected fun <MC : BaseCommandMenuContentModel,
             MP : BaseCommandPopupMenuPresentationModel> project(
         modifier: Modifier = Modifier,
+        primaryOverlay: BaseCommandButtonPresentationModel.Overlay ?= null,
         actionInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() },
         popupInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() },
         popupHandler: BaseCommandMenuHandler<MC, MP>
@@ -48,17 +49,26 @@ abstract class BaseCommandButtonProjection<out C : BaseCommand,
             actionInteractionSource = actionInteractionSource,
             popupInteractionSource = popupInteractionSource,
             command = this.contentModel,
-            presentationModel = this.presentationModel,
+            presentationModel = if (primaryOverlay != null) this.presentationModel.overlayWith(primaryOverlay) else
+                this.presentationModel,
             popupHandler = popupHandler,
-            overlays = this.overlays ?: mapOf()
+            secondaryOverlays = this.secondaryOverlays ?: mapOf()
         )
     }
+
+    @Composable
+    abstract fun reproject(
+        modifier: Modifier,
+        primaryOverlay: BaseCommandButtonPresentationModel.Overlay,
+        actionInteractionSource: MutableInteractionSource,
+        popupInteractionSource: MutableInteractionSource,
+    )
 }
 
 class CommandButtonProjection(
     contentModel: Command,
     presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel(),
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
+    overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
 ) : BaseCommandButtonProjection<Command, CommandButtonPresentationModel>(
     contentModel, presentationModel, overlays
 ) {
@@ -70,6 +80,23 @@ class CommandButtonProjection(
     ) {
         super.project(
             modifier = modifier,
+            primaryOverlay = null,
+            actionInteractionSource = actionInteractionSource,
+            popupInteractionSource = popupInteractionSource,
+            popupHandler = GeneralCommandMenuPopupHandler,
+        )
+    }
+
+    @Composable
+    override fun reproject(
+        modifier: Modifier,
+        primaryOverlay: BaseCommandButtonPresentationModel.Overlay,
+        actionInteractionSource: MutableInteractionSource,
+        popupInteractionSource: MutableInteractionSource,
+    ) {
+        super.project(
+            modifier = modifier,
+            primaryOverlay = primaryOverlay,
             actionInteractionSource = actionInteractionSource,
             popupInteractionSource = popupInteractionSource,
             popupHandler = GeneralCommandMenuPopupHandler,
@@ -80,15 +107,11 @@ class CommandButtonProjection(
 class ColorSelectorCommandButtonProjection(
     contentModel: ColorSelectorCommand,
     presentationModel: ColorSelectorCommandButtonPresentationModel = ColorSelectorCommandButtonPresentationModel(),
-    overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
+    overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
 ) : BaseCommandButtonProjection<ColorSelectorCommand, ColorSelectorCommandButtonPresentationModel>(
     contentModel, presentationModel, overlays
 ) {
-    @Composable
-    fun project(
-        modifier: Modifier = Modifier,
-        popupInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() }
-    ) {
+    private fun checkModel() {
         require(contentModel.secondaryContentModel.entries.all {
             when (it) {
                 is ColorSelectorPopupMenuSection -> it.colors.size == presentationModel.popupMenuPresentationModel.colorColumns
@@ -107,9 +130,36 @@ class ColorSelectorCommandButtonProjection(
         }) {
             "Needs to pass a non-trivial number of derived colors"
         }
+    }
+
+    @Composable
+    fun project(
+        modifier: Modifier = Modifier,
+        popupInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    ) {
+        checkModel()
 
         super.project(
             modifier = modifier,
+            primaryOverlay = null,
+            actionInteractionSource = remember { MutableInteractionSource() },
+            popupInteractionSource = popupInteractionSource,
+            popupHandler = ColorSelectorCommandMenuPopupHandler,
+        )
+    }
+
+    @Composable
+    override fun reproject(
+        modifier: Modifier,
+        primaryOverlay: BaseCommandButtonPresentationModel.Overlay,
+        actionInteractionSource: MutableInteractionSource,
+        popupInteractionSource: MutableInteractionSource
+    ) {
+        checkModel()
+
+        super.project(
+            modifier = modifier,
+            primaryOverlay = primaryOverlay,
             actionInteractionSource = remember { MutableInteractionSource() },
             popupInteractionSource = popupInteractionSource,
             popupHandler = ColorSelectorCommandMenuPopupHandler,
@@ -120,7 +170,7 @@ class ColorSelectorCommandButtonProjection(
 class CommandButtonStripProjection(
     val contentModel: CommandGroup,
     val presentationModel: CommandStripPresentationModel,
-    val overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
+    val overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
 ) : Projection<CommandGroup, CommandStripPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier) {
@@ -136,7 +186,7 @@ class CommandButtonStripProjection(
 class CommandButtonPanelProjection(
     val contentModel: CommandPanelContentModel,
     val presentationModel: CommandPanelPresentationModel,
-    val overlays: Map<Command, CommandButtonPresentationModel.Overlay>? = null
+    val overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
 ) : Projection<CommandPanelContentModel, CommandButtonPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier) {
