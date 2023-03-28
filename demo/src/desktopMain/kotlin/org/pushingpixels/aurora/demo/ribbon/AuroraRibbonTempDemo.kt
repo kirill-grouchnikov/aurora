@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
@@ -119,17 +120,23 @@ fun main() = auroraApplication {
                 presentationModel = styleGalleryInlinePresentationModel,
                 ribbonState = ribbonState
             )
-            TaskBar(
-                builder = builder,
-                resourceBundle = resourceBundle,
-                ribbonState = ribbonState,
-                onRibbonStateChange = {
-                    ribbonState = it
-                },
-                galleryContentModel = styleGalleryContentModel,
-                galleryPresentationModel = styleGalleryTaskbarPresentationModel,
-                galleryInlineState = ribbonState.documentStyleGalleryInlineState
-            )
+
+            for (taskBarMaxWidth in 60..250 step 50) {
+                Spacer(Modifier.height(8.dp))
+                TaskBar(
+                    maxWidth = taskBarMaxWidth.dp,
+                    builder = builder,
+                    resourceBundle = resourceBundle,
+                    ribbonState = ribbonState,
+                    onRibbonStateChange = {
+                        ribbonState = it
+                    },
+                    galleryContentModel = styleGalleryContentModel,
+                    galleryPresentationModel = styleGalleryTaskbarPresentationModel,
+                    galleryInlineState = ribbonState.documentStyleGalleryInlineState
+                )
+                Spacer(Modifier.height(8.dp))
+            }
 
             Spacer(Modifier.weight(weight = 1.0f, fill = true))
             Row(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
@@ -158,6 +165,7 @@ private fun SampleGallery(
 
 @Composable
 private fun TaskBar(
+    maxWidth: Dp,
     builder: RibbonBuilder,
     ribbonState: RibbonState,
     onRibbonStateChange: (RibbonState) -> Unit,
@@ -214,7 +222,8 @@ private fun TaskBar(
         )
 
     RibbonTaskbar(
-        modifier = Modifier.background(Color(0xFFFFDAB3)).padding(horizontal = 12.dp),
+        modifier = Modifier.height(32.dp).background(Color(0xFFFFDAB3)).padding(horizontal = 12.dp),
+        maxWidth = maxWidth,
         elements = taskbarElements
     )
 }
