@@ -38,10 +38,10 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
+import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.component.utils.ArrowSizingConstants
-import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
-import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
 import org.pushingpixels.aurora.component.utils.drawDoubleArrow
+import org.pushingpixels.aurora.component.utils.getStartwardDoubleArrowIcon
 import org.pushingpixels.aurora.theming.*
 import kotlin.math.roundToInt
 
@@ -99,46 +99,12 @@ fun AuroraHorizontallyScrollableBox(
     val scrollAmountPx = scrollAmount.value * density.density
 
     val startwardScrollerCommand = Command(text = "",
-        icon = object : TransitionAwarePainterDelegate() {
-            override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
-                return TransitionAwarePainter(
-                    iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
-                    decorationAreaType = decorationAreaType,
-                    skinColors = colors,
-                    colorSchemeBundle = null,
-                    modelStateInfoSnapshot = modelStateInfoSnapshot,
-                    paintDelegate = { drawScope, iconSize, colorScheme ->
-                        with(drawScope) {
-                            val arrowDoubleWidth =
-                                ArrowSizingConstants.DefaultDoubleArrowHeight.toPx() +
-                                        ArrowSizingConstants.DefaultDoubleArrowGap.toPx()
-                            val arrowDoubleHeight =
-                                ArrowSizingConstants.DefaultDoubleArrowWidth.toPx()
-                            val dx = (iconSize.toPx() - arrowDoubleWidth) / 2
-                            val dy = (iconSize.toPx() - arrowDoubleHeight) / 2
-                            val alpha = if (modelStateInfoSnapshot.currModelState.isDisabled)
-                                colors.getAlpha(
-                                    decorationAreaType,
-                                    modelStateInfoSnapshot.currModelState
-                                ) else 1.0f
-                            translate(left = dx, top = dy) {
-                                drawDoubleArrow(
-                                    drawScope = this,
-                                    width = arrowDoubleWidth,
-                                    height = arrowDoubleHeight,
-                                    gap = ArrowSizingConstants.DefaultDoubleArrowGap.toPx(),
-                                    strokeWidth = ArrowSizingConstants.DefaultDoubleArrowStroke.toPx(),
-                                    popupPlacementStrategy = PopupPlacementStrategy.Startward.VAlignTop,
-                                    layoutDirection = layoutDirection,
-                                    color = colorScheme.markColor.withAlpha(alpha)
-                                )
-                            }
-                        }
-                    },
-                    density = density
-                )
-            }
-        },
+        icon = getStartwardDoubleArrowIcon(
+            decorationAreaType = decorationAreaType,
+            skinColors = colors,
+            colorSchemeBundle = null,
+            density = density
+        ),
         isActionEnabled = (horizontalScrollState.value > 0),
         action = {
             scope.launch {
@@ -146,46 +112,12 @@ fun AuroraHorizontallyScrollableBox(
             }
         })
     val endwardScrollerCommand = Command(text = "",
-        icon = object : TransitionAwarePainterDelegate() {
-            override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
-                return TransitionAwarePainter(
-                    iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
-                    decorationAreaType = decorationAreaType,
-                    skinColors = colors,
-                    colorSchemeBundle = null,
-                    modelStateInfoSnapshot = modelStateInfoSnapshot,
-                    paintDelegate = { drawScope, iconSize, colorScheme ->
-                        with(drawScope) {
-                            val arrowDoubleWidth =
-                                ArrowSizingConstants.DefaultDoubleArrowHeight.toPx() +
-                                        ArrowSizingConstants.DefaultDoubleArrowGap.toPx()
-                            val arrowDoubleHeight =
-                                ArrowSizingConstants.DefaultDoubleArrowWidth.toPx()
-                            val dx = (iconSize.toPx() - arrowDoubleWidth) / 2
-                            val dy = (iconSize.toPx() - arrowDoubleHeight) / 2
-                            val alpha = if (modelStateInfoSnapshot.currModelState.isDisabled)
-                                colors.getAlpha(
-                                    decorationAreaType,
-                                    modelStateInfoSnapshot.currModelState
-                                ) else 1.0f
-                            translate(left = dx, top = dy) {
-                                drawDoubleArrow(
-                                    drawScope = this,
-                                    width = arrowDoubleWidth,
-                                    height = arrowDoubleHeight,
-                                    gap = ArrowSizingConstants.DefaultDoubleArrowGap.toPx(),
-                                    strokeWidth = ArrowSizingConstants.DefaultDoubleArrowStroke.toPx(),
-                                    popupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignTop,
-                                    layoutDirection = layoutDirection,
-                                    color = colorScheme.markColor.withAlpha(alpha)
-                                )
-                            }
-                        }
-                    },
-                    density = density
-                )
-            }
-        },
+        icon = getEndwardDoubleArrowIcon(
+            decorationAreaType = decorationAreaType,
+            skinColors = colors,
+            colorSchemeBundle = null,
+            density = density
+        ),
         isActionEnabled = (horizontalScrollState.value < horizontalScrollState.maxValue),
         action = {
             scope.launch {

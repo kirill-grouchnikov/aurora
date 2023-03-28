@@ -23,9 +23,16 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.theming.DecorationAreaType
+import org.pushingpixels.aurora.theming.ModelStateInfoSnapshot
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
+import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
+import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 
 internal object ArrowSizingConstants {
     val DefaultArrowStroke = 2.0.dp
@@ -211,5 +218,101 @@ internal fun drawDoubleArrow(
             color = color,
             style = Stroke(width = strokeWidth, cap = StrokeCap.Round, join = StrokeJoin.Miter)
         )
+    }
+}
+
+internal fun getStartwardDoubleArrowIcon(
+    decorationAreaType: DecorationAreaType,
+    skinColors: AuroraSkinColors,
+    colorSchemeBundle: AuroraColorSchemeBundle?,
+    density: Density
+): Painter {
+    return object : TransitionAwarePainterDelegate() {
+        override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
+            return TransitionAwarePainter(
+                iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
+                decorationAreaType = decorationAreaType,
+                skinColors = skinColors,
+                colorSchemeBundle = colorSchemeBundle,
+                modelStateInfoSnapshot = modelStateInfoSnapshot,
+                paintDelegate = { drawScope, iconSize, colorScheme ->
+                    with(drawScope) {
+                        val arrowDoubleWidth =
+                            ArrowSizingConstants.DefaultDoubleArrowHeight.toPx() +
+                                    ArrowSizingConstants.DefaultDoubleArrowGap.toPx()
+                        val arrowDoubleHeight =
+                            ArrowSizingConstants.DefaultDoubleArrowWidth.toPx()
+                        val dx = (iconSize.toPx() - arrowDoubleWidth) / 2
+                        val dy = (iconSize.toPx() - arrowDoubleHeight) / 2
+                        val alpha = if (modelStateInfoSnapshot.currModelState.isDisabled)
+                            skinColors.getAlpha(
+                                decorationAreaType,
+                                modelStateInfoSnapshot.currModelState
+                            ) else 1.0f
+                        translate(left = dx, top = dy) {
+                            drawDoubleArrow(
+                                drawScope = this,
+                                width = arrowDoubleWidth,
+                                height = arrowDoubleHeight,
+                                gap = ArrowSizingConstants.DefaultDoubleArrowGap.toPx(),
+                                strokeWidth = ArrowSizingConstants.DefaultDoubleArrowStroke.toPx(),
+                                popupPlacementStrategy = PopupPlacementStrategy.Startward.VAlignTop,
+                                layoutDirection = layoutDirection,
+                                color = colorScheme.markColor.withAlpha(alpha)
+                            )
+                        }
+                    }
+                },
+                density = density
+            )
+        }
+    }
+}
+
+internal fun getEndwardDoubleArrowIcon(
+    decorationAreaType: DecorationAreaType,
+    skinColors: AuroraSkinColors,
+    colorSchemeBundle: AuroraColorSchemeBundle?,
+    density: Density
+): Painter {
+    return object : TransitionAwarePainterDelegate() {
+        override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
+            return TransitionAwarePainter(
+                iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
+                decorationAreaType = decorationAreaType,
+                skinColors = skinColors,
+                colorSchemeBundle = colorSchemeBundle,
+                modelStateInfoSnapshot = modelStateInfoSnapshot,
+                paintDelegate = { drawScope, iconSize, colorScheme ->
+                    with(drawScope) {
+                        val arrowDoubleWidth =
+                            ArrowSizingConstants.DefaultDoubleArrowHeight.toPx() +
+                                    ArrowSizingConstants.DefaultDoubleArrowGap.toPx()
+                        val arrowDoubleHeight =
+                            ArrowSizingConstants.DefaultDoubleArrowWidth.toPx()
+                        val dx = (iconSize.toPx() - arrowDoubleWidth) / 2
+                        val dy = (iconSize.toPx() - arrowDoubleHeight) / 2
+                        val alpha = if (modelStateInfoSnapshot.currModelState.isDisabled)
+                            skinColors.getAlpha(
+                                decorationAreaType,
+                                modelStateInfoSnapshot.currModelState
+                            ) else 1.0f
+                        translate(left = dx, top = dy) {
+                            drawDoubleArrow(
+                                drawScope = this,
+                                width = arrowDoubleWidth,
+                                height = arrowDoubleHeight,
+                                gap = ArrowSizingConstants.DefaultDoubleArrowGap.toPx(),
+                                strokeWidth = ArrowSizingConstants.DefaultDoubleArrowStroke.toPx(),
+                                popupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignTop,
+                                layoutDirection = layoutDirection,
+                                color = colorScheme.markColor.withAlpha(alpha)
+                            )
+                        }
+                    }
+                },
+                density = density
+            )
+        }
     }
 }
