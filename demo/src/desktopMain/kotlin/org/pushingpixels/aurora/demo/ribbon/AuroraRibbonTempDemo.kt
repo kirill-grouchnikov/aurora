@@ -101,7 +101,7 @@ fun main() = auroraApplication {
                 commandButtonTextOverflow = TextOverflow.Ellipsis,
                 expandKeyTip = "L"
             )
-            val styleGalleryInlineState = remember {
+            ribbonState.documentStyleGalleryInlineState = remember {
                 RibbonGalleryInlineState(
                     contentModel = styleGalleryContentModel,
                     presentationModel = styleGalleryInlinePresentationModel,
@@ -117,7 +117,7 @@ fun main() = auroraApplication {
             SampleGallery(
                 contentModel = styleGalleryContentModel,
                 presentationModel = styleGalleryInlinePresentationModel,
-                inlineState = styleGalleryInlineState
+                ribbonState = ribbonState
             )
             TaskBar(
                 builder = builder,
@@ -128,7 +128,7 @@ fun main() = auroraApplication {
                 },
                 galleryContentModel = styleGalleryContentModel,
                 galleryPresentationModel = styleGalleryTaskbarPresentationModel,
-                galleryInlineState = styleGalleryInlineState
+                galleryInlineState = ribbonState.documentStyleGalleryInlineState
             )
 
             Spacer(Modifier.weight(weight = 1.0f, fill = true))
@@ -143,7 +143,7 @@ fun main() = auroraApplication {
 private fun SampleGallery(
     contentModel: RibbonGalleryContentModel,
     presentationModel: RibbonGalleryPresentationModel,
-    inlineState: RibbonGalleryInlineState
+    ribbonState: RibbonState
 ) {
     Row(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
         RibbonGalleryProjection(
@@ -151,7 +151,7 @@ private fun SampleGallery(
             presentationModel = presentationModel
         ).project(
             presentationPriority = PresentationPriority.Top,
-            inlineState = inlineState
+            inlineState = ribbonState.documentStyleGalleryInlineState
         )
     }
 }

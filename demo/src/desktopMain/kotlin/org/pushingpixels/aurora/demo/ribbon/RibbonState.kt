@@ -15,6 +15,8 @@
  */
 package org.pushingpixels.aurora.demo.ribbon
 
+import org.pushingpixels.aurora.component.ribbon.RibbonGalleryInlineState
+
 enum class DocumentStyle {
     Style1, Style2, Style3, Style4, Style5, Style6, Style7, Style8, Style9, Style10,
     Style11, Style12, Style13, Style14, Style15, Style16, Style17, Style18, Style19, Style20,
@@ -31,4 +33,6 @@ enum class FontFamily {
 data class RibbonState(
     val documentStyle: DocumentStyle,
     val fontFamily: FontFamily
-)
+) {
+    lateinit var documentStyleGalleryInlineState: RibbonGalleryInlineState
+}

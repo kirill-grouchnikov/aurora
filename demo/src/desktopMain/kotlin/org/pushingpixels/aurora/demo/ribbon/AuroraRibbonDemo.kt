@@ -95,7 +95,7 @@ fun main() = auroraApplication {
         commandButtonTextOverflow = TextOverflow.Ellipsis,
         expandKeyTip = "L"
     )
-    val styleGalleryInlineState = remember {
+    ribbonState.documentStyleGalleryInlineState = remember {
         RibbonGalleryInlineState(
             contentModel = styleGalleryContentModel,
             presentationModel = styleGalleryInlinePresentationModel,
@@ -213,7 +213,7 @@ fun main() = auroraApplication {
                     contentModel = styleGalleryContentModel,
                     presentationModel = styleGalleryTaskbarPresentationModel
                 ),
-                galleryInlineState = styleGalleryInlineState
+                galleryInlineState = ribbonState.documentStyleGalleryInlineState
             )
         )
 
