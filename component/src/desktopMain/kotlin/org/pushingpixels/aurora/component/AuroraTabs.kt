@@ -116,7 +116,7 @@ internal fun AuroraTabs(
     val scope = rememberCoroutineScope()
     val scrollAmount = 12.dp.value * density.density
 
-    val leftScrollerCommand = Command(text = "",
+    val startwardScrollerCommand = Command(text = "",
         icon = object : TransitionAwarePainterDelegate() {
             override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
                 return TransitionAwarePainter(
@@ -165,7 +165,7 @@ internal fun AuroraTabs(
                 )
             }
         })
-    val rightScrollerCommand = Command(text = "",
+    val endwardScrollerCommand = Command(text = "",
         icon = object : TransitionAwarePainterDelegate() {
             override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
                 return TransitionAwarePainter(
@@ -221,7 +221,7 @@ internal fun AuroraTabs(
         content = {
             // Startwards scroller
             CommandButtonProjection(
-                contentModel = leftScrollerCommand,
+                contentModel = startwardScrollerCommand,
                 presentationModel = scrollerPresentationModel.overlayWith(
                     overlay = BaseCommandButtonPresentationModel.Overlay(
                         sides = Sides(straightSides = hashSetOf(Side.Trailing))
@@ -325,7 +325,7 @@ internal fun AuroraTabs(
 
             // Endwards scroller
             CommandButtonProjection(
-                contentModel = rightScrollerCommand,
+                contentModel = endwardScrollerCommand,
                 presentationModel = scrollerPresentationModel.overlayWith(
                     overlay = BaseCommandButtonPresentationModel.Overlay(
                         sides = Sides(straightSides = hashSetOf(Side.Leading))
@@ -360,21 +360,21 @@ internal fun AuroraTabs(
             // How big is the left scroller?
             val leftScrollerPreLayoutInfo =
                 scrollerLayoutManager.getPreLayoutInfo(
-                    leftScrollerCommand,
+                    startwardScrollerCommand,
                     scrollerPresentationModel
                 )
             val leftScrollerSize = scrollerLayoutManager.getPreferredSize(
-                leftScrollerCommand, scrollerPresentationModel, leftScrollerPreLayoutInfo
+                startwardScrollerCommand, scrollerPresentationModel, leftScrollerPreLayoutInfo
             )
 
             // How big is the right scroller?
             val rightScrollerPreLayoutInfo =
                 scrollerLayoutManager.getPreLayoutInfo(
-                    rightScrollerCommand,
+                    endwardScrollerCommand,
                     scrollerPresentationModel
                 )
             val rightScrollerSize = scrollerLayoutManager.getPreferredSize(
-                rightScrollerCommand, scrollerPresentationModel, rightScrollerPreLayoutInfo
+                endwardScrollerCommand, scrollerPresentationModel, rightScrollerPreLayoutInfo
             )
 
             // How much space does the scrollable content need?

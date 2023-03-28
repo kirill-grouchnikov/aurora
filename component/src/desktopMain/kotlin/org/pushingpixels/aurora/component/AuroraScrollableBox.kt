@@ -98,7 +98,7 @@ fun AuroraHorizontallyScrollableBox(
     val scope = rememberCoroutineScope()
     val scrollAmountPx = scrollAmount.value * density.density
 
-    val leftScrollerCommand = Command(text = "",
+    val startwardScrollerCommand = Command(text = "",
         icon = object : TransitionAwarePainterDelegate() {
             override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
                 return TransitionAwarePainter(
@@ -145,7 +145,7 @@ fun AuroraHorizontallyScrollableBox(
                 horizontalScrollState.scrollTo((horizontalScrollState.value - scrollAmountPx.toInt()).coerceAtLeast(0))
             }
         })
-    val rightScrollerCommand = Command(text = "",
+    val endwardScrollerCommand = Command(text = "",
         icon = object : TransitionAwarePainterDelegate() {
             override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
                 return TransitionAwarePainter(
@@ -197,9 +197,9 @@ fun AuroraHorizontallyScrollableBox(
 
     Layout(modifier = modifier.fillMaxWidth().height(height = height),
         content = {
-            // Leftwards scroller
+            // Startward scroller
             CommandButtonProjection(
-                contentModel = leftScrollerCommand,
+                contentModel = startwardScrollerCommand,
                 presentationModel = scrollerPresentationModel.overlayWith(
                     overlay = BaseCommandButtonPresentationModel.Overlay(
                         sides = Sides(straightSides = hashSetOf(Side.Trailing))
@@ -213,9 +213,9 @@ fun AuroraHorizontallyScrollableBox(
                 }
             }
 
-            // Rightwards scroller
+            // Endward scroller
             CommandButtonProjection(
-                contentModel = rightScrollerCommand,
+                contentModel = endwardScrollerCommand,
                 presentationModel = scrollerPresentationModel.overlayWith(
                     overlay = BaseCommandButtonPresentationModel.Overlay(
                         sides = Sides(straightSides = hashSetOf(Side.Leading))
@@ -225,28 +225,28 @@ fun AuroraHorizontallyScrollableBox(
 
         },
         measurePolicy = { measurables, constraints ->
-            val leftScrollerMeasurable = measurables[0]
+            val startwardScrollerMeasurable = measurables[0]
             val contentMeasurable = measurables[1]
-            val rightScrollerMeasurable = measurables[2]
+            val endwardScrollerMeasurable = measurables[2]
 
-            // How big is the left scroller?
-            val leftScrollerPreLayoutInfo =
+            // How big is the startward scroller?
+            val startwardScrollerPreLayoutInfo =
                 scrollerLayoutManager.getPreLayoutInfo(
-                    leftScrollerCommand,
+                    startwardScrollerCommand,
                     scrollerPresentationModel
                 )
-            val leftScrollerSize = scrollerLayoutManager.getPreferredSize(
-                leftScrollerCommand, scrollerPresentationModel, leftScrollerPreLayoutInfo
+            val startwardScrollerSize = scrollerLayoutManager.getPreferredSize(
+                startwardScrollerCommand, scrollerPresentationModel, startwardScrollerPreLayoutInfo
             )
 
-            // How big is the right scroller?
-            val rightScrollerPreLayoutInfo =
+            // How big is the endward scroller?
+            val endwardScrollerPreLayoutInfo =
                 scrollerLayoutManager.getPreLayoutInfo(
-                    rightScrollerCommand,
+                    endwardScrollerCommand,
                     scrollerPresentationModel
                 )
-            val rightScrollerSize = scrollerLayoutManager.getPreferredSize(
-                rightScrollerCommand, scrollerPresentationModel, rightScrollerPreLayoutInfo
+            val endwardScrollerSize = scrollerLayoutManager.getPreferredSize(
+                endwardScrollerCommand, scrollerPresentationModel, endwardScrollerPreLayoutInfo
             )
 
             // How much space does the scrollable content need?
@@ -256,19 +256,19 @@ fun AuroraHorizontallyScrollableBox(
             // to fully display all scrollable content, we don't need to show the scrollers.
             val needScrollers = (contentRequiredWidth > constraints.maxWidth)
             val contentAvailableWidth = if (needScrollers) constraints.maxWidth -
-                    leftScrollerSize.width - rightScrollerSize.width
+                    startwardScrollerSize.width - endwardScrollerSize.width
             else constraints.maxWidth
 
             val contentHeightPx = height.toPx().roundToInt()
-            val leftScrollerPlaceable = leftScrollerMeasurable.measure(
+            val startwardScrollerPlaceable = startwardScrollerMeasurable.measure(
                 Constraints.fixed(
-                    width = if (needScrollers) leftScrollerSize.width.toInt() else 0,
+                    width = if (needScrollers) startwardScrollerSize.width.toInt() else 0,
                     height = contentHeightPx
                 )
             )
-            val rightScrollerPlaceable = rightScrollerMeasurable.measure(
+            val endwardScrollerPlaceable = endwardScrollerMeasurable.measure(
                 Constraints.fixed(
-                    width = if (needScrollers) rightScrollerSize.width.toInt() else 0,
+                    width = if (needScrollers) endwardScrollerSize.width.toInt() else 0,
                     height = contentHeightPx
                 )
             )
@@ -277,16 +277,16 @@ fun AuroraHorizontallyScrollableBox(
             )
 
             layout(width = constraints.maxWidth, height = contentHeightPx) {
-                if (leftScrollerPlaceable.width > 0) {
-                    leftScrollerPlaceable.placeRelative(0, 0)
+                if (startwardScrollerPlaceable.width > 0) {
+                    startwardScrollerPlaceable.placeRelative(0, 0)
                 }
-                if (rightScrollerPlaceable.width > 0) {
-                    rightScrollerPlaceable.placeRelative(
-                        constraints.maxWidth - rightScrollerPlaceable.width,
+                if (endwardScrollerPlaceable.width > 0) {
+                    endwardScrollerPlaceable.placeRelative(
+                        constraints.maxWidth - endwardScrollerPlaceable.width,
                         0
                     )
                 }
-                contentPlaceable.placeRelative(leftScrollerPlaceable.width, 0)
+                contentPlaceable.placeRelative(startwardScrollerPlaceable.width, 0)
             }
         })
 }
