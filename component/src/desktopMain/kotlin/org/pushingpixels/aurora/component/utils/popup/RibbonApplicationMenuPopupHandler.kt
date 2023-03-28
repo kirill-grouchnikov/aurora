@@ -102,6 +102,11 @@ private class RibbonApplicationMenuLevel1ButtonProjection(
             popupHandler = popupHandler,
         )
     }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
+        error("Reprojecting a ribbon application menu button is not supported")
+    }
 }
 
 internal class RibbonApplicationMenuPopupHandler(

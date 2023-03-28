@@ -89,7 +89,9 @@ fun RibbonTaskbar(
                     ).project()
                 }
 
-                is RibbonTaskbarComponentProjection -> {}
+                is RibbonTaskbarComponentProjection -> {
+                    element.componentProjection.reproject(modifier = Modifier)
+                }
             }
         }
     }

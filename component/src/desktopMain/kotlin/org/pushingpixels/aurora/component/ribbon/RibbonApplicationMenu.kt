@@ -195,4 +195,15 @@ class RibbonApplicationMenuCommandButtonProjection(
             popupHandler = RibbonApplicationMenuPopupHandler(secondaryStates = secondaryStates),
         )
     }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
+        super.project(
+            modifier = modifier,
+            primaryOverlay = null,
+            actionInteractionSource = remember { MutableInteractionSource() },
+            popupInteractionSource = remember { MutableInteractionSource() },
+            popupHandler = RibbonApplicationMenuPopupHandler(secondaryStates = secondaryStates),
+        )
+    }
 }

@@ -27,7 +27,10 @@ import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
 import org.pushingpixels.aurora.component.utils.popup.ColorSelectorCommandMenuPopupHandler
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 
-abstract class Projection<out C : ContentModel, out P : PresentationModel>
+abstract class Projection<out C : ContentModel, out P : PresentationModel> {
+    @Composable
+    abstract fun reproject(modifier: Modifier)
+}
 
 abstract class BaseCommandButtonProjection<out C : BaseCommand,
         out P: BaseCommandButtonPresentationModel>(
@@ -84,6 +87,17 @@ class CommandButtonProjection(
             actionInteractionSource = actionInteractionSource,
             popupInteractionSource = popupInteractionSource,
             popupHandler = GeneralCommandMenuPopupHandler,
+        )
+    }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
+        project(
+            modifier = modifier,
+            primaryOverlay = null,
+            actionInteractionSource = remember { MutableInteractionSource() },
+            popupInteractionSource = remember { MutableInteractionSource() },
+            popupHandler = GeneralCommandMenuPopupHandler
         )
     }
 
@@ -149,6 +163,19 @@ class ColorSelectorCommandButtonProjection(
     }
 
     @Composable
+    override fun reproject(modifier: Modifier) {
+        checkModel()
+
+        super.project(
+            modifier = modifier,
+            primaryOverlay = null,
+            actionInteractionSource = remember { MutableInteractionSource() },
+            popupInteractionSource = remember { MutableInteractionSource() },
+            popupHandler = ColorSelectorCommandMenuPopupHandler,
+        )
+    }
+
+    @Composable
     override fun reproject(
         modifier: Modifier,
         primaryOverlay: BaseCommandButtonPresentationModel.Overlay,
@@ -181,6 +208,16 @@ class CommandButtonStripProjection(
             overlays = this.overlays ?: mapOf()
         )
     }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
+        AuroraCommandButtonStrip(
+            modifier = modifier,
+            commandGroup = this.contentModel,
+            presentationModel = this.presentationModel,
+            overlays = this.overlays ?: mapOf()
+        )
+    }
 }
 
 class CommandButtonPanelProjection(
@@ -190,6 +227,22 @@ class CommandButtonPanelProjection(
 ) : Projection<CommandPanelContentModel, CommandButtonPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier) {
+        require(
+            !presentationModel.showGroupLabels ||
+                    (presentationModel.layoutSpec is PanelLayoutSpec.RowFill)
+        ) {
+            "Column fill layout is not supported when group labels are shown"
+        }
+        AuroraCommandButtonPanel(
+            modifier = modifier,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel,
+            overlays = this.overlays ?: mapOf()
+        )
+    }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
         require(
             !presentationModel.showGroupLabels ||
                     (presentationModel.layoutSpec is PanelLayoutSpec.RowFill)
@@ -221,6 +274,16 @@ class BreadcrumbBarProjection(
             horizontalScrollState = horizontalScrollState
         )
     }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
+        AuroraBreadcrumbBar(
+            modifier = modifier,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel,
+            horizontalScrollState = rememberScrollState(0)
+        )
+    }
 }
 
 class ComboBoxProjection<E>(
@@ -235,6 +298,16 @@ class ComboBoxProjection<E>(
         AuroraComboBox(
             modifier = modifier,
             interactionSource = interactionSource,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel
+        )
+    }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
+        AuroraComboBox(
+            modifier = modifier,
+            interactionSource = remember { MutableInteractionSource() },
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -257,6 +330,16 @@ class CheckBoxProjection(
             presentationModel = this.presentationModel
         )
     }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
+        AuroraCheckBox(
+            modifier = modifier,
+            interactionSource = remember { MutableInteractionSource() },
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel
+        )
+    }
 }
 
 class TriStateCheckBoxProjection(
@@ -271,6 +354,16 @@ class TriStateCheckBoxProjection(
         AuroraTriStateCheckBox(
             modifier = modifier,
             interactionSource = interactionSource,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel
+        )
+    }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
+        AuroraTriStateCheckBox(
+            modifier = modifier,
+            interactionSource = remember { MutableInteractionSource() },
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
@@ -293,6 +386,16 @@ class RadioButtonProjection(
             presentationModel = this.presentationModel
         )
     }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
+        AuroraRadioButton(
+            modifier = modifier,
+            interactionSource = remember { MutableInteractionSource() },
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel
+        )
+    }
 }
 
 class SwitchProjection(
@@ -311,6 +414,16 @@ class SwitchProjection(
             presentationModel = this.presentationModel
         )
     }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
+        AuroraSwitch(
+            modifier = modifier,
+            interactionSource = remember { MutableInteractionSource() },
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel
+        )
+    }
 }
 
 class CircularProgressProjection(
@@ -319,6 +432,15 @@ class CircularProgressProjection(
 ) : Projection<ProgressIndeterminateContentModel, ProgressCircularPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier) {
+        AuroraCircularProgress(
+            modifier = modifier,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel
+        )
+    }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
         AuroraCircularProgress(
             modifier = modifier,
             contentModel = this.contentModel,
@@ -339,6 +461,15 @@ class IndeterminateLinearProgressProjection(
             presentationModel = this.presentationModel
         )
     }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
+        AuroraIndeterminateLinearProgress(
+            modifier = modifier,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel
+        )
+    }
 }
 
 class DeterminateLinearProgressProjection(
@@ -347,6 +478,15 @@ class DeterminateLinearProgressProjection(
 ) : Projection<ProgressDeterminateContentModel, ProgressLinearPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier) {
+        AuroraDeterminateLinearProgress(
+            modifier = modifier,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel
+        )
+    }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
         AuroraDeterminateLinearProgress(
             modifier = modifier,
             contentModel = this.contentModel,
@@ -367,6 +507,15 @@ class IconProjection(
             presentationModel = this.presentationModel
         )
     }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
+        AuroraIcon(
+            modifier = modifier,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel
+        )
+    }
 }
 
 class LabelProjection(
@@ -375,6 +524,15 @@ class LabelProjection(
 ) : Projection<LabelContentModel, LabelPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier) {
+        AuroraLabel(
+            modifier = modifier,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel
+        )
+    }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
         AuroraLabel(
             modifier = modifier,
             contentModel = this.contentModel,
@@ -395,6 +553,15 @@ class VerticalSeparatorProjection(
             presentationModel = this.presentationModel
         )
     }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
+        AuroraVerticalSeparator(
+            modifier = modifier,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel
+        )
+    }
 }
 
 class HorizontalSeparatorProjection(
@@ -409,6 +576,15 @@ class HorizontalSeparatorProjection(
             presentationModel = this.presentationModel
         )
     }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
+        AuroraHorizontalSeparator(
+            modifier = modifier,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel
+        )
+    }
 }
 
 class SliderProjection(
@@ -417,6 +593,15 @@ class SliderProjection(
 ) : Projection<SliderContentModel, SliderPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier) {
+        AuroraSlider(
+            modifier = modifier,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel
+        )
+    }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
         AuroraSlider(
             modifier = modifier,
             contentModel = this.contentModel,
@@ -438,6 +623,16 @@ class TabsProjection(
             horizontalScrollState = horizontalScrollState
         )
     }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
+        AuroraTabs(
+            modifier = modifier,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel,
+            horizontalScrollState = rememberScrollState(0)
+        )
+    }
 }
 
 class TextFieldValueProjection(
@@ -456,6 +651,16 @@ class TextFieldValueProjection(
             presentationModel = this.presentationModel
         )
     }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
+        AuroraTextField(
+            modifier = modifier,
+            interactionSource = remember { MutableInteractionSource() },
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel
+        )
+    }
 }
 
 class TextFieldStringProjection(
@@ -470,6 +675,16 @@ class TextFieldStringProjection(
         AuroraTextField(
             modifier = modifier,
             interactionSource = interactionSource,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel
+        )
+    }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
+        AuroraTextField(
+            modifier = modifier,
+            interactionSource = remember { MutableInteractionSource() },
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )

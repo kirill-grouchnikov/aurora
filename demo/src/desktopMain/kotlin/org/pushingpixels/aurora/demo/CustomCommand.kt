@@ -268,6 +268,17 @@ class CustomCommandButtonProjection(
     }
 
     @Composable
+    override fun reproject(modifier: Modifier) {
+        super.project(
+            modifier = modifier,
+            primaryOverlay = null,
+            actionInteractionSource = remember { MutableInteractionSource() },
+            popupInteractionSource = remember { MutableInteractionSource() },
+            popupHandler = CustomCommandMenuPopupHandler,
+        )
+    }
+
+    @Composable
     override fun reproject(
         modifier: Modifier,
         primaryOverlay: BaseCommandButtonPresentationModel.Overlay,

@@ -152,6 +152,11 @@ class RibbonGalleryProjection(
             inlineState = inlineState
         )
     }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
+        error("Reprojecting a ribbon gallery is not supported")
+    }
 }
 
 class RibbonComponentProjection<out C : ContentModel, out P : PresentationModel>(
