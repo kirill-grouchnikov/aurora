@@ -121,7 +121,7 @@ fun main() = auroraApplication {
                 ribbonState = ribbonState
             )
 
-            for (taskBarMaxWidth in 60..250 step 50) {
+            for (taskBarMaxWidth in 50..300 step 70) {
                 Spacer(Modifier.height(8.dp))
                 TaskBar(
                     maxWidth = taskBarMaxWidth.dp,
@@ -222,7 +222,7 @@ private fun TaskBar(
         )
 
     RibbonTaskbar(
-        modifier = Modifier.height(32.dp).background(Color(0xFFFFDAB3)).padding(horizontal = 12.dp),
+        modifier = Modifier.height(32.dp).background(Color(0xFFFFDAB3)).padding(horizontal = 6.dp),
         maxWidth = maxWidth,
         elements = taskbarElements
     )
