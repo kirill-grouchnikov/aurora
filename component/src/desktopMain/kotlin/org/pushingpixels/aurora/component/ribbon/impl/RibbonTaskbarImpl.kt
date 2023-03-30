@@ -17,25 +17,285 @@ package org.pushingpixels.aurora.component.ribbon.impl
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.popup.BaseCascadingCommandMenuPopupLayoutInfo
+import org.pushingpixels.aurora.component.popup.CascadingCommandMenuHandler
+import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarCommandProjection
 import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarComponentProjection
 import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarElement
 import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarGalleryProjection
 import org.pushingpixels.aurora.component.utils.getEndwardDoubleArrowIcon
-import org.pushingpixels.aurora.theming.AuroraSkin
-import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
-import org.pushingpixels.aurora.theming.Sides
+import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
+
+private data class TaskbarExpandCommand(
+    override val icon: Painter,
+    override val secondaryContentModel: TaskbarExpandMenuContentModel,
+) : BaseCommand {
+    override val text = ""
+    override val extraText = null
+    override val action = null
+    override val actionPreview = null
+    override val isSecondaryEnabled = true
+    override val secondaryRichTooltip = null
+    override val isActionEnabled = false
+    override val isActionToggle = false
+    override val isActionToggleSelected = false
+    override val actionRichTooltip = null
+    override val onTriggerActionToggleSelectedChange = null
+}
+
+private data class TaskbarExpandMenuContentModel(
+    override val onActivatePopup: (() -> Unit)? = null,
+    override val onDeactivatePopup: (() -> Unit)? = null,
+    val elements: List<RibbonTaskbarElement>
+) : BaseCommandMenuContentModel
+
+private data class TaskbarExpandCommandPopupMenuPresentationModel(
+    val combinedWidths: Int
+) : BaseCommandPopupMenuPresentationModel
+
+private class TaskbarExpandCommandButtonPresentationModel(val combinedWidths: Int) :
+    BaseCommandButtonPresentationModel {
+    override val presentationState = CommandButtonPresentationState.Small
+    override val backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
+    override val contentPadding: PaddingValues = PaddingValues(all = 2.dp)
+    override val colorSchemeBundle: AuroraColorSchemeBundle? = null
+    override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center
+    override val iconDimension: DpSize? = null
+    override val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original
+    override val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original
+    override val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original
+    override val forceAllocateSpaceForIcon = false
+    override val actionKeyTip = null
+    override val autoRepeatAction = false
+    override val autoRepeatInitialInterval =
+        CommandButtonInteractionConstants.DefaultAutoRepeatInitialIntervalMillis
+    override val autoRepeatSubsequentInterval =
+        CommandButtonInteractionConstants.DefaultAutoRepeatSubsequentIntervalMillis
+    override val actionFireTrigger = ActionFireTrigger.OnPressReleased
+    override val textStyle: TextStyle? = null
+    override val textOverflow: TextOverflow = TextOverflow.Clip
+    override val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart
+    override val toDismissPopupsOnActivation: Boolean = true
+    override val popupKeyTip: String? = null
+    override val popupMenuPresentationModel: TaskbarExpandCommandPopupMenuPresentationModel =
+        TaskbarExpandCommandPopupMenuPresentationModel(combinedWidths = combinedWidths)
+    override val minWidth: Dp = 0.dp
+    override val popupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnPressed
+    override val textClick = TextClick.Action
+    override val actionRichTooltipPresentationModel = RichTooltipPresentationModel()
+    override val popupRichTooltipPresentationModel = RichTooltipPresentationModel()
+    override val popupAnchorBoundsProvider: (() -> Rect)? = null
+    override val horizontalGapScaleFactor = 1.0f
+    override val verticalGapScaleFactor = 1.0f
+    override val selectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize
+    override val showPopupIcon: Boolean = false
+    override val sides: Sides = Sides.ClosedRectangle
+
+    override fun overlayWith(overlay: BaseCommandButtonPresentationModel.Overlay): TaskbarExpandCommandButtonPresentationModel {
+        return TaskbarExpandCommandButtonPresentationModel(this.combinedWidths)
+    }
+}
+
+private data class TaskbarExpandPopupContentLayoutInfo(
+    override val popupSize: Size,
+) : BaseCascadingCommandMenuPopupLayoutInfo
+
+private object TaskbarExpandCommandMenuPopupHandler : CascadingCommandMenuHandler<
+        TaskbarExpandMenuContentModel, TaskbarExpandCommandPopupMenuPresentationModel,
+        TaskbarExpandPopupContentLayoutInfo> {
+    override fun getPopupContentLayoutInfo(
+        menuContentModel: TaskbarExpandMenuContentModel,
+        menuPresentationModel: TaskbarExpandCommandPopupMenuPresentationModel,
+        displayPrototypeCommand: BaseCommand?,
+        layoutDirection: LayoutDirection,
+        density: Density,
+        textStyle: TextStyle,
+        fontFamilyResolver: FontFamily.Resolver
+    ): TaskbarExpandPopupContentLayoutInfo {
+
+        val startPadding = TaskbarExpandPopupContentPadding.calculateStartPadding(layoutDirection)
+        val endPadding = TaskbarExpandPopupContentPadding.calculateEndPadding(layoutDirection)
+        val topPadding = TaskbarExpandPopupContentPadding.calculateTopPadding()
+        val bottomPadding = TaskbarExpandPopupContentPadding.calculateBottomPadding()
+
+        val heightDp = TaskbarExpandPopupHeight + topPadding + bottomPadding
+
+        return TaskbarExpandPopupContentLayoutInfo(
+            popupSize = Size(
+                width = menuPresentationModel.combinedWidths + (startPadding + endPadding).value * density.density,
+                height = heightDp.value * density.density
+            )
+        )
+    }
+
+    @Composable
+    override fun generatePopupContent(
+        menuContentModel: TaskbarExpandMenuContentModel,
+        menuPresentationModel: TaskbarExpandCommandPopupMenuPresentationModel,
+        overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>,
+        popupContentLayoutInfo: TaskbarExpandPopupContentLayoutInfo
+    ) {
+        Layout(modifier = Modifier.padding(TaskbarExpandPopupContentPadding),
+            content = {
+                for (element in menuContentModel.elements) {
+                    when (element) {
+                        is RibbonTaskbarCommandProjection -> {
+                            element.commandProjection.reproject(
+                                modifier = Modifier,
+                                primaryOverlay = BaseCommandButtonPresentationModel.Overlay(
+                                    presentationState = CommandButtonPresentationState.Small,
+                                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat
+                                ),
+                                actionInteractionSource = remember { MutableInteractionSource() },
+                                popupInteractionSource = remember { MutableInteractionSource() }
+                            )
+                        }
+
+                        is RibbonTaskbarGalleryProjection -> {
+                            val galleryContentModel = element.galleryProjection.contentModel
+                            val galleryPresentationModel = element.galleryProjection.presentationModel
+
+                            val galleryCommand = Command(
+                                text = "",
+                                icon = galleryContentModel.icon,
+                                secondaryContentModel = CommandMenuContentModel(
+                                    onDeactivatePopup = {
+                                        // Mark the inline state to have the latest selected command button to be revealed
+                                        element.galleryInlineState.revealSelected()
+                                    },
+                                    panelContentModel = CommandPanelContentModel(
+                                        commandGroups = galleryContentModel.commandGroups
+                                    ),
+                                    groups = galleryContentModel.extraPopupGroups
+                                ),
+                                isSecondaryEnabled = true,
+                            )
+                            CommandButtonProjection(
+                                contentModel = galleryCommand,
+                                presentationModel = CommandButtonPresentationModel(
+                                    presentationState = CommandButtonPresentationState.Small,
+                                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                                    popupMenuPresentationModel = CommandPopupMenuPresentationModel(
+                                        panelPresentationModel = CommandPopupMenuPanelPresentationModel(
+                                            layoutSpec = galleryPresentationModel.popupLayoutSpec,
+                                            contentPadding = PaddingValues(0.dp),
+                                            showGroupLabels = galleryContentModel.commandGroups.all { !it.title.isNullOrEmpty() },
+                                            commandPresentationState = galleryPresentationModel.commandButtonPresentationState,
+                                            commandPopupFireTrigger = galleryPresentationModel.commandPopupFireTrigger,
+                                            commandSelectedStateHighlight = galleryPresentationModel.commandSelectedStateHighlight
+                                        )
+                                    )
+                                ),
+                                secondaryOverlays = element.galleryProjection.secondaryOverlays
+                            ).project()
+                        }
+
+                        is RibbonTaskbarComponentProjection -> {
+                            element.componentProjection.reproject(modifier = Modifier)
+                        }
+                    }
+                }
+            },
+            measurePolicy = { measurables, constraints ->
+                val height = TaskbarExpandPopupHeight.toPx().toInt()
+                val gap = TaskbarLayoutGap.toPx().toInt()
+
+                val placeables = mutableListOf<Placeable>()
+                var fullWidth = 0
+                for ((index, measurable) in measurables.withIndex()) {
+                    val neededWidth = measurable.maxIntrinsicWidth(height)
+                    val needsGapAfter = (index < measurables.size - 1)
+                    placeables.add(
+                        measurable.measure(
+                            Constraints.fixed(
+                                width = measurable.maxIntrinsicWidth(height),
+                                height = measurable.maxIntrinsicHeight(neededWidth)
+                            )
+                        )
+                    )
+                    fullWidth += (neededWidth + (if (needsGapAfter) gap else 0))
+                }
+
+                layout(width = fullWidth, height = height) {
+                    var x = 0
+                    for (placeable in placeables) {
+                        val currWidth = placeable.measuredWidth
+                        val currHeight = placeable.measuredHeight
+                        placeable.placeRelative(x, (height - currHeight) / 2)
+                        x += (currWidth + gap)
+                    }
+                }
+            })
+    }
+}
+
+private class TaskbarExpandCommandButtonProjection(
+    contentModel: TaskbarExpandCommand,
+    presentationModel: TaskbarExpandCommandButtonPresentationModel,
+    secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
+) : BaseCommandButtonProjection<TaskbarExpandCommand, TaskbarExpandCommandButtonPresentationModel>(
+    contentModel, presentationModel, secondaryOverlays
+) {
+    @Composable
+    fun project(
+        modifier: Modifier = Modifier,
+        popupInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    ) {
+        super.project(
+            modifier = modifier,
+            primaryOverlay = null,
+            actionInteractionSource = remember { MutableInteractionSource() },
+            popupInteractionSource = popupInteractionSource,
+            popupHandler = TaskbarExpandCommandMenuPopupHandler,
+        )
+    }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
+        super.project(
+            modifier = modifier,
+            primaryOverlay = null,
+            actionInteractionSource = remember { MutableInteractionSource() },
+            popupInteractionSource = remember { MutableInteractionSource() },
+            popupHandler = TaskbarExpandCommandMenuPopupHandler,
+        )
+    }
+
+    @Composable
+    override fun reproject(
+        modifier: Modifier,
+        primaryOverlay: BaseCommandButtonPresentationModel.Overlay,
+        actionInteractionSource: MutableInteractionSource,
+        popupInteractionSource: MutableInteractionSource
+    ) {
+        super.project(
+            modifier = modifier,
+            primaryOverlay = primaryOverlay,
+            actionInteractionSource = remember { MutableInteractionSource() },
+            popupInteractionSource = popupInteractionSource,
+            popupHandler = TaskbarExpandCommandMenuPopupHandler,
+        )
+    }
+}
 
 @Composable
 fun RibbonTaskbar(
@@ -46,19 +306,8 @@ fun RibbonTaskbar(
     val colors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
     val density = LocalDensity.current
-    val expandCommand = Command(
-        text = "",
-        icon = getEndwardDoubleArrowIcon(
-            decorationAreaType = decorationAreaType,
-            skinColors = colors,
-            colorSchemeBundle = null,
-            density = density
-        ),
-        secondaryContentModel = CommandMenuContentModel(
-            groups = emptyList()
-        ),
-        isSecondaryEnabled = true
-    )
+
+    var combinedWidths by remember { mutableStateOf(0) }
 
     Layout(modifier = modifier,
         content = {
@@ -121,21 +370,25 @@ fun RibbonTaskbar(
                 }
             }
 
-            CommandButtonProjection(
-                contentModel = expandCommand,
-                presentationModel = CommandButtonPresentationModel(
-                    presentationState = CommandButtonPresentationState.Small,
-                    sides = Sides.ClosedRectangle,
-                    contentPadding = PaddingValues(all = 2.dp),
-                    showPopupIcon = false,
-                    popupMenuPresentationModel = CommandPopupMenuPresentationModel(),
-                )
+            TaskbarExpandCommandButtonProjection(
+                contentModel = TaskbarExpandCommand(
+                    icon = getEndwardDoubleArrowIcon(
+                        decorationAreaType = decorationAreaType,
+                        skinColors = colors,
+                        colorSchemeBundle = null,
+                        density = density
+                    ),
+                    secondaryContentModel = TaskbarExpandMenuContentModel(
+                        elements = elements
+                    )
+                ),
+                presentationModel = TaskbarExpandCommandButtonPresentationModel(combinedWidths = combinedWidths)
             ).project()
         },
         measurePolicy = { measurables, constraints ->
             val maxWidthPx = maxWidth.toPx().toInt()
             val height = constraints.maxHeight
-            val gap = TaskBarLayoutGap.toPx().toInt()
+            val gap = TaskbarLayoutGap.toPx().toInt()
 
             val contentMeasurables = measurables.subList(0, elements.size)
             val expandButtonMeasurable = measurables.last()
@@ -146,6 +399,7 @@ fun RibbonTaskbar(
             // but excluding the expand button?
             val fullWidthNeeded = measuredWidths.subList(0, measuredWidths.size - 1).sum() +
                     gap * (elements.size - 1)
+            combinedWidths = fullWidthNeeded
             // Can we show all the content?
             val canFitAllContent = (fullWidthNeeded <= maxWidthPx)
             // What is the width available to display content? If all content does not fit, we account
@@ -209,4 +463,6 @@ fun RibbonTaskbar(
         })
 }
 
-private val TaskBarLayoutGap = 4.dp
+private val TaskbarLayoutGap = 4.dp
+private val TaskbarExpandPopupHeight = 32.dp
+private val TaskbarExpandPopupContentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp)

@@ -97,10 +97,10 @@ object ColorSelectorCommandButtonSizingConstants {
 }
 
 data class ColorSelectorCommandPopupMenuPresentationModel(
-    override val itemPresentationState: CommandButtonPresentationState =
+    val itemPresentationState: CommandButtonPresentationState =
         DefaultCommandPopupMenuPresentationState,
-    override val itemPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
-    override val itemSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.IconOnly,
+    val itemPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
+    val itemSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.IconOnly,
     val itemSides: Sides = Sides.ClosedRectangle,
     val colorColumns: Int,
     val colorCellSize: Dp = ColorSelectorCommandButtonSizingConstants.DefaultColorCellSize,

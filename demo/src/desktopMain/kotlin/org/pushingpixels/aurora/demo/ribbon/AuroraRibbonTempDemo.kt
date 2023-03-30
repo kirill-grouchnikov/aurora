@@ -123,7 +123,7 @@ fun main() = auroraApplication {
 
             for (taskBarMaxWidth in 50..300 step 70) {
                 Spacer(Modifier.height(8.dp))
-                TaskBar(
+                Taskbar(
                     maxWidth = taskBarMaxWidth.dp,
                     builder = builder,
                     resourceBundle = resourceBundle,
@@ -164,7 +164,7 @@ private fun SampleGallery(
 }
 
 @Composable
-private fun TaskBar(
+private fun Taskbar(
     maxWidth: Dp,
     builder: RibbonBuilder,
     ribbonState: RibbonState,

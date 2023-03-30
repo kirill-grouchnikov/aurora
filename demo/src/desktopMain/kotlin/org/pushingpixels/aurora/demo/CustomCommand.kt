@@ -62,9 +62,9 @@ data class CustomMenuContentModel(
 ) : BaseCommandMenuContentModel
 
 data class CustomCommandPopupMenuPresentationModel(
-    override val itemPresentationState: CommandButtonPresentationState = DefaultCommandPopupMenuPresentationState,
-    override val itemPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
-    override val itemSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.IconOnly,
+    val itemPresentationState: CommandButtonPresentationState = DefaultCommandPopupMenuPresentationState,
+    val itemPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
+    val itemSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.IconOnly,
 ) : BaseCommandPopupMenuPresentationModel
 
 data class CustomCommandButtonPresentationModel(

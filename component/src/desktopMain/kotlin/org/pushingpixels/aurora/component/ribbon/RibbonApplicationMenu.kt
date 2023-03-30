@@ -87,10 +87,10 @@ object RibbonApplicationMenuSizingConstants {
 }
 
 data class RibbonApplicationMenuCommandPopupMenuPresentationModel(
-    override val itemPresentationState: CommandButtonPresentationState =
+    val itemPresentationState: CommandButtonPresentationState =
         DefaultCommandPopupMenuPresentationState,
-    override val itemPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
-    override val itemSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize,
+    val itemPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
+    val itemSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize,
     val itemIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val itemIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val itemIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,

@@ -99,9 +99,9 @@ data class CustomComplexMenuContentModel(
 ) : BaseCommandMenuContentModel
 
 data class CustomComplexCommandPopupMenuPresentationModel(
-    override val itemPresentationState: CommandButtonPresentationState = DefaultCommandPopupMenuPresentationState,
-    override val itemPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
-    override val itemSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.IconOnly,
+    val itemPresentationState: CommandButtonPresentationState = DefaultCommandPopupMenuPresentationState,
+    val itemPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
+    val itemSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.IconOnly,
     val itemIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val itemIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val itemIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
