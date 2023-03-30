@@ -183,14 +183,16 @@ private fun AuroraWindowScope.WindowTitlePaneTextAndIcon(
         val titleMeasurable = if (showsIcon) measurables[1] else measurables[0]
 
         val iconPlaceable = iconMeasurable?.measure(Constraints.fixed(width = iconSizePx, height = iconSizePx))
-        val maxTitleWidth = when (titleTextHorizontalGravity) {
-            // Centered - the available horizontal space is determined from the center of the
-            // whole title pane outwards to the left and right edge, which is effectively bounded
-            // by the horizontal space taken by the control buttons
-            HorizontalGravity.Centered -> width - 2 * controlButtonsWidth
-            // Leading or trailing - whatever horizontal space is left in this container after the icon
-            else -> width - buttonSizePx
-        }
+        val maxTitleWidth = kotlin.math.max(
+            0, when (titleTextHorizontalGravity) {
+                // Centered - the available horizontal space is determined from the center of the
+                // whole title pane outwards to the left and right edge, which is effectively bounded
+                // by the horizontal space taken by the control buttons
+                HorizontalGravity.Centered -> width - 2 * controlButtonsWidth
+                // Leading or trailing - whatever horizontal space is left in this container after the icon
+                else -> width - buttonSizePx
+            }
+        )
         val titlePlaceable = titleMeasurable.measure(
             Constraints(
                 minWidth = 0, maxWidth = maxTitleWidth, minHeight = 0, maxHeight = height
@@ -386,7 +388,8 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
                                 paintDelegate = { drawScope, iconSize, colorScheme ->
                                     windowConfiguration.titlePaneButtonsProvider.iconifyButtonProvider.drawIcon(
-                                        drawScope, iconSize, colorScheme)
+                                        drawScope, iconSize, colorScheme
+                                    )
                                 },
                                 density = density
                             )
@@ -429,7 +432,8 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                                     paintDelegate = { drawScope, iconSize, colorScheme ->
                                         windowConfiguration.titlePaneButtonsProvider.restoreButtonProvider.drawIcon(
-                                            drawScope, iconSize, colorScheme)
+                                            drawScope, iconSize, colorScheme
+                                        )
                                     },
                                     density = density,
                                 )
@@ -442,7 +446,8 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                                     paintDelegate = { drawScope, iconSize, colorScheme ->
                                         windowConfiguration.titlePaneButtonsProvider.maximizeButtonProvider.drawIcon(
-                                            drawScope, iconSize, colorScheme)
+                                            drawScope, iconSize, colorScheme
+                                        )
                                     },
                                     density = density,
                                 )
@@ -472,7 +477,8 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
                                 paintDelegate = { drawScope, iconSize, colorScheme ->
                                     windowConfiguration.titlePaneButtonsProvider.closeButtonProvider.drawIcon(
-                                        drawScope, iconSize, colorScheme)
+                                        drawScope, iconSize, colorScheme
+                                    )
                                 },
                                 density = density,
                             )
@@ -501,10 +507,12 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
             val regularGapPx = WindowTitlePaneSizingConstants.TitlePaneButtonIconRegularGap.toPx().roundToInt()
             val largeGapPx = WindowTitlePaneSizingConstants.TitlePaneButtonIconLargeGap.toPx().roundToInt()
 
-            val titleWidth = width -
-                    (minimizeButtonPlaceable.width + regularGapPx +
-                            maximizeButtonPlaceable.width + largeGapPx +
-                            closeButtonPlaceable.width)
+            var titleWidth = kotlin.math.max(
+                0, width -
+                        (minimizeButtonPlaceable.width + regularGapPx +
+                                maximizeButtonPlaceable.width + largeGapPx +
+                                closeButtonPlaceable.width)
+            )
 
             val titleBoxPlaceable = titleBoxMeasurable.measure(
                 Constraints.fixed(width = titleWidth, height = height)
@@ -588,7 +596,8 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
                                 paintDelegate = { drawScope, iconSize, colorScheme ->
                                     windowConfiguration.titlePaneButtonsProvider.iconifyButtonProvider.drawIcon(
-                                        drawScope, iconSize, colorScheme)
+                                        drawScope, iconSize, colorScheme
+                                    )
                                 },
                                 density = density
                             )
@@ -649,7 +658,8 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                                     paintDelegate = { drawScope, iconSize, colorScheme ->
                                         windowConfiguration.titlePaneButtonsProvider.restoreButtonProvider.drawIcon(
-                                            drawScope, iconSize, colorScheme)
+                                            drawScope, iconSize, colorScheme
+                                        )
                                     },
                                     density = density,
                                 )
@@ -662,7 +672,8 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
                                     paintDelegate = { drawScope, iconSize, colorScheme ->
                                         windowConfiguration.titlePaneButtonsProvider.maximizeButtonProvider.drawIcon(
-                                            drawScope, iconSize, colorScheme)
+                                            drawScope, iconSize, colorScheme
+                                        )
                                     },
                                     density = density,
                                 )
@@ -692,7 +703,8 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
                                 paintDelegate = { drawScope, iconSize, colorScheme ->
                                     windowConfiguration.titlePaneButtonsProvider.closeButtonProvider.drawIcon(
-                                        drawScope, iconSize, colorScheme)
+                                        drawScope, iconSize, colorScheme
+                                    )
                                 },
                                 density = density,
                             )
@@ -1070,30 +1082,30 @@ object AuroraWindowTitlePaneConfigurations {
         val maximizeButtonProvider: TitlePaneButtonProvider
     }
 
-    open class DefaultTitlePaneButtonsProvider: TitlePaneButtonsProvider {
+    open class DefaultTitlePaneButtonsProvider : TitlePaneButtonsProvider {
         override val closeButtonProvider: TitlePaneButtonProvider
-            get() = object: TitlePaneButtonProvider {
+            get() = object : TitlePaneButtonProvider {
                 override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorScheme: AuroraColorScheme) {
                     drawCloseIcon(drawScope, iconSize, colorScheme)
                 }
             }
 
         override val restoreButtonProvider: TitlePaneButtonProvider
-            get() = object: TitlePaneButtonProvider {
+            get() = object : TitlePaneButtonProvider {
                 override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorScheme: AuroraColorScheme) {
                     drawRestoreIcon(drawScope, iconSize, colorScheme)
                 }
             }
 
         override val iconifyButtonProvider: TitlePaneButtonProvider
-            get() = object: TitlePaneButtonProvider {
+            get() = object : TitlePaneButtonProvider {
                 override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorScheme: AuroraColorScheme) {
                     drawMinimizeIcon(drawScope, iconSize, colorScheme)
                 }
             }
 
         override val maximizeButtonProvider: TitlePaneButtonProvider
-            get() = object: TitlePaneButtonProvider {
+            get() = object : TitlePaneButtonProvider {
                 override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorScheme: AuroraColorScheme) {
                     drawMaximizeIcon(drawScope, iconSize, colorScheme)
                 }
