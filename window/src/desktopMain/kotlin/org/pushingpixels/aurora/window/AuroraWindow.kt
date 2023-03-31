@@ -134,7 +134,7 @@ fun AuroraWindowScope.AuroraWindowTitlePaneTitleText(title: String) {
 }
 
 @Composable
-private fun AuroraWindowScope.WindowTitlePaneTextAndIcon(
+internal fun AuroraWindowScope.WindowTitlePaneTextAndIcon(
     title: String,
     icon: Painter?,
     iconFilterStrategy: IconFilterStrategy,
@@ -1332,7 +1332,7 @@ fun AuroraDecorationArea(
 
 @OptIn(AuroraInternalApi::class)
 @Composable
-private fun AuroraSkin(
+internal fun AuroraSkin(
     displayName: String = AuroraSkin.displayName,
     decorationAreaType: DecorationAreaType,
     colors: AuroraSkinColors = AuroraSkin.colors,
