@@ -215,7 +215,7 @@ private object TaskbarExpandCommandMenuPopupHandler : CascadingCommandMenuHandle
                     }
                 }
             },
-            measurePolicy = { measurables, constraints ->
+            measurePolicy = { measurables, _ ->
                 val height = TaskbarExpandPopupHeight.toPx().toInt()
                 val gap = TaskbarLayoutGap.toPx().toInt()
 
@@ -307,7 +307,8 @@ fun RibbonTaskbar(
     val decorationAreaType = AuroraSkin.decorationAreaType
     val density = LocalDensity.current
 
-    var combinedWidths by remember { mutableStateOf(0) }
+    var overflowCombinedWidth by remember { mutableStateOf(0) }
+    val overflowElements = remember { mutableStateListOf<RibbonTaskbarElement>() }
 
     Layout(modifier = modifier,
         content = {
@@ -379,10 +380,10 @@ fun RibbonTaskbar(
                         density = density
                     ),
                     secondaryContentModel = TaskbarExpandMenuContentModel(
-                        elements = elements
+                        elements = overflowElements
                     )
                 ),
-                presentationModel = TaskbarExpandCommandButtonPresentationModel(combinedWidths = combinedWidths)
+                presentationModel = TaskbarExpandCommandButtonPresentationModel(combinedWidths = overflowCombinedWidth)
             ).project()
         },
         measurePolicy = { measurables, constraints ->
@@ -399,7 +400,6 @@ fun RibbonTaskbar(
             // but excluding the expand button?
             val fullWidthNeeded = measuredWidths.subList(0, measuredWidths.size - 1).sum() +
                     gap * (elements.size - 1)
-            combinedWidths = fullWidthNeeded
             // Can we show all the content?
             val canFitAllContent = (fullWidthNeeded <= maxWidthPx)
             // What is the width available to display content? If all content does not fit, we account
@@ -427,6 +427,14 @@ fun RibbonTaskbar(
                     )
                     currentlyTakenWidth += (neededWidth + gap)
                 } else {
+                    if (!isOverflowing) {
+                        // Starts overflowing from this element
+                        overflowElements.clear()
+                        overflowElements.addAll(elements.subList(index, elements.size))
+
+                        overflowCombinedWidth = measuredWidths.subList(index, measuredWidths.size - 1).sum() +
+                                gap * (elements.size - 1 - index)
+                    }
                     isOverflowing = true
                 }
             }
