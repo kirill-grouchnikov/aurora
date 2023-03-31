@@ -47,6 +47,22 @@ fun Modifier.auroraBackground() = this.then(
     )
 )
 
+@OptIn(AuroraInternalApi::class)
+@Composable
+fun Modifier.auroraBackgroundNoOverlays() = this.then(
+    // TODO - is there another way to get window size in here without our own composition local?
+    AuroraBackground(
+        rootSize = Size(
+            width = LocalTopWindowSize.current.width.value * LocalDensity.current.density,
+            height = LocalTopWindowSize.current.height.value * LocalDensity.current.density
+        ),
+        decorationAreaType = AuroraSkin.decorationAreaType,
+        colors = AuroraSkin.colors,
+        decorationPainter = AuroraSkin.painters.decorationPainter,
+        overlayPainters = emptyList()
+    )
+)
+
 private class AuroraBackground(
     private val rootSize: Size,
     private val decorationAreaType: DecorationAreaType,

@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.component.ribbon.impl
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -33,6 +32,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
+import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCascadingCommandMenuPopupLayoutInfo
 import org.pushingpixels.aurora.component.popup.CascadingCommandMenuHandler
@@ -155,101 +155,103 @@ private object TaskbarExpandCommandMenuPopupHandler : CascadingCommandMenuHandle
         overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>,
         popupContentLayoutInfo: TaskbarExpandPopupContentLayoutInfo
     ) {
-        val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
-            decorationAreaType = AuroraSkin.decorationAreaType
-        )
-        Layout(modifier = Modifier.background(color = backgroundColorScheme.backgroundFillColor)
-            .padding(TaskbarExpandPopupContentPadding),
-            content = {
-                for (element in menuContentModel.elements) {
-                    when (element) {
-                        is RibbonTaskbarCommandProjection -> {
-                            element.commandProjection.reproject(
-                                modifier = Modifier,
-                                primaryOverlay = BaseCommandButtonPresentationModel.Overlay(
-                                    presentationState = CommandButtonPresentationState.Small,
-                                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat
-                                ),
-                                actionInteractionSource = remember { MutableInteractionSource() },
-                                popupInteractionSource = remember { MutableInteractionSource() }
-                            )
-                        }
-
-                        is RibbonTaskbarGalleryProjection -> {
-                            val galleryContentModel = element.galleryProjection.contentModel
-                            val galleryPresentationModel = element.galleryProjection.presentationModel
-
-                            val galleryCommand = Command(
-                                text = "",
-                                icon = galleryContentModel.icon,
-                                secondaryContentModel = CommandMenuContentModel(
-                                    onDeactivatePopup = {
-                                        // Mark the inline state to have the latest selected command button to be revealed
-                                        element.galleryInlineState.revealSelected()
-                                    },
-                                    panelContentModel = CommandPanelContentModel(
-                                        commandGroups = galleryContentModel.commandGroups
+        AuroraDecorationArea(
+            decorationAreaType = DecorationAreaType.Header,
+            buttonShaper = AuroraSkin.buttonShaper
+        ) {
+            Layout(modifier = Modifier.auroraBackgroundNoOverlays()
+                .padding(TaskbarExpandPopupContentPadding),
+                content = {
+                    for (element in menuContentModel.elements) {
+                        when (element) {
+                            is RibbonTaskbarCommandProjection -> {
+                                element.commandProjection.reproject(
+                                    modifier = Modifier,
+                                    primaryOverlay = BaseCommandButtonPresentationModel.Overlay(
+                                        presentationState = CommandButtonPresentationState.Small,
+                                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat
                                     ),
-                                    groups = galleryContentModel.extraPopupGroups
-                                ),
-                                isSecondaryEnabled = true,
-                            )
-                            CommandButtonProjection(
-                                contentModel = galleryCommand,
-                                presentationModel = CommandButtonPresentationModel(
-                                    presentationState = CommandButtonPresentationState.Small,
-                                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                                    popupMenuPresentationModel = CommandPopupMenuPresentationModel(
-                                        panelPresentationModel = CommandPopupMenuPanelPresentationModel(
-                                            layoutSpec = galleryPresentationModel.popupLayoutSpec,
-                                            contentPadding = PaddingValues(0.dp),
-                                            showGroupLabels = galleryContentModel.commandGroups.all { !it.title.isNullOrEmpty() },
-                                            commandPresentationState = galleryPresentationModel.commandButtonPresentationState,
-                                            commandPopupFireTrigger = galleryPresentationModel.commandPopupFireTrigger,
-                                            commandSelectedStateHighlight = galleryPresentationModel.commandSelectedStateHighlight
-                                        )
-                                    )
-                                ),
-                                secondaryOverlays = element.galleryProjection.secondaryOverlays
-                            ).project()
-                        }
+                                    actionInteractionSource = remember { MutableInteractionSource() },
+                                    popupInteractionSource = remember { MutableInteractionSource() }
+                                )
+                            }
 
-                        is RibbonTaskbarComponentProjection -> {
-                            element.componentProjection.reproject(modifier = Modifier)
+                            is RibbonTaskbarGalleryProjection -> {
+                                val galleryContentModel = element.galleryProjection.contentModel
+                                val galleryPresentationModel = element.galleryProjection.presentationModel
+
+                                val galleryCommand = Command(
+                                    text = "",
+                                    icon = galleryContentModel.icon,
+                                    secondaryContentModel = CommandMenuContentModel(
+                                        onDeactivatePopup = {
+                                            // Mark the inline state to have the latest selected command button to be revealed
+                                            element.galleryInlineState.revealSelected()
+                                        },
+                                        panelContentModel = CommandPanelContentModel(
+                                            commandGroups = galleryContentModel.commandGroups
+                                        ),
+                                        groups = galleryContentModel.extraPopupGroups
+                                    ),
+                                    isSecondaryEnabled = true,
+                                )
+                                CommandButtonProjection(
+                                    contentModel = galleryCommand,
+                                    presentationModel = CommandButtonPresentationModel(
+                                        presentationState = CommandButtonPresentationState.Small,
+                                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                                        popupMenuPresentationModel = CommandPopupMenuPresentationModel(
+                                            panelPresentationModel = CommandPopupMenuPanelPresentationModel(
+                                                layoutSpec = galleryPresentationModel.popupLayoutSpec,
+                                                contentPadding = PaddingValues(0.dp),
+                                                showGroupLabels = galleryContentModel.commandGroups.all { !it.title.isNullOrEmpty() },
+                                                commandPresentationState = galleryPresentationModel.commandButtonPresentationState,
+                                                commandPopupFireTrigger = galleryPresentationModel.commandPopupFireTrigger,
+                                                commandSelectedStateHighlight = galleryPresentationModel.commandSelectedStateHighlight
+                                            )
+                                        )
+                                    ),
+                                    secondaryOverlays = element.galleryProjection.secondaryOverlays
+                                ).project()
+                            }
+
+                            is RibbonTaskbarComponentProjection -> {
+                                element.componentProjection.reproject(modifier = Modifier)
+                            }
                         }
                     }
-                }
-            },
-            measurePolicy = { measurables, _ ->
-                val height = TaskbarExpandPopupHeight.toPx().toInt()
-                val gap = TaskbarLayoutGap.toPx().toInt()
+                },
+                measurePolicy = { measurables, _ ->
+                    val height = TaskbarExpandPopupHeight.toPx().toInt()
+                    val gap = TaskbarLayoutGap.toPx().toInt()
 
-                val placeables = mutableListOf<Placeable>()
-                var fullWidth = 0
-                for ((index, measurable) in measurables.withIndex()) {
-                    val neededWidth = measurable.maxIntrinsicWidth(height)
-                    val needsGapAfter = (index < measurables.size - 1)
-                    placeables.add(
-                        measurable.measure(
-                            Constraints.fixed(
-                                width = measurable.maxIntrinsicWidth(height),
-                                height = measurable.maxIntrinsicHeight(neededWidth)
+                    val placeables = mutableListOf<Placeable>()
+                    var fullWidth = 0
+                    for ((index, measurable) in measurables.withIndex()) {
+                        val neededWidth = measurable.maxIntrinsicWidth(height)
+                        val needsGapAfter = (index < measurables.size - 1)
+                        placeables.add(
+                            measurable.measure(
+                                Constraints.fixed(
+                                    width = measurable.maxIntrinsicWidth(height),
+                                    height = measurable.maxIntrinsicHeight(neededWidth)
+                                )
                             )
                         )
-                    )
-                    fullWidth += (neededWidth + (if (needsGapAfter) gap else 0))
-                }
-
-                layout(width = fullWidth, height = height) {
-                    var x = 0
-                    for (placeable in placeables) {
-                        val currWidth = placeable.measuredWidth
-                        val currHeight = placeable.measuredHeight
-                        placeable.placeRelative(x, (height - currHeight) / 2)
-                        x += (currWidth + gap)
+                        fullWidth += (neededWidth + (if (needsGapAfter) gap else 0))
                     }
-                }
-            })
+
+                    layout(width = fullWidth, height = height) {
+                        var x = 0
+                        for (placeable in placeables) {
+                            val currWidth = placeable.measuredWidth
+                            val currHeight = placeable.measuredHeight
+                            placeable.placeRelative(x, (height - currHeight) / 2)
+                            x += (currWidth + gap)
+                        }
+                    }
+                })
+        }
     }
 }
 

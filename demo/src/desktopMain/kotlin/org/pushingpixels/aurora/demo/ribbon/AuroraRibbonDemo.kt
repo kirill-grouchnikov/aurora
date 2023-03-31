@@ -65,7 +65,7 @@ fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
-        size = DpSize(500.dp, 400.dp)
+        size = DpSize(800.dp, 600.dp)
     )
     var skin by remember { mutableStateOf(nebulaAmethystSkin()) }
     val resourceBundle by derivedStateOf {

@@ -380,6 +380,11 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
 ) {
     Column(Modifier.fillMaxSize().auroraBackground()) {
         RibbonWindowTitlePane(title, icon, iconFilterStrategy, ribbon, windowTitlePaneConfiguration)
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
+            Box(modifier = Modifier.auroraBackground().fillMaxWidth().padding(all = 4.dp)) {
+                ribbon.applicationMenuCommandButtonProjection?.project()
+            }
+        }
         // Wrap the entire content in NONE decoration area. App code can set its
         // own decoration area types on specific parts.
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.None) {
