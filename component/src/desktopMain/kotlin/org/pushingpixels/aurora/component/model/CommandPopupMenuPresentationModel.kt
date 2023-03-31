@@ -29,8 +29,7 @@ import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 import org.pushingpixels.aurora.theming.Sides
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 
-interface BaseCommandPopupMenuPresentationModel {
-}
+interface BaseCommandPopupMenuPresentationModel
 
 data class CommandPopupMenuPresentationModel(
     val itemPresentationState: CommandButtonPresentationState =
