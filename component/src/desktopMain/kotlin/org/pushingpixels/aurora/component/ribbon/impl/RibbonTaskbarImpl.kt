@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.component.ribbon.impl
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -154,7 +155,11 @@ private object TaskbarExpandCommandMenuPopupHandler : CascadingCommandMenuHandle
         overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>,
         popupContentLayoutInfo: TaskbarExpandPopupContentLayoutInfo
     ) {
-        Layout(modifier = Modifier.padding(TaskbarExpandPopupContentPadding),
+        val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
+            decorationAreaType = AuroraSkin.decorationAreaType
+        )
+        Layout(modifier = Modifier.background(color = backgroundColorScheme.backgroundFillColor)
+            .padding(TaskbarExpandPopupContentPadding),
             content = {
                 for (element in menuContentModel.elements) {
                     when (element) {
