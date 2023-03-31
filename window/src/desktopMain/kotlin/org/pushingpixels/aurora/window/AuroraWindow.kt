@@ -507,7 +507,7 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
             val regularGapPx = WindowTitlePaneSizingConstants.TitlePaneButtonIconRegularGap.toPx().roundToInt()
             val largeGapPx = WindowTitlePaneSizingConstants.TitlePaneButtonIconLargeGap.toPx().roundToInt()
 
-            var titleWidth = kotlin.math.max(
+            val titleWidth = kotlin.math.max(
                 0, width -
                         (minimizeButtonPlaceable.width + regularGapPx +
                                 maximizeButtonPlaceable.width + largeGapPx +
