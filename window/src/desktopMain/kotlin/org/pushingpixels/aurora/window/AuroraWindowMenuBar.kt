@@ -37,6 +37,7 @@ import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.Sides
 import org.pushingpixels.aurora.theming.auroraBackground
+import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 
 private object WindowMenuBarLayout {
     private class CommandButtonLayoutManagerMenuBar(

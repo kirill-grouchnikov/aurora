@@ -42,8 +42,8 @@ import org.pushingpixels.aurora.demo.svg.tango.help_browser
 import org.pushingpixels.aurora.demo.svg.tango.media_floppy
 import org.pushingpixels.aurora.demo.svg.tango.x_office_document_template
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
-import org.pushingpixels.aurora.window.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import org.pushingpixels.aurora.window.auroraApplication

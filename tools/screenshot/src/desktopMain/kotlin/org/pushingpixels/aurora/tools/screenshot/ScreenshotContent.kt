@@ -29,6 +29,7 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.tools.screenshot.svg.tango.*
 import org.pushingpixels.aurora.window.*
 import java.util.*

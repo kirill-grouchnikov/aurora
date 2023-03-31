@@ -37,7 +37,11 @@ import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.demo.svg.material.folder_open_black_24dp
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.window.*
+import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
+import org.pushingpixels.aurora.window.AuroraWindow
+import org.pushingpixels.aurora.window.AuroraWindowScope
+import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
+import org.pushingpixels.aurora.window.auroraApplication
 import java.io.File
 import javax.swing.JFileChooser
 import javax.swing.filechooser.FileSystemView

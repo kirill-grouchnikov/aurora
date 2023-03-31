@@ -34,9 +34,13 @@ import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.AuroraSkinDefinition
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.IconFilterStrategy
+import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
-import org.pushingpixels.aurora.window.*
+import org.pushingpixels.aurora.window.AuroraApplicationScope
+import org.pushingpixels.aurora.window.AuroraWindow
+import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
+import org.pushingpixels.aurora.window.auroraApplication
 import java.text.MessageFormat
 import java.util.*
 

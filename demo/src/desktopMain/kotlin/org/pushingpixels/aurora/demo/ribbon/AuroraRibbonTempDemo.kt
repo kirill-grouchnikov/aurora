@@ -38,7 +38,7 @@ import org.pushingpixels.aurora.demo.AuroraSkinSwitcher
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.edit_clear
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.window.AuroraDecorationArea
+import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import org.pushingpixels.aurora.window.auroraApplication

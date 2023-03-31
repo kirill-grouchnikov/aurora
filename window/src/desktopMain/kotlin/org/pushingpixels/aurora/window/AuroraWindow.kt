@@ -48,6 +48,7 @@ import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
@@ -1308,25 +1309,6 @@ fun AuroraApplicationScope.AuroraWindow(
                 )
             }
         }
-    }
-}
-
-@Composable
-fun AuroraDecorationArea(
-    decorationAreaType: DecorationAreaType,
-    buttonShaper: AuroraButtonShaper? = null,
-    content: @Composable () -> Unit
-) {
-    val buttonShaperToUse = buttonShaper ?: when (decorationAreaType) {
-        DecorationAreaType.TitlePane,
-        DecorationAreaType.Header,
-        DecorationAreaType.Toolbar,
-        DecorationAreaType.Footer -> ClassicButtonShaper()
-
-        else -> AuroraSkin.buttonShaper
-    }
-    AuroraSkin(decorationAreaType = decorationAreaType, buttonShaper = buttonShaperToUse) {
-        content()
     }
 }
 

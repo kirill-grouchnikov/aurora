@@ -36,6 +36,7 @@ import org.pushingpixels.aurora.demo.svg.material.chat_black_24dp
 import org.pushingpixels.aurora.demo.svg.material.help_outline_black_24dp
 import org.pushingpixels.aurora.demo.svg.material.person_black_24dp
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.window.*
 
 @ExperimentalUnitApi

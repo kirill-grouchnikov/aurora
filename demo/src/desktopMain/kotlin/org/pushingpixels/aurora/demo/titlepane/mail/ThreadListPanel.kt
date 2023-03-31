@@ -45,7 +45,7 @@ import org.pushingpixels.aurora.demo.svg.material.mode_edit_black_24dp
 import org.pushingpixels.aurora.demo.svg.material.person_outline_black_24dp
 import org.pushingpixels.aurora.demo.svg.material.refresh_black_24dp
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.window.AuroraDecorationArea
+import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindowScope
 
 @OptIn(ExperimentalUnitApi::class)
