@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
@@ -130,7 +131,11 @@ fun AuroraWindowScope.AuroraWindowTitlePaneTitleText(title: String) {
     )
     LabelProjection(
         contentModel = LabelContentModel(text = title),
-        presentationModel = LabelPresentationModel(textStyle = titleTextStyle)
+        presentationModel = LabelPresentationModel(
+            textStyle = titleTextStyle,
+            textMaxLines = 1,
+            textOverflow = TextOverflow.Ellipsis
+        )
     ).project()
 }
 

@@ -55,6 +55,7 @@ import javax.swing.SwingUtilities
 import kotlin.math.max
 import kotlin.math.roundToInt
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 internal fun AuroraWindowScope.RibbonWindowTitlePaneTextAndIcon(
     title: String,
@@ -87,8 +88,7 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneTextAndIcon(
             }
 
             RibbonTaskbar(
-                modifier = Modifier.height(32.dp).padding(horizontal = 6.dp),
-                maxWidth = 150.dp,
+                modifier = Modifier.padding(TaskbarContentPadding),
                 elements = ribbon.taskbarElements
             )
 
@@ -108,8 +108,16 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneTextAndIcon(
         val titleMeasurable = if (showsIcon) measurables[2] else measurables[1]
 
         val iconPlaceable = iconMeasurable?.measure(Constraints.fixed(width = iconSizePx, height = iconSizePx))
-        val taskbarPlaceable = taskbarMeasurable.measure(Constraints.fixedHeight(height = iconSizePx))
-        val maxTitleWidth = max(0, width - 2 * controlButtonsWidth - taskbarPlaceable.measuredWidth)
+        val maxTaskbarWidth = (width * TaskbarWidthMaxRatio).toInt()
+        val taskbarPlaceable = taskbarMeasurable.measure(
+            Constraints(
+                minWidth = 0,
+                maxWidth = maxTaskbarWidth,
+                minHeight = height,
+                maxHeight = height
+            )
+        )
+        val maxTitleWidth = max(0, width - controlButtonsWidth - taskbarPlaceable.measuredWidth)
         val titlePlaceable = titleMeasurable.measure(
             Constraints(
                 minWidth = 0, maxWidth = maxTitleWidth, minHeight = 0, maxHeight = height
@@ -550,3 +558,7 @@ fun AuroraApplicationScope.AuroraRibbonWindow(
         }
     }
 }
+
+private val TaskbarWidthMaxRatio = 0.25f
+private val TaskbarContentPadding = PaddingValues(horizontal = 6.dp)
+
