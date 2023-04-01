@@ -1369,7 +1369,6 @@ internal class RibbonBuilder(
                     )
                 ),
                 presentationModel = CommandButtonPresentationModel(
-                    popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignEnd,
                     popupKeyTip = "GS"
                 )
             ),
