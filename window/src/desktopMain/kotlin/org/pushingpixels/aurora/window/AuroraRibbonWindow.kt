@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.window
 
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.runtime.*
@@ -37,7 +36,6 @@ import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
-import org.pushingpixels.aurora.component.model.BaseCommandButtonPresentationModel
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.ribbon.Ribbon
 import org.pushingpixels.aurora.component.ribbon.impl.RibbonTaskbar
@@ -47,6 +45,7 @@ import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
+import org.pushingpixels.aurora.window.ribbon.RibbonPrimaryBar
 import java.awt.*
 import java.awt.event.AWTEventListener
 import java.awt.event.KeyEvent
@@ -388,25 +387,9 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
 ) {
     Column(Modifier.fillMaxSize().auroraBackground()) {
         RibbonWindowTitlePane(title, icon, iconFilterStrategy, ribbon, windowTitlePaneConfiguration)
-        AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
-            Row(modifier = Modifier.auroraBackground().fillMaxWidth().padding(all = 4.dp)) {
-                ribbon.applicationMenuCommandButtonProjection?.project()
 
-                Spacer(modifier = Modifier.weight(1.0f))
+        RibbonPrimaryBar(ribbon)
 
-                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    for (anchored in ribbon.anchoredCommands) {
-                        anchored.reproject(modifier = Modifier,
-                            primaryOverlay = BaseCommandButtonPresentationModel.Overlay(
-                                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                                popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignEnd
-                            ),
-                            actionInteractionSource = remember { MutableInteractionSource() },
-                            popupInteractionSource = remember { MutableInteractionSource() })
-                    }
-                }
-            }
-        }
         // Wrap the entire content in NONE decoration area. App code can set its
         // own decoration area types on specific parts.
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.None) {
