@@ -865,7 +865,8 @@ internal fun <M : BaseCommandMenuContentModel,
     // TODO - do we need more keys? Maybe from the presentation model
     val preLayoutInfo = remember(
         command.text, command.extraText,
-        command.action == null, command.secondaryContentModel == null
+        command.action == null, command.secondaryContentModel == null,
+        presentationModel.presentationState
     ) {
         layoutManager.getPreLayoutInfo(command, presentationModel)
     }
