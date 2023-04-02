@@ -106,7 +106,7 @@ internal fun RibbonPrimaryBar(ribbon: Ribbon) {
     val taskButtonPresentationModel = CommandButtonPresentationModel(
         presentationState = CommandButtonPresentationState.Medium,
         contentPadding = PaddingValues(vertical = 4.dp, horizontal = 12.dp),
-        sides = Sides(openSides = hashSetOf(Side.Bottom)),
+        sides = Sides(openSides = hashSetOf(Side.Bottom), straightSides = hashSetOf(Side.Bottom)),
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat
     )
     val taskButtonLayoutManager = taskButtonPresentationModel.presentationState.createLayoutManager(
@@ -218,7 +218,7 @@ internal fun RibbonPrimaryBar(ribbon: Ribbon) {
         SubcomposeLayout(
             modifier = Modifier.auroraBackground()
                 .fillMaxWidth()
-                .padding(all = 4.dp)
+                .padding(start = 4.dp, end = 4.dp, top = 2.dp)
                 .height((finalHeight / density.density).dp)
         ) { constraints ->
             val widthAvailable = constraints.maxWidth
@@ -283,10 +283,12 @@ internal fun RibbonPrimaryBar(ribbon: Ribbon) {
                             if (index > 0) {
                                 Spacer(modifier = Modifier.width(TaskbarPrimaryBarTaskButtonsGap))
                             }
-                            CommandButtonProjection(
-                                contentModel = taskCommand,
-                                presentationModel = taskButtonPresentationModel
-                            ).project()
+                            AuroraDecorationArea(decorationAreaType = DecorationAreaType.ControlPane) {
+                                CommandButtonProjection(
+                                    contentModel = taskCommand,
+                                    presentationModel = taskButtonPresentationModel
+                                ).project()
+                            }
                         }
                     }
                 )
@@ -298,7 +300,7 @@ internal fun RibbonPrimaryBar(ribbon: Ribbon) {
             layout(widthAvailable, heightAvailable) {
                 applicationMenuCommandButtonPlaceable?.placeRelative(
                     x = 0,
-                    y = (heightAvailable - applicationMenuCommandButtonPlaceable.measuredHeight) / 2
+                    y = heightAvailable - applicationMenuCommandButtonPlaceable.measuredHeight
                 )
 
                 val xForTaskButtons = if (applicationMenuCommandButtonPlaceable != null) {
@@ -308,13 +310,13 @@ internal fun RibbonPrimaryBar(ribbon: Ribbon) {
                 }
                 taskButtonsPlaceable.placeRelative(
                     x = xForTaskButtons,
-                    y = (heightAvailable - taskButtonsPlaceable.measuredHeight) / 2
+                    y = heightAvailable - taskButtonsPlaceable.measuredHeight
                 )
 
                 val xForAnchoredCommands = widthAvailable - anchoredCommandsPlaceable.measuredWidth
                 anchoredCommandsPlaceable.placeRelative(
                     x = xForAnchoredCommands,
-                    y = (heightAvailable - anchoredCommandsPlaceable.measuredHeight) / 2
+                    y = heightAvailable - anchoredCommandsPlaceable.measuredHeight
                 )
             }
         }

@@ -118,7 +118,7 @@ data class RibbonApplicationMenuCommandButtonPresentationModel(
 ) : BaseCommandButtonPresentationModel {
     override val presentationState: CommandButtonPresentationState = CommandButtonPresentationState.Medium
     override val colorSchemeBundle: AuroraColorSchemeBundle? = null
-    override val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
+    override val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat
     override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center
     override val iconDimension: DpSize? = null
     override val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme
