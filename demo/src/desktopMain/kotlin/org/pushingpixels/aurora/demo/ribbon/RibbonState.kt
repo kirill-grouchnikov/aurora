@@ -30,9 +30,34 @@ enum class FontFamily {
     Candella, Cambria
 }
 
+enum class FontSize(val fontSize: Int) {
+    Size11(11), Size12(12), Size13(13), Size14(14), Size16(16)
+}
+
+enum class DocumentSaveLocation {
+    None, Local, Remote, Saved
+}
+
+enum class ApplicationGame {
+    Tetris, Minesweeper, Doom
+}
+
+enum class ApplicationBrowser {
+    Firefox, Opera, Konqueror
+}
+
+enum class ApplicationMultimedia(val resourceKey: String) {
+    Pictures("Pictures.text"), Video("Video.text"), Audio("Audio.text")
+}
+
 data class RibbonState(
     val documentStyle: DocumentStyle,
-    val fontFamily: FontFamily
+    val fontFamily: FontFamily,
+    val fontSize: FontSize,
+    val documentSaveLocation: DocumentSaveLocation,
+    val applicationGame: ApplicationGame,
+    val applicationBrowser: ApplicationBrowser,
+    val applicationMultimedia: ApplicationMultimedia
 ) {
     lateinit var documentStyleGalleryInlineState: RibbonGalleryInlineState
 }

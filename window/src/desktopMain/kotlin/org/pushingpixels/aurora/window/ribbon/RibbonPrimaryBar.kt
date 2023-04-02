@@ -95,7 +95,7 @@ internal fun RibbonPrimaryBar(ribbon: Ribbon) {
             isActionToggle = true,
             isActionToggleSelected = (task == ribbon.selectedTask),
             onTriggerActionToggleSelectedChange = {
-                ribbon.onTaskClick(task)
+                if (it) ribbon.onTaskClick(task)
             }
         )
     }

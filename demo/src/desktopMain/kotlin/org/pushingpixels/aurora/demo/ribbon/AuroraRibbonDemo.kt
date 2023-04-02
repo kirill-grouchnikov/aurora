@@ -76,7 +76,12 @@ fun main() = auroraApplication {
         mutableStateOf(
             RibbonState(
                 documentStyle = DocumentStyle.Style2,
-                fontFamily = FontFamily.Calibri
+                fontFamily = FontFamily.Calibri,
+                fontSize = FontSize.Size11,
+                documentSaveLocation = DocumentSaveLocation.Local,
+                applicationGame = ApplicationGame.Tetris,
+                applicationBrowser = ApplicationBrowser.Firefox,
+                applicationMultimedia = ApplicationMultimedia.Pictures
             )
         )
     }
@@ -119,61 +124,133 @@ fun main() = auroraApplication {
         selectedFontFamily = ribbonState.fontFamily,
         onFontFamilySelected = {
             ribbonState = ribbonState.copy(fontFamily = it)
+        },
+        selectedFontSize = ribbonState.fontSize,
+        onFontSizeSelected = {
+            ribbonState = ribbonState.copy(fontSize = it)
         }
     )
-    val documentBand = builder.getDocumentBand()
+    val documentBand = builder.getDocumentBand(
+        selectedSaveLocation = ribbonState.documentSaveLocation,
+        onSaveLocationSelected = {
+            ribbonState = ribbonState.copy(documentSaveLocation = it)
+        }
+    )
     val findBand = builder.getFindBand()
 
-    val pageLayoutTask = RibbonTask(
-        title = resourceBundle.getString("PageLayout.textTaskTitle"),
-        bands = listOf(clipboardBand, quickStylesBand, fontBand, documentBand, findBand),
-        resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
-        keyTip = "P"
-    )
+    val pageLayoutTask = remember {
+        RibbonTask(
+            title = resourceBundle.getString("PageLayout.textTaskTitle"),
+            bands = listOf(clipboardBand, quickStylesBand, fontBand, documentBand, findBand),
+            resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+            keyTip = "P"
+        )
+    }
 
     val actionBand = builder.getActionBand()
     val preferencesBand = builder.getPreferencesBand()
-    val applicationsBand = builder.getApplicationsBand()
-
-    val writeTask = RibbonTask(
-        title = resourceBundle.getString("Write.textTaskTitle"),
-        bands = listOf(actionBand, preferencesBand, applicationsBand),
-        resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
-        keyTip = "W"
+    val applicationsBand = builder.getApplicationsBand(
+        selectedApplicationGame = ribbonState.applicationGame,
+        onApplicationGameSelected = {
+            ribbonState = ribbonState.copy(applicationGame = it)
+        },
+        selectedApplicationBrowser = ribbonState.applicationBrowser,
+        onApplicationBrowserSelected = {
+            ribbonState = ribbonState.copy(applicationBrowser = it)
+        },
+        selectedApplicationMultimedia = ribbonState.applicationMultimedia,
+        onApplicationMultimediaSelected = {
+            ribbonState = ribbonState.copy(applicationMultimedia = it)
+        }
     )
 
-    val contextualTaskGroup1 = RibbonContextualTaskGroup(
-        title = resourceBundle.getString("Group1.textTaskGroupTitle"),
-        hueColor = Color.Red,
-        tasks = listOf(
-            RibbonTask(
-                title = resourceBundle.getString("Task11.textTaskTitle"),
-                bands = listOf(builder.getActionBand(), builder.getApplicationsBand()),
-                resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
-                keyTip = "XA"
+    val writeTask = remember {
+        RibbonTask(
+            title = resourceBundle.getString("Write.textTaskTitle"),
+            bands = listOf(actionBand, preferencesBand, applicationsBand),
+            resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+            keyTip = "W"
+        )
+    }
+
+    val contextualTaskGroup1 = remember {
+        RibbonContextualTaskGroup(
+            title = resourceBundle.getString("Group1.textTaskGroupTitle"),
+            hueColor = Color.Red,
+            tasks = listOf(
+                RibbonTask(
+                    title = resourceBundle.getString("Task11.textTaskTitle"),
+                    bands = listOf(
+                        builder.getActionBand(),
+                        builder.getApplicationsBand(selectedApplicationGame = ribbonState.applicationGame,
+                            onApplicationGameSelected = {
+                                ribbonState = ribbonState.copy(applicationGame = it)
+                            },
+                            selectedApplicationBrowser = ribbonState.applicationBrowser,
+                            onApplicationBrowserSelected = {
+                                ribbonState = ribbonState.copy(applicationBrowser = it)
+                            },
+                            selectedApplicationMultimedia = ribbonState.applicationMultimedia,
+                            onApplicationMultimediaSelected = {
+                                ribbonState = ribbonState.copy(applicationMultimedia = it)
+                            })
+                    ),
+                    resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+                    keyTip = "XA"
+                ),
+                RibbonTask(
+                    title = resourceBundle.getString("Task12.textTaskTitle"),
+                    bands = listOf(
+                        builder.getActionBand(),
+                        builder.getApplicationsBand(selectedApplicationGame = ribbonState.applicationGame,
+                            onApplicationGameSelected = {
+                                ribbonState = ribbonState.copy(applicationGame = it)
+                            },
+                            selectedApplicationBrowser = ribbonState.applicationBrowser,
+                            onApplicationBrowserSelected = {
+                                ribbonState = ribbonState.copy(applicationBrowser = it)
+                            },
+                            selectedApplicationMultimedia = ribbonState.applicationMultimedia,
+                            onApplicationMultimediaSelected = {
+                                ribbonState = ribbonState.copy(applicationMultimedia = it)
+                            })
+                    ),
+                    resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+                    keyTip = "XB"
+                )
             ),
-            RibbonTask(
-                title = resourceBundle.getString("Task12.textTaskTitle"),
-                bands = listOf(builder.getActionBand(), builder.getApplicationsBand()),
-                resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
-                keyTip = "XB"
-            )
-        ),
-        isActive = false
-    )
-    val contextualTaskGroup2 = RibbonContextualTaskGroup(
-        title = resourceBundle.getString("Group2.textTaskGroupTitle"),
-        hueColor = Color.Green,
-        tasks = listOf(
-            RibbonTask(
-                title = resourceBundle.getString("Task21.textTaskTitle"),
-                bands = listOf(builder.getActionBand(), builder.getApplicationsBand()),
-                resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
-                keyTip = "YA"
-            )
-        ),
-        isActive = false
-    )
+            isActive = false
+        )
+    }
+    val contextualTaskGroup2 = remember {
+        RibbonContextualTaskGroup(
+            title = resourceBundle.getString("Group2.textTaskGroupTitle"),
+            hueColor = Color.Green,
+            tasks = listOf(
+                RibbonTask(
+                    title = resourceBundle.getString("Task21.textTaskTitle"),
+                    bands = listOf(
+                        builder.getActionBand(),
+                        builder.getApplicationsBand(selectedApplicationGame = ribbonState.applicationGame,
+                            onApplicationGameSelected = {
+                                ribbonState = ribbonState.copy(applicationGame = it)
+                            },
+                            selectedApplicationBrowser = ribbonState.applicationBrowser,
+                            onApplicationBrowserSelected = {
+                                ribbonState = ribbonState.copy(applicationBrowser = it)
+                            },
+                            selectedApplicationMultimedia = ribbonState.applicationMultimedia,
+                            onApplicationMultimediaSelected = {
+                                ribbonState = ribbonState.copy(applicationMultimedia = it)
+                            })
+                    ),
+                    resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+                    keyTip = "YA"
+                )
+            ),
+            isActive = false
+        )
+    }
 
     val taskbarElements: List<RibbonTaskbarElement> =
         listOf(
@@ -514,16 +591,6 @@ internal class RibbonBuilder(
             CommandGroup(commands = listOf(this.menuSaveSelection, this.menuClearSelection)),
             CommandGroup(commands = listOf(this.applyStyles))
         )
-    )
-
-    val fontSizeComboBoxEntries = listOf(11, 12, 13, 14, 16)
-
-    val applicationGamesEntries = listOf("Tetris", "Minesweeper", "Doom")
-    val applicationInternetEntries = listOf("Firefox", "Opera", "Konqueror")
-    val applicationMultimediaEntries = listOf(
-        resourceBundle.getString("Pictures.text"),
-        resourceBundle.getString("Video.text"),
-        resourceBundle.getString("Audio.text")
     )
 
     val amEntryPrintMemo = Command(
@@ -879,10 +946,11 @@ internal class RibbonBuilder(
         )
     }
 
-    @Composable
     fun getFontBand(
         selectedFontFamily: FontFamily,
-        onFontFamilySelected: (FontFamily) -> Unit
+        onFontFamilySelected: (FontFamily) -> Unit,
+        selectedFontSize: FontSize,
+        onFontSizeSelected: (FontSize) -> Unit,
     ): FlowRibbonBand {
         val fontFamilyComboBoxContentModel = ComboBoxContentModel(
             items = FontFamily.values().toList(),
@@ -894,12 +962,11 @@ internal class RibbonBuilder(
             richTooltip = RichTooltip(title = resourceBundle.getString("Fonts.tooltip.title")),
         )
 
-        val fontSizeComboSelectedItem = remember { mutableStateOf(this.fontSizeComboBoxEntries[0]) }
         val fontSizeComboBoxContentModel = ComboBoxContentModel(
-            items = this.fontSizeComboBoxEntries,
-            selectedItem = fontSizeComboSelectedItem.value,
+            items = FontSize.values().toList(),
+            selectedItem = selectedFontSize,
             onTriggerItemSelectedChange = {
-                fontSizeComboSelectedItem.value = it
+                onFontSizeSelected(it)
                 println("New font size selection -> $it")
             }
         )
@@ -932,7 +999,7 @@ internal class RibbonBuilder(
                 ) with RibbonComponentPresentationModel(keyTip = "SF"),
                 ComboBoxProjection(
                     contentModel = fontSizeComboBoxContentModel,
-                    presentationModel = ComboBoxPresentationModel(displayConverter = { "$it   " }),
+                    presentationModel = ComboBoxPresentationModel(displayConverter = { "${it.fontSize}   " }),
                 ) with RibbonComponentPresentationModel(keyTip = "SS"),
                 CommandButtonStripProjection(
                     contentModel = CommandGroup(commands = listOf(indentLeft, indentRight)),
@@ -982,14 +1049,10 @@ internal class RibbonBuilder(
         )
     }
 
-    enum class DocumentSaveLocation {
-        None, Local, Remote, Saved
-    }
-
-    @Composable
-    fun getDocumentBand(): RibbonBand {
-        var saveLocation by remember { mutableStateOf(DocumentSaveLocation.None) }
-
+    fun getDocumentBand(
+        selectedSaveLocation: DocumentSaveLocation,
+        onSaveLocationSelected: (DocumentSaveLocation) -> Unit
+    ): RibbonBand {
         return RibbonBand(
             title = resourceBundle.getString("Document.textBandTitle"),
             icon = applications_office(),
@@ -1009,9 +1072,9 @@ internal class RibbonBuilder(
                                 text = resourceBundle.getString("DocumentLocal.text"),
                                 icon = folder(),
                                 isActionToggle = true,
-                                isActionToggleSelected = (saveLocation == DocumentSaveLocation.Local),
+                                isActionToggleSelected = (selectedSaveLocation == DocumentSaveLocation.Local),
                                 onTriggerActionToggleSelectedChange = {
-                                    if (it) saveLocation = DocumentSaveLocation.Local
+                                    if (it) onSaveLocationSelected(DocumentSaveLocation.Local)
                                 },
                                 action = { println("Document Local activated") }
                             )
@@ -1021,9 +1084,9 @@ internal class RibbonBuilder(
                                 text = resourceBundle.getString("DocumentRemote.text"),
                                 icon = folder_remote(),
                                 isActionToggle = true,
-                                isActionToggleSelected = (saveLocation == DocumentSaveLocation.Remote),
+                                isActionToggleSelected = (selectedSaveLocation == DocumentSaveLocation.Remote),
                                 onTriggerActionToggleSelectedChange = {
-                                    if (it) saveLocation = DocumentSaveLocation.Remote
+                                    if (it) onSaveLocationSelected(DocumentSaveLocation.Remote)
                                 },
                                 action = { println("Document Remote activated") }
                             )
@@ -1033,9 +1096,9 @@ internal class RibbonBuilder(
                                 text = resourceBundle.getString("DocumentSaved.text"),
                                 icon = folder_saved_search(),
                                 isActionToggle = true,
-                                isActionToggleSelected = (saveLocation == DocumentSaveLocation.Saved),
+                                isActionToggleSelected = (selectedSaveLocation == DocumentSaveLocation.Saved),
                                 onTriggerActionToggleSelectedChange = {
-                                    if (it) saveLocation = DocumentSaveLocation.Saved
+                                    if (it) onSaveLocationSelected(DocumentSaveLocation.Saved)
                                 },
                                 action = { println("Document Saved activated") }
                             )
@@ -1092,7 +1155,6 @@ internal class RibbonBuilder(
         )
     }
 
-    @Composable
     fun getFindBand(): RibbonBand {
         return RibbonBand(
             title = resourceBundle.getString("Find.textBandTitle"),
@@ -1264,35 +1326,35 @@ internal class RibbonBuilder(
         )
     }
 
-    @Composable
-    fun getApplicationsBand(): RibbonBand {
-        val gamesComboSelectedItem = remember { mutableStateOf(this.applicationGamesEntries[0]) }
+    fun getApplicationsBand(
+        selectedApplicationGame: ApplicationGame,
+        onApplicationGameSelected: (ApplicationGame) -> Unit,
+        selectedApplicationBrowser: ApplicationBrowser,
+        onApplicationBrowserSelected: (ApplicationBrowser) -> Unit,
+        selectedApplicationMultimedia: ApplicationMultimedia,
+        onApplicationMultimediaSelected: (ApplicationMultimedia) -> Unit,
+    ): RibbonBand {
         val gamesComboBoxContentModel = ComboBoxContentModel(
-            items = this.applicationGamesEntries,
-            selectedItem = gamesComboSelectedItem.value,
+            items = ApplicationGame.values().toList(),
+            selectedItem = selectedApplicationGame,
             onTriggerItemSelectedChange = {
-                gamesComboSelectedItem.value = it
-                println("New game selection -> $it")
+                onApplicationGameSelected.invoke(it)
             }
         )
 
-        val internetComboSelectedItem = remember { mutableStateOf(this.applicationInternetEntries[0]) }
         val internetComboBoxContentModel = ComboBoxContentModel(
-            items = this.applicationInternetEntries,
-            selectedItem = internetComboSelectedItem.value,
+            items = ApplicationBrowser.values().toList(),
+            selectedItem = selectedApplicationBrowser,
             onTriggerItemSelectedChange = {
-                internetComboSelectedItem.value = it
-                println("New Internet selection -> $it")
+                onApplicationBrowserSelected.invoke(it)
             }
         )
 
-        val multimediaComboSelectedItem = remember { mutableStateOf(this.applicationMultimediaEntries[0]) }
         val multimediaComboBoxContentModel = ComboBoxContentModel(
-            items = this.applicationMultimediaEntries,
-            selectedItem = multimediaComboSelectedItem.value,
+            items = ApplicationMultimedia.values().toList(),
+            selectedItem = selectedApplicationMultimedia,
             onTriggerItemSelectedChange = {
-                multimediaComboSelectedItem.value = it
-                println("New multimedia selection -> $it")
+                onApplicationMultimediaSelected.invoke(it)
             }
         )
 
@@ -1309,7 +1371,7 @@ internal class RibbonBuilder(
                     componentProjections = listOf(
                         ComboBoxProjection(
                             contentModel = gamesComboBoxContentModel,
-                            presentationModel = ComboBoxPresentationModel(displayConverter = { it }),
+                            presentationModel = ComboBoxPresentationModel(displayConverter = { it.name }),
                         ) with RibbonComponentPresentationModel(
                             caption = resourceBundle.getString("Games.text"),
                             icon = applications_games(),
@@ -1319,7 +1381,7 @@ internal class RibbonBuilder(
                         ),
                         ComboBoxProjection(
                             contentModel = internetComboBoxContentModel,
-                            presentationModel = ComboBoxPresentationModel(displayConverter = { it }),
+                            presentationModel = ComboBoxPresentationModel(displayConverter = { it.name }),
                         ) with RibbonComponentPresentationModel(
                             caption = resourceBundle.getString("Internet.text"),
                             icon = applications_internet(),
@@ -1329,7 +1391,9 @@ internal class RibbonBuilder(
                         ),
                         ComboBoxProjection(
                             contentModel = multimediaComboBoxContentModel,
-                            presentationModel = ComboBoxPresentationModel(displayConverter = { it }),
+                            presentationModel = ComboBoxPresentationModel(displayConverter = {
+                                resourceBundle.getString(it.resourceKey)
+                            }),
                         ) with RibbonComponentPresentationModel(
                             caption = resourceBundle.getString("Multimedia.text"),
                             keyTip = "AM",
