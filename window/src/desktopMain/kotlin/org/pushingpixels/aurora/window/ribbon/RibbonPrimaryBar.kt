@@ -47,11 +47,17 @@ import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import java.lang.Integer.min
 import kotlin.math.max
 
+internal data class RibbonContextualTaskGroupLayoutInfo(
+    val ribbonContextualTaskGroup: RibbonContextualTaskGroup,
+    val startX: Int,
+    val endX: Int
+)
+
 @OptIn(AuroraInternalApi::class)
 @Composable
 internal fun RibbonPrimaryBar(
     ribbon: Ribbon,
-    onContextualTaskGroupSpansUpdated: (Map<RibbonContextualTaskGroup, Pair<Int, Int>>) -> Unit
+    onContextualTaskGroupSpansUpdated: (List<RibbonContextualTaskGroupLayoutInfo>) -> Unit
 ) {
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -142,7 +148,8 @@ internal fun RibbonPrimaryBar(
     }
 
     val taskButtonLayoutGap = (TaskbarPrimaryBarTaskButtonsGap.value * density.density).toInt()
-    var currTaskButtonX = (TaskbarPrimaryBarContentPadding.calculateStartPadding(layoutDirection).value * density.density).toInt()
+    var currTaskButtonX =
+        (TaskbarPrimaryBarContentPadding.calculateStartPadding(layoutDirection).value * density.density).toInt()
     if (applicationMenuButtonPreferredSize != null) {
         currTaskButtonX += (applicationMenuButtonPreferredSize.width.toInt()) + layoutGap
     }
@@ -161,7 +168,8 @@ internal fun RibbonPrimaryBar(
         if (ribbonTaskCommandPair.second != null) {
             val currentCombinedSpan = combinedContextualGroupSpanMap[ribbonTaskCommandPair.second]!!
             val updatedMin = min(currentCombinedSpan.first, currTaskButtonX)
-            val updatedMax = max(currentCombinedSpan.second, currTaskButtonX + currTaskButtonPreferredSize.width.toInt())
+            val updatedMax =
+                max(currentCombinedSpan.second, currTaskButtonX + currTaskButtonPreferredSize.width.toInt())
             combinedContextualGroupSpanMap[ribbonTaskCommandPair.second!!] = Pair(updatedMin, updatedMax)
         }
 
@@ -255,11 +263,15 @@ internal fun RibbonPrimaryBar(
         // Note special case where we kick in scrolling for the task toggle buttons.
         // In that case it would be too distracting to display the contextual task group highlights
         // in the title pane of the window, so we treat this case as no-highlights
-        println("UPDATING WITH EMPTY")
-        onContextualTaskGroupSpansUpdated(emptyMap())
+        onContextualTaskGroupSpansUpdated(emptyList())
     } else {
-        println("UPDATING WITH ${combinedContextualGroupSpanMap.size}")
-        onContextualTaskGroupSpansUpdated(combinedContextualGroupSpanMap)
+        val layoutInfoList: List<RibbonContextualTaskGroupLayoutInfo> =
+            combinedContextualGroupSpanMap.map {
+                RibbonContextualTaskGroupLayoutInfo(
+                    it.key, it.value.first, it.value.second
+                )
+            }
+        onContextualTaskGroupSpansUpdated(layoutInfoList)
     }
 
     val taskButtonRowScrollState: ScrollState = rememberScrollState(0)
