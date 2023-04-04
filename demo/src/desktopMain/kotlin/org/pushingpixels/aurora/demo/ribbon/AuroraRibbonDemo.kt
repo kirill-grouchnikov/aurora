@@ -15,8 +15,10 @@
  */
 package org.pushingpixels.aurora.demo.ribbon
 
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -36,10 +38,7 @@ import org.jetbrains.skia.Font
 import org.jetbrains.skia.TextLine
 import org.jetbrains.skia.Typeface
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.component.projection.ColorSelectorCommandButtonProjection
-import org.pushingpixels.aurora.component.projection.ComboBoxProjection
-import org.pushingpixels.aurora.component.projection.CommandButtonProjection
-import org.pushingpixels.aurora.component.projection.CommandButtonStripProjection
+import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.component.ribbon.*
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicies
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizeSequencingPolicies
@@ -218,8 +217,7 @@ fun main() = auroraApplication {
                     resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
                     keyTip = "XB"
                 )
-            ),
-            isActive = false
+            )
         )
     }
     val contextualTaskGroup2 = remember {
@@ -247,8 +245,7 @@ fun main() = auroraApplication {
                     resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
                     keyTip = "YA"
                 )
-            ),
-            isActive = false
+            )
         )
     }
 
@@ -300,12 +297,22 @@ fun main() = auroraApplication {
         )
 
     var selectedTask by remember { mutableStateOf(pageLayoutTask) }
+    var contextualTaskGroup1Visible by remember { mutableStateOf(false) }
+    var contextualTaskGroup2Visible by remember { mutableStateOf(false) }
+
+    val contextualTaskGroups = mutableListOf<RibbonContextualTaskGroup>()
+    if (contextualTaskGroup1Visible) {
+        contextualTaskGroups.add(contextualTaskGroup1)
+    }
+    if (contextualTaskGroup2Visible) {
+        contextualTaskGroups.add(contextualTaskGroup2)
+    }
 
     val ribbon = Ribbon(
         tasks = listOf(pageLayoutTask, writeTask),
         selectedTask = selectedTask,
         onTaskClick = { selectedTask = it },
-        contextualTaskGroups = listOf(contextualTaskGroup1, contextualTaskGroup2),
+        contextualTaskGroups = contextualTaskGroups,
         taskbarElements = taskbarElements,
         taskbarKeyTipPolicy = DefaultRibbonTaskbarKeyTipPolicy(),
         anchoredCommands = builder.getAnchoredCommands(),
@@ -321,7 +328,32 @@ fun main() = auroraApplication {
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         ribbon = ribbon,
         content = {
-
+            Row(modifier = Modifier.fillMaxSize()) {
+                Spacer(modifier = Modifier.weight(1.0f))
+                Column(
+                    modifier = Modifier.fillMaxHeight().padding(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    CheckBoxProjection(
+                        contentModel = SelectorContentModel(
+                            text = "Group 1 visible",
+                            selected = contextualTaskGroup1Visible,
+                            onClick = {
+                                contextualTaskGroup1Visible = !contextualTaskGroup1Visible
+                            }
+                        )
+                    ).project()
+                    CheckBoxProjection(
+                        contentModel = SelectorContentModel(
+                            text = "Group 2 visible",
+                            selected = contextualTaskGroup2Visible,
+                            onClick = {
+                                contextualTaskGroup2Visible = !contextualTaskGroup2Visible
+                            }
+                        )
+                    ).project()
+                }
+            }
         }
     )
 }

@@ -28,8 +28,7 @@ data class RibbonTask(
 data class RibbonContextualTaskGroup(
     val title: String,
     val hueColor: Color,
-    val tasks: List<RibbonTask>,
-    val isActive: Boolean = false
+    val tasks: List<RibbonTask>
 )
 
 

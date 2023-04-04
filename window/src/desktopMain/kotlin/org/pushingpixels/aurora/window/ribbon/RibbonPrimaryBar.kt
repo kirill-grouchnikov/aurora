@@ -19,10 +19,10 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
@@ -38,13 +38,21 @@ import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.Ribbon
+import org.pushingpixels.aurora.component.ribbon.RibbonContextualTaskGroup
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
+import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
+import org.pushingpixels.aurora.theming.colorscheme.ShiftColorScheme
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
+import java.lang.Integer.min
 import kotlin.math.max
 
 @OptIn(AuroraInternalApi::class)
 @Composable
-internal fun RibbonPrimaryBar(ribbon: Ribbon) {
+internal fun RibbonPrimaryBar(
+    ribbon: Ribbon,
+    onContextualTaskGroupSpansUpdated: (Map<RibbonContextualTaskGroup, Pair<Int, Int>>) -> Unit
+) {
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
@@ -53,6 +61,7 @@ internal fun RibbonPrimaryBar(ribbon: Ribbon) {
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
 
     val layoutGap = (TaskbarPrimaryBarGap.value * density.density).toInt()
+    var everythingFits by remember { mutableStateOf(false) }
 
     // Primary bar content is:
     //
@@ -89,15 +98,26 @@ internal fun RibbonPrimaryBar(ribbon: Ribbon) {
     }
 
     // Next is toggle buttons for all the ribbon tasks
-    val ribbonTaskCommands = ribbon.tasks.map { task ->
-        Command(text = task.title,
+    val ribbonTaskCommands: List<Pair<Command, RibbonContextualTaskGroup?>> = ribbon.tasks.map { task ->
+        Pair<Command, RibbonContextualTaskGroup?>(Command(text = task.title,
             icon = null,
             isActionToggle = true,
             isActionToggleSelected = (task == ribbon.selectedTask),
             onTriggerActionToggleSelectedChange = {
                 if (it) ribbon.onTaskClick(task)
             }
-        )
+        ), null)
+    } + ribbon.contextualTaskGroups.flatMap { contextualTaskGroup ->
+        contextualTaskGroup.tasks.map { contextualTask ->
+            Pair<Command, RibbonContextualTaskGroup?>(Command(text = contextualTask.title,
+                icon = null,
+                isActionToggle = true,
+                isActionToggleSelected = (contextualTask == ribbon.selectedTask),
+                onTriggerActionToggleSelectedChange = {
+                    if (it) ribbon.onTaskClick(contextualTask)
+                }
+            ), contextualTaskGroup)
+        }
     }
 
     var combinedTaskButtonsWidth = 0
@@ -116,21 +136,39 @@ internal fun RibbonPrimaryBar(ribbon: Ribbon) {
         fontFamilyResolver = fontFamilyResolver
     )
 
-    for (ribbonTaskCommand in ribbonTaskCommands) {
+    val combinedContextualGroupSpanMap: MutableMap<RibbonContextualTaskGroup, Pair<Int, Int>> = hashMapOf()
+    for (contextualTaskGroup in ribbon.contextualTaskGroups) {
+        combinedContextualGroupSpanMap[contextualTaskGroup] = Pair(Int.MAX_VALUE, Int.MIN_VALUE)
+    }
+
+    val taskButtonLayoutGap = (TaskbarPrimaryBarTaskButtonsGap.value * density.density).toInt()
+    var currTaskButtonX = (TaskbarPrimaryBarContentPadding.calculateStartPadding(layoutDirection).value * density.density).toInt()
+    if (applicationMenuButtonPreferredSize != null) {
+        currTaskButtonX += (applicationMenuButtonPreferredSize.width.toInt()) + layoutGap
+    }
+    for (ribbonTaskCommandPair in ribbonTaskCommands) {
         val currTaskButtonPreferredSize = taskButtonLayoutManager.getPreferredSize(
-            command = ribbonTaskCommand,
+            command = ribbonTaskCommandPair.first,
             presentationModel = taskButtonPresentationModel,
             preLayoutInfo = taskButtonLayoutManager.getPreLayoutInfo(
-                ribbonTaskCommand,
+                ribbonTaskCommandPair.first,
                 taskButtonPresentationModel
             )
         )
         combinedTaskButtonsWidth += currTaskButtonPreferredSize.width.toInt()
         maxTaskButtonHeight = max(maxTaskButtonHeight, currTaskButtonPreferredSize.height.toInt())
+
+        if (ribbonTaskCommandPair.second != null) {
+            val currentCombinedSpan = combinedContextualGroupSpanMap[ribbonTaskCommandPair.second]!!
+            val updatedMin = min(currentCombinedSpan.first, currTaskButtonX)
+            val updatedMax = max(currentCombinedSpan.second, currTaskButtonX + currTaskButtonPreferredSize.width.toInt())
+            combinedContextualGroupSpanMap[ribbonTaskCommandPair.second!!] = Pair(updatedMin, updatedMax)
+        }
+
+        currTaskButtonX += (currTaskButtonPreferredSize.width.toInt() + taskButtonLayoutGap)
     }
     if (ribbonTaskCommands.isNotEmpty()) {
-        combinedTaskButtonsWidth += ((TaskbarPrimaryBarTaskButtonsGap.value * density.density) *
-                (ribbonTaskCommands.size - 1)).toInt()
+        combinedTaskButtonsWidth += taskButtonLayoutGap * (ribbonTaskCommands.size - 1)
     }
 
     // And finally the anchored commands. We pre-compute their combined size twice, once at their original
@@ -213,17 +251,28 @@ internal fun RibbonPrimaryBar(ribbon: Ribbon) {
     }
     fullWidthNeeded += combinedAnchoredCommandsOriginalWidth
 
+    if (!everythingFits || ribbon.contextualTaskGroups.isEmpty()) {
+        // Note special case where we kick in scrolling for the task toggle buttons.
+        // In that case it would be too distracting to display the contextual task group highlights
+        // in the title pane of the window, so we treat this case as no-highlights
+        println("UPDATING WITH EMPTY")
+        onContextualTaskGroupSpansUpdated(emptyMap())
+    } else {
+        println("UPDATING WITH ${combinedContextualGroupSpanMap.size}")
+        onContextualTaskGroupSpansUpdated(combinedContextualGroupSpanMap)
+    }
+
     val taskButtonRowScrollState: ScrollState = rememberScrollState(0)
     AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
         SubcomposeLayout(
             modifier = Modifier.auroraBackground()
                 .fillMaxWidth()
-                .padding(start = 4.dp, end = 4.dp, top = 2.dp)
+                .padding(TaskbarPrimaryBarContentPadding)
                 .height((finalHeight / density.density).dp)
         ) { constraints ->
             val widthAvailable = constraints.maxWidth
             val heightAvailable = constraints.maxHeight
-            val everythingFits = (fullWidthNeeded <= widthAvailable)
+            everythingFits = (fullWidthNeeded <= widthAvailable)
 
             // Application menu command button (optional)
             val applicationMenuCommandButtonPlaceable =
@@ -279,23 +328,45 @@ internal fun RibbonPrimaryBar(ribbon: Ribbon) {
                     horizontalScrollState = taskButtonRowScrollState,
                     scrollAmount = 12.dp,
                     content = {
-                        for ((index, taskCommand) in ribbonTaskCommands.withIndex()) {
+                        for ((index, ribbonTaskCommandPair) in ribbonTaskCommands.withIndex()) {
                             if (index > 0) {
                                 Spacer(modifier = Modifier.width(TaskbarPrimaryBarTaskButtonsGap))
                             }
                             AuroraDecorationArea(decorationAreaType = DecorationAreaType.ControlPane) {
-                                CommandButtonProjection(
-                                    contentModel = taskCommand,
-                                    presentationModel = taskButtonPresentationModel
-                                ).project()
+                                if (ribbonTaskCommandPair.second == null) {
+                                    CommandButtonProjection(
+                                        contentModel = ribbonTaskCommandPair.first,
+                                        presentationModel = taskButtonPresentationModel
+                                    ).project()
+                                } else {
+                                    CommandButtonProjection(
+                                        contentModel = ribbonTaskCommandPair.first,
+                                        presentationModel = taskButtonPresentationModel.overlayWith(
+                                            BaseCommandButtonPresentationModel.Overlay(
+                                                colorSchemeBundle = generateColorSchemeBundle(
+                                                    active = AuroraSkin.colors.getActiveColorScheme(
+                                                        DecorationAreaType.ControlPane
+                                                    ),
+                                                    enabled = AuroraSkin.colors.getEnabledColorScheme(
+                                                        DecorationAreaType.ControlPane
+                                                    ),
+                                                    hueColor = ribbonTaskCommandPair.second!!.hueColor,
+                                                    hueAmount = 0.25f
+                                                )
+                                            )
+                                        )
+                                    ).project()
+                                }
                             }
                         }
                     }
                 )
-            }.first().measure(Constraints.fixed(
-                widthAvailableForTaskButtons,
-                maxTaskButtonHeight
-            ))
+            }.first().measure(
+                Constraints.fixed(
+                    widthAvailableForTaskButtons,
+                    maxTaskButtonHeight
+                )
+            )
 
             layout(widthAvailable, heightAvailable) {
                 applicationMenuCommandButtonPlaceable?.placeRelative(
@@ -323,7 +394,57 @@ internal fun RibbonPrimaryBar(ribbon: Ribbon) {
     }
 }
 
+private fun generateColorSchemeBundle(
+    active: AuroraColorScheme,
+    enabled: AuroraColorScheme,
+    hueColor: Color,
+    hueAmount: Float
+): AuroraColorSchemeBundle {
+    // This is temporary implementation, and will be removed when a custom composable for task toggle
+    // buttons is added
+    val tweakedActive = ShiftColorScheme(
+        origScheme = active,
+        backgroundShiftColor = hueColor,
+        backgroundShiftFactor = hueAmount,
+        foregroundShiftColor = active.foregroundColor,
+        foregroundShiftFactor = 0.0f,
+        shiftByBrightness = false
+    )
+    val saturatedActive = tweakedActive.saturate(0.4f)
+
+    val tweakedEnabled =
+        ShiftColorScheme(
+            origScheme = enabled,
+            backgroundShiftColor = hueColor,
+            backgroundShiftFactor = hueAmount,
+            foregroundShiftColor = enabled.foregroundColor,
+            foregroundShiftFactor = 0.0f,
+            shiftByBrightness = false
+        )
+    val result = AuroraColorSchemeBundle(
+        activeColorScheme = saturatedActive,
+        enabledColorScheme = tweakedEnabled,
+        disabledColorScheme = tweakedEnabled
+    )
+    // Translucent for disabled state
+    result.registerAlpha(0.5f, ComponentState.DisabledSelected, ComponentState.DisabledUnselected)
+    result.registerColorScheme(
+        tweakedEnabled, ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledUnselected
+    )
+    result.registerColorScheme(
+        saturatedActive,
+        ColorSchemeAssociationKind.Fill,
+        ComponentState.DisabledSelected
+    )
+
+    // Darker borders
+    result.registerColorScheme(tweakedActive.shade(0.5f), associationKind = ColorSchemeAssociationKind.Border)
+    return result
+}
+
 private val TaskbarPrimaryBarGap = 8.dp
 private val TaskbarPrimaryBarTaskButtonsGap = 6.dp
 private val TaskbarPrimaryBarAnchoredCommandsGap = 4.dp
+private val TaskbarPrimaryBarContentPadding = PaddingValues(start = 4.dp, end = 4.dp, top = 2.dp)
 

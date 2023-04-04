@@ -15,15 +15,21 @@
  */
 package org.pushingpixels.aurora.window
 
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Constraints
@@ -36,8 +42,14 @@ import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.Command
+import org.pushingpixels.aurora.component.model.HorizontalAlignment
+import org.pushingpixels.aurora.component.model.LabelContentModel
+import org.pushingpixels.aurora.component.model.LabelPresentationModel
+import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.ribbon.Ribbon
+import org.pushingpixels.aurora.component.ribbon.RibbonContextualTaskGroup
 import org.pushingpixels.aurora.component.ribbon.impl.RibbonTaskbar
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
@@ -62,13 +74,16 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneTextAndIcon(
     title: String,
     icon: Painter?,
     iconFilterStrategy: IconFilterStrategy,
-    ribbon: Ribbon
+    ribbon: Ribbon,
+    contextualTaskGroupSpans: Map<RibbonContextualTaskGroup, Pair<Int, Int>>,
+    contextualTaskGroupOffsetX: Int
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
     val skinColors = AuroraSkin.colors
     val showsIcon = (icon != null)
 
+    println("RibbonWindowTitlePaneTextAndIcon with ${contextualTaskGroupSpans.size} entries")
     Layout(modifier = Modifier.fillMaxWidth(),
         content = {
             if (showsIcon) {
@@ -94,6 +109,36 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneTextAndIcon(
             )
 
             AuroraWindowTitlePaneTitleText(title = title)
+
+            for (contextualTaskGroupSpan in contextualTaskGroupSpans) {
+                Box {
+                    LabelProjection(
+                        contentModel = LabelContentModel(text = contextualTaskGroupSpan.key.title),
+                        presentationModel = LabelPresentationModel(
+                            horizontalAlignment = HorizontalAlignment.Leading,
+                            contentPadding = TaskbarContextualTaskGroupTitlePadding)
+                    ).project(modifier = Modifier.fillMaxSize())
+                    Canvas(modifier = Modifier.fillMaxSize()) {
+                        val hueColor = contextualTaskGroupSpan.key.hueColor
+                        drawRect(
+                            brush = Brush.verticalGradient(
+                                0.0f to hueColor.withAlpha(0.0f),
+                                1.0f to hueColor.withAlpha(0.25f),
+                                startY = 0.0f,
+                                endY = size.height,
+                                tileMode = TileMode.Repeated
+                            )
+                        )
+
+                        drawLine(
+                            color = hueColor,
+                            start = Offset(0.0f, size.height - 0.5f),
+                            end = Offset(size.width, size.height - 0.5f),
+                            strokeWidth = 1.5f * density
+                        )
+                    }
+                }
+            }
         }) { measurables, constraints ->
         val width = constraints.maxWidth
         val height = constraints.maxHeight
@@ -104,9 +149,14 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneTextAndIcon(
         val largeGapPx = WindowTitlePaneSizingConstants.TitlePaneButtonIconLargeGap.toPx().roundToInt()
         val controlButtonsWidth = 3 * buttonSizePx + regularGapPx + largeGapPx
 
-        val iconMeasurable = if (showsIcon) measurables[0] else null
-        val taskbarMeasurable = if (showsIcon) measurables[1] else measurables[0]
-        val titleMeasurable = if (showsIcon) measurables[2] else measurables[1]
+        var placeableIndex = 0
+        val iconMeasurable = if (showsIcon) measurables[placeableIndex++] else null
+        val taskbarMeasurable = measurables[placeableIndex++]
+        val titleMeasurable = measurables[placeableIndex++]
+        println("Mapping ${contextualTaskGroupSpans.size} measurables")
+        val contextualTaskGroupIndicatorMeasurables: List<Measurable> =
+            if (measurables.size == placeableIndex) emptyList() else
+                contextualTaskGroupSpans.map { measurables[placeableIndex++] }
 
         val iconPlaceable = iconMeasurable?.measure(Constraints.fixed(width = iconSizePx, height = iconSizePx))
         val maxTaskbarWidth = (width * TaskbarWidthMaxRatio).toInt()
@@ -118,12 +168,31 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneTextAndIcon(
                 maxHeight = height
             )
         )
-        val maxTitleWidth = max(0, width - controlButtonsWidth - taskbarPlaceable.measuredWidth)
+        val displayedIconWidth = if (iconMeasurable != null) iconSizePx else 0
+        val maxTitleWidth = if (contextualTaskGroupSpans.isEmpty()) {
+            max(0, width - controlButtonsWidth - displayedIconWidth - taskbarPlaceable.measuredWidth)
+        } else {
+            // If we have visible contextual task groups, limit the title to be positioned
+            // between the taskbar and the contextual task group indicators
+            val contextualTaskGroupsStartX = contextualTaskGroupSpans.minOf { it.value.first }
+            max(
+                0,
+                contextualTaskGroupsStartX - contextualTaskGroupOffsetX - displayedIconWidth - taskbarPlaceable.measuredWidth
+            )
+        }
+
         val titlePlaceable = titleMeasurable.measure(
             Constraints(
                 minWidth = 0, maxWidth = maxTitleWidth, minHeight = 0, maxHeight = height
             )
         )
+
+        val contextualTaskGroupIndicatorPlaceables =
+            contextualTaskGroupIndicatorMeasurables.mapIndexed { index, taskGroupMeasurable ->
+                val contextualTaskGroup = ribbon.contextualTaskGroups[index]
+                val span = contextualTaskGroupSpans[contextualTaskGroup]!!
+                taskGroupMeasurable.measure(Constraints.fixed(width = span.second - span.first, height = height))
+            }
 
         layout(width = width, height = height) {
             val ltr = (layoutDirection == LayoutDirection.Ltr)
@@ -152,6 +221,12 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneTextAndIcon(
                 taskbarPlaceable.place(taskbarX, (height - taskbarPlaceable.measuredHeight) / 2)
                 titlePlaceable.place(titleX, (height - titlePlaceable.measuredHeight) / 2)
             }
+
+            for ((index, contextualTaskGroupIndicatorPlaceable) in contextualTaskGroupIndicatorPlaceables.withIndex()) {
+                val contextualTaskGroup = ribbon.contextualTaskGroups[index]
+                val span = contextualTaskGroupSpans[contextualTaskGroup]!!
+                contextualTaskGroupIndicatorPlaceable.placeRelative(span.first - contextualTaskGroupOffsetX, 0)
+            }
         }
     }
 }
@@ -162,6 +237,7 @@ private fun AuroraWindowScope.RibbonWindowTitlePane(
     icon: Painter?,
     iconFilterStrategy: IconFilterStrategy,
     ribbon: Ribbon,
+    contextualTaskGroupSpans: Map<RibbonContextualTaskGroup, Pair<Int, Int>>,
     windowConfiguration: AuroraWindowTitlePaneConfigurations.AuroraPlain
 ) {
     val density = LocalDensity.current
@@ -172,6 +248,7 @@ private fun AuroraWindowScope.RibbonWindowTitlePane(
         remember { mutableStateOf(((extendedState != null) && ((extendedState and Frame.MAXIMIZED_BOTH) != 0))) }
     val skinColors = AuroraSkin.colors
 
+    println("RibbonWindowTitlePane with ${contextualTaskGroupSpans.size} entries")
     AuroraDecorationArea(
         decorationAreaType = DecorationAreaType.TitlePane,
         buttonShaper = ClassicButtonShaper.Instance
@@ -183,12 +260,17 @@ private fun AuroraWindowScope.RibbonWindowTitlePane(
                 .auroraBackground()
                 .padding(WindowTitlePaneSizingConstants.TitlePaneContentPadding),
             content = {
+                // Account for the horizontal padding around the title pane content
+                val contextualTaskGroupOffsetX =
+                    (WindowTitlePaneSizingConstants.TitlePaneContentPadding.calculateStartPadding(layoutDirection).value * density.density).toInt()
                 WindowDraggableArea(modifier = Modifier.padding(top = 1.dp, bottom = 1.dp)) {
                     RibbonWindowTitlePaneTextAndIcon(
                         title = title,
                         icon = icon,
                         iconFilterStrategy = iconFilterStrategy,
-                        ribbon = ribbon
+                        ribbon = ribbon,
+                        contextualTaskGroupSpans = contextualTaskGroupSpans,
+                        contextualTaskGroupOffsetX = contextualTaskGroupOffsetX
                     )
                 }
 
@@ -376,6 +458,30 @@ private fun AuroraWindowScope.RibbonWindowTitlePane(
     }
 }
 
+private fun areSpansSame(
+    map1: Map<RibbonContextualTaskGroup, Pair<Int, Int>>,
+    map2: Map<RibbonContextualTaskGroup, Pair<Int, Int>>
+): Boolean {
+    if (map1.size != map2.size) {
+        return false
+    }
+
+    for (entry in map1.entries) {
+        val key = entry.key
+        val value = entry.value
+
+        if (!map2.containsKey(key)) {
+            return false
+        }
+        val value2 = map2[key]!!
+        if ((value.first != value2.first) || (value.second != value2.second)) {
+            return false
+        }
+    }
+
+    return true
+}
+
 @Composable
 private fun AuroraWindowScope.RibbonWindowInnerContent(
     title: String,
@@ -385,10 +491,24 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
     ribbon: Ribbon,
     content: @Composable AuroraWindowScope.() -> Unit
 ) {
-    Column(Modifier.fillMaxSize().auroraBackground()) {
-        RibbonWindowTitlePane(title, icon, iconFilterStrategy, ribbon, windowTitlePaneConfiguration)
+    val contextualTaskGroupSpans = remember {
+        mutableStateMapOf<RibbonContextualTaskGroup, Pair<Int, Int>>()
+    }
 
-        RibbonPrimaryBar(ribbon)
+    println("RibbonWindowInnerContent with ${contextualTaskGroupSpans.size} entries")
+    Column(Modifier.fillMaxSize().auroraBackground()) {
+        RibbonWindowTitlePane(
+            title, icon, iconFilterStrategy, ribbon, contextualTaskGroupSpans,
+            windowTitlePaneConfiguration
+        )
+
+        RibbonPrimaryBar(ribbon = ribbon,
+            onContextualTaskGroupSpansUpdated = {
+                if (!areSpansSame(contextualTaskGroupSpans, it)) {
+                    contextualTaskGroupSpans.clear()
+                    contextualTaskGroupSpans.putAll(it)
+                }
+            })
 
         // Wrap the entire content in NONE decoration area. App code can set its
         // own decoration area types on specific parts.
@@ -560,4 +680,5 @@ fun AuroraApplicationScope.AuroraRibbonWindow(
 
 private val TaskbarWidthMaxRatio = 0.25f
 private val TaskbarContentPadding = PaddingValues(horizontal = 6.dp)
+private val TaskbarContextualTaskGroupTitlePadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
 
