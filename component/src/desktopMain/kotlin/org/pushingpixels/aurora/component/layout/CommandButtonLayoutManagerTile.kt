@@ -197,17 +197,15 @@ internal open class CommandButtonLayoutManagerTile(
                 // how we should shift the content horizontally.
                 when (presentationModel.horizontalAlignment) {
                     HorizontalAlignment.Leading,
-                    HorizontalAlignment.Fill -> if (!ltr) {
-                        // shift everything to the right
-                        shiftX = finalWidth - preferredSize.width
+                    HorizontalAlignment.Fill -> {
                     }
 
                     HorizontalAlignment.Center ->
                         // shift everything to be centered horizontally
                         shiftX = (finalWidth - preferredSize.width) / 2
 
-                    HorizontalAlignment.Trailing -> if (ltr) {
-                        // shift everything to the right
+                    HorizontalAlignment.Trailing -> {
+                        // shift everything to the trailing edge
                         shiftX = finalWidth - preferredSize.width
                     }
                 }

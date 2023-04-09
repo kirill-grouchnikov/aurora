@@ -149,14 +149,15 @@ internal open class CommandButtonLayoutManagerSmall(
                 // Consult the horizontal alignment attribute of the command button to see
                 // how we should shift the content horizontally.
                 when (presentationModel.horizontalAlignment) {
-                    HorizontalAlignment.Leading ->
-                        shiftX = 0.0f
+                    HorizontalAlignment.Leading -> {}
+
                     HorizontalAlignment.Center,
                     HorizontalAlignment.Fill ->
                         // shift everything to be centered horizontally
                         shiftX = (finalWidth - preferredSize.width) / 2
-                    HorizontalAlignment.Trailing -> if (ltr) {
-                        // shift everything to the right
+
+                    HorizontalAlignment.Trailing -> {
+                        // shift everything to the trailing edge
                         shiftX = finalWidth - preferredSize.width
                     }
                 }
@@ -206,7 +207,7 @@ internal open class CommandButtonLayoutManagerSmall(
 
                 x += 2 * layoutHGap
             }
-            val xBorderBetweenActionAndPopup : Float
+            val xBorderBetweenActionAndPopup: Float
             when (preLayoutInfo.commandButtonKind) {
                 CommandButtonKind.ActionOnly -> {
                     actionClickArea = Rect(
@@ -216,6 +217,7 @@ internal open class CommandButtonLayoutManagerSmall(
                         bottom = finalHeight
                     )
                 }
+
                 CommandButtonKind.PopupOnly -> {
                     popupClickArea = Rect(
                         left = 0.0f,
@@ -224,6 +226,7 @@ internal open class CommandButtonLayoutManagerSmall(
                         bottom = finalHeight
                     )
                 }
+
                 CommandButtonKind.ActionAndPopupMainAction,
                 CommandButtonKind.ActionAndPopupMainPopup ->
                     // no break (all popup) if button has no text and no icon
@@ -294,7 +297,7 @@ internal open class CommandButtonLayoutManagerSmall(
 
                 x -= 2 * layoutHGap
             }
-            val xBorderBetweenActionAndPopup : Float
+            val xBorderBetweenActionAndPopup: Float
             when (preLayoutInfo.commandButtonKind) {
                 CommandButtonKind.ActionOnly -> {
                     actionClickArea = Rect(
@@ -304,6 +307,7 @@ internal open class CommandButtonLayoutManagerSmall(
                         bottom = finalHeight
                     )
                 }
+
                 CommandButtonKind.PopupOnly -> {
                     popupClickArea = Rect(
                         left = 0.0f,
@@ -312,6 +316,7 @@ internal open class CommandButtonLayoutManagerSmall(
                         bottom = finalHeight
                     )
                 }
+
                 CommandButtonKind.ActionAndPopupMainAction,
                 CommandButtonKind.ActionAndPopupMainPopup ->
                     // no break (all popup) if button has no text and no icon
