@@ -437,6 +437,8 @@ fun DemoCommandComplex(resourceBundle: ResourceBundle) {
         isActionEnabled = (currentZoomLevelIndex < (ZoomLevels.size - 1))
     )
 
+    val managedByMf = MessageFormat(resourceBundle.getString("Menu.managedBy"))
+
     CustomComplexCommandButtonProjection(
         contentModel = CustomComplexCommand(
             icon = menu_black_24dp(),
@@ -445,9 +447,9 @@ fun DemoCommandComplex(resourceBundle: ResourceBundle) {
                     CustomComplexMenuContentSection(
                         entries = listOf(
                             CustomComplexPopupMenuHeader(
-                                title = "Sync and save data",
+                                title = resourceBundle.getString("Menu.syncAndSaveData"),
                                 commandSignIn = Command(
-                                    text = "Sign In",
+                                    text = resourceBundle.getString("Menu.signIn"),
                                     action = { println("Sign In") }
                                 ),
                                 colors = listOf(Color(167, 130, 245), Color(240, 128, 180), Color(248, 206, 136))
@@ -565,7 +567,7 @@ fun DemoCommandComplex(resourceBundle: ResourceBundle) {
                         entries = listOf(
                             CustomComplexPopupMenuFooter(
                                 commandFooter = Command(
-                                    text = "Managed by Acme.com",
+                                    text = managedByMf.format(arrayOf<Any>("acme.com")),
                                     action = { println("Manage") }
                                 )
                             )
