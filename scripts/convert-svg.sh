@@ -17,9 +17,9 @@ export JAVA_HOME=`/usr/libexec/java_home -v 11`
 alias JAVA="java"
 
 AURORA_VERSION=2.0-SNAPSHOT
-KOTLIN_VERSION=1.8.10
+KOTLIN_VERSION=1.
 KOTLIN_COROUTINES_VERSION=1.6.4
-COMPOSE_VERSION=1.4.0-rc01
+COMPOSE_VERSION=1.4.0-rc03
 CLASSPATH=../drop/$AURORA_VERSION/aurora-svg-transcoder-desktop-$AURORA_VERSION.jar:../build/libs/batik-all-1.16.jar:../build/libs/xml-apis-1.4.01.jar:../build/libs/xml-apis-ext-1.3.04.jar:../build/libs/xmlgraphics-commons-2.7.jar:../build/libs/kotlin-stdlib-$KOTLIN_VERSION.jar:../build/libs/kotlin-stdlib-common-$KOTLIN_VERSION.jar:../build/libs/kotlinx-coroutines-core-jvm-$KOTLIN_COROUTINES_VERSION.jar:../build/libs/ui-graphics-desktop-$COMPOSE_VERSION.jar:../build/libs/ui-geometry-desktop-$COMPOSE_VERSION.jar
 
 # Don't convert the demo transcoding to deep traversal since one of the
