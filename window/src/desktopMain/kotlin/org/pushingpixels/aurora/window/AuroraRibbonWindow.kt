@@ -97,8 +97,6 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneTextAndIcon(
     val skinColors = AuroraSkin.colors
     val showsIcon = (icon != null)
 
-    val join1 = ribbon.contextualTaskGroups.joinToString { it.title }
-    val join2 = contextualTaskGroupSpans.joinToString { it.ribbonContextualTaskGroup.title }
     // Layout info for the contextual task groups is one frame behind, so we need to test
     // for matching span info
     val spanInfoMatches = spanInfoMatches(ribbon, contextualTaskGroupSpans)
