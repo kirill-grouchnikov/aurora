@@ -15,7 +15,10 @@
  */
 package org.pushingpixels.aurora.component.utils
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalContext
 import androidx.compose.runtime.CompositionLocalProvider
@@ -52,6 +55,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import java.awt.*
 import java.awt.geom.Rectangle2D
 import javax.swing.JPopupMenu
+import javax.swing.UIManager
 import javax.swing.border.Border
 import kotlin.math.ceil
 
@@ -73,7 +77,7 @@ internal val RichTooltip.hasFooterContent: Boolean
     get() = ((this.footerIcon != null) || this.hasFooterSections)
 
 @OptIn(AuroraInternalApi::class)
-internal fun displayRichTooltipContent(
+internal fun displayRichTooltipWindow(
     popupOriginator: Component,
     layoutDirection: LayoutDirection,
     density: Density,
@@ -87,7 +91,7 @@ internal fun displayRichTooltipContent(
     richTooltip: RichTooltip,
     presentationModel: RichTooltipPresentationModel,
     popupPlacementStrategy: PopupPlacementStrategy,
-) {
+): Window? {
     val popupOriginatorLocationOnScreen = popupOriginator.locationOnScreen
     val currentScreenBounds = popupOriginator.graphicsConfiguration.bounds
     popupOriginatorLocationOnScreen.translate(-currentScreenBounds.x, -currentScreenBounds.y)
@@ -380,7 +384,13 @@ internal fun displayRichTooltipContent(
     // This line is needed to ensure that each popup is displayed in its own heavyweight window
     JPopupMenu.setDefaultLightWeightPopupEnabled(false)
 
+    // ComposePanel has a private-access ComposeLayer (which is internal). That one has a SkiaLayer
+    // which extends JPanel. Since there is no direct access to that panel, configure its background
+    // color indirectly through setting this entry in the Swing's UIManager table.
+    UIManager.put("Panel.background", awtFillColor)
+
     val popupMenu = AuroraSwingPopupMenu(true)
+    popupMenu.background = awtFillColor
     popupContent.setContent {
         // Get the current composition context
         CompositionLocalProvider(compositionLocalContext) {
@@ -388,13 +398,16 @@ internal fun displayRichTooltipContent(
             CompositionLocalProvider(
                 LocalPopupMenu provides popupMenu,
                 LocalWindowSize provides popupDpSize,
-                LocalTopWindowSize provides LocalTopWindowSize.current
+                LocalTopWindowSize provides LocalTopWindowSize.current,
+                LocalSkinColors provides LocalSkinColors.current,
             ) {
-                TopLevelRichTooltipContent(
-                    richTooltip = richTooltip,
-                    richTooltipPresentationModel = presentationModel,
-                    tooltipLayoutInfo = tooltipLayoutInfo
-                )
+                Box(modifier = Modifier.fillMaxSize().background(fillColor)) {
+                    TopLevelRichTooltipContent(
+                        richTooltip = richTooltip,
+                        richTooltipPresentationModel = presentationModel,
+                        tooltipLayoutInfo = tooltipLayoutInfo
+                    )
+                }
             }
         }
     }
@@ -403,7 +416,7 @@ internal fun displayRichTooltipContent(
     // Hide the popups that "start" from our popup originator
     AuroraPopupManager.hidePopups(originator = popupOriginator)
     // And display our new popup content
-    AuroraPopupManager.showPopup(
+    return AuroraPopupManager.showPopup(
         originator = popupOriginator,
         popupTriggerAreaInOriginatorWindow = Rect.Zero,
         popup = popupMenu,

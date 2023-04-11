@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.*
+import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.withAlpha
@@ -99,6 +100,7 @@ internal fun <E> AuroraComboBox(
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
     val painters = AuroraSkin.painters
+    val animationConfig = AuroraSkin.animationConfig
     val buttonShaper = ClassicButtonShaper.Instance
     val popupOriginator = LocalPopupMenu.current ?: LocalWindow.current.rootPane
 
@@ -215,6 +217,7 @@ internal fun <E> AuroraComboBox(
     val contentModelState = rememberUpdatedState(commandMenuContentModel)
     val compositionLocalContext by rememberUpdatedState(currentCompositionLocalContext)
 
+    val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = modifier.auroraRichTooltip(
             richTooltip = contentModel.richTooltip,
@@ -243,7 +246,7 @@ internal fun <E> AuroraComboBox(
                             action = { }
                         )
                     }
-                    GeneralCommandMenuPopupHandler.showPopupContent(
+                    val popupWindow = GeneralCommandMenuPopupHandler.showPopupContent(
                         popupOriginator = popupOriginator,
                         layoutDirection = layoutDirection,
                         density = density,
@@ -277,6 +280,9 @@ internal fun <E> AuroraComboBox(
                         popupAnchorBoundsProvider = null,
                         overlays = emptyMap()
                     )
+                    coroutineScope.launch {
+                        popupWindow?.opacity = 1.0f
+                    }
                 }
             },
             interactionSource = interactionSource,
@@ -476,7 +482,7 @@ internal fun <E> AuroraComboBox(
             }
         }
 
-        var prototypeDisplayFullWidth : Dp = 0.0.dp
+        var prototypeDisplayFullWidth: Dp = 0.0.dp
         val displayPrototype = presentationModel.displayPrototype?.invoke(contentModel.items)
         if (displayPrototype != null) {
             val prototypeDisplayLabelWidth = getLabelPreferredSingleLineWidth(

@@ -873,6 +873,7 @@ internal fun <M : BaseCommandMenuContentModel,
 
     val hasIcon = preLayoutInfo.showIcon
     val compositionLocalContext by rememberUpdatedState(currentCompositionLocalContext)
+    val coroutineScope = rememberCoroutineScope()
 
     Layout(
         modifier = modifier.commandButtonLocator(buttonTopLeftOffset, buttonSize),
@@ -1117,7 +1118,7 @@ internal fun <M : BaseCommandMenuContentModel,
                         )
                         if (!isShowingPopupFromHere) {
                             // Display our popup content.
-                            popupHandler.showPopupContent(
+                            val popupWindow = popupHandler.showPopupContent(
                                 popupOriginator = popupOriginator,
                                 layoutDirection = layoutDirection,
                                 density = density,
@@ -1147,6 +1148,9 @@ internal fun <M : BaseCommandMenuContentModel,
                                 popupAnchorBoundsProvider = presentationModel.popupAnchorBoundsProvider,
                                 overlays = secondaryOverlays
                             )
+                            coroutineScope.launch {
+                                popupWindow?.opacity = 1.0f
+                            }
                         }
                     },
                     onDeactivatePopup = {

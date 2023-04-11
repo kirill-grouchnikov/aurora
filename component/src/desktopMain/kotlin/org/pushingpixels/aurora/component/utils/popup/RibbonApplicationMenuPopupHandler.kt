@@ -50,6 +50,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import java.awt.*
 import java.awt.geom.Rectangle2D
 import javax.swing.JPopupMenu
+import javax.swing.UIManager
 import javax.swing.border.Border
 import kotlin.math.ceil
 import kotlin.math.max
@@ -286,8 +287,9 @@ internal class RibbonApplicationMenuPopupHandler(
                                 popupPlacementStrategy: PopupPlacementStrategy,
                                 popupAnchorBoundsProvider: (() -> Rect)?,
                                 overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>
-                            ) {
+                            ): Window? {
                                 onLevel1ActionRollover.invoke(secondaryCommand)
+                                return null
                             }
                         }
 
@@ -496,7 +498,7 @@ internal class RibbonApplicationMenuPopupHandler(
         popupPlacementStrategy: PopupPlacementStrategy,
         popupAnchorBoundsProvider: (() -> Rect)?,
         overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>
-    ) {
+    ): Window? {
         val level1ContentLayoutInfo = getLevel1ContentLayoutInfo(
             menuContentModel = contentModel.value!!,
             menuPresentationModel = presentationModel,
@@ -602,7 +604,13 @@ internal class RibbonApplicationMenuPopupHandler(
         // This line is needed to ensure that each popup is displayed in its own heavyweight window
         JPopupMenu.setDefaultLightWeightPopupEnabled(false)
 
+        // ComposePanel has a private-access ComposeLayer (which is internal). That one has a SkiaLayer
+        // which extends JPanel. Since there is no direct access to that panel, configure its background
+        // color indirectly through setting this entry in the Swing's UIManager table.
+        UIManager.put("Panel.background", awtFillColor)
+
         val popupMenu = AuroraSwingPopupMenu(toDismissPopupsOnActivation)
+        popupMenu.background = awtFillColor
         popupContent.setContent {
             var activeLevel1Command by remember { mutableStateOf<Command?>(null) }
 
@@ -612,7 +620,8 @@ internal class RibbonApplicationMenuPopupHandler(
                 CompositionLocalProvider(
                     LocalPopupMenu provides popupMenu,
                     LocalWindowSize provides popupDpSize,
-                    LocalTopWindowSize provides LocalTopWindowSize.current
+                    LocalTopWindowSize provides LocalTopWindowSize.current,
+                    LocalSkinColors provides LocalSkinColors.current,
                 ) {
                     val level1PanelWidthDp = (level1ContentLayoutInfo.fullSize.width / density.density).dp
                     val level2PanelWidthDp = presentationModel.level2PanelWidth
@@ -675,7 +684,7 @@ internal class RibbonApplicationMenuPopupHandler(
         // Hide the popups that "start" from our popup originator
         AuroraPopupManager.hidePopups(originator = popupOriginator)
         // And display our new popup content
-        AuroraPopupManager.showPopup(
+        return AuroraPopupManager.showPopup(
             originator = popupOriginator,
             popupTriggerAreaInOriginatorWindow = popupTriggerAreaInWindow,
             popup = popupMenu,

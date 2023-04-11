@@ -195,7 +195,8 @@ internal fun AuroraTabButton(
     // TODO - do we need more keys? Maybe from the presentation model
     val preLayoutInfo = remember(
         command.text, command.extraText,
-        command.action == null, command.secondaryContentModel == null
+        command.action == null, command.secondaryContentModel == null,
+        presentationModel.presentationState
     ) {
         layoutManager.getPreLayoutInfo(command, presentationModel)
     }
@@ -451,7 +452,7 @@ internal fun AuroraTabButton(
             preLayoutInfo = preLayoutInfo
         )
 
-        // Measure the action and popup boxes
+        // Measure the action box
         var childIndex = 0
         val actionMeasurable = measurables[childIndex++]
         val actionPlaceable = actionMeasurable.measure(

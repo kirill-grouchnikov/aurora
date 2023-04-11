@@ -18,11 +18,8 @@ package org.pushingpixels.aurora.common
 import androidx.compose.ui.awt.ComposePanel
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import java.awt.BorderLayout
-import java.awt.Component
-import java.awt.Rectangle
-import javax.swing.JPopupMenu
-import javax.swing.SwingUtilities
+import java.awt.*
+import javax.swing.*
 import javax.swing.border.EmptyBorder
 
 class AuroraSwingPopupMenu(val toDismissPopupsOnActivation: Boolean) : JPopupMenu() {
@@ -44,6 +41,85 @@ class AuroraSwingPopupMenu(val toDismissPopupsOnActivation: Boolean) : JPopupMen
         // Do nothing, overriding the logic in JPopupMenu that hides a popup that does not
         // originate in Swing's JMenu. We do our own implementation of possibly cascading
         // popups.
+    }
+}
+
+private class AuroraPopup : Popup() {
+    private var hostWindow: JWindow? = null
+
+    override fun show() {
+        this.hostWindow?.show()
+    }
+
+    @Suppress("deprecation")
+    override fun hide() {
+        this.hostWindow?.hide()
+        this.hostWindow?.contentPane?.removeAll()
+        this.hostWindow?.dispose()
+    }
+
+    fun reset(owner: Component, contents: Component, ownerX: Int, ownerY: Int) {
+        if (this.hostWindow == null) {
+            this.hostWindow = createHostWindow(owner)
+        }
+        if (this.hostWindow == null) {
+            return
+        }
+        this.hostWindow!!.opacity = 0.0f
+        // Sets the proper location, and resets internal state of the window
+        this.hostWindow!!.setBounds(ownerX, ownerY, 1, 1)
+        this.hostWindow!!.contentPane.add(contents, BorderLayout.CENTER)
+        this.hostWindow!!.invalidate()
+        this.hostWindow!!.validate()
+        if (this.hostWindow!!.isVisible) {
+            // Do not call pack() if window is not visible to
+            // avoid early native peer creation
+            this.hostWindow?.pack()
+        }
+    }
+
+    private fun getParentWindow(owner: Component): Window {
+        return if (owner is Window) {
+            owner
+        } else {
+            SwingUtilities.getWindowAncestor(owner)
+        }
+    }
+
+    fun createHostWindow(owner: Component): JWindow? {
+        return if (GraphicsEnvironment.isHeadless()) {
+            // Don't support popups in headless mode
+            null
+        } else AuroraHeavyWeightWindow(getParentWindow(owner))
+    }
+}
+
+
+private class AuroraHeavyWeightWindow(parent: Window) : JWindow(parent) {
+    init {
+        focusableWindowState = false
+        type = Type.POPUP
+        isAlwaysOnTop = true
+    }
+
+    override fun update(g: Graphics) {
+        paint(g)
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun show() {
+        pack()
+        if (this.width > 0 && this.height > 0) {
+            super.show()
+        }
+    }
+}
+
+private class AuroraPopupFactory : PopupFactory() {
+    override fun getPopup(owner: Component, contents: Component, x: Int, y: Int): Popup {
+        val popup = AuroraPopup()
+        popup.reset(owner, contents, x, y)
+        return popup
     }
 }
 
@@ -73,7 +149,7 @@ object AuroraPopupManager {
         popupKind: PopupKind,
         onActivatePopup: (() -> Unit)? = null,
         onDeactivatePopup: (() -> Unit)? = null
-    ) {
+    ): Window? {
         shownPath.add(
             PopupInfo(
                 originator, popupTriggerAreaInOriginatorWindow,
@@ -86,6 +162,8 @@ object AuroraPopupManager {
         val currentScreenBounds = originator.graphicsConfiguration.bounds
         invokerLocOnScreen.translate(-currentScreenBounds.x, -currentScreenBounds.y)
 
+        PopupFactory.setSharedInstance(AuroraPopupFactory())
+
         popupContent.invalidate()
         popupContent.revalidate()
         popup.show(
@@ -93,6 +171,7 @@ object AuroraPopupManager {
             popupRectOnScreen.y - invokerLocOnScreen.y
         )
         onActivatePopup?.invoke()
+        return SwingUtilities.getWindowAncestor(popup)
     }
 
     fun hideLastPopup() {

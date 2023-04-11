@@ -15,10 +15,14 @@
  */
 package org.pushingpixels.aurora.component.popup
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalContext
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.State
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposePanel
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -35,6 +39,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import java.awt.*
 import java.awt.geom.Rectangle2D
 import javax.swing.JPopupMenu
+import javax.swing.UIManager
 import javax.swing.border.Border
 import kotlin.math.ceil
 
@@ -89,7 +94,7 @@ interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
         popupPlacementStrategy: PopupPlacementStrategy,
         popupAnchorBoundsProvider: (() -> Rect)?,
         overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>
-    ) {
+    ): Window? {
         val popupContentLayoutInfo = getPopupContentLayoutInfo(
             menuContentModel = contentModel.value!!,
             menuPresentationModel = presentationModel,
@@ -181,7 +186,13 @@ interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
         // This line is needed to ensure that each popup is displayed in its own heavyweight window
         JPopupMenu.setDefaultLightWeightPopupEnabled(false)
 
+        // ComposePanel has a private-access ComposeLayer (which is internal). That one has a SkiaLayer
+        // which extends JPanel. Since there is no direct access to that panel, configure its background
+        // color indirectly through setting this entry in the Swing's UIManager table.
+        UIManager.put("Panel.background", awtFillColor)
+
         val popupMenu = AuroraSwingPopupMenu(toDismissPopupsOnActivation)
+        popupMenu.background = awtFillColor
         popupContent.setContent {
             // Get the current composition context
             CompositionLocalProvider(compositionLocalContext) {
@@ -189,14 +200,17 @@ interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
                 CompositionLocalProvider(
                     LocalPopupMenu provides popupMenu,
                     LocalWindowSize provides popupDpSize,
-                    LocalTopWindowSize provides LocalTopWindowSize.current
+                    LocalTopWindowSize provides LocalTopWindowSize.current,
+                    LocalSkinColors provides LocalSkinColors.current,
                 ) {
-                    generatePopupContent(
-                        menuContentModel = contentModel.value!!,
-                        menuPresentationModel = presentationModel,
-                        overlays = overlays,
-                        popupContentLayoutInfo = popupContentLayoutInfo
-                    )
+                    Box(modifier = Modifier.fillMaxSize().background(fillColor)) {
+                        generatePopupContent(
+                            menuContentModel = contentModel.value!!,
+                            menuPresentationModel = presentationModel,
+                            overlays = overlays,
+                            popupContentLayoutInfo = popupContentLayoutInfo
+                        )
+                    }
                 }
             }
         }
@@ -205,7 +219,7 @@ interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
         // Hide the popups that "start" from our popup originator
         AuroraPopupManager.hidePopups(originator = popupOriginator)
         // And display our new popup content
-        AuroraPopupManager.showPopup(
+        return AuroraPopupManager.showPopup(
             originator = popupOriginator,
             popupTriggerAreaInOriginatorWindow = popupTriggerAreaInWindow,
             popup = popupMenu,

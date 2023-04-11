@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
+import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
@@ -59,12 +60,14 @@ fun Modifier.auroraContextMenu(
 
     val resolvedTextStyle = remember { resolveDefaults(mergedTextStyle, layoutDirection) }
 
+    val coroutineScope = rememberCoroutineScope()
+
     return this.then(Modifier.pointerInput(Unit) {
         while (true) {
             val lastMouseEvent = awaitPointerEventScope { awaitPointerEvent() }.awtEventOrNull
 
             if (enabledState.value && (lastMouseEvent?.isPopupTrigger == true)) {
-                GeneralCommandMenuPopupHandler.showPopupContent(
+                val popupWindow = GeneralCommandMenuPopupHandler.showPopupContent(
                     popupOriginator = popupOriginator,
                     layoutDirection = layoutDirection,
                     density = density,
@@ -91,6 +94,9 @@ fun Modifier.auroraContextMenu(
                     popupAnchorBoundsProvider = null,
                     overlays = overlays
                 )
+                coroutineScope.launch {
+                    popupWindow?.opacity = 1.0f
+                }
             }
         }
     })

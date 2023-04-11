@@ -37,7 +37,7 @@ import org.pushingpixels.aurora.component.model.RichTooltipPresentationModel
 import org.pushingpixels.aurora.component.utils.AuroraOffset
 import org.pushingpixels.aurora.component.utils.asOffset
 import org.pushingpixels.aurora.component.utils.asSize
-import org.pushingpixels.aurora.component.utils.displayRichTooltipContent
+import org.pushingpixels.aurora.component.utils.displayRichTooltipWindow
 import org.pushingpixels.aurora.theming.*
 
 // Rich tooltip tracking code based on code in TooltipArea.desktop.kt
@@ -96,12 +96,12 @@ fun Modifier.auroraRichTooltip(
     val topLeftOffset = AuroraOffset(0.0f, 0.0f)
     val size = remember { mutableStateOf(IntSize(0, 0)) }
 
-    val scope = rememberCoroutineScope()
+    val coroutineScope = rememberCoroutineScope()
     var job: Job? by remember { mutableStateOf(null) }
 
     fun startShowing() {
         job?.cancel()
-        job = scope.launch {
+        job = coroutineScope.launch {
             delay(750)
             val isShowingPopupFromHere = AuroraPopupManager.isShowingPopupFrom(
                 originator = popupOriginator,
@@ -111,7 +111,7 @@ fun Modifier.auroraRichTooltip(
                 ).asOffset(density)
             )
             if (!isShowingPopupFromHere) {
-                displayRichTooltipContent(
+                val tooltipWindow = displayRichTooltipWindow(
                     popupOriginator = popupOriginator,
                     layoutDirection = layoutDirection,
                     density = density,
@@ -129,6 +129,9 @@ fun Modifier.auroraRichTooltip(
                     presentationModel = presentationModel,
                     popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart
                 )
+                coroutineScope.launch {
+                    tooltipWindow?.opacity = 1.0f
+                }
             }
         }
     }

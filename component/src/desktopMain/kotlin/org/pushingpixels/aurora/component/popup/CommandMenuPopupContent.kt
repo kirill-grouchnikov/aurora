@@ -41,6 +41,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import java.awt.Component
 import java.awt.Rectangle
+import java.awt.Window
 
 internal val Color.awtColor: java.awt.Color
     get() = java.awt.Color(
@@ -69,7 +70,7 @@ interface BaseCommandMenuHandler<in M : BaseCommandMenuContentModel,
         popupPlacementStrategy: PopupPlacementStrategy,
         popupAnchorBoundsProvider: (() -> Rect)?,
         overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>
-    )
+    ): Window?
 
     companion object {
         fun getPlacementAwarePopupShift(
