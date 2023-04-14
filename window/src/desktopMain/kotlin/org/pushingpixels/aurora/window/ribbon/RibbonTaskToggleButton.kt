@@ -272,8 +272,8 @@ internal fun RibbonTaskToggleButton(
                     // based on the current model state info
                     populateColorScheme(
                         colorScheme = drawingCache.colorScheme,
-                        modelStateInfo = actionModelStateInfo,
-                        currState = currentActionState.value,
+                        modelStateInfo = actionModelNoSelectionStateInfo,
+                        currState = currentActionNoSelectionState.value,
                         colorSchemeDelegate = object : ColorSchemeDelegate {
                             override fun getColorSchemeForCurrentState(state: ComponentState): AuroraColorScheme {
                                 if (state == ComponentState.Enabled) {
@@ -291,6 +291,9 @@ internal fun RibbonTaskToggleButton(
                             }
 
                             override fun getColorSchemeForActiveState(state: ComponentState): AuroraColorScheme {
+                                if (state == ComponentState.Enabled) {
+                                    return skinColors.getBackgroundColorScheme(decorationAreaType = decorationAreaType)
+                                }
                                 return presentationModel.colorSchemeBundle?.getColorScheme(
                                     associationKind = ColorSchemeAssociationKind.Fill,
                                     componentState = state,
@@ -310,6 +313,7 @@ internal fun RibbonTaskToggleButton(
                     val fillMid = drawingCache.colorScheme.midColor
                     val fillDark = drawingCache.colorScheme.darkColor
                     val fillUltraDark = drawingCache.colorScheme.ultraDarkColor
+                    val fillBackgroundFill = drawingCache.colorScheme.backgroundFillColor
                     val fillIsDark = drawingCache.colorScheme.isDark
 
                     // Populate the cached color scheme for drawing the button border
@@ -413,9 +417,7 @@ internal fun RibbonTaskToggleButton(
                             } else {
                                 // Otherwise use flat color fill
                                 drawOutline(
-                                    color = skinColors.getBackgroundColorScheme(
-                                        decorationAreaType = decorationAreaType
-                                    ).backgroundFillColor,
+                                    color = fillBackgroundFill,
                                     outline = fillOutline,
                                     alpha = actionAlpha
                                 )
@@ -435,7 +437,7 @@ internal fun RibbonTaskToggleButton(
                         val borderOutline = buttonShaper.getButtonOutline(
                             layoutDirection = layoutDirection,
                             width = width,
-                            height = height,
+                            height = height + 1,
                             extraInsets = 0.5f,
                             isInner = false,
                             sides = presentationModel.sides,
@@ -446,7 +448,7 @@ internal fun RibbonTaskToggleButton(
                             if (borderPainter.isPaintingInnerOutline) buttonShaper.getButtonOutline(
                                 layoutDirection = layoutDirection,
                                 width = width,
-                                height = height,
+                                height = height + 1,
                                 extraInsets = 1.0f,
                                 isInner = true,
                                 sides = presentationModel.sides,
@@ -456,7 +458,7 @@ internal fun RibbonTaskToggleButton(
 
                         borderPainter.paintBorder(
                             this,
-                            Size(width, height),
+                            Size(width, height + 1),
                             borderOutline,
                             innerBorderOutline,
                             drawingCache.colorScheme,
@@ -538,8 +540,7 @@ private fun TaskToggleButtonTextContent(
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
 
-    // Compute the text color based on the passed model state (which can be action
-    // or popup)
+    // Compute the text color based on the passed model state
     val textColor = getTextColor(
         modelStateInfo = modelStateInfo,
         currState = currState,
@@ -547,8 +548,7 @@ private fun TaskToggleButtonTextContent(
         skinColors = skinColors,
         colorSchemeBundle = presentationModel.colorSchemeBundle,
         decorationAreaType = decorationAreaType,
-        colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
-        isTextInFilledArea = true
+        colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill
     )
     // Pass our text color to the children
     CompositionLocalProvider(
@@ -574,8 +574,7 @@ private fun getTextColor(
     skinColors: AuroraSkinColors,
     colorSchemeBundle: AuroraColorSchemeBundle?,
     decorationAreaType: DecorationAreaType,
-    colorSchemeAssociationKind: ColorSchemeAssociationKind,
-    isTextInFilledArea: Boolean
+    colorSchemeAssociationKind: ColorSchemeAssociationKind
 ): Color {
     var activeStates: Map<ComponentState, StateContributionInfo> = modelStateInfo.stateContributionMap
 

@@ -75,9 +75,7 @@ fun populateColorScheme(
             continue
         }
         // Get the color scheme that matches the contribution state
-        val contributionScheme = if (contribution.key == ComponentState.Enabled)
-            colorSchemeDelegate.getColorSchemeForCurrentState(contribution.key) else
-                colorSchemeDelegate.getColorSchemeForActiveState(contribution.key)
+        val contributionScheme = colorSchemeDelegate.getColorSchemeForActiveState(contribution.key)
 
         // And interpolate the colors
         ultraLight = ultraLight.interpolateTowards(contributionScheme.ultraLightColor, 1.0f - amount)
