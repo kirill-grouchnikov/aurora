@@ -39,6 +39,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.auroraRichTooltip
 import org.pushingpixels.aurora.component.model.Command
@@ -46,6 +47,8 @@ import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
+import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
+import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 import kotlin.math.max
@@ -315,9 +318,23 @@ internal fun RibbonTaskToggleButton(
                         colorScheme = drawingCache.colorScheme,
                         modelStateInfo = actionModelStateInfo,
                         currState = currentActionState.value,
-                        colorSchemeBundle = presentationModel.colorSchemeBundle,
-                        decorationAreaType = decorationAreaType,
-                        associationKind = ColorSchemeAssociationKind.Border
+                        colorSchemeDelegate = object : ColorSchemeDelegate {
+                            override fun getColorSchemeForCurrentState(state: ComponentState): AuroraColorScheme {
+                                return skinColors.getColorScheme(
+                                    decorationAreaType = decorationAreaType,
+                                    associationKind = ColorSchemeAssociationKind.Border,
+                                    componentState = state
+                                )
+                            }
+
+                            override fun getColorSchemeForActiveState(state: ComponentState): AuroraColorScheme {
+                                return skinColors.getColorScheme(
+                                    decorationAreaType = decorationAreaType,
+                                    associationKind = ColorSchemeAssociationKind.Border,
+                                    componentState = state
+                                )
+                            }
+                        }
                     )
                     // And retrieve the border colors
                     val borderUltraLight = drawingCache.colorScheme.ultraLightColor
@@ -452,7 +469,8 @@ internal fun RibbonTaskToggleButton(
             for (text in preLayoutInfo.texts) {
                 TaskToggleButtonTextContent(
                     text, presentationModel, actionModelNoSelectionStateInfo,
-                    currentActionNoSelectionState.value, resolvedTextStyle
+                    currentActionState.value, currentActionNoSelectionState.value,
+                    resolvedTextStyle
                 )
             }
         }) { measurables, constraints ->
@@ -512,7 +530,9 @@ internal fun RibbonTaskToggleButton(
 @Composable
 private fun TaskToggleButtonTextContent(
     text: String, presentationModel: CommandButtonPresentationModel,
-    modelStateInfo: ModelStateInfo?, currState: ComponentState,
+    modelStateInfo: ModelStateInfo,
+    currState: ComponentState,
+    currStateIgnoreSelection: ComponentState,
     style: TextStyle
 ) {
     val decorationAreaType = AuroraSkin.decorationAreaType
@@ -523,6 +543,7 @@ private fun TaskToggleButtonTextContent(
     val textColor = getTextColor(
         modelStateInfo = modelStateInfo,
         currState = currState,
+        currStateIgnoreSelection = currStateIgnoreSelection,
         skinColors = skinColors,
         colorSchemeBundle = presentationModel.colorSchemeBundle,
         decorationAreaType = decorationAreaType,
@@ -543,4 +564,76 @@ private fun TaskToggleButtonTextContent(
             overflow = presentationModel.textOverflow
         )
     }
+}
+
+@OptIn(AuroraInternalApi::class)
+private fun getTextColor(
+    modelStateInfo: ModelStateInfo,
+    currState: ComponentState,
+    currStateIgnoreSelection: ComponentState,
+    skinColors: AuroraSkinColors,
+    colorSchemeBundle: AuroraColorSchemeBundle?,
+    decorationAreaType: DecorationAreaType,
+    colorSchemeAssociationKind: ColorSchemeAssociationKind,
+    isTextInFilledArea: Boolean
+): Color {
+    var activeStates: Map<ComponentState, StateContributionInfo> = modelStateInfo.stateContributionMap
+
+    val buttonFillScheme = skinColors.getColorScheme(
+        decorationAreaType = decorationAreaType,
+        associationKind = ColorSchemeAssociationKind.Fill,
+        componentState = currStateIgnoreSelection
+    )
+    val parentDecorationAreaType = DecorationAreaType.Header
+    val parentFillScheme = skinColors.getBackgroundColorScheme(decorationAreaType = parentDecorationAreaType)
+
+    if (currState.isDisabled || (activeStates.size == 1)) {
+        // In enabled state the task toggle button does not show any background. Take the foreground
+        // color from the fill scheme of the parent
+        val schemeForCurrState = if (currState == ComponentState.Enabled) parentFillScheme else buttonFillScheme
+        return schemeForCurrState.foregroundColor
+    }
+
+    // Get the combined foreground color from all states
+    var aggrRed = 0f
+    var aggrGreen = 0f
+    var aggrBlue = 0f
+    for ((activeState, value) in activeStates) {
+        val contribution = value.contribution
+        val correspondsToParentFill = (activeState == ComponentState.Enabled) &&
+                !currState.isFacetActive(ComponentStateFacet.Selection)
+
+        val activeColorScheme = colorSchemeBundle?.getColorScheme(
+            associationKind = colorSchemeAssociationKind,
+            componentState = activeState,
+            allowFallback = true
+        ) ?: skinColors.getColorScheme(
+            decorationAreaType = decorationAreaType,
+            associationKind = colorSchemeAssociationKind,
+            componentState = activeState
+        )
+        val activeForeground = if (correspondsToParentFill) parentFillScheme.foregroundColor else
+            activeColorScheme.foregroundColor
+        aggrRed += contribution * activeForeground.red
+        aggrGreen += contribution * activeForeground.green
+        aggrBlue += contribution * activeForeground.blue
+    }
+    var foreground = Color(red = aggrRed, blue = aggrBlue, green = aggrGreen, alpha = 1.0f)
+
+    val baseAlpha = colorSchemeBundle?.getAlpha(currState) ?: skinColors.getAlpha(
+        decorationAreaType = decorationAreaType,
+        componentState = currState
+    )
+
+    if (baseAlpha < 1.0f) {
+        // Blend with the background fill
+        val backgroundColorScheme =
+            colorSchemeBundle?.getColorScheme(ComponentState.Enabled) ?: skinColors.getColorScheme(
+                decorationAreaType = decorationAreaType,
+                componentState = ComponentState.Enabled
+            )
+        val bgFillColor = backgroundColorScheme.backgroundFillColor
+        foreground = foreground.interpolateTowards(bgFillColor, baseAlpha)
+    }
+    return foreground
 }

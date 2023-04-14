@@ -130,7 +130,7 @@ fun populateColorScheme(
 
 @OptIn(AuroraInternalApi::class)
 @Composable
-fun populateColorScheme(
+internal fun populateColorScheme(
     colorScheme: MutableColorScheme,
     modelStateInfo: ModelStateInfo,
     currState: ComponentState,
@@ -543,7 +543,7 @@ internal fun getStateAwareColor(
 }
 
 @OptIn(AuroraInternalApi::class)
-fun getTextColor(
+internal fun getTextColor(
     modelStateInfo: ModelStateInfo?,
     currState: ComponentState,
     skinColors: AuroraSkinColors,
