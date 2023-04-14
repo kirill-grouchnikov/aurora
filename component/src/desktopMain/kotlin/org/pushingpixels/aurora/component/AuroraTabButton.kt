@@ -58,8 +58,7 @@ private class TabButtonDrawingCache(
     val colorScheme: MutableColorScheme = MutableColorScheme(
         displayName = "Internal mutable",
         isDark = false
-    ),
-    val markPath: Path = Path()
+    )
 )
 
 @OptIn(AuroraInternalApi::class)
@@ -91,7 +90,6 @@ internal fun AuroraTabButton(
     val buttonShaper = ClassicButtonShaper.Instance
     val painters = AuroraSkin.painters
 
-    val buttonTopLeftOffset = remember { AuroraOffset(0.0f, 0.0f) }
     val buttonSize = remember { mutableStateOf(IntSize(0, 0)) }
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -204,7 +202,7 @@ internal fun AuroraTabButton(
     val hasIcon = preLayoutInfo.showIcon
 
     Layout(
-        modifier = modifier.tabButtonLocator(buttonTopLeftOffset, buttonSize),
+        modifier = modifier,
         content = {
             val modifierAction: Modifier = Modifier.toggleable(
                 value = command.isActionToggleSelected,
@@ -299,15 +297,15 @@ internal fun AuroraTabButton(
                     )
 
                     Canvas(modifier = Modifier.matchParentSize()) {
-                        val width = buttonSize.value.width.toFloat()
-                        val height = buttonSize.value.height.toFloat()
+                        val width = size.width
+                        val height = size.height
 
                         withTransform({
                             clipRect(
                                 left = 0.0f,
                                 top = 0.0f,
-                                right = size.width,
-                                bottom = size.height,
+                                right = width,
+                                bottom = height,
                                 clipOp = ClipOp.Intersect
                             )
                             translate(
@@ -361,15 +359,15 @@ internal fun AuroraTabButton(
                     }
 
                     Canvas(modifier = Modifier.matchParentSize()) {
-                        val width = buttonSize.value.width.toFloat()
-                        val height = buttonSize.value.height.toFloat()
+                        val width = size.width
+                        val height = size.height
 
                         withTransform({
                             clipRect(
                                 left = 0.0f,
                                 top = 0.0f,
-                                right = size.width,
-                                bottom = size.height,
+                                right = width,
+                                bottom = height,
                                 clipOp = ClipOp.Intersect
                             )
                             translate(
@@ -411,7 +409,7 @@ internal fun AuroraTabButton(
 
                             borderPainter.paintBorder(
                                 this,
-                                Size(buttonSize.value.width.toFloat(), buttonSize.value.height.toFloat()),
+                                Size(width, height),
                                 borderOutline,
                                 innerBorderOutline,
                                 drawingCache.colorScheme,
@@ -428,8 +426,7 @@ internal fun AuroraTabButton(
                     presentationModel,
                     layoutManager.getPreferredIconSize(command, presentationModel),
                     actionModelStateInfo,
-                    currentActionState.value,
-                    drawingCache
+                    currentActionState.value
                 )
             }
 
@@ -549,125 +546,13 @@ private fun TabButtonTextContent(
 @Composable
 private fun TabButtonIconContent(
     command: Command, presentationModel: CommandButtonPresentationModel,
-    iconSize: DpSize, modelStateInfo: ModelStateInfo, currState: ComponentState,
-    drawingCache: TabButtonDrawingCache
+    iconSize: DpSize, modelStateInfo: ModelStateInfo, currState: ComponentState
 ) {
-    // Compute the combined strength of all the
-    // states that have the selection bit turned on
-    val selectionAlpha = modelStateInfo.stateContributionMap
-        .filter { it.key.isFacetActive(ComponentStateFacet.Selection) }
-        .map { it.value }
-        .sumOf { it.contribution.toDouble() }
-        .toFloat()
-    val showSelectionAroundIcon = (presentationModel.selectedStateHighlight == SelectedStateHighlight.IconOnly)
-            && (selectionAlpha > 0.0f)
-
     val skinColors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
-    val borderPainter = AuroraSkin.painters.borderPainter
-    val fillPainter = AuroraSkin.painters.fillPainter
 
     Box {
-        if (showSelectionAroundIcon) {
-            Canvas(modifier = Modifier.matchParentSize()) {
-                // Background fill / border for selected toggle menu commands
-                val stateForBackground =
-                    if (currState.isDisabled) ComponentState.DisabledSelected
-                    else ComponentState.Selected
-
-                val alphaForBackground = skinColors.getAlpha(
-                    decorationAreaType = decorationAreaType,
-                    componentState = stateForBackground
-                ) * selectionAlpha
-                val outline = Outline.Rectangle(
-                    rect = Rect(
-                        left = 0.5f,
-                        top = 0.5f,
-                        right = size.width - 0.5f,
-                        bottom = size.height - 0.5f
-                    )
-                )
-
-                val fillScheme = skinColors.getColorScheme(
-                    decorationAreaType = decorationAreaType,
-                    associationKind = ColorSchemeAssociationKind.Highlight,
-                    componentState = stateForBackground
-                )
-
-                fillPainter.paintContourBackground(
-                    drawScope = this,
-                    size = size,
-                    outline = outline,
-                    fillScheme = fillScheme,
-                    alpha = alphaForBackground
-                )
-
-                val borderScheme = skinColors.getColorScheme(
-                    decorationAreaType = decorationAreaType,
-                    associationKind = ColorSchemeAssociationKind.HighlightBorder,
-                    componentState = stateForBackground
-                )
-
-                borderPainter.paintBorder(
-                    drawScope = this,
-                    size = size,
-                    outline = outline,
-                    outlineInner = null,
-                    borderScheme = borderScheme,
-                    alpha = alphaForBackground
-                )
-            }
-        }
-        if (command.icon == null) {
-            // If we get to this function, we are being asked to display the icon. If the icon
-            // factory is null, we display a checkmark if the button is in selected
-            // state (full or partial)
-
-            // Checkmark color
-            val markColor = getStateAwareColor(
-                modelStateInfo = modelStateInfo,
-                currState = currState,
-                colorSchemeBundle = presentationModel.colorSchemeBundle,
-                decorationAreaType = decorationAreaType,
-                associationKind = ColorSchemeAssociationKind.Mark
-            ) { it.markColor }
-
-            val stateForMark = if (currState.isDisabled) ComponentState.DisabledSelected
-            else ComponentState.Selected
-            val alphaForMark = skinColors.getAlpha(
-                decorationAreaType = decorationAreaType,
-                componentState = stateForMark
-            )
-
-            Canvas(modifier = Modifier.matchParentSize()) {
-                val width = this.size.width
-                val height = this.size.height
-
-                // Draw the checkbox mark with the alpha that corresponds to the current
-                // selection and potential transition
-                val markStroke = 0.12f * width
-
-                with(drawingCache) {
-                    markPath.reset()
-                    markPath.moveTo(0.25f * width, 0.48f * height)
-                    markPath.lineTo(0.48f * width, 0.73f * height)
-                    markPath.lineTo(0.76f * width, 0.28f * height)
-
-                    // Note that we apply alpha twice - once for the selected / checked
-                    // state or transition, and the second time based on the enabled bit
-                    drawPath(
-                        path = markPath,
-                        color = markColor.withAlpha(selectionAlpha),
-                        style = Stroke(
-                            width = markStroke,
-                            cap = StrokeCap.Round,
-                            join = StrokeJoin.Round
-                        ),
-                        alpha = alphaForMark
-                    )
-                }
-            }
-        } else {
+        if (command.icon != null) {
             val icon = if (command.icon is TransitionAwarePainterDelegate)
                 command.icon.createNewIcon(modelStateInfo.getSnapshot(currState))
             else
@@ -702,20 +587,3 @@ private fun TabButtonIconContent(
         }
     }
 }
-
-private class TabButtonBoxLocator(val topLeftOffset: AuroraOffset, val size: MutableState<IntSize>) :
-    OnGloballyPositionedModifier {
-    override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
-        // Convert the top left corner of the component to the root coordinates
-        val converted = coordinates.localToRoot(Offset.Zero)
-        topLeftOffset.x = converted.x
-        topLeftOffset.y = converted.y
-
-        // And store the component size
-        size.value = coordinates.size
-    }
-}
-
-@Composable
-private fun Modifier.tabButtonLocator(topLeftOffset: AuroraOffset, size: MutableState<IntSize>) =
-    this.then(TabButtonBoxLocator(topLeftOffset, size))
