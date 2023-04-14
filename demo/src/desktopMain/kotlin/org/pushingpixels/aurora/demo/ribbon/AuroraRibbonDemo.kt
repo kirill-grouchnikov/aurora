@@ -42,10 +42,7 @@ import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.component.ribbon.*
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicies
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizeSequencingPolicies
-import org.pushingpixels.aurora.demo.ColorSolidIcon
-import org.pushingpixels.aurora.demo.DecoratedIcon
-import org.pushingpixels.aurora.demo.EmptyIcon
-import org.pushingpixels.aurora.demo.getQuickStylesContentModel
+import org.pushingpixels.aurora.demo.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.IconFilterStrategy
@@ -352,6 +349,7 @@ fun main() = auroraApplication {
                             }
                         )
                     ).project()
+                    AuroraSkinSwitcher({ skin = it })
                 }
             }
         }

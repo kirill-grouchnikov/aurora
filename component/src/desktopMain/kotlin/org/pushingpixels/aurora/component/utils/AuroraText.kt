@@ -35,7 +35,7 @@ import org.pushingpixels.aurora.theming.LocalTextStyle
 
 @OptIn(AuroraInternalApi::class)
 @Composable
-internal fun AuroraText(
+fun AuroraText(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,

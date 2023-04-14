@@ -345,30 +345,28 @@ internal fun RibbonPrimaryBar(
                                 Spacer(modifier = Modifier.width(TaskbarPrimaryBarTaskButtonsGap))
                             }
                             AuroraDecorationArea(decorationAreaType = DecorationAreaType.ControlPane) {
-                                if (ribbonTaskCommandPair.second == null) {
-                                    CommandButtonProjection(
-                                        contentModel = ribbonTaskCommandPair.first,
-                                        presentationModel = taskButtonPresentationModel
-                                    ).project()
-                                } else {
-                                    CommandButtonProjection(
-                                        contentModel = ribbonTaskCommandPair.first,
-                                        presentationModel = taskButtonPresentationModel.overlayWith(
-                                            BaseCommandButtonPresentationModel.Overlay(
-                                                colorSchemeBundle = generateColorSchemeBundle(
-                                                    active = AuroraSkin.colors.getActiveColorScheme(
-                                                        DecorationAreaType.ControlPane
-                                                    ),
-                                                    enabled = AuroraSkin.colors.getEnabledColorScheme(
-                                                        DecorationAreaType.ControlPane
-                                                    ),
-                                                    hueColor = ribbonTaskCommandPair.second!!.hueColor,
-                                                    hueAmount = 0.25f
-                                                )
+                                val presentationForCurrent = if (ribbonTaskCommandPair.second == null)
+                                    taskButtonPresentationModel else
+                                    taskButtonPresentationModel.overlayWith(
+                                        BaseCommandButtonPresentationModel.Overlay(
+                                            colorSchemeBundle = generateColorSchemeBundle(
+                                                active = AuroraSkin.colors.getActiveColorScheme(
+                                                    DecorationAreaType.ControlPane
+                                                ),
+                                                enabled = AuroraSkin.colors.getEnabledColorScheme(
+                                                    DecorationAreaType.ControlPane
+                                                ),
+                                                hueColor = ribbonTaskCommandPair.second!!.hueColor,
+                                                hueAmount = 0.25f
                                             )
                                         )
-                                    ).project()
-                                }
+                                    )
+
+                                RibbonTaskToggleButton(
+                                    modifier = Modifier,
+                                    command = ribbonTaskCommandPair.first,
+                                    presentationModel = presentationForCurrent
+                                )
                             }
                         }
                     }
