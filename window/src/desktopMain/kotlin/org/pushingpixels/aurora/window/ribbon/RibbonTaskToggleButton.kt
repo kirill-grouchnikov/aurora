@@ -26,8 +26,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -306,6 +309,7 @@ internal fun RibbonTaskToggleButton(
                             }
                         },
                     )
+
                     // And retrieve the container fill colors
                     val fillUltraLight = drawingCache.colorScheme.ultraLightColor
                     val fillExtraLight = drawingCache.colorScheme.extraLightColor
@@ -348,7 +352,6 @@ internal fun RibbonTaskToggleButton(
                     val borderDark = drawingCache.colorScheme.darkColor
                     val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
                     val borderIsDark = drawingCache.colorScheme.isDark
-
                     val decorationPainter = painters.decorationPainter
                     val borderPainter = painters.borderPainter
 
@@ -376,7 +379,7 @@ internal fun RibbonTaskToggleButton(
                         }
                     )
 
-                    Canvas(modifier = Modifier.matchParentSize()) {
+                    Canvas(modifier = Modifier.matchParentSize().graphicsLayer(alpha = actionAlpha)) {
                         val width = size.width
                         val height = size.height
 
@@ -391,79 +394,103 @@ internal fun RibbonTaskToggleButton(
                             density = this
                         )
 
-                        // Populate the cached color scheme for filling the task toggle button
-                        drawingCache.colorScheme.ultraLight = fillUltraLight.withAlpha(actionAlpha)
-                        drawingCache.colorScheme.extraLight = fillExtraLight.withAlpha(actionAlpha)
-                        drawingCache.colorScheme.light = fillLight.withAlpha(actionAlpha)
-                        drawingCache.colorScheme.mid = fillMid.withAlpha(actionAlpha)
-                        drawingCache.colorScheme.dark = fillDark.withAlpha(actionAlpha)
-                        drawingCache.colorScheme.ultraDark = fillUltraDark.withAlpha(actionAlpha)
-                        drawingCache.colorScheme.isDark = fillIsDark
-                        drawingCache.colorScheme.foreground = Color.Black
+                        withTransform({
+                            clipRect(
+                                left = 0.0f,
+                                top = 0.0f,
+                                right = size.width,
+                                bottom = size.height,
+                                clipOp = ClipOp.Intersect
+                            )
+                        }) {
+                            // Populate the cached color scheme for filling the task toggle button
+                            drawingCache.colorScheme.ultraLight = fillUltraLight.withAlpha(actionAlpha)
+                            drawingCache.colorScheme.extraLight = fillExtraLight.withAlpha(actionAlpha)
+                            drawingCache.colorScheme.light = fillLight.withAlpha(actionAlpha)
+                            drawingCache.colorScheme.mid = fillMid.withAlpha(actionAlpha)
+                            drawingCache.colorScheme.dark = fillDark.withAlpha(actionAlpha)
+                            drawingCache.colorScheme.ultraDark = fillUltraDark.withAlpha(actionAlpha)
+                            drawingCache.colorScheme.isDark = fillIsDark
+                            drawingCache.colorScheme.foreground = Color.Black
 
-                        if (actionAlpha > 0.0f) {
-                            if (skinColors.isRegisteredAsDecorationArea(decorationAreaType)) {
-                                // If the current skin has a decoration painter that provides custom visuals
-                                // for this decoration area, use it
-                                decorationPainter.paintDecorationArea(
-                                    drawScope = this,
-                                    decorationAreaType = decorationAreaType,
-                                    componentSize = size,
-                                    outline = fillOutline,
-                                    rootSize = rootSize,
-                                    offsetFromRoot = buttonTopLeftOffset,
-                                    colorScheme = drawingCache.colorScheme
-                                )
-                            } else {
-                                // Otherwise use flat color fill
-                                drawOutline(
-                                    color = fillBackgroundFill,
-                                    outline = fillOutline,
-                                    alpha = actionAlpha
-                                )
+                            if (actionAlpha > 0.0f) {
+                                if (skinColors.isRegisteredAsDecorationArea(decorationAreaType)) {
+                                    // If the current skin has a decoration painter that provides custom visuals
+                                    // for this decoration area, use it
+                                    decorationPainter.paintDecorationArea(
+                                        drawScope = this,
+                                        decorationAreaType = decorationAreaType,
+                                        componentSize = size,
+                                        outline = fillOutline,
+                                        rootSize = rootSize,
+                                        offsetFromRoot = buttonTopLeftOffset,
+                                        colorScheme = drawingCache.colorScheme
+                                    )
+                                } else {
+                                    // Otherwise use flat color fill
+                                    drawOutline(
+                                        color = fillBackgroundFill,
+                                        outline = fillOutline
+                                    )
+                                }
                             }
                         }
+                    }
 
-                        // Populate the cached color scheme for drawing the button border
-                        drawingCache.colorScheme.ultraLight = borderUltraLight
-                        drawingCache.colorScheme.extraLight = borderExtraLight
-                        drawingCache.colorScheme.light = borderLight
-                        drawingCache.colorScheme.mid = borderMid
-                        drawingCache.colorScheme.dark = borderDark
-                        drawingCache.colorScheme.ultraDark = borderUltraDark
-                        drawingCache.colorScheme.isDark = borderIsDark
-                        drawingCache.colorScheme.foreground = Color.Black
+                    Canvas(modifier = Modifier.matchParentSize()) {
+                        val width = size.width
+                        val height = size.height
 
-                        val borderOutline = buttonShaper.getButtonOutline(
-                            layoutDirection = layoutDirection,
-                            width = width,
-                            height = height + 1,
-                            extraInsets = 0.5f,
-                            isInner = false,
-                            sides = presentationModel.sides,
-                            outlineKind = OutlineKind.Border,
-                            density = this
-                        )
-                        val innerBorderOutline =
-                            if (borderPainter.isPaintingInnerOutline) buttonShaper.getButtonOutline(
+                        withTransform({
+                            clipRect(
+                                left = 0.0f,
+                                top = 0.0f,
+                                right = size.width,
+                                bottom = size.height,
+                                clipOp = ClipOp.Intersect
+                            )
+                        }) {
+                            // Populate the cached color scheme for drawing the button border
+                            drawingCache.colorScheme.ultraLight = borderUltraLight
+                            drawingCache.colorScheme.extraLight = borderExtraLight
+                            drawingCache.colorScheme.light = borderLight
+                            drawingCache.colorScheme.mid = borderMid
+                            drawingCache.colorScheme.dark = borderDark
+                            drawingCache.colorScheme.ultraDark = borderUltraDark
+                            drawingCache.colorScheme.isDark = borderIsDark
+                            drawingCache.colorScheme.foreground = Color.Black
+
+                            val borderOutline = buttonShaper.getButtonOutline(
                                 layoutDirection = layoutDirection,
                                 width = width,
                                 height = height + 1,
-                                extraInsets = 1.0f,
-                                isInner = true,
+                                extraInsets = 0.5f,
+                                isInner = false,
                                 sides = presentationModel.sides,
                                 outlineKind = OutlineKind.Border,
                                 density = this
-                            ) else null
+                            )
+                            val innerBorderOutline =
+                                if (borderPainter.isPaintingInnerOutline) buttonShaper.getButtonOutline(
+                                    layoutDirection = layoutDirection,
+                                    width = width,
+                                    height = height + 1,
+                                    extraInsets = 1.0f,
+                                    isInner = true,
+                                    sides = presentationModel.sides,
+                                    outlineKind = OutlineKind.Border,
+                                    density = this
+                                ) else null
 
-                        borderPainter.paintBorder(
-                            this,
-                            Size(width, height + 1),
-                            borderOutline,
-                            innerBorderOutline,
-                            drawingCache.colorScheme,
-                            actionAlpha
-                        )
+                            borderPainter.paintBorder(
+                                this,
+                                Size(width, height + 1),
+                                borderOutline,
+                                innerBorderOutline,
+                                drawingCache.colorScheme,
+                                actionAlpha
+                            )
+                        }
                     }
                 }
             }
