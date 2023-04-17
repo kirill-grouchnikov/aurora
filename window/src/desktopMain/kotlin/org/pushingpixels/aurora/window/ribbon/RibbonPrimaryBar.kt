@@ -15,12 +15,14 @@
  */
 package org.pushingpixels.aurora.window.ribbon
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.SubcomposeLayout
@@ -36,7 +38,6 @@ import org.pushingpixels.aurora.component.model.BaseCommandButtonPresentationMod
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
-import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.Ribbon
 import org.pushingpixels.aurora.component.ribbon.RibbonContextualTaskGroup
 import org.pushingpixels.aurora.theming.*
@@ -274,22 +275,49 @@ internal fun RibbonPrimaryBar(
         onContextualTaskGroupSpansUpdated(layoutInfoList)
     }
 
+    val decorationAreaType = AuroraSkin.decorationAreaType
+    val skinColors = AuroraSkin.colors
+
     val taskButtonRowScrollState: ScrollState = rememberScrollState(0)
     AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
         SubcomposeLayout(
             modifier = Modifier.auroraBackground()
                 .fillMaxWidth()
-                .padding(TaskbarPrimaryBarContentPadding)
+                .padding(PaddingValues(top = TaskbarPrimaryBarContentPadding.calculateTopPadding()))
                 .height((finalHeight / density.density).dp)
         ) { constraints ->
             val widthAvailable = constraints.maxWidth
             val heightAvailable = constraints.maxHeight
-            everythingFits = (fullWidthNeeded <= widthAvailable)
+            val startContentPadding = TaskbarPrimaryBarContentPadding.calculateStartPadding(layoutDirection).toPx().toInt()
+            val endContentPadding = TaskbarPrimaryBarContentPadding.calculateEndPadding(layoutDirection).toPx().toInt()
+
+            everythingFits = (fullWidthNeeded <= (widthAvailable - startContentPadding - endContentPadding))
+
+            val backgroundCanvasPlaceable = subcompose(0) {
+                Canvas(modifier = Modifier.fillMaxWidth().height((finalHeight / density.density).dp)) {
+                    val scheme = skinColors.getColorScheme(
+                        decorationAreaType = decorationAreaType,
+                        associationKind = ColorSchemeAssociationKind.Separator,
+                        componentState = ComponentState.Enabled
+                    )
+                    val color = scheme.separatorPrimaryColor
+                    drawLine(
+                        color = color,
+                        start = Offset(0.0f, size.height - 0.5f),
+                        end = Offset(size.width, size.height - 0.5f)
+                    )
+                }
+            }.first().measure(
+                Constraints.fixed(
+                    widthAvailable,
+                    maxTaskButtonHeight
+                )
+            )
 
             // Application menu command button (optional)
             val applicationMenuCommandButtonPlaceable =
                 if (applicationMenuButtonPreferredSize != null) {
-                    subcompose(0) {
+                    subcompose(1) {
                         ribbon.applicationMenuCommandButtonProjection?.project()
                     }.first().measure(
                         Constraints.fixed(
@@ -302,7 +330,7 @@ internal fun RibbonPrimaryBar(
                 }
 
             // Anchored commands
-            val anchoredCommandsPlaceable = subcompose(1) {
+            val anchoredCommandsPlaceable = subcompose(2) {
                 Row(horizontalArrangement = Arrangement.spacedBy(TaskbarPrimaryBarAnchoredCommandsGap)) {
                     for (anchored in ribbon.anchoredCommands) {
                         anchored.reproject(modifier = Modifier,
@@ -322,7 +350,7 @@ internal fun RibbonPrimaryBar(
             val widthAvailableForTaskButtons = if (everythingFits) {
                 combinedTaskButtonsWidth
             } else {
-                var widthLeft = widthAvailable
+                var widthLeft = widthAvailable - startContentPadding - endContentPadding
                 if (applicationMenuButtonPreferredSize != null) {
                     widthLeft -= (applicationMenuButtonPreferredSize.width.toInt() + layoutGap)
                 }
@@ -332,7 +360,7 @@ internal fun RibbonPrimaryBar(
                 widthLeft
             }
 
-            val taskButtonsPlaceable = subcompose(2) {
+            val taskButtonsPlaceable = subcompose(3) {
                 AuroraHorizontallyScrollableBox(
                     modifier = Modifier.width(width = (widthAvailableForTaskButtons / density.density).dp),
                     height = (finalHeight / density.density).dp,
@@ -379,22 +407,25 @@ internal fun RibbonPrimaryBar(
             )
 
             layout(widthAvailable, heightAvailable) {
-                applicationMenuCommandButtonPlaceable?.placeRelative(
+                backgroundCanvasPlaceable.placeRelative(
                     x = 0,
+                    y = heightAvailable - taskButtonsPlaceable.measuredHeight
+                )
+                applicationMenuCommandButtonPlaceable?.placeRelative(
+                    x = startContentPadding,
                     y = heightAvailable - applicationMenuCommandButtonPlaceable.measuredHeight
                 )
-
                 val xForTaskButtons = if (applicationMenuCommandButtonPlaceable != null) {
                     applicationMenuCommandButtonPlaceable.measuredWidth + layoutGap
                 } else {
-                    0
+                    startContentPadding
                 }
                 taskButtonsPlaceable.placeRelative(
                     x = xForTaskButtons,
                     y = heightAvailable - taskButtonsPlaceable.measuredHeight
                 )
 
-                val xForAnchoredCommands = widthAvailable - anchoredCommandsPlaceable.measuredWidth
+                val xForAnchoredCommands = widthAvailable - endContentPadding - anchoredCommandsPlaceable.measuredWidth
                 anchoredCommandsPlaceable.placeRelative(
                     x = xForAnchoredCommands,
                     y = heightAvailable - anchoredCommandsPlaceable.measuredHeight
