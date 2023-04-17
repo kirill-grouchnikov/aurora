@@ -75,7 +75,7 @@ private fun spanInfoMatches(
         return false
     }
     for (contextualTaskGroup in ribbon.contextualTaskGroups) {
-        if (contextualTaskGroupSpans.find { it.ribbonContextualTaskGroup == contextualTaskGroup} == null) {
+        if (contextualTaskGroupSpans.find { it.ribbonContextualTaskGroup == contextualTaskGroup } == null) {
             return false
         }
     }

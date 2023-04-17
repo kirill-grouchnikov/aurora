@@ -149,8 +149,10 @@ internal fun RibbonPrimaryBar(
     }
 
     val taskButtonLayoutGap = (TaskbarPrimaryBarTaskButtonsGap.value * density.density).toInt()
-    var currTaskButtonX =
+    val startContentPadding =
         (TaskbarPrimaryBarContentPadding.calculateStartPadding(layoutDirection).value * density.density).toInt()
+    var currTaskButtonX = startContentPadding
+
     if (applicationMenuButtonPreferredSize != null) {
         currTaskButtonX += (applicationMenuButtonPreferredSize.width.toInt()) + layoutGap
     }
@@ -266,12 +268,14 @@ internal fun RibbonPrimaryBar(
         // in the title pane of the window, so we treat this case as no-highlights
         onContextualTaskGroupSpansUpdated(emptyList())
     } else {
-        val layoutInfoList: List<RibbonContextualTaskGroupLayoutInfo> =
-            combinedContextualGroupSpanMap.map {
-                RibbonContextualTaskGroupLayoutInfo(
-                    it.key, it.value.first, it.value.second
-                )
-            }
+        // Need to convert the map of combined spans to a flat list, ordered by the order of
+        // contextual task groups in the ribbon
+        val layoutInfoList: MutableList<RibbonContextualTaskGroupLayoutInfo> = arrayListOf()
+        for (contextualTaskGroup in ribbon.contextualTaskGroups) {
+            val combinedSpan = combinedContextualGroupSpanMap[contextualTaskGroup]!!
+            layoutInfoList.add(RibbonContextualTaskGroupLayoutInfo(contextualTaskGroup,
+                combinedSpan.first - startContentPadding, combinedSpan.second - startContentPadding))
+        }
         onContextualTaskGroupSpansUpdated(layoutInfoList)
     }
 
