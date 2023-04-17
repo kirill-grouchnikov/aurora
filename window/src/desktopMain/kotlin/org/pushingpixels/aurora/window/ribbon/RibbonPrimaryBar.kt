@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.window.ribbon
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -24,7 +25,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
@@ -33,6 +36,7 @@ import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.AuroraHorizontallyScrollableBox
 import org.pushingpixels.aurora.component.model.BaseCommandButtonPresentationModel
 import org.pushingpixels.aurora.component.model.Command
@@ -248,6 +252,7 @@ internal fun RibbonPrimaryBar(
     if (applicationMenuButtonPreferredSize != null) {
         finalHeight = max(finalHeight, applicationMenuButtonPreferredSize.height.toInt())
     }
+    finalHeight += (TaskbarPrimaryBarContentPadding.calculateTopPadding().value * density.density).toInt()
 
     var fullWidthNeeded = 0
     if (applicationMenuButtonPreferredSize != null) {
@@ -273,8 +278,12 @@ internal fun RibbonPrimaryBar(
         val layoutInfoList: MutableList<RibbonContextualTaskGroupLayoutInfo> = arrayListOf()
         for (contextualTaskGroup in ribbon.contextualTaskGroups) {
             val combinedSpan = combinedContextualGroupSpanMap[contextualTaskGroup]!!
-            layoutInfoList.add(RibbonContextualTaskGroupLayoutInfo(contextualTaskGroup,
-                combinedSpan.first - startContentPadding, combinedSpan.second - startContentPadding))
+            layoutInfoList.add(
+                RibbonContextualTaskGroupLayoutInfo(
+                    contextualTaskGroup,
+                    combinedSpan.first, combinedSpan.second
+                )
+            )
         }
         onContextualTaskGroupSpansUpdated(layoutInfoList)
     }
@@ -284,156 +293,175 @@ internal fun RibbonPrimaryBar(
 
     val taskButtonRowScrollState: ScrollState = rememberScrollState(0)
     AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
-        SubcomposeLayout(
-            modifier = Modifier.auroraBackground()
+        Box(
+            Modifier.auroraBackground()
                 .fillMaxWidth()
-                .padding(PaddingValues(top = TaskbarPrimaryBarContentPadding.calculateTopPadding()))
                 .height((finalHeight / density.density).dp)
-        ) { constraints ->
-            val widthAvailable = constraints.maxWidth
-            val heightAvailable = constraints.maxHeight
-            val startContentPadding = TaskbarPrimaryBarContentPadding.calculateStartPadding(layoutDirection).toPx().toInt()
-            val endContentPadding = TaskbarPrimaryBarContentPadding.calculateEndPadding(layoutDirection).toPx().toInt()
+        ) {
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val scheme = skinColors.getColorScheme(
+                    decorationAreaType = decorationAreaType,
+                    associationKind = ColorSchemeAssociationKind.Separator,
+                    componentState = ComponentState.Enabled
+                )
+                // Horizontal separator line across the entire bottom edge
+                drawLine(
+                    color = scheme.separatorPrimaryColor,
+                    start = Offset(0.0f, size.height - 0.5f),
+                    end = Offset(size.width, size.height - 0.5f)
+                )
 
-            everythingFits = (fullWidthNeeded <= (widthAvailable - startContentPadding - endContentPadding))
+                // Vertical separators along the left and right edges of each contextual task group
+                val separatorBrush = Brush.verticalGradient(
+                    0.0f to scheme.separatorPrimaryColor,
+                    0.4f to scheme.separatorPrimaryColor,
+                    0.75f to scheme.separatorPrimaryColor.withAlpha(0.0f),
+                    1.0f to scheme.separatorPrimaryColor.withAlpha(0.0f),
+                    startY = 0.0f,
+                    endY = size.height,
+                    tileMode = TileMode.Repeated
+                )
 
-            val backgroundCanvasPlaceable = subcompose(0) {
-                Canvas(modifier = Modifier.fillMaxWidth().height((finalHeight / density.density).dp)) {
-                    val scheme = skinColors.getColorScheme(
-                        decorationAreaType = decorationAreaType,
-                        associationKind = ColorSchemeAssociationKind.Separator,
-                        componentState = ComponentState.Enabled
-                    )
-                    val color = scheme.separatorPrimaryColor
+                for (contextualTaskGroup in ribbon.contextualTaskGroups) {
+                    val combinedSpan = combinedContextualGroupSpanMap[contextualTaskGroup]!!
+                    val startX = combinedSpan.first.toFloat() + 0.5f
+                    val endX = combinedSpan.second.toFloat() - 0.5f
                     drawLine(
-                        color = color,
-                        start = Offset(0.0f, size.height - 0.5f),
-                        end = Offset(size.width, size.height - 0.5f)
+                        brush = separatorBrush,
+                        start = Offset(startX, 0.0f),
+                        end = Offset(startX, size.height),
+                        strokeWidth = 1.0f
+                    )
+                    drawLine(
+                        brush = separatorBrush,
+                        start = Offset(endX, 0.0f),
+                        end = Offset(endX, size.height),
+                        strokeWidth = 1.0f
                     )
                 }
-            }.first().measure(
-                Constraints.fixed(
-                    widthAvailable,
-                    maxTaskButtonHeight
-                )
-            )
-
-            // Application menu command button (optional)
-            val applicationMenuCommandButtonPlaceable =
-                if (applicationMenuButtonPreferredSize != null) {
-                    subcompose(1) {
-                        ribbon.applicationMenuCommandButtonProjection?.project()
-                    }.first().measure(
-                        Constraints.fixed(
-                            applicationMenuButtonPreferredSize.width.toInt(),
-                            applicationMenuButtonPreferredSize.height.toInt()
-                        )
-                    )
-                } else {
-                    null
-                }
-
-            // Anchored commands
-            val anchoredCommandsPlaceable = subcompose(2) {
-                Row(horizontalArrangement = Arrangement.spacedBy(TaskbarPrimaryBarAnchoredCommandsGap)) {
-                    for (anchored in ribbon.anchoredCommands) {
-                        anchored.reproject(modifier = Modifier,
-                            primaryOverlay = if (everythingFits) anchoredCommandsOverlayOriginal else anchoredCommandsOverlaySmall,
-                            actionInteractionSource = remember { MutableInteractionSource() },
-                            popupInteractionSource = remember { MutableInteractionSource() })
-                    }
-                }
-            }.first().measure(
-                Constraints.fixed(
-                    if (everythingFits) combinedAnchoredCommandsOriginalWidth else combinedAnchoredCommandsSmallWidth,
-                    maxAnchoredCommandHeight
-                )
-            )
-
-            // Task toggle buttons
-            val widthAvailableForTaskButtons = if (everythingFits) {
-                combinedTaskButtonsWidth
-            } else {
-                var widthLeft = widthAvailable - startContentPadding - endContentPadding
-                if (applicationMenuButtonPreferredSize != null) {
-                    widthLeft -= (applicationMenuButtonPreferredSize.width.toInt() + layoutGap)
-                }
-                if (combinedAnchoredCommandsSmallWidth > 0) {
-                    widthLeft -= (combinedAnchoredCommandsSmallWidth + layoutGap)
-                }
-                widthLeft
             }
 
-            val taskButtonsPlaceable = subcompose(3) {
-                AuroraHorizontallyScrollableBox(
-                    modifier = Modifier.width(width = (widthAvailableForTaskButtons / density.density).dp),
-                    height = (finalHeight / density.density).dp,
-                    contentWidth = { combinedTaskButtonsWidth },
-                    horizontalScrollState = taskButtonRowScrollState,
-                    scrollAmount = 12.dp,
-                    content = {
-                        for ((index, ribbonTaskCommandPair) in ribbonTaskCommands.withIndex()) {
-                            if (index > 0) {
-                                Spacer(modifier = Modifier.width(TaskbarPrimaryBarTaskButtonsGap))
-                            }
-                            AuroraDecorationArea(decorationAreaType = DecorationAreaType.ControlPane) {
-                                val presentationForCurrent = if (ribbonTaskCommandPair.second == null)
-                                    taskButtonPresentationModel else
-                                    taskButtonPresentationModel.overlayWith(
-                                        BaseCommandButtonPresentationModel.Overlay(
-                                            colorSchemeBundle = generateColorSchemeBundle(
-                                                active = AuroraSkin.colors.getActiveColorScheme(
-                                                    DecorationAreaType.ControlPane
-                                                ),
-                                                enabled = AuroraSkin.colors.getEnabledColorScheme(
-                                                    DecorationAreaType.ControlPane
-                                                ),
-                                                hueColor = ribbonTaskCommandPair.second!!.hueColor,
-                                                hueAmount = 0.25f
-                                            )
-                                        )
-                                    )
+            SubcomposeLayout(
+                modifier = Modifier.fillMaxSize().padding(TaskbarPrimaryBarContentPadding)
+            ) { constraints ->
+                val widthAvailable = constraints.maxWidth
+                val heightAvailable = constraints.maxHeight
 
-                                RibbonTaskToggleButton(
-                                    modifier = Modifier,
-                                    command = ribbonTaskCommandPair.first,
-                                    presentationModel = presentationForCurrent
-                                )
-                            }
+                everythingFits = (fullWidthNeeded <= widthAvailable)
+
+                // Application menu command button (optional)
+                val applicationMenuCommandButtonPlaceable =
+                    if (applicationMenuButtonPreferredSize != null) {
+                        subcompose(1) {
+                            ribbon.applicationMenuCommandButtonProjection?.project()
+                        }.first().measure(
+                            Constraints.fixed(
+                                applicationMenuButtonPreferredSize.width.toInt(),
+                                applicationMenuButtonPreferredSize.height.toInt()
+                            )
+                        )
+                    } else {
+                        null
+                    }
+
+                // Anchored commands
+                val anchoredCommandsPlaceable = subcompose(2) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(TaskbarPrimaryBarAnchoredCommandsGap)) {
+                        for (anchored in ribbon.anchoredCommands) {
+                            anchored.reproject(modifier = Modifier,
+                                primaryOverlay = if (everythingFits) anchoredCommandsOverlayOriginal else anchoredCommandsOverlaySmall,
+                                actionInteractionSource = remember { MutableInteractionSource() },
+                                popupInteractionSource = remember { MutableInteractionSource() })
                         }
                     }
+                }.first().measure(
+                    Constraints.fixed(
+                        if (everythingFits) combinedAnchoredCommandsOriginalWidth else combinedAnchoredCommandsSmallWidth,
+                        maxAnchoredCommandHeight
+                    )
                 )
-            }.first().measure(
-                Constraints.fixed(
-                    widthAvailableForTaskButtons,
-                    maxTaskButtonHeight
-                )
-            )
 
-            layout(widthAvailable, heightAvailable) {
-                backgroundCanvasPlaceable.placeRelative(
-                    x = 0,
-                    y = heightAvailable - taskButtonsPlaceable.measuredHeight
-                )
-                applicationMenuCommandButtonPlaceable?.placeRelative(
-                    x = startContentPadding,
-                    y = heightAvailable - applicationMenuCommandButtonPlaceable.measuredHeight
-                )
-                val xForTaskButtons = if (applicationMenuCommandButtonPlaceable != null) {
-                    applicationMenuCommandButtonPlaceable.measuredWidth + layoutGap
+                // Task toggle buttons
+                val widthAvailableForTaskButtons = if (everythingFits) {
+                    combinedTaskButtonsWidth
                 } else {
-                    startContentPadding
+                    var widthLeft = widthAvailable
+                    if (applicationMenuButtonPreferredSize != null) {
+                        widthLeft -= (applicationMenuButtonPreferredSize.width.toInt() + layoutGap)
+                    }
+                    if (combinedAnchoredCommandsSmallWidth > 0) {
+                        widthLeft -= (combinedAnchoredCommandsSmallWidth + layoutGap)
+                    }
+                    widthLeft
                 }
-                taskButtonsPlaceable.placeRelative(
-                    x = xForTaskButtons,
-                    y = heightAvailable - taskButtonsPlaceable.measuredHeight
+
+                val taskButtonsPlaceable = subcompose(3) {
+                    AuroraHorizontallyScrollableBox(
+                        modifier = Modifier.width(width = (widthAvailableForTaskButtons / density.density).dp),
+                        height = (maxTaskButtonHeight / density.density).dp,
+                        contentWidth = { combinedTaskButtonsWidth },
+                        horizontalScrollState = taskButtonRowScrollState,
+                        scrollAmount = 12.dp,
+                        content = {
+                            for ((index, ribbonTaskCommandPair) in ribbonTaskCommands.withIndex()) {
+                                if (index > 0) {
+                                    Spacer(modifier = Modifier.width(TaskbarPrimaryBarTaskButtonsGap))
+                                }
+                                AuroraDecorationArea(decorationAreaType = DecorationAreaType.ControlPane) {
+                                    val presentationForCurrent = if (ribbonTaskCommandPair.second == null)
+                                        taskButtonPresentationModel else
+                                        taskButtonPresentationModel.overlayWith(
+                                            BaseCommandButtonPresentationModel.Overlay(
+                                                colorSchemeBundle = generateColorSchemeBundle(
+                                                    active = AuroraSkin.colors.getActiveColorScheme(
+                                                        DecorationAreaType.ControlPane
+                                                    ),
+                                                    enabled = AuroraSkin.colors.getEnabledColorScheme(
+                                                        DecorationAreaType.ControlPane
+                                                    ),
+                                                    hueColor = ribbonTaskCommandPair.second!!.hueColor,
+                                                    hueAmount = 0.25f
+                                                )
+                                            )
+                                        )
+
+                                    RibbonTaskToggleButton(
+                                        modifier = Modifier,
+                                        command = ribbonTaskCommandPair.first,
+                                        presentationModel = presentationForCurrent
+                                    )
+                                }
+                            }
+                        }
+                    )
+                }.first().measure(
+                    Constraints.fixed(
+                        widthAvailableForTaskButtons,
+                        maxTaskButtonHeight
+                    )
                 )
 
-                val xForAnchoredCommands = widthAvailable - endContentPadding - anchoredCommandsPlaceable.measuredWidth
-                anchoredCommandsPlaceable.placeRelative(
-                    x = xForAnchoredCommands,
-                    y = heightAvailable - anchoredCommandsPlaceable.measuredHeight
-                )
+                layout(widthAvailable, heightAvailable) {
+                    applicationMenuCommandButtonPlaceable?.placeRelative(
+                        x = startContentPadding,
+                        y = heightAvailable - applicationMenuCommandButtonPlaceable.measuredHeight
+                    )
+                    val xForTaskButtons = if (applicationMenuCommandButtonPlaceable != null) {
+                        applicationMenuCommandButtonPlaceable.measuredWidth + layoutGap
+                    } else {
+                        startContentPadding
+                    }
+                    taskButtonsPlaceable.placeRelative(
+                        x = xForTaskButtons,
+                        y = heightAvailable - taskButtonsPlaceable.measuredHeight
+                    )
+
+                    val xForAnchoredCommands = widthAvailable - anchoredCommandsPlaceable.measuredWidth
+                    anchoredCommandsPlaceable.placeRelative(
+                        x = xForAnchoredCommands,
+                        y = heightAvailable - anchoredCommandsPlaceable.measuredHeight
+                    )
+                }
             }
         }
     }
@@ -487,6 +515,7 @@ private fun generateColorSchemeBundle(
     result.registerColorScheme(tweakedActive.shade(0.5f), associationKind = ColorSchemeAssociationKind.Border)
     return result
 }
+
 
 private val TaskbarPrimaryBarGap = 8.dp
 private val TaskbarPrimaryBarTaskButtonsGap = 6.dp

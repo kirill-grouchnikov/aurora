@@ -24,8 +24,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Measurable
@@ -97,6 +99,12 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneTextAndIcon(
     val skinColors = AuroraSkin.colors
     val showsIcon = (icon != null)
 
+    val contextualTaskGroupSeparatorScheme = AuroraSkin.colors.getColorScheme(
+        decorationAreaType = AuroraSkin.decorationAreaType,
+        associationKind = ColorSchemeAssociationKind.Separator,
+        componentState = ComponentState.Enabled
+    )
+
     // Layout info for the contextual task groups is one frame behind, so we need to test
     // for matching span info
     val spanInfoMatches = spanInfoMatches(ribbon, contextualTaskGroupSpans)
@@ -137,24 +145,60 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneTextAndIcon(
                                 contentPadding = TaskbarContextualTaskGroupTitlePadding
                             )
                         ).project(modifier = Modifier.fillMaxSize())
+
                         Canvas(modifier = Modifier.fillMaxSize()) {
-                            val hueColor = contextualTaskGroupSpan.ribbonContextualTaskGroup.hueColor
-                            drawRect(
-                                brush = Brush.verticalGradient(
-                                    0.0f to hueColor.withAlpha(0.0f),
-                                    1.0f to hueColor.withAlpha(0.25f),
+                            withTransform({
+                                clipRect(
+                                    left = 0.0f,
+                                    top = 0.0f,
+                                    right = size.width,
+                                    bottom = size.height + 1,
+                                    clipOp = ClipOp.Intersect
+                                )
+                            }) {
+                                val hueColor = contextualTaskGroupSpan.ribbonContextualTaskGroup.hueColor
+
+                                // Translucent vertical gradient fill
+                                drawRect(
+                                    brush = Brush.verticalGradient(
+                                        0.0f to hueColor.withAlpha(0.0f),
+                                        1.0f to hueColor.withAlpha(0.25f),
+                                        startY = 0.0f,
+                                        endY = size.height,
+                                        tileMode = TileMode.Repeated
+                                    )
+                                )
+
+                                // Full opacity horizontal line along the bottom edge
+                                drawLine(
+                                    color = hueColor,
+                                    start = Offset(0.0f, size.height - 0.5f),
+                                    end = Offset(size.width, size.height - 0.5f),
+                                    strokeWidth = 1.5f * density
+                                )
+
+                                // Vertical separators along the left and right edges
+                                val separatorBrush = Brush.verticalGradient(
+                                    0.0f to contextualTaskGroupSeparatorScheme.separatorPrimaryColor.withAlpha(0.0f),
+                                    size.height / 3.0f to contextualTaskGroupSeparatorScheme.separatorPrimaryColor,
+                                    1.0f to contextualTaskGroupSeparatorScheme.separatorPrimaryColor,
                                     startY = 0.0f,
-                                    endY = size.height,
+                                    endY = size.height + 1,
                                     tileMode = TileMode.Repeated
                                 )
-                            )
-
-                            drawLine(
-                                color = hueColor,
-                                start = Offset(0.0f, size.height - 0.5f),
-                                end = Offset(size.width, size.height - 0.5f),
-                                strokeWidth = 1.5f * density
-                            )
+                                drawLine(
+                                    brush = separatorBrush,
+                                    start = Offset(0.5f, 0.0f),
+                                    end = Offset(0.5f, size.height + 1),
+                                    strokeWidth = 1.0f
+                                )
+                                drawLine(
+                                    brush = separatorBrush,
+                                    start = Offset(size.width - 0.5f, 0.0f),
+                                    end = Offset(size.width - 0.5f, size.height + 1),
+                                    strokeWidth = 1.0f
+                                )
+                            }
                         }
                     }
                 }
