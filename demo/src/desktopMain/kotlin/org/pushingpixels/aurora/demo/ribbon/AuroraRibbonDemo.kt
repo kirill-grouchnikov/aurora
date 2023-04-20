@@ -18,25 +18,25 @@ package org.pushingpixels.aurora.demo.ribbon
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.ResourceLoader
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import org.jetbrains.skia.Color4f
-import org.jetbrains.skia.Font
-import org.jetbrains.skia.TextLine
-import org.jetbrains.skia.Typeface
+import org.jetbrains.skia.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.component.ribbon.*
@@ -131,7 +131,7 @@ fun main() = auroraApplication {
     )
     val findBand = builder.getFindBand()
 
-    val pageLayoutTask = remember {
+    val pageLayoutTask = remember(resourceBundle.locale) {
         RibbonTask(
             title = resourceBundle.getString("PageLayout.textTaskTitle"),
             bands = listOf(clipboardBand, quickStylesBand, fontBand, documentBand, findBand),
@@ -157,7 +157,7 @@ fun main() = auroraApplication {
         }
     )
 
-    val writeTask = remember {
+    val writeTask = remember(resourceBundle.locale) {
         RibbonTask(
             title = resourceBundle.getString("Write.textTaskTitle"),
             bands = listOf(actionBand, preferencesBand, applicationsBand),
@@ -166,7 +166,7 @@ fun main() = auroraApplication {
         )
     }
 
-    val contextualTaskGroup1 = remember {
+    val contextualTaskGroup1 = remember(resourceBundle.locale) {
         RibbonContextualTaskGroup(
             title = resourceBundle.getString("Group1.textTaskGroupTitle"),
             hueColor = Color.Red,
@@ -214,7 +214,7 @@ fun main() = auroraApplication {
             )
         )
     }
-    val contextualTaskGroup2 = remember {
+    val contextualTaskGroup2 = remember(resourceBundle.locale) {
         RibbonContextualTaskGroup(
             title = resourceBundle.getString("Group2.textTaskGroupTitle"),
             hueColor = Color.Green,
@@ -290,7 +290,7 @@ fun main() = auroraApplication {
             )
         )
 
-    var selectedTask by remember { mutableStateOf(pageLayoutTask) }
+    var selectedTask by remember(resourceBundle.locale) { mutableStateOf(pageLayoutTask) }
     var contextualTaskGroup1Visible by remember { mutableStateOf(false) }
     var contextualTaskGroup2Visible by remember { mutableStateOf(false) }
 
@@ -302,6 +302,10 @@ fun main() = auroraApplication {
         contextualTaskGroups.add(contextualTaskGroup2)
     }
 
+    val applicationMenuCommandButtonProjection = remember(resourceBundle.locale) {
+        builder.getApplicationMenuCommandButtonProjection()
+    }
+
     val ribbon = Ribbon(
         tasks = listOf(pageLayoutTask, writeTask),
         selectedTask = selectedTask,
@@ -310,7 +314,7 @@ fun main() = auroraApplication {
         taskbarElements = taskbarElements,
         taskbarKeyTipPolicy = DefaultRibbonTaskbarKeyTipPolicy(),
         anchoredCommands = builder.getAnchoredCommands(),
-        applicationMenuCommandButtonProjection = builder.getApplicationMenuCommandButtonProjection()
+        applicationMenuCommandButtonProjection = applicationMenuCommandButtonProjection
     )
 
     AuroraRibbonWindow(
@@ -347,6 +351,7 @@ fun main() = auroraApplication {
                         )
                     ).project()
                     AuroraSkinSwitcher({ skin = it })
+                    AuroraLocaleSwitcher(resourceBundle)
                 }
             }
         }
@@ -365,24 +370,24 @@ internal class RibbonBuilder(
         action = { println("Test menu item 1 activated") }
     )
     val popupCommand2 = Command(
-        text = mf.format(arrayOf("1")),
-        icon = ColorSolidIcon(Color(red = 0x80, green = 0xDE, blue = 0xEA)),
-        action = { println("Test menu item 1 activated") }
+        text = mf.format(arrayOf("2")),
+        icon = ColorSolidIcon(Color(red = 0x80, green = 0xCB, blue = 0xC4)),
+        action = { println("Test menu item 2 activated") }
     )
     val popupCommand3 = Command(
-        text = mf.format(arrayOf("1")),
-        icon = ColorSolidIcon(Color(red = 0x80, green = 0xDE, blue = 0xEA)),
-        action = { println("Test menu item 1 activated") }
+        text = mf.format(arrayOf("3")),
+        icon = ColorSolidIcon(Color(red = 0xA5, green = 0xD6, blue = 0xA7)),
+        action = { println("Test menu item 3 activated") }
     )
     val popupCommand4 = Command(
-        text = mf.format(arrayOf("1")),
-        icon = ColorSolidIcon(Color(red = 0x80, green = 0xDE, blue = 0xEA)),
-        action = { println("Test menu item 1 activated") }
+        text = mf.format(arrayOf("4")),
+        icon = ColorSolidIcon(Color(red = 0xC5, green = 0xE1, blue = 0xA5)),
+        action = { println("Test menu item 4 activated") }
     )
     val popupCommand5 = Command(
-        text = mf.format(arrayOf("1")),
-        icon = ColorSolidIcon(Color(red = 0x80, green = 0xDE, blue = 0xEA)),
-        action = { println("Test menu item 1 activated") }
+        text = mf.format(arrayOf("5")),
+        icon = ColorSolidIcon(Color(red = 0xE6, green = 0xEE, blue = 0x9C)),
+        action = { println("Test menu item 5 activated") }
     )
 
     val cutCommand = Command(
@@ -1491,17 +1496,10 @@ internal class RibbonBuilder(
         )
     }
 
-    @Composable
+    @OptIn(ExperimentalComposeUiApi::class)
     fun getApplicationMenuCommandButtonProjection(): RibbonApplicationMenuCommandButtonProjection {
         val overlays = hashMapOf<Command, BaseCommandButtonPresentationModel.Overlay>()
         val secondaryStates = hashMapOf<Command, CommandButtonPresentationState>()
-
-        val mf = MessageFormat(resourceBundle.getString("TestMenuItem.text"))
-        val popupCommand1 = Command(
-            text = mf.format(arrayOf("1")),
-            icon = ColorSolidIcon(Color(red = 0x80, green = 0xDE, blue = 0xEA)),
-            action = { println("Test menu item 1 activated") }
-        )
 
         // "Create new" primary
         val defaultCommands: MutableList<Command> = mutableListOf()
@@ -1669,7 +1667,12 @@ internal class RibbonBuilder(
 
         overlays[amFooterProps] = BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "T")
 
-        val tooltipImage = painterResource("/org/pushingpixels/aurora/demo/appmenubutton-tooltip-main.png")
+        val tooltipStream = ResourceLoader.Default.load(
+            "/org/pushingpixels/aurora/demo/appmenubutton-tooltip-main.png"
+        )
+        val tooltipBitmap = Image.makeFromEncoded(tooltipStream.readAllBytes()).toComposeImageBitmap()
+        val tooltipImage = BitmapPainter(tooltipBitmap)
+
         val tooltipImageRatio =
             tooltipImage.intrinsicSize.width / tooltipImage.intrinsicSize.height
         val tooltipImageScaledSize = DpSize(160.dp, 160.dp / tooltipImageRatio)
@@ -1680,7 +1683,7 @@ internal class RibbonBuilder(
                 secondaryRichTooltip = RichTooltip(
                     title = resourceBundle.getString("AppMenu.tooltip.title"),
                     descriptionSections = listOf(resourceBundle.getString("AppMenu.tooltip.paragraph1")),
-                    mainIcon = null,
+                    mainIcon = tooltipImage,
                     footerIcon = help_browser(),
                     footerSections = listOf(resourceBundle.getString("AppMenu.tooltip.footer1"))
                 ),

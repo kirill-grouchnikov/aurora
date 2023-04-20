@@ -291,10 +291,10 @@ internal open class CommandButtonLayoutManagerMedium(
 
             // Account for content overflowing the available horizontal space (constrained width
             // scenario).
-            if (hasText || hasPopup) {
+            if (hasText || (hasPopup && presentationModel.showPopupIcon)) {
                 val paddingEnd = presentationModel.horizontalGapScaleFactor *
                         paddingValues.endPadding.toPx()
-                if (hasPopup) {
+                if (hasPopup && presentationModel.showPopupIcon) {
                     if (popupActionRect.right > (finalWidth - paddingEnd)) {
                         shiftX = popupActionRect.right - (finalWidth - paddingEnd)
                         // Shift the popup action rectangle to the left
@@ -432,8 +432,7 @@ internal open class CommandButtonLayoutManagerMedium(
             }
         } else {
             var x = finalWidth - presentationModel.horizontalGapScaleFactor *
-                    paddingValues.startPadding
-                        .toPx() - shiftX + layoutHGap
+                    paddingValues.startPadding.toPx() - shiftX + layoutHGap
 
             // icon
             if (hasIcon) {
@@ -449,7 +448,6 @@ internal open class CommandButtonLayoutManagerMedium(
             }
 
             // text
-            val textHeight: Float
             if (hasText) {
                 if (hasIcon) {
                     x = x + layoutHGap - getIconTextGap(presentationModel).toPx()
@@ -461,7 +459,7 @@ internal open class CommandButtonLayoutManagerMedium(
                     text = command.text, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
                     density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
                 )
-                textHeight = paragraph.height
+                val textHeight = paragraph.height
                 val textTop =
                     paddingTop + (finalHeight - textHeight - paddingTop - paddingBottom) / 2.0f
                 val lineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
@@ -505,10 +503,10 @@ internal open class CommandButtonLayoutManagerMedium(
 
             // Account for content overflowing the available horizontal space (constrained width
             // scenario).
-            if (hasText || hasPopup) {
+            if (hasText || (hasPopup && presentationModel.showPopupIcon)) {
                 val paddingEnd = presentationModel.horizontalGapScaleFactor *
                         paddingValues.endPadding.toPx()
-                if (hasPopup) {
+                if (hasPopup && presentationModel.showPopupIcon) {
                     if (popupActionRect.left < paddingEnd) {
                         shiftX = paddingEnd - popupActionRect.left
                         // Shift the popup action rectangle to the right
