@@ -246,9 +246,7 @@ internal class CommandButtonLayoutManagerAppMenuLevel2(
                 // how we should shift the content horizontally.
                 when (presentationModel.horizontalAlignment) {
                     HorizontalAlignment.Leading,
-                    HorizontalAlignment.Fill -> if (!ltr) {
-                        // shift everything to the right
-                        shiftX = finalWidth - preferredSize.width
+                    HorizontalAlignment.Fill -> {
                     }
 
                     HorizontalAlignment.Center ->
@@ -506,8 +504,7 @@ internal class CommandButtonLayoutManagerAppMenuLevel2(
             }
         } else {
             var x = finalWidth - presentationModel.horizontalGapScaleFactor *
-                    paddingValues.startPadding
-                        .toPx() - shiftX + layoutHGap
+                    paddingValues.startPadding.toPx() - shiftX + layoutHGap
 
             // icon
             if (hasIcon) {
@@ -580,7 +577,7 @@ internal class CommandButtonLayoutManagerAppMenuLevel2(
                     val extraLineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
                         text = command.extraText!!,
                         textRect = Rect(
-                            left = x - extraParagraph.maxIntrinsicWidth,
+                            left = x - extraParagraph.width,
                             right = x,
                             top = lineLayoutInfo.textRect.bottom,
                             bottom = lineLayoutInfo.textRect.bottom + extraParagraph.height

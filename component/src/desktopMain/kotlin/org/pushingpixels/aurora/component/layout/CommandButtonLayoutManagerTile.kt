@@ -227,8 +227,7 @@ internal open class CommandButtonLayoutManagerTile(
 
         if (ltr) {
             var x = presentationModel.horizontalGapScaleFactor *
-                    paddingValues.startPadding
-                        .toPx() + shiftX - layoutHGap
+                    paddingValues.startPadding.toPx() + shiftX - layoutHGap
 
             // icon
             if (hasIcon) {
