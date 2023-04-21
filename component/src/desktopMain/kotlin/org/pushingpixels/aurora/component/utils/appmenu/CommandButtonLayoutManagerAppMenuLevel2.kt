@@ -556,7 +556,7 @@ internal class CommandButtonLayoutManagerAppMenuLevel2(
                 val lineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
                     text = command.text,
                     textRect = Rect(
-                        left = x - paragraph.maxIntrinsicWidth,
+                        left = x - paragraph.width,
                         right = x,
                         top = textTop,
                         bottom = textTop + textHeight

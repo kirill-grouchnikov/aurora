@@ -244,15 +244,25 @@ internal open class CommandButtonLayoutManagerTile(
             // text
             val textHeight: Float
             if (hasText) {
-                if (hasIcon) {
-                    x = x - layoutHGap + getIconTextGap(presentationModel).toPx()
+                val textLeft = if (hasIcon) {
+                    x - layoutHGap + getIconTextGap(presentationModel).toPx()
                 } else {
-                    x += layoutHGap
+                    x + layoutHGap
                 }
+                val textRight = if (hasPopup && presentationModel.showPopupIcon) {
+                    finalWidth - presentationModel.horizontalGapScaleFactor *
+                            paddingValues.endPadding.toPx() -
+                            CommandButtonSizingConstants.PopupIconWidth.toPx() - 4
+                } else {
+                    finalWidth - presentationModel.horizontalGapScaleFactor *
+                            paddingValues.endPadding.toPx()
+                }
+
                 val hasExtraText = (buttonExtraText != null)
 
                 val paragraph = Paragraph(
-                    text = command.text, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
+                    text = command.text, style = textStyle,
+                    constraints = Constraints(maxWidth = (textRight - textLeft).toInt()),
                     density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
                 )
 
@@ -260,8 +270,8 @@ internal open class CommandButtonLayoutManagerTile(
                 val lineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
                     text = command.text,
                     textRect = Rect(
-                        left = x,
-                        right = x + paragraph.maxIntrinsicWidth,
+                        left = textLeft,
+                        right = textLeft + paragraph.width,
                         top = (finalHeight - (if (hasExtraText) 2 else 1) * textHeight) / 2.0f,
                         bottom = (finalHeight - (if (hasExtraText) 2 else 1) * textHeight) / 2.0f + textHeight
                     )
@@ -272,7 +282,7 @@ internal open class CommandButtonLayoutManagerTile(
                     val extraParagraph = Paragraph(
                         text = command.extraText!!,
                         style = textStyle,
-                        constraints = Constraints(maxWidth = Int.MAX_VALUE),
+                        constraints = Constraints(maxWidth = (textRight - textLeft).toInt()),
                         density = _density,
                         maxLines = 1,
                         fontFamilyResolver = fontFamilyResolver
@@ -281,8 +291,8 @@ internal open class CommandButtonLayoutManagerTile(
                     val extraLineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
                         text = command.extraText!!,
                         textRect = Rect(
-                            left = x,
-                            right = x + extraParagraph.maxIntrinsicWidth,
+                            left = textLeft,
+                            right = textLeft + extraParagraph.width,
                             top = lineLayoutInfo.textRect.bottom,
                             bottom = lineLayoutInfo.textRect.bottom + textHeight
                         )
@@ -517,6 +527,20 @@ internal open class CommandButtonLayoutManagerTile(
             // text
             val textHeight: Float
             if (hasText) {
+                val textRight = if (hasIcon) {
+                    x + layoutHGap - getIconTextGap(presentationModel).toPx()
+                } else {
+                    x - layoutHGap
+                }
+                val textLeft = if (hasPopup && presentationModel.showPopupIcon) {
+                    presentationModel.horizontalGapScaleFactor *
+                            paddingValues.endPadding.toPx() +
+                            CommandButtonSizingConstants.PopupIconWidth.toPx() + 4
+                } else {
+                    presentationModel.horizontalGapScaleFactor *
+                            paddingValues.endPadding.toPx()
+                }
+
                 if (hasIcon) {
                     x = x + layoutHGap - getIconTextGap(presentationModel).toPx()
                 } else {
@@ -525,7 +549,8 @@ internal open class CommandButtonLayoutManagerTile(
                 val hasExtraText = (buttonExtraText != null)
 
                 val paragraph = Paragraph(
-                    text = command.text, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
+                    text = command.text, style = textStyle,
+                    constraints = Constraints(maxWidth = (textRight - textLeft).toInt()),
                     density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
                 )
 
@@ -533,7 +558,7 @@ internal open class CommandButtonLayoutManagerTile(
                 val lineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
                     text = command.text,
                     textRect = Rect(
-                        left = x - paragraph.maxIntrinsicWidth,
+                        left = x - paragraph.width,
                         right = x,
                         top = (finalHeight - (if (hasExtraText) 2 else 1) * textHeight) / 2.0f,
                         bottom = (finalHeight - (if (hasExtraText) 2 else 1) * textHeight) / 2.0f + textHeight
@@ -545,7 +570,7 @@ internal open class CommandButtonLayoutManagerTile(
                     val extraParagraph = Paragraph(
                         text = command.extraText!!,
                         style = textStyle,
-                        constraints = Constraints(maxWidth = Int.MAX_VALUE),
+                        constraints = Constraints(maxWidth = (textRight - textLeft).toInt()),
                         density = _density,
                         maxLines = 1,
                         fontFamilyResolver = fontFamilyResolver
@@ -554,7 +579,7 @@ internal open class CommandButtonLayoutManagerTile(
                     val extraLineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
                         text = command.extraText!!,
                         textRect = Rect(
-                            left = x - extraParagraph.maxIntrinsicWidth,
+                            left = x - extraParagraph.width,
                             right = x,
                             top = lineLayoutInfo.textRect.bottom,
                             bottom = lineLayoutInfo.textRect.bottom + textHeight

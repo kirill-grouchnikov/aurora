@@ -235,14 +235,23 @@ internal open class CommandButtonLayoutManagerMedium(
 
             // text
             if (hasText) {
-                if (hasIcon) {
-                    x = x - layoutHGap + getIconTextGap(presentationModel).toPx()
+                val textLeft = if (hasIcon) {
+                    x - layoutHGap + getIconTextGap(presentationModel).toPx()
                 } else {
-                    x += layoutHGap
+                    x + layoutHGap
+                }
+                val textRight = if (hasPopup && presentationModel.showPopupIcon) {
+                    finalWidth - presentationModel.horizontalGapScaleFactor *
+                            paddingValues.endPadding.toPx() -
+                            CommandButtonSizingConstants.PopupIconWidth.toPx() - 4
+                } else {
+                    finalWidth - presentationModel.horizontalGapScaleFactor *
+                            paddingValues.endPadding.toPx()
                 }
 
                 val paragraph = Paragraph(
-                    text = command.text, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
+                    text = command.text, style = textStyle,
+                    constraints = Constraints(maxWidth = (textRight - textLeft).toInt()),
                     density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
                 )
 
@@ -252,8 +261,8 @@ internal open class CommandButtonLayoutManagerMedium(
                 val lineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
                     text = command.text,
                     textRect = Rect(
-                        left = x,
-                        right = x + paragraph.maxIntrinsicWidth,
+                        left = textLeft,
+                        right = textLeft + paragraph.width,
                         top = textTop,
                         bottom = textTop + textHeight
                     )
@@ -449,6 +458,20 @@ internal open class CommandButtonLayoutManagerMedium(
 
             // text
             if (hasText) {
+                val textRight = if (hasIcon) {
+                    x + layoutHGap - getIconTextGap(presentationModel).toPx()
+                } else {
+                    x - layoutHGap
+                }
+                val textLeft = if (hasPopup && presentationModel.showPopupIcon) {
+                    presentationModel.horizontalGapScaleFactor *
+                            paddingValues.endPadding.toPx() +
+                            CommandButtonSizingConstants.PopupIconWidth.toPx() + 4
+                } else {
+                    presentationModel.horizontalGapScaleFactor *
+                            paddingValues.endPadding.toPx()
+                }
+
                 if (hasIcon) {
                     x = x + layoutHGap - getIconTextGap(presentationModel).toPx()
                 } else {
@@ -456,7 +479,8 @@ internal open class CommandButtonLayoutManagerMedium(
                 }
 
                 val paragraph = Paragraph(
-                    text = command.text, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
+                    text = command.text, style = textStyle,
+                    Constraints(maxWidth = (textRight - textLeft).toInt()),
                     density = _density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
                 )
                 val textHeight = paragraph.height
@@ -465,7 +489,7 @@ internal open class CommandButtonLayoutManagerMedium(
                 val lineLayoutInfo = CommandButtonLayoutManager.TextLayoutInfo(
                     text = command.text,
                     textRect = Rect(
-                        left = x - paragraph.maxIntrinsicWidth,
+                        left = x - paragraph.width,
                         right = x,
                         top = textTop,
                         bottom = textTop + textHeight
