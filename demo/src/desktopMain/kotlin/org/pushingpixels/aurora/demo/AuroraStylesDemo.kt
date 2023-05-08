@@ -28,7 +28,6 @@ import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
@@ -49,7 +48,6 @@ import org.pushingpixels.aurora.window.auroraApplication
 import java.text.MessageFormat
 import java.util.*
 
-@ExperimentalUnitApi
 fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
@@ -228,7 +226,6 @@ fun getStylesContentModel(
     )
 }
 
-@ExperimentalUnitApi
 @Composable
 fun CommandDemoEditStrip(
     styleData: StyleData,
@@ -355,7 +352,6 @@ fun DemoStyleCanvas(
     }
 }
 
-@ExperimentalUnitApi
 @Composable
 fun AuroraApplicationScope.DemoStyleContent(
     onSkinChange: (AuroraSkinDefinition) -> Unit,

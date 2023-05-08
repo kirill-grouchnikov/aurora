@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
@@ -40,7 +39,6 @@ object VisorDecorations {
     val Threads = DecorationAreaType("Visor Threads")
 }
 
-@ExperimentalUnitApi
 fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,

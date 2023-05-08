@@ -27,7 +27,6 @@ import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
@@ -51,7 +50,6 @@ import java.text.MessageFormat
 import java.util.*
 import kotlin.system.exitProcess
 
-@ExperimentalUnitApi
 fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
@@ -404,7 +402,6 @@ fun DemoFooter(
     }
 }
 
-@ExperimentalUnitApi
 @Composable
 fun DemoHeader(
     text: String,
@@ -444,7 +441,6 @@ fun DemoHeader(
     }
 }
 
-@ExperimentalUnitApi
 @Composable
 fun AuroraApplicationScope.DemoArea(
     modifier: Modifier = Modifier,
@@ -1163,7 +1159,6 @@ fun AuroraApplicationScope.DemoArea(
     }
 }
 
-@ExperimentalUnitApi
 @Composable
 fun AuroraApplicationScope.DemoContent(
     onSkinChange: (AuroraSkinDefinition) -> Unit,

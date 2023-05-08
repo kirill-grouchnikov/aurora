@@ -22,7 +22,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
@@ -63,7 +62,6 @@ fun main() = auroraApplication {
     }
 }
 
-@OptIn(ExperimentalUnitApi::class)
 @Composable
 fun DemoContentAlignmentRow(
     command: Command,

@@ -20,7 +20,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
@@ -44,7 +43,6 @@ import org.pushingpixels.aurora.window.auroraApplication
 import java.text.MessageFormat
 import java.util.*
 
-@ExperimentalUnitApi
 fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
@@ -70,7 +68,6 @@ fun main() = auroraApplication {
 }
 
 
-@ExperimentalUnitApi
 @Composable
 fun AuroraWindowScope.DemoTabsContent(
     onSkinChange: (AuroraSkinDefinition) -> Unit,

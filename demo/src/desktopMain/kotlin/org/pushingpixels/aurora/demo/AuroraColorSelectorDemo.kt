@@ -22,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
@@ -43,7 +42,6 @@ import javax.swing.JColorChooser
 
 private val DefaultColor = Color.DarkGray
 
-@ExperimentalUnitApi
 fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
@@ -73,7 +71,6 @@ data class ColorData(
     val previewColor: Color,
 )
 
-@ExperimentalUnitApi
 @Composable
 fun ColorSelectorButton(
     permanentColor: Color,
@@ -162,7 +159,6 @@ fun ColorSelectorButton(
     ).project()
 }
 
-@ExperimentalUnitApi
 @Composable
 fun AuroraApplicationScope.ColorSelectorDemoContent(
     onSkinChange: (AuroraSkinDefinition) -> Unit,

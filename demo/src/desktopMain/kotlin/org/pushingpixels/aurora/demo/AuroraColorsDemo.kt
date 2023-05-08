@@ -24,7 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
@@ -46,7 +45,6 @@ import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import org.pushingpixels.aurora.window.auroraApplication
 import java.util.*
 
-@ExperimentalUnitApi
 fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
@@ -189,7 +187,6 @@ fun DemoColorsProgress(enabled: Boolean) {
     }
 }
 
-@ExperimentalUnitApi
 @Composable
 fun AuroraApplicationScope.DemoColorsArea(
     modifier: Modifier = Modifier,
@@ -938,7 +935,6 @@ fun AuroraApplicationScope.DemoColorsArea(
     }
 }
 
-@ExperimentalUnitApi
 @Composable
 fun AuroraApplicationScope.DemoColorsContent(
     onSkinChange: (AuroraSkinDefinition) -> Unit,

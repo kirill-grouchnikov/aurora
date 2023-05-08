@@ -28,7 +28,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.withAlpha
@@ -40,7 +39,6 @@ import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.window.AuroraWindowScope
 
-@OptIn(ExperimentalUnitApi::class)
 @Composable
 fun AuroraWindowScope.ThreadPanel(modifier: Modifier) {
     Column(modifier = modifier.fillMaxHeight().auroraBackground()) {
@@ -168,7 +166,6 @@ fun AuroraWindowScope.ThreadPanel(modifier: Modifier) {
     }
 }
 
-@OptIn(ExperimentalUnitApi::class)
 @Composable
 private fun CollapsedMessagePanel(from: String, title: String, timestamp: String) {
     Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 2.dp)) {
@@ -220,8 +217,6 @@ private fun CollapsedMessagePanel(from: String, title: String, timestamp: String
     }
 }
 
-
-@OptIn(ExperimentalUnitApi::class)
 @Composable
 private fun ExpandedMessagePanel(
     from: String, timestamp: String, to: String, message: String,

@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
@@ -45,7 +44,6 @@ import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import org.pushingpixels.aurora.window.auroraApplication
 import java.util.*
 
-@ExperimentalUnitApi
 fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
@@ -107,7 +105,6 @@ fun main() = auroraApplication {
     }
 }
 
-@ExperimentalUnitApi
 @Composable
 fun AuroraWindowScope.DemoProgressArea(
     modifier: Modifier = Modifier,
@@ -236,7 +233,6 @@ fun AuroraWindowScope.DemoProgressArea(
     }
 }
 
-@ExperimentalUnitApi
 @Composable
 fun AuroraWindowScope.DemoProgressContent(
     onSkinChange: (AuroraSkinDefinition) -> Unit,

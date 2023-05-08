@@ -30,7 +30,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.component.AuroraBoxWithHighlights
@@ -48,7 +47,6 @@ import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.window.AuroraWindowScope
 
-@OptIn(ExperimentalUnitApi::class)
 @Composable
 fun AuroraWindowScope.ThreadListPanel(modifier: Modifier) {
     AuroraDecorationArea(decorationAreaType = VisorDecorations.Threads) {
@@ -144,7 +142,6 @@ fun AuroraWindowScope.ThreadListPanel(modifier: Modifier) {
     }
 }
 
-@OptIn(ExperimentalUnitApi::class)
 @Composable
 private fun ThreadListEntry(threadInfo: ThreadInfo) {
     // Resolve the default text style to get the default font size
