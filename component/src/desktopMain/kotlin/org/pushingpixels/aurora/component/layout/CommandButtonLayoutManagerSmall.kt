@@ -149,10 +149,11 @@ internal open class CommandButtonLayoutManagerSmall(
                 // Consult the horizontal alignment attribute of the command button to see
                 // how we should shift the content horizontally.
                 when (presentationModel.horizontalAlignment) {
-                    HorizontalAlignment.Leading -> {}
+                    HorizontalAlignment.Leading,
+                    HorizontalAlignment.Fill -> {
+                    }
 
-                    HorizontalAlignment.Center,
-                    HorizontalAlignment.Fill ->
+                    HorizontalAlignment.Center ->
                         // shift everything to be centered horizontally
                         shiftX = (finalWidth - preferredSize.width) / 2
 
