@@ -324,7 +324,8 @@ object CustomComplexCommandMenuPopupHandler : CascadingCommandMenuHandler<
                             )
                         )
                         val zoomLabelWidth = getLabelPreferredSingleLineWidth(
-                            contentModel = LabelContentModel(text = "${entry.zoom}%"),
+                            contentModel = LabelContentModel(
+                                text = menuPresentationModel.zoomLabelPresentationModel.singleLineDisplayPrototype!!),
                             presentationModel = menuPresentationModel.zoomLabelPresentationModel,
                             resolvedTextStyle = textStyle,
                             layoutDirection = layoutDirection,
