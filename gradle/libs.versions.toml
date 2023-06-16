@@ -1,11 +1,11 @@
 [versions]
 kotlin = "1.8.20"
-coroutines = "1.6.4"
+coroutines = "1.7.1"
 compose = "1.4.0"
 dokka = "1.7.20"
 batik = "1.16"
 
-versionchecker = "0.46.0"
+versionchecker = "0.47.0"
 mavenpublish = "0.25.2"
 
 [libraries]
