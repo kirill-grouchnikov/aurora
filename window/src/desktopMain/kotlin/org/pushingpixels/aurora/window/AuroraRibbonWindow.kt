@@ -57,6 +57,7 @@ import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
+import org.pushingpixels.aurora.window.ribbon.RibbonBands
 import org.pushingpixels.aurora.window.ribbon.RibbonContextualTaskGroupLayoutInfo
 import org.pushingpixels.aurora.window.ribbon.RibbonPrimaryBar
 import java.awt.*
@@ -561,13 +562,21 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
             windowTitlePaneConfiguration
         )
 
-        RibbonPrimaryBar(ribbon = ribbon,
-            onContextualTaskGroupSpansUpdated = {
-                if (!areSpansSame(contextualTaskGroupSpans, it)) {
-                    contextualTaskGroupSpans.clear()
-                    contextualTaskGroupSpans.addAll(it)
-                }
-            })
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
+            Column(Modifier.fillMaxWidth().auroraBackground()) {
+                RibbonPrimaryBar(ribbon = ribbon,
+                    onContextualTaskGroupSpansUpdated = {
+                        if (!areSpansSame(contextualTaskGroupSpans, it)) {
+                            contextualTaskGroupSpans.clear()
+                            contextualTaskGroupSpans.addAll(it)
+                        }
+                    })
+
+                RibbonBands(ribbon = ribbon)
+
+                Spacer(modifier = Modifier.fillMaxWidth().height(1.dp))
+            }
+        }
 
         // Wrap the entire content in NONE decoration area. App code can set its
         // own decoration area types on specific parts.
