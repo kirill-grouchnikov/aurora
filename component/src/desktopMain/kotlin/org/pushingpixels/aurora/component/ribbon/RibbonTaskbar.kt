@@ -49,14 +49,14 @@ class DefaultRibbonTaskbarKeyTipPolicy : RibbonTaskbarKeyTipPolicy {
     override val overflowButtonKeyTip = "00"
 
     override fun getContentKeyTip(contentIndex: Int): String {
-        var contentIndex = contentIndex
-        if (contentIndex < 10) {
-            return contentIndex.toString()
+        var contentIndexForLookup = contentIndex
+        if (contentIndexForLookup < 10) {
+            return contentIndexForLookup.toString()
         }
-        contentIndex -= 10
+        contentIndexForLookup -= 10
 
         // Creates a sequence of 01, 02, 03, ..., 09, 0A, 0B, 0C, ..., 0Z, 11, 12, ...
-        return (contentIndex / LETTERS.length).toString() +
+        return (contentIndexForLookup / LETTERS.length).toString() +
                 LETTERS[contentIndex % LETTERS.length]
     }
 

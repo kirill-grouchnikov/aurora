@@ -100,7 +100,6 @@ internal fun <E> AuroraComboBox(
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
     val painters = AuroraSkin.painters
-    val animationConfig = AuroraSkin.animationConfig
     val buttonShaper = ClassicButtonShaper.Instance
     val popupOriginator = LocalPopupMenu.current ?: LocalWindow.current.rootPane
 

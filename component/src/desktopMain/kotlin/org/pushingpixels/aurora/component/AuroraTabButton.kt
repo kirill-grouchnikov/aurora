@@ -90,7 +90,6 @@ internal fun AuroraTabButton(
     val buttonShaper = ClassicButtonShaper.Instance
     val painters = AuroraSkin.painters
 
-    val buttonSize = remember { mutableStateOf(IntSize(0, 0)) }
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     val mergedTextStyle = LocalTextStyle.current.merge(presentationModel.textStyle)
