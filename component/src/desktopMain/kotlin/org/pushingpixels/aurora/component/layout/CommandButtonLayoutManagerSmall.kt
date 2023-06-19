@@ -91,17 +91,7 @@ internal open class CommandButtonLayoutManagerSmall(
         presentationModel: BaseCommandButtonPresentationModel
     ): CommandButtonLayoutManager.CommandButtonPreLayoutInfo {
         val hasAction = (command.action != null)
-        val hasPopup = (command.secondaryContentModel != null)
-
-        val commandButtonKind = if (hasAction && hasPopup) {
-            if (presentationModel.textClick == TextClick.Action)
-                CommandButtonKind.ActionAndPopupMainAction else
-                CommandButtonKind.ActionAndPopupMainPopup
-        } else if (hasPopup) {
-            CommandButtonKind.PopupOnly
-        } else {
-            CommandButtonKind.ActionOnly
-        }
+        val commandButtonKind = getCommandButtonKind(command, presentationModel)
 
         return CommandButtonLayoutManager.CommandButtonPreLayoutInfo(
             commandButtonKind = commandButtonKind,
@@ -210,7 +200,7 @@ internal open class CommandButtonLayoutManagerSmall(
             }
             val xBorderBetweenActionAndPopup: Float
             when (preLayoutInfo.commandButtonKind) {
-                CommandButtonKind.ActionOnly -> {
+                CommandButtonLayoutManager.CommandButtonKind.ActionOnly -> {
                     actionClickArea = Rect(
                         left = 0.0f,
                         top = 0.0f,
@@ -219,7 +209,7 @@ internal open class CommandButtonLayoutManagerSmall(
                     )
                 }
 
-                CommandButtonKind.PopupOnly -> {
+                CommandButtonLayoutManager.CommandButtonKind.PopupOnly -> {
                     popupClickArea = Rect(
                         left = 0.0f,
                         top = 0.0f,
@@ -228,8 +218,8 @@ internal open class CommandButtonLayoutManagerSmall(
                     )
                 }
 
-                CommandButtonKind.ActionAndPopupMainAction,
-                CommandButtonKind.ActionAndPopupMainPopup ->
+                CommandButtonLayoutManager.CommandButtonKind.ActionAndPopupMainAction,
+                CommandButtonLayoutManager.CommandButtonKind.ActionAndPopupMainPopup ->
                     // no break (all popup) if button has no text and no icon
                     if (hasIcon) {
                         // shift popup action rectangle to the right
@@ -300,7 +290,7 @@ internal open class CommandButtonLayoutManagerSmall(
             }
             val xBorderBetweenActionAndPopup: Float
             when (preLayoutInfo.commandButtonKind) {
-                CommandButtonKind.ActionOnly -> {
+                CommandButtonLayoutManager.CommandButtonKind.ActionOnly -> {
                     actionClickArea = Rect(
                         left = 0.0f,
                         top = 0.0f,
@@ -309,7 +299,7 @@ internal open class CommandButtonLayoutManagerSmall(
                     )
                 }
 
-                CommandButtonKind.PopupOnly -> {
+                CommandButtonLayoutManager.CommandButtonKind.PopupOnly -> {
                     popupClickArea = Rect(
                         left = 0.0f,
                         top = 0.0f,
@@ -318,8 +308,8 @@ internal open class CommandButtonLayoutManagerSmall(
                     )
                 }
 
-                CommandButtonKind.ActionAndPopupMainAction,
-                CommandButtonKind.ActionAndPopupMainPopup ->
+                CommandButtonLayoutManager.CommandButtonKind.ActionAndPopupMainAction,
+                CommandButtonLayoutManager.CommandButtonKind.ActionAndPopupMainPopup ->
                     // no break (all popup) if button has no text and no icon
                     if (hasIcon) {
                         // shift popup action rectangle to the left

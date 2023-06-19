@@ -163,7 +163,7 @@ override fun getPreLayoutInfo(
 ): CommandButtonLayoutManager.CommandButtonPreLayoutInfo {
     // Popup only button with no popup (arrow) icon
     return CommandButtonLayoutManager.CommandButtonPreLayoutInfo(
-        commandButtonKind = CommandButtonKind.PopupOnly,
+        commandButtonKind = CommandButtonLayoutManager.CommandButtonKind.PopupOnly,
         showIcon = true,
         texts = emptyList(),
         extraTexts = emptyList(),

@@ -199,18 +199,7 @@ internal open class CommandButtonLayoutManagerBig(
         presentationModel: BaseCommandButtonPresentationModel
     ): CommandButtonLayoutManager.CommandButtonPreLayoutInfo {
         val hasAction = (command.action != null)
-        val hasPopup = (command.secondaryContentModel != null)
-
-        val commandButtonKind = if (hasAction && hasPopup) {
-            if (presentationModel.textClick == TextClick.Action)
-                CommandButtonKind.ActionAndPopupMainAction else
-                CommandButtonKind.ActionAndPopupMainPopup
-        } else if (hasPopup) {
-            CommandButtonKind.PopupOnly
-        } else {
-            CommandButtonKind.ActionOnly
-        }
-
+        val commandButtonKind = getCommandButtonKind(command, presentationModel)
         val texts = getTitleStrings(command, presentationModel)
 
         return CommandButtonLayoutManager.CommandButtonPreLayoutInfo(
@@ -375,7 +364,7 @@ internal open class CommandButtonLayoutManagerBig(
         var popupClickArea = Rect.Zero
 
         when (preLayoutInfo.commandButtonKind) {
-            CommandButtonKind.ActionOnly -> {
+            CommandButtonLayoutManager.CommandButtonKind.ActionOnly -> {
                 actionClickArea = Rect(
                     left = 0.0f,
                     top = 0.0f,
@@ -383,7 +372,7 @@ internal open class CommandButtonLayoutManagerBig(
                     bottom = finalHeight
                 )
             }
-            CommandButtonKind.PopupOnly -> {
+            CommandButtonLayoutManager.CommandButtonKind.PopupOnly -> {
                 popupClickArea = Rect(
                     left = 0.0f,
                     top = 0.0f,
@@ -391,8 +380,8 @@ internal open class CommandButtonLayoutManagerBig(
                     bottom = finalHeight
                 )
             }
-            CommandButtonKind.ActionAndPopupMainAction,
-            CommandButtonKind.ActionAndPopupMainPopup -> {
+            CommandButtonLayoutManager.CommandButtonKind.ActionAndPopupMainAction,
+            CommandButtonLayoutManager.CommandButtonKind.ActionAndPopupMainPopup -> {
                 // no break (all popup) if button has no icon
                 if (hasIcon) {
                     val yBorderBetweenActionAndPopupAreas = iconRect.bottom + layoutVGap

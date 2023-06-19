@@ -48,6 +48,29 @@ interface CommandButtonLayoutManager : MeasureScope {
     }
 
     /**
+     * Enumerates the available command button kinds.
+     */
+    enum class CommandButtonKind(val hasAction: Boolean, val hasPopup: Boolean) {
+        /** Command button that has only action area. */
+        ActionOnly(true, false),
+
+        /** Command button that has only popup area. */
+        PopupOnly(false, true),
+
+        /**
+         * Command button that has both action and popup areas, with the main
+         * text click activating the action.
+         */
+        ActionAndPopupMainAction(true, true),
+
+        /**
+         * Command button that has both action and popup areas, with the main
+         * text click activating the popup.
+         */
+        ActionAndPopupMainPopup(true, true);
+    }
+
+    /**
      * Layout information on a single line of text.
      *
      * @param text Text itself
@@ -142,7 +165,7 @@ interface CommandButtonLayoutManager : MeasureScope {
         presentationModel: BaseCommandButtonPresentationModel
     ): CommandButtonPreLayoutInfo
 
-    fun getExtraTextMaxLines() : Int = 1
+    fun getExtraTextMaxLines(): Int = 1
 
     /**
      * Returns the preferred size of a projected button for the specified parameters.
@@ -163,3 +186,22 @@ interface CommandButtonLayoutManager : MeasureScope {
         preLayoutInfo: CommandButtonPreLayoutInfo
     ): CommandButtonLayoutInfo
 }
+
+fun getCommandButtonKind(
+    command: BaseCommand,
+    presentationModel: BaseCommandButtonPresentationModel
+): CommandButtonLayoutManager.CommandButtonKind {
+    val hasAction = (command.action != null)
+    val hasPopup = (command.secondaryContentModel != null)
+
+    return if (hasAction && hasPopup) {
+        if (presentationModel.textClick == TextClick.Action)
+            CommandButtonLayoutManager.CommandButtonKind.ActionAndPopupMainAction else
+            CommandButtonLayoutManager.CommandButtonKind.ActionAndPopupMainPopup
+    } else if (hasPopup) {
+        CommandButtonLayoutManager.CommandButtonKind.PopupOnly
+    } else {
+        CommandButtonLayoutManager.CommandButtonKind.ActionOnly
+    }
+}
+

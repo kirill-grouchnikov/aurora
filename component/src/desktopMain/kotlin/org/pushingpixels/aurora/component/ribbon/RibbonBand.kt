@@ -23,6 +23,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
+import org.pushingpixels.aurora.component.layout.getCommandButtonKind
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.Projection
@@ -102,17 +103,7 @@ object RibbonBandCommandButtonPresentationStates {
             presentationModel: BaseCommandButtonPresentationModel
         ): CommandButtonLayoutManager.CommandButtonPreLayoutInfo {
             val hasAction = (command.action != null)
-            val hasPopup = (command.secondaryContentModel != null)
-
-            val commandButtonKind = if (hasAction && hasPopup) {
-                if (presentationModel.textClick == TextClick.Action)
-                    CommandButtonKind.ActionAndPopupMainAction else
-                    CommandButtonKind.ActionAndPopupMainPopup
-            } else if (hasPopup) {
-                CommandButtonKind.PopupOnly
-            } else {
-                CommandButtonKind.ActionOnly
-            }
+            val commandButtonKind = getCommandButtonKind(command, presentationModel)
 
             return CommandButtonLayoutManager.CommandButtonPreLayoutInfo(
                 commandButtonKind = commandButtonKind,
@@ -276,7 +267,7 @@ object RibbonBandCommandButtonPresentationStates {
             var popupClickArea = Rect.Zero
 
             when (preLayoutInfo.commandButtonKind) {
-                CommandButtonKind.ActionOnly -> {
+                CommandButtonLayoutManager.CommandButtonKind.ActionOnly -> {
                     actionClickArea = Rect(
                         left = 0.0f,
                         top = 0.0f,
@@ -285,7 +276,7 @@ object RibbonBandCommandButtonPresentationStates {
                     )
                 }
 
-                CommandButtonKind.PopupOnly -> {
+                CommandButtonLayoutManager.CommandButtonKind.PopupOnly -> {
                     popupClickArea = Rect(
                         left = 0.0f,
                         top = 0.0f,

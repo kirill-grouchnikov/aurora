@@ -129,30 +129,6 @@ enum class HorizontalAlignment {
     internal abstract val arrangement: Arrangement.Horizontal
 }
 
-
-/**
- * Enumerates the available command button kinds.
- */
-enum class CommandButtonKind(val hasAction: Boolean, val hasPopup: Boolean) {
-    /** Command button that has only action area. */
-    ActionOnly(true, false),
-
-    /** Command button that has only popup area. */
-    PopupOnly(false, true),
-
-    /**
-     * Command button that has both action and popup areas, with the main
-     * text click activating the action.
-     */
-    ActionAndPopupMainAction(true, true),
-
-    /**
-     * Command button that has both action and popup areas, with the main
-     * text click activating the popup.
-     */
-    ActionAndPopupMainPopup(true, true);
-}
-
 /**
  * Presentation state for command buttons. This class provides a number of core
  * companion presentation states. In addition, it also allows creating additional

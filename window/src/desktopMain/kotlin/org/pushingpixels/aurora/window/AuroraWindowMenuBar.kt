@@ -86,9 +86,9 @@ private object WindowMenuBarLayout {
             val commandButtonKind = if (!(hasAction xor hasPopup)) {
                 throw IllegalArgumentException("Menu command ${command.text} needs to have either action or secondary content")
             } else if (hasPopup) {
-                CommandButtonKind.PopupOnly
+                CommandButtonLayoutManager.CommandButtonKind.PopupOnly
             } else {
-                CommandButtonKind.ActionOnly
+                CommandButtonLayoutManager.CommandButtonKind.ActionOnly
             }
 
             return CommandButtonLayoutManager.CommandButtonPreLayoutInfo(

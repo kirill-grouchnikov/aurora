@@ -125,17 +125,7 @@ internal open class CommandButtonLayoutManagerMedium(
         presentationModel: BaseCommandButtonPresentationModel
     ): CommandButtonLayoutManager.CommandButtonPreLayoutInfo {
         val hasAction = (command.action != null)
-        val hasPopup = (command.secondaryContentModel != null)
-
-        val commandButtonKind = if (hasAction && hasPopup) {
-            if (presentationModel.textClick == TextClick.Action)
-                CommandButtonKind.ActionAndPopupMainAction else
-                CommandButtonKind.ActionAndPopupMainPopup
-        } else if (hasPopup) {
-            CommandButtonKind.PopupOnly
-        } else {
-            CommandButtonKind.ActionOnly
-        }
+        val commandButtonKind = getCommandButtonKind(command, presentationModel)
 
         return CommandButtonLayoutManager.CommandButtonPreLayoutInfo(
             commandButtonKind = commandButtonKind,
@@ -334,7 +324,7 @@ internal open class CommandButtonLayoutManagerMedium(
 
             val xBorderBetweenActionAndPopup: Float
             when (preLayoutInfo.commandButtonKind) {
-                CommandButtonKind.ActionOnly -> {
+                CommandButtonLayoutManager.CommandButtonKind.ActionOnly -> {
                     actionClickArea = Rect(
                         left = 0.0f,
                         top = 0.0f,
@@ -343,7 +333,7 @@ internal open class CommandButtonLayoutManagerMedium(
                     )
                 }
 
-                CommandButtonKind.PopupOnly -> {
+                CommandButtonLayoutManager.CommandButtonKind.PopupOnly -> {
                     popupClickArea = Rect(
                         left = 0.0f,
                         top = 0.0f,
@@ -352,7 +342,7 @@ internal open class CommandButtonLayoutManagerMedium(
                     )
                 }
 
-                CommandButtonKind.ActionAndPopupMainAction ->
+                CommandButtonLayoutManager.CommandButtonKind.ActionAndPopupMainAction ->
                     // 1. break before popup icon if button has text or icon
                     // 2. no break (all popup) if button has no text and no icon
                     if (hasText || hasIcon) {
@@ -393,7 +383,7 @@ internal open class CommandButtonLayoutManagerMedium(
                         )
                     }
 
-                CommandButtonKind.ActionAndPopupMainPopup ->
+                CommandButtonLayoutManager.CommandButtonKind.ActionAndPopupMainPopup ->
                     // 1. break after icon if button has icon
                     // 2. no break (all popup) if button has no icon
                     if (hasIcon) {
@@ -559,7 +549,7 @@ internal open class CommandButtonLayoutManagerMedium(
 
             val xBorderBetweenActionAndPopup: Float
             when (preLayoutInfo.commandButtonKind) {
-                CommandButtonKind.ActionOnly -> {
+                CommandButtonLayoutManager.CommandButtonKind.ActionOnly -> {
                     actionClickArea = Rect(
                         left = 0.0f,
                         top = 0.0f,
@@ -568,7 +558,7 @@ internal open class CommandButtonLayoutManagerMedium(
                     )
                 }
 
-                CommandButtonKind.PopupOnly -> {
+                CommandButtonLayoutManager.CommandButtonKind.PopupOnly -> {
                     popupClickArea = Rect(
                         left = 0.0f,
                         top = 0.0f,
@@ -577,7 +567,7 @@ internal open class CommandButtonLayoutManagerMedium(
                     )
                 }
 
-                CommandButtonKind.ActionAndPopupMainAction ->
+                CommandButtonLayoutManager.CommandButtonKind.ActionAndPopupMainAction ->
                     // 1. break before popup icon if button has text or icon
                     // 2. no break (all popup) if button has no text and no icon
                     if (hasText || hasIcon) {
@@ -618,7 +608,7 @@ internal open class CommandButtonLayoutManagerMedium(
                         )
                     }
 
-                CommandButtonKind.ActionAndPopupMainPopup ->
+                CommandButtonLayoutManager.CommandButtonKind.ActionAndPopupMainPopup ->
                     // 1. break after icon if button has icon
                     // 2. no break (all popup) if button has no icon
                     if (hasIcon) {
