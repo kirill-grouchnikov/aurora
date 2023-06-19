@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.ModelStateInfoSnapshot
@@ -269,7 +270,8 @@ internal fun getStartwardDoubleArrowIcon(
     }
 }
 
-internal fun getEndwardDoubleArrowIcon(
+@AuroraInternalApi
+fun getEndwardDoubleArrowIcon(
     decorationAreaType: DecorationAreaType,
     skinColors: AuroraSkinColors,
     colorSchemeBundle: AuroraColorSchemeBundle?,
