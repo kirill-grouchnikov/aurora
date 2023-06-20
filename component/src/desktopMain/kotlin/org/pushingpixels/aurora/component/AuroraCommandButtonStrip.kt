@@ -21,10 +21,18 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFontFamilyResolver
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.resolveDefaults
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
+import org.pushingpixels.aurora.theming.LocalTextStyle
 import org.pushingpixels.aurora.theming.Side
 import org.pushingpixels.aurora.theming.Sides
+import kotlin.math.max
 
 @Composable
 private fun CommandButtonStripContent(
@@ -69,14 +77,9 @@ private fun CommandButtonStripContent(
     }
 }
 
-@Composable
-internal fun AuroraCommandButtonStrip(
-    modifier: Modifier = Modifier,
-    commandGroup: CommandGroup,
-    presentationModel: CommandStripPresentationModel = CommandStripPresentationModel(),
-    overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay> = mapOf()
-) {
-    val commandButtonPresentationModel = CommandButtonPresentationModel(
+private fun getCommandButtonPresentationModel(presentationModel: CommandStripPresentationModel):
+        CommandButtonPresentationModel {
+    return CommandButtonPresentationModel(
         presentationState = presentationModel.commandPresentationState,
         backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
         horizontalAlignment = presentationModel.horizontalAlignment,
@@ -90,6 +93,58 @@ internal fun AuroraCommandButtonStrip(
         popupFireTrigger = presentationModel.popupFireTrigger,
         selectedStateHighlight = presentationModel.selectedStateHighlight
     )
+}
+
+@OptIn(AuroraInternalApi::class)
+@Composable
+internal fun commandButtonStripIntrinsicSize(
+    commandGroup: CommandGroup,
+    presentationModel: CommandStripPresentationModel
+): Size {
+    val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
+    val textStyle = LocalTextStyle.current
+    val fontFamilyResolver = LocalFontFamilyResolver.current
+    val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
+
+    val commandButtonPresentationModel = getCommandButtonPresentationModel(presentationModel)
+    val layoutManager = commandButtonPresentationModel.presentationState.createLayoutManager(
+        layoutDirection = layoutDirection,
+        density = density,
+        textStyle = resolvedTextStyle,
+        fontFamilyResolver = fontFamilyResolver
+    )
+
+    var width = 0.0f
+    var height = 0.0f
+    for (command in commandGroup.commands) {
+        val preLayoutInfo =
+            layoutManager.getPreLayoutInfo(
+                command,
+                commandButtonPresentationModel
+            )
+        val preferredSize = layoutManager.getPreferredSize(
+            command, commandButtonPresentationModel, preLayoutInfo
+        )
+        if (presentationModel.orientation == StripOrientation.Vertical) {
+            width = max(width, preferredSize.width)
+            height += preferredSize.height
+        } else {
+            width += preferredSize.width
+            height = max(height, preferredSize.height)
+        }
+    }
+    return Size(width, height)
+}
+
+@Composable
+internal fun AuroraCommandButtonStrip(
+    modifier: Modifier = Modifier,
+    commandGroup: CommandGroup,
+    presentationModel: CommandStripPresentationModel = CommandStripPresentationModel(),
+    overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay> = mapOf()
+) {
+    val commandButtonPresentationModel = getCommandButtonPresentationModel(presentationModel)
     if (presentationModel.orientation == StripOrientation.Horizontal) {
         Row(modifier = modifier) {
             CommandButtonStripContent(

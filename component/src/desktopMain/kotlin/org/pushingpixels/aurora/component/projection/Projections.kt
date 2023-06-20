@@ -21,15 +21,28 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFontFamilyResolver
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.resolveDefaults
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
 import org.pushingpixels.aurora.component.utils.popup.ColorSelectorCommandMenuPopupHandler
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
+import org.pushingpixels.aurora.theming.LocalTextStyle
 
 abstract class Projection<out C : ContentModel, out P : PresentationModel> {
     @Composable
     abstract fun reproject(modifier: Modifier)
+
+    @Composable
+    open fun intrinsicWidth(height: Int): Int = 0
+
+    @Composable
+    open fun intrinsicHeight(width: Int): Int = 0
 }
 
 abstract class BaseCommandButtonProjection<out C : BaseCommand,
@@ -66,6 +79,41 @@ abstract class BaseCommandButtonProjection<out C : BaseCommand,
         actionInteractionSource: MutableInteractionSource,
         popupInteractionSource: MutableInteractionSource,
     )
+
+    @OptIn(AuroraInternalApi::class)
+    @Composable
+    private fun intrinsicSize(): Size {
+        val density = LocalDensity.current
+        val layoutDirection = LocalLayoutDirection.current
+        val textStyle = LocalTextStyle.current
+        val fontFamilyResolver = LocalFontFamilyResolver.current
+        val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
+
+        val layoutManager = presentationModel.presentationState.createLayoutManager(
+            layoutDirection = layoutDirection,
+            density = density,
+            textStyle = resolvedTextStyle,
+            fontFamilyResolver = fontFamilyResolver
+        )
+        val preLayoutInfo =
+            layoutManager.getPreLayoutInfo(
+                contentModel,
+                presentationModel
+            )
+        return layoutManager.getPreferredSize(
+            contentModel, presentationModel, preLayoutInfo
+        )
+    }
+
+    @Composable
+    override fun intrinsicWidth(height: Int): Int {
+        return this.intrinsicSize().width.toInt()
+    }
+
+    @Composable
+    override fun intrinsicHeight(width: Int): Int {
+        return this.intrinsicSize().height.toInt()
+    }
 }
 
 class CommandButtonProjection(
@@ -218,6 +266,16 @@ class CommandButtonStripProjection(
             overlays = this.overlays ?: mapOf()
         )
     }
+
+    @Composable
+    override fun intrinsicWidth(height: Int): Int {
+        return commandButtonStripIntrinsicSize(this.contentModel, this.presentationModel).width.toInt()
+    }
+
+    @Composable
+    override fun intrinsicHeight(width: Int): Int {
+        return commandButtonStripIntrinsicSize(this.contentModel, this.presentationModel).height.toInt()
+    }
 }
 
 class CommandButtonPanelProjection(
@@ -284,6 +342,16 @@ class BreadcrumbBarProjection(
             horizontalScrollState = rememberScrollState(0)
         )
     }
+
+    @Composable
+    override fun intrinsicWidth(height: Int): Int {
+        return breadcrumbBarIntrinsicSize(this.contentModel, this.presentationModel).width.toInt()
+    }
+
+    @Composable
+    override fun intrinsicHeight(width: Int): Int {
+        return breadcrumbBarIntrinsicSize(this.contentModel, this.presentationModel).height.toInt()
+    }
 }
 
 class ComboBoxProjection<E>(
@@ -311,6 +379,16 @@ class ComboBoxProjection<E>(
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
+    }
+
+    @Composable
+    override fun intrinsicWidth(height: Int): Int {
+        return comboBoxInstrinsicSize(this.contentModel, this.presentationModel).width.toInt()
+    }
+
+    @Composable
+    override fun intrinsicHeight(width: Int): Int {
+        return comboBoxInstrinsicSize(this.contentModel, this.presentationModel).height.toInt()
     }
 }
 

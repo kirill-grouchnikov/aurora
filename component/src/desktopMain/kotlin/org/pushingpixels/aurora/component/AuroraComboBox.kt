@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.component
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
@@ -27,7 +28,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ClipOp
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -73,6 +76,117 @@ private class ComboBoxLocator(val topLeftOffset: AuroraOffset, val size: Mutable
 private fun Modifier.comboBoxLocator(topLeftOffset: AuroraOffset, size: MutableState<IntSize>) = this.then(
     ComboBoxLocator(topLeftOffset, size)
 )
+
+@OptIn(AuroraInternalApi::class)
+@Composable
+internal fun <E> comboBoxInstrinsicSize(
+    contentModel: ComboBoxContentModel<E>,
+    presentationModel: ComboBoxPresentationModel<E>
+): Size {
+    val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
+    val textStyle = LocalTextStyle.current
+    val fontFamilyResolver = LocalFontFamilyResolver.current
+    val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
+
+    val prototypeDisplayFullWidth = getPrototypeDisplayFullWidth(
+        contentModel, presentationModel
+    )
+
+    var contentWidth : Dp = 0.dp
+    val icon = presentationModel.displayIconConverter?.invoke(contentModel.selectedItem)
+    if (icon != null) {
+        contentWidth += 16.dp
+        contentWidth += ComboBoxSizingConstants.DefaultComboBoxIconTextLayoutGap * presentationModel.horizontalGapScaleFactor
+    }
+    contentWidth += (getLabelPreferredSingleLineWidth(
+        contentModel = LabelContentModel(text = presentationModel.displayConverter.invoke(contentModel.selectedItem)),
+        presentationModel = LabelPresentationModel(
+            contentPadding = PaddingValues(0.dp),
+            textStyle = presentationModel.textStyle ?: LocalTextStyle.current,
+            textMaxLines = 1,
+            textOverflow = presentationModel.textOverflow
+        ),
+        resolvedTextStyle = resolvedTextStyle,
+        layoutDirection = layoutDirection,
+        density = density,
+        fontFamilyResolver = LocalFontFamilyResolver.current
+    ) / density.density).dp
+
+    contentWidth = max(contentWidth, prototypeDisplayFullWidth)
+
+    var width = presentationModel.contentPadding.calculateStartPadding(layoutDirection) +
+            contentWidth + ComboBoxSizingConstants.DefaultComboBoxContentArrowGap +
+            ComboBoxSizingConstants.DefaultComboBoxArrowWidth +
+            presentationModel.contentPadding.calculateEndPadding(layoutDirection)
+    width = max(width, presentationModel.defaultMinSize.width)
+
+    var contentHeight : Dp = 0.dp
+    if (icon != null) {
+        contentHeight = 16.dp
+    }
+    contentHeight = max(contentHeight,
+        (getLabelPreferredHeight(contentModel = LabelContentModel(text = presentationModel.displayConverter.invoke(contentModel.selectedItem)),
+            presentationModel = LabelPresentationModel(
+                textStyle = presentationModel.textStyle ?: LocalTextStyle.current,
+                textMaxLines = 1,
+                textOverflow = presentationModel.textOverflow
+            ),
+            resolvedTextStyle = resolvedTextStyle,
+            layoutDirection = layoutDirection,
+            density = density,
+            fontFamilyResolver = LocalFontFamilyResolver.current,
+            availableWidth = Float.MAX_VALUE) / density.density).dp,
+    )
+    val height = presentationModel.contentPadding.calculateTopPadding() +
+            contentHeight + presentationModel.contentPadding.calculateBottomPadding()
+
+    return Size(width.value * density.density,
+        height.value * density.density)
+}
+
+@OptIn(AuroraInternalApi::class)
+@Composable
+private fun <E> getPrototypeDisplayFullWidth(contentModel: ComboBoxContentModel<E>,
+                                             presentationModel: ComboBoxPresentationModel<E>) : Dp {
+    val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
+    val textStyle = LocalTextStyle.current
+    val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
+
+    var prototypeDisplayFullWidth: Dp = 0.0.dp
+    val displayPrototype = presentationModel.displayPrototype?.invoke(contentModel.items)
+    if (displayPrototype != null) {
+        val prototypeDisplayLabelWidth = getLabelPreferredSingleLineWidth(
+            contentModel = LabelContentModel(text = presentationModel.displayConverter.invoke(displayPrototype)),
+            presentationModel = LabelPresentationModel(
+                contentPadding = PaddingValues(0.dp),
+                textStyle = presentationModel.textStyle ?: LocalTextStyle.current,
+                textMaxLines = 1,
+                textOverflow = presentationModel.textOverflow
+            ),
+            resolvedTextStyle = resolvedTextStyle,
+            layoutDirection = layoutDirection,
+            density = density,
+            fontFamilyResolver = LocalFontFamilyResolver.current
+        )
+
+        val prototypeIcon = presentationModel.displayIconConverter?.invoke(displayPrototype)
+
+        // Full display width - content start padding, icon + gap if icon is present, text,
+        // arrow gap + arrow, content end padding
+        prototypeDisplayFullWidth = presentationModel.contentPadding.calculateStartPadding(layoutDirection)
+        if (prototypeIcon != null) {
+            prototypeDisplayFullWidth += (16.dp + ComboBoxSizingConstants.DefaultComboBoxIconTextLayoutGap * presentationModel.horizontalGapScaleFactor)
+        }
+        prototypeDisplayFullWidth += (ComboBoxSizingConstants.DefaultComboBoxContentArrowGap
+                + ArrowSizingConstants.DefaultSingleArrowHeight)
+        prototypeDisplayFullWidth += (prototypeDisplayLabelWidth / density.density).dp
+        prototypeDisplayFullWidth += presentationModel.contentPadding.calculateEndPadding(layoutDirection)
+    }
+
+    return prototypeDisplayFullWidth
+}
 
 @OptIn(AuroraInternalApi::class)
 @Composable
@@ -481,35 +595,9 @@ internal fun <E> AuroraComboBox(
             }
         }
 
-        var prototypeDisplayFullWidth: Dp = 0.0.dp
-        val displayPrototype = presentationModel.displayPrototype?.invoke(contentModel.items)
-        if (displayPrototype != null) {
-            val prototypeDisplayLabelWidth = getLabelPreferredSingleLineWidth(
-                contentModel = LabelContentModel(text = presentationModel.displayConverter.invoke(displayPrototype)),
-                presentationModel = LabelPresentationModel(
-                    textStyle = presentationModel.textStyle ?: LocalTextStyle.current,
-                    textMaxLines = 1,
-                    textOverflow = presentationModel.textOverflow
-                ),
-                resolvedTextStyle = resolvedTextStyle,
-                layoutDirection = layoutDirection,
-                density = density,
-                fontFamilyResolver = LocalFontFamilyResolver.current
-            )
-
-            val prototypeIcon = presentationModel.displayIconConverter?.invoke(displayPrototype)
-
-            // Full display width - content start padding, icon + gap if icon is present, text,
-            // arrow gap + arrow, content end padding
-            prototypeDisplayFullWidth = presentationModel.contentPadding.calculateStartPadding(layoutDirection)
-            if (prototypeIcon != null) {
-                prototypeDisplayFullWidth += (16.dp + ComboBoxSizingConstants.DefaultComboBoxIconTextLayoutGap * presentationModel.horizontalGapScaleFactor)
-            }
-            prototypeDisplayFullWidth += (ComboBoxSizingConstants.DefaultComboBoxContentArrowGap
-                    + ArrowSizingConstants.DefaultSingleArrowHeight)
-            prototypeDisplayFullWidth += (prototypeDisplayLabelWidth / density.density).dp
-            prototypeDisplayFullWidth += presentationModel.contentPadding.calculateEndPadding(layoutDirection)
-        }
+        val prototypeDisplayFullWidth = getPrototypeDisplayFullWidth(
+            contentModel, presentationModel
+        )
 
         // Pass our text color and model state snapshot to the children
         CompositionLocalProvider(
@@ -519,7 +607,7 @@ internal fun <E> AuroraComboBox(
         ) {
             Row(
                 modifier = Modifier.defaultMinSize(
-                    minWidth = max(presentationModel.defaultMinSize.width, prototypeDisplayFullWidth),
+                    minWidth = presentationModel.defaultMinSize.width,
                     minHeight = presentationModel.defaultMinSize.height
                 ).padding(
                     PaddingValues(
@@ -551,6 +639,10 @@ internal fun <E> AuroraComboBox(
                 }
 
                 AuroraText(
+                    modifier = Modifier.defaultMinSize(
+                        minWidth = prototypeDisplayFullWidth,
+                        minHeight = 0.dp
+                    ),
                     text = presentationModel.displayConverter.invoke(contentModel.selectedItem),
                     style = presentationModel.textStyle ?: LocalTextStyle.current,
                     overflow = presentationModel.textOverflow,

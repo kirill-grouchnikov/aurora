@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -34,6 +35,66 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.theming.LocalTextStyle
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
+
+private fun getCommandButtonPresentationModel(presentationModel: BreadcrumbBarPresentationModel):
+        CommandButtonPresentationModel {
+    return CommandButtonPresentationModel(
+        presentationState = presentationModel.presentationState,
+        backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
+        iconActiveFilterStrategy = presentationModel.iconActiveFilterStrategy,
+        iconEnabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
+        iconDisabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
+        popupMenuPresentationModel = CommandPopupMenuPresentationModel(
+            itemIconActiveFilterStrategy = presentationModel.iconActiveFilterStrategy,
+            itemIconEnabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
+            itemIconDisabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
+            maxVisibleItems = presentationModel.maxVisibleChoiceCommands
+        )
+    )
+}
+
+@OptIn(AuroraInternalApi::class)
+@Composable
+internal fun breadcrumbBarIntrinsicSize(
+    contentModel: BreadcrumbBarContentModel,
+    presentationModel: BreadcrumbBarPresentationModel
+): Size {
+    val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
+    val textStyle = LocalTextStyle.current
+    val fontFamilyResolver = LocalFontFamilyResolver.current
+    val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
+
+    val contentPresentationModel = getCommandButtonPresentationModel(presentationModel)
+    val contentLayoutManager = contentPresentationModel.presentationState.createLayoutManager(
+        layoutDirection = layoutDirection,
+        density = density,
+        textStyle = resolvedTextStyle,
+        fontFamilyResolver = fontFamilyResolver
+    )
+
+    val forSizing = Command(text = "sample", action = {})
+    val boxHeight = contentLayoutManager.getPreferredSize(
+        command = forSizing,
+        presentationModel = contentPresentationModel,
+        preLayoutInfo = contentLayoutManager.getPreLayoutInfo(
+            forSizing,
+            contentPresentationModel
+        )
+    ).height
+    val width = contentModel.commands.sumOf { command ->
+        val commandPreLayoutInfo =
+            contentLayoutManager.getPreLayoutInfo(
+                command,
+                contentPresentationModel
+            )
+        val commandSize = contentLayoutManager.getPreferredSize(
+            command, contentPresentationModel, commandPreLayoutInfo
+        )
+        commandSize.width.toDouble()
+    }
+    return Size(width.toFloat(), boxHeight)
+}
 
 @OptIn(AuroraInternalApi::class)
 @Composable
@@ -51,19 +112,7 @@ internal fun AuroraBreadcrumbBar(
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
 
     // Presentation model for the content - copy fields from the breadcrumb bar presentation model
-    val contentPresentationModel = CommandButtonPresentationModel(
-        presentationState = presentationModel.presentationState,
-        backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
-        iconActiveFilterStrategy = presentationModel.iconActiveFilterStrategy,
-        iconEnabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
-        iconDisabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
-        popupMenuPresentationModel = CommandPopupMenuPresentationModel(
-            itemIconActiveFilterStrategy = presentationModel.iconActiveFilterStrategy,
-            itemIconEnabledFilterStrategy = presentationModel.iconEnabledFilterStrategy,
-            itemIconDisabledFilterStrategy = presentationModel.iconDisabledFilterStrategy,
-            maxVisibleItems = presentationModel.maxVisibleChoiceCommands
-        )
-    )
+    val contentPresentationModel = getCommandButtonPresentationModel(presentationModel)
     val contentLayoutManager = contentPresentationModel.presentationState.createLayoutManager(
         layoutDirection = layoutDirection,
         density = density,
