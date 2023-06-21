@@ -549,7 +549,7 @@ internal class RibbonBuilder(
                                     ),
                                     x = 2.0f,
                                     y = size.height - 4.0f,
-                                    paint = org.jetbrains.skia.Paint().also { skiaPaint ->
+                                    paint = Paint().also { skiaPaint ->
                                         skiaPaint.color4f = Color4f(
                                             r = 0f,
                                             g = 0f,
@@ -592,7 +592,7 @@ internal class RibbonBuilder(
                                     ),
                                     x = 2.0f,
                                     y = size.height - 4.0f,
-                                    paint = org.jetbrains.skia.Paint().also { skiaPaint ->
+                                    paint = Paint().also { skiaPaint ->
                                         skiaPaint.color4f = Color4f(
                                             r = 0f,
                                             g = 0f,
