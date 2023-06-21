@@ -791,7 +791,7 @@ internal class RibbonBuilder(
             expandCommandKeyTip = "Q",
             collapsedStateKeyTip = "ZC",
             groups = listOf(
-                RibbonBandGroup(
+                RibbonBandCommandGroup(
                     commandProjections = listOf(
                         CommandButtonProjection(
                             contentModel = pasteCommand,
@@ -930,7 +930,7 @@ internal class RibbonBuilder(
             collapsedStateKeyTip = "ZS",
             resizePolicies = CoreRibbonResizePolicies.getCorePoliciesRestrictive(),
             groups = listOf(
-                RibbonBandGroup(
+                RibbonBandCommandGroup(
                     commandProjections = listOf(
                         CommandButtonProjection(
                             contentModel = Command(
@@ -1097,7 +1097,7 @@ internal class RibbonBuilder(
             collapsedStateKeyTip = "ZD",
             resizePolicies = CoreRibbonResizePolicies.getCorePoliciesRestrictive(),
             groups = listOf(
-                RibbonBandGroup(
+                RibbonBandCommandGroup(
                     commandProjections = listOf(
                         CommandButtonProjection(
                             contentModel = Command(
@@ -1137,7 +1137,7 @@ internal class RibbonBuilder(
                         ) at PresentationPriority.Top
                     )
                 ),
-                RibbonBandGroup(
+                RibbonBandCommandGroup(
                     commandProjections = listOf(
                         CommandButtonProjection(
                             contentModel = Command(
@@ -1195,7 +1195,7 @@ internal class RibbonBuilder(
             // TODO - custom policy list
             resizePolicies = CoreRibbonResizePolicies.getCorePoliciesRestrictive(),
             groups = listOf(
-                RibbonBandGroup(
+                RibbonBandCommandGroup(
                     commandProjections = listOf(
                         CommandButtonProjection(
                             contentModel = Command(
@@ -1245,7 +1245,7 @@ internal class RibbonBuilder(
             // TODO - custom list
             resizePolicies = CoreRibbonResizePolicies.getCorePoliciesRestrictive(),
             groups = listOf(
-                RibbonBandGroup(
+                RibbonBandCommandGroup(
                     commandProjections = listOf(
                         CommandButtonProjection(
                             contentModel = Command(text = resourceBundle.getString("AddressBook.text"),
@@ -1255,7 +1255,7 @@ internal class RibbonBuilder(
                         ) at PresentationPriority.Top
                     )
                 ),
-                RibbonBandGroup(
+                RibbonBandCommandGroup(
                     commandProjections = listOf(
                         CommandButtonProjection(
                             contentModel = Command(text = resourceBundle.getString("Document.text"),
@@ -1298,7 +1298,7 @@ internal class RibbonBuilder(
             ),
             resizePolicies = CoreRibbonResizePolicies.getCorePoliciesRestrictive(),
             groups = listOf(
-                RibbonBandGroup(
+                RibbonBandCommandGroup(
                     commandProjections = listOf(
                         CommandButtonProjection(
                             contentModel = Command(text = resourceBundle.getString("Accessibility.text"),
@@ -1322,7 +1322,7 @@ internal class RibbonBuilder(
                         ) at PresentationPriority.Medium
                     )
                 ),
-                RibbonBandGroup(
+                RibbonBandCommandGroup(
                     commandProjections = listOf(
                         CommandButtonProjection(
                             contentModel = Command(text = resourceBundle.getString("Font.text"),
@@ -1338,7 +1338,7 @@ internal class RibbonBuilder(
                         ) at PresentationPriority.Top
                     )
                 ),
-                RibbonBandGroup(
+                RibbonBandCommandGroup(
                     commandProjections = listOf(
                         CommandButtonProjection(
                             contentModel = Command(text = resourceBundle.getString("Screensaver.text"),
@@ -1399,7 +1399,7 @@ internal class RibbonBuilder(
                 action = { println("Expand button clicked! ") }
             ),
             groups = listOf(
-                RibbonBandGroup(
+                RibbonBandComponentGroup(
                     componentProjections = listOf(
                         ComboBoxProjection(
                             contentModel = gamesComboBoxContentModel,

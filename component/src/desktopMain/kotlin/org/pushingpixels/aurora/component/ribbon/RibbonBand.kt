@@ -46,12 +46,17 @@ infix fun RibbonGalleryProjection.at(that: PresentationPriority):
 infix fun <C : ContentModel, P : PresentationModel> Projection<C, P>.with(that: RibbonComponentPresentationModel):
         Pair<Projection<C, P>, RibbonComponentPresentationModel> = Pair(this, that)
 
-data class RibbonBandGroup(
+sealed interface RibbonBandGroup
+
+data class RibbonBandComponentGroup(
     val title: String? = null,
-    val commandProjections: List<Pair<BaseCommandButtonProjection<*, *>, PresentationPriority>> = emptyList(),
     val componentProjections: List<Pair<Projection<ContentModel, PresentationModel>, RibbonComponentPresentationModel>> = emptyList(),
+): RibbonBandGroup
+
+data class RibbonBandCommandGroup(
+    val commandProjections: List<Pair<BaseCommandButtonProjection<*, *>, PresentationPriority>> = emptyList(),
     val galleryProjections: List<Pair<RibbonGalleryProjection, PresentationPriority>> = emptyList(),
-)
+): RibbonBandGroup
 
 data class RibbonBand(
     override val title: String,
