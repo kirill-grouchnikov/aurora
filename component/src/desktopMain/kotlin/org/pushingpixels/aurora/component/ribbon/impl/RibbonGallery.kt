@@ -40,10 +40,7 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
-import org.pushingpixels.aurora.component.ribbon.PresentationPriority
-import org.pushingpixels.aurora.component.ribbon.RibbonGalleryContentModel
-import org.pushingpixels.aurora.component.ribbon.RibbonGalleryInlineState
-import org.pushingpixels.aurora.component.ribbon.RibbonGalleryPresentationModel
+import org.pushingpixels.aurora.component.ribbon.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import kotlin.math.max
@@ -53,9 +50,8 @@ import kotlin.math.roundToInt
 @Composable
 internal fun RibbonGallery(
     modifier: Modifier,
-    presentationPriority: PresentationPriority,
     contentModel: RibbonGalleryContentModel,
-    presentationModel: RibbonGalleryPresentationModel,
+    presentationModel: InRibbonGalleryPresentationModel,
     inlineState: RibbonGalleryInlineState
 ) {
     val density = LocalDensity.current
@@ -69,7 +65,7 @@ internal fun RibbonGallery(
 
     val flatCommandList = contentModel.commandGroups.map { it.commands }.flatten()
 
-    val visibleCount = presentationModel.preferredVisibleCommandCounts[presentationPriority]!!
+    val visibleCount = presentationModel.collapsedVisibleCount
     val fullCount = flatCommandList.size
     if (inlineState.getAndClearRevealSelected()) {
         // The inline state has been marked to have the latest selected command button to be revealed
@@ -137,7 +133,7 @@ internal fun RibbonGallery(
         },
         isActionEnabled = (inlineState.firstVisibleIndex > 0),
         action = {
-            inlineState.firstVisibleIndex = inlineState.firstVisibleIndex - visibleCount
+            inlineState.firstVisibleIndex -= visibleCount
         })
     val bottomScrollerCommand = Command(text = "",
         icon = object : TransitionAwarePainterDelegate() {
@@ -178,7 +174,7 @@ internal fun RibbonGallery(
         },
         isActionEnabled = (inlineState.lastVisibleIndex != (fullCount - 1)),
         action = {
-            inlineState.firstVisibleIndex = inlineState.firstVisibleIndex + visibleCount
+            inlineState.firstVisibleIndex += visibleCount
         })
     val showFullGalleryInPopupCommand = Command(
         text = "",

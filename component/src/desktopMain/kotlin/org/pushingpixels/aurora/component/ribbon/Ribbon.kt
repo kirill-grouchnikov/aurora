@@ -66,8 +66,30 @@ object RibbonGallerySizingConstants {
     val DefaultContentLayoutGap: Dp = 4.dp
 }
 
-data class RibbonGalleryPresentationModel(
+data class InRibbonGalleryPresentationModel(
+    val collapsedVisibleCount: Int,
+    val commandButtonPresentationState: CommandButtonPresentationState,
+    val commandButtonTextOverflow: TextOverflow = TextOverflow.Clip,
+    val commandPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
+    val commandSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize,
+    val contentPadding: PaddingValues = RibbonGallerySizingConstants.DefaultContentPadding,
+    val layoutGap: Dp = RibbonGallerySizingConstants.DefaultContentLayoutGap,
+    val expandKeyTip: String? = null,
     val popupLayoutSpec: MenuPopupPanelLayoutSpec,
+) : PresentationModel
+
+data class RibbonGalleryMetaPresentationModel(
+    val commandButtonPresentationState: CommandButtonPresentationState,
+    val commandButtonTextOverflow: TextOverflow = TextOverflow.Clip,
+    val commandPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
+    val commandSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize,
+    val contentPadding: PaddingValues = RibbonGallerySizingConstants.DefaultContentPadding,
+    val layoutGap: Dp = RibbonGallerySizingConstants.DefaultContentLayoutGap,
+    val expandKeyTip: String? = null,
+    val popupLayoutSpec: MenuPopupPanelLayoutSpec,
+) : PresentationModel
+
+data class RibbonGalleryPresentationModel(
     val preferredVisibleCommandCounts: Map<PresentationPriority, Int> = emptyMap(),
     val commandButtonPresentationState: CommandButtonPresentationState,
     val commandButtonTextOverflow: TextOverflow = TextOverflow.Clip,
@@ -76,17 +98,25 @@ data class RibbonGalleryPresentationModel(
     val contentPadding: PaddingValues = RibbonGallerySizingConstants.DefaultContentPadding,
     val layoutGap: Dp = RibbonGallerySizingConstants.DefaultContentLayoutGap,
     val expandKeyTip: String? = null,
+    val popupLayoutSpec: MenuPopupPanelLayoutSpec,
 ) : PresentationModel
 
 class RibbonGalleryInlineState(
     val contentModel: RibbonGalleryContentModel,
-    val presentationModel: RibbonGalleryPresentationModel,
-    val presentationPriority: PresentationPriority
+    val presentationModel: RibbonGalleryMetaPresentationModel,
+    val presentationPriority: PresentationPriority,
+    val collapsedVisibleCountLow: Int,
+    val collapsedVisibleCountMedium: Int,
+    val collapsedVisibleCountTop: Int,
 ) {
     private val fullCount: Int
         get() = contentModel.commandGroups.sumOf { it.commands.size }
     private val visibleCount: Int
-        get() = presentationModel.preferredVisibleCommandCounts[presentationPriority]!!
+        get() = when (presentationPriority) {
+            PresentationPriority.Low -> collapsedVisibleCountLow
+            PresentationPriority.Medium -> collapsedVisibleCountMedium
+            PresentationPriority.Top -> collapsedVisibleCountTop
+        }
     var firstVisibleIndex by mutableStateOf(0)
     val lastVisibleIndex: Int
         get() = min(firstVisibleIndex + visibleCount - 1, fullCount - 1)
@@ -127,13 +157,12 @@ class RibbonGalleryInlineState(
 
 class RibbonGalleryProjection(
     val contentModel: RibbonGalleryContentModel,
-    val presentationModel: RibbonGalleryPresentationModel,
+    val presentationModel: InRibbonGalleryPresentationModel,
     val secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
 ) : Projection<RibbonGalleryContentModel, RibbonGalleryPresentationModel>() {
     @Composable
     fun project(
         modifier: Modifier = Modifier,
-        presentationPriority: PresentationPriority,
         inlineState: RibbonGalleryInlineState
     ) {
         require(
@@ -146,7 +175,6 @@ class RibbonGalleryProjection(
 
         RibbonGallery(
             modifier = modifier,
-            presentationPriority = presentationPriority,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel,
             inlineState = inlineState

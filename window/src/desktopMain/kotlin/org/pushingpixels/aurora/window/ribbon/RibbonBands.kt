@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.window.ribbon
 
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -33,15 +32,11 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
-import org.pushingpixels.aurora.component.ribbon.AbstractRibbonBand
-import org.pushingpixels.aurora.component.ribbon.FlowRibbonBand
-import org.pushingpixels.aurora.component.ribbon.Ribbon
-import org.pushingpixels.aurora.component.ribbon.RibbonBand
+import org.pushingpixels.aurora.component.ribbon.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import kotlin.math.max
-import kotlin.math.roundToInt
 
 @OptIn(AuroraInternalApi::class)
 @Composable
@@ -100,17 +95,19 @@ internal fun RibbonBands(ribbon: Ribbon) {
 private fun RibbonBand(band: AbstractRibbonBand) {
     when (band) {
         is RibbonBand -> {
-            Column(modifier = Modifier.width(120.dp).fillMaxHeight()) {
+            Column(modifier = Modifier.width(200.dp).fillMaxHeight()) {
                 Box(modifier = Modifier.fillMaxWidth().weight(1.0f)) {
+                    RibbonBandContent(band)
                 }
 
                 RibbonBandTitle(band)
             }
         }
+
         is FlowRibbonBand -> {
             Column(modifier = Modifier.width(IntrinsicSize.Min).fillMaxHeight()) {
                 Box(modifier = Modifier.fillMaxWidth().weight(1.0f)) {
-                   FlowRibbonBandContent(band)
+                    FlowRibbonBandContent(band)
                 }
 
                 RibbonBandTitle(band)
@@ -121,21 +118,48 @@ private fun RibbonBand(band: AbstractRibbonBand) {
 
 @Composable
 fun RibbonBandContent(band: RibbonBand) {
+    Row(modifier = Modifier.fillMaxSize().padding(6.dp)) {
+        for (bandGroup in band.groups) {
+            if (bandGroup is RibbonBandCommandGroup) {
+                for (gallery in bandGroup.galleries) {
+                    RibbonGalleryProjection(
+                        contentModel = gallery.contentModel,
+                        presentationModel = InRibbonGalleryPresentationModel(
+                            collapsedVisibleCount = when (gallery.presentationPriority) {
+                                PresentationPriority.Low -> gallery.collapsedVisibleCountLow
+                                PresentationPriority.Medium -> gallery.collapsedVisibleCountMedium
+                                PresentationPriority.Top -> gallery.collapsedVisibleCountTop
+                            },
+                            commandButtonPresentationState = gallery.presentationModel.commandButtonPresentationState,
+                            commandButtonTextOverflow = gallery.presentationModel.commandButtonTextOverflow,
+                            commandPopupFireTrigger = gallery.presentationModel.commandPopupFireTrigger,
+                            commandSelectedStateHighlight = gallery.presentationModel.commandSelectedStateHighlight,
+                            contentPadding = gallery.presentationModel.contentPadding,
+                            layoutGap = gallery.presentationModel.layoutGap,
+                            expandKeyTip = gallery.presentationModel.expandKeyTip,
+                            popupLayoutSpec = gallery.presentationModel.popupLayoutSpec
+                        ),
+                        secondaryOverlays = gallery.secondaryOverlays
+                    ).project(inlineState = gallery.inlineState)
+                }
+            }
+        }
+    }
 }
 
 @Composable
-private fun getOptimalWidth(band: FlowRibbonBand, gap: Int) : Int {
+private fun getOptimalWidth(band: FlowRibbonBand, gap: Int): Int {
     val compCount = band.flowComponentProjections.size
     val widths = IntArray(compCount)
     var currBestResult = 0
-    for ((index, flowCompProjection) in band.flowComponentProjections.withIndex())  {
+    for ((index, flowCompProjection) in band.flowComponentProjections.withIndex()) {
         widths[index] = flowCompProjection.first.intrinsicWidth(0)
         currBestResult += (widths[index] + gap)
     }
 
     // need to find the inflection points that result in
     // the lowest value for max length of three sub-sequences
-    for (inflectionIndex1 in 0 until (compCount - 2))  {
+    for (inflectionIndex1 in 0 until (compCount - 2)) {
         for (inflectionIndex2 in inflectionIndex1 + 1 until compCount - 1) {
             var w1 = 0
             for (index1 in 0..inflectionIndex1) {

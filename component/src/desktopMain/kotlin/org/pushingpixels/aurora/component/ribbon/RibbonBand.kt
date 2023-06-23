@@ -40,9 +40,6 @@ sealed interface AbstractRibbonBand {
     val resizePolicies: List<RibbonBandResizePolicy>
 }
 
-infix fun RibbonGalleryProjection.at(that: PresentationPriority):
-        Pair<RibbonGalleryProjection, PresentationPriority> = Pair(this, that)
-
 infix fun <C : ContentModel, P : PresentationModel> Projection<C, P>.with(that: RibbonComponentPresentationModel):
         Pair<Projection<C, P>, RibbonComponentPresentationModel> = Pair(this, that)
 
@@ -53,9 +50,20 @@ data class RibbonBandComponentGroup(
     val componentProjections: List<Pair<Projection<ContentModel, PresentationModel>, RibbonComponentPresentationModel>> = emptyList(),
 ): RibbonBandGroup
 
+data class RibbonBandGallery(
+    val contentModel: RibbonGalleryContentModel,
+    val presentationModel: RibbonGalleryMetaPresentationModel,
+    val secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null,
+    val presentationPriority: PresentationPriority,
+    val collapsedVisibleCountLow: Int,
+    val collapsedVisibleCountMedium: Int,
+    val collapsedVisibleCountTop: Int,
+    val inlineState: RibbonGalleryInlineState
+)
+
 data class RibbonBandCommandGroup(
     val commandProjections: List<Pair<BaseCommandButtonProjection<*, *>, PresentationPriority>> = emptyList(),
-    val galleryProjections: List<Pair<RibbonGalleryProjection, PresentationPriority>> = emptyList(),
+    val galleries: List<RibbonBandGallery> = emptyList(),
 ): RibbonBandGroup
 
 data class RibbonBand(

@@ -85,12 +85,7 @@ fun main() = auroraApplication {
         onRibbonStateUpdate = { newState -> ribbonState = newState })
 
     val styleGalleryContentModel = builder.styleGalleryContentModel
-    val styleGalleryInlinePresentationModel = RibbonGalleryPresentationModel(
-        preferredVisibleCommandCounts = mapOf(
-            PresentationPriority.Low to 1,
-            PresentationPriority.Medium to 2,
-            PresentationPriority.Top to 2
-        ),
+    val styleGalleryInlineMetaPresentationModel = RibbonGalleryMetaPresentationModel(
         popupLayoutSpec = MenuPopupPanelLayoutSpec(
             columnCount = 3, visibleRowCount = 3
         ),
@@ -101,18 +96,21 @@ fun main() = auroraApplication {
     ribbonState.documentStyleGalleryInlineState = remember {
         RibbonGalleryInlineState(
             contentModel = styleGalleryContentModel,
-            presentationModel = styleGalleryInlinePresentationModel,
-            presentationPriority = PresentationPriority.Top
+            presentationModel = styleGalleryInlineMetaPresentationModel,
+            presentationPriority = PresentationPriority.Top,
+            collapsedVisibleCountLow = 1,
+            collapsedVisibleCountMedium = 2,
+            collapsedVisibleCountTop = 2
         )
     }
 
-    val styleGalleryTaskbarPresentationModel = RibbonGalleryPresentationModel(
+    val styleGalleryTaskbarMetaPresentationModel = RibbonGalleryMetaPresentationModel(
         popupLayoutSpec = MenuPopupPanelLayoutSpec(columnCount = 4, visibleRowCount = 2),
         commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixed
     )
 
     val clipboardBand = builder.getClipboardBand()
-    val quickStylesBand = builder.getQuickStylesBand(styleGalleryInlinePresentationModel)
+    val quickStylesBand = builder.getQuickStylesBand(styleGalleryInlineMetaPresentationModel)
     val fontBand = builder.getFontBand(
         selectedFontFamily = ribbonState.fontFamily,
         onFontFamilySelected = {
@@ -282,10 +280,8 @@ fun main() = auroraApplication {
             // Content preview and selection is controlled by the same model and is kept in sync
             // along all usages of the gallery content model in our ribbon.
             RibbonTaskbarGalleryProjection(
-                galleryProjection = RibbonGalleryProjection(
-                    contentModel = styleGalleryContentModel,
-                    presentationModel = styleGalleryTaskbarPresentationModel
-                ),
+                galleryContentModel = styleGalleryContentModel,
+                galleryMetaPresentationModel = styleGalleryTaskbarMetaPresentationModel,
                 galleryInlineState = ribbonState.documentStyleGalleryInlineState
             )
         )
@@ -847,7 +843,7 @@ internal class RibbonBuilder(
         )
     }
 
-    fun getQuickStylesBand(stylesInlinePresentationModel: RibbonGalleryPresentationModel): RibbonBand {
+    fun getQuickStylesBand(stylesInlinePresentationModel: RibbonGalleryMetaPresentationModel): RibbonBand {
         val colorPreviewListener: ColorPreviewListener = object : ColorPreviewListener {
             override fun onColorPreviewActivated(color: Color) {
                 println("Preview activated color $color")
@@ -967,11 +963,16 @@ internal class RibbonBuilder(
                             )
                         ) at PresentationPriority.Medium
                     ),
-                    galleryProjections = listOf(
-                        RibbonGalleryProjection(
+                    galleries = listOf(
+                        RibbonBandGallery(
                             contentModel = styleGalleryContentModel,
-                            presentationModel = stylesInlinePresentationModel
-                        ) at PresentationPriority.Top
+                            presentationModel = stylesInlinePresentationModel,
+                            presentationPriority = PresentationPriority.Top,
+                            collapsedVisibleCountLow = 1,
+                            collapsedVisibleCountMedium = 2,
+                            collapsedVisibleCountTop = 2,
+                            inlineState = ribbonState.documentStyleGalleryInlineState
+                        )
                     )
                 )
             )
