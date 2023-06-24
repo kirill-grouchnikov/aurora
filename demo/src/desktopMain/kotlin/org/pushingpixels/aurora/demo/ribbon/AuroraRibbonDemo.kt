@@ -102,7 +102,7 @@ fun main() = auroraApplication {
         commandButtonTextOverflow = TextOverflow.Ellipsis,
         expandKeyTip = "L"
     )
-    ribbonState.documentStyleGalleryInlineState = remember(ribbonState.documentStyle) {
+    ribbonState.documentStyleGalleryInlineState = remember {
         RibbonGalleryInlineState(
             contentModel = styleGalleryContentModel,
             presentationModel = styleGalleryInlineMetaPresentationModel,
