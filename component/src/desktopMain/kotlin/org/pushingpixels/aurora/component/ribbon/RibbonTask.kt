@@ -22,7 +22,9 @@ data class RibbonTask(
     val title: String,
     val bands: List<AbstractRibbonBand>,
     val resizeSequencingPolicy: RibbonBandResizeSequencingPolicy,
-    val keyTip: String? = null
+    val keyTip: String? = null,
+    val isActive: Boolean,
+    val onClick: () -> Unit
 )
 
 data class RibbonContextualTaskGroup(

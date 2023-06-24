@@ -112,9 +112,9 @@ internal fun RibbonPrimaryBar(
         Pair<Command, RibbonContextualTaskGroup?>(Command(text = task.title,
             icon = null,
             isActionToggle = true,
-            isActionToggleSelected = (task == ribbon.selectedTask),
+            isActionToggleSelected = task.isActive,
             onTriggerActionToggleSelectedChange = {
-                if (it) ribbon.onTaskClick(task)
+                if (it) task.onClick.invoke()
             }
         ), null)
     } + ribbon.contextualTaskGroups.flatMap { contextualTaskGroup ->
@@ -122,9 +122,9 @@ internal fun RibbonPrimaryBar(
             Pair<Command, RibbonContextualTaskGroup?>(Command(text = contextualTask.title,
                 icon = null,
                 isActionToggle = true,
-                isActionToggleSelected = (contextualTask == ribbon.selectedTask),
+                isActionToggleSelected = contextualTask.isActive,
                 onTriggerActionToggleSelectedChange = {
-                    if (it) ribbon.onTaskClick(contextualTask)
+                    if (it) contextualTask.onClick.invoke()
                 }
             ), contextualTaskGroup)
         }

@@ -52,6 +52,7 @@ import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.ribbon.Ribbon
 import org.pushingpixels.aurora.component.ribbon.RibbonBand
 import org.pushingpixels.aurora.component.ribbon.RibbonBandCommandGroup
+import org.pushingpixels.aurora.component.ribbon.RibbonTask
 import org.pushingpixels.aurora.component.ribbon.impl.RibbonTaskbar
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
@@ -564,6 +565,24 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
             windowTitlePaneConfiguration
         )
 
+        var selectedTask: RibbonTask? = null
+        for (task in ribbon.tasks) {
+            if (task.isActive) {
+                selectedTask = task
+            }
+        }
+        for (contextualTaskGroup in ribbon.contextualTaskGroups) {
+            for (contextualTask in contextualTaskGroup.tasks) {
+                if (contextualTask.isActive) {
+                    selectedTask = contextualTask
+                }
+            }
+        }
+
+        require(selectedTask != null) {
+            "Ribbon needs one task to be marked as active"
+        }
+
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
             Column(Modifier.fillMaxWidth().auroraBackground()) {
                 RibbonPrimaryBar(ribbon = ribbon,
@@ -574,7 +593,7 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
                         }
                     })
 
-                RibbonBands(ribbonTask = ribbon.selectedTask)
+                RibbonBands(ribbonTask = selectedTask)
 
                 Spacer(modifier = Modifier.fillMaxWidth().height(1.dp))
             }

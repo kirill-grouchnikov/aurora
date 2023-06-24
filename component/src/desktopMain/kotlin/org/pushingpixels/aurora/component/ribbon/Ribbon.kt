@@ -213,8 +213,6 @@ interface OnShowContextualMenuListener {
 
 data class Ribbon(
     val tasks: List<RibbonTask>,
-    val selectedTask: RibbonTask,
-    val onTaskClick: (RibbonTask) -> Unit,
     val contextualTaskGroups: List<RibbonContextualTaskGroup> = emptyList(),
     val anchoredCommands: List<CommandButtonProjection> = emptyList(),
     val taskbarElements: List<RibbonTaskbarElement> = emptyList(),

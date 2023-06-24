@@ -71,6 +71,7 @@ fun main() = auroraApplication {
     var ribbonState by remember {
         mutableStateOf(
             RibbonState(
+                selectedTask = Task.PageLayout,
                 documentStyle = DocumentStyle.Style2,
                 fontFamily = FontFamily.Calibri,
                 fontSize = FontSize.Size11,
@@ -122,18 +123,6 @@ fun main() = auroraApplication {
         styleGalleryContentModel,
         styleGalleryInlineMetaPresentationModel
     )
-//    println("In quick styles band")
-//    var selected3: Command? = null
-//    val group3 = quickStylesBand.groups[0] as RibbonBandCommandGroup
-//    val gallery3 = group3.galleries[0]
-//    for (commandGroup in gallery3.contentModel.commandGroups) {
-//        for (command in commandGroup.commands) {
-//            if (command.isActionToggleSelected) {
-//                selected3 = command
-//            }
-//        }
-//    }
-//    println("\t${selected3?.text}")
 
     val fontBand = builder.getFontBand(
         selectedFontFamily = ribbonState.fontFamily,
@@ -157,7 +146,9 @@ fun main() = auroraApplication {
         title = resourceBundle.getString("PageLayout.textTaskTitle"),
         bands = listOf(clipboardBand, quickStylesBand, fontBand, documentBand, findBand),
         resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
-        keyTip = "P"
+        keyTip = "P",
+        isActive = (ribbonState.selectedTask == Task.PageLayout),
+        onClick = { ribbonState = ribbonState.copy(selectedTask = Task.PageLayout) }
     )
 
     val actionBand = builder.getActionBand()
@@ -181,7 +172,9 @@ fun main() = auroraApplication {
         title = resourceBundle.getString("Write.textTaskTitle"),
         bands = listOf(actionBand, preferencesBand, applicationsBand),
         resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
-        keyTip = "W"
+        keyTip = "W",
+        isActive = (ribbonState.selectedTask == Task.Write),
+        onClick = { ribbonState = ribbonState.copy(selectedTask = Task.Write) }
     )
 
     val contextualTaskGroup1 = RibbonContextualTaskGroup(
@@ -206,7 +199,9 @@ fun main() = auroraApplication {
                             })
                     ),
                     resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
-                    keyTip = "XA"
+                    keyTip = "XA",
+                    isActive = (ribbonState.selectedTask == Task.Contextual11),
+                    onClick = { ribbonState = ribbonState.copy(selectedTask = Task.Contextual11) }
                 ),
                 RibbonTask(
                     title = resourceBundle.getString("Task12.textTaskTitle"),
@@ -226,7 +221,9 @@ fun main() = auroraApplication {
                             })
                     ),
                     resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
-                    keyTip = "XB"
+                    keyTip = "XB",
+                    isActive = (ribbonState.selectedTask == Task.Contextual12),
+                    onClick = { ribbonState = ribbonState.copy(selectedTask = Task.Contextual12) }
                 )
             )
         )
@@ -252,7 +249,9 @@ fun main() = auroraApplication {
                             })
                     ),
                     resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
-                    keyTip = "YA"
+                    keyTip = "YA",
+                    isActive = (ribbonState.selectedTask == Task.Contextual21),
+                    onClick = { ribbonState = ribbonState.copy(selectedTask = Task.Contextual21) }
                 )
             )
         )
@@ -302,7 +301,6 @@ fun main() = auroraApplication {
             )
         )
 
-    var selectedTask by remember { mutableStateOf(pageLayoutTask) }
     var contextualTaskGroup1Visible by remember { mutableStateOf(false) }
     var contextualTaskGroup2Visible by remember { mutableStateOf(false) }
 
@@ -318,8 +316,6 @@ fun main() = auroraApplication {
 
     val ribbon = Ribbon(
         tasks = listOf(pageLayoutTask, writeTask),
-        selectedTask = selectedTask,
-        onTaskClick = { selectedTask = it },
         contextualTaskGroups = contextualTaskGroups,
         taskbarElements = taskbarElements,
         taskbarKeyTipPolicy = DefaultRibbonTaskbarKeyTipPolicy(),
