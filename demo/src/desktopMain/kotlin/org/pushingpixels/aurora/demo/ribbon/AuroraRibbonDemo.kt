@@ -61,9 +61,12 @@ fun main() = auroraApplication {
         size = DpSize(800.dp, 600.dp)
     )
     var skin by remember { mutableStateOf(nebulaAmethystSkin()) }
-    val resourceBundle by derivedStateOf {
-        ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
+    val resourceBundle by remember(applicationLocale) {
+        derivedStateOf {
+            ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
+        }
     }
+    val density = LocalDensity.current.density
 
     var ribbonState by remember {
         mutableStateOf(
@@ -78,13 +81,18 @@ fun main() = auroraApplication {
             )
         )
     }
-    val builder = RibbonBuilder(
-        resourceBundle = resourceBundle,
-        density = LocalDensity.current.density,
-        ribbonState = ribbonState,
-        onRibbonStateUpdate = { newState -> ribbonState = newState })
+    val builder = remember(applicationLocale, ribbonState) {
+        RibbonBuilder(
+            resourceBundle = resourceBundle,
+            density = density,
+            ribbonState = ribbonState,
+            onRibbonStateUpdate = { newState ->
+                ribbonState = newState
+            }
+        )
+    }
 
-    val styleGalleryContentModel = builder.styleGalleryContentModel
+    val styleGalleryContentModel = builder.getStyleGalleryContentModel()
     val styleGalleryInlineMetaPresentationModel = RibbonGalleryMetaPresentationModel(
         popupLayoutSpec = MenuPopupPanelLayoutSpec(
             columnCount = 3, visibleRowCount = 3
@@ -93,7 +101,7 @@ fun main() = auroraApplication {
         commandButtonTextOverflow = TextOverflow.Ellipsis,
         expandKeyTip = "L"
     )
-    ribbonState.documentStyleGalleryInlineState = remember {
+    ribbonState.documentStyleGalleryInlineState = remember(ribbonState.documentStyle) {
         RibbonGalleryInlineState(
             contentModel = styleGalleryContentModel,
             presentationModel = styleGalleryInlineMetaPresentationModel,
@@ -110,7 +118,23 @@ fun main() = auroraApplication {
     )
 
     val clipboardBand = builder.getClipboardBand()
-    val quickStylesBand = builder.getQuickStylesBand(styleGalleryInlineMetaPresentationModel)
+    val quickStylesBand = builder.getQuickStylesBand(
+        styleGalleryContentModel,
+        styleGalleryInlineMetaPresentationModel
+    )
+//    println("In quick styles band")
+//    var selected3: Command? = null
+//    val group3 = quickStylesBand.groups[0] as RibbonBandCommandGroup
+//    val gallery3 = group3.galleries[0]
+//    for (commandGroup in gallery3.contentModel.commandGroups) {
+//        for (command in commandGroup.commands) {
+//            if (command.isActionToggleSelected) {
+//                selected3 = command
+//            }
+//        }
+//    }
+//    println("\t${selected3?.text}")
+
     val fontBand = builder.getFontBand(
         selectedFontFamily = ribbonState.fontFamily,
         onFontFamilySelected = {
@@ -129,14 +153,12 @@ fun main() = auroraApplication {
     )
     val findBand = builder.getFindBand()
 
-    val pageLayoutTask = remember(resourceBundle.locale) {
-        RibbonTask(
-            title = resourceBundle.getString("PageLayout.textTaskTitle"),
-            bands = listOf(clipboardBand, quickStylesBand, fontBand, documentBand, findBand),
-            resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
-            keyTip = "P"
-        )
-    }
+    val pageLayoutTask = RibbonTask(
+        title = resourceBundle.getString("PageLayout.textTaskTitle"),
+        bands = listOf(clipboardBand, quickStylesBand, fontBand, documentBand, findBand),
+        resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+        keyTip = "P"
+    )
 
     val actionBand = builder.getActionBand()
     val preferencesBand = builder.getPreferencesBand()
@@ -155,17 +177,14 @@ fun main() = auroraApplication {
         }
     )
 
-    val writeTask = remember(resourceBundle.locale) {
-        RibbonTask(
-            title = resourceBundle.getString("Write.textTaskTitle"),
-            bands = listOf(actionBand, preferencesBand, applicationsBand),
-            resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
-            keyTip = "W"
-        )
-    }
+    val writeTask = RibbonTask(
+        title = resourceBundle.getString("Write.textTaskTitle"),
+        bands = listOf(actionBand, preferencesBand, applicationsBand),
+        resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+        keyTip = "W"
+    )
 
-    val contextualTaskGroup1 = remember(resourceBundle.locale) {
-        RibbonContextualTaskGroup(
+    val contextualTaskGroup1 = RibbonContextualTaskGroup(
             title = resourceBundle.getString("Group1.textTaskGroupTitle"),
             hueColor = Color.Red,
             tasks = listOf(
@@ -211,9 +230,7 @@ fun main() = auroraApplication {
                 )
             )
         )
-    }
-    val contextualTaskGroup2 = remember(resourceBundle.locale) {
-        RibbonContextualTaskGroup(
+    val contextualTaskGroup2 = RibbonContextualTaskGroup(
             title = resourceBundle.getString("Group2.textTaskGroupTitle"),
             hueColor = Color.Green,
             tasks = listOf(
@@ -239,7 +256,6 @@ fun main() = auroraApplication {
                 )
             )
         )
-    }
 
     val taskbarElements: List<RibbonTaskbarElement> =
         listOf(
@@ -286,7 +302,7 @@ fun main() = auroraApplication {
             )
         )
 
-    var selectedTask by remember(resourceBundle.locale) { mutableStateOf(pageLayoutTask) }
+    var selectedTask by remember { mutableStateOf(pageLayoutTask) }
     var contextualTaskGroup1Visible by remember { mutableStateOf(false) }
     var contextualTaskGroup2Visible by remember { mutableStateOf(false) }
 
@@ -298,9 +314,7 @@ fun main() = auroraApplication {
         contextualTaskGroups.add(contextualTaskGroup2)
     }
 
-    val applicationMenuCommandButtonProjection = remember(resourceBundle.locale) {
-        builder.getApplicationMenuCommandButtonProjection()
-    }
+    val applicationMenuCommandButtonProjection = builder.getApplicationMenuCommandButtonProjection()
 
     val ribbon = Ribbon(
         tasks = listOf(pageLayoutTask, writeTask),
@@ -526,101 +540,6 @@ internal class RibbonBuilder(
         }
     }
 
-    val stylesGalleryCommandList = CommandGroup(
-        title = resourceBundle.getString("StylesGallery.textGroupTitle1"),
-        commands = (1..10).map { index ->
-            Command(
-                text = mfButtonText.format(arrayOf(index)),
-                icon = DecoratedIcon(main = font_x_generic(),
-                    decoration = object : Painter() {
-                        override val intrinsicSize: Size = Size.Unspecified
-
-                        override fun DrawScope.onDraw() {
-                            this.drawIntoCanvas { canvas ->
-                                val nativeCanvas = canvas.nativeCanvas
-                                nativeCanvas.drawTextLine(
-                                    line = TextLine.make(
-                                        text = "$index",
-                                        font = overlayFont
-                                    ),
-                                    x = 2.0f,
-                                    y = size.height - 4.0f,
-                                    paint = Paint().also { skiaPaint ->
-                                        skiaPaint.color4f = Color4f(
-                                            r = 0f,
-                                            g = 0f,
-                                            b = 0f,
-                                            a = 1.0f
-                                        )
-                                    }
-                                )
-                            }
-                        }
-                    }),
-                isActionToggle = true,
-                isActionToggleSelected = (ribbonState.documentStyle == DocumentStyle.values()[index - 1]),
-                onTriggerActionToggleSelectedChange = {
-                    if (it) {
-                        println("Activating $index")
-                        onRibbonStateUpdate.invoke(ribbonState.copy(documentStyle = DocumentStyle.values()[index - 1]))
-                    }
-                },
-                actionPreview = styleGalleryCommandPreview
-            )
-        }
-    )
-    val stylesGalleryCommandList2 = CommandGroup(
-        title = resourceBundle.getString("StylesGallery.textGroupTitle1"),
-        commands = (11..30).map { index ->
-            Command(
-                text = mfButtonText.format(arrayOf(index)),
-                icon = DecoratedIcon(main = font_x_generic(),
-                    decoration = object : Painter() {
-                        override val intrinsicSize: Size = Size.Unspecified
-
-                        override fun DrawScope.onDraw() {
-                            this.drawIntoCanvas { canvas ->
-                                val nativeCanvas = canvas.nativeCanvas
-                                nativeCanvas.drawTextLine(
-                                    line = TextLine.make(
-                                        text = "$index",
-                                        font = overlayFont
-                                    ),
-                                    x = 2.0f,
-                                    y = size.height - 4.0f,
-                                    paint = Paint().also { skiaPaint ->
-                                        skiaPaint.color4f = Color4f(
-                                            r = 0f,
-                                            g = 0f,
-                                            b = 0f,
-                                            a = 1.0f
-                                        )
-                                    }
-                                )
-                            }
-                        }
-                    }),
-                isActionToggle = true,
-                isActionToggleSelected = (ribbonState.documentStyle == DocumentStyle.values()[index - 1]),
-                onTriggerActionToggleSelectedChange = {
-                    if (it) {
-                        onRibbonStateUpdate.invoke(ribbonState.copy(documentStyle = DocumentStyle.values()[index - 1]))
-                    }
-                },
-                actionPreview = styleGalleryCommandPreview
-            )
-        }
-    )
-
-    val styleGalleryContentModel = RibbonGalleryContentModel(
-        icon = font_x_generic(),
-        commandGroups = listOf(stylesGalleryCommandList, stylesGalleryCommandList2),
-        extraPopupGroups = listOf(
-            CommandGroup(commands = listOf(this.menuSaveSelection, this.menuClearSelection)),
-            CommandGroup(commands = listOf(this.applyStyles))
-        )
-    )
-
     val amEntryPrintMemo = Command(
         text = resourceBundle.getString("AppMenuPrint.memo.text"),
         icon = text_x_generic(),
@@ -753,6 +672,106 @@ internal class RibbonBuilder(
         )
     }
 
+    @Composable
+    fun getStyleGalleryContentModel(): RibbonGalleryContentModel {
+        val stylesGalleryCommandList = CommandGroup(
+            title = resourceBundle.getString("StylesGallery.textGroupTitle1"),
+            commands = (1..10).map { index ->
+                Command(
+                    text = mfButtonText.format(arrayOf(index)),
+                    icon = DecoratedIcon(main = font_x_generic(),
+                        decoration = object : Painter() {
+                            override val intrinsicSize: Size = Size.Unspecified
+
+                            override fun DrawScope.onDraw() {
+                                this.drawIntoCanvas { canvas ->
+                                    val nativeCanvas = canvas.nativeCanvas
+                                    nativeCanvas.drawTextLine(
+                                        line = TextLine.make(
+                                            text = "$index",
+                                            font = overlayFont
+                                        ),
+                                        x = 2.0f,
+                                        y = size.height - 4.0f,
+                                        paint = Paint().also { skiaPaint ->
+                                            skiaPaint.color4f = Color4f(
+                                                r = 0f,
+                                                g = 0f,
+                                                b = 0f,
+                                                a = 1.0f
+                                            )
+                                        }
+                                    )
+                                }
+                            }
+                        }),
+                    isActionToggle = true,
+                    isActionToggleSelected = (ribbonState.documentStyle == DocumentStyle.values()[index - 1]),
+                    onTriggerActionToggleSelectedChange = {
+                        if (it) {
+                            println("Activating $index")
+                            onRibbonStateUpdate.invoke(ribbonState.copy(documentStyle = DocumentStyle.values()[index - 1]))
+                        }
+                    },
+                    actionPreview = styleGalleryCommandPreview
+                )
+            }
+        )
+
+        val stylesGalleryCommandList2 = CommandGroup(
+            title = resourceBundle.getString("StylesGallery.textGroupTitle1"),
+            commands = (11..30).map { index ->
+                Command(
+                    text = mfButtonText.format(arrayOf(index)),
+                    icon = DecoratedIcon(main = font_x_generic(),
+                        decoration = object : Painter() {
+                            override val intrinsicSize: Size = Size.Unspecified
+
+                            override fun DrawScope.onDraw() {
+                                this.drawIntoCanvas { canvas ->
+                                    val nativeCanvas = canvas.nativeCanvas
+                                    nativeCanvas.drawTextLine(
+                                        line = TextLine.make(
+                                            text = "$index",
+                                            font = overlayFont
+                                        ),
+                                        x = 2.0f,
+                                        y = size.height - 4.0f,
+                                        paint = Paint().also { skiaPaint ->
+                                            skiaPaint.color4f = Color4f(
+                                                r = 0f,
+                                                g = 0f,
+                                                b = 0f,
+                                                a = 1.0f
+                                            )
+                                        }
+                                    )
+                                }
+                            }
+                        }),
+                    isActionToggle = true,
+                    isActionToggleSelected = (ribbonState.documentStyle == DocumentStyle.values()[index - 1]),
+                    onTriggerActionToggleSelectedChange = {
+                        if (it) {
+                            onRibbonStateUpdate.invoke(ribbonState.copy(documentStyle = DocumentStyle.values()[index - 1]))
+                        }
+                    },
+                    actionPreview = styleGalleryCommandPreview
+                )
+            }
+        )
+
+        return RibbonGalleryContentModel(
+            icon = font_x_generic(),
+            commandGroups = listOf(stylesGalleryCommandList, stylesGalleryCommandList2),
+            extraPopupGroups = listOf(
+                CommandGroup(commands = listOf(this.menuSaveSelection, this.menuClearSelection)),
+                CommandGroup(commands = listOf(this.applyStyles))
+            )
+        )
+    }
+
+    @Composable
     fun getClipboardBand(): RibbonBand {
         val formatCommand = Command(
             text = resourceBundle.getString("Format.text"),
@@ -843,7 +862,11 @@ internal class RibbonBuilder(
         )
     }
 
-    fun getQuickStylesBand(stylesInlinePresentationModel: RibbonGalleryMetaPresentationModel): RibbonBand {
+    @Composable
+    fun getQuickStylesBand(
+        styleGalleryContentModel: RibbonGalleryContentModel,
+        stylesInlinePresentationModel: RibbonGalleryMetaPresentationModel
+    ): RibbonBand {
         val colorPreviewListener: ColorPreviewListener = object : ColorPreviewListener {
             override fun onColorPreviewActivated(color: Color) {
                 println("Preview activated color $color")
@@ -1498,6 +1521,7 @@ internal class RibbonBuilder(
     }
 
     @OptIn(ExperimentalComposeUiApi::class)
+    @Composable
     fun getApplicationMenuCommandButtonProjection(): RibbonApplicationMenuCommandButtonProjection {
         val overlays = hashMapOf<Command, BaseCommandButtonPresentationModel.Overlay>()
         val secondaryStates = hashMapOf<Command, CommandButtonPresentationState>()

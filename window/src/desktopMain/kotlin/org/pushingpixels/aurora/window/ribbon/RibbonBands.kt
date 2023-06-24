@@ -40,15 +40,14 @@ import kotlin.math.max
 
 @OptIn(AuroraInternalApi::class)
 @Composable
-internal fun RibbonBands(ribbon: Ribbon) {
+internal fun RibbonBands(ribbonTask: RibbonTask) {
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
     val fontFamilyResolver = LocalFontFamilyResolver.current
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
 
-    val selectedTask = ribbon.selectedTask
-    val bands = selectedTask.bands
+    val bands = ribbonTask.bands
 
     // The height of ribbon band control panel is computed based on the preferred height of a command
     // button in BIG state.
@@ -188,14 +187,14 @@ fun FlowRibbonBandContent(band: FlowRibbonBand) {
     val density = LocalDensity.current
     val gap = (RibbonBandContentGap.value * density.density).toInt()
     val optimalWidth = getOptimalWidth(band, gap)
-    println("Optimal width: $optimalWidth")
+    //println("Optimal width: $optimalWidth")
     Layout(modifier = Modifier.fillMaxHeight()
         .width((optimalWidth / density.density).dp),
         content = {
             // Project all the content
-            println("Intrinsic widths:")
+            //println("Intrinsic widths:")
             for (projection in band.flowComponentProjections) {
-                println("\t${projection.first.intrinsicWidth(0)}")
+                //println("\t${projection.first.intrinsicWidth(0)}")
                 projection.first.reproject(Modifier)
             }
         },
@@ -204,10 +203,10 @@ fun FlowRibbonBandContent(band: FlowRibbonBand) {
 
             val placeables = measurables.map { it.measure(Constraints()) }
 
-            println("Measured widths:")
-            placeables.forEach {
-                println("\t${it.measuredWidth}")
-            }
+//            println("Measured widths:")
+//            placeables.forEach {
+//                println("\t${it.measuredWidth}")
+//            }
 
             layout(width = width, height = constraints.maxHeight) {
                 val rowHeight = constraints.maxHeight / 3
