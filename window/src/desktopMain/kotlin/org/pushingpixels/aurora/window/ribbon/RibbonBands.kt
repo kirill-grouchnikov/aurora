@@ -156,9 +156,19 @@ private fun RibbonBandContent(band: RibbonBand, bandContentHeight: Float) {
     }
 }
 
+private data class RibbonBandComponentGroupLayoutInfo(
+    val fullWidth: Int,
+    val titleLabelWidth: Int,
+    val columnWidths: List<Int>
+)
+
 @OptIn(AuroraInternalApi::class)
 @Composable
-private fun getComponentGroupContentWidth(group: RibbonBandComponentGroup, bandContentHeight: Float, gap: Int): Int {
+private fun getComponentGroupContentLayoutInfo(
+    group: RibbonBandComponentGroup,
+    bandContentHeight: Float,
+    gap: Int
+): RibbonBandComponentGroupLayoutInfo {
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
@@ -177,7 +187,9 @@ private fun getComponentGroupContentWidth(group: RibbonBandComponentGroup, bandC
             layoutDirection = layoutDirection,
             density = density,
             fontFamilyResolver = LocalFontFamilyResolver.current
-        ) else 0.0f
+        ).toInt() else 0
+
+    val columnWidths: MutableList<Int> = arrayListOf()
 
     var contentWidth = 0
     var currentColumnWidth = 0
@@ -188,43 +200,68 @@ private fun getComponentGroupContentWidth(group: RibbonBandComponentGroup, bandC
 
         currentIndexInColumn++
         if (currentIndexInColumn == contentRows) {
+            columnWidths.add(currentColumnWidth)
+
             // Start a new column
             contentWidth += currentColumnWidth
             currentIndexInColumn = 0
             currentColumnWidth = 0
         }
     }
+    if (currentIndexInColumn < contentRows) {
+        columnWidths.add(currentColumnWidth)
+    }
+
     // Account for gaps between columns
     val contentColumnCount = ceil(group.componentProjections.size.toFloat() / contentRows.toFloat()).toInt()
     contentWidth += (contentColumnCount - 1) * gap
 
-    return max(titleLabelWidth.toInt(), contentWidth)
+    val fullWidth = max(titleLabelWidth, contentWidth)
+
+    return RibbonBandComponentGroupLayoutInfo(
+        fullWidth = fullWidth,
+        titleLabelWidth = titleLabelWidth,
+        columnWidths = columnWidths
+    )
 }
 
 @Composable
 private fun RibbonBandComponentGroupContent(group: RibbonBandComponentGroup, bandContentHeight: Float) {
     val density = LocalDensity.current
     val gap = (RibbonBandContentGap.value * density.density).toInt()
-    val width = getComponentGroupContentWidth(group, bandContentHeight, gap)
+    val layoutInfo = getComponentGroupContentLayoutInfo(group, bandContentHeight, gap)
+
+    val hasTitle = (group.title != null)
+    val contentRows = if (hasTitle) 2 else 3
+
     Layout(modifier = Modifier.fillMaxHeight()
-        .width((width / density.density).dp),
+        .width((layoutInfo.fullWidth / density.density).dp),
         content = {
             // Title label if exists
             if (group.title != null) {
-                LabelProjection(contentModel = LabelContentModel(text = group.title!!)).project()
+                LabelProjection(contentModel = LabelContentModel(text = group.title!!)).project(
+                    Modifier.width((layoutInfo.titleLabelWidth / density.density).dp)
+                )
             }
 
             // The rest of the content
+            var currentColumnIndex = 0
+            var currentContentRow = 0
             for (projection in group.componentProjections) {
-                projection.first.reproject(Modifier)
+                // All components in the same column have the same (max) width
+                val currentColumnWidth = layoutInfo.columnWidths[currentColumnIndex]
+                projection.first.reproject(Modifier.width((currentColumnWidth / density.density).dp))
+
+                currentContentRow++
+                if (currentContentRow == contentRows) {
+                    currentColumnIndex++
+                    currentContentRow = 0
+                }
             }
         },
         measurePolicy = { measurables, constraints ->
             val width = constraints.maxWidth
             val placeables = measurables.map { it.measure(Constraints()) }
-
-            val hasTitle = (group.title != null)
-            val contentRows = if (hasTitle) 2 else 3
 
             layout(width = width, height = constraints.maxHeight) {
                 val rowHeight = constraints.maxHeight / 3
@@ -238,22 +275,21 @@ private fun RibbonBandComponentGroupContent(group: RibbonBandComponentGroup, ban
 
                 val topContentY = y
                 var currentContentRow = 0
-                var currentColumnWidth = 0
+                var currentColumnIndex = 0
                 for (placeable in placeables.subList(
                     fromIndex = if (hasTitle) 1 else 0,
                     toIndex = placeables.size
                 )) {
                     placeable.placeRelative(x, y)
-                    currentColumnWidth = max(currentColumnWidth, placeable.measuredWidth)
                     currentContentRow++
                     y += rowHeight
 
                     if (currentContentRow == contentRows) {
                         // Start a new column
                         y = topContentY
-                        x += (currentColumnWidth + gap)
+                        x += (layoutInfo.columnWidths[currentColumnIndex] + gap)
                         currentContentRow = 0
-                        currentColumnWidth = 0
+                        currentColumnIndex++
                     }
                 }
             }
