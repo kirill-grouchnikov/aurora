@@ -41,13 +41,16 @@ sealed interface AbstractRibbonBand {
 }
 
 infix fun <C : ContentModel, P : PresentationModel> Projection<C, P>.with(that: RibbonComponentPresentationModel):
-        Pair<Projection<C, P>, RibbonComponentPresentationModel> = Pair(this, that)
+        RibbonMetaComponentProjection<C, P> = RibbonMetaComponentProjection(
+            projection = this,
+            ribbonComponentPresentationModel = that
+        )
 
 sealed interface RibbonBandGroup
 
 data class RibbonBandComponentGroup(
     val title: String? = null,
-    val componentProjections: List<Pair<Projection<ContentModel, PresentationModel>, RibbonComponentPresentationModel>> = emptyList(),
+    val componentProjections: List<RibbonMetaComponentProjection<ContentModel, PresentationModel>> = emptyList(),
 ): RibbonBandGroup
 
 data class RibbonBandGallery(
@@ -85,7 +88,7 @@ data class FlowRibbonBand(
     override val collapsedStateKeyTip: String? = null,
     override val resizePolicies: List<RibbonBandResizePolicy> =
         CoreRibbonResizePolicies.getCoreFlowPoliciesRestrictive(3),
-    val flowComponentProjections: List<Pair<Projection<ContentModel, PresentationModel>, RibbonComponentPresentationModel>> = emptyList()
+    val flowComponentProjections: List<RibbonMetaComponentProjection<ContentModel, PresentationModel>> = emptyList()
 ) : AbstractRibbonBand
 
 object RibbonBandCommandButtonPresentationStates {

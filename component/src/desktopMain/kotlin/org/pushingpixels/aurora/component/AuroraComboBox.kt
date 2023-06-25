@@ -93,7 +93,7 @@ internal fun <E> comboBoxInstrinsicSize(
         contentModel, presentationModel
     )
 
-    var contentWidth : Dp = 0.dp
+    var contentWidth: Dp = 0.dp
     val icon = presentationModel.displayIconConverter?.invoke(contentModel.selectedItem)
     if (icon != null) {
         contentWidth += 16.dp
@@ -110,7 +110,7 @@ internal fun <E> comboBoxInstrinsicSize(
         resolvedTextStyle = resolvedTextStyle,
         layoutDirection = layoutDirection,
         density = density,
-        fontFamilyResolver = LocalFontFamilyResolver.current
+        fontFamilyResolver = fontFamilyResolver
     ) / density.density).dp
 
     contentWidth = max(contentWidth, prototypeDisplayFullWidth)
@@ -121,12 +121,14 @@ internal fun <E> comboBoxInstrinsicSize(
             presentationModel.contentPadding.calculateEndPadding(layoutDirection)
     width = max(width, presentationModel.defaultMinSize.width)
 
-    var contentHeight : Dp = 0.dp
+    var contentHeight: Dp = 0.dp
     if (icon != null) {
         contentHeight = 16.dp
     }
-    contentHeight = max(contentHeight,
-        (getLabelPreferredHeight(contentModel = LabelContentModel(text = presentationModel.displayConverter.invoke(contentModel.selectedItem)),
+    contentHeight = max(
+        contentHeight,
+        (getLabelPreferredHeight(
+            contentModel = LabelContentModel(text = presentationModel.displayConverter.invoke(contentModel.selectedItem)),
             presentationModel = LabelPresentationModel(
                 textStyle = presentationModel.textStyle ?: LocalTextStyle.current,
                 textMaxLines = 1,
@@ -135,23 +137,29 @@ internal fun <E> comboBoxInstrinsicSize(
             resolvedTextStyle = resolvedTextStyle,
             layoutDirection = layoutDirection,
             density = density,
-            fontFamilyResolver = LocalFontFamilyResolver.current,
-            availableWidth = Float.MAX_VALUE) / density.density).dp,
+            fontFamilyResolver = fontFamilyResolver,
+            availableWidth = Float.MAX_VALUE
+        ) / density.density).dp,
     )
     val height = presentationModel.contentPadding.calculateTopPadding() +
             contentHeight + presentationModel.contentPadding.calculateBottomPadding()
 
-    return Size(width.value * density.density,
-        height.value * density.density)
+    return Size(
+        width.value * density.density,
+        height.value * density.density
+    )
 }
 
 @OptIn(AuroraInternalApi::class)
 @Composable
-private fun <E> getPrototypeDisplayFullWidth(contentModel: ComboBoxContentModel<E>,
-                                             presentationModel: ComboBoxPresentationModel<E>) : Dp {
+private fun <E> getPrototypeDisplayFullWidth(
+    contentModel: ComboBoxContentModel<E>,
+    presentationModel: ComboBoxPresentationModel<E>
+): Dp {
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
+    val fontFamilyResolver = LocalFontFamilyResolver.current
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
 
     var prototypeDisplayFullWidth: Dp = 0.0.dp
@@ -168,7 +176,7 @@ private fun <E> getPrototypeDisplayFullWidth(contentModel: ComboBoxContentModel<
             resolvedTextStyle = resolvedTextStyle,
             layoutDirection = layoutDirection,
             density = density,
-            fontFamilyResolver = LocalFontFamilyResolver.current
+            fontFamilyResolver = fontFamilyResolver
         )
 
         val prototypeIcon = presentationModel.displayIconConverter?.invoke(displayPrototype)

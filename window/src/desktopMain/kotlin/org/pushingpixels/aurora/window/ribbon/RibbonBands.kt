@@ -182,7 +182,10 @@ private fun getComponentGroupContentLayoutInfo(
     val titleLabelWidth = if (hasTitle)
         getLabelPreferredSingleLineWidth(
             contentModel = LabelContentModel(text = group.title!!),
-            presentationModel = LabelPresentationModel(),
+            presentationModel = LabelPresentationModel(
+                contentPadding = PaddingValues(0.dp),
+                textMaxLines = 1
+            ),
             resolvedTextStyle = resolvedTextStyle,
             layoutDirection = layoutDirection,
             density = density,
@@ -195,7 +198,7 @@ private fun getComponentGroupContentLayoutInfo(
     var currentColumnWidth = 0
     var currentIndexInColumn = 0
     for (projection in group.componentProjections) {
-        val widthNeeded = projection.first.intrinsicWidth(height = rowHeight)
+        val widthNeeded = projection.intrinsicWidth(height = rowHeight)
         currentColumnWidth = max(currentColumnWidth, widthNeeded)
 
         currentIndexInColumn++
@@ -250,7 +253,7 @@ private fun RibbonBandComponentGroupContent(group: RibbonBandComponentGroup, ban
             for (projection in group.componentProjections) {
                 // All components in the same column have the same (max) width
                 val currentColumnWidth = layoutInfo.columnWidths[currentColumnIndex]
-                projection.first.reproject(Modifier.width((currentColumnWidth / density.density).dp))
+                projection.reproject(Modifier.width((currentColumnWidth / density.density).dp))
 
                 currentContentRow++
                 if (currentContentRow == contentRows) {
@@ -303,7 +306,7 @@ private fun getOptimalFlowRibbonBandWidth(band: FlowRibbonBand, bandContentHeigh
     var currBestResult = 0
     val rowHeight = ((bandContentHeight - 4 * gap) / 3.0f).toInt()
     for ((index, flowCompProjection) in band.flowComponentProjections.withIndex()) {
-        widths[index] = flowCompProjection.first.intrinsicWidth(height = rowHeight)
+        widths[index] = flowCompProjection.intrinsicWidth(height = rowHeight)
         currBestResult += (widths[index] + gap)
     }
 
@@ -346,7 +349,7 @@ private fun FlowRibbonBandContent(band: FlowRibbonBand, bandContentHeight: Float
             //println("Intrinsic widths:")
             for (projection in band.flowComponentProjections) {
                 //println("\t${projection.first.intrinsicWidth(0)}")
-                projection.first.reproject(Modifier)
+                projection.reproject(Modifier)
             }
         },
         measurePolicy = { measurables, constraints ->
