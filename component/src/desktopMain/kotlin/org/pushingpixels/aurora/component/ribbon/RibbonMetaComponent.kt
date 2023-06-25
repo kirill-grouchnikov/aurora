@@ -21,20 +21,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.projection.Projection
+import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonBandRowHeight
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.component.utils.getLabelPreferredSingleLineWidth
 import org.pushingpixels.aurora.theming.LocalTextStyle
 import kotlin.math.max
+import kotlin.math.min
 
 data class MetaComponentPresentationModel<out P : PresentationModel>(
     val presentationModel: P,
@@ -137,6 +141,7 @@ class RibbonMetaComponentProjection<out C : ContentModel, out P : PresentationMo
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
     modifier: Modifier,
@@ -145,36 +150,125 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
 ) {
     val hasIcon = (ribbonComponentPresentationModel.icon != null)
     val hasCaption = (ribbonComponentPresentationModel.caption != null)
-    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-        if (hasIcon) {
-            Box(Modifier.size(DpSize(16.dp, 16.dp)).paint(painter = ribbonComponentPresentationModel.icon!!))
-        }
 
-        if (hasIcon && hasCaption) {
-            Spacer(modifier = Modifier.width(DefaultMetaComponentIconTextLayoutGap))
-        }
+    val rowHeight = LocalRibbonBandRowHeight.current
+    val widthNeededForComponent = projection.intrinsicWidth(rowHeight)
+    val heightNeededForComponent = projection.intrinsicHeight(widthNeededForComponent)
 
-        if (hasCaption) {
-            LabelProjection(
-                contentModel = LabelContentModel(text = ribbonComponentPresentationModel.caption!!),
-                presentationModel = LabelPresentationModel(
-                    contentPadding = PaddingValues(0.dp),
-                    textMaxLines = 1
+    Layout(modifier = modifier,
+        content = {
+            if (hasIcon) {
+                Box(Modifier.size(DpSize(16.dp, 16.dp)).paint(painter = ribbonComponentPresentationModel.icon!!))
+            }
+
+            if (hasCaption) {
+                LabelProjection(
+                    contentModel = LabelContentModel(text = ribbonComponentPresentationModel.caption!!),
+                    presentationModel = LabelPresentationModel(
+                        contentPadding = PaddingValues(0.dp),
+                        textMaxLines = 1
+                    )
+                ).project()
+            }
+
+            projection.reproject(Modifier)
+        },
+        measurePolicy = { measurables, constraints ->
+            val height = if (constraints.hasFixedHeight) constraints.maxHeight else heightNeededForComponent
+
+            var index = 0
+            val iconPlaceable = if (hasIcon) measurables[index++].measure(Constraints()) else null
+            val captionPlaceable = if (hasCaption) measurables[index++].measure(Constraints()) else null
+
+            var componentWidth: Int = 0
+            var componentOffsetX: Int = 0
+            var fullWidth: Int = 0
+
+            if (constraints.hasFixedWidth) {
+                val width = constraints.maxWidth
+                var widthLeftForComponent = width
+                if (hasIcon) {
+                    widthLeftForComponent -= iconPlaceable!!.measuredWidth
+                }
+                if (hasIcon && hasCaption) {
+                    widthLeftForComponent -= DefaultMetaComponentIconTextLayoutGap.toPx().toInt()
+                }
+                if (hasCaption) {
+                    widthLeftForComponent -= captionPlaceable!!.measuredWidth
+                }
+                if (hasIcon || hasCaption) {
+                    widthLeftForComponent -= DefaultMetaComponentLayoutGap.toPx().toInt()
+                }
+
+                when (ribbonComponentPresentationModel.horizontalAlignment) {
+                    HorizontalAlignment.Fill -> {
+                        // Give all available horizontal space to the component
+                        componentWidth = widthLeftForComponent
+                    }
+
+                    HorizontalAlignment.Leading -> {
+                        // Give the component as much as it needs, with no offset
+                        componentWidth = min(widthLeftForComponent, widthNeededForComponent)
+                    }
+
+                    HorizontalAlignment.Center -> {
+                        // Give the component as much as it needs, and offset for centered placement
+                        componentWidth = min(widthLeftForComponent, widthNeededForComponent)
+                        componentOffsetX = (widthLeftForComponent - componentWidth) / 2
+                    }
+
+                    HorizontalAlignment.Trailing -> {
+                        // Give the component as much as it needs, and offset for trailing placement
+                        componentWidth = min(widthLeftForComponent, widthNeededForComponent)
+                        componentOffsetX = widthLeftForComponent - componentWidth
+                    }
+                }
+                fullWidth = constraints.maxWidth
+            } else {
+                componentWidth = widthNeededForComponent
+                if (hasIcon) {
+                    fullWidth = iconPlaceable!!.measuredWidth
+                }
+                if (hasIcon && hasCaption) {
+                    fullWidth += DefaultMetaComponentIconTextLayoutGap.toPx().toInt()
+                }
+                if (hasCaption) {
+                    fullWidth += captionPlaceable!!.measuredWidth
+                }
+                if (hasIcon || hasCaption) {
+                    fullWidth += DefaultMetaComponentLayoutGap.toPx().toInt()
+                }
+                fullWidth += componentWidth
+            }
+
+            val componentPlaceable = measurables[index].measure(
+                Constraints.fixed(
+                    width = componentWidth,
+                    height = heightNeededForComponent
                 )
-            ).project()
-        }
-
-        if (hasIcon || hasCaption) {
-            Spacer(modifier = Modifier.width(DefaultMetaComponentLayoutGap))
-        }
-
-        projection.reproject(
-            modifier = Modifier.then(
-                if (ribbonComponentPresentationModel.horizontalAlignment == HorizontalAlignment.Fill)
-                    Modifier.weight(1.0f) else Modifier
             )
-        )
-    }
+
+            layout(width = fullWidth, height = height) {
+                var x = 0
+                if (hasIcon) {
+                    iconPlaceable?.placeRelative(x, (height - iconPlaceable.measuredHeight) / 2)
+                    x += iconPlaceable!!.measuredWidth
+                }
+                if (hasIcon && hasCaption) {
+                    x += DefaultMetaComponentIconTextLayoutGap.toPx().toInt()
+                }
+                if (hasCaption) {
+                    captionPlaceable?.placeRelative(x, (height - captionPlaceable.measuredHeight) / 2)
+                    x += captionPlaceable!!.measuredWidth
+                }
+                if (hasIcon || hasCaption) {
+                    x += DefaultMetaComponentLayoutGap.toPx().toInt()
+                }
+
+                x += componentOffsetX
+                componentPlaceable.placeRelative(x, (height - componentPlaceable.measuredHeight) / 2)
+            }
+        })
 }
 
 private val DefaultMetaComponentIconTextLayoutGap = 4.dp

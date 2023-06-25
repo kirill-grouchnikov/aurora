@@ -130,6 +130,7 @@ internal fun <E> comboBoxInstrinsicSize(
         (getLabelPreferredHeight(
             contentModel = LabelContentModel(text = presentationModel.displayConverter.invoke(contentModel.selectedItem)),
             presentationModel = LabelPresentationModel(
+                contentPadding = PaddingValues(0.dp),
                 textStyle = presentationModel.textStyle ?: LocalTextStyle.current,
                 textMaxLines = 1,
                 textOverflow = presentationModel.textOverflow

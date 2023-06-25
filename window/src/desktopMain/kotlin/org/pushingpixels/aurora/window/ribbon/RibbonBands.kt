@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.window.ribbon
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +34,7 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.ribbon.*
+import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonBandRowHeight
 import org.pushingpixels.aurora.component.utils.getEndwardDoubleArrowIcon
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.component.utils.getLabelPreferredSingleLineWidth
@@ -84,10 +86,17 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
     )
     val fullHeightDp = ((bandContentHeight + bandTitleHeight) / density.density).dp
 
-    AuroraDecorationArea(decorationAreaType = DecorationAreaType.ControlPane) {
-        Row(modifier = Modifier.fillMaxWidth().height(fullHeightDp).auroraBackground()) {
-            for (band in bands) {
-                RibbonBand(band = band, bandContentHeight = bandContentHeight)
+    val gap = (RibbonBandContentGap.value * density.density).toInt()
+    val rowHeight = ((bandContentHeight - 4 * gap) / 3.0f).toInt()
+
+    CompositionLocalProvider(
+        LocalRibbonBandRowHeight provides rowHeight,
+    ) {
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.ControlPane) {
+            Row(modifier = Modifier.fillMaxWidth().height(fullHeightDp).auroraBackground()) {
+                for (band in bands) {
+                    RibbonBand(band = band, bandContentHeight = bandContentHeight)
+                }
             }
         }
     }
@@ -253,7 +262,7 @@ private fun RibbonBandComponentGroupContent(group: RibbonBandComponentGroup, ban
             for (projection in group.componentProjections) {
                 // All components in the same column have the same (max) width
                 val currentColumnWidth = layoutInfo.columnWidths[currentColumnIndex]
-                projection.reproject(Modifier.width((currentColumnWidth / density.density).dp))
+                projection.project(Modifier.width((currentColumnWidth / density.density).dp))
 
                 currentContentRow++
                 if (currentContentRow == contentRows) {
@@ -340,6 +349,7 @@ private fun getOptimalFlowRibbonBandWidth(band: FlowRibbonBand, bandContentHeigh
 private fun FlowRibbonBandContent(band: FlowRibbonBand, bandContentHeight: Float) {
     val density = LocalDensity.current
     val gap = (RibbonBandContentGap.value * density.density).toInt()
+
     val optimalWidth = getOptimalFlowRibbonBandWidth(band, bandContentHeight, gap)
     //println("Optimal width: $optimalWidth")
     Layout(modifier = Modifier.fillMaxHeight()
@@ -349,7 +359,7 @@ private fun FlowRibbonBandContent(band: FlowRibbonBand, bandContentHeight: Float
             //println("Intrinsic widths:")
             for (projection in band.flowComponentProjections) {
                 //println("\t${projection.first.intrinsicWidth(0)}")
-                projection.reproject(Modifier)
+                projection.project(Modifier)
             }
         },
         measurePolicy = { measurables, constraints ->
