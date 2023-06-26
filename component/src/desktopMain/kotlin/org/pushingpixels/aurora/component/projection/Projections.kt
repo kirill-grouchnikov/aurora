@@ -383,12 +383,12 @@ class ComboBoxProjection<E>(
 
     @Composable
     override fun intrinsicWidth(height: Int): Int {
-        return comboBoxInstrinsicSize(this.contentModel, this.presentationModel).width.toInt()
+        return comboBoxIntrinsicSize(this.contentModel, this.presentationModel).width.toInt()
     }
 
     @Composable
     override fun intrinsicHeight(width: Int): Int {
-        return comboBoxInstrinsicSize(this.contentModel, this.presentationModel).height.toInt()
+        return comboBoxIntrinsicSize(this.contentModel, this.presentationModel).height.toInt()
     }
 }
 

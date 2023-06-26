@@ -79,7 +79,7 @@ private fun Modifier.comboBoxLocator(topLeftOffset: AuroraOffset, size: MutableS
 
 @OptIn(AuroraInternalApi::class)
 @Composable
-internal fun <E> comboBoxInstrinsicSize(
+internal fun <E> comboBoxIntrinsicSize(
     contentModel: ComboBoxContentModel<E>,
     presentationModel: ComboBoxPresentationModel<E>
 ): Size {
@@ -164,9 +164,8 @@ private fun <E> getPrototypeDisplayFullWidth(
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
     val textMeasurer = rememberTextMeasurer(cacheSize = 10)
 
-    var displayPrototype = presentationModel.displayPrototype?.invoke(contentModel.items)
-    if (displayPrototype == null) {
-        displayPrototype = contentModel.items.maxBy {
+    val displayPrototype = presentationModel.displayPrototype?.invoke(contentModel.items) ?:
+        contentModel.items.maxByOrNull {
             textMeasurer.measure(
                 text = presentationModel.displayConverter.invoke(it),
                 style = presentationModel.textStyle ?: resolvedTextStyle,
@@ -174,7 +173,7 @@ private fun <E> getPrototypeDisplayFullWidth(
                 maxLines = 1
             ).multiParagraph.width
         }
-    }
+
     val prototypeDisplayLabelWidth = getLabelPreferredSingleLineWidth(
         contentModel = LabelContentModel(text = presentationModel.displayConverter.invoke(displayPrototype!!)),
         presentationModel = LabelPresentationModel(
