@@ -164,7 +164,7 @@ private fun <E> getPrototypeDisplayFullWidth(
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
     val textMeasurer = rememberTextMeasurer(cacheSize = 10)
 
-    var displayPrototype = presentationModel.displayPrototype?.invoke(contentModel.items, presentationModel)
+    var displayPrototype = presentationModel.displayPrototype?.invoke(contentModel.items)
     if (displayPrototype == null) {
         displayPrototype = contentModel.items.maxBy {
             textMeasurer.measure(
