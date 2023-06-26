@@ -349,16 +349,13 @@ private fun getOptimalFlowRibbonBandWidth(band: FlowRibbonBand, bandContentHeigh
 private fun FlowRibbonBandContent(band: FlowRibbonBand, bandContentHeight: Float) {
     val density = LocalDensity.current
     val gap = (RibbonBandContentGap.value * density.density).toInt()
+    val rowHeight = ((bandContentHeight - 4 * gap) / 3.0f).toInt()
 
     val optimalWidth = getOptimalFlowRibbonBandWidth(band, bandContentHeight, gap)
-    //println("Optimal width: $optimalWidth")
-    Layout(modifier = Modifier.fillMaxHeight()
-        .width((optimalWidth / density.density).dp),
+    Layout(modifier = Modifier.fillMaxHeight().width((optimalWidth / density.density).dp),
         content = {
             // Project all the content
-            //println("Intrinsic widths:")
             for (projection in band.flowComponentProjections) {
-                //println("\t${projection.first.intrinsicWidth(0)}")
                 projection.project(Modifier)
             }
         },
@@ -367,20 +364,14 @@ private fun FlowRibbonBandContent(band: FlowRibbonBand, bandContentHeight: Float
 
             val placeables = measurables.map { it.measure(Constraints()) }
 
-//            println("Measured widths:")
-//            placeables.forEach {
-//                println("\t${it.measuredWidth}")
-//            }
-
             layout(width = width, height = constraints.maxHeight) {
-                val rowHeight = constraints.maxHeight / 3
                 var x = 0
                 var y = gap
 
                 for (placeable in placeables) {
                     if (x + placeable.measuredWidth > width) {
                         x = 0
-                        y += rowHeight
+                        y += (rowHeight + gap)
                     }
                     placeable.placeRelative(x, y)
                     x += placeable.measuredWidth
