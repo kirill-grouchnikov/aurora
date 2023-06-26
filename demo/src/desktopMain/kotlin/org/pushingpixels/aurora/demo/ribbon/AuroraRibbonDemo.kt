@@ -178,83 +178,83 @@ fun main() = auroraApplication {
     )
 
     val contextualTaskGroup1 = RibbonContextualTaskGroup(
-            title = resourceBundle.getString("Group1.textTaskGroupTitle"),
-            hueColor = Color.Red,
-            tasks = listOf(
-                RibbonTask(
-                    title = resourceBundle.getString("Task11.textTaskTitle"),
-                    bands = listOf(
-                        builder.getActionBand(),
-                        builder.getApplicationsBand(selectedApplicationGame = ribbonState.applicationGame,
-                            onApplicationGameSelected = {
-                                ribbonState = ribbonState.copy(applicationGame = it)
-                            },
-                            selectedApplicationBrowser = ribbonState.applicationBrowser,
-                            onApplicationBrowserSelected = {
-                                ribbonState = ribbonState.copy(applicationBrowser = it)
-                            },
-                            selectedApplicationMultimedia = ribbonState.applicationMultimedia,
-                            onApplicationMultimediaSelected = {
-                                ribbonState = ribbonState.copy(applicationMultimedia = it)
-                            })
-                    ),
-                    resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
-                    keyTip = "XA",
-                    isActive = (ribbonState.selectedTask == Task.Contextual11),
-                    onClick = { ribbonState = ribbonState.copy(selectedTask = Task.Contextual11) }
+        title = resourceBundle.getString("Group1.textTaskGroupTitle"),
+        hueColor = Color.Red,
+        tasks = listOf(
+            RibbonTask(
+                title = resourceBundle.getString("Task11.textTaskTitle"),
+                bands = listOf(
+                    builder.getActionBand(),
+                    builder.getApplicationsBand(selectedApplicationGame = ribbonState.applicationGame,
+                        onApplicationGameSelected = {
+                            ribbonState = ribbonState.copy(applicationGame = it)
+                        },
+                        selectedApplicationBrowser = ribbonState.applicationBrowser,
+                        onApplicationBrowserSelected = {
+                            ribbonState = ribbonState.copy(applicationBrowser = it)
+                        },
+                        selectedApplicationMultimedia = ribbonState.applicationMultimedia,
+                        onApplicationMultimediaSelected = {
+                            ribbonState = ribbonState.copy(applicationMultimedia = it)
+                        })
                 ),
-                RibbonTask(
-                    title = resourceBundle.getString("Task12.textTaskTitle"),
-                    bands = listOf(
-                        builder.getActionBand(),
-                        builder.getApplicationsBand(selectedApplicationGame = ribbonState.applicationGame,
-                            onApplicationGameSelected = {
-                                ribbonState = ribbonState.copy(applicationGame = it)
-                            },
-                            selectedApplicationBrowser = ribbonState.applicationBrowser,
-                            onApplicationBrowserSelected = {
-                                ribbonState = ribbonState.copy(applicationBrowser = it)
-                            },
-                            selectedApplicationMultimedia = ribbonState.applicationMultimedia,
-                            onApplicationMultimediaSelected = {
-                                ribbonState = ribbonState.copy(applicationMultimedia = it)
-                            })
-                    ),
-                    resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
-                    keyTip = "XB",
-                    isActive = (ribbonState.selectedTask == Task.Contextual12),
-                    onClick = { ribbonState = ribbonState.copy(selectedTask = Task.Contextual12) }
-                )
+                resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+                keyTip = "XA",
+                isActive = (ribbonState.selectedTask == Task.Contextual11),
+                onClick = { ribbonState = ribbonState.copy(selectedTask = Task.Contextual11) }
+            ),
+            RibbonTask(
+                title = resourceBundle.getString("Task12.textTaskTitle"),
+                bands = listOf(
+                    builder.getActionBand(),
+                    builder.getApplicationsBand(selectedApplicationGame = ribbonState.applicationGame,
+                        onApplicationGameSelected = {
+                            ribbonState = ribbonState.copy(applicationGame = it)
+                        },
+                        selectedApplicationBrowser = ribbonState.applicationBrowser,
+                        onApplicationBrowserSelected = {
+                            ribbonState = ribbonState.copy(applicationBrowser = it)
+                        },
+                        selectedApplicationMultimedia = ribbonState.applicationMultimedia,
+                        onApplicationMultimediaSelected = {
+                            ribbonState = ribbonState.copy(applicationMultimedia = it)
+                        })
+                ),
+                resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+                keyTip = "XB",
+                isActive = (ribbonState.selectedTask == Task.Contextual12),
+                onClick = { ribbonState = ribbonState.copy(selectedTask = Task.Contextual12) }
             )
         )
+    )
     val contextualTaskGroup2 = RibbonContextualTaskGroup(
-            title = resourceBundle.getString("Group2.textTaskGroupTitle"),
-            hueColor = Color.Green,
-            tasks = listOf(
-                RibbonTask(
-                    title = resourceBundle.getString("Task21.textTaskTitle"),
-                    bands = listOf(
-                        builder.getActionBand(),
-                        builder.getApplicationsBand(selectedApplicationGame = ribbonState.applicationGame,
-                            onApplicationGameSelected = {
-                                ribbonState = ribbonState.copy(applicationGame = it)
-                            },
-                            selectedApplicationBrowser = ribbonState.applicationBrowser,
-                            onApplicationBrowserSelected = {
-                                ribbonState = ribbonState.copy(applicationBrowser = it)
-                            },
-                            selectedApplicationMultimedia = ribbonState.applicationMultimedia,
-                            onApplicationMultimediaSelected = {
-                                ribbonState = ribbonState.copy(applicationMultimedia = it)
-                            })
-                    ),
-                    resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
-                    keyTip = "YA",
-                    isActive = (ribbonState.selectedTask == Task.Contextual21),
-                    onClick = { ribbonState = ribbonState.copy(selectedTask = Task.Contextual21) }
-                )
+        title = resourceBundle.getString("Group2.textTaskGroupTitle"),
+        hueColor = Color.Green,
+        tasks = listOf(
+            RibbonTask(
+                title = resourceBundle.getString("Task21.textTaskTitle"),
+                bands = listOf(
+                    builder.getActionBand(),
+                    builder.getApplicationsBand(selectedApplicationGame = ribbonState.applicationGame,
+                        onApplicationGameSelected = {
+                            ribbonState = ribbonState.copy(applicationGame = it)
+                        },
+                        selectedApplicationBrowser = ribbonState.applicationBrowser,
+                        onApplicationBrowserSelected = {
+                            ribbonState = ribbonState.copy(applicationBrowser = it)
+                        },
+                        selectedApplicationMultimedia = ribbonState.applicationMultimedia,
+                        onApplicationMultimediaSelected = {
+                            ribbonState = ribbonState.copy(applicationMultimedia = it)
+                        })
+                ),
+                resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+                keyTip = "YA",
+                isActive = (ribbonState.selectedTask == Task.Contextual21),
+                onClick = { ribbonState = ribbonState.copy(selectedTask = Task.Contextual21) }
             )
         )
+    )
 
     val taskbarElements: List<RibbonTaskbarElement> =
         listOf(
@@ -1378,6 +1378,7 @@ internal class RibbonBuilder(
         )
     }
 
+    @Composable
     fun getApplicationsBand(
         selectedApplicationGame: ApplicationGame,
         onApplicationGameSelected: (ApplicationGame) -> Unit,
@@ -1423,7 +1424,9 @@ internal class RibbonBuilder(
                     componentProjections = listOf(
                         ComboBoxProjection(
                             contentModel = gamesComboBoxContentModel,
-                            presentationModel = ComboBoxPresentationModel(displayConverter = { it.name }),
+                            presentationModel = ComboBoxPresentationModel(
+                                displayConverter = { it.name }
+                            ),
                         ) with RibbonComponentPresentationModel(
                             caption = resourceBundle.getString("Games.text"),
                             icon = applications_games(),
@@ -1433,7 +1436,9 @@ internal class RibbonBuilder(
                         ),
                         ComboBoxProjection(
                             contentModel = internetComboBoxContentModel,
-                            presentationModel = ComboBoxPresentationModel(displayConverter = { it.name }),
+                            presentationModel = ComboBoxPresentationModel(
+                                displayConverter = { it.name }
+                            ),
                         ) with RibbonComponentPresentationModel(
                             caption = resourceBundle.getString("Internet.text"),
                             icon = applications_internet(),
@@ -1443,9 +1448,11 @@ internal class RibbonBuilder(
                         ),
                         ComboBoxProjection(
                             contentModel = multimediaComboBoxContentModel,
-                            presentationModel = ComboBoxPresentationModel(displayConverter = {
-                                resourceBundle.getString(it.resourceKey)
-                            }),
+                            presentationModel = ComboBoxPresentationModel(
+                                displayConverter = {
+                                    resourceBundle.getString(it.resourceKey)
+                                }
+                            ),
                         ) with RibbonComponentPresentationModel(
                             caption = resourceBundle.getString("Multimedia.text"),
                             keyTip = "AM",

@@ -50,8 +50,6 @@ import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.model.LabelPresentationModel
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.ribbon.Ribbon
-import org.pushingpixels.aurora.component.ribbon.RibbonBand
-import org.pushingpixels.aurora.component.ribbon.RibbonBandCommandGroup
 import org.pushingpixels.aurora.component.ribbon.RibbonTask
 import org.pushingpixels.aurora.component.ribbon.impl.RibbonTaskbar
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainter

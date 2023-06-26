@@ -33,7 +33,7 @@ data class ComboBoxContentModel<E>(
     val richTooltip: RichTooltip? = null,
     val enabled: Boolean = true,
     val onTriggerItemSelectedChange: (E) -> Unit
-): ContentModel
+) : ContentModel
 
 object ComboBoxSizingConstants {
     val DefaultComboBoxArrowWidth = ArrowSizingConstants.DefaultSingleArrowWidth
@@ -56,8 +56,10 @@ data class ComboBoxPresentationModel<E>(
     val displayIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val displayPrototype: ((List<E>) -> E)? = null,
     val contentPadding: PaddingValues = ComboBoxSizingConstants.DefaultComboBoxContentPadding,
-    val defaultMinSize: DpSize = DpSize(width = ComboBoxSizingConstants.DefaultComboBoxContentWidth,
-        ComboBoxSizingConstants.DefaultComboBoxContentHeight),
+    val defaultMinSize: DpSize = DpSize(
+        width = ComboBoxSizingConstants.DefaultComboBoxContentWidth,
+        height = ComboBoxSizingConstants.DefaultComboBoxContentHeight
+    ),
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Leading,
     val horizontalGapScaleFactor: Float = 1.0f,
     val textStyle: TextStyle? = null,
@@ -66,4 +68,4 @@ data class ComboBoxPresentationModel<E>(
     val popupMaxVisibleItems: Int = 8,
     val popupDisplayPrototype: ((List<E>) -> E)? = null,
     val richTooltipPresentationModel: RichTooltipPresentationModel = RichTooltipPresentationModel()
-): PresentationModel
+) : PresentationModel
