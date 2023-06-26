@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.window.ribbon
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.ribbon.*
@@ -51,6 +53,7 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
     val textStyle = LocalTextStyle.current
     val fontFamilyResolver = LocalFontFamilyResolver.current
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
+    val gap = (RibbonBandContentGap.value * density.density).toInt()
 
     val bands = ribbonTask.bands
 
@@ -74,7 +77,7 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
         )
     val bandContentHeight = sizingLayoutManager.getPreferredSize(
         commandForSizing, presentationForSizing, sizingPreLayoutInfo
-    ).height
+    ).height + 2 * gap
     val bandTitleHeight = getLabelPreferredHeight(
         contentModel = LabelContentModel(text = "Title"),
         presentationModel = LabelPresentationModel(contentPadding = RibbonBandTitleLabelPadding, textMaxLines = 1),
@@ -86,7 +89,6 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
     )
     val fullHeightDp = ((bandContentHeight + bandTitleHeight) / density.density).dp
 
-    val gap = (RibbonBandContentGap.value * density.density).toInt()
     val rowHeight = ((bandContentHeight - 4 * gap) / 3.0f).toInt()
 
     CompositionLocalProvider(
@@ -132,33 +134,132 @@ private fun RibbonBandContent(band: RibbonBand, bandContentHeight: Float) {
     Row(modifier = Modifier.fillMaxSize().padding(0.dp)) {
         for (bandGroup in band.groups) {
             when (bandGroup) {
-                is RibbonBandCommandGroup ->
-                    Box(modifier = Modifier.fillMaxSize().padding(all = RibbonBandContentGap)) {
-                        for (gallery in bandGroup.galleries) {
-                            RibbonGalleryProjection(
-                                contentModel = gallery.contentModel,
-                                presentationModel = InRibbonGalleryPresentationModel(
-                                    collapsedVisibleCount = when (gallery.presentationPriority) {
-                                        PresentationPriority.Low -> gallery.collapsedVisibleCountLow
-                                        PresentationPriority.Medium -> gallery.collapsedVisibleCountMedium
-                                        PresentationPriority.Top -> gallery.collapsedVisibleCountTop
-                                    },
-                                    commandButtonPresentationState = gallery.presentationModel.commandButtonPresentationState,
-                                    commandButtonTextOverflow = gallery.presentationModel.commandButtonTextOverflow,
-                                    commandPopupFireTrigger = gallery.presentationModel.commandPopupFireTrigger,
-                                    commandSelectedStateHighlight = gallery.presentationModel.commandSelectedStateHighlight,
-                                    contentPadding = gallery.presentationModel.contentPadding,
-                                    layoutGap = gallery.presentationModel.layoutGap,
-                                    expandKeyTip = gallery.presentationModel.expandKeyTip,
-                                    popupLayoutSpec = gallery.presentationModel.popupLayoutSpec
-                                ),
-                                secondaryOverlays = gallery.secondaryOverlays
-                            ).project(inlineState = gallery.inlineState)
-                        }
-                    }
+                is RibbonBandCommandGroup -> {
+                    RibbonBandCommandGroupContent(group = bandGroup, bandContentHeight = bandContentHeight)
+                }
 
                 is RibbonBandComponentGroup -> {
                     RibbonBandComponentGroupContent(group = bandGroup, bandContentHeight = bandContentHeight)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun RibbonBandCommandGroupContent(group: RibbonBandCommandGroup, bandContentHeight: Float) {
+    Row(modifier = Modifier.fillMaxSize().padding(all = RibbonBandContentGap)) {
+        // Display galleries first
+        for (gallery in group.galleries) {
+            RibbonGalleryProjection(
+                contentModel = gallery.contentModel,
+                presentationModel = InRibbonGalleryPresentationModel(
+                    collapsedVisibleCount = when (gallery.presentationPriority) {
+                        PresentationPriority.Low -> gallery.collapsedVisibleCountLow
+                        PresentationPriority.Medium -> gallery.collapsedVisibleCountMedium
+                        PresentationPriority.Top -> gallery.collapsedVisibleCountTop
+                    },
+                    commandButtonPresentationState = gallery.presentationModel.commandButtonPresentationState,
+                    commandButtonTextOverflow = gallery.presentationModel.commandButtonTextOverflow,
+                    commandPopupFireTrigger = gallery.presentationModel.commandPopupFireTrigger,
+                    commandSelectedStateHighlight = gallery.presentationModel.commandSelectedStateHighlight,
+                    contentPadding = gallery.presentationModel.contentPadding,
+                    layoutGap = gallery.presentationModel.layoutGap,
+                    expandKeyTip = gallery.presentationModel.expandKeyTip,
+                    popupLayoutSpec = gallery.presentationModel.popupLayoutSpec
+                ),
+                secondaryOverlays = gallery.secondaryOverlays
+            ).project(inlineState = gallery.inlineState)
+        }
+        // And command buttons second
+
+        // TODO - this will be a combination of presentation priority, available horizontal space
+        // and ribbon band resize policies
+        val buttonsBig: MutableList<BaseCommandButtonProjection<*, *>> = arrayListOf()
+        val buttonsMedium: MutableList<BaseCommandButtonProjection<*, *>> = arrayListOf()
+        val buttonsSmall: MutableList<BaseCommandButtonProjection<*, *>> = arrayListOf()
+        for (commandProjection in group.commandProjections) {
+            when (commandProjection.second) {
+                PresentationPriority.Top -> buttonsBig.add(commandProjection.first)
+                PresentationPriority.Medium -> buttonsMedium.add(commandProjection.first)
+                PresentationPriority.Low -> buttonsSmall.add(commandProjection.first)
+            }
+        }
+
+        if (buttonsBig.isNotEmpty()) {
+            BigButtons(buttonsBig)
+        }
+        if (buttonsMedium.isNotEmpty()) {
+            MediumButtons(buttonsMedium)
+        }
+        if (buttonsSmall.isNotEmpty()) {
+            SmallButtons(buttonsSmall)
+        }
+    }
+}
+
+@Composable
+private fun BigButtons(buttons: List<BaseCommandButtonProjection<*, *>>) {
+    Row(
+        modifier = Modifier.fillMaxHeight(),
+        horizontalArrangement = Arrangement.spacedBy(RibbonBandContentGap)
+    ) {
+        for (button in buttons) {
+            button.reproject(modifier = Modifier,
+                primaryOverlay = BaseCommandButtonPresentationModel.Overlay(
+                    presentationState = CommandButtonPresentationState.Big
+                ),
+                actionInteractionSource = remember { MutableInteractionSource() },
+                popupInteractionSource = remember { MutableInteractionSource() })
+        }
+    }
+}
+
+@Composable
+private fun MediumButtons(buttons: List<BaseCommandButtonProjection<*, *>>) {
+    Row(
+        modifier = Modifier.fillMaxHeight(),
+        horizontalArrangement = Arrangement.spacedBy(RibbonBandContentGap)
+    ) {
+        val columnCount = ceil(buttons.size / 3.0f).toInt()
+        var buttonIndex = 0
+        for (column in 1..columnCount) {
+            Column(modifier = Modifier.fillMaxHeight(),
+                verticalArrangement = Arrangement.spacedBy(RibbonBandContentGap)) {
+                for (row in 1..3) {
+                    if (buttonIndex < buttons.size) {
+                        buttons[buttonIndex].reproject(modifier = Modifier,
+                            primaryOverlay = BaseCommandButtonPresentationModel.Overlay(
+                                presentationState = CommandButtonPresentationState.Medium
+                            ),
+                            actionInteractionSource = remember { MutableInteractionSource() },
+                            popupInteractionSource = remember { MutableInteractionSource() })
+                        buttonIndex++
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SmallButtons(buttons: List<BaseCommandButtonProjection<*, *>>) {
+    Row(
+        modifier = Modifier.fillMaxHeight(),
+        horizontalArrangement = Arrangement.spacedBy(RibbonBandContentGap)
+    ) {
+        val columnCount = ceil(buttons.size / 3.0f).toInt()
+        var buttonIndex = 0
+        for (column in 1..columnCount) {
+            for (row in 1..3) {
+                if (buttonIndex < buttons.size) {
+                    buttons[buttonIndex].reproject(modifier = Modifier,
+                        primaryOverlay = BaseCommandButtonPresentationModel.Overlay(
+                            presentationState = CommandButtonPresentationState.Small
+                        ),
+                        actionInteractionSource = remember { MutableInteractionSource() },
+                        popupInteractionSource = remember { MutableInteractionSource() })
+                    buttonIndex++
                 }
             }
         }
