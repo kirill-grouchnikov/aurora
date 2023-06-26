@@ -207,7 +207,8 @@ private fun BigButtons(buttons: List<BaseCommandButtonProjection<*, *>>) {
         for (button in buttons) {
             button.reproject(modifier = Modifier,
                 primaryOverlay = BaseCommandButtonPresentationModel.Overlay(
-                    presentationState = CommandButtonPresentationState.Big
+                    presentationState = CommandButtonPresentationState.Big,
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat
                 ),
                 actionInteractionSource = remember { MutableInteractionSource() },
                 popupInteractionSource = remember { MutableInteractionSource() })
@@ -230,7 +231,8 @@ private fun MediumButtons(buttons: List<BaseCommandButtonProjection<*, *>>) {
                     if (buttonIndex < buttons.size) {
                         buttons[buttonIndex].reproject(modifier = Modifier,
                             primaryOverlay = BaseCommandButtonPresentationModel.Overlay(
-                                presentationState = CommandButtonPresentationState.Medium
+                                presentationState = CommandButtonPresentationState.Medium,
+                                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat
                             ),
                             actionInteractionSource = remember { MutableInteractionSource() },
                             popupInteractionSource = remember { MutableInteractionSource() })
@@ -255,7 +257,8 @@ private fun SmallButtons(buttons: List<BaseCommandButtonProjection<*, *>>) {
                 if (buttonIndex < buttons.size) {
                     buttons[buttonIndex].reproject(modifier = Modifier,
                         primaryOverlay = BaseCommandButtonPresentationModel.Overlay(
-                            presentationState = CommandButtonPresentationState.Small
+                            presentationState = CommandButtonPresentationState.Small,
+                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat
                         ),
                         actionInteractionSource = remember { MutableInteractionSource() },
                         popupInteractionSource = remember { MutableInteractionSource() })
