@@ -37,10 +37,7 @@ import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.AuroraHorizontallyScrollableBox
-import org.pushingpixels.aurora.component.model.BaseCommandButtonPresentationModel
-import org.pushingpixels.aurora.component.model.Command
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
+import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.ribbon.Ribbon
 import org.pushingpixels.aurora.component.ribbon.RibbonContextualTaskGroup
 import org.pushingpixels.aurora.theming.*
@@ -136,6 +133,8 @@ internal fun RibbonPrimaryBar(
     val taskButtonPresentationModel = CommandButtonPresentationModel(
         presentationState = CommandButtonPresentationState.Medium,
         contentPadding = PaddingValues(vertical = 4.dp, horizontal = 12.dp),
+        minWidth = 120.dp,
+        horizontalAlignment = HorizontalAlignment.Center,
         sides = Sides(openSides = hashSetOf(Side.Bottom), straightSides = hashSetOf(Side.Bottom)),
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat
     )

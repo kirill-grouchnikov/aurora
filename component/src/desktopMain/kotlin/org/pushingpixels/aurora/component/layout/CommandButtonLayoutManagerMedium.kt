@@ -47,7 +47,7 @@ internal open class CommandButtonLayoutManagerMedium(
         return (command.icon != null) || presentationModel.forceAllocateSpaceForIcon
     }
 
-    override fun getPreferredSize(
+    private fun getPreferredSizeIgnoringMinWidth(
         command: BaseCommand,
         presentationModel: BaseCommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
@@ -120,6 +120,21 @@ internal open class CommandButtonLayoutManagerMedium(
         return Size(width, by + max(prefIconHeight, textHeight))
     }
 
+    override fun getPreferredSize(
+        command: BaseCommand,
+        presentationModel: BaseCommandButtonPresentationModel,
+        preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
+    ): Size {
+        val preferredSizeIgnoringMinWidth = getPreferredSizeIgnoringMinWidth(command, presentationModel, preLayoutInfo)
+        return Size(
+            width = max(
+                preferredSizeIgnoringMinWidth.width,
+                presentationModel.minWidth.toPx()
+            ),
+            height = preferredSizeIgnoringMinWidth.height
+        )
+    }
+
     override fun getPreLayoutInfo(
         command: BaseCommand,
         presentationModel: BaseCommandButtonPresentationModel
@@ -145,6 +160,9 @@ internal open class CommandButtonLayoutManagerMedium(
         presentationModel: BaseCommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
+        val preferredSizeIgnoringMinWidth = getPreferredSizeIgnoringMinWidth(
+            command, presentationModel, preLayoutInfo
+        )
         val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo)
         val paddingTop = presentationModel.verticalGapScaleFactor *
                 presentationModel.contentPadding.topPadding.toPx()
@@ -168,8 +186,10 @@ internal open class CommandButtonLayoutManagerMedium(
             arrayListOf()
 
         var shiftX = 0.0f
-        var finalWidth = preferredSize.width
-        var finalHeight = preferredSize.height
+        var finalWidth = preferredSizeIgnoringMinWidth.width
+        var finalHeight = preferredSizeIgnoringMinWidth.height
+
+        // First step - do we have constrained maximum width?
         if (constraints.hasFixedWidth && (constraints.maxWidth > 0)) {
             finalWidth = constraints.maxWidth.toFloat()
             if (finalWidth > preferredSize.width) {
@@ -192,6 +212,7 @@ internal open class CommandButtonLayoutManagerMedium(
                 }
             }
         }
+        // Second step - do we have minimum width from the presentation model?
         if (finalWidth < presentationModel.minWidth.toPx()) {
             shiftX += (presentationModel.minWidth.toPx() - finalWidth) / 2.0f
             finalWidth = presentationModel.minWidth.toPx()
