@@ -132,8 +132,8 @@ internal fun RibbonPrimaryBar(
 
     val taskButtonPresentationModel = CommandButtonPresentationModel(
         presentationState = CommandButtonPresentationState.Medium,
-        contentPadding = PaddingValues(vertical = 4.dp, horizontal = 12.dp),
-        minWidth = 120.dp,
+        contentPadding = TaskbarPrimaryBarTaskButtonContentPadding,
+        minWidth = TaskbarPrimaryBarTaskButtonMinWidth,
         horizontalAlignment = HorizontalAlignment.Center,
         sides = Sides(openSides = hashSetOf(Side.Bottom), straightSides = hashSetOf(Side.Bottom)),
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat
@@ -513,6 +513,8 @@ private fun generateColorSchemeBundle(
 }
 
 private val TaskbarPrimaryBarGap = 8.dp
+private val TaskbarPrimaryBarTaskButtonMinWidth = 120.dp
+private val TaskbarPrimaryBarTaskButtonContentPadding = PaddingValues(vertical = 4.dp, horizontal = 12.dp)
 private val TaskbarPrimaryBarTaskButtonsGap = 6.dp
 private val TaskbarPrimaryBarAnchoredCommandsGap = 4.dp
 private val TaskbarPrimaryBarContentPadding = PaddingValues(start = 4.dp, end = 4.dp, top = 2.dp)
