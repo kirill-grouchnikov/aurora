@@ -46,7 +46,7 @@ abstract class Projection<out C : ContentModel, out P : PresentationModel> {
 }
 
 abstract class BaseCommandButtonProjection<out C : BaseCommand,
-        out P: BaseCommandButtonPresentationModel>(
+        out P: BaseCommandButtonPresentationModel, out CBP: BaseCommandButtonProjection<C, P, CBP>>(
     open val contentModel: C,
     open val presentationModel: P,
     open val secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
@@ -71,6 +71,8 @@ abstract class BaseCommandButtonProjection<out C : BaseCommand,
             secondaryOverlays = this.secondaryOverlays ?: mapOf()
         )
     }
+
+    abstract fun copy(primaryOverlay: BaseCommandButtonPresentationModel.Overlay): CBP
 
     @Composable
     abstract fun reproject(
@@ -120,7 +122,7 @@ class CommandButtonProjection(
     contentModel: Command,
     presentationModel: CommandButtonPresentationModel = CommandButtonPresentationModel(),
     secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
-) : BaseCommandButtonProjection<Command, CommandButtonPresentationModel>(
+) : BaseCommandButtonProjection<Command, CommandButtonPresentationModel, CommandButtonProjection>(
     contentModel, presentationModel, secondaryOverlays
 ) {
     @Composable
@@ -135,6 +137,14 @@ class CommandButtonProjection(
             actionInteractionSource = actionInteractionSource,
             popupInteractionSource = popupInteractionSource,
             popupHandler = GeneralCommandMenuPopupHandler,
+        )
+    }
+
+    override fun copy(primaryOverlay: BaseCommandButtonPresentationModel.Overlay): CommandButtonProjection {
+        return CommandButtonProjection(
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel.overlayWith(primaryOverlay),
+            secondaryOverlays = secondaryOverlays
         )
     }
 
@@ -170,7 +180,7 @@ class ColorSelectorCommandButtonProjection(
     contentModel: ColorSelectorCommand,
     presentationModel: ColorSelectorCommandButtonPresentationModel = ColorSelectorCommandButtonPresentationModel(),
     secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
-) : BaseCommandButtonProjection<ColorSelectorCommand, ColorSelectorCommandButtonPresentationModel>(
+) : BaseCommandButtonProjection<ColorSelectorCommand, ColorSelectorCommandButtonPresentationModel, ColorSelectorCommandButtonProjection>(
     contentModel, presentationModel, secondaryOverlays
 ) {
     private fun checkModel() {
@@ -207,6 +217,14 @@ class ColorSelectorCommandButtonProjection(
             actionInteractionSource = remember { MutableInteractionSource() },
             popupInteractionSource = popupInteractionSource,
             popupHandler = ColorSelectorCommandMenuPopupHandler,
+        )
+    }
+
+    override fun copy(primaryOverlay: BaseCommandButtonPresentationModel.Overlay): ColorSelectorCommandButtonProjection {
+        return ColorSelectorCommandButtonProjection(
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel.overlayWith(primaryOverlay),
+            secondaryOverlays = this.secondaryOverlays
         )
     }
 

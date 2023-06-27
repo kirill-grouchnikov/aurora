@@ -163,7 +163,7 @@ class RibbonApplicationMenuCommandButtonProjection(
     presentationModel: RibbonApplicationMenuCommandButtonPresentationModel,
     secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null,
     val secondaryStates: Map<Command, CommandButtonPresentationState>? = null
-) : BaseCommandButtonProjection<RibbonApplicationMenuCommand, RibbonApplicationMenuCommandButtonPresentationModel>(
+) : BaseCommandButtonProjection<RibbonApplicationMenuCommand, RibbonApplicationMenuCommandButtonPresentationModel, RibbonApplicationMenuCommandButtonProjection>(
     contentModel, presentationModel, secondaryOverlays
 ) {
     @Composable
@@ -177,6 +177,14 @@ class RibbonApplicationMenuCommandButtonProjection(
             actionInteractionSource = remember { MutableInteractionSource() },
             popupInteractionSource = popupInteractionSource,
             popupHandler = RibbonApplicationMenuPopupHandler(secondaryStates = secondaryStates),
+        )
+    }
+
+    override fun copy(primaryOverlay: BaseCommandButtonPresentationModel.Overlay): RibbonApplicationMenuCommandButtonProjection {
+        return RibbonApplicationMenuCommandButtonProjection(
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel.overlayWith(primaryOverlay),
+            secondaryOverlays = this.secondaryOverlays
         )
     }
 

@@ -49,16 +49,19 @@ import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.nebulaAmethystSkin
 import org.pushingpixels.aurora.window.AuroraRibbonWindow
 import org.pushingpixels.aurora.window.auroraApplication
+import java.awt.GraphicsEnvironment
 import java.text.MessageFormat
 import java.util.*
 import javax.swing.JColorChooser
 import kotlin.system.exitProcess
 
 fun main() = auroraApplication {
+    val density = LocalDensity.current.density
+    val windowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().maximumWindowBounds
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
-        position = WindowPosition.Aligned(Alignment.Center),
-        size = DpSize(800.dp, 600.dp)
+        position = WindowPosition.Aligned(Alignment.TopCenter),
+        size = DpSize(windowBounds.width.dp, 600.dp)
     )
     var skin by remember { mutableStateOf(nebulaAmethystSkin()) }
     val resourceBundle by remember(applicationLocale) {
@@ -66,7 +69,6 @@ fun main() = auroraApplication {
             ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
         }
     }
-    val density = LocalDensity.current.density
 
     var ribbonState by remember {
         mutableStateOf(

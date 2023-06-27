@@ -43,9 +43,9 @@ enum class PresentationPriority {
     Low
 }
 
-infix fun <C : BaseCommand, P : BaseCommandButtonPresentationModel> BaseCommandButtonProjection<C, P>.at(
+infix fun <C : BaseCommand, P : BaseCommandButtonPresentationModel, CBP: BaseCommandButtonProjection<C, P, CBP>> BaseCommandButtonProjection<C, P, CBP>.at(
     that: PresentationPriority
-): Pair<BaseCommandButtonProjection<C, P>, PresentationPriority> = Pair(this, that)
+): Pair<BaseCommandButtonProjection<C, P, CBP>, PresentationPriority> = Pair(this, that)
 
 data class RibbonComponentPresentationModel(
     val caption: String? = null,

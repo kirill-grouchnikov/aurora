@@ -250,7 +250,7 @@ class CustomCommandButtonProjection(
     contentModel: CustomCommand,
     presentationModel: CustomCommandButtonPresentationModel = CustomCommandButtonPresentationModel(),
     secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
-) : BaseCommandButtonProjection<CustomCommand, CustomCommandButtonPresentationModel>(
+) : BaseCommandButtonProjection<CustomCommand, CustomCommandButtonPresentationModel, CustomCommandButtonProjection>(
     contentModel, presentationModel, secondaryOverlays
 ) {
     @Composable
@@ -264,6 +264,14 @@ class CustomCommandButtonProjection(
             actionInteractionSource = remember { MutableInteractionSource() },
             popupInteractionSource = popupInteractionSource,
             popupHandler = CustomCommandMenuPopupHandler,
+        )
+    }
+
+    override fun copy(primaryOverlay: BaseCommandButtonPresentationModel.Overlay): CustomCommandButtonProjection {
+        return CustomCommandButtonProjection(
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel.overlayWith(primaryOverlay),
+            secondaryOverlays = this.secondaryOverlays
         )
     }
 

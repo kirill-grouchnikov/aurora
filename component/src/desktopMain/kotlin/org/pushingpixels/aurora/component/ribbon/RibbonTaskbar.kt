@@ -24,7 +24,7 @@ import org.pushingpixels.aurora.component.projection.Projection
 
 sealed interface RibbonTaskbarElement
 
-data class RibbonTaskbarCommandProjection(val commandProjection: BaseCommandButtonProjection<*, *>) :
+data class RibbonTaskbarCommandProjection(val commandProjection: BaseCommandButtonProjection<*, *, *>) :
     RibbonTaskbarElement
 
 data class RibbonTaskbarComponentProjection(val componentProjection: Projection<ContentModel, PresentationModel>) :

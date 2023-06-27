@@ -200,7 +200,7 @@ private class TaskbarExpandCommandButtonProjection(
     contentModel: TaskbarExpandCommand,
     presentationModel: TaskbarExpandCommandButtonPresentationModel,
     secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
-) : BaseCommandButtonProjection<TaskbarExpandCommand, TaskbarExpandCommandButtonPresentationModel>(
+) : BaseCommandButtonProjection<TaskbarExpandCommand, TaskbarExpandCommandButtonPresentationModel, TaskbarExpandCommandButtonProjection>(
     contentModel, presentationModel, secondaryOverlays
 ) {
     @Composable
@@ -214,6 +214,14 @@ private class TaskbarExpandCommandButtonProjection(
             actionInteractionSource = remember { MutableInteractionSource() },
             popupInteractionSource = popupInteractionSource,
             popupHandler = TaskbarExpandCommandMenuPopupHandler,
+        )
+    }
+
+    override fun copy(primaryOverlay: BaseCommandButtonPresentationModel.Overlay): TaskbarExpandCommandButtonProjection {
+        return TaskbarExpandCommandButtonProjection(
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel.overlayWith(primaryOverlay),
+            secondaryOverlays = this.secondaryOverlays
         )
     }
 

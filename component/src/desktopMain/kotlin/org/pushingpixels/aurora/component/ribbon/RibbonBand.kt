@@ -65,7 +65,7 @@ data class RibbonBandGallery(
 )
 
 data class RibbonBandCommandGroup(
-    val commandProjections: List<Pair<BaseCommandButtonProjection<*, *>, PresentationPriority>> = emptyList(),
+    val commandProjections: List<Pair<BaseCommandButtonProjection<*, *, *>, PresentationPriority>> = emptyList(),
     val galleries: List<RibbonBandGallery> = emptyList(),
 ): RibbonBandGroup
 
