@@ -18,7 +18,7 @@ package org.pushingpixels.aurora.demo.ribbon
 import org.pushingpixels.aurora.component.ribbon.RibbonGalleryInlineState
 
 enum class Task {
-    PageLayout, Write, Contextual11, Contextual12, Contextual21
+    PageLayout, Write, Animations, Wrapped, Contextual11, Contextual12, Contextual21
 }
 
 enum class DocumentStyle {

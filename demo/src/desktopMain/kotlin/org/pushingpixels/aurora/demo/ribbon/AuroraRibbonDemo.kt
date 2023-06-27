@@ -179,6 +179,52 @@ fun main() = auroraApplication {
         onClick = { ribbonState = ribbonState.copy(selectedTask = Task.Write) }
     )
 
+    val animationsTask = RibbonTask(
+        title = resourceBundle.getString("Animations.textTaskTitle"),
+        bands = listOf(
+            builder.getActionBand(),
+            builder.getApplicationsBand(selectedApplicationGame = ribbonState.applicationGame,
+                onApplicationGameSelected = {
+                    ribbonState = ribbonState.copy(applicationGame = it)
+                },
+                selectedApplicationBrowser = ribbonState.applicationBrowser,
+                onApplicationBrowserSelected = {
+                    ribbonState = ribbonState.copy(applicationBrowser = it)
+                },
+                selectedApplicationMultimedia = ribbonState.applicationMultimedia,
+                onApplicationMultimediaSelected = {
+                    ribbonState = ribbonState.copy(applicationMultimedia = it)
+                })
+        ),
+        resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+        keyTip = "A",
+        isActive = (ribbonState.selectedTask == Task.Animations),
+        onClick = { ribbonState = ribbonState.copy(selectedTask = Task.Animations) }
+    )
+
+    val wrappedTask = RibbonTask(
+        title = resourceBundle.getString("Wrapped.textTaskTitle"),
+        bands = listOf(
+            builder.getActionBand(),
+            builder.getApplicationsBand(selectedApplicationGame = ribbonState.applicationGame,
+                onApplicationGameSelected = {
+                    ribbonState = ribbonState.copy(applicationGame = it)
+                },
+                selectedApplicationBrowser = ribbonState.applicationBrowser,
+                onApplicationBrowserSelected = {
+                    ribbonState = ribbonState.copy(applicationBrowser = it)
+                },
+                selectedApplicationMultimedia = ribbonState.applicationMultimedia,
+                onApplicationMultimediaSelected = {
+                    ribbonState = ribbonState.copy(applicationMultimedia = it)
+                })
+        ),
+        resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+        keyTip = "A",
+        isActive = (ribbonState.selectedTask == Task.Wrapped),
+        onClick = { ribbonState = ribbonState.copy(selectedTask = Task.Wrapped) }
+    )
+
     val contextualTaskGroup1 = RibbonContextualTaskGroup(
         title = resourceBundle.getString("Group1.textTaskGroupTitle"),
         hueColor = Color.Red,
@@ -317,7 +363,7 @@ fun main() = auroraApplication {
     val applicationMenuCommandButtonProjection = builder.getApplicationMenuCommandButtonProjection()
 
     val ribbon = Ribbon(
-        tasks = listOf(pageLayoutTask, writeTask),
+        tasks = listOf(pageLayoutTask, writeTask, animationsTask, wrappedTask),
         contextualTaskGroups = contextualTaskGroups,
         taskbarElements = taskbarElements,
         taskbarKeyTipPolicy = DefaultRibbonTaskbarKeyTipPolicy(),
@@ -775,7 +821,10 @@ internal class RibbonBuilder(
             text = resourceBundle.getString("Format.text"),
             icon = edit_paste(),
             secondaryContentModel = CommandMenuContentModel(
-                group = CommandGroup(commands = listOf(this.menuSaveSelection, this.menuClearSelection)),
+                groups = listOf(
+                    CommandGroup(commands = listOf(this.menuSaveSelection, this.menuClearSelection)),
+                    CommandGroup(commands = listOf(this.applyStyles))
+                ),
                 panelContentModel = getQuickStylesContentModel(resourceBundle)
             ),
             secondaryRichTooltip = RichTooltip(
@@ -844,7 +893,7 @@ internal class RibbonBuilder(
                                         layoutSpec = MenuPopupPanelLayoutSpec(columnCount = 5, visibleRowCount = 3),
                                         showGroupLabels = false,
                                         commandPresentationState = CommandButtonPresentationState.BigFitToIcon,
-                                        commandIconDimension = DpSize(48.dp, 48.dp),
+                                        commandIconDimension = DpSize(24.dp, 24.dp),
                                     )
                                 )
                             ),
