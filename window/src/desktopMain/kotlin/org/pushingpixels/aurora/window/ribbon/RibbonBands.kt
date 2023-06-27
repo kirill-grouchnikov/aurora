@@ -174,7 +174,7 @@ private fun getCommandGroupWidth(
                 expandKeyTip = gallery.presentationModel.expandKeyTip,
                 popupLayoutSpec = gallery.presentationModel.popupLayoutSpec
             )
-        ).intrinsicWidth(bandContentHeight.toInt())
+        ).intrinsicWidth(bandContentHeight.toInt() - 2 * gap)
     }
     if (group.galleries.isNotEmpty()) {
         result += gap * (group.galleries.size - 1)

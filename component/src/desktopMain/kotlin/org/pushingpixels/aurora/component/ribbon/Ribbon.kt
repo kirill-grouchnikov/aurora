@@ -30,6 +30,7 @@ import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.Projection
 import org.pushingpixels.aurora.component.ribbon.impl.RibbonGallery
+import org.pushingpixels.aurora.component.ribbon.impl.ribbonGalleryIntrinsicWidth
 import kotlin.math.min
 
 enum class PresentationPriority {
@@ -184,6 +185,16 @@ class RibbonGalleryProjection(
     @Composable
     override fun reproject(modifier: Modifier) {
         error("Reprojecting a ribbon gallery is not supported")
+    }
+
+    @Composable
+    override fun intrinsicWidth(height: Int): Int {
+        return ribbonGalleryIntrinsicWidth(this.contentModel, this.presentationModel, height)
+    }
+
+    @Composable
+    override fun intrinsicHeight(width: Int): Int {
+        error("In-ribbon gallery height is fixed by its band container")
     }
 }
 

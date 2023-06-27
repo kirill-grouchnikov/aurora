@@ -41,10 +41,49 @@ import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.*
+import org.pushingpixels.aurora.component.ribbon.RibbonBandCommandButtonPresentationStates.BigFixed
+import org.pushingpixels.aurora.component.ribbon.RibbonBandCommandButtonPresentationStates.BigFixedLandscape
 import org.pushingpixels.aurora.component.utils.*
+import org.pushingpixels.aurora.component.utils.ArrowSizingConstants.DefaultDoubleArrowWidth
 import org.pushingpixels.aurora.theming.*
 import kotlin.math.max
 import kotlin.math.roundToInt
+
+@Composable
+internal fun ribbonGalleryIntrinsicWidth(
+    contentModel: RibbonGalleryContentModel,
+    presentationModel: InRibbonGalleryPresentationModel,
+    height: Int
+): Int {
+    val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
+    val visibleCount = presentationModel.collapsedVisibleCount
+
+    val heightForButtons = height - ((presentationModel.contentPadding.calculateTopPadding() +
+            presentationModel.contentPadding.calculateBottomPadding()).value * density.density).toInt()
+
+    // Leading margin
+    var result = (presentationModel.contentPadding.calculateStartPadding(layoutDirection).value * density.density).toInt()
+    // Visible gallery buttons
+    when (presentationModel.commandButtonPresentationState) {
+        CommandButtonPresentationState.Small ->
+            result += visibleCount * heightForButtons / 3
+        BigFixed ->
+            result += visibleCount * heightForButtons
+        BigFixedLandscape ->
+            result += visibleCount * heightForButtons * 5 / 4
+        else ->
+            error("Presentation state ${presentationModel.commandButtonPresentationState.displayName} not supported")
+    }
+    // Gaps between and around the gallery buttons
+    result += (visibleCount + 1) * ((presentationModel.layoutGap.value * density.density).toInt())
+    // Control button strip width
+    result += (DefaultDoubleArrowWidth.value * density.density).toInt()
+    // Trailing margin
+    result += (presentationModel.contentPadding.calculateEndPadding(layoutDirection).value * density.density).toInt()
+
+    return result
+}
 
 @OptIn(AuroraInternalApi::class)
 @Composable
