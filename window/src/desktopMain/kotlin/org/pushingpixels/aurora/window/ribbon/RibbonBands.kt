@@ -35,6 +35,7 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
+import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.ribbon.*
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonBandRowHeight
 import org.pushingpixels.aurora.component.utils.getEndwardDoubleArrowIcon
@@ -96,8 +97,11 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
     ) {
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.ControlPane) {
             Row(modifier = Modifier.fillMaxWidth().height(fullHeightDp).auroraBackground()) {
-                for (band in bands) {
+                for ((index, band) in bands.withIndex()) {
                     RibbonBand(band = band, bandContentHeight = bandContentHeight)
+                    if (index < bands.size - 1) {
+                        VerticalSeparatorProjection().project(modifier = Modifier.fillMaxHeight())
+                    }
                 }
             }
         }
@@ -132,7 +136,7 @@ private fun RibbonBand(band: AbstractRibbonBand, bandContentHeight: Float) {
 @Composable
 private fun RibbonBandContent(band: RibbonBand, bandContentHeight: Float) {
     Row(modifier = Modifier.fillMaxSize().padding(0.dp)) {
-        for (bandGroup in band.groups) {
+        for ((index, bandGroup) in band.groups.withIndex()) {
             when (bandGroup) {
                 is RibbonBandCommandGroup -> {
                     RibbonBandCommandGroupContent(group = bandGroup, bandContentHeight = bandContentHeight)
@@ -141,6 +145,11 @@ private fun RibbonBandContent(band: RibbonBand, bandContentHeight: Float) {
                 is RibbonBandComponentGroup -> {
                     RibbonBandComponentGroupContent(group = bandGroup, bandContentHeight = bandContentHeight)
                 }
+            }
+            if (index < (band.groups.size - 1)) {
+                VerticalSeparatorProjection().project(
+                    modifier = Modifier.fillMaxHeight().padding(vertical = RibbonBandContentGap)
+                )
             }
         }
     }
@@ -453,7 +462,7 @@ private fun getComponentGroupContentLayoutInfo(
     val contentColumnCount = ceil(group.componentProjections.size.toFloat() / contentRows.toFloat()).toInt()
     contentWidth += (contentColumnCount - 1) * gap
 
-    val fullWidth = max(titleLabelWidth, contentWidth)
+    val fullWidth = max(titleLabelWidth, contentWidth) + 2 * gap
 
     return RibbonBandComponentGroupLayoutInfo(
         fullWidth = fullWidth,
@@ -472,7 +481,8 @@ private fun RibbonBandComponentGroupContent(group: RibbonBandComponentGroup, ban
     val contentRows = if (hasTitle) 2 else 3
 
     Layout(modifier = Modifier.fillMaxHeight()
-        .width((layoutInfo.fullWidth / density.density).dp),
+        .width((layoutInfo.fullWidth / density.density).dp)
+        .padding(horizontal = RibbonBandContentGap),
         content = {
             // Title label if exists
             if (group.title != null) {
@@ -567,7 +577,7 @@ private fun getOptimalFlowRibbonBandWidth(band: FlowRibbonBand, bandContentHeigh
         }
     }
 
-    return currBestResult
+    return currBestResult + 2 * gap
 }
 
 @Composable
@@ -577,7 +587,8 @@ private fun FlowRibbonBandContent(band: FlowRibbonBand, bandContentHeight: Float
     val rowHeight = ((bandContentHeight - 4 * gap) / 3.0f).toInt()
 
     val optimalWidth = getOptimalFlowRibbonBandWidth(band, bandContentHeight, gap)
-    Layout(modifier = Modifier.fillMaxHeight().width((optimalWidth / density.density).dp),
+    Layout(modifier = Modifier.fillMaxHeight().width((optimalWidth / density.density).dp)
+        .padding(horizontal = RibbonBandContentGap),
         content = {
             // Project all the content
             for (projection in band.flowComponentProjections) {
