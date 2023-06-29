@@ -93,7 +93,8 @@ internal fun AuroraTabs(
         iconEnabledFilterStrategy = presentationModel.tabIconEnabledFilterStrategy,
         iconDisabledFilterStrategy = presentationModel.tabIconDisabledFilterStrategy,
         sides = Sides(openSides = hashSetOf(Side.Bottom), straightSides = hashSetOf(Side.Bottom)),
-        contentPadding = presentationModel.tabContentPadding
+        contentPadding = presentationModel.tabContentPadding,
+        minWidth = presentationModel.tabMinWidth
     )
     val contentLayoutManager = contentPresentationModel.presentationState.createLayoutManager(
         layoutDirection = layoutDirection,
