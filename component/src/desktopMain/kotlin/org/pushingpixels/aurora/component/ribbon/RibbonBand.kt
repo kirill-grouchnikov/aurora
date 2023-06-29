@@ -26,7 +26,6 @@ import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.layout.getCommandButtonKind
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
-import org.pushingpixels.aurora.component.projection.Projection
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicies
 import org.pushingpixels.aurora.component.ribbon.resize.RibbonBandResizePolicy
 import kotlin.math.min
@@ -39,12 +38,6 @@ sealed interface AbstractRibbonBand {
     val collapsedStateKeyTip: String?
     val resizePolicies: List<RibbonBandResizePolicy>
 }
-
-infix fun <C : ContentModel, P : PresentationModel> Projection<C, P>.with(that: RibbonComponentPresentationModel):
-        RibbonMetaComponentProjection<C, P> = RibbonMetaComponentProjection(
-            projection = this,
-            ribbonComponentPresentationModel = that
-        )
 
 sealed interface RibbonBandGroup
 

@@ -18,7 +18,6 @@ package org.pushingpixels.aurora.component.ribbon
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.layout.Layout
@@ -30,12 +29,15 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.component.AuroraIcon
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.IconProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.projection.Projection
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonBandRowHeight
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.component.utils.getLabelPreferredSingleLineWidth
+import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.LocalTextStyle
 import kotlin.math.max
 import kotlin.math.min
@@ -47,6 +49,7 @@ data class MetaComponentPresentationModel<out P : PresentationModel>(
 
 class RibbonMetaComponentProjection<out C : ContentModel, out P : PresentationModel>(
     val projection: Projection<C, P>,
+    val enabled: () -> Boolean,
     val ribbonComponentPresentationModel: RibbonComponentPresentationModel
 ) : Projection<C, MetaComponentPresentationModel<P>>() {
     @Composable
@@ -54,6 +57,7 @@ class RibbonMetaComponentProjection<out C : ContentModel, out P : PresentationMo
         RibbonMetaComponent(
             modifier = modifier,
             projection = projection,
+            enabled = enabled,
             ribbonComponentPresentationModel = ribbonComponentPresentationModel
         )
     }
@@ -63,6 +67,7 @@ class RibbonMetaComponentProjection<out C : ContentModel, out P : PresentationMo
         RibbonMetaComponent(
             modifier = modifier,
             projection = projection,
+            enabled = enabled,
             ribbonComponentPresentationModel = ribbonComponentPresentationModel
         )
     }
@@ -146,6 +151,7 @@ class RibbonMetaComponentProjection<out C : ContentModel, out P : PresentationMo
 internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
     modifier: Modifier,
     projection: Projection<C, P>,
+    enabled: () -> Boolean,
     ribbonComponentPresentationModel: RibbonComponentPresentationModel
 ) {
     val hasIcon = (ribbonComponentPresentationModel.icon != null)
@@ -158,12 +164,25 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
     Layout(modifier = modifier,
         content = {
             if (hasIcon) {
-                Box(Modifier.size(DpSize(16.dp, 16.dp)).paint(painter = ribbonComponentPresentationModel.icon!!))
+                IconProjection(
+                    contentModel = IconContentModel(
+                        icon = ribbonComponentPresentationModel.icon!!,
+                        enabled = enabled.invoke()
+                    ),
+                    presentationModel = IconPresentationModel(
+                        iconDimension = DpSize(16.dp, 16.dp),
+                        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+                        iconEnabledFilterStrategy = IconFilterStrategy.Original
+                    )
+                ).project()
             }
 
             if (hasCaption) {
                 LabelProjection(
-                    contentModel = LabelContentModel(text = ribbonComponentPresentationModel.caption!!),
+                    contentModel = LabelContentModel(
+                        text = ribbonComponentPresentationModel.caption!!,
+                        enabled = enabled.invoke()
+                    ),
                     presentationModel = LabelPresentationModel(
                         contentPadding = PaddingValues(0.dp),
                         textMaxLines = 1

@@ -1096,58 +1096,78 @@ internal class RibbonBuilder(
                 action = { println("Expand button clicked! ") }
             ),
             flowComponentProjections = listOf(
-                ComboBoxProjection(
-                    contentModel = fontFamilyComboBoxContentModel,
-                    presentationModel = ComboBoxPresentationModel(displayConverter = { "+ Minor ($it)   " }),
-                ) with RibbonComponentPresentationModel(keyTip = "SF"),
-                ComboBoxProjection(
-                    contentModel = fontSizeComboBoxContentModel,
-                    presentationModel = ComboBoxPresentationModel(displayConverter = { "${it.fontSize}   " }),
-                ) with RibbonComponentPresentationModel(keyTip = "SS"),
-                CommandButtonStripProjection(
-                    contentModel = CommandGroup(commands = listOf(indentLeft, indentRight)),
-                    presentationModel = CommandStripPresentationModel(
-                        orientation = StripOrientation.Horizontal
+                RibbonMetaComponentProjection(
+                    projection = ComboBoxProjection(
+                        contentModel = fontFamilyComboBoxContentModel,
+                        presentationModel = ComboBoxPresentationModel(displayConverter = { "+ Minor ($it)   " })
                     ),
-                    overlays = mapOf(
-                        indentLeft to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "AO"),
-                        indentRight to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "AI")
-                    )
-                ) with RibbonComponentPresentationModel(),
-                CommandButtonStripProjection(
-                    contentModel = CommandGroup(
-                        commands = listOf(
-                            styleBoldCommand, styleItalicCommand,
-                            styleUnderlineCommand, styleStrikethroughCommand
+                    enabled = { fontFamilyComboBoxContentModel.enabled },
+                    ribbonComponentPresentationModel = RibbonComponentPresentationModel(keyTip = "SF")
+                ),
+                RibbonMetaComponentProjection(
+                    projection = ComboBoxProjection(
+                        contentModel = fontSizeComboBoxContentModel,
+                        presentationModel = ComboBoxPresentationModel(displayConverter = { "${it.fontSize}   " }),
+                    ),
+                    enabled = { fontSizeComboBoxContentModel.enabled },
+                    ribbonComponentPresentationModel = RibbonComponentPresentationModel(keyTip = "SS")
+                ),
+                RibbonMetaComponentProjection(
+                    projection = CommandButtonStripProjection(
+                        contentModel = CommandGroup(commands = listOf(indentLeft, indentRight)),
+                        presentationModel = CommandStripPresentationModel(
+                            orientation = StripOrientation.Horizontal
+                        ),
+                        overlays = mapOf(
+                            indentLeft to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "AO"),
+                            indentRight to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "AI")
                         )
                     ),
-                    presentationModel = CommandStripPresentationModel(
-                        orientation = StripOrientation.Horizontal
-                    ),
-                    overlays = mapOf(
-                        styleBoldCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "1"),
-                        styleItalicCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "2"),
-                        styleUnderlineCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "3"),
-                        styleStrikethroughCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "4")
-                    )
-                ) with RibbonComponentPresentationModel(),
-                CommandButtonStripProjection(
-                    contentModel = CommandGroup(
-                        commands = listOf(
-                            alignLeftCommand, alignCenterCommand,
-                            alignRightCommand, alignFillCommand
+                    enabled = { true },
+                    ribbonComponentPresentationModel = RibbonComponentPresentationModel()
+                ),
+                RibbonMetaComponentProjection(
+                    projection = CommandButtonStripProjection(
+                        contentModel = CommandGroup(
+                            commands = listOf(
+                                styleBoldCommand, styleItalicCommand,
+                                styleUnderlineCommand, styleStrikethroughCommand
+                            )
+                        ),
+                        presentationModel = CommandStripPresentationModel(
+                            orientation = StripOrientation.Horizontal
+                        ),
+                        overlays = mapOf(
+                            styleBoldCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "1"),
+                            styleItalicCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "2"),
+                            styleUnderlineCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "3"),
+                            styleStrikethroughCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "4")
                         )
                     ),
-                    presentationModel = CommandStripPresentationModel(
-                        orientation = StripOrientation.Horizontal
+                    enabled = { true },
+                    ribbonComponentPresentationModel = RibbonComponentPresentationModel()
+                ),
+                RibbonMetaComponentProjection(
+                    projection = CommandButtonStripProjection(
+                        contentModel = CommandGroup(
+                            commands = listOf(
+                                alignLeftCommand, alignCenterCommand,
+                                alignRightCommand, alignFillCommand
+                            )
+                        ),
+                        presentationModel = CommandStripPresentationModel(
+                            orientation = StripOrientation.Horizontal
+                        ),
+                        overlays = mapOf(
+                            alignLeftCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "AL"),
+                            alignCenterCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "AC"),
+                            alignRightCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "AR"),
+                            alignFillCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "AF")
+                        )
                     ),
-                    overlays = mapOf(
-                        alignLeftCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "AL"),
-                        alignCenterCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "AC"),
-                        alignRightCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "AR"),
-                        alignFillCommand to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "AF")
-                    )
-                ) with RibbonComponentPresentationModel()
+                    enabled = { true },
+                    ribbonComponentPresentationModel = RibbonComponentPresentationModel()
+                )
             )
         )
     }
@@ -1451,7 +1471,8 @@ internal class RibbonBuilder(
             selectedItem = selectedApplicationBrowser,
             onTriggerItemSelectedChange = {
                 onApplicationBrowserSelected.invoke(it)
-            }
+            },
+            enabled = false
         )
 
         val multimediaComboBoxContentModel = ComboBoxContentModel(
@@ -1473,42 +1494,54 @@ internal class RibbonBuilder(
             groups = listOf(
                 RibbonBandComponentGroup(
                     componentProjections = listOf(
-                        ComboBoxProjection(
-                            contentModel = gamesComboBoxContentModel,
-                            presentationModel = ComboBoxPresentationModel(
-                                displayConverter = { it.name }
+                        RibbonMetaComponentProjection(
+                            projection = ComboBoxProjection(
+                                contentModel = gamesComboBoxContentModel,
+                                presentationModel = ComboBoxPresentationModel(
+                                    displayConverter = { it.name }
+                                ),
                             ),
-                        ) with RibbonComponentPresentationModel(
-                            caption = resourceBundle.getString("Games.text"),
-                            icon = applications_games(),
-                            keyTip = "AG",
-                            isResizingAware = true,
-                            horizontalAlignment = HorizontalAlignment.Fill
+                            enabled = { gamesComboBoxContentModel.enabled },
+                            ribbonComponentPresentationModel = RibbonComponentPresentationModel(
+                                caption = resourceBundle.getString("Games.text"),
+                                icon = applications_games(),
+                                keyTip = "AG",
+                                isResizingAware = true,
+                                horizontalAlignment = HorizontalAlignment.Fill
+                            )
                         ),
-                        ComboBoxProjection(
-                            contentModel = internetComboBoxContentModel,
-                            presentationModel = ComboBoxPresentationModel(
-                                displayConverter = { it.name }
+                        RibbonMetaComponentProjection(
+                            projection = ComboBoxProjection(
+                                contentModel = internetComboBoxContentModel,
+                                presentationModel = ComboBoxPresentationModel(
+                                    displayConverter = { it.name }
+                                ),
                             ),
-                        ) with RibbonComponentPresentationModel(
-                            caption = resourceBundle.getString("Internet.text"),
-                            icon = applications_internet(),
-                            keyTip = "AI",
-                            isResizingAware = true,
-                            horizontalAlignment = HorizontalAlignment.Fill
+                            enabled = { internetComboBoxContentModel.enabled },
+                            ribbonComponentPresentationModel = RibbonComponentPresentationModel(
+                                caption = resourceBundle.getString("Internet.text"),
+                                icon = applications_internet(),
+                                keyTip = "AI",
+                                isResizingAware = true,
+                                horizontalAlignment = HorizontalAlignment.Fill
+                            )
                         ),
-                        ComboBoxProjection(
-                            contentModel = multimediaComboBoxContentModel,
-                            presentationModel = ComboBoxPresentationModel(
-                                displayConverter = {
-                                    resourceBundle.getString(it.resourceKey)
-                                }
+                        RibbonMetaComponentProjection(
+                            projection = ComboBoxProjection(
+                                contentModel = multimediaComboBoxContentModel,
+                                presentationModel = ComboBoxPresentationModel(
+                                    displayConverter = {
+                                        resourceBundle.getString(it.resourceKey)
+                                    }
+                                ),
                             ),
-                        ) with RibbonComponentPresentationModel(
-                            caption = resourceBundle.getString("Multimedia.text"),
-                            keyTip = "AM",
-                            isResizingAware = true,
-                            horizontalAlignment = HorizontalAlignment.Fill
+                            enabled = { multimediaComboBoxContentModel.enabled },
+                            ribbonComponentPresentationModel = RibbonComponentPresentationModel(
+                                caption = resourceBundle.getString("Multimedia.text"),
+                                keyTip = "AM",
+                                isResizingAware = true,
+                                horizontalAlignment = HorizontalAlignment.Fill
+                            )
                         )
                     )
                 )
