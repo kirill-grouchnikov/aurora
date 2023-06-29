@@ -29,19 +29,27 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.component.model.ProgressCircularPresentationModel
-import org.pushingpixels.aurora.component.model.ProgressDeterminateContentModel
-import org.pushingpixels.aurora.component.model.ProgressIndeterminateContentModel
-import org.pushingpixels.aurora.component.model.ProgressLinearPresentationModel
+import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.theming.AuroraSkin
 import org.pushingpixels.aurora.theming.ColorSchemeAssociationKind
 import org.pushingpixels.aurora.theming.ComponentState
 import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
 import kotlin.math.min
+
+@Composable
+internal fun circularProgressIntrinsicSize(
+    presentationModel: ProgressCircularPresentationModel
+): Size {
+    val density = LocalDensity.current
+    val side = presentationModel.size.value * density.density
+    return Size(side, side)
+}
 
 @Composable
 internal fun AuroraCircularProgress(
@@ -121,6 +129,15 @@ private val progressFillPainter = FractionBasedFillPainter(
     1.0f to { it.midColor },
     displayName = "Progress fill (internal)"
 )
+
+@Composable
+internal fun linearProgressIntrinsicSize(
+    presentationModel: ProgressLinearPresentationModel
+): Size {
+    val density = LocalDensity.current
+    return Size(width = presentationModel.primarySize.value * density.density,
+        height = presentationModel.secondarySize.value * density.density)
+}
 
 @Composable
 internal fun AuroraIndeterminateLinearProgress(

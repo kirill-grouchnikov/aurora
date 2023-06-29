@@ -543,6 +543,16 @@ class CircularProgressProjection(
             presentationModel = this.presentationModel
         )
     }
+
+    @Composable
+    override fun intrinsicWidth(height: Int): Int {
+        return circularProgressIntrinsicSize(this.presentationModel).width.toInt()
+    }
+
+    @Composable
+    override fun intrinsicHeight(width: Int): Int {
+        return circularProgressIntrinsicSize(this.presentationModel).height.toInt()
+    }
 }
 
 class IndeterminateLinearProgressProjection(
@@ -566,6 +576,16 @@ class IndeterminateLinearProgressProjection(
             presentationModel = this.presentationModel
         )
     }
+
+    @Composable
+    override fun intrinsicWidth(height: Int): Int {
+        return linearProgressIntrinsicSize(this.presentationModel).width.toInt()
+    }
+
+    @Composable
+    override fun intrinsicHeight(width: Int): Int {
+        return linearProgressIntrinsicSize(this.presentationModel).height.toInt()
+    }
 }
 
 class DeterminateLinearProgressProjection(
@@ -588,6 +608,16 @@ class DeterminateLinearProgressProjection(
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
+    }
+
+    @Composable
+    override fun intrinsicWidth(height: Int): Int {
+        return linearProgressIntrinsicSize(this.presentationModel).width.toInt()
+    }
+
+    @Composable
+    override fun intrinsicHeight(width: Int): Int {
+        return linearProgressIntrinsicSize(this.presentationModel).height.toInt()
     }
 }
 
