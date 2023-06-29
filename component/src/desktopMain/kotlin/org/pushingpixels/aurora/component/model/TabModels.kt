@@ -30,6 +30,8 @@ object TabConstants {
     val InterTabMargin = 2.dp
     val TopPadding = 4.dp
     val DoubleSeparatorGap = 2.dp
+
+    val TabButtonContentPadding = PaddingValues(start = 10.dp, top = 4.dp, end = 10.dp, bottom = 3.dp)
 }
 
 data class TabContentModel(
@@ -56,5 +58,5 @@ data class TabsPresentationModel(
     val tabIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val tabIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val tabIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
-    val tabContentPadding: PaddingValues = CommandButtonSizingConstants.WideButtonContentPadding
+    val tabContentPadding: PaddingValues = TabConstants.TabButtonContentPadding
 ) : PresentationModel
