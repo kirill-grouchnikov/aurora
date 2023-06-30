@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
@@ -45,6 +46,64 @@ import org.pushingpixels.aurora.component.utils.getEndwardDoubleArrowIcon
 import org.pushingpixels.aurora.component.utils.getStartwardDoubleArrowIcon
 import org.pushingpixels.aurora.theming.*
 import kotlin.math.max
+
+@OptIn(AuroraInternalApi::class)
+@Composable
+internal fun tabsIntrinsicSize(
+    contentModel: TabsContentModel,
+    presentationModel: TabsPresentationModel,
+): Size {
+    val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
+    val textStyle = LocalTextStyle.current
+    val fontFamilyResolver = LocalFontFamilyResolver.current
+    val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
+
+    // Presentation model for the content - copy fields from the tabs presentation model
+    val contentPresentationModel = CommandButtonPresentationModel(
+        presentationState = presentationModel.tabPresentationState,
+        backgroundAppearanceStrategy = presentationModel.tabBackgroundAppearanceStrategy,
+        iconActiveFilterStrategy = presentationModel.tabIconActiveFilterStrategy,
+        iconEnabledFilterStrategy = presentationModel.tabIconEnabledFilterStrategy,
+        iconDisabledFilterStrategy = presentationModel.tabIconDisabledFilterStrategy,
+        sides = Sides(openSides = hashSetOf(Side.Bottom), straightSides = hashSetOf(Side.Bottom)),
+        contentPadding = presentationModel.tabContentPadding,
+        minWidth = presentationModel.tabMinWidth
+    )
+
+    // For the intrinsic size, we do not account for the scroller buttons that are shown
+    // when there is not enough horizontal space
+    var width = 0.0f
+    var height = 0.0f
+
+    val layoutManager = contentPresentationModel.presentationState.createLayoutManager(
+        layoutDirection = layoutDirection,
+        density = density,
+        textStyle = resolvedTextStyle,
+        fontFamilyResolver = fontFamilyResolver
+    )
+    for (tabModel in contentModel.tabs) {
+        val currentTabCommand = Command(text = tabModel.text, icon = tabModel.icon)
+        val preLayoutInfo = layoutManager.getPreLayoutInfo(currentTabCommand, contentPresentationModel)
+        val currentTabIntrinsicSize = layoutManager.getPreferredSize(
+            currentTabCommand, contentPresentationModel, preLayoutInfo
+        )
+        width += currentTabIntrinsicSize.width
+        height = max(height, currentTabIntrinsicSize.height)
+    }
+
+    // Account for leading and traling margins
+    val leadingMarginPx = presentationModel.leadingMargin.value * density.density
+    val trailingMarginPx = presentationModel.trailingMargin.value * density.density
+    val interTabMarginPx = presentationModel.interTabMargin.value * density.density
+
+    width += (leadingMarginPx + trailingMarginPx)
+    if (contentModel.tabs.size > 1) {
+        width += interTabMarginPx * (contentModel.tabs.size - 1)
+    }
+
+    return Size(width, height)
+}
 
 @OptIn(AuroraInternalApi::class)
 @Composable

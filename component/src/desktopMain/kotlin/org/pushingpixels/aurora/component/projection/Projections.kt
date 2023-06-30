@@ -881,6 +881,16 @@ class TabsProjection(
             horizontalScrollState = rememberScrollState(0)
         )
     }
+
+    @Composable
+    override fun intrinsicWidth(height: Int): Int {
+        return tabsIntrinsicSize(this.contentModel, this.presentationModel).width.toInt()
+    }
+
+    @Composable
+    override fun intrinsicHeight(width: Int): Int {
+        return tabsIntrinsicSize(this.contentModel, this.presentationModel).height.toInt()
+    }
 }
 
 class TextFieldValueProjection(
