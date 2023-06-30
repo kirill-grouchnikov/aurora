@@ -15,17 +15,40 @@
  */
 package org.pushingpixels.aurora.component
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFontFamilyResolver
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.resolveDefaults
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.component.model.IconContentModel
-import org.pushingpixels.aurora.component.model.IconPresentationModel
+import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.AuroraThemedIcon
+import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
+import org.pushingpixels.aurora.component.utils.getLabelPreferredSingleLineWidth
 import org.pushingpixels.aurora.theming.*
+
+@Composable
+internal fun iconIntrinsicSize(
+    contentModel: IconContentModel,
+    presentationModel: IconPresentationModel
+): Size {
+    val density = LocalDensity.current
+    val iconDimension = presentationModel.iconDimension
+    return Size(
+        iconDimension.width.value * density.density,
+        iconDimension.height.value * density.density
+    )
+}
 
 @OptIn(AuroraInternalApi::class)
 @Composable

@@ -20,29 +20,30 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.resolveDefaults
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.component.model.SwitchContentModel
-import org.pushingpixels.aurora.component.model.SwitchPresentationModel
+import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.theming.AuroraSkin
-import org.pushingpixels.aurora.theming.ColorSchemeAssociationKind
-import org.pushingpixels.aurora.theming.ComponentState
-import org.pushingpixels.aurora.theming.ComponentStateFacet
+import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
@@ -60,6 +61,28 @@ private val trackFillPainter = FractionBasedFillPainter(
     1.0f to { it.lightColor },
     displayName = "Track fill (internal)"
 )
+
+@Composable
+internal fun switchIntrinsicSize(
+    contentModel: SwitchContentModel,
+    presentationModel: SwitchPresentationModel
+): Size {
+    val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
+
+    val width = presentationModel.contentPadding.calculateStartPadding(layoutDirection) +
+            presentationModel.trackSize.width +
+            presentationModel.contentPadding.calculateEndPadding(layoutDirection)
+
+    val height = presentationModel.contentPadding.calculateTopPadding() +
+            presentationModel.trackSize.height +
+            presentationModel.contentPadding.calculateBottomPadding()
+
+    return Size(
+        width.value * density.density,
+        height.value * density.density
+    )
+}
 
 @OptIn(AuroraInternalApi::class)
 @Composable

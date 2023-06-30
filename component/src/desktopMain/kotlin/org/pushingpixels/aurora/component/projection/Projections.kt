@@ -550,6 +550,16 @@ class SwitchProjection(
             presentationModel = this.presentationModel
         )
     }
+
+    @Composable
+    override fun intrinsicWidth(height: Int): Int {
+        return switchIntrinsicSize(contentModel, presentationModel).width.toInt()
+    }
+
+    @Composable
+    override fun intrinsicHeight(width: Int): Int {
+        return switchIntrinsicSize(contentModel, presentationModel).height.toInt()
+    }
 }
 
 class CircularProgressProjection(
@@ -671,6 +681,16 @@ class IconProjection(
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
+    }
+
+    @Composable
+    override fun intrinsicWidth(height: Int): Int {
+        return iconIntrinsicSize(this.contentModel, this.presentationModel).width.toInt()
+    }
+
+    @Composable
+    override fun intrinsicHeight(width: Int): Int {
+        return iconIntrinsicSize(this.contentModel, this.presentationModel).height.toInt()
     }
 }
 
