@@ -39,9 +39,6 @@ import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.component.utils.ArrowSizingConstants
-import org.pushingpixels.aurora.component.utils.drawDoubleArrow
-import org.pushingpixels.aurora.component.utils.getStartwardDoubleArrowIcon
 import org.pushingpixels.aurora.theming.*
 import kotlin.math.roundToInt
 

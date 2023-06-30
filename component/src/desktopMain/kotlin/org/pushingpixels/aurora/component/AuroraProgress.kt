@@ -33,8 +33,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.model.ProgressCircularPresentationModel
+import org.pushingpixels.aurora.component.model.ProgressDeterminateContentModel
+import org.pushingpixels.aurora.component.model.ProgressIndeterminateContentModel
+import org.pushingpixels.aurora.component.model.ProgressLinearPresentationModel
 import org.pushingpixels.aurora.theming.AuroraSkin
 import org.pushingpixels.aurora.theming.ColorSchemeAssociationKind
 import org.pushingpixels.aurora.theming.ComponentState

@@ -51,7 +51,6 @@ import org.pushingpixels.aurora.theming.auroraBackground
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
 import kotlin.math.roundToInt
-import kotlin.math.sign
 
 object ScrollBarSizingConstants {
     val DefaultScrollBarMinimumHeight = 16.dp
