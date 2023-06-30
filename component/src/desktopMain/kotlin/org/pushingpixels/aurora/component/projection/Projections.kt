@@ -41,10 +41,10 @@ abstract class Projection<out C : ContentModel, out P : PresentationModel> {
     abstract fun reproject(modifier: Modifier)
 
     @Composable
-    open fun intrinsicWidth(height: Int): Int = 0
+    abstract fun intrinsicWidth(height: Int): Int
 
     @Composable
-    open fun intrinsicHeight(width: Int): Int = 0
+    abstract fun intrinsicHeight(width: Int): Int
 }
 
 abstract class BaseCommandButtonProjection<out C : BaseCommand,
@@ -333,6 +333,16 @@ class CommandButtonPanelProjection(
             presentationModel = this.presentationModel,
             overlays = this.overlays ?: mapOf()
         )
+    }
+
+    @Composable
+    override fun intrinsicWidth(height: Int): Int {
+        error("Command button panel width is defined by its parent container")
+    }
+
+    @Composable
+    override fun intrinsicHeight(width: Int): Int {
+        error("Command button panel height is defined by its parent container")
     }
 }
 
@@ -919,6 +929,16 @@ class TextFieldValueProjection(
             presentationModel = this.presentationModel
         )
     }
+
+    @Composable
+    override fun intrinsicWidth(height: Int): Int {
+        error("Text field width is defined by its parent container")
+    }
+
+    @Composable
+    override fun intrinsicHeight(width: Int): Int {
+        error("Text field height is defined by its parent container")
+    }
 }
 
 class TextFieldStringProjection(
@@ -946,6 +966,16 @@ class TextFieldStringProjection(
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
+    }
+
+    @Composable
+    override fun intrinsicWidth(height: Int): Int {
+        error("Text field width is defined by its parent container")
+    }
+
+    @Composable
+    override fun intrinsicHeight(width: Int): Int {
+        error("Text field height is defined by its parent container")
     }
 }
 
