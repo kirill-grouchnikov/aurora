@@ -62,6 +62,44 @@ fun getLabelPreferredHeight(
             density.density
 }
 
+fun getLabelPreferredWidth(
+    contentModel: LabelContentModel,
+    presentationModel: LabelPresentationModel,
+    resolvedTextStyle: TextStyle,
+    layoutDirection: LayoutDirection,
+    density: Density,
+    fontFamilyResolver: FontFamily.Resolver,
+    availableHeight: Float
+): Float {
+    // Account for vertical content padding
+    val heightForText = availableHeight -
+            (presentationModel.contentPadding.calculateLeftPadding(layoutDirection) +
+                    presentationModel.contentPadding.calculateRightPadding(layoutDirection)).value *
+            density.density
+
+    val paragraph = Paragraph(
+        text = contentModel.text, style = resolvedTextStyle,
+        constraints = Constraints(maxHeight = heightForText.toInt()),
+        density = density, maxLines = presentationModel.textMaxLines,
+        fontFamilyResolver = fontFamilyResolver
+    )
+
+    var textWidth = paragraph.width
+    if (contentModel.icon != null) {
+        // Account for icon width
+        textWidth += presentationModel.iconDimension.width.value * density.density
+        // and gap between icon and text
+        textWidth +=
+            (presentationModel.iconTextGap * presentationModel.horizontalGapScaleFactor).value *
+                    density.density
+    }
+
+    // Account for horizontal content padding
+    return textWidth + (presentationModel.contentPadding.calculateStartPadding(layoutDirection)
+            + presentationModel.contentPadding.calculateEndPadding(layoutDirection)).value *
+            density.density
+}
+
 fun getLabelPreferredSingleLineWidth(
     contentModel: LabelContentModel,
     presentationModel: LabelPresentationModel,

@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -64,6 +65,27 @@ private class SliderDrawingCache(
         isDark = false
     )
 )
+
+@Composable
+internal fun sliderIntrinsicSize(
+    contentModel: SliderContentModel,
+    presentationModel: SliderPresentationModel
+): Size {
+    val density = LocalDensity.current
+
+    var height = SliderSizingConstants.DefaultSliderContentPadding.calculateTopPadding()
+    height += SliderSizingConstants.TrackHeight
+    if ((presentationModel.tickSteps >= 0) && presentationModel.drawTicks) {
+        height += SliderSizingConstants.TrackTickGap
+        height += SliderSizingConstants.TickHeight
+    }
+    height += SliderSizingConstants.DefaultSliderContentPadding.calculateBottomPadding()
+
+    return Size(
+        SliderSizingConstants.DefaultWidth.value * density.density,
+        height.value * density.density
+    )
+}
 
 @OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
 @Composable

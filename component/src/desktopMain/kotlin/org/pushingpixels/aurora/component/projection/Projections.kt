@@ -30,6 +30,8 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
+import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
+import org.pushingpixels.aurora.component.utils.getLabelPreferredWidth
 import org.pushingpixels.aurora.component.utils.popup.ColorSelectorCommandMenuPopupHandler
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.LocalTextStyle
@@ -715,6 +717,46 @@ class LabelProjection(
             presentationModel = this.presentationModel
         )
     }
+
+    @OptIn(AuroraInternalApi::class)
+    @Composable
+    override fun intrinsicWidth(height: Int): Int {
+        val density = LocalDensity.current
+        val layoutDirection = LocalLayoutDirection.current
+        val textStyle = LocalTextStyle.current
+        val fontFamilyResolver = LocalFontFamilyResolver.current
+        val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
+
+        return getLabelPreferredWidth(
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel,
+            resolvedTextStyle = resolvedTextStyle,
+            layoutDirection = layoutDirection,
+            density = density,
+            fontFamilyResolver = fontFamilyResolver,
+            availableHeight = height.toFloat()
+        ).toInt()
+    }
+
+    @OptIn(AuroraInternalApi::class)
+    @Composable
+    override fun intrinsicHeight(width: Int): Int {
+        val density = LocalDensity.current
+        val layoutDirection = LocalLayoutDirection.current
+        val textStyle = LocalTextStyle.current
+        val fontFamilyResolver = LocalFontFamilyResolver.current
+        val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
+
+        return getLabelPreferredHeight(
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel,
+            resolvedTextStyle = resolvedTextStyle,
+            layoutDirection = layoutDirection,
+            density = density,
+            fontFamilyResolver = fontFamilyResolver,
+            availableWidth = width.toFloat()
+        ).toInt()
+    }
 }
 
 class VerticalSeparatorProjection(
@@ -737,6 +779,16 @@ class VerticalSeparatorProjection(
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
+    }
+
+    @Composable
+    override fun intrinsicWidth(height: Int): Int {
+        return (SeparatorSizingConstants.Thickness.value * LocalDensity.current.density).toInt()
+    }
+
+    @Composable
+    override fun intrinsicHeight(width: Int): Int {
+        error("Vertical separator height is defined by its parent container")
     }
 }
 
@@ -761,6 +813,16 @@ class HorizontalSeparatorProjection(
             presentationModel = this.presentationModel
         )
     }
+
+    @Composable
+    override fun intrinsicWidth(height: Int): Int {
+        error("Horizontal separator width is defined by its parent container")
+    }
+
+    @Composable
+    override fun intrinsicHeight(width: Int): Int {
+        return (SeparatorSizingConstants.Thickness.value * LocalDensity.current.density).toInt()
+    }
 }
 
 class SliderProjection(
@@ -783,6 +845,16 @@ class SliderProjection(
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
+    }
+
+    @Composable
+    override fun intrinsicWidth(height: Int): Int {
+        return sliderIntrinsicSize(this.contentModel, this.presentationModel).width.toInt()
+    }
+
+    @Composable
+    override fun intrinsicHeight(width: Int): Int {
+        return sliderIntrinsicSize(this.contentModel, this.presentationModel).height.toInt()
     }
 }
 
