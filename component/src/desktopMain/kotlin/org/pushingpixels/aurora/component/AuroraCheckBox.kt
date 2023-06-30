@@ -25,17 +25,23 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFontFamilyResolver
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.resolveDefaults
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.component.model.SelectorContentModel
-import org.pushingpixels.aurora.component.model.SelectorPresentationModel
-import org.pushingpixels.aurora.component.model.SelectorSizingConstants
+import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
@@ -49,6 +55,66 @@ private class CheckBoxDrawingCache(
     ),
     val markPath: Path = Path()
 )
+
+@OptIn(AuroraInternalApi::class)
+@Composable
+internal fun checkBoxIntrinsicSize(
+    contentModel: SelectorContentModel,
+    presentationModel: SelectorPresentationModel
+): Size {
+    val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
+    val textStyle = LocalTextStyle.current
+    val fontFamilyResolver = LocalFontFamilyResolver.current
+    val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
+
+    var contentWidth: Dp = presentationModel.markSize
+    contentWidth += SelectorSizingConstants.SelectorMarkTextGap *
+            presentationModel.horizontalGapScaleFactor
+    contentWidth += (getLabelPreferredSingleLineWidth(
+        contentModel = LabelContentModel(text = contentModel.text),
+        presentationModel = LabelPresentationModel(
+            contentPadding = PaddingValues(0.dp),
+            textStyle = resolvedTextStyle,
+            textMaxLines = 1,
+            textOverflow = TextOverflow.Visible
+        ),
+        resolvedTextStyle = resolvedTextStyle,
+        layoutDirection = layoutDirection,
+        density = density,
+        fontFamilyResolver = fontFamilyResolver
+    ) / density.density).dp
+
+    val width = presentationModel.contentPadding.calculateStartPadding(layoutDirection) +
+            contentWidth +
+            presentationModel.contentPadding.calculateEndPadding(layoutDirection)
+
+    var contentHeight: Dp = presentationModel.markSize
+    contentHeight = max(
+        contentHeight,
+        (getLabelPreferredHeight(
+            contentModel = LabelContentModel(text = contentModel.text),
+            presentationModel = LabelPresentationModel(
+                contentPadding = PaddingValues(0.dp),
+                textStyle = resolvedTextStyle,
+                textMaxLines = 1,
+                textOverflow = TextOverflow.Visible
+            ),
+            resolvedTextStyle = resolvedTextStyle,
+            layoutDirection = layoutDirection,
+            density = density,
+            fontFamilyResolver = fontFamilyResolver,
+            availableWidth = Float.MAX_VALUE
+        ) / density.density).dp,
+    )
+    val height = presentationModel.contentPadding.calculateTopPadding() +
+            contentHeight + presentationModel.contentPadding.calculateBottomPadding()
+
+    return Size(
+        width.value * density.density,
+        height.value * density.density
+    )
+}
 
 @OptIn(AuroraInternalApi::class)
 @Composable

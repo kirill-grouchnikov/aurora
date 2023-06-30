@@ -97,11 +97,9 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
     ) {
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.ControlPane) {
             Row(modifier = Modifier.fillMaxWidth().height(fullHeightDp).auroraBackground()) {
-                for ((index, band) in bands.withIndex()) {
+                for (band in bands) {
                     RibbonBand(band = band, bandContentHeight = bandContentHeight)
-                    if (index < bands.size - 1) {
-                        VerticalSeparatorProjection().project(modifier = Modifier.fillMaxHeight())
-                    }
+                    VerticalSeparatorProjection().project(modifier = Modifier.fillMaxHeight())
                 }
             }
         }
@@ -455,6 +453,8 @@ private fun getComponentGroupContentLayoutInfo(
         }
     }
     if (currentIndexInColumn < contentRows) {
+        // Incomplete last column
+        contentWidth += currentColumnWidth
         columnWidths.add(currentColumnWidth)
     }
 

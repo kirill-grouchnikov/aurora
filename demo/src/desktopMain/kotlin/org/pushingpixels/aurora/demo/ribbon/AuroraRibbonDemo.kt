@@ -80,7 +80,13 @@ fun main() = auroraApplication {
                 documentSaveLocation = DocumentSaveLocation.Local,
                 applicationGame = ApplicationGame.Tetris,
                 applicationBrowser = ApplicationBrowser.Firefox,
-                applicationMultimedia = ApplicationMultimedia.Pictures
+                applicationMultimedia = ApplicationMultimedia.Pictures,
+                visibilityRulerOn = true,
+                visibilityGridlinesOn = false,
+                visibilityMessageBarOn = false,
+                visibilityDocumentMapOn = false,
+                visibilityThumbnailsOn = false,
+                presentation = Presentation.Comfortable
             )
         )
     }
@@ -169,10 +175,28 @@ fun main() = auroraApplication {
             ribbonState = ribbonState.copy(applicationMultimedia = it)
         }
     )
+    val showHideBand = builder.getShowHideBand(
+        visibilityRulerOn = ribbonState.visibilityRulerOn,
+        onVisibilityRulerClick = { ribbonState = ribbonState.copy(visibilityRulerOn = !ribbonState.visibilityRulerOn)},
+        visibilityGridlinesOn = ribbonState.visibilityGridlinesOn,
+        onVisibilityGridlinesClick = { ribbonState = ribbonState.copy(visibilityGridlinesOn = !ribbonState.visibilityGridlinesOn)},
+        visibilityMessageBarOn = ribbonState.visibilityMessageBarOn,
+        onVisibilityMessageBarClick = { ribbonState = ribbonState.copy(visibilityMessageBarOn = !ribbonState.visibilityMessageBarOn)},
+        visibilityDocumentMapOn = ribbonState.visibilityDocumentMapOn,
+        onVisibilityDocumentMapClick = { ribbonState = ribbonState.copy(visibilityDocumentMapOn = !ribbonState.visibilityDocumentMapOn)},
+        visibilityThumbnailsOn = ribbonState.visibilityThumbnailsOn,
+        onVisibilityThumbnailsClick = { ribbonState = ribbonState.copy(visibilityThumbnailsOn = !ribbonState.visibilityThumbnailsOn)}
+    )
+    val presentationBand = builder.getPresentationBand(
+        selectedPresentation = ribbonState.presentation,
+        onPresentationSelected = {
+            ribbonState = ribbonState.copy(presentation = it)
+        }
+    )
 
     val writeTask = RibbonTask(
         title = resourceBundle.getString("Write.textTaskTitle"),
-        bands = listOf(actionBand, preferencesBand, applicationsBand),
+        bands = listOf(actionBand, preferencesBand, applicationsBand, showHideBand, presentationBand),
         resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
         keyTip = "W",
         isActive = (ribbonState.selectedTask == Task.Write),
@@ -1543,6 +1567,143 @@ internal class RibbonBuilder(
                                 horizontalAlignment = HorizontalAlignment.Fill
                             )
                         )
+                    )
+                )
+            )
+        )
+    }
+
+    @Composable
+    fun getShowHideBand(
+        visibilityRulerOn: Boolean,
+        onVisibilityRulerClick: () -> Unit,
+        visibilityGridlinesOn: Boolean,
+        onVisibilityGridlinesClick: () -> Unit,
+        visibilityMessageBarOn: Boolean,
+        onVisibilityMessageBarClick: () -> Unit,
+        visibilityDocumentMapOn: Boolean,
+        onVisibilityDocumentMapClick: () -> Unit,
+        visibilityThumbnailsOn: Boolean,
+        onVisibilityThumbnailsClick: () -> Unit,
+    ): RibbonBand {
+        val rulerContentModel = SelectorContentModel(
+            text = resourceBundle.getString("Ruler.text"),
+            selected = visibilityRulerOn,
+            onClick = { onVisibilityRulerClick.invoke() }
+        )
+        val gridlinesContentModel = SelectorContentModel(
+            text = resourceBundle.getString("Gridlines.text"),
+            selected = visibilityGridlinesOn,
+            onClick = { onVisibilityGridlinesClick.invoke() }
+        )
+        val messageBarContentModel = SelectorContentModel(
+            text = resourceBundle.getString("MessageBar.text"),
+            enabled = false,
+            selected = visibilityMessageBarOn,
+            onClick = { onVisibilityMessageBarClick.invoke() }
+        )
+        val documentMapContentModel = SelectorContentModel(
+            text = resourceBundle.getString("DocumentMap.text"),
+            selected = visibilityDocumentMapOn,
+            onClick = { onVisibilityDocumentMapClick.invoke() }
+        )
+        val thumbnailsContentModel = SelectorContentModel(
+            text = resourceBundle.getString("Thumbnails.text"),
+            selected = visibilityThumbnailsOn,
+            onClick = { onVisibilityThumbnailsClick.invoke() }
+        )
+
+        return RibbonBand(
+            title = resourceBundle.getString("ShowHide.textBandTitle"),
+            icon = office_calendar_modified(),
+            expandCommand = Command(
+                text = "",
+                icon = null,
+                action = { println("Expand button clicked! ") }
+            ),
+            groups = listOf(
+                RibbonBandComponentGroup(
+                    componentProjections = listOf(
+                        RibbonMetaComponentProjection(
+                            projection = CheckBoxProjection(contentModel = rulerContentModel),
+                            enabled = { rulerContentModel.enabled },
+                            ribbonComponentPresentationModel = RibbonComponentPresentationModel(keyTip = "SR")
+                        ),
+                        RibbonMetaComponentProjection(
+                            projection = CheckBoxProjection(contentModel = gridlinesContentModel),
+                            enabled = { gridlinesContentModel.enabled },
+                            ribbonComponentPresentationModel = RibbonComponentPresentationModel(keyTip = "SG")
+                        ),
+                        RibbonMetaComponentProjection(
+                            projection = CheckBoxProjection(contentModel = messageBarContentModel),
+                            enabled = { messageBarContentModel.enabled },
+                            ribbonComponentPresentationModel = RibbonComponentPresentationModel(keyTip = "SM")
+                        ),
+                        RibbonMetaComponentProjection(
+                            projection = CheckBoxProjection(contentModel = documentMapContentModel),
+                            enabled = { documentMapContentModel.enabled },
+                            ribbonComponentPresentationModel = RibbonComponentPresentationModel(keyTip = "SD")
+                        ),
+                        RibbonMetaComponentProjection(
+                            projection = CheckBoxProjection(contentModel = thumbnailsContentModel),
+                            enabled = { thumbnailsContentModel.enabled },
+                            ribbonComponentPresentationModel = RibbonComponentPresentationModel(keyTip = "ST")
+                        ),
+                    )
+                )
+            )
+        )
+    }
+
+    @Composable
+    fun getPresentationBand(
+        selectedPresentation: Presentation,
+        onPresentationSelected: (Presentation) -> Unit,
+    ): RibbonBand {
+        val comfortableContentModel = SelectorContentModel(
+            text = resourceBundle.getString("Comfortable.text"),
+            selected = (selectedPresentation == Presentation.Comfortable),
+            onClick = { onPresentationSelected.invoke(Presentation.Comfortable) }
+        )
+
+        val cozyContentModel = SelectorContentModel(
+            text = resourceBundle.getString("Cozy.text"),
+            selected = (selectedPresentation == Presentation.Cozy),
+            onClick = { onPresentationSelected.invoke(Presentation.Cozy) }
+        )
+
+        val compactContentModel = SelectorContentModel(
+            text = resourceBundle.getString("Compact.text"),
+            selected = (selectedPresentation == Presentation.Compact),
+            onClick = { onPresentationSelected.invoke(Presentation.Compact) }
+        )
+
+        return RibbonBand(
+            title = resourceBundle.getString("Presentation.textBandTitle"),
+            icon = office_calendar_modified(),
+            expandCommand = Command(
+                text = "",
+                icon = null,
+                action = { println("Expand button clicked! ") }
+            ),
+            groups = listOf(
+                RibbonBandComponentGroup(
+                    componentProjections = listOf(
+                        RibbonMetaComponentProjection(
+                            projection = RadioButtonProjection(contentModel = comfortableContentModel),
+                            enabled = { comfortableContentModel.enabled },
+                            ribbonComponentPresentationModel = RibbonComponentPresentationModel(keyTip = "LA")
+                        ),
+                        RibbonMetaComponentProjection(
+                            projection = RadioButtonProjection(contentModel = cozyContentModel),
+                            enabled = { cozyContentModel.enabled },
+                            ribbonComponentPresentationModel = RibbonComponentPresentationModel(keyTip = "LA")
+                        ),
+                        RibbonMetaComponentProjection(
+                            projection = RadioButtonProjection(contentModel = compactContentModel),
+                            enabled = { compactContentModel.enabled },
+                            ribbonComponentPresentationModel = RibbonComponentPresentationModel(keyTip = "LA")
+                        ),
                     )
                 )
             )

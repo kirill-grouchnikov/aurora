@@ -436,6 +436,16 @@ class CheckBoxProjection(
             presentationModel = this.presentationModel
         )
     }
+
+    @Composable
+    override fun intrinsicWidth(height: Int): Int {
+        return checkBoxIntrinsicSize(contentModel, presentationModel).width.toInt()
+    }
+
+    @Composable
+    override fun intrinsicHeight(width: Int): Int {
+        return checkBoxIntrinsicSize(contentModel, presentationModel).height.toInt()
+    }
 }
 
 class TriStateCheckBoxProjection(
@@ -464,6 +474,16 @@ class TriStateCheckBoxProjection(
             presentationModel = this.presentationModel
         )
     }
+
+    @Composable
+    override fun intrinsicWidth(height: Int): Int {
+        return triStateCheckBoxIntrinsicSize(contentModel, presentationModel).width.toInt()
+    }
+
+    @Composable
+    override fun intrinsicHeight(width: Int): Int {
+        return triStateCheckBoxIntrinsicSize(contentModel, presentationModel).height.toInt()
+    }
 }
 
 class RadioButtonProjection(
@@ -491,6 +511,16 @@ class RadioButtonProjection(
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
         )
+    }
+
+    @Composable
+    override fun intrinsicWidth(height: Int): Int {
+        return radioButtonIntrinsicSize(contentModel, presentationModel).width.toInt()
+    }
+
+    @Composable
+    override fun intrinsicHeight(width: Int): Int {
+        return radioButtonIntrinsicSize(contentModel, presentationModel).height.toInt()
     }
 }
 

@@ -54,6 +54,10 @@ enum class ApplicationMultimedia(val resourceKey: String) {
     Pictures("Pictures.text"), Video("Video.text"), Audio("Audio.text")
 }
 
+enum class Presentation {
+    Comfortable, Cozy, Compact
+}
+
 data class RibbonState(
     val selectedTask: Task,
     val documentStyle: DocumentStyle,
@@ -62,7 +66,13 @@ data class RibbonState(
     val documentSaveLocation: DocumentSaveLocation,
     val applicationGame: ApplicationGame,
     val applicationBrowser: ApplicationBrowser,
-    val applicationMultimedia: ApplicationMultimedia
+    val applicationMultimedia: ApplicationMultimedia,
+    val visibilityRulerOn: Boolean,
+    val visibilityGridlinesOn: Boolean,
+    val visibilityMessageBarOn: Boolean,
+    val visibilityDocumentMapOn: Boolean,
+    val visibilityThumbnailsOn: Boolean,
+    val presentation: Presentation
 ) {
     lateinit var documentStyleGalleryInlineState: RibbonGalleryInlineState
 }
