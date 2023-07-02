@@ -73,8 +73,8 @@ fun getLabelPreferredWidth(
 ): Float {
     // Account for vertical content padding
     val heightForText = availableHeight -
-            (presentationModel.contentPadding.calculateLeftPadding(layoutDirection) +
-                    presentationModel.contentPadding.calculateRightPadding(layoutDirection)).value *
+            (presentationModel.contentPadding.calculateTopPadding() +
+                    presentationModel.contentPadding.calculateBottomPadding()).value *
             density.density
 
     val paragraph = Paragraph(
@@ -84,7 +84,7 @@ fun getLabelPreferredWidth(
         fontFamilyResolver = fontFamilyResolver
     )
 
-    var textWidth = paragraph.width
+    var textWidth = paragraph.maxIntrinsicWidth
     if (contentModel.icon != null) {
         // Account for icon width
         textWidth += presentationModel.iconDimension.width.value * density.density
