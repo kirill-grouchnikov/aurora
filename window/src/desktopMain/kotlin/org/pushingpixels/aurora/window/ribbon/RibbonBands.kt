@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -96,10 +97,28 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
         LocalRibbonBandRowHeight provides rowHeight,
     ) {
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.ControlPane) {
-            Row(modifier = Modifier.fillMaxWidth().height(fullHeightDp).auroraBackground()) {
-                for (band in bands) {
-                    RibbonBand(band = band, bandContentHeight = bandContentHeight)
-                    VerticalSeparatorProjection().project(modifier = Modifier.fillMaxHeight())
+            SubcomposeLayout(
+                modifier = Modifier.fillMaxWidth().height(fullHeightDp)
+            ) { constraints ->
+                val widthAvailable = constraints.maxWidth
+                val heightAvailable = constraints.maxHeight
+
+                val bandsPlaceable =
+                    subcompose(1) {
+                        Row(modifier = Modifier.fillMaxSize().auroraBackground()) {
+                            for (band in bands) {
+                                RibbonBand(band = band, bandContentHeight = bandContentHeight)
+                                VerticalSeparatorProjection().project(modifier = Modifier.fillMaxHeight())
+                            }
+                        }
+                    }.first().measure(
+                        Constraints.fixed(
+                            width = widthAvailable,
+                            height = heightAvailable
+                        )
+                    )
+                layout(widthAvailable, heightAvailable) {
+                    bandsPlaceable.placeRelative(x = 0, y = 0)
                 }
             }
         }
