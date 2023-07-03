@@ -51,6 +51,54 @@ import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import kotlin.math.ceil
 import kotlin.math.max
 
+@Composable
+private fun getBandsIntrinsicWidth(
+    bands: List<AbstractRibbonBand>,
+    bandCurrentResizePolicies: Map<AbstractRibbonBand, RibbonBandResizePolicy>,
+    bandFullHeight: Int,
+    bandContentHeight: Int,
+    gap: Int,
+    separatorWidth: Int
+): Int {
+    var result = 0
+    for (band in bands) {
+        val bandCurrentResizePolicy = bandCurrentResizePolicies[band]!!
+        val heightForWidth = if (bandCurrentResizePolicy is CoreRibbonResizePolicies.Icon)
+            bandFullHeight else bandContentHeight
+        result += bandCurrentResizePolicy.getPreferredWidth(
+            ribbonBand = band,
+            availableHeight = heightForWidth,
+            gap = gap
+        )
+    }
+    result += bands.size * separatorWidth
+
+    return result
+}
+
+private fun validateResizePolicies(
+    bands: List<AbstractRibbonBand>,
+    intrinsicWidthList: List<Pair<Map<AbstractRibbonBand, RibbonBandResizePolicy>, Int>>
+) {
+    for (index in 0 until intrinsicWidthList.size - 1) {
+        val currentIntrinsicWidth = intrinsicWidthList[index].second
+        val nextIntrinsicWidth = intrinsicWidthList[index + 1].second
+        if (nextIntrinsicWidth > currentIntrinsicWidth) {
+            val currentMapping = intrinsicWidthList[index].first
+            val nextMapping = intrinsicWidthList[index + 1].first
+            val currentLegend =
+                bands.joinToString { "${it.title}:${currentMapping[it]?.javaClass?.simpleName}" }
+            val nextLegend =
+                bands.joinToString { "${it.title}:${nextMapping[it]?.javaClass?.simpleName}" }
+            error("""Inconsistent intrinsic widths
+                resizing sequence $currentLegend with intrinsic width $currentIntrinsicWidth
+                is followed by
+                resizing sequence $nextLegend with intrinsic width $nextIntrinsicWidth
+            """.trimMargin())
+        }
+    }
+}
+
 @OptIn(AuroraInternalApi::class)
 @Composable
 internal fun RibbonBands(ribbonTask: RibbonTask) {
@@ -97,6 +145,35 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
     val bandFullHeightDp = (bandFullHeight / density.density).dp
 
     val rowHeight = ((bandContentHeight - 4 * gap) / 3.0f).toInt()
+    val separatorWidth: Int = VerticalSeparatorProjection().intrinsicWidth(bandFullHeight)
+
+    val resizePolicySequence = ribbonTask.resizeSequencingPolicy.getResizeSequence(ribbonTask)
+    val intrinsicWidthList: MutableList<Pair<Map<AbstractRibbonBand, RibbonBandResizePolicy>, Int>> =
+        arrayListOf()
+
+    // Start with the most permissive resize policy for every band
+    val bandCurrentResizePolicies: MutableMap<AbstractRibbonBand, RibbonBandResizePolicy> =
+        bands.associateWith { it.resizePolicies[0] }.toMutableMap()
+    for (resizePolicy in resizePolicySequence) {
+        // Start replacing the resize policies for the ribbon bands based on the resize
+        // sequence associated with this task
+        bandCurrentResizePolicies[resizePolicy.first] = resizePolicy.second
+
+        var neededWidth = getBandsIntrinsicWidth(
+            bands, bandCurrentResizePolicies,
+            bandFullHeight, bandContentHeight, gap, separatorWidth
+        )
+        neededWidth += bands.size * separatorWidth
+
+        //val legend = bands.joinToString { "${it.title}:${bandCurrentResizePolicies[it]?.javaClass?.simpleName}" }
+        //println("Needed $neededWidth at $legend")
+
+        intrinsicWidthList.add(Pair(bandCurrentResizePolicies.toMap(), neededWidth))
+    }
+
+    // Make sure that resize policies configured on this task create a non-increasing sequence
+    // of intrinsic widths
+    validateResizePolicies(bands, intrinsicWidthList)
 
     CompositionLocalProvider(
         LocalRibbonBandRowHeight provides rowHeight,
@@ -108,18 +185,11 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
                 val widthAvailable = constraints.maxWidth
                 val heightAvailable = constraints.maxHeight
 
-                val bandResizePolicies = bands.associateWith {
-                    when (it) {
-                        is RibbonBand -> CoreRibbonResizePolicies.Mirror
-                        is FlowRibbonBand -> CoreRibbonResizePolicies.FlowThreeRows
-                    }
-                }
-
-                val resizePolicySequence = ribbonTask.resizeSequencingPolicy.getResizeSequence(ribbonTask)
-                println("Resize policy sequence")
-                for (resizePolicy in resizePolicySequence) {
-                    println("\t${resizePolicy.first.title} -> ${resizePolicy.second.javaClass.simpleName}")
-                }
+                val bandResizePolicies: Map<AbstractRibbonBand, RibbonBandResizePolicy> =
+                    intrinsicWidthList.find { it.second <= widthAvailable }?.first
+                        ?: intrinsicWidthList.last().first
+                // TODO - kick in horizontal scrolling if we don't have enough horizontal
+                // space to display the most restrictive configuration
 
                 val bandsPlaceable =
                     subcompose(1) {

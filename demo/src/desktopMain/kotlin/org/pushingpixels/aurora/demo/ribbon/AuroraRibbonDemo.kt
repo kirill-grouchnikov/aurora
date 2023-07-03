@@ -1304,8 +1304,7 @@ internal class RibbonBuilder(
             title = resourceBundle.getString("Find.textBandTitle"),
             icon = edit_find(),
             collapsedStateKeyTip = "ZY",
-            // TODO - custom policy list
-            resizePolicies = CoreRibbonResizePolicies.getCorePoliciesRestrictive(),
+            resizePolicies = listOf(CoreRibbonResizePolicies.Mirror, CoreRibbonResizePolicies.Icon),
             groups = listOf(
                 RibbonBandCommandGroup(
                     commandProjections = listOf(
@@ -1354,8 +1353,8 @@ internal class RibbonBuilder(
                 icon = null,
                 action = { println("Expand button clicked! ") }
             ),
-            // TODO - custom list
-            resizePolicies = CoreRibbonResizePolicies.getCorePoliciesRestrictive(),
+            resizePolicies = listOf(CoreRibbonResizePolicies.Mirror, CoreRibbonResizePolicies.Mid2Low,
+                CoreRibbonResizePolicies.Icon),
             groups = listOf(
                 RibbonBandCommandGroup(
                     commandProjections = listOf(
