@@ -1459,7 +1459,7 @@ internal class RibbonBuilder(
                         ) at PresentationPriority.Medium,
                         CommandButtonProjection(
                             contentModel = Command(text = resourceBundle.getString("Themes.text"),
-                                icon = preferences_desktop_locale(),
+                                icon = preferences_desktop_theme(),
                                 action = { println("Themes activated") }),
                             presentationModel = CommandButtonPresentationModel(actionKeyTip = "T")
                         ) at PresentationPriority.Medium

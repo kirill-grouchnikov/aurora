@@ -18,13 +18,23 @@ package org.pushingpixels.aurora.component.ribbon.resize
 import org.pushingpixels.aurora.component.ribbon.AbstractRibbonBand
 import org.pushingpixels.aurora.component.ribbon.RibbonTask
 
+/**
+ * Resize sequencing policy for [RibbonTask] content. This policy is responsible for determining
+ * the order in which the task's bands get progressively less or more horizontal space as the ribbon
+ * is resized.
+ */
 interface RibbonBandResizeSequencingPolicy {
+    /**
+     * The pair of ribbon band and ribbon band resize policy in this list is used to determine which
+     * ribbon band should be getting less or more horizontal space as the ribbon is resized, and
+     * what should this band's resize policy be at that moment.
+     */
     fun getResizeSequence(ribbonTask: RibbonTask) : List<Pair<AbstractRibbonBand, RibbonBandResizePolicy>>
 }
 
 object CoreRibbonResizeSequencingPolicies {
     /**
-     * The round robin resize sequencing policy. Under this policy the ribbon
+     * The round-robin resize sequencing policy. Under this policy the ribbon
      * bands are being collapsed in a cyclic fashion starting from the last ribbon band.
      *
      * @author Kirill Grouchnikov
