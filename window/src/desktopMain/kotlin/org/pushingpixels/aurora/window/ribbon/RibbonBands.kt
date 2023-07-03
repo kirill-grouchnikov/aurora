@@ -115,6 +115,12 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
                     }
                 }
 
+                val resizePolicySequence = ribbonTask.resizeSequencingPolicy.getResizeSequence(ribbonTask)
+                println("Resize policy sequence")
+                for (resizePolicy in resizePolicySequence) {
+                    println("\t${resizePolicy.first.title} -> ${resizePolicy.second.javaClass.simpleName}")
+                }
+
                 val bandsPlaceable =
                     subcompose(1) {
                         Row(modifier = Modifier.fillMaxSize().auroraBackground()) {

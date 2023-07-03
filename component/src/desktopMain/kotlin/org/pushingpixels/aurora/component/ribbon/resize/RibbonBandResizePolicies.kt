@@ -121,16 +121,20 @@ abstract class CoreRibbonResizePolicy(val mapping: (PresentationPriority) -> Pre
     RibbonBandResizePolicy
 
 object CoreRibbonResizePolicies {
-    public fun getCorePoliciesPermissive(): List<RibbonBandResizePolicy> {
-        return emptyList()
+    fun getCorePoliciesNone(): List<RibbonBandResizePolicy> {
+        return listOf(Mirror, Icon)
     }
 
-    public fun getCorePoliciesRestrictive(): List<RibbonBandResizePolicy> {
-        return emptyList()
+    fun getCorePoliciesPermissive(): List<RibbonBandResizePolicy> {
+        return listOf(None, Low2Mid, Mid2Mid, Mirror, Mid2Low, High2Mid, High2Low, Icon)
     }
 
-    public fun getCoreFlowPoliciesRestrictive(stepsToRepeat: Int): List<RibbonBandResizePolicy> {
-        return emptyList()
+    fun getCorePoliciesRestrictive(): List<RibbonBandResizePolicy> {
+        return listOf(Mirror, Mid2Low, High2Mid, High2Low, Icon)
+    }
+
+    fun getCoreFlowPoliciesRestrictive(stepsToRepeat: Int): List<RibbonBandResizePolicy> {
+        return List(stepsToRepeat) { FlowTwoRows } + List(stepsToRepeat) {FlowThreeRows} + Icon
     }
 
     @Composable
@@ -335,6 +339,8 @@ object CoreRibbonResizePolicies {
         }
     }
 
+    object None : BaseCoreRibbonResizePolicy({ PresentationPriority.Top })
+
     object High2Mid : BaseCoreRibbonResizePolicy({
         when (it) {
             PresentationPriority.Top -> PresentationPriority.Medium
@@ -344,6 +350,7 @@ object CoreRibbonResizePolicies {
     })
 
     object High2Low : BaseCoreRibbonResizePolicy({ PresentationPriority.Low })
+
     object Mid2Mid : BaseCoreRibbonResizePolicy({
         when (it) {
             PresentationPriority.Top -> PresentationPriority.Top

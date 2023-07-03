@@ -19,62 +19,68 @@ import org.pushingpixels.aurora.component.ribbon.AbstractRibbonBand
 import org.pushingpixels.aurora.component.ribbon.RibbonTask
 
 interface RibbonBandResizeSequencingPolicy {
-    /**
-     * Resets this policy. Note that this method is for internal use only and
-     * should not be called by the application code.
-     */
-    fun reset(ribbonTask: RibbonTask)
-
-    /**
-     * Returns the next ribbon band for collapse.
-     *
-     * @return The next ribbon band for collapse.
-     */
-    fun next(ribbonTask: RibbonTask): AbstractRibbonBand
+    fun getResizeSequence(ribbonTask: RibbonTask) : List<Pair<AbstractRibbonBand, RibbonBandResizePolicy>>
 }
 
 object CoreRibbonResizeSequencingPolicies {
     /**
      * The round robin resize sequencing policy. Under this policy the ribbon
-     * bands are being collapsed in a cyclic fashion, distributing the collapsed
-     * pixels between the different bands.
+     * bands are being collapsed in a cyclic fashion starting from the last ribbon band.
      *
      * @author Kirill Grouchnikov
      */
-    class RoundRobin : RibbonBandResizeSequencingPolicy {
-        // The index of the next ribbon task for collapsing.
-        private var nextIndex = 0
+    object RoundRobin : RibbonBandResizeSequencingPolicy {
+        override fun getResizeSequence(ribbonTask: RibbonTask) : List<Pair<AbstractRibbonBand, RibbonBandResizePolicy>> {
+            val result: MutableList<Pair<AbstractRibbonBand, RibbonBandResizePolicy>> = arrayListOf()
+            val bands = ribbonTask.bands
+            val resizePolicies: Map<AbstractRibbonBand, MutableList<RibbonBandResizePolicy>> =
+                ribbonTask.bands.associateWith { ArrayList(it.resizePolicies) }
+            val resizePolicyCount = ribbonTask.bands.sumOf { it.resizePolicies.size }
 
-        override fun reset(ribbonTask: RibbonTask) {
-            nextIndex = ribbonTask.bands.size - 1
-        }
+            var policiesLeft = resizePolicyCount
+            var currentBandIndex = bands.size - 1
+            while (policiesLeft > 0) {
+                val currentBand: AbstractRibbonBand = bands[currentBandIndex]
+                val policiesLeftForCurrentBand = resizePolicies[currentBand]!!
+                if (policiesLeftForCurrentBand.isEmpty()) {
+                    // Nothing left to take from this band, go to the next one in sequence
+                    currentBandIndex--
+                    if (currentBandIndex < 0) {
+                        currentBandIndex = bands.size - 1
+                    }
+                    continue
+                }
+                val currentPolicy: RibbonBandResizePolicy = policiesLeftForCurrentBand.removeFirst()
+                policiesLeft--
+                result.add(Pair(currentBand, currentPolicy))
+                // Go to the next band in sequence
+                currentBandIndex--
+                if (currentBandIndex < 0) {
+                    currentBandIndex = bands.size - 1
+                }
+            }
 
-        override fun next(ribbonTask: RibbonTask): AbstractRibbonBand {
-            val result: AbstractRibbonBand = ribbonTask.bands[nextIndex]
-            nextIndex--
-            if (nextIndex < 0) nextIndex = ribbonTask.bands.size - 1
             return result
         }
     }
 
-    class CollapseFromLast: RibbonBandResizeSequencingPolicy {
-        // The index of the next ribbon task for collapsing.
-        private var nextIndex = 0
+    /**
+     * The collapse from last resize sequencing policy. Under this policy the ribbon
+     * bands are being collapsed starting from the last ribbon band. The current ribbon band
+     * collapses its content until its own resize policies list is exhausted before going to the
+     * next band.
+     *
+     * @author Kirill Grouchnikov
+     */
+    object CollapseFromLast: RibbonBandResizeSequencingPolicy {
+        override fun getResizeSequence(ribbonTask: RibbonTask) : List<Pair<AbstractRibbonBand, RibbonBandResizePolicy>> {
+            val result: MutableList<Pair<AbstractRibbonBand, RibbonBandResizePolicy>> = arrayListOf()
 
-        override fun reset(ribbonTask: RibbonTask) {
-            nextIndex = ribbonTask.bands.size - 1
-        }
+            val reversedBands: List<AbstractRibbonBand> = ribbonTask.bands.reversed()
+            for (band in reversedBands) {
+                result.addAll(band.resizePolicies.map { Pair(band, it) })
+            }
 
-        override fun next(ribbonTask: RibbonTask): AbstractRibbonBand {
-            val result: AbstractRibbonBand = ribbonTask.bands[nextIndex]
-
-            // check whether the current resize policy on the returned ribbon
-            // band is the last
-            val resizePolicies: List<RibbonBandResizePolicy> = result.resizePolicies
-//            if (result.getCurrentResizePolicy() === resizePolicies[resizePolicies.size - 1]) {
-//                nextIndex--
-//                if (nextIndex < 0) nextIndex = 0
-//            }
             return result
         }
     }

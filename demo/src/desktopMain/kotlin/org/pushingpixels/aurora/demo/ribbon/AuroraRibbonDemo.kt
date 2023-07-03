@@ -149,7 +149,7 @@ fun main() = auroraApplication {
     val pageLayoutTask = RibbonTask(
         title = resourceBundle.getString("PageLayout.textTaskTitle"),
         bands = listOf(clipboardBand, quickStylesBand, fontBand, documentBand, findBand),
-        resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+        resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.CollapseFromLast,
         keyTip = "P",
         isActive = (ribbonState.selectedTask == Task.PageLayout),
         onClick = { ribbonState = ribbonState.copy(selectedTask = Task.PageLayout) }
@@ -193,7 +193,7 @@ fun main() = auroraApplication {
     val writeTask = RibbonTask(
         title = resourceBundle.getString("Write.textTaskTitle"),
         bands = listOf(actionBand, preferencesBand, applicationsBand, showHideBand, presentationBand),
-        resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+        resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin,
         keyTip = "W",
         isActive = (ribbonState.selectedTask == Task.Write),
         onClick = { ribbonState = ribbonState.copy(selectedTask = Task.Write) }
@@ -216,7 +216,7 @@ fun main() = auroraApplication {
                     ribbonState = ribbonState.copy(applicationMultimedia = it)
                 })
         ),
-        resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+        resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin,
         keyTip = "A",
         isActive = (ribbonState.selectedTask == Task.Animations),
         onClick = { ribbonState = ribbonState.copy(selectedTask = Task.Animations) }
@@ -239,7 +239,7 @@ fun main() = auroraApplication {
                     ribbonState = ribbonState.copy(applicationMultimedia = it)
                 })
         ),
-        resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+        resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin,
         keyTip = "A",
         isActive = (ribbonState.selectedTask == Task.Wrapped),
         onClick = { ribbonState = ribbonState.copy(selectedTask = Task.Wrapped) }
@@ -266,7 +266,7 @@ fun main() = auroraApplication {
                             ribbonState = ribbonState.copy(applicationMultimedia = it)
                         })
                 ),
-                resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+                resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin,
                 keyTip = "XA",
                 isActive = (ribbonState.selectedTask == Task.Contextual11),
                 onClick = { ribbonState = ribbonState.copy(selectedTask = Task.Contextual11) }
@@ -288,7 +288,7 @@ fun main() = auroraApplication {
                             ribbonState = ribbonState.copy(applicationMultimedia = it)
                         })
                 ),
-                resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+                resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin,
                 keyTip = "XB",
                 isActive = (ribbonState.selectedTask == Task.Contextual12),
                 onClick = { ribbonState = ribbonState.copy(selectedTask = Task.Contextual12) }
@@ -316,7 +316,7 @@ fun main() = auroraApplication {
                             ribbonState = ribbonState.copy(applicationMultimedia = it)
                         })
                 ),
-                resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin(),
+                resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin,
                 keyTip = "YA",
                 isActive = (ribbonState.selectedTask == Task.Contextual21),
                 onClick = { ribbonState = ribbonState.copy(selectedTask = Task.Contextual21) }
@@ -872,6 +872,7 @@ internal class RibbonBuilder(
             ),
             expandCommandKeyTip = "Q",
             collapsedStateKeyTip = "ZC",
+            resizePolicies = listOf(CoreRibbonResizePolicies.Mirror, CoreRibbonResizePolicies.Mid2Low),
             groups = listOf(
                 RibbonBandCommandGroup(
                     commandProjections = listOf(
