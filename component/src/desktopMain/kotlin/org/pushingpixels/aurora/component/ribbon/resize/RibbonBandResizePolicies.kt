@@ -346,7 +346,35 @@ object CoreRibbonResizePolicies {
         }
     }
 
+    object High2Mid: BaseCoreRibbonResizePolicy({
+        when (it) {
+            PresentationPriority.Top -> PresentationPriority.Medium
+            PresentationPriority.Medium -> PresentationPriority.Low
+            PresentationPriority.Low -> PresentationPriority.Low
+        }
+    })
     object High2Low: BaseCoreRibbonResizePolicy({ PresentationPriority.Low })
+    object Mid2Mid: BaseCoreRibbonResizePolicy({
+        when (it) {
+            PresentationPriority.Top -> PresentationPriority.Top
+            PresentationPriority.Medium -> PresentationPriority.Medium
+            PresentationPriority.Low -> PresentationPriority.Medium
+        }
+    })
+    object Mid2Low: BaseCoreRibbonResizePolicy({
+        when (it) {
+            PresentationPriority.Top -> PresentationPriority.Top
+            PresentationPriority.Medium -> PresentationPriority.Low
+            PresentationPriority.Low -> PresentationPriority.Low
+        }
+    })
+    object Low2Mid: BaseCoreRibbonResizePolicy({
+        when (it) {
+            PresentationPriority.Top -> PresentationPriority.Top
+            PresentationPriority.Medium -> PresentationPriority.Top
+            PresentationPriority.Low -> PresentationPriority.Medium
+        }
+    })
     object Mirror: BaseCoreRibbonResizePolicy({ it })
 
     object FlowOneRow: FlowRibbonBandResizePolicy {
