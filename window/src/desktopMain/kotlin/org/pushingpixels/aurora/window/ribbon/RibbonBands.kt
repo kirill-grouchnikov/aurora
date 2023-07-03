@@ -41,6 +41,7 @@ import org.pushingpixels.aurora.component.ribbon.*
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonBandRowHeight
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicy
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicies
+import org.pushingpixels.aurora.component.ribbon.resize.FlowRibbonBandResizePolicy
 import org.pushingpixels.aurora.component.ribbon.resize.RibbonBandResizePolicy
 import org.pushingpixels.aurora.component.utils.getEndwardDoubleArrowIcon
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
@@ -106,12 +107,12 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
                 val widthAvailable = constraints.maxWidth
                 val heightAvailable = constraints.maxHeight
 
-                val bandResizePolicies = bands.map {
-                    it to when (it) {
+                val bandResizePolicies = bands.associateWith {
+                    when (it) {
                         is RibbonBand -> CoreRibbonResizePolicies.Mirror
                         is FlowRibbonBand -> CoreRibbonResizePolicies.FlowThreeRows
                     }
-                }.toMap()
+                }
 
                 val bandsPlaceable =
                     subcompose(1) {
@@ -159,7 +160,7 @@ private fun RibbonBand(
         is FlowRibbonBand -> {
             Column(modifier = Modifier.width(IntrinsicSize.Min).fillMaxHeight()) {
                 Box(modifier = Modifier.fillMaxWidth().weight(1.0f)) {
-                    FlowRibbonBandContent(band, bandResizePolicy, bandContentHeight)
+                    FlowRibbonBandContent(band, bandResizePolicy as FlowRibbonBandResizePolicy, bandContentHeight)
                 }
 
                 RibbonBandTitle(band)
@@ -605,7 +606,7 @@ private fun RibbonBandComponentGroupContent(
 @Composable
 private fun FlowRibbonBandContent(
     band: FlowRibbonBand,
-    bandResizePolicy: RibbonBandResizePolicy,
+    bandResizePolicy: FlowRibbonBandResizePolicy,
     bandContentHeight: Int
 ) {
     val density = LocalDensity.current
@@ -625,15 +626,29 @@ private fun FlowRibbonBandContent(
             val width = constraints.maxWidth
 
             val placeables = measurables.map { it.measure(Constraints()) }
+            // count the rows
+            var rows = 1
+            var currX = 0
+            for (placeable in placeables) {
+                if (currX + placeable.measuredWidth <= width) {
+                    currX += (placeable.measuredWidth + gap)
+                } else {
+                    currX = 0
+                    rows++
+                }
+            }
+
+            // Compute vertical gap for balanced, vertically centered layout of the rows
+            val verticalGap = (constraints.maxHeight - rows * rowHeight) / (rows + 1)
 
             layout(width = width, height = constraints.maxHeight) {
                 var x = 0
-                var y = gap
+                var y = verticalGap
 
                 for (placeable in placeables) {
                     if (x + placeable.measuredWidth > width) {
                         x = 0
-                        y += (rowHeight + gap)
+                        y += (rowHeight + verticalGap)
                     }
                     placeable.placeRelative(x, y)
                     x += placeable.measuredWidth

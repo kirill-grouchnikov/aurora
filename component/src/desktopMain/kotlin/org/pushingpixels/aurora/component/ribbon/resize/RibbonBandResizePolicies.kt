@@ -349,6 +349,66 @@ object CoreRibbonResizePolicies {
     object High2Low: BaseCoreRibbonResizePolicy({ PresentationPriority.Low })
     object Mirror: BaseCoreRibbonResizePolicy({ it })
 
+    object FlowOneRow: FlowRibbonBandResizePolicy {
+        @Composable
+        override fun getPreferredWidth(ribbonBand: AbstractRibbonBand, availableHeight: Int, gap: Int): Int {
+            require(ribbonBand is FlowRibbonBand) {
+                "This policy only supports flow ribbon bands"
+            }
+            val compCount = ribbonBand.flowComponentProjections.size
+            val widths = IntArray(compCount)
+            var currBestResult = 0
+            val rowHeight = ((availableHeight - 4 * gap) / 3.0f).toInt()
+            for ((index, flowCompProjection) in ribbonBand.flowComponentProjections.withIndex()) {
+                widths[index] = flowCompProjection.intrinsicWidth(height = rowHeight)
+                currBestResult += widths[index]
+            }
+            if (ribbonBand.flowComponentProjections.size > 1) {
+                currBestResult += (ribbonBand.flowComponentProjections.size - 1) * gap
+            }
+            return currBestResult + 2 * gap
+        }
+    }
+
+    object FlowTwoRows: FlowRibbonBandResizePolicy {
+        @Composable
+        override fun getPreferredWidth(ribbonBand: AbstractRibbonBand, availableHeight: Int, gap: Int): Int {
+            require(ribbonBand is FlowRibbonBand) {
+                "This policy only supports flow ribbon bands"
+            }
+            val compCount = ribbonBand.flowComponentProjections.size
+            val widths = IntArray(compCount)
+            var currBestResult = 0
+            val rowHeight = ((availableHeight - 4 * gap) / 3.0f).toInt()
+            for ((index, flowCompProjection) in ribbonBand.flowComponentProjections.withIndex()) {
+                widths[index] = flowCompProjection.intrinsicWidth(height = rowHeight)
+                currBestResult += widths[index]
+            }
+            if (ribbonBand.flowComponentProjections.size > 1) {
+                currBestResult += (ribbonBand.flowComponentProjections.size - 1) * gap
+            }
+
+            // need to find the inflection point that results in
+            // the lowest value for max length of two sub-sequences
+            for (inflectionIndex in 0 until compCount - 1) {
+                var w1 = 0
+                for (index1 in 0..inflectionIndex) {
+                    w1 += widths[index1] + gap
+                }
+                var w2 = 0
+                for (index2 in inflectionIndex + 1 until compCount) {
+                    w2 += widths[index2] + gap
+                }
+                val width = max(w1.toDouble(), w2.toDouble()).toInt()
+                if (width < currBestResult) {
+                    currBestResult = width
+                }
+            }
+
+            return currBestResult + 2 * gap
+        }
+    }
+
     object FlowThreeRows: FlowRibbonBandResizePolicy {
         @Composable
         override fun getPreferredWidth(ribbonBand: AbstractRibbonBand, availableHeight: Int, gap: Int): Int {
@@ -361,7 +421,10 @@ object CoreRibbonResizePolicies {
             val rowHeight = ((availableHeight - 4 * gap) / 3.0f).toInt()
             for ((index, flowCompProjection) in ribbonBand.flowComponentProjections.withIndex()) {
                 widths[index] = flowCompProjection.intrinsicWidth(height = rowHeight)
-                currBestResult += (widths[index] + gap)
+                currBestResult += widths[index]
+            }
+            if (ribbonBand.flowComponentProjections.size > 1) {
+                currBestResult += (ribbonBand.flowComponentProjections.size - 1) * gap
             }
 
             // need to find the inflection points that result in
