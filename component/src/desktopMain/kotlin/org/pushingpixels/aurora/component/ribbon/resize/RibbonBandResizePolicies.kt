@@ -31,6 +31,7 @@ import org.pushingpixels.aurora.component.utils.getLabelPreferredSingleLineWidth
 import org.pushingpixels.aurora.theming.LocalTextStyle
 import kotlin.math.ceil
 import kotlin.math.max
+import kotlin.math.min
 
 /**
  * Defines the resize policies for the [RibbonBand]s and [FlowRibbonBand]s.
@@ -114,9 +115,9 @@ interface RibbonBandResizePolicy {
     fun getPreferredWidth(ribbonBand: AbstractRibbonBand, availableHeight: Int, gap: Int): Int
 }
 
-interface FlowRibbonBandResizePolicy: RibbonBandResizePolicy
+interface FlowRibbonBandResizePolicy : RibbonBandResizePolicy
 
-abstract class CoreRibbonResizePolicy(val mapping: (PresentationPriority) -> PresentationPriority):
+abstract class CoreRibbonResizePolicy(val mapping: (PresentationPriority) -> PresentationPriority) :
     RibbonBandResizePolicy
 
 object CoreRibbonResizePolicies {
@@ -308,7 +309,8 @@ object CoreRibbonResizePolicies {
         return fullWidth
     }
 
-    abstract class BaseCoreRibbonResizePolicy(mapping: (PresentationPriority) -> PresentationPriority): CoreRibbonResizePolicy(mapping) {
+    abstract class BaseCoreRibbonResizePolicy(mapping: (PresentationPriority) -> PresentationPriority) :
+        CoreRibbonResizePolicy(mapping) {
         @Composable
         override fun getPreferredWidth(ribbonBand: AbstractRibbonBand, availableHeight: Int, gap: Int): Int {
             require(ribbonBand is RibbonBand) {
@@ -333,38 +335,42 @@ object CoreRibbonResizePolicies {
         }
     }
 
-    object High2Mid: BaseCoreRibbonResizePolicy({
+    object High2Mid : BaseCoreRibbonResizePolicy({
         when (it) {
             PresentationPriority.Top -> PresentationPriority.Medium
             PresentationPriority.Medium -> PresentationPriority.Low
             PresentationPriority.Low -> PresentationPriority.Low
         }
     })
-    object High2Low: BaseCoreRibbonResizePolicy({ PresentationPriority.Low })
-    object Mid2Mid: BaseCoreRibbonResizePolicy({
+
+    object High2Low : BaseCoreRibbonResizePolicy({ PresentationPriority.Low })
+    object Mid2Mid : BaseCoreRibbonResizePolicy({
         when (it) {
             PresentationPriority.Top -> PresentationPriority.Top
             PresentationPriority.Medium -> PresentationPriority.Medium
             PresentationPriority.Low -> PresentationPriority.Medium
         }
     })
-    object Mid2Low: BaseCoreRibbonResizePolicy({
+
+    object Mid2Low : BaseCoreRibbonResizePolicy({
         when (it) {
             PresentationPriority.Top -> PresentationPriority.Top
             PresentationPriority.Medium -> PresentationPriority.Low
             PresentationPriority.Low -> PresentationPriority.Low
         }
     })
-    object Low2Mid: BaseCoreRibbonResizePolicy({
+
+    object Low2Mid : BaseCoreRibbonResizePolicy({
         when (it) {
             PresentationPriority.Top -> PresentationPriority.Top
             PresentationPriority.Medium -> PresentationPriority.Top
             PresentationPriority.Low -> PresentationPriority.Medium
         }
     })
-    object Mirror: BaseCoreRibbonResizePolicy({ it })
 
-    object FlowOneRow: FlowRibbonBandResizePolicy {
+    object Mirror : BaseCoreRibbonResizePolicy({ it })
+
+    object FlowOneRow : FlowRibbonBandResizePolicy {
         @Composable
         override fun getPreferredWidth(ribbonBand: AbstractRibbonBand, availableHeight: Int, gap: Int): Int {
             require(ribbonBand is FlowRibbonBand) {
@@ -385,7 +391,7 @@ object CoreRibbonResizePolicies {
         }
     }
 
-    object FlowTwoRows: FlowRibbonBandResizePolicy {
+    object FlowTwoRows : FlowRibbonBandResizePolicy {
         @Composable
         override fun getPreferredWidth(ribbonBand: AbstractRibbonBand, availableHeight: Int, gap: Int): Int {
             require(ribbonBand is FlowRibbonBand) {
@@ -424,7 +430,7 @@ object CoreRibbonResizePolicies {
         }
     }
 
-    object FlowThreeRows: FlowRibbonBandResizePolicy {
+    object FlowThreeRows : FlowRibbonBandResizePolicy {
         @Composable
         override fun getPreferredWidth(ribbonBand: AbstractRibbonBand, availableHeight: Int, gap: Int): Int {
             require(ribbonBand is FlowRibbonBand) {
@@ -466,6 +472,41 @@ object CoreRibbonResizePolicies {
             }
 
             return currBestResult + 2 * gap
+        }
+    }
+
+    object Icon : RibbonBandResizePolicy {
+        @OptIn(AuroraInternalApi::class)
+        @Composable
+        override fun getPreferredWidth(ribbonBand: AbstractRibbonBand, availableHeight: Int, gap: Int): Int {
+            val density = LocalDensity.current
+            val layoutDirection = LocalLayoutDirection.current
+            val textStyle = LocalTextStyle.current
+            val fontFamilyResolver = LocalFontFamilyResolver.current
+            val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
+
+            val iconCommand = Command(
+                text = ribbonBand.title,
+                icon = ribbonBand.icon
+            )
+            val iconPresentationModel =
+                CommandButtonPresentationModel(presentationState = CommandButtonPresentationState.Big)
+            val layoutManager = iconPresentationModel.presentationState.createLayoutManager(
+                layoutDirection = layoutDirection,
+                density = density,
+                textStyle = resolvedTextStyle,
+                fontFamilyResolver = fontFamilyResolver
+            )
+            val preLayoutInfo =
+                layoutManager.getPreLayoutInfo(
+                    iconCommand,
+                    iconPresentationModel
+                )
+            return min(
+                layoutManager.getPreferredSize(
+                    iconCommand, iconPresentationModel, preLayoutInfo
+                ).width.toInt(), availableHeight * 5 / 4
+            )
         }
     }
 }

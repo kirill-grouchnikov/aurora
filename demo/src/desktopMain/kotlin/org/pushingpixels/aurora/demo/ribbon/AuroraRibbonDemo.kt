@@ -1611,7 +1611,7 @@ internal class RibbonBuilder(
 
         return RibbonBand(
             title = resourceBundle.getString("ShowHide.textBandTitle"),
-            icon = office_calendar_modified(),
+            icon = applications_graphics(),
             expandCommand = Command(
                 text = "",
                 icon = null,
@@ -1676,7 +1676,7 @@ internal class RibbonBuilder(
 
         return RibbonBand(
             title = resourceBundle.getString("Presentation.textBandTitle"),
-            icon = office_calendar_modified(),
+            icon = preferences_desktop_screensaver(),
             expandCommand = Command(
                 text = "",
                 icon = null,

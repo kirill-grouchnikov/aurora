@@ -93,7 +93,8 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
         fontFamilyResolver = fontFamilyResolver,
         availableWidth = Float.MAX_VALUE
     )
-    val fullHeightDp = ((bandContentHeight + bandTitleHeight) / density.density).dp
+    val bandFullHeight = (bandContentHeight + bandTitleHeight).toInt()
+    val bandFullHeightDp = (bandFullHeight / density.density).dp
 
     val rowHeight = ((bandContentHeight - 4 * gap) / 3.0f).toInt()
 
@@ -102,7 +103,7 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
     ) {
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.ControlPane) {
             SubcomposeLayout(
-                modifier = Modifier.fillMaxWidth().height(fullHeightDp)
+                modifier = Modifier.fillMaxWidth().height(bandFullHeightDp)
             ) { constraints ->
                 val widthAvailable = constraints.maxWidth
                 val heightAvailable = constraints.maxHeight
@@ -121,7 +122,8 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
                                 RibbonBand(
                                     band = band,
                                     bandResizePolicy = bandResizePolicies[band]!!,
-                                    bandContentHeight = bandContentHeight
+                                    bandContentHeight = bandContentHeight,
+                                    bandFullHeight = bandFullHeight
                                 )
                                 VerticalSeparatorProjection().project(modifier = Modifier.fillMaxHeight())
                             }
@@ -144,26 +146,52 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
 private fun RibbonBand(
     band: AbstractRibbonBand,
     bandResizePolicy: RibbonBandResizePolicy,
-    bandContentHeight: Int
+    bandContentHeight: Int,
+    bandFullHeight: Int
 ) {
-    when (band) {
-        is RibbonBand -> {
-            Column(modifier = Modifier.width(IntrinsicSize.Min).fillMaxHeight()) {
-                Box(modifier = Modifier.fillMaxWidth().weight(1.0f)) {
-                    RibbonBandContent(band, bandResizePolicy as CoreRibbonResizePolicy, bandContentHeight)
-                }
-
-                RibbonBandTitle(band)
-            }
+    val density = LocalDensity.current
+    if (bandResizePolicy is CoreRibbonResizePolicies.Icon) {
+        val width = bandResizePolicy.getPreferredWidth(
+            ribbonBand = band,
+            availableHeight = bandFullHeight,
+            gap = 0
+        )
+        Box(modifier = Modifier.width((width / density.density).dp).fillMaxHeight()) {
+            val iconCommand = Command(
+                text = band.title,
+                icon = band.icon
+            )
+            val iconPresentationModel =
+                CommandButtonPresentationModel(
+                    presentationState = CommandButtonPresentationState.Big,
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                    popupKeyTip = band.collapsedStateKeyTip
+                )
+            CommandButtonProjection(
+                contentModel = iconCommand,
+                presentationModel = iconPresentationModel
+            ).project(modifier = Modifier.fillMaxSize())
         }
+    } else {
+        when (band) {
+            is RibbonBand -> {
+                Column(modifier = Modifier.width(IntrinsicSize.Min).fillMaxHeight()) {
+                    Box(modifier = Modifier.fillMaxWidth().weight(1.0f)) {
+                        RibbonBandContent(band, bandResizePolicy as CoreRibbonResizePolicy, bandContentHeight)
+                    }
 
-        is FlowRibbonBand -> {
-            Column(modifier = Modifier.width(IntrinsicSize.Min).fillMaxHeight()) {
-                Box(modifier = Modifier.fillMaxWidth().weight(1.0f)) {
-                    FlowRibbonBandContent(band, bandResizePolicy as FlowRibbonBandResizePolicy, bandContentHeight)
+                    RibbonBandTitle(band)
                 }
+            }
 
-                RibbonBandTitle(band)
+            is FlowRibbonBand -> {
+                Column(modifier = Modifier.width(IntrinsicSize.Min).fillMaxHeight()) {
+                    Box(modifier = Modifier.fillMaxWidth().weight(1.0f)) {
+                        FlowRibbonBandContent(band, bandResizePolicy as FlowRibbonBandResizePolicy, bandContentHeight)
+                    }
+
+                    RibbonBandTitle(band)
+                }
             }
         }
     }
