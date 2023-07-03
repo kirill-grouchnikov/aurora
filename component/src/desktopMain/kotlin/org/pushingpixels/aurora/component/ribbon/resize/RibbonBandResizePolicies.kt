@@ -112,19 +112,6 @@ interface RibbonBandResizePolicy {
      */
     @Composable
     fun getPreferredWidth(ribbonBand: AbstractRibbonBand, availableHeight: Int, gap: Int): Int
-
-    /**
-     * Installs this resize policy on the associated ribbon band. For
-     * [FlowRibbonBand]s only changes the bounds of the flow components.
-     * For [RibbonBand]s can also change the presentation state of the command
-     * buttons and the number of visible buttons in the ribbon galleries. Note that
-     * this method is for internal use only and should not be called by the
-     * application code.
-     *
-     * @param availableHeight The height available for the associated ribbon band.
-     * @param gap The inter-component gap.
-     */
-    fun install(availableHeight: Int, gap: Int) {}
 }
 
 interface FlowRibbonBandResizePolicy: RibbonBandResizePolicy
