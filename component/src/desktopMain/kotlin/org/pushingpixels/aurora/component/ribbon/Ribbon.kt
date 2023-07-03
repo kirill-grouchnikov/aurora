@@ -32,6 +32,7 @@ import org.pushingpixels.aurora.component.projection.Projection
 import org.pushingpixels.aurora.component.ribbon.impl.RibbonGallery
 import org.pushingpixels.aurora.component.ribbon.impl.ribbonGalleryIntrinsicWidth
 import kotlin.math.min
+import kotlin.properties.Delegates
 
 enum class PresentationPriority {
     /** Top priority */
@@ -105,19 +106,11 @@ data class RibbonGalleryPresentationModel(
 class RibbonGalleryInlineState(
     val contentModel: RibbonGalleryContentModel,
     val presentationModel: RibbonGalleryMetaPresentationModel,
-    val presentationPriority: PresentationPriority,
-    val collapsedVisibleCountLow: Int,
-    val collapsedVisibleCountMedium: Int,
-    val collapsedVisibleCountTop: Int,
 ) {
     private val fullCount: Int
         get() = contentModel.commandGroups.sumOf { it.commands.size }
-    private val visibleCount: Int
-        get() = when (presentationPriority) {
-            PresentationPriority.Low -> collapsedVisibleCountLow
-            PresentationPriority.Medium -> collapsedVisibleCountMedium
-            PresentationPriority.Top -> collapsedVisibleCountTop
-        }
+    var visibleCount by Delegates.notNull<Int>()
+    lateinit var presentationPriority: PresentationPriority
     var firstVisibleIndex by mutableStateOf(0)
     val lastVisibleIndex: Int
         get() = min(firstVisibleIndex + visibleCount - 1, fullCount - 1)

@@ -39,6 +39,9 @@ import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.ribbon.*
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonBandRowHeight
+import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicy
+import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicies
+import org.pushingpixels.aurora.component.ribbon.resize.RibbonBandResizePolicy
 import org.pushingpixels.aurora.component.utils.getEndwardDoubleArrowIcon
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.component.utils.getLabelPreferredSingleLineWidth
@@ -77,9 +80,9 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
             commandForSizing,
             presentationForSizing
         )
-    val bandContentHeight = sizingLayoutManager.getPreferredSize(
+    val bandContentHeight = (sizingLayoutManager.getPreferredSize(
         commandForSizing, presentationForSizing, sizingPreLayoutInfo
-    ).height + 2 * gap
+    ).height + 2 * gap).toInt()
     val bandTitleHeight = getLabelPreferredHeight(
         contentModel = LabelContentModel(text = "Title"),
         presentationModel = LabelPresentationModel(contentPadding = RibbonBandTitleLabelPadding, textMaxLines = 1),
@@ -103,11 +106,22 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
                 val widthAvailable = constraints.maxWidth
                 val heightAvailable = constraints.maxHeight
 
+                val bandResizePolicies = bands.map {
+                    it to when (it) {
+                        is RibbonBand -> CoreRibbonResizePolicies.Mirror
+                        is FlowRibbonBand -> CoreRibbonResizePolicies.FlowThreeRows
+                    }
+                }.toMap()
+
                 val bandsPlaceable =
                     subcompose(1) {
                         Row(modifier = Modifier.fillMaxSize().auroraBackground()) {
                             for (band in bands) {
-                                RibbonBand(band = band, bandContentHeight = bandContentHeight)
+                                RibbonBand(
+                                    band = band,
+                                    bandResizePolicy = bandResizePolicies[band]!!,
+                                    bandContentHeight = bandContentHeight
+                                )
                                 VerticalSeparatorProjection().project(modifier = Modifier.fillMaxHeight())
                             }
                         }
@@ -126,12 +140,16 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
 }
 
 @Composable
-private fun RibbonBand(band: AbstractRibbonBand, bandContentHeight: Float) {
+private fun RibbonBand(
+    band: AbstractRibbonBand,
+    bandResizePolicy: RibbonBandResizePolicy,
+    bandContentHeight: Int
+) {
     when (band) {
         is RibbonBand -> {
             Column(modifier = Modifier.width(IntrinsicSize.Min).fillMaxHeight()) {
                 Box(modifier = Modifier.fillMaxWidth().weight(1.0f)) {
-                    RibbonBandContent(band, bandContentHeight)
+                    RibbonBandContent(band, bandResizePolicy as CoreRibbonResizePolicy, bandContentHeight)
                 }
 
                 RibbonBandTitle(band)
@@ -141,7 +159,7 @@ private fun RibbonBand(band: AbstractRibbonBand, bandContentHeight: Float) {
         is FlowRibbonBand -> {
             Column(modifier = Modifier.width(IntrinsicSize.Min).fillMaxHeight()) {
                 Box(modifier = Modifier.fillMaxWidth().weight(1.0f)) {
-                    FlowRibbonBandContent(band, bandContentHeight)
+                    FlowRibbonBandContent(band, bandResizePolicy, bandContentHeight)
                 }
 
                 RibbonBandTitle(band)
@@ -151,16 +169,20 @@ private fun RibbonBand(band: AbstractRibbonBand, bandContentHeight: Float) {
 }
 
 @Composable
-private fun RibbonBandContent(band: RibbonBand, bandContentHeight: Float) {
+private fun RibbonBandContent(
+    band: RibbonBand,
+    bandResizePolicy: CoreRibbonResizePolicy,
+    bandContentHeight: Int
+) {
     Row(modifier = Modifier.fillMaxSize().padding(0.dp)) {
         for ((index, bandGroup) in band.groups.withIndex()) {
             when (bandGroup) {
                 is RibbonBandCommandGroup -> {
-                    RibbonBandCommandGroupContent(group = bandGroup, bandContentHeight = bandContentHeight)
+                    RibbonBandCommandGroupContent(bandGroup, bandResizePolicy, bandContentHeight)
                 }
 
                 is RibbonBandComponentGroup -> {
-                    RibbonBandComponentGroupContent(group = bandGroup, bandContentHeight = bandContentHeight)
+                    RibbonBandComponentGroupContent(bandGroup, bandResizePolicy, bandContentHeight)
                 }
             }
             if (index < (band.groups.size - 1)) {
@@ -175,7 +197,8 @@ private fun RibbonBandContent(band: RibbonBand, bandContentHeight: Float) {
 @Composable
 private fun getCommandGroupWidth(
     group: RibbonBandCommandGroup,
-    bandContentHeight: Float,
+    bandResizePolicy: CoreRibbonResizePolicy,
+    bandContentHeight: Int,
     gap: Int
 ): Int {
     val rowHeight = ((bandContentHeight - 4 * gap) / 3.0f).toInt()
@@ -186,7 +209,7 @@ private fun getCommandGroupWidth(
         result += RibbonGalleryProjection(
             contentModel = gallery.contentModel,
             presentationModel = InRibbonGalleryPresentationModel(
-                collapsedVisibleCount = when (gallery.presentationPriority) {
+                collapsedVisibleCount = when (bandResizePolicy.mapping.invoke(gallery.presentationPriority)) {
                     PresentationPriority.Low -> gallery.collapsedVisibleCountLow
                     PresentationPriority.Medium -> gallery.collapsedVisibleCountMedium
                     PresentationPriority.Top -> gallery.collapsedVisibleCountTop
@@ -213,7 +236,7 @@ private fun getCommandGroupWidth(
     val buttonsMedium: MutableList<BaseCommandButtonProjection<*, *, *>> = arrayListOf()
     val buttonsSmall: MutableList<BaseCommandButtonProjection<*, *, *>> = arrayListOf()
     for (commandProjection in group.commandProjections) {
-        when (commandProjection.second) {
+        when (bandResizePolicy.mapping.invoke(commandProjection.second)) {
             PresentationPriority.Top -> buttonsBig.add(commandProjection.first)
             PresentationPriority.Medium -> buttonsMedium.add(commandProjection.first)
             PresentationPriority.Low -> buttonsSmall.add(commandProjection.first)
@@ -284,10 +307,14 @@ private fun getCommandGroupWidth(
 }
 
 @Composable
-private fun RibbonBandCommandGroupContent(group: RibbonBandCommandGroup, bandContentHeight: Float) {
+private fun RibbonBandCommandGroupContent(
+    group: RibbonBandCommandGroup,
+    bandResizePolicy: CoreRibbonResizePolicy,
+    bandContentHeight: Int
+) {
     val density = LocalDensity.current
     val gap = (RibbonBandContentGap.value * density.density).toInt()
-    val contentWidth = getCommandGroupWidth(group, bandContentHeight, gap)
+    val contentWidth = getCommandGroupWidth(group, bandResizePolicy, bandContentHeight, gap)
 
     Row(
         modifier = Modifier.fillMaxHeight()
@@ -296,14 +323,18 @@ private fun RibbonBandCommandGroupContent(group: RibbonBandCommandGroup, bandCon
     ) {
         // Display galleries first
         for (gallery in group.galleries) {
+            val mappedPriority = bandResizePolicy.mapping.invoke(gallery.presentationPriority)
+            val visibleCount = when (mappedPriority) {
+                PresentationPriority.Low -> gallery.collapsedVisibleCountLow
+                PresentationPriority.Medium -> gallery.collapsedVisibleCountMedium
+                PresentationPriority.Top -> gallery.collapsedVisibleCountTop
+            }
+            gallery.inlineState.presentationPriority = mappedPriority
+            gallery.inlineState.visibleCount = visibleCount
             RibbonGalleryProjection(
                 contentModel = gallery.contentModel,
                 presentationModel = InRibbonGalleryPresentationModel(
-                    collapsedVisibleCount = when (gallery.presentationPriority) {
-                        PresentationPriority.Low -> gallery.collapsedVisibleCountLow
-                        PresentationPriority.Medium -> gallery.collapsedVisibleCountMedium
-                        PresentationPriority.Top -> gallery.collapsedVisibleCountTop
-                    },
+                    collapsedVisibleCount = visibleCount,
                     commandButtonPresentationState = gallery.presentationModel.commandButtonPresentationState,
                     commandButtonTextOverflow = gallery.presentationModel.commandButtonTextOverflow,
                     commandPopupFireTrigger = gallery.presentationModel.commandPopupFireTrigger,
@@ -324,7 +355,7 @@ private fun RibbonBandCommandGroupContent(group: RibbonBandCommandGroup, bandCon
         val buttonsMedium: MutableList<BaseCommandButtonProjection<*, *, *>> = arrayListOf()
         val buttonsSmall: MutableList<BaseCommandButtonProjection<*, *, *>> = arrayListOf()
         for (commandProjection in group.commandProjections) {
-            when (commandProjection.second) {
+            when (bandResizePolicy.mapping.invoke(commandProjection.second)) {
                 PresentationPriority.Top -> buttonsBig.add(commandProjection.first)
                 PresentationPriority.Medium -> buttonsMedium.add(commandProjection.first)
                 PresentationPriority.Low -> buttonsSmall.add(commandProjection.first)
@@ -400,16 +431,21 @@ private fun SmallButtons(buttons: List<BaseCommandButtonProjection<*, *, *>>) {
         val columnCount = ceil(buttons.size / 3.0f).toInt()
         var buttonIndex = 0
         for (column in 1..columnCount) {
-            for (row in 1..3) {
-                if (buttonIndex < buttons.size) {
-                    buttons[buttonIndex].reproject(modifier = Modifier,
-                        primaryOverlay = BaseCommandButtonPresentationModel.Overlay(
-                            presentationState = CommandButtonPresentationState.Small,
-                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat
-                        ),
-                        actionInteractionSource = remember { MutableInteractionSource() },
-                        popupInteractionSource = remember { MutableInteractionSource() })
-                    buttonIndex++
+            Column(
+                modifier = Modifier.fillMaxHeight(),
+                verticalArrangement = Arrangement.spacedBy(RibbonBandContentGap)
+            ) {
+                for (row in 1..3) {
+                    if (buttonIndex < buttons.size) {
+                        buttons[buttonIndex].reproject(modifier = Modifier,
+                            primaryOverlay = BaseCommandButtonPresentationModel.Overlay(
+                                presentationState = CommandButtonPresentationState.Small,
+                                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat
+                            ),
+                            actionInteractionSource = remember { MutableInteractionSource() },
+                            popupInteractionSource = remember { MutableInteractionSource() })
+                        buttonIndex++
+                    }
                 }
             }
         }
@@ -426,7 +462,7 @@ private data class RibbonBandComponentGroupLayoutInfo(
 @Composable
 private fun getComponentGroupContentLayoutInfo(
     group: RibbonBandComponentGroup,
-    bandContentHeight: Float,
+    bandContentHeight: Int,
     gap: Int
 ): RibbonBandComponentGroupLayoutInfo {
     val density = LocalDensity.current
@@ -491,7 +527,11 @@ private fun getComponentGroupContentLayoutInfo(
 }
 
 @Composable
-private fun RibbonBandComponentGroupContent(group: RibbonBandComponentGroup, bandContentHeight: Float) {
+private fun RibbonBandComponentGroupContent(
+    group: RibbonBandComponentGroup,
+    bandResizePolicy: CoreRibbonResizePolicy,
+    bandContentHeight: Int
+) {
     val density = LocalDensity.current
     val gap = (RibbonBandContentGap.value * density.density).toInt()
     val layoutInfo = getComponentGroupContentLayoutInfo(group, bandContentHeight, gap)
@@ -563,49 +603,16 @@ private fun RibbonBandComponentGroupContent(group: RibbonBandComponentGroup, ban
 }
 
 @Composable
-private fun getOptimalFlowRibbonBandWidth(band: FlowRibbonBand, bandContentHeight: Float, gap: Int): Int {
-    val compCount = band.flowComponentProjections.size
-    val widths = IntArray(compCount)
-    var currBestResult = 0
-    val rowHeight = ((bandContentHeight - 4 * gap) / 3.0f).toInt()
-    for ((index, flowCompProjection) in band.flowComponentProjections.withIndex()) {
-        widths[index] = flowCompProjection.intrinsicWidth(height = rowHeight)
-        currBestResult += (widths[index] + gap)
-    }
-
-    // need to find the inflection points that result in
-    // the lowest value for max length of three sub-sequences
-    for (inflectionIndex1 in 0 until (compCount - 2)) {
-        for (inflectionIndex2 in inflectionIndex1 + 1 until compCount - 1) {
-            var w1 = 0
-            for (index1 in 0..inflectionIndex1) {
-                w1 += widths[index1] + gap
-            }
-            var w2 = 0
-            for (index2 in inflectionIndex1 + 1..inflectionIndex2) {
-                w2 += widths[index2] + gap
-            }
-            var w3 = 0
-            for (index3 in inflectionIndex2 + 1 until compCount) {
-                w3 += widths[index3] + gap
-            }
-            val width = max(max(w1, w2), w3)
-            if (width < currBestResult) {
-                currBestResult = width
-            }
-        }
-    }
-
-    return currBestResult + 2 * gap
-}
-
-@Composable
-private fun FlowRibbonBandContent(band: FlowRibbonBand, bandContentHeight: Float) {
+private fun FlowRibbonBandContent(
+    band: FlowRibbonBand,
+    bandResizePolicy: RibbonBandResizePolicy,
+    bandContentHeight: Int
+) {
     val density = LocalDensity.current
     val gap = (RibbonBandContentGap.value * density.density).toInt()
     val rowHeight = ((bandContentHeight - 4 * gap) / 3.0f).toInt()
 
-    val optimalWidth = getOptimalFlowRibbonBandWidth(band, bandContentHeight, gap)
+    val optimalWidth = bandResizePolicy.getPreferredWidth(band, bandContentHeight, gap)
     Layout(modifier = Modifier.fillMaxHeight().width((optimalWidth / density.density).dp)
         .padding(horizontal = RibbonBandContentGap),
         content = {

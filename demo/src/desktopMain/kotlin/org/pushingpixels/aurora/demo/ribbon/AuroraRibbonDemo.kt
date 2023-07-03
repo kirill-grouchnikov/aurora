@@ -113,11 +113,7 @@ fun main() = auroraApplication {
     ribbonState.documentStyleGalleryInlineState = remember {
         RibbonGalleryInlineState(
             contentModel = styleGalleryContentModel,
-            presentationModel = styleGalleryInlineMetaPresentationModel,
-            presentationPriority = PresentationPriority.Top,
-            collapsedVisibleCountLow = 1,
-            collapsedVisibleCountMedium = 2,
-            collapsedVisibleCountTop = 2
+            presentationModel = styleGalleryInlineMetaPresentationModel
         )
     }
 
