@@ -15,8 +15,10 @@
  */
 package org.pushingpixels.aurora.window.ribbon
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
@@ -32,6 +34,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.component.AuroraHorizontallyScrollableBox
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
@@ -174,6 +177,8 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
     // of intrinsic widths
     validateResizePolicies(bands, intrinsicWidthList)
 
+    val bandsRowScrollState: ScrollState = rememberScrollState(0)
+
     CompositionLocalProvider(
         LocalRibbonBandRowHeight provides rowHeight,
     ) {
@@ -184,24 +189,40 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
                 val widthAvailable = constraints.maxWidth
                 val heightAvailable = constraints.maxHeight
 
-                val bandResizePolicies: Map<AbstractRibbonBand, RibbonBandResizePolicy> =
-                    intrinsicWidthList.find { it.second <= widthAvailable }?.first
-                        ?: intrinsicWidthList.last().first
-                // TODO - kick in horizontal scrolling if we don't have enough horizontal
-                // space to display the most restrictive configuration
+                val requiredWidthForBands: Int
+                val bandResizePolicies: Map<AbstractRibbonBand, RibbonBandResizePolicy>
+                val bestFittingMatch = intrinsicWidthList.find { it.second <= widthAvailable }
+                if (bestFittingMatch != null) {
+                    bandResizePolicies = bestFittingMatch.first
+                    requiredWidthForBands = bestFittingMatch.second
+                } else {
+                    // Kick in horizontal scrolling if we don't have enough horizontal
+                    // space to display the most restrictive configuration
+                    bandResizePolicies = intrinsicWidthList.last().first
+                    requiredWidthForBands = intrinsicWidthList.last().second
+                }
 
                 val bandsPlaceable =
                     subcompose(1) {
-                        Row(modifier = Modifier.fillMaxSize().auroraBackground()) {
-                            for (band in bands) {
-                                RibbonBand(
-                                    band = band,
-                                    bandResizePolicy = bandResizePolicies[band]!!,
-                                    bandContentHeight = bandContentHeight,
-                                    bandFullHeight = bandFullHeight
-                                )
-                                VerticalSeparatorProjection().project(modifier = Modifier.fillMaxHeight())
-                            }
+                        Box(modifier = Modifier.fillMaxSize().auroraBackground()) {
+                            AuroraHorizontallyScrollableBox(
+                                modifier = Modifier.width(width = (widthAvailable / density.density).dp),
+                                height = (heightAvailable / density.density).dp,
+                                contentWidth = { requiredWidthForBands },
+                                horizontalScrollState = bandsRowScrollState,
+                                scrollAmount = 12.dp,
+                                content = {
+                                    for (band in bands) {
+                                        RibbonBand(
+                                            band = band,
+                                            bandResizePolicy = bandResizePolicies[band]!!,
+                                            bandContentHeight = bandContentHeight,
+                                            bandFullHeight = bandFullHeight
+                                        )
+                                        VerticalSeparatorProjection().project(modifier = Modifier.fillMaxHeight())
+                                    }
+                                }
+                            )
                         }
                     }.first().measure(
                         Constraints.fixed(
