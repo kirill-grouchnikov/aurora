@@ -191,11 +191,6 @@ class RibbonGalleryProjection(
     }
 }
 
-class RibbonComponentProjection<out C : ContentModel, out P : PresentationModel>(
-    val projection: Projection<C, P>,
-    val ribbonComponentPresentationModel: RibbonComponentPresentationModel = RibbonComponentPresentationModel()
-)
-
 interface OnShowContextualMenuListener {
     fun getContextualMenuContentModel(
         ribbon: Ribbon,

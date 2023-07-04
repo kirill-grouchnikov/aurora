@@ -369,6 +369,7 @@ fun main() = auroraApplication {
             )
         )
 
+    var minimizedMode by remember { mutableStateOf(false) }
     var contextualTaskGroup1Visible by remember { mutableStateOf(false) }
     var contextualTaskGroup2Visible by remember { mutableStateOf(false) }
 
@@ -388,9 +389,11 @@ fun main() = auroraApplication {
         taskbarElements = taskbarElements,
         taskbarKeyTipPolicy = DefaultRibbonTaskbarKeyTipPolicy(),
         anchoredCommands = builder.getAnchoredCommands(),
-        applicationMenuCommandButtonProjection = applicationMenuCommandButtonProjection
+        applicationMenuCommandButtonProjection = applicationMenuCommandButtonProjection,
+        isMinimized = minimizedMode
     )
 
+    val vmf = MessageFormat(resourceBundle.getString("GroupVisibility.text"))
     AuroraRibbonWindow(
         skin = skin,
         onCloseRequest = ::exitApplication,
@@ -408,7 +411,16 @@ fun main() = auroraApplication {
                 ) {
                     CheckBoxProjection(
                         contentModel = SelectorContentModel(
-                            text = "Group 1 visible",
+                            text = resourceBundle.getString("Minimized.text"),
+                            selected = minimizedMode,
+                            onClick = {
+                                minimizedMode = !minimizedMode
+                            }
+                        )
+                    ).project()
+                    CheckBoxProjection(
+                        contentModel = SelectorContentModel(
+                            text = vmf.format(arrayOf("1")),
                             selected = contextualTaskGroup1Visible,
                             onClick = {
                                 contextualTaskGroup1Visible = !contextualTaskGroup1Visible
@@ -417,7 +429,7 @@ fun main() = auroraApplication {
                     ).project()
                     CheckBoxProjection(
                         contentModel = SelectorContentModel(
-                            text = "Group 2 visible",
+                            text = vmf.format(arrayOf("2")),
                             selected = contextualTaskGroup2Visible,
                             onClick = {
                                 contextualTaskGroup2Visible = !contextualTaskGroup2Visible
