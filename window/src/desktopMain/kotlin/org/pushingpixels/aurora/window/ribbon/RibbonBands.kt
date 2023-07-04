@@ -39,8 +39,8 @@ import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.ribbon.*
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonBandRowHeight
-import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicy
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicies
+import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicy
 import org.pushingpixels.aurora.component.ribbon.resize.FlowRibbonBandResizePolicy
 import org.pushingpixels.aurora.component.ribbon.resize.RibbonBandResizePolicy
 import org.pushingpixels.aurora.component.utils.getEndwardDoubleArrowIcon
@@ -218,13 +218,15 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
 }
 
 @Composable
-private fun RibbonBand(
+internal fun RibbonBand(
     band: AbstractRibbonBand,
     bandResizePolicy: RibbonBandResizePolicy,
     bandContentHeight: Int,
     bandFullHeight: Int
 ) {
     val density = LocalDensity.current
+    val gap = (RibbonBandContentGap.value * density.density).toInt()
+
     if (bandResizePolicy is CoreRibbonResizePolicies.Icon) {
         val width = bandResizePolicy.getPreferredWidth(
             ribbonBand = band,
@@ -232,17 +234,28 @@ private fun RibbonBand(
             gap = 0
         )
         Box(modifier = Modifier.width((width / density.density).dp).fillMaxHeight()) {
-            val iconCommand = Command(
+            val iconCommand = RibbonBandCollapsedCommand(
                 text = band.title,
-                icon = band.icon
+                icon = band.icon,
+                secondaryContentModel = RibbonBandCollapsedMenuContentModel(ribbonBand = band)
             )
             val iconPresentationModel =
-                CommandButtonPresentationModel(
-                    presentationState = CommandButtonPresentationState.Big,
+                RibbonBandCollapsedCommandButtonPresentationModel(
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                    popupKeyTip = band.collapsedStateKeyTip
+                    popupKeyTip = band.collapsedStateKeyTip,
+                    popupMenuPresentationModel = RibbonBandCollapsedCommandPopupMenuPresentationModel(
+                        bandWidth = band.resizePolicies[0].getPreferredWidth(
+                            ribbonBand = band,
+                            availableHeight = bandContentHeight,
+                            gap = gap
+                        ),
+                        bandContentHeight = bandContentHeight,
+                        bandFullHeight = bandFullHeight,
+                        gap = gap
+                    )
                 )
-            CommandButtonProjection(
+
+            RibbonBandCollapsedCommandButtonProjection(
                 contentModel = iconCommand,
                 presentationModel = iconPresentationModel
             ).project(modifier = Modifier.fillMaxSize())

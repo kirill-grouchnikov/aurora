@@ -492,7 +492,8 @@ object CoreRibbonResizePolicies {
 
             val iconCommand = Command(
                 text = ribbonBand.title,
-                icon = ribbonBand.icon
+                icon = ribbonBand.icon,
+                secondaryContentModel = CommandMenuContentModel(group = CommandGroup(commands = listOf()))
             )
             val iconPresentationModel =
                 CommandButtonPresentationModel(presentationState = CommandButtonPresentationState.Big)
