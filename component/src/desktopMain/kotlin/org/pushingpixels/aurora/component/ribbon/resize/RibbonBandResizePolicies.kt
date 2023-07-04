@@ -320,12 +320,12 @@ object CoreRibbonResizePolicies {
             }
             var result = 0
             for (bandGroup in ribbonBand.groups) {
-                when (bandGroup) {
+                result += when (bandGroup) {
                     is RibbonBandCommandGroup ->
-                        result += getCommandGroupWidth(bandGroup, this.mapping, availableHeight, gap)
+                        getCommandGroupWidth(bandGroup, this.mapping, availableHeight, gap)
 
                     is RibbonBandComponentGroup ->
-                        result += getComponentGroupWidth(bandGroup, this.mapping, availableHeight, gap)
+                        getComponentGroupWidth(bandGroup, this.mapping, availableHeight, gap)
                 }
             }
 

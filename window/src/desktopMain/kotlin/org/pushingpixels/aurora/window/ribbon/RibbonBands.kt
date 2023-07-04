@@ -90,11 +90,13 @@ private fun validateResizePolicies(
                 bands.joinToString { "${it.title}:${currentMapping[it]?.javaClass?.simpleName}" }
             val nextLegend =
                 bands.joinToString { "${it.title}:${nextMapping[it]?.javaClass?.simpleName}" }
-            error("""Inconsistent intrinsic widths
+            error(
+                """Inconsistent intrinsic widths
                 resizing sequence $currentLegend with intrinsic width $currentIntrinsicWidth
                 is followed by
                 resizing sequence $nextLegend with intrinsic width $nextIntrinsicWidth
-            """.trimMargin())
+            """.trimMargin()
+            )
         }
     }
 }
@@ -164,9 +166,6 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
             bandFullHeight, bandContentHeight, gap, separatorWidth
         )
         neededWidth += bands.size * separatorWidth
-
-        //val legend = bands.joinToString { "${it.title}:${bandCurrentResizePolicies[it]?.javaClass?.simpleName}" }
-        //println("Needed $neededWidth at $legend")
 
         intrinsicWidthList.add(Pair(bandCurrentResizePolicies.toMap(), neededWidth))
     }
@@ -283,7 +282,7 @@ private fun RibbonBandContent(
         for ((index, bandGroup) in band.groups.withIndex()) {
             when (bandGroup) {
                 is RibbonBandCommandGroup -> {
-                    RibbonBandCommandGroupContent(bandGroup, bandResizePolicy, bandContentHeight)
+                    RibbonBandCommandGroupContent(bandGroup, bandResizePolicy)
                 }
 
                 is RibbonBandComponentGroup -> {
@@ -300,132 +299,11 @@ private fun RibbonBandContent(
 }
 
 @Composable
-private fun getCommandGroupWidth(
-    group: RibbonBandCommandGroup,
-    bandResizePolicy: CoreRibbonResizePolicy,
-    bandContentHeight: Int,
-    gap: Int
-): Int {
-    val rowHeight = ((bandContentHeight - 4 * gap) / 3.0f).toInt()
-    var result = 0
-
-    // Start with galleries
-    for (gallery in group.galleries) {
-        result += RibbonGalleryProjection(
-            contentModel = gallery.contentModel,
-            presentationModel = InRibbonGalleryPresentationModel(
-                collapsedVisibleCount = when (bandResizePolicy.mapping.invoke(gallery.presentationPriority)) {
-                    PresentationPriority.Low -> gallery.collapsedVisibleCountLow
-                    PresentationPriority.Medium -> gallery.collapsedVisibleCountMedium
-                    PresentationPriority.Top -> gallery.collapsedVisibleCountTop
-                },
-                commandButtonPresentationState = gallery.presentationModel.commandButtonPresentationState,
-                commandButtonTextOverflow = gallery.presentationModel.commandButtonTextOverflow,
-                commandPopupFireTrigger = gallery.presentationModel.commandPopupFireTrigger,
-                commandSelectedStateHighlight = gallery.presentationModel.commandSelectedStateHighlight,
-                contentPadding = gallery.presentationModel.contentPadding,
-                layoutGap = gallery.presentationModel.layoutGap,
-                expandKeyTip = gallery.presentationModel.expandKeyTip,
-                popupLayoutSpec = gallery.presentationModel.popupLayoutSpec
-            )
-        ).intrinsicWidth(bandContentHeight.toInt() - 2 * gap)
-    }
-    if (group.galleries.isNotEmpty()) {
-        result += gap * (group.galleries.size - 1)
-    }
-
-    // And then buttons
-    // TODO - this will be a combination of presentation priority, available horizontal space
-    // and ribbon band resize policies
-    val buttonsBig: MutableList<BaseCommandButtonProjection<*, *, *>> = arrayListOf()
-    val buttonsMedium: MutableList<BaseCommandButtonProjection<*, *, *>> = arrayListOf()
-    val buttonsSmall: MutableList<BaseCommandButtonProjection<*, *, *>> = arrayListOf()
-    for (commandProjection in group.commandProjections) {
-        when (bandResizePolicy.mapping.invoke(commandProjection.second)) {
-            PresentationPriority.Top -> buttonsBig.add(commandProjection.first)
-            PresentationPriority.Medium -> buttonsMedium.add(commandProjection.first)
-            PresentationPriority.Low -> buttonsSmall.add(commandProjection.first)
-        }
-    }
-
-    for (big in buttonsBig) {
-        result += big.copy(
-            primaryOverlay = BaseCommandButtonPresentationModel.Overlay(
-                presentationState = CommandButtonPresentationState.Big,
-            )
-        ).intrinsicWidth(bandContentHeight.toInt())
-    }
-    if (buttonsBig.isNotEmpty()) {
-        result += gap * (buttonsBig.size - 1)
-    }
-
-    val mediumColumnCount = ceil(buttonsMedium.size / 3.0f).toInt()
-    if (mediumColumnCount > 0) {
-        var mediumButtonIndex = 0
-        for (column in 1..mediumColumnCount) {
-            var columnWidth = 0
-            for (row in 1..3) {
-                if (mediumButtonIndex < buttonsMedium.size) {
-                    val buttonIntrinsicWidth = buttonsMedium[mediumButtonIndex].copy(
-                        primaryOverlay = BaseCommandButtonPresentationModel.Overlay(
-                            presentationState = CommandButtonPresentationState.Medium,
-                        )
-                    ).intrinsicWidth(rowHeight)
-                    columnWidth = max(columnWidth, buttonIntrinsicWidth)
-                    mediumButtonIndex++
-                }
-            }
-            result += columnWidth
-        }
-        result += gap * (mediumColumnCount - 1)
-    }
-
-    val smallColumnCount = ceil(buttonsSmall.size / 3.0f).toInt()
-    if (smallColumnCount > 0) {
-        var smallButtonIndex = 0
-        for (column in 1..smallColumnCount) {
-            var columnWidth = 0
-            for (row in 1..3) {
-                if (smallButtonIndex < buttonsSmall.size) {
-                    val buttonIntrinsicWidth = buttonsSmall[smallButtonIndex].copy(
-                        primaryOverlay = BaseCommandButtonPresentationModel.Overlay(
-                            presentationState = CommandButtonPresentationState.Small,
-                        )
-                    ).intrinsicWidth(rowHeight)
-                    columnWidth = max(columnWidth, buttonIntrinsicWidth)
-                    smallButtonIndex++
-                }
-            }
-            result += columnWidth
-        }
-        result += gap * (smallColumnCount - 1)
-    }
-
-    val buttonGroupsBySize = ((if (buttonsBig.isNotEmpty()) 1 else 0) +
-            (if (buttonsMedium.isNotEmpty()) 1 else 0) +
-            (if (buttonsSmall.isNotEmpty()) 1 else 0))
-    if (buttonGroupsBySize > 0) {
-        result += gap * (buttonGroupsBySize - 1)
-    }
-
-    return result + 2 * gap
-}
-
-@Composable
 private fun RibbonBandCommandGroupContent(
     group: RibbonBandCommandGroup,
-    bandResizePolicy: CoreRibbonResizePolicy,
-    bandContentHeight: Int
+    bandResizePolicy: CoreRibbonResizePolicy
 ) {
-    val density = LocalDensity.current
-    val gap = (RibbonBandContentGap.value * density.density).toInt()
-    val contentWidth = getCommandGroupWidth(group, bandResizePolicy, bandContentHeight, gap)
-
-    Row(
-        modifier = Modifier.fillMaxHeight()
-            .width((contentWidth / density.density).dp)
-            .padding(all = RibbonBandContentGap)
-    ) {
+    Row(modifier = Modifier.fillMaxHeight().padding(all = RibbonBandContentGap)) {
         // Display galleries first
         for (gallery in group.galleries) {
             val mappedPriority = bandResizePolicy.mapping.invoke(gallery.presentationPriority)
@@ -467,14 +345,19 @@ private fun RibbonBandCommandGroupContent(
             }
         }
 
-        if (buttonsBig.isNotEmpty()) {
-            BigButtons(buttonsBig)
-        }
-        if (buttonsMedium.isNotEmpty()) {
-            MediumButtons(buttonsMedium)
-        }
-        if (buttonsSmall.isNotEmpty()) {
-            SmallButtons(buttonsSmall)
+        Row(
+            modifier = Modifier.fillMaxHeight(),
+            horizontalArrangement = Arrangement.spacedBy(RibbonBandContentGap)
+        ) {
+            if (buttonsBig.isNotEmpty()) {
+                BigButtons(buttonsBig)
+            }
+            if (buttonsMedium.isNotEmpty()) {
+                MediumButtons(buttonsMedium)
+            }
+            if (buttonsSmall.isNotEmpty()) {
+                SmallButtons(buttonsSmall)
+            }
         }
     }
 }
