@@ -29,10 +29,10 @@ import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.resolveDefaults
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.AuroraHorizontallyScrollableBox
 import org.pushingpixels.aurora.component.model.*
@@ -104,17 +104,14 @@ private fun validateResizePolicies(
     }
 }
 
-@OptIn(AuroraInternalApi::class)
 @Composable
-internal fun RibbonBands(ribbonTask: RibbonTask) {
-    val density = LocalDensity.current
-    val layoutDirection = LocalLayoutDirection.current
-    val textStyle = LocalTextStyle.current
-    val fontFamilyResolver = LocalFontFamilyResolver.current
-    val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
+internal fun getBandContentHeight(
+    layoutDirection: LayoutDirection,
+    density: Density,
+    resolvedTextStyle: TextStyle,
+    fontFamilyResolver: FontFamily.Resolver,
+): Int {
     val gap = (RibbonBandContentGap.value * density.density).toInt()
-
-    val bands = ribbonTask.bands
 
     // The height of ribbon band control panel is computed based on the preferred height of a command
     // button in BIG state.
@@ -134,10 +131,19 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
             commandForSizing,
             presentationForSizing
         )
-    val bandContentHeight = (sizingLayoutManager.getPreferredSize(
+    return (sizingLayoutManager.getPreferredSize(
         commandForSizing, presentationForSizing, sizingPreLayoutInfo
     ).height + 2 * gap).toInt()
-    val bandTitleHeight = getLabelPreferredHeight(
+}
+
+@Composable
+internal fun getBandTitleHeight(
+    layoutDirection: LayoutDirection,
+    density: Density,
+    resolvedTextStyle: TextStyle,
+    fontFamilyResolver: FontFamily.Resolver
+): Int {
+    return getLabelPreferredHeight(
         contentModel = LabelContentModel(text = "Title"),
         presentationModel = LabelPresentationModel(contentPadding = RibbonBandTitleLabelPadding, textMaxLines = 1),
         resolvedTextStyle = resolvedTextStyle,
@@ -145,8 +151,24 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
         density = density,
         fontFamilyResolver = fontFamilyResolver,
         availableWidth = Float.MAX_VALUE
-    )
-    val bandFullHeight = (bandContentHeight + bandTitleHeight).toInt()
+    ).toInt()
+}
+
+@OptIn(AuroraInternalApi::class)
+@Composable
+internal fun RibbonBands(ribbonTask: RibbonTask) {
+    val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
+    val textStyle = LocalTextStyle.current
+    val fontFamilyResolver = LocalFontFamilyResolver.current
+    val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
+    val gap = (RibbonBandContentGap.value * density.density).toInt()
+
+    val bands = ribbonTask.bands
+
+    val bandContentHeight = getBandContentHeight(layoutDirection, density, resolvedTextStyle, fontFamilyResolver)
+    val bandTitleHeight = getBandTitleHeight(layoutDirection, density, resolvedTextStyle, fontFamilyResolver)
+    val bandFullHeight = (bandContentHeight + bandTitleHeight)
     val bandFullHeightDp = (bandFullHeight / density.density).dp
 
     val rowHeight = ((bandContentHeight - 4 * gap) / 3.0f).toInt()

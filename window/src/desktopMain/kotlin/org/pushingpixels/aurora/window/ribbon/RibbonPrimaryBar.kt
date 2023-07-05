@@ -57,8 +57,11 @@ internal data class RibbonContextualTaskGroupLayoutInfo(
 @OptIn(AuroraInternalApi::class)
 @Composable
 internal fun RibbonPrimaryBar(
+    modifier: Modifier,
     ribbon: Ribbon,
-    onContextualTaskGroupSpansUpdated: (List<RibbonContextualTaskGroupLayoutInfo>) -> Unit
+    onContextualTaskGroupSpansUpdated: (List<RibbonContextualTaskGroupLayoutInfo>) -> Unit,
+    showSelectedTaskInPopup: Boolean,
+    onUpdateShowSelectedTaskInPopup: (Boolean) -> Unit
 ) {
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -111,7 +114,9 @@ internal fun RibbonPrimaryBar(
             isActionToggle = true,
             isActionToggleSelected = task.isActive,
             onTriggerActionToggleSelectedChange = {
-                if (it) task.onClick.invoke()
+                if (it) {
+                    task.onClick.invoke()
+                }
             }
         ), null)
     } + ribbon.contextualTaskGroups.flatMap { contextualTaskGroup ->
@@ -121,7 +126,9 @@ internal fun RibbonPrimaryBar(
                 isActionToggle = true,
                 isActionToggleSelected = contextualTask.isActive,
                 onTriggerActionToggleSelectedChange = {
-                    if (it) contextualTask.onClick.invoke()
+                    if (it) {
+                        contextualTask.onClick.invoke()
+                    }
                 }
             ), contextualTaskGroup)
         }
@@ -291,7 +298,7 @@ internal fun RibbonPrimaryBar(
 
     val taskButtonRowScrollState: ScrollState = rememberScrollState(0)
     Box(
-        Modifier.auroraBackground()
+        modifier.auroraBackground()
             .fillMaxWidth()
             .height((finalHeight / density.density).dp)
     ) {
@@ -425,7 +432,9 @@ internal fun RibbonPrimaryBar(
                                 RibbonTaskToggleButton(
                                     modifier = Modifier,
                                     command = ribbonTaskCommandPair.first,
-                                    presentationModel = presentationForCurrent
+                                    presentationModel = presentationForCurrent,
+                                    showSelectedTaskInPopup = showSelectedTaskInPopup,
+                                    onUpdateShowSelectedTaskInPopup = onUpdateShowSelectedTaskInPopup
                                 )
                             }
                         }

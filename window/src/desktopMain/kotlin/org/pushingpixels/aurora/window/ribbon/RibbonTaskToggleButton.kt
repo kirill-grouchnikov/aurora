@@ -70,7 +70,9 @@ private class RibbonTaskToggleButtonDrawingCache(
 internal fun RibbonTaskToggleButton(
     modifier: Modifier,
     command: Command,
-    presentationModel: CommandButtonPresentationModel
+    presentationModel: CommandButtonPresentationModel,
+    showSelectedTaskInPopup: Boolean,
+    onUpdateShowSelectedTaskInPopup: (Boolean) -> Unit
 ) {
     val actionInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() }
     val drawingCache = remember { RibbonTaskToggleButtonDrawingCache() }
@@ -262,6 +264,7 @@ internal fun RibbonTaskToggleButton(
                 indication = null,
                 onValueChange = {
                     command.onTriggerActionToggleSelectedChange?.invoke(it)
+                    onUpdateShowSelectedTaskInPopup.invoke(!showSelectedTaskInPopup)
                 }
             )
             Box(

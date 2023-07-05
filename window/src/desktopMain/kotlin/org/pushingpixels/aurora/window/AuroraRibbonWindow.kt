@@ -23,6 +23,8 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.ColorFilter
@@ -30,16 +32,18 @@ import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.Measurable
+import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.resolveDefaults
+import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.rememberWindowState
+import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
@@ -58,9 +62,7 @@ import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
-import org.pushingpixels.aurora.window.ribbon.RibbonBands
-import org.pushingpixels.aurora.window.ribbon.RibbonContextualTaskGroupLayoutInfo
-import org.pushingpixels.aurora.window.ribbon.RibbonPrimaryBar
+import org.pushingpixels.aurora.window.ribbon.*
 import java.awt.*
 import java.awt.event.AWTEventListener
 import java.awt.event.KeyEvent
@@ -544,6 +546,29 @@ private fun areSpansSame(
     return true
 }
 
+private fun Ribbon.getSelectedTask(): RibbonTask {
+    var selectedTask: RibbonTask? = null
+    for (task in this.tasks) {
+        if (task.isActive) {
+            selectedTask = task
+        }
+    }
+    for (contextualTaskGroup in this.contextualTaskGroups) {
+        for (contextualTask in contextualTaskGroup.tasks) {
+            if (contextualTask.isActive) {
+                selectedTask = contextualTask
+            }
+        }
+    }
+
+    require(selectedTask != null) {
+        "Ribbon needs one task to be marked as active"
+    }
+
+    return selectedTask
+}
+
+@OptIn(AuroraInternalApi::class)
 @Composable
 private fun AuroraWindowScope.RibbonWindowInnerContent(
     title: String,
@@ -556,6 +581,16 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
     val contextualTaskGroupSpans = remember {
         mutableStateListOf<RibbonContextualTaskGroupLayoutInfo>()
     }
+    var showSelectedTaskInPopup by remember { mutableStateOf(false) }
+
+    val selectedTask = ribbon.getSelectedTask()
+    val contentModelState = rememberUpdatedState(RibbonTaskCollapsedMenuContentModel(
+        ribbonTask = selectedTask,
+        onDeactivatePopup = { showSelectedTaskInPopup = false }
+    ))
+
+    val ribbonPrimaryBarTopLeftOffset = remember { RibbonOffset(0.0f, 0.0f) }
+    val ribbonPrimaryBarSize = remember { mutableStateOf(IntSize(0, 0)) }
 
     Column(Modifier.fillMaxSize().auroraBackground()) {
         RibbonWindowTitlePane(
@@ -563,35 +598,29 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
             windowTitlePaneConfiguration
         )
 
-        var selectedTask: RibbonTask? = null
-        for (task in ribbon.tasks) {
-            if (task.isActive) {
-                selectedTask = task
-            }
-        }
-        for (contextualTaskGroup in ribbon.contextualTaskGroups) {
-            for (contextualTask in contextualTaskGroup.tasks) {
-                if (contextualTask.isActive) {
-                    selectedTask = contextualTask
-                }
-            }
-        }
-
-        require(selectedTask != null) {
-            "Ribbon needs one task to be marked as active"
-        }
-
+        println("Show selected task in popup $showSelectedTaskInPopup")
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
             Column(Modifier.fillMaxWidth().auroraBackground()) {
-                RibbonPrimaryBar(ribbon = ribbon,
+                RibbonPrimaryBar(
+                    modifier = Modifier.ribbonElementLocator(ribbonPrimaryBarTopLeftOffset, ribbonPrimaryBarSize),
+                    ribbon = ribbon,
                     onContextualTaskGroupSpansUpdated = {
                         if (!areSpansSame(contextualTaskGroupSpans, it)) {
                             contextualTaskGroupSpans.clear()
                             contextualTaskGroupSpans.addAll(it)
                         }
-                    })
+                    },
+                    showSelectedTaskInPopup = showSelectedTaskInPopup,
+                    onUpdateShowSelectedTaskInPopup = {
+                        if (ribbon.isMinimized) {
+                            showSelectedTaskInPopup = it
+                        }
+                    }
+                )
 
-                RibbonBands(ribbonTask = selectedTask)
+                if (!ribbon.isMinimized) {
+                    RibbonBands(ribbonTask = selectedTask)
+                }
 
                 Spacer(modifier = Modifier.fillMaxWidth().height(1.dp))
             }
@@ -601,6 +630,66 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
         // own decoration area types on specific parts.
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.None) {
             content()
+        }
+    }
+
+    val density = LocalDensity.current
+    // This needs to use rememberUpdatedState. Otherwise switching locale to RTL will
+    // not properly propagate in here.
+    val layoutDirection by rememberUpdatedState(LocalLayoutDirection.current)
+    val mergedTextStyle = LocalTextStyle.current
+    val fontFamilyResolver = LocalFontFamilyResolver.current
+    val skinColors = AuroraSkin.colors
+    val painters = AuroraSkin.painters
+    val decorationAreaType = AuroraSkin.decorationAreaType
+    val popupOriginator = LocalPopupMenu.current ?: LocalWindow.current.rootPane
+    val compositionLocalContext by rememberUpdatedState(currentCompositionLocalContext)
+    val resolvedTextStyle = remember { resolveDefaults(mergedTextStyle, layoutDirection) }
+    val coroutineScope = rememberCoroutineScope()
+
+    val bandContentHeight = getBandContentHeight(layoutDirection, density, resolvedTextStyle, fontFamilyResolver)
+    val bandTitleHeight = getBandTitleHeight(layoutDirection, density, resolvedTextStyle, fontFamilyResolver)
+    val bandFullHeight = (bandContentHeight + bandTitleHeight)
+
+    SideEffect {
+        if (showSelectedTaskInPopup) {
+            // TODO - need command overlays?
+            val popupWindow = RibbonTaskCollapsedCommandMenuPopupHandler.showPopupContent(
+                popupOriginator = popupOriginator,
+                layoutDirection = layoutDirection,
+                density = density,
+                textStyle = resolvedTextStyle,
+                fontFamilyResolver = fontFamilyResolver,
+                skinColors = skinColors,
+                colorSchemeBundle = null,
+                skinPainters = painters,
+                decorationAreaType = decorationAreaType,
+                compositionLocalContext = compositionLocalContext,
+                anchorBoundsInWindow = Rect(
+                    offset = ribbonPrimaryBarTopLeftOffset.asOffset(density),
+                    size = ribbonPrimaryBarSize.value.asSize(density)
+                ),
+                popupTriggerAreaInWindow = Rect(
+                    offset = RibbonOffset(
+                        x = ribbonPrimaryBarTopLeftOffset.x + ribbonPrimaryBarTopLeftOffset.x,
+                        y = ribbonPrimaryBarTopLeftOffset.y + ribbonPrimaryBarTopLeftOffset.y
+                    ).asOffset(density),
+                    size = ribbonPrimaryBarSize.value.asSize(density)
+                ),
+                contentModel = contentModelState,
+                presentationModel = RibbonTaskCollapsedCommandPopupMenuPresentationModel(
+                    taskWidth = ribbonPrimaryBarSize.value.width,
+                    taskHeight = bandFullHeight
+                ),
+                displayPrototypeCommand = null,
+                toDismissPopupsOnActivation = true,
+                popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
+                popupAnchorBoundsProvider = null,
+                overlays = mapOf()
+            )
+            coroutineScope.launch {
+                popupWindow?.opacity = 1.0f
+            }
         }
     }
 }
@@ -764,6 +853,35 @@ fun AuroraApplicationScope.AuroraRibbonWindow(
         }
     }
 }
+
+private data class RibbonOffset(var x: Float, var y: Float)
+
+private fun RibbonOffset.asOffset(density: Density): Offset {
+    return Offset(x / density.density, y / density.density)
+}
+
+private fun IntSize.asSize(density: Density): Size {
+    return Size(width / density.density, height / density.density)
+}
+
+private class RibbonTaskLocator(val topLeftOffset: RibbonOffset, val size: MutableState<IntSize>) :
+    OnGloballyPositionedModifier {
+    override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
+        // Convert the top left corner of the component to the root coordinates
+        val converted = coordinates.localToRoot(Offset.Zero)
+        topLeftOffset.x = converted.x
+        topLeftOffset.y = converted.y
+
+        // And store the component size
+        size.value = coordinates.size
+    }
+}
+
+@Composable
+private fun Modifier.ribbonElementLocator(topLeftOffset: RibbonOffset, size: MutableState<IntSize>) =
+    this.then(
+        RibbonTaskLocator(topLeftOffset, size)
+    )
 
 private val TaskbarWidthMaxRatio = 0.25f
 private val TaskbarContentPadding = PaddingValues(horizontal = 6.dp)
