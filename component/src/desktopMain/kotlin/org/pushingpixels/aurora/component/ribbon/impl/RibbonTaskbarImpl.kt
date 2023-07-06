@@ -38,7 +38,10 @@ import org.pushingpixels.aurora.component.popup.BaseCascadingCommandMenuPopupLay
 import org.pushingpixels.aurora.component.popup.CascadingCommandMenuHandler
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
-import org.pushingpixels.aurora.component.ribbon.*
+import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarCommandProjection
+import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarComponentProjection
+import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarElement
+import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarGalleryProjection
 import org.pushingpixels.aurora.component.utils.getEndwardDoubleArrowIcon
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle

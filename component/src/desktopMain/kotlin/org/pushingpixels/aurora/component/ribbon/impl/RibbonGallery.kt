@@ -40,9 +40,11 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
-import org.pushingpixels.aurora.component.ribbon.*
+import org.pushingpixels.aurora.component.ribbon.InRibbonGalleryPresentationModel
 import org.pushingpixels.aurora.component.ribbon.RibbonBandCommandButtonPresentationStates.BigFixed
 import org.pushingpixels.aurora.component.ribbon.RibbonBandCommandButtonPresentationStates.BigFixedLandscape
+import org.pushingpixels.aurora.component.ribbon.RibbonGalleryContentModel
+import org.pushingpixels.aurora.component.ribbon.RibbonGalleryInlineState
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.component.utils.ArrowSizingConstants.DefaultDoubleArrowWidth
 import org.pushingpixels.aurora.theming.*
