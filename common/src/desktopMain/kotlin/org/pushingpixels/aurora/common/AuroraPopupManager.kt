@@ -32,7 +32,8 @@ class AuroraSwingPopupMenu(val toDismissPopupsOnActivation: Boolean) : JPopupMen
             // following property change. Not ideal, but then this whole setup is like that.
             if ((it.propertyName == "JPopupMenu.firePopupMenuCanceled") && (it.newValue as Boolean)) {
                 // Handle this as a signal to hide all the popups
-                AuroraPopupManager.hidePopups(null)
+                //println("***** FIRE MENU CANCELED *****")
+                //AuroraPopupManager.hidePopups(null)
             }
         }
     }
@@ -124,8 +125,11 @@ private class AuroraPopupFactory : PopupFactory() {
 }
 
 object AuroraPopupManager {
-    enum class PopupKind {
-        Popup, RichTooltip
+    class PopupKind {
+        companion object {
+            val Popup = PopupKind()
+            val RichTooltip = PopupKind()
+        }
     }
 
     private data class PopupInfo(
@@ -232,7 +236,8 @@ object AuroraPopupManager {
     fun dump() {
         println("Popups")
         for (link in shownPath) {
-            println("\tOriginator ${link.originatorPopup.javaClass.simpleName}@${link.originatorPopup.hashCode()}")
+            println("\tOriginator ${link.originatorPopup.javaClass.simpleName}@${link.originatorPopup.hashCode()} [${link.popupKind.javaClass.simpleName}]")
+            println("\t --- trigger area ${link.popupTriggerAreaInOriginatorWindow}")
         }
     }
 }

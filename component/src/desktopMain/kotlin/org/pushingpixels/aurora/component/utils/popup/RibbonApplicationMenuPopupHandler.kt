@@ -295,7 +295,8 @@ internal class RibbonApplicationMenuPopupHandler(
                                 toDismissPopupsOnActivation: Boolean,
                                 popupPlacementStrategy: PopupPlacementStrategy,
                                 popupAnchorBoundsProvider: (() -> Rect)?,
-                                overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>
+                                overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>,
+                                popupKind: AuroraPopupManager.PopupKind
                             ): Window? {
                                 onLevel1ActionRollover.invoke(secondaryCommand)
                                 return null
@@ -506,7 +507,8 @@ internal class RibbonApplicationMenuPopupHandler(
         toDismissPopupsOnActivation: Boolean,
         popupPlacementStrategy: PopupPlacementStrategy,
         popupAnchorBoundsProvider: (() -> Rect)?,
-        overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>
+        overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>,
+        popupKind: AuroraPopupManager.PopupKind
     ): Window? {
         val level1ContentLayoutInfo = getLevel1ContentLayoutInfo(
             menuContentModel = contentModel.value!!,
@@ -699,7 +701,7 @@ internal class RibbonApplicationMenuPopupHandler(
             popup = popupMenu,
             popupContent = popupContent,
             popupRectOnScreen = popupRect,
-            popupKind = AuroraPopupManager.PopupKind.Popup,
+            popupKind = popupKind,
             onActivatePopup = contentModel.value?.onActivatePopup,
             onDeactivatePopup = contentModel.value?.onDeactivatePopup
         )

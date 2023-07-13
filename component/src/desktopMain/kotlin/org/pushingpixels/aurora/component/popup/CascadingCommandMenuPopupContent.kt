@@ -93,7 +93,8 @@ interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
         toDismissPopupsOnActivation: Boolean,
         popupPlacementStrategy: PopupPlacementStrategy,
         popupAnchorBoundsProvider: (() -> Rect)?,
-        overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>
+        overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>,
+        popupKind: AuroraPopupManager.PopupKind
     ): Window? {
         val popupContentLayoutInfo = getPopupContentLayoutInfo(
             menuContentModel = contentModel.value!!,
@@ -225,7 +226,7 @@ interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
             popup = popupMenu,
             popupContent = popupContent,
             popupRectOnScreen = popupRect,
-            popupKind = AuroraPopupManager.PopupKind.Popup,
+            popupKind = popupKind,
             onActivatePopup = contentModel.value?.onActivatePopup,
             onDeactivatePopup = contentModel.value?.onDeactivatePopup
         )

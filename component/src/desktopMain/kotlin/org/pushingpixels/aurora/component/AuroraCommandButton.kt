@@ -1146,7 +1146,8 @@ internal fun <M : BaseCommandMenuContentModel,
                                 toDismissPopupsOnActivation = presentationModel.toDismissPopupsOnActivation,
                                 popupPlacementStrategy = presentationModel.popupPlacementStrategy,
                                 popupAnchorBoundsProvider = presentationModel.popupAnchorBoundsProvider,
-                                overlays = secondaryOverlays
+                                overlays = secondaryOverlays,
+                                popupKind = AuroraPopupManager.PopupKind.Popup
                             )
                             coroutineScope.launch {
                                 popupWindow?.opacity = 1.0f

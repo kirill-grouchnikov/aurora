@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.component.model.BaseCommandButtonPresentationModel
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandMenuContentModel
@@ -95,7 +96,8 @@ fun Modifier.auroraContextMenu(
                     toDismissPopupsOnActivation = presentationModel.toDismissOnCommandActivation,
                     popupPlacementStrategy = presentationModel.popupPlacementStrategy,
                     popupAnchorBoundsProvider = null,
-                    overlays = overlays
+                    overlays = overlays,
+                    popupKind = AuroraPopupManager.PopupKind.Popup
                 )
                 coroutineScope.launch {
                     popupWindow?.opacity = 1.0f

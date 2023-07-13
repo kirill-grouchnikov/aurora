@@ -60,6 +60,7 @@ internal fun RibbonPrimaryBar(
     modifier: Modifier,
     ribbon: Ribbon,
     onContextualTaskGroupSpansUpdated: (List<RibbonContextualTaskGroupLayoutInfo>) -> Unit,
+    selectedTaskButtonModifier: Modifier,
     showSelectedTaskInPopup: Boolean,
     onUpdateShowSelectedTaskInPopup: (Boolean) -> Unit
 ) {
@@ -111,25 +112,25 @@ internal fun RibbonPrimaryBar(
     val ribbonTaskCommands: List<Pair<Command, RibbonContextualTaskGroup?>> = ribbon.tasks.map { task ->
         Pair<Command, RibbonContextualTaskGroup?>(Command(text = task.title,
             icon = null,
-            isActionToggle = true,
-            isActionToggleSelected = task.isActive,
-            onTriggerActionToggleSelectedChange = {
-                if (it) {
-                    task.onClick.invoke()
+            action = {
+                if (!task.isActive) {
+                 task.onClick.invoke()
                 }
-            }
+            },
+            isActionToggle = true,
+            isActionToggleSelected = task.isActive
         ), null)
     } + ribbon.contextualTaskGroups.flatMap { contextualTaskGroup ->
         contextualTaskGroup.tasks.map { contextualTask ->
             Pair<Command, RibbonContextualTaskGroup?>(Command(text = contextualTask.title,
                 icon = null,
-                isActionToggle = true,
-                isActionToggleSelected = contextualTask.isActive,
-                onTriggerActionToggleSelectedChange = {
-                    if (it) {
+                action = {
+                    if (!contextualTask.isActive) {
                         contextualTask.onClick.invoke()
                     }
-                }
+                },
+                isActionToggle = true,
+                isActionToggleSelected = contextualTask.isActive
             ), contextualTaskGroup)
         }
     }
@@ -430,7 +431,11 @@ internal fun RibbonPrimaryBar(
                                     )
 
                                 RibbonTaskToggleButton(
-                                    modifier = Modifier,
+                                    modifier = if (ribbonTaskCommandPair.first.isActionToggleSelected) {
+                                        selectedTaskButtonModifier
+                                    } else {
+                                        Modifier
+                                    },
                                     command = ribbonTaskCommandPair.first,
                                     presentationModel = presentationForCurrent,
                                     showSelectedTaskInPopup = showSelectedTaskInPopup,

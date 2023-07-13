@@ -586,11 +586,15 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
     val selectedTask = ribbon.getSelectedTask()
     val contentModelState = rememberUpdatedState(RibbonTaskCollapsedMenuContentModel(
         ribbonTask = selectedTask,
-        onDeactivatePopup = { showSelectedTaskInPopup = false }
+        onDeactivatePopup = {
+            showSelectedTaskInPopup = false
+        }
     ))
 
     val ribbonPrimaryBarTopLeftOffset = remember { RibbonOffset(0.0f, 0.0f) }
     val ribbonPrimaryBarSize = remember { mutableStateOf(IntSize(0, 0)) }
+    val ribbonSelectedButtonTopLeftOffset = remember { RibbonOffset(0.0f, 0.0f) }
+    val ribbonSelectedButtonSize = remember { mutableStateOf(IntSize(0, 0)) }
 
     Column(Modifier.fillMaxSize().auroraBackground()) {
         RibbonWindowTitlePane(
@@ -598,7 +602,6 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
             windowTitlePaneConfiguration
         )
 
-        println("Show selected task in popup $showSelectedTaskInPopup")
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
             Column(Modifier.fillMaxWidth().auroraBackground()) {
                 RibbonPrimaryBar(
@@ -610,9 +613,13 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
                             contextualTaskGroupSpans.addAll(it)
                         }
                     },
+                    selectedTaskButtonModifier = Modifier.ribbonElementLocator(
+                        ribbonSelectedButtonTopLeftOffset,
+                        ribbonSelectedButtonSize
+                    ),
                     showSelectedTaskInPopup = showSelectedTaskInPopup,
                     onUpdateShowSelectedTaskInPopup = {
-                        if (ribbon.isMinimized) {
+                       if (ribbon.isMinimized) {
                             showSelectedTaskInPopup = it
                         }
                     }
@@ -651,7 +658,7 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
     val bandTitleHeight = getBandTitleHeight(layoutDirection, density, resolvedTextStyle, fontFamilyResolver)
     val bandFullHeight = (bandContentHeight + bandTitleHeight)
 
-    SideEffect {
+    LaunchedEffect(showSelectedTaskInPopup) {
         if (showSelectedTaskInPopup) {
             // TODO - need command overlays?
             val popupWindow = RibbonTaskCollapsedCommandMenuPopupHandler.showPopupContent(
@@ -671,10 +678,10 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
                 ),
                 popupTriggerAreaInWindow = Rect(
                     offset = RibbonOffset(
-                        x = ribbonPrimaryBarTopLeftOffset.x + ribbonPrimaryBarTopLeftOffset.x,
-                        y = ribbonPrimaryBarTopLeftOffset.y + ribbonPrimaryBarTopLeftOffset.y
+                        x = ribbonSelectedButtonTopLeftOffset.x,
+                        y = ribbonSelectedButtonTopLeftOffset.y
                     ).asOffset(density),
-                    size = ribbonPrimaryBarSize.value.asSize(density)
+                    size = ribbonSelectedButtonSize.value.asSize(density)
                 ),
                 contentModel = contentModelState,
                 presentationModel = RibbonTaskCollapsedCommandPopupMenuPresentationModel(
@@ -685,11 +692,17 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
                 toDismissPopupsOnActivation = true,
                 popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
                 popupAnchorBoundsProvider = null,
-                overlays = mapOf()
+                overlays = mapOf(),
+                popupKind = AuroraPopupManager.PopupKind.Popup
             )
             coroutineScope.launch {
                 popupWindow?.opacity = 1.0f
             }
+        } else {
+            AuroraPopupManager.hidePopups(
+                originator = popupOriginator,
+                popupKind = AuroraPopupManager.PopupKind.Popup
+            )
         }
     }
 }
@@ -740,28 +753,40 @@ fun AuroraWindowScope.AuroraRibbonWindowContent(
             }
             if ((event is MouseEvent) && (event.id == MouseEvent.MOUSE_PRESSED) && (src is Component)) {
                 // This can be in our custom popup menu or in the top-level window
-                val originator = SwingUtilities.getAncestorOfClass(AuroraSwingPopupMenu::class.java, src)
+                var originator = SwingUtilities.getAncestorOfClass(AuroraSwingPopupMenu::class.java, src)
                     ?: SwingUtilities.getWindowAncestor(src)
+                if (originator is JFrame) {
+                    originator = originator.rootPane
+                }
                 if (originator != null) {
                     val eventLocation = event.locationOnScreen
                     SwingUtilities.convertPointFromScreen(eventLocation, originator)
 
-                    if (!AuroraPopupManager.isShowingPopupFrom(
+                    val showingFromHere = AuroraPopupManager.isShowingPopupFrom(
                             originator = originator,
                             pointInOriginator = Offset(eventLocation.x.toFloat(), eventLocation.y.toFloat())
                         )
-                    ) {
+                    if (!showingFromHere) {
+                        // Mouse press on an area that doesn't have any popups originating in it.
+                        // Hide popups.
                         AuroraPopupManager.hidePopups(originator)
                     }
                 }
+            }
+            if (event.javaClass.simpleName == "UngrabEvent") {
+                // Not the cleanest, but works for now
+                AuroraPopupManager.hidePopups(null)
             }
         }
     }
 
     DisposableEffect(this, window) {
+        // 0x80000000 is the mask for the internal sun.awt.SunToolkit.GRAB_EVENT_MASK which we need
+        // to detect when our window is "ungrabbed". When that happens, we should hide all popups
+        // shown from our window.
         Toolkit.getDefaultToolkit().addAWTEventListener(
             awtEventListener,
-            AWTEvent.KEY_EVENT_MASK or AWTEvent.MOUSE_EVENT_MASK or AWTEvent.MOUSE_WHEEL_EVENT_MASK
+            AWTEvent.KEY_EVENT_MASK or AWTEvent.MOUSE_EVENT_MASK or AWTEvent.MOUSE_WHEEL_EVENT_MASK or 0x80000000
         )
 
         onDispose {
@@ -886,4 +911,3 @@ private fun Modifier.ribbonElementLocator(topLeftOffset: RibbonOffset, size: Mut
 private val TaskbarWidthMaxRatio = 0.25f
 private val TaskbarContentPadding = PaddingValues(horizontal = 6.dp)
 private val TaskbarContextualTaskGroupTitlePadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
-

@@ -403,7 +403,8 @@ internal fun <E> AuroraComboBox(
                         toDismissPopupsOnActivation = true,
                         popupPlacementStrategy = presentationModel.popupPlacementStrategy,
                         popupAnchorBoundsProvider = null,
-                        overlays = emptyMap()
+                        overlays = emptyMap(),
+                        popupKind = AuroraPopupManager.PopupKind.Popup
                     )
                     coroutineScope.launch {
                         popupWindow?.opacity = 1.0f

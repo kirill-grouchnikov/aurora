@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.window.ribbon
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -256,19 +257,22 @@ internal fun RibbonTaskToggleButton(
             buttonTopLeftOffset = it.localToRoot(Offset.Zero)
         },
         content = {
-            val modifierAction: Modifier = Modifier.toggleable(
-                value = command.isActionToggleSelected,
+            // This button is a sort of in-between. It is toggleable in the sense that it can be
+            // selected, but it does not lose selection when it's clicked again. Modifier.toggleable
+            // has `onValueChanged` but it's not as good of an indicator that the button has been
+            // clicked as `Modifier.clickable` and its `onClick`.
+            val clickableModifier = Modifier.clickable(
                 enabled = isActionEnabled,
                 role = Role.Tab,
                 interactionSource = actionInteractionSource,
                 indication = null,
-                onValueChange = {
-                    command.onTriggerActionToggleSelectedChange?.invoke(it)
+                onClick = {
+                    command.action?.invoke()
                     onUpdateShowSelectedTaskInPopup.invoke(!showSelectedTaskInPopup)
                 }
             )
             Box(
-                modifier = modifierAction.auroraRichTooltip(
+                modifier = clickableModifier.auroraRichTooltip(
                     richTooltip = command.actionRichTooltip,
                     presentationModel = presentationModel.actionRichTooltipPresentationModel
                 )
