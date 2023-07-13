@@ -1152,6 +1152,10 @@ internal fun <M : BaseCommandMenuContentModel,
                             coroutineScope.launch {
                                 popupWindow?.opacity = 1.0f
                             }
+                        } else {
+                            // Showing a popup that originates from the popup area of this command button.
+                            // Hide it.
+                            AuroraPopupManager.hidePopups(originator = popupOriginator)
                         }
                     },
                     onDeactivatePopup = {

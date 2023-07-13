@@ -979,8 +979,11 @@ fun AuroraWindowScope.AuroraWindowContent(
             }
             if ((event is MouseEvent) && (event.id == MouseEvent.MOUSE_PRESSED) && (src is Component)) {
                 // This can be in our custom popup menu or in the top-level window
-                val originator = SwingUtilities.getAncestorOfClass(AuroraSwingPopupMenu::class.java, src)
+                var originator = SwingUtilities.getAncestorOfClass(AuroraSwingPopupMenu::class.java, src)
                     ?: SwingUtilities.getWindowAncestor(src)
+                if (originator is JFrame) {
+                    originator = originator.rootPane
+                }
                 if (originator != null) {
                     val eventLocation = event.locationOnScreen
                     SwingUtilities.convertPointFromScreen(eventLocation, originator)
@@ -994,13 +997,20 @@ fun AuroraWindowScope.AuroraWindowContent(
                     }
                 }
             }
+            if (event.javaClass.simpleName == "UngrabEvent") {
+                // Not the cleanest, but works for now
+                AuroraPopupManager.hidePopups(null)
+            }
         }
     }
 
     DisposableEffect(this, window) {
+        // 0x80000000 is the mask for the internal sun.awt.SunToolkit.GRAB_EVENT_MASK which we need
+        // to detect when our window is "ungrabbed". When that happens, we should hide all popups
+        // shown from our window.
         Toolkit.getDefaultToolkit().addAWTEventListener(
             awtEventListener,
-            AWTEvent.KEY_EVENT_MASK or AWTEvent.MOUSE_EVENT_MASK or AWTEvent.MOUSE_WHEEL_EVENT_MASK
+            AWTEvent.KEY_EVENT_MASK or AWTEvent.MOUSE_EVENT_MASK or AWTEvent.MOUSE_WHEEL_EVENT_MASK or 0x80000000
         )
 
         onDispose {
