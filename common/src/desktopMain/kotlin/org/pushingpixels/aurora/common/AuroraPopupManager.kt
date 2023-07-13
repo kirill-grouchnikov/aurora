@@ -22,20 +22,47 @@ import java.awt.*
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 
+/**
+ * Major moving parts in the current implementation of Aurora popups.
+ *
+ * 1. Every popup is hosted in its own heavyweight window so that popups (including
+ *    cascading popups where applicable) are not constrained to the boundaries of the
+ *    original content window.
+ * 2. Popup content is hosted in a custom sub-class of Swing's JPopupMenu. This is
+ *    needed to use the built-in (but all private to JDK) implementation of window grabbing
+ *    and ungrabbing that allows Aurora to dismiss its popup(s) when the user either
+ *    moves a system-decorated Aurora window by its title pane or switches to another
+ *    window.
+ * 3. The implementation is using a hardcoded constant from sun.awt.SunToolkit.GRAB_EVENT_MASK
+ *    alongside comparing the classname of the global AWT event to "UngrabEvent". This is
+ *    not ideal as it can break on future JDKs or JDKs that deviate from the baseline
+ *    implementation.
+ * 4. Another alternative is to continue using JPopupMenu and register a property change
+ *    listener on it that gets fired with a synthetic change on property named
+ *    "JPopupMenu.firePopupMenuCanceled". This can also break on future JDKs and JDKs that
+ *    deviate from the baseline implementation. In addition, it is harder to coordinate
+ *    the logic around popup dismissals inside the popup menu object itself.
+ * 5. Popup content is hosted in a ComposePanel that uses Compose's currentCompositionLocalContext
+ *    to pass all the composition locals from the main window into the popup window.
+ * 6. For historical reasons, window-level Swing and AWT APIs operate in device-independent
+ *    units that logically correspond to Compose's dp unit. When popup content is configured
+ *    and pre-measured to determine how big the Swing / AWT popup window needs to be, those
+ *    measurements are converted from pixels to these device-independent units based on the
+ *    screen density.
+ * 7. There's an issue with first display of content in a ComposePanel embedded in a JPopupMenu
+ *    where it starts with the default light grey fill for the first frame. This is particularly
+ *    visible in dark Aurora skins. To work around this issue, every Aurora popup starts at
+ *    AWT opacity 0. The calling code is responsible for setting the popup window opacity to 1
+ *    after that first display, which is at the present moment done using a  CoroutineScope.launch
+ *    block.
+ */
+
+// IMPORTANT - this needs to be a subclass of JPopupMenu to get the ungrab events
+// for the AWT listeners registered at Aurora window level.
 class AuroraSwingPopupMenu(val toDismissPopupsOnActivation: Boolean) : JPopupMenu() {
     init {
         layout = BorderLayout()
         border = EmptyBorder(1, 1, 1, 1)
-        addPropertyChangeListener {
-            // BasicPopupMenuUI has a comment in cancelPopupMenu that instead of notifying
-            // the menu's listener that the menu is about to be canceled, it sends the
-            // following property change. Not ideal, but then this whole setup is like that.
-            if ((it.propertyName == "JPopupMenu.firePopupMenuCanceled") && (it.newValue as Boolean)) {
-                // Handle this as a signal to hide all the popups
-                //println("***** FIRE MENU CANCELED *****")
-                //AuroraPopupManager.hidePopups(null)
-            }
-        }
     }
 
     override fun menuSelectionChanged(isIncluded: Boolean) {
