@@ -75,11 +75,12 @@ class AuroraSwingPopupMenu(val toDismissPopupsOnActivation: Boolean) : JPopupMen
 private class AuroraPopup : Popup() {
     private var hostWindow: JWindow? = null
 
+    @Suppress("DEPRECATION")
     override fun show() {
         this.hostWindow?.show()
     }
 
-    @Suppress("deprecation")
+    @Suppress("DEPRECATION")
     override fun hide() {
         this.hostWindow?.hide()
         this.hostWindow?.contentPane?.removeAll()
@@ -134,6 +135,7 @@ private class AuroraHeavyWeightWindow(parent: Window) : JWindow(parent) {
         paint(g)
     }
 
+    @Suppress("DEPRECATION")
     @Deprecated("Deprecated in Java")
     override fun show() {
         pack()
