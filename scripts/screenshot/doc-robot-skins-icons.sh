@@ -17,9 +17,9 @@ export JAVA_HOME=`/usr/libexec/java_home -v 11`
 alias JAVA="java"
 
 AURORA_VERSION=2.0-SNAPSHOT
-KOTLIN_VERSION=1.8.20
+KOTLIN_VERSION=1.9.0
 KOTLIN_COROUTINES_VERSION=1.6.4
-COMPOSE_VERSION=1.4.1
+COMPOSE_VERSION=1.4.3
 CLASSPATH=../../drop/$AURORA_VERSION/aurora-screenshot-desktop-$AURORA_VERSION.jar:../../demo/build/libs/aurora-demo-desktop.jar:../build/libs/:../../build/libs/*
 
 java -cp $CLASSPATH org.pushingpixels.aurora.tools.screenshot.theming.skins.AuroraSkinsIconFilterDriverKt \
