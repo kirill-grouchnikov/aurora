@@ -69,7 +69,7 @@ tasks.register("copyJars") {
     mkdir("drop/${project.property("VERSION_NAME")}")
     subprojects {
         copy {
-            from("${project.buildDir}/libs")
+            from("${project.layout.buildDirectory.get().asFile}/libs")
             include("${rootProject.name}-${project.name}-*-${project.property("VERSION_NAME")}.jar")
             into("${rootProject.projectDir}/drop/${project.property("VERSION_NAME")}")
         }
