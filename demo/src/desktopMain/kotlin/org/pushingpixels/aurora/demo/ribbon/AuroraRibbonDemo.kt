@@ -370,7 +370,7 @@ fun main() = auroraApplication {
             RibbonTaskbarComponentProjection(
                 ComboBoxProjection(
                     contentModel = ComboBoxContentModel(
-                        items = FontFamily.values().toList(),
+                        items = FontFamily.entries,
                         selectedItem = ribbonState.fontFamily,
                         onTriggerItemSelectedChange = {
                             ribbonState = ribbonState.copy(fontFamily = it)
@@ -810,11 +810,11 @@ internal class RibbonBuilder(
                             }
                         }),
                     isActionToggle = true,
-                    isActionToggleSelected = (ribbonState.documentStyle == DocumentStyle.values()[index - 1]),
+                    isActionToggleSelected = (ribbonState.documentStyle == DocumentStyle.entries[index - 1]),
                     onTriggerActionToggleSelectedChange = {
                         if (it) {
                             println("Activating $index")
-                            onRibbonStateUpdate.invoke(ribbonState.copy(documentStyle = DocumentStyle.values()[index - 1]))
+                            onRibbonStateUpdate.invoke(ribbonState.copy(documentStyle = DocumentStyle.entries[index - 1]))
                         }
                     },
                     actionPreview = styleGalleryCommandPreview
@@ -854,10 +854,10 @@ internal class RibbonBuilder(
                             }
                         }),
                     isActionToggle = true,
-                    isActionToggleSelected = (ribbonState.documentStyle == DocumentStyle.values()[index - 1]),
+                    isActionToggleSelected = (ribbonState.documentStyle == DocumentStyle.entries[index - 1]),
                     onTriggerActionToggleSelectedChange = {
                         if (it) {
-                            onRibbonStateUpdate.invoke(ribbonState.copy(documentStyle = DocumentStyle.values()[index - 1]))
+                            onRibbonStateUpdate.invoke(ribbonState.copy(documentStyle = DocumentStyle.entries[index - 1]))
                         }
                     },
                     actionPreview = styleGalleryCommandPreview
@@ -1117,7 +1117,7 @@ internal class RibbonBuilder(
         onFontSizeSelected: (FontSize) -> Unit,
     ): FlowRibbonBand {
         val fontFamilyComboBoxContentModel = ComboBoxContentModel(
-            items = FontFamily.values().toList(),
+            items = FontFamily.entries,
             selectedItem = selectedFontFamily,
             onTriggerItemSelectedChange = {
                 onFontFamilySelected(it)
@@ -1127,7 +1127,7 @@ internal class RibbonBuilder(
         )
 
         val fontSizeComboBoxContentModel = ComboBoxContentModel(
-            items = FontSize.values().toList(),
+            items = FontSize.entries,
             selectedItem = selectedFontSize,
             onTriggerItemSelectedChange = {
                 onFontSizeSelected(it)
@@ -1521,7 +1521,7 @@ internal class RibbonBuilder(
         onApplicationMultimediaSelected: (ApplicationMultimedia) -> Unit,
     ): RibbonBand {
         val gamesComboBoxContentModel = ComboBoxContentModel(
-            items = ApplicationGame.values().toList(),
+            items = ApplicationGame.entries,
             selectedItem = selectedApplicationGame,
             onTriggerItemSelectedChange = {
                 onApplicationGameSelected.invoke(it)
@@ -1529,7 +1529,7 @@ internal class RibbonBuilder(
         )
 
         val internetComboBoxContentModel = ComboBoxContentModel(
-            items = ApplicationBrowser.values().toList(),
+            items = ApplicationBrowser.entries,
             selectedItem = selectedApplicationBrowser,
             onTriggerItemSelectedChange = {
                 onApplicationBrowserSelected.invoke(it)
@@ -1538,7 +1538,7 @@ internal class RibbonBuilder(
         )
 
         val multimediaComboBoxContentModel = ComboBoxContentModel(
-            items = ApplicationMultimedia.values().toList(),
+            items = ApplicationMultimedia.entries,
             selectedItem = selectedApplicationMultimedia,
             onTriggerItemSelectedChange = {
                 onApplicationMultimediaSelected.invoke(it)

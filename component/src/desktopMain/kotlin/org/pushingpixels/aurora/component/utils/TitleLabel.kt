@@ -71,7 +71,7 @@ internal fun TitleLabel(
                     extraInsets = 0.5f,
                     isInner = false,
                     sides = Sides(
-                        straightSides = Side.values().toSet(),
+                        straightSides = Side.entries.toSet(),
                         openSides = setOf(Side.Leading, Side.Trailing)
                     ),
                     outlineKind = OutlineKind.Border,
@@ -97,7 +97,7 @@ internal fun TitleLabel(
                         extraInsets = 1.0f,
                         isInner = true,
                         sides = Sides(
-                            straightSides = Side.values().toSet(),
+                            straightSides = Side.entries.toSet(),
                             openSides = setOf(Side.Leading, Side.Trailing)
                         ),
                         outlineKind = OutlineKind.Border,

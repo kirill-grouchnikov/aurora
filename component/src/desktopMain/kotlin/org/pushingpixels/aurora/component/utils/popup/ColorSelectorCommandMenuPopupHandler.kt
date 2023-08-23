@@ -442,7 +442,7 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
                             menuContentModel = menuContentModel,
                             menuPresentationModel = menuPresentationModel,
                             color = secondary,
-                            sides = Sides(straightSides = Side.values().toSet(), openSides = openSides)
+                            sides = Sides(straightSides = Side.entries.toSet(), openSides = openSides)
                         )
                     }
                 }

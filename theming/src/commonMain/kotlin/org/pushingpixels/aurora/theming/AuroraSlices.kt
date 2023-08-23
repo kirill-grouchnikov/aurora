@@ -809,7 +809,7 @@ data class Sides(
 ) {
     companion object {
         @Stable
-        val ClosedRectangle: Sides = Sides(straightSides = Side.values().toSet())
+        val ClosedRectangle: Sides = Sides(straightSides = Side.entries.toSet())
     }
 }
 
