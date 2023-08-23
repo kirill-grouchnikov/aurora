@@ -15,11 +15,14 @@
  */
 package org.pushingpixels.aurora.demo.ribbon
 
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -29,14 +32,21 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.ResourceLoader
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import org.jetbrains.skia.*
+import org.pushingpixels.aurora.common.colorBrightness
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.component.ribbon.*
@@ -122,10 +132,16 @@ fun main() = auroraApplication {
         commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixed
     )
 
+    var previewFill: Color? by remember { mutableStateOf(null) }
+    var backgroundFill: Color by remember { mutableStateOf(Color(200, 200, 200)) }
+
     val clipboardBand = builder.getClipboardBand()
     val quickStylesBand = builder.getQuickStylesBand(
-        styleGalleryContentModel,
-        styleGalleryInlineMetaPresentationModel
+        styleGalleryContentModel = styleGalleryContentModel,
+        stylesInlinePresentationModel = styleGalleryInlineMetaPresentationModel,
+        onColorActivated = { backgroundFill = it },
+        onColorPreviewActivated = { previewFill = it },
+        onColorPreviewCanceled = { previewFill = null }
     )
 
     val fontBand = builder.getFontBand(
@@ -173,15 +189,23 @@ fun main() = auroraApplication {
     )
     val showHideBand = builder.getShowHideBand(
         visibilityRulerOn = ribbonState.visibilityRulerOn,
-        onVisibilityRulerClick = { ribbonState = ribbonState.copy(visibilityRulerOn = !ribbonState.visibilityRulerOn)},
+        onVisibilityRulerClick = { ribbonState = ribbonState.copy(visibilityRulerOn = !ribbonState.visibilityRulerOn) },
         visibilityGridlinesOn = ribbonState.visibilityGridlinesOn,
-        onVisibilityGridlinesClick = { ribbonState = ribbonState.copy(visibilityGridlinesOn = !ribbonState.visibilityGridlinesOn)},
+        onVisibilityGridlinesClick = {
+            ribbonState = ribbonState.copy(visibilityGridlinesOn = !ribbonState.visibilityGridlinesOn)
+        },
         visibilityMessageBarOn = ribbonState.visibilityMessageBarOn,
-        onVisibilityMessageBarClick = { ribbonState = ribbonState.copy(visibilityMessageBarOn = !ribbonState.visibilityMessageBarOn)},
+        onVisibilityMessageBarClick = {
+            ribbonState = ribbonState.copy(visibilityMessageBarOn = !ribbonState.visibilityMessageBarOn)
+        },
         visibilityDocumentMapOn = ribbonState.visibilityDocumentMapOn,
-        onVisibilityDocumentMapClick = { ribbonState = ribbonState.copy(visibilityDocumentMapOn = !ribbonState.visibilityDocumentMapOn)},
+        onVisibilityDocumentMapClick = {
+            ribbonState = ribbonState.copy(visibilityDocumentMapOn = !ribbonState.visibilityDocumentMapOn)
+        },
         visibilityThumbnailsOn = ribbonState.visibilityThumbnailsOn,
-        onVisibilityThumbnailsClick = { ribbonState = ribbonState.copy(visibilityThumbnailsOn = !ribbonState.visibilityThumbnailsOn)}
+        onVisibilityThumbnailsClick = {
+            ribbonState = ribbonState.copy(visibilityThumbnailsOn = !ribbonState.visibilityThumbnailsOn)
+        }
     )
     val presentationBand = builder.getPresentationBand(
         selectedPresentation = ribbonState.presentation,
@@ -404,7 +428,11 @@ fun main() = auroraApplication {
         ribbon = ribbon,
         content = {
             Row(modifier = Modifier.fillMaxSize()) {
-                Spacer(modifier = Modifier.weight(1.0f))
+                RulerPanel(
+                    modifier = Modifier.weight(1.0f).fillMaxHeight(),
+                    previewFill = previewFill,
+                    backgroundFill = backgroundFill
+                )
                 Column(
                     modifier = Modifier.fillMaxHeight().padding(12.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -945,19 +973,19 @@ internal class RibbonBuilder(
     @Composable
     fun getQuickStylesBand(
         styleGalleryContentModel: RibbonGalleryContentModel,
-        stylesInlinePresentationModel: RibbonGalleryMetaPresentationModel
+        stylesInlinePresentationModel: RibbonGalleryMetaPresentationModel,
+        onColorActivated: (Color) -> Unit,
+        onColorPreviewActivated: (Color) -> Unit,
+        onColorPreviewCanceled: (Color) -> Unit
     ): RibbonBand {
         val colorPreviewListener: ColorPreviewListener = object : ColorPreviewListener {
             override fun onColorPreviewActivated(color: Color) {
-                println("Preview activated color $color")
+                onColorPreviewActivated.invoke(color)
             }
 
             override fun onColorPreviewCanceled(color: Color) {
-                println("Preview canceled color")
+                onColorPreviewCanceled.invoke(color)
             }
-        }
-        val colorActivationListener: (Color) -> Unit = {
-            println("Activated color $it")
         }
         val defaultColor = Color(240, 240, 240, 255)
 
@@ -967,7 +995,7 @@ internal class RibbonBuilder(
                     text = resourceBundle.getString("ColorSelector.textAutomatic"),
                     icon = ColorSolidIcon(defaultColor),
                     action = {
-                        colorActivationListener.invoke(defaultColor)
+                        onColorActivated.invoke(defaultColor)
                         RecentlyUsedColors.addToRecentlyUsed(defaultColor)
                     },
                     actionPreview = object : CommandActionPreview {
@@ -1015,7 +1043,7 @@ internal class RibbonBuilder(
                         )
                         if (awtColor != null) {
                             val composeColor = Color(awtColor.red, awtColor.green, awtColor.blue, awtColor.alpha)
-                            colorActivationListener.invoke(composeColor)
+                            onColorActivated.invoke(composeColor)
                             RecentlyUsedColors.addToRecentlyUsed(composeColor)
                         }
                     }
@@ -1058,7 +1086,7 @@ internal class RibbonBuilder(
                                 secondaryContentModel = ColorSelectorMenuContentModel(
                                     entries = colorSelectorMenuEntries,
                                     onColorPreviewActivated = colorPreviewListener,
-                                    onColorActivated = colorActivationListener
+                                    onColorActivated = onColorActivated
                                 )
                             ),
                             presentationModel = ColorSelectorCommandButtonPresentationModel(
@@ -1365,8 +1393,10 @@ internal class RibbonBuilder(
                 icon = null,
                 action = { println("Expand button clicked! ") }
             ),
-            resizePolicies = listOf(CoreRibbonResizePolicies.Mirror, CoreRibbonResizePolicies.Mid2Low,
-                CoreRibbonResizePolicies.Icon),
+            resizePolicies = listOf(
+                CoreRibbonResizePolicies.Mirror, CoreRibbonResizePolicies.Mid2Low,
+                CoreRibbonResizePolicies.Icon
+            ),
             groups = listOf(
                 RibbonBandCommandGroup(
                     commandProjections = listOf(
@@ -1979,6 +2009,206 @@ internal class RibbonBuilder(
             secondaryOverlays = overlays,
             secondaryStates = secondaryStates
         )
+    }
+}
+
+@Composable
+private fun RulerPanel(
+    modifier: Modifier,
+    previewFill: Color?,
+    backgroundFill: Color
+) {
+    val fill by remember(previewFill, backgroundFill) {
+        derivedStateOf { previewFill ?: backgroundFill }
+    }
+    val line by remember(previewFill, backgroundFill) {
+        derivedStateOf {
+            if (fill.colorBrightness > 0.7f) Color.DarkGray else Color.White
+        }
+    }
+    val layoutDirection = LocalLayoutDirection.current
+    val textMeasurer = rememberTextMeasurer(cacheSize = 10)
+    Box(modifier = modifier.background(fill)) {
+        Canvas(modifier = Modifier.matchParentSize()) {
+            val width = size.width
+            val height = size.height
+
+            if (layoutDirection == LayoutDirection.Ltr) {
+                // horizontal ruler on top
+                val offset = 20
+                run {
+                    var i = offset
+                    while (i < width / density) {
+                        if ((i - offset) % 100 == 0) {
+                            i += 10
+                            continue
+                        }
+                        drawLine(
+                            color = line,
+                            start = Offset(i.dp.toPx(), 9.dp.toPx()),
+                            end = Offset(i.dp.toPx(), 11.dp.toPx())
+                        )
+                        i += 10
+                    }
+                }
+                run {
+                    var i = offset + 50
+                    while (i < width / density) {
+                        drawLine(
+                            color = line,
+                            start = Offset(i.dp.toPx(), 7.dp.toPx()),
+                            end = Offset(i.dp.toPx(), 13.dp.toPx())
+                        )
+                        i += 100
+                    }
+                }
+                run {
+                    var i = offset
+                    while (i < width / density) {
+                        val c = (i - offset) / 100 % 10
+                        drawText(
+                            textMeasurer,
+                            "" + c,
+                            topLeft = Offset((i - 4).dp.toPx(), 1.dp.toPx()),
+                            style = TextStyle(
+                                color = line,
+                                fontWeight = FontWeight.Light
+                            )
+                        )
+                        i += 100
+                    }
+                }
+
+                // vertical ruler on left
+                run {
+                    var i = offset
+                    while (i < height / density) {
+                        if ((i - offset) % 100 == 0) {
+                            i += 10
+                            continue
+                        }
+                        drawLine(
+                            color = line,
+                            start = Offset(9.dp.toPx(), i.dp.toPx()),
+                            end = Offset(11.dp.toPx(), i.dp.toPx())
+                        )
+                        i += 10
+                    }
+                }
+                run {
+                    var i = offset + 50
+                    while (i < height / density) {
+                        drawLine(
+                            color = line,
+                            start = Offset(7.dp.toPx(), i.dp.toPx()),
+                            end = Offset(13.dp.toPx(), i.dp.toPx())
+                        )
+                        i += 100
+                    }
+                }
+                var i = offset
+                while (i < height / density) {
+                    val c = (i - offset) / 100 % 10
+                    drawText(
+                        textMeasurer,
+                        "" + c,
+                        topLeft = Offset(6.dp.toPx(), (i - 8).dp.toPx()),
+                        style = TextStyle(
+                            color = line,
+                            fontWeight = FontWeight.Light
+                        )
+                    )
+                    i += 100
+                }
+            } else {
+                // horizontal ruler on top
+                val offset = 20
+                run {
+                    var i = width / density - offset
+                    while (i > 0) {
+                        if ((width / density - offset - i).toInt() % 100 == 0) {
+                            i -= 10
+                            continue
+                        }
+                        drawLine(
+                            color = line,
+                            start = Offset(i.dp.toPx(), 9.dp.toPx()),
+                            end = Offset(i.dp.toPx(), 11.dp.toPx())
+                        )
+                        i -= 10
+                    }
+                }
+                run {
+                    var i = width / density - offset - 50
+                    while (i > 0) {
+                        drawLine(
+                            color = line,
+                            start = Offset(i.dp.toPx(), 7.dp.toPx()),
+                            end = Offset(i.dp.toPx(), 13.dp.toPx())
+                        )
+                        i -= 100
+                    }
+                }
+                run {
+                    var i = width / density - offset
+                    while (i > 0) {
+                        val c = (width / density - offset - i).toInt() / 100 % 10
+                        drawText(
+                            textMeasurer,
+                            "" + c,
+                            topLeft = Offset((i - 4).dp.toPx(), 1.dp.toPx()),
+                            style = TextStyle(
+                                color = line,
+                                fontWeight = FontWeight.Light
+                            )
+                        )
+                        i -= 100
+                    }
+                }
+
+                // vertical ruler on right
+                run {
+                    var i = offset
+                    while (i < height / density) {
+                        if ((i - offset) % 100 == 0) {
+                            i += 10
+                            continue
+                        }
+                        drawLine(
+                            color = line,
+                            start = Offset((width / density - 9).dp.toPx(), i.dp.toPx()),
+                            end = Offset((width / density - 11).dp.toPx(), i.dp.toPx())
+                        )
+                        i += 10
+                    }
+                }
+                run {
+                    var i = offset + 50
+                    while (i < height / density) {
+                        drawLine(
+                            color = line,
+                            start = Offset((width / density - 7).dp.toPx(), i.dp.toPx()),
+                            end = Offset((width / density - 13).dp.toPx(), i.dp.toPx())
+                        )
+                        i += 100
+                    }
+                }
+                var i = offset
+                while (i < height / density) {
+                    val c = (i - offset) / 100 % 10
+                    drawText(
+                        textMeasurer,
+                        "" + c,
+                        topLeft = Offset((width / density - 15).dp.toPx(), (i - 8).dp.toPx()),
+                        style = TextStyle(
+                            color = line,
+                            fontWeight = FontWeight.Light
+                        )
+                    )
+                    i += 100
+                }
+            }
+        }
     }
 }
 
