@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.demo.ribbon
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -132,16 +133,42 @@ fun main() = auroraApplication {
         commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixed
     )
 
-    var previewFill: Color? by remember { mutableStateOf(null) }
-    var backgroundFill: Color by remember { mutableStateOf(Color(200, 200, 200)) }
+    var ribbonColorData by remember {
+        mutableStateOf(
+            RibbonColorData(
+                isInPreview = false,
+                permanentColor = Color(200, 200, 200),
+                previewColor = Color(200, 200, 200)
+            )
+        )
+    }
 
     val clipboardBand = builder.getClipboardBand()
     val quickStylesBand = builder.getQuickStylesBand(
         styleGalleryContentModel = styleGalleryContentModel,
         stylesInlinePresentationModel = styleGalleryInlineMetaPresentationModel,
-        onColorActivated = { backgroundFill = it },
-        onColorPreviewActivated = { previewFill = it },
-        onColorPreviewCanceled = { previewFill = null }
+        onColorActivated = {
+            ribbonColorData = ribbonColorData.copy(
+                isInPreview = false,
+                permanentColor = it
+            )
+        },
+        onColorPreviewActivated = {
+            ribbonColorData = ribbonColorData.copy(
+                isInPreview = true,
+                previewColor = it
+            )
+        },
+        onColorPreviewCanceled = {
+            // Handle the case where the user moves the mouse between color cells,
+            // and we get color preview cancel on the old cell after color preview
+            // activation on the new cell. Detect this by looking at the color we are
+            // getting in this cancellation and comparing it with the current preview
+            // color in our data model. If they don't match, don't do anything.
+            if (ribbonColorData.isInPreview && (ribbonColorData.previewColor == it)) {
+                ribbonColorData = ribbonColorData.copy(isInPreview = false)
+            }
+        }
     )
 
     val fontBand = builder.getFontBand(
@@ -430,8 +457,7 @@ fun main() = auroraApplication {
             Row(modifier = Modifier.fillMaxSize()) {
                 RulerPanel(
                     modifier = Modifier.weight(1.0f).fillMaxHeight(),
-                    previewFill = previewFill,
-                    backgroundFill = backgroundFill
+                    ribbonColorData = ribbonColorData
                 )
                 Column(
                     modifier = Modifier.fillMaxHeight().padding(12.dp),
@@ -2012,23 +2038,29 @@ internal class RibbonBuilder(
     }
 }
 
+@Stable
+data class RibbonColorData(
+    val isInPreview: Boolean,
+    val permanentColor: Color,
+    val previewColor: Color,
+)
+
 @Composable
 private fun RulerPanel(
     modifier: Modifier,
-    previewFill: Color?,
-    backgroundFill: Color
+    ribbonColorData: RibbonColorData
 ) {
-    val fill by remember(previewFill, backgroundFill) {
-        derivedStateOf { previewFill ?: backgroundFill }
-    }
-    val line by remember(previewFill, backgroundFill) {
-        derivedStateOf {
-            if (fill.colorBrightness > 0.7f) Color.DarkGray else Color.White
-        }
-    }
+    // Animate color to preview / permanent based on the preview state
+    val fill = animateColorAsState(
+        targetValue = if (ribbonColorData.isInPreview) ribbonColorData.previewColor else ribbonColorData.permanentColor
+    )
+    val legend = animateColorAsState(
+        targetValue = if (fill.value.colorBrightness > 0.7f) Color.DarkGray else Color.White
+    )
+
     val layoutDirection = LocalLayoutDirection.current
     val textMeasurer = rememberTextMeasurer(cacheSize = 10)
-    Box(modifier = modifier.background(fill)) {
+    Box(modifier = modifier.background(fill.value)) {
         Canvas(modifier = Modifier.matchParentSize()) {
             val width = size.width
             val height = size.height
@@ -2044,7 +2076,7 @@ private fun RulerPanel(
                             continue
                         }
                         drawLine(
-                            color = line,
+                            color = legend.value,
                             start = Offset(i.dp.toPx(), 9.dp.toPx()),
                             end = Offset(i.dp.toPx(), 11.dp.toPx())
                         )
@@ -2055,7 +2087,7 @@ private fun RulerPanel(
                     var i = offset + 50
                     while (i < width / density) {
                         drawLine(
-                            color = line,
+                            color = legend.value,
                             start = Offset(i.dp.toPx(), 7.dp.toPx()),
                             end = Offset(i.dp.toPx(), 13.dp.toPx())
                         )
@@ -2071,7 +2103,7 @@ private fun RulerPanel(
                             "" + c,
                             topLeft = Offset((i - 4).dp.toPx(), 1.dp.toPx()),
                             style = TextStyle(
-                                color = line,
+                                color = legend.value,
                                 fontWeight = FontWeight.Light
                             )
                         )
@@ -2088,7 +2120,7 @@ private fun RulerPanel(
                             continue
                         }
                         drawLine(
-                            color = line,
+                            color = legend.value,
                             start = Offset(9.dp.toPx(), i.dp.toPx()),
                             end = Offset(11.dp.toPx(), i.dp.toPx())
                         )
@@ -2099,7 +2131,7 @@ private fun RulerPanel(
                     var i = offset + 50
                     while (i < height / density) {
                         drawLine(
-                            color = line,
+                            color = legend.value,
                             start = Offset(7.dp.toPx(), i.dp.toPx()),
                             end = Offset(13.dp.toPx(), i.dp.toPx())
                         )
@@ -2114,7 +2146,7 @@ private fun RulerPanel(
                         "" + c,
                         topLeft = Offset(6.dp.toPx(), (i - 8).dp.toPx()),
                         style = TextStyle(
-                            color = line,
+                            color = legend.value,
                             fontWeight = FontWeight.Light
                         )
                     )
@@ -2131,7 +2163,7 @@ private fun RulerPanel(
                             continue
                         }
                         drawLine(
-                            color = line,
+                            color = legend.value,
                             start = Offset(i.dp.toPx(), 9.dp.toPx()),
                             end = Offset(i.dp.toPx(), 11.dp.toPx())
                         )
@@ -2142,7 +2174,7 @@ private fun RulerPanel(
                     var i = width / density - offset - 50
                     while (i > 0) {
                         drawLine(
-                            color = line,
+                            color = legend.value,
                             start = Offset(i.dp.toPx(), 7.dp.toPx()),
                             end = Offset(i.dp.toPx(), 13.dp.toPx())
                         )
@@ -2158,7 +2190,7 @@ private fun RulerPanel(
                             "" + c,
                             topLeft = Offset((i - 4).dp.toPx(), 1.dp.toPx()),
                             style = TextStyle(
-                                color = line,
+                                color = legend.value,
                                 fontWeight = FontWeight.Light
                             )
                         )
@@ -2175,7 +2207,7 @@ private fun RulerPanel(
                             continue
                         }
                         drawLine(
-                            color = line,
+                            color = legend.value,
                             start = Offset((width / density - 9).dp.toPx(), i.dp.toPx()),
                             end = Offset((width / density - 11).dp.toPx(), i.dp.toPx())
                         )
@@ -2186,7 +2218,7 @@ private fun RulerPanel(
                     var i = offset + 50
                     while (i < height / density) {
                         drawLine(
-                            color = line,
+                            color = legend.value,
                             start = Offset((width / density - 7).dp.toPx(), i.dp.toPx()),
                             end = Offset((width / density - 13).dp.toPx(), i.dp.toPx())
                         )
@@ -2201,7 +2233,7 @@ private fun RulerPanel(
                         "" + c,
                         topLeft = Offset((width / density - 15).dp.toPx(), (i - 8).dp.toPx()),
                         style = TextStyle(
-                            color = line,
+                            color = legend.value,
                             fontWeight = FontWeight.Light
                         )
                     )
