@@ -55,6 +55,7 @@ import org.pushingpixels.aurora.component.model.LabelPresentationModel
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.ribbon.Ribbon
 import org.pushingpixels.aurora.component.ribbon.RibbonTask
+import org.pushingpixels.aurora.component.ribbon.impl.RibbonOverlay
 import org.pushingpixels.aurora.component.ribbon.impl.RibbonTaskbar
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
@@ -62,6 +63,7 @@ import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
+import org.pushingpixels.aurora.window.WindowSizingConstants.DecoratedBorderThickness
 import org.pushingpixels.aurora.window.ribbon.*
 import java.awt.*
 import java.awt.event.AWTEventListener
@@ -596,48 +598,51 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
     val ribbonSelectedButtonTopLeftOffset = remember { RibbonOffset(0.0f, 0.0f) }
     val ribbonSelectedButtonSize = remember { mutableStateOf(IntSize(0, 0)) }
 
-    Column(Modifier.fillMaxSize().auroraBackground()) {
-        RibbonWindowTitlePane(
-            title, icon, iconFilterStrategy, ribbon, contextualTaskGroupSpans,
-            windowTitlePaneConfiguration
-        )
+    Box(Modifier.fillMaxSize()) {
+        Column(Modifier.fillMaxSize().auroraBackground()) {
+            RibbonWindowTitlePane(
+                title, icon, iconFilterStrategy, ribbon, contextualTaskGroupSpans,
+                windowTitlePaneConfiguration
+            )
 
-        AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
-            Column(Modifier.fillMaxWidth().auroraBackground()) {
-                RibbonPrimaryBar(
-                    modifier = Modifier.ribbonElementLocator(ribbonPrimaryBarTopLeftOffset, ribbonPrimaryBarSize),
-                    ribbon = ribbon,
-                    onContextualTaskGroupSpansUpdated = {
-                        if (!areSpansSame(contextualTaskGroupSpans, it)) {
-                            contextualTaskGroupSpans.clear()
-                            contextualTaskGroupSpans.addAll(it)
+            AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
+                Column(Modifier.fillMaxWidth().auroraBackground()) {
+                    RibbonPrimaryBar(
+                        modifier = Modifier.ribbonElementLocator(ribbonPrimaryBarTopLeftOffset, ribbonPrimaryBarSize),
+                        ribbon = ribbon,
+                        onContextualTaskGroupSpansUpdated = {
+                            if (!areSpansSame(contextualTaskGroupSpans, it)) {
+                                contextualTaskGroupSpans.clear()
+                                contextualTaskGroupSpans.addAll(it)
+                            }
+                        },
+                        selectedTaskButtonModifier = Modifier.ribbonElementLocator(
+                            ribbonSelectedButtonTopLeftOffset,
+                            ribbonSelectedButtonSize
+                        ),
+                        showSelectedTaskInPopup = showSelectedTaskInPopup,
+                        onUpdateShowSelectedTaskInPopup = {
+                            if (ribbon.isMinimized) {
+                                showSelectedTaskInPopup = it
+                            }
                         }
-                    },
-                    selectedTaskButtonModifier = Modifier.ribbonElementLocator(
-                        ribbonSelectedButtonTopLeftOffset,
-                        ribbonSelectedButtonSize
-                    ),
-                    showSelectedTaskInPopup = showSelectedTaskInPopup,
-                    onUpdateShowSelectedTaskInPopup = {
-                       if (ribbon.isMinimized) {
-                            showSelectedTaskInPopup = it
-                        }
+                    )
+
+                    if (!ribbon.isMinimized) {
+                        RibbonBands(ribbonTask = selectedTask)
                     }
-                )
 
-                if (!ribbon.isMinimized) {
-                    RibbonBands(ribbonTask = selectedTask)
+                    Spacer(modifier = Modifier.fillMaxWidth().height(1.dp))
                 }
+            }
 
-                Spacer(modifier = Modifier.fillMaxWidth().height(1.dp))
+            // Wrap the entire content in NONE decoration area. App code can set its
+            // own decoration area types on specific parts.
+            AuroraDecorationArea(decorationAreaType = DecorationAreaType.None) {
+                content()
             }
         }
-
-        // Wrap the entire content in NONE decoration area. App code can set its
-        // own decoration area types on specific parts.
-        AuroraDecorationArea(decorationAreaType = DecorationAreaType.None) {
-            content()
-        }
+        RibbonOverlay(Modifier.fillMaxSize(), DecoratedBorderThickness)
     }
 
     val density = LocalDensity.current

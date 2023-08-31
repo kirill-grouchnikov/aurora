@@ -66,6 +66,7 @@ abstract class BaseCommandButtonProjection<out C : BaseCommand,
             modifier = modifier,
             actionInteractionSource = actionInteractionSource,
             popupInteractionSource = popupInteractionSource,
+            originalProjection = this,
             command = this.contentModel,
             presentationModel = if (primaryOverlay != null) this.presentationModel.overlayWith(primaryOverlay) else
                 this.presentationModel,

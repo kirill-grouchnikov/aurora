@@ -15,24 +15,31 @@
  */
 package org.pushingpixels.aurora.component.ribbon
 
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.IconProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.projection.Projection
+import org.pushingpixels.aurora.component.ribbon.impl.BoundsTracker
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonBandRowHeight
+import org.pushingpixels.aurora.component.utils.AuroraOffset
+import org.pushingpixels.aurora.component.utils.AuroraRect
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.component.utils.getLabelPreferredSingleLineWidth
 import org.pushingpixels.aurora.theming.IconFilterStrategy
@@ -159,7 +166,7 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
     val widthNeededForComponent = projection.intrinsicWidth(rowHeight)
     val heightNeededForComponent = projection.intrinsicHeight(widthNeededForComponent)
 
-    Layout(modifier = modifier,
+    Layout(modifier = modifier.metaComponentLocator(projection),
         content = {
             if (hasIcon) {
                 IconProjection(
@@ -286,7 +293,35 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
                 componentPlaceable.placeRelative(x, (height - componentPlaceable.measuredHeight) / 2)
             }
         })
+
+    DisposableEffect(projection) {
+        onDispose {
+            BoundsTracker.untrackBounds(projection)
+        }
+    }
 }
+
+private class MetaComponentLocator(val projection: Projection<ContentModel, PresentationModel>) :
+    OnGloballyPositionedModifier {
+    override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
+        // Convert the top left corner of the component to the root coordinates
+        val converted = coordinates.localToRoot(Offset.Zero)
+
+        BoundsTracker.trackBounds(
+            projection,
+            AuroraRect(
+                x = converted.x,
+                y = converted.y,
+                width = coordinates.size.width.toFloat(),
+                height = coordinates.size.height.toFloat()
+            )
+        )
+    }
+}
+
+@Composable
+private fun Modifier.metaComponentLocator(projection: Projection<ContentModel, PresentationModel>) =
+    this.then(MetaComponentLocator(projection))
 
 private val DefaultMetaComponentIconTextLayoutGap = 4.dp
 private val DefaultMetaComponentLayoutGap = 6.dp

@@ -16,10 +16,7 @@
 package org.pushingpixels.aurora.component.ribbon.impl
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -40,6 +37,7 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
+import org.pushingpixels.aurora.component.projection.Projection
 import org.pushingpixels.aurora.component.ribbon.InRibbonGalleryPresentationModel
 import org.pushingpixels.aurora.component.ribbon.RibbonBandCommandButtonPresentationStates.BigFixed
 import org.pushingpixels.aurora.component.ribbon.RibbonBandCommandButtonPresentationStates.BigFixedLandscape
@@ -65,15 +63,19 @@ internal fun ribbonGalleryIntrinsicWidth(
             presentationModel.contentPadding.calculateBottomPadding()).value * density.density).toInt()
 
     // Leading margin
-    var result = (presentationModel.contentPadding.calculateStartPadding(layoutDirection).value * density.density).toInt()
+    var result =
+        (presentationModel.contentPadding.calculateStartPadding(layoutDirection).value * density.density).toInt()
     // Visible gallery buttons
     when (presentationModel.commandButtonPresentationState) {
         CommandButtonPresentationState.Small ->
             result += visibleCount * heightForButtons / 3
+
         BigFixed ->
             result += visibleCount * heightForButtons
+
         BigFixedLandscape ->
             result += visibleCount * heightForButtons * 5 / 4
+
         else ->
             error("Presentation state ${presentationModel.commandButtonPresentationState.displayName} not supported")
     }
@@ -91,6 +93,7 @@ internal fun ribbonGalleryIntrinsicWidth(
 @Composable
 internal fun RibbonGallery(
     modifier: Modifier,
+    originalProjection: Projection<RibbonGalleryContentModel, InRibbonGalleryPresentationModel>,
     contentModel: RibbonGalleryContentModel,
     presentationModel: InRibbonGalleryPresentationModel,
     inlineState: RibbonGalleryInlineState
@@ -106,7 +109,7 @@ internal fun RibbonGallery(
 
     val flatCommandList = contentModel.commandGroups.map { it.commands }.flatten()
 
-    val visibleCount = presentationModel.collapsedVisibleCount
+    val visibleCount = inlineState.visibleCount
     val fullCount = flatCommandList.size
     if (inlineState.getAndClearRevealSelected()) {
         // The inline state has been marked to have the latest selected command button to be revealed
@@ -273,7 +276,11 @@ internal fun RibbonGallery(
     val galleryTopLeftOffset = remember { AuroraOffset(0.0f, 0.0f) }
     val gallerySize = remember { mutableStateOf(IntSize(0, 0)) }
 
-    Layout(modifier = Modifier.galleryLocator(topLeftOffset = galleryTopLeftOffset, size = gallerySize),
+    Layout(modifier = Modifier.galleryLocator(
+        projection = originalProjection,
+        topLeftOffset = galleryTopLeftOffset,
+        size = gallerySize
+    ),
         content = {
             Row(
                 modifier = modifier.auroraBorder(
@@ -423,9 +430,19 @@ internal fun RibbonGallery(
                 scrollerButtonColumnPlaceable.placeRelative(buttonRowWidth.roundToInt(), 0)
             }
         })
+
+    DisposableEffect(originalProjection) {
+        onDispose {
+            BoundsTracker.untrackBounds(originalProjection)
+        }
+    }
 }
 
-private class GalleryLocator(val topLeftOffset: AuroraOffset, val size: MutableState<IntSize>) :
+private class GalleryLocator(
+    val projection: Projection<RibbonGalleryContentModel, InRibbonGalleryPresentationModel>,
+    val topLeftOffset: AuroraOffset,
+    val size: MutableState<IntSize>
+) :
     OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
         // Convert the top left corner of the component to the root coordinates
@@ -435,11 +452,25 @@ private class GalleryLocator(val topLeftOffset: AuroraOffset, val size: MutableS
 
         // And store the component size
         size.value = coordinates.size
+
+        BoundsTracker.trackBounds(
+            projection,
+            AuroraRect(
+                x = converted.x,
+                y = converted.y,
+                width = coordinates.size.width.toFloat(),
+                height = coordinates.size.height.toFloat()
+            )
+        )
     }
 }
 
 @Composable
-private fun Modifier.galleryLocator(topLeftOffset: AuroraOffset, size: MutableState<IntSize>) =
+private fun Modifier.galleryLocator(
+    projection: Projection<RibbonGalleryContentModel, InRibbonGalleryPresentationModel>,
+    topLeftOffset: AuroraOffset,
+    size: MutableState<IntSize>
+) =
     this.then(
-        GalleryLocator(topLeftOffset, size)
+        GalleryLocator(projection, topLeftOffset, size)
     )

@@ -171,11 +171,18 @@ fun main() = auroraApplication {
         }
     )
 
-    val fontBand = builder.getFontBand(
-        selectedFontFamily = ribbonState.fontFamily,
-        onFontFamilySelected = {
+    val fontFamilyComboBoxContentModel = ComboBoxContentModel(
+        items = FontFamily.entries,
+        selectedItem = ribbonState.fontFamily,
+        onTriggerItemSelectedChange = {
             ribbonState = ribbonState.copy(fontFamily = it)
+            println("New font family selection -> ${it.name}")
         },
+        richTooltip = RichTooltip(title = resourceBundle.getString("Fonts.tooltip.title")),
+    )
+
+    val fontBand = builder.getFontBand(
+        fontFamilyComboBoxContentModel = fontFamilyComboBoxContentModel,
         selectedFontSize = ribbonState.fontSize,
         onFontSizeSelected = {
             ribbonState = ribbonState.copy(fontSize = it)
@@ -396,15 +403,7 @@ fun main() = auroraApplication {
             ),
             RibbonTaskbarComponentProjection(
                 ComboBoxProjection(
-                    contentModel = ComboBoxContentModel(
-                        items = FontFamily.entries,
-                        selectedItem = ribbonState.fontFamily,
-                        onTriggerItemSelectedChange = {
-                            ribbonState = ribbonState.copy(fontFamily = it)
-                            println("New font family selection -> ${it.name}")
-                        },
-                        richTooltip = RichTooltip(title = resourceBundle.getString("Fonts.tooltip.title")),
-                    ),
+                    contentModel = fontFamilyComboBoxContentModel,
                     presentationModel = ComboBoxPresentationModel(displayConverter = { it.name }),
                 )
             ),
@@ -1137,20 +1136,10 @@ internal class RibbonBuilder(
     }
 
     fun getFontBand(
-        selectedFontFamily: FontFamily,
-        onFontFamilySelected: (FontFamily) -> Unit,
+        fontFamilyComboBoxContentModel: ComboBoxContentModel<FontFamily>,
         selectedFontSize: FontSize,
         onFontSizeSelected: (FontSize) -> Unit,
     ): FlowRibbonBand {
-        val fontFamilyComboBoxContentModel = ComboBoxContentModel(
-            items = FontFamily.entries,
-            selectedItem = selectedFontFamily,
-            onTriggerItemSelectedChange = {
-                onFontFamilySelected(it)
-                println("New font family selection -> $it")
-            },
-            richTooltip = RichTooltip(title = resourceBundle.getString("Fonts.tooltip.title")),
-        )
 
         val fontSizeComboBoxContentModel = ComboBoxContentModel(
             items = FontSize.entries,

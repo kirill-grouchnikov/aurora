@@ -91,18 +91,6 @@ data class RibbonGalleryMetaPresentationModel(
     val popupLayoutSpec: MenuPopupPanelLayoutSpec,
 ) : PresentationModel
 
-data class RibbonGalleryPresentationModel(
-    val preferredVisibleCommandCounts: Map<PresentationPriority, Int> = emptyMap(),
-    val commandButtonPresentationState: CommandButtonPresentationState,
-    val commandButtonTextOverflow: TextOverflow = TextOverflow.Clip,
-    val commandPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
-    val commandSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize,
-    val contentPadding: PaddingValues = RibbonGallerySizingConstants.DefaultContentPadding,
-    val layoutGap: Dp = RibbonGallerySizingConstants.DefaultContentLayoutGap,
-    val expandKeyTip: String? = null,
-    val popupLayoutSpec: MenuPopupPanelLayoutSpec,
-) : PresentationModel
-
 class RibbonGalleryInlineState(
     val contentModel: RibbonGalleryContentModel,
     val presentationModel: RibbonGalleryMetaPresentationModel,
@@ -153,7 +141,7 @@ class RibbonGalleryProjection(
     val contentModel: RibbonGalleryContentModel,
     val presentationModel: InRibbonGalleryPresentationModel,
     val secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
-) : Projection<RibbonGalleryContentModel, RibbonGalleryPresentationModel>() {
+) : Projection<RibbonGalleryContentModel, InRibbonGalleryPresentationModel>() {
     @Composable
     fun project(
         modifier: Modifier = Modifier,
@@ -169,6 +157,7 @@ class RibbonGalleryProjection(
 
         RibbonGallery(
             modifier = modifier,
+            originalProjection = this,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel,
             inlineState = inlineState

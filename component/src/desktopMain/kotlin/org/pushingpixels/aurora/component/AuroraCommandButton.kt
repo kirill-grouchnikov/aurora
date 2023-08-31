@@ -59,8 +59,11 @@ import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
+import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
+import org.pushingpixels.aurora.component.projection.Projection
 import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
+import org.pushingpixels.aurora.component.ribbon.impl.BoundsTracker
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
@@ -563,6 +566,8 @@ internal fun <M : BaseCommandMenuContentModel,
     modifier: Modifier,
     actionInteractionSource: MutableInteractionSource,
     popupInteractionSource: MutableInteractionSource,
+    originalProjection: BaseCommandButtonProjection<BaseCommand,
+            BaseCommandButtonPresentationModel, BaseCommandButtonProjection<BaseCommand, BaseCommandButtonPresentationModel, *>>,
     command: BaseCommand,
     popupHandler: BaseCommandMenuHandler<M, P>,
     presentationModel: BaseCommandButtonPresentationModel,
@@ -876,7 +881,7 @@ internal fun <M : BaseCommandMenuContentModel,
     val coroutineScope = rememberCoroutineScope()
 
     Layout(
-        modifier = modifier.commandButtonLocator(buttonTopLeftOffset, buttonSize),
+        modifier = modifier.commandButtonLocator(originalProjection, buttonTopLeftOffset, buttonSize),
         content = {
             val modifierAction: Modifier
             if (isToggle) {
@@ -1578,6 +1583,12 @@ internal fun <M : BaseCommandMenuContentModel,
             )
         }
     }
+
+    DisposableEffect(originalProjection) {
+        onDispose {
+            BoundsTracker.untrackBounds(originalProjection)
+        }
+    }
 }
 
 @OptIn(AuroraInternalApi::class)
@@ -1890,7 +1901,11 @@ private fun CommandButtonPopupIconContent(
     }
 }
 
-private class CommandButtonBoxLocator(val topLeftOffset: AuroraOffset, val size: MutableState<IntSize>) :
+private class CommandButtonLocator(
+    val projection: Projection<ContentModel, PresentationModel>,
+    val topLeftOffset: AuroraOffset,
+    val size: MutableState<IntSize>
+) :
     OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
         // Convert the top left corner of the component to the root coordinates
@@ -1900,11 +1915,22 @@ private class CommandButtonBoxLocator(val topLeftOffset: AuroraOffset, val size:
 
         // And store the component size
         size.value = coordinates.size
+
+        BoundsTracker.trackBounds(
+            projection,
+            AuroraRect(
+                x = converted.x,
+                y = converted.y,
+                width = coordinates.size.width.toFloat(),
+                height = coordinates.size.height.toFloat()
+            )
+        )
     }
 }
 
 @Composable
-private fun Modifier.commandButtonLocator(topLeftOffset: AuroraOffset, size: MutableState<IntSize>) =
-    this.then(
-        CommandButtonBoxLocator(topLeftOffset, size)
-    )
+private fun Modifier.commandButtonLocator(
+    projection: Projection<ContentModel, PresentationModel>,
+    topLeftOffset: AuroraOffset,
+    size: MutableState<IntSize>
+) = this.then(CommandButtonLocator(projection, topLeftOffset, size))
