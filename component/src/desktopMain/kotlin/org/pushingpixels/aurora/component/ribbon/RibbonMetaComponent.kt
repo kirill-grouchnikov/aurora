@@ -15,9 +15,10 @@
  */
 package org.pushingpixels.aurora.component.ribbon
 
-import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.Layout
@@ -29,7 +30,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.*
@@ -38,7 +38,6 @@ import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.projection.Projection
 import org.pushingpixels.aurora.component.ribbon.impl.BoundsTracker
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonBandRowHeight
-import org.pushingpixels.aurora.component.utils.AuroraOffset
 import org.pushingpixels.aurora.component.utils.AuroraRect
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.component.utils.getLabelPreferredSingleLineWidth
@@ -57,6 +56,13 @@ class RibbonMetaComponentProjection<out C : ContentModel, out P : PresentationMo
     val enabled: () -> Boolean,
     val ribbonComponentPresentationModel: RibbonComponentPresentationModel
 ) : Projection<C, MetaComponentPresentationModel<P>>() {
+    override val contentModel: C
+        get() = this.projection.contentModel
+
+    override val presentationModel: MetaComponentPresentationModel<P>
+        get() = MetaComponentPresentationModel(this.projection.presentationModel,
+            this.ribbonComponentPresentationModel)
+
     @Composable
     fun project(modifier: Modifier = Modifier) {
         RibbonMetaComponent(

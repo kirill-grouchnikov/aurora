@@ -60,6 +60,7 @@ import org.pushingpixels.aurora.component.ribbon.RibbonTask
 import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarGalleryProjection
 import org.pushingpixels.aurora.component.ribbon.impl.RibbonOverlay
 import org.pushingpixels.aurora.component.ribbon.impl.RibbonTaskbar
+import org.pushingpixels.aurora.component.ribbon.impl.getComponentProjectionUnder
 import org.pushingpixels.aurora.component.ribbon.impl.getGalleryProjectionUnder
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
@@ -979,10 +980,20 @@ private fun Modifier.ribbonContextMenu(ribbon: Ribbon): Modifier {
                         )
                     }
                 } else {
-                    contentModel.apply {
-                        value = ribbon.onShowContextualMenuListener!!.getContextualMenuContentModel(
-                            ribbon = ribbon,
-                        )
+                    val ribbonComponent = getComponentProjectionUnder(eventX, eventY)
+                    if (ribbonComponent != null) {
+                        contentModel.apply {
+                            value = ribbon.onShowContextualMenuListener!!.getContextualMenuContentModel(
+                                ribbon = ribbon,
+                                componentProjection = ribbonComponent
+                            )
+                        }
+                    } else {
+                        contentModel.apply {
+                            value = ribbon.onShowContextualMenuListener!!.getContextualMenuContentModel(
+                                ribbon = ribbon,
+                            )
+                        }
                     }
                 }
                 val popupWindow = GeneralCommandMenuPopupHandler.showPopupContent(

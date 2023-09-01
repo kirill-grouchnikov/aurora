@@ -28,8 +28,10 @@ import androidx.compose.ui.unit.Dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.ContentModel
 import org.pushingpixels.aurora.component.model.PresentationModel
+import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.Projection
 import org.pushingpixels.aurora.component.ribbon.RibbonGalleryProjection
+import org.pushingpixels.aurora.component.ribbon.RibbonMetaComponentProjection
 import org.pushingpixels.aurora.component.utils.AuroraRect
 import org.pushingpixels.aurora.component.utils.contains
 
@@ -58,6 +60,18 @@ fun getGalleryProjectionUnder(x: Float, y: Float) : RibbonGalleryProjection? {
         if (tracked.key is RibbonGalleryProjection) {
             if (tracked.value.contains(x, y)) {
                 return tracked.key as RibbonGalleryProjection
+            }
+        }
+    }
+    return null
+}
+
+@AuroraInternalApi
+fun getComponentProjectionUnder(x: Float, y: Float) : Projection<*, *>? {
+    for (tracked in BoundsTracker.getBounds().entries) {
+        if ((tracked.key !is RibbonGalleryProjection) && (tracked.key !is BaseCommandButtonProjection<*, *, *>)) {
+            if (tracked.value.contains(x, y)) {
+                return tracked.key
             }
         }
     }

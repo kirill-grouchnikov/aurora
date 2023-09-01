@@ -138,8 +138,8 @@ class RibbonGalleryInlineState(
 }
 
 class RibbonGalleryProjection(
-    val contentModel: RibbonGalleryContentModel,
-    val presentationModel: InRibbonGalleryPresentationModel,
+    override val contentModel: RibbonGalleryContentModel,
+    override val presentationModel: InRibbonGalleryPresentationModel,
     val secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
 ) : Projection<RibbonGalleryContentModel, InRibbonGalleryPresentationModel>() {
     @Composable
@@ -203,7 +203,7 @@ data class Ribbon(
     val tasks: List<RibbonTask>,
     val contextualTaskGroups: List<RibbonContextualTaskGroup> = emptyList(),
     val anchoredCommands: List<CommandButtonProjection> = emptyList(),
-    val taskbarElements: List<RibbonTaskbarElement> = emptyList(),
+    val taskbarElements: MutableList<RibbonTaskbarElement> = arrayListOf(),
     val taskbarKeyTipPolicy: RibbonTaskbarKeyTipPolicy,
     val applicationMenuCommandButtonProjection: RibbonApplicationMenuCommandButtonProjection? = null,
     val isMinimized: Boolean = false,

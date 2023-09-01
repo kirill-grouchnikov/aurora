@@ -37,6 +37,10 @@ import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHan
 import org.pushingpixels.aurora.theming.LocalTextStyle
 
 abstract class Projection<out C : ContentModel, out P : PresentationModel> {
+    abstract val contentModel: C
+
+    abstract val presentationModel: P
+
     @Composable
     abstract fun reproject(modifier: Modifier)
 
@@ -49,8 +53,8 @@ abstract class Projection<out C : ContentModel, out P : PresentationModel> {
 
 abstract class BaseCommandButtonProjection<out C : BaseCommand,
         out P: BaseCommandButtonPresentationModel, out CBP: BaseCommandButtonProjection<C, P, CBP>>(
-    open val contentModel: C,
-    open val presentationModel: P,
+    override val contentModel: C,
+    override val presentationModel: P,
     open val secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
 ) : Projection<C, P>() {
     @Composable
@@ -267,8 +271,8 @@ class ColorSelectorCommandButtonProjection(
 }
 
 class CommandButtonStripProjection(
-    val contentModel: CommandGroup,
-    val presentationModel: CommandStripPresentationModel,
+    override val contentModel: CommandGroup,
+    override val presentationModel: CommandStripPresentationModel,
     val overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
 ) : Projection<CommandGroup, CommandStripPresentationModel>() {
     @Composable
@@ -303,10 +307,10 @@ class CommandButtonStripProjection(
 }
 
 class CommandButtonPanelProjection(
-    val contentModel: CommandPanelContentModel,
-    val presentationModel: CommandPanelPresentationModel,
+    override val contentModel: CommandPanelContentModel,
+    override val presentationModel: CommandPanelPresentationModel,
     val overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
-) : Projection<CommandPanelContentModel, CommandButtonPresentationModel>() {
+) : Projection<CommandPanelContentModel, CommandPanelPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier) {
         require(
@@ -351,8 +355,8 @@ class CommandButtonPanelProjection(
 }
 
 class BreadcrumbBarProjection(
-    val contentModel: BreadcrumbBarContentModel,
-    val presentationModel: BreadcrumbBarPresentationModel = BreadcrumbBarPresentationModel()
+    override val contentModel: BreadcrumbBarContentModel,
+    override val presentationModel: BreadcrumbBarPresentationModel = BreadcrumbBarPresentationModel()
 ) : Projection<BreadcrumbBarContentModel, BreadcrumbBarPresentationModel>() {
     @Composable
     fun project(
@@ -389,8 +393,8 @@ class BreadcrumbBarProjection(
 }
 
 class ComboBoxProjection<E>(
-    val contentModel: ComboBoxContentModel<E>,
-    val presentationModel: ComboBoxPresentationModel<E>
+    override val contentModel: ComboBoxContentModel<E>,
+    override val presentationModel: ComboBoxPresentationModel<E>
 ) : Projection<ComboBoxContentModel<E>, ComboBoxPresentationModel<E>>() {
     @Composable
     fun project(
@@ -427,8 +431,8 @@ class ComboBoxProjection<E>(
 }
 
 class CheckBoxProjection(
-    val contentModel: SelectorContentModel,
-    val presentationModel: SelectorPresentationModel = SelectorPresentationModel()
+    override val contentModel: SelectorContentModel,
+    override val presentationModel: SelectorPresentationModel = SelectorPresentationModel()
 ) : Projection<SelectorContentModel, SelectorPresentationModel>() {
     @Composable
     fun project(
@@ -465,8 +469,8 @@ class CheckBoxProjection(
 }
 
 class TriStateCheckBoxProjection(
-    val contentModel: TriStateSelectorContentModel,
-    val presentationModel: SelectorPresentationModel = SelectorPresentationModel()
+    override val contentModel: TriStateSelectorContentModel,
+    override val presentationModel: SelectorPresentationModel = SelectorPresentationModel()
 ) : Projection<TriStateSelectorContentModel, SelectorPresentationModel>() {
     @Composable
     fun project(
@@ -503,8 +507,8 @@ class TriStateCheckBoxProjection(
 }
 
 class RadioButtonProjection(
-    val contentModel: SelectorContentModel,
-    val presentationModel: SelectorPresentationModel = SelectorPresentationModel()
+    override val contentModel: SelectorContentModel,
+    override val presentationModel: SelectorPresentationModel = SelectorPresentationModel()
 ) : Projection<SelectorContentModel, SelectorPresentationModel>() {
     @Composable
     fun project(
@@ -541,8 +545,8 @@ class RadioButtonProjection(
 }
 
 class SwitchProjection(
-    val contentModel: SwitchContentModel,
-    val presentationModel: SwitchPresentationModel = SwitchPresentationModel()
+    override val contentModel: SwitchContentModel,
+    override val presentationModel: SwitchPresentationModel = SwitchPresentationModel()
 ) : Projection<SwitchContentModel, SwitchPresentationModel>() {
     @Composable
     fun project(
@@ -579,8 +583,8 @@ class SwitchProjection(
 }
 
 class CircularProgressProjection(
-    val contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
-    val presentationModel: ProgressCircularPresentationModel = ProgressCircularPresentationModel()
+    override val contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
+    override val presentationModel: ProgressCircularPresentationModel = ProgressCircularPresentationModel()
 ) : Projection<ProgressIndeterminateContentModel, ProgressCircularPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier) {
@@ -612,8 +616,8 @@ class CircularProgressProjection(
 }
 
 class IndeterminateLinearProgressProjection(
-    val contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
-    val presentationModel: ProgressLinearPresentationModel = ProgressLinearPresentationModel()
+    override val contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
+    override val presentationModel: ProgressLinearPresentationModel = ProgressLinearPresentationModel()
 ) : Projection<ProgressIndeterminateContentModel, ProgressLinearPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier) {
@@ -645,8 +649,8 @@ class IndeterminateLinearProgressProjection(
 }
 
 class DeterminateLinearProgressProjection(
-    val contentModel: ProgressDeterminateContentModel,
-    val presentationModel: ProgressLinearPresentationModel = ProgressLinearPresentationModel()
+    override val contentModel: ProgressDeterminateContentModel,
+    override val presentationModel: ProgressLinearPresentationModel = ProgressLinearPresentationModel()
 ) : Projection<ProgressDeterminateContentModel, ProgressLinearPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier) {
@@ -678,8 +682,8 @@ class DeterminateLinearProgressProjection(
 }
 
 class IconProjection(
-    val contentModel: IconContentModel,
-    val presentationModel: IconPresentationModel = IconPresentationModel()
+    override val contentModel: IconContentModel,
+    override val presentationModel: IconPresentationModel = IconPresentationModel()
 ) : Projection<IconContentModel, IconPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier) {
@@ -711,8 +715,8 @@ class IconProjection(
 }
 
 class LabelProjection(
-    val contentModel: LabelContentModel,
-    val presentationModel: LabelPresentationModel = LabelPresentationModel()
+    override val contentModel: LabelContentModel,
+    override val presentationModel: LabelPresentationModel = LabelPresentationModel()
 ) : Projection<LabelContentModel, LabelPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier) {
@@ -774,8 +778,8 @@ class LabelProjection(
 }
 
 class VerticalSeparatorProjection(
-    val contentModel: SeparatorContentModel = SeparatorContentModel(),
-    val presentationModel: SeparatorPresentationModel = SeparatorPresentationModel()
+    override val contentModel: SeparatorContentModel = SeparatorContentModel(),
+    override val presentationModel: SeparatorPresentationModel = SeparatorPresentationModel()
 ) : Projection<SeparatorContentModel, SeparatorPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier) {
@@ -807,8 +811,8 @@ class VerticalSeparatorProjection(
 }
 
 class HorizontalSeparatorProjection(
-    val contentModel: SeparatorContentModel = SeparatorContentModel(),
-    val presentationModel: SeparatorPresentationModel = SeparatorPresentationModel()
+    override val contentModel: SeparatorContentModel = SeparatorContentModel(),
+    override val presentationModel: SeparatorPresentationModel = SeparatorPresentationModel()
 ) : Projection<SeparatorContentModel, SeparatorPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier) {
@@ -840,8 +844,8 @@ class HorizontalSeparatorProjection(
 }
 
 class SliderProjection(
-    val contentModel: SliderContentModel,
-    val presentationModel: SliderPresentationModel = SliderPresentationModel()
+    override val contentModel: SliderContentModel,
+    override val presentationModel: SliderPresentationModel = SliderPresentationModel()
 ) : Projection<SliderContentModel, SliderPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier) {
@@ -873,8 +877,8 @@ class SliderProjection(
 }
 
 class TabsProjection(
-    val contentModel: TabsContentModel,
-    val presentationModel: TabsPresentationModel = TabsPresentationModel()
+    override val contentModel: TabsContentModel,
+    override val presentationModel: TabsPresentationModel = TabsPresentationModel()
 ) : Projection<TabsContentModel, TabsPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier, horizontalScrollState: ScrollState = rememberScrollState(0)) {
@@ -908,8 +912,8 @@ class TabsProjection(
 }
 
 class TextFieldValueProjection(
-    val contentModel: TextFieldValueContentModel,
-    val presentationModel: TextFieldPresentationModel = TextFieldPresentationModel()
+    override val contentModel: TextFieldValueContentModel,
+    override val presentationModel: TextFieldPresentationModel = TextFieldPresentationModel()
 ) : Projection<TextFieldValueContentModel, TextFieldPresentationModel>() {
     @Composable
     fun project(
@@ -946,8 +950,8 @@ class TextFieldValueProjection(
 }
 
 class TextFieldStringProjection(
-    val contentModel: TextFieldStringContentModel,
-    val presentationModel: TextFieldPresentationModel = TextFieldPresentationModel()
+    override val contentModel: TextFieldStringContentModel,
+    override val presentationModel: TextFieldPresentationModel = TextFieldPresentationModel()
 ) : Projection<TextFieldStringContentModel, TextFieldPresentationModel>() {
     @Composable
     fun project(
