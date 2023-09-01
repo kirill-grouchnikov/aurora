@@ -128,6 +128,7 @@ class CommandButtonProjection(
 ) : BaseCommandButtonProjection<Command, CommandButtonPresentationModel, CommandButtonProjection>(
     contentModel, presentationModel, secondaryOverlays
 ) {
+    @OptIn(AuroraInternalApi::class)
     @Composable
     fun project(
         modifier: Modifier = Modifier,
@@ -151,6 +152,7 @@ class CommandButtonProjection(
         )
     }
 
+    @OptIn(AuroraInternalApi::class)
     @Composable
     override fun reproject(modifier: Modifier) {
         project(
@@ -162,6 +164,7 @@ class CommandButtonProjection(
         )
     }
 
+    @OptIn(AuroraInternalApi::class)
     @Composable
     override fun reproject(
         modifier: Modifier,

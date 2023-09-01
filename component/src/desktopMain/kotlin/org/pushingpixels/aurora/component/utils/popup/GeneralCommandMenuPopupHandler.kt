@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.AuroraVerticalScrollbar
 import org.pushingpixels.aurora.component.ScrollBarSizingConstants
 import org.pushingpixels.aurora.component.getPreferredCommandPopupMenuPanelSize
@@ -51,7 +52,8 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-internal data class GeneralPopupContentLayoutInfo(
+@AuroraInternalApi
+data class GeneralPopupContentLayoutInfo(
     override val popupSize: Size,
     val fullSize: Size,
     val buttonPanelSize: Size,
@@ -62,7 +64,8 @@ internal data class GeneralPopupContentLayoutInfo(
     val gutterWidth: Float
 ) : BaseCascadingCommandMenuPopupLayoutInfo
 
-internal object GeneralCommandMenuPopupHandler : CascadingCommandMenuHandler<
+@AuroraInternalApi
+object GeneralCommandMenuPopupHandler : CascadingCommandMenuHandler<
         CommandMenuContentModel, CommandPopupMenuPresentationModel, GeneralPopupContentLayoutInfo> {
     override fun getPopupContentLayoutInfo(
         menuContentModel: CommandMenuContentModel,

@@ -64,6 +64,7 @@ import java.awt.GraphicsEnvironment
 import java.text.MessageFormat
 import java.util.*
 import javax.swing.JColorChooser
+import javax.swing.JOptionPane
 import kotlin.system.exitProcess
 
 fun main() = auroraApplication {
@@ -433,6 +434,71 @@ fun main() = auroraApplication {
 
     val applicationMenuCommandButtonProjection = builder.getApplicationMenuCommandButtonProjection()
 
+    val onShowContextualMenuListener = object : OnShowContextualMenuListener {
+        private fun build(ribbon: Ribbon, vararg commands: Command): CommandMenuContentModel {
+            val allCommands: MutableList<Command> = arrayListOf()
+            if (commands.isNotEmpty()) {
+                allCommands.addAll(commands)
+            }
+
+            if (minimizedMode) {
+                allCommands.add(Command(
+                    text = resourceBundle.getString("ContextMenu.showRibbon"),
+                    action = { minimizedMode = false }
+                ))
+            } else {
+                allCommands.add(Command(
+                    text = resourceBundle.getString("ContextMenu.hideRibbon"),
+                    action = { minimizedMode = true }
+                ))
+            }
+            allCommands.add(Command(
+                text = resourceBundle.getString("ContextMenu.configureRibbon"),
+                action = { println("Configure ribbon option selected") }
+            ))
+
+            return CommandMenuContentModel(groups = listOf(CommandGroup(commands = allCommands.toList())))
+        }
+
+        override fun getContextualMenuContentModel(ribbon: Ribbon): CommandMenuContentModel {
+            return build(ribbon)
+        }
+
+        override fun <C : ContentModel, P : PresentationModel> getContextualMenuContentModel(
+            ribbon: Ribbon,
+            componentProjection: Projection<C, P>
+        ): CommandMenuContentModel {
+            TODO("Not yet implemented")
+        }
+
+        override fun getContextualMenuContentModel(
+            ribbon: Ribbon,
+            commandProjection: CommandButtonProjection
+        ): CommandMenuContentModel {
+            TODO("Not yet implemented")
+        }
+
+        override fun getContextualMenuContentModel(
+            ribbon: Ribbon,
+            galleryProjection: RibbonGalleryProjection
+        ): CommandMenuContentModel {
+            val isInTaskbar = ribbon.taskbarElements.find {
+                (it is RibbonTaskbarGalleryProjection) &&
+                        (it.galleryContentModel == galleryProjection.contentModel)
+            } != null
+            val galleryCommand = if (isInTaskbar) {
+                Command(text = resourceBundle.getString("ContextMenu.removeFromTaskbar"),
+                    action = { println("Dummy") }
+                )
+            } else {
+                Command(text = resourceBundle.getString("ContextMenu.addToTaskbar"),
+                    action = { println("Dummy") }
+                )
+            }
+            return build(ribbon, galleryCommand)
+        }
+    }
+
     val ribbon = Ribbon(
         tasks = listOf(pageLayoutTask, writeTask, animationsTask, wrappedTask),
         contextualTaskGroups = contextualTaskGroups,
@@ -440,7 +506,8 @@ fun main() = auroraApplication {
         taskbarKeyTipPolicy = DefaultRibbonTaskbarKeyTipPolicy(),
         anchoredCommands = builder.getAnchoredCommands(),
         applicationMenuCommandButtonProjection = applicationMenuCommandButtonProjection,
-        isMinimized = minimizedMode
+        isMinimized = minimizedMode,
+        onShowContextualMenuListener = onShowContextualMenuListener
     )
 
     val vmf = MessageFormat(resourceBundle.getString("GroupVisibility.text"))

@@ -16,21 +16,25 @@
 package org.pushingpixels.aurora.window
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.awt.awtEventOrNull
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ClipOp
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.Measurable
@@ -48,17 +52,18 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.component.model.Command
-import org.pushingpixels.aurora.component.model.HorizontalAlignment
-import org.pushingpixels.aurora.component.model.LabelContentModel
-import org.pushingpixels.aurora.component.model.LabelPresentationModel
+import org.pushingpixels.aurora.component.contextmenu.auroraContextMenu
+import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.ribbon.Ribbon
 import org.pushingpixels.aurora.component.ribbon.RibbonTask
+import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarGalleryProjection
 import org.pushingpixels.aurora.component.ribbon.impl.RibbonOverlay
 import org.pushingpixels.aurora.component.ribbon.impl.RibbonTaskbar
+import org.pushingpixels.aurora.component.ribbon.impl.getGalleryProjectionUnder
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
+import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
@@ -599,7 +604,7 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
     val ribbonSelectedButtonSize = remember { mutableStateOf(IntSize(0, 0)) }
 
     Box(Modifier.fillMaxSize()) {
-        Column(Modifier.fillMaxSize().auroraBackground()) {
+        Column(Modifier.fillMaxSize().auroraBackground().ribbonContextMenu(ribbon)) {
             RibbonWindowTitlePane(
                 title, icon, iconFilterStrategy, ribbon, contextualTaskGroupSpans,
                 windowTitlePaneConfiguration
@@ -608,7 +613,10 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
             AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
                 Column(Modifier.fillMaxWidth().auroraBackground()) {
                     RibbonPrimaryBar(
-                        modifier = Modifier.ribbonElementLocator(ribbonPrimaryBarTopLeftOffset, ribbonPrimaryBarSize),
+                        modifier = Modifier.ribbonElementLocator(
+                            ribbonPrimaryBarTopLeftOffset,
+                            ribbonPrimaryBarSize
+                        ),
                         ribbon = ribbon,
                         onContextualTaskGroupSpansUpdated = {
                             if (!areSpansSame(contextualTaskGroupSpans, it)) {
@@ -635,17 +643,18 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
                     Spacer(modifier = Modifier.fillMaxWidth().height(1.dp))
                 }
             }
-
             // Wrap the entire content in NONE decoration area. App code can set its
             // own decoration area types on specific parts.
             AuroraDecorationArea(decorationAreaType = DecorationAreaType.None) {
                 content()
             }
         }
+
         RibbonOverlay(Modifier.fillMaxSize(), DecoratedBorderThickness)
     }
 
     val density = LocalDensity.current
+
     // This needs to use rememberUpdatedState. Otherwise switching locale to RTL will
     // not properly propagate in here.
     val layoutDirection by rememberUpdatedState(LocalLayoutDirection.current)
@@ -768,9 +777,9 @@ fun AuroraWindowScope.AuroraRibbonWindowContent(
                     SwingUtilities.convertPointFromScreen(eventLocation, originator)
 
                     val showingFromHere = AuroraPopupManager.isShowingPopupFrom(
-                            originator = originator,
-                            pointInOriginator = Offset(eventLocation.x.toFloat(), eventLocation.y.toFloat())
-                        )
+                        originator = originator,
+                        pointInOriginator = Offset(eventLocation.x.toFloat(), eventLocation.y.toFloat())
+                    )
                     if (!showingFromHere) {
                         // Mouse press on an area that doesn't have any popups originating in it.
                         // Hide popups.
@@ -912,6 +921,113 @@ private fun Modifier.ribbonElementLocator(topLeftOffset: RibbonOffset, size: Mut
     this.then(
         RibbonTaskLocator(topLeftOffset, size)
     )
+
+@OptIn(AuroraInternalApi::class)
+@Composable
+private fun Modifier.ribbonContextMenu(ribbon: Ribbon): Modifier {
+    if (ribbon.onShowContextualMenuListener == null) {
+        return this
+    }
+
+    val density = LocalDensity.current
+    // This needs to use rememberUpdatedState. Otherwise switching locale to RTL will
+    // not properly propagate in here.
+    val layoutDirection by rememberUpdatedState(LocalLayoutDirection.current)
+    val mergedTextStyle = LocalTextStyle.current
+    val fontFamilyResolver = LocalFontFamilyResolver.current
+    val skinColors = AuroraSkin.colors
+    val painters = AuroraSkin.painters
+    val decorationAreaType = AuroraSkin.decorationAreaType
+    val popupOriginator = LocalPopupMenu.current ?: LocalWindow.current.rootPane
+    val compositionLocalContext by rememberUpdatedState(currentCompositionLocalContext)
+
+    val resolvedTextStyle = remember { resolveDefaults(mergedTextStyle, layoutDirection) }
+
+    val coroutineScope = rememberCoroutineScope()
+
+    val contentModel = remember {
+        mutableStateOf(CommandMenuContentModel(
+            groups = listOf(
+                CommandGroup(
+                    commands = listOf(
+                        Command(text = "",
+                            action = {})
+                    )
+                ),
+            )
+        ))
+    }
+
+    return this.then(Modifier.pointerInput(Unit) {
+        while (true) {
+            val lastMouseEvent = awaitPointerEventScope { awaitPointerEvent() }.awtEventOrNull
+
+            if (lastMouseEvent?.isPopupTrigger == true) {
+                // AWT event coordinates are in scaled pixels (equivalent to Dp in Compose).
+                // Convert them to the underlying pixels using the density factor.
+                val eventX = lastMouseEvent.x * density.density
+                val eventY = lastMouseEvent.y * density.density
+
+                println("Testing ${lastMouseEvent.x}x${lastMouseEvent.y} -> ${eventX}x${eventY} in $popupOriginator")
+
+                val ribbonGallery = getGalleryProjectionUnder(eventX, eventY)
+                if (ribbonGallery != null) {
+                    contentModel.apply {
+                        value = ribbon.onShowContextualMenuListener!!.getContextualMenuContentModel(
+                            ribbon = ribbon,
+                            galleryProjection = ribbonGallery
+                        )
+                    }
+                } else {
+                    contentModel.apply {
+                        value = ribbon.onShowContextualMenuListener!!.getContextualMenuContentModel(
+                            ribbon = ribbon,
+                        )
+                    }
+                }
+                val popupWindow = GeneralCommandMenuPopupHandler.showPopupContent(
+                    popupOriginator = popupOriginator,
+                    layoutDirection = layoutDirection,
+                    density = density,
+                    textStyle = resolvedTextStyle,
+                    fontFamilyResolver = fontFamilyResolver,
+                    skinColors = skinColors,
+                    colorSchemeBundle = null,
+                    skinPainters = painters,
+                    decorationAreaType = decorationAreaType,
+                    compositionLocalContext = compositionLocalContext,
+                    anchorBoundsInWindow = Rect(
+                        offset = Offset(
+                            x = lastMouseEvent.x.toFloat(),
+                            y = lastMouseEvent.y.toFloat()
+                        ),
+                        size = Size.Zero
+                    ),
+                    popupTriggerAreaInWindow = Rect.Zero,
+                    contentModel = contentModel,
+                    presentationModel = CommandPopupMenuPresentationModel(
+                        popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
+                        toDismissOnCommandActivation = true
+                    ),
+                    displayPrototypeCommand = null,
+                    toDismissPopupsOnActivation = true,
+                    popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
+                    popupAnchorBoundsProvider = null,
+                    overlays = emptyMap(),
+                    popupKind = AuroraPopupManager.PopupKind.Popup
+                )
+                coroutineScope.launch {
+                    popupWindow?.opacity = 1.0f
+                }
+            }
+        }
+    })
+//
+//
+//    this.then(Modifier.auroraContextMenu(enabled = true,
+//        contentModel = CommandMenuContentModel()
+//    ))
+}
 
 private val TaskbarWidthMaxRatio = 0.25f
 private val TaskbarContentPadding = PaddingValues(horizontal = 6.dp)

@@ -29,33 +29,54 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.ContentModel
 import org.pushingpixels.aurora.component.model.PresentationModel
 import org.pushingpixels.aurora.component.projection.Projection
+import org.pushingpixels.aurora.component.ribbon.RibbonGalleryProjection
 import org.pushingpixels.aurora.component.utils.AuroraRect
+import org.pushingpixels.aurora.component.utils.contains
 
 internal object BoundsTracker {
     private val bounds: MutableMap<Projection<ContentModel, PresentationModel>, AuroraRect> = hashMapOf()
 
     fun trackBounds(projection: Projection<ContentModel, PresentationModel>, rect: AuroraRect) {
         bounds[projection] = rect
-        println("Added tracking, total ${bounds.size}")
+//        if (projection is RibbonGalleryProjection) {
+//            println("Gallery at $rect")
+//        }
+        //println("Added tracking, total ${bounds.size}")
     }
 
     fun untrackBounds(projection: Projection<ContentModel, PresentationModel>) {
         bounds.remove(projection)
-        println("Removed tracking, total ${bounds.size}")
+        //println("Removed tracking, total ${bounds.size}")
     }
 
     internal fun getBounds(): MutableMap<Projection<ContentModel, PresentationModel>, AuroraRect> = bounds
 }
 
 @AuroraInternalApi
+fun getGalleryProjectionUnder(x: Float, y: Float) : RibbonGalleryProjection? {
+    for (tracked in BoundsTracker.getBounds().entries) {
+        if (tracked.key is RibbonGalleryProjection) {
+            if (tracked.value.contains(x, y)) {
+                return tracked.key as RibbonGalleryProjection
+            }
+        }
+    }
+    return null
+}
+
+@AuroraInternalApi
 @Composable
 fun RibbonOverlay(modifier: Modifier, insets: Dp) {
     Canvas(modifier = modifier) {
-        for (tracked in BoundsTracker.getBounds().values) {
+        for (tracked in BoundsTracker.getBounds().entries) {
+            val color = when (tracked.key) {
+                is RibbonGalleryProjection -> Color.Blue
+                else -> Color.Red
+            }
             drawRect(
-                color = Color.Red,
-                topLeft = Offset(tracked.x - insets.toPx(), tracked.y - insets.toPx()),
-                size = Size(tracked.width, tracked.height),
+                color = color,
+                topLeft = Offset(tracked.value.x - insets.toPx(), tracked.value.y - insets.toPx()),
+                size = Size(tracked.value.width, tracked.value.height),
                 style = Stroke(width=1.0f, cap= StrokeCap.Butt, join= StrokeJoin.Round)
             )
         }
