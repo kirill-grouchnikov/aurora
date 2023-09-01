@@ -79,6 +79,18 @@ fun getComponentProjectionUnder(x: Float, y: Float) : Projection<*, *>? {
 }
 
 @AuroraInternalApi
+fun getCommandButtonProjectionUnder(x: Float, y: Float) : BaseCommandButtonProjection<*, *, *>? {
+    for (tracked in BoundsTracker.getBounds().entries) {
+        if (tracked.key is BaseCommandButtonProjection<*, *, *>) {
+            if (tracked.value.contains(x, y)) {
+                return tracked.key as BaseCommandButtonProjection<*, *, *>
+            }
+        }
+    }
+    return null
+}
+
+@AuroraInternalApi
 @Composable
 fun RibbonOverlay(modifier: Modifier, insets: Dp) {
     Canvas(modifier = modifier) {

@@ -382,48 +382,43 @@ fun main() = auroraApplication {
         )
     )
 
-    val taskbarElements: MutableList<RibbonTaskbarElement> = mutableStateListOf()
-    taskbarElements.add(
-        RibbonTaskbarCommandProjection(
-            CommandButtonProjection(
-                contentModel = builder.pasteCommand,
-                presentationModel = CommandButtonPresentationModel()
+    val taskbarElements: MutableList<RibbonTaskbarElement> = remember {
+        mutableStateListOf(
+            RibbonTaskbarCommandProjection(
+                CommandButtonProjection(
+                    contentModel = builder.pasteCommand,
+                    presentationModel = CommandButtonPresentationModel()
+                )
+            ),
+            RibbonTaskbarCommandProjection(
+                CommandButtonProjection(
+                    contentModel = Command(
+                        text = "",
+                        icon = edit_clear(),
+                        action = { println("Taskbar Clear activated") },
+                        isActionEnabled = false
+                    ),
+                    presentationModel = CommandButtonPresentationModel()
+                )
+            ),
+            RibbonTaskbarComponentProjection(
+                ComboBoxProjection(
+                    contentModel = fontFamilyComboBoxContentModel,
+                    presentationModel = ComboBoxPresentationModel(displayConverter = { it.name }),
+                )
+            ),
+            // Add the same gallery we have in the first ribbon task to the taskbar, configuring
+            // its popup presentation with a 4x2 grid of slightly smaller buttons (instead of a 3x3
+            // grid of slightly larger ones in the in-task gallery popup).
+            // Content preview and selection is controlled by the same model and is kept in sync
+            // along all usages of the gallery content model in our ribbon.
+            RibbonTaskbarGalleryProjection(
+                galleryContentModel = styleGalleryContentModel,
+                galleryMetaPresentationModel = styleGalleryTaskbarMetaPresentationModel,
+                galleryInlineState = ribbonState.documentStyleGalleryInlineState
             )
         )
-    )
-    taskbarElements.add(
-        RibbonTaskbarCommandProjection(
-            CommandButtonProjection(
-                contentModel = Command(
-                    text = "",
-                    icon = edit_clear(),
-                    action = { println("Taskbar Clear activated") },
-                    isActionEnabled = false
-                ),
-                presentationModel = CommandButtonPresentationModel()
-            )
-        )
-    )
-    taskbarElements.add(
-        RibbonTaskbarComponentProjection(
-            ComboBoxProjection(
-                contentModel = fontFamilyComboBoxContentModel,
-                presentationModel = ComboBoxPresentationModel(displayConverter = { it.name }),
-            )
-        )
-    )
-    // Add the same gallery we have in the first ribbon task to the taskbar, configuring
-    // its popup presentation with a 4x2 grid of slightly smaller buttons (instead of a 3x3
-    // grid of slightly larger ones in the in-task gallery popup).
-    // Content preview and selection is controlled by the same model and is kept in sync
-    // along all usages of the gallery content model in our ribbon.
-    taskbarElements.add(
-        RibbonTaskbarGalleryProjection(
-            galleryContentModel = styleGalleryContentModel,
-            galleryMetaPresentationModel = styleGalleryTaskbarMetaPresentationModel,
-            galleryInlineState = ribbonState.documentStyleGalleryInlineState
-        )
-    )
+    }
 
     var minimizedMode by remember { mutableStateOf(false) }
     var contextualTaskGroup1Visible by remember { mutableStateOf(false) }
@@ -513,9 +508,29 @@ fun main() = auroraApplication {
 
         override fun getContextualMenuContentModel(
             ribbon: Ribbon,
-            commandProjection: CommandButtonProjection
+            commandProjection: BaseCommandButtonProjection<*, *, *>
         ): CommandMenuContentModel {
-            TODO("Not yet implemented")
+            val isInTaskbar = ribbon.taskbarElements.find {
+                (it is RibbonTaskbarCommandProjection) &&
+                        (it.commandProjection.contentModel == commandProjection.contentModel)
+            } != null
+            val buttonCommand = if (isInTaskbar) {
+                Command(text = resourceBundle.getString("ContextMenu.removeFromTaskbar"),
+                    action = {
+                        taskbarElements.removeIf {
+                            (it is RibbonTaskbarCommandProjection) &&
+                                    (it.commandProjection.contentModel == commandProjection.contentModel)
+                        }
+                    }
+                )
+            } else {
+                Command(text = resourceBundle.getString("ContextMenu.addToTaskbar"),
+                    action = {
+                        taskbarElements.add(RibbonTaskbarCommandProjection(commandProjection))
+                    }
+                )
+            }
+            return build(ribbon, buttonCommand)
         }
 
         override fun getContextualMenuContentModel(

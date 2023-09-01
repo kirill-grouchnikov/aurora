@@ -58,10 +58,7 @@ import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.ribbon.Ribbon
 import org.pushingpixels.aurora.component.ribbon.RibbonTask
 import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarGalleryProjection
-import org.pushingpixels.aurora.component.ribbon.impl.RibbonOverlay
-import org.pushingpixels.aurora.component.ribbon.impl.RibbonTaskbar
-import org.pushingpixels.aurora.component.ribbon.impl.getComponentProjectionUnder
-import org.pushingpixels.aurora.component.ribbon.impl.getGalleryProjectionUnder
+import org.pushingpixels.aurora.component.ribbon.impl.*
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
@@ -611,6 +608,8 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
                 windowTitlePaneConfiguration
             )
 
+            println("Ribbon taskbar with ${ribbon.taskbarElements.size} elements")
+
             AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
                 Column(Modifier.fillMaxWidth().auroraBackground()) {
                     RibbonPrimaryBar(
@@ -989,10 +988,20 @@ private fun Modifier.ribbonContextMenu(ribbon: Ribbon): Modifier {
                             )
                         }
                     } else {
-                        contentModel.apply {
-                            value = ribbon.onShowContextualMenuListener!!.getContextualMenuContentModel(
-                                ribbon = ribbon,
-                            )
+                        val ribbonCommandButton = getCommandButtonProjectionUnder(eventX, eventY)
+                        if (ribbonCommandButton != null) {
+                            contentModel.apply {
+                                value = ribbon.onShowContextualMenuListener!!.getContextualMenuContentModel(
+                                    ribbon = ribbon,
+                                    commandProjection = ribbonCommandButton
+                                )
+                            }
+                        } else {
+                            contentModel.apply {
+                                value = ribbon.onShowContextualMenuListener!!.getContextualMenuContentModel(
+                                    ribbon = ribbon,
+                                )
+                            }
                         }
                     }
                 }

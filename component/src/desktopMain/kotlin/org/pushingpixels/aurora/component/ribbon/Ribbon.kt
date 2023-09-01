@@ -193,7 +193,7 @@ interface OnShowContextualMenuListener {
 
     fun getContextualMenuContentModel(
         ribbon: Ribbon,
-        commandProjection: CommandButtonProjection
+        commandProjection: BaseCommandButtonProjection<*, *, *>
     ): CommandMenuContentModel
 
     fun getContextualMenuContentModel(ribbon: Ribbon): CommandMenuContentModel
