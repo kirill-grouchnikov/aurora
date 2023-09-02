@@ -38,11 +38,11 @@ import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.Projection
-import org.pushingpixels.aurora.component.ribbon.InRibbonGalleryPresentationModel
 import org.pushingpixels.aurora.component.ribbon.RibbonBandCommandButtonPresentationStates.BigFixed
 import org.pushingpixels.aurora.component.ribbon.RibbonBandCommandButtonPresentationStates.BigFixedLandscape
 import org.pushingpixels.aurora.component.ribbon.RibbonGalleryContentModel
 import org.pushingpixels.aurora.component.ribbon.RibbonGalleryInlineState
+import org.pushingpixels.aurora.component.ribbon.RibbonGalleryMetaPresentationModel
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.component.utils.ArrowSizingConstants.DefaultDoubleArrowWidth
 import org.pushingpixels.aurora.theming.*
@@ -52,12 +52,12 @@ import kotlin.math.roundToInt
 @Composable
 internal fun ribbonGalleryIntrinsicWidth(
     contentModel: RibbonGalleryContentModel,
-    presentationModel: InRibbonGalleryPresentationModel,
+    presentationModel: RibbonGalleryMetaPresentationModel,
+    visibleCount: Int,
     height: Int
 ): Int {
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
-    val visibleCount = presentationModel.collapsedVisibleCount
 
     val heightForButtons = height - ((presentationModel.contentPadding.calculateTopPadding() +
             presentationModel.contentPadding.calculateBottomPadding()).value * density.density).toInt()
@@ -93,9 +93,9 @@ internal fun ribbonGalleryIntrinsicWidth(
 @Composable
 internal fun RibbonGallery(
     modifier: Modifier,
-    originalProjection: Projection<RibbonGalleryContentModel, InRibbonGalleryPresentationModel>,
+    originalProjection: Projection<RibbonGalleryContentModel, RibbonGalleryMetaPresentationModel>,
     contentModel: RibbonGalleryContentModel,
-    presentationModel: InRibbonGalleryPresentationModel,
+    presentationModel: RibbonGalleryMetaPresentationModel,
     inlineState: RibbonGalleryInlineState
 ) {
     val density = LocalDensity.current
@@ -439,7 +439,7 @@ internal fun RibbonGallery(
 }
 
 private class GalleryLocator(
-    val projection: Projection<RibbonGalleryContentModel, InRibbonGalleryPresentationModel>,
+    val projection: Projection<RibbonGalleryContentModel, RibbonGalleryMetaPresentationModel>,
     val topLeftOffset: AuroraOffset,
     val size: MutableState<IntSize>
 ) :
@@ -467,10 +467,7 @@ private class GalleryLocator(
 
 @Composable
 private fun Modifier.galleryLocator(
-    projection: Projection<RibbonGalleryContentModel, InRibbonGalleryPresentationModel>,
+    projection: Projection<RibbonGalleryContentModel, RibbonGalleryMetaPresentationModel>,
     topLeftOffset: AuroraOffset,
     size: MutableState<IntSize>
-) =
-    this.then(
-        GalleryLocator(projection, topLeftOffset, size)
-    )
+) = this.then(GalleryLocator(projection, topLeftOffset, size))

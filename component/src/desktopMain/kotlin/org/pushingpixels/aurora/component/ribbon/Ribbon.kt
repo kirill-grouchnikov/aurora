@@ -45,7 +45,7 @@ enum class PresentationPriority {
     Low
 }
 
-infix fun <C : BaseCommand, P : BaseCommandButtonPresentationModel, CBP: BaseCommandButtonProjection<C, P, CBP>> BaseCommandButtonProjection<C, P, CBP>.at(
+infix fun <C : BaseCommand, P : BaseCommandButtonPresentationModel, CBP : BaseCommandButtonProjection<C, P, CBP>> BaseCommandButtonProjection<C, P, CBP>.at(
     that: PresentationPriority
 ): Pair<BaseCommandButtonProjection<C, P, CBP>, PresentationPriority> = Pair(this, that)
 
@@ -68,18 +68,6 @@ object RibbonGallerySizingConstants {
     val DefaultContentLayoutGap: Dp = 4.dp
 }
 
-data class InRibbonGalleryPresentationModel(
-    val collapsedVisibleCount: Int,
-    val commandButtonPresentationState: CommandButtonPresentationState,
-    val commandButtonTextOverflow: TextOverflow = TextOverflow.Clip,
-    val commandPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
-    val commandSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize,
-    val contentPadding: PaddingValues = RibbonGallerySizingConstants.DefaultContentPadding,
-    val layoutGap: Dp = RibbonGallerySizingConstants.DefaultContentLayoutGap,
-    val expandKeyTip: String? = null,
-    val popupLayoutSpec: MenuPopupPanelLayoutSpec,
-) : PresentationModel
-
 data class RibbonGalleryMetaPresentationModel(
     val commandButtonPresentationState: CommandButtonPresentationState,
     val commandButtonTextOverflow: TextOverflow = TextOverflow.Clip,
@@ -89,6 +77,9 @@ data class RibbonGalleryMetaPresentationModel(
     val layoutGap: Dp = RibbonGallerySizingConstants.DefaultContentLayoutGap,
     val expandKeyTip: String? = null,
     val popupLayoutSpec: MenuPopupPanelLayoutSpec,
+    val collapsedVisibleCountLow: Int,
+    val collapsedVisibleCountMedium: Int,
+    val collapsedVisibleCountTop: Int,
 ) : PresentationModel
 
 class RibbonGalleryInlineState(
@@ -139,14 +130,12 @@ class RibbonGalleryInlineState(
 
 class RibbonGalleryProjection(
     override val contentModel: RibbonGalleryContentModel,
-    override val presentationModel: InRibbonGalleryPresentationModel,
-    val secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null
-) : Projection<RibbonGalleryContentModel, InRibbonGalleryPresentationModel>() {
+    override val presentationModel: RibbonGalleryMetaPresentationModel,
+    val secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null,
+    val inlineState: RibbonGalleryInlineState
+) : Projection<RibbonGalleryContentModel, RibbonGalleryMetaPresentationModel>() {
     @Composable
-    fun project(
-        modifier: Modifier = Modifier,
-        inlineState: RibbonGalleryInlineState
-    ) {
+    fun project(modifier: Modifier = Modifier) {
         require(
             (presentationModel.commandButtonPresentationState == CommandButtonPresentationState.Small) ||
                     (presentationModel.commandButtonPresentationState == RibbonBandCommandButtonPresentationStates.BigFixed) ||
@@ -171,7 +160,10 @@ class RibbonGalleryProjection(
 
     @Composable
     override fun intrinsicWidth(height: Int): Int {
-        return ribbonGalleryIntrinsicWidth(this.contentModel, this.presentationModel, height)
+        return ribbonGalleryIntrinsicWidth(
+            this.contentModel, this.presentationModel, this.inlineState.visibleCount,
+            height
+        )
     }
 
     @Composable
@@ -179,6 +171,9 @@ class RibbonGalleryProjection(
         error("In-ribbon gallery height is fixed by its band container")
     }
 }
+
+infix fun RibbonGalleryProjection.at(that: PresentationPriority):
+        Pair<RibbonGalleryProjection, PresentationPriority> = Pair(this, that)
 
 interface OnShowContextualMenuListener {
     fun getContextualMenuContentModel(

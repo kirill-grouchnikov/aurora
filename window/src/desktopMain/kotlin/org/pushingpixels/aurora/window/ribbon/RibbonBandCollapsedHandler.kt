@@ -54,6 +54,7 @@ internal data class RibbonBandCollapsedCommand(
     override val isActionToggleSelected = false
     override val actionRichTooltip = null
     override val onTriggerActionToggleSelectedChange = null
+    override val tag = null
 }
 
 internal data class RibbonBandCollapsedMenuContentModel(

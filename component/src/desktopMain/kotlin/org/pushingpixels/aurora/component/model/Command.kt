@@ -53,6 +53,7 @@ interface BaseCommand: ContentModel {
     val secondaryContentModel: BaseCommandMenuContentModel?
     val isSecondaryEnabled: Boolean
     val secondaryRichTooltip: RichTooltip?
+    val tag: Any?
 }
 
 data class Command(
@@ -68,7 +69,8 @@ data class Command(
     override val onTriggerActionToggleSelectedChange: ((Boolean) -> Unit)? = null,
     override val secondaryContentModel: CommandMenuContentModel? = null,
     override val isSecondaryEnabled: Boolean = true,
-    override val secondaryRichTooltip: RichTooltip? = null
+    override val secondaryRichTooltip: RichTooltip? = null,
+    override val tag: Any? = null,
 ) : BaseCommand
 
 data class CommandGroup(

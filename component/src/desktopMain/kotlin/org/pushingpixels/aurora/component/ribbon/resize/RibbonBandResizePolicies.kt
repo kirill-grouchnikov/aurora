@@ -146,24 +146,18 @@ object CoreRibbonResizePolicies {
         var result = 0
 
         // Start with galleries
-        for (gallery in group.galleries) {
+        for (galleryProjections in group.galleries) {
+            val collapsedVisibleCount = when (mapping.invoke(galleryProjections.second)) {
+                PresentationPriority.Low -> galleryProjections.first.presentationModel.collapsedVisibleCountLow
+                PresentationPriority.Medium -> galleryProjections.first.presentationModel.collapsedVisibleCountMedium
+                PresentationPriority.Top -> galleryProjections.first.presentationModel.collapsedVisibleCountTop
+            }
             result += RibbonGalleryProjection(
-                contentModel = gallery.contentModel,
-                presentationModel = InRibbonGalleryPresentationModel(
-                    collapsedVisibleCount = when (mapping.invoke(gallery.presentationPriority)) {
-                        PresentationPriority.Low -> gallery.collapsedVisibleCountLow
-                        PresentationPriority.Medium -> gallery.collapsedVisibleCountMedium
-                        PresentationPriority.Top -> gallery.collapsedVisibleCountTop
-                    },
-                    commandButtonPresentationState = gallery.presentationModel.commandButtonPresentationState,
-                    commandButtonTextOverflow = gallery.presentationModel.commandButtonTextOverflow,
-                    commandPopupFireTrigger = gallery.presentationModel.commandPopupFireTrigger,
-                    commandSelectedStateHighlight = gallery.presentationModel.commandSelectedStateHighlight,
-                    contentPadding = gallery.presentationModel.contentPadding,
-                    layoutGap = gallery.presentationModel.layoutGap,
-                    expandKeyTip = gallery.presentationModel.expandKeyTip,
-                    popupLayoutSpec = gallery.presentationModel.popupLayoutSpec
-                )
+                contentModel = galleryProjections.first.contentModel,
+                presentationModel = galleryProjections.first.presentationModel,
+                inlineState = galleryProjections.first.inlineState.apply {
+                    visibleCount = collapsedVisibleCount
+                }
             ).intrinsicWidth(bandContentHeight - 2 * gap)
         }
         if (group.galleries.isNotEmpty()) {

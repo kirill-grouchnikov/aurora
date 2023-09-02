@@ -115,7 +115,8 @@ data class ColorSelectorCommand(
     override val icon: Painter? = null,
     override val secondaryContentModel: ColorSelectorMenuContentModel,
     override val isSecondaryEnabled: Boolean = true,
-    override val secondaryRichTooltip: RichTooltip? = null
+    override val secondaryRichTooltip: RichTooltip? = null,
+    override val tag: Any? = null,
 ) : BaseCommand {
     override val action = null
     override val actionPreview = null

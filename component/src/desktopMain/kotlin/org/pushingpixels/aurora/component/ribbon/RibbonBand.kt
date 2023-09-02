@@ -46,20 +46,9 @@ data class RibbonBandComponentGroup(
     val componentProjections: List<RibbonMetaComponentProjection<ContentModel, PresentationModel>> = emptyList(),
 ): RibbonBandGroup
 
-data class RibbonBandGallery(
-    val contentModel: RibbonGalleryContentModel,
-    val presentationModel: RibbonGalleryMetaPresentationModel,
-    val secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null,
-    val presentationPriority: PresentationPriority,
-    val collapsedVisibleCountLow: Int,
-    val collapsedVisibleCountMedium: Int,
-    val collapsedVisibleCountTop: Int,
-    val inlineState: RibbonGalleryInlineState
-)
-
 data class RibbonBandCommandGroup(
     val commandProjections: List<Pair<BaseCommandButtonProjection<*, *, *>, PresentationPriority>> = emptyList(),
-    val galleries: List<RibbonBandGallery> = emptyList(),
+    val galleries: List<Pair<RibbonGalleryProjection, PresentationPriority>> = emptyList()
 ): RibbonBandGroup
 
 data class RibbonBand(

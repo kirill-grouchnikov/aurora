@@ -361,35 +361,19 @@ private fun RibbonBandCommandGroupContent(
 ) {
     Row(modifier = Modifier.fillMaxHeight().padding(all = RibbonBandContentGap)) {
         // Display galleries first
-        for (gallery in group.galleries) {
-            val mappedPriority = bandResizePolicy.mapping.invoke(gallery.presentationPriority)
+        for (galleryProjection in group.galleries) {
+            val mappedPriority = bandResizePolicy.mapping.invoke(galleryProjection.second)
             val visibleCount = when (mappedPriority) {
-                PresentationPriority.Low -> gallery.collapsedVisibleCountLow
-                PresentationPriority.Medium -> gallery.collapsedVisibleCountMedium
-                PresentationPriority.Top -> gallery.collapsedVisibleCountTop
+                PresentationPriority.Low -> galleryProjection.first.presentationModel.collapsedVisibleCountLow
+                PresentationPriority.Medium -> galleryProjection.first.presentationModel.collapsedVisibleCountMedium
+                PresentationPriority.Top -> galleryProjection.first.presentationModel.collapsedVisibleCountTop
             }
-            gallery.inlineState.presentationPriority = mappedPriority
-            gallery.inlineState.visibleCount = visibleCount
-            RibbonGalleryProjection(
-                contentModel = gallery.contentModel,
-                presentationModel = InRibbonGalleryPresentationModel(
-                    collapsedVisibleCount = visibleCount,
-                    commandButtonPresentationState = gallery.presentationModel.commandButtonPresentationState,
-                    commandButtonTextOverflow = gallery.presentationModel.commandButtonTextOverflow,
-                    commandPopupFireTrigger = gallery.presentationModel.commandPopupFireTrigger,
-                    commandSelectedStateHighlight = gallery.presentationModel.commandSelectedStateHighlight,
-                    contentPadding = gallery.presentationModel.contentPadding,
-                    layoutGap = gallery.presentationModel.layoutGap,
-                    expandKeyTip = gallery.presentationModel.expandKeyTip,
-                    popupLayoutSpec = gallery.presentationModel.popupLayoutSpec
-                ),
-                secondaryOverlays = gallery.secondaryOverlays
-            ).project(inlineState = gallery.inlineState)
+            galleryProjection.first.inlineState.presentationPriority = mappedPriority
+            galleryProjection.first.inlineState.visibleCount = visibleCount
+            galleryProjection.first.project()
         }
-        // And command buttons second
 
-        // TODO - this will be a combination of presentation priority, available horizontal space
-        // and ribbon band resize policies
+        // And command buttons second
         val buttonsBig: MutableList<BaseCommandButtonProjection<*, *, *>> = arrayListOf()
         val buttonsMedium: MutableList<BaseCommandButtonProjection<*, *, *>> = arrayListOf()
         val buttonsSmall: MutableList<BaseCommandButtonProjection<*, *, *>> = arrayListOf()

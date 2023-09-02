@@ -119,7 +119,10 @@ fun main() = auroraApplication {
         ),
         commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixedLandscape,
         commandButtonTextOverflow = TextOverflow.Ellipsis,
-        expandKeyTip = "L"
+        expandKeyTip = "L",
+        collapsedVisibleCountLow = 1,
+        collapsedVisibleCountMedium = 2,
+        collapsedVisibleCountTop = 2
     )
     ribbonState.documentStyleGalleryInlineState = remember {
         RibbonGalleryInlineState(
@@ -128,9 +131,18 @@ fun main() = auroraApplication {
         )
     }
 
+    val styleGalleryInlineProjection = RibbonGalleryProjection(
+        contentModel = styleGalleryContentModel,
+        presentationModel = styleGalleryInlineMetaPresentationModel,
+        inlineState = ribbonState.documentStyleGalleryInlineState
+    )
+
     val styleGalleryTaskbarMetaPresentationModel = RibbonGalleryMetaPresentationModel(
         popupLayoutSpec = MenuPopupPanelLayoutSpec(columnCount = 4, visibleRowCount = 2),
-        commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixed
+        commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixed,
+        collapsedVisibleCountLow = styleGalleryInlineMetaPresentationModel.collapsedVisibleCountLow,
+        collapsedVisibleCountMedium = styleGalleryInlineMetaPresentationModel.collapsedVisibleCountMedium,
+        collapsedVisibleCountTop = styleGalleryInlineMetaPresentationModel.collapsedVisibleCountTop
     )
 
     var ribbonColorData by remember {
@@ -145,8 +157,7 @@ fun main() = auroraApplication {
 
     val clipboardBand = builder.getClipboardBand()
     val quickStylesBand = builder.getQuickStylesBand(
-        styleGalleryContentModel = styleGalleryContentModel,
-        stylesInlinePresentationModel = styleGalleryInlineMetaPresentationModel,
+        styleGalleryProjection = styleGalleryInlineProjection,
         onColorActivated = {
             ribbonColorData = ribbonColorData.copy(
                 isInPreview = false,
@@ -1134,8 +1145,7 @@ internal class RibbonBuilder(
 
     @Composable
     fun getQuickStylesBand(
-        styleGalleryContentModel: RibbonGalleryContentModel,
-        stylesInlinePresentationModel: RibbonGalleryMetaPresentationModel,
+        styleGalleryProjection: RibbonGalleryProjection,
         onColorActivated: (Color) -> Unit,
         onColorPreviewActivated: (Color) -> Unit,
         onColorPreviewCanceled: (Color) -> Unit
@@ -1257,15 +1267,7 @@ internal class RibbonBuilder(
                         ) at PresentationPriority.Medium
                     ),
                     galleries = listOf(
-                        RibbonBandGallery(
-                            contentModel = styleGalleryContentModel,
-                            presentationModel = stylesInlinePresentationModel,
-                            presentationPriority = PresentationPriority.Top,
-                            collapsedVisibleCountLow = 1,
-                            collapsedVisibleCountMedium = 2,
-                            collapsedVisibleCountTop = 2,
-                            inlineState = ribbonState.documentStyleGalleryInlineState
-                        )
+                        styleGalleryProjection at PresentationPriority.Top
                     )
                 )
             )

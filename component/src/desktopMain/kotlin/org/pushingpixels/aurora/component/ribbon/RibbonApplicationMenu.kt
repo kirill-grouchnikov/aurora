@@ -58,6 +58,7 @@ data class RibbonApplicationMenuCommand(
     override val actionRichTooltip = null
     override val onTriggerActionToggleSelectedChange = null
     override val isSecondaryEnabled = true
+    override val tag = null
 }
 
 object RibbonApplicationMenuButtonPresentationStates {

@@ -53,6 +53,7 @@ data class CustomCommand(
     override val isActionToggleSelected = false
     override val actionRichTooltip = null
     override val onTriggerActionToggleSelectedChange = null
+    override val tag = null
 }
 
 data class CustomMenuContentModel(

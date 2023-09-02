@@ -58,6 +58,7 @@ data class CustomComplexCommand(
     override val isActionToggleSelected = false
     override val actionRichTooltip = null
     override val onTriggerActionToggleSelectedChange = null
+    override val tag = null
 }
 
 sealed interface CustomComplexPopupMenuEntry

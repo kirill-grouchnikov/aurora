@@ -62,6 +62,7 @@ private data class TaskbarExpandCommand(
     override val isActionToggleSelected = false
     override val actionRichTooltip = null
     override val onTriggerActionToggleSelectedChange = null
+    override val tag = null
 }
 
 private data class TaskbarExpandMenuContentModel(
@@ -407,6 +408,7 @@ private fun TaskbarContent(elements: List<RibbonTaskbarElement>) {
                         groups = galleryContentModel.extraPopupGroups
                     ),
                     isSecondaryEnabled = true,
+                    tag = element.galleryContentModel
                 )
                 CommandButtonProjection(
                     contentModel = galleryCommand,
