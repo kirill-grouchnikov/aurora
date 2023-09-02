@@ -68,7 +68,7 @@ object RibbonGallerySizingConstants {
     val DefaultContentLayoutGap: Dp = 4.dp
 }
 
-data class RibbonGalleryMetaPresentationModel(
+data class RibbonGalleryPresentationModel(
     val commandButtonPresentationState: CommandButtonPresentationState,
     val commandButtonTextOverflow: TextOverflow = TextOverflow.Clip,
     val commandPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnRollover,
@@ -84,7 +84,7 @@ data class RibbonGalleryMetaPresentationModel(
 
 class RibbonGalleryInlineState(
     val contentModel: RibbonGalleryContentModel,
-    val presentationModel: RibbonGalleryMetaPresentationModel,
+    val presentationModel: RibbonGalleryPresentationModel,
 ) {
     private val fullCount: Int
         get() = contentModel.commandGroups.sumOf { it.commands.size }
@@ -130,10 +130,10 @@ class RibbonGalleryInlineState(
 
 class RibbonGalleryProjection(
     override val contentModel: RibbonGalleryContentModel,
-    override val presentationModel: RibbonGalleryMetaPresentationModel,
+    override val presentationModel: RibbonGalleryPresentationModel,
     val secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null,
     val inlineState: RibbonGalleryInlineState
-) : Projection<RibbonGalleryContentModel, RibbonGalleryMetaPresentationModel>() {
+) : Projection<RibbonGalleryContentModel, RibbonGalleryPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier) {
         require(

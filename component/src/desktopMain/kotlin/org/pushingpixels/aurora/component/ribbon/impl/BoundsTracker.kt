@@ -63,6 +63,16 @@ fun getGalleryProjectionUnder(x: Float, y: Float) : RibbonGalleryProjection? {
             }
         }
     }
+    // second pass - see if a command button projection was created from a gallery
+    for (tracked in BoundsTracker.getBounds().entries) {
+        if (tracked.key is BaseCommandButtonProjection<*, *, *>) {
+            val commandButtonProjection = tracked.key as BaseCommandButtonProjection<*, *, *>
+            if ((commandButtonProjection.contentModel.tag is RibbonGalleryProjection) &&
+                    tracked.value.contains(x, y)) {
+                return commandButtonProjection.contentModel.tag as RibbonGalleryProjection
+            }
+        }
+    }
     return null
 }
 

@@ -38,10 +38,10 @@ import org.pushingpixels.aurora.component.popup.BaseCascadingCommandMenuPopupLay
 import org.pushingpixels.aurora.component.popup.CascadingCommandMenuHandler
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
-import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarCommandProjection
-import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarComponentProjection
+import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarCommand
+import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarComponent
 import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarElement
-import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarGalleryProjection
+import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarGallery
 import org.pushingpixels.aurora.component.utils.getEndwardDoubleArrowIcon
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
@@ -378,7 +378,7 @@ fun RibbonTaskbar(
 private fun TaskbarContent(elements: List<RibbonTaskbarElement>) {
     for (element in elements) {
         when (element) {
-            is RibbonTaskbarCommandProjection -> {
+            is RibbonTaskbarCommand -> {
                 element.commandProjection.reproject(
                     modifier = Modifier,
                     primaryOverlay = BaseCommandButtonPresentationModel.Overlay(
@@ -390,9 +390,9 @@ private fun TaskbarContent(elements: List<RibbonTaskbarElement>) {
                 )
             }
 
-            is RibbonTaskbarGalleryProjection -> {
-                val galleryContentModel = element.galleryContentModel
-                val galleryPresentationModel = element.galleryMetaPresentationModel
+            is RibbonTaskbarGallery -> {
+                val galleryContentModel = element.galleryProjection.contentModel
+                val galleryPresentationModel = element.galleryProjection.presentationModel
 
                 val galleryCommand = Command(
                     text = "",
@@ -400,7 +400,7 @@ private fun TaskbarContent(elements: List<RibbonTaskbarElement>) {
                     secondaryContentModel = CommandMenuContentModel(
                         onDeactivatePopup = {
                             // Mark the inline state to have the latest selected command button to be revealed
-                            element.galleryInlineState.revealSelected()
+                            element.galleryProjection.inlineState.revealSelected()
                         },
                         panelContentModel = CommandPanelContentModel(
                             commandGroups = galleryContentModel.commandGroups
@@ -408,7 +408,7 @@ private fun TaskbarContent(elements: List<RibbonTaskbarElement>) {
                         groups = galleryContentModel.extraPopupGroups
                     ),
                     isSecondaryEnabled = true,
-                    tag = element.galleryContentModel
+                    tag = element.galleryProjection
                 )
                 CommandButtonProjection(
                     contentModel = galleryCommand,
@@ -426,11 +426,11 @@ private fun TaskbarContent(elements: List<RibbonTaskbarElement>) {
                             )
                         )
                     ),
-                    secondaryOverlays = element.secondaryOverlays
+                    secondaryOverlays = element.galleryProjection.secondaryOverlays
                 ).project()
             }
 
-            is RibbonTaskbarComponentProjection -> {
+            is RibbonTaskbarComponent -> {
                 element.componentProjection.reproject(modifier = Modifier)
             }
         }

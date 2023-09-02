@@ -42,7 +42,7 @@ import org.pushingpixels.aurora.component.ribbon.RibbonBandCommandButtonPresenta
 import org.pushingpixels.aurora.component.ribbon.RibbonBandCommandButtonPresentationStates.BigFixedLandscape
 import org.pushingpixels.aurora.component.ribbon.RibbonGalleryContentModel
 import org.pushingpixels.aurora.component.ribbon.RibbonGalleryInlineState
-import org.pushingpixels.aurora.component.ribbon.RibbonGalleryMetaPresentationModel
+import org.pushingpixels.aurora.component.ribbon.RibbonGalleryPresentationModel
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.component.utils.ArrowSizingConstants.DefaultDoubleArrowWidth
 import org.pushingpixels.aurora.theming.*
@@ -52,7 +52,7 @@ import kotlin.math.roundToInt
 @Composable
 internal fun ribbonGalleryIntrinsicWidth(
     contentModel: RibbonGalleryContentModel,
-    presentationModel: RibbonGalleryMetaPresentationModel,
+    presentationModel: RibbonGalleryPresentationModel,
     visibleCount: Int,
     height: Int
 ): Int {
@@ -93,9 +93,9 @@ internal fun ribbonGalleryIntrinsicWidth(
 @Composable
 internal fun RibbonGallery(
     modifier: Modifier,
-    originalProjection: Projection<RibbonGalleryContentModel, RibbonGalleryMetaPresentationModel>,
+    originalProjection: Projection<RibbonGalleryContentModel, RibbonGalleryPresentationModel>,
     contentModel: RibbonGalleryContentModel,
-    presentationModel: RibbonGalleryMetaPresentationModel,
+    presentationModel: RibbonGalleryPresentationModel,
     inlineState: RibbonGalleryInlineState
 ) {
     val density = LocalDensity.current
@@ -439,7 +439,7 @@ internal fun RibbonGallery(
 }
 
 private class GalleryLocator(
-    val projection: Projection<RibbonGalleryContentModel, RibbonGalleryMetaPresentationModel>,
+    val projection: Projection<RibbonGalleryContentModel, RibbonGalleryPresentationModel>,
     val topLeftOffset: AuroraOffset,
     val size: MutableState<IntSize>
 ) :
@@ -467,7 +467,7 @@ private class GalleryLocator(
 
 @Composable
 private fun Modifier.galleryLocator(
-    projection: Projection<RibbonGalleryContentModel, RibbonGalleryMetaPresentationModel>,
+    projection: Projection<RibbonGalleryContentModel, RibbonGalleryPresentationModel>,
     topLeftOffset: AuroraOffset,
     size: MutableState<IntSize>
 ) = this.then(GalleryLocator(projection, topLeftOffset, size))

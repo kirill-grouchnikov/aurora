@@ -15,8 +15,6 @@
  */
 package org.pushingpixels.aurora.component.ribbon
 
-import org.pushingpixels.aurora.component.model.BaseCommandButtonPresentationModel
-import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.ContentModel
 import org.pushingpixels.aurora.component.model.PresentationModel
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
@@ -24,18 +22,14 @@ import org.pushingpixels.aurora.component.projection.Projection
 
 sealed interface RibbonTaskbarElement
 
-data class RibbonTaskbarCommandProjection(val commandProjection: BaseCommandButtonProjection<*, *, *>) :
+data class RibbonTaskbarCommand(val commandProjection: BaseCommandButtonProjection<*, *, *>) :
     RibbonTaskbarElement
 
-data class RibbonTaskbarComponentProjection(val componentProjection: Projection<ContentModel, PresentationModel>) :
+data class RibbonTaskbarComponent(val componentProjection: Projection<ContentModel, PresentationModel>) :
     RibbonTaskbarElement
 
-data class RibbonTaskbarGalleryProjection(
-    val galleryContentModel: RibbonGalleryContentModel,
-    val galleryMetaPresentationModel: RibbonGalleryMetaPresentationModel,
-    val secondaryOverlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>? = null,
-    val galleryInlineState: RibbonGalleryInlineState
-) : RibbonTaskbarElement
+data class RibbonTaskbarGallery(val galleryProjection: RibbonGalleryProjection):
+    RibbonTaskbarElement
 
 interface RibbonTaskbarKeyTipPolicy {
     /**

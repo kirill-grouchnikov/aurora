@@ -113,7 +113,7 @@ fun main() = auroraApplication {
     }
 
     val styleGalleryContentModel = builder.getStyleGalleryContentModel()
-    val styleGalleryInlineMetaPresentationModel = RibbonGalleryMetaPresentationModel(
+    val styleGalleryInlineMetaPresentationModel = RibbonGalleryPresentationModel(
         popupLayoutSpec = MenuPopupPanelLayoutSpec(
             columnCount = 3, visibleRowCount = 3
         ),
@@ -137,7 +137,7 @@ fun main() = auroraApplication {
         inlineState = ribbonState.documentStyleGalleryInlineState
     )
 
-    val styleGalleryTaskbarMetaPresentationModel = RibbonGalleryMetaPresentationModel(
+    val styleGalleryTaskbarMetaPresentationModel = RibbonGalleryPresentationModel(
         popupLayoutSpec = MenuPopupPanelLayoutSpec(columnCount = 4, visibleRowCount = 2),
         commandButtonPresentationState = RibbonBandCommandButtonPresentationStates.BigFixed,
         collapsedVisibleCountLow = styleGalleryInlineMetaPresentationModel.collapsedVisibleCountLow,
@@ -395,13 +395,13 @@ fun main() = auroraApplication {
 
     val taskbarElements: MutableList<RibbonTaskbarElement> = remember {
         mutableStateListOf(
-            RibbonTaskbarCommandProjection(
+            RibbonTaskbarCommand(
                 CommandButtonProjection(
                     contentModel = builder.pasteCommand,
                     presentationModel = CommandButtonPresentationModel()
                 )
             ),
-            RibbonTaskbarCommandProjection(
+            RibbonTaskbarCommand(
                 CommandButtonProjection(
                     contentModel = Command(
                         text = "",
@@ -412,7 +412,7 @@ fun main() = auroraApplication {
                     presentationModel = CommandButtonPresentationModel()
                 )
             ),
-            RibbonTaskbarComponentProjection(
+            RibbonTaskbarComponent(
                 ComboBoxProjection(
                     contentModel = fontFamilyComboBoxContentModel,
                     presentationModel = ComboBoxPresentationModel(displayConverter = { it.name }),
@@ -423,10 +423,12 @@ fun main() = auroraApplication {
             // grid of slightly larger ones in the in-task gallery popup).
             // Content preview and selection is controlled by the same model and is kept in sync
             // along all usages of the gallery content model in our ribbon.
-            RibbonTaskbarGalleryProjection(
-                galleryContentModel = styleGalleryContentModel,
-                galleryMetaPresentationModel = styleGalleryTaskbarMetaPresentationModel,
-                galleryInlineState = ribbonState.documentStyleGalleryInlineState
+            RibbonTaskbarGallery(
+                RibbonGalleryProjection(
+                    contentModel = styleGalleryContentModel,
+                    presentationModel = styleGalleryTaskbarMetaPresentationModel,
+                    inlineState = ribbonState.documentStyleGalleryInlineState
+                )
             )
         )
     }
@@ -480,14 +482,14 @@ fun main() = auroraApplication {
             componentProjection: Projection<C, P>
         ): CommandMenuContentModel {
             val isInTaskbar = ribbon.taskbarElements.find {
-                (it is RibbonTaskbarComponentProjection) &&
+                (it is RibbonTaskbarComponent) &&
                         (it.componentProjection.contentModel == componentProjection.contentModel)
             } != null
             val componentCommand = if (isInTaskbar) {
                 Command(text = resourceBundle.getString("ContextMenu.removeFromTaskbar"),
                     action = {
                         taskbarElements.removeIf {
-                            (it is RibbonTaskbarComponentProjection) &&
+                            (it is RibbonTaskbarComponent) &&
                                     it.componentProjection.contentModel == componentProjection.contentModel
                         }
                     }
@@ -499,7 +501,7 @@ fun main() = auroraApplication {
                         // presentation model in the taskbar
                         if (componentProjection.contentModel == fontFamilyComboBoxContentModel) {
                             taskbarElements.add(
-                                RibbonTaskbarComponentProjection(
+                                RibbonTaskbarComponent(
                                     ComboBoxProjection(
                                         contentModel = fontFamilyComboBoxContentModel,
                                         presentationModel = ComboBoxPresentationModel(
@@ -509,7 +511,7 @@ fun main() = auroraApplication {
                                 )
                             )
                         } else {
-                            taskbarElements.add(RibbonTaskbarComponentProjection(componentProjection))
+                            taskbarElements.add(RibbonTaskbarComponent(componentProjection))
                         }
                     }
                 )
@@ -522,14 +524,14 @@ fun main() = auroraApplication {
             commandProjection: BaseCommandButtonProjection<*, *, *>
         ): CommandMenuContentModel {
             val isInTaskbar = ribbon.taskbarElements.find {
-                (it is RibbonTaskbarCommandProjection) &&
+                (it is RibbonTaskbarCommand) &&
                         (it.commandProjection.contentModel == commandProjection.contentModel)
             } != null
             val buttonCommand = if (isInTaskbar) {
                 Command(text = resourceBundle.getString("ContextMenu.removeFromTaskbar"),
                     action = {
                         taskbarElements.removeIf {
-                            (it is RibbonTaskbarCommandProjection) &&
+                            (it is RibbonTaskbarCommand) &&
                                     (it.commandProjection.contentModel == commandProjection.contentModel)
                         }
                     }
@@ -537,7 +539,7 @@ fun main() = auroraApplication {
             } else {
                 Command(text = resourceBundle.getString("ContextMenu.addToTaskbar"),
                     action = {
-                        taskbarElements.add(RibbonTaskbarCommandProjection(commandProjection))
+                        taskbarElements.add(RibbonTaskbarCommand(commandProjection))
                     }
                 )
             }
@@ -549,15 +551,15 @@ fun main() = auroraApplication {
             galleryProjection: RibbonGalleryProjection
         ): CommandMenuContentModel {
             val isInTaskbar = ribbon.taskbarElements.find {
-                (it is RibbonTaskbarGalleryProjection) &&
-                        (it.galleryContentModel == galleryProjection.contentModel)
+                (it is RibbonTaskbarGallery) &&
+                        (it.galleryProjection.contentModel == galleryProjection.contentModel)
             } != null
             val galleryCommand = if (isInTaskbar) {
                 Command(text = resourceBundle.getString("ContextMenu.removeFromTaskbar"),
                     action = {
                         taskbarElements.removeIf {
-                            (it is RibbonTaskbarGalleryProjection) &&
-                                    it.galleryContentModel == galleryProjection.contentModel
+                            (it is RibbonTaskbarGallery) &&
+                                    it.galleryProjection.contentModel == galleryProjection.contentModel
                         }
                     }
                 )
@@ -566,10 +568,12 @@ fun main() = auroraApplication {
                     action = {
                         if (galleryProjection.contentModel == styleGalleryContentModel) {
                             taskbarElements.add(
-                                RibbonTaskbarGalleryProjection(
-                                    galleryContentModel = styleGalleryContentModel,
-                                    galleryMetaPresentationModel = styleGalleryTaskbarMetaPresentationModel,
-                                    galleryInlineState = ribbonState.documentStyleGalleryInlineState
+                                RibbonTaskbarGallery(
+                                    RibbonGalleryProjection(
+                                        contentModel = styleGalleryContentModel,
+                                        presentationModel = styleGalleryTaskbarMetaPresentationModel,
+                                        inlineState = ribbonState.documentStyleGalleryInlineState
+                                    )
                                 )
                             )
                         }

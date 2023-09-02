@@ -16,7 +16,6 @@
 package org.pushingpixels.aurora.window
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.runtime.*
@@ -29,7 +28,6 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ClipOp
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.withTransform
@@ -52,12 +50,10 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.component.contextmenu.auroraContextMenu
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.ribbon.Ribbon
 import org.pushingpixels.aurora.component.ribbon.RibbonTask
-import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarGalleryProjection
 import org.pushingpixels.aurora.component.ribbon.impl.*
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
