@@ -42,6 +42,7 @@ import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.ribbon.*
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonBandRowHeight
+import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackBounds
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicies
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicy
 import org.pushingpixels.aurora.component.ribbon.resize.FlowRibbonBandResizePolicy
@@ -260,6 +261,7 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 internal fun RibbonBand(
     band: AbstractRibbonBand,
@@ -298,10 +300,12 @@ internal fun RibbonBand(
                     )
                 )
 
-            RibbonBandCollapsedCommandButtonProjection(
-                contentModel = iconCommand,
-                presentationModel = iconPresentationModel
-            ).project(modifier = Modifier.fillMaxSize())
+            CompositionLocalProvider(LocalRibbonTrackBounds provides false) {
+                RibbonBandCollapsedCommandButtonProjection(
+                    contentModel = iconCommand,
+                    presentationModel = iconPresentationModel
+                ).project(modifier = Modifier.fillMaxSize())
+            }
         }
     } else {
         when (band) {
@@ -687,47 +691,47 @@ private fun FlowRibbonBandContent(
 
 @OptIn(AuroraInternalApi::class)
 @Composable
-private fun RibbonBandTitle(
-    band: AbstractRibbonBand,
-) {
+private fun RibbonBandTitle(band: AbstractRibbonBand) {
     val colors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
     val density = LocalDensity.current
 
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(RibbonBandTitleAreaPadding),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        LabelProjection(
-            contentModel = LabelContentModel(text = band.title),
-            presentationModel = LabelPresentationModel(
-                contentPadding = RibbonBandTitleLabelPadding,
-                horizontalAlignment = HorizontalAlignment.Center,
-                textMaxLines = 1,
-            )
-        ).project(modifier = Modifier.weight(1.0f))
-
-        if (band.expandCommand != null) {
-            CommandButtonProjection(
-                contentModel = Command(
-                    text = "",
-                    icon = getEndwardDoubleArrowIcon(
-                        decorationAreaType = decorationAreaType,
-                        skinColors = colors,
-                        colorSchemeBundle = null,
-                        density = density
-                    ),
-                    action = { band.expandCommand?.action?.invoke() },
-                    actionRichTooltip = band.expandCommand?.actionRichTooltip
-                ),
-                presentationModel = CommandButtonPresentationModel(
-                    presentationState = CommandButtonPresentationState.SmallFitToIcon,
-                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                    contentPadding = RibbonBandExpandButtonContentPadding,
-                    sides = Sides.ClosedRectangle,
-                    actionKeyTip = band.expandCommandKeyTip
+    CompositionLocalProvider(LocalRibbonTrackBounds provides false) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(RibbonBandTitleAreaPadding),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            LabelProjection(
+                contentModel = LabelContentModel(text = band.title),
+                presentationModel = LabelPresentationModel(
+                    contentPadding = RibbonBandTitleLabelPadding,
+                    horizontalAlignment = HorizontalAlignment.Center,
+                    textMaxLines = 1,
                 )
-            ).project()
+            ).project(modifier = Modifier.weight(1.0f))
+
+            if (band.expandCommand != null) {
+                CommandButtonProjection(
+                    contentModel = Command(
+                        text = "",
+                        icon = getEndwardDoubleArrowIcon(
+                            decorationAreaType = decorationAreaType,
+                            skinColors = colors,
+                            colorSchemeBundle = null,
+                            density = density
+                        ),
+                        action = { band.expandCommand?.action?.invoke() },
+                        actionRichTooltip = band.expandCommand?.actionRichTooltip
+                    ),
+                    presentationModel = CommandButtonPresentationModel(
+                        presentationState = CommandButtonPresentationState.SmallFitToIcon,
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                        contentPadding = RibbonBandExpandButtonContentPadding,
+                        sides = Sides.ClosedRectangle,
+                        actionKeyTip = band.expandCommandKeyTip
+                    )
+                ).project()
+            }
         }
     }
 }

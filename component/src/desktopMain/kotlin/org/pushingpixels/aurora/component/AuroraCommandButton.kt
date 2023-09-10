@@ -64,6 +64,7 @@ import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjecti
 import org.pushingpixels.aurora.component.projection.Projection
 import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.ribbon.impl.BoundsTracker
+import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackBounds
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
@@ -880,8 +881,10 @@ internal fun <M : BaseCommandMenuContentModel,
     val compositionLocalContext by rememberUpdatedState(currentCompositionLocalContext)
     val coroutineScope = rememberCoroutineScope()
 
+    val trackBounds = LocalRibbonTrackBounds.current
+
     Layout(
-        modifier = modifier.commandButtonLocator(originalProjection, buttonTopLeftOffset, buttonSize),
+        modifier = modifier.commandButtonLocator(originalProjection, buttonTopLeftOffset, buttonSize, trackBounds),
         content = {
             val modifierAction: Modifier
             if (isToggle) {
@@ -1904,7 +1907,8 @@ private fun CommandButtonPopupIconContent(
 private class CommandButtonLocator(
     val projection: Projection<ContentModel, PresentationModel>,
     val topLeftOffset: AuroraOffset,
-    val size: MutableState<IntSize>
+    val size: MutableState<IntSize>,
+    val trackBounds: Boolean
 ) :
     OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
@@ -1916,15 +1920,17 @@ private class CommandButtonLocator(
         // And store the component size
         size.value = coordinates.size
 
-        BoundsTracker.trackBounds(
-            projection,
-            AuroraRect(
-                x = converted.x,
-                y = converted.y,
-                width = coordinates.size.width.toFloat(),
-                height = coordinates.size.height.toFloat()
+        if (trackBounds) {
+            BoundsTracker.trackBounds(
+                projection,
+                AuroraRect(
+                    x = converted.x,
+                    y = converted.y,
+                    width = coordinates.size.width.toFloat(),
+                    height = coordinates.size.height.toFloat()
+                )
             )
-        )
+        }
     }
 }
 
@@ -1932,5 +1938,6 @@ private class CommandButtonLocator(
 private fun Modifier.commandButtonLocator(
     projection: Projection<ContentModel, PresentationModel>,
     topLeftOffset: AuroraOffset,
-    size: MutableState<IntSize>
-) = this.then(CommandButtonLocator(projection, topLeftOffset, size))
+    size: MutableState<IntSize>,
+    trackBounds: Boolean
+) = this.then(CommandButtonLocator(projection, topLeftOffset, size, trackBounds))

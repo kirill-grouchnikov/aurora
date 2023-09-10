@@ -22,3 +22,8 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 val LocalRibbonBandRowHeight = staticCompositionLocalOf<Int> {
     error("LocalRibbonBandRowHeight not provided")
 }
+
+@AuroraInternalApi
+val LocalRibbonTrackBounds = staticCompositionLocalOf {
+    false
+}

@@ -276,10 +276,13 @@ internal fun RibbonGallery(
     val galleryTopLeftOffset = remember { AuroraOffset(0.0f, 0.0f) }
     val gallerySize = remember { mutableStateOf(IntSize(0, 0)) }
 
+    val trackBounds = LocalRibbonTrackBounds.current
+
     Layout(modifier = Modifier.galleryLocator(
         projection = originalProjection,
         topLeftOffset = galleryTopLeftOffset,
-        size = gallerySize
+        size = gallerySize,
+        trackBounds = trackBounds
     ),
         content = {
             Row(
@@ -441,7 +444,8 @@ internal fun RibbonGallery(
 private class GalleryLocator(
     val projection: Projection<RibbonGalleryContentModel, RibbonGalleryPresentationModel>,
     val topLeftOffset: AuroraOffset,
-    val size: MutableState<IntSize>
+    val size: MutableState<IntSize>,
+    val trackBounds: Boolean
 ) :
     OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
@@ -453,15 +457,17 @@ private class GalleryLocator(
         // And store the component size
         size.value = coordinates.size
 
-        BoundsTracker.trackBounds(
-            projection,
-            AuroraRect(
-                x = converted.x,
-                y = converted.y,
-                width = coordinates.size.width.toFloat(),
-                height = coordinates.size.height.toFloat()
+        if (trackBounds) {
+            BoundsTracker.trackBounds(
+                projection,
+                AuroraRect(
+                    x = converted.x,
+                    y = converted.y,
+                    width = coordinates.size.width.toFloat(),
+                    height = coordinates.size.height.toFloat()
+                )
             )
-        )
+        }
     }
 }
 
@@ -469,5 +475,6 @@ private class GalleryLocator(
 private fun Modifier.galleryLocator(
     projection: Projection<RibbonGalleryContentModel, RibbonGalleryPresentationModel>,
     topLeftOffset: AuroraOffset,
-    size: MutableState<IntSize>
-) = this.then(GalleryLocator(projection, topLeftOffset, size))
+    size: MutableState<IntSize>,
+    trackBounds: Boolean
+) = this.then(GalleryLocator(projection, topLeftOffset, size, trackBounds))

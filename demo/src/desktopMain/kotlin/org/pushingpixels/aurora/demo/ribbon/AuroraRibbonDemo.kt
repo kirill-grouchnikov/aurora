@@ -2197,43 +2197,87 @@ private fun RulerPanel(
             val width = size.width
             val height = size.height
 
-            if (layoutDirection == LayoutDirection.Ltr) {
-                // horizontal ruler on top
-                val offset = 20
-                run {
-                    var i = offset
-                    while (i < width / density) {
-                        if ((i - offset) % 100 == 0) {
+            if ((width > 0.0f) && (height > 0.0f)) {
+                if (layoutDirection == LayoutDirection.Ltr) {
+                    // horizontal ruler on top
+                    val offset = 20
+                    run {
+                        var i = offset
+                        while (i < width / density) {
+                            if ((i - offset) % 100 == 0) {
+                                i += 10
+                                continue
+                            }
+                            drawLine(
+                                color = legend.value,
+                                start = Offset(i.dp.toPx(), 9.dp.toPx()),
+                                end = Offset(i.dp.toPx(), 11.dp.toPx())
+                            )
                             i += 10
-                            continue
                         }
-                        drawLine(
-                            color = legend.value,
-                            start = Offset(i.dp.toPx(), 9.dp.toPx()),
-                            end = Offset(i.dp.toPx(), 11.dp.toPx())
-                        )
-                        i += 10
                     }
-                }
-                run {
-                    var i = offset + 50
-                    while (i < width / density) {
-                        drawLine(
-                            color = legend.value,
-                            start = Offset(i.dp.toPx(), 7.dp.toPx()),
-                            end = Offset(i.dp.toPx(), 13.dp.toPx())
-                        )
-                        i += 100
+                    run {
+                        var i = offset + 50
+                        while (i < width / density) {
+                            drawLine(
+                                color = legend.value,
+                                start = Offset(i.dp.toPx(), 7.dp.toPx()),
+                                end = Offset(i.dp.toPx(), 13.dp.toPx())
+                            )
+                            i += 100
+                        }
                     }
-                }
-                run {
+                    run {
+                        var i = offset
+                        while (i < width / density) {
+                            val c = (i - offset) / 100 % 10
+                            drawText(
+                                textMeasurer,
+                                "" + c,
+                                topLeft = Offset((i - 4).dp.toPx(), 1.dp.toPx()),
+                                style = TextStyle(
+                                    color = legend.value,
+                                    fontWeight = FontWeight.Light
+                                )
+                            )
+                            i += 100
+                        }
+                    }
+
+                    // vertical ruler on left
+                    run {
+                        var i = offset
+                        while (i < height / density) {
+                            if ((i - offset) % 100 == 0) {
+                                i += 10
+                                continue
+                            }
+                            drawLine(
+                                color = legend.value,
+                                start = Offset(9.dp.toPx(), i.dp.toPx()),
+                                end = Offset(11.dp.toPx(), i.dp.toPx())
+                            )
+                            i += 10
+                        }
+                    }
+                    run {
+                        var i = offset + 50
+                        while (i < height / density) {
+                            drawLine(
+                                color = legend.value,
+                                start = Offset(7.dp.toPx(), i.dp.toPx()),
+                                end = Offset(13.dp.toPx(), i.dp.toPx())
+                            )
+                            i += 100
+                        }
+                    }
                     var i = offset
-                    while (i < width / density) {
+                    while (i < height / density) {
                         val c = (i - offset) / 100 % 10
                         drawText(
                             textMeasurer,
                             "" + c,
-                            topLeft = Offset((i - 4).dp.toPx(), 1.dp.toPx()),
+                            topLeft = Offset(6.dp.toPx(), (i - 8).dp.toPx()),
                             style = TextStyle(
                                 color = legend.value,
                                 fontWeight = FontWeight.Light
@@ -2241,135 +2285,93 @@ private fun RulerPanel(
                         )
                         i += 100
                     }
-                }
+                } else {
+                    // horizontal ruler on top
+                    val offset = 20
+                    run {
+                        var i = width / density - offset
+                        while (i > 0) {
+                            if ((width / density - offset - i).toInt() % 100 == 0) {
+                                i -= 10
+                                continue
+                            }
+                            drawLine(
+                                color = legend.value,
+                                start = Offset(i.dp.toPx(), 9.dp.toPx()),
+                                end = Offset(i.dp.toPx(), 11.dp.toPx())
+                            )
+                            i -= 10
+                        }
+                    }
+                    run {
+                        var i = width / density - offset - 50
+                        while (i > 0) {
+                            drawLine(
+                                color = legend.value,
+                                start = Offset(i.dp.toPx(), 7.dp.toPx()),
+                                end = Offset(i.dp.toPx(), 13.dp.toPx())
+                            )
+                            i -= 100
+                        }
+                    }
+                    run {
+                        var i = width / density - offset
+                        while (i > 0) {
+                            val c = (width / density - offset - i).toInt() / 100 % 10
+                            drawText(
+                                textMeasurer,
+                                "" + c,
+                                topLeft = Offset((i - 4).dp.toPx(), 1.dp.toPx()),
+                                style = TextStyle(
+                                    color = legend.value,
+                                    fontWeight = FontWeight.Light
+                                )
+                            )
+                            i -= 100
+                        }
+                    }
 
-                // vertical ruler on left
-                run {
+                    // vertical ruler on right
+                    run {
+                        var i = offset
+                        while (i < height / density) {
+                            if ((i - offset) % 100 == 0) {
+                                i += 10
+                                continue
+                            }
+                            drawLine(
+                                color = legend.value,
+                                start = Offset((width / density - 9).dp.toPx(), i.dp.toPx()),
+                                end = Offset((width / density - 11).dp.toPx(), i.dp.toPx())
+                            )
+                            i += 10
+                        }
+                    }
+                    run {
+                        var i = offset + 50
+                        while (i < height / density) {
+                            drawLine(
+                                color = legend.value,
+                                start = Offset((width / density - 7).dp.toPx(), i.dp.toPx()),
+                                end = Offset((width / density - 13).dp.toPx(), i.dp.toPx())
+                            )
+                            i += 100
+                        }
+                    }
                     var i = offset
                     while (i < height / density) {
-                        if ((i - offset) % 100 == 0) {
-                            i += 10
-                            continue
-                        }
-                        drawLine(
-                            color = legend.value,
-                            start = Offset(9.dp.toPx(), i.dp.toPx()),
-                            end = Offset(11.dp.toPx(), i.dp.toPx())
-                        )
-                        i += 10
-                    }
-                }
-                run {
-                    var i = offset + 50
-                    while (i < height / density) {
-                        drawLine(
-                            color = legend.value,
-                            start = Offset(7.dp.toPx(), i.dp.toPx()),
-                            end = Offset(13.dp.toPx(), i.dp.toPx())
-                        )
-                        i += 100
-                    }
-                }
-                var i = offset
-                while (i < height / density) {
-                    val c = (i - offset) / 100 % 10
-                    drawText(
-                        textMeasurer,
-                        "" + c,
-                        topLeft = Offset(6.dp.toPx(), (i - 8).dp.toPx()),
-                        style = TextStyle(
-                            color = legend.value,
-                            fontWeight = FontWeight.Light
-                        )
-                    )
-                    i += 100
-                }
-            } else {
-                // horizontal ruler on top
-                val offset = 20
-                run {
-                    var i = width / density - offset
-                    while (i > 0) {
-                        if ((width / density - offset - i).toInt() % 100 == 0) {
-                            i -= 10
-                            continue
-                        }
-                        drawLine(
-                            color = legend.value,
-                            start = Offset(i.dp.toPx(), 9.dp.toPx()),
-                            end = Offset(i.dp.toPx(), 11.dp.toPx())
-                        )
-                        i -= 10
-                    }
-                }
-                run {
-                    var i = width / density - offset - 50
-                    while (i > 0) {
-                        drawLine(
-                            color = legend.value,
-                            start = Offset(i.dp.toPx(), 7.dp.toPx()),
-                            end = Offset(i.dp.toPx(), 13.dp.toPx())
-                        )
-                        i -= 100
-                    }
-                }
-                run {
-                    var i = width / density - offset
-                    while (i > 0) {
-                        val c = (width / density - offset - i).toInt() / 100 % 10
+                        val c = (i - offset) / 100 % 10
                         drawText(
                             textMeasurer,
                             "" + c,
-                            topLeft = Offset((i - 4).dp.toPx(), 1.dp.toPx()),
+                            topLeft = Offset((width / density - 15).dp.toPx(), (i - 8).dp.toPx()),
                             style = TextStyle(
                                 color = legend.value,
                                 fontWeight = FontWeight.Light
                             )
                         )
-                        i -= 100
-                    }
-                }
-
-                // vertical ruler on right
-                run {
-                    var i = offset
-                    while (i < height / density) {
-                        if ((i - offset) % 100 == 0) {
-                            i += 10
-                            continue
-                        }
-                        drawLine(
-                            color = legend.value,
-                            start = Offset((width / density - 9).dp.toPx(), i.dp.toPx()),
-                            end = Offset((width / density - 11).dp.toPx(), i.dp.toPx())
-                        )
-                        i += 10
-                    }
-                }
-                run {
-                    var i = offset + 50
-                    while (i < height / density) {
-                        drawLine(
-                            color = legend.value,
-                            start = Offset((width / density - 7).dp.toPx(), i.dp.toPx()),
-                            end = Offset((width / density - 13).dp.toPx(), i.dp.toPx())
-                        )
                         i += 100
                     }
-                }
-                var i = offset
-                while (i < height / density) {
-                    val c = (i - offset) / 100 % 10
-                    drawText(
-                        textMeasurer,
-                        "" + c,
-                        topLeft = Offset((width / density - 15).dp.toPx(), (i - 8).dp.toPx()),
-                        style = TextStyle(
-                            color = legend.value,
-                            fontWeight = FontWeight.Light
-                        )
-                    )
-                    i += 100
                 }
             }
         }

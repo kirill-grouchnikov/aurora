@@ -38,6 +38,7 @@ import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.projection.Projection
 import org.pushingpixels.aurora.component.ribbon.impl.BoundsTracker
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonBandRowHeight
+import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackBounds
 import org.pushingpixels.aurora.component.utils.AuroraRect
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.component.utils.getLabelPreferredSingleLineWidth
@@ -60,8 +61,10 @@ class RibbonMetaComponentProjection<out C : ContentModel, out P : PresentationMo
         get() = this.projection.contentModel
 
     override val presentationModel: MetaComponentPresentationModel<P>
-        get() = MetaComponentPresentationModel(this.projection.presentationModel,
-            this.ribbonComponentPresentationModel)
+        get() = MetaComponentPresentationModel(
+            this.projection.presentationModel,
+            this.ribbonComponentPresentationModel
+        )
 
     @Composable
     fun project(modifier: Modifier = Modifier) {
@@ -172,7 +175,14 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
     val widthNeededForComponent = projection.intrinsicWidth(rowHeight)
     val heightNeededForComponent = projection.intrinsicHeight(widthNeededForComponent)
 
-    Layout(modifier = modifier.metaComponentLocator(projection),
+    val trackBounds = LocalRibbonTrackBounds.current
+
+    Layout(
+        modifier = if (trackBounds) {
+            modifier.metaComponentLocator(projection)
+        } else {
+            modifier
+        },
         content = {
             if (hasIcon) {
                 IconProjection(

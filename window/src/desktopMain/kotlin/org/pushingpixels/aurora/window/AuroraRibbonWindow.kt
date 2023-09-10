@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.window
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.runtime.*
@@ -28,6 +29,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ClipOp
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.withTransform
@@ -91,7 +93,7 @@ private fun spanInfoMatches(
 
 @OptIn(AuroraInternalApi::class)
 @Composable
-internal fun AuroraWindowScope.RibbonWindowTitlePaneTextAndIcon(
+internal fun AuroraWindowScope.RibbonWindowTitlePaneMainContent(
     title: String,
     icon: Painter?,
     iconFilterStrategy: IconFilterStrategy,
@@ -133,10 +135,12 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneTextAndIcon(
                 )
             }
 
-            RibbonTaskbar(
-                modifier = Modifier.padding(TaskbarContentPadding),
-                elements = ribbon.taskbarElements
-            )
+            CompositionLocalProvider(LocalRibbonTrackBounds provides true) {
+                RibbonTaskbar(
+                    modifier = Modifier.padding(TaskbarContentPadding),
+                    elements = ribbon.taskbarElements
+                )
+            }
 
             AuroraWindowTitlePaneTitleText(title = title)
 
@@ -330,7 +334,7 @@ private fun AuroraWindowScope.RibbonWindowTitlePane(
                 val contextualTaskGroupOffsetX =
                     (WindowTitlePaneSizingConstants.TitlePaneContentPadding.calculateStartPadding(layoutDirection).value * density.density).toInt()
                 WindowDraggableArea(modifier = Modifier.padding(top = 1.dp, bottom = 1.dp)) {
-                    RibbonWindowTitlePaneTextAndIcon(
+                    RibbonWindowTitlePaneMainContent(
                         title = title,
                         icon = icon,
                         iconFilterStrategy = iconFilterStrategy,
@@ -597,56 +601,58 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
     val ribbonSelectedButtonTopLeftOffset = remember { RibbonOffset(0.0f, 0.0f) }
     val ribbonSelectedButtonSize = remember { mutableStateOf(IntSize(0, 0)) }
 
-    Box(Modifier.fillMaxSize()) {
-        Column(Modifier.fillMaxSize().auroraBackground().ribbonContextMenu(ribbon)) {
-            RibbonWindowTitlePane(
-                title, icon, iconFilterStrategy, ribbon, contextualTaskGroupSpans,
-                windowTitlePaneConfiguration
-            )
+    Column(Modifier.fillMaxSize()) {
+        Box(Modifier.fillMaxWidth()) {
+            Column(Modifier.fillMaxWidth().ribbonContextMenu(ribbon)) {
+                RibbonWindowTitlePane(
+                    title, icon, iconFilterStrategy, ribbon, contextualTaskGroupSpans,
+                    windowTitlePaneConfiguration
+                )
+                AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
+                    CompositionLocalProvider(LocalRibbonTrackBounds provides true) {
+                        Column(Modifier.fillMaxWidth().auroraBackground()) {
+                            RibbonPrimaryBar(
+                                modifier = Modifier.ribbonElementLocator(
+                                    ribbonPrimaryBarTopLeftOffset,
+                                    ribbonPrimaryBarSize
+                                ),
+                                ribbon = ribbon,
+                                onContextualTaskGroupSpansUpdated = {
+                                    if (!areSpansSame(contextualTaskGroupSpans, it)) {
+                                        contextualTaskGroupSpans.clear()
+                                        contextualTaskGroupSpans.addAll(it)
+                                    }
+                                },
+                                selectedTaskButtonModifier = Modifier.ribbonElementLocator(
+                                    ribbonSelectedButtonTopLeftOffset,
+                                    ribbonSelectedButtonSize
+                                ),
+                                showSelectedTaskInPopup = showSelectedTaskInPopup,
+                                onUpdateShowSelectedTaskInPopup = {
+                                    if (ribbon.isMinimized) {
+                                        showSelectedTaskInPopup = it
+                                    }
+                                }
+                            )
 
-            println("Ribbon taskbar with ${ribbon.taskbarElements.size} elements")
+                            if (!ribbon.isMinimized) {
+                                RibbonBands(ribbonTask = selectedTask)
+                            }
 
-            AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
-                Column(Modifier.fillMaxWidth().auroraBackground()) {
-                    RibbonPrimaryBar(
-                        modifier = Modifier.ribbonElementLocator(
-                            ribbonPrimaryBarTopLeftOffset,
-                            ribbonPrimaryBarSize
-                        ),
-                        ribbon = ribbon,
-                        onContextualTaskGroupSpansUpdated = {
-                            if (!areSpansSame(contextualTaskGroupSpans, it)) {
-                                contextualTaskGroupSpans.clear()
-                                contextualTaskGroupSpans.addAll(it)
-                            }
-                        },
-                        selectedTaskButtonModifier = Modifier.ribbonElementLocator(
-                            ribbonSelectedButtonTopLeftOffset,
-                            ribbonSelectedButtonSize
-                        ),
-                        showSelectedTaskInPopup = showSelectedTaskInPopup,
-                        onUpdateShowSelectedTaskInPopup = {
-                            if (ribbon.isMinimized) {
-                                showSelectedTaskInPopup = it
-                            }
+                            Spacer(modifier = Modifier.fillMaxWidth().height(1.dp))
                         }
-                    )
-
-                    if (!ribbon.isMinimized) {
-                        RibbonBands(ribbonTask = selectedTask)
                     }
-
-                    Spacer(modifier = Modifier.fillMaxWidth().height(1.dp))
                 }
             }
+            RibbonOverlay(Modifier.background(Color.Blue), DecoratedBorderThickness)
+        }
+        Box(modifier = Modifier.fillMaxWidth().weight(1.0f)) {
             // Wrap the entire content in NONE decoration area. App code can set its
             // own decoration area types on specific parts.
             AuroraDecorationArea(decorationAreaType = DecorationAreaType.None) {
                 content()
             }
         }
-
-        RibbonOverlay(Modifier.fillMaxSize(), DecoratedBorderThickness)
     }
 
     val density = LocalDensity.current
@@ -942,16 +948,18 @@ private fun Modifier.ribbonContextMenu(ribbon: Ribbon): Modifier {
     val coroutineScope = rememberCoroutineScope()
 
     val contentModel = remember {
-        mutableStateOf(CommandMenuContentModel(
-            groups = listOf(
-                CommandGroup(
-                    commands = listOf(
-                        Command(text = "",
-                            action = {})
-                    )
-                ),
+        mutableStateOf(
+            CommandMenuContentModel(
+                groups = listOf(
+                    CommandGroup(
+                        commands = listOf(
+                            Command(text = "",
+                                action = {})
+                        )
+                    ),
+                )
             )
-        ))
+        )
     }
 
     return this.then(Modifier.pointerInput(Unit) {

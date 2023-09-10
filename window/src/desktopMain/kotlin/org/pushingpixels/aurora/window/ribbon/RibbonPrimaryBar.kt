@@ -40,6 +40,7 @@ import org.pushingpixels.aurora.component.AuroraHorizontallyScrollableBox
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.ribbon.Ribbon
 import org.pushingpixels.aurora.component.ribbon.RibbonContextualTaskGroup
+import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackBounds
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
@@ -358,7 +359,9 @@ internal fun RibbonPrimaryBar(
             val applicationMenuCommandButtonPlaceable =
                 if (applicationMenuButtonPreferredSize != null) {
                     subcompose(1) {
-                        ribbon.applicationMenuCommandButtonProjection?.project()
+                        CompositionLocalProvider(LocalRibbonTrackBounds provides false) {
+                            ribbon.applicationMenuCommandButtonProjection?.project()
+                        }
                     }.first().measure(
                         Constraints.fixed(
                             applicationMenuButtonPreferredSize.width.toInt(),
