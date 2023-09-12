@@ -31,11 +31,11 @@ import org.pushingpixels.aurora.component.model.PresentationModel
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.Projection
 import org.pushingpixels.aurora.component.ribbon.RibbonGalleryProjection
-import org.pushingpixels.aurora.component.ribbon.RibbonMetaComponentProjection
-import org.pushingpixels.aurora.component.utils.AuroraRect
-import org.pushingpixels.aurora.component.utils.contains
+import org.pushingpixels.aurora.common.AuroraRect
+import org.pushingpixels.aurora.common.contains
 
-internal object BoundsTracker {
+@AuroraInternalApi
+object BoundsTracker {
     private val bounds: MutableMap<Projection<ContentModel, PresentationModel>, AuroraRect> = hashMapOf()
 
     fun trackBounds(projection: Projection<ContentModel, PresentationModel>, rect: AuroraRect) {

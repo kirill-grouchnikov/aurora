@@ -309,7 +309,7 @@ fun main() = auroraApplication {
                 })
         ),
         resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin,
-        keyTip = "A",
+        keyTip = "R",
         isActive = (ribbonState.selectedTask == Task.Wrapped),
         onClick = { ribbonState = ribbonState.copy(selectedTask = Task.Wrapped) }
     )
@@ -1087,7 +1087,7 @@ internal class RibbonBuilder(
                     descriptionSections = listOf(resourceBundle.getString("Clipboard.textBandTooltipParagraph1"))
                 )
             ),
-            expandCommandKeyTip = "Q",
+            expandCommandKeyTip = "FO",
             collapsedStateKeyTip = "ZC",
             resizePolicies = listOf(CoreRibbonResizePolicies.Mirror, CoreRibbonResizePolicies.Mid2Low),
             groups = listOf(
@@ -1944,7 +1944,7 @@ internal class RibbonBuilder(
                     isActionToggle = true
                 ),
                 presentationModel = CommandButtonPresentationModel(
-                    popupKeyTip = "GC"
+                    actionKeyTip = "GC"
                 )
             ),
             CommandButtonProjection(
@@ -1958,7 +1958,7 @@ internal class RibbonBuilder(
                     )
                 ),
                 presentationModel = CommandButtonPresentationModel(
-                    popupKeyTip = "GH"
+                    actionKeyTip = "GH"
                 )
             )
         )

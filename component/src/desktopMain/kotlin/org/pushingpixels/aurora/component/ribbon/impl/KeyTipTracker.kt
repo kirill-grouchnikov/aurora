@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.nativeCanvas
@@ -29,9 +28,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.Paragraph
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.drawText
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
@@ -44,18 +40,19 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.ContentModel
 import org.pushingpixels.aurora.component.model.PresentationModel
 import org.pushingpixels.aurora.component.projection.Projection
-import org.pushingpixels.aurora.component.utils.AuroraRect
+import org.pushingpixels.aurora.common.AuroraRect
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 
-internal object KeyTipTracker {
+@AuroraInternalApi
+object KeyTipTracker {
     data class KeyTipInfo(
         var projection: Projection<ContentModel, PresentationModel>,
         var keyTip: String,
         var screenRect: AuroraRect,
-        var offsetX: Float,
-        var offsetY: Float
+        var anchorX: Float,
+        var anchorY: Float
     )
 
     private val keyTips: MutableList<KeyTipInfo> = arrayListOf()
@@ -78,17 +75,17 @@ internal object KeyTipTracker {
     fun trackKeyTipOffset(
         projection: Projection<ContentModel, PresentationModel>,
         keyTip: String,
-        offsetX: Float,
-        offsetY: Float
+        anchorX: Float,
+        anchorY: Float
     ) {
         val existing = keyTips.find {
             (it.projection == projection) && (it.keyTip == keyTip)
         }
         if (existing != null) {
-            existing.offsetX = offsetX
-            existing.offsetY = offsetY
+            existing.anchorX = anchorX
+            existing.anchorY = anchorY
         } else {
-            keyTips.add(KeyTipInfo(projection, keyTip, AuroraRect(0.0f, 0.0f, 0.0f, 0.0f), offsetX, offsetY))
+            keyTips.add(KeyTipInfo(projection, keyTip, AuroraRect(0.0f, 0.0f, 0.0f, 0.0f), anchorX, anchorY))
         }
     }
 
@@ -146,10 +143,9 @@ fun RibbonKeyTipOverlay(modifier: Modifier, insets: Dp) {
     Canvas(modifier = modifier) {
         val width = this.size.width
         val height = this.size.height
-        println("KEY TIP TRACKER SIZE ${this.size}")
+        //println("KEY TIP TRACKER SIZE ${this.size}")
 
         for (tracked in KeyTipTracker.getKeyTips()) {
-
             val paragraph = Paragraph(
                 text = tracked.keyTip, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
                 density = density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
@@ -159,9 +155,16 @@ fun RibbonKeyTipOverlay(modifier: Modifier, insets: Dp) {
             val tipWidth = leftPadding.toPx() + paragraph.maxIntrinsicWidth + rightPadding.toPx()
             val tipHeight = topPadding.toPx() + paragraph.height + bottomPadding.toPx()
 
+            val fullOffsetX = tracked.screenRect.x + tracked.anchorX - tipWidth / 2 - insets.toPx()
+            val fullOffsetY = tracked.screenRect.y + tracked.anchorY - tipHeight / 2 - insets.toPx()
+            if (tracked.keyTip.equals("FY")) {
+                println("Key tip $tracked width=$tipWidth height=$tipHeight offsetX=$fullOffsetX")
+            }
+
+
             //println("Drawing ${tracked.keyTip} at ${tracked.screenRect}")
             withTransform({
-                translate(left = tracked.screenRect.x, top = tracked.screenRect.y)
+                translate(left = fullOffsetX, top = fullOffsetY)
             }) {
                 val fillOutline = buttonShaper.getButtonOutline(
                     layoutDirection = layoutDirection,

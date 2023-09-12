@@ -22,7 +22,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -33,8 +32,9 @@ import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.layout.Placeable
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -42,12 +42,18 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
-import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.common.interpolateTowards
-import org.pushingpixels.aurora.common.withAlpha
+import androidx.compose.ui.unit.IntSize
+import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.component.auroraRichTooltip
+import org.pushingpixels.aurora.component.model.BaseCommand
+import org.pushingpixels.aurora.component.model.BaseCommandButtonPresentationModel
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
+import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
+import org.pushingpixels.aurora.component.ribbon.impl.BoundsTracker
+import org.pushingpixels.aurora.component.ribbon.impl.KeyTipTracker
+import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackBounds
+import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackKeyTips
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
@@ -70,6 +76,8 @@ private class RibbonTaskToggleButtonDrawingCache(
 @Composable
 internal fun RibbonTaskToggleButton(
     modifier: Modifier,
+    originalProjection: BaseCommandButtonProjection<BaseCommand,
+            BaseCommandButtonPresentationModel, BaseCommandButtonProjection<BaseCommand, BaseCommandButtonPresentationModel, *>>,
     command: Command,
     presentationModel: CommandButtonPresentationModel,
     showSelectedTaskInPopup: Boolean,
@@ -251,11 +259,19 @@ internal fun RibbonTaskToggleButton(
         width = LocalTopWindowSize.current.width.value * LocalDensity.current.density,
         height = LocalTopWindowSize.current.height.value * LocalDensity.current.density
     )
-    var buttonTopLeftOffset by remember { mutableStateOf(Offset(0.0f, 0.0f)) }
+    val buttonTopLeftOffset = remember { AuroraOffset(0.0f, 0.0f) }
+    val buttonSize = remember { mutableStateOf(IntSize(0, 0)) }
+    val trackBounds = LocalRibbonTrackBounds.current
+    val trackKeyTips = LocalRibbonTrackKeyTips.current
+
     Layout(
-        modifier = modifier.onGloballyPositioned {
-            buttonTopLeftOffset = it.localToRoot(Offset.Zero)
-        },
+        modifier = modifier.ribbonTaskToggleButtonLocator(
+            originalProjection,
+            buttonTopLeftOffset,
+            buttonSize,
+            trackBounds,
+            trackKeyTips
+        ),
         content = {
             // This button is a sort of in-between. It is toggleable in the sense that it can be
             // selected, but it does not lose selection when it's clicked again. Modifier.toggleable
@@ -430,7 +446,7 @@ internal fun RibbonTaskToggleButton(
                                         componentSize = size,
                                         outline = fillOutline,
                                         rootSize = rootSize,
-                                        offsetFromRoot = buttonTopLeftOffset,
+                                        offsetFromRoot = buttonTopLeftOffset.asOffset(density),
                                         colorScheme = drawingCache.colorScheme
                                     )
                                 } else {
@@ -544,6 +560,15 @@ internal fun RibbonTaskToggleButton(
             )
         }
 
+        if ((presentationModel.actionKeyTip != null) && !layoutInfo.actionClickArea.isEmpty) {
+            KeyTipTracker.trackKeyTipOffset(
+                originalProjection,
+                presentationModel.actionKeyTip!!,
+                layoutInfo.actionClickArea.left + layoutInfo.actionClickArea.width / 2,
+                layoutInfo.actionClickArea.top + layoutInfo.actionClickArea.height / 2
+            )
+        }
+
         layout(
             width = layoutInfo.fullSize.width.toInt(),
             height = layoutInfo.fullSize.height.toInt()
@@ -558,6 +583,13 @@ internal fun RibbonTaskToggleButton(
                     y = layoutInfo.textLayoutInfoList[index].textRect.top.roundToInt()
                 )
             }
+        }
+    }
+
+    DisposableEffect(originalProjection) {
+        onDispose {
+            BoundsTracker.untrackBounds(originalProjection)
+            KeyTipTracker.untrackKeyTip(originalProjection)
         }
     }
 }
@@ -670,3 +702,59 @@ private fun getTextColor(
     }
     return foreground
 }
+
+@OptIn(AuroraInternalApi::class)
+private class RibbonTaskToggleButtonLocator(
+    val projection: BaseCommandButtonProjection<*, *, *>,
+    val topLeftOffset: AuroraOffset,
+    val size: MutableState<IntSize>,
+    val trackBounds: Boolean,
+    val trackKeyTips: Boolean
+) : OnGloballyPositionedModifier {
+    override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
+        // Convert the top left corner of the component to the root coordinates
+        val converted = coordinates.localToRoot(Offset.Zero)
+        topLeftOffset.x = converted.x
+        topLeftOffset.y = converted.y
+
+        // And store the component size
+        size.value = coordinates.size
+
+        val bounds = AuroraRect(
+            x = converted.x,
+            y = converted.y,
+            width = coordinates.size.width.toFloat(),
+            height = coordinates.size.height.toFloat()
+        )
+        if (trackBounds) {
+            BoundsTracker.trackBounds(projection, bounds)
+        }
+
+        if (trackKeyTips) {
+            if (projection.presentationModel.actionKeyTip != null) {
+                KeyTipTracker.trackKeyTipBase(
+                    projection,
+                    projection.presentationModel.actionKeyTip!!,
+                    bounds
+                )
+            }
+            if (projection.presentationModel.popupKeyTip != null) {
+                KeyTipTracker.trackKeyTipBase(
+                    projection,
+                    projection.presentationModel.popupKeyTip!!,
+                    bounds
+                )
+            }
+        }
+    }
+}
+
+@OptIn(AuroraInternalApi::class)
+@Composable
+private fun Modifier.ribbonTaskToggleButtonLocator(
+    projection: BaseCommandButtonProjection<*, *, *>,
+    topLeftOffset: AuroraOffset,
+    size: MutableState<IntSize>,
+    trackBounds: Boolean,
+    trackKeyTips: Boolean
+) = this.then(RibbonTaskToggleButtonLocator(projection, topLeftOffset, size, trackBounds, trackKeyTips))

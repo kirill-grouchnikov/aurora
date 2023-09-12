@@ -34,9 +34,9 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.component.model.RichTooltip
 import org.pushingpixels.aurora.component.model.RichTooltipPresentationModel
-import org.pushingpixels.aurora.component.utils.AuroraOffset
-import org.pushingpixels.aurora.component.utils.asOffset
-import org.pushingpixels.aurora.component.utils.asSize
+import org.pushingpixels.aurora.common.AuroraOffset
+import org.pushingpixels.aurora.common.asOffset
+import org.pushingpixels.aurora.common.asSize
 import org.pushingpixels.aurora.component.utils.displayRichTooltipWindow
 import org.pushingpixels.aurora.theming.*
 
@@ -53,6 +53,7 @@ private suspend fun PointerInputScope.detectDown(onDown: (Offset) -> Unit) {
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 private class Locator(val topLeftOffset: AuroraOffset, val size: MutableState<IntSize>) :
     OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
@@ -66,6 +67,7 @@ private class Locator(val topLeftOffset: AuroraOffset, val size: MutableState<In
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 private fun Modifier.locator(topLeftOffset: AuroraOffset, size: MutableState<IntSize>) = this.then(
     Locator(topLeftOffset, size)

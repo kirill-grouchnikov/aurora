@@ -33,8 +33,7 @@ import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.Projection
@@ -441,6 +440,7 @@ internal fun RibbonGallery(
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 private class GalleryLocator(
     val projection: Projection<RibbonGalleryContentModel, RibbonGalleryPresentationModel>,
     val topLeftOffset: AuroraOffset,
@@ -471,6 +471,7 @@ private class GalleryLocator(
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 private fun Modifier.galleryLocator(
     projection: Projection<RibbonGalleryContentModel, RibbonGalleryPresentationModel>,

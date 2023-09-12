@@ -27,3 +27,8 @@ val LocalRibbonBandRowHeight = staticCompositionLocalOf<Int> {
 val LocalRibbonTrackBounds = staticCompositionLocalOf {
     false
 }
+
+@AuroraInternalApi
+val LocalRibbonTrackKeyTips = staticCompositionLocalOf {
+    false
+}

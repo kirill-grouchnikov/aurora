@@ -39,7 +39,7 @@ import org.pushingpixels.aurora.component.projection.Projection
 import org.pushingpixels.aurora.component.ribbon.impl.BoundsTracker
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonBandRowHeight
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackBounds
-import org.pushingpixels.aurora.component.utils.AuroraRect
+import org.pushingpixels.aurora.common.AuroraRect
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.component.utils.getLabelPreferredSingleLineWidth
 import org.pushingpixels.aurora.theming.IconFilterStrategy
@@ -317,6 +317,7 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 private class MetaComponentLocator(val projection: Projection<ContentModel, PresentationModel>) :
     OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {

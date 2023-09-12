@@ -45,6 +45,8 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.common.AuroraRect
+import org.pushingpixels.aurora.common.contains
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.SliderContentModel
 import org.pushingpixels.aurora.component.model.SliderPresentationModel
@@ -56,6 +58,7 @@ import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
 import kotlin.math.roundToInt
 
+@OptIn(AuroraInternalApi::class)
 @Immutable
 private class SliderDrawingCache(
     val trackRect: AuroraRect = AuroraRect(0.0f, 0.0f, 0.0f, 0.0f),

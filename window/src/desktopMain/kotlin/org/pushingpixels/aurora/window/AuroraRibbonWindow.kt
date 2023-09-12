@@ -136,7 +136,10 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneMainContent(
                 )
             }
 
-            CompositionLocalProvider(LocalRibbonTrackBounds provides true) {
+            CompositionLocalProvider(
+                LocalRibbonTrackBounds provides true,
+                LocalRibbonTrackKeyTips provides true
+            ) {
                 RibbonTaskbar(
                     modifier = Modifier.padding(TaskbarContentPadding),
                     elements = ribbon.taskbarElements
@@ -610,7 +613,10 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
                     windowTitlePaneConfiguration
                 )
                 AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
-                    CompositionLocalProvider(LocalRibbonTrackBounds provides true) {
+                    CompositionLocalProvider(
+                        LocalRibbonTrackBounds provides true,
+                        LocalRibbonTrackKeyTips provides true
+                    ) {
                         Column(Modifier.fillMaxWidth().auroraBackground()) {
                             RibbonPrimaryBar(
                                 modifier = Modifier.ribbonElementLocator(

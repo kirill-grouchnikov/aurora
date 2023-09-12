@@ -41,9 +41,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.*
 import kotlinx.coroutines.launch
-import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.common.AuroraPopupManager
-import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
@@ -59,6 +57,7 @@ private class ComboBoxDrawingCache(
     )
 )
 
+@OptIn(AuroraInternalApi::class)
 private class ComboBoxLocator(val topLeftOffset: AuroraOffset, val size: MutableState<IntSize>) :
     OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
@@ -72,6 +71,7 @@ private class ComboBoxLocator(val topLeftOffset: AuroraOffset, val size: Mutable
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 private fun Modifier.comboBoxLocator(topLeftOffset: AuroraOffset, size: MutableState<IntSize>) = this.then(
     ComboBoxLocator(topLeftOffset, size)

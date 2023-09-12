@@ -43,6 +43,7 @@ import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.ribbon.*
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonBandRowHeight
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackBounds
+import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackKeyTips
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicies
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicy
 import org.pushingpixels.aurora.component.ribbon.resize.FlowRibbonBandResizePolicy
@@ -300,7 +301,10 @@ internal fun RibbonBand(
                     )
                 )
 
-            CompositionLocalProvider(LocalRibbonTrackBounds provides false) {
+            CompositionLocalProvider(
+                LocalRibbonTrackBounds provides false,
+                LocalRibbonTrackKeyTips provides true
+            ) {
                 RibbonBandCollapsedCommandButtonProjection(
                     contentModel = iconCommand,
                     presentationModel = iconPresentationModel
@@ -696,7 +700,10 @@ private fun RibbonBandTitle(band: AbstractRibbonBand) {
     val decorationAreaType = AuroraSkin.decorationAreaType
     val density = LocalDensity.current
 
-    CompositionLocalProvider(LocalRibbonTrackBounds provides false) {
+    CompositionLocalProvider(
+        LocalRibbonTrackBounds provides false,
+        LocalRibbonTrackKeyTips provides true
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(RibbonBandTitleAreaPadding),
             verticalAlignment = Alignment.CenterVertically

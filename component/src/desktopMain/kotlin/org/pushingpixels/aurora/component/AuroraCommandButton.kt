@@ -52,20 +52,17 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.*
-import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.common.AuroraPopupManager
-import org.pushingpixels.aurora.common.interpolateTowards
-import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
-import org.pushingpixels.aurora.component.projection.Projection
 import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.ribbon.impl.BoundsTracker
 import org.pushingpixels.aurora.component.ribbon.impl.KeyTipTracker
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackBounds
+import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackKeyTips
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
@@ -883,9 +880,16 @@ internal fun <M : BaseCommandMenuContentModel,
     val coroutineScope = rememberCoroutineScope()
 
     val trackBounds = LocalRibbonTrackBounds.current
+    val trackKeyTips = LocalRibbonTrackKeyTips.current
 
     Layout(
-        modifier = modifier.commandButtonLocator(originalProjection, buttonTopLeftOffset, buttonSize, trackBounds),
+        modifier = modifier.commandButtonLocator(
+            originalProjection,
+            buttonTopLeftOffset,
+            buttonSize,
+            trackBounds,
+            trackKeyTips
+        ),
         content = {
             val modifierAction: Modifier
             if (isToggle) {
@@ -1550,22 +1554,19 @@ internal fun <M : BaseCommandMenuContentModel,
         }
 
         if ((presentationModel.actionKeyTip != null) && !layoutInfo.actionClickArea.isEmpty) {
-            if (originalProjection.contentModel.text.equals("Paste")) {
-                println("Action + Popup layout!")
-            }
             KeyTipTracker.trackKeyTipOffset(
                 originalProjection,
                 presentationModel.actionKeyTip!!,
-                layoutInfo.actionClickArea.left,
-                layoutInfo.actionClickArea.top
+                layoutInfo.actionClickArea.left + layoutInfo.actionClickArea.width / 2,
+                layoutInfo.actionClickArea.top + layoutInfo.actionClickArea.height / 2
             )
         }
         if ((presentationModel.popupKeyTip != null) && !layoutInfo.popupClickArea.isEmpty) {
             KeyTipTracker.trackKeyTipOffset(
                 originalProjection,
                 presentationModel.popupKeyTip!!,
-                layoutInfo.popupClickArea.left,
-                layoutInfo.popupClickArea.top
+                layoutInfo.popupClickArea.left + layoutInfo.popupClickArea.width / 2,
+                layoutInfo.popupClickArea.top + layoutInfo.popupClickArea.height / 2
             )
         }
 
@@ -1926,15 +1927,17 @@ private fun CommandButtonPopupIconContent(
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 private class CommandButtonLocator(
     val projection: BaseCommandButtonProjection<*, *, *>,
     val topLeftOffset: AuroraOffset,
     val size: MutableState<IntSize>,
-    val trackBounds: Boolean
+    val trackBounds: Boolean,
+    val trackKeyTips: Boolean
 ) :
     OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
-        if (projection.contentModel.text.equals("Paste")) {
+        if (projection.presentationModel.actionKeyTip.equals("FY")) {
             println("Position!")
         }
 
@@ -1946,16 +1949,17 @@ private class CommandButtonLocator(
         // And store the component size
         size.value = coordinates.size
 
+        val bounds = AuroraRect(
+            x = converted.x,
+            y = converted.y,
+            width = coordinates.size.width.toFloat(),
+            height = coordinates.size.height.toFloat()
+        )
         if (trackBounds) {
-            val bounds = AuroraRect(
-                x = converted.x,
-                y = converted.y,
-                width = coordinates.size.width.toFloat(),
-                height = coordinates.size.height.toFloat()
-            )
-
             BoundsTracker.trackBounds(projection, bounds)
+        }
 
+        if (trackKeyTips) {
             if (projection.presentationModel.actionKeyTip != null) {
                 KeyTipTracker.trackKeyTipBase(
                     projection,
@@ -1974,10 +1978,12 @@ private class CommandButtonLocator(
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 private fun Modifier.commandButtonLocator(
     projection: BaseCommandButtonProjection<*, *, *>,
     topLeftOffset: AuroraOffset,
     size: MutableState<IntSize>,
-    trackBounds: Boolean
-) = this.then(CommandButtonLocator(projection, topLeftOffset, size, trackBounds))
+    trackBounds: Boolean,
+    trackKeyTips: Boolean
+) = this.then(CommandButtonLocator(projection, topLeftOffset, size, trackBounds, trackKeyTips))

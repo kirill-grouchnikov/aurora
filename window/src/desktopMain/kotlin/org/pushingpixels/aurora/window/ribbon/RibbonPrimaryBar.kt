@@ -38,9 +38,11 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.AuroraHorizontallyScrollableBox
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.Ribbon
 import org.pushingpixels.aurora.component.ribbon.RibbonContextualTaskGroup
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackBounds
+import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackKeyTips
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
@@ -53,6 +55,12 @@ internal data class RibbonContextualTaskGroupLayoutInfo(
     val ribbonContextualTaskGroup: RibbonContextualTaskGroup,
     val startX: Int,
     val endX: Int
+)
+
+private data class RibbonTaskInfo(
+    val taskCommand: Command,
+    val taskKeyTip: String?,
+    val contextualTaskGroup: RibbonContextualTaskGroup?
 )
 
 @OptIn(AuroraInternalApi::class)
@@ -110,29 +118,39 @@ internal fun RibbonPrimaryBar(
     }
 
     // Next is toggle buttons for all the ribbon tasks
-    val ribbonTaskCommands: List<Pair<Command, RibbonContextualTaskGroup?>> = ribbon.tasks.map { task ->
-        Pair<Command, RibbonContextualTaskGroup?>(Command(text = task.title,
-            icon = null,
-            action = {
-                if (!task.isActive) {
-                 task.onClick.invoke()
-                }
-            },
-            isActionToggle = true,
-            isActionToggleSelected = task.isActive
-        ), null)
-    } + ribbon.contextualTaskGroups.flatMap { contextualTaskGroup ->
-        contextualTaskGroup.tasks.map { contextualTask ->
-            Pair<Command, RibbonContextualTaskGroup?>(Command(text = contextualTask.title,
+    val ribbonTaskInfoList: List<RibbonTaskInfo> = ribbon.tasks.map { task ->
+        RibbonTaskInfo(
+            Command(
+                text = task.title,
                 icon = null,
                 action = {
-                    if (!contextualTask.isActive) {
-                        contextualTask.onClick.invoke()
+                    if (!task.isActive) {
+                        task.onClick.invoke()
                     }
                 },
                 isActionToggle = true,
-                isActionToggleSelected = contextualTask.isActive
-            ), contextualTaskGroup)
+                isActionToggleSelected = task.isActive
+            ),
+            task.keyTip,
+            null
+        )
+    } + ribbon.contextualTaskGroups.flatMap { contextualTaskGroup ->
+        contextualTaskGroup.tasks.map { contextualTask ->
+            RibbonTaskInfo(
+                Command(
+                    text = contextualTask.title,
+                    icon = null,
+                    action = {
+                        if (!contextualTask.isActive) {
+                            contextualTask.onClick.invoke()
+                        }
+                    },
+                    isActionToggle = true,
+                    isActionToggleSelected = contextualTask.isActive
+                ),
+                contextualTask.keyTip,
+                contextualTaskGroup
+            )
         }
     }
 
@@ -167,30 +185,30 @@ internal fun RibbonPrimaryBar(
     if (applicationMenuButtonPreferredSize != null) {
         currTaskButtonX += (applicationMenuButtonPreferredSize.width.toInt()) + layoutGap
     }
-    for (ribbonTaskCommandPair in ribbonTaskCommands) {
+    for (ribbonTaskInfo in ribbonTaskInfoList) {
         val currTaskButtonPreferredSize = taskButtonLayoutManager.getPreferredSize(
-            command = ribbonTaskCommandPair.first,
+            command = ribbonTaskInfo.taskCommand,
             presentationModel = taskButtonPresentationModel,
             preLayoutInfo = taskButtonLayoutManager.getPreLayoutInfo(
-                ribbonTaskCommandPair.first,
+                ribbonTaskInfo.taskCommand,
                 taskButtonPresentationModel
             )
         )
         combinedTaskButtonsWidth += currTaskButtonPreferredSize.width.toInt()
         maxTaskButtonHeight = max(maxTaskButtonHeight, currTaskButtonPreferredSize.height.toInt())
 
-        if (ribbonTaskCommandPair.second != null) {
-            val currentCombinedSpan = combinedContextualGroupSpanMap[ribbonTaskCommandPair.second]!!
+        if (ribbonTaskInfo.contextualTaskGroup != null) {
+            val currentCombinedSpan = combinedContextualGroupSpanMap[ribbonTaskInfo.contextualTaskGroup]!!
             val updatedMin = min(currentCombinedSpan.first, currTaskButtonX)
             val updatedMax =
                 max(currentCombinedSpan.second, currTaskButtonX + currTaskButtonPreferredSize.width.toInt())
-            combinedContextualGroupSpanMap[ribbonTaskCommandPair.second!!] = Pair(updatedMin, updatedMax)
+            combinedContextualGroupSpanMap[ribbonTaskInfo.contextualTaskGroup] = Pair(updatedMin, updatedMax)
         }
 
         currTaskButtonX += (currTaskButtonPreferredSize.width.toInt() + taskButtonLayoutGap)
     }
-    if (ribbonTaskCommands.isNotEmpty()) {
-        combinedTaskButtonsWidth += taskButtonLayoutGap * (ribbonTaskCommands.size - 1)
+    if (ribbonTaskInfoList.isNotEmpty()) {
+        combinedTaskButtonsWidth += taskButtonLayoutGap * (ribbonTaskInfoList.size - 1)
     }
 
     // And finally the anchored commands. We pre-compute their combined size twice, once at their original
@@ -359,7 +377,10 @@ internal fun RibbonPrimaryBar(
             val applicationMenuCommandButtonPlaceable =
                 if (applicationMenuButtonPreferredSize != null) {
                     subcompose(1) {
-                        CompositionLocalProvider(LocalRibbonTrackBounds provides false) {
+                        CompositionLocalProvider(
+                            LocalRibbonTrackBounds provides false,
+                            LocalRibbonTrackKeyTips provides true
+                        ) {
                             ribbon.applicationMenuCommandButtonProjection?.project()
                         }
                     }.first().measure(
@@ -411,39 +432,53 @@ internal fun RibbonPrimaryBar(
                     horizontalScrollState = taskButtonRowScrollState,
                     scrollAmount = 12.dp,
                     content = {
-                        for ((index, ribbonTaskCommandPair) in ribbonTaskCommands.withIndex()) {
+                        for ((index, ribbonTaskInfo) in ribbonTaskInfoList.withIndex()) {
                             if (index > 0) {
                                 Spacer(modifier = Modifier.width(TaskbarPrimaryBarTaskButtonsGap))
                             }
-                            AuroraDecorationArea(decorationAreaType = DecorationAreaType.ControlPane) {
-                                val presentationForCurrent = if (ribbonTaskCommandPair.second == null)
-                                    taskButtonPresentationModel else
-                                    taskButtonPresentationModel.overlayWith(
+                            CompositionLocalProvider(
+                                LocalRibbonTrackBounds provides false,
+                                LocalRibbonTrackKeyTips provides true
+                            ) {
+                                AuroraDecorationArea(decorationAreaType = DecorationAreaType.ControlPane) {
+                                    var presentationForCurrent = taskButtonPresentationModel.overlayWith(
                                         BaseCommandButtonPresentationModel.Overlay(
-                                            colorSchemeBundle = generateColorSchemeBundle(
-                                                active = AuroraSkin.colors.getActiveColorScheme(
-                                                    DecorationAreaType.ControlPane
-                                                ),
-                                                enabled = AuroraSkin.colors.getEnabledColorScheme(
-                                                    DecorationAreaType.ControlPane
-                                                ),
-                                                hueColor = ribbonTaskCommandPair.second!!.hueColor,
-                                                hueAmount = 0.25f
-                                            )
+                                            actionKeyTip = ribbonTaskInfo.taskKeyTip
                                         )
                                     )
+                                    if (ribbonTaskInfo.contextualTaskGroup != null) {
+                                        presentationForCurrent = presentationForCurrent.overlayWith(
+                                            BaseCommandButtonPresentationModel.Overlay(
+                                                colorSchemeBundle = generateColorSchemeBundle(
+                                                    active = AuroraSkin.colors.getActiveColorScheme(
+                                                        DecorationAreaType.ControlPane
+                                                    ),
+                                                    enabled = AuroraSkin.colors.getEnabledColorScheme(
+                                                        DecorationAreaType.ControlPane
+                                                    ),
+                                                    hueColor = ribbonTaskInfo.contextualTaskGroup.hueColor,
+                                                    hueAmount = 0.25f
+                                                )
+                                            )
+                                        )
+                                    }
 
-                                RibbonTaskToggleButton(
-                                    modifier = if (ribbonTaskCommandPair.first.isActionToggleSelected) {
-                                        selectedTaskButtonModifier
-                                    } else {
-                                        Modifier
-                                    },
-                                    command = ribbonTaskCommandPair.first,
-                                    presentationModel = presentationForCurrent,
-                                    showSelectedTaskInPopup = showSelectedTaskInPopup,
-                                    onUpdateShowSelectedTaskInPopup = onUpdateShowSelectedTaskInPopup
-                                )
+                                    RibbonTaskToggleButton(
+                                        modifier = if (ribbonTaskInfo.taskCommand.isActionToggleSelected) {
+                                            selectedTaskButtonModifier
+                                        } else {
+                                            Modifier
+                                        },
+                                        originalProjection = CommandButtonProjection(
+                                            ribbonTaskInfo.taskCommand,
+                                            presentationForCurrent
+                                        ),
+                                        command = ribbonTaskInfo.taskCommand,
+                                        presentationModel = presentationForCurrent,
+                                        showSelectedTaskInPopup = showSelectedTaskInPopup,
+                                        onUpdateShowSelectedTaskInPopup = onUpdateShowSelectedTaskInPopup
+                                    )
+                                }
                             }
                         }
                     }
