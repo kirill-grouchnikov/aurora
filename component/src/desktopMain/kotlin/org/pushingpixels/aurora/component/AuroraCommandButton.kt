@@ -64,6 +64,7 @@ import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjecti
 import org.pushingpixels.aurora.component.projection.Projection
 import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.ribbon.impl.BoundsTracker
+import org.pushingpixels.aurora.component.ribbon.impl.KeyTipTracker
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackBounds
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
@@ -1548,6 +1549,26 @@ internal fun <M : BaseCommandMenuContentModel,
             )
         }
 
+        if ((presentationModel.actionKeyTip != null) && !layoutInfo.actionClickArea.isEmpty) {
+            if (originalProjection.contentModel.text.equals("Paste")) {
+                println("Action + Popup layout!")
+            }
+            KeyTipTracker.trackKeyTipOffset(
+                originalProjection,
+                presentationModel.actionKeyTip!!,
+                layoutInfo.actionClickArea.left,
+                layoutInfo.actionClickArea.top
+            )
+        }
+        if ((presentationModel.popupKeyTip != null) && !layoutInfo.popupClickArea.isEmpty) {
+            KeyTipTracker.trackKeyTipOffset(
+                originalProjection,
+                presentationModel.popupKeyTip!!,
+                layoutInfo.popupClickArea.left,
+                layoutInfo.popupClickArea.top
+            )
+        }
+
         layout(
             width = layoutInfo.fullSize.width.toInt(),
             height = layoutInfo.fullSize.height.toInt()
@@ -1590,6 +1611,7 @@ internal fun <M : BaseCommandMenuContentModel,
     DisposableEffect(originalProjection) {
         onDispose {
             BoundsTracker.untrackBounds(originalProjection)
+            KeyTipTracker.untrackKeyTip(originalProjection)
         }
     }
 }
@@ -1905,13 +1927,17 @@ private fun CommandButtonPopupIconContent(
 }
 
 private class CommandButtonLocator(
-    val projection: Projection<ContentModel, PresentationModel>,
+    val projection: BaseCommandButtonProjection<*, *, *>,
     val topLeftOffset: AuroraOffset,
     val size: MutableState<IntSize>,
     val trackBounds: Boolean
 ) :
     OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
+        if (projection.contentModel.text.equals("Paste")) {
+            println("Position!")
+        }
+
         // Convert the top left corner of the component to the root coordinates
         val converted = coordinates.localToRoot(Offset.Zero)
         topLeftOffset.x = converted.x
@@ -1921,22 +1947,36 @@ private class CommandButtonLocator(
         size.value = coordinates.size
 
         if (trackBounds) {
-            BoundsTracker.trackBounds(
-                projection,
-                AuroraRect(
-                    x = converted.x,
-                    y = converted.y,
-                    width = coordinates.size.width.toFloat(),
-                    height = coordinates.size.height.toFloat()
-                )
+            val bounds = AuroraRect(
+                x = converted.x,
+                y = converted.y,
+                width = coordinates.size.width.toFloat(),
+                height = coordinates.size.height.toFloat()
             )
+
+            BoundsTracker.trackBounds(projection, bounds)
+
+            if (projection.presentationModel.actionKeyTip != null) {
+                KeyTipTracker.trackKeyTipBase(
+                    projection,
+                    projection.presentationModel.actionKeyTip!!,
+                    bounds
+                )
+            }
+            if (projection.presentationModel.popupKeyTip != null) {
+                KeyTipTracker.trackKeyTipBase(
+                    projection,
+                    projection.presentationModel.popupKeyTip!!,
+                    bounds
+                )
+            }
         }
     }
 }
 
 @Composable
 private fun Modifier.commandButtonLocator(
-    projection: Projection<ContentModel, PresentationModel>,
+    projection: BaseCommandButtonProjection<*, *, *>,
     topLeftOffset: AuroraOffset,
     size: MutableState<IntSize>,
     trackBounds: Boolean

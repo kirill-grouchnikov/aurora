@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.awtEventOrNull
 import androidx.compose.ui.draw.paint
@@ -602,7 +603,7 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
     val ribbonSelectedButtonSize = remember { mutableStateOf(IntSize(0, 0)) }
 
     Column(Modifier.fillMaxSize()) {
-        Box(Modifier.fillMaxWidth()) {
+        RibbonBox(Modifier.fillMaxWidth()) {
             Column(Modifier.fillMaxWidth().ribbonContextMenu(ribbon)) {
                 RibbonWindowTitlePane(
                     title, icon, iconFilterStrategy, ribbon, contextualTaskGroupSpans,
@@ -644,7 +645,8 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
                     }
                 }
             }
-            RibbonOverlay(Modifier.background(Color.Blue), DecoratedBorderThickness)
+            RibbonOverlay(Modifier, DecoratedBorderThickness)
+            RibbonKeyTipOverlay(Modifier, DecoratedBorderThickness)
         }
         Box(modifier = Modifier.fillMaxWidth().weight(1.0f)) {
             // Wrap the entire content in NONE decoration area. App code can set its
@@ -1051,6 +1053,32 @@ private fun Modifier.ribbonContextMenu(ribbon: Ribbon): Modifier {
 //    this.then(Modifier.auroraContextMenu(enabled = true,
 //        contentModel = CommandMenuContentModel()
 //    ))
+}
+
+@Composable
+private fun RibbonBox(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Layout(
+        modifier = modifier,
+        content = content
+    ) { measurables, constraints ->
+        val width = constraints.maxWidth
+        val mainPlaceable = measurables[0].measure(Constraints.fixedWidth(width = width))
+        val height = mainPlaceable.measuredHeight
+
+        val otherPlaceables = measurables.subList(1, measurables.size).map {
+            it.measure(Constraints.fixed(width = width, height = height))
+        }
+
+        layout(width = width, height = height) {
+            mainPlaceable.placeRelative(0, 0)
+            otherPlaceables.forEach {
+                it.placeRelative(0, 0)
+            }
+        }
+    }
 }
 
 private val TaskbarWidthMaxRatio = 0.25f

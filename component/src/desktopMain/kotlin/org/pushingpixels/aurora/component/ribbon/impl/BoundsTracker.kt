@@ -104,6 +104,9 @@ fun getCommandButtonProjectionUnder(x: Float, y: Float) : BaseCommandButtonProje
 @Composable
 fun RibbonOverlay(modifier: Modifier, insets: Dp) {
     Canvas(modifier = modifier) {
+        val width = this.size.width
+        val height = this.size.height
+        println("BOUNDS TRACKER SIZE ${this.size}")
         for (tracked in BoundsTracker.getBounds().entries) {
             val color = when (tracked.key) {
                 is RibbonGalleryProjection -> Color.Blue
