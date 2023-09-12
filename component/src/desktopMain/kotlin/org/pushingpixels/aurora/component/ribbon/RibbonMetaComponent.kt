@@ -30,16 +30,15 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.common.AuroraRect
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.IconProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.projection.Projection
-import org.pushingpixels.aurora.component.ribbon.impl.BoundsTracker
-import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonBandRowHeight
-import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackBounds
-import org.pushingpixels.aurora.common.AuroraRect
+import org.pushingpixels.aurora.component.ribbon.impl.*
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.component.utils.getLabelPreferredSingleLineWidth
 import org.pushingpixels.aurora.theming.IconFilterStrategy
@@ -70,6 +69,7 @@ class RibbonMetaComponentProjection<out C : ContentModel, out P : PresentationMo
     fun project(modifier: Modifier = Modifier) {
         RibbonMetaComponent(
             modifier = modifier,
+            originalProjection = this,
             projection = projection,
             enabled = enabled,
             ribbonComponentPresentationModel = ribbonComponentPresentationModel
@@ -80,6 +80,7 @@ class RibbonMetaComponentProjection<out C : ContentModel, out P : PresentationMo
     override fun reproject(modifier: Modifier) {
         RibbonMetaComponent(
             modifier = modifier,
+            originalProjection = this,
             projection = projection,
             enabled = enabled,
             ribbonComponentPresentationModel = ribbonComponentPresentationModel
@@ -164,6 +165,7 @@ class RibbonMetaComponentProjection<out C : ContentModel, out P : PresentationMo
 @Composable
 internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
     modifier: Modifier,
+    originalProjection: RibbonMetaComponentProjection<C, P>,
     projection: Projection<C, P>,
     enabled: () -> Boolean,
     ribbonComponentPresentationModel: RibbonComponentPresentationModel
@@ -176,10 +178,11 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
     val heightNeededForComponent = projection.intrinsicHeight(widthNeededForComponent)
 
     val trackBounds = LocalRibbonTrackBounds.current
+    val trackKeyTips = LocalRibbonTrackKeyTips.current
 
     Layout(
         modifier = if (trackBounds) {
-            modifier.metaComponentLocator(projection)
+            modifier.metaComponentLocator(originalProjection, trackBounds, trackKeyTips)
         } else {
             modifier
         },
@@ -220,9 +223,9 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
             val iconPlaceable = if (hasIcon) measurables[index++].measure(Constraints()) else null
             val captionPlaceable = if (hasCaption) measurables[index++].measure(Constraints()) else null
 
-            var componentWidth: Int = 0
-            var componentOffsetX: Int = 0
-            var fullWidth: Int = 0
+            var componentWidth = 0
+            var componentOffsetX = 0
+            var fullWidth = 0
 
             if (constraints.hasFixedWidth) {
                 val width = constraints.maxWidth
@@ -288,6 +291,56 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
                 )
             )
 
+            if (originalProjection.ribbonComponentPresentationModel.keyTip != null) {
+                // Key tip offset logic:
+                // If the meta component has caption, the key tip is horizontally centered at the start
+                // edge of the caption. Otherwise, it is horizontally centered at the horizontal center
+                // of the main component.
+                if (hasCaption) {
+                    val captionMid = if (layoutDirection == LayoutDirection.Ltr) {
+                        if (hasIcon) {
+                            iconPlaceable!!.measuredWidth + DefaultMetaComponentIconTextLayoutGap.toPx()
+                        } else {
+                            0
+                        }
+                    } else {
+                        if (hasIcon) {
+                            fullWidth - iconPlaceable!!.measuredWidth - DefaultMetaComponentIconTextLayoutGap.toPx()
+                        } else {
+                            fullWidth
+                        }
+                    }
+                    KeyTipTracker.trackKeyTipOffset(
+                        originalProjection,
+                        originalProjection.ribbonComponentPresentationModel.keyTip,
+                        captionMid.toFloat(),
+                        height / 2.0f
+                    )
+                } else {
+                    val componentMid = if (layoutDirection == LayoutDirection.Ltr) {
+                        if (hasIcon) {
+                            val iconSpace = iconPlaceable!!.measuredWidth + componentOffsetX
+                            iconSpace + (fullWidth - iconSpace) / 2.0f
+                        } else {
+                            fullWidth / 2.0f
+                        }
+                    } else {
+                        if (hasIcon) {
+                            val iconSpace = iconPlaceable!!.measuredWidth + componentOffsetX
+                            (fullWidth - iconSpace) / 2.0f
+                        } else {
+                            fullWidth / 2.0f
+                        }
+                    }
+                    KeyTipTracker.trackKeyTipOffset(
+                        originalProjection,
+                        originalProjection.ribbonComponentPresentationModel.keyTip,
+                        componentMid,
+                        height / 2.0f
+                    )
+                }
+            }
+
             layout(width = fullWidth, height = height) {
                 var x = 0
                 if (hasIcon) {
@@ -312,33 +365,50 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
 
     DisposableEffect(projection) {
         onDispose {
-            BoundsTracker.untrackBounds(projection)
+            BoundsTracker.untrackBounds(originalProjection)
+            KeyTipTracker.untrackKeyTip(originalProjection)
         }
     }
 }
 
 @OptIn(AuroraInternalApi::class)
-private class MetaComponentLocator(val projection: Projection<ContentModel, PresentationModel>) :
+private class MetaComponentLocator(
+    val projection: RibbonMetaComponentProjection<*, *>,
+    val trackBounds: Boolean,
+    val trackKeyTips: Boolean
+) :
     OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
         // Convert the top left corner of the component to the root coordinates
         val converted = coordinates.localToRoot(Offset.Zero)
 
-        BoundsTracker.trackBounds(
-            projection,
-            AuroraRect(
-                x = converted.x,
-                y = converted.y,
-                width = coordinates.size.width.toFloat(),
-                height = coordinates.size.height.toFloat()
-            )
+        val bounds = AuroraRect(
+            x = converted.x,
+            y = converted.y,
+            width = coordinates.size.width.toFloat(),
+            height = coordinates.size.height.toFloat()
         )
+        if (trackBounds) {
+            BoundsTracker.trackBounds(projection, bounds)
+        }
+        if (trackKeyTips) {
+            if (projection.presentationModel.ribbonComponentPresentationModel.keyTip != null) {
+                KeyTipTracker.trackKeyTipBase(
+                    projection,
+                    projection.presentationModel.ribbonComponentPresentationModel.keyTip!!,
+                    bounds
+                )
+            }
+        }
     }
 }
 
 @Composable
-private fun Modifier.metaComponentLocator(projection: Projection<ContentModel, PresentationModel>) =
-    this.then(MetaComponentLocator(projection))
+private fun Modifier.metaComponentLocator(
+    projection: RibbonMetaComponentProjection<*, *>,
+    trackBounds: Boolean,
+    trackKeyTips: Boolean
+) = this.then(MetaComponentLocator(projection, trackBounds, trackKeyTips))
 
 private val DefaultMetaComponentIconTextLayoutGap = 4.dp
 private val DefaultMetaComponentLayoutGap = 6.dp

@@ -1893,12 +1893,12 @@ internal class RibbonBuilder(
                         RibbonMetaComponentProjection(
                             projection = RadioButtonProjection(contentModel = cozyContentModel),
                             enabled = { cozyContentModel.enabled },
-                            ribbonComponentPresentationModel = RibbonComponentPresentationModel(keyTip = "LA")
+                            ribbonComponentPresentationModel = RibbonComponentPresentationModel(keyTip = "LB")
                         ),
                         RibbonMetaComponentProjection(
                             projection = RadioButtonProjection(contentModel = compactContentModel),
                             enabled = { compactContentModel.enabled },
-                            ribbonComponentPresentationModel = RibbonComponentPresentationModel(keyTip = "LA")
+                            ribbonComponentPresentationModel = RibbonComponentPresentationModel(keyTip = "LC")
                         ),
                     )
                 )

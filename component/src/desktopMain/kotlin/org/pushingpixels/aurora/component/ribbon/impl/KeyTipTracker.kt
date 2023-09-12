@@ -37,10 +37,10 @@ import org.jetbrains.skia.Font
 import org.jetbrains.skia.TextLine
 import org.jetbrains.skia.Typeface
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.common.AuroraRect
 import org.pushingpixels.aurora.component.model.ContentModel
 import org.pushingpixels.aurora.component.model.PresentationModel
 import org.pushingpixels.aurora.component.projection.Projection
-import org.pushingpixels.aurora.common.AuroraRect
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme

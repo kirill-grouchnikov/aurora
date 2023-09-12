@@ -357,7 +357,8 @@ internal fun RibbonGallery(
                                     offset = galleryTopLeftOffset.asOffset(density),
                                     size = Size(width = gallerySize.value.width / density.density, height = 0.0f)
                                 )
-                            }
+                            },
+                            popupKeyTip = presentationModel.expandKeyTip
                         )
                     )
                 ).project(modifier = Modifier.weight(1.0f / 3.0f))

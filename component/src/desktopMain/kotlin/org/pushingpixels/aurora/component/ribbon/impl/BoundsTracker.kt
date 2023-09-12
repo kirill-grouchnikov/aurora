@@ -26,13 +26,13 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.common.AuroraRect
+import org.pushingpixels.aurora.common.contains
 import org.pushingpixels.aurora.component.model.ContentModel
 import org.pushingpixels.aurora.component.model.PresentationModel
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.Projection
 import org.pushingpixels.aurora.component.ribbon.RibbonGalleryProjection
-import org.pushingpixels.aurora.common.AuroraRect
-import org.pushingpixels.aurora.common.contains
 
 @AuroraInternalApi
 object BoundsTracker {

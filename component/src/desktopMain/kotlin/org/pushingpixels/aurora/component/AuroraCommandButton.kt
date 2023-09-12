@@ -1937,10 +1937,6 @@ private class CommandButtonLocator(
 ) :
     OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
-        if (projection.presentationModel.actionKeyTip.equals("FY")) {
-            println("Position!")
-        }
-
         // Convert the top left corner of the component to the root coordinates
         val converted = coordinates.localToRoot(Offset.Zero)
         topLeftOffset.x = converted.x
