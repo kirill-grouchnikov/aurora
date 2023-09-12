@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.nativeCanvas
@@ -51,8 +52,7 @@ object KeyTipTracker {
         var projection: Projection<ContentModel, PresentationModel>,
         var keyTip: String,
         var screenRect: AuroraRect,
-        var anchorX: Float,
-        var anchorY: Float
+        var anchor: Offset
     )
 
     private val keyTips: MutableList<KeyTipInfo> = arrayListOf()
@@ -68,24 +68,22 @@ object KeyTipTracker {
         if (existing != null) {
             existing.screenRect = screenRect.copy()
         } else {
-            keyTips.add(KeyTipInfo(projection, keyTip, screenRect, 0.0f, 0.0f))
+            keyTips.add(KeyTipInfo(projection, keyTip, screenRect, Offset.Zero))
         }
     }
 
     fun trackKeyTipOffset(
         projection: Projection<ContentModel, PresentationModel>,
         keyTip: String,
-        anchorX: Float,
-        anchorY: Float
+        anchor: Offset
     ) {
         val existing = keyTips.find {
             (it.projection == projection) && (it.keyTip == keyTip)
         }
         if (existing != null) {
-            existing.anchorX = anchorX
-            existing.anchorY = anchorY
+            existing.anchor = anchor.copy()
         } else {
-            keyTips.add(KeyTipInfo(projection, keyTip, AuroraRect(0.0f, 0.0f, 0.0f, 0.0f), anchorX, anchorY))
+            keyTips.add(KeyTipInfo(projection, keyTip, AuroraRect(0.0f, 0.0f, 0.0f, 0.0f), anchor.copy()))
         }
     }
 
@@ -141,11 +139,8 @@ fun RibbonKeyTipOverlay(modifier: Modifier, insets: Dp) {
     val bottomPadding = KeyTipPaddingValues.calculateBottomPadding()
 
     Canvas(modifier = modifier) {
-        val width = this.size.width
-        val height = this.size.height
-        //println("KEY TIP TRACKER SIZE ${this.size}")
-
         for (tracked in KeyTipTracker.getKeyTips()) {
+            // Compute how much space the keytip text needs
             val paragraph = Paragraph(
                 text = tracked.keyTip, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
                 density = density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
@@ -155,14 +150,9 @@ fun RibbonKeyTipOverlay(modifier: Modifier, insets: Dp) {
             val tipWidth = leftPadding.toPx() + paragraph.maxIntrinsicWidth + rightPadding.toPx()
             val tipHeight = topPadding.toPx() + paragraph.height + bottomPadding.toPx()
 
-            val fullOffsetX = tracked.screenRect.x + tracked.anchorX - tipWidth / 2 - insets.toPx()
-            val fullOffsetY = tracked.screenRect.y + tracked.anchorY - tipHeight / 2 - insets.toPx()
-            if (tracked.keyTip.equals("FY")) {
-                println("Key tip $tracked width=$tipWidth height=$tipHeight offsetX=$fullOffsetX")
-            }
+            val fullOffsetX = tracked.screenRect.x + tracked.anchor.x - tipWidth / 2 - insets.toPx()
+            val fullOffsetY = tracked.screenRect.y + tracked.anchor.y - tipHeight / 2 - insets.toPx()
 
-
-            //println("Drawing ${tracked.keyTip} at ${tracked.screenRect}")
             withTransform({
                 translate(left = fullOffsetX, top = fullOffsetY)
             }) {

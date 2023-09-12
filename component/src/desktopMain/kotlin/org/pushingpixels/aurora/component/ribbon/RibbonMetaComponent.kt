@@ -313,8 +313,7 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
                     KeyTipTracker.trackKeyTipOffset(
                         originalProjection,
                         originalProjection.ribbonComponentPresentationModel.keyTip,
-                        captionMid.toFloat(),
-                        height / 2.0f
+                        Offset(captionMid.toFloat(), height / 2.0f)
                     )
                 } else {
                     val componentMid = if (layoutDirection == LayoutDirection.Ltr) {
@@ -335,8 +334,7 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
                     KeyTipTracker.trackKeyTipOffset(
                         originalProjection,
                         originalProjection.ribbonComponentPresentationModel.keyTip,
-                        componentMid,
-                        height / 2.0f
+                        Offset(componentMid, height / 2.0f)
                     )
                 }
             }

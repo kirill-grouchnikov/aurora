@@ -18,12 +18,14 @@ package org.pushingpixels.aurora.component.layout
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
+import org.pushingpixels.aurora.common.AuroraOffset
 import org.pushingpixels.aurora.component.model.*
 
 /**
@@ -185,6 +187,20 @@ interface CommandButtonLayoutManager : MeasureScope {
         presentationModel: BaseCommandButtonPresentationModel,
         preLayoutInfo: CommandButtonPreLayoutInfo
     ): CommandButtonLayoutInfo
+
+    fun getActionKeyTipAnchorCenterPoint(layoutInfo: CommandButtonLayoutInfo): Offset {
+        return Offset(
+            (layoutInfo.actionClickArea.left + layoutInfo.actionClickArea.right) / 2.0f,
+            (layoutInfo.actionClickArea.top + layoutInfo.actionClickArea.bottom) / 2.0f,
+        )
+    }
+
+    fun getPopupKeyTipAnchorCenterPoint(layoutInfo: CommandButtonLayoutInfo): Offset {
+        return Offset(
+            (layoutInfo.popupClickArea.left + layoutInfo.popupClickArea.right) / 2.0f,
+            (layoutInfo.popupClickArea.top + layoutInfo.popupClickArea.bottom) / 2.0f,
+        )
+    }
 }
 
 fun getCommandButtonKind(
