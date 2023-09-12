@@ -5,7 +5,7 @@ compose = "1.5.1"
 dokka = "1.9.0-dev-228"
 batik = "1.17"
 
-versionchecker = "0.47.0"
+versionchecker = "0.48.0"
 mavenpublish = "0.25.3"
 
 [libraries]
