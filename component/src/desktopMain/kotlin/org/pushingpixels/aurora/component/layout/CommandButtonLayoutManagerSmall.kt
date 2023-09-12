@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.component.layout
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.TextStyle
@@ -361,6 +362,42 @@ internal open class CommandButtonLayoutManagerSmall(
             extraTextLayoutInfoList = emptyList(),
             popupActionRect = popupActionRect
         )
+    }
+
+    override fun getActionKeyTipAnchorCenterPoint(
+        command: BaseCommand,
+        presentationModel: BaseCommandButtonPresentationModel,
+        layoutInfo: CommandButtonLayoutManager.CommandButtonLayoutInfo
+    ): Offset {
+        return if (layoutDirection == LayoutDirection.Ltr) {
+            Offset(
+                x = layoutInfo.actionClickArea.left + layoutInfo.actionClickArea.width,
+                y = (layoutInfo.fullSize.height + layoutInfo.actionClickArea.height) / 2.0f
+            )
+        } else {
+            Offset(
+                x = layoutInfo.actionClickArea.left,
+                y = (layoutInfo.fullSize.height + layoutInfo.actionClickArea.height) / 2.0f
+            )
+        }
+    }
+
+    override fun getPopupKeyTipAnchorCenterPoint(
+        command: BaseCommand,
+        presentationModel: BaseCommandButtonPresentationModel,
+        layoutInfo: CommandButtonLayoutManager.CommandButtonLayoutInfo
+    ): Offset {
+        return if (layoutDirection == LayoutDirection.Ltr) {
+            Offset(
+                x = layoutInfo.popupClickArea.left + layoutInfo.popupClickArea.width,
+                y = (layoutInfo.fullSize.height + layoutInfo.popupClickArea.height) / 2.0f
+            )
+        } else {
+            Offset(
+                x = layoutInfo.popupClickArea.left,
+                y = (layoutInfo.fullSize.height + layoutInfo.popupClickArea.height) / 2.0f
+            )
+        }
     }
 }
 

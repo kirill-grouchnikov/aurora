@@ -15,16 +15,19 @@
  */
 package org.pushingpixels.aurora.component.layout
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.Paragraph
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.*
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.*
 import kotlin.math.max
 
-internal open class CommandButtonLayoutManagerMedium(
+@AuroraInternalApi
+open class CommandButtonLayoutManagerMedium(
     override val layoutDirection: LayoutDirection,
     private val _density: Density,
     private val textStyle: TextStyle,
@@ -689,8 +692,59 @@ internal open class CommandButtonLayoutManagerMedium(
             popupActionRect = popupActionRect
         )
     }
+
+    override fun getActionKeyTipAnchorCenterPoint(
+        command: BaseCommand,
+        presentationModel: BaseCommandButtonPresentationModel,
+        layoutInfo: CommandButtonLayoutManager.CommandButtonLayoutInfo
+    ): Offset {
+        val hasIcon = (command.icon != null) || presentationModel.forceAllocateSpaceForIcon
+
+        // If the button shows icon, the action keytip is at the end edge of the icon. Otherwise,
+        // it is at the end edge of the full action click area.
+        if (layoutDirection == LayoutDirection.Ltr) {
+            val x = if (hasIcon) {
+                layoutInfo.iconRect.left + layoutInfo.iconRect.width
+            } else {
+                layoutInfo.actionClickArea.left + layoutInfo.actionClickArea.width
+            }
+            return Offset(
+                x = x,
+                y = (layoutInfo.fullSize.height + layoutInfo.actionClickArea.height) / 2.0f
+            )
+        } else {
+            val x = if (hasIcon) {
+                layoutInfo.iconRect.left
+            } else {
+                layoutInfo.actionClickArea.left
+            }
+            return Offset(
+                x = x,
+                y = (layoutInfo.fullSize.height + layoutInfo.actionClickArea.height) / 2.0f
+            )
+        }
+    }
+
+    override fun getPopupKeyTipAnchorCenterPoint(
+        command: BaseCommand,
+        presentationModel: BaseCommandButtonPresentationModel,
+        layoutInfo: CommandButtonLayoutManager.CommandButtonLayoutInfo
+    ): Offset {
+        return if (layoutDirection == LayoutDirection.Ltr) {
+            Offset(
+                x = layoutInfo.popupClickArea.left + layoutInfo.popupClickArea.width,
+                y = (layoutInfo.fullSize.height + layoutInfo.popupClickArea.height) / 2.0f
+            )
+        } else {
+            Offset(
+                x = layoutInfo.popupClickArea.left,
+                y = (layoutInfo.fullSize.height + layoutInfo.popupClickArea.height) / 2.0f
+            )
+        }
+    }
 }
 
+@AuroraInternalApi
 internal class CommandButtonLayoutManagerMediumFitToIcon(
     layoutDirection: LayoutDirection,
     _density: Density,

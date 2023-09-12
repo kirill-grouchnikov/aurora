@@ -564,7 +564,7 @@ internal fun RibbonTaskToggleButton(
             KeyTipTracker.trackKeyTipOffset(
                 originalProjection,
                 presentationModel.actionKeyTip!!,
-                layoutManager.getActionKeyTipAnchorCenterPoint(layoutInfo)
+                layoutManager.getActionKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo)
             )
         }
 

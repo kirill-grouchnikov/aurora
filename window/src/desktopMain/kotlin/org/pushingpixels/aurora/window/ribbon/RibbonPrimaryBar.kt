@@ -31,12 +31,15 @@ import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.resolveDefaults
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.AuroraHorizontallyScrollableBox
+import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
+import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManagerMedium
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.Ribbon
@@ -158,7 +161,7 @@ internal fun RibbonPrimaryBar(
     var maxTaskButtonHeight = 0
 
     val taskButtonPresentationModel = CommandButtonPresentationModel(
-        presentationState = CommandButtonPresentationState.Medium,
+        presentationState = RibbonTaskToggle,
         contentPadding = TaskbarPrimaryBarTaskButtonContentPadding,
         minWidth = TaskbarPrimaryBarTaskButtonMinWidth,
         horizontalAlignment = HorizontalAlignment.Center,
@@ -562,6 +565,55 @@ private fun generateColorSchemeBundle(
     // Darker borders
     result.registerColorScheme(tweakedActive.shade(0.5f), associationKind = ColorSchemeAssociationKind.Border)
     return result
+}
+
+private val RibbonTaskToggle: CommandButtonPresentationState =
+    object : CommandButtonPresentationState("RibbonTaskToggle") {
+        override fun createLayoutManager(
+            layoutDirection: LayoutDirection,
+            density: Density,
+            textStyle: TextStyle,
+            fontFamilyResolver: FontFamily.Resolver
+        ): CommandButtonLayoutManager {
+            return CommandButtonLayoutManagerRibbonTaskToggle(
+                layoutDirection,
+                density,
+                textStyle,
+                fontFamilyResolver
+            )
+        }
+    }
+
+@OptIn(AuroraInternalApi::class)
+private class CommandButtonLayoutManagerRibbonTaskToggle(
+    layoutDirection: LayoutDirection,
+    _density: Density,
+    textStyle: TextStyle,
+    fontFamilyResolver: FontFamily.Resolver
+) : CommandButtonLayoutManagerMedium(layoutDirection, _density, textStyle, fontFamilyResolver) {
+    override fun getActionKeyTipAnchorCenterPoint(
+        command: BaseCommand,
+        presentationModel: BaseCommandButtonPresentationModel,
+        layoutInfo: CommandButtonLayoutManager.CommandButtonLayoutInfo
+    ): Offset {
+        // horizontally centered at the bottom edge of the action click area
+        return Offset(
+            x = layoutInfo.actionClickArea.left + layoutInfo.actionClickArea.width / 2,
+            y = layoutInfo.actionClickArea.top + layoutInfo.actionClickArea.height
+        )
+    }
+
+    override fun getPopupKeyTipAnchorCenterPoint(
+        command: BaseCommand,
+        presentationModel: BaseCommandButtonPresentationModel,
+        layoutInfo: CommandButtonLayoutManager.CommandButtonLayoutInfo
+    ): Offset {
+        // horizontally centered at the bottom edge of the popup click area
+        return Offset(
+            x = layoutInfo.popupClickArea.left + layoutInfo.popupClickArea.width / 2,
+            y = layoutInfo.popupClickArea.top + layoutInfo.popupClickArea.height
+        )
+    }
 }
 
 private val TaskbarPrimaryBarGap = 8.dp

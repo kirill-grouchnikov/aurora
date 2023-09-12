@@ -21,6 +21,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.layout.*
 
 interface CommandActionPreview {
@@ -187,6 +188,7 @@ abstract class CommandButtonPresentationState(val displayName: String) {
             }
 
         /** Medium state */
+        @OptIn(AuroraInternalApi::class)
         val Medium: CommandButtonPresentationState =
             object : CommandButtonPresentationState("Medium") {
                 override fun createLayoutManager(
@@ -205,6 +207,7 @@ abstract class CommandButtonPresentationState(val displayName: String) {
             }
 
         /** Fit-to-icon + medium state */
+        @OptIn(AuroraInternalApi::class)
         val MediumFitToIcon: CommandButtonPresentationState =
             object : CommandButtonPresentationState("Medium fit to icon") {
                 override fun createLayoutManager(

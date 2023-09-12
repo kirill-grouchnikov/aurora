@@ -1557,14 +1557,14 @@ internal fun <M : BaseCommandMenuContentModel,
             KeyTipTracker.trackKeyTipOffset(
                 originalProjection,
                 presentationModel.actionKeyTip!!,
-                layoutManager.getActionKeyTipAnchorCenterPoint(layoutInfo)
+                layoutManager.getActionKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo)
             )
         }
         if ((presentationModel.popupKeyTip != null) && !layoutInfo.popupClickArea.isEmpty) {
             KeyTipTracker.trackKeyTipOffset(
                 originalProjection,
                 presentationModel.popupKeyTip!!,
-                layoutManager.getPopupKeyTipAnchorCenterPoint(layoutInfo)
+                layoutManager.getPopupKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo)
             )
         }
 

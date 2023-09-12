@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManagerMedium
 import org.pushingpixels.aurora.theming.IconFilterStrategy
@@ -50,6 +51,7 @@ data class CommandPopupMenuPresentationModel(
     val toDismissOnCommandActivation: Boolean = true,
 ): BaseCommandPopupMenuPresentationModel
 
+@OptIn(AuroraInternalApi::class)
 private class PopupMenuCommandButtonLayoutManager(
     layoutDirection: LayoutDirection,
     density: Density,
@@ -74,6 +76,7 @@ private class PopupMenuCommandButtonLayoutManager(
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 val DefaultCommandPopupMenuPresentationState: CommandButtonPresentationState =
     object : CommandButtonPresentationState("Popup menu") {
         override fun createLayoutManager(
