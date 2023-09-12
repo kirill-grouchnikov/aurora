@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.component.utils.appmenu
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.Paragraph
@@ -736,5 +737,45 @@ internal class CommandButtonLayoutManagerAppMenuLevel2(
             extraTextLayoutInfoList = extraTextLayoutInfoList,
             popupActionRect = popupActionRect
         )
+    }
+
+    override fun getActionKeyTipAnchorCenterPoint(
+        command: BaseCommand,
+        presentationModel: BaseCommandButtonPresentationModel,
+        layoutInfo: CommandButtonLayoutManager.CommandButtonLayoutInfo
+    ): Offset {
+        return if (layoutDirection == LayoutDirection.Ltr) {
+            // bottom-right corner of the icon area
+            Offset(
+                x = layoutInfo.iconRect.left + layoutInfo.iconRect.width,
+                y = layoutInfo.actionClickArea.top + layoutInfo.actionClickArea.height
+            )
+        } else {
+            // bottom-left corner of the icon area
+            Offset(
+                x = layoutInfo.iconRect.left,
+                y = layoutInfo.actionClickArea.top + layoutInfo.actionClickArea.height
+            )
+        }
+    }
+
+    override fun getPopupKeyTipAnchorCenterPoint(
+        command: BaseCommand,
+        presentationModel: BaseCommandButtonPresentationModel,
+        layoutInfo: CommandButtonLayoutManager.CommandButtonLayoutInfo
+    ): Offset {
+        return if (layoutDirection == LayoutDirection.Ltr) {
+            // bottom-left corner of the popup click area
+            Offset(
+                x = layoutInfo.popupClickArea.left,
+                y = layoutInfo.popupClickArea.top + layoutInfo.popupClickArea.height
+            )
+        } else {
+            // bottom-left corner of the popup click area
+            Offset(
+                x = layoutInfo.popupClickArea.left + layoutInfo.popupClickArea.width,
+                y = layoutInfo.popupClickArea.top + layoutInfo.popupClickArea.height
+            )
+        }
     }
 }

@@ -188,27 +188,17 @@ interface CommandButtonLayoutManager : MeasureScope {
         preLayoutInfo: CommandButtonPreLayoutInfo
     ): CommandButtonLayoutInfo
 
-    open fun getActionKeyTipAnchorCenterPoint(
+    fun getActionKeyTipAnchorCenterPoint(
         command: BaseCommand,
         presentationModel: BaseCommandButtonPresentationModel,
         layoutInfo: CommandButtonLayoutInfo
-    ): Offset {
-        return Offset(
-            (layoutInfo.actionClickArea.left + layoutInfo.actionClickArea.right) / 2.0f,
-            (layoutInfo.actionClickArea.top + layoutInfo.actionClickArea.bottom) / 2.0f,
-        )
-    }
+    ): Offset
 
-    open fun getPopupKeyTipAnchorCenterPoint(
+    fun getPopupKeyTipAnchorCenterPoint(
         command: BaseCommand,
         presentationModel: BaseCommandButtonPresentationModel,
         layoutInfo: CommandButtonLayoutInfo
-    ): Offset {
-        return Offset(
-            (layoutInfo.popupClickArea.left + layoutInfo.popupClickArea.right) / 2.0f,
-            (layoutInfo.popupClickArea.top + layoutInfo.popupClickArea.bottom) / 2.0f,
-        )
-    }
+    ): Offset
 }
 
 fun getCommandButtonKind(

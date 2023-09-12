@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.Paragraph
@@ -148,6 +149,30 @@ private object WindowMenuBarLayout {
                 ),
                 extraTextLayoutInfoList = emptyList(),
                 popupActionRect = Rect.Zero
+            )
+        }
+
+        override fun getActionKeyTipAnchorCenterPoint(
+            command: BaseCommand,
+            presentationModel: BaseCommandButtonPresentationModel,
+            layoutInfo: CommandButtonLayoutManager.CommandButtonLayoutInfo
+        ): Offset {
+            // horizontally centered at the bottom edge of the action click area
+            return Offset(
+                x = layoutInfo.actionClickArea.left + layoutInfo.actionClickArea.width / 2,
+                y = layoutInfo.actionClickArea.top + layoutInfo.actionClickArea.height
+            )
+        }
+
+        override fun getPopupKeyTipAnchorCenterPoint(
+            command: BaseCommand,
+            presentationModel: BaseCommandButtonPresentationModel,
+            layoutInfo: CommandButtonLayoutManager.CommandButtonLayoutInfo
+        ): Offset {
+            // horizontally centered at the bottom edge of the popup click area
+            return Offset(
+                x = layoutInfo.popupClickArea.left + layoutInfo.popupClickArea.width / 2,
+                y = layoutInfo.popupClickArea.top + layoutInfo.popupClickArea.height
             )
         }
     }

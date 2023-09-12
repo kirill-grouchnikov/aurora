@@ -879,8 +879,8 @@ internal fun <M : BaseCommandMenuContentModel,
     val compositionLocalContext by rememberUpdatedState(currentCompositionLocalContext)
     val coroutineScope = rememberCoroutineScope()
 
-    val trackBounds = LocalRibbonTrackBounds.current
-    val trackKeyTips = LocalRibbonTrackKeyTips.current
+    val trackBounds = LocalRibbonTrackBounds.current && (popupMenu == null)
+    val trackKeyTips = LocalRibbonTrackKeyTips.current && (popupMenu == null)
 
     Layout(
         modifier = modifier.commandButtonLocator(
