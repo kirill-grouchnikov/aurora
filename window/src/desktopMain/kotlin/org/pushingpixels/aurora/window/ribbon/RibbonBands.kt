@@ -41,9 +41,7 @@ import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.ribbon.*
-import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonBandRowHeight
-import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackBounds
-import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackKeyTips
+import org.pushingpixels.aurora.component.ribbon.impl.*
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicies
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicy
 import org.pushingpixels.aurora.component.ribbon.resize.FlowRibbonBandResizePolicy
@@ -205,6 +203,7 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
 
     CompositionLocalProvider(
         LocalRibbonBandRowHeight provides rowHeight,
+        LocalRibbonBandRow provides RibbonBandRow.None,
     ) {
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.ControlPane) {
             SubcomposeLayout(
@@ -428,6 +427,7 @@ private fun BigButtons(buttons: List<BaseCommandButtonProjection<*, *, *>>) {
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 private fun MediumButtons(buttons: List<BaseCommandButtonProjection<*, *, *>>) {
     Row(
@@ -443,14 +443,21 @@ private fun MediumButtons(buttons: List<BaseCommandButtonProjection<*, *, *>>) {
             ) {
                 for (row in 1..3) {
                     if (buttonIndex < buttons.size) {
-                        buttons[buttonIndex].reproject(modifier = Modifier,
-                            primaryOverlay = BaseCommandButtonPresentationModel.Overlay(
-                                presentationState = CommandButtonPresentationState.Medium,
-                                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat
-                            ),
-                            actionInteractionSource = remember { MutableInteractionSource() },
-                            popupInteractionSource = remember { MutableInteractionSource() })
-                        buttonIndex++
+                        val rowEnum = when (row) {
+                            1 -> RibbonBandRow.Top
+                            2 -> RibbonBandRow.Middle
+                            else -> RibbonBandRow.Bottom
+                        }
+                        CompositionLocalProvider(LocalRibbonBandRow provides rowEnum) {
+                            buttons[buttonIndex].reproject(modifier = Modifier,
+                                primaryOverlay = BaseCommandButtonPresentationModel.Overlay(
+                                    presentationState = CommandButtonPresentationState.Medium,
+                                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat
+                                ),
+                                actionInteractionSource = remember { MutableInteractionSource() },
+                                popupInteractionSource = remember { MutableInteractionSource() })
+                            buttonIndex++
+                        }
                     }
                 }
             }
@@ -458,6 +465,7 @@ private fun MediumButtons(buttons: List<BaseCommandButtonProjection<*, *, *>>) {
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 private fun SmallButtons(buttons: List<BaseCommandButtonProjection<*, *, *>>) {
     Row(
@@ -473,14 +481,21 @@ private fun SmallButtons(buttons: List<BaseCommandButtonProjection<*, *, *>>) {
             ) {
                 for (row in 1..3) {
                     if (buttonIndex < buttons.size) {
-                        buttons[buttonIndex].reproject(modifier = Modifier,
-                            primaryOverlay = BaseCommandButtonPresentationModel.Overlay(
-                                presentationState = CommandButtonPresentationState.Small,
-                                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat
-                            ),
-                            actionInteractionSource = remember { MutableInteractionSource() },
-                            popupInteractionSource = remember { MutableInteractionSource() })
-                        buttonIndex++
+                        val rowEnum = when (row) {
+                            1 -> RibbonBandRow.Top
+                            2 -> RibbonBandRow.Middle
+                            else -> RibbonBandRow.Bottom
+                        }
+                        CompositionLocalProvider(LocalRibbonBandRow provides rowEnum) {
+                            buttons[buttonIndex].reproject(modifier = Modifier,
+                                primaryOverlay = BaseCommandButtonPresentationModel.Overlay(
+                                    presentationState = CommandButtonPresentationState.Small,
+                                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat
+                                ),
+                                actionInteractionSource = remember { MutableInteractionSource() },
+                                popupInteractionSource = remember { MutableInteractionSource() })
+                            buttonIndex++
+                        }
                     }
                 }
             }
@@ -562,6 +577,7 @@ private fun getComponentGroupContentLayoutInfo(
     )
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 private fun RibbonBandComponentGroupContent(
     group: RibbonBandComponentGroup,
@@ -592,7 +608,15 @@ private fun RibbonBandComponentGroupContent(
             for (projection in group.componentProjections) {
                 // All components in the same column have the same (max) width
                 val currentColumnWidth = layoutInfo.columnWidths[currentColumnIndex]
-                projection.project(Modifier.width((currentColumnWidth / density.density).dp))
+
+                val rowEnum = when (currentContentRow) {
+                    0 -> RibbonBandRow.Top
+                    1 -> RibbonBandRow.Middle
+                    else -> RibbonBandRow.Bottom
+                }
+                CompositionLocalProvider(LocalRibbonBandRow provides rowEnum) {
+                    projection.project(Modifier.width((currentColumnWidth / density.density).dp))
+                }
 
                 currentContentRow++
                 if (currentContentRow == contentRows) {
@@ -638,6 +662,7 @@ private fun RibbonBandComponentGroupContent(
         })
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 private fun FlowRibbonBandContent(
     band: FlowRibbonBand,
@@ -649,32 +674,43 @@ private fun FlowRibbonBandContent(
     val rowHeight = ((bandContentHeight - 4 * gap) / 3.0f).toInt()
 
     val optimalWidth = bandResizePolicy.getPreferredWidth(band, bandContentHeight, gap)
+    val rowCount = bandResizePolicy.rowCount
     Layout(modifier = Modifier.fillMaxHeight().width((optimalWidth / density.density).dp)
         .padding(horizontal = RibbonBandContentGap),
         content = {
             // Project all the content
+            var currRow = 1
+            var currX = 0
+            val widthForContent = optimalWidth - 2 * gap
             for (projection in band.flowComponentProjections) {
-                projection.project(Modifier)
+                val projectionWidth = projection.intrinsicWidth(rowHeight)
+                if ((currX + projectionWidth) > widthForContent) {
+                    currX = 0
+                    currRow++
+                }
+                currX += (projectionWidth + gap)
+
+                val rowEnum = when (rowCount) {
+                    1 -> RibbonBandRow.Middle
+                    2 -> if (currRow == 1) RibbonBandRow.Top else RibbonBandRow.Bottom
+                    else -> when (currRow) {
+                        1 -> RibbonBandRow.Top
+                        2 -> RibbonBandRow.Middle
+                        else -> RibbonBandRow.Bottom
+                    }
+                }
+                CompositionLocalProvider(LocalRibbonBandRow provides rowEnum) {
+                    projection.project(Modifier)
+                }
             }
         },
         measurePolicy = { measurables, constraints ->
             val width = constraints.maxWidth
 
             val placeables = measurables.map { it.measure(Constraints()) }
-            // count the rows
-            var rows = 1
-            var currX = 0
-            for (placeable in placeables) {
-                if (currX + placeable.measuredWidth <= width) {
-                    currX += (placeable.measuredWidth + gap)
-                } else {
-                    currX = 0
-                    rows++
-                }
-            }
 
             // Compute vertical gap for balanced, vertically centered layout of the rows
-            val verticalGap = (constraints.maxHeight - rows * rowHeight) / (rows + 1)
+            val verticalGap = (constraints.maxHeight - rowCount * rowHeight) / (rowCount + 1)
 
             layout(width = width, height = constraints.maxHeight) {
                 var x = 0

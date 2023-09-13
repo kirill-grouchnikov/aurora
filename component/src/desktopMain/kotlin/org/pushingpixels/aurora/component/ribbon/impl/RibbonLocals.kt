@@ -19,8 +19,13 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import org.pushingpixels.aurora.common.AuroraInternalApi
 
 @AuroraInternalApi
-val LocalRibbonBandRowHeight = staticCompositionLocalOf<Int> {
-    error("LocalRibbonBandRowHeight not provided")
+enum class RibbonBandRow {
+    Top, Middle, Bottom, None
+}
+
+@AuroraInternalApi
+val LocalRibbonBandRowHeight = staticCompositionLocalOf {
+    0
 }
 
 @AuroraInternalApi
@@ -31,4 +36,9 @@ val LocalRibbonTrackBounds = staticCompositionLocalOf {
 @AuroraInternalApi
 val LocalRibbonTrackKeyTips = staticCompositionLocalOf {
     false
+}
+
+@AuroraInternalApi
+val LocalRibbonBandRow = staticCompositionLocalOf {
+    RibbonBandRow.None
 }

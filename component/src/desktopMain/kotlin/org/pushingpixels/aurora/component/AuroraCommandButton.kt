@@ -878,6 +878,8 @@ internal fun <M : BaseCommandMenuContentModel,
 
     val trackBounds = LocalRibbonTrackBounds.current && (popupMenu == null)
     val trackKeyTips = LocalRibbonTrackKeyTips.current && (popupMenu == null)
+    val bandRowHeight = LocalRibbonBandRowHeight.current
+    val bandRow = LocalRibbonBandRow.current
 
     Layout(
         modifier = modifier.commandButtonLocator(
@@ -1607,7 +1609,11 @@ internal fun <M : BaseCommandMenuContentModel,
                     originalProjection,
                     presentationModel.actionKeyTip!!,
                     command.isActionEnabled,
-                    layoutManager.getActionKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo)
+                    getAdjustedAnchor(
+                        anchor = layoutManager.getActionKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo),
+                        row = bandRow,
+                        rowHeight = bandRowHeight
+                    )
                 )
             }
             if ((presentationModel.popupKeyTip != null) && !layoutInfo.popupClickArea.isEmpty) {
@@ -1615,7 +1621,11 @@ internal fun <M : BaseCommandMenuContentModel,
                     originalProjection,
                     presentationModel.popupKeyTip!!,
                     command.isSecondaryEnabled,
-                    layoutManager.getPopupKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo)
+                    getAdjustedAnchor(
+                        anchor = layoutManager.getPopupKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo),
+                        row = bandRow,
+                        rowHeight = bandRowHeight
+                    )
                 )
             }
         }

@@ -176,6 +176,20 @@ internal fun getKeyTipSize(
 }
 
 @OptIn(AuroraInternalApi::class)
+internal fun getAdjustedAnchor(
+    anchor: Offset,
+    row: RibbonBandRow,
+    rowHeight: Int
+): Offset {
+    return when (row) {
+        RibbonBandRow.Top -> anchor.copy(y = 0.0f)
+        RibbonBandRow.Middle -> anchor.copy(y = rowHeight / 2.0f)
+        RibbonBandRow.Bottom -> anchor.copy(y = rowHeight.toFloat())
+        RibbonBandRow.None -> anchor
+    }
+}
+
+@OptIn(AuroraInternalApi::class)
 internal fun DrawScope.drawKeyTip(
     keyTipInfo: KeyTipTracker.KeyTipInfo,
     textStyle: TextStyle,

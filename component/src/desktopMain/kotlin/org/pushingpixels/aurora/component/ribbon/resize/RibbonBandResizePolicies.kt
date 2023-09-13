@@ -113,7 +113,9 @@ interface RibbonBandResizePolicy {
     fun getPreferredWidth(ribbonBand: AbstractRibbonBand, availableHeight: Int, gap: Int): Int
 }
 
-interface FlowRibbonBandResizePolicy : RibbonBandResizePolicy
+sealed interface FlowRibbonBandResizePolicy : RibbonBandResizePolicy {
+    val rowCount: Int
+}
 
 abstract class CoreRibbonResizePolicy(val mapping: (PresentationPriority) -> PresentationPriority) :
     RibbonBandResizePolicy
@@ -370,6 +372,8 @@ object CoreRibbonResizePolicies {
     object Mirror : BaseCoreRibbonResizePolicy({ it })
 
     object FlowOneRow : FlowRibbonBandResizePolicy {
+        override val rowCount: Int = 1
+
         @Composable
         override fun getPreferredWidth(ribbonBand: AbstractRibbonBand, availableHeight: Int, gap: Int): Int {
             require(ribbonBand is FlowRibbonBand) {
@@ -391,6 +395,8 @@ object CoreRibbonResizePolicies {
     }
 
     object FlowTwoRows : FlowRibbonBandResizePolicy {
+        override val rowCount: Int = 2
+
         @Composable
         override fun getPreferredWidth(ribbonBand: AbstractRibbonBand, availableHeight: Int, gap: Int): Int {
             require(ribbonBand is FlowRibbonBand) {
@@ -430,6 +436,8 @@ object CoreRibbonResizePolicies {
     }
 
     object FlowThreeRows : FlowRibbonBandResizePolicy {
+        override val rowCount: Int = 3
+
         @Composable
         override fun getPreferredWidth(ribbonBand: AbstractRibbonBand, availableHeight: Int, gap: Int): Int {
             require(ribbonBand is FlowRibbonBand) {

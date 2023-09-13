@@ -179,6 +179,8 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
 
     val trackBounds = LocalRibbonTrackBounds.current
     val trackKeyTips = LocalRibbonTrackKeyTips.current
+    val bandRowHeight = LocalRibbonBandRowHeight.current
+    val bandRow = LocalRibbonBandRow.current
 
     Layout(
         modifier = if (trackBounds) {
@@ -314,7 +316,11 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
                         originalProjection,
                         originalProjection.ribbonComponentPresentationModel.keyTip,
                         originalProjection.enabled.invoke(),
-                        Offset(captionMid.toFloat(), height / 2.0f)
+                        getAdjustedAnchor(
+                            anchor = Offset(captionMid.toFloat(), height / 2.0f),
+                            row = bandRow,
+                            rowHeight = bandRowHeight
+                        )
                     )
                 } else {
                     val componentMid = if (layoutDirection == LayoutDirection.Ltr) {
@@ -336,7 +342,11 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
                         originalProjection,
                         originalProjection.ribbonComponentPresentationModel.keyTip,
                         originalProjection.enabled.invoke(),
-                        Offset(componentMid, height / 2.0f)
+                        getAdjustedAnchor(
+                            anchor = Offset(componentMid, height / 2.0f),
+                            row = bandRow,
+                            rowHeight = bandRowHeight
+                        )
                     )
                 }
             }
