@@ -59,10 +59,7 @@ import org.pushingpixels.aurora.component.popup.BaseCommandMenuHandler
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
-import org.pushingpixels.aurora.component.ribbon.impl.BoundsTracker
-import org.pushingpixels.aurora.component.ribbon.impl.KeyTipTracker
-import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackBounds
-import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackKeyTips
+import org.pushingpixels.aurora.component.ribbon.impl.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
@@ -73,12 +70,12 @@ import kotlin.math.roundToInt
 
 @Immutable
 private class CommandButtonDrawingCache(
-    val colorScheme: MutableColorScheme = MutableColorScheme(
+    override val colorScheme: MutableColorScheme = MutableColorScheme(
         displayName = "Internal mutable",
         isDark = false
     ),
     val markPath: Path = Path()
-)
+): DrawingCache
 
 private fun Modifier.commandButtonActionHoverable(
     interactionSource: MutableInteractionSource,
@@ -1452,6 +1449,27 @@ internal fun <M : BaseCommandMenuContentModel,
                 }
             }
 
+            if (popupMenu != null) {
+                if (presentationModel.actionKeyTip != null) {
+                    CommandButtonKeyTip(
+                        originalProjection = originalProjection,
+                        keyTip = presentationModel.actionKeyTip!!,
+                        isEnabled = isActionEnabled,
+                        buttonSize = buttonSize.value,
+                        drawingCache = drawingCache
+                    )
+                }
+                if (presentationModel.popupKeyTip != null) {
+                    CommandButtonKeyTip(
+                        originalProjection = originalProjection,
+                        keyTip = presentationModel.popupKeyTip!!,
+                        isEnabled = isPopupEnabled,
+                        buttonSize = buttonSize.value,
+                        drawingCache = drawingCache
+                    )
+                }
+            }
+
             SideEffect {
                 if (actionRollover) {
                     val isShowingPopupFromHere = AuroraPopupManager.isShowingPopupFrom(
@@ -1544,7 +1562,7 @@ internal fun <M : BaseCommandMenuContentModel,
         }
         var separatorPlaceable: Placeable? = null
         if (hasAction and hasPopup and isActionEnabled and isPopupEnabled) {
-            val separatorMeasurable = measurables[childIndex]
+            val separatorMeasurable = measurables[childIndex++]
             separatorPlaceable = separatorMeasurable.measure(
                 Constraints.fixed(
                     width = layoutInfo.separatorArea.width.roundToInt(),
@@ -1553,19 +1571,49 @@ internal fun <M : BaseCommandMenuContentModel,
             )
         }
 
-        if ((presentationModel.actionKeyTip != null) && !layoutInfo.actionClickArea.isEmpty) {
-            KeyTipTracker.trackKeyTipOffset(
-                originalProjection,
-                presentationModel.actionKeyTip!!,
-                layoutManager.getActionKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo)
+        var actionKeyTipPlaceable: Placeable? = null
+        if ((popupMenu != null) && (presentationModel.actionKeyTip != null)) {
+            val actionKeyTipSizingInfo = getKeyTipSize(
+                presentationModel.actionKeyTip!!, mergedTextStyle, density, fontFamilyResolver, layoutDirection
+            )
+            val actionKeyTipMeasurable = measurables[childIndex++]
+            actionKeyTipPlaceable = actionKeyTipMeasurable.measure(
+                Constraints.fixed(
+                    width = actionKeyTipSizingInfo.first.width.roundToInt(),
+                    height = actionKeyTipSizingInfo.first.height.roundToInt()
+                )
             )
         }
-        if ((presentationModel.popupKeyTip != null) && !layoutInfo.popupClickArea.isEmpty) {
-            KeyTipTracker.trackKeyTipOffset(
-                originalProjection,
-                presentationModel.popupKeyTip!!,
-                layoutManager.getPopupKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo)
+
+        var popupKeyTipPlaceable: Placeable? = null
+        if ((popupMenu != null) && (presentationModel.popupKeyTip != null)) {
+            val popupKeyTipSizingInfo = getKeyTipSize(
+                presentationModel.popupKeyTip!!, mergedTextStyle, density, fontFamilyResolver, layoutDirection
             )
+            val popupKeyTipMeasurable = measurables[childIndex]
+            popupKeyTipPlaceable = popupKeyTipMeasurable.measure(
+                Constraints.fixed(
+                    width = popupKeyTipSizingInfo.first.width.roundToInt(),
+                    height = popupKeyTipSizingInfo.first.height.roundToInt()
+                )
+            )
+        }
+
+        if (popupMenu == null) {
+            if ((presentationModel.actionKeyTip != null) && !layoutInfo.actionClickArea.isEmpty) {
+                KeyTipTracker.trackKeyTipOffset(
+                    originalProjection,
+                    presentationModel.actionKeyTip!!,
+                    layoutManager.getActionKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo)
+                )
+            }
+            if ((presentationModel.popupKeyTip != null) && !layoutInfo.popupClickArea.isEmpty) {
+                KeyTipTracker.trackKeyTipOffset(
+                    originalProjection,
+                    presentationModel.popupKeyTip!!,
+                    layoutManager.getPopupKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo)
+                )
+            }
         }
 
         layout(
@@ -1604,6 +1652,48 @@ internal fun <M : BaseCommandMenuContentModel,
                 x = layoutInfo.separatorArea.left.roundToInt(),
                 y = layoutInfo.separatorArea.top.roundToInt()
             )
+            if (actionKeyTipPlaceable != null) {
+                val actionKeyTipAnchor =
+                    layoutManager.getActionKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo)
+                var x = actionKeyTipAnchor.x - actionKeyTipPlaceable.measuredWidth / 2
+                var y = actionKeyTipAnchor.y - actionKeyTipPlaceable.measuredHeight / 2
+
+                // Now fit it inside the bounds
+                if (x < 0) {
+                    x = 0.0f
+                }
+                if (y < 0) {
+                    y = 0.0f
+                }
+                if ((x + actionKeyTipPlaceable.measuredWidth) > layoutInfo.fullSize.width) {
+                    x = layoutInfo.fullSize.width - actionKeyTipPlaceable.measuredWidth
+                }
+                if ((y + actionKeyTipPlaceable.measuredHeight) > layoutInfo.fullSize.height) {
+                    y = layoutInfo.fullSize.height - actionKeyTipPlaceable.measuredHeight
+                }
+                actionKeyTipPlaceable.place(x.toInt(), y.toInt())
+            }
+            if (popupKeyTipPlaceable != null) {
+                val popupKeyTipAnchor =
+                    layoutManager.getPopupKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo)
+                var x = popupKeyTipAnchor.x - popupKeyTipPlaceable.measuredWidth / 2
+                var y = popupKeyTipAnchor.y - popupKeyTipPlaceable.measuredHeight / 2
+
+                // Now fit it inside the bounds
+                if (x < 0) {
+                    x = 0.0f
+                }
+                if (y < 0) {
+                    y = 0.0f
+                }
+                if ((x + popupKeyTipPlaceable.measuredWidth) > layoutInfo.fullSize.width) {
+                    x = layoutInfo.fullSize.width - popupKeyTipPlaceable.measuredWidth
+                }
+                if ((y + popupKeyTipPlaceable.measuredHeight) > layoutInfo.fullSize.height) {
+                    y = layoutInfo.fullSize.height - popupKeyTipPlaceable.measuredHeight
+                }
+                popupKeyTipPlaceable.place(x.toInt(), y.toInt())
+            }
         }
     }
 
@@ -1921,6 +2011,48 @@ private fun CommandButtonPopupIconContent(
                     color = arrowColor
                 )
             }
+        }
+    }
+}
+
+
+@OptIn(AuroraInternalApi::class)
+@Composable
+private fun CommandButtonKeyTip(
+    originalProjection: BaseCommandButtonProjection<*, *, *>,
+    keyTip: String,
+    isEnabled: Boolean,
+    buttonSize: IntSize,
+    drawingCache: DrawingCache
+) {
+    val decorationAreaType = AuroraSkin.decorationAreaType
+    val skinColors = AuroraSkin.colors
+    val painters = AuroraSkin.painters
+
+    val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
+    val textStyle = resolveDefaults(LocalTextStyle.current, layoutDirection)
+    val fontFamilyResolver = LocalFontFamilyResolver.current
+
+    Box {
+        Canvas(modifier = Modifier.matchParentSize()) {
+            drawKeyTip(
+                keyTipInfo = KeyTipTracker.KeyTipInfo(
+                    projection = originalProjection,
+                    keyTip = keyTip,
+                    screenRect = AuroraRect(0.0f, 0.0f, buttonSize.width.toFloat(), buttonSize.height.toFloat()),
+                    anchor = Offset(size.width / 2.0f, size.height / 2.0f)
+                ),
+                textStyle = textStyle,
+                density = density,
+                fontFamilyResolver = fontFamilyResolver,
+                layoutDirection = layoutDirection,
+                insets = 0.dp,
+                decorationAreaType = decorationAreaType,
+                drawingCache = drawingCache,
+                painters = painters,
+                skinColors = skinColors
+            )
         }
     }
 }

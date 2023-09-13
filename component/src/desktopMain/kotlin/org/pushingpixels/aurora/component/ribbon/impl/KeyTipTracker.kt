@@ -22,6 +22,8 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.nativeCanvas
@@ -29,20 +31,19 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.Paragraph
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.resolveDefaults
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import org.jetbrains.skia.Color4f
-import org.jetbrains.skia.Font
-import org.jetbrains.skia.TextLine
-import org.jetbrains.skia.Typeface
+import androidx.compose.ui.unit.*
+import org.jetbrains.skia.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraRect
 import org.pushingpixels.aurora.component.model.ContentModel
 import org.pushingpixels.aurora.component.model.PresentationModel
 import org.pushingpixels.aurora.component.projection.Projection
+import org.pushingpixels.aurora.component.utils.DrawingCache
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 
@@ -100,11 +101,11 @@ object KeyTipTracker {
 
 @Immutable
 private class KeyTipDrawingCache(
-    val colorScheme: MutableColorScheme = MutableColorScheme(
+    override val colorScheme: MutableColorScheme = MutableColorScheme(
         displayName = "Internal mutable",
         isDark = false
     )
-)
+) : DrawingCache
 
 @AuroraInternalApi
 @Composable
@@ -112,9 +113,75 @@ fun RibbonKeyTipOverlay(modifier: Modifier, insets: Dp) {
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
     val painters = AuroraSkin.painters
-    val buttonShaper = ClassicButtonShaper.Instance
-    val fillPainter = painters.fillPainter
-    val borderPainter = painters.borderPainter
+
+    val drawingCache = remember { KeyTipDrawingCache() }
+
+    val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
+    val textStyle = resolveDefaults(LocalTextStyle.current, layoutDirection)
+    val fontFamilyResolver = LocalFontFamilyResolver.current
+
+    Canvas(modifier = modifier) {
+        for (tracked in KeyTipTracker.getKeyTips()) {
+            drawKeyTip(
+                tracked,
+                textStyle,
+                density,
+                fontFamilyResolver,
+                layoutDirection,
+                insets,
+                drawingCache,
+                decorationAreaType,
+                skinColors,
+                painters
+            )
+        }
+    }
+}
+
+internal fun getKeyTipSize(
+    keyTip: String,
+    textStyle: TextStyle,
+    density: Density,
+    fontFamilyResolver: FontFamily.Resolver,
+    layoutDirection: LayoutDirection
+) : Pair<Size, Float> {
+    val leftPadding = KeyTipPaddingValues.calculateLeftPadding(layoutDirection)
+    val rightPadding = KeyTipPaddingValues.calculateRightPadding(layoutDirection)
+    val topPadding = KeyTipPaddingValues.calculateTopPadding()
+    val bottomPadding = KeyTipPaddingValues.calculateBottomPadding()
+
+    // Compute how much space the keytip text needs
+    val paragraph = Paragraph(
+        text = keyTip, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
+        density = density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
+    )
+
+    val tipWidth = leftPadding.value * density.density + paragraph.maxIntrinsicWidth + rightPadding.value * density.density
+    val tipHeight = topPadding.value * density.density + paragraph.height + bottomPadding.value * density.density
+
+    return Pair(Size(tipWidth, tipHeight), paragraph.firstBaseline)
+}
+
+@OptIn(AuroraInternalApi::class)
+internal fun DrawScope.drawKeyTip(
+    keyTipInfo: KeyTipTracker.KeyTipInfo,
+    textStyle: TextStyle,
+    density: Density,
+    fontFamilyResolver: FontFamily.Resolver,
+    layoutDirection: LayoutDirection,
+    insets: Dp,
+    drawingCache: DrawingCache,
+    decorationAreaType: DecorationAreaType,
+    skinColors: AuroraSkinColors,
+    painters: AuroraPainters
+) {
+    val keyTipFont = Font(Typeface.makeDefault()).also {
+        it.size *= density.density
+    }
+
+    val leftPadding = KeyTipPaddingValues.calculateLeftPadding(layoutDirection)
+    val topPadding = KeyTipPaddingValues.calculateTopPadding()
 
     val fillScheme = skinColors.getColorScheme(decorationAreaType, ComponentState.Enabled)
     val borderScheme = skinColors.getColorScheme(
@@ -122,126 +189,105 @@ fun RibbonKeyTipOverlay(modifier: Modifier, insets: Dp) {
         ColorSchemeAssociationKind.Border, ComponentState.Enabled
     )
     val alpha = skinColors.getAlpha(decorationAreaType, ComponentState.Enabled)
+    val fillPainter = painters.fillPainter
+    val borderPainter = painters.borderPainter
+    val buttonShaper = ClassicButtonShaper.Instance
 
-    val drawingCache = remember { KeyTipDrawingCache() }
+    val tipSizingInfo = getKeyTipSize(keyTipInfo.keyTip, textStyle, density, fontFamilyResolver, layoutDirection)
+    val tipWidth = tipSizingInfo.first.width
+    val tipHeight = tipSizingInfo.first.height
+    val baseline = tipSizingInfo.second
 
-    val density = LocalDensity.current
-    val keyTipFont = Font(Typeface.makeDefault()).also {
-        it.size *= density.density
-    }
-    val layoutDirection = LocalLayoutDirection.current
-    val textStyle = resolveDefaults(LocalTextStyle.current, layoutDirection)
-    val fontFamilyResolver = LocalFontFamilyResolver.current
+    val fullOffsetX = keyTipInfo.screenRect.x + keyTipInfo.anchor.x - tipWidth / 2 - insets.toPx()
+    val fullOffsetY = keyTipInfo.screenRect.y + keyTipInfo.anchor.y - tipHeight / 2 - insets.toPx()
 
-    val leftPadding = KeyTipPaddingValues.calculateLeftPadding(layoutDirection)
-    val rightPadding = KeyTipPaddingValues.calculateRightPadding(layoutDirection)
-    val topPadding = KeyTipPaddingValues.calculateTopPadding()
-    val bottomPadding = KeyTipPaddingValues.calculateBottomPadding()
+    withTransform({
+        translate(left = fullOffsetX, top = fullOffsetY)
+    }) {
+        val fillOutline = buttonShaper.getButtonOutline(
+            layoutDirection = layoutDirection,
+            width = tipWidth,
+            height = tipHeight,
+            extraInsets = 0.5f,
+            isInner = false,
+            sides = Sides(),
+            outlineKind = OutlineKind.Fill,
+            density = this
+        )
 
-    Canvas(modifier = modifier) {
-        for (tracked in KeyTipTracker.getKeyTips()) {
-            // Compute how much space the keytip text needs
-            val paragraph = Paragraph(
-                text = tracked.keyTip, style = textStyle, constraints = Constraints(maxWidth = Int.MAX_VALUE),
-                density = density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
-            )
-            val baseline = paragraph.firstBaseline
+        val outlineBoundingRect = fillOutline.bounds
+        if (outlineBoundingRect.isEmpty) {
+            return@withTransform
+        }
 
-            val tipWidth = leftPadding.toPx() + paragraph.maxIntrinsicWidth + rightPadding.toPx()
-            val tipHeight = topPadding.toPx() + paragraph.height + bottomPadding.toPx()
+        // Populate the cached color scheme for filling the combobox
+        drawingCache.colorScheme.ultraLight = fillScheme.ultraLightColor
+        drawingCache.colorScheme.extraLight = fillScheme.extraLightColor
+        drawingCache.colorScheme.light = fillScheme.lightColor
+        drawingCache.colorScheme.mid = fillScheme.midColor
+        drawingCache.colorScheme.dark = fillScheme.darkColor
+        drawingCache.colorScheme.ultraDark = fillScheme.ultraDarkColor
+        drawingCache.colorScheme.isDark = fillScheme.isDark
+        drawingCache.colorScheme.foreground = fillScheme.foregroundColor
+        fillPainter.paintContourBackground(
+            this, this.size, fillOutline, drawingCache.colorScheme, alpha
+        )
 
-            val fullOffsetX = tracked.screenRect.x + tracked.anchor.x - tipWidth / 2 - insets.toPx()
-            val fullOffsetY = tracked.screenRect.y + tracked.anchor.y - tipHeight / 2 - insets.toPx()
+        // Populate the cached color scheme for drawing the border
+        drawingCache.colorScheme.ultraLight = borderScheme.ultraLightColor
+        drawingCache.colorScheme.extraLight = borderScheme.extraLightColor
+        drawingCache.colorScheme.light = borderScheme.lightColor
+        drawingCache.colorScheme.mid = borderScheme.midColor
+        drawingCache.colorScheme.dark = borderScheme.darkColor
+        drawingCache.colorScheme.ultraDark = borderScheme.ultraDarkColor
+        drawingCache.colorScheme.isDark = borderScheme.isDark
+        drawingCache.colorScheme.foreground = borderScheme.foregroundColor
 
-            withTransform({
-                translate(left = fullOffsetX, top = fullOffsetY)
-            }) {
-                val fillOutline = buttonShaper.getButtonOutline(
-                    layoutDirection = layoutDirection,
-                    width = tipWidth,
-                    height = tipHeight,
-                    extraInsets = 0.5f,
-                    isInner = false,
-                    sides = Sides(),
-                    outlineKind = OutlineKind.Fill,
-                    density = this
-                )
+        val borderOutline = buttonShaper.getButtonOutline(
+            layoutDirection = layoutDirection,
+            width = tipWidth,
+            height = tipHeight,
+            extraInsets = 0.5f,
+            isInner = false,
+            sides = Sides(),
+            outlineKind = OutlineKind.Border,
+            density = this
+        )
 
-                val outlineBoundingRect = fillOutline.bounds
-                if (outlineBoundingRect.isEmpty) {
-                    return@withTransform
-                }
+        val innerBorderOutline = if (borderPainter.isPaintingInnerOutline)
+            buttonShaper.getButtonOutline(
+                layoutDirection = layoutDirection,
+                width = tipWidth,
+                height = tipHeight,
+                extraInsets = 1.0f,
+                isInner = true,
+                sides = Sides(),
+                outlineKind = OutlineKind.Border,
+                density = this
+            ) else null
 
-                // Populate the cached color scheme for filling the combobox
-                drawingCache.colorScheme.ultraLight = fillScheme.ultraLightColor
-                drawingCache.colorScheme.extraLight = fillScheme.extraLightColor
-                drawingCache.colorScheme.light = fillScheme.lightColor
-                drawingCache.colorScheme.mid = fillScheme.midColor
-                drawingCache.colorScheme.dark = fillScheme.darkColor
-                drawingCache.colorScheme.ultraDark = fillScheme.ultraDarkColor
-                drawingCache.colorScheme.isDark = fillScheme.isDark
-                drawingCache.colorScheme.foreground = fillScheme.foregroundColor
-                fillPainter.paintContourBackground(
-                    this, this.size, fillOutline, drawingCache.colorScheme, alpha
-                )
+        borderPainter.paintBorder(
+            this, this.size, borderOutline, innerBorderOutline, drawingCache.colorScheme, alpha
+        )
 
-                // Populate the cached color scheme for drawing the border
-                drawingCache.colorScheme.ultraLight = borderScheme.ultraLightColor
-                drawingCache.colorScheme.extraLight = borderScheme.extraLightColor
-                drawingCache.colorScheme.light = borderScheme.lightColor
-                drawingCache.colorScheme.mid = borderScheme.midColor
-                drawingCache.colorScheme.dark = borderScheme.darkColor
-                drawingCache.colorScheme.ultraDark = borderScheme.ultraDarkColor
-                drawingCache.colorScheme.isDark = borderScheme.isDark
-                drawingCache.colorScheme.foreground = borderScheme.foregroundColor
-
-                val borderOutline = buttonShaper.getButtonOutline(
-                    layoutDirection = layoutDirection,
-                    width = tipWidth,
-                    height = tipHeight,
-                    extraInsets = 0.5f,
-                    isInner = false,
-                    sides = Sides(),
-                    outlineKind = OutlineKind.Border,
-                    density = this
-                )
-
-                val innerBorderOutline = if (borderPainter.isPaintingInnerOutline)
-                    buttonShaper.getButtonOutline(
-                        layoutDirection = layoutDirection,
-                        width = tipWidth,
-                        height = tipHeight,
-                        extraInsets = 1.0f,
-                        isInner = true,
-                        sides = Sides(),
-                        outlineKind = OutlineKind.Border,
-                        density = this
-                    ) else null
-
-                borderPainter.paintBorder(
-                    this, this.size, borderOutline, innerBorderOutline, drawingCache.colorScheme, alpha
-                )
-
-                this.drawIntoCanvas { canvas ->
-                    val nativeCanvas = canvas.nativeCanvas
-                    nativeCanvas.drawTextLine(
-                        line = TextLine.make(
-                            text = tracked.keyTip,
-                            font = keyTipFont
-                        ),
-                        x = leftPadding.toPx(),
-                        y = topPadding.toPx() + baseline,
-                        paint = org.jetbrains.skia.Paint().also { skiaPaint ->
-                            skiaPaint.color4f = Color4f(
-                                r = fillScheme.foregroundColor.red,
-                                g = fillScheme.foregroundColor.green,
-                                b = fillScheme.foregroundColor.blue,
-                                a = fillScheme.foregroundColor.alpha
-                            )
-                        }
+        this.drawIntoCanvas { canvas ->
+            val nativeCanvas = canvas.nativeCanvas
+            nativeCanvas.drawTextLine(
+                line = TextLine.make(
+                    text = keyTipInfo.keyTip,
+                    font = keyTipFont
+                ),
+                x = leftPadding.toPx(),
+                y = topPadding.toPx() + baseline,
+                paint = Paint().also { skiaPaint ->
+                    skiaPaint.color4f = Color4f(
+                        r = fillScheme.foregroundColor.red,
+                        g = fillScheme.foregroundColor.green,
+                        b = fillScheme.foregroundColor.blue,
+                        a = fillScheme.foregroundColor.alpha
                     )
                 }
-            }
+            )
         }
     }
 }

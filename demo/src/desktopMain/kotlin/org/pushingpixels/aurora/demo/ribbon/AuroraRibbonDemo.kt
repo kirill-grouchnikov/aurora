@@ -1136,9 +1136,9 @@ internal class RibbonBuilder(
                                 )
                             ),
                             secondaryOverlays = mapOf(
-                                this.menuSaveSelection to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "SS"),
-                                this.menuClearSelection to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "SC"),
-                                this.applyStyles to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "SA")
+                                this.menuSaveSelection to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "KS"),
+                                this.menuClearSelection to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "KC"),
+                                this.applyStyles to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "KA")
                             )
                         ) at PresentationPriority.Medium
                     )
