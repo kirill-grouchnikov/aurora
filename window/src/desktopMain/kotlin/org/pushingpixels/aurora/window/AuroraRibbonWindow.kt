@@ -142,7 +142,8 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneMainContent(
             ) {
                 RibbonTaskbar(
                     modifier = Modifier.padding(TaskbarContentPadding),
-                    elements = ribbon.taskbarElements
+                    elements = ribbon.taskbarElements,
+                    taskbarKeyTipPolicy = ribbon.taskbarKeyTipPolicy
                 )
             }
 

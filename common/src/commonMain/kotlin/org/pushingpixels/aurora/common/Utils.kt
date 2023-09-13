@@ -32,6 +32,10 @@ fun AuroraRect.contains(x: Float, y: Float): Boolean {
 }
 
 @AuroraInternalApi
+val AuroraRect.isEmpty: Boolean
+    get() = (this.width == 0.0f) && (this.height == 0.0f)
+
+@AuroraInternalApi
 fun AuroraOffset.asOffset(density: Density): Offset {
     return Offset(x / density.density, y / density.density)
 }

@@ -313,6 +313,7 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
                     KeyTipTracker.trackKeyTipOffset(
                         originalProjection,
                         originalProjection.ribbonComponentPresentationModel.keyTip,
+                        originalProjection.enabled.invoke(),
                         Offset(captionMid.toFloat(), height / 2.0f)
                     )
                 } else {
@@ -334,6 +335,7 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
                     KeyTipTracker.trackKeyTipOffset(
                         originalProjection,
                         originalProjection.ribbonComponentPresentationModel.keyTip,
+                        originalProjection.enabled.invoke(),
                         Offset(componentMid, height / 2.0f)
                     )
                 }
@@ -394,6 +396,7 @@ private class MetaComponentLocator(
                 KeyTipTracker.trackKeyTipBase(
                     projection,
                     projection.presentationModel.ribbonComponentPresentationModel.keyTip!!,
+                    projection.enabled.invoke(),
                     bounds
                 )
             }

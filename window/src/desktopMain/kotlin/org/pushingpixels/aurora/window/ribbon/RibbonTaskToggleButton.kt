@@ -564,6 +564,7 @@ internal fun RibbonTaskToggleButton(
             KeyTipTracker.trackKeyTipOffset(
                 originalProjection,
                 presentationModel.actionKeyTip!!,
+                command.isActionEnabled,
                 layoutManager.getActionKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo)
             )
         }
@@ -734,6 +735,7 @@ private class RibbonTaskToggleButtonLocator(
                 KeyTipTracker.trackKeyTipBase(
                     projection,
                     projection.presentationModel.actionKeyTip!!,
+                    projection.contentModel.isActionEnabled,
                     bounds
                 )
             }
@@ -741,6 +743,7 @@ private class RibbonTaskToggleButtonLocator(
                 KeyTipTracker.trackKeyTipBase(
                     projection,
                     projection.presentationModel.popupKeyTip!!,
+                    projection.contentModel.isSecondaryEnabled,
                     bounds
                 )
             }

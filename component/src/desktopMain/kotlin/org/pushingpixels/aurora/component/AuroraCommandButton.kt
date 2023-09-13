@@ -75,7 +75,7 @@ private class CommandButtonDrawingCache(
         isDark = false
     ),
     val markPath: Path = Path()
-): DrawingCache
+) : DrawingCache
 
 private fun Modifier.commandButtonActionHoverable(
     interactionSource: MutableInteractionSource,
@@ -882,6 +882,8 @@ internal fun <M : BaseCommandMenuContentModel,
     Layout(
         modifier = modifier.commandButtonLocator(
             originalProjection,
+            command,
+            presentationModel,
             buttonTopLeftOffset,
             buttonSize,
             trackBounds,
@@ -1604,6 +1606,7 @@ internal fun <M : BaseCommandMenuContentModel,
                 KeyTipTracker.trackKeyTipOffset(
                     originalProjection,
                     presentationModel.actionKeyTip!!,
+                    command.isActionEnabled,
                     layoutManager.getActionKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo)
                 )
             }
@@ -1611,6 +1614,7 @@ internal fun <M : BaseCommandMenuContentModel,
                 KeyTipTracker.trackKeyTipOffset(
                     originalProjection,
                     presentationModel.popupKeyTip!!,
+                    command.isSecondaryEnabled,
                     layoutManager.getPopupKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo)
                 )
             }
@@ -2040,6 +2044,7 @@ private fun CommandButtonKeyTip(
                 keyTipInfo = KeyTipTracker.KeyTipInfo(
                     projection = originalProjection,
                     keyTip = keyTip,
+                    isEnabled = isEnabled,
                     screenRect = AuroraRect(0.0f, 0.0f, buttonSize.width.toFloat(), buttonSize.height.toFloat()),
                     anchor = Offset(size.width / 2.0f, size.height / 2.0f)
                 ),
@@ -2059,7 +2064,9 @@ private fun CommandButtonKeyTip(
 
 @OptIn(AuroraInternalApi::class)
 private class CommandButtonLocator(
-    val projection: BaseCommandButtonProjection<*, *, *>,
+    val originalProjection: BaseCommandButtonProjection<*, *, *>,
+    val command: BaseCommand,
+    val presentationModel: BaseCommandButtonPresentationModel,
     val topLeftOffset: AuroraOffset,
     val size: MutableState<IntSize>,
     val trackBounds: Boolean,
@@ -2082,21 +2089,23 @@ private class CommandButtonLocator(
             height = coordinates.size.height.toFloat()
         )
         if (trackBounds) {
-            BoundsTracker.trackBounds(projection, bounds)
+            BoundsTracker.trackBounds(originalProjection, bounds)
         }
 
         if (trackKeyTips) {
-            if (projection.presentationModel.actionKeyTip != null) {
+            if (presentationModel.actionKeyTip != null) {
                 KeyTipTracker.trackKeyTipBase(
-                    projection,
-                    projection.presentationModel.actionKeyTip!!,
+                    originalProjection,
+                    presentationModel.actionKeyTip!!,
+                    command.isActionEnabled,
                     bounds
                 )
             }
-            if (projection.presentationModel.popupKeyTip != null) {
+            if (presentationModel.popupKeyTip != null) {
                 KeyTipTracker.trackKeyTipBase(
-                    projection,
-                    projection.presentationModel.popupKeyTip!!,
+                    originalProjection,
+                    presentationModel.popupKeyTip!!,
+                    command.isSecondaryEnabled,
                     bounds
                 )
             }
@@ -2107,9 +2116,21 @@ private class CommandButtonLocator(
 @OptIn(AuroraInternalApi::class)
 @Composable
 private fun Modifier.commandButtonLocator(
-    projection: BaseCommandButtonProjection<*, *, *>,
+    originalProjection: BaseCommandButtonProjection<*, *, *>,
+    command: BaseCommand,
+    presentationModel: BaseCommandButtonPresentationModel,
     topLeftOffset: AuroraOffset,
     size: MutableState<IntSize>,
     trackBounds: Boolean,
     trackKeyTips: Boolean
-) = this.then(CommandButtonLocator(projection, topLeftOffset, size, trackBounds, trackKeyTips))
+) = this.then(
+    CommandButtonLocator(
+        originalProjection,
+        command,
+        presentationModel,
+        topLeftOffset,
+        size,
+        trackBounds,
+        trackKeyTips
+    )
+)

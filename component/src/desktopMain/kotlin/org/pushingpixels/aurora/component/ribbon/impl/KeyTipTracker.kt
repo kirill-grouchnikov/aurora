@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.*
 import org.jetbrains.skia.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraRect
+import org.pushingpixels.aurora.common.isEmpty
 import org.pushingpixels.aurora.component.model.ContentModel
 import org.pushingpixels.aurora.component.model.PresentationModel
 import org.pushingpixels.aurora.component.projection.Projection
@@ -52,6 +53,7 @@ object KeyTipTracker {
     data class KeyTipInfo(
         var projection: Projection<ContentModel, PresentationModel>,
         var keyTip: String,
+        var isEnabled: Boolean,
         var screenRect: AuroraRect,
         var anchor: Offset
     )
@@ -61,6 +63,7 @@ object KeyTipTracker {
     fun trackKeyTipBase(
         projection: Projection<ContentModel, PresentationModel>,
         keyTip: String,
+        isEnabled: Boolean,
         screenRect: AuroraRect
     ) {
         val existing = keyTips.find {
@@ -69,13 +72,14 @@ object KeyTipTracker {
         if (existing != null) {
             existing.screenRect = screenRect.copy()
         } else {
-            keyTips.add(KeyTipInfo(projection, keyTip, screenRect, Offset.Zero))
+            keyTips.add(KeyTipInfo(projection, keyTip, isEnabled, screenRect, Offset.Zero))
         }
     }
 
     fun trackKeyTipOffset(
         projection: Projection<ContentModel, PresentationModel>,
         keyTip: String,
+        isEnabled: Boolean,
         anchor: Offset
     ) {
         val existing = keyTips.find {
@@ -84,7 +88,12 @@ object KeyTipTracker {
         if (existing != null) {
             existing.anchor = anchor.copy()
         } else {
-            keyTips.add(KeyTipInfo(projection, keyTip, AuroraRect(0.0f, 0.0f, 0.0f, 0.0f), anchor.copy()))
+            keyTips.add(
+                KeyTipInfo(
+                    projection, keyTip, isEnabled,
+                    AuroraRect(0.0f, 0.0f, 0.0f, 0.0f), anchor.copy()
+                )
+            )
         }
     }
 
@@ -123,18 +132,20 @@ fun RibbonKeyTipOverlay(modifier: Modifier, insets: Dp) {
 
     Canvas(modifier = modifier) {
         for (tracked in KeyTipTracker.getKeyTips()) {
-            drawKeyTip(
-                tracked,
-                textStyle,
-                density,
-                fontFamilyResolver,
-                layoutDirection,
-                insets,
-                drawingCache,
-                decorationAreaType,
-                skinColors,
-                painters
-            )
+            if (!tracked.screenRect.isEmpty) {
+                drawKeyTip(
+                    tracked,
+                    textStyle,
+                    density,
+                    fontFamilyResolver,
+                    layoutDirection,
+                    insets,
+                    drawingCache,
+                    decorationAreaType,
+                    skinColors,
+                    painters
+                )
+            }
         }
     }
 }
@@ -145,7 +156,7 @@ internal fun getKeyTipSize(
     density: Density,
     fontFamilyResolver: FontFamily.Resolver,
     layoutDirection: LayoutDirection
-) : Pair<Size, Float> {
+): Pair<Size, Float> {
     val leftPadding = KeyTipPaddingValues.calculateLeftPadding(layoutDirection)
     val rightPadding = KeyTipPaddingValues.calculateRightPadding(layoutDirection)
     val topPadding = KeyTipPaddingValues.calculateTopPadding()
@@ -157,7 +168,8 @@ internal fun getKeyTipSize(
         density = density, maxLines = 1, fontFamilyResolver = fontFamilyResolver
     )
 
-    val tipWidth = leftPadding.value * density.density + paragraph.maxIntrinsicWidth + rightPadding.value * density.density
+    val tipWidth =
+        leftPadding.value * density.density + paragraph.maxIntrinsicWidth + rightPadding.value * density.density
     val tipHeight = topPadding.value * density.density + paragraph.height + bottomPadding.value * density.density
 
     return Pair(Size(tipWidth, tipHeight), paragraph.firstBaseline)
@@ -183,12 +195,10 @@ internal fun DrawScope.drawKeyTip(
     val leftPadding = KeyTipPaddingValues.calculateLeftPadding(layoutDirection)
     val topPadding = KeyTipPaddingValues.calculateTopPadding()
 
-    val fillScheme = skinColors.getColorScheme(decorationAreaType, ComponentState.Enabled)
-    val borderScheme = skinColors.getColorScheme(
-        decorationAreaType,
-        ColorSchemeAssociationKind.Border, ComponentState.Enabled
-    )
-    val alpha = skinColors.getAlpha(decorationAreaType, ComponentState.Enabled)
+    val state = if (keyTipInfo.isEnabled) ComponentState.Enabled else ComponentState.DisabledUnselected
+    val fillScheme = skinColors.getColorScheme(decorationAreaType, state)
+    val borderScheme = skinColors.getColorScheme(decorationAreaType, ColorSchemeAssociationKind.Border, state)
+    val alpha = skinColors.getAlpha(decorationAreaType, state)
     val fillPainter = painters.fillPainter
     val borderPainter = painters.borderPainter
     val buttonShaper = ClassicButtonShaper.Instance

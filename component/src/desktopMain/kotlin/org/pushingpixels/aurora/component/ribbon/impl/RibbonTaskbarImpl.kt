@@ -38,10 +38,7 @@ import org.pushingpixels.aurora.component.popup.BaseCascadingCommandMenuPopupLay
 import org.pushingpixels.aurora.component.popup.CascadingCommandMenuHandler
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
-import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarCommand
-import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarComponent
-import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarElement
-import org.pushingpixels.aurora.component.ribbon.RibbonTaskbarGallery
+import org.pushingpixels.aurora.component.ribbon.*
 import org.pushingpixels.aurora.component.utils.getEndwardDoubleArrowIcon
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
@@ -68,14 +65,19 @@ private data class TaskbarExpandCommand(
 private data class TaskbarExpandMenuContentModel(
     override val onActivatePopup: (() -> Unit)? = null,
     override val onDeactivatePopup: (() -> Unit)? = null,
-    val elements: List<RibbonTaskbarElement>
+    val elements: List<RibbonTaskbarElement>,
+    val taskbarKeyTipPolicy: RibbonTaskbarKeyTipPolicy,
+    val taskbarKeyTipPolicyStartElement: () -> Int
 ) : BaseCommandMenuContentModel
 
 private data class TaskbarExpandCommandPopupMenuPresentationModel(
     val combinedWidths: Int
 ) : BaseCommandPopupMenuPresentationModel
 
-private class TaskbarExpandCommandButtonPresentationModel(val combinedWidths: Int) :
+private class TaskbarExpandCommandButtonPresentationModel(
+    val combinedWidths: Int,
+    override val popupKeyTip: String
+) :
     BaseCommandButtonPresentationModel {
     override val presentationState = CommandButtonPresentationState.Small
     override val backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
@@ -98,7 +100,6 @@ private class TaskbarExpandCommandButtonPresentationModel(val combinedWidths: In
     override val textOverflow: TextOverflow = TextOverflow.Clip
     override val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart
     override val toDismissPopupsOnActivation: Boolean = true
-    override val popupKeyTip: String? = null
     override val popupMenuPresentationModel: TaskbarExpandCommandPopupMenuPresentationModel =
         TaskbarExpandCommandPopupMenuPresentationModel(combinedWidths = combinedWidths)
     override val minWidth: Dp = 0.dp
@@ -114,7 +115,7 @@ private class TaskbarExpandCommandButtonPresentationModel(val combinedWidths: In
     override val sides: Sides = Sides.ClosedRectangle
 
     override fun overlayWith(overlay: BaseCommandButtonPresentationModel.Overlay): TaskbarExpandCommandButtonPresentationModel {
-        return TaskbarExpandCommandButtonPresentationModel(this.combinedWidths)
+        return TaskbarExpandCommandButtonPresentationModel(this.combinedWidths, this.popupKeyTip)
     }
 }
 
@@ -164,7 +165,11 @@ private object TaskbarExpandCommandMenuPopupHandler : CascadingCommandMenuHandle
             Layout(modifier = Modifier.auroraBackgroundNoOverlays()
                 .padding(TaskbarExpandPopupContentPadding),
                 content = {
-                    TaskbarContent(menuContentModel.elements)
+                    TaskbarContent(
+                        menuContentModel.elements,
+                        menuContentModel.taskbarKeyTipPolicy,
+                        menuContentModel.taskbarKeyTipPolicyStartElement.invoke()
+                    )
                 },
                 measurePolicy = { measurables, _ ->
                     val height = TaskbarExpandPopupHeight.toPx().toInt()
@@ -261,7 +266,8 @@ private class TaskbarExpandCommandButtonProjection(
 @Composable
 fun RibbonTaskbar(
     modifier: Modifier,
-    elements: List<RibbonTaskbarElement>
+    elements: List<RibbonTaskbarElement>,
+    taskbarKeyTipPolicy: RibbonTaskbarKeyTipPolicy
 ) {
     val colors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
@@ -272,7 +278,7 @@ fun RibbonTaskbar(
 
     Layout(modifier = modifier,
         content = {
-            TaskbarContent(elements)
+            TaskbarContent(elements, taskbarKeyTipPolicy, 1)
 
             TaskbarExpandCommandButtonProjection(
                 contentModel = TaskbarExpandCommand(
@@ -283,10 +289,41 @@ fun RibbonTaskbar(
                         density = density
                     ),
                     secondaryContentModel = TaskbarExpandMenuContentModel(
-                        elements = overflowElements
+                        elements = overflowElements,
+                        taskbarKeyTipPolicy = taskbarKeyTipPolicy,
+                        taskbarKeyTipPolicyStartElement = {
+                            // Go over elements displayed in the taskbar (not overflow)
+                            var taken = 0
+                            for (index in 0 until (elements.count() - overflowElements.count())) {
+                                when (val element = elements[index]) {
+                                    is RibbonTaskbarCommand -> {
+                                        val needsActionTip = (element.commandProjection.contentModel.action != null) &&
+                                                element.commandProjection.contentModel.isActionEnabled
+                                        val needsPopupTip = (element.commandProjection.contentModel.secondaryContentModel != null) &&
+                                                element.commandProjection.contentModel.isSecondaryEnabled
+                                        if (needsActionTip) {
+                                            taken++
+                                        }
+                                        if (needsPopupTip) {
+                                            taken++
+                                        }
+                                    }
+
+                                    is RibbonTaskbarGallery -> {
+                                        taken++
+                                    }
+
+                                    else -> {}
+                                }
+                            }
+                            taken + 1
+                        }
                     )
                 ),
-                presentationModel = TaskbarExpandCommandButtonPresentationModel(combinedWidths = overflowCombinedWidth)
+                presentationModel = TaskbarExpandCommandButtonPresentationModel(
+                    combinedWidths = overflowCombinedWidth,
+                    popupKeyTip = taskbarKeyTipPolicy.overflowButtonKeyTip
+                )
             ).project()
         },
         measurePolicy = { measurables, constraints ->
@@ -375,15 +412,26 @@ fun RibbonTaskbar(
 }
 
 @Composable
-private fun TaskbarContent(elements: List<RibbonTaskbarElement>) {
+private fun TaskbarContent(
+    elements: List<RibbonTaskbarElement>,
+    taskbarKeyTipPolicy: RibbonTaskbarKeyTipPolicy,
+    startContentIndex: Int
+) {
+    var contentIndex = startContentIndex
     for (element in elements) {
         when (element) {
             is RibbonTaskbarCommand -> {
+                val needsActionTip = (element.commandProjection.contentModel.action != null) &&
+                        element.commandProjection.contentModel.isActionEnabled
+                val needsPopupTip = (element.commandProjection.contentModel.secondaryContentModel != null) &&
+                        element.commandProjection.contentModel.isSecondaryEnabled
                 element.commandProjection.reproject(
                     modifier = Modifier,
                     primaryOverlay = BaseCommandButtonPresentationModel.Overlay(
                         presentationState = CommandButtonPresentationState.Small,
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                        actionKeyTip = if (needsActionTip) taskbarKeyTipPolicy.getContentKeyTip(contentIndex++) else null,
+                        popupKeyTip = if (needsPopupTip) taskbarKeyTipPolicy.getContentKeyTip(contentIndex++) else null
                     ),
                     actionInteractionSource = remember { MutableInteractionSource() },
                     popupInteractionSource = remember { MutableInteractionSource() }
@@ -424,7 +472,8 @@ private fun TaskbarContent(elements: List<RibbonTaskbarElement>) {
                                 commandPopupFireTrigger = galleryPresentationModel.commandPopupFireTrigger,
                                 commandSelectedStateHighlight = galleryPresentationModel.commandSelectedStateHighlight
                             )
-                        )
+                        ),
+                        popupKeyTip = taskbarKeyTipPolicy.getContentKeyTip(contentIndex++)
                     ),
                     secondaryOverlays = element.galleryProjection.secondaryOverlays
                 ).project()
