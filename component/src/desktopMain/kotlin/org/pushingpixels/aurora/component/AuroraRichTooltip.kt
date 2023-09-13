@@ -30,13 +30,9 @@ import androidx.compose.ui.unit.IntSize
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.common.AuroraPopupManager
+import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.component.model.RichTooltip
 import org.pushingpixels.aurora.component.model.RichTooltipPresentationModel
-import org.pushingpixels.aurora.common.AuroraOffset
-import org.pushingpixels.aurora.common.asOffset
-import org.pushingpixels.aurora.common.asSize
 import org.pushingpixels.aurora.component.utils.displayRichTooltipWindow
 import org.pushingpixels.aurora.theming.*
 

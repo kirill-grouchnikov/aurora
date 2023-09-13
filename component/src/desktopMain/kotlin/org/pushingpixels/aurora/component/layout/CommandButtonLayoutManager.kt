@@ -25,7 +25,6 @@ import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
-import org.pushingpixels.aurora.common.AuroraOffset
 import org.pushingpixels.aurora.component.model.*
 
 /**
