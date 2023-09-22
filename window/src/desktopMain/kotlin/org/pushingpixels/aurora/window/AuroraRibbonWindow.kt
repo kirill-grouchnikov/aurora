@@ -603,62 +603,64 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
     val ribbonSelectedButtonTopLeftOffset = remember { RibbonOffset(0.0f, 0.0f) }
     val ribbonSelectedButtonSize = remember { mutableStateOf(IntSize(0, 0)) }
 
-    Column(Modifier.fillMaxSize()) {
-        RibbonBox(Modifier.fillMaxWidth()) {
-            Column(Modifier.fillMaxWidth().ribbonContextMenu(ribbon)) {
-                RibbonWindowTitlePane(
-                    title, icon, iconFilterStrategy, ribbon, contextualTaskGroupSpans,
-                    windowTitlePaneConfiguration
-                )
-                AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
-                    CompositionLocalProvider(
-                        LocalRibbonTrackBounds provides true,
-                        LocalRibbonTrackKeyTips provides true
-                    ) {
-                        Column(Modifier.fillMaxWidth().auroraBackground()) {
-                            RibbonPrimaryBar(
-                                modifier = Modifier.ribbonElementLocator(
-                                    ribbonPrimaryBarTopLeftOffset,
-                                    ribbonPrimaryBarSize
-                                ),
-                                ribbon = ribbon,
-                                onContextualTaskGroupSpansUpdated = {
-                                    if (!areSpansSame(contextualTaskGroupSpans, it)) {
-                                        contextualTaskGroupSpans.clear()
-                                        contextualTaskGroupSpans.addAll(it)
+    Box(Modifier.fillMaxSize()) {
+        Column(Modifier.fillMaxSize()) {
+            RibbonBox(Modifier.fillMaxWidth()) {
+                Column(Modifier.fillMaxWidth().ribbonContextMenu(ribbon)) {
+                    RibbonWindowTitlePane(
+                        title, icon, iconFilterStrategy, ribbon, contextualTaskGroupSpans,
+                        windowTitlePaneConfiguration
+                    )
+                    AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
+                        CompositionLocalProvider(
+                            LocalRibbonTrackBounds provides true,
+                            LocalRibbonTrackKeyTips provides true
+                        ) {
+                            Column(Modifier.fillMaxWidth().auroraBackground()) {
+                                RibbonPrimaryBar(
+                                    modifier = Modifier.ribbonElementLocator(
+                                        ribbonPrimaryBarTopLeftOffset,
+                                        ribbonPrimaryBarSize
+                                    ),
+                                    ribbon = ribbon,
+                                    onContextualTaskGroupSpansUpdated = {
+                                        if (!areSpansSame(contextualTaskGroupSpans, it)) {
+                                            contextualTaskGroupSpans.clear()
+                                            contextualTaskGroupSpans.addAll(it)
+                                        }
+                                    },
+                                    selectedTaskButtonModifier = Modifier.ribbonElementLocator(
+                                        ribbonSelectedButtonTopLeftOffset,
+                                        ribbonSelectedButtonSize
+                                    ),
+                                    showSelectedTaskInPopup = showSelectedTaskInPopup,
+                                    onUpdateShowSelectedTaskInPopup = {
+                                        if (ribbon.isMinimized) {
+                                            showSelectedTaskInPopup = it
+                                        }
                                     }
-                                },
-                                selectedTaskButtonModifier = Modifier.ribbonElementLocator(
-                                    ribbonSelectedButtonTopLeftOffset,
-                                    ribbonSelectedButtonSize
-                                ),
-                                showSelectedTaskInPopup = showSelectedTaskInPopup,
-                                onUpdateShowSelectedTaskInPopup = {
-                                    if (ribbon.isMinimized) {
-                                        showSelectedTaskInPopup = it
-                                    }
+                                )
+
+                                if (!ribbon.isMinimized) {
+                                    RibbonBands(ribbonTask = selectedTask)
                                 }
-                            )
 
-                            if (!ribbon.isMinimized) {
-                                RibbonBands(ribbonTask = selectedTask)
+                                Spacer(modifier = Modifier.fillMaxWidth().height(1.dp))
                             }
-
-                            Spacer(modifier = Modifier.fillMaxWidth().height(1.dp))
                         }
                     }
                 }
+                RibbonOverlay(Modifier, DecoratedBorderThickness)
             }
-            RibbonOverlay(Modifier, DecoratedBorderThickness)
-            RibbonKeyTipOverlay(Modifier, DecoratedBorderThickness)
-        }
-        Box(modifier = Modifier.fillMaxWidth().weight(1.0f)) {
-            // Wrap the entire content in NONE decoration area. App code can set its
-            // own decoration area types on specific parts.
-            AuroraDecorationArea(decorationAreaType = DecorationAreaType.None) {
-                content()
+            Box(modifier = Modifier.fillMaxWidth().weight(1.0f)) {
+                // Wrap the entire content in NONE decoration area. App code can set its
+                // own decoration area types on specific parts.
+                AuroraDecorationArea(decorationAreaType = DecorationAreaType.None) {
+                    content()
+                }
             }
         }
+        RibbonKeyTipOverlay(Modifier.fillMaxSize(), DecoratedBorderThickness)
     }
 
     val density = LocalDensity.current
