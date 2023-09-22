@@ -1,8 +1,8 @@
 [versions]
 kotlin = "1.9.10"
 coroutines = "1.7.3"
-compose = "1.5.1"
-dokka = "1.9.0-dev-228"
+compose = "1.5.10-beta01"
+dokka = "1.9.10-dev-234"
 batik = "1.17"
 
 versionchecker = "0.48.0"
