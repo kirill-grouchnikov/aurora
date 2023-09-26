@@ -349,7 +349,7 @@ private fun RibbonBandContent(
                 }
 
                 is RibbonBandComponentGroup -> {
-                    RibbonBandComponentGroupContent(bandGroup, bandResizePolicy, bandContentHeight)
+                    RibbonBandComponentGroupContent(bandGroup, bandContentHeight)
                 }
             }
             if (index < (band.groups.size - 1)) {
@@ -581,7 +581,6 @@ private fun getComponentGroupContentLayoutInfo(
 @Composable
 private fun RibbonBandComponentGroupContent(
     group: RibbonBandComponentGroup,
-    bandResizePolicy: CoreRibbonResizePolicy,
     bandContentHeight: Int
 ) {
     val density = LocalDensity.current

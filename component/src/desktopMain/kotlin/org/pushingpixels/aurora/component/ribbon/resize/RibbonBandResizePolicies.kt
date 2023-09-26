@@ -247,7 +247,6 @@ object CoreRibbonResizePolicies {
     @Composable
     private fun getComponentGroupWidth(
         group: RibbonBandComponentGroup,
-        mapping: (PresentationPriority) -> PresentationPriority,
         bandContentHeight: Int,
         gap: Int
     ): Int {
@@ -321,7 +320,7 @@ object CoreRibbonResizePolicies {
                         getCommandGroupWidth(bandGroup, this.mapping, availableHeight, gap)
 
                     is RibbonBandComponentGroup ->
-                        getComponentGroupWidth(bandGroup, this.mapping, availableHeight, gap)
+                        getComponentGroupWidth(bandGroup, availableHeight, gap)
                 }
             }
 
