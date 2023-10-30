@@ -262,6 +262,10 @@ object AuroraPopupManager {
         return match != null
     }
 
+    fun isShowingPopups(): Boolean {
+        return shownPath.isNotEmpty()
+    }
+
     fun dump() {
         println("Popups")
         for (link in shownPath) {

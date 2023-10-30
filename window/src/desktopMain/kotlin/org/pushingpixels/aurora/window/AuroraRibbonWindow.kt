@@ -65,10 +65,7 @@ import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
 import org.pushingpixels.aurora.window.WindowSizingConstants.DecoratedBorderThickness
 import org.pushingpixels.aurora.window.ribbon.*
 import java.awt.*
-import java.awt.event.AWTEventListener
-import java.awt.event.KeyEvent
-import java.awt.event.MouseEvent
-import java.awt.event.WindowEvent
+import java.awt.event.*
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
 import kotlin.math.max
@@ -767,13 +764,60 @@ fun AuroraWindowScope.AuroraRibbonWindowContent(
         )
     }
 
+    val prevAltModif = remember(this, window) { mutableStateOf(false) }
     val awtEventListener = remember(this, window) {
         AWTEventListener { event ->
             val src = event.source
-            if ((event is KeyEvent) && (event.id == KeyEvent.KEY_RELEASED)
-                && (event.keyCode == KeyEvent.VK_ESCAPE)
-            ) {
-                AuroraPopupManager.hideLastPopup()
+            if ((event is KeyEvent) && (event.id == KeyEvent.KEY_RELEASED)) {
+                val wasAltModif: Boolean = prevAltModif.value
+                prevAltModif.value = (event.modifiersEx == InputEvent.ALT_DOWN_MASK)
+                if (wasAltModif && event.keyCode == KeyEvent.VK_ALT) {
+                    return@AWTEventListener
+                }
+
+                val keyChar: Char = event.keyChar
+                if (Character.isLetter(keyChar) || Character.isDigit(keyChar)) {
+                    KeyTipTracker.handleKeyPress(keyChar)
+                }
+
+                if ((event.keyCode == KeyEvent.VK_ALT) || (event.getKeyCode() == KeyEvent.VK_F10)) {
+                    if (event.modifiersEx != 0) {
+                        return@AWTEventListener
+                    }
+                    val hadPopups: Boolean = AuroraPopupManager.isShowingPopups()
+                    AuroraPopupManager.hidePopups(null)
+                    if (hadPopups || KeyTipTracker.isShowingKeyTips()) {
+                        KeyTipTracker.hideAllKeyTips()
+                    } else {
+                        KeyTipTracker.showRootKeyTipChain()
+                    }
+                }
+                if (event.keyCode == KeyEvent.VK_ESCAPE) {
+                    // Hide last shown popup
+                    AuroraPopupManager.hideLastPopup()
+                    // Dismiss currently shown key tip chain
+                    if (KeyTipTracker.isShowingKeyTips()) {
+                        KeyTipTracker.showPreviousChain()
+                    }
+                }
+                if (KeyTipTracker.isShowingKeyTips()) {
+                    // Traversal of ribbon tasks while keytips are showing
+                    when (event.keyCode) {
+                        KeyEvent.VK_LEFT -> {
+                            val selectedIndex = ribbon.tasks.indexOfFirst { it == ribbon.getSelectedTask() }
+                            if (selectedIndex > 0) {
+                                ribbon.tasks[selectedIndex - 1].onClick.invoke()
+                            }
+                        }
+
+                        KeyEvent.VK_RIGHT -> {
+                            val selectedIndex = ribbon.tasks.indexOfFirst { it == ribbon.getSelectedTask() }
+                            if ((selectedIndex >= 0) && (selectedIndex < (ribbon.tasks.size - 1))) {
+                                ribbon.tasks[selectedIndex + 1].onClick.invoke()
+                            }
+                        }
+                    }
+                }
             }
             if ((event is MouseEvent) && (event.id == MouseEvent.MOUSE_PRESSED) && (src is Component)) {
                 // This can be in our custom popup menu or in the top-level window

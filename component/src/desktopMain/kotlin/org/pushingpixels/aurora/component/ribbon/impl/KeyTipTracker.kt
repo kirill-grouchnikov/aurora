@@ -106,6 +106,16 @@ object KeyTipTracker {
     }
 
     internal fun getKeyTips(): List<KeyTipInfo> = keyTips
+
+    fun isShowingKeyTips(): Boolean = true
+
+    fun showPreviousChain() {}
+
+    fun hideAllKeyTips() {}
+
+    fun showRootKeyTipChain() {}
+
+    fun handleKeyPress(char: Char) {}
 }
 
 @Immutable
