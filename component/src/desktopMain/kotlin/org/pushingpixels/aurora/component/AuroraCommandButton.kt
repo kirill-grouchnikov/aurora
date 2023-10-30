@@ -2051,7 +2051,7 @@ private fun CommandButtonKeyTip(
     Box {
         Canvas(modifier = Modifier.matchParentSize()) {
             drawKeyTip(
-                keyTipInfo = KeyTipTracker.KeyTipInfo(
+                keyTipInfo = KeyTipTracker.KeyTipLink(
                     projection = originalProjection,
                     keyTip = keyTip,
                     isEnabled = isEnabled,

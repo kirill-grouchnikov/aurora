@@ -17,9 +17,7 @@ package org.pushingpixels.aurora.component.ribbon.impl
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -35,6 +33,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.skia.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraRect
@@ -50,15 +50,24 @@ import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 
 @AuroraInternalApi
 object KeyTipTracker {
-    data class KeyTipInfo(
-        var projection: Projection<ContentModel, PresentationModel>,
-        var keyTip: String,
-        var isEnabled: Boolean,
+    data class KeyTipLink(
+        val projection: Projection<ContentModel, PresentationModel>,
+        val keyTip: String,
+        val isEnabled: Boolean,
         var screenRect: AuroraRect,
-        var anchor: Offset
+        var anchor: Offset,
+        val traversal: (() -> KeyTipChain)? = null
     )
 
-    private val keyTips: MutableList<KeyTipInfo> = arrayListOf()
+    data class KeyTipChain(
+        val links: List<KeyTipLink>,
+        val keyTipLookupIndex: Int = 0,
+        val parent: (() -> KeyTipChain)? = null
+    )
+
+    private val keyTips: MutableList<KeyTipLink> = arrayListOf()
+
+    private val keyTipChains: MutableList<KeyTipChain> = arrayListOf()
 
     fun trackKeyTipBase(
         projection: Projection<ContentModel, PresentationModel>,
@@ -72,7 +81,7 @@ object KeyTipTracker {
         if (existing != null) {
             existing.screenRect = screenRect.copy()
         } else {
-            keyTips.add(KeyTipInfo(projection, keyTip, isEnabled, screenRect, Offset.Zero))
+            keyTips.add(KeyTipLink(projection, keyTip, isEnabled, screenRect, Offset.Zero))
         }
     }
 
@@ -89,7 +98,7 @@ object KeyTipTracker {
             existing.anchor = anchor.copy()
         } else {
             keyTips.add(
-                KeyTipInfo(
+                KeyTipLink(
                     projection, keyTip, isEnabled,
                     AuroraRect(0.0f, 0.0f, 0.0f, 0.0f), anchor.copy()
                 )
@@ -105,17 +114,39 @@ object KeyTipTracker {
         }
     }
 
-    internal fun getKeyTips(): List<KeyTipInfo> = keyTips
+    internal fun getKeyTips(): List<KeyTipLink> = keyTips
 
-    fun isShowingKeyTips(): Boolean = true
+    internal fun getCurrentlyShownKeyTipChain(): KeyTipChain? {
+        if (keyTipChains.isEmpty()) {
+            return null
+        }
+        return keyTipChains.last()
+    }
 
-    fun showPreviousChain() {}
+    fun isShowingKeyTips(): Boolean = keyTipChains.isNotEmpty()
 
-    fun hideAllKeyTips() {}
+    fun showPreviousChain() {
+        if (keyTipChains.isEmpty()) {
+            return
+        }
+        keyTipChains.removeLast()
+        visibleFlow.value = keyTipChains.isNotEmpty()
+    }
 
-    fun showRootKeyTipChain() {}
+    fun hideAllKeyTips() {
+        keyTipChains.clear()
+        visibleFlow.value = false
+    }
+
+    fun showRootKeyTipChain() {
+        keyTipChains.add(KeyTipChain(links = keyTips))
+        visibleFlow.value = true
+    }
 
     fun handleKeyPress(char: Char) {}
+
+    val visibleFlow = MutableStateFlow(false)
+    val uiVisibleFlow: StateFlow<Boolean> = visibleFlow
 }
 
 @Immutable
@@ -140,21 +171,28 @@ fun RibbonKeyTipOverlay(modifier: Modifier, insets: Dp) {
     val textStyle = resolveDefaults(LocalTextStyle.current, layoutDirection)
     val fontFamilyResolver = LocalFontFamilyResolver.current
 
-    Canvas(modifier = modifier) {
-        for (tracked in KeyTipTracker.getKeyTips()) {
-            if (!tracked.screenRect.isEmpty) {
-                drawKeyTip(
-                    tracked,
-                    textStyle,
-                    density,
-                    fontFamilyResolver,
-                    layoutDirection,
-                    insets,
-                    drawingCache,
-                    decorationAreaType,
-                    skinColors,
-                    painters
-                )
+    val visibilityState by KeyTipTracker.visibleFlow.collectAsState()
+
+    if (visibilityState) {
+        Canvas(modifier = modifier) {
+            val currentlyShownKeyTipChain = KeyTipTracker.getCurrentlyShownKeyTipChain()
+            if (currentlyShownKeyTipChain != null) {
+                for (tracked in currentlyShownKeyTipChain.links) {
+                    if (!tracked.screenRect.isEmpty) {
+                        drawKeyTip(
+                            tracked,
+                            textStyle,
+                            density,
+                            fontFamilyResolver,
+                            layoutDirection,
+                            insets,
+                            drawingCache,
+                            decorationAreaType,
+                            skinColors,
+                            painters
+                        )
+                    }
+                }
             }
         }
     }
@@ -201,7 +239,7 @@ internal fun getAdjustedAnchor(
 
 @OptIn(AuroraInternalApi::class)
 internal fun DrawScope.drawKeyTip(
-    keyTipInfo: KeyTipTracker.KeyTipInfo,
+    keyTipInfo: KeyTipTracker.KeyTipLink,
     textStyle: TextStyle,
     density: Density,
     fontFamilyResolver: FontFamily.Resolver,
