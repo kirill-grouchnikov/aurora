@@ -1,7 +1,7 @@
 [versions]
 kotlin = "1.9.10"
 coroutines = "1.7.3"
-compose = "1.5.10-rc01"
+compose = "1.5.10-rc02"
 dokka = "1.9.10"
 batik = "1.17"
 
