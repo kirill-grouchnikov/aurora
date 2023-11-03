@@ -883,6 +883,65 @@ internal fun <M : BaseCommandMenuContentModel,
     val bandRowHeight = LocalRibbonBandRowHeight.current
     val bandRow = LocalRibbonBandRow.current
 
+    // These two track the offset of action and popup area relative in
+    // the overall bounding box of the command button. To paint continuous
+    // visuals of the command button across two separate Box composables,
+    // we paint each as full-size area, along with clipping to the specific
+    // area (action or popup) and offsetting during the Canvas paint pass.
+    var actionAreaOffset = remember { Offset.Zero }
+    var popupAreaOffset = remember { Offset.Zero }
+    val popupAreaSize = remember { mutableStateOf(IntSize(0, 0)) }
+    val onActivatePopup: () -> Unit = {
+        val isShowingPopupFromHere = AuroraPopupManager.isShowingPopupFrom(
+            originator = popupOriginator,
+            pointInOriginator = AuroraOffset(
+                x = buttonTopLeftOffset.x + popupAreaOffset.x + popupAreaSize.value.width / 2.0f,
+                y = buttonTopLeftOffset.y + popupAreaOffset.y + popupAreaSize.value.height / 2.0f
+            ).asOffset(density)
+        )
+        if (!isShowingPopupFromHere) {
+            // Display our popup content.
+            val popupWindow = popupHandler.showPopupContent(
+                popupOriginator = popupOriginator,
+                layoutDirection = layoutDirection,
+                density = density,
+                textStyle = resolvedTextStyle,
+                fontFamilyResolver = fontFamilyResolver,
+                skinColors = skinColors,
+                colorSchemeBundle = presentationModel.colorSchemeBundle,
+                skinPainters = painters,
+                decorationAreaType = decorationAreaType,
+                compositionLocalContext = compositionLocalContext,
+                anchorBoundsInWindow = Rect(
+                    offset = buttonTopLeftOffset.asOffset(density),
+                    size = buttonSize.value.asSize(density)
+                ),
+                popupTriggerAreaInWindow = Rect(
+                    offset = AuroraOffset(
+                        x = buttonTopLeftOffset.x + popupAreaOffset.x,
+                        y = buttonTopLeftOffset.y + popupAreaOffset.y
+                    ).asOffset(density),
+                    size = popupAreaSize.value.asSize(density)
+                ),
+                contentModel = secondaryContentModel,
+                presentationModel = presentationModel.popupMenuPresentationModel as P,
+                displayPrototypeCommand = null,
+                toDismissPopupsOnActivation = presentationModel.toDismissPopupsOnActivation,
+                popupPlacementStrategy = presentationModel.popupPlacementStrategy,
+                popupAnchorBoundsProvider = presentationModel.popupAnchorBoundsProvider,
+                overlays = secondaryOverlays,
+                popupKind = AuroraPopupManager.PopupKind.Popup
+            )
+            coroutineScope.launch {
+                popupWindow?.opacity = 1.0f
+            }
+        } else {
+            // Showing a popup that originates from the popup area of this command button.
+            // Hide it.
+            AuroraPopupManager.hidePopups(originator = popupOriginator)
+        }
+    }
+
     Layout(
         modifier = modifier.commandButtonLocator(
             originalProjection,
@@ -893,7 +952,7 @@ internal fun <M : BaseCommandMenuContentModel,
             trackBounds,
             trackKeyTips,
             keyTipChainRoot,
-            { command.secondaryContentModel },
+            command.secondaryContentModel,
         ),
         content = {
             val modifierAction: Modifier
@@ -925,14 +984,6 @@ internal fun <M : BaseCommandMenuContentModel,
                     presentationModel = presentationModel
                 )
             }
-            // These two track the offset of action and popup area relative in
-            // the overall bounding box of the command button. To paint continuous
-            // visuals of the command button across two separate Box composables,
-            // we paint each as full-size area, along with clipping to the specific
-            // area (action or popup) and offsetting during the Canvas paint pass.
-            var actionAreaOffset = remember { Offset.Zero }
-            var popupAreaOffset = remember { Offset.Zero }
-            val popupAreaSize = remember { mutableStateOf(IntSize(0, 0)) }
             Box(
                 modifier = modifierAction.auroraRichTooltip(
                     richTooltip = command.actionRichTooltip,
@@ -1126,56 +1177,7 @@ internal fun <M : BaseCommandMenuContentModel,
             Box(
                 modifier = Modifier.commandButtonPopupModifier(
                     enabled = isPopupEnabled,
-                    onActivatePopup = {
-                        val isShowingPopupFromHere = AuroraPopupManager.isShowingPopupFrom(
-                            originator = popupOriginator,
-                            pointInOriginator = AuroraOffset(
-                                x = buttonTopLeftOffset.x + popupAreaOffset.x + popupAreaSize.value.width / 2.0f,
-                                y = buttonTopLeftOffset.y + popupAreaOffset.y + popupAreaSize.value.height / 2.0f
-                            ).asOffset(density)
-                        )
-                        if (!isShowingPopupFromHere) {
-                            // Display our popup content.
-                            val popupWindow = popupHandler.showPopupContent(
-                                popupOriginator = popupOriginator,
-                                layoutDirection = layoutDirection,
-                                density = density,
-                                textStyle = resolvedTextStyle,
-                                fontFamilyResolver = fontFamilyResolver,
-                                skinColors = skinColors,
-                                colorSchemeBundle = presentationModel.colorSchemeBundle,
-                                skinPainters = painters,
-                                decorationAreaType = decorationAreaType,
-                                compositionLocalContext = compositionLocalContext,
-                                anchorBoundsInWindow = Rect(
-                                    offset = buttonTopLeftOffset.asOffset(density),
-                                    size = buttonSize.value.asSize(density)
-                                ),
-                                popupTriggerAreaInWindow = Rect(
-                                    offset = AuroraOffset(
-                                        x = buttonTopLeftOffset.x + popupAreaOffset.x,
-                                        y = buttonTopLeftOffset.y + popupAreaOffset.y
-                                    ).asOffset(density),
-                                    size = popupAreaSize.value.asSize(density)
-                                ),
-                                contentModel = secondaryContentModel,
-                                presentationModel = presentationModel.popupMenuPresentationModel as P,
-                                displayPrototypeCommand = null,
-                                toDismissPopupsOnActivation = presentationModel.toDismissPopupsOnActivation,
-                                popupPlacementStrategy = presentationModel.popupPlacementStrategy,
-                                popupAnchorBoundsProvider = presentationModel.popupAnchorBoundsProvider,
-                                overlays = secondaryOverlays,
-                                popupKind = AuroraPopupManager.PopupKind.Popup
-                            )
-                            coroutineScope.launch {
-                                popupWindow?.opacity = 1.0f
-                            }
-                        } else {
-                            // Showing a popup that originates from the popup area of this command button.
-                            // Hide it.
-                            AuroraPopupManager.hidePopups(originator = popupOriginator)
-                        }
-                    },
+                    onActivatePopup = onActivatePopup,
                     onDeactivatePopup = {
                         val isShowingPopupFromHere = AuroraPopupManager.isShowingPopupFrom(
                             originator = popupOriginator,
@@ -1609,7 +1611,6 @@ internal fun <M : BaseCommandMenuContentModel,
 
         if (popupMenu == null) {
             if ((presentationModel.actionKeyTip != null) && !layoutInfo.actionClickArea.isEmpty) {
-                val traversal: () -> Any
                 KeyTipTracker.trackKeyTipOffset(
                     originalProjection,
                     presentationModel.actionKeyTip!!,
@@ -1619,8 +1620,13 @@ internal fun <M : BaseCommandMenuContentModel,
                         row = bandRow,
                         rowHeight = bandRowHeight
                     ),
+                    {
+                        coroutineScope.launch {
+                            command.action?.invoke()
+                        }
+                    },
                     keyTipChainRoot,
-                    command.secondaryContentModel
+                    null
                 )
             }
             if ((presentationModel.popupKeyTip != null) && !layoutInfo.popupClickArea.isEmpty) {
@@ -1633,6 +1639,11 @@ internal fun <M : BaseCommandMenuContentModel,
                         row = bandRow,
                         rowHeight = bandRowHeight
                     ),
+                    {
+                        coroutineScope.launch {
+                            onActivatePopup.invoke()
+                        }
+                    },
                     keyTipChainRoot,
                     command.secondaryContentModel
                 )
@@ -2066,6 +2077,7 @@ private fun CommandButtonKeyTip(
                     isEnabled = isEnabled,
                     screenRect = AuroraRect(0.0f, 0.0f, buttonSize.width.toFloat(), buttonSize.height.toFloat()),
                     anchor = Offset(size.width / 2.0f, size.height / 2.0f),
+                    onActivated = null,
                     chainRoot = null,
                     traversal = { null }
                 ),
@@ -2093,7 +2105,7 @@ private class CommandButtonLocator(
     val trackBounds: Boolean,
     val trackKeyTips: Boolean,
     val keyTipChainRoot: Any?,
-    val keyTipTraversal: () -> Any?,
+    val popupKeyTipTraversal: Any?,
 ) :
     OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
@@ -2123,7 +2135,7 @@ private class CommandButtonLocator(
                     command.isActionEnabled,
                     bounds,
                     keyTipChainRoot,
-                    keyTipTraversal
+                    null
                 )
             }
             if (presentationModel.popupKeyTip != null) {
@@ -2133,7 +2145,7 @@ private class CommandButtonLocator(
                     command.isSecondaryEnabled,
                     bounds,
                     keyTipChainRoot,
-                    keyTipTraversal
+                    popupKeyTipTraversal
                 )
             }
         }
@@ -2151,7 +2163,7 @@ private fun Modifier.commandButtonLocator(
     trackBounds: Boolean,
     trackKeyTips: Boolean,
     keyTipChainRoot: Any?,
-    keyTipTraversal: () -> Any?,
+    popupKeyTipTraversal: Any?,
 ) = this.then(
     CommandButtonLocator(
         originalProjection,
@@ -2162,6 +2174,6 @@ private fun Modifier.commandButtonLocator(
         trackBounds,
         trackKeyTips,
         keyTipChainRoot,
-        keyTipTraversal
+        popupKeyTipTraversal
     )
 )

@@ -58,6 +58,7 @@ object KeyTipTracker {
         val isEnabled: Boolean,
         var screenRect: AuroraRect,
         var anchor: Offset,
+        var onActivated: (() -> Unit)?,
         val chainRoot: Any?,
         val traversal: Any?
     )
@@ -94,6 +95,7 @@ object KeyTipTracker {
                     isEnabled = isEnabled,
                     screenRect = screenRect,
                     anchor = Offset.Zero,
+                    onActivated = null,
                     chainRoot = chainRoot,
                     traversal = traversal,
                 )
@@ -106,6 +108,7 @@ object KeyTipTracker {
         keyTip: String,
         isEnabled: Boolean,
         anchor: Offset,
+        onActivated: (() -> Unit)?,
         chainRoot: Any?,
         traversal: Any?,
     ) {
@@ -114,6 +117,7 @@ object KeyTipTracker {
         }
         if (existing != null) {
             existing.anchor = anchor.copy()
+            existing.onActivated = onActivated
         } else {
             keyTips.add(
                 KeyTipLink(
@@ -122,6 +126,7 @@ object KeyTipTracker {
                     isEnabled = isEnabled,
                     screenRect = AuroraRect(0.0f, 0.0f, 0.0f, 0.0f),
                     anchor = anchor.copy(),
+                    onActivated = onActivated,
                     chainRoot = chainRoot,
                     traversal = traversal,
                 )
@@ -164,6 +169,7 @@ object KeyTipTracker {
         chainRoots.clear()
         visibleFlow.value = false
         chainDepth.value = 0
+        println("Cleared all key tips, depth ${chainDepth.value}")
     }
 
     fun showRootKeyTipChain(ribbon: Ribbon) {
@@ -177,6 +183,7 @@ object KeyTipTracker {
         if (!isShowingKeyTips()) {
             return
         }
+        println("Processing $char at depth ${chainDepth.value}")
         val currChain = getCurrentlyShownKeyTipChain()!!
         val currChainRoot = chainRoots.last()
 
@@ -187,6 +194,7 @@ object KeyTipTracker {
             if (char.lowercaseChar() == keyTipString.get(0).lowercaseChar()) {
                 // Match!
                 if (link.isEnabled) {
+                    link.onActivated?.invoke()
                     // TODO - activate the element
                     if (link.traversal != null) {
                         val nextChainRoot = link.traversal

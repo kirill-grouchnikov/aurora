@@ -322,6 +322,7 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
                             row = bandRow,
                             rowHeight = bandRowHeight
                         ),
+                        null,
                         keyTipChainRoot,
                         null
                     )
@@ -350,6 +351,7 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
                             row = bandRow,
                             rowHeight = bandRowHeight
                         ),
+                        null,
                         keyTipChainRoot,
                         null
                     )

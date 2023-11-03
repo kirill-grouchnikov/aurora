@@ -43,6 +43,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
+import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.component.auroraRichTooltip
 import org.pushingpixels.aurora.component.model.BaseCommand
@@ -258,6 +259,8 @@ internal fun RibbonTaskToggleButton(
     )
     val buttonTopLeftOffset = remember { AuroraOffset(0.0f, 0.0f) }
     val buttonSize = remember { mutableStateOf(IntSize(0, 0)) }
+    val coroutineScope = rememberCoroutineScope()
+
     val trackBounds = LocalRibbonTrackBounds.current
     val keyTipChainRoot = LocalRibbonKeyTipChainRoot.current
     val trackKeyTips = LocalRibbonTrackKeyTips.current
@@ -566,6 +569,11 @@ internal fun RibbonTaskToggleButton(
                 presentationModel.actionKeyTip!!,
                 command.isActionEnabled,
                 layoutManager.getActionKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo),
+                {
+                    coroutineScope.launch {
+                        command.action?.invoke()
+                    }
+                },
                 keyTipChainRoot,
                 command.tag
             )
