@@ -322,7 +322,8 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
                             row = bandRow,
                             rowHeight = bandRowHeight
                         ),
-                        keyTipChainRoot
+                        keyTipChainRoot,
+                        null
                     )
                 } else {
                     val componentMid = if (layoutDirection == LayoutDirection.Ltr) {
@@ -349,7 +350,8 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
                             row = bandRow,
                             rowHeight = bandRowHeight
                         ),
-                        keyTipChainRoot
+                        keyTipChainRoot,
+                        null
                     )
                 }
             }
@@ -412,7 +414,8 @@ private class MetaComponentLocator(
                     projection.presentationModel.ribbonComponentPresentationModel.keyTip!!,
                     projection.enabled.invoke(),
                     bounds,
-                    keyTipChainRoot
+                    keyTipChainRoot,
+                    { null }
                 )
             }
         }

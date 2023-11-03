@@ -269,7 +269,8 @@ internal fun RibbonTaskToggleButton(
             buttonSize,
             trackBounds,
             trackKeyTips,
-            keyTipChainRoot
+            keyTipChainRoot,
+            command.tag
         ),
         content = {
             // This button is a sort of in-between. It is toggleable in the sense that it can be
@@ -565,7 +566,8 @@ internal fun RibbonTaskToggleButton(
                 presentationModel.actionKeyTip!!,
                 command.isActionEnabled,
                 layoutManager.getActionKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo),
-                keyTipChainRoot
+                keyTipChainRoot,
+                command.tag
             )
         }
 
@@ -711,6 +713,7 @@ private class RibbonTaskToggleButtonLocator(
     val trackBounds: Boolean,
     val trackKeyTips: Boolean,
     val keyTipChainRoot: Any?,
+    val keyTipTraversal: Any?,
 ) : OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
         // Convert the top left corner of the component to the root coordinates
@@ -738,7 +741,8 @@ private class RibbonTaskToggleButtonLocator(
                     projection.presentationModel.actionKeyTip!!,
                     projection.contentModel.isActionEnabled,
                     bounds,
-                    keyTipChainRoot
+                    keyTipChainRoot,
+                    keyTipTraversal
                 )
             }
             if (projection.presentationModel.popupKeyTip != null) {
@@ -747,7 +751,8 @@ private class RibbonTaskToggleButtonLocator(
                     projection.presentationModel.popupKeyTip!!,
                     projection.contentModel.isSecondaryEnabled,
                     bounds,
-                    keyTipChainRoot
+                    keyTipChainRoot,
+                    keyTipTraversal
                 )
             }
         }
@@ -763,4 +768,15 @@ private fun Modifier.ribbonTaskToggleButtonLocator(
     trackBounds: Boolean,
     trackKeyTips: Boolean,
     keyTipChainRoot: Any?,
-) = this.then(RibbonTaskToggleButtonLocator(projection, topLeftOffset, size, trackBounds, trackKeyTips, keyTipChainRoot))
+    keyTipTraversal: Any?
+) = this.then(
+    RibbonTaskToggleButtonLocator(
+        projection,
+        topLeftOffset,
+        size,
+        trackBounds,
+        trackKeyTips,
+        keyTipChainRoot,
+        keyTipTraversal
+    )
+)

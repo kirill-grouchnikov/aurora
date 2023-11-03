@@ -37,6 +37,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.skia.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraRect
 import org.pushingpixels.aurora.common.isEmpty
 import org.pushingpixels.aurora.component.model.ContentModel
@@ -57,19 +58,20 @@ object KeyTipTracker {
         val isEnabled: Boolean,
         var screenRect: AuroraRect,
         var anchor: Offset,
-        val chainRoot: Any? = null,
-        val traversal: (() -> KeyTipChain)? = null
+        val chainRoot: Any?,
+        val traversal: Any?
     )
 
     data class KeyTipChain(
         val links: List<KeyTipLink>,
         val keyTipLookupIndex: Int = 0,
-        val parent: (() -> KeyTipChain)? = null
     )
 
     private val keyTips: MutableList<KeyTipLink> = arrayListOf()
 
     private val keyTipChains: MutableList<KeyTipChain> = arrayListOf()
+
+    private val chainRoots: MutableList<Any> = arrayListOf()
 
     fun trackKeyTipBase(
         projection: Projection<ContentModel, PresentationModel>,
@@ -77,6 +79,7 @@ object KeyTipTracker {
         isEnabled: Boolean,
         screenRect: AuroraRect,
         chainRoot: Any?,
+        traversal: Any?,
     ) {
         val existing = keyTips.find {
             (it.projection == projection) && (it.keyTip == keyTip)
@@ -84,13 +87,17 @@ object KeyTipTracker {
         if (existing != null) {
             existing.screenRect = screenRect.copy()
         } else {
-            keyTips.add(KeyTipLink(
-                projection = projection,
-                keyTip = keyTip,
-                isEnabled = isEnabled,
-                screenRect =  screenRect,
-                anchor = Offset.Zero,
-                chainRoot = chainRoot))
+            keyTips.add(
+                KeyTipLink(
+                    projection = projection,
+                    keyTip = keyTip,
+                    isEnabled = isEnabled,
+                    screenRect = screenRect,
+                    anchor = Offset.Zero,
+                    chainRoot = chainRoot,
+                    traversal = traversal,
+                )
+            )
         }
     }
 
@@ -100,6 +107,7 @@ object KeyTipTracker {
         isEnabled: Boolean,
         anchor: Offset,
         chainRoot: Any?,
+        traversal: Any?,
     ) {
         val existing = keyTips.find {
             (it.projection == projection) && (it.keyTip == keyTip)
@@ -115,6 +123,7 @@ object KeyTipTracker {
                     screenRect = AuroraRect(0.0f, 0.0f, 0.0f, 0.0f),
                     anchor = anchor.copy(),
                     chainRoot = chainRoot,
+                    traversal = traversal,
                 )
             )
         }
@@ -144,27 +153,63 @@ object KeyTipTracker {
             return
         }
         keyTipChains.removeLast()
+        chainRoots.removeLast()
         visibleFlow.value = keyTipChains.isNotEmpty()
+        chainDepth.value--
+        println("Going back one at new depth ${chainDepth.value}")
     }
 
     fun hideAllKeyTips() {
         keyTipChains.clear()
+        chainRoots.clear()
         visibleFlow.value = false
+        chainDepth.value = 0
     }
 
     fun showRootKeyTipChain(ribbon: Ribbon) {
         keyTipChains.add(KeyTipChain(links = keyTips.filter { it.chainRoot == ribbon }))
+        chainRoots.add(ribbon)
         visibleFlow.value = true
+        chainDepth.value = 1
     }
 
     fun handleKeyPress(char: Char) {
-        if (isShowingKeyTips()) {
-            println("Handling key press $char")
+        if (!isShowingKeyTips()) {
+            return
+        }
+        val currChain = getCurrentlyShownKeyTipChain()!!
+        val currChainRoot = chainRoots.last()
+
+        // Go over the key tip links and see if there is an exact match
+        for (link in currChain.links) {
+            val keyTipString = link.keyTip
+            // TODO - handle two-character tips
+            if (char.lowercaseChar() == keyTipString.get(0).lowercaseChar()) {
+                // Match!
+                if (link.isEnabled) {
+                    // TODO - activate the element
+                    if (link.traversal != null) {
+                        val nextChainRoot = link.traversal
+                        keyTipChains.add(KeyTipChain(links = keyTips.filter { it.chainRoot == nextChainRoot }))
+                        chainRoots.add(nextChainRoot)
+                        chainDepth.value++
+                        println("Going to next root ${nextChainRoot.javaClass.simpleName} at new depth ${chainDepth.value}")
+                    } else {
+                        // Match found and activated, and no further traversal available
+                        // a) Dismiss all key tip chains
+                        hideAllKeyTips()
+                        // b) hide all popups
+                        AuroraPopupManager.hidePopups(null)
+                    }
+                }
+            }
         }
     }
 
     val visibleFlow = MutableStateFlow(false)
     val uiVisibleFlow: StateFlow<Boolean> = visibleFlow
+    val chainDepth = MutableStateFlow(0)
+    val uiChainDepth: StateFlow<Int> = chainDepth
 }
 
 @Immutable
@@ -189,9 +234,10 @@ fun RibbonKeyTipOverlay(modifier: Modifier, insets: Dp) {
     val textStyle = resolveDefaults(LocalTextStyle.current, layoutDirection)
     val fontFamilyResolver = LocalFontFamilyResolver.current
 
-    val visibilityState by KeyTipTracker.visibleFlow.collectAsState()
+    val visibilityState by KeyTipTracker.uiVisibleFlow.collectAsState()
+    val chainDepth by KeyTipTracker.uiChainDepth.collectAsState()
 
-    if (visibilityState) {
+    if (visibilityState && (chainDepth > 0)) {
         Canvas(modifier = modifier) {
             val currentlyShownKeyTipChain = KeyTipTracker.getCurrentlyShownKeyTipChain()
             if (currentlyShownKeyTipChain != null) {

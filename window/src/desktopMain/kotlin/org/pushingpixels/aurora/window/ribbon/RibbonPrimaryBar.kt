@@ -136,7 +136,8 @@ internal fun RibbonPrimaryBar(
                     }
                 },
                 isActionToggle = true,
-                isActionToggleSelected = task.isActive
+                isActionToggleSelected = task.isActive,
+                tag = task
             ),
             task.keyTip,
             null
@@ -153,7 +154,8 @@ internal fun RibbonPrimaryBar(
                         }
                     },
                     isActionToggle = true,
-                    isActionToggleSelected = contextualTask.isActive
+                    isActionToggleSelected = contextualTask.isActive,
+                    tag = contextualTask
                 ),
                 contextualTask.keyTip,
                 contextualTaskGroup

@@ -892,7 +892,8 @@ internal fun <M : BaseCommandMenuContentModel,
             buttonSize,
             trackBounds,
             trackKeyTips,
-            keyTipChainRoot
+            keyTipChainRoot,
+            { command.secondaryContentModel },
         ),
         content = {
             val modifierAction: Modifier
@@ -1608,6 +1609,7 @@ internal fun <M : BaseCommandMenuContentModel,
 
         if (popupMenu == null) {
             if ((presentationModel.actionKeyTip != null) && !layoutInfo.actionClickArea.isEmpty) {
+                val traversal: () -> Any
                 KeyTipTracker.trackKeyTipOffset(
                     originalProjection,
                     presentationModel.actionKeyTip!!,
@@ -1617,7 +1619,8 @@ internal fun <M : BaseCommandMenuContentModel,
                         row = bandRow,
                         rowHeight = bandRowHeight
                     ),
-                    keyTipChainRoot
+                    keyTipChainRoot,
+                    command.secondaryContentModel
                 )
             }
             if ((presentationModel.popupKeyTip != null) && !layoutInfo.popupClickArea.isEmpty) {
@@ -1630,7 +1633,8 @@ internal fun <M : BaseCommandMenuContentModel,
                         row = bandRow,
                         rowHeight = bandRowHeight
                     ),
-                    keyTipChainRoot
+                    keyTipChainRoot,
+                    command.secondaryContentModel
                 )
             }
         }
@@ -2061,7 +2065,9 @@ private fun CommandButtonKeyTip(
                     keyTip = keyTip,
                     isEnabled = isEnabled,
                     screenRect = AuroraRect(0.0f, 0.0f, buttonSize.width.toFloat(), buttonSize.height.toFloat()),
-                    anchor = Offset(size.width / 2.0f, size.height / 2.0f)
+                    anchor = Offset(size.width / 2.0f, size.height / 2.0f),
+                    chainRoot = null,
+                    traversal = { null }
                 ),
                 textStyle = textStyle,
                 density = density,
@@ -2087,6 +2093,7 @@ private class CommandButtonLocator(
     val trackBounds: Boolean,
     val trackKeyTips: Boolean,
     val keyTipChainRoot: Any?,
+    val keyTipTraversal: () -> Any?,
 ) :
     OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
@@ -2115,7 +2122,8 @@ private class CommandButtonLocator(
                     presentationModel.actionKeyTip!!,
                     command.isActionEnabled,
                     bounds,
-                    keyTipChainRoot
+                    keyTipChainRoot,
+                    keyTipTraversal
                 )
             }
             if (presentationModel.popupKeyTip != null) {
@@ -2124,7 +2132,8 @@ private class CommandButtonLocator(
                     presentationModel.popupKeyTip!!,
                     command.isSecondaryEnabled,
                     bounds,
-                    keyTipChainRoot
+                    keyTipChainRoot,
+                    keyTipTraversal
                 )
             }
         }
@@ -2142,6 +2151,7 @@ private fun Modifier.commandButtonLocator(
     trackBounds: Boolean,
     trackKeyTips: Boolean,
     keyTipChainRoot: Any?,
+    keyTipTraversal: () -> Any?,
 ) = this.then(
     CommandButtonLocator(
         originalProjection,
@@ -2151,6 +2161,7 @@ private fun Modifier.commandButtonLocator(
         size,
         trackBounds,
         trackKeyTips,
-        keyTipChainRoot
+        keyTipChainRoot,
+        keyTipTraversal
     )
 )
