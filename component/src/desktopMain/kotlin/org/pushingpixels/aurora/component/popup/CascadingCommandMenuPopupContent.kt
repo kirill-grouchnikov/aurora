@@ -33,6 +33,7 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonKeyTipChainRoot
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
@@ -203,6 +204,7 @@ interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
                     LocalWindowSize provides popupDpSize,
                     LocalTopWindowSize provides LocalTopWindowSize.current,
                     LocalSkinColors provides LocalSkinColors.current,
+                    LocalRibbonKeyTipChainRoot provides contentModel.value,
                 ) {
                     Box(modifier = Modifier.fillMaxSize().background(fillColor)) {
                         generatePopupContent(

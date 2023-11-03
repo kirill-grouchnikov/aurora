@@ -42,6 +42,7 @@ import org.pushingpixels.aurora.common.isEmpty
 import org.pushingpixels.aurora.component.model.ContentModel
 import org.pushingpixels.aurora.component.model.PresentationModel
 import org.pushingpixels.aurora.component.projection.Projection
+import org.pushingpixels.aurora.component.ribbon.Ribbon
 import org.pushingpixels.aurora.component.utils.DrawingCache
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
@@ -56,6 +57,7 @@ object KeyTipTracker {
         val isEnabled: Boolean,
         var screenRect: AuroraRect,
         var anchor: Offset,
+        val chainRoot: Any? = null,
         val traversal: (() -> KeyTipChain)? = null
     )
 
@@ -73,7 +75,8 @@ object KeyTipTracker {
         projection: Projection<ContentModel, PresentationModel>,
         keyTip: String,
         isEnabled: Boolean,
-        screenRect: AuroraRect
+        screenRect: AuroraRect,
+        chainRoot: Any?,
     ) {
         val existing = keyTips.find {
             (it.projection == projection) && (it.keyTip == keyTip)
@@ -81,7 +84,13 @@ object KeyTipTracker {
         if (existing != null) {
             existing.screenRect = screenRect.copy()
         } else {
-            keyTips.add(KeyTipLink(projection, keyTip, isEnabled, screenRect, Offset.Zero))
+            keyTips.add(KeyTipLink(
+                projection = projection,
+                keyTip = keyTip,
+                isEnabled = isEnabled,
+                screenRect =  screenRect,
+                anchor = Offset.Zero,
+                chainRoot = chainRoot))
         }
     }
 
@@ -89,7 +98,8 @@ object KeyTipTracker {
         projection: Projection<ContentModel, PresentationModel>,
         keyTip: String,
         isEnabled: Boolean,
-        anchor: Offset
+        anchor: Offset,
+        chainRoot: Any?,
     ) {
         val existing = keyTips.find {
             (it.projection == projection) && (it.keyTip == keyTip)
@@ -99,8 +109,12 @@ object KeyTipTracker {
         } else {
             keyTips.add(
                 KeyTipLink(
-                    projection, keyTip, isEnabled,
-                    AuroraRect(0.0f, 0.0f, 0.0f, 0.0f), anchor.copy()
+                    projection = projection,
+                    keyTip = keyTip,
+                    isEnabled = isEnabled,
+                    screenRect = AuroraRect(0.0f, 0.0f, 0.0f, 0.0f),
+                    anchor = anchor.copy(),
+                    chainRoot = chainRoot,
                 )
             )
         }
@@ -138,12 +152,16 @@ object KeyTipTracker {
         visibleFlow.value = false
     }
 
-    fun showRootKeyTipChain() {
-        keyTipChains.add(KeyTipChain(links = keyTips))
+    fun showRootKeyTipChain(ribbon: Ribbon) {
+        keyTipChains.add(KeyTipChain(links = keyTips.filter { it.chainRoot == ribbon }))
         visibleFlow.value = true
     }
 
-    fun handleKeyPress(char: Char) {}
+    fun handleKeyPress(char: Char) {
+        if (isShowingKeyTips()) {
+            println("Handling key press $char")
+        }
+    }
 
     val visibleFlow = MutableStateFlow(false)
     val uiVisibleFlow: StateFlow<Boolean> = visibleFlow

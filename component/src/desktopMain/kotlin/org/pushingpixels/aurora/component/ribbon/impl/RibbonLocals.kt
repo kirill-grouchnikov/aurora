@@ -39,6 +39,11 @@ val LocalRibbonTrackKeyTips = staticCompositionLocalOf {
 }
 
 @AuroraInternalApi
+val LocalRibbonKeyTipChainRoot = staticCompositionLocalOf<Any?> {
+    null
+}
+
+@AuroraInternalApi
 val LocalRibbonBandRow = staticCompositionLocalOf {
     RibbonBandRow.None
 }

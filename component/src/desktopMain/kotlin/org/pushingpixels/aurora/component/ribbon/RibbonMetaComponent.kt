@@ -179,12 +179,13 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
 
     val trackBounds = LocalRibbonTrackBounds.current
     val trackKeyTips = LocalRibbonTrackKeyTips.current
+    val keyTipChainRoot = LocalRibbonKeyTipChainRoot.current
     val bandRowHeight = LocalRibbonBandRowHeight.current
     val bandRow = LocalRibbonBandRow.current
 
     Layout(
         modifier = if (trackBounds) {
-            modifier.metaComponentLocator(originalProjection, trackBounds, trackKeyTips)
+            modifier.metaComponentLocator(originalProjection, trackBounds, trackKeyTips, keyTipChainRoot)
         } else {
             modifier
         },
@@ -320,7 +321,8 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
                             anchor = Offset(captionMid.toFloat(), height / 2.0f),
                             row = bandRow,
                             rowHeight = bandRowHeight
-                        )
+                        ),
+                        keyTipChainRoot
                     )
                 } else {
                     val componentMid = if (layoutDirection == LayoutDirection.Ltr) {
@@ -346,7 +348,8 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
                             anchor = Offset(componentMid, height / 2.0f),
                             row = bandRow,
                             rowHeight = bandRowHeight
-                        )
+                        ),
+                        keyTipChainRoot
                     )
                 }
             }
@@ -385,7 +388,8 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
 private class MetaComponentLocator(
     val projection: RibbonMetaComponentProjection<*, *>,
     val trackBounds: Boolean,
-    val trackKeyTips: Boolean
+    val trackKeyTips: Boolean,
+    val keyTipChainRoot: Any?,
 ) :
     OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
@@ -407,7 +411,8 @@ private class MetaComponentLocator(
                     projection,
                     projection.presentationModel.ribbonComponentPresentationModel.keyTip!!,
                     projection.enabled.invoke(),
-                    bounds
+                    bounds,
+                    keyTipChainRoot
                 )
             }
         }
@@ -418,8 +423,9 @@ private class MetaComponentLocator(
 private fun Modifier.metaComponentLocator(
     projection: RibbonMetaComponentProjection<*, *>,
     trackBounds: Boolean,
-    trackKeyTips: Boolean
-) = this.then(MetaComponentLocator(projection, trackBounds, trackKeyTips))
+    trackKeyTips: Boolean,
+    keyTipChainRoot: Any?,
+) = this.then(MetaComponentLocator(projection, trackBounds, trackKeyTips, keyTipChainRoot))
 
 private val DefaultMetaComponentIconTextLayoutGap = 4.dp
 private val DefaultMetaComponentLayoutGap = 6.dp

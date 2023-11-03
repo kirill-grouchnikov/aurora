@@ -41,6 +41,7 @@ import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.ribbon.RibbonApplicationMenuCommandPopupMenuPresentationModel
 import org.pushingpixels.aurora.component.ribbon.RibbonApplicationMenuContentModel
+import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonKeyTipChainRoot
 import org.pushingpixels.aurora.component.utils.TitleLabel
 import org.pushingpixels.aurora.component.utils.appmenu.CommandButtonLayoutManagerAppMenuLevel2
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
@@ -328,6 +329,7 @@ internal class RibbonApplicationMenuPopupHandler(
         }
     }
 
+    @OptIn(AuroraInternalApi::class)
     @Composable
     private fun generateLevel2Content(
         modifier: Modifier,
@@ -351,101 +353,104 @@ internal class RibbonApplicationMenuPopupHandler(
             popupFireTrigger = PopupFireTrigger.OnRollover,
             selectedStateHighlight = SelectedStateHighlight.FullSize
         )
-
-        Column(modifier = modifier.padding(all = 1.0.dp)) {
-            if (level1Command?.secondaryContentModel != null) {
-                // Determine the height of the tallest button
-                var maxButtonHeight = 0.0f
-                val regularButtonLayoutManager = itemPresentationState.createLayoutManager(
-                    layoutDirection = layoutDirection,
-                    density = density,
-                    textStyle = textStyle,
-                    fontFamilyResolver = fontFamilyResolver
-                )
-                for (commandGroup in level1Command.secondaryContentModel.groups) {
-                    for (secondaryCommand in commandGroup.commands) {
-                        val preferredSize = regularButtonLayoutManager.getPreferredSize(
-                            command = secondaryCommand,
-                            presentationModel = itemButtonPresentationModel,
-                            preLayoutInfo = regularButtonLayoutManager.getPreLayoutInfo(
+        CompositionLocalProvider(
+            LocalRibbonKeyTipChainRoot provides level1Command?.secondaryContentModel,
+        ) {
+            Column(modifier = modifier.padding(all = 1.0.dp)) {
+                if (level1Command?.secondaryContentModel != null) {
+                    // Determine the height of the tallest button
+                    var maxButtonHeight = 0.0f
+                    val regularButtonLayoutManager = itemPresentationState.createLayoutManager(
+                        layoutDirection = layoutDirection,
+                        density = density,
+                        textStyle = textStyle,
+                        fontFamilyResolver = fontFamilyResolver
+                    )
+                    for (commandGroup in level1Command.secondaryContentModel.groups) {
+                        for (secondaryCommand in commandGroup.commands) {
+                            val preferredSize = regularButtonLayoutManager.getPreferredSize(
                                 command = secondaryCommand,
-                                presentationModel = itemButtonPresentationModel
-                            )
-                        )
-                        maxButtonHeight = max(maxButtonHeight, preferredSize.height)
-                        if (regularButtonLayoutManager is CommandButtonLayoutManagerAppMenuLevel2) {
-                            maxButtonHeight = max(
-                                maxButtonHeight,
-                                regularButtonLayoutManager.getPreferredHeight(
-                                    fixedWidth = dpSize.width,
+                                presentationModel = itemButtonPresentationModel,
+                                preLayoutInfo = regularButtonLayoutManager.getPreLayoutInfo(
                                     command = secondaryCommand,
                                     presentationModel = itemButtonPresentationModel
                                 )
                             )
-                        }
-                    }
-                }
-
-                AuroraVerticallyScrollableBox(
-                    modifier = Modifier.fillMaxWidth(),
-                    width = dpSize.width,
-                    contentHeight = {
-                        var combinedHeight = 0.0f
-                        for (commandGroup in level1Command.secondaryContentModel.groups) {
-                            if (commandGroup.title != null) {
-                                combinedHeight += getLabelPreferredHeight(
-                                    contentModel = LabelContentModel(text = commandGroup.title),
-                                    presentationModel = LabelPresentationModel(
-                                        horizontalAlignment = HorizontalAlignment.Leading
-                                    ),
-                                    resolvedTextStyle = textStyle,
-                                    layoutDirection = layoutDirection,
-                                    density = density,
-                                    fontFamilyResolver = fontFamilyResolver,
-                                    availableWidth = dpSize.width.value * density.density
-                                )
-                            }
-
-                            combinedHeight += (commandGroup.commands.size * maxButtonHeight)
-                        }
-                        combinedHeight.toInt()
-                    },
-                    verticalScrollState = rememberScrollState(0),
-                    scrollAmount = 12.dp,
-                    content = {
-                        for (commandGroup in level1Command.secondaryContentModel.groups) {
-                            if (commandGroup.title != null) {
-                                TitleLabel(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    title = commandGroup.title,
-                                    presentationModel = LabelPresentationModel(
-                                        horizontalAlignment = HorizontalAlignment.Leading
+                            maxButtonHeight = max(maxButtonHeight, preferredSize.height)
+                            if (regularButtonLayoutManager is CommandButtonLayoutManagerAppMenuLevel2) {
+                                maxButtonHeight = max(
+                                    maxButtonHeight,
+                                    regularButtonLayoutManager.getPreferredHeight(
+                                        fixedWidth = dpSize.width,
+                                        command = secondaryCommand,
+                                        presentationModel = itemButtonPresentationModel
                                     )
                                 )
                             }
-
-                            for (secondaryCommand in commandGroup.commands) {
-                                // Check if we have a presentation overlay for this level 2 command
-                                val hasOverlay = overlays.containsKey(secondaryCommand)
-                                val currSecondaryPresentationModel = if (hasOverlay)
-                                    itemButtonPresentationModel.overlayWith(overlays[secondaryCommand]!!)
-                                else itemButtonPresentationModel
-                                // Project a command button for each level 2 command, passing the same
-                                // overlays into it.
-                                CommandButtonProjection(
-                                    contentModel = secondaryCommand,
-                                    presentationModel = currSecondaryPresentationModel,
-                                    secondaryOverlays = overlays
-                                ).project(
-                                    modifier = Modifier.fillMaxWidth()
-                                        .height(height = (maxButtonHeight / density.density).dp),
-                                    actionInteractionSource = remember { MutableInteractionSource() },
-                                    popupInteractionSource = remember { MutableInteractionSource() }
-                                )
-                            }
                         }
                     }
-                )
+
+                    AuroraVerticallyScrollableBox(
+                        modifier = Modifier.fillMaxWidth(),
+                        width = dpSize.width,
+                        contentHeight = {
+                            var combinedHeight = 0.0f
+                            for (commandGroup in level1Command.secondaryContentModel.groups) {
+                                if (commandGroup.title != null) {
+                                    combinedHeight += getLabelPreferredHeight(
+                                        contentModel = LabelContentModel(text = commandGroup.title),
+                                        presentationModel = LabelPresentationModel(
+                                            horizontalAlignment = HorizontalAlignment.Leading
+                                        ),
+                                        resolvedTextStyle = textStyle,
+                                        layoutDirection = layoutDirection,
+                                        density = density,
+                                        fontFamilyResolver = fontFamilyResolver,
+                                        availableWidth = dpSize.width.value * density.density
+                                    )
+                                }
+
+                                combinedHeight += (commandGroup.commands.size * maxButtonHeight)
+                            }
+                            combinedHeight.toInt()
+                        },
+                        verticalScrollState = rememberScrollState(0),
+                        scrollAmount = 12.dp,
+                        content = {
+                            for (commandGroup in level1Command.secondaryContentModel.groups) {
+                                if (commandGroup.title != null) {
+                                    TitleLabel(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        title = commandGroup.title,
+                                        presentationModel = LabelPresentationModel(
+                                            horizontalAlignment = HorizontalAlignment.Leading
+                                        )
+                                    )
+                                }
+
+                                for (secondaryCommand in commandGroup.commands) {
+                                    // Check if we have a presentation overlay for this level 2 command
+                                    val hasOverlay = overlays.containsKey(secondaryCommand)
+                                    val currSecondaryPresentationModel = if (hasOverlay)
+                                        itemButtonPresentationModel.overlayWith(overlays[secondaryCommand]!!)
+                                    else itemButtonPresentationModel
+                                    // Project a command button for each level 2 command, passing the same
+                                    // overlays into it.
+                                    CommandButtonProjection(
+                                        contentModel = secondaryCommand,
+                                        presentationModel = currSecondaryPresentationModel,
+                                        secondaryOverlays = overlays
+                                    ).project(
+                                        modifier = Modifier.fillMaxWidth()
+                                            .height(height = (maxButtonHeight / density.density).dp),
+                                        actionInteractionSource = remember { MutableInteractionSource() },
+                                        popupInteractionSource = remember { MutableInteractionSource() }
+                                    )
+                                }
+                            }
+                        }
+                    )
+                }
             }
         }
     }
@@ -633,6 +638,7 @@ internal class RibbonApplicationMenuPopupHandler(
                     LocalWindowSize provides popupDpSize,
                     LocalTopWindowSize provides LocalTopWindowSize.current,
                     LocalSkinColors provides LocalSkinColors.current,
+                    LocalRibbonKeyTipChainRoot provides contentModel.value,
                 ) {
                     val level1PanelWidthDp = (level1ContentLayoutInfo.fullSize.width / density.density).dp
                     val level2PanelWidthDp = presentationModel.level2PanelWidth

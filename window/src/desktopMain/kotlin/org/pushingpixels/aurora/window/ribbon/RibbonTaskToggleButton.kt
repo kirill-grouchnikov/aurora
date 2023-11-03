@@ -50,10 +50,7 @@ import org.pushingpixels.aurora.component.model.BaseCommandButtonPresentationMod
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
-import org.pushingpixels.aurora.component.ribbon.impl.BoundsTracker
-import org.pushingpixels.aurora.component.ribbon.impl.KeyTipTracker
-import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackBounds
-import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackKeyTips
+import org.pushingpixels.aurora.component.ribbon.impl.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
@@ -262,6 +259,7 @@ internal fun RibbonTaskToggleButton(
     val buttonTopLeftOffset = remember { AuroraOffset(0.0f, 0.0f) }
     val buttonSize = remember { mutableStateOf(IntSize(0, 0)) }
     val trackBounds = LocalRibbonTrackBounds.current
+    val keyTipChainRoot = LocalRibbonKeyTipChainRoot.current
     val trackKeyTips = LocalRibbonTrackKeyTips.current
 
     Layout(
@@ -270,7 +268,8 @@ internal fun RibbonTaskToggleButton(
             buttonTopLeftOffset,
             buttonSize,
             trackBounds,
-            trackKeyTips
+            trackKeyTips,
+            keyTipChainRoot
         ),
         content = {
             // This button is a sort of in-between. It is toggleable in the sense that it can be
@@ -565,7 +564,8 @@ internal fun RibbonTaskToggleButton(
                 originalProjection,
                 presentationModel.actionKeyTip!!,
                 command.isActionEnabled,
-                layoutManager.getActionKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo)
+                layoutManager.getActionKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo),
+                keyTipChainRoot
             )
         }
 
@@ -709,7 +709,8 @@ private class RibbonTaskToggleButtonLocator(
     val topLeftOffset: AuroraOffset,
     val size: MutableState<IntSize>,
     val trackBounds: Boolean,
-    val trackKeyTips: Boolean
+    val trackKeyTips: Boolean,
+    val keyTipChainRoot: Any?,
 ) : OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
         // Convert the top left corner of the component to the root coordinates
@@ -736,7 +737,8 @@ private class RibbonTaskToggleButtonLocator(
                     projection,
                     projection.presentationModel.actionKeyTip!!,
                     projection.contentModel.isActionEnabled,
-                    bounds
+                    bounds,
+                    keyTipChainRoot
                 )
             }
             if (projection.presentationModel.popupKeyTip != null) {
@@ -744,7 +746,8 @@ private class RibbonTaskToggleButtonLocator(
                     projection,
                     projection.presentationModel.popupKeyTip!!,
                     projection.contentModel.isSecondaryEnabled,
-                    bounds
+                    bounds,
+                    keyTipChainRoot
                 )
             }
         }
@@ -758,5 +761,6 @@ private fun Modifier.ribbonTaskToggleButtonLocator(
     topLeftOffset: AuroraOffset,
     size: MutableState<IntSize>,
     trackBounds: Boolean,
-    trackKeyTips: Boolean
-) = this.then(RibbonTaskToggleButtonLocator(projection, topLeftOffset, size, trackBounds, trackKeyTips))
+    trackKeyTips: Boolean,
+    keyTipChainRoot: Any?,
+) = this.then(RibbonTaskToggleButtonLocator(projection, topLeftOffset, size, trackBounds, trackKeyTips, keyTipChainRoot))

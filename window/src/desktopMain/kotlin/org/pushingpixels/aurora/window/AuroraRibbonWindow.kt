@@ -603,46 +603,50 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize()) {
             RibbonBox(Modifier.fillMaxWidth()) {
-                Column(Modifier.fillMaxWidth().ribbonContextMenu(ribbon)) {
-                    RibbonWindowTitlePane(
-                        title, icon, iconFilterStrategy, ribbon, contextualTaskGroupSpans,
-                        windowTitlePaneConfiguration
-                    )
-                    AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
-                        CompositionLocalProvider(
-                            LocalRibbonTrackBounds provides true,
-                            LocalRibbonTrackKeyTips provides true
-                        ) {
-                            Column(Modifier.fillMaxWidth().auroraBackground()) {
-                                RibbonPrimaryBar(
-                                    modifier = Modifier.ribbonElementLocator(
-                                        ribbonPrimaryBarTopLeftOffset,
-                                        ribbonPrimaryBarSize
-                                    ),
-                                    ribbon = ribbon,
-                                    onContextualTaskGroupSpansUpdated = {
-                                        if (!areSpansSame(contextualTaskGroupSpans, it)) {
-                                            contextualTaskGroupSpans.clear()
-                                            contextualTaskGroupSpans.addAll(it)
+                CompositionLocalProvider(
+                    LocalRibbonKeyTipChainRoot provides ribbon,
+                ) {
+                    Column(Modifier.fillMaxWidth().ribbonContextMenu(ribbon)) {
+                        RibbonWindowTitlePane(
+                            title, icon, iconFilterStrategy, ribbon, contextualTaskGroupSpans,
+                            windowTitlePaneConfiguration
+                        )
+                        AuroraDecorationArea(decorationAreaType = DecorationAreaType.Header) {
+                            CompositionLocalProvider(
+                                LocalRibbonTrackBounds provides true,
+                                LocalRibbonTrackKeyTips provides true,
+                            ) {
+                                Column(Modifier.fillMaxWidth().auroraBackground()) {
+                                    RibbonPrimaryBar(
+                                        modifier = Modifier.ribbonElementLocator(
+                                            ribbonPrimaryBarTopLeftOffset,
+                                            ribbonPrimaryBarSize
+                                        ),
+                                        ribbon = ribbon,
+                                        onContextualTaskGroupSpansUpdated = {
+                                            if (!areSpansSame(contextualTaskGroupSpans, it)) {
+                                                contextualTaskGroupSpans.clear()
+                                                contextualTaskGroupSpans.addAll(it)
+                                            }
+                                        },
+                                        selectedTaskButtonModifier = Modifier.ribbonElementLocator(
+                                            ribbonSelectedButtonTopLeftOffset,
+                                            ribbonSelectedButtonSize
+                                        ),
+                                        showSelectedTaskInPopup = showSelectedTaskInPopup,
+                                        onUpdateShowSelectedTaskInPopup = {
+                                            if (ribbon.isMinimized) {
+                                                showSelectedTaskInPopup = it
+                                            }
                                         }
-                                    },
-                                    selectedTaskButtonModifier = Modifier.ribbonElementLocator(
-                                        ribbonSelectedButtonTopLeftOffset,
-                                        ribbonSelectedButtonSize
-                                    ),
-                                    showSelectedTaskInPopup = showSelectedTaskInPopup,
-                                    onUpdateShowSelectedTaskInPopup = {
-                                        if (ribbon.isMinimized) {
-                                            showSelectedTaskInPopup = it
-                                        }
+                                    )
+
+                                    if (!ribbon.isMinimized) {
+                                        RibbonBands(ribbonTask = selectedTask)
                                     }
-                                )
 
-                                if (!ribbon.isMinimized) {
-                                    RibbonBands(ribbonTask = selectedTask)
+                                    Spacer(modifier = Modifier.fillMaxWidth().height(1.dp))
                                 }
-
-                                Spacer(modifier = Modifier.fillMaxWidth().height(1.dp))
                             }
                         }
                     }
@@ -789,7 +793,7 @@ fun AuroraWindowScope.AuroraRibbonWindowContent(
                     if (hadPopups || KeyTipTracker.isShowingKeyTips()) {
                         KeyTipTracker.hideAllKeyTips()
                     } else {
-                        KeyTipTracker.showRootKeyTipChain()
+                        KeyTipTracker.showRootKeyTipChain(ribbon)
                     }
                 }
                 if (event.keyCode == KeyEvent.VK_ESCAPE) {

@@ -878,6 +878,8 @@ internal fun <M : BaseCommandMenuContentModel,
 
     val trackBounds = LocalRibbonTrackBounds.current && (popupMenu == null)
     val trackKeyTips = LocalRibbonTrackKeyTips.current && (popupMenu == null)
+    val keyTipChainRoot = LocalRibbonKeyTipChainRoot.current
+    //println("${originalProjection.javaClass.simpleName} : ${command.text} -> ${keyTipChainRoot?.javaClass?.simpleName}")
     val bandRowHeight = LocalRibbonBandRowHeight.current
     val bandRow = LocalRibbonBandRow.current
 
@@ -889,7 +891,8 @@ internal fun <M : BaseCommandMenuContentModel,
             buttonTopLeftOffset,
             buttonSize,
             trackBounds,
-            trackKeyTips
+            trackKeyTips,
+            keyTipChainRoot
         ),
         content = {
             val modifierAction: Modifier
@@ -1613,7 +1616,8 @@ internal fun <M : BaseCommandMenuContentModel,
                         anchor = layoutManager.getActionKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo),
                         row = bandRow,
                         rowHeight = bandRowHeight
-                    )
+                    ),
+                    keyTipChainRoot
                 )
             }
             if ((presentationModel.popupKeyTip != null) && !layoutInfo.popupClickArea.isEmpty) {
@@ -1625,7 +1629,8 @@ internal fun <M : BaseCommandMenuContentModel,
                         anchor = layoutManager.getPopupKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo),
                         row = bandRow,
                         rowHeight = bandRowHeight
-                    )
+                    ),
+                    keyTipChainRoot
                 )
             }
         }
@@ -2080,7 +2085,8 @@ private class CommandButtonLocator(
     val topLeftOffset: AuroraOffset,
     val size: MutableState<IntSize>,
     val trackBounds: Boolean,
-    val trackKeyTips: Boolean
+    val trackKeyTips: Boolean,
+    val keyTipChainRoot: Any?,
 ) :
     OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
@@ -2108,7 +2114,8 @@ private class CommandButtonLocator(
                     originalProjection,
                     presentationModel.actionKeyTip!!,
                     command.isActionEnabled,
-                    bounds
+                    bounds,
+                    keyTipChainRoot
                 )
             }
             if (presentationModel.popupKeyTip != null) {
@@ -2116,7 +2123,8 @@ private class CommandButtonLocator(
                     originalProjection,
                     presentationModel.popupKeyTip!!,
                     command.isSecondaryEnabled,
-                    bounds
+                    bounds,
+                    keyTipChainRoot
                 )
             }
         }
@@ -2132,7 +2140,8 @@ private fun Modifier.commandButtonLocator(
     topLeftOffset: AuroraOffset,
     size: MutableState<IntSize>,
     trackBounds: Boolean,
-    trackKeyTips: Boolean
+    trackKeyTips: Boolean,
+    keyTipChainRoot: Any?,
 ) = this.then(
     CommandButtonLocator(
         originalProjection,
@@ -2141,6 +2150,7 @@ private fun Modifier.commandButtonLocator(
         topLeftOffset,
         size,
         trackBounds,
-        trackKeyTips
+        trackKeyTips,
+        keyTipChainRoot
     )
 )
