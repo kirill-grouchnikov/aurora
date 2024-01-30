@@ -1,12 +1,12 @@
 [versions]
-kotlin = "1.9.21"
+kotlin = "1.9.22"
 coroutines = "1.7.3"
-compose = "1.5.11"
+compose = "1.5.12"
 dokka = "1.9.10"
 batik = "1.17"
 
-versionchecker = "0.50.0"
-mavenpublish = "0.26.0"
+versionchecker = "0.51.0"
+mavenpublish = "0.27.0"
 
 [libraries]
 compose-desktop = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose" }
