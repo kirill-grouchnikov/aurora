@@ -25,7 +25,7 @@ val isPaintingInnerOutline: Boolean
 
 Note that if this attribute is `false`, the implementation of the `paintBorder()` **must** ignore the `outlineInner` parameter.
 
-Applications that wish to provide a custom (branding) border painter may utilize the existing `FractionBasedBorderPainter` base class. Most core Aurora border painters extend this class. In addition, the `DelegateBorderPainter` and `CompositeBorderPainter` classes can be used to combine existing border painters and tweak the colors selected for the painting.
+Applications that wish to provide a custom (branding) border painter may utilize the existing `FractionBasedBorderPainter` base class. Most core Aurora border painters extend this class. In addition, the `DelegateFractionBasedBorderPainter` and `CompositeBorderPainter` classes can be used to combine existing border painters and tweak the colors selected for the painting.
 
 ### Management API
 
