@@ -1076,8 +1076,7 @@ internal fun <M : BaseCommandMenuContentModel,
                                     ) else 1.0f
                         }
                     )
-                    actionAlpha = min(actionAlpha, 1.0f)
-                    actionAlpha = max(actionAlpha, 0.0f)
+                    actionAlpha = actionAlpha.coerceIn(0.0f, 1.0f)
 
                     Canvas(modifier = Modifier.matchParentSize()) {
                         val width = buttonSize.value.width.toFloat()
@@ -1281,8 +1280,7 @@ internal fun <M : BaseCommandMenuContentModel,
                                     ) else 1.0f
                         }
                     )
-                    popupAlpha = min(popupAlpha, 1.0f)
-                    popupAlpha = max(popupAlpha, 0.0f)
+                    popupAlpha = popupAlpha.coerceIn(0.0f, 1.0f)
 
                     Canvas(modifier = Modifier.matchParentSize()) {
                         val width = buttonSize.value.width.toFloat()

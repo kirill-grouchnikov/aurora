@@ -34,10 +34,8 @@ fun Color.interpolateTowards(other: Color, thisLikeness: Float): Color {
     val r = getInterpolatedChannelValue(this.red, other.red, thisLikeness)
     val g = getInterpolatedChannelValue(this.green, other.green, thisLikeness)
     val b = getInterpolatedChannelValue(this.blue, other.blue, thisLikeness)
-    var a = if (alpha1 == alpha2) alpha1 else
-        thisLikeness * alpha1 + (1.0f - thisLikeness) * alpha2
-    a = min(a, 1.0f)
-    a = max(a, 0.0f)
+    val a = (if (alpha1 == alpha2) alpha1 else
+        thisLikeness * alpha1 + (1.0f - thisLikeness) * alpha2).coerceIn(0.0f, 1.0f)
     return Color(r, g, b, a, this.colorSpace)
 }
 
@@ -50,10 +48,8 @@ fun Color.interpolateTowardsAsRGB(other: Color, thisLikeness: Float): Int {
     val r = getInterpolatedChannelValue(this.red, other.red, thisLikeness)
     val g = getInterpolatedChannelValue(this.green, other.green, thisLikeness)
     val b = getInterpolatedChannelValue(this.blue, other.blue, thisLikeness)
-    var a = if (alpha1 == alpha2) alpha1 else
-        thisLikeness * alpha1 + (1.0f - thisLikeness) * alpha2
-    a = min(a, 1.0f)
-    a = max(a, 0.0f)
+    val a = (if (alpha1 == alpha2) alpha1 else
+        thisLikeness * alpha1 + (1.0f - thisLikeness) * alpha2).coerceIn(0.0f, 1.0f)
 
     return ((a * 255.0f + 0.5f).toInt() shl 24) or
             ((r * 255.0f + 0.5f).toInt() shl 16) or
