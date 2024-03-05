@@ -133,7 +133,7 @@ class DelegateFractionBasedBorderPainter(
                 // And apply the mask
                 return Color(value = (transformedArgb.toULong() and masks[i + 1].toULong()) shl 32)
             }
-            if (fractionLow < 0.5f || fractionHigh > 0.5f) {
+            if ((fractionLow > 0.5f) || (fractionHigh < 0.5f)) {
                 continue
             }
             // current range contains 0.5f

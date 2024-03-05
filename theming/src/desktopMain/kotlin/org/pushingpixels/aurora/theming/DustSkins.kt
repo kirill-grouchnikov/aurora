@@ -20,7 +20,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colorscheme.composite
 import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
-import org.pushingpixels.aurora.theming.painter.border.DelegateBorderPainter
+import org.pushingpixels.aurora.theming.painter.border.DelegateFractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.MatteFillPainter
@@ -153,12 +153,10 @@ private fun dustBasePainters(): AuroraPainters {
         borderPainter = CompositeBorderPainter(
             displayName = "Dust",
             outer = ClassicBorderPainter(),
-            inner = DelegateBorderPainter(
+            inner = DelegateFractionBasedBorderPainter(
                 displayName = "Dust Inner",
                 delegate = ClassicBorderPainter(),
-                topMask = 0x60FFFFFF,
-                midMask = 0x40FFFFFF,
-                bottomMask = 0x20FFFFFF,
+                masks = longArrayOf(0x60FFFFFF, 0x40FFFFFF, 0x20FFFFFF),
                 transform = {
                     it.shift(
                         backgroundShiftColor = it.ultraLightColor, backgroundShiftFactor = 0.8f,

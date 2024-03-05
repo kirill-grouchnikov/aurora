@@ -15,94 +15,16 @@
  */
 package org.pushingpixels.aurora.theming.painter.fill
 
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Fill
 import org.pushingpixels.aurora.common.interpolateTowards
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 
 /**
  * Fill painter that paints a subtle gradient appearance.
  *
  * @author Kirill Grouchnikov
  */
-open class StandardFillPainter : AuroraFillPainter {
-    override val displayName: String
-        get() = "Standard"
-
-    override fun paintContourBackground(
-        drawScope: DrawScope,
-        size: Size,
-        outline: Outline,
-        fillScheme: AuroraColorScheme,
-        alpha: Float
-    ) {
-        with(drawScope) {
-            drawOutline(
-                outline = outline,
-                style = Fill,
-                brush = Brush.verticalGradient(
-                    0.0f to getTopFillColor(fillScheme),
-                    0.4999999f to getMidFillColorTop(fillScheme),
-                    0.5f to getMidFillColorBottom(fillScheme),
-                    1.0f to getBottomFillColor(fillScheme),
-                    startY = 0.0f,
-                    endY = size.height,
-                    tileMode = TileMode.Clamp
-                ),
-                alpha = alpha
-            )
-        }
-    }
-
-    /**
-     * Computes the color of the top portion of the fill. Override to provide different visual.
-     *
-     * @param fillScheme
-     * The fill scheme.
-     * @return The color of the top portion of the fill.
-     */
-    open fun getTopFillColor(fillScheme: AuroraColorScheme): Color {
-        return fillScheme.darkColor.interpolateTowards(fillScheme.midColor, 0.4f)
-    }
-
-    /**
-     * Computes the color of the middle portion of the fill from the top. Override to provide
-     * different visual.
-     *
-     * @param fillScheme
-     * The fill scheme.
-     * @return The color of the middle portion of the fill from the top.
-     */
-    open fun getMidFillColorTop(fillScheme: AuroraColorScheme): Color {
-        return fillScheme.midColor
-    }
-
-    /**
-     * Computes the color of the middle portion of the fill from the bottom. Override to provide
-     * different visual.
-     *
-     * @param fillScheme
-     * The fill scheme.
-     * @return The color of the middle portion of the fill from the bottom.
-     */
-    open fun getMidFillColorBottom(fillScheme: AuroraColorScheme): Color {
-        return getMidFillColorTop(fillScheme)
-    }
-
-    /**
-     * Computes the color of the bottom portion of the fill. Override to provide different visual.
-     *
-     * @param fillScheme
-     * The fill scheme.
-     * @return The color of the bottom portion of the fill.
-     */
-    open fun getBottomFillColor(fillScheme: AuroraColorScheme): Color {
-        return fillScheme.ultraLightColor
-    }
-
-    override fun getRepresentativeColor(fillScheme: AuroraColorScheme): Color {
-        return this.getMidFillColorTop(fillScheme)
-    }
-}
+open class StandardFillPainter : FractionBasedFillPainter(
+    0.0f to { it.darkColor.interpolateTowards(it.midColor, 0.4f) },
+    0.5f to { it.midColor },
+    1.0f to { it.ultraLightColor },
+    displayName = "Standard"
+)

@@ -15,26 +15,13 @@
  */
 package org.pushingpixels.aurora.theming.painter.border
 
-import androidx.compose.ui.graphics.Color
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
-
 /**
  * Border painter that draws glass appearance.
  *
  * @author Kirill Grouchnikov
  */
-class GlassBorderPainter : StandardBorderPainter() {
-    override val displayName = "Glass"
-
-    override fun getTopBorderColor(borderScheme: AuroraColorScheme): Color {
-        return super.getMidBorderColor(borderScheme)
-    }
-
-    override fun getMidBorderColor(borderScheme: AuroraColorScheme): Color {
-        return getTopBorderColor(borderScheme)
-    }
-
-    override fun getBottomBorderColor(borderScheme: AuroraColorScheme): Color {
-        return getTopBorderColor(borderScheme)
-    }
-}
+class GlassBorderPainter  : FractionBasedBorderPainter(
+    0.0f to { it.darkColor },
+    1.0f to { it.darkColor },
+    displayName = "Classic"
+)

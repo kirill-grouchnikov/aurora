@@ -15,32 +15,16 @@
  */
 package org.pushingpixels.aurora.theming.painter.fill
 
-import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.common.interpolateTowards
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 
 /**
  * Fill painter that returns images with matte appearance.
  *
  * @author Kirill Grouchnikov
  */
-class MatteFillPainter : ClassicFillPainter() {
-    override val displayName: String
-        get() = "Matte"
-
-    override fun getTopFillColor(fillScheme: AuroraColorScheme): Color {
-        return super.getBottomFillColor(fillScheme).interpolateTowards(
-            super.getMidFillColorTop(fillScheme), 0.5f
-        )
-    }
-
-    override fun getMidFillColorTop(fillScheme: AuroraColorScheme): Color {
-        return super.getMidFillColorTop(fillScheme).interpolateTowards(
-            super.getBottomFillColor(fillScheme), 0.7f
-        )
-    }
-
-    override fun getBottomFillColor(fillScheme: AuroraColorScheme): Color {
-        return super.getMidFillColorTop(fillScheme)
-    }
-}
+class MatteFillPainter : FractionBasedFillPainter(
+    0.0f to { it.midColor.interpolateTowards(it.ultraLightColor, 0.35f) },
+    0.5f to { it.midColor.interpolateTowards(it.ultraLightColor, 0.49f) },
+    1.0f to { it.midColor.interpolateTowards(it.ultraLightColor, 0.7f) },
+    displayName = "Matte"
+)

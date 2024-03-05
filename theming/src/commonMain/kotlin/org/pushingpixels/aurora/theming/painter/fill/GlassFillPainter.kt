@@ -15,38 +15,17 @@
  */
 package org.pushingpixels.aurora.theming.painter.fill
 
-import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.common.interpolateTowards
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 
 /**
  * Fill painter that returns images with glass appearance.
  *
  * @author Kirill Grouchnikov
  */
-class GlassFillPainter : ClassicFillPainter() {
-    override val displayName: String
-        get() = "Glass"
-
-    override fun getTopFillColor(fillScheme: AuroraColorScheme): Color {
-        return super.getBottomFillColor(fillScheme).interpolateTowards(
-            super.getMidFillColorTop(fillScheme), 0.6f
-        )
-    }
-
-    override fun getMidFillColorTop(fillScheme: AuroraColorScheme): Color {
-        return this.getTopFillColor(fillScheme).interpolateTowards(
-            super.getMidFillColorTop(fillScheme), 0.8f
-        )
-    }
-
-    override fun getMidFillColorBottom(fillScheme: AuroraColorScheme): Color {
-        return super.getMidFillColorTop(fillScheme)
-    }
-
-    override fun getBottomFillColor(fillScheme: AuroraColorScheme): Color {
-        return this.getMidFillColorBottom(fillScheme).interpolateTowards(
-            super.getBottomFillColor(fillScheme), 0.7f
-        )
-    }
-}
+class GlassFillPainter : FractionBasedFillPainter(
+    0.0f to { it.midColor.interpolateTowards(it.ultraLightColor, 0.4f) },
+    0.4999999f to { it.midColor.interpolateTowards(it.ultraLightColor, 0.52f) } ,
+    0.5f to { it.midColor },
+    1.0f to { it.midColor.interpolateTowards(it.ultraLightColor, 0.7f) },
+    displayName = "Glass"
+)

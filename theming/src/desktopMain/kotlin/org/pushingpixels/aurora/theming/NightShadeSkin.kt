@@ -20,7 +20,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colorscheme.composite
 import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
-import org.pushingpixels.aurora.theming.painter.border.DelegateBorderPainter
+import org.pushingpixels.aurora.theming.painter.border.DelegateFractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
@@ -183,13 +183,11 @@ fun nightShadeSkin(): AuroraSkinDefinition {
         borderPainter = CompositeBorderPainter(
             displayName = "Night Shade",
             outer = ClassicBorderPainter(),
-            inner = DelegateBorderPainter(
+            inner = DelegateFractionBasedBorderPainter(
                 displayName = "Night Shade Inner", 
                 delegate = ClassicBorderPainter(),
-                topMask = 0x40FFFFFF,
-                midMask = 0x20FFFFFF, 
-                bottomMask = 0x00FFFFFF,
-            ) { it.tint(0.2f) }),
+                masks = longArrayOf(0x40FFFFFF, 0x20FFFFFF, 0x00FFFFFF),
+                transform = { it.tint(0.2f) })),
         decorationPainter = MatteDecorationPainter(),
         highlightFillPainter = ClassicFillPainter()
     )

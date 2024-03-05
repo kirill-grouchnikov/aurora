@@ -15,27 +15,13 @@
  */
 package org.pushingpixels.aurora.theming.painter.border
 
-import androidx.compose.ui.graphics.Color
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
-
 /**
  * Border painter that returns images with classic appearance.
  *
  * @author Kirill Grouchnikov
  */
-class ClassicBorderPainter : StandardBorderPainter() {
-    override val displayName: String
-        get() = "Classic"
-
-    override fun getTopBorderColor(borderScheme: AuroraColorScheme): Color {
-        return super.getMidBorderColor(borderScheme);
-    }
-
-    override fun getMidBorderColor(borderScheme: AuroraColorScheme): Color {
-        return getTopBorderColor(borderScheme)
-    }
-
-    override fun getBottomBorderColor(borderScheme: AuroraColorScheme): Color {
-        return getTopBorderColor(borderScheme)
-    }
-}
+class ClassicBorderPainter : FractionBasedBorderPainter(
+    0.0f to { it.darkColor },
+    1.0f to { it.darkColor },
+    displayName = "Classic"
+)

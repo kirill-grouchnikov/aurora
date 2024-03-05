@@ -32,7 +32,7 @@ import org.pushingpixels.aurora.theming.painter.FractionBasedPainter
  *
  * @author Kirill Grouchnikov
  */
-class FractionBasedFillPainter(
+open class FractionBasedFillPainter(
     vararg colorQueryStops: ColorQueryStop,
     displayName: String
 ) : FractionBasedPainter(displayName, *colorQueryStops), AuroraFillPainter {
@@ -73,7 +73,7 @@ class FractionBasedFillPainter(
             if (fractionHigh == 0.5f) {
                 return colorQueries[i + 1].invoke(fillScheme)
             }
-            if (fractionLow < 0.5f || fractionHigh > 0.5f) {
+            if ((fractionLow > 0.5f) || (fractionHigh < 0.5f)) {
                 continue
             }
             // current range contains 0.5f

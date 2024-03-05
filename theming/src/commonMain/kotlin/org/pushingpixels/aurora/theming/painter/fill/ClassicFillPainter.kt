@@ -15,31 +15,19 @@
  */
 package org.pushingpixels.aurora.theming.painter.fill
 
-import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.common.interpolateTowards
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 
 /**
  * Fill painter that returns images with classic appearance.
  *
  * @author Kirill Grouchnikov
  */
-open class ClassicFillPainter : StandardFillPainter() {
-    override val displayName: String
-        get() = "Classic"
-
-    override fun getTopFillColor(fillScheme: AuroraColorScheme): Color {
-        return super.getBottomFillColor(fillScheme).interpolateTowards(
-            super.getMidFillColorTop(fillScheme), 0.5f
-        )
-    }
-
-    override fun getMidFillColorTop(fillScheme: AuroraColorScheme): Color {
-        return super.getMidFillColorTop(fillScheme).interpolateTowards(
-            super.getBottomFillColor(fillScheme), 0.7f
-        )
-    }
-
+open class ClassicFillPainter : FractionBasedFillPainter(
+    0.0f to { it.midColor.interpolateTowards(it.ultraLightColor, 0.5f) },
+    0.5f to { it.midColor.interpolateTowards(it.ultraLightColor, 0.7f) },
+    1.0f to { it.ultraLightColor },
+    displayName = "Classic"
+) {
     companion object {
         /** Reusable instance of this painter. */
         val Instance = ClassicFillPainter()

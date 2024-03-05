@@ -22,7 +22,7 @@ import org.pushingpixels.aurora.theming.colorscheme.composite
 import org.pushingpixels.aurora.theming.painter.border.AuroraBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
-import org.pushingpixels.aurora.theming.painter.border.DelegateBorderPainter
+import org.pushingpixels.aurora.theming.painter.border.DelegateFractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.FlatDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.AuroraFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
@@ -174,20 +174,16 @@ private fun graphiteBasePainters(
         ),
         borderPainter = borderPainter ?: CompositeBorderPainter(
             displayName = "Graphite",
-            outer = DelegateBorderPainter(
+            outer = DelegateFractionBasedBorderPainter(
                 displayName = "Graphite Outer",
                 delegate = ClassicBorderPainter(),
-                topMask = 0xFFFFFFFF,
-                midMask = 0xFFFFFFFF,
-                bottomMask = 0xFFFFFFFF
-            ) { it.shade(0.4f) },
-            inner = DelegateBorderPainter(
+                masks = longArrayOf(0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF),
+                transform = { it.shade(0.4f) }),
+            inner = DelegateFractionBasedBorderPainter(
                 displayName = "Graphite Inner",
                 delegate = ClassicBorderPainter(),
-                topMask = 0xA0FFFFFF,
-                midMask = 0x90FFFFFF,
-                bottomMask = 0xA0FFFFFF
-            ) { it.tint(0.25f) }),
+                masks = longArrayOf(0xA0FFFFFF, 0x90FFFFFF, 0xA0FFFFFF),
+                transform = { it.tint(0.25f) })),
         decorationPainter = FlatDecorationPainter(),
         highlightFillPainter = highlightFillPainter ?: ClassicFillPainter()
     )

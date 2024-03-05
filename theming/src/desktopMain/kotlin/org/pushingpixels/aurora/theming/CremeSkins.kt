@@ -20,7 +20,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colorscheme.CremeColorScheme
 import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
-import org.pushingpixels.aurora.theming.painter.border.DelegateBorderPainter
+import org.pushingpixels.aurora.theming.painter.border.DelegateFractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.MatteFillPainter
@@ -66,9 +66,11 @@ private fun cremeBasePainters(): AuroraPainters {
         borderPainter = CompositeBorderPainter(
             displayName = "Creme",
             outer = ClassicBorderPainter(),
-            inner = DelegateBorderPainter(
-                displayName = "Creme Inner", delegate = ClassicBorderPainter()
-            ) { it.tint(0.9f) }),
+            inner = DelegateFractionBasedBorderPainter(
+                displayName = "Creme Inner",
+                delegate = ClassicBorderPainter(),
+                masks = longArrayOf(0xFFFFFFFFL, 0xFFFFFFFFL, 0xFFFFFFFFL),
+                transform = { it.tint(0.9f) })),
         decorationPainter = ArcDecorationPainter(),
         highlightFillPainter = ClassicFillPainter()
     )

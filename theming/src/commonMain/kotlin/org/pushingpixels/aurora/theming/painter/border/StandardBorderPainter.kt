@@ -15,75 +15,11 @@
  */
 package org.pushingpixels.aurora.theming.painter.border
 
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
 import org.pushingpixels.aurora.common.interpolateTowards
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 
-open class StandardBorderPainter : AuroraBorderPainter {
-    override val displayName: String
-        get() = "Standard"
-    override val isPaintingInnerOutline: Boolean
-        get() = false
-
-    override fun paintBorder(
-        drawScope: DrawScope,
-        size: Size,
-        outline: Outline,
-        outlineInner: Outline?,
-        borderScheme: AuroraColorScheme,
-        alpha: Float
-    ) {
-        with(drawScope) {
-            drawOutline(
-                outline = outline,
-                style = Stroke(width = 1.0f),
-                brush = Brush.verticalGradient(
-                    0.0f to getTopBorderColor(borderScheme),
-                    0.5f to getMidBorderColor(borderScheme),
-                    1.0f to getBottomBorderColor(borderScheme),
-                    startY = 0.0f,
-                    endY = size.height,
-                    tileMode = TileMode.Repeated
-                ),
-                alpha = alpha
-            )
-        }
-    }
-
-    /**
-     * Computes the color of the top portion of the border. Override to provide different visual.
-     *
-     * @param borderScheme The border color scheme.
-     * @return The color of the top portion of the border.
-     */
-    open fun getTopBorderColor(borderScheme: AuroraColorScheme): Color {
-        return borderScheme.ultraDarkColor
-    }
-
-    /**
-     * Computes the color of the middle portion of the border. Override to provide different visual.
-     *
-     * @param borderScheme The border color scheme.
-     * @return The color of the middle portion of the border.
-     */
-    open fun getMidBorderColor(borderScheme: AuroraColorScheme): Color {
-        return borderScheme.darkColor
-    }
-
-    /**
-     * Computes the color of the bottom portion of the border. Override to provide different visual.
-     *
-     * @param borderScheme The border color scheme.
-     * @return The color of the bottom portion of the border.
-     */
-    open fun getBottomBorderColor(borderScheme: AuroraColorScheme): Color {
-        return borderScheme.darkColor.interpolateTowards(borderScheme.midColor, 0.5f)
-    }
-
-    override fun getRepresentativeColor(borderScheme: AuroraColorScheme): Color {
-        return this.getMidBorderColor(borderScheme)
-    }
-}
+open class StandardBorderPainter  : FractionBasedBorderPainter(
+    0.0f to { it.ultraDarkColor },
+    0.5f to { it.darkColor },
+    1.0f to { it.darkColor.interpolateTowards(it.midColor, 0.5f) },
+    displayName = "Standard"
+)

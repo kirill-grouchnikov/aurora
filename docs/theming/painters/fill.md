@@ -16,7 +16,7 @@ The `outline` parameter specifies the actual shape to fill and the `fillScheme` 
 
 Important thing to note - a fill painter **should not** paint the focus ring or the border; these are painted by separate painters.
 
-Applications that wish to provide a custom (branding) fill painter may utilize the existing `StandardFillPainter` base class. The subclass can override any one of the four base functions that compute fill colors at four vertical locations (see `get*FillColor` functions). Most core Aurora fill painters extend this class.
+Applications that wish to provide a custom (branding) fill painter may utilize the existing `FractionBasedFillPainter` base class. Most core Aurora fill painters extend this class.
 
 ### Management API
 

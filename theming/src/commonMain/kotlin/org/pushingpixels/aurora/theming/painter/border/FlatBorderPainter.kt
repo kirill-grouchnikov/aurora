@@ -15,22 +15,13 @@
  */
 package org.pushingpixels.aurora.theming.painter.border
 
-import androidx.compose.ui.graphics.Color
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
-
 /**
  * Border painter that draws flat appearance.
  *
  * @author Kirill Grouchnikov
  */
-class FlatBorderPainter : StandardBorderPainter() {
-    override val displayName = "Flat"
-
-    override fun getMidBorderColor(borderScheme: AuroraColorScheme): Color {
-        return super.getTopBorderColor(borderScheme)
-    }
-
-    override fun getBottomBorderColor(borderScheme: AuroraColorScheme): Color {
-        return super.getTopBorderColor(borderScheme)
-    }
-}
+class FlatBorderPainter  : FractionBasedBorderPainter(
+    0.0f to { it.ultraDarkColor },
+    1.0f to { it.ultraDarkColor },
+    displayName = "Flat"
+)

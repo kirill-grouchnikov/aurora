@@ -20,7 +20,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colorscheme.composite
 import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
-import org.pushingpixels.aurora.theming.painter.border.DelegateBorderPainter
+import org.pushingpixels.aurora.theming.painter.border.DelegateFractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.FractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
@@ -267,12 +267,11 @@ fun magellanSkin(): AuroraSkinDefinition {
                 1.0f to { it.darkColor },
                 displayName = "Magellan Outer"
             ),
-            inner = DelegateBorderPainter(
-                displayName = "Magellan Inner", delegate = ClassicBorderPainter(),
-                topMask = 0xA0FFFFFF,
-                midMask = 0x60FFFFFF,
-                bottomMask = 0x40FFFFFF
-            ) { it.tint(0.5f) }),
+            inner = DelegateFractionBasedBorderPainter(
+                displayName = "Magellan Inner",
+                delegate = ClassicBorderPainter(),
+                masks = longArrayOf(0xA0FFFFFF, 0x60FFFFFF, 0x40FFFFFF),
+                transform = { it.tint(0.5f) })),
         decorationPainter = MatteDecorationPainter(),
         highlightFillPainter = ClassicFillPainter()
     )

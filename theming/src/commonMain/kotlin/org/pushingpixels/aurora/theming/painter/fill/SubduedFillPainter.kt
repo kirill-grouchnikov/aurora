@@ -15,21 +15,16 @@
  */
 package org.pushingpixels.aurora.theming.painter.fill
 
-import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.common.interpolateTowards
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 
 /**
  * Fill painter that returns images with subdued gradient appearance.
  *
  * @author Kirill Grouchnikov
  */
-class SubduedFillPainter : StandardFillPainter() {
-    override val displayName = "Subdued"
-
-    override fun getTopFillColor(fillScheme: AuroraColorScheme): Color {
-        return super.getTopFillColor(fillScheme).interpolateTowards(
-            this.getMidFillColorTop(fillScheme), 0.3f
-        )
-    }
-}
+class SubduedFillPainter : FractionBasedFillPainter(
+    0.0f to { it.darkColor.interpolateTowards(it.midColor, 0.12f) },
+    0.5f to { it.midColor },
+    1.0f to { it.ultraLightColor },
+    displayName = "Subdued"
+)
