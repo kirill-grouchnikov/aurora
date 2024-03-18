@@ -36,12 +36,9 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
  */
 abstract class ShaderWrapperDecorationPainter(
     val runtimeEffect: RuntimeEffect,
-    baseShader: Shader? = null,
+    val baseShader: Shader,
     val baseDecorationPainter: AuroraDecorationPainter? = null
 ) : AuroraDecorationPainter {
-    private val shaderChildren: Array<Shader?>? =
-        if (baseShader != null) arrayOf(baseShader) else null
-
     abstract fun getShaderData(
         density: Density,
         componentSize: Size,
@@ -79,7 +76,7 @@ abstract class ShaderWrapperDecorationPainter(
 
             val shader = runtimeEffect.makeShader(
                 uniforms = getShaderData(drawScope, componentSize, offsetFromRoot, colorScheme),
-                children = shaderChildren,
+                children = arrayOf(baseShader),
                 localMatrix = null
             )
 
