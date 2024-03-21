@@ -582,13 +582,13 @@ class SwitchProjection(
     }
 }
 
-class CircularProgressProjection(
-    override val contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
+class DeterminateCircularProgressProjection(
+    override val contentModel: ProgressDeterminateContentModel,
     override val presentationModel: ProgressCircularPresentationModel = ProgressCircularPresentationModel()
-) : Projection<ProgressIndeterminateContentModel, ProgressCircularPresentationModel>() {
+) : Projection<ProgressDeterminateContentModel, ProgressCircularPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier) {
-        AuroraCircularProgress(
+        AuroraDeterminateCircularProgress(
             modifier = modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel
@@ -597,7 +597,40 @@ class CircularProgressProjection(
 
     @Composable
     override fun reproject(modifier: Modifier) {
-        AuroraCircularProgress(
+        AuroraDeterminateCircularProgress(
+            modifier = modifier,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel
+        )
+    }
+
+    @Composable
+    override fun intrinsicWidth(height: Int): Int {
+        return circularProgressIntrinsicSize(this.presentationModel).width.toInt()
+    }
+
+    @Composable
+    override fun intrinsicHeight(width: Int): Int {
+        return circularProgressIntrinsicSize(this.presentationModel).height.toInt()
+    }
+}
+
+class CircularIndeterminateProgressProjection(
+    override val contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
+    override val presentationModel: ProgressCircularPresentationModel = ProgressCircularPresentationModel()
+) : Projection<ProgressIndeterminateContentModel, ProgressCircularPresentationModel>() {
+    @Composable
+    fun project(modifier: Modifier = Modifier) {
+        AuroraIndeterminateCircularProgress(
+            modifier = modifier,
+            contentModel = this.contentModel,
+            presentationModel = this.presentationModel
+        )
+    }
+
+    @Composable
+    override fun reproject(modifier: Modifier) {
+        AuroraIndeterminateCircularProgress(
             modifier = modifier,
             contentModel = this.contentModel,
             presentationModel = this.presentationModel

@@ -43,8 +43,8 @@ object ProgressConstants {
 
 data class ProgressCircularPresentationModel(
     val colorSchemeBundle: AuroraColorSchemeBundle? = null,
-    val size: Dp = 10.dp,
-    val strokeWidth: Dp = 1.2f.dp
+    val radius: Dp = 10.dp,
+    val strokeWidth: Dp = 2.0f.dp
 ): PresentationModel
 
 data class ProgressLinearPresentationModel(

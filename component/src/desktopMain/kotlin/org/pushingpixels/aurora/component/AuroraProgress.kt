@@ -49,12 +49,12 @@ internal fun circularProgressIntrinsicSize(
     presentationModel: ProgressCircularPresentationModel
 ): Size {
     val density = LocalDensity.current
-    val side = presentationModel.size.value * density.density
+    val side = presentationModel.radius.value * density.density
     return Size(side, side)
 }
 
 @Composable
-internal fun AuroraCircularProgress(
+internal fun AuroraIndeterminateCircularProgress(
     modifier: Modifier,
     contentModel: ProgressIndeterminateContentModel,
     presentationModel: ProgressCircularPresentationModel
@@ -91,7 +91,7 @@ internal fun AuroraCircularProgress(
     Canvas(
         modifier
             .progressSemantics()
-            .size(presentationModel.size)
+            .size(presentationModel.radius)
     ) {
         val isArcGrowing = (arcSpan > prevArcSpan.value)
         if (isArcGrowing) {
@@ -117,7 +117,49 @@ internal fun AuroraCircularProgress(
             size = Size(2.0f * diameter, 2.0f * diameter),
             style = Stroke(
                 width = presentationModel.strokeWidth.toPx(),
-                cap = StrokeCap.Butt,
+                cap = StrokeCap.Round,
+                join = StrokeJoin.Round
+            ),
+            alpha = alpha
+        )
+    }
+}
+
+@Composable
+internal fun AuroraDeterminateCircularProgress(
+    modifier: Modifier,
+    contentModel: ProgressDeterminateContentModel,
+    presentationModel: ProgressCircularPresentationModel
+) {
+
+    val componentState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
+    val color =
+        (presentationModel.colorSchemeBundle?.getColorScheme(componentState) ?: AuroraSkin.colors.getColorScheme(
+            decorationAreaType = AuroraSkin.decorationAreaType,
+            componentState = componentState
+        )).foregroundColor
+    val alpha = presentationModel.colorSchemeBundle?.getAlpha(componentState) ?: AuroraSkin.colors.getAlpha(
+        decorationAreaType = AuroraSkin.decorationAreaType,
+        componentState = componentState
+    )
+
+    Canvas(
+        modifier
+            .progressSemantics()
+            .size(presentationModel.radius * 2)
+    ) {
+        val strokeWidthPx = presentationModel.strokeWidth.toPx()
+        val diameter = 2.0f * presentationModel.radius.toPx() - strokeWidthPx
+        drawArc(
+            color = color,
+            startAngle = 270.0f,
+            sweepAngle = 360.0f * contentModel.progress,
+            useCenter = false,
+            topLeft = Offset(strokeWidthPx / 2.0f, strokeWidthPx / 2.0f),
+            size = Size(diameter, diameter),
+            style = Stroke(
+                width = strokeWidthPx,
+                cap = StrokeCap.Round,
                 join = StrokeJoin.Round
             ),
             alpha = alpha

@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -54,7 +55,7 @@ fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
-        size = DpSize(720.dp, 750.dp)
+        size = DpSize(720.dp, 780.dp)
     )
     val aboutState = rememberWindowState(
         placement = WindowPlacement.Floating,
@@ -159,8 +160,9 @@ data class DemoStyle(
 )
 
 @Composable
-fun DemoProgress(enabled: Boolean) {
+fun DemoLinearProgress(enabled: Boolean) {
     var progress by remember { mutableStateOf(0.5f) }
+    println("Progress = $progress")
     val animatedStateProgress = animateFloatAsState(
         targetValue = progress,
         animationSpec = ProgressConstants.ProgressAnimationSpec
@@ -170,7 +172,7 @@ fun DemoProgress(enabled: Boolean) {
         CommandButtonProjection(
             contentModel = Command(text = "",
                 icon = remove_circle_outline_24px(),
-                isActionEnabled = enabled and (progress > 0.0f),
+                isActionEnabled = enabled and (progress > 0.00001f),
                 action = { progress -= 0.1f }),
             presentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.Small,
@@ -192,7 +194,60 @@ fun DemoProgress(enabled: Boolean) {
         CommandButtonProjection(
             contentModel = Command(text = "",
                 icon = add_circle_outline_24px(),
-                isActionEnabled = enabled and (progress < 1.0f),
+                isActionEnabled = enabled and (progress < 0.99999f),
+                action = { progress += 0.1f }),
+            presentationModel = CommandButtonPresentationModel(
+                presentationState = CommandButtonPresentationState.Small,
+                iconDimension = DpSize(14.dp, 14.dp),
+                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
+                iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText
+            )
+        ).project()
+    }
+}
+
+@Composable
+fun DemoCircularProgress(enabled: Boolean, customSize: Dp? = null) {
+    var progress by remember { mutableStateOf(0.5f) }
+    val animatedStateProgress = animateFloatAsState(
+        targetValue = progress,
+        animationSpec = ProgressConstants.ProgressAnimationSpec
+    )
+
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        CommandButtonProjection(
+            contentModel = Command(text = "",
+                icon = remove_circle_outline_24px(),
+                isActionEnabled = enabled and (progress > 0.00001f),
+                action = { progress -= 0.1f }),
+            presentationModel = CommandButtonPresentationModel(
+                presentationState = CommandButtonPresentationState.Small,
+                iconDimension = DpSize(14.dp, 14.dp),
+                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
+                iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText
+            )
+        ).project()
+
+        val presentationModel = if (customSize != null)
+            ProgressCircularPresentationModel(radius = customSize) else
+                ProgressCircularPresentationModel()
+
+        DeterminateCircularProgressProjection(
+            contentModel = ProgressDeterminateContentModel(
+                enabled = enabled,
+                progress = animatedStateProgress.value
+            ),
+            presentationModel = presentationModel
+        ).project()
+
+        CommandButtonProjection(
+            contentModel = Command(text = "",
+                icon = add_circle_outline_24px(),
+                isActionEnabled = enabled and (progress < 0.99999f),
                 action = { progress += 0.1f }),
             presentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.Small,
@@ -1061,21 +1116,34 @@ fun AuroraApplicationScope.DemoArea(
                 Spacer(modifier = Modifier.width(16.dp))
 
                 // Example of a determinate linear progress bar
-                DemoProgress(enabled = contentEnabled)
+                DemoLinearProgress(enabled = contentEnabled)
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Example of a determinate circular progress bar
+                DemoCircularProgress(enabled = contentEnabled)
 
                 Spacer(modifier = Modifier.width(16.dp))
 
-                // Example of a circular progress indicator
-                CircularProgressProjection(
+                // Example of a larger determinate circular progress indicator
+                DemoCircularProgress(enabled = contentEnabled, customSize = 14.dp)
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                // Example of an indeterminate circular progress indicator
+                CircularIndeterminateProgressProjection(
                     contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled)
                 ).project()
 
                 Spacer(modifier = Modifier.width(16.dp))
 
-                // Example of a larger circular progress indicator
-                CircularProgressProjection(
+                // Example of a larger indeterminate circular progress indicator
+                CircularIndeterminateProgressProjection(
                     contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled),
-                    presentationModel = ProgressCircularPresentationModel(size = 14.dp)
+                    presentationModel = ProgressCircularPresentationModel(radius = 14.dp)
                 ).project()
             }
 
