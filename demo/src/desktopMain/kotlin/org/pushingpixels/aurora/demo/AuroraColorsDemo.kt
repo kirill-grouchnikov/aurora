@@ -832,7 +832,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                 Spacer(modifier = Modifier.width(16.dp))
 
                 // Example of a circular progress indicator
-                CircularIndeterminateProgressProjection(
+                IndeterminateCircularProgressProjection(
                     contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled),
                     presentationModel = ProgressCircularPresentationModel(colorSchemeBundle = demoSchemeBundle())
                 ).project()
@@ -840,7 +840,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                 Spacer(modifier = Modifier.width(16.dp))
 
                 // Example of a larger circular progress indicator
-                CircularIndeterminateProgressProjection(
+                IndeterminateCircularProgressProjection(
                     contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled),
                     presentationModel = ProgressCircularPresentationModel(
                         colorSchemeBundle = demoSchemeBundle(),

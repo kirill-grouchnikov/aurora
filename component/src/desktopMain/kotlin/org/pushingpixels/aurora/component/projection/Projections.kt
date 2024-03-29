@@ -615,7 +615,7 @@ class DeterminateCircularProgressProjection(
     }
 }
 
-class CircularIndeterminateProgressProjection(
+class IndeterminateCircularProgressProjection(
     override val contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
     override val presentationModel: ProgressCircularPresentationModel = ProgressCircularPresentationModel()
 ) : Projection<ProgressIndeterminateContentModel, ProgressCircularPresentationModel>() {

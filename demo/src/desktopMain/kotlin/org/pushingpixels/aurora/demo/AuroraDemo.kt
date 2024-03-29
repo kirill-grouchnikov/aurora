@@ -1134,14 +1134,14 @@ fun AuroraApplicationScope.DemoArea(
                 Spacer(modifier = Modifier.width(16.dp))
 
                 // Example of an indeterminate circular progress indicator
-                CircularIndeterminateProgressProjection(
+                IndeterminateCircularProgressProjection(
                     contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled)
                 ).project()
 
                 Spacer(modifier = Modifier.width(16.dp))
 
                 // Example of a larger indeterminate circular progress indicator
-                CircularIndeterminateProgressProjection(
+                IndeterminateCircularProgressProjection(
                     contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled),
                     presentationModel = ProgressCircularPresentationModel(radius = 14.dp)
                 ).project()
