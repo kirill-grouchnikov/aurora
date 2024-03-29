@@ -178,7 +178,7 @@ fun AuroraWindowScope.DemoProgressArea(
                 presentationModel = LabelPresentationModel(textStyle = textStyle)
             ).project()
             DeterminateLinearProgressProjection(
-                contentModel = ProgressDeterminateContentModel(
+                contentModel = DeterminateProgressContentModel(
                     enabled = true,
                     progress = animatedStateProgress.value
                 )
@@ -195,7 +195,7 @@ fun AuroraWindowScope.DemoProgressArea(
                 presentationModel = LabelPresentationModel(textStyle = textStyle)
             ).project()
             IndeterminateLinearProgressProjection(
-                contentModel = ProgressIndeterminateContentModel(enabled = true),
+                contentModel = IndeterminateProgressContentModel(enabled = true),
             ).project()
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -209,7 +209,7 @@ fun AuroraWindowScope.DemoProgressArea(
                 presentationModel = LabelPresentationModel(textStyle = textStyle)
             ).project()
             DeterminateLinearProgressProjection(
-                contentModel = ProgressDeterminateContentModel(
+                contentModel = DeterminateProgressContentModel(
                     enabled = false,
                     progress = animatedStateProgress.value
                 )
@@ -226,7 +226,7 @@ fun AuroraWindowScope.DemoProgressArea(
                 presentationModel = LabelPresentationModel(textStyle = textStyle)
             ).project()
             IndeterminateLinearProgressProjection(
-                contentModel = ProgressIndeterminateContentModel(enabled = false),
+                contentModel = IndeterminateProgressContentModel(enabled = false),
             ).project()
         }
 

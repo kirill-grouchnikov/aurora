@@ -33,10 +33,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.component.model.ProgressCircularPresentationModel
-import org.pushingpixels.aurora.component.model.ProgressDeterminateContentModel
-import org.pushingpixels.aurora.component.model.ProgressIndeterminateContentModel
-import org.pushingpixels.aurora.component.model.ProgressLinearPresentationModel
+import org.pushingpixels.aurora.component.model.CircularProgressPresentationModel
+import org.pushingpixels.aurora.component.model.DeterminateProgressContentModel
+import org.pushingpixels.aurora.component.model.IndeterminateProgressContentModel
+import org.pushingpixels.aurora.component.model.LinearProgressPresentationModel
 import org.pushingpixels.aurora.theming.AuroraSkin
 import org.pushingpixels.aurora.theming.ColorSchemeAssociationKind
 import org.pushingpixels.aurora.theming.ComponentState
@@ -46,7 +46,7 @@ import kotlin.math.min
 
 @Composable
 internal fun circularProgressIntrinsicSize(
-    presentationModel: ProgressCircularPresentationModel
+    presentationModel: CircularProgressPresentationModel
 ): Size {
     val density = LocalDensity.current
     val side = presentationModel.radius.value * density.density
@@ -56,8 +56,8 @@ internal fun circularProgressIntrinsicSize(
 @Composable
 internal fun AuroraIndeterminateCircularProgress(
     modifier: Modifier,
-    contentModel: ProgressIndeterminateContentModel,
-    presentationModel: ProgressCircularPresentationModel
+    contentModel: IndeterminateProgressContentModel,
+    presentationModel: CircularProgressPresentationModel
 ) {
     val transition = rememberInfiniteTransition()
     val arcSpan by transition.animateFloat(
@@ -128,8 +128,8 @@ internal fun AuroraIndeterminateCircularProgress(
 @Composable
 internal fun AuroraDeterminateCircularProgress(
     modifier: Modifier,
-    contentModel: ProgressDeterminateContentModel,
-    presentationModel: ProgressCircularPresentationModel
+    contentModel: DeterminateProgressContentModel,
+    presentationModel: CircularProgressPresentationModel
 ) {
 
     val componentState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
@@ -176,7 +176,7 @@ private val progressFillPainter = FractionBasedFillPainter(
 
 @Composable
 internal fun linearProgressIntrinsicSize(
-    presentationModel: ProgressLinearPresentationModel
+    presentationModel: LinearProgressPresentationModel
 ): Size {
     val density = LocalDensity.current
     return Size(width = presentationModel.primarySize.value * density.density,
@@ -186,8 +186,8 @@ internal fun linearProgressIntrinsicSize(
 @Composable
 internal fun AuroraIndeterminateLinearProgress(
     modifier: Modifier,
-    contentModel: ProgressIndeterminateContentModel,
-    presentationModel: ProgressLinearPresentationModel
+    contentModel: IndeterminateProgressContentModel,
+    presentationModel: LinearProgressPresentationModel
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -315,8 +315,8 @@ internal fun AuroraIndeterminateLinearProgress(
 @Composable
 internal fun AuroraDeterminateLinearProgress(
     modifier: Modifier,
-    contentModel: ProgressDeterminateContentModel,
-    presentationModel: ProgressLinearPresentationModel
+    contentModel: DeterminateProgressContentModel,
+    presentationModel: LinearProgressPresentationModel
 ) {
     val layoutDirection = LocalLayoutDirection.current
 

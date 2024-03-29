@@ -163,11 +163,11 @@ fun DemoColorsProgress(enabled: Boolean) {
         ).project()
 
         DeterminateLinearProgressProjection(
-            contentModel = ProgressDeterminateContentModel(
+            contentModel = DeterminateProgressContentModel(
                 enabled = enabled,
                 progress = animatedStateProgress.value
             ),
-            presentationModel = ProgressLinearPresentationModel(colorSchemeBundle = demoSchemeBundle())
+            presentationModel = LinearProgressPresentationModel(colorSchemeBundle = demoSchemeBundle())
         ).project()
 
         CommandButtonProjection(
@@ -820,8 +820,8 @@ fun AuroraApplicationScope.DemoColorsArea(
             ) {
                 // Example of an indeterminate linear progress bar
                 IndeterminateLinearProgressProjection(
-                    contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled),
-                    presentationModel = ProgressLinearPresentationModel(colorSchemeBundle = demoSchemeBundle())
+                    contentModel = IndeterminateProgressContentModel(enabled = contentEnabled),
+                    presentationModel = LinearProgressPresentationModel(colorSchemeBundle = demoSchemeBundle())
                 ).project()
 
                 Spacer(modifier = Modifier.width(16.dp))
@@ -833,16 +833,16 @@ fun AuroraApplicationScope.DemoColorsArea(
 
                 // Example of a circular progress indicator
                 IndeterminateCircularProgressProjection(
-                    contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled),
-                    presentationModel = ProgressCircularPresentationModel(colorSchemeBundle = demoSchemeBundle())
+                    contentModel = IndeterminateProgressContentModel(enabled = contentEnabled),
+                    presentationModel = CircularProgressPresentationModel(colorSchemeBundle = demoSchemeBundle())
                 ).project()
 
                 Spacer(modifier = Modifier.width(16.dp))
 
                 // Example of a larger circular progress indicator
                 IndeterminateCircularProgressProjection(
-                    contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled),
-                    presentationModel = ProgressCircularPresentationModel(
+                    contentModel = IndeterminateProgressContentModel(enabled = contentEnabled),
+                    presentationModel = CircularProgressPresentationModel(
                         colorSchemeBundle = demoSchemeBundle(),
                         radius = 14.dp
                     )

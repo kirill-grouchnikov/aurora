@@ -21,11 +21,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 
-data class ProgressIndeterminateContentModel(
+data class IndeterminateProgressContentModel(
     val enabled: Boolean = true,
 ): ContentModel
 
-data class ProgressDeterminateContentModel(
+data class DeterminateProgressContentModel(
     val enabled: Boolean = true,
     val progress: Float
 ): ContentModel
@@ -41,13 +41,13 @@ object ProgressConstants {
     )
 }
 
-data class ProgressCircularPresentationModel(
+data class CircularProgressPresentationModel(
     val colorSchemeBundle: AuroraColorSchemeBundle? = null,
     val radius: Dp = 10.dp,
     val strokeWidth: Dp = 2.0f.dp
 ): PresentationModel
 
-data class ProgressLinearPresentationModel(
+data class LinearProgressPresentationModel(
     val colorSchemeBundle: AuroraColorSchemeBundle? = null,
     val primarySize : Dp = ProgressConstants.DefaultWidth,
     val secondarySize : Dp = ProgressConstants.DefaultHeight

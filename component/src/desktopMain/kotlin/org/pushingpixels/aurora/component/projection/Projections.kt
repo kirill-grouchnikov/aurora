@@ -583,9 +583,9 @@ class SwitchProjection(
 }
 
 class DeterminateCircularProgressProjection(
-    override val contentModel: ProgressDeterminateContentModel,
-    override val presentationModel: ProgressCircularPresentationModel = ProgressCircularPresentationModel()
-) : Projection<ProgressDeterminateContentModel, ProgressCircularPresentationModel>() {
+    override val contentModel: DeterminateProgressContentModel,
+    override val presentationModel: CircularProgressPresentationModel = CircularProgressPresentationModel()
+) : Projection<DeterminateProgressContentModel, CircularProgressPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier) {
         AuroraDeterminateCircularProgress(
@@ -616,9 +616,9 @@ class DeterminateCircularProgressProjection(
 }
 
 class IndeterminateCircularProgressProjection(
-    override val contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
-    override val presentationModel: ProgressCircularPresentationModel = ProgressCircularPresentationModel()
-) : Projection<ProgressIndeterminateContentModel, ProgressCircularPresentationModel>() {
+    override val contentModel: IndeterminateProgressContentModel = IndeterminateProgressContentModel(),
+    override val presentationModel: CircularProgressPresentationModel = CircularProgressPresentationModel()
+) : Projection<IndeterminateProgressContentModel, CircularProgressPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier) {
         AuroraIndeterminateCircularProgress(
@@ -649,9 +649,9 @@ class IndeterminateCircularProgressProjection(
 }
 
 class IndeterminateLinearProgressProjection(
-    override val contentModel: ProgressIndeterminateContentModel = ProgressIndeterminateContentModel(),
-    override val presentationModel: ProgressLinearPresentationModel = ProgressLinearPresentationModel()
-) : Projection<ProgressIndeterminateContentModel, ProgressLinearPresentationModel>() {
+    override val contentModel: IndeterminateProgressContentModel = IndeterminateProgressContentModel(),
+    override val presentationModel: LinearProgressPresentationModel = LinearProgressPresentationModel()
+) : Projection<IndeterminateProgressContentModel, LinearProgressPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier) {
         AuroraIndeterminateLinearProgress(
@@ -682,9 +682,9 @@ class IndeterminateLinearProgressProjection(
 }
 
 class DeterminateLinearProgressProjection(
-    override val contentModel: ProgressDeterminateContentModel,
-    override val presentationModel: ProgressLinearPresentationModel = ProgressLinearPresentationModel()
-) : Projection<ProgressDeterminateContentModel, ProgressLinearPresentationModel>() {
+    override val contentModel: DeterminateProgressContentModel,
+    override val presentationModel: LinearProgressPresentationModel = LinearProgressPresentationModel()
+) : Projection<DeterminateProgressContentModel, LinearProgressPresentationModel>() {
     @Composable
     fun project(modifier: Modifier = Modifier) {
         AuroraDeterminateLinearProgress(

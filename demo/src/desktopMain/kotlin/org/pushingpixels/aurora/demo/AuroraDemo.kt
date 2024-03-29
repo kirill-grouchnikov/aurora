@@ -185,7 +185,7 @@ fun DemoLinearProgress(enabled: Boolean) {
         ).project()
 
         DeterminateLinearProgressProjection(
-            contentModel = ProgressDeterminateContentModel(
+            contentModel = DeterminateProgressContentModel(
                 enabled = enabled,
                 progress = animatedStateProgress.value
             )
@@ -233,11 +233,11 @@ fun DemoCircularProgress(enabled: Boolean, customSize: Dp? = null) {
         ).project()
 
         val presentationModel = if (customSize != null)
-            ProgressCircularPresentationModel(radius = customSize) else
-                ProgressCircularPresentationModel()
+            CircularProgressPresentationModel(radius = customSize) else
+                CircularProgressPresentationModel()
 
         DeterminateCircularProgressProjection(
-            contentModel = ProgressDeterminateContentModel(
+            contentModel = DeterminateProgressContentModel(
                 enabled = enabled,
                 progress = animatedStateProgress.value
             ),
@@ -1110,7 +1110,7 @@ fun AuroraApplicationScope.DemoArea(
             ) {
                 // Example of an indeterminate linear progress bar
                 IndeterminateLinearProgressProjection(
-                    contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled),
+                    contentModel = IndeterminateProgressContentModel(enabled = contentEnabled),
                 ).project()
 
                 Spacer(modifier = Modifier.width(16.dp))
@@ -1135,15 +1135,15 @@ fun AuroraApplicationScope.DemoArea(
 
                 // Example of an indeterminate circular progress indicator
                 IndeterminateCircularProgressProjection(
-                    contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled)
+                    contentModel = IndeterminateProgressContentModel(enabled = contentEnabled)
                 ).project()
 
                 Spacer(modifier = Modifier.width(16.dp))
 
                 // Example of a larger indeterminate circular progress indicator
                 IndeterminateCircularProgressProjection(
-                    contentModel = ProgressIndeterminateContentModel(enabled = contentEnabled),
-                    presentationModel = ProgressCircularPresentationModel(radius = 14.dp)
+                    contentModel = IndeterminateProgressContentModel(enabled = contentEnabled),
+                    presentationModel = CircularProgressPresentationModel(radius = 14.dp)
                 ).project()
             }
 
