@@ -153,7 +153,7 @@ fun DemoColorsProgress(enabled: Boolean) {
                 isActionEnabled = enabled and (progress > 0.0f),
                 action = { progress -= 0.1f }),
             presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.Small,
+                presentationState = CommandButtonPresentationState.SmallFitToIcon,
                 iconDimension = DpSize(14.dp, 14.dp),
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
                 iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -176,7 +176,7 @@ fun DemoColorsProgress(enabled: Boolean) {
                 isActionEnabled = enabled and (progress < 1.0f),
                 action = { progress += 0.1f }),
             presentationModel = CommandButtonPresentationModel(
-                presentationState = CommandButtonPresentationState.Small,
+                presentationState = CommandButtonPresentationState.SmallFitToIcon,
                 iconDimension = DpSize(14.dp, 14.dp),
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
                 iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -253,6 +253,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                         }
                     ),
                     presentationModel = CommandButtonPresentationModel(
+                        presentationState = CommandButtonPresentationState.MediumFitToIcon,
                         iconDimension = DpSize(20.dp, 20.dp),
                         // This is a full-color icon. Use original colors for enabled and active
                         // states, and color scheme based filtering for disabled states
@@ -274,6 +275,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                         action = {}
                     ),
                     presentationModel = CommandButtonPresentationModel(
+                        presentationState = CommandButtonPresentationState.MediumFitToIcon,
                         iconDimension = DpSize(20.dp, 20.dp),
                         iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -294,6 +296,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                         action = { println("Clicked!") }
                     ),
                     presentationModel = CommandButtonPresentationModel(
+                        presentationState = CommandButtonPresentationState.MediumFitToIcon,
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                         iconDimension = DpSize(20.dp, 20.dp),
                         iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
