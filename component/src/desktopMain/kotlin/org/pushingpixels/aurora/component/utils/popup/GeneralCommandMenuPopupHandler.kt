@@ -15,10 +15,10 @@
  */
 package org.pushingpixels.aurora.component.utils.popup
 
-import androidx.compose.foundation.ScrollbarAdapter
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -330,9 +330,7 @@ object GeneralCommandMenuPopupHandler : CascadingCommandMenuHandler<
             }
             if (contentLayoutInfo.generalVerticalScrollbarSize.width > 0.0f) {
                 AuroraVerticalScrollbar(
-                    adapter = remember(stateVertical) {
-                        ScrollbarAdapter(stateVertical)
-                    }
+                    adapter = rememberScrollbarAdapter(scrollState = stateVertical)
                 )
             }
         }
