@@ -4,7 +4,7 @@ Aurora libraries are built with [Gradle](https://docs.gradle.org/). Each library
 
 ### Java requirements
 
-Aurora is built with Java 11. Search for "Java 11 download" in your favorite search engine, or browse [this page](https://www.oracle.com/technetwork/java/javase/downloads/index.html) (and perhaps the archives that it points to) to get the JDK distribution for your environment.
+Aurora is built with Java 17. Search for "Java 17 download" in your favorite search engine, or browse [this page](https://www.oracle.com/technetwork/java/javase/downloads/index.html) (and perhaps the archives that it points to) to get the JDK distribution for your environment.
 
 ### Local artifacts
 
@@ -19,8 +19,8 @@ Some Aurora libraries have third-party dependencies. To print the full dependenc
 
 ```
 -------- svg-transcoder --------
-org.jetbrains.compose.desktop:desktop:1.2.1
-org.apache.xmlgraphics:batik-all:1.15
+org.jetbrains.compose.desktop:desktop:1.6.10-beta01
+org.apache.xmlgraphics:batik-all:1.17
 ```
 
 To locally copy these dependencies (in case you do not want to pull them at build time with Gradle, Maven or other similar build tools in your own environment), use `./gradlew getDependencies`. Once that command completes, all dependencies will be in the `build/libs` folder.
