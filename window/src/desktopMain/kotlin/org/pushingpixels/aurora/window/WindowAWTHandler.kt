@@ -20,8 +20,6 @@ import androidx.compose.ui.unit.Density
 import java.awt.*
 import java.awt.event.AWTEventListener
 import java.awt.event.MouseEvent
-import java.security.AccessController
-import java.security.PrivilegedActionException
 import java.security.PrivilegedExceptionAction
 import javax.swing.JRootPane
 import javax.swing.SwingUtilities
@@ -108,7 +106,7 @@ internal class AWTInputHandler(
                 MouseEvent.MOUSE_EXITED -> mouseExited(pointInWindow, window)
                 MouseEvent.MOUSE_PRESSED -> mousePressed(pointInWindow, window)
                 MouseEvent.MOUSE_RELEASED -> mouseReleased(pointInWindow, window)
-                MouseEvent.MOUSE_DRAGGED -> mouseDragged(pointInWindow, window)
+                MouseEvent.MOUSE_DRAGGED -> mouseDragged(pointInWindow, window, event)
                 MouseEvent.MOUSE_MOVED -> mouseMoved(pointInWindow, window)
             }
         }
@@ -230,18 +228,14 @@ internal class AWTInputHandler(
         }
     }
 
-    private fun mouseDragged(pointInWindow: Point, w: Window) {
+    private fun mouseDragged(pointInWindow: Point, w: Window, ev: MouseEvent) {
         //println("mouseDragged!")
         val pt: Point = pointInWindow
         if (isMovingWindow) {
-            val windowPt: Point
-            try {
-                windowPt = AccessController.doPrivileged(getLocationAction)
-                windowPt.x = windowPt.x - dragOffsetX
-                windowPt.y = windowPt.y - dragOffsetY
-                w.location = windowPt
-            } catch (e: PrivilegedActionException) {
-            }
+            val windowPt: Point = ev.locationOnScreen
+            windowPt.x -= dragOffsetX
+            windowPt.y -= dragOffsetY
+            w.location = windowPt
         } else if (dragCursor != 0) {
             val r: Rectangle = w.bounds
             val startBounds = Rectangle(r)
