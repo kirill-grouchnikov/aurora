@@ -2,7 +2,8 @@ import org.jetbrains.compose.compose
 
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose")
+    alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.compose.compiler)
     id("com.vanniktech.maven.publish")
     id("org.jetbrains.dokka")
     `maven-publish`

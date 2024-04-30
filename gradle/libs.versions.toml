@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.0.0-RC1"
+kotlin = "2.0.0-RC2"
 coroutines = "1.8.0"
 compose = "1.6.10-beta03"
 dokka = "1.9.20"
@@ -7,6 +7,11 @@ batik = "1.17"
 
 versionchecker = "0.51.0"
 mavenpublish = "0.28.0"
+
+[plugins]
+jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose" }
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 [libraries]
 compose-desktop = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose" }
