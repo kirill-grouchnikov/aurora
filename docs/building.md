@@ -4,7 +4,7 @@ Aurora libraries are built with [Gradle](https://docs.gradle.org/). Each library
 
 ### Java requirements
 
-Aurora is built with Java 17. Search for "Java 17 download" in your favorite search engine, or browse [this page](https://www.oracle.com/technetwork/java/javase/downloads/index.html) (and perhaps the archives that it points to) to get the JDK distribution for your environment.
+Aurora is built with Java 11. Search for "Java 11 download" in your favorite search engine, or browse [this page](https://www.oracle.com/technetwork/java/javase/downloads/index.html) (and perhaps the archives that it points to) to get the JDK distribution for your environment.
 
 ### Local artifacts
 

@@ -49,9 +49,9 @@ allprojects {
     }
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-        // Force class file format for Java 17
+        // Force class file format for Java 11
         kotlinOptions {
-            jvmTarget = "17"
+            jvmTarget = "11"
             freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
         }
     }
