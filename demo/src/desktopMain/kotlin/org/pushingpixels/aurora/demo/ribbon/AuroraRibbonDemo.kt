@@ -807,8 +807,8 @@ internal class RibbonBuilder(
     var mfButtonText = MessageFormat(
         resourceBundle.getString("StylesGallery.textButton")
     )
-    val overlayFont = Font(Typeface.makeDefault()).also {
-        it.size = it.size * density
+    val overlayFont = Font(Typeface.makeEmpty()).also {
+        it.size *= density
     }
 
     val styleGalleryCommandPreview = object : CommandActionPreview {

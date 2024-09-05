@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 buildscript {
     repositories {
         google()
@@ -48,11 +51,11 @@ allprojects {
         }
     }
 
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-        // Force class file format for Java 11
-        kotlinOptions {
-            jvmTarget = "11"
-            freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+    tasks.withType<KotlinCompile>().configureEach {
+        compilerOptions {
+            // Force class file format for Java 11
+            jvmTarget.set(JvmTarget.JVM_11)
+            freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
         }
     }
 

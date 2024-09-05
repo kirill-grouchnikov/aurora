@@ -322,7 +322,7 @@ internal fun DrawScope.drawKeyTip(
     skinColors: AuroraSkinColors,
     painters: AuroraPainters
 ) {
-    val keyTipFont = Font(Typeface.makeDefault()).also {
+    val keyTipFont = Font(Typeface.makeEmpty()).also {
         it.size *= density.density
     }
 
