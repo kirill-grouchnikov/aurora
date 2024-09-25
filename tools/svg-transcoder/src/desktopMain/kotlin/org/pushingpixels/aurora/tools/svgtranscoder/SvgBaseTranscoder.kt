@@ -31,6 +31,7 @@ import java.awt.Color
 import java.awt.Paint
 import java.awt.Shape
 import java.awt.geom.*
+import java.awt.geom.PathIterator as AwtPathIterator
 import java.awt.image.ImageObserver
 import java.awt.image.RenderedImage
 import java.io.*
@@ -194,7 +195,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
      *
      * @param pathIterator Path iterator.
      */
-    private fun transcodePathIterator(pathIterator: PathIterator, suffix: String) {
+    private fun transcodePathIterator(pathIterator: AwtPathIterator, suffix: String) {
         val coords = FloatArray(6)
         printWriterManager!!.println("if (generalPath$suffix == null) {")
         printWriterManager!!.println("   generalPath$suffix = Path()")
@@ -204,19 +205,19 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         printWriterManager!!.println("generalPath$suffix?.run {")
         while (!pathIterator.isDone) {
             when (pathIterator.currentSegment(coords)) {
-                PathIterator.SEG_CUBICTO -> printWriterManager?.println(
+                AwtPathIterator.SEG_CUBICTO -> printWriterManager?.println(
                     "    cubicTo(${coords[0]}f, ${coords[1]}f, ${coords[2]}f, ${coords[3]}f, ${coords[4]}f, ${coords[5]}f)"
                 )
-                PathIterator.SEG_QUADTO -> printWriterManager?.println(
+                AwtPathIterator.SEG_QUADTO -> printWriterManager?.println(
                     "    quadraticBezierTo(${coords[0]}f, ${coords[1]}f, ${coords[2]}f, ${coords[3]}f)"
                 )
-                PathIterator.SEG_MOVETO -> printWriterManager?.println(
+                AwtPathIterator.SEG_MOVETO -> printWriterManager?.println(
                     "    moveTo(${coords[0]}f, ${coords[1]}f)"
                 )
-                PathIterator.SEG_LINETO -> printWriterManager?.println(
+                AwtPathIterator.SEG_LINETO -> printWriterManager?.println(
                     "    lineTo(${coords[0]}f, ${coords[1]}f)"
                 )
-                PathIterator.SEG_CLOSE -> printWriterManager?.println(
+                AwtPathIterator.SEG_CLOSE -> printWriterManager?.println(
                     "    close()"
                 )
             }
@@ -1075,9 +1076,9 @@ abstract class SvgBaseTranscoder(private val classname: String) {
         val coords = FloatArray(6)
         while (!pathIterator.isDone) {
             when (pathIterator.currentSegment(coords)) {
-                PathIterator.SEG_CUBICTO -> pathPoints.add(Point2D.Float(coords[4], coords[5]))
-                PathIterator.SEG_QUADTO -> pathPoints.add(Point2D.Float(coords[2], coords[3]))
-                PathIterator.SEG_MOVETO, PathIterator.SEG_LINETO -> pathPoints.add(
+                AwtPathIterator.SEG_CUBICTO -> pathPoints.add(Point2D.Float(coords[4], coords[5]))
+                AwtPathIterator.SEG_QUADTO -> pathPoints.add(Point2D.Float(coords[2], coords[3]))
+                AwtPathIterator.SEG_MOVETO, AwtPathIterator.SEG_LINETO -> pathPoints.add(
                     Point2D.Float(
                         coords[0], coords[1]
                     )

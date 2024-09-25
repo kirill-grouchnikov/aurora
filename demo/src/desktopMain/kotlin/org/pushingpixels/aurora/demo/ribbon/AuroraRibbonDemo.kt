@@ -34,7 +34,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.res.ResourceLoader
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
@@ -2136,8 +2135,8 @@ internal class RibbonBuilder(
 
         overlays[amFooterProps] = BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "T")
 
-        val tooltipStream = ResourceLoader.Default.load(
-            "/org/pushingpixels/aurora/demo/appmenubutton-tooltip-main.png"
+        val tooltipStream = ResourceLoader.javaClass.classLoader.getResourceAsStream(
+            "org/pushingpixels/aurora/demo/appmenubutton-tooltip-main.png"
         )
         val tooltipBitmap = Image.makeFromEncoded(tooltipStream.readAllBytes()).toComposeImageBitmap()
         val tooltipImage = BitmapPainter(tooltipBitmap)
@@ -2377,5 +2376,8 @@ private fun RulerPanel(
         }
     }
 }
+
+private object ResourceLoader
+
 
 
