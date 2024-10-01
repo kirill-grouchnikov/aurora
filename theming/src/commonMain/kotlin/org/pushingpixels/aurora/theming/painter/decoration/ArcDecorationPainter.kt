@@ -67,7 +67,7 @@ class ArcDecorationPainter : AuroraDecorationPainter {
                 topPath.moveTo(0.0f, 0.0f)
                 topPath.lineTo(boundingRect.width, 0.0f)
                 topPath.lineTo(boundingRect.width, boundingRect.height / 2.0f)
-                topPath.quadraticBezierTo(
+                topPath.quadraticTo(
                     boundingRect.width / 2, boundingRect.height / 4.0f,
                     0.0f, boundingRect.height / 2.0f
                 )
@@ -93,7 +93,7 @@ class ArcDecorationPainter : AuroraDecorationPainter {
                 bottomPath.moveTo(0.0f, boundingRect.height)
                 bottomPath.lineTo(boundingRect.width, boundingRect.height)
                 bottomPath.lineTo(boundingRect.width, boundingRect.height / 2.0f)
-                bottomPath.quadraticBezierTo(
+                bottomPath.quadraticTo(
                     boundingRect.width / 2, boundingRect.height / 4.0f,
                     0.0f, boundingRect.height / 2.0f
                 )
@@ -117,7 +117,7 @@ class ArcDecorationPainter : AuroraDecorationPainter {
                 // Middle part (connector between the two arc parts)
                 val middlePath = Path()
                 middlePath.moveTo(boundingRect.width, boundingRect.height / 2.0f)
-                middlePath.quadraticBezierTo(
+                middlePath.quadraticTo(
                     boundingRect.width / 2, boundingRect.height / 4.0f,
                     0.0f, boundingRect.height / 2.0f
                 )

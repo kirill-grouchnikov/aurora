@@ -58,7 +58,7 @@ withTransform({
         clipPath(Path().also { it.addPath((shape as Outline.Generic).path) })
     }
 }) {
-    val rect2D = Rect(left=-1.6708927154541016f, top=-2.4904184341430664f, right=99.99999809265137f, bottom=99.99999904632568f)
+    val rect2D = Rect(left=0.00998297892510891f, top=-0.6340898275375366f, right=100.00000373087823f, bottom=99.99999678134918f)
     val tTiled = Matrix(values=floatArrayOf(
 1.0f, 0.0f, 0.0f, 0.0f,
 0.0f, 1.0f, 0.0f, 0.0f,
@@ -105,7 +105,7 @@ generalPathTile?.run {
 }
 shapeTile = Outline.Generic(generalPathTile!!)
 drawOutline(outline = shapeTile!!, style = Fill, brush=brush!!, alpha = alphaTile, blendMode = blendModeTile)
-brush = ShaderBrush(org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 28.466116f, y0 = 13.660017f, r0 = 0.0f, x1 = 24.332644f, y1 = 26.59464f, r1 = 20.667356f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 128, r = 31, g = 175, b = 198), org.jetbrains.skia.Color.makeARGB(a = 128, r = 161, g = 211, b = 60), ), positions = floatArrayOf(0.9f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null)))
+brush = ShaderBrush(org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 29.003996f, y0 = 14.36685f, r0 = 0.0f, x1 = 25.004993f, y1 = 26.3676f, r1 = 19.995007f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 128, r = 31, g = 175, b = 198), org.jetbrains.skia.Color.makeARGB(a = 128, r = 161, g = 211, b = 60), ), positions = floatArrayOf(0.9f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null)))
 stroke = Stroke(width=10.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPathTile == null) {
    generalPathTile = Path()

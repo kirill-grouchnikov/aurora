@@ -209,7 +209,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
                     "    cubicTo(${coords[0]}f, ${coords[1]}f, ${coords[2]}f, ${coords[3]}f, ${coords[4]}f, ${coords[5]}f)"
                 )
                 AwtPathIterator.SEG_QUADTO -> printWriterManager?.println(
-                    "    quadraticBezierTo(${coords[0]}f, ${coords[1]}f, ${coords[2]}f, ${coords[3]}f)"
+                    "    quadraticTo(${coords[0]}f, ${coords[1]}f, ${coords[2]}f, ${coords[3]}f)"
                 )
                 AwtPathIterator.SEG_MOVETO -> printWriterManager?.println(
                     "    moveTo(${coords[0]}f, ${coords[1]}f)"

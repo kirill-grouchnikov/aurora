@@ -614,7 +614,7 @@ blendMode = blendModeStack.removeAt(0)
          * @return The X of the bounding box of the original SVG image.
          */
         fun getOrigX(): Double {
-            return 1.713640570640564
+            return 1.749769687652588
         }
 
         /**
@@ -623,7 +623,7 @@ blendMode = blendModeStack.removeAt(0)
          * @return The Y of the bounding box of the original SVG image.
          */
         fun getOrigY(): Double {
-            return 1.076781153678894
+            return 1.124945044517517
         }
 
         /**
@@ -632,7 +632,7 @@ blendMode = blendModeStack.removeAt(0)
          * @return The width of the bounding box of the original SVG image.
          */
         fun getOrigWidth(): Double {
-            return 45.44770050048828
+            return 45.37544250488281
         }
 
         /**
@@ -641,7 +641,7 @@ blendMode = blendModeStack.removeAt(0)
          * @return The height of the bounding box of the original SVG image.
          */
         fun getOrigHeight(): Double {
-            return 46.9232177734375
+            return 46.87505340576172
         }
 
         
