@@ -19,8 +19,8 @@ Some Aurora libraries have third-party dependencies. To print the full dependenc
 
 ```
 -------- svg-transcoder --------
-org.jetbrains.compose.desktop:desktop:1.7.0-beta01
-org.apache.xmlgraphics:batik-all:1.17
+org.jetbrains.compose.desktop:desktop:1.7.0-rc01
+org.apache.xmlgraphics:batik-all:1.18
 ```
 
 To locally copy these dependencies (in case you do not want to pull them at build time with Gradle, Maven or other similar build tools in your own environment), use `./gradlew getDependencies`. Once that command completes, all dependencies will be in the `build/libs` folder.

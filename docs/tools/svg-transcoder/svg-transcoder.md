@@ -24,7 +24,7 @@ The `SvgBatchConverter` class is the entry point into the offline batch converte
 
 Assuming your `AURORA_VERSION` variable points to the latest version of the Aurora libraries, here is how you would run the converter pipeline for a single SVG source folder (note that the dependencies versions need to match the Aurora version, see [the list below](#dependency-versions-for-the-aurora-svg-transcoder)):
 
-<code>java <b>-cp</b> ../drop/$AURORA_VERSION/aurora-svg-transcoder-desktop-$AURORA_VERSION.jar:../build/libs/batik-all-1.17.jar:../build/libs/xml-apis-1.4.01.jar:../build/libs/xml-apis-ext-1.3.04.jar:../build/libs/xmlgraphics-commons-2.9.jar:../build/libs/kotlin-stdlib-$KOTLIN_VERSION.jar:../build/libs/kotlin-stdlib-common-$KOTLIN_VERSION.jar:../build/libs/kotlinx-coroutines-core-jvm-$KOTLIN_COROUTINES_VERSION.jar:../build/libs/ui-graphics-desktop-$COMPOSE_VERSION.jar:../build/libs/ui-geometry-desktop-$COMPOSE_VERSION.jar org.pushingpixels.aurora.tools.svgtranscoder.SvgBatchConverter <b>sourceFolder=</b>../demo/src/desktopMain/kotlin/org/pushingpixels/aurora/demo/svg <b>outputPackageName=</b>org.pushingpixels.aurora.demo.svg <b>templateFile=</b>/org/pushingpixels/aurora/tools/svgtranscoder/AuroraSvgTranscoderTemplate.templ
+<code>java <b>-cp</b> ../drop/$AURORA_VERSION/aurora-svg-transcoder-desktop-$AURORA_VERSION.jar:../build/libs/batik-all-1.18.jar:../build/libs/xml-apis-1.4.01.jar:../build/libs/xml-apis-ext-1.3.04.jar:../build/libs/xmlgraphics-commons-2.9.jar:../build/libs/kotlin-stdlib-$KOTLIN_VERSION.jar:../build/libs/kotlin-stdlib-common-$KOTLIN_VERSION.jar:../build/libs/kotlinx-coroutines-core-jvm-$KOTLIN_COROUTINES_VERSION.jar:../build/libs/ui-graphics-desktop-$COMPOSE_VERSION.jar:../build/libs/ui-geometry-desktop-$COMPOSE_VERSION.jar org.pushingpixels.aurora.tools.svgtranscoder.SvgBatchConverter <b>sourceFolder=</b>../demo/src/desktopMain/kotlin/org/pushingpixels/aurora/demo/svg <b>outputPackageName=</b>org.pushingpixels.aurora.demo.svg <b>templateFile=</b>/org/pushingpixels/aurora/tools/svgtranscoder/AuroraSvgTranscoderTemplate.templ
 </code>
 
 The first part is enumerating all the jar files required for the converter - Aurora, Batik and Kotlin. In this sample script, the Aurora SVG transcoder jar is under `drop` folder after running the `gradlew copyJars` command. The Batik dependencies are under `build/libs` after running the `gradlew getDependencies` command.
@@ -47,7 +47,7 @@ The `SvgDeepBatchConverter` class is the entry point into the offline recursive 
 
 Assuming your `AURORA_VERSION` variable points to the latest version of the Aurora libraries, here is how you would run the converter pipeline recursively for all SVG files under a folder (note that the dependencies versions need to match the Aurora version, see [the list below](#dependency-versions-for-the-aurora-svg-transcoder)):
 
-<code>java <b>-cp</b> ../drop/$AURORA_VERSION/aurora-svg-transcoder-desktop-$AURORA_VERSION.jar:../build/libs/batik-all-1.17.jar:../build/libs/xml-apis-1.4.01.jar:../build/libs/xml-apis-ext-1.3.04.jar:../build/libs/xmlgraphics-commons-2.9.jar:../build/libs/kotlin-stdlib-$KOTLIN_VERSION.jar:../build/libs/kotlin-stdlib-common-$KOTLIN_VERSION.jar:../build/libs/kotlinx-coroutines-core-jvm-$KOTLIN_COROUTINES_VERSION.jar:../build/libs/ui-graphics-desktop-$COMPOSE_VERSION.jar:../build/libs/ui-geometry-desktop-$COMPOSE_VERSION.jar org.pushingpixels.aurora.tools.svgtranscoder.SvgDeepBatchConverter <b>sourceRootFolder=</b>../demo/src/desktopMain/kotlin/org/pushingpixels/aurora/demo/svg <b>outputRootPackageName=</b>org.pushingpixels.aurora.demo.svg <b>templateFile=</b>/org/pushingpixels/aurora/tools/svgtranscoder/AuroraSvgTranscoderTemplate.templ
+<code>java <b>-cp</b> ../drop/$AURORA_VERSION/aurora-svg-transcoder-desktop-$AURORA_VERSION.jar:../build/libs/batik-all-1.18.jar:../build/libs/xml-apis-1.4.01.jar:../build/libs/xml-apis-ext-1.3.04.jar:../build/libs/xmlgraphics-commons-2.9.jar:../build/libs/kotlin-stdlib-$KOTLIN_VERSION.jar:../build/libs/kotlin-stdlib-common-$KOTLIN_VERSION.jar:../build/libs/kotlinx-coroutines-core-jvm-$KOTLIN_COROUTINES_VERSION.jar:../build/libs/ui-graphics-desktop-$COMPOSE_VERSION.jar:../build/libs/ui-geometry-desktop-$COMPOSE_VERSION.jar org.pushingpixels.aurora.tools.svgtranscoder.SvgDeepBatchConverter <b>sourceRootFolder=</b>../demo/src/desktopMain/kotlin/org/pushingpixels/aurora/demo/svg <b>outputRootPackageName=</b>org.pushingpixels.aurora.demo.svg <b>templateFile=</b>/org/pushingpixels/aurora/tools/svgtranscoder/AuroraSvgTranscoderTemplate.templ
 </code>
 
 The first part is enumerating all the jar files required for the converter - Aurora, Batik and Kotlin. In this sample script, the Aurora SVG transcoder jar is under `drop` folder after running the `gradlew copyJars` command. The Batik dependencies are under `build/libs` after running the `gradlew getDependencies` command.
@@ -95,10 +95,10 @@ The following table summarizes the level of support for different SVG elements.
 ### Dependency versions for the Aurora SVG transcoder
 
 * For **2.0-SNAPSHOT**, use
-  * `batik-all-1.17.jar`
+  * `batik-all-1.18.jar`
   * `xml-apis-1.4.01.jar`
   * `xml-apis-ext-1.3.04.jar`
-  * `xmlgraphics-commons-2.9.jar`
+  * `xmlgraphics-commons-2.10.jar`
 * For **1.3.0**, use
   * `batik-all-1.16.jar`
   * `xml-apis-1.4.01.jar`
