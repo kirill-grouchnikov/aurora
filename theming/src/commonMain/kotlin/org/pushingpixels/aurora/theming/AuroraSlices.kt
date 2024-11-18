@@ -21,7 +21,12 @@ import androidx.compose.runtime.Stable
 /**
  * Defines a single facet of core and custom [ComponentState]s. See Javadocs of the
  * [ComponentState] class for more information on state facets.
- */
+ *
+ * @param name  Facet name.
+ * @param value Facet value. This is used in the matching algorithm described in the
+ * javadocs of [ComponentState]. The larger the value, the more importance is
+ * given to the specific facet.
+*/
 class ComponentStateFacet(var name: String, value: Int) {
     var value: Int
     override fun toString(): String {
@@ -65,22 +70,30 @@ class ComponentStateFacet(var name: String, value: Int) {
         val Mix = ComponentStateFacet("mixed", 10)
     }
 
-    /**
-     * Creates a new facet.
-     *
-     * @param name  Facet name.
-     * @param value Facet value. This is used in the matching algorithm described in the
-     * javadocs of [ComponentState]. The larger the value, the more importance is
-     * given to the specific facet.
-     */
     init {
         require(value >= 0) { "Facet value must be non-negative" }
         this.value = value
     }
 }
 
+/**
+ * Creates a new component state.
+ *
+ * @param name
+ * Component state name. Does not have to be unique. The name is
+ * only used in the [.toString].
+ * @param hardFallback
+ * The fallback state that will be used in [AuroraColorSchemeBundle.getColorScheme]
+ * in case [.bestFit] returns `null`
+ * @param facetsOn
+ * Indicates that are turned on for this state. For example, [.RolloverSelected] should pass both
+ * [ComponentStateFacet.Rollover] and [ComponentStateFacet.Selection].
+ * @param facetsOff
+ * Indicates that are turned on for this state. For example, [.DisabledUnselected] should pass both
+ * [ComponentStateFacet.Enable] and [ComponentStateFacet.Selection].
+ */
 class ComponentState(
-    name: String, hardFallback: ComponentState?,
+    private val name: String, hardFallback: ComponentState?,
     facetsOn: Array<ComponentStateFacet>?, facetsOff: Array<ComponentStateFacet>?
 ) {
     /**
@@ -98,7 +111,6 @@ class ComponentState(
     private val facetsTurnedOff: MutableSet<ComponentStateFacet>?
 
     private val mappingOn: MutableMap<ComponentStateFacet, Boolean>
-    private val name: String
     val hardFallback: ComponentState?
 
     /**
@@ -185,9 +197,7 @@ class ComponentState(
             if (this === Enabled) {
                 return false
             }
-            return if (!isFacetActive(ComponentStateFacet.Enable)) {
-                false
-            } else true
+            return isFacetActive(ComponentStateFacet.Enable)
         }
 
     private fun fitValue(state: ComponentState): Int {
@@ -578,24 +588,7 @@ class ComponentState(
         }
     }
 
-    /**
-     * Creates a new component state.
-     *
-     * @param name
-     * Component state name. Does not have to be unique. The name is
-     * only used in the [.toString].
-     * @param hardFallback
-     * The fallback state that will be used in [AuroraColors.getColorScheme]
-     * in case [.bestFit] returns `null`
-     * @param facetsOn
-     * Indicates that are turned on for this state. For example, [.RolloverSelected] should pass both
-     * [ComponentStateFacet.Rollover] and [ComponentStateFacet.Selection].
-     * @param facetsOff
-     * Indicates that are turned on for this state. For example, [.DisabledUnselected] should pass both
-     * [ComponentStateFacet.Enable] and [ComponentStateFacet.Selection].
-     */
     init {
-        this.name = name
         this.hardFallback = hardFallback
         facetsTurnedOn = mutableSetOf()
         if (facetsOn != null) {
@@ -720,19 +713,6 @@ class ColorSchemeAssociationKind(
         }
     }
 
-    /**
-     * Creates a new association kind.
-     *
-     * @param name     Association kind name.
-     * @param fallback Fallback association kind. This is used when no color scheme is
-     * associated with this kind. For example, [.TabBorder] specifies that its
-     * fallback is [.Border]. When the tabbed pane is
-     * painting the tabs, it will try to use the color scheme associated with
-     * [.TabBorder].
-     * If none was registered, it will fall back to use the color scheme associated
-     * with [.Border], and if that is not registered as well, will use the
-     * color scheme associated with [.Fill].
-     */
     init {
         values.add(this)
     }
@@ -852,28 +832,28 @@ enum class IconFilterStrategy {
 
 sealed class PopupPlacementStrategy(val isHorizontal: Boolean) {
     object Upward {
-        object HAlignStart : PopupPlacementStrategy(false)
-        object HAlignEnd : PopupPlacementStrategy(false)
+        data object HAlignStart : PopupPlacementStrategy(false)
+        data object HAlignEnd : PopupPlacementStrategy(false)
     }
 
     object Downward {
-        object HAlignStart : PopupPlacementStrategy(false)
-        object HAlignEnd : PopupPlacementStrategy(false)
+        data object HAlignStart : PopupPlacementStrategy(false)
+        data object HAlignEnd : PopupPlacementStrategy(false)
     }
 
     object CenteredVertically {
-        object HAlignStart : PopupPlacementStrategy(false)
-        object HAlignEnd : PopupPlacementStrategy(false)
+        data object HAlignStart : PopupPlacementStrategy(false)
+        data object HAlignEnd : PopupPlacementStrategy(false)
     }
 
     object Startward {
-        object VAlignTop : PopupPlacementStrategy(true)
-        object VAlignBottom : PopupPlacementStrategy(true)
+        data object VAlignTop : PopupPlacementStrategy(true)
+        data object VAlignBottom : PopupPlacementStrategy(true)
     }
 
     object Endward {
-        object VAlignTop : PopupPlacementStrategy(true)
-        object VAlignBottom : PopupPlacementStrategy(true)
+        data object VAlignTop : PopupPlacementStrategy(true)
+        data object VAlignBottom : PopupPlacementStrategy(true)
     }
 }
 

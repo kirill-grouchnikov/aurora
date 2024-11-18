@@ -52,7 +52,7 @@ fun getBaseOutline(
             && (straightSides.contains(leftSide) || straightSides.contains(Side.Bottom)))
 
     val openSides = sides?.openSides
-    val hasOpenSides = (openSides != null) && openSides.isNotEmpty()
+    val hasOpenSides = !openSides.isNullOrEmpty()
 
     if (!hasOpenSides) {
         // If all the sides are straight, the result is a simple rectangle

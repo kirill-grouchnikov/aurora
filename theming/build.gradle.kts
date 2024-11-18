@@ -1,5 +1,3 @@
-import org.jetbrains.compose.compose
-
 plugins {
     kotlin("multiplatform")
     alias(libs.plugins.jetbrainsCompose)

@@ -181,7 +181,7 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
                 }
                 if (line.contains("{")) {
                     require(!(inColorSchemeBlock || inColorsBlock)) { "Already in color scheme or colors definition, line $lineNumber" }
-                    name = line.substring(0, line.indexOf("{")).trim { it <= ' ' }
+                    name = line.substring(0, line.indexOf("{")).trim { char -> char <= ' ' }
                     if (name == "@colors") {
                         inColorsBlock = true
                     } else {
@@ -244,8 +244,8 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
                 }
                 val split = line.split("=".toRegex()).toTypedArray()
                 require(split.size == 2) { "Unsupported format in line $line [$lineNumber]" }
-                val key = split[0].trim { it <= ' ' }
-                val value = split[1].trim { it <= ' ' }
+                val key = split[0].trim { char -> char <= ' ' }
+                val value = split[1].trim { char -> char <= ' ' }
                 if (inColorsBlock) {
                     colorMap[key] = decodeColor(value, colorMap)
                     return@here
@@ -317,9 +317,9 @@ fun getColorSchemes(inputStream: InputStream): ColorSchemes {
                     if (value.contains("->")) {
                         val splitInner = value.split("->".toRegex()).toTypedArray()
                         val colorStart: Color =
-                            decodeColor(splitInner[0].trim { it <= ' ' }, colorMap)
+                            decodeColor(splitInner[0].trim { char -> char <= ' ' }, colorMap)
                         val colorEnd: Color =
-                            decodeColor(splitInner[1].trim { it <= ' ' }, colorMap)
+                            decodeColor(splitInner[1].trim { char -> char <= ' ' }, colorMap)
                         ultraLight = colorStart
                         extraLight = colorStart.interpolateTowards(colorEnd, 0.9f)
                         light = colorStart.interpolateTowards(colorEnd, 0.7f)

@@ -23,7 +23,7 @@ import org.pushingpixels.aurora.theming.utils.getSpecularRectangularEffect
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-class SpecularRectangularFillPainter(base: AuroraFillPainter, val baseAlpha: Float = 1.0f) :
+class SpecularRectangularFillPainter(base: AuroraFillPainter, private val baseAlpha: Float = 1.0f) :
     ShaderWrapperFillPainter(
         runtimeEffect = getSpecularRectangularEffect(),
         baseFillPainter = base
