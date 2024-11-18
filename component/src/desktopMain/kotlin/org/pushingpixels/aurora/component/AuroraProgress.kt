@@ -95,15 +95,15 @@ internal fun AuroraIndeterminateCircularProgress(
     ) {
         val isArcGrowing = (arcSpan > prevArcSpan.value)
         if (isArcGrowing) {
-            arcStart.value = arcStart.value - 8.0f
+            arcStart.value -= 8.0f
             arcEnd.value = arcStart.value - arcSpan
         } else {
-            arcEnd.value = arcEnd.value - 8.0f
+            arcEnd.value -= 8.0f
             arcStart.value = arcEnd.value + arcSpan
         }
 
-        arcStart.value = arcStart.value % 360.0f
-        arcEnd.value = arcEnd.value % 360.0f
+        arcStart.value %= 360.0f
+        arcEnd.value %= 360.0f
 
         prevArcSpan.value = arcSpan
 

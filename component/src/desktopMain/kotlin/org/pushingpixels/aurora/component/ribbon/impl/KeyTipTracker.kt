@@ -191,7 +191,7 @@ object KeyTipTracker {
         for (link in currChain.links) {
             val keyTipString = link.keyTip
             // TODO - handle two-character tips
-            if (char.lowercaseChar() == keyTipString.get(0).lowercaseChar()) {
+            if (char.lowercaseChar() == keyTipString[0].lowercaseChar()) {
                 // Match!
                 if (link.isEnabled) {
                     link.onActivated?.invoke()
@@ -214,9 +214,9 @@ object KeyTipTracker {
         }
     }
 
-    val visibleFlow = MutableStateFlow(false)
+    private val visibleFlow = MutableStateFlow(false)
     val uiVisibleFlow: StateFlow<Boolean> = visibleFlow
-    val chainDepth = MutableStateFlow(0)
+    private val chainDepth = MutableStateFlow(0)
     val uiChainDepth: StateFlow<Int> = chainDepth
 }
 

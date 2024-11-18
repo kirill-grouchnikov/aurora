@@ -370,7 +370,7 @@ object CoreRibbonResizePolicies {
 
     object Mirror : BaseCoreRibbonResizePolicy({ it })
 
-    object FlowOneRow : FlowRibbonBandResizePolicy {
+    data object FlowOneRow : FlowRibbonBandResizePolicy {
         override val rowCount: Int = 1
 
         @Composable
@@ -393,7 +393,7 @@ object CoreRibbonResizePolicies {
         }
     }
 
-    object FlowTwoRows : FlowRibbonBandResizePolicy {
+    data object FlowTwoRows : FlowRibbonBandResizePolicy {
         override val rowCount: Int = 2
 
         @Composable
@@ -434,7 +434,7 @@ object CoreRibbonResizePolicies {
         }
     }
 
-    object FlowThreeRows : FlowRibbonBandResizePolicy {
+    data object FlowThreeRows : FlowRibbonBandResizePolicy {
         override val rowCount: Int = 3
 
         @Composable

@@ -65,7 +65,6 @@ import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 import java.awt.event.KeyEvent
 import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.roundToInt
 
 @Immutable

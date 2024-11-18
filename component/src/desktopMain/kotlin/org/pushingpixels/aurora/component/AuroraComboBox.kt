@@ -151,7 +151,7 @@ internal fun <E> comboBoxIntrinsicSize(
     )
 }
 
-@OptIn(AuroraInternalApi::class, ExperimentalTextApi::class)
+@OptIn(AuroraInternalApi::class)
 @Composable
 private fun <E> getPrototypeDisplayFullWidth(
     contentModel: ComboBoxContentModel<E>,

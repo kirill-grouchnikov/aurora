@@ -43,7 +43,7 @@ import org.pushingpixels.aurora.component.ribbon.RibbonGalleryContentModel
 import org.pushingpixels.aurora.component.ribbon.RibbonGalleryInlineState
 import org.pushingpixels.aurora.component.ribbon.RibbonGalleryPresentationModel
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.component.utils.ArrowSizingConstants.DefaultDoubleArrowWidth
+import org.pushingpixels.aurora.component.utils.ArrowSizingConstants
 import org.pushingpixels.aurora.theming.*
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -65,23 +65,17 @@ internal fun ribbonGalleryIntrinsicWidth(
     var result =
         (presentationModel.contentPadding.calculateStartPadding(layoutDirection).value * density.density).toInt()
     // Visible gallery buttons
-    when (presentationModel.commandButtonPresentationState) {
-        CommandButtonPresentationState.Small ->
-            result += visibleCount * heightForButtons / 3
-
-        BigFixed ->
-            result += visibleCount * heightForButtons
-
-        BigFixedLandscape ->
-            result += visibleCount * heightForButtons * 5 / 4
-
+    result += when (presentationModel.commandButtonPresentationState) {
+        CommandButtonPresentationState.Small -> visibleCount * heightForButtons / 3
+        BigFixed -> visibleCount * heightForButtons
+        BigFixedLandscape -> visibleCount * heightForButtons * 5 / 4
         else ->
             error("Presentation state ${presentationModel.commandButtonPresentationState.displayName} not supported")
     }
     // Gaps between and around the gallery buttons
     result += (visibleCount + 1) * ((presentationModel.layoutGap.value * density.density).toInt())
     // Control button strip width
-    result += (DefaultDoubleArrowWidth.value * density.density).toInt()
+    result += (ArrowSizingConstants.DefaultDoubleArrowWidth.value * density.density).toInt()
     // Trailing margin
     result += (presentationModel.contentPadding.calculateEndPadding(layoutDirection).value * density.density).toInt()
 
