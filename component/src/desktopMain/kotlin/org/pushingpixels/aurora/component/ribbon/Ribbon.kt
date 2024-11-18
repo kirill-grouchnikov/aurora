@@ -161,8 +161,7 @@ class RibbonGalleryProjection(
     @Composable
     override fun intrinsicWidth(height: Int): Int {
         return ribbonGalleryIntrinsicWidth(
-            this.contentModel, this.presentationModel, this.inlineState.visibleCount,
-            height
+            this.contentModel, this.presentationModel, this.inlineState.visibleCount, height
         )
     }
 

@@ -55,31 +55,32 @@ internal fun ribbonGalleryIntrinsicWidth(
     visibleCount: Int,
     height: Int
 ): Int {
-    val density = LocalDensity.current
-    val layoutDirection = LocalLayoutDirection.current
 
-    val heightForButtons = height - ((presentationModel.contentPadding.calculateTopPadding() +
-            presentationModel.contentPadding.calculateBottomPadding()).value * density.density).toInt()
+    var resultPx: Float
+    with (LocalDensity.current) {
+        val layoutDirection = LocalLayoutDirection.current
 
-    // Leading margin
-    var result =
-        (presentationModel.contentPadding.calculateStartPadding(layoutDirection).value * density.density).toInt()
-    // Visible gallery buttons
-    result += when (presentationModel.commandButtonPresentationState) {
-        CommandButtonPresentationState.Small -> visibleCount * heightForButtons / 3
-        BigFixed -> visibleCount * heightForButtons
-        BigFixedLandscape -> visibleCount * heightForButtons * 5 / 4
-        else ->
-            error("Presentation state ${presentationModel.commandButtonPresentationState.displayName} not supported")
+        val heightForButtons = height - ((presentationModel.contentPadding.calculateTopPadding() +
+                presentationModel.contentPadding.calculateBottomPadding()).toPx())
+        // Leading margin
+        resultPx = presentationModel.contentPadding.calculateStartPadding(layoutDirection).toPx()
+        // Visible gallery buttons
+        resultPx += when (presentationModel.commandButtonPresentationState) {
+            CommandButtonPresentationState.Small -> visibleCount * heightForButtons / 3
+            BigFixed -> visibleCount * heightForButtons
+            BigFixedLandscape -> visibleCount * heightForButtons * 5 / 4
+            else ->
+                error("Presentation state ${presentationModel.commandButtonPresentationState.displayName} not supported")
+        }
+        // Gaps between and around the gallery buttons
+        resultPx += (visibleCount + 1) * presentationModel.layoutGap.toPx()
+        // Control button strip width
+        resultPx += ArrowSizingConstants.DefaultDoubleArrowWidth.toPx()
+        // Trailing margin
+        resultPx += presentationModel.contentPadding.calculateEndPadding(layoutDirection).toPx()
     }
-    // Gaps between and around the gallery buttons
-    result += (visibleCount + 1) * ((presentationModel.layoutGap.value * density.density).toInt())
-    // Control button strip width
-    result += (ArrowSizingConstants.DefaultDoubleArrowWidth.value * density.density).toInt()
-    // Trailing margin
-    result += (presentationModel.contentPadding.calculateEndPadding(layoutDirection).value * density.density).toInt()
 
-    return result
+    return resultPx.toInt()
 }
 
 @OptIn(AuroraInternalApi::class)
