@@ -1078,13 +1078,13 @@ object AuroraWindowTitlePaneConfigurations {
     /**
      * Window title pane is provided by the operating system.
      */
-    object System : AuroraWindowTitlePaneConfiguration()
+    data object System : AuroraWindowTitlePaneConfiguration()
 
     /**
      * No window title pane. The application UI is responsible for resizing, dragging and other
      * top-level user interaction with the window.
      */
-    object None : AuroraWindowTitlePaneConfiguration()
+    data object None : AuroraWindowTitlePaneConfiguration()
 
     interface TitlePaneButtonProvider {
         /** Draws the icon for this button. */

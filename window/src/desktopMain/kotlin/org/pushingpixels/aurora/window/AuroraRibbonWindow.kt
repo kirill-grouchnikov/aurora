@@ -62,7 +62,7 @@ import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
-import org.pushingpixels.aurora.window.WindowSizingConstants.DecoratedBorderThickness
+import org.pushingpixels.aurora.window.WindowSizingConstants
 import org.pushingpixels.aurora.window.ribbon.*
 import java.awt.*
 import java.awt.event.*
@@ -651,7 +651,7 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
                         }
                     }
                 }
-                RibbonOverlay(Modifier, DecoratedBorderThickness)
+                RibbonOverlay(Modifier, WindowSizingConstants.DecoratedBorderThickness)
             }
             Box(modifier = Modifier.fillMaxWidth().weight(1.0f)) {
                 // Wrap the entire content in NONE decoration area. App code can set its
@@ -661,7 +661,7 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
                 }
             }
         }
-        RibbonKeyTipOverlay(Modifier.fillMaxSize(), DecoratedBorderThickness)
+        RibbonKeyTipOverlay(Modifier.fillMaxSize(), WindowSizingConstants.DecoratedBorderThickness)
     }
 
     val density = LocalDensity.current
@@ -784,7 +784,7 @@ fun AuroraWindowScope.AuroraRibbonWindowContent(
                     KeyTipTracker.handleKeyPress(keyChar)
                 }
 
-                if ((event.keyCode == KeyEvent.VK_ALT) || (event.getKeyCode() == KeyEvent.VK_F10)) {
+                if ((event.keyCode == KeyEvent.VK_ALT) || (event.keyCode == KeyEvent.VK_F10)) {
                     if (event.modifiersEx != 0) {
                         return@AWTEventListener
                     }
@@ -1135,6 +1135,6 @@ private fun RibbonBox(
     }
 }
 
-private val TaskbarWidthMaxRatio = 0.25f
+private const val TaskbarWidthMaxRatio = 0.25f
 private val TaskbarContentPadding = PaddingValues(horizontal = 6.dp)
 private val TaskbarContextualTaskGroupTitlePadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)

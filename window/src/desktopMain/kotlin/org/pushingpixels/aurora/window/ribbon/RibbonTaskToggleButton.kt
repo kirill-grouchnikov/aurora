@@ -652,7 +652,7 @@ private fun getTextColor(
     decorationAreaType: DecorationAreaType,
     colorSchemeAssociationKind: ColorSchemeAssociationKind
 ): Color {
-    var activeStates: Map<ComponentState, StateContributionInfo> = modelStateInfo.stateContributionMap
+    val activeStates: Map<ComponentState, StateContributionInfo> = modelStateInfo.stateContributionMap
 
     val buttonFillScheme = skinColors.getColorScheme(
         decorationAreaType = decorationAreaType,
