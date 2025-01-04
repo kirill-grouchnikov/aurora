@@ -20,7 +20,7 @@ import org.gradle.api.Project
 
 class AuroraSvgTranscoderGradlePlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        project.tasks.create("transcode", TranscodeTask::class.java)
-        project.tasks.create("transcodeDeep", TranscodeDeepTask::class.java)
+        project.tasks.register("transcode", TranscodeTask::class.java)
+        project.tasks.register("transcodeDeep", TranscodeDeepTask::class.java)
     }
 }
