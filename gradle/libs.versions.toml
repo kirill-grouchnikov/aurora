@@ -1,9 +1,9 @@
 [versions]
-kotlin = "2.1.0"
+kotlin = "2.1.20"
 coroutines = "1.10.2"
-compose = "1.8.0-rc01"
+compose = "1.8.0"
 dokka = "2.0.0"
-batik = "1.18"
+batik = "1.19"
 
 versionchecker = "0.52.0"
 mavenpublish = "0.31.0"
