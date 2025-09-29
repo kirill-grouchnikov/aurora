@@ -102,7 +102,7 @@ Aurora artifacts are available in the central Maven repository under `groupId=or
 
 ### Snapshots
 
-Aurora snapshot artifacts are available in the [Sonatype repository](https://oss.sonatype.org/content/repositories/snapshots/org/pushing-pixels/).
+Aurora snapshot artifacts [are available in the Maven Central snapshot repository](https://central.sonatype.com/service/rest/repository/browse/maven-snapshots/org/pushing-pixels/) using the `https://central.sonatype.com/repository/maven-snapshots/` URL.
 
 ## Building Aurora
 
