@@ -324,7 +324,7 @@ internal fun AuroraCheckBox(
         val textColor = getTextColor(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
-            skinColors = AuroraSkin.colors,
+            colors = AuroraSkin.colors,
             colorSchemeBundle = presentationModel.colorSchemeBundle,
             decorationAreaType = decorationAreaType,
             colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,

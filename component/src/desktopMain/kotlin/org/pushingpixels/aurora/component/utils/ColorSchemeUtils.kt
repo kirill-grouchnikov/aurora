@@ -545,7 +545,7 @@ internal fun getStateAwareColor(
 internal fun getTextColor(
     modelStateInfo: ModelStateInfo?,
     currState: ComponentState,
-    skinColors: AuroraSkinColors,
+    colors: AuroraSkinColors,
     colorSchemeBundle: AuroraColorSchemeBundle?,
     decorationAreaType: DecorationAreaType,
     colorSchemeAssociationKind: ColorSchemeAssociationKind,
@@ -565,7 +565,7 @@ internal fun getTextColor(
         associationKind = colorSchemeAssociationKind,
         componentState = tweakedCurrState,
         allowFallback = true
-    ) ?: skinColors.getColorScheme(
+    ) ?: colors.getColorScheme(
         decorationAreaType = decorationAreaType,
         associationKind = colorSchemeAssociationKind,
         componentState = tweakedCurrState
@@ -585,7 +585,7 @@ internal fun getTextColor(
                 associationKind = colorSchemeAssociationKind,
                 componentState = activeState,
                 allowFallback = true
-            ) ?: skinColors.getColorScheme(
+            ) ?: colors.getColorScheme(
                 decorationAreaType = decorationAreaType,
                 associationKind = colorSchemeAssociationKind,
                 componentState = activeState
@@ -598,7 +598,7 @@ internal fun getTextColor(
         foreground = Color(red = aggrRed, blue = aggrBlue, green = aggrGreen, alpha = 1.0f)
     }
 
-    val baseAlpha = colorSchemeBundle?.getAlpha(tweakedCurrState) ?: skinColors.getAlpha(
+    val baseAlpha = colorSchemeBundle?.getAlpha(tweakedCurrState) ?: colors.getAlpha(
         decorationAreaType = decorationAreaType,
         componentState = tweakedCurrState
     )
@@ -607,7 +607,7 @@ internal fun getTextColor(
         // Blend with the background fill
         val stateForQuery =
             if (tweakedCurrState.isDisabled) ComponentState.DisabledUnselected else ComponentState.Enabled
-        val backgroundColorScheme = colorSchemeBundle?.getColorScheme(stateForQuery) ?: skinColors.getColorScheme(
+        val backgroundColorScheme = colorSchemeBundle?.getColorScheme(stateForQuery) ?: colors.getColorScheme(
             decorationAreaType = decorationAreaType,
             componentState = stateForQuery
         )

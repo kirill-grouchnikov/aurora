@@ -74,7 +74,6 @@ fun AuroraBoxWithHighlights(
     }
 
     val decorationAreaType = AuroraSkin.decorationAreaType
-    val skinColors = AuroraSkin.colors
     val buttonShaper = AuroraSkin.buttonShaper
 
     // Transition for the selection state
@@ -191,7 +190,7 @@ fun AuroraBoxWithHighlights(
         val textColor = getTextColor(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
-            skinColors = skinColors,
+            colors = AuroraSkin.colors,
             colorSchemeBundle = null,
             decorationAreaType = decorationAreaType,
             colorSchemeAssociationKind = ColorSchemeAssociationKind.Highlight,

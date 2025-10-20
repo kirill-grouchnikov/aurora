@@ -36,7 +36,6 @@ import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.*
@@ -420,7 +419,7 @@ internal fun <E> AuroraComboBox(
         val textColor = getTextColor(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
-            skinColors = skinColors,
+            colors = skinColors,
             colorSchemeBundle = presentationModel.colorSchemeBundle,
             decorationAreaType = decorationAreaType,
             colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,

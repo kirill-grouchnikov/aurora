@@ -1749,14 +1749,13 @@ private fun CommandButtonTextContent(
     style: TextStyle
 ) {
     val decorationAreaType = AuroraSkin.decorationAreaType
-    val skinColors = AuroraSkin.colors
 
     // Compute the text color based on the passed model state (which can be action
     // or popup)
     val textColor = getTextColor(
         modelStateInfo = modelStateInfo,
         currState = currState,
-        skinColors = skinColors,
+        colors = AuroraSkin.colors,
         colorSchemeBundle = presentationModel.colorSchemeBundle,
         decorationAreaType = decorationAreaType,
         colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
@@ -1788,14 +1787,13 @@ private fun CommandButtonExtraTextContent(
     style: TextStyle, maxLines: Int
 ) {
     val decorationAreaType = AuroraSkin.decorationAreaType
-    val skinColors = AuroraSkin.colors
 
     // Compute the regular text color based on the passed model state (which can be action
     // or popup)
     val textColor = getTextColor(
         modelStateInfo = modelStateInfo,
         currState = currState,
-        skinColors = skinColors,
+        colors = AuroraSkin.colors,
         colorSchemeBundle = presentationModel.colorSchemeBundle,
         decorationAreaType = decorationAreaType,
         colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
@@ -1804,13 +1802,13 @@ private fun CommandButtonExtraTextContent(
 
     // "Move" the regular text color towards the disabled state for more muted visuals
     // of the extra text
-    val disabledColorScheme = skinColors.getColorScheme(
+    val disabledColorScheme = AuroraSkin.colors.getColorScheme(
         decorationAreaType, ComponentState.DisabledUnselected
     )
     var disabledFgColor = disabledColorScheme.foregroundColor
-    val buttonAlpha = skinColors.getAlpha(decorationAreaType, currState)
+    val buttonAlpha = AuroraSkin.colors.getAlpha(decorationAreaType, currState)
 
-    val backgroundColorScheme = skinColors.getColorScheme(decorationAreaType, currState)
+    val backgroundColorScheme = AuroraSkin.colors.getColorScheme(decorationAreaType, currState)
     val bgFillColor = backgroundColorScheme.backgroundFillColor
     if (buttonAlpha < 1.0f) {
         // Blend with the background fill
@@ -1982,7 +1980,7 @@ private fun CommandButtonIconContent(
             val textColor = getTextColor(
                 modelStateInfo = modelStateInfo,
                 currState = currState,
-                skinColors = skinColors,
+                colors = skinColors,
                 colorSchemeBundle = presentationModel.colorSchemeBundle,
                 decorationAreaType = decorationAreaType,
                 colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,

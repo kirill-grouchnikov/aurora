@@ -519,7 +519,7 @@ private fun TabButtonTextContent(
     val textColor = getTextColor(
         modelStateInfo = modelStateInfo,
         currState = currState,
-        skinColors = skinColors,
+        colors = skinColors,
         colorSchemeBundle = presentationModel.colorSchemeBundle,
         decorationAreaType = decorationAreaType,
         colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
@@ -563,7 +563,7 @@ private fun TabButtonIconContent(
             val textColor = getTextColor(
                 modelStateInfo = modelStateInfo,
                 currState = currState,
-                skinColors = skinColors,
+                colors = skinColors,
                 colorSchemeBundle = presentationModel.colorSchemeBundle,
                 decorationAreaType = decorationAreaType,
                 colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,

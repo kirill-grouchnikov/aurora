@@ -415,7 +415,7 @@ internal fun AuroraSlider(
         val textColor = getTextColor(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
-            skinColors = skinColors,
+            colors = skinColors,
             colorSchemeBundle = presentationModel.colorSchemeBundle,
             decorationAreaType = decorationAreaType,
             colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
