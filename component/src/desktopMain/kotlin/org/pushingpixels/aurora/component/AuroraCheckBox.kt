@@ -266,6 +266,7 @@ internal fun AuroraCheckBox(
             colorScheme = drawingCache.colorScheme,
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
+            colors = AuroraSkin.colors,
             colorSchemeBundle = presentationModel.colorSchemeBundle,
             decorationAreaType = decorationAreaType,
             associationKind = ColorSchemeAssociationKind.MarkBox
@@ -286,6 +287,7 @@ internal fun AuroraCheckBox(
             colorScheme = drawingCache.colorScheme,
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
+            colors = AuroraSkin.colors,
             colorSchemeBundle = presentationModel.colorSchemeBundle,
             decorationAreaType = decorationAreaType,
             associationKind = ColorSchemeAssociationKind.Border
@@ -304,6 +306,7 @@ internal fun AuroraCheckBox(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colorSchemeBundle = presentationModel.colorSchemeBundle,
+            colors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
             associationKind = ColorSchemeAssociationKind.Mark
         ) { it.markColor }

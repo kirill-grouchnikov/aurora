@@ -1016,9 +1016,11 @@ internal fun <M : BaseCommandMenuContentModel,
                         colorSchemeBundle = presentationModel.colorSchemeBundle,
                         modelStateInfo = actionModelStateInfoToUse,
                         currState = currentActionStateToUse.value,
+                        colors = AuroraSkin.colors,
                         decorationAreaType = decorationAreaType,
                         associationKind = ColorSchemeAssociationKind.Fill
                     )
+
                     // And retrieve the container fill colors
                     val fillUltraLight = drawingCache.colorScheme.ultraLightColor
                     val fillExtraLight = drawingCache.colorScheme.extraLightColor
@@ -1035,6 +1037,7 @@ internal fun <M : BaseCommandMenuContentModel,
                         colorSchemeBundle = presentationModel.colorSchemeBundle,
                         modelStateInfo = actionModelStateInfoToUse,
                         currState = currentActionStateToUse.value,
+                        colors = AuroraSkin.colors,
                         decorationAreaType = decorationAreaType,
                         associationKind = ColorSchemeAssociationKind.Border
                     )
@@ -1223,6 +1226,7 @@ internal fun <M : BaseCommandMenuContentModel,
                         colorSchemeBundle = presentationModel.colorSchemeBundle,
                         modelStateInfo = popupModelStateInfo,
                         currState = currentPopupState.value,
+                        colors = AuroraSkin.colors,
                         decorationAreaType = decorationAreaType,
                         associationKind = ColorSchemeAssociationKind.Fill
                     )
@@ -1242,6 +1246,7 @@ internal fun <M : BaseCommandMenuContentModel,
                         colorSchemeBundle = presentationModel.colorSchemeBundle,
                         modelStateInfo = popupModelStateInfo,
                         currState = currentPopupState.value,
+                        colors = AuroraSkin.colors,
                         decorationAreaType = decorationAreaType,
                         associationKind = ColorSchemeAssociationKind.Border
                     )
@@ -1926,6 +1931,7 @@ private fun CommandButtonIconContent(
                 modelStateInfo = modelStateInfo,
                 currState = currState,
                 colorSchemeBundle = presentationModel.colorSchemeBundle,
+                colors = AuroraSkin.colors,
                 decorationAreaType = decorationAreaType,
                 associationKind = ColorSchemeAssociationKind.Mark
             ) { it.markColor }
@@ -2015,6 +2021,7 @@ private fun CommandButtonPopupIconContent(
         modelStateInfo = modelStateInfo,
         currState = currState,
         colorSchemeBundle = presentationModel.colorSchemeBundle,
+        colors = AuroraSkin.colors,
         decorationAreaType = decorationAreaType,
         associationKind = ColorSchemeAssociationKind.Mark
     ) { it.markColor }

@@ -254,6 +254,7 @@ internal fun AuroraRadioButton(
             colorScheme = drawingCache.colorScheme,
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
+            colors = AuroraSkin.colors,
             colorSchemeBundle = presentationModel.colorSchemeBundle,
             decorationAreaType = decorationAreaType,
             associationKind = ColorSchemeAssociationKind.MarkBox
@@ -273,6 +274,7 @@ internal fun AuroraRadioButton(
             colorScheme = drawingCache.colorScheme,
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
+            colors = AuroraSkin.colors,
             colorSchemeBundle = presentationModel.colorSchemeBundle,
             decorationAreaType = decorationAreaType,
             associationKind = ColorSchemeAssociationKind.Border
@@ -291,6 +293,7 @@ internal fun AuroraRadioButton(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colorSchemeBundle = presentationModel.colorSchemeBundle,
+            colors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
             associationKind = ColorSchemeAssociationKind.Mark
         ) { it.markColor }

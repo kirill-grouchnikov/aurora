@@ -371,6 +371,7 @@ internal fun AuroraSlider(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colorSchemeBundle = presentationModel.colorSchemeBundle,
+            colors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
             associationKind = ColorSchemeAssociationKind.Fill
         )
@@ -391,6 +392,7 @@ internal fun AuroraSlider(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colorSchemeBundle = presentationModel.colorSchemeBundle,
+            colors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
             associationKind = ColorSchemeAssociationKind.Border
         )

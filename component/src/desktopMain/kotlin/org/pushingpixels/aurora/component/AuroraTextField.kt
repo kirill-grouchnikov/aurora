@@ -226,6 +226,7 @@ internal fun AuroraTextField(
         modelStateInfo = modelStateInfo,
         currState = currentState.value,
         colorSchemeBundle = presentationModel.colorSchemeBundle,
+        colors = AuroraSkin.colors,
         decorationAreaType = decorationAreaType,
         associationKind = ColorSchemeAssociationKind.Border
     )

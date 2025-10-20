@@ -230,6 +230,7 @@ internal fun AuroraSwitch(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colorSchemeBundle = presentationModel.colorSchemeBundle,
+            colors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
             associationKind = ColorSchemeAssociationKind.Mark
         ) { it.markColor }
@@ -241,6 +242,7 @@ internal fun AuroraSwitch(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colorSchemeBundle = presentationModel.colorSchemeBundle,
+            colors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
             associationKind = ColorSchemeAssociationKind.MarkBox
         )
@@ -261,6 +263,7 @@ internal fun AuroraSwitch(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colorSchemeBundle = presentationModel.colorSchemeBundle,
+            colors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
             associationKind = ColorSchemeAssociationKind.Border
         )

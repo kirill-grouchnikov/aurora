@@ -313,6 +313,7 @@ private fun Scrollbar(
                     modelStateInfo = modelStateInfo,
                     currState = currentState.value,
                     colorSchemeBundle = null,
+                    colors = AuroraSkin.colors,
                     decorationAreaType = decorationAreaType,
                     associationKind = ColorSchemeAssociationKind.Fill,
                     treatEnabledAsActive = true
@@ -333,6 +334,7 @@ private fun Scrollbar(
                     modelStateInfo = modelStateInfo,
                     currState = currentState.value,
                     colorSchemeBundle = null,
+                    colors = AuroraSkin.colors,
                     decorationAreaType = decorationAreaType,
                     associationKind = ColorSchemeAssociationKind.Border,
                     treatEnabledAsActive = false

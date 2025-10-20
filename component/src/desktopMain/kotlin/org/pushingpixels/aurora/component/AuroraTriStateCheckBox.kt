@@ -285,6 +285,7 @@ internal fun AuroraTriStateCheckBox(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colorSchemeBundle = presentationModel.colorSchemeBundle,
+            colors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
             associationKind = ColorSchemeAssociationKind.MarkBox
         )
@@ -305,6 +306,7 @@ internal fun AuroraTriStateCheckBox(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colorSchemeBundle = presentationModel.colorSchemeBundle,
+            colors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
             associationKind = ColorSchemeAssociationKind.Border
         )
@@ -322,6 +324,7 @@ internal fun AuroraTriStateCheckBox(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colorSchemeBundle = presentationModel.colorSchemeBundle,
+            colors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
             associationKind = ColorSchemeAssociationKind.Mark
         ) { it.markColor }

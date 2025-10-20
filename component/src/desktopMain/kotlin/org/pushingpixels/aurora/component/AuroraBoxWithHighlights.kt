@@ -205,6 +205,7 @@ fun AuroraBoxWithHighlights(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colorSchemeBundle = null,
+            colors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
             associationKind = ColorSchemeAssociationKind.Highlight
         )
@@ -224,6 +225,7 @@ fun AuroraBoxWithHighlights(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colorSchemeBundle = null,
+            colors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
             associationKind = ColorSchemeAssociationKind.HighlightBorder
         )

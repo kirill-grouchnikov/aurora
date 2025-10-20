@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.component.utils
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.byAlpha
@@ -34,7 +33,6 @@ interface ColorSchemeDelegate {
 }
 
 @OptIn(AuroraInternalApi::class)
-@Composable
 fun populateColorScheme(
     colorScheme: MutableColorScheme,
     modelStateInfo: ModelStateInfo,
@@ -127,28 +125,30 @@ fun populateColorScheme(
 }
 
 @OptIn(AuroraInternalApi::class)
-@Composable
 internal fun populateColorScheme(
     colorScheme: MutableColorScheme,
     modelStateInfo: ModelStateInfo,
     currState: ComponentState,
+    colors: AuroraSkinColors,
     colorSchemeBundle: AuroraColorSchemeBundle?,
     decorationAreaType: DecorationAreaType,
     associationKind: ColorSchemeAssociationKind,
     treatEnabledAsActive: Boolean = false
 ) {
-    val currStateScheme = if (treatEnabledAsActive && (currState == ComponentState.Enabled))
+    val currStateScheme = if (treatEnabledAsActive && (currState == ComponentState.Enabled)) {
         colorSchemeBundle?.getActiveColorScheme()
-            ?: AuroraSkin.colors.getActiveColorScheme(decorationAreaType = decorationAreaType) else
+            ?: colors.getActiveColorScheme(decorationAreaType = decorationAreaType)
+    } else {
         colorSchemeBundle?.getColorScheme(
             associationKind = associationKind,
             componentState = currState,
             allowFallback = true
-        ) ?: AuroraSkin.colors.getColorScheme(
+        ) ?: colors.getColorScheme(
             decorationAreaType = decorationAreaType,
             associationKind = associationKind,
             componentState = currState
         )
+    }
 
     var ultraLight = currStateScheme.ultraLightColor
     var extraLight = currStateScheme.extraLightColor
@@ -183,18 +183,20 @@ internal fun populateColorScheme(
         }
         // Get the color scheme that matches the contribution state
         val contributionScheme =
-            if (treatEnabledAsActive && (contribution.key == ComponentState.Enabled))
+            if (treatEnabledAsActive && (contribution.key == ComponentState.Enabled)) {
                 colorSchemeBundle?.getActiveColorScheme()
-                    ?: AuroraSkin.colors.getActiveColorScheme(decorationAreaType = decorationAreaType) else
+                    ?: colors.getActiveColorScheme(decorationAreaType = decorationAreaType)
+            } else {
                 colorSchemeBundle?.getColorScheme(
                     associationKind = associationKind,
                     componentState = contribution.key,
                     allowFallback = true
-                ) ?: AuroraSkin.colors.getColorScheme(
+                ) ?: colors.getColorScheme(
                     decorationAreaType = decorationAreaType,
                     associationKind = associationKind,
                     componentState = contribution.key
                 )
+            }
 
         // And interpolate the colors
         ultraLight = ultraLight.interpolateTowards(contributionScheme.ultraLightColor, 1.0f - amount)
@@ -355,26 +357,25 @@ internal fun populateColorScheme(
 }
 
 @OptIn(AuroraInternalApi::class)
-@Composable
 internal fun populateColorSchemeWithHighlightAlpha(
     colorScheme: MutableColorScheme,
     modelStateInfo: ModelStateInfo,
     currState: ComponentState,
     colorSchemeBundle: AuroraColorSchemeBundle?,
+    colors: AuroraSkinColors,
     decorationAreaType: DecorationAreaType,
     associationKind: ColorSchemeAssociationKind
 ) {
-    val skinColors = AuroraSkin.colors
     val currStateScheme = colorSchemeBundle?.getColorScheme(
         associationKind = associationKind,
         componentState = currState,
         allowFallback = true
-    ) ?: skinColors.getColorScheme(
+    ) ?: colors.getColorScheme(
         decorationAreaType = decorationAreaType,
         associationKind = associationKind,
         componentState = currState
     )
-    val currHighlightAlpha = colorSchemeBundle?.getHighlightAlpha(currState) ?: skinColors.getHighlightAlpha(
+    val currHighlightAlpha = colorSchemeBundle?.getHighlightAlpha(currState) ?: colors.getHighlightAlpha(
         decorationAreaType = decorationAreaType,
         componentState = currState
     )
@@ -405,7 +406,7 @@ internal fun populateColorSchemeWithHighlightAlpha(
             // Already accounted for the currently active state
             continue
         }
-        val alpha = skinColors.getHighlightAlpha(
+        val alpha = colors.getHighlightAlpha(
             decorationAreaType = decorationAreaType,
             componentState = contribution.key
         )
@@ -419,7 +420,7 @@ internal fun populateColorSchemeWithHighlightAlpha(
             associationKind = associationKind,
             componentState = contribution.key,
             allowFallback = true
-        ) ?: skinColors.getColorScheme(
+        ) ?: colors.getColorScheme(
             decorationAreaType = decorationAreaType,
             associationKind = associationKind,
             componentState = contribution.key
@@ -486,11 +487,11 @@ internal fun populateColorSchemeWithHighlightAlpha(
 }
 
 @OptIn(AuroraInternalApi::class)
-@Composable
 internal fun getStateAwareColor(
     modelStateInfo: ModelStateInfo,
     currState: ComponentState,
     colorSchemeBundle: AuroraColorSchemeBundle?,
+    colors: AuroraSkinColors,
     decorationAreaType: DecorationAreaType,
     associationKind: ColorSchemeAssociationKind,
     query: (AuroraColorScheme) -> Color,
@@ -499,7 +500,7 @@ internal fun getStateAwareColor(
         associationKind = associationKind,
         componentState = currState,
         allowFallback = true
-    ) ?: AuroraSkin.colors.getColorScheme(
+    ) ?: colors.getColorScheme(
         decorationAreaType = decorationAreaType,
         associationKind = associationKind,
         componentState = currState
@@ -527,7 +528,7 @@ internal fun getStateAwareColor(
             associationKind = associationKind,
             componentState = contribution.key,
             allowFallback = true
-        ) ?: AuroraSkin.colors.getColorScheme(
+        ) ?: colors.getColorScheme(
             decorationAreaType = decorationAreaType,
             associationKind = associationKind,
             componentState = contribution.key

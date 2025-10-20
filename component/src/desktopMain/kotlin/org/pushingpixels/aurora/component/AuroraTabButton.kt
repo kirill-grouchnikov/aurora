@@ -236,6 +236,7 @@ internal fun AuroraTabButton(
                         modelStateInfo = actionModelStateInfo,
                         currState = currentActionState.value,
                         colorSchemeBundle = presentationModel.colorSchemeBundle,
+                        colors = AuroraSkin.colors,
                         decorationAreaType = decorationAreaType,
                         associationKind = ColorSchemeAssociationKind.Fill
                     )
@@ -255,6 +256,7 @@ internal fun AuroraTabButton(
                         modelStateInfo = actionModelStateInfo,
                         currState = currentActionState.value,
                         colorSchemeBundle = presentationModel.colorSchemeBundle,
+                        colors = AuroraSkin.colors,
                         decorationAreaType = decorationAreaType,
                         associationKind = ColorSchemeAssociationKind.Border
                     )

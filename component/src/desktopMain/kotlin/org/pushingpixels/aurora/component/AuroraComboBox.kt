@@ -431,6 +431,7 @@ internal fun <E> AuroraComboBox(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colorSchemeBundle = presentationModel.colorSchemeBundle,
+            colors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
             associationKind = ColorSchemeAssociationKind.Mark
         ) { it.markColor }
@@ -442,6 +443,7 @@ internal fun <E> AuroraComboBox(
                 colorScheme = drawingCache.colorScheme,
                 modelStateInfo = modelStateInfo,
                 currState = currentState.value,
+                colors = AuroraSkin.colors,
                 colorSchemeBundle = presentationModel.colorSchemeBundle,
                 decorationAreaType = decorationAreaType,
                 associationKind = ColorSchemeAssociationKind.Fill
@@ -461,6 +463,7 @@ internal fun <E> AuroraComboBox(
                 colorScheme = drawingCache.colorScheme,
                 modelStateInfo = modelStateInfo,
                 currState = currentState.value,
+                colors = AuroraSkin.colors,
                 colorSchemeBundle = presentationModel.colorSchemeBundle,
                 decorationAreaType = decorationAreaType,
                 associationKind = ColorSchemeAssociationKind.Border
