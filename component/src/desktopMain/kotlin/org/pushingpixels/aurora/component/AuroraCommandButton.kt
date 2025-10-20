@@ -1388,12 +1388,25 @@ internal fun <M : BaseCommandMenuContentModel,
                 val currStateForIcon =
                     if (hasAction or isToggle) currentActionState.value else currentPopupState.value
 
+                // Compute the text / icon color based on the passed model state (which can be action
+                // or popup)
+                val textColor = getTextColor(
+                    modelStateInfo = modelStateInfoForIcon,
+                    currState = currStateForIcon,
+                    colors = skinColors,
+                    colorSchemeBundle = presentationModel.colorSchemeBundle,
+                    decorationAreaType = decorationAreaType,
+                    colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
+                    isTextInFilledArea = true
+                )
+
                 CommandButtonIconContent(
                     command,
                     presentationModel,
                     layoutManager.getPreferredIconSize(command, presentationModel),
                     modelStateInfoForIcon,
                     currStateForIcon,
+                    textColor,
                     drawingCache
                 )
             }
@@ -1415,16 +1428,28 @@ internal fun <M : BaseCommandMenuContentModel,
                 currentPopupState.value
             }
 
+            // Compute the text color based on the passed model state (which can be action
+            // or popup)
+            val textColor = getTextColor(
+                modelStateInfo = modelStateInfoForText,
+                currState = currStateForText,
+                colors = AuroraSkin.colors,
+                colorSchemeBundle = presentationModel.colorSchemeBundle,
+                decorationAreaType = decorationAreaType,
+                colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
+                isTextInFilledArea = true
+            )
+
             for (text in preLayoutInfo.texts) {
                 CommandButtonTextContent(
                     presentationModel, text, modelStateInfoForText, currStateForText,
-                    resolvedTextStyle
+                    textColor, resolvedTextStyle
                 )
             }
             for (extraText in preLayoutInfo.extraTexts) {
                 CommandButtonExtraTextContent(
                     presentationModel, extraText, modelStateInfoForText, currStateForText,
-                    resolvedTextStyle, layoutManager.getExtraTextMaxLines()
+                    textColor, resolvedTextStyle, layoutManager.getExtraTextMaxLines()
                 )
             }
 
@@ -1746,32 +1771,18 @@ internal fun <M : BaseCommandMenuContentModel,
 private fun CommandButtonTextContent(
     presentationModel: BaseCommandButtonPresentationModel,
     text: String, modelStateInfo: ModelStateInfo, currState: ComponentState,
-    style: TextStyle
+    defaultTextColor: Color, style: TextStyle
 ) {
-    val decorationAreaType = AuroraSkin.decorationAreaType
-
-    // Compute the text color based on the passed model state (which can be action
-    // or popup)
-    val textColor = getTextColor(
-        modelStateInfo = modelStateInfo,
-        currState = currState,
-        colors = AuroraSkin.colors,
-        colorSchemeBundle = presentationModel.colorSchemeBundle,
-        decorationAreaType = decorationAreaType,
-        colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
-        isTextInFilledArea = true
-    )
-
     // Pass our text color and model state snapshot to the children
     CompositionLocalProvider(
-        LocalTextColor provides textColor,
+        LocalTextColor provides defaultTextColor,
         LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currState)
     ) {
         // Since we're passing the resolved style that has the default color,
         // also explicitly pass our text color to override the one set in the style
         AuroraText(
             text = text,
-            color = textColor,
+            color = defaultTextColor,
             style = style,
             maxLines = 1,
             overflow = presentationModel.textOverflow
@@ -1784,21 +1795,9 @@ private fun CommandButtonTextContent(
 private fun CommandButtonExtraTextContent(
     presentationModel: BaseCommandButtonPresentationModel,
     text: String, modelStateInfo: ModelStateInfo, currState: ComponentState,
-    style: TextStyle, maxLines: Int
+    defaultTextColor: Color, style: TextStyle, maxLines: Int
 ) {
     val decorationAreaType = AuroraSkin.decorationAreaType
-
-    // Compute the regular text color based on the passed model state (which can be action
-    // or popup)
-    val textColor = getTextColor(
-        modelStateInfo = modelStateInfo,
-        currState = currState,
-        colors = AuroraSkin.colors,
-        colorSchemeBundle = presentationModel.colorSchemeBundle,
-        decorationAreaType = decorationAreaType,
-        colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
-        isTextInFilledArea = true
-    )
 
     // "Move" the regular text color towards the disabled state for more muted visuals
     // of the extra text
@@ -1817,7 +1816,7 @@ private fun CommandButtonExtraTextContent(
     if (currState.isDisabled) {
         disabledFgColor = disabledFgColor.interpolateTowards(bgFillColor, 0.5f)
     }
-    disabledFgColor = disabledFgColor.interpolateTowards(textColor, 0.5f)
+    disabledFgColor = disabledFgColor.interpolateTowards(defaultTextColor, 0.5f)
 
     // Pass our text color and model state snapshot to the children
     CompositionLocalProvider(
@@ -1841,7 +1840,10 @@ private fun CommandButtonExtraTextContent(
 private fun CommandButtonIconContent(
     command: BaseCommand,
     presentationModel: BaseCommandButtonPresentationModel,
-    iconSize: DpSize, modelStateInfo: ModelStateInfo, currState: ComponentState,
+    iconSize: DpSize,
+    modelStateInfo: ModelStateInfo,
+    currState: ComponentState,
+    defaultIconColor: Color,
     drawingCache: CommandButtonDrawingCache
 ) {
     // Compute the combined strength of all the
@@ -1975,21 +1977,9 @@ private fun CommandButtonIconContent(
             else
                 command.icon
 
-            // Compute the text color based on the passed model state (which can be action
-            // or popup)
-            val textColor = getTextColor(
-                modelStateInfo = modelStateInfo,
-                currState = currState,
-                colors = skinColors,
-                colorSchemeBundle = presentationModel.colorSchemeBundle,
-                decorationAreaType = decorationAreaType,
-                colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
-                isTextInFilledArea = true
-            )
-
-            // Pass our text color and model state snapshot to the children
+            // Pass our text / icon color and model state snapshot to the children
             CompositionLocalProvider(
-                LocalTextColor provides textColor,
+                LocalTextColor provides defaultIconColor,
                 LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currState),
                 LocalColorSchemeBundle provides presentationModel.colorSchemeBundle
             ) {

@@ -68,7 +68,9 @@ private class CombinedIconModifier(
 
         // And then add the active state filter strategy if we have any active state(s)
         // in the model state snapshot
-        if (modelStateInfoSnapshot.activeStrength > 0.0f) {
+        val skipForThemedFollowText = ((enabledFilterStrategy == IconFilterStrategy.ThemedFollowText)
+                && (activeFilterStrategy == IconFilterStrategy.ThemedFollowText))
+        if (!skipForThemedFollowText && modelStateInfoSnapshot.activeStrength > 0.0f) {
             val activeAlpha = if (activeFilterStrategy != IconFilterStrategy.Original)
                 modelStateInfoSnapshot.activeStrength else 1.0f
             val activeColorFilter: ColorFilter? =
