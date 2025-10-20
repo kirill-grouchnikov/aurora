@@ -25,6 +25,7 @@ import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.component.projection.CheckBoxProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonPanelProjection
 import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
@@ -103,6 +104,7 @@ fun main() = auroraApplication {
     val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
+    var useStickyGroupLabels by remember { mutableStateOf(false) }
 
     AuroraWindow(
         skin = skin,
@@ -112,7 +114,8 @@ fun main() = auroraApplication {
         onCloseRequest = ::exitApplication,
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp)) {
+            Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically) {
                 AuroraDecorationArea(
                     decorationAreaType = DecorationAreaType.None,
                     buttonShaper = ClassicButtonShaper.Instance
@@ -122,6 +125,14 @@ fun main() = auroraApplication {
                     Spacer(modifier = Modifier.width(8.dp))
 
                     AuroraLocaleSwitcher(resourceBundle)
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    CheckBoxProjection(contentModel = SelectorContentModel(
+                        text = "sticky group labels",
+                        selected = useStickyGroupLabels,
+                        onClick = { useStickyGroupLabels = !useStickyGroupLabels }
+                    )).project()
                 }
             }
 
@@ -137,6 +148,7 @@ fun main() = auroraApplication {
                         presentationModel = CommandPanelPresentationModel(
                             layoutSpec = PanelLayoutSpec.RowFill(PanelRowFillSpec.Adaptive(140.dp)),
                             showGroupLabels = true,
+                            useStickyGroupLabels = useStickyGroupLabels,
                             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                             commandPresentationState = CommandButtonPresentationState.Medium,
                             iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -153,6 +165,7 @@ fun main() = auroraApplication {
                         presentationModel = CommandPanelPresentationModel(
                             layoutSpec = PanelLayoutSpec.ColumnFill(PanelColumnFillSpec.Adaptive(80.dp)),
                             showGroupLabels = false,
+                            useStickyGroupLabels = false,
                             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                             commandPresentationState = CommandButtonPresentationState.Big,
                             iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,

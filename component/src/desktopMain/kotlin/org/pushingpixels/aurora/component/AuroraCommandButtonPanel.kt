@@ -276,8 +276,10 @@ internal fun AuroraCommandButtonPanel(
                         ) {
                             for ((groupIndex, commandGroup) in contentModel.commandGroups.withIndex()) {
                                 if (presentationModel.showGroupLabels && (commandGroup.title != null)) {
-                                    item {
-                                        CommandButtonGroupTitle(commandGroup)
+                                    if (presentationModel.useStickyGroupLabels) {
+                                        stickyHeader { CommandButtonGroupTitle(commandGroup) }
+                                    } else {
+                                        item { CommandButtonGroupTitle(commandGroup) }
                                     }
                                 }
 

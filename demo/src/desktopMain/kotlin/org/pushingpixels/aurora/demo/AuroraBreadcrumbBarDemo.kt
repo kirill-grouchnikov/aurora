@@ -187,6 +187,7 @@ fun AuroraWindowScope.BreadcrumbContent(onSkinChange: (AuroraSkinDefinition) -> 
                 presentationModel = CommandPanelPresentationModel(
                     layoutSpec = PanelLayoutSpec.RowFill(PanelRowFillSpec.Adaptive(140.dp)),
                     showGroupLabels = false,
+                    useStickyGroupLabels = false,
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                     commandPresentationState = CommandButtonPresentationState.Medium,
                     commandHorizontalAlignment = HorizontalAlignment.Leading,
