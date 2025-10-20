@@ -1,7 +1,5 @@
 plugins {
     `java-gradle-plugin`
-    `kotlin-dsl`
-    groovy
     id("com.vanniktech.maven.publish")
     `maven-publish`
 }
