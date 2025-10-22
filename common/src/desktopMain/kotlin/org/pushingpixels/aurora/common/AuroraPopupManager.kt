@@ -97,6 +97,7 @@ private class AuroraPopup : Popup() {
         this.hostWindow!!.opacity = 0.0f
         // Sets the proper location, and resets internal state of the window
         this.hostWindow!!.setBounds(ownerX, ownerY, 1, 1)
+        this.hostWindow!!.background = contents.background
         this.hostWindow!!.contentPane.add(contents, BorderLayout.CENTER)
         this.hostWindow!!.invalidate()
         this.hostWindow!!.validate()
@@ -129,6 +130,7 @@ private class AuroraHeavyWeightWindow(parent: Window) : JWindow(parent) {
         focusableWindowState = false
         type = Type.POPUP
         isAlwaysOnTop = true
+        background = parent.background
     }
 
     override fun update(g: Graphics) {
