@@ -18,7 +18,13 @@ package org.pushingpixels.aurora.theming.utils
 import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.common.overlayWith
 import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.theming.ComponentState
+import org.pushingpixels.aurora.theming.ContainerColorTokensAssociationKind
+import org.pushingpixels.aurora.theming.DecorationAreaType
+import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 
 internal fun getRolloverUnselectedTokens(baseTokens: ContainerColorTokens): ContainerColorTokens {
     // Mixing in 20% of surface bright on top of base
@@ -141,3 +147,215 @@ enum class ContainerType {
     Muted,
     Active
 }
+
+fun getActiveContainerTokens(colors: AuroraSkinColors, decorationAreaType: DecorationAreaType):
+        ContainerColorTokens {
+    return colors.getActiveContainerTokens(decorationAreaType)
+}
+
+fun getActiveContainerTokens(
+    colors: AuroraSkinColors, decorationAreaType: DecorationAreaType,
+    componentState: ComponentState
+): ContainerColorTokens {
+
+    // TODO - wire this to a composition local
+    val tokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null
+    val tokensOverlay: ContainerColorTokensOverlay? = if (tokensOverlayProvider != null)
+        tokensOverlayProvider.invoke(colors, decorationAreaType)
+    else
+        null
+
+    val result = if (tokensOverlay != null)
+        tokensOverlay.getActiveContainerTokens(componentState)
+    else
+        colors.getActiveContainerTokens(decorationAreaType, componentState)
+    return result
+}
+
+fun getMutedContainerTokens(colors: AuroraSkinColors, decorationAreaType: DecorationAreaType):
+        ContainerColorTokens {
+    return colors.getMutedContainerTokens(decorationAreaType)
+}
+
+fun getMutedContainerTokens(
+    colors: AuroraSkinColors, decorationAreaType: DecorationAreaType,
+    componentState: ComponentState
+): ContainerColorTokens {
+
+    // TODO - wire this to a composition local
+    val tokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null
+    val tokensOverlay: ContainerColorTokensOverlay? = if (tokensOverlayProvider != null)
+        tokensOverlayProvider.invoke(colors, decorationAreaType)
+    else
+        null
+
+    val result = if (tokensOverlay != null)
+        tokensOverlay.mutedContainerTokens
+    else
+        colors.getMutedContainerTokens(decorationAreaType)
+    return result
+}
+
+fun getNeutralContainerTokens(colors: AuroraSkinColors, decorationAreaType: DecorationAreaType):
+        ContainerColorTokens {
+    return colors.getNeutralContainerTokens(decorationAreaType)
+}
+
+fun getNeutralContainerTokens(
+    colors: AuroraSkinColors, decorationAreaType: DecorationAreaType,
+    componentState: ComponentState
+): ContainerColorTokens {
+
+    // TODO - wire this to a composition local
+    val tokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null
+    val tokensOverlay: ContainerColorTokensOverlay? = if (tokensOverlayProvider != null)
+        tokensOverlayProvider.invoke(colors, decorationAreaType)
+    else
+        null
+
+    val result = if (tokensOverlay != null)
+        tokensOverlay.neutralContainerTokens
+    else
+        colors.getNeutralContainerTokens(decorationAreaType)
+    return result
+}
+
+fun getContainerTokens(
+    colors: AuroraSkinColors,
+    decorationAreaType: DecorationAreaType,
+    componentState: ComponentState,
+    backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
+    inactiveContainerType: ContainerType
+): ContainerColorTokens? {
+    var componentState = componentState
+
+    // TODO - wire this to a composition local
+    val tokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null
+    val tokensOverlay: ContainerColorTokensOverlay? = if (tokensOverlayProvider != null)
+        tokensOverlayProvider.invoke(colors, decorationAreaType)
+    else
+        null
+
+    // special case - if the component is marked as flat and
+    // it is in the default state, or it is a component
+    // that is never painting its background - get the color tokens of the
+    // parent
+    val isNeverPainted = (backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Never)
+    val isFlat = (backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat)
+    if (isNeverPainted || (!componentState.isActive && isFlat)) {
+        val result: ContainerColorTokens? = if (tokensOverlay != null)
+            tokensOverlay.neutralContainerTokens
+        else
+            colors.getNeutralContainerTokens(decorationAreaType)
+        return result
+    }
+
+    if (componentState.isDisabled) {
+        componentState = componentState.enabledMatch!!
+    }
+    val result: ContainerColorTokens
+    if (componentState.isActive) {
+        result = if (tokensOverlay != null)
+            tokensOverlay.getActiveContainerTokens(componentState)
+        else
+            colors.getActiveContainerTokens(decorationAreaType, componentState)
+    } else {
+        if (inactiveContainerType == ContainerType.Muted) {
+            result = if (tokensOverlay != null)
+                tokensOverlay.mutedContainerTokens
+            else
+                colors.getMutedContainerTokens(decorationAreaType)
+        } else {
+            result = if (tokensOverlay != null)
+                tokensOverlay.neutralContainerTokens
+            else
+                colors.getNeutralContainerTokens(decorationAreaType)
+        }
+    }
+
+    return result
+}
+
+/**
+ * Returns the color tokens of the component.
+ *
+ * @param component       Component.
+ * @param associationKind Association kind.
+ * @param componentState  Component state.
+ * @return Component color tokens.
+ */
+fun getContainerTokens(
+    colors: AuroraSkinColors,
+    decorationAreaType: DecorationAreaType,
+    associationKind: ContainerColorTokensAssociationKind,
+    componentState: ComponentState,
+    backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
+    inactiveContainerType: ContainerType
+): ContainerColorTokens? {
+    return getContainerTokens(colors, decorationAreaType, associationKind, componentState,
+        backgroundAppearanceStrategy, inactiveContainerType, false)
+}
+
+/**
+ * Returns the color tokens of the component.
+ *
+ * @param component       Component.
+ * @param associationKind Association kind.
+ * @param componentState  Component state.
+ * @return Component color tokens.
+ */
+fun getContainerTokens(
+    colors: AuroraSkinColors,
+    decorationAreaType: DecorationAreaType,
+    associationKind: ContainerColorTokensAssociationKind,
+    componentState: ComponentState,
+    backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
+    inactiveContainerType: ContainerType,
+    skipFlatCheck: Boolean
+): ContainerColorTokens {
+    var componentState = componentState
+
+    // TODO - wire this to a composition local
+    val tokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null
+    val tokensOverlay: ContainerColorTokensOverlay? = if (tokensOverlayProvider != null)
+        tokensOverlayProvider.invoke(colors, decorationAreaType)
+    else
+        null
+
+    // special case - if the component is marked as flat, get the color tokens of the parent.
+    // However, flat toolbars should be ignored, since they are
+    // the "top" level decoration area.
+    if (!skipFlatCheck && (backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat)) {
+        val result: ContainerColorTokens = if (tokensOverlay != null)
+            tokensOverlay.neutralContainerTokens
+        else
+            colors.getNeutralContainerTokens(decorationAreaType)
+        return result
+    }
+
+    if (componentState.isDisabled) {
+        componentState = componentState.enabledMatch!!
+    }
+    val result: ContainerColorTokens
+    if (componentState.isActive) {
+        result = if (tokensOverlay != null)
+            tokensOverlay.getActiveContainerTokens(componentState)
+        else
+            colors.getActiveContainerTokens(decorationAreaType, associationKind, componentState)
+    } else {
+        if (inactiveContainerType == ContainerType.Neutral) {
+            result = if (tokensOverlay != null)
+                tokensOverlay.neutralContainerTokens
+            else
+                colors.getNeutralContainerTokens(decorationAreaType, associationKind)
+        } else {
+            result = if (tokensOverlay != null)
+                tokensOverlay.mutedContainerTokens
+            else
+                colors.getMutedContainerTokens(decorationAreaType, associationKind)
+        }
+    }
+    return result
+}
+
+

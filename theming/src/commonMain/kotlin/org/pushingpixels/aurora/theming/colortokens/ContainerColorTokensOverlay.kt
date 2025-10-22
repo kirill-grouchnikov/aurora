@@ -238,7 +238,7 @@ class ContainerColorTokensOverlay(
         }
     }
 
-    fun getActiveContainerTokens(componentState: ComponentState): ContainerColorTokens? {
+    fun getActiveContainerTokens(componentState: ComponentState): ContainerColorTokens {
         if (componentState.isDisabled) {
             return getActiveContainerTokens(componentState.enabledMatch!!)
         }
@@ -253,7 +253,7 @@ class ContainerColorTokensOverlay(
         }
     }
 
-    private fun getActiveContainerTokensForState(componentState: ComponentState): ContainerColorTokens? {
+    private fun getActiveContainerTokensForState(componentState: ComponentState): ContainerColorTokens {
         if (componentState.isDisabled) {
             return getActiveContainerTokensForState(componentState.enabledMatch!!)
         }
@@ -264,31 +264,31 @@ class ContainerColorTokensOverlay(
             if (!this.activeTokenOverrides.containsKey(componentState)) {
                 this.activeTokenOverrides[componentState] = getPressedUnselectedTokens(activeTokens)
             }
-            return this.activeTokenOverrides[componentState]
+            return this.activeTokenOverrides[componentState]!!
         }
         if (componentState === ComponentState.PressedSelected) {
             if (!this.activeTokenOverrides.containsKey(componentState)) {
                 this.activeTokenOverrides[componentState] = getPressedSelectedTokens(activeTokens)
             }
-            return this.activeTokenOverrides[componentState]
+            return this.activeTokenOverrides[componentState]!!
         }
         if (componentState === ComponentState.Selected) {
             if (!this.activeTokenOverrides.containsKey(componentState)) {
                 this.activeTokenOverrides[componentState] = activeTokens
             }
-            return this.activeTokenOverrides[componentState]
+            return this.activeTokenOverrides[componentState]!!
         }
         if (componentState === ComponentState.RolloverUnselected) {
             if (!this.activeTokenOverrides.containsKey(componentState)) {
                 this.activeTokenOverrides[componentState] = getRolloverUnselectedTokens(activeTokens)
             }
-            return this.activeTokenOverrides[componentState]
+            return this.activeTokenOverrides[componentState]!!
         }
         if (componentState === ComponentState.RolloverSelected) {
             if (!this.activeTokenOverrides.containsKey(componentState)) {
                 this.activeTokenOverrides[componentState] = getRolloverSelectedTokens(activeTokens)
             }
-            return this.activeTokenOverrides[componentState]
+            return this.activeTokenOverrides[componentState]!!
         }
 
         val hardFallback: ComponentState? = componentState.hardFallback
