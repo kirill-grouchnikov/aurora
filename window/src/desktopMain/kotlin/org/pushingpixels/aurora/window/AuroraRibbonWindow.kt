@@ -651,7 +651,7 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
                         }
                     }
                 }
-                RibbonOverlay(Modifier, WindowSizingConstants.DecoratedBorderThickness)
+                //RibbonOverlay(Modifier, WindowSizingConstants.DecoratedBorderThickness)
             }
             Box(modifier = Modifier.fillMaxWidth().weight(1.0f)) {
                 // Wrap the entire content in NONE decoration area. App code can set its

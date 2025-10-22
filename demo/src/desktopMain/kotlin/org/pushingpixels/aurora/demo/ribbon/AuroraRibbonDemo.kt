@@ -290,29 +290,6 @@ fun main() = auroraApplication {
         onClick = { ribbonState = ribbonState.copy(selectedTask = Task.Animations) }
     )
 
-    val wrappedTask = RibbonTask(
-        title = resourceBundle.getString("Wrapped.textTaskTitle"),
-        bands = listOf(
-            builder.getActionBand(),
-            builder.getApplicationsBand(selectedApplicationGame = ribbonState.applicationGame,
-                onApplicationGameSelected = {
-                    ribbonState = ribbonState.copy(applicationGame = it)
-                },
-                selectedApplicationBrowser = ribbonState.applicationBrowser,
-                onApplicationBrowserSelected = {
-                    ribbonState = ribbonState.copy(applicationBrowser = it)
-                },
-                selectedApplicationMultimedia = ribbonState.applicationMultimedia,
-                onApplicationMultimediaSelected = {
-                    ribbonState = ribbonState.copy(applicationMultimedia = it)
-                })
-        ),
-        resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin,
-        keyTip = "R",
-        isActive = (ribbonState.selectedTask == Task.Wrapped),
-        onClick = { ribbonState = ribbonState.copy(selectedTask = Task.Wrapped) }
-    )
-
     val contextualTaskGroup1 = RibbonContextualTaskGroup(
         title = resourceBundle.getString("Group1.textTaskGroupTitle"),
         hueColor = Color.Red,
@@ -584,7 +561,7 @@ fun main() = auroraApplication {
     }
 
     val ribbon = Ribbon(
-        tasks = listOf(pageLayoutTask, writeTask, animationsTask, wrappedTask),
+        tasks = listOf(pageLayoutTask, writeTask, animationsTask),
         contextualTaskGroups = contextualTaskGroups,
         taskbarElements = taskbarElements,
         taskbarKeyTipPolicy = DefaultRibbonTaskbarKeyTipPolicy(),
