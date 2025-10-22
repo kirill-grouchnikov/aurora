@@ -62,7 +62,7 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.TopStart),
         size = DpSize(200.dp, 150.dp)
     )
-    var skin by remember { mutableStateOf(twilightSkin()) }
+    var skin by remember { mutableStateOf(geminiSkin()) }
     val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }

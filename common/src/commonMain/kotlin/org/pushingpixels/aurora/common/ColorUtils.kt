@@ -268,6 +268,34 @@ fun Color.darker(diff: Float): Color {
     return interpolateTowards(Color.Black, 1.0f - diff)
 }
 
+
+fun Color.overlayWith(overlay: Color): Color {
+    val baseAlpha = this.alpha
+    val overlayAlpha = overlay.alpha
+    val finalAlpha = overlayAlpha + baseAlpha * (1.0f - overlayAlpha)
+
+    if (finalAlpha == 0.0f) {
+        return Color(0, 0, 0, 0)
+    }
+
+    val baseR = this.red
+    val overlayR = overlay.red
+    val finalR = (overlayR * overlayAlpha +
+            (baseR * baseAlpha) * (1.0f - overlayAlpha)) / finalAlpha
+
+    val baseG = this.green
+    val overlayG = overlay.green
+    val finalG = (overlayG * overlayAlpha +
+            (baseG * baseAlpha) * (1.0f - overlayAlpha)) / finalAlpha
+
+    val baseB = this.blue
+    val overlayB = overlay.blue
+    val finalB = (overlayB * overlayAlpha +
+            (baseB * baseAlpha) * (1.0f - overlayAlpha)) / finalAlpha
+
+    return Color(finalR, finalG, finalB, finalAlpha, this.colorSpace)
+}
+
 /** Returns the brightness of this color in [0.0-1.0] range ignoring the alpha. */
 val Color.colorBrightness: Float
     get() = getColorBrightness(this.red, this.green, this.blue)

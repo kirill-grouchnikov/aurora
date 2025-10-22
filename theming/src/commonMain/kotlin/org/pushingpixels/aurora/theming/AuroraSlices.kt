@@ -93,7 +93,8 @@ class ComponentStateFacet(var name: String, value: Int) {
  * [ComponentStateFacet.Enable] and [ComponentStateFacet.Selection].
  */
 class ComponentState(
-    private val name: String, hardFallback: ComponentState?,
+    private val name: String, val hardFallback: ComponentState?,
+    val enabledMatch: ComponentState? = null,
     facetsOn: Array<ComponentStateFacet>?, facetsOff: Array<ComponentStateFacet>?
 ) {
     /**
@@ -111,7 +112,6 @@ class ComponentState(
     private val facetsTurnedOff: MutableSet<ComponentStateFacet>?
 
     private val mappingOn: MutableMap<ComponentStateFacet, Boolean>
-    val hardFallback: ComponentState?
 
     /**
      * Creates a new component state.
@@ -129,7 +129,7 @@ class ComponentState(
     constructor(
         name: String, facetsOn: Array<ComponentStateFacet>?,
         facetsOff: Array<ComponentStateFacet>?
-    ) : this(name, null, facetsOn, facetsOff)
+    ) : this(name, null, null, facetsOn, facetsOff)
 
     override fun toString(): String {
         val sb = StringBuilder()
@@ -315,56 +315,6 @@ class ComponentState(
         private val allStates: MutableSet<ComponentState> = HashSet()
 
         /**
-         * Disabled selected.
-         */
-        val DisabledSelected = ComponentState(
-            name = "disabled selected",
-            facetsOn = arrayOf(ComponentStateFacet.Selection),
-            facetsOff = arrayOf(ComponentStateFacet.Enable)
-        )
-
-        /**
-         * Disabled and not selected.
-         */
-        val DisabledUnselected = ComponentState(
-            name = "disabled unselected",
-            facetsOn = null,
-            facetsOff = arrayOf(
-                ComponentStateFacet.Enable, ComponentStateFacet.Selection
-            )
-        )
-
-        /**
-         * Disabled and indeterminate.
-         */
-        val DisabledIndeterminate = ComponentState(
-            name = "indeterminate disabled",
-            hardFallback = DisabledSelected,
-            facetsOn = arrayOf(ComponentStateFacet.Indeterminate),
-            facetsOff = arrayOf(ComponentStateFacet.Enable)
-        )
-
-        /**
-         * Disabled and determinate.
-         */
-        val DisabledDeterminate = ComponentState(
-            name = "determinate disabled",
-            hardFallback = DisabledSelected,
-            facetsOn = arrayOf(ComponentStateFacet.Determinate),
-            facetsOff = arrayOf(ComponentStateFacet.Enable)
-        )
-
-        /**
-         * Disabled and mixed.
-         */
-        val DisabledMixed = ComponentState(
-            name = "mixed disabled",
-            hardFallback = DisabledSelected,
-            facetsOn = arrayOf(ComponentStateFacet.Mix),
-            facetsOff = arrayOf(ComponentStateFacet.Enable)
-        )
-
-        /**
          * Pressed selected.
          */
         val PressedSelected = ComponentState(
@@ -488,6 +438,63 @@ class ComponentState(
             facetsOff = null)
 
         /**
+         * Disabled selected.
+         */
+        val DisabledSelected = ComponentState(
+            name = "disabled selected",
+            hardFallback = null,
+            enabledMatch = Selected,
+            facetsOn = arrayOf(ComponentStateFacet.Selection),
+            facetsOff = arrayOf(ComponentStateFacet.Enable)
+        )
+
+        /**
+         * Disabled and not selected.
+         */
+        val DisabledUnselected = ComponentState(
+            name = "disabled unselected",
+            hardFallback = null,
+            enabledMatch = Enabled,
+            facetsOn = null,
+            facetsOff = arrayOf(
+                ComponentStateFacet.Enable, ComponentStateFacet.Selection
+            )
+        )
+
+        /**
+         * Disabled and indeterminate.
+         */
+        val DisabledIndeterminate = ComponentState(
+            name = "indeterminate disabled",
+            hardFallback = DisabledSelected,
+            enabledMatch = Indeterminate,
+            facetsOn = arrayOf(ComponentStateFacet.Indeterminate),
+            facetsOff = arrayOf(ComponentStateFacet.Enable)
+        )
+
+        /**
+         * Disabled and determinate.
+         */
+        val DisabledDeterminate = ComponentState(
+            name = "determinate disabled",
+            hardFallback = DisabledSelected,
+            enabledMatch = Determinate,
+            facetsOn = arrayOf(ComponentStateFacet.Determinate),
+            facetsOff = arrayOf(ComponentStateFacet.Enable)
+        )
+
+        /**
+         * Disabled and mixed.
+         */
+        val DisabledMixed = ComponentState(
+            name = "mixed disabled",
+            hardFallback = DisabledSelected,
+            enabledMatch = Mixed,
+            facetsOn = arrayOf(ComponentStateFacet.Mix),
+            facetsOff = arrayOf(ComponentStateFacet.Enable)
+        )
+
+        /**
          * Returns all active component states. Note that the result will **not** contain
          * [ComponentState.Enabled].
          *
@@ -589,7 +596,6 @@ class ComponentState(
     }
 
     init {
-        this.hardFallback = hardFallback
         facetsTurnedOn = mutableSetOf()
         if (facetsOn != null) {
             facetsTurnedOn.addAll(facetsOn)
@@ -709,6 +715,92 @@ class ColorSchemeAssociationKind(
          * @return All available association kinds.
          */
         fun values(): Set<ColorSchemeAssociationKind> {
+            return values.toCollection(LinkedHashSet(values.size))
+        }
+    }
+
+    init {
+        values.add(this)
+    }
+}
+
+
+/**
+ * Allows associating different color schemes to different visual parts of UI components. For
+ * example, the checkbox has three different visual areas:
+ *
+ *  * Border - associated with [.Border]
+ *  * Fill - associated with [.MarkBox]
+ *  * Check mark - associated with [.Mark]
+ *
+ * Applications can create custom instances of this class to further refine the control over the
+ * painting. In this case, the custom UI delegates must be created to use these new association
+ * kinds.
+ *
+ * @author Kirill Grouchnikov
+ */
+class ContainerColorTokensAssociationKind(
+    /**
+     * Name for this association kind.
+     */
+    private val name: String,
+    /**
+     * Fallback for this association kind. This is used when no color scheme is associated with
+     * this kind. For example, [.TabBorder] specifies that its fallback is
+     * [.Border]. When the tabs are painted, it will
+     * try to use the color scheme associated with [.TabBorder]. If none was registered,
+     * it will fall back to use the color scheme associated with [.Border], and if that is
+     * not registered as well, will use the color scheme associated with [.Fill].
+     */
+    val fallback: ContainerColorTokensAssociationKind?
+) {
+    override fun toString(): String {
+        return name
+    }
+
+    companion object {
+        /**
+         * All known association kind values.
+         */
+        private val values: MutableSet<ContainerColorTokensAssociationKind> = HashSet()
+
+        /**
+         * The default visual area that is used for the inner part of most controls.
+         */
+        val Default = ContainerColorTokensAssociationKind("default", null)
+
+        /**
+         * Visual area of separators.
+         */
+        val Separator = ContainerColorTokensAssociationKind("separator", Default)
+
+        /**
+         * Fill visual area of the tabs.
+         */
+        val Tab = ContainerColorTokensAssociationKind("tab", Default)
+
+        /**
+         * Visual area of marks. Used for painting check marks of checkboxes and radio buttons, as
+         * well as arrow icons of combo boxes, spinners and more.
+         */
+        val Mark = ContainerColorTokensAssociationKind("mark", Default)
+
+        /**
+         * Highlight visual areas for lists, tables, trees and menus.
+         */
+        val Highlight = ContainerColorTokensAssociationKind("highlight", Default)
+
+        /**
+         * Highlight visual areas for text components.
+         */
+        val HighlightText = ContainerColorTokensAssociationKind("highlightText", Highlight)
+
+        /**
+         * Returns all available association kinds.
+         *
+         * @return All available association kinds.
+         */
+        fun values(): Set<ContainerColorTokensAssociationKind> {
             return values.toCollection(LinkedHashSet(values.size))
         }
     }
@@ -927,4 +1019,14 @@ enum class TitleIconHorizontalGravity {
      * Align icon on the side of the title pane opposite to that of the control buttons.
      */
     OppositeControlButtons
+}
+
+/**
+ * Enumeration of available system container types.
+ */
+enum class SystemContainerType {
+    Info,
+    Warning,
+    Error,
+    Success
 }

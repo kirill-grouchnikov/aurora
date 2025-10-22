@@ -19,6 +19,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colorscheme.composite
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.DelegateFractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.FractionBasedBorderPainter
@@ -29,8 +30,11 @@ import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopBezelOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopLineOverlayPainter
+import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.getColorSchemes
+import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
+import org.pushingpixels.ephemeral.chroma.hct.Hct
 
 /**
  * Applies the specified highlight schemes on the relevant parts of the
@@ -242,6 +246,35 @@ private fun geminiSkinColors(): AuroraSkinColors {
         toolbarSchemeBundle, darkBlueBackgroundColorScheme,
         DecorationAreaType.Toolbar
     )
+
+
+    // Same seed for active and muted
+    val geminiDefaultActiveTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFB0BBB8u.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultLight()
+    )
+    val geminiDefaultMutedTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFB0BBB8u.toInt()),
+        containerConfiguration = ContainerConfiguration(
+            /* isDark */ false,
+            /* contrastLevel */ 0.2
+        )
+    )
+    val geminiDefaultNeutralTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFD1E1E0u.toInt()),
+        containerConfiguration = ContainerConfiguration(
+            /* isDark */ false,
+            /* contrastLevel */ 0.6
+        )
+    )
+    val geminiDefaultBundle = ContainerColorTokensBundle(
+        activeContainerTokens = geminiDefaultActiveTokens,
+        mutedContainerTokens = geminiDefaultMutedTokens,
+        neutralContainerTokens = geminiDefaultNeutralTokens,
+        isSystemDark = false
+    )
+
+    result.registerDecorationAreaTokensBundle(geminiDefaultBundle, DecorationAreaType.None)
 
     return result
 }

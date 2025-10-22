@@ -19,10 +19,10 @@ import org.pushingpixels.aurora.theming.ColorSchemeAssociationKind
 import org.pushingpixels.aurora.theming.ComponentState
 import org.pushingpixels.aurora.theming.ComponentStateFacet
 import org.pushingpixels.aurora.theming.DecorationAreaType
+import org.pushingpixels.aurora.theming.SystemContainerType
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.set
 
 /**
  * Color scheme bundle. Defines the visual appearance of a single decoration area of a skin.
@@ -435,6 +435,7 @@ class AuroraColorSchemeBundle(
     }
 }
 
+// TODO - move to ContainerColorTokensBundle
 class AuroraSkinColors {
     /**
      * Maps decoration area type to the color scheme bundles. Must contain an
@@ -446,6 +447,17 @@ class AuroraSkinColors {
      * Maps decoration area type to the background color schemes.
      */
     private val backgroundColorSchemeMap: MutableMap<DecorationAreaType, AuroraColorScheme> = hashMapOf()
+
+    /**
+     * Maps decoration area type to the color token bundles. Must contain an
+     * entry for [DecorationAreaType.None].
+     */
+    private val colorTokensBundleMap: MutableMap<DecorationAreaType, ContainerColorTokensBundle> = hashMapOf()
+
+    /**
+     * Maps decoration area type to the neutral color tokens overrides.
+     */
+    private val neutralColorTokensOverrideMap: MutableMap<DecorationAreaType, ContainerColorTokens> = hashMapOf()
 
     /**
      * Set of all decoration area types that are not explicitly registered in
@@ -573,6 +585,27 @@ class AuroraSkinColors {
     }
 
     /**
+     * Registers the specified color tokens bundle to be used on controls in
+     * decoration areas.
+     *
+     * @param bundle    The color tokens bundle to use on controls in decoration
+     * areas.
+     * @param areaTypes Enumerates the area types that are affected by the parameters.
+     */
+    fun registerDecorationAreaTokensBundle(
+        bundle: ContainerColorTokensBundle, vararg areaTypes: DecorationAreaType
+    ) {
+        for (areaType in areaTypes) {
+            require(!this.neutralColorTokensOverrideMap.containsKey(areaType)) {
+                "Decorated area type $areaType already configured"
+            }
+
+            this.decoratedAreaSet.add(areaType)
+            this.colorTokensBundleMap[areaType] = bundle
+        }
+    }
+
+    /**
      * Registers the specified color scheme bundle to be used on controls in
      * decoration areas.
      *
@@ -638,6 +671,29 @@ class AuroraSkinColors {
             backgroundColorScheme = backgroundColorScheme,
             areaTypes = areaTypes
         )
+    }
+
+    /**
+     * Registers the specified neutral color tokens to be used on controls in
+     * decoration areas.
+     *
+     * @param neutralContainerTokens The neutral tokens to use in specified decoration areas.
+     * @param areaTypes             Enumerates the area types that are affected by the parameters.
+     * Each decoration area type will be painted by
+     * [RadianceDecorationPainter.paintDecorationArea]
+     */
+    fun registerAsDecorationArea(
+        neutralContainerTokens: ContainerColorTokens,
+        vararg areaTypes: DecorationAreaType
+    ) {
+        for (areaType in areaTypes) {
+            require(areaType !== DecorationAreaType.None) { "Decoration area type NONE not supported by this API" }
+            require(!this.colorTokensBundleMap.containsKey(areaType)) {
+                "Decoration area type $areaType already configured"
+            }
+            this.decoratedAreaSet.add(areaType)
+            this.neutralColorTokensOverrideMap[areaType] = neutralContainerTokens
+        }
     }
 
     /**
@@ -782,6 +838,69 @@ class AuroraSkinColors {
         }
         // 3 - return the background scheme for the default area type
         return backgroundColorSchemeMap[DecorationAreaType.None]!!
+    }
+
+    fun getSystemContainerTokens(
+        decorationAreaType: DecorationAreaType,
+        systemContainerType: SystemContainerType
+    ): ContainerColorTokens {
+        // small optimization - lookup the decoration area only if there
+        // are decoration-specific tokens bundles.
+        if (this.colorTokensBundleMap.size > 1) {
+            if (this.colorTokensBundleMap.containsKey(decorationAreaType)) {
+                return this.colorTokensBundleMap.get(decorationAreaType)!!
+                    .getSystemContainerTokens(systemContainerType)
+            }
+        }
+
+        return this.colorTokensBundleMap.get(DecorationAreaType.None)!!
+            .getSystemContainerTokens(systemContainerType)
+    }
+
+    fun getInverseSystemContainerTokens(
+        decorationAreaType: DecorationAreaType,
+        systemContainerType: SystemContainerType
+    ): ContainerColorTokens {
+        // small optimization - lookup the decoration area only if there
+        // are decoration-specific tokens bundles.
+        if (this.colorTokensBundleMap.size > 1) {
+            if (this.colorTokensBundleMap.containsKey(decorationAreaType)) {
+                return this.colorTokensBundleMap.get(decorationAreaType)!!
+                    .getInverseSystemContainerTokens(systemContainerType)
+            }
+        }
+
+        return this.colorTokensBundleMap.get(DecorationAreaType.None)!!
+            .getInverseSystemContainerTokens(systemContainerType)
+    }
+
+    /**
+     * Returns neutral container tokens for the specified decoration area type.
+     *
+     * @param decorationAreaType Decoration area type.
+     * @return Neutral container tokens for the decoration area type.
+     *
+     * @see .getNeutralContainerTokens
+     * @see .getNeutralContainerTokens
+     * @see .getMutedContainerTokens
+     * @see .getActiveContainerTokens
+     */
+    fun getNeutralContainerTokens(decorationAreaType: DecorationAreaType): ContainerColorTokens {
+        // 1 - If it's the default area type, take its neutral container tokens
+        if (decorationAreaType === DecorationAreaType.None) {
+            return this.colorTokensBundleMap.get(DecorationAreaType.None)!!
+                .getNeutralContainerTokens()
+        }
+        // 2 - check the registered neutral tokens override for this specific area type.
+        if (this.neutralColorTokensOverrideMap.containsKey(decorationAreaType)) {
+            return this.neutralColorTokensOverrideMap.get(decorationAreaType)!!
+        }
+        // 3 - check the registered tokens bundle for this specific area type.
+        if (this.colorTokensBundleMap.containsKey(decorationAreaType)) {
+            return this.colorTokensBundleMap[decorationAreaType]!!.getNeutralContainerTokens()
+        }
+        // 4 - return the neutral tokens for the default area type
+        return this.colorTokensBundleMap[DecorationAreaType.None]!!.getNeutralContainerTokens()
     }
 }
 
