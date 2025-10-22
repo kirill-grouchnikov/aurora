@@ -5,6 +5,8 @@ compose = "1.9.1"
 dokka = "2.1.0"
 batik = "1.19"
 
+ephemeral_chroma = "1.0.0"
+
 versionchecker = "0.53.0"
 mavenpublish = "0.34.0"
 
@@ -18,6 +20,7 @@ kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", ve
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka"}
 batik = { module = "org.apache.xmlgraphics:batik-all", version.ref = "batik" }
+ephemeral-chroma = { module = "org.pushing-pixels:ephemeral-chroma", version.ref = "ephemeral_chroma" }
 
 versionchecker-gradlePlugin = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "versionchecker" }
 mavenpublish-gradlePlugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "mavenpublish" }

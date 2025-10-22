@@ -16,6 +16,7 @@ kotlin {
                 api(compose.foundation)
                 implementation(project(":common"))
                 implementation(project(":theming"))
+                implementation(libs.ephemeral.chroma)
             }
         }
         named("desktopMain") {
@@ -23,6 +24,7 @@ kotlin {
                 api(compose.desktop.common)
                 implementation(project(":common"))
                 implementation(project(":theming"))
+                implementation(libs.ephemeral.chroma)
             }
         }
     }
