@@ -445,20 +445,24 @@ internal fun <E> AuroraComboBox(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colors = skinColors,
-            colorSchemeBundle = presentationModel.colorSchemeBundle,
             decorationAreaType = decorationAreaType,
-            colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
+            associationKind = ContainerColorTokensAssociationKind.Default,
+            backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
+            skipFlatCheck = false,
+            inactiveContainerType = ContainerType.Muted,
             isTextInFilledArea = true
         )
         // And the arrow color
         val arrowColor = getStateAwareColor(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
-            colorSchemeBundle = presentationModel.colorSchemeBundle,
             colors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
-            associationKind = ColorSchemeAssociationKind.Mark
-        ) { it.markColor }
+            associationKind = ContainerColorTokensAssociationKind.Default,
+            backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
+            skipFlatCheck = false,
+            inactiveContainerType = ContainerType.Muted,
+        ) { it.onContainer }
 
         if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.Never) {
             // Populate the cached color scheme for filling the combobox
