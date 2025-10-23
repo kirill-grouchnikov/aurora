@@ -15,21 +15,28 @@
  */
 package org.pushingpixels.aurora.theming
 
+import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colorscheme.composite
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
+import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.DelegateFractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.FractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
+import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
+import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
+import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopBezelOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopLineOverlayPainter
+import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.getColorSchemes
@@ -304,7 +311,34 @@ fun geminiSkin(): AuroraSkinDefinition {
                 transform = { it.tint(0.7f) }
             )),
         decorationPainter = MatteDecorationPainter(),
-        highlightFillPainter = ClassicFillPainter()
+        highlightFillPainter = ClassicFillPainter(),
+        surfacePainter = FractionBasedSurfacePainter(
+            ColorStop(fraction = 0.0f, colorQuery = {
+                if (it.isDark) it.containerSurfaceHigh else it.containerSurfaceLow
+            }),
+            ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerSurface),
+            ColorStop(fraction = 1.0f, colorQuery = {
+                if (it.isDark) it.containerSurfaceLow else it.containerSurfaceHigh
+            }),
+            displayName = "Gemini"
+        ),
+        highlightSurfacePainter = FractionBasedSurfacePainter(
+            ColorStop(fraction = 0.0f, colorQuery = {
+                if (it.isDark) it.containerSurfaceHigh else it.containerSurfaceLow
+            }),
+            ColorStop(fraction = 1.0f, colorQuery = ContainerColorTokens::containerSurface),
+            displayName = "Gemini Highlight"
+        ),
+        outlinePainter = InlayOutlinePainter(
+            displayName = "Gemini",
+            outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutline),
+            inner = OutlineSpec(
+                ColorStop(fraction = 0.0f, alpha = 0.375f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+                ColorStop(fraction = 0.5f, alpha = 0.25f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+                ColorStop(fraction = 1.0f, alpha = 0.125f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+            )
+        ),
+        highlightOutlinePainter = FlatOutlinePainter(),
     )
 
     // add an overlay painter to paint a bezel line along the top

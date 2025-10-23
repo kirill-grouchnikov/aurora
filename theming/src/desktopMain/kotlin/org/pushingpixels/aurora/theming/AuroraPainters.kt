@@ -18,7 +18,11 @@ package org.pushingpixels.aurora.theming
 import org.pushingpixels.aurora.theming.painter.border.AuroraBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.AuroraFillPainter
+import org.pushingpixels.aurora.theming.painter.outline.AuroraOutlinePainter
+import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.overlay.AuroraOverlayPainter
+import org.pushingpixels.aurora.theming.painter.surface.AuroraSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
 import java.util.*
 
 data class AuroraPainters(
@@ -26,6 +30,10 @@ data class AuroraPainters(
     val borderPainter: AuroraBorderPainter,
     val decorationPainter: AuroraDecorationPainter,
     val highlightFillPainter: AuroraFillPainter,
+    val surfacePainter: AuroraSurfacePainter = ClassicSurfacePainter.Instance,
+    val outlinePainter: AuroraOutlinePainter = FlatOutlinePainter(),
+    val highlightSurfacePainter: AuroraSurfacePainter = ClassicSurfacePainter.Instance,
+    val highlightOutlinePainter: AuroraOutlinePainter = FlatOutlinePainter(),
     val overlayPaintersMap: MutableMap<DecorationAreaType, MutableList<AuroraOverlayPainter>> = hashMapOf()
 ) {
     /**

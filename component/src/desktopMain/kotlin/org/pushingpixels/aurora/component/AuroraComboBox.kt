@@ -29,6 +29,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ClipOp
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -45,16 +46,40 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.painter.outline.InsetKind
+import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
-import org.pushingpixels.aurora.theming.utils.MutableColorScheme
+import org.pushingpixels.aurora.theming.utils.ContainerType
+import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
+import org.pushingpixels.aurora.theming.utils.getBaseOutline
 
 @Immutable
 private class ComboBoxDrawingCache(
-    val colorScheme: MutableColorScheme = MutableColorScheme(
-        displayName = "Internal mutable",
-        isDark = false
-    )
+    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens(isDarkAttr = false)
 )
+
+private object ComboBoxOutlineSuppler: OutlineSupplier {
+    override fun getOutline(
+        layoutDirection: LayoutDirection,
+        density: Density,
+        size: Size,
+        insets: Float,
+        radiusAdjustment: Float
+    ): Outline {
+        val cornerRadius = with(density) {
+            3.0.dp.toPx()
+        }
+        return getBaseOutline(
+            layoutDirection = layoutDirection,
+            width = size.width,
+            height = size.height,
+            radius = cornerRadius - radiusAdjustment,
+            sides = Sides(),
+            insets = insets,
+            outlineKind = OutlineKind.Fill,
+        )
+    }
+}
 
 @OptIn(AuroraInternalApi::class)
 private class ComboBoxLocator(val topLeftOffset: AuroraOffset, val size: MutableState<IntSize>) :
@@ -438,47 +463,22 @@ internal fun <E> AuroraComboBox(
         if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.Never) {
             // Populate the cached color scheme for filling the combobox
             // based on the current model state info
-            populateColorScheme(
-                colorScheme = drawingCache.colorScheme,
+            populateColorTokens(
+                colorTokens = drawingCache.colorTokens,
+                colors = AuroraSkin.colors,
+                decorationAreaType = decorationAreaType,
                 modelStateInfo = modelStateInfo,
                 currState = currentState.value,
-                colors = AuroraSkin.colors,
-                colorSchemeBundle = presentationModel.colorSchemeBundle,
-                decorationAreaType = decorationAreaType,
-                associationKind = ColorSchemeAssociationKind.Fill
-            )
-            // And retrieve the container fill colors
-            val fillUltraLight = drawingCache.colorScheme.ultraLightColor
-            val fillExtraLight = drawingCache.colorScheme.extraLightColor
-            val fillLight = drawingCache.colorScheme.lightColor
-            val fillMid = drawingCache.colorScheme.midColor
-            val fillDark = drawingCache.colorScheme.darkColor
-            val fillUltraDark = drawingCache.colorScheme.ultraDarkColor
-            val fillIsDark = drawingCache.colorScheme.isDark
+                associationKind = ContainerColorTokensAssociationKind.Default,
+                backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
+                treatEnabledAsActive = false,
+                skipFlatCheck = false,
+                inactiveContainerType = ContainerType.Muted)
 
-            // Populate the cached color scheme for drawing the border
-            // based on the current model state info
-            populateColorScheme(
-                colorScheme = drawingCache.colorScheme,
-                modelStateInfo = modelStateInfo,
-                currState = currentState.value,
-                colors = AuroraSkin.colors,
-                colorSchemeBundle = presentationModel.colorSchemeBundle,
-                decorationAreaType = decorationAreaType,
-                associationKind = ColorSchemeAssociationKind.Border
-            )
-            // And retrieve the border colors
-            val borderUltraLight = drawingCache.colorScheme.ultraLightColor
-            val borderExtraLight = drawingCache.colorScheme.extraLightColor
-            val borderLight = drawingCache.colorScheme.lightColor
-            val borderMid = drawingCache.colorScheme.midColor
-            val borderDark = drawingCache.colorScheme.darkColor
-            val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
-            val borderIsDark = drawingCache.colorScheme.isDark
+            val surfacePainter = AuroraSkin.painters.surfacePainter
+            val outlinePainter = AuroraSkin.painters.outlinePainter
 
-            val fillPainter = AuroraSkin.painters.fillPainter
-            val borderPainter = AuroraSkin.painters.borderPainter
-
+            // TODO - tonal alpha
             val alpha =
                 if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat) {
                     if (currentState.value == ComponentState.DisabledSelected) {
@@ -525,55 +525,29 @@ internal fun <E> AuroraComboBox(
                         return@withTransform
                     }
 
-                    // Populate the cached color scheme for filling the combobox
-                    drawingCache.colorScheme.ultraLight = fillUltraLight
-                    drawingCache.colorScheme.extraLight = fillExtraLight
-                    drawingCache.colorScheme.light = fillLight
-                    drawingCache.colorScheme.mid = fillMid
-                    drawingCache.colorScheme.dark = fillDark
-                    drawingCache.colorScheme.ultraDark = fillUltraDark
-                    drawingCache.colorScheme.isDark = fillIsDark
-                    drawingCache.colorScheme.foreground = textColor
-                    fillPainter.paintContourBackground(
-                        this, this.size, fillOutline, drawingCache.colorScheme, alpha
-                    )
-
-                    // Populate the cached color scheme for drawing the border
-                    drawingCache.colorScheme.ultraLight = borderUltraLight
-                    drawingCache.colorScheme.extraLight = borderExtraLight
-                    drawingCache.colorScheme.light = borderLight
-                    drawingCache.colorScheme.mid = borderMid
-                    drawingCache.colorScheme.dark = borderDark
-                    drawingCache.colorScheme.ultraDark = borderUltraDark
-                    drawingCache.colorScheme.isDark = borderIsDark
-                    drawingCache.colorScheme.foreground = textColor
-
-                    val borderOutline = buttonShaper.getButtonOutline(
+                    val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
+                    val outlineFill = ComboBoxOutlineSuppler.getOutline(
                         layoutDirection = layoutDirection,
-                        width = width,
-                        height = height,
-                        extraInsets = 0.5f,
-                        isInner = false,
-                        sides = Sides(),
-                        outlineKind = OutlineKind.Border,
-                        density = this
-                    )
+                        density = density,
+                        size = this.size,
+                        insets = outlineInset,
+                        radiusAdjustment = 0.0f)
 
-                    val innerBorderOutline = if (borderPainter.isPaintingInnerOutline)
-                        buttonShaper.getButtonOutline(
-                            layoutDirection = layoutDirection,
-                            width = width,
-                            height = height,
-                            extraInsets = 1.0f,
-                            isInner = true,
-                            sides = Sides(),
-                            outlineKind = OutlineKind.Border,
-                            density = this
-                        ) else null
+                    // TODO - extract to SurfacePainterUtils for overlays
+                    surfacePainter.paintContourBackground(
+                        drawScope = this,
+                        size = this.size,
+                        outline = outlineFill,
+                        colorTokens = drawingCache.colorTokens,
+                        alpha = alpha)
 
-                    borderPainter.paintBorder(
-                        this, this.size, borderOutline, innerBorderOutline, drawingCache.colorScheme, alpha
-                    )
+                    // TODO - extract to OutlinePainterUtils for overlays
+                    outlinePainter.paintOutline(
+                        drawScope = this,
+                        size = this.size,
+                        outlineSupplier = ComboBoxOutlineSuppler,
+                        colorTokens = drawingCache.colorTokens,
+                        alpha = alpha)
 
                     val arrowWidth = if (presentationModel.popupPlacementStrategy.isHorizontal)
                         ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx() else
