@@ -89,14 +89,13 @@ private class AuroraBackground(
                 outline = Outline.Rectangle(Rect(Offset.Zero, size)),
                 rootSize = rootSize,
                 offsetFromRoot = offset,
-                colorScheme = colors.getBackgroundColorScheme(decorationAreaType)
+                colorTokens = colors.getNeutralContainerTokens(decorationAreaType),
             )
         } else {
             // Otherwise use flat color fill
             drawRect(
-                color = colors.getBackgroundColorScheme(
-                    decorationAreaType = decorationAreaType
-                ).backgroundFillColor
+                color = colors.getNeutralContainerTokens(decorationAreaType = decorationAreaType)
+                    .containerSurface
             )
         }
 

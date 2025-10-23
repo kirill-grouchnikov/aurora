@@ -27,6 +27,7 @@ import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.Shader
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 
 /**
  * Implementation of [AuroraDecorationPainter] that uses a Skia shader to paint on
@@ -44,6 +45,13 @@ abstract class ShaderWrapperDecorationPainter(
         componentSize: Size,
         offsetFromRoot: Offset,
         fillScheme: AuroraColorScheme
+    ): Data
+
+    abstract fun getShaderData(
+        density: Density,
+        componentSize: Size,
+        offsetFromRoot: Offset,
+        colorTokens: ContainerColorTokens
     ): Data
 
     override fun paintDecorationArea(
@@ -76,6 +84,55 @@ abstract class ShaderWrapperDecorationPainter(
 
             val shader = runtimeEffect.makeShader(
                 uniforms = getShaderData(drawScope, componentSize, offsetFromRoot, colorScheme),
+                children = arrayOf(baseShader),
+                localMatrix = null
+            )
+
+            val clipPath = Path()
+            clipPath.addOutline(outline)
+            clipPath(path = clipPath) {
+                drawRect(
+                    brush = ShaderBrush(shader),
+                    topLeft = Offset(-offsetFromRoot.x, -offsetFromRoot.y),
+                    size = Size(
+                        componentSize.width + offsetFromRoot.x,
+                        componentSize.height + offsetFromRoot.y
+                    )
+                )
+            }
+        }
+    }
+
+    override fun paintDecorationArea(
+        drawScope: DrawScope,
+        decorationAreaType: DecorationAreaType,
+        componentSize: Size,
+        outline: Outline,
+        rootSize: Size,
+        offsetFromRoot: Offset,
+        colorTokens: ContainerColorTokens
+    ) {
+        with(drawScope) {
+            if (baseDecorationPainter != null) {
+                baseDecorationPainter.paintDecorationArea(
+                    drawScope = this,
+                    decorationAreaType = decorationAreaType,
+                    componentSize = componentSize,
+                    outline = outline,
+                    rootSize = rootSize,
+                    offsetFromRoot = offsetFromRoot,
+                    colorTokens = colorTokens
+                )
+            } else {
+                drawOutline(
+                    outline = outline,
+                    style = Fill,
+                    color = colorTokens.containerSurface
+                )
+            }
+
+            val shader = runtimeEffect.makeShader(
+                uniforms = getShaderData(drawScope, componentSize, offsetFromRoot, colorTokens),
                 children = arrayOf(baseShader),
                 localMatrix = null
             )

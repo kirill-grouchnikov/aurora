@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 
 /**
  * Decoration painter that paints a flat appearance.
@@ -47,6 +48,24 @@ class FlatDecorationPainter : AuroraDecorationPainter {
                 outline = outline,
                 style = Fill,
                 color = colorScheme.backgroundFillColor
+            )
+        }
+    }
+
+    override fun paintDecorationArea(
+        drawScope: DrawScope,
+        decorationAreaType: DecorationAreaType,
+        componentSize: Size,
+        outline: Outline,
+        rootSize: Size,
+        offsetFromRoot: Offset,
+        colorTokens: ContainerColorTokens
+    ) {
+        with(drawScope) {
+            drawOutline(
+                outline = outline,
+                style = Fill,
+                color = colorTokens.containerSurface
             )
         }
     }

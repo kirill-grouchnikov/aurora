@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import org.pushingpixels.aurora.theming.AuroraTrait
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 
 /**
  * Decoration painter interface for Aurora.
@@ -45,5 +46,15 @@ interface AuroraDecorationPainter : AuroraTrait {
         rootSize: Size,
         offsetFromRoot: Offset,
         colorScheme: AuroraColorScheme
+    )
+
+    fun paintDecorationArea(
+        drawScope: DrawScope,
+        decorationAreaType: DecorationAreaType,
+        componentSize: Size,
+        outline: Outline,
+        rootSize: Size,
+        offsetFromRoot: Offset,
+        colorTokens: ContainerColorTokens
     )
 }

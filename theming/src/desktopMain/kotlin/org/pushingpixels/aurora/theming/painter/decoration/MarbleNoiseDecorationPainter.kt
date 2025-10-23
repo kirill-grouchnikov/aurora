@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.Density
 import org.jetbrains.skia.Data
 import org.jetbrains.skia.Shader
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.utils.getDuotoneEffect
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -64,6 +65,29 @@ class MarbleNoiseDecorationPainter(
         dataBuffer.putFloat(20, fillScheme.darkColor.green)
         dataBuffer.putFloat(24, fillScheme.darkColor.blue)
         dataBuffer.putFloat(28, fillScheme.darkColor.alpha)
+        // Alpha
+        dataBuffer.putFloat(32, textureAlpha)
+
+        return Data.makeFromBytes(dataBuffer.array())
+    }
+
+    override fun getShaderData(
+        density: Density,
+        componentSize: Size,
+        offsetFromRoot: Offset,
+        colorTokens: ContainerColorTokens
+    ): Data {
+        val dataBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
+        // RGBA colorBright
+        dataBuffer.putFloat(0, colorTokens.containerSurfaceBright.red)
+        dataBuffer.putFloat(4, colorTokens.containerSurfaceBright.green)
+        dataBuffer.putFloat(8, colorTokens.containerSurfaceBright.blue)
+        dataBuffer.putFloat(12, colorTokens.containerSurfaceBright.alpha)
+        // RGBA colorDim
+        dataBuffer.putFloat(16, colorTokens.containerSurfaceDim.red)
+        dataBuffer.putFloat(20, colorTokens.containerSurfaceDim.green)
+        dataBuffer.putFloat(24, colorTokens.containerSurfaceDim.blue)
+        dataBuffer.putFloat(28, colorTokens.containerSurfaceDim.alpha)
         // Alpha
         dataBuffer.putFloat(32, textureAlpha)
 
