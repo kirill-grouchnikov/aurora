@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.theming
 
 import androidx.compose.ui.graphics.toArgb
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
@@ -45,6 +46,7 @@ import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.getColorSchemes
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
 import org.pushingpixels.ephemeral.chroma.hct.Hct
+import java.awt.Container
 
 /**
  * Applies the specified highlight schemes on the relevant parts of the
@@ -459,8 +461,8 @@ fun geminiSkin(): AuroraSkinDefinition {
     // edge of footer
     painters.addOverlayPainter(
         TopBezelOverlayPainter(
-            colorSchemeQueryTop = { it.darkColor },
-            colorSchemeQueryBottom = { it.ultraLightColor }
+            colorTokensQueryTop = ContainerColorTokens::containerOutlineVariant,
+            colorTokensQueryBottom = { it.inverseContainerOutline.withAlpha(0.28125f) },
         ),
         DecorationAreaType.Footer
     )
@@ -468,15 +470,11 @@ fun geminiSkin(): AuroraSkinDefinition {
     // add two overlay painters to create a bezel line between
     // menu bar and toolbars
     painters.addOverlayPainter(
-        BottomLineOverlayPainter(
-            composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.5f))
-        ),
+        BottomLineOverlayPainter(ContainerColorTokens::containerOutline),
         DecorationAreaType.Header
     )
     painters.addOverlayPainter(
-        TopLineOverlayPainter(
-            composite({ it.foregroundColor }, ColorTransforms.alpha(0.125f))
-        ),
+        TopLineOverlayPainter( { it.complementaryContainerOutline.withAlpha(0.1875f) }),
         DecorationAreaType.Toolbar
     )
 
@@ -490,7 +488,7 @@ fun geminiSkin(): AuroraSkinDefinition {
     // add overlay painter to paint a dark line along the bottom
     // edge of toolbars
     painters.addOverlayPainter(
-        BottomLineOverlayPainter(colorSchemeQuery = { it.ultraDarkColor }),
+        BottomLineOverlayPainter(colorTokensQuery = ContainerColorTokens::containerOutline),
         DecorationAreaType.Toolbar
     )
 

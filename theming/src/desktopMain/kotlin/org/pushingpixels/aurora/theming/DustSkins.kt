@@ -170,20 +170,20 @@ private fun dustBasePainters(): AuroraPainters {
     )
 
     // add two overlay painters to create a bezel line between menu bar and toolbars
-    painters.addOverlayPainter(
-        BottomLineOverlayPainter(
-            composite(
-                { it.ultraDarkColor },
-                ColorTransforms.brightness(-0.5f)
-            )
-        ), DecorationAreaType.Header
-    )
-    painters.addOverlayPainter(TopLineOverlayPainter(
-        composite(
-            { it.foregroundColor },
-            ColorTransforms.alpha(0.125f)
-        )
-    ), DecorationAreaType.Toolbar)
+//    painters.addOverlayPainter(
+//        BottomLineOverlayPainter(
+//            composite(
+//                { it.ultraDarkColor },
+//                ColorTransforms.brightness(-0.5f)
+//            )
+//        ), DecorationAreaType.Header
+//    )
+//    painters.addOverlayPainter(TopLineOverlayPainter(
+//        composite(
+//            { it.foregroundColor },
+//            ColorTransforms.alpha(0.125f)
+//        )
+//    ), DecorationAreaType.Toolbar)
 
     return painters
 }

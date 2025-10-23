@@ -228,22 +228,22 @@ fun sentinelSkin(): AuroraSkinDefinition {
         BottomShadowOverlayPainter.getInstance(100),
         DecorationAreaType.Toolbar
     )
-    painters.addOverlayPainter(
-        BottomLineOverlayPainter(
-            composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.1f))
-        ),
-        DecorationAreaType.Toolbar
-    )
+//    painters.addOverlayPainter(
+//        BottomLineOverlayPainter(
+//            composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.1f))
+//        ),
+//        DecorationAreaType.Toolbar
+//    )
 
     // Add overlay painters to paint drop shadow and a dark line along the top
     // edges of footers
     painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(15), DecorationAreaType.Footer)
-    painters.addOverlayPainter(
-        TopLineOverlayPainter(
-            composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.1f))
-        ),
-        DecorationAreaType.Footer
-    )
+//    painters.addOverlayPainter(
+//        TopLineOverlayPainter(
+//            composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.1f))
+//        ),
+//        DecorationAreaType.Footer
+//    )
 
     return AuroraSkinDefinition(
         displayName = "Sentinel",

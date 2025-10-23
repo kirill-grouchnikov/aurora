@@ -215,22 +215,22 @@ fun marinerSkin(): AuroraSkinDefinition {
 
     // add an overlay painter to paint a bezel line along the top
     // edge of footer
-    painters.addOverlayPainter(
-        TopBezelOverlayPainter(
-            colorSchemeQueryTop = { it.ultraDarkColor },
-            colorSchemeQueryBottom = { it.lightColor }
-        ),
-        DecorationAreaType.Footer
-    )
+//    painters.addOverlayPainter(
+//        TopBezelOverlayPainter(
+//            colorTokensQueryTop = { it.ultraDarkColor },
+//            colorTokensQueryBottom = { it.lightColor }
+//        ),
+//        DecorationAreaType.Footer
+//    )
 
     // add two overlay painters to create a bezel line between
     // menu bar and toolbars
-    painters.addOverlayPainter(
-        BottomLineOverlayPainter(
-            composite({ it.ultraDarkColor }, ColorTransforms.brightness(0.5f))
-        ),
-        DecorationAreaType.Header
-    )
+//    painters.addOverlayPainter(
+//        BottomLineOverlayPainter(
+//            composite({ it.ultraDarkColor }, ColorTransforms.brightness(0.5f))
+//        ),
+//        DecorationAreaType.Header
+//    )
 
     // add overlay painter to paint drop shadows along the bottom
     // edges of toolbars
@@ -241,10 +241,10 @@ fun marinerSkin(): AuroraSkinDefinition {
 
     // add overlay painter to paint a dark line along the bottom
     // edge of toolbars
-    painters.addOverlayPainter(
-        BottomLineOverlayPainter(colorSchemeQuery = { it.ultraDarkColor }),
-        DecorationAreaType.Toolbar
-    )
+//    painters.addOverlayPainter(
+//        BottomLineOverlayPainter(colorTokensQuery = { it.ultraDarkColor }),
+//        DecorationAreaType.Toolbar
+//    )
 
     return AuroraSkinDefinition(
         displayName = "Mariner",

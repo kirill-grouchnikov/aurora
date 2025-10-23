@@ -19,8 +19,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import org.pushingpixels.aurora.theming.DecorationAreaType
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 
 /**
  * Overlay painter that paints a single line at the top edge of the relevant
@@ -28,7 +28,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
  *
  * @author Kirill Grouchnikov
  */
-class TopLineOverlayPainter(private val colorSchemeQuery: (AuroraColorScheme) -> Color) : AuroraOverlayPainter {
+class TopLineOverlayPainter(private val colorTokensQuery: (ContainerColorTokens) -> Color) : AuroraOverlayPainter {
     override val displayName = "Top Line"
 
     override fun paintOverlay(
@@ -38,10 +38,10 @@ class TopLineOverlayPainter(private val colorSchemeQuery: (AuroraColorScheme) ->
         height: Float,
         colors: AuroraSkinColors
     ) {
-        val backgroundColorScheme = colors.getBackgroundColorScheme(decorationAreaType)
+        val neutralColorTokens = colors.getNeutralContainerTokens(decorationAreaType)
         with(drawScope) {
             drawLine(
-                color = colorSchemeQuery.invoke(backgroundColorScheme),
+                color = colorTokensQuery.invoke(neutralColorTokens),
                 start = Offset.Zero,
                 end = Offset(width, 0.0f)
             )

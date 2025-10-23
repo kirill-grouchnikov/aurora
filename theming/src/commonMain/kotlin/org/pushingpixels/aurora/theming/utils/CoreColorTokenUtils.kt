@@ -226,7 +226,7 @@ fun getContainerTokens(
     componentState: ComponentState,
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     inactiveContainerType: ContainerType
-): ContainerColorTokens? {
+): ContainerColorTokens {
     var componentState = componentState
 
     // TODO - wire this to a composition local
@@ -243,7 +243,7 @@ fun getContainerTokens(
     val isNeverPainted = (backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Never)
     val isFlat = (backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat)
     if (isNeverPainted || (!componentState.isActive && isFlat)) {
-        val result: ContainerColorTokens? = if (tokensOverlay != null)
+        val result: ContainerColorTokens = if (tokensOverlay != null)
             tokensOverlay.neutralContainerTokens
         else
             colors.getNeutralContainerTokens(decorationAreaType)

@@ -144,12 +144,12 @@ private fun nebulaBasePainters(): AuroraPainters {
 
     // add an overlay painter to paint separator lines along the bottom
     // edges of title panes and menu bars
-    painters.addOverlayPainter(
-        BottomLineOverlayPainter(
-            composite({ it.darkColor }, ColorTransforms.alpha(0.625f))
-        ),
-        DecorationAreaType.TitlePane, DecorationAreaType.Header
-    )
+//    painters.addOverlayPainter(
+//        BottomLineOverlayPainter(
+//            composite({ it.darkColor }, ColorTransforms.alpha(0.625f))
+//        ),
+//        DecorationAreaType.TitlePane, DecorationAreaType.Header
+//    )
 
     return painters
 }
@@ -198,11 +198,11 @@ fun nebulaAmethystSkin(): AuroraSkinDefinition {
             // separator + drop shadow along the toolbar bottom
             painters.clearOverlayPainters(DecorationAreaType.Toolbar)
             painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.Toolbar)
-            painters.addOverlayPainter(
-                BottomLineOverlayPainter(
-                    composite({ it.darkColor }, ColorTransforms.alpha(0.625f))
-                ), DecorationAreaType.Toolbar
-            )
+//            painters.addOverlayPainter(
+//                BottomLineOverlayPainter(
+//                    composite({ it.darkColor }, ColorTransforms.alpha(0.625f))
+//                ), DecorationAreaType.Toolbar
+//            )
 
         },
         buttonShaper = ClassicButtonShaper()

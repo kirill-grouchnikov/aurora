@@ -201,16 +201,16 @@ fun nightShadeSkin(): AuroraSkinDefinition {
 
     // add an overlay painter to paint a dark line along the bottom
     // edge of toolbars
-    painters.addOverlayPainter(BottomLineOverlayPainter(
-        composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.5f))
-    ), DecorationAreaType.Toolbar)
+//    painters.addOverlayPainter(BottomLineOverlayPainter(
+//        composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.5f))
+//    ), DecorationAreaType.Toolbar)
 
     // add an overlay painter to paint a bezel line along the top
     // edge of footer
-    painters.addOverlayPainter(TopBezelOverlayPainter(
-        colorSchemeQueryTop = composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.5f)),
-        colorSchemeQueryBottom = composite({ it.foregroundColor }, ColorTransforms.alpha(0.125f))
-    ), DecorationAreaType.Footer)
+//    painters.addOverlayPainter(TopBezelOverlayPainter(
+//        colorTokensQueryTop = composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.5f)),
+//        colorTokensQueryBottom = composite({ it.foregroundColor }, ColorTransforms.alpha(0.125f))
+//    ), DecorationAreaType.Footer)
 
     return AuroraSkinDefinition(
         displayName = "Night Shade",

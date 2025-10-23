@@ -98,10 +98,10 @@ private fun businessBasePainters(): AuroraPainters {
 
     // add an overlay painter to paint separator lines along the bottom
     // edges of title panes and menu bars
-    painters.addOverlayPainter(
-        BottomLineOverlayPainter(colorSchemeQuery = { it.midColor }),
-        DecorationAreaType.Header
-    )
+//    painters.addOverlayPainter(
+//        BottomLineOverlayPainter(colorTokensQuery = { it.midColor }),
+//        DecorationAreaType.Header
+//    )
 
     return painters
 }

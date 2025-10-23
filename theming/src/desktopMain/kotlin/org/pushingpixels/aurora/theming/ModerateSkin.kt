@@ -75,10 +75,10 @@ fun moderateSkin(): AuroraSkinDefinition {
     painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(100), DecorationAreaType.Toolbar)
     // add an overlay painter to paint separator lines along the bottom
     // edges of menu bars
-    painters.addOverlayPainter(
-        BottomLineOverlayPainter(colorSchemeQuery = { it.midColor }),
-        DecorationAreaType.Header
-    )
+//    painters.addOverlayPainter(
+//        BottomLineOverlayPainter(colorTokensQuery = { it.midColor }),
+//        DecorationAreaType.Header
+//    )
 
     return AuroraSkinDefinition(
         displayName = "Moderate",

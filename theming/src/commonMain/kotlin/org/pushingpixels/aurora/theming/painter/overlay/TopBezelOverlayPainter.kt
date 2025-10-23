@@ -19,8 +19,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import org.pushingpixels.aurora.theming.DecorationAreaType
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 
 /**
  * Overlay painter that paints a bezel line at the top edge of the relevant
@@ -29,8 +29,8 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
  * @author Kirill Grouchnikov
  */
 class TopBezelOverlayPainter(
-    private val colorSchemeQueryTop: (AuroraColorScheme) -> Color,
-    private val colorSchemeQueryBottom: (AuroraColorScheme) -> Color
+    private val colorTokensQueryTop: (ContainerColorTokens) -> Color,
+    private val colorTokensQueryBottom: (ContainerColorTokens) -> Color
 ) : AuroraOverlayPainter {
     override val displayName = "Top Bezel"
 
@@ -41,15 +41,15 @@ class TopBezelOverlayPainter(
         height: Float,
         colors: AuroraSkinColors
     ) {
-        val backgroundColorScheme = colors.getBackgroundColorScheme(decorationAreaType)
+        val neutralColorTokens = colors.getNeutralContainerTokens(decorationAreaType)
         with(drawScope) {
             drawLine(
-                color = colorSchemeQueryTop.invoke(backgroundColorScheme),
+                color = colorTokensQueryTop.invoke(neutralColorTokens),
                 start = Offset.Zero,
                 end = Offset(width, 0.0f)
             )
             drawLine(
-                color = colorSchemeQueryBottom.invoke(backgroundColorScheme),
+                color = colorTokensQueryBottom.invoke(neutralColorTokens),
                 start = Offset(0.0f, 1.0f),
                 end = Offset(width, 1.0f)
             )

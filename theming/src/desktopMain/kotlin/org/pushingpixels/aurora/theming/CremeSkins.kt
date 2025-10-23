@@ -79,8 +79,8 @@ private fun cremeBasePainters(): AuroraPainters {
     painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(40), DecorationAreaType.Toolbar)
 
     // add an overlay painter to paint a dark line along the bottom edge of toolbars
-    painters.addOverlayPainter(BottomLineOverlayPainter(colorSchemeQuery = { it.midColor }),
-        DecorationAreaType.Toolbar)
+//    painters.addOverlayPainter(BottomLineOverlayPainter(colorTokensQuery = { it.midColor }),
+//        DecorationAreaType.Toolbar)
 
     return painters
 }

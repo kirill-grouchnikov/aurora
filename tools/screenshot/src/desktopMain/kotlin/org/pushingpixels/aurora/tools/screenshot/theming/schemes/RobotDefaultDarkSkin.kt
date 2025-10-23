@@ -39,11 +39,11 @@ fun robotDefaultDarkSkin(accentColorScheme: AuroraColorScheme): AuroraSkinDefini
         ),
         highlightFillPainter = ClassicFillPainter()
     )
-    painters.addOverlayPainter(
-        BottomLineOverlayPainter(colorSchemeQuery = { it.midColor }),
-        DecorationAreaType.TitlePane,
-        DecorationAreaType.Header
-    )
+//    painters.addOverlayPainter(
+//        BottomLineOverlayPainter(colorTokensQuery = { it.midColor }),
+//        DecorationAreaType.TitlePane,
+//        DecorationAreaType.Header
+//    )
 
     val skinColors = AuroraSkinColors()
 

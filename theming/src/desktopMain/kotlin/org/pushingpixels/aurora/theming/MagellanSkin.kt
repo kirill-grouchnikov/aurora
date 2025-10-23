@@ -285,21 +285,21 @@ fun magellanSkin(): AuroraSkinDefinition {
 
     // add overlay painter to paint a dark line along the bottom
     // edge of toolbars
-    painters.addOverlayPainter(
-        BottomLineOverlayPainter(colorSchemeQuery = { it.ultraDarkColor }),
-        DecorationAreaType.Toolbar
-    )
+//    painters.addOverlayPainter(
+//        BottomLineOverlayPainter(colorTokensQuery = { it.ultraDarkColor }),
+//        DecorationAreaType.Toolbar
+//    )
 
     // add an overlay painter to paint a light line along the top
     // edge of toolbars
-    painters.addOverlayPainter(
-        TopLineOverlayPainter(
-            composite(
-                { it.foregroundColor },
-                ColorTransforms.alpha(0.15625f)
-            )
-        ), DecorationAreaType.Toolbar
-    )
+//    painters.addOverlayPainter(
+//        TopLineOverlayPainter(
+//            composite(
+//                { it.foregroundColor },
+//                ColorTransforms.alpha(0.15625f)
+//            )
+//        ), DecorationAreaType.Toolbar
+//    )
 
     // add an overlay painter to paint a bezel line along the top
     // edge of footer

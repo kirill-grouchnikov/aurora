@@ -126,11 +126,11 @@ fun autumnSkin(): AuroraSkinDefinition {
     painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(50), DecorationAreaType.Toolbar)
     // add an overlay painter to paint separator lines along the bottom
     // edges of title panes and menu bars
-    painters.addOverlayPainter(
-        BottomLineOverlayPainter(colorSchemeQuery = { it.darkColor }),
-        DecorationAreaType.TitlePane,
-        DecorationAreaType.Header
-    )
+//    painters.addOverlayPainter(
+//        BottomLineOverlayPainter(colorTokensQuery = { it.darkColor }),
+//        DecorationAreaType.TitlePane,
+//        DecorationAreaType.Header
+//    )
 
     return AuroraSkinDefinition(
         displayName = "Autumn",
