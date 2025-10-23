@@ -30,6 +30,7 @@ interface OutlineSupplier {
     ): Outline
 }
 
+// TODO - merge this with AuroraSlices.OutlineKind?
 enum class InsetKind {
     Surface, Content
 }

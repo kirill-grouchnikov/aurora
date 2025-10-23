@@ -15,7 +15,7 @@
  */
 package org.pushingpixels.aurora.theming
 
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
@@ -37,7 +37,10 @@ import org.pushingpixels.aurora.theming.painter.overlay.BottomShadowOverlayPaint
 import org.pushingpixels.aurora.theming.painter.overlay.TopBezelOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
+import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
+import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
+import org.pushingpixels.aurora.theming.palette.overlayWith
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.getColorSchemes
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
@@ -254,6 +257,7 @@ private fun geminiSkinColors(): AuroraSkinColors {
         DecorationAreaType.Toolbar
     )
 
+    // TODO - remove everything above this comment
 
     // Same seed for active and muted
     val geminiDefaultActiveTokens = getContainerTokens(
@@ -274,6 +278,33 @@ private fun geminiSkinColors(): AuroraSkinColors {
             /* contrastLevel */ 0.6
         )
     )
+
+    val geminiHighlightContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFFFDC02u.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultLight()
+    )
+
+    val geminiHighlightOutlineContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFFFDC02u.toInt()),
+        containerConfiguration = ContainerConfiguration(
+            /* isDark */ false,
+            /* contrastLevel */ 0.3
+        )
+    )
+
+    // Use muted visuals for the container surface roles, and highlight (yellow) tokens
+    // for outline roles
+    val geminiHighlightRolloverContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFB0BBB8u.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultLight(),
+        colorResolver = DefaultPaletteColorResolver.overlayWith(
+            TokenPaletteColorResolverOverlay(
+                containerOutline = { geminiHighlightOutlineContainerTokens.containerOutlineVariant.toArgb() },
+                containerOutlineVariant = { geminiHighlightOutlineContainerTokens.containerOutlineVariant.toArgb() },
+            )
+        )
+    )
+
     val geminiDefaultBundle = ContainerColorTokensBundle(
         activeContainerTokens = geminiDefaultActiveTokens,
         mutedContainerTokens = geminiDefaultMutedTokens,
@@ -281,7 +312,90 @@ private fun geminiSkinColors(): AuroraSkinColors {
         isSystemDark = false
     )
 
+    // Highlight tokens for controls in selected states
+    geminiDefaultBundle.registerActiveContainerTokens(
+        geminiHighlightContainerTokens,
+        ContainerColorTokensAssociationKind.Default,
+        ComponentState.Selected, ComponentState.RolloverSelected
+    )
+
+    // Highlight rollover for controls in rollover state
+    geminiDefaultBundle.registerActiveContainerTokens(
+        geminiHighlightRolloverContainerTokens,
+        ContainerColorTokensAssociationKind.Default,
+        ComponentState.RolloverUnselected
+    )
+
+    // Highlights
+    geminiDefaultBundle.registerActiveContainerTokens(
+        geminiHighlightContainerTokens,
+        ContainerColorTokensAssociationKind.Highlight,
+        *ComponentState.activeStates
+    )
+
     result.registerDecorationAreaTokensBundle(geminiDefaultBundle, DecorationAreaType.None)
+
+    // Control panes, footers
+    result.registerAsDecorationArea(
+        getContainerTokens(
+            seed = Hct.fromInt(0xFFA9B4B1u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()
+        ),
+        DecorationAreaType.ControlPane,
+        DecorationAreaType.Footer
+    )
+
+    // Toolbars
+    val geminiToolbarBundle = ContainerColorTokensBundle(
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFFFDC02u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()
+        ),
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF142429u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 1.0
+            )
+        ),
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF203042u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.4
+            )
+        ),
+        isSystemDark = true
+    )
+    result.registerDecorationAreaTokensBundle(geminiToolbarBundle, DecorationAreaType.Toolbar)
+
+    // Headers
+    val geminiHeaderBundle = ContainerColorTokensBundle(
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFFFDC02u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ 0.8
+            )
+        ),
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF1C282Du.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 1.0
+            )
+        ),
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF142429u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.9
+            )
+        ),
+        isSystemDark = true
+    )
+    result.registerDecorationAreaTokensBundle(geminiHeaderBundle,
+        DecorationAreaType.TitlePane, DecorationAreaType.Header)
 
     return result
 }
