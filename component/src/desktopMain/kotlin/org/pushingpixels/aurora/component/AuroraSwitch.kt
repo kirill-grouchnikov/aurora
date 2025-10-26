@@ -33,32 +33,43 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.SwitchContentModel
 import org.pushingpixels.aurora.component.model.SwitchPresentationModel
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.theming.AuroraSkin
-import org.pushingpixels.aurora.theming.ColorSchemeAssociationKind
-import org.pushingpixels.aurora.theming.ComponentState
-import org.pushingpixels.aurora.theming.ComponentStateFacet
-import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
-import org.pushingpixels.aurora.theming.utils.MutableColorScheme
+import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.painter.outline.InsetKind
+import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
+import org.pushingpixels.aurora.theming.utils.ContainerType
+import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
 
 @Immutable
 private class SwitchDrawingCache(
-    val colorScheme: MutableColorScheme = MutableColorScheme(
-        displayName = "Internal mutable",
-        isDark = false
-    )
+    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens(isDarkAttr = false)
 )
 
-private val trackFillPainter = FractionBasedFillPainter(
-    0.0f to { it.lightColor },
-    1.0f to { it.lightColor },
-    displayName = "Track fill (internal)"
-)
+private object SwitchOutlineSuppler: OutlineSupplier {
+    override fun getOutline(
+        layoutDirection: LayoutDirection,
+        density: Density,
+        size: Size,
+        insets: Float,
+        radiusAdjustment: Float
+    ): Outline {
+        return getBaseOutline(
+            layoutDirection = layoutDirection,
+            width = size.width,
+            height = size.height,
+            radius = size.height / 2.0f - radiusAdjustment,
+            sides = Sides(),
+            insets = insets,
+            outlineKind = OutlineKind.Fill,
+        )
+    }
+}
 
 @Composable
 internal fun switchIntrinsicSize(
@@ -105,6 +116,8 @@ internal fun AuroraSwitch(
             )
         )
     }
+
+    val density = LocalDensity.current
 
     // Transition for the selection state
     val selectionTransition = updateTransition(contentModel.selected)
@@ -225,56 +238,20 @@ internal fun AuroraSwitch(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = presentationModel.horizontalAlignment.arrangement
     ) {
+        populateColorTokens(
+            colorTokens = drawingCache.colorTokens,
+            colors = AuroraSkin.colors,
+            decorationAreaType = decorationAreaType,
+            modelStateInfo = modelStateInfo,
+            currState = currentState.value,
+            associationKind = ContainerColorTokensAssociationKind.Mark,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+            treatEnabledAsActive = false,
+            skipFlatCheck = false,
+            inactiveContainerType = ContainerType.Muted)
+
         // Get the thumb fill color (flat)
-        val thumbColor = getStateAwareColor(
-            modelStateInfo = modelStateInfo,
-            currState = currentState.value,
-            colorSchemeBundle = presentationModel.colorSchemeBundle,
-            colors = AuroraSkin.colors,
-            decorationAreaType = decorationAreaType,
-            associationKind = ColorSchemeAssociationKind.Mark
-        ) { it.markColor }
-
-        // Populate the cached color scheme for filling the track
-        // based on the current model state info
-        populateColorScheme(
-            colorScheme = drawingCache.colorScheme,
-            modelStateInfo = modelStateInfo,
-            currState = currentState.value,
-            colorSchemeBundle = presentationModel.colorSchemeBundle,
-            colors = AuroraSkin.colors,
-            decorationAreaType = decorationAreaType,
-            associationKind = ColorSchemeAssociationKind.MarkBox
-        )
-
-        // And retrieve the track fill colors
-        val trackUltraLight = drawingCache.colorScheme.ultraLightColor
-        val trackExtraLight = drawingCache.colorScheme.extraLightColor
-        val trackLight = drawingCache.colorScheme.lightColor
-        val trackMid = drawingCache.colorScheme.midColor
-        val trackDark = drawingCache.colorScheme.darkColor
-        val trackUltraDark = drawingCache.colorScheme.ultraDarkColor
-        val trackIsDark = drawingCache.colorScheme.isDark
-
-        // Populate the cached color scheme for drawing the track border
-        // based on the current model state info
-        populateColorScheme(
-            colorScheme = drawingCache.colorScheme,
-            modelStateInfo = modelStateInfo,
-            currState = currentState.value,
-            colorSchemeBundle = presentationModel.colorSchemeBundle,
-            colors = AuroraSkin.colors,
-            decorationAreaType = decorationAreaType,
-            associationKind = ColorSchemeAssociationKind.Border
-        )
-        // And retrieve the mark box border colors
-        val borderUltraLight = drawingCache.colorScheme.ultraLightColor
-        val borderExtraLight = drawingCache.colorScheme.extraLightColor
-        val borderLight = drawingCache.colorScheme.lightColor
-        val borderMid = drawingCache.colorScheme.midColor
-        val borderDark = drawingCache.colorScheme.darkColor
-        val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
-        val borderIsDark = drawingCache.colorScheme.isDark
+        val thumbColor = drawingCache.colorTokens.onContainer
 
         // Thumb selection factor is the combined strength of all the
         // states that have the selection bit turned on
@@ -290,61 +267,45 @@ internal fun AuroraSwitch(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colors = AuroraSkin.colors,
-            colorSchemeBundle = presentationModel.colorSchemeBundle,
             decorationAreaType = decorationAreaType,
-            colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
+            associationKind = ContainerColorTokensAssociationKind.Default,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
+            skipFlatCheck = false,
+            inactiveContainerType = ContainerType.Neutral,
             isTextInFilledArea = false
         )
-        val alpha = if (currentState.value.isDisabled)
-            AuroraSkin.colors.getAlpha(decorationAreaType, currentState.value) else 1.0f
+        val thumbAlpha = if (currentState.value.isDisabled)
+            drawingCache.colorTokens.onContainerDisabledAlpha else 1.0f
 
-        val borderPainter = AuroraSkin.painters.borderPainter
+        val surfacePainter = AuroraSkin.painters.surfacePainter
+        val outlinePainter = AuroraSkin.painters.outlinePainter
 
         Canvas(Modifier.wrapContentSize(Alignment.Center).size(presentationModel.trackSize)) {
-            val trackOutline = getBaseOutline(
+            val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
+            val outlineFill = SwitchOutlineSuppler.getOutline(
                 layoutDirection = layoutDirection,
-                width = this.size.width,
-                height = this.size.height,
-                radius = this.size.height / 2.0f,
-                sides = null,
-                insets = 0.5f
-            )
+                density = density,
+                size = this.size,
+                insets = outlineInset,
+                radiusAdjustment = 0.0f)
 
-            // Populate the cached color scheme for filling the track
-            drawingCache.colorScheme.ultraLight = trackUltraLight
-            drawingCache.colorScheme.extraLight = trackExtraLight
-            drawingCache.colorScheme.light = trackLight
-            drawingCache.colorScheme.mid = trackMid
-            drawingCache.colorScheme.dark = trackDark
-            drawingCache.colorScheme.ultraDark = trackUltraDark
-            drawingCache.colorScheme.isDark = trackIsDark
-            drawingCache.colorScheme.foreground = textColor
-            trackFillPainter.paintContourBackground(
-                this, this.size, trackOutline, drawingCache.colorScheme, alpha
-            )
+            paintSurface(
+                drawScope = this,
+                componentState = currentState.value,
+                surfacePainter = surfacePainter,
+                size = this.size,
+                alpha = 1.0f,
+                outline = outlineFill,
+                colorTokens = drawingCache.colorTokens)
 
-            // Populate the cached color scheme for drawing the markbox border
-            drawingCache.colorScheme.ultraLight = borderUltraLight
-            drawingCache.colorScheme.extraLight = borderExtraLight
-            drawingCache.colorScheme.light = borderLight
-            drawingCache.colorScheme.mid = borderMid
-            drawingCache.colorScheme.dark = borderDark
-            drawingCache.colorScheme.ultraDark = borderUltraDark
-            drawingCache.colorScheme.isDark = borderIsDark
-            drawingCache.colorScheme.foreground = textColor
-
-            val trackOutlineInner = if (borderPainter.isPaintingInnerOutline) getBaseOutline(
-                layoutDirection = layoutDirection,
-                width = this.size.width,
-                height = this.size.height,
-                radius = this.size.height / 2.0f - 1.0f,
-                sides = null,
-                insets = 2.0f
-            ) else null
-
-            borderPainter.paintBorder(
-                this, this.size, trackOutline, trackOutlineInner, drawingCache.colorScheme, alpha
-            )
+            paintOutline(
+                drawScope = this,
+                componentState = currentState.value,
+                outlinePainter = outlinePainter,
+                size = this.size,
+                alpha = 1.0f,
+                outlineSupplier = SwitchOutlineSuppler,
+                colorTokens = drawingCache.colorTokens)
 
             val thumbSize = presentationModel.thumbSizeOff +
                     (presentationModel.thumbSizeOn - presentationModel.thumbSizeOff) * thumbSelectionFactor
@@ -378,7 +339,7 @@ internal fun AuroraSwitch(
                 outline = thumbOutline,
                 style = Fill,
                 color = thumbColor,
-                alpha = alpha
+                alpha = thumbAlpha
             )
         }
     }

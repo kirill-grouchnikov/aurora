@@ -36,11 +36,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
+import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
@@ -49,10 +45,7 @@ import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.painter.outline.InsetKind
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.utils.ContainerType
-import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
-import org.pushingpixels.aurora.theming.utils.getBaseOutline
-import org.pushingpixels.aurora.theming.utils.getClassicCornerRadius
 
 @Immutable
 private class RadioButtonDrawingCache(
@@ -321,7 +314,7 @@ internal fun AuroraRadioButton(
             associationKind = ContainerColorTokensAssociationKind.Default,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
             skipFlatCheck = false,
-            inactiveContainerType = ContainerType.Muted,
+            inactiveContainerType = ContainerType.Neutral,
             isTextInFilledArea = false
         )
 

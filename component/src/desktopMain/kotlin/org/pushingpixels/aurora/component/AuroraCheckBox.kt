@@ -331,7 +331,7 @@ internal fun AuroraCheckBox(
             associationKind = ContainerColorTokensAssociationKind.Default,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
             skipFlatCheck = false,
-            inactiveContainerType = ContainerType.Muted,
+            inactiveContainerType = ContainerType.Neutral,
             isTextInFilledArea = false
         )
 
