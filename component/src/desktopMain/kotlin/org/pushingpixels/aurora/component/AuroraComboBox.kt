@@ -482,23 +482,15 @@ internal fun <E> AuroraComboBox(
             val surfacePainter = AuroraSkin.painters.surfacePainter
             val outlinePainter = AuroraSkin.painters.outlinePainter
 
-            // TODO - tonal alpha
+            // Handle flat comboboxes
             val alpha =
                 if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat) {
-                    if (currentState.value == ComponentState.DisabledSelected) {
-                        // Respect the alpha in disabled+selected state
-                        skinColors.getAlpha(decorationAreaType, currentState.value)
-                    } else {
-                        // For flat comboboxes, compute the combined contribution of all
-                        // non-disabled states - ignoring ComponentState.ENABLED
-                        modelStateInfo.stateContributionMap
-                            .filter { !it.key.isDisabled && (it.key != ComponentState.Enabled) }
-                            .values.sumOf { it.contribution.toDouble() }.toFloat()
-                    }
-                } else {
-                    if (currentState.value.isDisabled)
-                        AuroraSkin.colors.getAlpha(decorationAreaType, currentState.value) else 1.0f
-                }
+                    // For flat comboboxes, compute the combined contribution of all
+                    // non-disabled states - ignoring ComponentState.ENABLED
+                    modelStateInfo.stateContributionMap
+                        .filter { !it.key.isDisabled && (it.key != ComponentState.Enabled) }
+                        .values.sumOf { it.contribution.toDouble() }.toFloat()
+                } else 1.0f
 
             Canvas(Modifier.matchParentSize()) {
                 val width = this.size.width
@@ -537,21 +529,23 @@ internal fun <E> AuroraComboBox(
                         insets = outlineInset,
                         radiusAdjustment = 0.0f)
 
-                    // TODO - extract to SurfacePainterUtils for overlays
-                    surfacePainter.paintContourBackground(
+                    paintSurface(
                         drawScope = this,
+                        componentState = currentState.value,
+                        surfacePainter = surfacePainter,
                         size = this.size,
+                        alpha = alpha,
                         outline = outlineFill,
-                        colorTokens = drawingCache.colorTokens,
-                        alpha = alpha)
+                        colorTokens = drawingCache.colorTokens)
 
-                    // TODO - extract to OutlinePainterUtils for overlays
-                    outlinePainter.paintOutline(
+                    paintOutline(
                         drawScope = this,
+                        componentState = currentState.value,
+                        outlinePainter = outlinePainter,
                         size = this.size,
+                        alpha = alpha,
                         outlineSupplier = ComboBoxOutlineSuppler,
-                        colorTokens = drawingCache.colorTokens,
-                        alpha = alpha)
+                        colorTokens = drawingCache.colorTokens)
 
                     val arrowWidth = if (presentationModel.popupPlacementStrategy.isHorizontal)
                         ComboBoxSizingConstants.DefaultComboBoxArrowHeight.toPx() else
