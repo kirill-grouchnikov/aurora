@@ -24,7 +24,7 @@ import org.pushingpixels.aurora.theming.painter.outline.AuroraOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.painter.surface.AuroraSurfacePainter
 
-fun paintSurface(
+internal fun paintSurface(
     drawScope: DrawScope,
     componentState: ComponentState,
     surfacePainter: AuroraSurfacePainter,
@@ -45,7 +45,7 @@ fun paintSurface(
     )
 }
 
-fun paintOutline(
+internal fun paintOutline(
     drawScope: DrawScope,
     componentState: ComponentState,
     outlinePainter: AuroraOutlinePainter,

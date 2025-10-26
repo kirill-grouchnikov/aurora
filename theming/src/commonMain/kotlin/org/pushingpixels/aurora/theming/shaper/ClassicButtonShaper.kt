@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.theming.OutlineKind
 import org.pushingpixels.aurora.theming.Sides
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
+import org.pushingpixels.aurora.theming.utils.getClassicCornerRadius
 
 /**
  * Button shaper that returns rectangular buttons with slightly rounded corners.
@@ -53,9 +54,7 @@ class ClassicButtonShaper : AuroraButtonShaper, RectangularButtonShaper {
     }
 
     override fun getCornerRadius(width: Float, height: Float, insets: Float, density: Density): Float {
-        with(density) {
-            return 3.0f.dp.toPx()
-        }
+        return density.getClassicCornerRadius()
     }
 
     override fun getPreferredSize(uiPreferredWidth: Float, uiPreferredHeight: Float): Size {

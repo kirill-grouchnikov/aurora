@@ -26,6 +26,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
@@ -36,7 +37,9 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import org.pushingpixels.aurora.common.AuroraInternalApi
@@ -44,17 +47,39 @@ import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.utils.MutableColorScheme
+import org.pushingpixels.aurora.theming.painter.outline.InsetKind
+import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
+import org.pushingpixels.aurora.theming.utils.ContainerType
+import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
+import org.pushingpixels.aurora.theming.utils.getClassicCornerRadius
 
 @Immutable
 private class CheckBoxDrawingCache(
-    val colorScheme: MutableColorScheme = MutableColorScheme(
-        displayName = "Internal mutable",
-        isDark = false
-    ),
+    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens(isDarkAttr = false),
     val markPath: Path = Path()
 )
+
+private object CheckBoxMarkOutlineSuppler: OutlineSupplier {
+    override fun getOutline(
+        layoutDirection: LayoutDirection,
+        density: Density,
+        size: Size,
+        insets: Float,
+        radiusAdjustment: Float
+    ): Outline {
+        val cornerRadius = density.getClassicCornerRadius()
+        return getBaseOutline(
+            layoutDirection = layoutDirection,
+            width = size.width,
+            height = size.height,
+            radius = cornerRadius - radiusAdjustment,
+            sides = Sides(),
+            insets = insets,
+            outlineKind = OutlineKind.Fill,
+        )
+    }
+}
 
 @OptIn(AuroraInternalApi::class)
 @Composable
@@ -138,6 +163,8 @@ internal fun AuroraCheckBox(
             )
         )
     }
+
+    val density = LocalDensity.current
 
     val markAlpha = remember { mutableStateOf(if (contentModel.selected) 1.0f else 0.0f) }
 
@@ -260,56 +287,31 @@ internal fun AuroraCheckBox(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = presentationModel.horizontalAlignment.arrangement
     ) {
-        // Populate the cached color scheme for filling the markbox
+        // Populate the cached color tokens for filling the checkbox mark
         // based on the current model state info
-        populateColorScheme(
-            colorScheme = drawingCache.colorScheme,
+        populateColorTokens(
+            colorTokens = drawingCache.colorTokens,
+            colors = AuroraSkin.colors,
+            decorationAreaType = decorationAreaType,
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
-            colors = AuroraSkin.colors,
-            colorSchemeBundle = presentationModel.colorSchemeBundle,
-            decorationAreaType = decorationAreaType,
-            associationKind = ColorSchemeAssociationKind.MarkBox
-        )
-
-        // And retrieve the mark box colors
-        val fillUltraLight = drawingCache.colorScheme.ultraLightColor
-        val fillExtraLight = drawingCache.colorScheme.extraLightColor
-        val fillLight = drawingCache.colorScheme.lightColor
-        val fillMid = drawingCache.colorScheme.midColor
-        val fillDark = drawingCache.colorScheme.darkColor
-        val fillUltraDark = drawingCache.colorScheme.ultraDarkColor
-        val fillIsDark = drawingCache.colorScheme.isDark
-
-        // Populate the cached color scheme for drawing the markbox border
-        // based on the current model state info
-        populateColorScheme(
-            colorScheme = drawingCache.colorScheme,
-            modelStateInfo = modelStateInfo,
-            currState = currentState.value,
-            colors = AuroraSkin.colors,
-            colorSchemeBundle = presentationModel.colorSchemeBundle,
-            decorationAreaType = decorationAreaType,
-            associationKind = ColorSchemeAssociationKind.Border
-        )
-        // And retrieve the mark box border colors
-        val borderUltraLight = drawingCache.colorScheme.ultraLightColor
-        val borderExtraLight = drawingCache.colorScheme.extraLightColor
-        val borderLight = drawingCache.colorScheme.lightColor
-        val borderMid = drawingCache.colorScheme.midColor
-        val borderDark = drawingCache.colorScheme.darkColor
-        val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
-        val borderIsDark = drawingCache.colorScheme.isDark
+            associationKind = ContainerColorTokensAssociationKind.Mark,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+            treatEnabledAsActive = false,
+            skipFlatCheck = false,
+            inactiveContainerType = ContainerType.Muted)
 
         // Mark color
         val markColor = getStateAwareColor(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
-            colorSchemeBundle = presentationModel.colorSchemeBundle,
             colors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
-            associationKind = ColorSchemeAssociationKind.Mark
-        ) { it.markColor }
+            associationKind = ContainerColorTokensAssociationKind.Mark,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+            skipFlatCheck = false,
+            inactiveContainerType = ContainerType.Muted,
+        ) { it.onContainer }
 
         // Checkmark alpha is the combined strength of all the
         // states that have the selection bit turned on
@@ -325,66 +327,46 @@ internal fun AuroraCheckBox(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colors = AuroraSkin.colors,
-            colorSchemeBundle = presentationModel.colorSchemeBundle,
             decorationAreaType = decorationAreaType,
-            colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
+            associationKind = ContainerColorTokensAssociationKind.Default,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
+            skipFlatCheck = false,
+            inactiveContainerType = ContainerType.Muted,
             isTextInFilledArea = false
         )
-        val alpha = if (currentState.value.isDisabled)
-            AuroraSkin.colors.getAlpha(decorationAreaType, currentState.value) else 1.0f
 
-        val fillPainter = AuroraSkin.painters.fillPainter
-        val borderPainter = AuroraSkin.painters.borderPainter
-//      modelStateInfo.dumpState()
+        val surfacePainter = AuroraSkin.painters.surfacePainter
+        val outlinePainter = AuroraSkin.painters.outlinePainter
 
         Canvas(Modifier.wrapContentSize(Alignment.Center).size(presentationModel.markSize)) {
             val width = this.size.width
             val height = this.size.height
 
-            val outline = getBaseOutline(
+            val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
+            val outlineFill = CheckBoxMarkOutlineSuppler.getOutline(
                 layoutDirection = layoutDirection,
-                width = this.size.width,
-                height = this.size.height,
-                radius = 3.0f.dp.toPx(),
-                sides = null,
-                insets = 0.5f
-            )
+                density = density,
+                size = this.size,
+                insets = outlineInset,
+                radiusAdjustment = 0.0f)
 
-            // Populate the cached color scheme for filling the markbox
-            drawingCache.colorScheme.ultraLight = fillUltraLight
-            drawingCache.colorScheme.extraLight = fillExtraLight
-            drawingCache.colorScheme.light = fillLight
-            drawingCache.colorScheme.mid = fillMid
-            drawingCache.colorScheme.dark = fillDark
-            drawingCache.colorScheme.ultraDark = fillUltraDark
-            drawingCache.colorScheme.isDark = fillIsDark
-            drawingCache.colorScheme.foreground = textColor
-            fillPainter.paintContourBackground(
-                this, this.size, outline, drawingCache.colorScheme, alpha
-            )
+            paintSurface(
+                drawScope = this,
+                componentState = currentState.value,
+                surfacePainter = surfacePainter,
+                size = this.size,
+                alpha = 1.0f,
+                outline = outlineFill,
+                colorTokens = drawingCache.colorTokens)
 
-            // Populate the cached color scheme for drawing the markbox border
-            drawingCache.colorScheme.ultraLight = borderUltraLight
-            drawingCache.colorScheme.extraLight = borderExtraLight
-            drawingCache.colorScheme.light = borderLight
-            drawingCache.colorScheme.mid = borderMid
-            drawingCache.colorScheme.dark = borderDark
-            drawingCache.colorScheme.ultraDark = borderUltraDark
-            drawingCache.colorScheme.isDark = borderIsDark
-            drawingCache.colorScheme.foreground = textColor
-
-            val outlineInner = if (borderPainter.isPaintingInnerOutline) getBaseOutline(
-                layoutDirection = layoutDirection,
-                width = this.size.width,
-                height = this.size.height,
-                radius = 3.0f.dp.toPx() - 1,
-                sides = null,
-                insets = 2.0f
-            ) else null
-
-            borderPainter.paintBorder(
-                this, this.size, outline, outlineInner, drawingCache.colorScheme, alpha
-            )
+            paintOutline(
+                drawScope = this,
+                componentState = currentState.value,
+                outlinePainter = outlinePainter,
+                size = this.size,
+                alpha = 1.0f,
+                outlineSupplier = CheckBoxMarkOutlineSuppler,
+                colorTokens = drawingCache.colorTokens)
 
             // Draw the checkbox mark with the alpha that corresponds to the current
             // selection and potential transition
@@ -406,7 +388,7 @@ internal fun AuroraCheckBox(
                         cap = StrokeCap.Round,
                         join = StrokeJoin.Round
                     ),
-                    alpha = alpha
+                    alpha = 1.0f
                 )
             }
         }

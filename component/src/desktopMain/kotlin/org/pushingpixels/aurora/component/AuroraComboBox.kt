@@ -52,6 +52,7 @@ import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
+import org.pushingpixels.aurora.theming.utils.getClassicCornerRadius
 
 @Immutable
 private class ComboBoxDrawingCache(
@@ -66,9 +67,7 @@ private object ComboBoxOutlineSuppler: OutlineSupplier {
         insets: Float,
         radiusAdjustment: Float
     ): Outline {
-        val cornerRadius = with(density) {
-            3.0.dp.toPx()
-        }
+        val cornerRadius = density.getClassicCornerRadius()
         return getBaseOutline(
             layoutDirection = layoutDirection,
             width = size.width,
@@ -465,7 +464,7 @@ internal fun <E> AuroraComboBox(
         ) { it.onContainer }
 
         if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.Never) {
-            // Populate the cached color scheme for filling the combobox
+            // Populate the cached color tokens for filling the combobox
             // based on the current model state info
             populateColorTokens(
                 colorTokens = drawingCache.colorTokens,

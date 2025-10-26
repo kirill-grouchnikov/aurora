@@ -36,7 +36,9 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import org.pushingpixels.aurora.common.AuroraInternalApi
@@ -44,15 +46,39 @@ import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.painter.outline.InsetKind
+import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
+import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
+import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
+import org.pushingpixels.aurora.theming.utils.getBaseOutline
+import org.pushingpixels.aurora.theming.utils.getClassicCornerRadius
 
 @Immutable
 private class RadioButtonDrawingCache(
-    val colorScheme: MutableColorScheme = MutableColorScheme(
-        displayName = "Internal mutable",
-        isDark = false
-    )
+    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens(isDarkAttr = false)
 )
+
+private object RadioButtonMarkOutlineSuppler: OutlineSupplier {
+    override fun getOutline(
+        layoutDirection: LayoutDirection,
+        density: Density,
+        size: Size,
+        insets: Float,
+        radiusAdjustment: Float
+    ): Outline {
+        return Outline.Rounded(
+            roundRect = RoundRect(
+                left = 0.5f + insets,
+                top = 0.5f + insets,
+                right = size.width - 0.5f - insets,
+                bottom = size.height - 0.5f - insets,
+                radiusX = (size.width - 1.0f) / 2.0f - insets,
+                radiusY = (size.height - 1.0f) / 2.0f - insets
+            )
+        )
+    }
+}
 
 @OptIn(AuroraInternalApi::class)
 @Composable
@@ -136,6 +162,8 @@ internal fun AuroraRadioButton(
             )
         )
     }
+
+    val density = LocalDensity.current
 
     val markAlpha = remember { mutableStateOf(if (contentModel.selected) 1.0f else 0.0f) }
 
@@ -248,55 +276,31 @@ internal fun AuroraRadioButton(
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Populate the cached color scheme for filling the markbox
+        // Populate the cached color tokens for filling the radio button mark
         // based on the current model state info
-        populateColorScheme(
-            colorScheme = drawingCache.colorScheme,
+        populateColorTokens(
+            colorTokens = drawingCache.colorTokens,
+            colors = AuroraSkin.colors,
+            decorationAreaType = decorationAreaType,
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
-            colors = AuroraSkin.colors,
-            colorSchemeBundle = presentationModel.colorSchemeBundle,
-            decorationAreaType = decorationAreaType,
-            associationKind = ColorSchemeAssociationKind.MarkBox
-        )
-        // And retrieve the mark box colors
-        val fillUltraLight = drawingCache.colorScheme.ultraLightColor
-        val fillExtraLight = drawingCache.colorScheme.extraLightColor
-        val fillLight = drawingCache.colorScheme.lightColor
-        val fillMid = drawingCache.colorScheme.midColor
-        val fillDark = drawingCache.colorScheme.darkColor
-        val fillUltraDark = drawingCache.colorScheme.ultraDarkColor
-        val fillIsDark = drawingCache.colorScheme.isDark
-
-        // Populate the cached color scheme for drawing the markbox border
-        // based on the current model state info
-        populateColorScheme(
-            colorScheme = drawingCache.colorScheme,
-            modelStateInfo = modelStateInfo,
-            currState = currentState.value,
-            colors = AuroraSkin.colors,
-            colorSchemeBundle = presentationModel.colorSchemeBundle,
-            decorationAreaType = decorationAreaType,
-            associationKind = ColorSchemeAssociationKind.Border
-        )
-        // And retrieve the mark box border colors
-        val borderUltraLight = drawingCache.colorScheme.ultraLightColor
-        val borderExtraLight = drawingCache.colorScheme.extraLightColor
-        val borderLight = drawingCache.colorScheme.lightColor
-        val borderMid = drawingCache.colorScheme.midColor
-        val borderDark = drawingCache.colorScheme.darkColor
-        val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
-        val borderIsDark = drawingCache.colorScheme.isDark
+            associationKind = ContainerColorTokensAssociationKind.Mark,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+            treatEnabledAsActive = false,
+            skipFlatCheck = false,
+            inactiveContainerType = ContainerType.Muted)
 
         // Mark color
         val markColor = getStateAwareColor(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
-            colorSchemeBundle = presentationModel.colorSchemeBundle,
             colors = AuroraSkin.colors,
             decorationAreaType = decorationAreaType,
-            associationKind = ColorSchemeAssociationKind.Mark
-        ) { it.markColor }
+            associationKind = ContainerColorTokensAssociationKind.Mark,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+            skipFlatCheck = false,
+            inactiveContainerType = ContainerType.Muted,
+        ) { it.onContainer }
 
         // Checkmark alpha is the combined strength of all the
         // states that have the selection bit turned on
@@ -313,66 +317,45 @@ internal fun AuroraRadioButton(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colors = AuroraSkin.colors,
-            colorSchemeBundle = presentationModel.colorSchemeBundle,
             decorationAreaType = decorationAreaType,
-            colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
+            associationKind = ContainerColorTokensAssociationKind.Default,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
+            skipFlatCheck = false,
+            inactiveContainerType = ContainerType.Muted,
             isTextInFilledArea = false
         )
-        val alpha = if (currentState.value.isDisabled)
-            AuroraSkin.colors.getAlpha(decorationAreaType, currentState.value) else 1.0f
 
-        val fillPainter = AuroraSkin.painters.fillPainter
-        val borderPainter = AuroraSkin.painters.borderPainter
+        val surfacePainter = AuroraSkin.painters.surfacePainter
+        val outlinePainter = AuroraSkin.painters.outlinePainter
 
         Canvas(
             Modifier.wrapContentSize(Alignment.Center).size(presentationModel.markSize)
         ) {
-            val width = this.size.width
-            val height = this.size.height
+            val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
+            val outlineFill = RadioButtonMarkOutlineSuppler.getOutline(
+                layoutDirection = layoutDirection,
+                density = density,
+                size = this.size,
+                insets = outlineInset,
+                radiusAdjustment = 0.0f)
 
-            val outline = Outline.Rounded(
-                roundRect = RoundRect(
-                    left = 0.5f, top = 0.5f,
-                    right = width - 0.5f, bottom = height - 0.5f,
-                    radiusX = (width - 1.0f) / 2.0f, radiusY = (height - 1.0f) / 2.0f
-                )
-            )
+            paintSurface(
+                drawScope = this,
+                componentState = currentState.value,
+                surfacePainter = surfacePainter,
+                size = this.size,
+                alpha = 1.0f,
+                outline = outlineFill,
+                colorTokens = drawingCache.colorTokens)
 
-            // Populate the cached color scheme for filling the markbox
-            drawingCache.colorScheme.ultraLight = fillUltraLight
-            drawingCache.colorScheme.extraLight = fillExtraLight
-            drawingCache.colorScheme.light = fillLight
-            drawingCache.colorScheme.mid = fillMid
-            drawingCache.colorScheme.dark = fillDark
-            drawingCache.colorScheme.ultraDark = fillUltraDark
-            drawingCache.colorScheme.isDark = fillIsDark
-            drawingCache.colorScheme.foreground = textColor
-            fillPainter.paintContourBackground(
-                this, this.size, outline, drawingCache.colorScheme, alpha
-            )
-
-            // Populate the cached color scheme for drawing the markbox border
-            drawingCache.colorScheme.ultraLight = borderUltraLight
-            drawingCache.colorScheme.extraLight = borderExtraLight
-            drawingCache.colorScheme.light = borderLight
-            drawingCache.colorScheme.mid = borderMid
-            drawingCache.colorScheme.dark = borderDark
-            drawingCache.colorScheme.ultraDark = borderUltraDark
-            drawingCache.colorScheme.isDark = borderIsDark
-            drawingCache.colorScheme.foreground = textColor
-
-            val outlineInner = if (borderPainter.isPaintingInnerOutline)
-                Outline.Rounded(
-                    roundRect = RoundRect(
-                        left = 1.0f, top = 1.0f,
-                        right = width - 1.0f, bottom = height - 1.0f,
-                        radiusX = (width - 2.0f) / 2.0f, radiusY = (height - 2.0f) / 2.0f
-                    )
-                ) else null
-
-            borderPainter.paintBorder(
-                this, this.size, outline, outlineInner, drawingCache.colorScheme, alpha
-            )
+            paintOutline(
+                drawScope = this,
+                componentState = currentState.value,
+                outlinePainter = outlinePainter,
+                size = this.size,
+                alpha = 1.0f,
+                outlineSupplier = RadioButtonMarkOutlineSuppler,
+                colorTokens = drawingCache.colorTokens)
 
             // Draw the radio mark with the alpha that corresponds to the current
             // selection and potential transition
@@ -392,7 +375,7 @@ internal fun AuroraRadioButton(
                 outline = outlineMark,
                 color = markColor.withAlpha(markAlpha.value),
                 style = Fill,
-                alpha = alpha
+                alpha = 1.0f
             )
         }
         Spacer(modifier = Modifier.width(SelectorSizingConstants.SelectorMarkTextGap *
