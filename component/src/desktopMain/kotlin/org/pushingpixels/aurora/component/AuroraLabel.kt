@@ -36,7 +36,9 @@ import org.pushingpixels.aurora.component.model.LabelPresentationModel
 import org.pushingpixels.aurora.component.utils.AuroraText
 import org.pushingpixels.aurora.component.utils.AuroraThemedIcon
 import org.pushingpixels.aurora.component.utils.getLabelPreferredSingleLineWidth
+import org.pushingpixels.aurora.component.utils.getTextColor
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.utils.ContainerType
 
 @OptIn(AuroraInternalApi::class)
 @Composable
@@ -120,11 +122,18 @@ private fun LabelTextContent(
         // If the presentation model specifies a text style with a color, use that. Otherwise
         // use the foreground color that matches the decoration area type of this label
         val presentationStyleHasColor = presentationModel.textStyle?.color?.isSpecified ?: false
-        val textColor = if (presentationStyleHasColor) presentationModel.textStyle!!.color else
-            skinColors.getColorScheme(
-                decorationAreaType,
-                state
-            ).foregroundColor
+        val textColor = if (presentationStyleHasColor) presentationModel.textStyle.color else
+            getTextColor(
+                modelStateInfo = null,
+                currState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected,
+                colors = skinColors,
+                decorationAreaType = decorationAreaType,
+                associationKind = ContainerColorTokensAssociationKind.Default,
+                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
+                skipFlatCheck = true,
+                inactiveContainerType = ContainerType.Neutral,
+                isTextInFilledArea = false,
+        )
 
         // Pass our text color and synthesized model state snapshot to the children
         CompositionLocalProvider(
@@ -176,7 +185,17 @@ private fun LabelIconContent(
         val decorationAreaType = AuroraSkin.decorationAreaType
         val skinColors = AuroraSkin.colors
 
-        val textColor = skinColors.getColorScheme(decorationAreaType, currState).foregroundColor
+        val textColor = getTextColor(
+            modelStateInfo = null,
+            currState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected,
+            colors = skinColors,
+            decorationAreaType = decorationAreaType,
+            associationKind = ContainerColorTokensAssociationKind.Default,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
+            skipFlatCheck = true,
+            inactiveContainerType = ContainerType.Neutral,
+            isTextInFilledArea = false,
+        )
 
         // Pass our text color and synthesized model state snapshot to the children
         CompositionLocalProvider(

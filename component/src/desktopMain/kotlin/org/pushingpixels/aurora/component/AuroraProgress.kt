@@ -31,17 +31,18 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.component.model.CircularProgressPresentationModel
 import org.pushingpixels.aurora.component.model.DeterminateProgressContentModel
 import org.pushingpixels.aurora.component.model.IndeterminateProgressContentModel
 import org.pushingpixels.aurora.component.model.LinearProgressPresentationModel
-import org.pushingpixels.aurora.theming.AuroraSkin
-import org.pushingpixels.aurora.theming.ColorSchemeAssociationKind
-import org.pushingpixels.aurora.theming.ComponentState
-import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
-import org.pushingpixels.aurora.theming.utils.getBaseOutline
+import org.pushingpixels.aurora.component.utils.paintOutline
+import org.pushingpixels.aurora.component.utils.paintSurface
+import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
+import org.pushingpixels.aurora.theming.utils.*
 import kotlin.math.min
 
 @Composable
@@ -78,15 +79,15 @@ internal fun AuroraIndeterminateCircularProgress(
     val prevArcSpan = remember { mutableStateOf(arcSpan) }
 
     val componentState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
-    val color =
-        (presentationModel.colorSchemeBundle?.getColorScheme(componentState) ?: AuroraSkin.colors.getColorScheme(
-            decorationAreaType = AuroraSkin.decorationAreaType,
-            componentState = componentState
-        )).foregroundColor
-    val alpha = presentationModel.colorSchemeBundle?.getAlpha(componentState) ?: AuroraSkin.colors.getAlpha(
+    val colorTokens = getContainerTokens(
+        colors = AuroraSkin.colors,
         decorationAreaType = AuroraSkin.decorationAreaType,
-        componentState = componentState
+        componentState = componentState,
+        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
+        inactiveContainerType = ContainerType.Neutral
     )
+    val color = colorTokens.onContainer
+    val alpha = if (contentModel.enabled) 1.0f else colorTokens.onContainerDisabledAlpha
 
     Canvas(
         modifier
@@ -133,15 +134,15 @@ internal fun AuroraDeterminateCircularProgress(
 ) {
 
     val componentState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
-    val color =
-        (presentationModel.colorSchemeBundle?.getColorScheme(componentState) ?: AuroraSkin.colors.getColorScheme(
-            decorationAreaType = AuroraSkin.decorationAreaType,
-            componentState = componentState
-        )).foregroundColor
-    val alpha = presentationModel.colorSchemeBundle?.getAlpha(componentState) ?: AuroraSkin.colors.getAlpha(
+    val colorTokens = getContainerTokens(
+        colors = AuroraSkin.colors,
         decorationAreaType = AuroraSkin.decorationAreaType,
-        componentState = componentState
+        componentState = componentState,
+        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
+        inactiveContainerType = ContainerType.Neutral
     )
+    val color = colorTokens.onContainer
+    val alpha = if (contentModel.enabled) 1.0f else colorTokens.onContainerDisabledAlpha
 
     Canvas(
         modifier
@@ -167,12 +168,26 @@ internal fun AuroraDeterminateCircularProgress(
     }
 }
 
-private val progressFillPainter = FractionBasedFillPainter(
-    0.0f to { it.extraLightColor },
-    0.5f to { it.lightColor },
-    1.0f to { it.midColor },
-    displayName = "Progress fill (internal)"
-)
+private object LinearProgressOutlineSuppler: OutlineSupplier {
+    override fun getOutline(
+        layoutDirection: LayoutDirection,
+        density: Density,
+        size: Size,
+        insets: Float,
+        radiusAdjustment: Float
+    ): Outline {
+        val cornerRadius = density.getClassicCornerRadius()
+        return getBaseOutline(
+            layoutDirection = layoutDirection,
+            width = size.width,
+            height = size.height,
+            radius = cornerRadius - radiusAdjustment,
+            sides = Sides(),
+            insets = insets,
+            outlineKind = OutlineKind.Fill,
+        )
+    }
+}
 
 @Composable
 internal fun linearProgressIntrinsicSize(
@@ -203,31 +218,23 @@ internal fun AuroraIndeterminateLinearProgress(
         )
     )
 
-    val progressState =
+    val componentState =
         if (contentModel.enabled) ComponentState.Indeterminate else ComponentState.DisabledIndeterminate
-    val borderState =
-        if (contentModel.enabled) ComponentState.Determinate else ComponentState.DisabledDeterminate
+    val fillColorTokens = getContainerTokens(
+        colors = AuroraSkin.colors,
+        decorationAreaType = AuroraSkin.decorationAreaType,
+        componentState = componentState,
+        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+        inactiveContainerType = ContainerType.Muted
+    )
+    val progressColorTokens = getActiveContainerTokens(
+        colors = AuroraSkin.colors,
+        decorationAreaType = AuroraSkin.decorationAreaType,
+        componentState = componentState,
+    )
 
-    // install state-aware alpha channel (support for skins
-    // that use translucency on disabled states).
-    val stateAlpha = presentationModel.colorSchemeBundle?.getAlpha(progressState) ?: AuroraSkin.colors.getAlpha(
-        decorationAreaType = AuroraSkin.decorationAreaType,
-        componentState = progressState
-    )
-    val colorScheme =
-        presentationModel.colorSchemeBundle?.getColorScheme(progressState) ?: AuroraSkin.colors.getColorScheme(
-            decorationAreaType = AuroraSkin.decorationAreaType,
-            componentState = progressState
-        )
-    val borderColorScheme = presentationModel.colorSchemeBundle?.getColorScheme(
-        associationKind = ColorSchemeAssociationKind.Border,
-        componentState = borderState,
-        allowFallback = true
-    ) ?: AuroraSkin.colors.getColorScheme(
-        decorationAreaType = AuroraSkin.decorationAreaType,
-        associationKind = ColorSchemeAssociationKind.Border,
-        componentState = borderState
-    )
+    val surfacePainter = AuroraSkin.painters.surfacePainter
+    val outlinePainter = AuroraSkin.painters.outlinePainter
 
     Canvas(
         modifier
@@ -257,20 +264,22 @@ internal fun AuroraIndeterminateLinearProgress(
                 )
             })
         }) {
+            val containerSurfaceAlpha =
+                if (componentState.isDisabled) progressColorTokens.containerSurfaceDisabledAlpha else 1.0f
             drawOutline(
                 outline = Outline.Rectangle(Rect(offset = Offset.Zero, size = size)),
                 style = Fill,
                 brush = Brush.verticalGradient(
-                    0.0f to colorScheme.darkColor,
-                    0.2f to colorScheme.lightColor,
-                    0.5f to colorScheme.midColor,
-                    0.8f to colorScheme.lightColor,
-                    1.0f to colorScheme.darkColor,
+                    0.0f to progressColorTokens.containerSurfaceHighest,
+                    0.2f to progressColorTokens.containerSurface,
+                    0.5f to progressColorTokens.containerSurfaceHigh,
+                    0.8f to progressColorTokens.containerSurface,
+                    1.0f to progressColorTokens.containerSurfaceHighest,
                     startY = 0.0f,
                     endY = size.height,
                     tileMode = TileMode.Clamp
                 ),
-                alpha = stateAlpha
+                alpha = containerSurfaceAlpha
             )
 
             val stripeCount = (size.width / size.height).toInt()
@@ -290,25 +299,19 @@ internal fun AuroraIndeterminateLinearProgress(
                         it.lineTo(stripePos + size.height, size.height)
                         it.close()
                     },
-                    color = colorScheme.ultraLightColor,
-                    alpha = stateAlpha
+                    color = progressColorTokens.containerSurfaceLow,
+                    alpha = containerSurfaceAlpha
                 )
             }
         }
-        val outline = getBaseOutline(
-            layoutDirection = layoutDirection,
-            width = size.width,
-            height = size.height,
-            radius = radius,
-            sides = null,
-            insets = 0.5f
-        )
-        drawOutline(
-            outline = outline,
-            style = Stroke(width = 1.0f),
-            color = borderColorScheme.darkColor,
-            alpha = stateAlpha
-        )
+        paintOutline(
+            drawScope = this,
+            componentState = componentState,
+            outlinePainter = outlinePainter,
+            size = this.size,
+            alpha = 1.0f,
+            outlineSupplier = LinearProgressOutlineSuppler,
+            colorTokens = fillColorTokens)
     }
 }
 
@@ -324,34 +327,22 @@ internal fun AuroraDeterminateLinearProgress(
         if (contentModel.enabled) ComponentState.Determinate else ComponentState.DisabledDeterminate
     val fillState =
         if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
-    val borderState =
-        if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
 
-    // install state-aware alpha channel (support for skins
-    // that use translucency on disabled states).
-    val stateAlpha = presentationModel.colorSchemeBundle?.getAlpha(fillState) ?: AuroraSkin.colors.getAlpha(
+    val fillColorTokens = getContainerTokens(
+        colors = AuroraSkin.colors,
         decorationAreaType = AuroraSkin.decorationAreaType,
-        componentState = fillState
+        componentState = fillState,
+        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+        inactiveContainerType = ContainerType.Muted
     )
-    val fillScheme = presentationModel.colorSchemeBundle?.getColorScheme(fillState) ?: AuroraSkin.colors.getColorScheme(
+    val progressColorTokens = getActiveContainerTokens(
+        colors = AuroraSkin.colors,
         decorationAreaType = AuroraSkin.decorationAreaType,
-        componentState = fillState
+        componentState = progressState,
     )
-    val progressColorScheme =
-        presentationModel.colorSchemeBundle?.getColorScheme(progressState) ?: AuroraSkin.colors.getColorScheme(
-            decorationAreaType = AuroraSkin.decorationAreaType,
-            componentState = progressState
-        )
-    val borderColorScheme = presentationModel.colorSchemeBundle?.getColorScheme(
-        associationKind = ColorSchemeAssociationKind.Border,
-        componentState = borderState,
-        allowFallback = true
-    ) ?: AuroraSkin.colors.getColorScheme(
-        decorationAreaType = AuroraSkin.decorationAreaType,
-        associationKind = ColorSchemeAssociationKind.Border,
-        componentState = borderState
-    )
-    val fillPainter = AuroraSkin.painters.fillPainter
+
+    val surfacePainter = AuroraSkin.painters.surfacePainter
+    val outlinePainter = AuroraSkin.painters.outlinePainter
 
     Canvas(
         modifier
@@ -380,19 +371,24 @@ internal fun AuroraDeterminateLinearProgress(
                 )
             })
         }) {
-            fillPainter.paintContourBackground(
+            paintSurface(
                 drawScope = this,
+                componentState = fillState,
+                surfacePainter = surfacePainter,
                 size = this.size,
+                alpha = 1.0f,
                 outline = Outline.Rectangle(Rect(offset = Offset.Zero, size = size)),
-                fillScheme = fillScheme,
-                alpha = stateAlpha
+                colorTokens = fillColorTokens
             )
 
             val progressWidth = size.width * contentModel.progress
             if (progressWidth > 0.0f) {
-                progressFillPainter.paintContourBackground(
+                paintSurface(
                     drawScope = this,
+                    componentState = progressState,
+                    surfacePainter = surfacePainter,
                     size = this.size,
+                    alpha = 1.0f,
                     outline = Outline.Rectangle(
                         Rect(
                             offset = if (layoutDirection == LayoutDirection.Ltr) Offset.Zero else
@@ -400,24 +396,18 @@ internal fun AuroraDeterminateLinearProgress(
                             size = Size(progressWidth, size.height)
                         )
                     ),
-                    fillScheme = progressColorScheme,
-                    alpha = stateAlpha
+                    colorTokens = progressColorTokens
                 )
             }
         }
-        val outline = getBaseOutline(
-            layoutDirection = layoutDirection,
-            width = size.width,
-            height = size.height,
-            radius = radius,
-            sides = null,
-            insets = 0.5f
-        )
-        drawOutline(
-            outline = outline,
-            style = Stroke(width = 1.0f),
-            color = borderColorScheme.darkColor,
-            alpha = stateAlpha
-        )
+
+        paintOutline(
+            drawScope = this,
+            componentState = fillState,
+            outlinePainter = outlinePainter,
+            size = this.size,
+            alpha = 1.0f,
+            outlineSupplier = LinearProgressOutlineSuppler,
+            colorTokens = fillColorTokens)
     }
 }

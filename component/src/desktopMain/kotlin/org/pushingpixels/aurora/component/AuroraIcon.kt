@@ -27,7 +27,9 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.IconContentModel
 import org.pushingpixels.aurora.component.model.IconPresentationModel
 import org.pushingpixels.aurora.component.utils.AuroraThemedIcon
+import org.pushingpixels.aurora.component.utils.getTextColor
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.utils.ContainerType
 
 @Composable
 internal fun iconIntrinsicSize(
@@ -74,7 +76,17 @@ internal fun AuroraIcon(
             val decorationAreaType = AuroraSkin.decorationAreaType
             val skinColors = AuroraSkin.colors
 
-            val textColor = skinColors.getColorScheme(decorationAreaType, state).foregroundColor
+            val textColor = getTextColor(
+                modelStateInfo = null,
+                currState = state,
+                colors = skinColors,
+                decorationAreaType = decorationAreaType,
+                associationKind = ContainerColorTokensAssociationKind.Default,
+                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
+                skipFlatCheck = true,
+                inactiveContainerType = ContainerType.Neutral,
+                isTextInFilledArea = false,
+            )
 
             // Pass our text color and synthesized model state snapshot to the children
             CompositionLocalProvider(
