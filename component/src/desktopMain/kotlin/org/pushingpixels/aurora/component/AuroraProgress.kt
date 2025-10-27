@@ -233,7 +233,6 @@ internal fun AuroraIndeterminateLinearProgress(
         componentState = componentState,
     )
 
-    val surfacePainter = AuroraSkin.painters.surfacePainter
     val outlinePainter = AuroraSkin.painters.outlinePainter
 
     Canvas(

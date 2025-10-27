@@ -291,7 +291,7 @@ fun getContainerTokens(
     componentState: ComponentState,
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     inactiveContainerType: ContainerType
-): ContainerColorTokens? {
+): ContainerColorTokens {
     return getContainerTokens(colors, decorationAreaType, associationKind, componentState,
         backgroundAppearanceStrategy, inactiveContainerType, false)
 }
