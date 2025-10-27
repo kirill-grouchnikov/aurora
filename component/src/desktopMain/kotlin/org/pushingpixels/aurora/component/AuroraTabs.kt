@@ -45,6 +45,7 @@ import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.utils.getEndwardDoubleArrowIcon
 import org.pushingpixels.aurora.component.utils.getStartwardDoubleArrowIcon
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.utils.ContainerType
 import kotlin.math.max
 
 @OptIn(AuroraInternalApi::class)
@@ -175,7 +176,8 @@ internal fun AuroraTabs(
         icon = getStartwardDoubleArrowIcon(
             decorationAreaType = decorationAreaType,
             skinColors = colors,
-            colorSchemeBundle = presentationModel.colorSchemeBundle,
+            inactiveContainerType = ContainerType.Muted,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             density = density
         ),
         isActionEnabled = (horizontalScrollState.value > 0),
@@ -190,7 +192,8 @@ internal fun AuroraTabs(
         icon = getEndwardDoubleArrowIcon(
             decorationAreaType = decorationAreaType,
             skinColors = colors,
-            colorSchemeBundle = presentationModel.colorSchemeBundle,
+            inactiveContainerType = ContainerType.Muted,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             density = density
         ),
         isActionEnabled = (horizontalScrollState.value < horizontalScrollState.maxValue),

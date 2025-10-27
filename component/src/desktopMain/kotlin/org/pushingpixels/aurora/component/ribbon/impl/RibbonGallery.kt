@@ -45,6 +45,7 @@ import org.pushingpixels.aurora.component.ribbon.RibbonGalleryPresentationModel
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.component.utils.ArrowSizingConstants
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.utils.ContainerType
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -139,19 +140,17 @@ internal fun RibbonGallery(
                     iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
                     decorationAreaType = decorationAreaType,
                     skinColors = colors,
-                    colorSchemeBundle = null,
+                    inactiveContainerType = ContainerType.Neutral,
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
                     modelStateInfoSnapshot = modelStateInfoSnapshot,
-                    paintDelegate = { drawScope, iconSize, colorScheme ->
+                    paintDelegate = { drawScope, iconSize, colorTokens ->
                         with(drawScope) {
                             val arrowWidth = ArrowSizingConstants.DefaultDoubleArrowWidth.toPx()
                             val arrowHeight = ArrowSizingConstants.DefaultDoubleArrowHeight.toPx()
                             val dx = (iconSize.toPx() - arrowWidth) / 2
                             val dy = (iconSize.toPx() - arrowHeight) / 2
                             val alpha = if (modelStateInfoSnapshot.currModelState.isDisabled)
-                                colors.getAlpha(
-                                    decorationAreaType,
-                                    modelStateInfoSnapshot.currModelState
-                                ) else 1.0f
+                                colorTokens.onContainerDisabledAlpha else 1.0f
                             translate(left = dx, top = dy) {
                                 drawArrow(
                                     drawScope = this,
@@ -160,7 +159,7 @@ internal fun RibbonGallery(
                                     strokeWidth = ArrowSizingConstants.DefaultDoubleArrowStroke.toPx(),
                                     popupPlacementStrategy = PopupPlacementStrategy.Upward.HAlignStart,
                                     layoutDirection = layoutDirection,
-                                    color = colorScheme.markColor.withAlpha(alpha)
+                                    color = colorTokens.onContainer.withAlpha(alpha)
                                 )
                             }
                         }
@@ -180,19 +179,17 @@ internal fun RibbonGallery(
                     iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
                     decorationAreaType = decorationAreaType,
                     skinColors = colors,
-                    colorSchemeBundle = null,
+                    inactiveContainerType = ContainerType.Neutral,
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
                     modelStateInfoSnapshot = modelStateInfoSnapshot,
-                    paintDelegate = { drawScope, iconSize, colorScheme ->
+                    paintDelegate = { drawScope, iconSize, colorTokens ->
                         with(drawScope) {
                             val arrowWidth = ArrowSizingConstants.DefaultDoubleArrowWidth.toPx()
                             val arrowHeight = ArrowSizingConstants.DefaultDoubleArrowHeight.toPx()
                             val dx = (iconSize.toPx() - arrowWidth) / 2
                             val dy = (iconSize.toPx() - arrowHeight) / 2
                             val alpha = if (modelStateInfoSnapshot.currModelState.isDisabled)
-                                colors.getAlpha(
-                                    decorationAreaType,
-                                    modelStateInfoSnapshot.currModelState
-                                ) else 1.0f
+                                colorTokens.onContainerDisabledAlpha else 1.0f
                             translate(left = dx, top = dy) {
                                 drawArrow(
                                     drawScope = this,
@@ -201,7 +198,7 @@ internal fun RibbonGallery(
                                     strokeWidth = ArrowSizingConstants.DefaultDoubleArrowStroke.toPx(),
                                     popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
                                     layoutDirection = layoutDirection,
-                                    color = colorScheme.markColor.withAlpha(alpha)
+                                    color = colorTokens.onContainer.withAlpha(alpha)
                                 )
                             }
                         }
@@ -222,9 +219,10 @@ internal fun RibbonGallery(
                     iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
                     decorationAreaType = decorationAreaType,
                     skinColors = colors,
-                    colorSchemeBundle = null,
+                    inactiveContainerType = ContainerType.Neutral,
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
                     modelStateInfoSnapshot = modelStateInfoSnapshot,
-                    paintDelegate = { drawScope, iconSize, colorScheme ->
+                    paintDelegate = { drawScope, iconSize, colorTokens ->
                         with(drawScope) {
                             val arrowDoubleWidth =
                                 ArrowSizingConstants.DefaultDoubleArrowHeight.toPx() +
@@ -234,10 +232,7 @@ internal fun RibbonGallery(
                             val dx = (iconSize.toPx() - arrowDoubleWidth) / 2
                             val dy = (iconSize.toPx() - arrowDoubleHeight) / 2
                             val alpha = if (modelStateInfoSnapshot.currModelState.isDisabled)
-                                colors.getAlpha(
-                                    decorationAreaType,
-                                    modelStateInfoSnapshot.currModelState
-                                ) else 1.0f
+                                colorTokens.onContainerDisabledAlpha else 1.0f
                             translate(left = dx, top = dy) {
                                 drawDoubleArrow(
                                     drawScope = this,
@@ -247,7 +242,7 @@ internal fun RibbonGallery(
                                     strokeWidth = ArrowSizingConstants.DefaultDoubleArrowStroke.toPx(),
                                     popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
                                     layoutDirection = layoutDirection,
-                                    color = colorScheme.markColor.withAlpha(alpha)
+                                    color = colorTokens.onContainer.withAlpha(alpha)
                                 )
                             }
                         }

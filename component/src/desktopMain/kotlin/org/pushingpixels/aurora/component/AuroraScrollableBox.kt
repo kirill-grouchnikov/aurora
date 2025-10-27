@@ -40,6 +40,7 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.utils.ContainerType
 import kotlin.math.roundToInt
 
 object ScrollableBoxConstants {
@@ -99,7 +100,8 @@ fun AuroraHorizontallyScrollableBox(
         icon = getStartwardDoubleArrowIcon(
             decorationAreaType = decorationAreaType,
             skinColors = colors,
-            colorSchemeBundle = null,
+            inactiveContainerType = ContainerType.Muted,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             density = density
         ),
         isActionEnabled = (horizontalScrollState.value > 0),
@@ -112,7 +114,8 @@ fun AuroraHorizontallyScrollableBox(
         icon = getEndwardDoubleArrowIcon(
             decorationAreaType = decorationAreaType,
             skinColors = colors,
-            colorSchemeBundle = null,
+            inactiveContainerType = ContainerType.Muted,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             density = density
         ),
         isActionEnabled = (horizontalScrollState.value < horizontalScrollState.maxValue),
@@ -274,9 +277,10 @@ fun AuroraVerticallyScrollableBox(
                     iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
                     decorationAreaType = decorationAreaType,
                     skinColors = colors,
-                    colorSchemeBundle = null,
+                    inactiveContainerType = ContainerType.Muted,
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                     modelStateInfoSnapshot = modelStateInfoSnapshot,
-                    paintDelegate = { drawScope, iconSize, colorScheme ->
+                    paintDelegate = { drawScope, iconSize, colorTokens ->
                         with(drawScope) {
                             val arrowDoubleWidth =
                                 ArrowSizingConstants.DefaultDoubleArrowHeight.toPx() +
@@ -286,10 +290,7 @@ fun AuroraVerticallyScrollableBox(
                             val dx = (iconSize.toPx() - arrowDoubleWidth) / 2
                             val dy = (iconSize.toPx() - arrowDoubleHeight) / 2
                             val alpha = if (modelStateInfoSnapshot.currModelState.isDisabled)
-                                colors.getAlpha(
-                                    decorationAreaType,
-                                    modelStateInfoSnapshot.currModelState
-                                ) else 1.0f
+                                colorTokens.onContainerDisabledAlpha else 1.0f
                             translate(left = dx, top = dy) {
                                 drawDoubleArrow(
                                     drawScope = this,
@@ -299,7 +300,7 @@ fun AuroraVerticallyScrollableBox(
                                     strokeWidth = ArrowSizingConstants.DefaultDoubleArrowStroke.toPx(),
                                     popupPlacementStrategy = PopupPlacementStrategy.Upward.HAlignStart,
                                     layoutDirection = layoutDirection,
-                                    color = colorScheme.markColor.withAlpha(alpha)
+                                    color = colorTokens.onContainer.withAlpha(alpha)
                                 )
                             }
                         }
@@ -321,9 +322,10 @@ fun AuroraVerticallyScrollableBox(
                     iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
                     decorationAreaType = decorationAreaType,
                     skinColors = colors,
-                    colorSchemeBundle = null,
+                    inactiveContainerType = ContainerType.Muted,
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                     modelStateInfoSnapshot = modelStateInfoSnapshot,
-                    paintDelegate = { drawScope, iconSize, colorScheme ->
+                    paintDelegate = { drawScope, iconSize, colorTokens ->
                         with(drawScope) {
                             val arrowDoubleWidth =
                                 ArrowSizingConstants.DefaultDoubleArrowHeight.toPx() +
@@ -333,10 +335,7 @@ fun AuroraVerticallyScrollableBox(
                             val dx = (iconSize.toPx() - arrowDoubleWidth) / 2
                             val dy = (iconSize.toPx() - arrowDoubleHeight) / 2
                             val alpha = if (modelStateInfoSnapshot.currModelState.isDisabled)
-                                colors.getAlpha(
-                                    decorationAreaType,
-                                    modelStateInfoSnapshot.currModelState
-                                ) else 1.0f
+                                colorTokens.onContainerDisabledAlpha else 1.0f
                             translate(left = dx, top = dy) {
                                 drawDoubleArrow(
                                     drawScope = this,
@@ -346,7 +345,7 @@ fun AuroraVerticallyScrollableBox(
                                     strokeWidth = ArrowSizingConstants.DefaultDoubleArrowStroke.toPx(),
                                     popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
                                     layoutDirection = layoutDirection,
-                                    color = colorScheme.markColor.withAlpha(alpha)
+                                    color = colorTokens.onContainer.withAlpha(alpha)
                                 )
                             }
                         }

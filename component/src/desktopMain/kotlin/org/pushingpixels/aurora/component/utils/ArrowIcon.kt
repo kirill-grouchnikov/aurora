@@ -29,11 +29,12 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.ModelStateInfoSnapshot
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.utils.ContainerType
 
 internal object ArrowSizingConstants {
     val DefaultArrowStroke = 2.0.dp
@@ -69,8 +70,6 @@ private fun PopupPlacementStrategy.toArrowDirection(layoutDirection: LayoutDirec
         is PopupPlacementStrategy.Endward.VAlignBottom ->
             if (layoutDirection == LayoutDirection.Ltr) ArrowDirection.Rightward
             else ArrowDirection.Leftward
-
-        else -> ArrowDirection.Downward
     }
 }
 
@@ -225,7 +224,8 @@ internal fun drawDoubleArrow(
 internal fun getStartwardDoubleArrowIcon(
     decorationAreaType: DecorationAreaType,
     skinColors: AuroraSkinColors,
-    colorSchemeBundle: AuroraColorSchemeBundle?,
+    inactiveContainerType: ContainerType,
+    backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     density: Density
 ): Painter {
     return object : TransitionAwarePainterDelegate() {
@@ -234,9 +234,10 @@ internal fun getStartwardDoubleArrowIcon(
                 iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
                 decorationAreaType = decorationAreaType,
                 skinColors = skinColors,
-                colorSchemeBundle = colorSchemeBundle,
+                inactiveContainerType = inactiveContainerType,
+                backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                 modelStateInfoSnapshot = modelStateInfoSnapshot,
-                paintDelegate = { drawScope, iconSize, colorScheme ->
+                paintDelegate = { drawScope, iconSize, colorTokens ->
                     with(drawScope) {
                         val arrowDoubleWidth =
                             ArrowSizingConstants.DefaultDoubleArrowHeight.toPx() +
@@ -246,10 +247,7 @@ internal fun getStartwardDoubleArrowIcon(
                         val dx = (iconSize.toPx() - arrowDoubleWidth) / 2
                         val dy = (iconSize.toPx() - arrowDoubleHeight) / 2
                         val alpha = if (modelStateInfoSnapshot.currModelState.isDisabled)
-                            skinColors.getAlpha(
-                                decorationAreaType,
-                                modelStateInfoSnapshot.currModelState
-                            ) else 1.0f
+                            colorTokens.onContainerDisabledAlpha else 1.0f
                         translate(left = dx, top = dy) {
                             drawDoubleArrow(
                                 drawScope = this,
@@ -259,7 +257,7 @@ internal fun getStartwardDoubleArrowIcon(
                                 strokeWidth = ArrowSizingConstants.DefaultDoubleArrowStroke.toPx(),
                                 popupPlacementStrategy = PopupPlacementStrategy.Startward.VAlignTop,
                                 layoutDirection = layoutDirection,
-                                color = colorScheme.markColor.withAlpha(alpha)
+                                color = colorTokens.onContainer.withAlpha(alpha)
                             )
                         }
                     }
@@ -274,7 +272,8 @@ internal fun getStartwardDoubleArrowIcon(
 fun getEndwardDoubleArrowIcon(
     decorationAreaType: DecorationAreaType,
     skinColors: AuroraSkinColors,
-    colorSchemeBundle: AuroraColorSchemeBundle?,
+    inactiveContainerType: ContainerType,
+    backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     density: Density
 ): Painter {
     return object : TransitionAwarePainterDelegate() {
@@ -283,9 +282,10 @@ fun getEndwardDoubleArrowIcon(
                 iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
                 decorationAreaType = decorationAreaType,
                 skinColors = skinColors,
-                colorSchemeBundle = colorSchemeBundle,
+                inactiveContainerType = inactiveContainerType,
+                backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                 modelStateInfoSnapshot = modelStateInfoSnapshot,
-                paintDelegate = { drawScope, iconSize, colorScheme ->
+                paintDelegate = { drawScope, iconSize, colorTokens ->
                     with(drawScope) {
                         val arrowDoubleWidth =
                             ArrowSizingConstants.DefaultDoubleArrowHeight.toPx() +
@@ -295,10 +295,7 @@ fun getEndwardDoubleArrowIcon(
                         val dx = (iconSize.toPx() - arrowDoubleWidth) / 2
                         val dy = (iconSize.toPx() - arrowDoubleHeight) / 2
                         val alpha = if (modelStateInfoSnapshot.currModelState.isDisabled)
-                            skinColors.getAlpha(
-                                decorationAreaType,
-                                modelStateInfoSnapshot.currModelState
-                            ) else 1.0f
+                            colorTokens.onContainerDisabledAlpha else 1.0f
                         translate(left = dx, top = dy) {
                             drawDoubleArrow(
                                 drawScope = this,
@@ -308,7 +305,7 @@ fun getEndwardDoubleArrowIcon(
                                 strokeWidth = ArrowSizingConstants.DefaultDoubleArrowStroke.toPx(),
                                 popupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignTop,
                                 layoutDirection = layoutDirection,
-                                color = colorScheme.markColor.withAlpha(alpha)
+                                color = colorTokens.onContainer.withAlpha(alpha)
                             )
                         }
                     }

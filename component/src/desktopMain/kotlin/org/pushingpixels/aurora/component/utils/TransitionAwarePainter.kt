@@ -22,13 +22,14 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
-import org.pushingpixels.aurora.theming.ColorSchemeAssociationKind
+import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.theming.ContainerColorTokensAssociationKind
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.ModelStateInfoSnapshot
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.theming.utils.MutableColorScheme
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.utils.ContainerType
+import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
 
 abstract class TransitionAwarePainterDelegate: Painter() {
     abstract fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter
@@ -42,35 +43,36 @@ abstract class TransitionAwarePainterDelegate: Painter() {
 
 /**
  * Painter with transition-aware capabilities. Has a delegate that does the actual
- * painting based on the transition color schemes.
+ * painting based on the transition color tokens.
  */
 class TransitionAwarePainter(
     val iconSize: Dp,
     val decorationAreaType: DecorationAreaType,
     val skinColors: AuroraSkinColors,
-    val colorSchemeBundle: AuroraColorSchemeBundle?,
+    val inactiveContainerType: ContainerType,
+    val backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     val modelStateInfoSnapshot: ModelStateInfoSnapshot,
-    val paintDelegate: (drawScope: DrawScope, iconSize: Dp, colorScheme: AuroraColorScheme) -> Unit,
+    val paintDelegate: (drawScope: DrawScope, iconSize: Dp, colorTokens: ContainerColorTokens) -> Unit,
     val density: Density
 ) : Painter() {
 
-    private val mutableColorScheme = MutableColorScheme(
-        displayName = "Internal mutable",
-        isDark = false
-    )
+    private val mutableColorTokens = MutableContainerColorTokens(isDarkAttr = false)
 
     override val intrinsicSize: Size
         get() = Size(iconSize.value * density.density, iconSize.value * density.density)
 
     override fun DrawScope.onDraw() {
-        populateColorScheme(
-            colorScheme = mutableColorScheme,
-            modelStateInfo = modelStateInfoSnapshot,
-            skinColors = skinColors,
-            colorSchemeBundle = colorSchemeBundle,
+        populateColorTokens(
+            colorTokens = mutableColorTokens,
+            colors = skinColors,
             decorationAreaType = decorationAreaType,
-            associationKind = ColorSchemeAssociationKind.Mark
-        )
+            modelStateInfoSnapshot = modelStateInfoSnapshot,
+            associationKind = ContainerColorTokensAssociationKind.Mark,
+            backgroundAppearanceStrategy = backgroundAppearanceStrategy,
+            treatEnabledAsActive = false,
+            skipFlatCheck = false,
+            inactiveContainerType = inactiveContainerType)
+
         this.withTransform({
             clipRect(
                 left = 0.0f,
@@ -80,7 +82,7 @@ class TransitionAwarePainter(
                 clipOp = ClipOp.Intersect
             )
         }) {
-            paintDelegate.invoke(this, iconSize, mutableColorScheme)
+            paintDelegate.invoke(this, iconSize, mutableColorTokens)
         }
     }
 }

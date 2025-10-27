@@ -51,6 +51,7 @@ import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.component.utils.getLabelPreferredSingleLineWidth
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
+import org.pushingpixels.aurora.theming.utils.ContainerType
 import kotlin.math.ceil
 import kotlin.math.max
 
@@ -760,7 +761,8 @@ private fun RibbonBandTitle(band: AbstractRibbonBand) {
                         icon = getEndwardDoubleArrowIcon(
                             decorationAreaType = decorationAreaType,
                             skinColors = colors,
-                            colorSchemeBundle = null,
+                            inactiveContainerType = ContainerType.Muted,
+                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                             density = density
                         ),
                         action = { band.expandCommand?.action?.invoke() },

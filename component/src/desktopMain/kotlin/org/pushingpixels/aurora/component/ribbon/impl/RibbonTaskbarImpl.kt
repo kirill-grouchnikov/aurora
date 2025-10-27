@@ -43,6 +43,7 @@ import org.pushingpixels.aurora.component.utils.getEndwardDoubleArrowIcon
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
+import org.pushingpixels.aurora.theming.utils.ContainerType
 
 private data class TaskbarExpandCommand(
     override val icon: Painter,
@@ -285,7 +286,8 @@ fun RibbonTaskbar(
                     icon = getEndwardDoubleArrowIcon(
                         decorationAreaType = decorationAreaType,
                         skinColors = colors,
-                        colorSchemeBundle = null,
+                        inactiveContainerType = ContainerType.Muted,
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
                         density = density
                     ),
                     secondaryContentModel = TaskbarExpandMenuContentModel(

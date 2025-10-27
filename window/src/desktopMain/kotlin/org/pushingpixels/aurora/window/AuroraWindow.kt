@@ -44,14 +44,16 @@ import org.pushingpixels.aurora.common.Platform
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
-import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
+import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
 import java.awt.*
 import java.awt.event.AWTEventListener
@@ -390,11 +392,12 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                 iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                 decorationAreaType = DecorationAreaType.TitlePane,
                                 skinColors = skinColors,
-                                colorSchemeBundle = null,
+                                inactiveContainerType = ContainerType.Neutral,
+                                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                paintDelegate = { drawScope, iconSize, colorScheme ->
+                                paintDelegate = { drawScope, iconSize, colorTokens ->
                                     windowConfiguration.titlePaneButtonsProvider.iconifyButtonProvider.drawIcon(
-                                        drawScope, iconSize, colorScheme
+                                        drawScope, iconSize, colorTokens
                                     )
                                 },
                                 density = density
@@ -434,11 +437,12 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                     iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = skinColors,
-                                    colorSchemeBundle = null,
+                                    inactiveContainerType = ContainerType.Neutral,
+                                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                    paintDelegate = { drawScope, iconSize, colorScheme ->
+                                    paintDelegate = { drawScope, iconSize, colorTokens ->
                                         windowConfiguration.titlePaneButtonsProvider.restoreButtonProvider.drawIcon(
-                                            drawScope, iconSize, colorScheme
+                                            drawScope, iconSize, colorTokens
                                         )
                                     },
                                     density = density,
@@ -448,11 +452,12 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                     iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = skinColors,
-                                    colorSchemeBundle = null,
+                                    inactiveContainerType = ContainerType.Neutral,
+                                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                    paintDelegate = { drawScope, iconSize, colorScheme ->
+                                    paintDelegate = { drawScope, iconSize, colorTokens ->
                                         windowConfiguration.titlePaneButtonsProvider.maximizeButtonProvider.drawIcon(
-                                            drawScope, iconSize, colorScheme
+                                            drawScope, iconSize, colorTokens
                                         )
                                     },
                                     density = density,
@@ -479,11 +484,12 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                 iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                 decorationAreaType = DecorationAreaType.TitlePane,
                                 skinColors = skinColors,
-                                colorSchemeBundle = null,
+                                inactiveContainerType = ContainerType.Neutral,
+                                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                paintDelegate = { drawScope, iconSize, colorScheme ->
+                                paintDelegate = { drawScope, iconSize, colorTokens ->
                                     windowConfiguration.titlePaneButtonsProvider.closeButtonProvider.drawIcon(
-                                        drawScope, iconSize, colorScheme
+                                        drawScope, iconSize, colorTokens
                                     )
                                 },
                                 density = density,
@@ -598,11 +604,12 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                 iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                 decorationAreaType = DecorationAreaType.TitlePane,
                                 skinColors = skinColors,
-                                colorSchemeBundle = null,
+                                inactiveContainerType = ContainerType.Neutral,
+                                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                paintDelegate = { drawScope, iconSize, colorScheme ->
+                                paintDelegate = { drawScope, iconSize, colorTokens ->
                                     windowConfiguration.titlePaneButtonsProvider.iconifyButtonProvider.drawIcon(
-                                        drawScope, iconSize, colorScheme
+                                        drawScope, iconSize, colorTokens
                                     )
                                 },
                                 density = density
@@ -660,11 +667,12 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                     iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = skinColors,
-                                    colorSchemeBundle = null,
+                                    inactiveContainerType = ContainerType.Neutral,
+                                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                    paintDelegate = { drawScope, iconSize, colorScheme ->
+                                    paintDelegate = { drawScope, iconSize, colorTokens ->
                                         windowConfiguration.titlePaneButtonsProvider.restoreButtonProvider.drawIcon(
-                                            drawScope, iconSize, colorScheme
+                                            drawScope, iconSize, colorTokens
                                         )
                                     },
                                     density = density,
@@ -674,11 +682,12 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                     iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = skinColors,
-                                    colorSchemeBundle = null,
+                                    inactiveContainerType = ContainerType.Neutral,
+                                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                    paintDelegate = { drawScope, iconSize, colorScheme ->
+                                    paintDelegate = { drawScope, iconSize, colorTokens ->
                                         windowConfiguration.titlePaneButtonsProvider.maximizeButtonProvider.drawIcon(
-                                            drawScope, iconSize, colorScheme
+                                            drawScope, iconSize, colorTokens
                                         )
                                     },
                                     density = density,
@@ -705,11 +714,12 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                 iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                 decorationAreaType = DecorationAreaType.TitlePane,
                                 skinColors = skinColors,
-                                colorSchemeBundle = null,
+                                inactiveContainerType = ContainerType.Neutral,
+                                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                paintDelegate = { drawScope, iconSize, colorScheme ->
+                                paintDelegate = { drawScope, iconSize, colorTokens ->
                                     windowConfiguration.titlePaneButtonsProvider.closeButtonProvider.drawIcon(
-                                        drawScope, iconSize, colorScheme
+                                        drawScope, iconSize, colorTokens
                                     )
                                 },
                                 density = density,
@@ -1088,7 +1098,7 @@ object AuroraWindowTitlePaneConfigurations {
 
     interface TitlePaneButtonProvider {
         /** Draws the icon for this button. */
-        fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorScheme: AuroraColorScheme)
+        fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorTokens: ContainerColorTokens)
     }
 
     interface TitlePaneButtonsProvider {
@@ -1101,29 +1111,29 @@ object AuroraWindowTitlePaneConfigurations {
     open class DefaultTitlePaneButtonsProvider : TitlePaneButtonsProvider {
         override val closeButtonProvider: TitlePaneButtonProvider
             get() = object : TitlePaneButtonProvider {
-                override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorScheme: AuroraColorScheme) {
-                    drawCloseIcon(drawScope, iconSize, colorScheme)
+                override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorTokens: ContainerColorTokens) {
+                    drawCloseIcon(drawScope, iconSize, colorTokens)
                 }
             }
 
         override val restoreButtonProvider: TitlePaneButtonProvider
             get() = object : TitlePaneButtonProvider {
-                override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorScheme: AuroraColorScheme) {
-                    drawRestoreIcon(drawScope, iconSize, colorScheme)
+                override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorTokens: ContainerColorTokens) {
+                    drawRestoreIcon(drawScope, iconSize, colorTokens)
                 }
             }
 
         override val iconifyButtonProvider: TitlePaneButtonProvider
             get() = object : TitlePaneButtonProvider {
-                override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorScheme: AuroraColorScheme) {
-                    drawMinimizeIcon(drawScope, iconSize, colorScheme)
+                override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorTokens: ContainerColorTokens) {
+                    drawMinimizeIcon(drawScope, iconSize, colorTokens)
                 }
             }
 
         override val maximizeButtonProvider: TitlePaneButtonProvider
             get() = object : TitlePaneButtonProvider {
-                override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorScheme: AuroraColorScheme) {
-                    drawMaximizeIcon(drawScope, iconSize, colorScheme)
+                override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorTokens: ContainerColorTokens) {
+                    drawMaximizeIcon(drawScope, iconSize, colorTokens)
                 }
             }
     }

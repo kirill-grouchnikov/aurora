@@ -55,14 +55,14 @@ import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.ribbon.Ribbon
 import org.pushingpixels.aurora.component.ribbon.RibbonTask
 import org.pushingpixels.aurora.component.ribbon.impl.*
-import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
+import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
-import org.pushingpixels.aurora.window.WindowSizingConstants
 import org.pushingpixels.aurora.window.ribbon.*
 import java.awt.*
 import java.awt.event.*
@@ -355,11 +355,12 @@ private fun AuroraWindowScope.RibbonWindowTitlePane(
                                 iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                 decorationAreaType = DecorationAreaType.TitlePane,
                                 skinColors = skinColors,
-                                colorSchemeBundle = null,
+                                inactiveContainerType = ContainerType.Neutral,
+                                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                paintDelegate = { drawScope, iconSize, colorScheme ->
+                                paintDelegate = { drawScope, iconSize, colorTokens ->
                                     windowConfiguration.titlePaneButtonsProvider.iconifyButtonProvider.drawIcon(
-                                        drawScope, iconSize, colorScheme
+                                        drawScope, iconSize, colorTokens
                                     )
                                 },
                                 density = density
@@ -399,11 +400,12 @@ private fun AuroraWindowScope.RibbonWindowTitlePane(
                                     iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = skinColors,
-                                    colorSchemeBundle = null,
+                                    inactiveContainerType = ContainerType.Neutral,
+                                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                    paintDelegate = { drawScope, iconSize, colorScheme ->
+                                    paintDelegate = { drawScope, iconSize, colorTokens ->
                                         windowConfiguration.titlePaneButtonsProvider.restoreButtonProvider.drawIcon(
-                                            drawScope, iconSize, colorScheme
+                                            drawScope, iconSize, colorTokens
                                         )
                                     },
                                     density = density,
@@ -413,11 +415,12 @@ private fun AuroraWindowScope.RibbonWindowTitlePane(
                                     iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = skinColors,
-                                    colorSchemeBundle = null,
+                                    inactiveContainerType = ContainerType.Neutral,
+                                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                    paintDelegate = { drawScope, iconSize, colorScheme ->
+                                    paintDelegate = { drawScope, iconSize, colorTokens ->
                                         windowConfiguration.titlePaneButtonsProvider.maximizeButtonProvider.drawIcon(
-                                            drawScope, iconSize, colorScheme
+                                            drawScope, iconSize, colorTokens
                                         )
                                     },
                                     density = density,
@@ -444,11 +447,12 @@ private fun AuroraWindowScope.RibbonWindowTitlePane(
                                 iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                 decorationAreaType = DecorationAreaType.TitlePane,
                                 skinColors = skinColors,
-                                colorSchemeBundle = null,
+                                inactiveContainerType = ContainerType.Neutral,
+                                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
-                                paintDelegate = { drawScope, iconSize, colorScheme ->
+                                paintDelegate = { drawScope, iconSize, colorTokens ->
                                     windowConfiguration.titlePaneButtonsProvider.closeButtonProvider.drawIcon(
-                                        drawScope, iconSize, colorScheme
+                                        drawScope, iconSize, colorTokens
                                     )
                                 },
                                 density = density,
