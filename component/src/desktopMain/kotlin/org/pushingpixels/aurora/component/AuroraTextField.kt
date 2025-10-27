@@ -30,16 +30,20 @@ import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.byAlpha
@@ -50,17 +54,33 @@ import org.pushingpixels.aurora.component.model.TextFieldStringContentModel
 import org.pushingpixels.aurora.component.model.TextFieldValueContentModel
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.utils.MutableColorScheme
-import org.pushingpixels.aurora.theming.utils.getBaseOutline
+import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
+import org.pushingpixels.aurora.theming.utils.ContainerType
+import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
+import org.pushingpixels.aurora.theming.utils.getContainerTokens
 import kotlin.math.max
 
 @Immutable
 private class TextFieldDrawingCache(
-    val colorScheme: MutableColorScheme = MutableColorScheme(
-        displayName = "Internal mutable",
-        isDark = false
-    )
+    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens(isDarkAttr = false)
 )
+
+private object TextFieldOutlineSuppler: OutlineSupplier {
+    override fun getOutline(
+        layoutDirection: LayoutDirection,
+        density: Density,
+        size: Size,
+        insets: Float,
+        radiusAdjustment: Float
+    ): Outline {
+        return Outline.Rectangle(
+            Rect(
+                left = insets, top = insets,
+                right = size.width - insets, bottom = size.height - insets
+            )
+        )
+    }
+}
 
 @Composable
 internal fun AuroraTextField(
@@ -116,6 +136,8 @@ internal fun AuroraTextField(
             )
         )
     }
+
+    val density = LocalDensity.current
 
     // Transition for the selection state
     val selectionTransition = updateTransition(isFocused)
@@ -217,53 +239,38 @@ internal fun AuroraTextField(
 
     val skinColors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
-    val borderPainter = AuroraSkin.painters.borderPainter
+    val outlinePainter = AuroraSkin.painters.outlinePainter
 
-    // Populate the cached color scheme for drawing the text field border
+    // Populate the cached color tokens for drawing the text field border
     // based on the current model state info
-    populateColorScheme(
-        colorScheme = drawingCache.colorScheme,
-        modelStateInfo = modelStateInfo,
-        currState = currentState.value,
-        colorSchemeBundle = presentationModel.colorSchemeBundle,
+    populateColorTokens(
+        colorTokens = drawingCache.colorTokens,
         colors = AuroraSkin.colors,
         decorationAreaType = decorationAreaType,
-        associationKind = ColorSchemeAssociationKind.Border
-    )
-    // And retrieve the border colors
-    val borderUltraLight = drawingCache.colorScheme.ultraLightColor
-    val borderExtraLight = drawingCache.colorScheme.extraLightColor
-    val borderLight = drawingCache.colorScheme.lightColor
-    val borderMid = drawingCache.colorScheme.midColor
-    val borderDark = drawingCache.colorScheme.darkColor
-    val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
-    val borderIsDark = drawingCache.colorScheme.isDark
-
-    val alpha = if (currentState.value.isDisabled)
-        AuroraSkin.colors.getAlpha(decorationAreaType, currentState.value) else 1.0f
+        modelStateInfo = modelStateInfo,
+        currState = currentState.value,
+        associationKind = ContainerColorTokensAssociationKind.Default,
+        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+        treatEnabledAsActive = false,
+        skipFlatCheck = false,
+        inactiveContainerType = ContainerType.Neutral)
 
     val textColor = getTextColor(
         modelStateInfo = modelStateInfo,
         currState = currentState.value,
-        colors = AuroraSkin.colors,
-        colorSchemeBundle = presentationModel.colorSchemeBundle,
+        colors = skinColors,
         decorationAreaType = decorationAreaType,
-        colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
-        isTextInFilledArea = false
+        associationKind = ContainerColorTokensAssociationKind.Default,
+        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+        skipFlatCheck = false,
+        inactiveContainerType = ContainerType.Neutral,
+        isTextInFilledArea = true
     )
     val textStyle = LocalTextStyle.current.merge(presentationModel.textStyle).merge(TextStyle(color = textColor))
 
     val placeholderAlpha = 0.7f * (1.0f - modelStateInfo.activeStrength) *
             (if (contentModel.value.text.isEmpty()) 1.0f else 0.0f)
-    val placeholderColor = getTextColor(
-        modelStateInfo = modelStateInfo,
-        currState = currentState.value,
-        colors = AuroraSkin.colors,
-        colorSchemeBundle = presentationModel.colorSchemeBundle,
-        decorationAreaType = decorationAreaType,
-        colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
-        isTextInFilledArea = false
-    ).byAlpha(placeholderAlpha)
+    val placeholderColor = textColor.byAlpha(placeholderAlpha)
 
     val placeholderStyle =
         LocalTextStyle.current.merge(presentationModel.textStyle).merge(TextStyle(color = placeholderColor))
@@ -280,23 +287,16 @@ internal fun AuroraTextField(
 
             // Read-only text fields use the regular background fill. Editable text fields
             // use text background fill (with rollover and focused transitions)
-            val backgroundFillColor = if (contentModel.readOnly)
-                (presentationModel.colorSchemeBundle?.getColorScheme(
-                    associationKind = ColorSchemeAssociationKind.Fill,
-                    componentState = currentState.value,
-                    allowFallback = true
-                ) ?: skinColors.getColorScheme(
-                    decorationAreaType = decorationAreaType,
-                    associationKind = ColorSchemeAssociationKind.Fill,
-                    componentState = currentState.value
-                )).backgroundFillColor
-            else getTextFillBackground(
-                modelStateInfo = modelStateInfo,
-                currState = currentState.value,
-                skinColors = skinColors,
-                colorSchemeBundle = presentationModel.colorSchemeBundle,
-                decorationAreaType = decorationAreaType
-            )
+            val backgroundFillColor = if (contentModel.readOnly) {
+                drawingCache.colorTokens.containerSurface
+            } else {
+                getTextFillBackground(
+                    modelStateInfo = modelStateInfo,
+                    currState = currentState.value,
+                    colors = skinColors,
+                    decorationAreaType = decorationAreaType
+                )
+            }
 
             drawRect(
                 color = backgroundFillColor,
@@ -305,95 +305,41 @@ internal fun AuroraTextField(
             )
 
             if (presentationModel.showBorder) {
-                val outline = getBaseOutline(
-                    layoutDirection = layoutDirection,
-                    width = size.width,
-                    height = size.height,
-                    radius = 0.0f,
-                    sides = Sides.ClosedRectangle,
-                    insets = borderStrokeWidth
-                )
-
-                val outlineBoundingRect = outline.bounds
-                if (outlineBoundingRect.isEmpty) {
-                    return@Canvas
-                }
-
-                // Populate the cached color scheme for drawing the button border
-                drawingCache.colorScheme.ultraLight = borderUltraLight
-                drawingCache.colorScheme.extraLight = borderExtraLight
-                drawingCache.colorScheme.light = borderLight
-                drawingCache.colorScheme.mid = borderMid
-                drawingCache.colorScheme.dark = borderDark
-                drawingCache.colorScheme.ultraDark = borderUltraDark
-                drawingCache.colorScheme.isDark = borderIsDark
-                drawingCache.colorScheme.foreground = Color.Black
-
-                borderPainter.paintBorder(
+                paintOutline(
                     drawScope = this,
-                    size = size,
-                    outline = getBaseOutline(
-                        layoutDirection = layoutDirection,
-                        width = size.width,
-                        height = size.height,
-                        radius = 0.0f,
-                        sides = Sides.ClosedRectangle,
-                        insets = 1.0f
-                    ),
-                    outlineInner = null,
-                    borderScheme = drawingCache.colorScheme,
-                    alpha = alpha
-                )
+                    componentState = currentState.value,
+                    outlinePainter = outlinePainter,
+                    size = this.size,
+                    alpha = 1.0f,
+                    outlineSupplier = TextFieldOutlineSuppler,
+                    colorTokens = drawingCache.colorTokens)
 
                 if (!contentModel.readOnly) {
                     // Get the base border color
-                    val baseBorderScheme = presentationModel.colorSchemeBundle?.getColorScheme(
-                        associationKind = ColorSchemeAssociationKind.Border,
-                        componentState = currentState.value,
-                        allowFallback = true
-                    ) ?: skinColors.getColorScheme(
-                        decorationAreaType = decorationAreaType,
-                        associationKind = ColorSchemeAssociationKind.Border,
-                        componentState = currentState.value
-                    )
-                    var borderColor = borderPainter.getRepresentativeColor(baseBorderScheme)
+                    var borderColor = drawingCache.colorTokens.containerOutline
 
                     if (!currentState.value.isDisabled && (modelStateInfo.stateContributionMap.size > 1)) {
                         // If we have more than one active state, compute the composite color from all
                         // the contributions
                         for (activeEntry in modelStateInfo.stateContributionMap.entries) {
                             val activeState = activeEntry.key
-                            if (activeState === currentState.value) {
+                            if (activeState == currentState.value) {
                                 continue
                             }
                             val contribution = activeEntry.value.contribution
                             if (contribution == 0.0f) {
                                 continue
                             }
-                            val activeStateAlpha =
-                                presentationModel.colorSchemeBundle?.getAlpha(activeState) ?: skinColors.getAlpha(
-                                    decorationAreaType,
-                                    activeState
-                                )
-                            if (activeStateAlpha == 0.0f) {
-                                continue
-                            }
-                            val activeBorderScheme =
-                                presentationModel.colorSchemeBundle?.getColorScheme(
-                                    associationKind = ColorSchemeAssociationKind.Border,
-                                    componentState = activeState,
-                                    allowFallback = true
-                                ) ?: skinColors.getColorScheme(
-                                    decorationAreaType = decorationAreaType,
-                                    associationKind = ColorSchemeAssociationKind.Border,
-                                    componentState = activeState
-                                )
-                            val activeBorderColor =
-                                borderPainter.getRepresentativeColor(activeBorderScheme)
-                            borderColor = borderColor.interpolateTowards(
-                                activeBorderColor,
-                                1.0f - contribution * activeStateAlpha
+                            val activeColorTokens = getContainerTokens(
+                                colors = skinColors,
+                                decorationAreaType = decorationAreaType,
+                                componentState = activeState,
+                                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+                                inactiveContainerType = ContainerType.Neutral
                             )
+                            val activeBorderColor = activeColorTokens.containerOutline
+                            borderColor = borderColor.interpolateTowards(
+                                activeBorderColor, 1.0f - contribution)
                         }
                     }
 
@@ -422,8 +368,7 @@ internal fun AuroraTextField(
         val textSelectionBackgroundColor = getTextSelectionBackground(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
-            skinColors = skinColors,
-            colorSchemeBundle = presentationModel.colorSchemeBundle,
+            colors = skinColors,
             decorationAreaType = decorationAreaType
         )
         CompositionLocalProvider(

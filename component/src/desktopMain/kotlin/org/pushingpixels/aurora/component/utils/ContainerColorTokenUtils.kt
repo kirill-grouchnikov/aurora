@@ -618,22 +618,25 @@ internal fun getTextFillBackground(
         associationKind = ContainerColorTokensAssociationKind.Default,
         componentState = stateForQuery,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-        inactiveContainerType = ContainerType.Muted,
+        inactiveContainerType = ContainerType.Neutral,
         skipFlatCheck = false
     )
 
-    // TODO: align with Radiance for the surface fill, including the animations
-    var textBackgroundFillColor = tokens.containerSurface
+    val textBackgroundFillColor = if (tokens.isDark) {
+        tokens.containerSurfaceHigh
+    } else {
+        tokens.containerSurfaceLow
+    }
 
-    val lightnessFactor = if (tokens.isDark) 0.1f else 0.4f
-    var lighterFill = textBackgroundFillColor.lighter(lightnessFactor)
-    lighterFill = lighterFill.interpolateTowards(textBackgroundFillColor, 0.6f)
+    val textHighlightedBackgroundFillColor = if (tokens.isDark) {
+        tokens.containerSurfaceHighest
+    } else {
+        tokens.containerSurfaceLowest
+    }
     val selectionStrength = modelStateInfo.strength(ComponentStateFacet.Selection)
     val rolloverStrength = modelStateInfo.strength(ComponentStateFacet.Rollover)
     val activeStrength = max(selectionStrength, rolloverStrength) / 4.0f
-    textBackgroundFillColor = lighterFill.interpolateTowards(
-        textBackgroundFillColor, activeStrength
-    )
-    return textBackgroundFillColor
+
+    return textBackgroundFillColor.interpolateTowards(textHighlightedBackgroundFillColor, activeStrength)
 }
 

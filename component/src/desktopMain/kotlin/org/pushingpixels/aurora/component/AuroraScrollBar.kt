@@ -27,8 +27,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
@@ -40,15 +40,12 @@ import androidx.compose.ui.unit.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.component.utils.ModelStateInfo
-import org.pushingpixels.aurora.component.utils.StateTransitionTracker
-import org.pushingpixels.aurora.component.utils.TransitionInfo
-import org.pushingpixels.aurora.component.utils.populateColorScheme
-import org.pushingpixels.aurora.theming.AuroraSkin
-import org.pushingpixels.aurora.theming.ColorSchemeAssociationKind
-import org.pushingpixels.aurora.theming.ComponentState
-import org.pushingpixels.aurora.theming.auroraBackground
-import org.pushingpixels.aurora.theming.utils.MutableColorScheme
+import org.pushingpixels.aurora.component.utils.*
+import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.painter.outline.InsetKind
+import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
+import org.pushingpixels.aurora.theming.utils.ContainerType
+import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
 import kotlin.math.roundToInt
 
@@ -61,11 +58,64 @@ object ScrollBarSizingConstants {
 
 @Immutable
 private class ScrollBarDrawingCache(
-    val colorScheme: MutableColorScheme = MutableColorScheme(
-        displayName = "Internal mutable",
-        isDark = false
-    )
+    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens(isDarkAttr = false)
 )
+
+private object ScrollBarVerticalThumbOutlineSuppler: OutlineSupplier {
+    override fun getOutline(
+        layoutDirection: LayoutDirection,
+        density: Density,
+        size: Size,
+        insets: Float,
+        radiusAdjustment: Float
+    ): Outline {
+        // Adaptive corner radius, either half the height (which will be width after
+        // rotation) for larger thumbs, or quarter the height for smaller thumbs
+        val adjustedInsets = insets + 1.0f
+        val radius: Float = if (size.width >= 1.5 * size.height)
+            (size.height - 2.0f * adjustedInsets) / 2.0f
+        else
+            (size.height - 2.0f * adjustedInsets) / 4.0f
+
+        return getBaseOutline(
+            layoutDirection = layoutDirection,
+            width = size.width,
+            height = size.height,
+            radius = radius - radiusAdjustment,
+            sides = Sides(),
+            insets = insets,
+            outlineKind = OutlineKind.Fill,
+        )
+    }
+}
+
+private object ScrollBarHorizontalThumbOutlineSuppler: OutlineSupplier {
+    override fun getOutline(
+        layoutDirection: LayoutDirection,
+        density: Density,
+        size: Size,
+        insets: Float,
+        radiusAdjustment: Float
+    ): Outline {
+        // Adaptive corner radius, either half the height for larger thumbs, or quarter the
+        // height for smaller thumbs
+        val adjustedInsets = insets + 1.0f
+        val radius: Float = if (size.width >= 1.5 * size.height)
+            (size.height - 2.0f * adjustedInsets) / 2.0f
+        else
+            (size.height - 2.0f * adjustedInsets) / 4.0f
+
+        return getBaseOutline(
+            layoutDirection = layoutDirection,
+            width = size.width,
+            height = size.height,
+            radius = radius - radiusAdjustment,
+            sides = Sides(),
+            insets = insets,
+            outlineKind = OutlineKind.Fill,
+        )
+    }
+}
 
 // Based on code in Scrollbar.desktop.kt
 
@@ -173,6 +223,8 @@ private fun Scrollbar(
             )
         )
     }
+
+    val density = LocalDensity.current
 
     val decorationAreaType = AuroraSkin.decorationAreaType
 
@@ -305,113 +357,55 @@ private fun Scrollbar(
                         sliderAdapter = sliderAdapter,
                     )
             ) {
-                // Populate the cached color scheme for filling the component
+                // Populate the cached color tokens for filling the component
                 // based on the current model state info. Note that enabled scroll bar
                 // is filled as active
-                populateColorScheme(
-                    colorScheme = drawingCache.colorScheme,
-                    modelStateInfo = modelStateInfo,
-                    currState = currentState.value,
-                    colorSchemeBundle = null,
+                populateColorTokens(
+                    colorTokens = drawingCache.colorTokens,
                     colors = AuroraSkin.colors,
                     decorationAreaType = decorationAreaType,
-                    associationKind = ColorSchemeAssociationKind.Fill,
-                    treatEnabledAsActive = true
-                )
-                // And retrieve the container fill colors
-                val fillUltraLight = drawingCache.colorScheme.ultraLightColor
-                val fillExtraLight = drawingCache.colorScheme.extraLightColor
-                val fillLight = drawingCache.colorScheme.lightColor
-                val fillMid = drawingCache.colorScheme.midColor
-                val fillDark = drawingCache.colorScheme.darkColor
-                val fillUltraDark = drawingCache.colorScheme.ultraDarkColor
-                val fillIsDark = drawingCache.colorScheme.isDark
-
-                // Populate the cached color scheme for drawing the border
-                // based on the current model state info.
-                populateColorScheme(
-                    colorScheme = drawingCache.colorScheme,
                     modelStateInfo = modelStateInfo,
                     currState = currentState.value,
-                    colorSchemeBundle = null,
-                    colors = AuroraSkin.colors,
-                    decorationAreaType = decorationAreaType,
-                    associationKind = ColorSchemeAssociationKind.Border,
-                    treatEnabledAsActive = false
-                )
-                // And retrieve the border colors
-                val borderUltraLight = drawingCache.colorScheme.ultraLightColor
-                val borderExtraLight = drawingCache.colorScheme.extraLightColor
-                val borderLight = drawingCache.colorScheme.lightColor
-                val borderMid = drawingCache.colorScheme.midColor
-                val borderDark = drawingCache.colorScheme.darkColor
-                val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
-                val borderIsDark = drawingCache.colorScheme.isDark
+                    associationKind = ContainerColorTokensAssociationKind.Default,
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+                    treatEnabledAsActive = true,
+                    skipFlatCheck = false,
+                    inactiveContainerType = ContainerType.Muted)
 
-                val fillPainter = AuroraSkin.painters.fillPainter
-                val borderPainter = AuroraSkin.painters.borderPainter
-
-                var alpha = if (currentState.value.isDisabled)
-                    AuroraSkin.colors.getAlpha(decorationAreaType, currentState.value) else 1.0f
-                if (!isVisible) {
-                    alpha = 0.0f
-                }
+                val surfacePainter = AuroraSkin.painters.surfacePainter
+                val outlinePainter = AuroraSkin.painters.outlinePainter
 
                 Canvas(Modifier.matchParentSize()) {
-                    val insets = 0.5f
-                    val width = if (isVertical) this.size.height else this.size.width
-                    val height = if (isVertical) this.size.width else this.size.height
-                    val radius = (size - 2 * insets) / 2.0f
-
-                    val outline = getBaseOutline(
-                        layoutDirection = layoutDirection,
-                        width = width,
-                        height = height,
-                        radius = radius,
-                        sides = null,
-                        insets = insets
-                    )
-
-                    withTransform({
-                        if (isVertical) {
-                            // Rotate the vertical scrollbar by 90 degrees for consistent visual
-                            // appearance of fill + border
-                            rotate(
-                                degrees = 90.0f,
-                                pivot = Offset(x = 0.0f, y = 0.0f)
-                            )
-                            val thumbOffset = (position.toFloat() * (this.size.height - size.toFloat())) / containerSize
-                            translate(left = thumbOffset, top = -this.size.width)
-                        }
-                    }) {
-
-                        // Populate the cached color scheme for filling the component
-                        drawingCache.colorScheme.ultraLight = fillUltraLight
-                        drawingCache.colorScheme.extraLight = fillExtraLight
-                        drawingCache.colorScheme.light = fillLight
-                        drawingCache.colorScheme.mid = fillMid
-                        drawingCache.colorScheme.dark = fillDark
-                        drawingCache.colorScheme.ultraDark = fillUltraDark
-                        drawingCache.colorScheme.isDark = fillIsDark
-                        drawingCache.colorScheme.foreground = Color.Black
-                        fillPainter.paintContourBackground(
-                            this, this.size, outline, drawingCache.colorScheme, alpha
-                        )
-
-                        // Populate the cached color scheme for drawing the component border
-                        drawingCache.colorScheme.ultraLight = borderUltraLight
-                        drawingCache.colorScheme.extraLight = borderExtraLight
-                        drawingCache.colorScheme.light = borderLight
-                        drawingCache.colorScheme.mid = borderMid
-                        drawingCache.colorScheme.dark = borderDark
-                        drawingCache.colorScheme.ultraDark = borderUltraDark
-                        drawingCache.colorScheme.isDark = borderIsDark
-                        drawingCache.colorScheme.foreground = Color.Black
-
-                        borderPainter.paintBorder(
-                            this, this.size, outline, null, drawingCache.colorScheme, alpha
-                        )
+                    val outlineSupplier = if (isVertical) {
+                        ScrollBarVerticalThumbOutlineSuppler
+                    } else {
+                        ScrollBarHorizontalThumbOutlineSuppler
                     }
+                    val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
+                    val outlineFill = outlineSupplier.getOutline(
+                        layoutDirection = layoutDirection,
+                        density = density,
+                        size = this.size,
+                        insets = outlineInset,
+                        radiusAdjustment = 0.0f)
+
+                    paintSurface(
+                        drawScope = this,
+                        componentState = currentState.value,
+                        surfacePainter = surfacePainter,
+                        size = this.size,
+                        alpha = 1.0f,
+                        outline = outlineFill,
+                        colorTokens = drawingCache.colorTokens)
+
+                    paintOutline(
+                        drawScope = this,
+                        componentState = currentState.value,
+                        outlinePainter = outlinePainter,
+                        size = this.size,
+                        alpha = 1.0f,
+                        outlineSupplier = outlineSupplier,
+                        colorTokens = drawingCache.colorTokens)
                 }
             }
         },
