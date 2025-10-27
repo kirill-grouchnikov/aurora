@@ -16,10 +16,7 @@
 package org.pushingpixels.aurora.component.utils
 
 import androidx.compose.ui.graphics.Color
-import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.common.interpolateTowards
-import org.pushingpixels.aurora.common.lighter
-import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
@@ -260,6 +257,142 @@ internal fun populateColorTokens(
             contributionTokens.accentOnContainer, 1.0f - amount)
 
         //println("\tcontribution of $amount from ${contribution.key} to $backgroundStart")
+    }
+
+    // Update the mutable color tokens with the interpolated colors and alphas
+    colorTokens.isDarkAttr = currColorTokens.isDark
+    colorTokens.containerSurfaceLowestAttr = containerSurfaceLowest
+    colorTokens.containerSurfaceLowAttr = containerSurfaceLow
+    colorTokens.containerSurfaceAttr = containerSurfaceLow
+    colorTokens.containerSurfaceHighAttr = containerSurfaceHigh
+    colorTokens.containerSurfaceHighestAttr = containerSurfaceHighest
+    colorTokens.containerSurfaceDimAttr = containerSurfaceDim
+    colorTokens.containerSurfaceBrightAttr = containerSurfaceBright
+    colorTokens.onContainerAttr = onContainer
+    colorTokens.onContainerVariantAttr = onContainerVariant
+    colorTokens.containerOutlineAttr = containerOutline
+    colorTokens.containerOutlineVariantAttr = containerOutlineVariant
+    colorTokens.containerSurfaceDisabledAlphaAttr = containerSurfaceDisabledAlpha
+    colorTokens.onContainerDisabledAlphaAttr = onContainerDisabledAlpha
+    colorTokens.containerOutlineDisabledAlphaAttr = containerOutlineDisabledAlpha
+    colorTokens.inverseContainerSurfaceAttr = inverseContainerSurface
+    colorTokens.inverseOnContainerAttr = inverseOnContainer
+    colorTokens.inverseContainerOutlineAttr = inverseContainerOutline
+    colorTokens.complementaryOnContainerAttr = complementaryOnContainer
+    colorTokens.complementaryContainerOutlineAttr = complementaryContainerOutline
+    colorTokens.accentOnContainerAttr = accentOnContainer
+}
+
+@OptIn(AuroraInternalApi::class)
+internal fun populateColorTokensForHighlights(
+    colorTokens: MutableContainerColorTokens,
+    colors: AuroraSkinColors,
+    decorationAreaType: DecorationAreaType,
+    modelStateInfo: ModelStateInfo,
+    currState: ComponentState,
+    associationKind: ContainerColorTokensAssociationKind,
+    inactiveContainerType: ContainerType) {
+
+    val currColorTokens = getContainerTokens(
+        colors = colors,
+        decorationAreaType = decorationAreaType,
+        associationKind = associationKind,
+        componentState = currState,
+        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+        inactiveContainerType = inactiveContainerType,
+        skipFlatCheck = true
+    )
+
+    val currHighlightAlpha =
+        if ((currState == ComponentState.Enabled) || (currState == ComponentState.DisabledUnselected)) 0.0f else 1.0f
+    val currHighlightAmount = currHighlightAlpha * modelStateInfo.stateContributionMap.entries
+        .find { it.key == currState }!!.value.contribution
+
+    var containerSurfaceLowest = currColorTokens.containerSurfaceLowest.byAlpha(currHighlightAmount)
+    var containerSurfaceLow = currColorTokens.containerSurfaceLow.byAlpha(currHighlightAmount)
+    var containerSurface = currColorTokens.containerSurface.byAlpha(currHighlightAmount)
+    var containerSurfaceHigh = currColorTokens.containerSurfaceHigh.byAlpha(currHighlightAmount)
+    var containerSurfaceHighest = currColorTokens.containerSurfaceHighest.byAlpha(currHighlightAmount)
+    var containerSurfaceDim = currColorTokens.containerSurfaceDim.byAlpha(currHighlightAmount)
+    var containerSurfaceBright = currColorTokens.containerSurfaceBright.byAlpha(currHighlightAmount)
+    var onContainer = currColorTokens.onContainer.byAlpha(currHighlightAmount)
+    var onContainerVariant = currColorTokens.onContainerVariant.byAlpha(currHighlightAmount)
+    var containerOutline = currColorTokens.containerOutline.byAlpha(currHighlightAmount)
+    var containerOutlineVariant = currColorTokens.containerOutlineVariant.byAlpha(currHighlightAmount)
+    var containerSurfaceDisabledAlpha = currColorTokens.containerSurfaceDisabledAlpha
+    var onContainerDisabledAlpha = currColorTokens.onContainerDisabledAlpha
+    var containerOutlineDisabledAlpha = currColorTokens.containerOutlineDisabledAlpha
+    var inverseContainerSurface = currColorTokens.inverseContainerSurface.byAlpha(currHighlightAmount)
+    var inverseOnContainer = currColorTokens.inverseOnContainer.byAlpha(currHighlightAmount)
+    var inverseContainerOutline = currColorTokens.inverseContainerOutline.byAlpha(currHighlightAmount)
+    var complementaryOnContainer = currColorTokens.complementaryOnContainer.byAlpha(currHighlightAmount)
+    var complementaryContainerOutline = currColorTokens.complementaryContainerOutline.byAlpha(currHighlightAmount)
+    var accentOnContainer = currColorTokens.accentOnContainer.byAlpha(currHighlightAmount)
+
+    for (contribution in modelStateInfo.stateContributionMap) {
+        if (contribution.key == currState) {
+            // Already accounted for the currently active state
+            continue
+        }
+        val contributionHighlightAlpha =
+            if ((contribution.key == ComponentState.Enabled) || (contribution.key == ComponentState.DisabledUnselected)) 0.0f else 1.0f
+        val amount = contributionHighlightAlpha * contribution.value.contribution
+        if (amount == 0.0f) {
+            // Skip a zero-amount contribution
+            continue
+        }
+        // Get the color tokens that match the contribution state
+        val contributionTokens = getContainerTokens(
+            colors = colors,
+            decorationAreaType = decorationAreaType,
+            associationKind = associationKind,
+            componentState = contribution.key,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+            inactiveContainerType = inactiveContainerType,
+            skipFlatCheck = true
+        )
+
+        // And interpolate the colors
+        containerSurfaceLowest = containerSurfaceLowest.interpolateTowards(
+            contributionTokens.containerSurfaceLowest.byAlpha(amount), 1.0f - amount)
+        containerSurfaceLow = containerSurfaceLow.interpolateTowards(
+            contributionTokens.containerSurfaceLow.byAlpha(amount), 1.0f - amount)
+        containerSurface = containerSurface.interpolateTowards(
+            contributionTokens.containerSurface.byAlpha(amount), 1.0f - amount)
+        containerSurfaceHigh = containerSurfaceHigh.interpolateTowards(
+            contributionTokens.containerSurfaceHigh.byAlpha(amount), 1.0f - amount)
+        containerSurfaceHighest = containerSurfaceHighest.interpolateTowards(
+            contributionTokens.containerSurfaceHighest.byAlpha(amount), 1.0f - amount)
+        containerSurfaceDim = containerSurfaceDim.interpolateTowards(
+            contributionTokens.containerSurfaceDim.byAlpha(amount), 1.0f - amount)
+        containerSurfaceBright = containerSurfaceBright.interpolateTowards(
+            contributionTokens.containerSurfaceBright.byAlpha(amount), 1.0f - amount)
+        onContainer = onContainer.interpolateTowards(
+            contributionTokens.onContainer.byAlpha(amount), 1.0f - amount)
+        onContainerVariant = onContainerVariant.interpolateTowards(
+            contributionTokens.onContainerVariant.byAlpha(amount), 1.0f - amount)
+        containerOutline = containerOutline.interpolateTowards(
+            contributionTokens.containerOutline.byAlpha(amount), 1.0f - amount)
+        containerOutlineVariant = containerOutlineVariant.interpolateTowards(
+            contributionTokens.containerOutlineVariant.byAlpha(amount), 1.0f - amount)
+        containerSurfaceDisabledAlpha = ((1.0f - amount) * containerSurfaceDisabledAlpha +
+                amount * contributionTokens.containerSurfaceDisabledAlpha).coerceIn(0.0f, 1.0f)
+        onContainerDisabledAlpha = ((1.0f - amount) * onContainerDisabledAlpha +
+                amount * contributionTokens.onContainerDisabledAlpha).coerceIn(0.0f, 1.0f)
+        containerOutlineDisabledAlpha = ((1.0f - amount) * containerOutlineDisabledAlpha +
+                amount * contributionTokens.containerOutlineDisabledAlpha).coerceIn(0.0f, 1.0f)
+        inverseContainerSurface = inverseContainerSurface.interpolateTowards(
+            contributionTokens.inverseContainerSurface.byAlpha(amount), 1.0f - amount)
+        inverseOnContainer = inverseOnContainer.interpolateTowards(
+            contributionTokens.inverseOnContainer.byAlpha(amount), 1.0f - amount)
+        inverseContainerOutline = inverseContainerOutline.interpolateTowards(
+            contributionTokens.inverseContainerOutline.byAlpha(amount), 1.0f - amount)
+        complementaryOnContainer = complementaryOnContainer.interpolateTowards(
+            contributionTokens.complementaryOnContainer.byAlpha(amount), 1.0f - amount)
+        complementaryContainerOutline = complementaryContainerOutline.interpolateTowards(
+            contributionTokens.complementaryContainerOutline.byAlpha(amount), 1.0f - amount)
+        accentOnContainer = accentOnContainer.interpolateTowards(
+            contributionTokens.accentOnContainer.byAlpha(amount), 1.0f - amount)
     }
 
     // Update the mutable color tokens with the interpolated colors and alphas

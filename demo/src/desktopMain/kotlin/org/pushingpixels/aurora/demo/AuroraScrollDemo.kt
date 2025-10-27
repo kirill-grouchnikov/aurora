@@ -84,13 +84,13 @@ fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
-        size = DpSize(250.dp, 400.dp)
+        size = DpSize(350.dp, 400.dp)
     )
     val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
 
-    var skin by remember { mutableStateOf(twilightSkin()) }
+    var skin by remember { mutableStateOf(geminiSkin()) }
 
     val scope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()

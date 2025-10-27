@@ -249,7 +249,6 @@ internal fun <E> AuroraComboBox(
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
     val painters = AuroraSkin.painters
-    val buttonShaper = ClassicButtonShaper.Instance
     val popupOriginator = LocalPopupMenu.current ?: LocalWindow.current.rootPane
 
     val comboBoxTopLeftOffset = AuroraOffset(0.0f, 0.0f)
@@ -504,22 +503,6 @@ internal fun <E> AuroraComboBox(
                         clipOp = ClipOp.Intersect
                     )
                 }) {
-                    val fillOutline = buttonShaper.getButtonOutline(
-                        layoutDirection = layoutDirection,
-                        width = width,
-                        height = height,
-                        extraInsets = 0.5f,
-                        isInner = false,
-                        sides = Sides(),
-                        outlineKind = OutlineKind.Fill,
-                        density = this
-                    )
-
-                    val outlineBoundingRect = fillOutline.bounds
-                    if (outlineBoundingRect.isEmpty) {
-                        return@withTransform
-                    }
-
                     val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
                     val outlineFill = ComboBoxOutlineSuppler.getOutline(
                         layoutDirection = layoutDirection,
@@ -527,6 +510,10 @@ internal fun <E> AuroraComboBox(
                         size = this.size,
                         insets = outlineInset,
                         radiusAdjustment = 0.0f)
+                    val outlineBoundingRect = outlineFill.bounds
+                    if (outlineBoundingRect.isEmpty) {
+                        return@withTransform
+                    }
 
                     paintSurface(
                         drawScope = this,
