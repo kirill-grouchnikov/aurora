@@ -62,7 +62,7 @@ import kotlin.math.max
 
 @Immutable
 private class TextFieldDrawingCache(
-    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens(isDarkAttr = false)
+    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens()
 )
 
 private object TextFieldOutlineSuppler: OutlineSupplier {
@@ -71,7 +71,8 @@ private object TextFieldOutlineSuppler: OutlineSupplier {
         density: Density,
         size: Size,
         insets: Float,
-        radiusAdjustment: Float
+        radiusAdjustment: Float,
+        outlineKind: OutlineKind
     ): Outline {
         return Outline.Rectangle(
             Rect(

@@ -58,7 +58,7 @@ object ScrollBarSizingConstants {
 
 @Immutable
 private class ScrollBarDrawingCache(
-    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens(isDarkAttr = false)
+    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens()
 )
 
 private object ScrollBarVerticalThumbOutlineSuppler: OutlineSupplier {
@@ -67,7 +67,8 @@ private object ScrollBarVerticalThumbOutlineSuppler: OutlineSupplier {
         density: Density,
         size: Size,
         insets: Float,
-        radiusAdjustment: Float
+        radiusAdjustment: Float,
+        outlineKind: OutlineKind
     ): Outline {
         // Adaptive corner radius, either half the height (which will be width after
         // rotation) for larger thumbs, or quarter the height for smaller thumbs
@@ -84,7 +85,7 @@ private object ScrollBarVerticalThumbOutlineSuppler: OutlineSupplier {
             radius = radius - radiusAdjustment,
             sides = Sides(),
             insets = insets,
-            outlineKind = OutlineKind.Fill,
+            outlineKind = outlineKind,
         )
     }
 }
@@ -95,7 +96,8 @@ private object ScrollBarHorizontalThumbOutlineSuppler: OutlineSupplier {
         density: Density,
         size: Size,
         insets: Float,
-        radiusAdjustment: Float
+        radiusAdjustment: Float,
+        outlineKind: OutlineKind
     ): Outline {
         // Adaptive corner radius, either half the height for larger thumbs, or quarter the
         // height for smaller thumbs
@@ -112,7 +114,7 @@ private object ScrollBarHorizontalThumbOutlineSuppler: OutlineSupplier {
             radius = radius - radiusAdjustment,
             sides = Sides(),
             insets = insets,
-            outlineKind = OutlineKind.Fill,
+            outlineKind = outlineKind,
         )
     }
 }
@@ -387,7 +389,8 @@ private fun Scrollbar(
                         density = density,
                         size = this.size,
                         insets = outlineInset,
-                        radiusAdjustment = 0.0f)
+                        radiusAdjustment = 0.0f,
+                        outlineKind = OutlineKind.Fill)
 
                     paintSurface(
                         drawScope = this,

@@ -49,7 +49,7 @@ import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
 
 @Immutable
 private class RadioButtonDrawingCache(
-    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens(isDarkAttr = false)
+    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens()
 )
 
 private object RadioButtonMarkOutlineSuppler: OutlineSupplier {
@@ -58,7 +58,8 @@ private object RadioButtonMarkOutlineSuppler: OutlineSupplier {
         density: Density,
         size: Size,
         insets: Float,
-        radiusAdjustment: Float
+        radiusAdjustment: Float,
+        outlineKind: OutlineKind
     ): Outline {
         return Outline.Rounded(
             roundRect = RoundRect(
@@ -330,7 +331,8 @@ internal fun AuroraRadioButton(
                 density = density,
                 size = this.size,
                 insets = outlineInset,
-                radiusAdjustment = 0.0f)
+                radiusAdjustment = 0.0f,
+                outlineKind = OutlineKind.Fill)
 
             paintSurface(
                 drawScope = this,

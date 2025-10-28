@@ -32,6 +32,7 @@ import org.pushingpixels.aurora.component.model.CommandMenuContentModel
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
@@ -54,11 +55,11 @@ fun main() = auroraApplication {
             titlePaneButtonsProvider = object : AuroraWindowTitlePaneConfigurations.DefaultTitlePaneButtonsProvider() {
                 override val closeButtonProvider: AuroraWindowTitlePaneConfigurations.TitlePaneButtonProvider
                     get() = object : AuroraWindowTitlePaneConfigurations.TitlePaneButtonProvider {
-                        override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorScheme: AuroraColorScheme) {
+                        override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorTokens: ContainerColorTokens) {
                             with(drawScope) {
                                 val start = iconSize.toPx() / 4.0f
                                 val end = iconSize.toPx() * 0.75f
-                                val color = colorScheme.markColor
+                                val color = colorTokens.onContainer
 
                                 // Triangle
                                 drawLine(
@@ -88,11 +89,11 @@ fun main() = auroraApplication {
 
                 override val restoreButtonProvider: AuroraWindowTitlePaneConfigurations.TitlePaneButtonProvider
                     get() = object : AuroraWindowTitlePaneConfigurations.TitlePaneButtonProvider {
-                        override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorScheme: AuroraColorScheme) {
+                        override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorTokens: ContainerColorTokens) {
                             with(drawScope) {
                                 val start = iconSize.toPx() / 4.0f
                                 val end = iconSize.toPx() * 0.75f
-                                val color = colorScheme.markColor
+                                val color = colorTokens.onContainer
 
                                 // Arrow to bottom-left
                                 drawLine(
@@ -122,12 +123,12 @@ fun main() = auroraApplication {
 
                 override val iconifyButtonProvider: AuroraWindowTitlePaneConfigurations.TitlePaneButtonProvider
                     get() = object : AuroraWindowTitlePaneConfigurations.TitlePaneButtonProvider {
-                        override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorScheme: AuroraColorScheme) {
+                        override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorTokens: ContainerColorTokens) {
                             with(drawScope) {
                                 val start = iconSize.toPx() / 4.0f
                                 val end = iconSize.toPx() * 0.75f
                                 val mid = (start + end) / 2.0f
-                                val color = colorScheme.markColor
+                                val color = colorTokens.onContainer
 
                                 drawLine(
                                     color = color,
@@ -149,11 +150,11 @@ fun main() = auroraApplication {
 
                 override val maximizeButtonProvider: AuroraWindowTitlePaneConfigurations.TitlePaneButtonProvider
                     get() = object : AuroraWindowTitlePaneConfigurations.TitlePaneButtonProvider {
-                        override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorScheme: AuroraColorScheme) {
+                        override fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorTokens: ContainerColorTokens) {
                             with(drawScope) {
                                 val start = iconSize.toPx() / 4.0f
                                 val end = iconSize.toPx() * 0.75f
-                                val color = colorScheme.markColor
+                                val color = colorTokens.onContainer
 
                                 // Arrow to top-right
                                 drawLine(

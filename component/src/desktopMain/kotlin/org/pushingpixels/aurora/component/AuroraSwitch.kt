@@ -48,7 +48,7 @@ import org.pushingpixels.aurora.theming.utils.getBaseOutline
 
 @Immutable
 private class SwitchDrawingCache(
-    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens(isDarkAttr = false)
+    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens()
 )
 
 private object SwitchOutlineSuppler: OutlineSupplier {
@@ -57,7 +57,8 @@ private object SwitchOutlineSuppler: OutlineSupplier {
         density: Density,
         size: Size,
         insets: Float,
-        radiusAdjustment: Float
+        radiusAdjustment: Float,
+        outlineKind: OutlineKind
     ): Outline {
         return getBaseOutline(
             layoutDirection = layoutDirection,
@@ -66,7 +67,7 @@ private object SwitchOutlineSuppler: OutlineSupplier {
             radius = size.height / 2.0f - radiusAdjustment,
             sides = Sides(),
             insets = insets,
-            outlineKind = OutlineKind.Fill,
+            outlineKind = outlineKind,
         )
     }
 }
@@ -287,7 +288,8 @@ internal fun AuroraSwitch(
                 density = density,
                 size = this.size,
                 insets = outlineInset,
-                radiusAdjustment = 0.0f)
+                radiusAdjustment = 0.0f,
+                outlineKind = OutlineKind.Fill)
 
             paintSurface(
                 drawScope = this,

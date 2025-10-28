@@ -28,6 +28,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.withTransform
@@ -41,24 +42,51 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.painter.outline.InsetKind
+import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.MutableColorScheme
+import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
+import org.pushingpixels.aurora.theming.utils.getBaseOutline
+import org.pushingpixels.aurora.theming.utils.getClassicCornerRadius
 import kotlin.math.max
 import kotlin.math.roundToInt
 
 @Immutable
 private class TabButtonDrawingCache(
-    val colorScheme: MutableColorScheme = MutableColorScheme(
-        displayName = "Internal mutable",
-        isDark = false
-    )
+    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens()
 )
+
+private class TabButtonOutlineSuppler(val presentationModel: CommandButtonPresentationModel): OutlineSupplier {
+    override fun getOutline(
+        layoutDirection: LayoutDirection,
+        density: Density,
+        size: Size,
+        insets: Float,
+        radiusAdjustment: Float,
+        outlineKind: OutlineKind
+    ): Outline {
+        val cornerRadius = density.getClassicCornerRadius()
+        return getBaseOutline(
+            layoutDirection = layoutDirection,
+            width = size.width,
+            height = size.height,
+            radius = cornerRadius - radiusAdjustment,
+            sides = presentationModel.sides,
+            insets = insets,
+            outlineKind = outlineKind,
+        )
+    }
+}
 
 @OptIn(AuroraInternalApi::class)
 @Composable
@@ -229,72 +257,33 @@ internal fun AuroraTabButton(
                 }
             ) {
                 if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.Never) {
-                    // Populate the cached color scheme for filling the action area
+                    // Populate the cached color tokens for filling the action area
                     // based on the current model state info
-                    populateColorScheme(
-                        colorScheme = drawingCache.colorScheme,
-                        modelStateInfo = actionModelStateInfo,
-                        currState = currentActionState.value,
-                        colorSchemeBundle = presentationModel.colorSchemeBundle,
+                    populateColorTokens(
+                        colorTokens = drawingCache.colorTokens,
                         colors = AuroraSkin.colors,
                         decorationAreaType = decorationAreaType,
-                        associationKind = ColorSchemeAssociationKind.Fill
-                    )
-                    // And retrieve the container fill colors
-                    val fillUltraLight = drawingCache.colorScheme.ultraLightColor
-                    val fillExtraLight = drawingCache.colorScheme.extraLightColor
-                    val fillLight = drawingCache.colorScheme.lightColor
-                    val fillMid = drawingCache.colorScheme.midColor
-                    val fillDark = drawingCache.colorScheme.darkColor
-                    val fillUltraDark = drawingCache.colorScheme.ultraDarkColor
-                    val fillIsDark = drawingCache.colorScheme.isDark
-
-                    // Populate the cached color scheme for drawing the button border
-                    // based on the current model state info
-                    populateColorScheme(
-                        colorScheme = drawingCache.colorScheme,
                         modelStateInfo = actionModelStateInfo,
                         currState = currentActionState.value,
-                        colorSchemeBundle = presentationModel.colorSchemeBundle,
-                        colors = AuroraSkin.colors,
-                        decorationAreaType = decorationAreaType,
-                        associationKind = ColorSchemeAssociationKind.Border
-                    )
-                    // And retrieve the border colors
-                    val borderUltraLight = drawingCache.colorScheme.ultraLightColor
-                    val borderExtraLight = drawingCache.colorScheme.extraLightColor
-                    val borderLight = drawingCache.colorScheme.lightColor
-                    val borderMid = drawingCache.colorScheme.midColor
-                    val borderDark = drawingCache.colorScheme.darkColor
-                    val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
-                    val borderIsDark = drawingCache.colorScheme.isDark
+                        associationKind = ContainerColorTokensAssociationKind.Tab,
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+                        treatEnabledAsActive = true,
+                        skipFlatCheck = false,
+                        inactiveContainerType = ContainerType.Muted)
 
-                    val fillPainter = painters.fillPainter
-                    val borderPainter = painters.borderPainter
+                    val outlinePainter = AuroraSkin.painters.outlinePainter
 
                     val actionAlpha = max(actionRolloverFraction,
                         if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat) {
-                            if (currentActionState.value == ComponentState.DisabledSelected) {
-                                // Respect the alpha in disabled+selected state
-                                skinColors.getAlpha(
-                                    decorationAreaType,
-                                    currentActionState.value
-                                )
-                            } else {
                                 // For flat buttons, compute the combined contribution of all
                                 // non-disabled states - ignoring ComponentState.ENABLED
                                 actionModelStateInfo.stateContributionMap
                                     .filter { !it.key.isDisabled && (it.key != ComponentState.Enabled) }
                                     .values.sumOf { it.contribution.toDouble() }.toFloat()
-                            }
-                        } else {
-                            if (currentActionState.value.isDisabled)
-                                skinColors.getAlpha(
-                                    decorationAreaType,
-                                    currentActionState.value
-                                ) else 1.0f
-                        }
+                        } else 1.0f
                     )
+
+                    val outlineSupplier = TabButtonOutlineSuppler(presentationModel)
 
                     Canvas(modifier = Modifier.matchParentSize()) {
                         val width = size.width
@@ -313,31 +302,14 @@ internal fun AuroraTabButton(
                                 top = -actionAreaOffset.y
                             )
                         }) {
-                            val fillOutline = buttonShaper.getButtonOutline(
+                            val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
+                            val outlineFill = outlineSupplier.getOutline(
                                 layoutDirection = layoutDirection,
-                                width = width,
-                                height = height,
-                                extraInsets = 0.5f,
-                                isInner = false,
-                                sides = presentationModel.sides,
-                                outlineKind = OutlineKind.Fill,
-                                density = this
-                            )
-
-                            val outlineBoundingRect = fillOutline.bounds
-                            if (outlineBoundingRect.isEmpty) {
-                                return@withTransform
-                            }
-
-                            // Populate the cached color scheme for filling the top part of the tab button
-                            drawingCache.colorScheme.ultraLight = fillUltraLight
-                            drawingCache.colorScheme.extraLight = fillExtraLight
-                            drawingCache.colorScheme.light = fillLight
-                            drawingCache.colorScheme.mid = fillMid
-                            drawingCache.colorScheme.dark = fillDark
-                            drawingCache.colorScheme.ultraDark = fillUltraDark
-                            drawingCache.colorScheme.isDark = fillIsDark
-                            drawingCache.colorScheme.foreground = Color.Black
+                                density = density,
+                                size = this.size,
+                                insets = outlineInset,
+                                radiusAdjustment = 0.0f,
+                                outlineKind = OutlineKind.Fill)
 
                             withTransform({
                                 clipRect(
@@ -349,9 +321,9 @@ internal fun AuroraTabButton(
                                 )
                             }) {
                                 drawOutline(
-                                    outline = fillOutline,
+                                    outline = outlineFill,
                                     style = Fill,
-                                    color = fillPainter.getRepresentativeColor(drawingCache.colorScheme),
+                                    color = drawingCache.colorTokens.containerSurface,
                                     alpha = actionAlpha
                                 )
                             }
@@ -375,46 +347,14 @@ internal fun AuroraTabButton(
                                 top = -actionAreaOffset.y
                             )
                         }) {
-                            // Populate the cached color scheme for drawing the button border
-                            drawingCache.colorScheme.ultraLight = borderUltraLight
-                            drawingCache.colorScheme.extraLight = borderExtraLight
-                            drawingCache.colorScheme.light = borderLight
-                            drawingCache.colorScheme.mid = borderMid
-                            drawingCache.colorScheme.dark = borderDark
-                            drawingCache.colorScheme.ultraDark = borderUltraDark
-                            drawingCache.colorScheme.isDark = borderIsDark
-                            drawingCache.colorScheme.foreground = Color.Black
-
-                            val borderOutline = buttonShaper.getButtonOutline(
-                                layoutDirection = layoutDirection,
-                                width = width,
-                                height = height,
-                                extraInsets = 0.5f,
-                                isInner = false,
-                                sides = presentationModel.sides,
-                                outlineKind = OutlineKind.Border,
-                                density = this
-                            )
-                            val innerBorderOutline =
-                                if (borderPainter.isPaintingInnerOutline) buttonShaper.getButtonOutline(
-                                    layoutDirection = layoutDirection,
-                                    width = width,
-                                    height = height,
-                                    extraInsets = 1.0f,
-                                    isInner = true,
-                                    sides = presentationModel.sides,
-                                    outlineKind = OutlineKind.Border,
-                                    density = this
-                                ) else null
-
-                            borderPainter.paintBorder(
-                                this,
-                                Size(width, height),
-                                borderOutline,
-                                innerBorderOutline,
-                                drawingCache.colorScheme,
-                                actionAlpha
-                            )
+                            paintOutline(
+                                drawScope = this,
+                                componentState = currentActionState.value,
+                                outlinePainter = outlinePainter,
+                                size = this.size,
+                                alpha = actionAlpha,
+                                outlineSupplier = outlineSupplier,
+                                colorTokens = drawingCache.colorTokens)
                         }
                     }
                 }

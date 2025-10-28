@@ -56,7 +56,7 @@ class TransitionAwarePainter(
     val density: Density
 ) : Painter() {
 
-    private val mutableColorTokens = MutableContainerColorTokens(isDarkAttr = false)
+    private val mutableColorTokens = MutableContainerColorTokens()
 
     override val intrinsicSize: Size
         get() = Size(iconSize.value * density.density, iconSize.value * density.density)

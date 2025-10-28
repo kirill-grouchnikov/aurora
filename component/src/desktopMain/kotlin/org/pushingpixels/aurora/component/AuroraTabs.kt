@@ -163,11 +163,14 @@ internal fun AuroraTabs(
         fontFamilyResolver = fontFamilyResolver
     )
 
-    val underlineScheme = AuroraSkin.colors.getColorScheme(
+    val underlineColorTokens = AuroraSkin.colors.getNeutralContainerTokens(
         decorationAreaType = AuroraSkin.decorationAreaType,
-        associationKind = ColorSchemeAssociationKind.TabBorder,
-        componentState = ComponentState.Enabled
-    )
+        associationKind = ContainerColorTokensAssociationKind.Tab)
+    val underlineColor = if (underlineColorTokens.isDark) {
+        underlineColorTokens.complementaryContainerOutline
+    } else {
+        underlineColorTokens.containerOutline
+    }
 
     val scope = rememberCoroutineScope()
     val scrollAmount = 12.dp.value * density.density
@@ -244,11 +247,11 @@ internal fun AuroraTabs(
 
                         // Left underline
                         Canvas(modifier = Modifier) {
-                            drawRect(color = underlineScheme.darkColor, topLeft = Offset.Zero, size = size)
+                            drawRect(color = underlineColor, topLeft = Offset.Zero, size = size)
                         }
                         // Right underline
                         Canvas(modifier = Modifier) {
-                            drawRect(color = underlineScheme.darkColor, topLeft = Offset.Zero, size = size)
+                            drawRect(color = underlineColor, topLeft = Offset.Zero, size = size)
                         }
                     },
                     measurePolicy = { measurables, constraints ->
@@ -328,16 +331,16 @@ internal fun AuroraTabs(
 
             // Leading underline to extend the whole width of the tabs and scroller buttons
             Canvas(modifier = Modifier) {
-                drawRect(color = underlineScheme.darkColor, topLeft = Offset.Zero, size = size)
+                drawRect(color = underlineColor, topLeft = Offset.Zero, size = size)
             }
             // Trailing underline to extend the whole width of the tabs and scroller buttons
             Canvas(modifier = Modifier) {
-                drawRect(color = underlineScheme.darkColor, topLeft = Offset.Zero, size = size)
+                drawRect(color = underlineColor, topLeft = Offset.Zero, size = size)
             }
             if (presentationModel.contentSeparatorKind == TabContentSeparatorKind.Double) {
                 // Bottom part of the double content separator
                 Canvas(modifier = Modifier) {
-                    drawRect(color = underlineScheme.darkColor, topLeft = Offset.Zero, size = size)
+                    drawRect(color = underlineColor, topLeft = Offset.Zero, size = size)
                 }
             }
         },

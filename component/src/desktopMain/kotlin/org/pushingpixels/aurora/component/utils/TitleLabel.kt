@@ -43,9 +43,9 @@ private object TitleLabelOutlineSuppler: OutlineSupplier {
         density: Density,
         size: Size,
         insets: Float,
-        radiusAdjustment: Float
+        radiusAdjustment: Float,
+        outlineKind: OutlineKind
     ): Outline {
-        val cornerRadius = density.getClassicCornerRadius()
         return getBaseOutline(
             layoutDirection = layoutDirection,
             width = size.width,
@@ -56,7 +56,7 @@ private object TitleLabelOutlineSuppler: OutlineSupplier {
                 openSides = setOf(Side.Leading, Side.Trailing)
             ),
             insets = insets,
-            outlineKind = OutlineKind.Border,
+            outlineKind = outlineKind,
         )
     }
 }

@@ -43,7 +43,7 @@ import org.pushingpixels.aurora.theming.utils.getClassicCornerRadius
 
 @Immutable
 private class BoxWithHighlightsDrawingCache(
-    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens(isDarkAttr = false)
+    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens()
 )
 
 private object BoxWithHighlightsOutlineSuppler: OutlineSupplier {
@@ -52,7 +52,8 @@ private object BoxWithHighlightsOutlineSuppler: OutlineSupplier {
         density: Density,
         size: Size,
         insets: Float,
-        radiusAdjustment: Float
+        radiusAdjustment: Float,
+        outlineKind: OutlineKind
     ): Outline {
         val cornerRadius = density.getClassicCornerRadius()
         return getBaseOutline(
@@ -62,7 +63,7 @@ private object BoxWithHighlightsOutlineSuppler: OutlineSupplier {
             radius = cornerRadius - radiusAdjustment,
             sides = Sides(),
             insets = insets,
-            outlineKind = OutlineKind.Fill,
+            outlineKind = outlineKind,
         )
     }
 }
@@ -264,7 +265,8 @@ fun AuroraBoxWithHighlights(
                     density = density,
                     size = this.size,
                     insets = outlineInset,
-                    radiusAdjustment = 0.0f)
+                    radiusAdjustment = 0.0f,
+                    outlineKind = OutlineKind.Fill)
                 val outlineBoundingRect = outlineFill.bounds
                 if (outlineBoundingRect.isEmpty) {
                     return@withTransform

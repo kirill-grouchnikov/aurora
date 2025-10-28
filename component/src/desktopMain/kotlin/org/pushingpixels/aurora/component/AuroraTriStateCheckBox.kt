@@ -53,7 +53,7 @@ import org.pushingpixels.aurora.theming.utils.getClassicCornerRadius
 
 @Immutable
 private class TriStateCheckBoxDrawingCache(
-    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens(isDarkAttr = false),
+    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens(),
     val markPath: Path = Path()
 )
 
@@ -63,7 +63,8 @@ private object TriStateCheckBoxMarkOutlineSuppler: OutlineSupplier {
         density: Density,
         size: Size,
         insets: Float,
-        radiusAdjustment: Float
+        radiusAdjustment: Float,
+        outlineKind: OutlineKind
     ): Outline {
         val cornerRadius = density.getClassicCornerRadius();
         return getBaseOutline(
@@ -73,7 +74,7 @@ private object TriStateCheckBoxMarkOutlineSuppler: OutlineSupplier {
             radius = cornerRadius - radiusAdjustment,
             sides = Sides(),
             insets = insets,
-            outlineKind = OutlineKind.Fill,
+            outlineKind = outlineKind,
         )
     }
 }
@@ -406,7 +407,8 @@ internal fun AuroraTriStateCheckBox(
                 density = density,
                 size = this.size,
                 insets = outlineInset,
-                radiusAdjustment = 0.0f)
+                radiusAdjustment = 0.0f,
+                outlineKind = OutlineKind.Fill)
 
             paintSurface(
                 drawScope = this,

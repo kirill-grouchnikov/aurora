@@ -62,7 +62,7 @@ import kotlin.math.roundToInt
 private class SliderDrawingCache(
     val trackRect: AuroraRect = AuroraRect(0.0f, 0.0f, 0.0f, 0.0f),
     val thumbRect: AuroraRect = AuroraRect(0.0f, 0.0f, 0.0f, 0.0f),
-    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens(isDarkAttr = false)
+    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens()
 )
 
 @Composable
@@ -92,7 +92,8 @@ private object SliderTrackOutlineSuppler: OutlineSupplier {
         density: Density,
         size: Size,
         insets: Float,
-        radiusAdjustment: Float
+        radiusAdjustment: Float,
+        outlineKind: OutlineKind
     ): Outline {
         val cornerRadius = density.getClassicCornerRadius() / 2.0f
         return getBaseOutline(
@@ -102,7 +103,7 @@ private object SliderTrackOutlineSuppler: OutlineSupplier {
             radius = cornerRadius - radiusAdjustment,
             sides = Sides(),
             insets = insets,
-            outlineKind = OutlineKind.Fill,
+            outlineKind = outlineKind,
         )
     }
 }
@@ -113,7 +114,8 @@ private object SliderThumbOutlineSuppler: OutlineSupplier {
         density: Density,
         size: Size,
         insets: Float,
-        radiusAdjustment: Float
+        radiusAdjustment: Float,
+        outlineKind: OutlineKind
     ): Outline {
         return Outline.Rounded(
             roundRect = RoundRect(
@@ -456,7 +458,8 @@ internal fun AuroraSlider(
                 density = density,
                 size = trackSize,
                 insets = outlineInset,
-                radiusAdjustment = 0.0f)
+                radiusAdjustment = 0.0f,
+                outlineKind = OutlineKind.Fill)
 
             translate(left = drawingCache.trackRect.x, top = drawingCache.trackRect.y) {
                 paintSurface(
@@ -499,7 +502,8 @@ internal fun AuroraSlider(
                             density = density,
                             size = selectionSize,
                             insets = outlineInset,
-                            radiusAdjustment = 0.0f)
+                            radiusAdjustment = 0.0f,
+                            outlineKind = OutlineKind.Fill)
 
                         paintSurface(
                             drawScope = this,
@@ -531,7 +535,8 @@ internal fun AuroraSlider(
                             density = density,
                             size = selectionSize,
                             insets = outlineInset,
-                            radiusAdjustment = 0.0f)
+                            radiusAdjustment = 0.0f,
+                            outlineKind = OutlineKind.Fill)
 
                         paintSurface(
                             drawScope = this,
@@ -620,7 +625,8 @@ internal fun AuroraSlider(
                     density = density,
                     size = Size(thumbSize, thumbSize),
                     insets = thumbOutlineInset,
-                    radiusAdjustment = 0.0f)
+                    radiusAdjustment = 0.0f,
+                    outlineKind = OutlineKind.Fill)
 
                 paintSurface(
                     drawScope = this,

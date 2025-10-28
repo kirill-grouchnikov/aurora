@@ -55,7 +55,7 @@ import org.pushingpixels.aurora.theming.utils.getClassicCornerRadius
 
 @Immutable
 private class ComboBoxDrawingCache(
-    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens(isDarkAttr = false)
+    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens()
 )
 
 private object ComboBoxOutlineSuppler: OutlineSupplier {
@@ -64,7 +64,8 @@ private object ComboBoxOutlineSuppler: OutlineSupplier {
         density: Density,
         size: Size,
         insets: Float,
-        radiusAdjustment: Float
+        radiusAdjustment: Float,
+        outlineKind: OutlineKind
     ): Outline {
         val cornerRadius = density.getClassicCornerRadius()
         return getBaseOutline(
@@ -74,7 +75,7 @@ private object ComboBoxOutlineSuppler: OutlineSupplier {
             radius = cornerRadius - radiusAdjustment,
             sides = Sides(),
             insets = insets,
-            outlineKind = OutlineKind.Fill,
+            outlineKind = outlineKind,
         )
     }
 }
@@ -508,7 +509,8 @@ internal fun <E> AuroraComboBox(
                         density = density,
                         size = this.size,
                         insets = outlineInset,
-                        radiusAdjustment = 0.0f)
+                        radiusAdjustment = 0.0f,
+                        outlineKind = OutlineKind.Fill)
                     val outlineBoundingRect = outlineFill.bounds
                     if (outlineBoundingRect.isEmpty) {
                         return@withTransform

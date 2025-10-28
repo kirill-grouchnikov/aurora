@@ -174,7 +174,8 @@ private object LinearProgressOutlineSuppler: OutlineSupplier {
         density: Density,
         size: Size,
         insets: Float,
-        radiusAdjustment: Float
+        radiusAdjustment: Float,
+        outlineKind: OutlineKind
     ): Outline {
         val cornerRadius = density.getClassicCornerRadius()
         return getBaseOutline(
@@ -184,7 +185,7 @@ private object LinearProgressOutlineSuppler: OutlineSupplier {
             radius = cornerRadius - radiusAdjustment,
             sides = Sides(),
             insets = insets,
-            outlineKind = OutlineKind.Fill,
+            outlineKind = outlineKind,
         )
     }
 }

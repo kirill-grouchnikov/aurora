@@ -749,18 +749,12 @@ fun AuroraWindowScope.AuroraRibbonWindowContent(
 ) {
 
     val skinColors = AuroraSkin.colors
-    val backgroundColorScheme = skinColors.getBackgroundColorScheme(DecorationAreaType.TitlePane)
-    val borderColorScheme = skinColors.getColorScheme(
-        DecorationAreaType.TitlePane, ColorSchemeAssociationKind.Border, ComponentState.Enabled
-    )
+    val neutralColorTokens = skinColors.getNeutralContainerTokens(DecorationAreaType.TitlePane)
 
     Box(
         Modifier
             .fillMaxSize()
-            .drawAuroraWindowBorder(
-                backgroundColorScheme = backgroundColorScheme,
-                borderColorScheme = borderColorScheme
-            )
+            .drawAuroraWindowBorder(neutralColorTokens)
             .padding(WindowSizingConstants.DecoratedBorderThickness)
     ) {
         RibbonWindowInnerContent(

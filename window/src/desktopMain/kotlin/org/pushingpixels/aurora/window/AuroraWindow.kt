@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
@@ -44,17 +45,15 @@ import org.pushingpixels.aurora.common.Platform
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
-import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
+import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.ContainerType
-import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
 import org.pushingpixels.aurora.theming.utils.getContainerColorTokensFilter
 import java.awt.*
 import java.awt.event.AWTEventListener
@@ -122,13 +121,13 @@ fun AuroraWindowScope.AuroraWindowTitlePaneTitleText(title: String) {
     val skinColors = AuroraSkin.colors
     val density = LocalDensity.current
 
-    val colorScheme =
-        skinColors.getEnabledColorScheme(DecorationAreaType.TitlePane)
+    val colorTokens =
+        skinColors.getNeutralContainerTokens(DecorationAreaType.TitlePane)
     val titleTextStyle = TextStyle(
-        color = colorScheme.foregroundColor,
+        color = colorTokens.onContainer,
         fontWeight = FontWeight.Bold,
         shadow = Shadow(
-            color = colorScheme.echoColor,
+            color = colorTokens.complementaryOnContainer,
             blurRadius = density.density
         )
     )
@@ -836,33 +835,30 @@ private fun AuroraWindowScope.WindowInnerContent(
     }
 }
 
-internal fun Modifier.drawAuroraWindowBorder(
-    backgroundColorScheme: AuroraColorScheme,
-    borderColorScheme: AuroraColorScheme
-): Modifier = drawBehind {
+internal fun Modifier.drawAuroraWindowBorder(colorTokens: ContainerColorTokens): Modifier = drawBehind {
     val width: Float = size.width
     val height: Float = size.height
     val thickness = WindowSizingConstants.DecoratedBorderThickness.toPx()
 
     if ((width > thickness) && (height > thickness)) {
         drawRect(
-            color = backgroundColorScheme.lightColor,
+            color = colorTokens.containerSurface,
             topLeft = Offset(thickness / 2.0f, thickness / 2.0f),
             size = Size(width - thickness, height - thickness),
-            style = androidx.compose.ui.graphics.drawscope.Stroke(width = thickness)
+            style = Stroke(width = thickness)
         )
 
         val quarterThickness = thickness / 4.0f
         // bottom and right in border ultra dark
         drawLine(
-            color = borderColorScheme.ultraDarkColor,
+            color = colorTokens.containerOutline,
             start = Offset(x = 0f, y = height - quarterThickness / 2.0f),
             end = Offset(x = width, y = height - quarterThickness / 2.0f),
             strokeWidth = quarterThickness,
             cap = StrokeCap.Butt
         )
         drawLine(
-            color = borderColorScheme.ultraDarkColor,
+            color = colorTokens.containerOutline,
             start = Offset(x = width - quarterThickness / 2.0f, y = 0f),
             end = Offset(x = width - quarterThickness / 2.0f, y = height),
             strokeWidth = quarterThickness,
@@ -870,14 +866,14 @@ internal fun Modifier.drawAuroraWindowBorder(
         )
         // top and left in border dark
         drawLine(
-            color = borderColorScheme.darkColor,
+            color = colorTokens.containerOutlineVariant,
             start = Offset(x = 0f, y = quarterThickness / 2.0f),
             end = Offset(x = width, y = quarterThickness / 2.0f),
             strokeWidth = quarterThickness,
             cap = StrokeCap.Butt
         )
         drawLine(
-            color = borderColorScheme.darkColor,
+            color = colorTokens.containerOutlineVariant,
             start = Offset(x = quarterThickness / 2.0f, y = 0f),
             end = Offset(x = quarterThickness / 2.0f, y = height),
             strokeWidth = quarterThickness,
@@ -885,7 +881,7 @@ internal fun Modifier.drawAuroraWindowBorder(
         )
         // inner bottom and right in background mid
         drawLine(
-            color = borderColorScheme.midColor,
+            color = colorTokens.containerSurface,
             start = Offset(
                 x = quarterThickness,
                 y = height - 1.5f * quarterThickness
@@ -898,7 +894,7 @@ internal fun Modifier.drawAuroraWindowBorder(
             cap = StrokeCap.Butt
         )
         drawLine(
-            color = borderColorScheme.midColor,
+            color = colorTokens.containerOutline,
             start = Offset(
                 x = width - 1.5f * quarterThickness,
                 y = quarterThickness
@@ -912,14 +908,14 @@ internal fun Modifier.drawAuroraWindowBorder(
         )
         // inner top and left in background mid
         drawLine(
-            color = borderColorScheme.midColor,
+            color = colorTokens.containerOutline,
             start = Offset(x = quarterThickness, y = 1.5f * quarterThickness),
             end = Offset(x = width - quarterThickness, y = 1.5f * quarterThickness),
             strokeWidth = quarterThickness,
             cap = StrokeCap.Butt
         )
         drawLine(
-            color = borderColorScheme.midColor,
+            color = colorTokens.containerOutline,
             start = Offset(x = 1.5f * quarterThickness, y = quarterThickness),
             end = Offset(x = 1.5f * quarterThickness, y = height - quarterThickness),
             strokeWidth = quarterThickness,
@@ -940,10 +936,7 @@ fun AuroraWindowScope.AuroraWindowContent(
 ) {
 
     val skinColors = AuroraSkin.colors
-    val backgroundColorScheme = skinColors.getBackgroundColorScheme(DecorationAreaType.TitlePane)
-    val borderColorScheme = skinColors.getColorScheme(
-        DecorationAreaType.TitlePane, ColorSchemeAssociationKind.Border, ComponentState.Enabled
-    )
+    val neutralColorTokens = skinColors.getNeutralContainerTokens(DecorationAreaType.TitlePane)
 
     when (windowTitlePaneConfiguration) {
         is AuroraWindowTitlePaneConfigurations.AuroraIntegrated,
@@ -951,10 +944,7 @@ fun AuroraWindowScope.AuroraWindowContent(
             Box(
                 Modifier
                     .fillMaxSize()
-                    .drawAuroraWindowBorder(
-                        backgroundColorScheme = backgroundColorScheme,
-                        borderColorScheme = borderColorScheme
-                    )
+                    .drawAuroraWindowBorder(neutralColorTokens)
                     .padding(WindowSizingConstants.DecoratedBorderThickness)
             ) {
                 WindowInnerContent(

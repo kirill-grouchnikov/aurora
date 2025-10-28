@@ -21,12 +21,13 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.theming.AuroraTrait
+import org.pushingpixels.aurora.theming.OutlineKind
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 
 interface OutlineSupplier {
     fun getOutline(
         layoutDirection: LayoutDirection, density: Density,
-        size: Size, insets: Float, radiusAdjustment: Float
+        size: Size, insets: Float, radiusAdjustment: Float, outlineKind: OutlineKind
     ): Outline
 }
 
