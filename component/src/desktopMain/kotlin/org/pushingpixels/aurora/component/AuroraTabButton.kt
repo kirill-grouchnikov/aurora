@@ -27,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ClipOp
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Fill
@@ -54,7 +53,6 @@ import org.pushingpixels.aurora.theming.painter.outline.InsetKind
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.ContainerType
-import org.pushingpixels.aurora.theming.utils.MutableColorScheme
 import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
 import org.pushingpixels.aurora.theming.utils.getClassicCornerRadius
@@ -460,11 +458,12 @@ private fun TabButtonTextContent(
         modelStateInfo = modelStateInfo,
         currState = currState,
         colors = skinColors,
-        colorSchemeBundle = presentationModel.colorSchemeBundle,
         decorationAreaType = decorationAreaType,
-        colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
-        isTextInFilledArea = true
-    )
+        associationKind = ContainerColorTokensAssociationKind.Tab,
+        backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
+        skipFlatCheck = false,
+        inactiveContainerType = ContainerType.Muted,
+        isTextInFilledArea = true)
 
     // Pass our text color to the children
     CompositionLocalProvider(
@@ -504,11 +503,12 @@ private fun TabButtonIconContent(
                 modelStateInfo = modelStateInfo,
                 currState = currState,
                 colors = skinColors,
-                colorSchemeBundle = presentationModel.colorSchemeBundle,
                 decorationAreaType = decorationAreaType,
-                colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
-                isTextInFilledArea = true
-            )
+                associationKind = ContainerColorTokensAssociationKind.Tab,
+                backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
+                skipFlatCheck = false,
+                inactiveContainerType = ContainerType.Muted,
+                isTextInFilledArea = true)
 
             // Pass our text color and model state snapshot to the children
             CompositionLocalProvider(

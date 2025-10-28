@@ -686,6 +686,73 @@ internal fun getTextColor(
 }
 
 @OptIn(AuroraInternalApi::class)
+internal fun getTextVariantColor(
+    modelStateInfo: ModelStateInfo?,
+    currState: ComponentState,
+    colors: AuroraSkinColors,
+    decorationAreaType: DecorationAreaType,
+    associationKind: ContainerColorTokensAssociationKind,
+    backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
+    skipFlatCheck: Boolean,
+    inactiveContainerType: ContainerType,
+    isTextInFilledArea: Boolean
+): Color {
+    var activeStates: Map<ComponentState, StateContributionInfo>? =
+        modelStateInfo?.stateContributionMap
+    var tweakedCurrState = currState
+    // Special case for when text is not drawn in the filled area
+    if (!isTextInFilledArea) {
+        tweakedCurrState =
+            if (currState.isDisabled) ComponentState.DisabledUnselected else ComponentState.Enabled
+        activeStates = null
+    }
+
+    val colorTokens = getContainerTokens(
+        colors = colors,
+        decorationAreaType = decorationAreaType,
+        associationKind = associationKind,
+        componentState = tweakedCurrState,
+        backgroundAppearanceStrategy = backgroundAppearanceStrategy,
+        inactiveContainerType = inactiveContainerType,
+        skipFlatCheck = skipFlatCheck
+    )
+
+    var foreground: Color
+    if (tweakedCurrState.isDisabled || activeStates == null || activeStates.size == 1) {
+        // Disabled state or only one active state being tracked
+        foreground = colorTokens.onContainerVariant
+    } else {
+        // Get the combined foreground color from all states
+        var aggrRed = 0f
+        var aggrGreen = 0f
+        var aggrBlue = 0f
+        for ((activeState, value) in activeStates) {
+            val contribution = value.contribution
+            val activeColorScheme = getContainerTokens(
+                colors = colors,
+                decorationAreaType = decorationAreaType,
+                associationKind = associationKind,
+                componentState = activeState,
+                backgroundAppearanceStrategy = backgroundAppearanceStrategy,
+                inactiveContainerType = inactiveContainerType,
+                skipFlatCheck = skipFlatCheck
+            )
+            val activeForeground = activeColorScheme.onContainerVariant
+            aggrRed += contribution * activeForeground.red
+            aggrGreen += contribution * activeForeground.green
+            aggrBlue += contribution * activeForeground.blue
+        }
+        foreground = Color(red = aggrRed, blue = aggrBlue, green = aggrGreen, alpha = 1.0f)
+    }
+
+    if (tweakedCurrState.isDisabled) {
+        foreground = foreground.withAlpha(colorTokens.onContainerDisabledAlpha)
+    }
+
+    return foreground
+}
+
+@OptIn(AuroraInternalApi::class)
 internal fun getTextSelectionBackground(
     modelStateInfo: ModelStateInfo,
     currState: ComponentState,

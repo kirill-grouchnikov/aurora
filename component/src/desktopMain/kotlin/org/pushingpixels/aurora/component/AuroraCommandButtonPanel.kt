@@ -238,11 +238,13 @@ internal fun AuroraCommandButtonPanel(
         presentationModel.contentPadding.calculateEndPadding(layoutDirection)
     val contentTopPadding = presentationModel.contentPadding.calculateTopPadding()
     val contentBottomPadding = presentationModel.contentPadding.calculateBottomPadding()
-    val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
-        decorationAreaType = AuroraSkin.decorationAreaType
-    )
-    val backgroundEvenGroups = backgroundColorScheme.backgroundFillColor
-    val backgroundOddGroups = backgroundColorScheme.accentedBackgroundFillColor
+    val neutralColorTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
+    val backgroundEvenGroups = neutralColorTokens.containerSurface
+    val backgroundOddGroups = if (neutralColorTokens.isDark) {
+        neutralColorTokens.containerSurfaceLow
+    } else {
+        neutralColorTokens.containerSurfaceHigh
+    }
 
     SubcomposeLayout(modifier = modifier.fillMaxSize()) { constraints ->
         val gap = presentationModel.contentGap

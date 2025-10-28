@@ -29,6 +29,7 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
@@ -47,10 +48,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.resolveDefaults
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.*
 import kotlinx.coroutines.*
 import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
@@ -62,19 +60,19 @@ import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.ribbon.impl.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.utils.MutableColorScheme
+import org.pushingpixels.aurora.theming.painter.outline.InsetKind
+import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
+import org.pushingpixels.aurora.theming.utils.*
 import java.awt.event.KeyEvent
 import kotlin.math.max
 import kotlin.math.roundToInt
 
 @Immutable
 private class CommandButtonDrawingCache(
-    override val colorScheme: MutableColorScheme = MutableColorScheme(
-        displayName = "Internal mutable",
-        isDark = false
-    ),
+    val actionColorTokens: MutableContainerColorTokens = MutableContainerColorTokens(),
+    val popupColorTokens: MutableContainerColorTokens = MutableContainerColorTokens(),
     val markPath: Path = Path()
-) : DrawingCache
+)
 
 private fun Modifier.commandButtonActionHoverable(
     interactionSource: MutableInteractionSource,
@@ -554,6 +552,28 @@ private fun Modifier.commandButtonPopupModifier(
     }
 )
 
+private class CommandButtonOutlineSuppler(val presentationModel: BaseCommandButtonPresentationModel): OutlineSupplier {
+    override fun getOutline(
+        layoutDirection: LayoutDirection,
+        density: Density,
+        size: Size,
+        insets: Float,
+        radiusAdjustment: Float,
+        outlineKind: OutlineKind
+    ): Outline {
+        val cornerRadius = density.getClassicCornerRadius()
+        return getBaseOutline(
+            layoutDirection = layoutDirection,
+            width = size.width,
+            height = size.height,
+            radius = cornerRadius - radiusAdjustment,
+            sides = presentationModel.sides,
+            insets = insets,
+            outlineKind = outlineKind,
+        )
+    }
+}
+
 @OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
 @Composable
 internal fun <M : BaseCommandMenuContentModel,
@@ -1009,81 +1029,37 @@ internal fun <M : BaseCommandMenuContentModel,
                         if (ignoreSelectedState) currentActionNoSelectionState
                         else currentActionState
 
-                    // Populate the cached color scheme for filling the action area
+                    // Populate the cached color tokens for filling the action area
                     // based on the current model state info
-                    populateColorScheme(
-                        colorScheme = drawingCache.colorScheme,
-                        colorSchemeBundle = presentationModel.colorSchemeBundle,
-                        modelStateInfo = actionModelStateInfoToUse,
-                        currState = currentActionStateToUse.value,
+                    populateColorTokens(
+                        colorTokens = drawingCache.actionColorTokens,
                         colors = AuroraSkin.colors,
                         decorationAreaType = decorationAreaType,
-                        associationKind = ColorSchemeAssociationKind.Fill
-                    )
-
-                    // And retrieve the container fill colors
-                    val fillUltraLight = drawingCache.colorScheme.ultraLightColor
-                    val fillExtraLight = drawingCache.colorScheme.extraLightColor
-                    val fillLight = drawingCache.colorScheme.lightColor
-                    val fillMid = drawingCache.colorScheme.midColor
-                    val fillDark = drawingCache.colorScheme.darkColor
-                    val fillUltraDark = drawingCache.colorScheme.ultraDarkColor
-                    val fillIsDark = drawingCache.colorScheme.isDark
-
-                    // Populate the cached color scheme for drawing the button border
-                    // based on the current model state info
-                    populateColorScheme(
-                        colorScheme = drawingCache.colorScheme,
-                        colorSchemeBundle = presentationModel.colorSchemeBundle,
                         modelStateInfo = actionModelStateInfoToUse,
                         currState = currentActionStateToUse.value,
-                        colors = AuroraSkin.colors,
-                        decorationAreaType = decorationAreaType,
-                        associationKind = ColorSchemeAssociationKind.Border
-                    )
-                    // And retrieve the border colors
-                    val borderUltraLight = drawingCache.colorScheme.ultraLightColor
-                    val borderExtraLight = drawingCache.colorScheme.extraLightColor
-                    val borderLight = drawingCache.colorScheme.lightColor
-                    val borderMid = drawingCache.colorScheme.midColor
-                    val borderDark = drawingCache.colorScheme.darkColor
-                    val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
-                    val borderIsDark = drawingCache.colorScheme.isDark
+                        associationKind = ContainerColorTokensAssociationKind.Default,
+                        backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
+                        treatEnabledAsActive = false,
+                        skipFlatCheck = false,
+                        inactiveContainerType = ContainerType.Muted)
 
-                    val fillPainter = painters.fillPainter
-                    val borderPainter = painters.borderPainter
+                    val surfacePainter = AuroraSkin.painters.surfacePainter
+                    val outlinePainter = AuroraSkin.painters.outlinePainter
 
                     var actionAlpha = max(combinedRolloverFraction,
                         if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat) {
-                            if (currentActionStateToUse.value == ComponentState.DisabledSelected) {
-                                // Respect the alpha in disabled+selected state
-                                presentationModel.colorSchemeBundle?.getAlpha(currentActionStateToUse.value)
-                                    ?: skinColors.getAlpha(
-                                        decorationAreaType,
-                                        currentActionStateToUse.value
-                                    )
-                            } else {
-                                // For flat buttons, compute the combined contribution of all
-                                // non-disabled states - ignoring ComponentState.ENABLED
-                                actionModelStateInfoToUse.stateContributionMap
-                                    .filter { !it.key.isDisabled && (it.key != ComponentState.Enabled) }
-                                    .values.sumOf { it.contribution.toDouble() }.toFloat()
-                            }
-                        } else {
-                            if (currentActionStateToUse.value.isDisabled)
-                                presentationModel.colorSchemeBundle?.getAlpha(currentActionStateToUse.value)
-                                    ?: skinColors.getAlpha(
-                                        decorationAreaType,
-                                        currentActionStateToUse.value
-                                    ) else 1.0f
-                        }
+                            // For flat buttons, compute the combined contribution of all
+                            // non-disabled states - ignoring ComponentState.ENABLED
+                            actionModelStateInfoToUse.stateContributionMap
+                                .filter { !it.key.isDisabled && (it.key != ComponentState.Enabled) }
+                                .values.sumOf { it.contribution.toDouble() }.toFloat()
+                        } else 1.0f
                     )
                     actionAlpha = actionAlpha.coerceIn(0.0f, 1.0f)
 
-                    Canvas(modifier = Modifier.matchParentSize()) {
-                        val width = buttonSize.value.width.toFloat()
-                        val height = buttonSize.value.height.toFloat()
+                    val outlineSupplier = CommandButtonOutlineSuppler(presentationModel)
 
+                    Canvas(modifier = Modifier.matchParentSize()) {
                         withTransform({
                             clipRect(
                                 left = 0.0f,
@@ -1097,79 +1073,36 @@ internal fun <M : BaseCommandMenuContentModel,
                                 top = -actionAreaOffset.y
                             )
                         }) {
-                            val fillOutline = buttonShaper.getButtonOutline(
+                            val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
+                            val outlineFill = outlineSupplier.getOutline(
                                 layoutDirection = layoutDirection,
-                                width = width,
-                                height = height,
-                                extraInsets = 0.5f,
-                                isInner = false,
-                                sides = presentationModel.sides,
-                                outlineKind = OutlineKind.Fill,
-                                density = this
-                            )
-
-                            val outlineBoundingRect = fillOutline.bounds
+                                density = density,
+                                size = buttonSize.value.asSize(),
+                                insets = outlineInset,
+                                radiusAdjustment = 0.0f,
+                                outlineKind = OutlineKind.Fill)
+                            val outlineBoundingRect = outlineFill.bounds
                             if (outlineBoundingRect.isEmpty) {
                                 return@withTransform
                             }
 
-                            // Populate the cached color scheme for filling the button container
-                            drawingCache.colorScheme.ultraLight = fillUltraLight
-                            drawingCache.colorScheme.extraLight = fillExtraLight
-                            drawingCache.colorScheme.light = fillLight
-                            drawingCache.colorScheme.mid = fillMid
-                            drawingCache.colorScheme.dark = fillDark
-                            drawingCache.colorScheme.ultraDark = fillUltraDark
-                            drawingCache.colorScheme.isDark = fillIsDark
-                            drawingCache.colorScheme.foreground = Color.Black
-                            fillPainter.paintContourBackground(
-                                this,
-                                buttonSize.value.asSize(),
-                                fillOutline,
-                                drawingCache.colorScheme,
-                                actionAlpha
-                            )
+                            paintSurface(
+                                drawScope = this,
+                                componentState = currentActionStateToUse.value,
+                                surfacePainter = surfacePainter,
+                                size = buttonSize.value.asSize(),
+                                alpha = actionAlpha,
+                                outline = outlineFill,
+                                colorTokens = drawingCache.actionColorTokens)
 
-                            // Populate the cached color scheme for drawing the button border
-                            drawingCache.colorScheme.ultraLight = borderUltraLight
-                            drawingCache.colorScheme.extraLight = borderExtraLight
-                            drawingCache.colorScheme.light = borderLight
-                            drawingCache.colorScheme.mid = borderMid
-                            drawingCache.colorScheme.dark = borderDark
-                            drawingCache.colorScheme.ultraDark = borderUltraDark
-                            drawingCache.colorScheme.isDark = borderIsDark
-                            drawingCache.colorScheme.foreground = Color.Black
-
-                            val borderOutline = buttonShaper.getButtonOutline(
-                                layoutDirection = layoutDirection,
-                                width = width,
-                                height = height,
-                                extraInsets = 0.5f,
-                                isInner = false,
-                                sides = presentationModel.sides,
-                                outlineKind = OutlineKind.Border,
-                                density = this
-                            )
-                            val innerBorderOutline =
-                                if (borderPainter.isPaintingInnerOutline) buttonShaper.getButtonOutline(
-                                    layoutDirection = layoutDirection,
-                                    width = width,
-                                    height = height,
-                                    extraInsets = 1.0f,
-                                    isInner = true,
-                                    sides = presentationModel.sides,
-                                    outlineKind = OutlineKind.Border,
-                                    density = this
-                                ) else null
-
-                            borderPainter.paintBorder(
-                                this,
-                                buttonSize.value.asSize(),
-                                borderOutline,
-                                innerBorderOutline,
-                                drawingCache.colorScheme,
-                                actionAlpha
-                            )
+                            paintOutline(
+                                drawScope = this,
+                                componentState = currentActionStateToUse.value,
+                                outlinePainter = outlinePainter,
+                                size = buttonSize.value.asSize(),
+                                alpha = actionAlpha,
+                                outlineSupplier = outlineSupplier,
+                                colorTokens = drawingCache.actionColorTokens)
                         }
                     }
                 }
@@ -1219,77 +1152,37 @@ internal fun <M : BaseCommandMenuContentModel,
                 }
             ) {
                 if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.Never) {
-                    // Populate the cached color scheme for filling the button container
+                    // Populate the cached color tokens for filling the button container
                     // based on the current model state info
-                    populateColorScheme(
-                        colorScheme = drawingCache.colorScheme,
-                        colorSchemeBundle = presentationModel.colorSchemeBundle,
-                        modelStateInfo = popupModelStateInfo,
-                        currState = currentPopupState.value,
+                    populateColorTokens(
+                        colorTokens = drawingCache.popupColorTokens,
                         colors = AuroraSkin.colors,
                         decorationAreaType = decorationAreaType,
-                        associationKind = ColorSchemeAssociationKind.Fill
-                    )
-                    // And retrieve the container fill colors
-                    val fillUltraLight = drawingCache.colorScheme.ultraLightColor
-                    val fillExtraLight = drawingCache.colorScheme.extraLightColor
-                    val fillLight = drawingCache.colorScheme.lightColor
-                    val fillMid = drawingCache.colorScheme.midColor
-                    val fillDark = drawingCache.colorScheme.darkColor
-                    val fillUltraDark = drawingCache.colorScheme.ultraDarkColor
-                    val fillIsDark = drawingCache.colorScheme.isDark
-
-                    // Populate the cached color scheme for drawing the button border
-                    // based on the current model state info
-                    populateColorScheme(
-                        colorScheme = drawingCache.colorScheme,
-                        colorSchemeBundle = presentationModel.colorSchemeBundle,
                         modelStateInfo = popupModelStateInfo,
                         currState = currentPopupState.value,
-                        colors = AuroraSkin.colors,
-                        decorationAreaType = decorationAreaType,
-                        associationKind = ColorSchemeAssociationKind.Border
-                    )
-                    // And retrieve the border colors
-                    val borderUltraLight = drawingCache.colorScheme.ultraLightColor
-                    val borderExtraLight = drawingCache.colorScheme.extraLightColor
-                    val borderLight = drawingCache.colorScheme.lightColor
-                    val borderMid = drawingCache.colorScheme.midColor
-                    val borderDark = drawingCache.colorScheme.darkColor
-                    val borderUltraDark = drawingCache.colorScheme.ultraDarkColor
-                    val borderIsDark = drawingCache.colorScheme.isDark
+                        associationKind = ContainerColorTokensAssociationKind.Default,
+                        backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
+                        treatEnabledAsActive = false,
+                        skipFlatCheck = false,
+                        inactiveContainerType = ContainerType.Muted)
 
-                    val fillPainter = painters.fillPainter
-                    val borderPainter = painters.borderPainter
+                    val surfacePainter = AuroraSkin.painters.surfacePainter
+                    val outlinePainter = AuroraSkin.painters.outlinePainter
 
                     var popupAlpha = max(combinedRolloverFraction,
                         if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat) {
-                            if (currentPopupState.value == ComponentState.DisabledSelected) {
-                                // Respect the alpha in disabled+selected state
-                                presentationModel.colorSchemeBundle?.getAlpha(currentPopupState.value)
-                                    ?: skinColors.getAlpha(decorationAreaType, currentPopupState.value)
-                            } else {
-                                // For flat buttons, compute the combined contribution of all
-                                // non-disabled states - ignoring ComponentState.ENABLED
-                                popupModelStateInfo.stateContributionMap
-                                    .filter { !it.key.isDisabled && (it.key != ComponentState.Enabled) }
-                                    .values.sumOf { it.contribution.toDouble() }.toFloat()
-                            }
-                        } else {
-                            if (currentPopupState.value.isDisabled)
-                                presentationModel.colorSchemeBundle?.getAlpha(currentPopupState.value)
-                                    ?: skinColors.getAlpha(
-                                        decorationAreaType,
-                                        currentPopupState.value
-                                    ) else 1.0f
-                        }
+                            // For flat buttons, compute the combined contribution of all
+                            // non-disabled states - ignoring ComponentState.ENABLED
+                            popupModelStateInfo.stateContributionMap
+                                .filter { !it.key.isDisabled && (it.key != ComponentState.Enabled) }
+                                .values.sumOf { it.contribution.toDouble() }.toFloat()
+                        } else 1.0f
                     )
                     popupAlpha = popupAlpha.coerceIn(0.0f, 1.0f)
 
-                    Canvas(modifier = Modifier.matchParentSize()) {
-                        val width = buttonSize.value.width.toFloat()
-                        val height = buttonSize.value.height.toFloat()
+                    val outlineSupplier = CommandButtonOutlineSuppler(presentationModel)
 
+                    Canvas(modifier = Modifier.matchParentSize()) {
                         withTransform({
                             clipRect(
                                 left = 0.0f,
@@ -1303,79 +1196,36 @@ internal fun <M : BaseCommandMenuContentModel,
                                 top = -popupAreaOffset.y
                             )
                         }) {
-                            val fillOutline = buttonShaper.getButtonOutline(
+                            val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
+                            val outlineFill = outlineSupplier.getOutline(
                                 layoutDirection = layoutDirection,
-                                width = width,
-                                height = height,
-                                extraInsets = 0.5f,
-                                isInner = false,
-                                sides = presentationModel.sides,
-                                outlineKind = OutlineKind.Fill,
-                                density = this
-                            )
-
-                            val outlineBoundingRect = fillOutline.bounds
+                                density = density,
+                                size = buttonSize.value.asSize(),
+                                insets = outlineInset,
+                                radiusAdjustment = 0.0f,
+                                outlineKind = OutlineKind.Fill)
+                            val outlineBoundingRect = outlineFill.bounds
                             if (outlineBoundingRect.isEmpty) {
                                 return@withTransform
                             }
 
-                            // Populate the cached color scheme for filling the button container
-                            drawingCache.colorScheme.ultraLight = fillUltraLight
-                            drawingCache.colorScheme.extraLight = fillExtraLight
-                            drawingCache.colorScheme.light = fillLight
-                            drawingCache.colorScheme.mid = fillMid
-                            drawingCache.colorScheme.dark = fillDark
-                            drawingCache.colorScheme.ultraDark = fillUltraDark
-                            drawingCache.colorScheme.isDark = fillIsDark
-                            drawingCache.colorScheme.foreground = Color.Black
-                            fillPainter.paintContourBackground(
-                                this,
-                                buttonSize.value.asSize(),
-                                fillOutline,
-                                drawingCache.colorScheme,
-                                popupAlpha
-                            )
+                            paintSurface(
+                                drawScope = this,
+                                componentState = currentPopupState.value,
+                                surfacePainter = surfacePainter,
+                                size = buttonSize.value.asSize(),
+                                alpha = popupAlpha,
+                                outline = outlineFill,
+                                colorTokens = drawingCache.popupColorTokens)
 
-                            // Populate the cached color scheme for drawing the button border
-                            drawingCache.colorScheme.ultraLight = borderUltraLight
-                            drawingCache.colorScheme.extraLight = borderExtraLight
-                            drawingCache.colorScheme.light = borderLight
-                            drawingCache.colorScheme.mid = borderMid
-                            drawingCache.colorScheme.dark = borderDark
-                            drawingCache.colorScheme.ultraDark = borderUltraDark
-                            drawingCache.colorScheme.isDark = borderIsDark
-                            drawingCache.colorScheme.foreground = Color.Black
-
-                            val borderOutline = buttonShaper.getButtonOutline(
-                                layoutDirection = layoutDirection,
-                                width = width,
-                                height = height,
-                                extraInsets = 0.5f,
-                                isInner = false,
-                                sides = presentationModel.sides,
-                                outlineKind = OutlineKind.Border,
-                                density = this
-                            )
-                            val innerBorderOutline =
-                                if (borderPainter.isPaintingInnerOutline) buttonShaper.getButtonOutline(
-                                    layoutDirection = layoutDirection,
-                                    width = width,
-                                    height = height,
-                                    extraInsets = 1.0f,
-                                    isInner = true,
-                                    sides = presentationModel.sides,
-                                    outlineKind = OutlineKind.Border,
-                                    density = this
-                                ) else null
-
-                            borderPainter.paintBorder(
-                                this,
-                                buttonSize.value.asSize(),
-                                borderOutline,
-                                innerBorderOutline,
-                                drawingCache.colorScheme,
-                                popupAlpha
-                            )
+                            paintOutline(
+                                drawScope = this,
+                                componentState = currentPopupState.value,
+                                outlinePainter = outlinePainter,
+                                size = buttonSize.value.asSize(),
+                                alpha = popupAlpha,
+                                outlineSupplier = outlineSupplier,
+                                colorTokens = drawingCache.popupColorTokens)
                         }
                     }
                 }
@@ -1393,10 +1243,12 @@ internal fun <M : BaseCommandMenuContentModel,
                 val textColor = getTextColor(
                     modelStateInfo = modelStateInfoForIcon,
                     currState = currStateForIcon,
-                    colors = skinColors,
-                    colorSchemeBundle = presentationModel.colorSchemeBundle,
+                    colors = AuroraSkin.colors,
                     decorationAreaType = decorationAreaType,
-                    colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
+                    associationKind = ContainerColorTokensAssociationKind.Default,
+                    backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
+                    skipFlatCheck = false,
+                    inactiveContainerType = ContainerType.Muted,
                     isTextInFilledArea = true
                 )
 
@@ -1434,9 +1286,22 @@ internal fun <M : BaseCommandMenuContentModel,
                 modelStateInfo = modelStateInfoForText,
                 currState = currStateForText,
                 colors = AuroraSkin.colors,
-                colorSchemeBundle = presentationModel.colorSchemeBundle,
                 decorationAreaType = decorationAreaType,
-                colorSchemeAssociationKind = ColorSchemeAssociationKind.Fill,
+                associationKind = ContainerColorTokensAssociationKind.Default,
+                backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
+                skipFlatCheck = false,
+                inactiveContainerType = ContainerType.Muted,
+                isTextInFilledArea = true
+            )
+            val textVariantColor = getTextVariantColor(
+                modelStateInfo = modelStateInfoForText,
+                currState = currStateForText,
+                colors = AuroraSkin.colors,
+                decorationAreaType = decorationAreaType,
+                associationKind = ContainerColorTokensAssociationKind.Default,
+                backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
+                skipFlatCheck = false,
+                inactiveContainerType = ContainerType.Muted,
                 isTextInFilledArea = true
             )
 
@@ -1449,7 +1314,7 @@ internal fun <M : BaseCommandMenuContentModel,
             for (extraText in preLayoutInfo.extraTexts) {
                 CommandButtonExtraTextContent(
                     presentationModel, extraText, modelStateInfoForText, currStateForText,
-                    textColor, resolvedTextStyle, layoutManager.getExtraTextMaxLines()
+                    textVariantColor, resolvedTextStyle, layoutManager.getExtraTextMaxLines()
                 )
             }
 
@@ -1493,7 +1358,6 @@ internal fun <M : BaseCommandMenuContentModel,
                         keyTip = presentationModel.actionKeyTip!!,
                         isEnabled = isActionEnabled,
                         buttonSize = buttonSize.value,
-                        drawingCache = drawingCache
                     )
                 }
                 if (presentationModel.popupKeyTip != null) {
@@ -1502,7 +1366,6 @@ internal fun <M : BaseCommandMenuContentModel,
                         keyTip = presentationModel.popupKeyTip!!,
                         isEnabled = isPopupEnabled,
                         buttonSize = buttonSize.value,
-                        drawingCache = drawingCache
                     )
                 }
             }
@@ -1797,40 +1660,37 @@ private fun CommandButtonExtraTextContent(
     text: String, modelStateInfo: ModelStateInfo, currState: ComponentState,
     defaultTextColor: Color, style: TextStyle, maxLines: Int
 ) {
-    val decorationAreaType = AuroraSkin.decorationAreaType
-
-    // "Move" the regular text color towards the disabled state for more muted visuals
-    // of the extra text
-    val disabledColorScheme = AuroraSkin.colors.getColorScheme(
-        decorationAreaType, ComponentState.DisabledUnselected
-    )
-    var disabledFgColor = disabledColorScheme.foregroundColor
-    val buttonAlpha = AuroraSkin.colors.getAlpha(decorationAreaType, currState)
-
-    val backgroundColorScheme = AuroraSkin.colors.getColorScheme(decorationAreaType, currState)
-    val bgFillColor = backgroundColorScheme.backgroundFillColor
-    if (buttonAlpha < 1.0f) {
-        // Blend with the background fill
-        disabledFgColor = disabledFgColor.interpolateTowards(bgFillColor, buttonAlpha)
-    }
-    if (currState.isDisabled) {
-        disabledFgColor = disabledFgColor.interpolateTowards(bgFillColor, 0.5f)
-    }
-    disabledFgColor = disabledFgColor.interpolateTowards(defaultTextColor, 0.5f)
-
     // Pass our text color and model state snapshot to the children
     CompositionLocalProvider(
-        LocalTextColor provides disabledFgColor,
+        LocalTextColor provides defaultTextColor,
         LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currState)
     ) {
         // Since we're passing the resolved style that has the default color,
         // also explicitly pass our text color to override the one set in the style
         AuroraText(
             text = text,
-            color = disabledFgColor,
+            color = defaultTextColor,
             style = style,
             maxLines = maxLines,
             overflow = presentationModel.textOverflow
+        )
+    }
+}
+
+private object CommandButtonSelectedIconOutlineSuppler: OutlineSupplier {
+    override fun getOutline(
+        layoutDirection: LayoutDirection,
+        density: Density,
+        size: Size,
+        insets: Float,
+        radiusAdjustment: Float,
+        outlineKind: OutlineKind
+    ): Outline {
+        return Outline.Rectangle(
+            Rect(
+                left = insets, top = insets,
+                right = size.width - insets, bottom = size.height - insets
+            )
         )
     }
 }
@@ -1858,8 +1718,8 @@ private fun CommandButtonIconContent(
 
     val skinColors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
-    val borderPainter = AuroraSkin.painters.borderPainter
-    val fillPainter = AuroraSkin.painters.fillPainter
+    val surfacePainter = AuroraSkin.painters.surfacePainter
+    val outlinePainter = AuroraSkin.painters.outlinePainter
 
     Box {
         if (showSelectionAroundIcon) {
@@ -1869,56 +1729,41 @@ private fun CommandButtonIconContent(
                     if (currState.isDisabled) ComponentState.DisabledSelected
                     else ComponentState.Selected
 
-                val alphaForBackground =
-                    (presentationModel.colorSchemeBundle?.getAlpha(stateForBackground) ?: skinColors.getAlpha(
-                        decorationAreaType = decorationAreaType,
-                        componentState = stateForBackground
-                    )) * selectionAlpha
-                val outline = Outline.Rectangle(
-                    rect = Rect(
-                        left = 0.5f,
-                        top = 0.5f,
-                        right = size.width - 0.5f,
-                        bottom = size.height - 0.5f
-                    )
-                )
-
-                val fillScheme = presentationModel.colorSchemeBundle?.getColorScheme(
-                    associationKind = ColorSchemeAssociationKind.Highlight,
-                    componentState = stateForBackground,
-                    allowFallback = true
-                ) ?: skinColors.getColorScheme(
+                val highlightColorTokens = getContainerTokens(
+                    colors = skinColors,
                     decorationAreaType = decorationAreaType,
-                    associationKind = ColorSchemeAssociationKind.Highlight,
-                    componentState = stateForBackground
-                )
-
-                fillPainter.paintContourBackground(
-                    drawScope = this,
-                    size = size,
-                    outline = outline,
-                    fillScheme = fillScheme,
-                    alpha = alphaForBackground
-                )
-
-                val borderScheme = presentationModel.colorSchemeBundle?.getColorScheme(
-                    associationKind = ColorSchemeAssociationKind.HighlightBorder,
+                    associationKind = ContainerColorTokensAssociationKind.Highlight,
                     componentState = stateForBackground,
-                    allowFallback = true
-                ) ?: skinColors.getColorScheme(
-                    decorationAreaType = decorationAreaType,
-                    associationKind = ColorSchemeAssociationKind.HighlightBorder,
-                    componentState = stateForBackground
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
+                    inactiveContainerType = ContainerType.Neutral
                 )
 
-                borderPainter.paintBorder(
+                val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
+                val outlineFill = CommandButtonSelectedIconOutlineSuppler.getOutline(
+                    layoutDirection = layoutDirection,
+                    density = this,
+                    size = this.size,
+                    insets = outlineInset,
+                    radiusAdjustment = 0.0f,
+                    outlineKind = OutlineKind.Fill)
+
+                paintSurface(
                     drawScope = this,
-                    size = size,
-                    outline = outline,
-                    outlineInner = null,
-                    borderScheme = borderScheme,
-                    alpha = alphaForBackground
-                )
+                    componentState = stateForBackground,
+                    surfacePainter = surfacePainter,
+                    size = this.size,
+                    alpha = selectionAlpha,
+                    outline = outlineFill,
+                    colorTokens = highlightColorTokens)
+
+                paintOutline(
+                    drawScope = this,
+                    componentState = stateForBackground,
+                    outlinePainter = outlinePainter,
+                    size = this.size,
+                    alpha = selectionAlpha,
+                    outlineSupplier = CommandButtonSelectedIconOutlineSuppler,
+                    colorTokens = highlightColorTokens)
             }
         }
         if (command.icon == null) {
@@ -1930,18 +1775,24 @@ private fun CommandButtonIconContent(
             val markColor = getStateAwareColor(
                 modelStateInfo = modelStateInfo,
                 currState = currState,
-                colorSchemeBundle = presentationModel.colorSchemeBundle,
                 colors = AuroraSkin.colors,
                 decorationAreaType = decorationAreaType,
-                associationKind = ColorSchemeAssociationKind.Mark
-            ) { it.markColor }
+                associationKind = ContainerColorTokensAssociationKind.Mark,
+                backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
+                skipFlatCheck = false,
+                inactiveContainerType = ContainerType.Muted,
+            ) { it.onContainer }
 
-            val stateForMark = if (currState.isDisabled) ComponentState.DisabledSelected
-            else ComponentState.Selected
-            val alphaForMark = presentationModel.colorSchemeBundle?.getAlpha(stateForMark) ?: skinColors.getAlpha(
+            val markColorTokens = getContainerTokens(
+                colors = AuroraSkin.colors,
                 decorationAreaType = decorationAreaType,
-                componentState = stateForMark
+                associationKind = ContainerColorTokensAssociationKind.Mark,
+                componentState = currState,
+                backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
+                inactiveContainerType = ContainerType.Muted,
+                skipFlatCheck = false
             )
+            val markAlpha = if (currState.isDisabled) markColorTokens.onContainerDisabledAlpha else 1.0f
 
             Canvas(modifier = Modifier.matchParentSize()) {
                 val width = this.size.width
@@ -1967,7 +1818,7 @@ private fun CommandButtonIconContent(
                             cap = StrokeCap.Round,
                             join = StrokeJoin.Round
                         ),
-                        alpha = alphaForMark
+                        alpha = markAlpha
                     )
                 }
             }
@@ -2008,11 +1859,13 @@ private fun CommandButtonPopupIconContent(
     val arrowColor = getStateAwareColor(
         modelStateInfo = modelStateInfo,
         currState = currState,
-        colorSchemeBundle = presentationModel.colorSchemeBundle,
         colors = AuroraSkin.colors,
         decorationAreaType = decorationAreaType,
-        associationKind = ColorSchemeAssociationKind.Mark
-    ) { it.markColor }
+        associationKind = ContainerColorTokensAssociationKind.Mark,
+        backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
+        skipFlatCheck = false,
+        inactiveContainerType = ContainerType.Muted,
+    ) { it.onContainer }
 
     Box {
         Canvas(modifier = Modifier.matchParentSize()) {
@@ -2049,7 +1902,6 @@ private fun CommandButtonKeyTip(
     keyTip: String,
     isEnabled: Boolean,
     buttonSize: IntSize,
-    drawingCache: DrawingCache
 ) {
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
@@ -2079,7 +1931,6 @@ private fun CommandButtonKeyTip(
                 layoutDirection = layoutDirection,
                 insets = 0.dp,
                 decorationAreaType = decorationAreaType,
-                drawingCache = drawingCache,
                 painters = painters,
                 skinColors = skinColors
             )
