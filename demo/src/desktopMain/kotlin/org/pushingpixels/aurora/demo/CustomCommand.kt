@@ -218,11 +218,9 @@ object CustomCommandMenuPopupHandler : CascadingCommandMenuHandler<
     ) {
         val itemButtonPresentationModel = popupContentLayoutInfo.itemButtonPresentationModel
 
-        val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
-            decorationAreaType = AuroraSkin.decorationAreaType
-        )
+        val neutralColorTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
         Column(
-            modifier = Modifier.fillMaxSize().background(color = backgroundColorScheme.backgroundFillColor)
+            modifier = Modifier.fillMaxSize().background(color = neutralColorTokens.containerSurface)
                 .padding(all = 1.0.dp)
         ) {
             for (entry in menuContentModel.entries) {

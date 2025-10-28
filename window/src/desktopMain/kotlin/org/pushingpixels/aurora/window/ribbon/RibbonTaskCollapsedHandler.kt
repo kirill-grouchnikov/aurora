@@ -75,11 +75,9 @@ internal object RibbonTaskCollapsedCommandMenuPopupHandler : CascadingCommandMen
         overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>,
         popupContentLayoutInfo: RibbonTaskCollapsedPopupContentLayoutInfo
     ) {
-        val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
-            decorationAreaType = AuroraSkin.decorationAreaType
-        )
+        val neutralColorTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
         Box(
-            modifier = Modifier.fillMaxSize().background(color = backgroundColorScheme.backgroundFillColor)
+            modifier = Modifier.fillMaxSize().background(color = neutralColorTokens.containerSurface)
                 .padding(all = 1.0.dp)
         ) {
             RibbonBands(ribbonTask = menuContentModel.ribbonTask)

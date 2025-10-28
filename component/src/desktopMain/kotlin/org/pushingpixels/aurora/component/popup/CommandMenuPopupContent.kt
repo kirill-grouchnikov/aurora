@@ -37,9 +37,8 @@ import org.pushingpixels.aurora.theming.AuroraPainters
 import org.pushingpixels.aurora.theming.AuroraSkin
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import java.awt.Component
 import java.awt.Rectangle
 import java.awt.Window
@@ -58,7 +57,6 @@ interface BaseCommandMenuHandler<in M : BaseCommandMenuContentModel,
         textStyle: TextStyle,
         fontFamilyResolver: FontFamily.Resolver,
         skinColors: AuroraSkinColors,
-        colorSchemeBundle: AuroraColorSchemeBundle?,
         skinPainters: AuroraPainters,
         decorationAreaType: DecorationAreaType,
         compositionLocalContext: CompositionLocalContext,
@@ -230,16 +228,14 @@ interface BaseCommandMenuHandler<in M : BaseCommandMenuContentModel,
 
 @Composable
 fun Modifier.auroraPopupMenuRowBackground(
-    backgroundFillColorQuery: (Int, AuroraColorScheme) -> Color,
-    iconGutterFillColorQuery: ((AuroraColorScheme) -> Color)? = null,
+    backgroundFillColorQuery: (Int, ContainerColorTokens) -> Color,
+    iconGutterFillColorQuery: ((ContainerColorTokens) -> Color)? = null,
     gutterWidth: Float = 0.0f,
 ): Modifier {
-    val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
-        decorationAreaType = AuroraSkin.decorationAreaType
-    )
+    val colorTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
 
-    val backgroundFill = backgroundFillColorQuery.invoke(0, backgroundColorScheme)
-    val gutterFill = if (gutterWidth > 0) (iconGutterFillColorQuery?.invoke(backgroundColorScheme)
+    val backgroundFill = backgroundFillColorQuery.invoke(0, colorTokens)
+    val gutterFill = if (gutterWidth > 0) (iconGutterFillColorQuery?.invoke(colorTokens)
         ?: Color.Unspecified) else Color.Unspecified
 
     return this.then(
@@ -253,17 +249,15 @@ fun Modifier.auroraPopupMenuRowBackground(
 
 @Composable
 fun Modifier.auroraPopupMenuRowBackground(
-    backgroundFillColorQuery: (Int, AuroraColorScheme) -> Color,
-    iconGutterFillColorQuery: ((AuroraColorScheme) -> Color)? = null,
+    backgroundFillColorQuery: (Int, ContainerColorTokens) -> Color,
+    iconGutterFillColorQuery: ((ContainerColorTokens) -> Color)? = null,
     rowIndex: Int,
     gutterWidth: Float = 0.0f,
 ): Modifier {
-    val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
-        decorationAreaType = AuroraSkin.decorationAreaType
-    )
+    val colorTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
 
-    val backgroundFill = backgroundFillColorQuery.invoke(rowIndex, backgroundColorScheme)
-    val gutterFill = if (gutterWidth > 0) (iconGutterFillColorQuery?.invoke(backgroundColorScheme)
+    val backgroundFill = backgroundFillColorQuery.invoke(rowIndex, colorTokens)
+    val gutterFill = if (gutterWidth > 0) (iconGutterFillColorQuery?.invoke(colorTokens)
         ?: Color.Unspecified) else Color.Unspecified
 
     return this.then(

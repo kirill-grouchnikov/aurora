@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.times
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.HSBtoRGB
 import org.pushingpixels.aurora.common.RGBtoHSB
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCascadingCommandMenuPopupLayoutInfo
@@ -52,7 +53,9 @@ import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.utils.TitleLabel
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
+import org.pushingpixels.aurora.theming.utils.getContainerTokens
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
@@ -283,11 +286,9 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
             horizontalAlignment = HorizontalAlignment.Leading
         )
 
-        val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
-            decorationAreaType = AuroraSkin.decorationAreaType
-        )
+        val neutralTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
         Column(
-            modifier = Modifier.fillMaxSize().background(color = backgroundColorScheme.backgroundFillColor)
+            modifier = Modifier.fillMaxSize().background(color = neutralTokens.containerSurface)
                 .padding(all = 1.0.dp)
         ) {
             for ((index, entry) in menuContentModel.entries.withIndex()) {
@@ -307,8 +308,14 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
                         ).project(
                             modifier = Modifier.fillMaxWidth()
                                 .auroraPopupMenuRowBackground(
-                                    backgroundFillColorQuery = { _, scheme -> scheme.backgroundFillColor },
-                                    iconGutterFillColorQuery = { it.accentedBackgroundFillColor },
+                                    backgroundFillColorQuery = { _, colorTokens -> colorTokens.containerSurface },
+                                    iconGutterFillColorQuery = {
+                                        if (it.isDark) {
+                                            it.containerSurfaceHighest
+                                        } else {
+                                            it.containerSurfaceLowest
+                                        }
+                                    },
                                     gutterWidth = popupContentLayoutInfo.gutterWidth),
                             actionInteractionSource = remember { MutableInteractionSource() },
                             popupInteractionSource = remember { MutableInteractionSource() }
@@ -506,21 +513,27 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
 
     @Composable
     private fun BottomLine() {
-        val skinColors = AuroraSkin.colors
-        val decorationAreaType = AuroraSkin.decorationAreaType
-        val borderColorScheme = skinColors.getColorScheme(
-            decorationAreaType = decorationAreaType,
-            associationKind = ColorSchemeAssociationKind.HighlightBorder,
-            componentState = ComponentState.Enabled
+        val separatorTokens = getContainerTokens(
+            colors = AuroraSkin.colors,
+            decorationAreaType = AuroraSkin.decorationAreaType,
+            associationKind = ContainerColorTokensAssociationKind.Separator,
+            componentState = ComponentState.Enabled,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+            inactiveContainerType = ContainerType.Neutral
         )
-        val borderColor = borderColorScheme.lineColor
+
+        val primaryColor = if (separatorTokens.isDark) {
+            separatorTokens.complementaryContainerOutline.withAlpha(0.28125f)
+        } else {
+            separatorTokens.containerOutline.withAlpha(0.375f)
+        }
 
         Box(modifier = Modifier.fillMaxWidth().height(1.0.dp)) {
             Canvas(modifier = Modifier.matchParentSize()) {
                 val width = this.size.width
 
                 drawLine(
-                    color = borderColor,
+                    color = primaryColor,
                     start = Offset(0.5f, 0.5f),
                     end = Offset(width - 0.5f, 0.5f),
                     strokeWidth = 1.0f
@@ -595,20 +608,23 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
                 )
 
                 if (rolloverFraction > 0.0f) {
-                    val highlightBorderScheme = skinColors.getColorScheme(
+                    val highlightColorTokens = getContainerTokens(
+                        colors = skinColors,
                         decorationAreaType = decorationAreaType,
-                        associationKind = ColorSchemeAssociationKind.HighlightBorder,
-                        componentState = ComponentState.RolloverUnselected
+                        associationKind = ContainerColorTokensAssociationKind.Highlight,
+                        componentState = ComponentState.RolloverUnselected,
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+                        inactiveContainerType = ContainerType.Muted
                     )
 
                     drawRect(
-                        color = highlightBorderScheme.midColor,
+                        color = highlightColorTokens.containerOutline,
                         style = Stroke(1.0f),
                         alpha = rolloverFraction
                     )
 
                     drawRect(
-                        color = highlightBorderScheme.ultraDarkColor,
+                        color = highlightColorTokens.complementaryContainerOutline.withAlpha(0.25f),
                         style = Stroke(1.0f),
                         topLeft = Offset(1.0f, 1.0f),
                         size = Size(width - 2.0f, height - 2.0f),

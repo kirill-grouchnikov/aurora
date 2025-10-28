@@ -127,10 +127,24 @@ fun DemoCommandRow(
                     backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                     textClick = TextClick.Action,
                     popupMenuPresentationModel = CommandPopupMenuPresentationModel(
-                        backgroundFillColorQuery = { rowIndex, colorScheme ->
-                            if ((rowIndex % 2) == 0) colorScheme.backgroundFillColor else colorScheme.accentedBackgroundFillColor
+                        backgroundFillColorQuery = { rowIndex, colorTokens ->
+                            if ((rowIndex % 2) == 0) {
+                                colorTokens.containerSurface
+                            } else {
+                                if (colorTokens.isDark) {
+                                    colorTokens.containerSurfaceHighest
+                                } else {
+                                    colorTokens.containerSurfaceLowest
+                                }
+                            }
                         },
-                        iconGutterFillColorQuery = { it.accentedBackgroundFillColor }
+                        iconGutterFillColorQuery = {
+                            if (it.isDark) {
+                                it.containerSurfaceHighest
+                            } else {
+                                it.containerSurfaceLowest
+                            }
+                        }
                     )
                 )
             ).project()

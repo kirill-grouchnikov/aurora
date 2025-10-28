@@ -78,7 +78,6 @@ fun Modifier.auroraContextMenu(
                     textStyle = resolvedTextStyle,
                     fontFamilyResolver = fontFamilyResolver,
                     skinColors = skinColors,
-                    colorSchemeBundle = null,
                     skinPainters = painters,
                     decorationAreaType = decorationAreaType,
                     compositionLocalContext = compositionLocalContext,

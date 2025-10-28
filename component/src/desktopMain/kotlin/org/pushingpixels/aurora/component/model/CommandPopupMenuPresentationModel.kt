@@ -29,6 +29,7 @@ import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 import org.pushingpixels.aurora.theming.Sides
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 
 interface BaseCommandPopupMenuPresentationModel
 
@@ -45,8 +46,8 @@ data class CommandPopupMenuPresentationModel(
     val itemSides: Sides = Sides.ClosedRectangle,
     val itemHorizontalAlignment: HorizontalAlignment = HorizontalAlignment.Fill,
     val maxVisibleItems: Int = 0,
-    val iconGutterFillColorQuery: ((AuroraColorScheme) -> Color)? = null,
-    val backgroundFillColorQuery: ((Int, AuroraColorScheme) -> Color) = { _, scheme -> scheme.backgroundFillColor },
+    val iconGutterFillColorQuery: ((ContainerColorTokens) -> Color)? = null,
+    val backgroundFillColorQuery: ((Int, ContainerColorTokens) -> Color) = { _, colorTokens -> colorTokens.containerSurface },
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignTop,
     val toDismissOnCommandActivation: Boolean = true,
 ): BaseCommandPopupMenuPresentationModel

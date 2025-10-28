@@ -62,7 +62,6 @@ import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.ContainerType
-import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
 import org.pushingpixels.aurora.theming.utils.getContainerColorTokensFilter
 import org.pushingpixels.aurora.window.ribbon.*
 import java.awt.*
@@ -698,7 +697,6 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
                 textStyle = resolvedTextStyle,
                 fontFamilyResolver = fontFamilyResolver,
                 skinColors = skinColors,
-                colorSchemeBundle = null,
                 skinPainters = painters,
                 decorationAreaType = decorationAreaType,
                 compositionLocalContext = compositionLocalContext,
@@ -1071,7 +1069,6 @@ private fun Modifier.ribbonContextMenu(ribbon: Ribbon): Modifier {
                     textStyle = resolvedTextStyle,
                     fontFamilyResolver = fontFamilyResolver,
                     skinColors = skinColors,
-                    colorSchemeBundle = null,
                     skinPainters = painters,
                     decorationAreaType = decorationAreaType,
                     compositionLocalContext = compositionLocalContext,

@@ -499,11 +499,9 @@ object CustomComplexCommandMenuPopupHandler : CascadingCommandMenuHandler<
         val density = LocalDensity.current
         val itemButtonPresentationModel = popupContentLayoutInfo.itemButtonPresentationModel
 
-        val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
-            decorationAreaType = AuroraSkin.decorationAreaType
-        )
+        val neutralColorTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
         Column(
-            modifier = Modifier.fillMaxSize().background(color = backgroundColorScheme.backgroundFillColor)
+            modifier = Modifier.fillMaxSize().background(color = neutralColorTokens.containerSurface)
                 .padding(all = 1.0.dp)
         ) {
             var entryIndex = 0
@@ -652,7 +650,11 @@ object CustomComplexCommandMenuPopupHandler : CascadingCommandMenuHandler<
 
                                     Box(
                                         modifier = Modifier.background(
-                                            backgroundColorScheme.accentedBackgroundFillColor
+                                            if (neutralColorTokens.isDark) {
+                                                neutralColorTokens.containerSurfaceHighest
+                                            } else {
+                                                neutralColorTokens.containerSurfaceLowest
+                                            }
                                         )
                                     ) {
                                         CommandButtonProjection(
@@ -678,7 +680,13 @@ object CustomComplexCommandMenuPopupHandler : CascadingCommandMenuHandler<
                             Box(
                                 modifier = Modifier.fillMaxWidth()
                                     .height((popupContentLayoutInfo.itemHeights[entryIndex] / density.density).dp)
-                                    .background(backgroundColorScheme.accentedBackgroundFillColor)
+                                    .background(
+                                        if (neutralColorTokens.isDark) {
+                                            neutralColorTokens.containerSurfaceHighest
+                                        } else {
+                                            neutralColorTokens.containerSurfaceLowest
+                                        }
+                                    )
                             ) {
                                 CommandButtonProjection(
                                     contentModel = entry.commandFooter,

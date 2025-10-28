@@ -46,7 +46,6 @@ import org.pushingpixels.aurora.component.utils.TitleLabel
 import org.pushingpixels.aurora.component.utils.appmenu.CommandButtonLayoutManagerAppMenuLevel2
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import java.awt.*
 import java.awt.geom.Rectangle2D
@@ -284,7 +283,6 @@ internal class RibbonApplicationMenuPopupHandler(
                                 textStyle: TextStyle,
                                 fontFamilyResolver: FontFamily.Resolver,
                                 skinColors: AuroraSkinColors,
-                                colorSchemeBundle: AuroraColorSchemeBundle?,
                                 skinPainters: AuroraPainters,
                                 decorationAreaType: DecorationAreaType,
                                 compositionLocalContext: CompositionLocalContext,
@@ -463,12 +461,16 @@ internal class RibbonApplicationMenuPopupHandler(
         footerContentLayoutInfo: RibbonApplicationMenuFooterContentLayoutInfo
     ) {
         val footerButtonPresentationModel = footerContentLayoutInfo.footerButtonPresentationModel
-        val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
-            decorationAreaType = AuroraSkin.decorationAreaType
-        )
+        val neutralColorTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
         Row(
             modifier = Modifier.fillMaxSize()
-                .background(color = backgroundColorScheme.accentedBackgroundFillColor)
+                .background(
+                    color = if (neutralColorTokens.isDark) {
+                        neutralColorTokens.containerSurfaceHighest
+                    } else {
+                        neutralColorTokens.containerSurfaceLowest
+                    }
+                )
                 .padding(menuPresentationModel.footerContentPadding),
             horizontalArrangement = Arrangement.End
         ) {
@@ -500,7 +502,6 @@ internal class RibbonApplicationMenuPopupHandler(
         textStyle: TextStyle,
         fontFamilyResolver: FontFamily.Resolver,
         skinColors: AuroraSkinColors,
-        colorSchemeBundle: AuroraColorSchemeBundle?,
         skinPainters: AuroraPainters,
         decorationAreaType: DecorationAreaType,
         compositionLocalContext: CompositionLocalContext,
@@ -557,17 +558,13 @@ internal class RibbonApplicationMenuPopupHandler(
             fullPopupSize = fullPopupSize
         )
 
+        val neutralColorTokens = skinColors.getNeutralContainerTokens(decorationAreaType)
         val popupContent = ComposePanel()
-        val fillColor = skinColors.getBackgroundColorScheme(decorationAreaType).backgroundFillColor
+        val fillColor = neutralColorTokens.containerSurface
         val awtFillColor = fillColor.awtColor
         popupContent.background = awtFillColor
 
-        val borderScheme = skinColors.getColorScheme(
-            decorationAreaType = DecorationAreaType.None,
-            associationKind = ColorSchemeAssociationKind.Border,
-            componentState = ComponentState.Enabled
-        )
-        val popupBorderColor = skinPainters.borderPainter.getRepresentativeColor(borderScheme)
+        val popupBorderColor = neutralColorTokens.containerOutline
         val awtBorderColor = popupBorderColor.awtColor
         val borderThickness = 1.0f / density.density
 

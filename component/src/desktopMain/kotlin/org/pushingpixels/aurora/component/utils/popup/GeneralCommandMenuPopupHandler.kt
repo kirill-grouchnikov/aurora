@@ -279,7 +279,7 @@ object GeneralCommandMenuPopupHandler : CascadingCommandMenuHandler<
         ) {
             if (hasPanel) {
                 CommandButtonPanelProjection(
-                    contentModel = menuContentModel.panelContentModel!!,
+                    contentModel = menuContentModel.panelContentModel,
                     presentationModel = menuPresentationModel.panelPresentationModel!!.toCommandPanelPresentationModel(),
                     overlays = overlays
                 ).project()

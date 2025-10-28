@@ -400,7 +400,6 @@ internal fun <E> AuroraComboBox(
                         textStyle = resolvedTextStyle,
                         fontFamilyResolver = fontFamilyResolver,
                         skinColors = skinColors,
-                        colorSchemeBundle = null,
                         skinPainters = painters,
                         decorationAreaType = decorationAreaType,
                         compositionLocalContext = compositionLocalContext,
@@ -417,8 +416,16 @@ internal fun <E> AuroraComboBox(
                             itemPresentationState = CommandButtonPresentationState.Medium,
                             maxVisibleItems = presentationModel.popupMaxVisibleItems,
                             popupPlacementStrategy = presentationModel.popupPlacementStrategy,
-                            backgroundFillColorQuery = { rowIndex, colorScheme ->
-                                if ((rowIndex % 2) == 0) colorScheme.backgroundFillColor else colorScheme.accentedBackgroundFillColor
+                            backgroundFillColorQuery = { rowIndex, colorTokens ->
+                                if ((rowIndex % 2) == 0) {
+                                    colorTokens.containerSurface
+                                } else {
+                                    if (colorTokens.isDark) {
+                                        colorTokens.containerSurfaceHighest
+                                    } else {
+                                        colorTokens.containerSurfaceLowest
+                                    }
+                                }
                             },
                         ),
                         displayPrototypeCommand = displayPrototypeCommand,

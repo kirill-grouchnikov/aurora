@@ -35,7 +35,6 @@ import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonKeyTipChainRoot
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import java.awt.*
 import java.awt.geom.Rectangle2D
@@ -82,7 +81,6 @@ interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
         textStyle: TextStyle,
         fontFamilyResolver: FontFamily.Resolver,
         skinColors: AuroraSkinColors,
-        colorSchemeBundle: AuroraColorSchemeBundle?,
         skinPainters: AuroraPainters,
         decorationAreaType: DecorationAreaType,
         compositionLocalContext: CompositionLocalContext,
@@ -125,17 +123,13 @@ interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
             fullPopupSize = fullPopupSize
         )
 
+        val neutralTokens = skinColors.getNeutralContainerTokens(decorationAreaType)
         val popupContent = ComposePanel()
-        val fillColor = skinColors.getBackgroundColorScheme(decorationAreaType).backgroundFillColor
+        val fillColor = neutralTokens.containerSurface
         val awtFillColor = fillColor.awtColor
         popupContent.background = awtFillColor
 
-        val borderScheme = skinColors.getColorScheme(
-            decorationAreaType = DecorationAreaType.None,
-            associationKind = ColorSchemeAssociationKind.Border,
-            componentState = ComponentState.Enabled
-        )
-        val popupBorderColor = skinPainters.borderPainter.getRepresentativeColor(borderScheme)
+        val popupBorderColor = neutralTokens.containerOutline
         val awtBorderColor = popupBorderColor.awtColor
         val borderThickness = 1.0f / density.density
 
