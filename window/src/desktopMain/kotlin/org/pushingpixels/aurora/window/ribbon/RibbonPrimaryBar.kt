@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalDensity
@@ -50,10 +49,9 @@ import org.pushingpixels.aurora.component.ribbon.RibbonContextualTaskGroup
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackBounds
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackKeyTips
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
-import org.pushingpixels.aurora.theming.colorscheme.ShiftColorScheme
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
+import org.pushingpixels.aurora.theming.utils.ContainerType
+import org.pushingpixels.aurora.theming.utils.getContainerTokens
 import java.lang.Integer.min
 import kotlin.math.max
 
@@ -331,24 +329,33 @@ internal fun RibbonPrimaryBar(
             .height((finalHeight / density.density).dp)
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
-            val scheme = skinColors.getColorScheme(
+            val separatorTokens = getContainerTokens(
+                colors = skinColors,
                 decorationAreaType = decorationAreaType,
-                associationKind = ColorSchemeAssociationKind.Separator,
-                componentState = ComponentState.Enabled
+                associationKind = ContainerColorTokensAssociationKind.Separator,
+                componentState = ComponentState.Enabled,
+                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+                inactiveContainerType = ContainerType.Neutral
             )
+            val separatorPrimaryColor = if (separatorTokens.isDark) {
+                separatorTokens.complementaryContainerOutline.withAlpha(0.28125f)
+            } else {
+                separatorTokens.containerOutline.withAlpha(0.375f)
+            }
+
             // Horizontal separator line across the entire bottom edge
             drawLine(
-                color = scheme.separatorPrimaryColor,
+                color = separatorPrimaryColor,
                 start = Offset(0.0f, size.height - 0.5f),
                 end = Offset(size.width, size.height - 0.5f)
             )
 
             // Vertical separators along the left and right edges of each contextual task group
             val separatorBrush = Brush.verticalGradient(
-                0.0f to scheme.separatorPrimaryColor,
-                0.4f to scheme.separatorPrimaryColor,
-                0.75f to scheme.separatorPrimaryColor.withAlpha(0.0f),
-                1.0f to scheme.separatorPrimaryColor.withAlpha(0.0f),
+                0.0f to separatorPrimaryColor,
+                0.4f to separatorPrimaryColor,
+                0.75f to separatorPrimaryColor.withAlpha(0.0f),
+                1.0f to separatorPrimaryColor.withAlpha(0.0f),
                 startY = 0.0f,
                 endY = size.height,
                 tileMode = TileMode.Repeated
@@ -455,20 +462,21 @@ internal fun RibbonPrimaryBar(
                                         )
                                     )
                                     if (ribbonTaskInfo.contextualTaskGroup != null) {
-                                        presentationForCurrent = presentationForCurrent.overlayWith(
-                                            BaseCommandButtonPresentationModel.Overlay(
-                                                colorSchemeBundle = generateColorSchemeBundle(
-                                                    active = AuroraSkin.colors.getActiveColorScheme(
-                                                        DecorationAreaType.ControlPane
-                                                    ),
-                                                    enabled = AuroraSkin.colors.getEnabledColorScheme(
-                                                        DecorationAreaType.ControlPane
-                                                    ),
-                                                    hueColor = ribbonTaskInfo.contextualTaskGroup.hueColor,
-                                                    hueAmount = 0.25f
-                                                )
-                                            )
-                                        )
+                                        // TODO - wire container color tokens overlay provider based on the hue
+//                                        presentationForCurrent = presentationForCurrent.overlayWith(
+//                                            BaseCommandButtonPresentationModel.Overlay(
+//                                                colorSchemeBundle = generateColorSchemeBundle(
+//                                                    active = AuroraSkin.colors.getActiveColorScheme(
+//                                                        DecorationAreaType.ControlPane
+//                                                    ),
+//                                                    enabled = AuroraSkin.colors.getEnabledColorScheme(
+//                                                        DecorationAreaType.ControlPane
+//                                                    ),
+//                                                    hueColor = ribbonTaskInfo.contextualTaskGroup.hueColor,
+//                                                    hueAmount = 0.25f
+//                                                )
+//                                            )
+//                                        )
                                     }
 
                                     RibbonTaskToggleButton(
@@ -523,54 +531,6 @@ internal fun RibbonPrimaryBar(
     }
 }
 
-private fun generateColorSchemeBundle(
-    active: AuroraColorScheme,
-    enabled: AuroraColorScheme,
-    hueColor: Color,
-    hueAmount: Float
-): AuroraColorSchemeBundle {
-    // This is temporary implementation, and will be removed when a custom composable for task toggle
-    // buttons is added
-    val tweakedActive = ShiftColorScheme(
-        origScheme = active,
-        backgroundShiftColor = hueColor,
-        backgroundShiftFactor = hueAmount,
-        foregroundShiftColor = active.foregroundColor,
-        foregroundShiftFactor = 0.0f,
-        shiftByBrightness = false
-    )
-    val saturatedActive = tweakedActive.saturate(0.4f)
-
-    val tweakedEnabled =
-        ShiftColorScheme(
-            origScheme = enabled,
-            backgroundShiftColor = hueColor,
-            backgroundShiftFactor = hueAmount,
-            foregroundShiftColor = enabled.foregroundColor,
-            foregroundShiftFactor = 0.0f,
-            shiftByBrightness = false
-        )
-    val result = AuroraColorSchemeBundle(
-        activeColorScheme = saturatedActive,
-        enabledColorScheme = tweakedEnabled,
-        disabledColorScheme = tweakedEnabled
-    )
-    // Translucent for disabled state
-    result.registerAlpha(0.5f, ComponentState.DisabledSelected, ComponentState.DisabledUnselected)
-    result.registerColorScheme(
-        tweakedEnabled, ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected
-    )
-    result.registerColorScheme(
-        saturatedActive,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected
-    )
-
-    // Darker borders
-    result.registerColorScheme(tweakedActive.shade(0.5f), associationKind = ColorSchemeAssociationKind.Border)
-    return result
-}
 
 private val RibbonTaskToggle: CommandButtonPresentationState =
     object : CommandButtonPresentationState("RibbonTaskToggle") {

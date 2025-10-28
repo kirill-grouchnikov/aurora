@@ -56,6 +56,7 @@ import org.pushingpixels.aurora.demo.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.IconFilterStrategy
+import org.pushingpixels.aurora.theming.geminiSkin
 import org.pushingpixels.aurora.theming.nebulaAmethystSkin
 import org.pushingpixels.aurora.window.AuroraRibbonWindow
 import org.pushingpixels.aurora.window.auroraApplication
@@ -73,7 +74,7 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.TopCenter),
         size = DpSize(windowBounds.width.dp, 600.dp)
     )
-    var skin by remember { mutableStateOf(nebulaAmethystSkin()) }
+    var skin by remember { mutableStateOf(geminiSkin()) }
     val resourceBundle by remember(applicationLocale) {
         derivedStateOf {
             ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)

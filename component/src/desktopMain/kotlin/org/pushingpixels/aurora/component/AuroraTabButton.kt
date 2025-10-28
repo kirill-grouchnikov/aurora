@@ -111,9 +111,6 @@ internal fun AuroraTabButton(
     }
 
     val decorationAreaType = AuroraSkin.decorationAreaType
-    val skinColors = AuroraSkin.colors
-    val buttonShaper = ClassicButtonShaper.Instance
-    val painters = AuroraSkin.painters
 
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current

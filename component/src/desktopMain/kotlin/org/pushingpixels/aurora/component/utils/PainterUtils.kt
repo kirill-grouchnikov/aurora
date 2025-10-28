@@ -45,7 +45,7 @@ internal fun paintSurface(
     )
 }
 
-internal fun paintOutline(
+fun paintOutline(
     drawScope: DrawScope,
     componentState: ComponentState,
     outlinePainter: AuroraOutlinePainter,
