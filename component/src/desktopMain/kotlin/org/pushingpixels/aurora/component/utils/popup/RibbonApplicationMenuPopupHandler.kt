@@ -155,7 +155,7 @@ internal class RibbonApplicationMenuPopupHandler(
             presentationState = menuPresentationModel.itemPresentationState,
             iconActiveFilterStrategy = IconFilterStrategy.Original,
             iconEnabledFilterStrategy = IconFilterStrategy.Original,
-            iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+            iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
             forceAllocateSpaceForIcon = atLeastOneButtonHasIcon,
             popupPlacementStrategy = PopupPlacementStrategy.Endward.VAlignTop,
             popupFireTrigger = menuPresentationModel.itemPopupFireTrigger,
@@ -213,7 +213,7 @@ internal class RibbonApplicationMenuPopupHandler(
             presentationState = CommandButtonPresentationState.Medium,
             iconActiveFilterStrategy = IconFilterStrategy.Original,
             iconEnabledFilterStrategy = IconFilterStrategy.Original,
-            iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+            iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
             popupFireTrigger = PopupFireTrigger.OnRollover,
             selectedStateHighlight = SelectedStateHighlight.FullSize

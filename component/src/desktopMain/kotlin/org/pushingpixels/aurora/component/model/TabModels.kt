@@ -57,7 +57,7 @@ data class TabsPresentationModel(
     val tabBackgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
     val tabIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val tabIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
-    val tabIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    val tabIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
     val tabContentPadding: PaddingValues = TabConstants.TabButtonContentPadding,
     val tabMinWidth: Dp = 0.dp
 ) : PresentationModel

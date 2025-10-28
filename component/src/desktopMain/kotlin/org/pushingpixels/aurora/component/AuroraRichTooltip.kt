@@ -116,7 +116,6 @@ fun Modifier.auroraRichTooltip(
                     textStyle = resolvedTextStyle,
                     fontFamilyResolver = fontFamilyResolver,
                     skinColors = skinColors,
-                    skinPainters = painters,
                     decorationAreaType = decorationAreaType,
                     compositionLocalContext = compositionLocalContext,
                     anchorBoundsInWindow = Rect(

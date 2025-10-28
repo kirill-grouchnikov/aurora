@@ -63,6 +63,7 @@ import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
+import org.pushingpixels.aurora.theming.utils.getContainerColorTokensFilter
 import org.pushingpixels.aurora.window.ribbon.*
 import java.awt.*
 import java.awt.event.*
@@ -114,19 +115,19 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneMainContent(
     Layout(modifier = Modifier.fillMaxWidth(),
         content = {
             if (showsIcon) {
-                val scheme = skinColors.getEnabledColorScheme(DecorationAreaType.TitlePane)
+                val colorTokens = skinColors.getMutedContainerTokens(DecorationAreaType.TitlePane)
                 val colorFilter: ColorFilter? = when (iconFilterStrategy) {
                     IconFilterStrategy.ThemedFollowText ->
-                        ColorFilter.tint(color = scheme.foregroundColor)
+                        ColorFilter.tint(color = colorTokens.onContainer)
 
-                    IconFilterStrategy.ThemedFollowColorScheme ->
-                        getColorSchemeFilter(scheme)
+                    IconFilterStrategy.ThemedFollowColorTokens ->
+                        getContainerColorTokensFilter(colorTokens)
 
                     IconFilterStrategy.Original -> null
                 }
                 Box(
                     modifier = Modifier.size(WindowTitlePaneSizingConstants.TitlePaneAppIconSize)
-                        .paint(painter = icon!!, colorFilter = colorFilter)
+                        .paint(painter = icon, colorFilter = colorFilter)
                 )
             }
 

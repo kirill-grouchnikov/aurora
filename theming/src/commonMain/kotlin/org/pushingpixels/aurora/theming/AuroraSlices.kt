@@ -918,8 +918,8 @@ enum class IconFilterStrategy {
     /** The icon is themed based on the current text color. */
     ThemedFollowText,
 
-    /** The icon is themed based on the color scheme that matches the current component state. */
-    ThemedFollowColorScheme
+    /** The icon is themed based on the color tokens that match the current component state. */
+    ThemedFollowColorTokens
 }
 
 sealed class PopupPlacementStrategy(val isHorizontal: Boolean) {

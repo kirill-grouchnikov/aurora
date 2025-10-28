@@ -41,7 +41,7 @@ data class LabelPresentationModel(
     val colorSchemeBundle: AuroraColorSchemeBundle? = null,
     val contentPadding: PaddingValues = LabelSizingConstants.DefaultLabelContentPadding,
     val iconDimension: DpSize = LabelSizingConstants.DefaultLabelIconSize,
-    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val inheritStateFromParent: Boolean = false,
     val textStyle: TextStyle? = null,

@@ -198,7 +198,7 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
                     ),
                     presentationModel = IconPresentationModel(
                         iconDimension = DpSize(16.dp, 16.dp),
-                        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+                        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
                         iconEnabledFilterStrategy = IconFilterStrategy.Original
                     )
                 ).project()

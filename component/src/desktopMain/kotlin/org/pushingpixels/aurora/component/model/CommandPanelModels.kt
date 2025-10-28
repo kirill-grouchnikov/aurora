@@ -84,7 +84,7 @@ data class CommandPanelPresentationModel(
     val commandPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnPressed,
     val commandSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize,
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
@@ -108,7 +108,7 @@ data class CommandPopupMenuPanelPresentationModel(
     val commandVerticalGapScaleFactor: Float = 1.0f,
     val commandPopupFireTrigger: PopupFireTrigger = PopupFireTrigger.OnPressed,
     val commandSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize,
-    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original
 ) : PresentationModel {

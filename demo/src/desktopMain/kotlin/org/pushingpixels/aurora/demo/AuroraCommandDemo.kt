@@ -53,7 +53,7 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(800.dp, 540.dp)
     )
-    var skin by remember { mutableStateOf(marinerSkin()) }
+    var skin by remember { mutableStateOf(geminiSkin()) }
     val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }

@@ -567,7 +567,7 @@ fun AuroraApplicationScope.DemoArea(
                         iconDimension = DpSize(20.dp, 20.dp),
                         // This is a full-color icon. Use original colors for enabled and active
                         // states, and color scheme based filtering for disabled states
-                        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+                        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
                         iconEnabledFilterStrategy = IconFilterStrategy.Original,
                         iconActiveFilterStrategy = IconFilterStrategy.Original,
                     )

@@ -54,7 +54,7 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(800.dp, 600.dp)
     )
-    val skin by remember { mutableStateOf(businessSkin()) }
+    val skin by remember { mutableStateOf(geminiSkin()) }
 
     AuroraWindow(
         skin = skin,

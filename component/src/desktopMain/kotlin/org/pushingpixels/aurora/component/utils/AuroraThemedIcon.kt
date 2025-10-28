@@ -29,37 +29,38 @@ import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.DpSize
 import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.theming.utils.MutableColorScheme
-import org.pushingpixels.aurora.theming.utils.getColorSchemeFilter
+import org.pushingpixels.aurora.theming.utils.ContainerType
+import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
+import org.pushingpixels.aurora.theming.utils.getContainerColorTokensFilter
+import org.pushingpixels.aurora.theming.utils.getContainerTokens
 
 private class CombinedIconModifier(
     val icon: Painter,
     val enabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val activeFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val skinColors: AuroraSkinColors,
-    val colorSchemeBundle: AuroraColorSchemeBundle?,
     val decorationAreaType: DecorationAreaType,
     val modelStateInfoSnapshot: ModelStateInfoSnapshot,
-    val currModelState: ComponentState,
     val textColor: Color,
-    val mutableColorScheme: MutableColorScheme
+    val mutableContainerColorTokens: MutableContainerColorTokens
 ) : DrawModifier {
     override fun ContentDrawScope.draw() {
         // We start with the enabled state filter strategy
         val enabledFilter: ColorFilter? =
             when (enabledFilterStrategy) {
                 IconFilterStrategy.ThemedFollowText -> ColorFilter.tint(color = textColor)
-                IconFilterStrategy.ThemedFollowColorScheme -> getColorSchemeFilter(
-                    scheme = skinColors.getColorScheme(
-                        decorationAreaType = decorationAreaType,
-                        componentState = currModelState
+                IconFilterStrategy.ThemedFollowColorTokens ->
+                    getContainerColorTokensFilter(
+                        colorTokens = getContainerTokens(
+                            colors = skinColors,
+                            decorationAreaType = decorationAreaType,
+                            componentState = modelStateInfoSnapshot.currModelState,
+                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+                            inactiveContainerType = ContainerType.Neutral
+                        )
                     )
-                )
-
                 IconFilterStrategy.Original -> null
             }
         with(icon) {
@@ -77,17 +78,19 @@ private class CombinedIconModifier(
                 when (activeFilterStrategy) {
                     IconFilterStrategy.Original -> null
                     IconFilterStrategy.ThemedFollowText -> ColorFilter.tint(color = textColor)
-                    IconFilterStrategy.ThemedFollowColorScheme -> {
-                        populateColorScheme(
-                            mutableColorScheme,
-                            modelStateInfoSnapshot,
-                            currModelState,
-                            skinColors,
-                            colorSchemeBundle,
-                            decorationAreaType
-                        )
-                        getColorSchemeFilter(
-                            scheme = mutableColorScheme,
+                    IconFilterStrategy.ThemedFollowColorTokens -> {
+                        populateColorTokens(
+                            colorTokens = mutableContainerColorTokens,
+                            colors = skinColors,
+                            decorationAreaType = decorationAreaType,
+                            modelStateInfoSnapshot = modelStateInfoSnapshot,
+                            associationKind = ContainerColorTokensAssociationKind.Default,
+                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+                            treatEnabledAsActive = false,
+                            skipFlatCheck = false,
+                            inactiveContainerType = ContainerType.Muted)
+                        getContainerColorTokensFilter(
+                            colorTokens = mutableContainerColorTokens,
                         )
                     }
                 }
@@ -101,10 +104,7 @@ private class CombinedIconModifier(
 
 @Immutable
 private class IconDrawingCache(
-    val colorScheme: MutableColorScheme = MutableColorScheme(
-        displayName = "Internal mutable",
-        isDark = false
-    )
+    val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens()
 )
 
 @OptIn(AuroraInternalApi::class)
@@ -112,7 +112,7 @@ private class IconDrawingCache(
 internal fun AuroraThemedIcon(
     icon: Painter,
     size: DpSize,
-    disabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    disabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
     enabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     activeFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     modifier: Modifier = Modifier
@@ -124,7 +124,6 @@ internal fun AuroraThemedIcon(
 
     val textColor = LocalTextColor.current
     val colors = AuroraSkin.colors
-    val colorSchemeBundle = LocalColorSchemeBundle.current
     val decorationAreaType = AuroraSkin.decorationAreaType
 
     if (currModelState.isDisabled) {
@@ -142,14 +141,17 @@ internal fun AuroraThemedIcon(
                 )
             }
 
-            IconFilterStrategy.ThemedFollowColorScheme -> {
+            IconFilterStrategy.ThemedFollowColorTokens -> {
                 Box(
                     modifier.size(size).paint(
                         painter = icon,
-                        colorFilter = getColorSchemeFilter(
-                            scheme = colors.getColorScheme(
+                        colorFilter = getContainerColorTokensFilter(
+                            colorTokens = getContainerTokens(
+                                colors = colors,
                                 decorationAreaType = decorationAreaType,
-                                componentState = currModelState
+                                componentState = modelStateInfoSnapshot.currModelState,
+                                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+                                inactiveContainerType = ContainerType.Neutral
                             )
                         )
                     )
@@ -170,12 +172,10 @@ internal fun AuroraThemedIcon(
                         enabledFilterStrategy,
                         activeFilterStrategy,
                         colors,
-                        colorSchemeBundle,
                         decorationAreaType,
                         modelStateInfoSnapshot,
-                        currModelState,
                         textColor,
-                        drawingCache.colorScheme
+                        drawingCache.colorTokens
                     )
                 )
             )
@@ -183,118 +183,3 @@ internal fun AuroraThemedIcon(
     }
 }
 
-internal fun populateColorScheme(
-    colorScheme: MutableColorScheme,
-    modelStateInfoSnapshot: ModelStateInfoSnapshot,
-    currState: ComponentState,
-    skinColors: AuroraSkinColors,
-    colorSchemeBundle: AuroraColorSchemeBundle? = null,
-    decorationAreaType: DecorationAreaType
-) {
-    val currStateScheme = colorSchemeBundle?.getColorScheme(currState) ?: skinColors.getColorScheme(
-        decorationAreaType = decorationAreaType,
-        componentState = currState
-    )
-
-    var ultraLight = currStateScheme.ultraLightColor
-    var extraLight = currStateScheme.extraLightColor
-    var light = currStateScheme.lightColor
-    var mid = currStateScheme.midColor
-    var dark = currStateScheme.darkColor
-    var ultraDark = currStateScheme.ultraDarkColor
-    var foreground = currStateScheme.foregroundColor
-    var backgroundFill = currStateScheme.backgroundFillColor
-    var accentedBackgroundFill = currStateScheme.accentedBackgroundFillColor
-    var focusRing = currStateScheme.focusRingColor
-    var line = currStateScheme.lineColor
-    var selectionForeground = currStateScheme.selectionForegroundColor
-    var selectionBackground = currStateScheme.selectionBackgroundColor
-    var textBackgroundFill = currStateScheme.textBackgroundFillColor
-    var separatorPrimary = currStateScheme.separatorPrimaryColor
-    var separatorSecondary = currStateScheme.separatorSecondaryColor
-    var mark = currStateScheme.markColor
-    var echo = currStateScheme.echoColor
-
-    //println("Starting with $currState at $backgroundStart")
-
-    for (contribution in modelStateInfoSnapshot.stateContributionMap) {
-        if (contribution.key == currState) {
-            // Already accounted for the currently active state
-            continue
-        }
-        val amount = contribution.value
-        if (amount == 0.0f) {
-            // Skip a zero-amount contribution
-            continue
-        }
-        // Get the color scheme that matches the contribution state
-        val contributionScheme = colorSchemeBundle?.getColorScheme(contribution.key) ?: skinColors.getColorScheme(
-            decorationAreaType = decorationAreaType,
-            componentState = contribution.key
-        )
-
-        // And interpolate the colors
-        ultraLight =
-            ultraLight.interpolateTowards(contributionScheme.ultraLightColor, 1.0f - amount)
-        extraLight =
-            extraLight.interpolateTowards(contributionScheme.extraLightColor, 1.0f - amount)
-        light = light.interpolateTowards(contributionScheme.lightColor, 1.0f - amount)
-        mid = mid.interpolateTowards(contributionScheme.midColor, 1.0f - amount)
-        dark = dark.interpolateTowards(contributionScheme.darkColor, 1.0f - amount)
-        ultraDark = ultraDark.interpolateTowards(contributionScheme.ultraDarkColor, 1.0f - amount)
-        foreground =
-            foreground.interpolateTowards(contributionScheme.foregroundColor, 1.0f - amount)
-        backgroundFill =
-            backgroundFill.interpolateTowards(contributionScheme.backgroundFillColor, 1.0f - amount)
-        accentedBackgroundFill = accentedBackgroundFill.interpolateTowards(
-            contributionScheme.accentedBackgroundFillColor,
-            1.0f - amount
-        )
-        focusRing = focusRing.interpolateTowards(contributionScheme.focusRingColor, 1.0f - amount)
-        line = line.interpolateTowards(contributionScheme.lineColor, 1.0f - amount)
-        selectionForeground = selectionForeground.interpolateTowards(
-            contributionScheme.selectionForegroundColor,
-            1.0f - amount
-        )
-        selectionBackground = selectionBackground.interpolateTowards(
-            contributionScheme.selectionBackgroundColor,
-            1.0f - amount
-        )
-        textBackgroundFill = textBackgroundFill.interpolateTowards(
-            contributionScheme.textBackgroundFillColor,
-            1.0f - amount
-        )
-        separatorPrimary = separatorPrimary.interpolateTowards(
-            contributionScheme.separatorPrimaryColor,
-            1.0f - amount
-        )
-        separatorSecondary = separatorSecondary.interpolateTowards(
-            contributionScheme.separatorSecondaryColor,
-            1.0f - amount
-        )
-        mark = mark.interpolateTowards(contributionScheme.markColor, 1.0f - amount)
-        echo = echo.interpolateTowards(contributionScheme.echoColor, 1.0f - amount)
-
-        //println("\tcontribution of $amount from ${contribution.key} to $backgroundStart")
-    }
-
-    // Update the mutable color scheme with the interpolated colors
-    colorScheme.ultraLight = ultraLight
-    colorScheme.extraLight = extraLight
-    colorScheme.light = light
-    colorScheme.mid = mid
-    colorScheme.dark = dark
-    colorScheme.ultraDark = ultraDark
-    colorScheme.foreground = foreground
-    colorScheme.backgroundFill = backgroundFill
-    colorScheme.accentedBackgroundFill = accentedBackgroundFill
-    colorScheme.focusRing = focusRing
-    colorScheme.line = line
-    colorScheme.selectionForeground = selectionForeground
-    colorScheme.selectionBackground = selectionBackground
-    colorScheme.textBackgroundFill = textBackgroundFill
-    colorScheme.separatorPrimary = separatorPrimary
-    colorScheme.separatorSecondary = separatorSecondary
-    colorScheme.mark = mark
-    colorScheme.echo = echo
-}

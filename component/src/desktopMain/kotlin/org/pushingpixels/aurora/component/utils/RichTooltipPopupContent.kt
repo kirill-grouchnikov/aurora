@@ -84,7 +84,6 @@ internal fun displayRichTooltipWindow(
     textStyle: TextStyle,
     fontFamilyResolver: FontFamily.Resolver,
     skinColors: AuroraSkinColors,
-    skinPainters: AuroraPainters,
     decorationAreaType: DecorationAreaType,
     compositionLocalContext: CompositionLocalContext,
     anchorBoundsInWindow: Rect,
@@ -321,17 +320,14 @@ internal fun displayRichTooltipWindow(
         )
     }
 
+    val neutralColorTokens = skinColors.getNeutralContainerTokens(decorationAreaType)
+
     val popupContent = ComposePanel()
-    val fillColor = skinColors.getBackgroundColorScheme(decorationAreaType).backgroundFillColor
+    val fillColor = neutralColorTokens.containerSurface
     val awtFillColor = fillColor.awtColor
     popupContent.background = awtFillColor
 
-    val borderScheme = skinColors.getColorScheme(
-        decorationAreaType = DecorationAreaType.None,
-        associationKind = ColorSchemeAssociationKind.Border,
-        componentState = ComponentState.Enabled
-    )
-    val popupBorderColor = skinPainters.borderPainter.getRepresentativeColor(borderScheme)
+    val popupBorderColor = neutralColorTokens.containerOutline
     val awtBorderColor = popupBorderColor.awtColor
     val borderThickness = 1.0f / density.density
 
@@ -441,12 +437,16 @@ private class RichTooltipBackground(
     private val colors: AuroraSkinColors
 ) : DrawModifier {
     override fun ContentDrawScope.draw() {
-        val colorScheme = colors.getColorScheme(decorationAreaType, ComponentState.Enabled)
-        val startColor = colorScheme.extraLightColor
-        val endColor = colorScheme.lightColor
+        val tokens = colors.getNeutralContainerTokens(decorationAreaType)
+        val topColor = if (tokens.isDark) {
+            tokens.containerSurface
+        } else {
+            tokens.containerSurfaceLowest
+        }
+        val bottomColor = tokens.containerSurfaceLow
         val brush = Brush.verticalGradient(
-            0.0f to startColor,
-            1.0f to endColor,
+            0.0f to topColor,
+            1.0f to bottomColor,
             startY = 0.0f,
             endY = size.height,
             tileMode = TileMode.Clamp

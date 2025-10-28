@@ -40,7 +40,7 @@ data class CommandPopupMenuPresentationModel(
     val panelPresentationModel: CommandPopupMenuPanelPresentationModel? = null,
     val itemIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val itemIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
-    val itemIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    val itemIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
     val itemContentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
     val itemSides: Sides = Sides.ClosedRectangle,
     val itemHorizontalAlignment: HorizontalAlignment = HorizontalAlignment.Fill,

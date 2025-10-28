@@ -49,7 +49,7 @@ data class CommandStripPresentationModel(
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
     val iconDimension: DpSize? = null,
-    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val popupPlacementStrategy: PopupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,

@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 
 data class MutableContainerColorTokens(
-    var isDarkAttr: Boolean,
+    var isDarkAttr: Boolean = false,
     var containerSurfaceLowestAttr: Color = Color.Unspecified,
     var containerSurfaceLowAttr: Color = Color.Unspecified,
     var containerSurfaceAttr: Color = Color.Unspecified,

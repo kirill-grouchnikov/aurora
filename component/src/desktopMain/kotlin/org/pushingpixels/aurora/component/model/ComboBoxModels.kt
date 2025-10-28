@@ -51,7 +51,7 @@ data class ComboBoxPresentationModel<E>(
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
     val displayConverter: (E) -> String,
     val displayIconConverter: ((E) -> Painter)? = null,
-    val displayIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    val displayIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
     val displayIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val displayIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val displayPrototype: ((List<E>) -> E)? = null,

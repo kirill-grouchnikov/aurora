@@ -150,7 +150,7 @@ data class CommandButtonPresentationModel(
     override val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
     override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
     override val iconDimension: DpSize? = null,
-    override val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    override val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
     override val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     override val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     override val forceAllocateSpaceForIcon: Boolean = false,

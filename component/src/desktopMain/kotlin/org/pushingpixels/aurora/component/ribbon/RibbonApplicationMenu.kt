@@ -94,7 +94,7 @@ data class RibbonApplicationMenuCommandPopupMenuPresentationModel(
     val itemSelectedStateHighlight: SelectedStateHighlight = SelectedStateHighlight.FullSize,
     val itemIconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val itemIconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
-    val itemIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    val itemIconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
     val itemSides: Sides = Sides.ClosedRectangle,
     val itemHorizontalAlignment: HorizontalAlignment = HorizontalAlignment.Fill,
     val footerContentPadding: PaddingValues = RibbonApplicationMenuSizingConstants.DefaultFooterContentPadding,
@@ -122,7 +122,7 @@ data class RibbonApplicationMenuCommandButtonPresentationModel(
     override val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat
     override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center
     override val iconDimension: DpSize? = null
-    override val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme
+    override val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens
     override val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original
     override val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original
     override val forceAllocateSpaceForIcon: Boolean = false

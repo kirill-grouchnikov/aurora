@@ -72,7 +72,7 @@ internal data class RibbonBandCollapsedCommandPopupMenuPresentationModel(
 
 internal data class RibbonBandCollapsedCommandButtonPresentationModel(
     override val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-    override val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    override val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
     override val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     override val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     override val popupKeyTip: String? = null,

@@ -35,7 +35,7 @@ fun main(args: Array<String>) = auroraApplication {
         screenshot(
             skinDefinition.invoke(),
             filename,
-            IconFilterStrategy.ThemedFollowColorScheme,
+            IconFilterStrategy.ThemedFollowColorTokens,
             counter
         )
     }

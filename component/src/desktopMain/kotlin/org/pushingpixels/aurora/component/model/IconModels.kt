@@ -35,7 +35,7 @@ data class IconPresentationModel(
     val iconDimension: DpSize = IconSizingConstants.DefaultIconSize,
     val iconColorFilter: ColorFilter? = null,
     val colorSchemeBundle: AuroraColorSchemeBundle? = null,
-    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val inheritStateFromParent: Boolean = false,
 ) : PresentationModel

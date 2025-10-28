@@ -21,14 +21,45 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ClipOp
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.model.LabelPresentationModel
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.utils.getBaseOutline
+import org.pushingpixels.aurora.theming.utils.getClassicCornerRadius
+
+private object TitleLabelOutlineSuppler: OutlineSupplier {
+    override fun getOutline(
+        layoutDirection: LayoutDirection,
+        density: Density,
+        size: Size,
+        insets: Float,
+        radiusAdjustment: Float
+    ): Outline {
+        val cornerRadius = density.getClassicCornerRadius()
+        return getBaseOutline(
+            layoutDirection = layoutDirection,
+            width = size.width,
+            height = size.height,
+            radius = 0.0f,
+            sides = Sides(
+                straightSides = Side.entries.toSet(),
+                openSides = setOf(Side.Leading, Side.Trailing)
+            ),
+            insets = insets,
+            outlineKind = OutlineKind.Border,
+        )
+    }
+}
 
 @Composable
 internal fun TitleLabel(
@@ -39,7 +70,7 @@ internal fun TitleLabel(
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
     val buttonShaper = remember { ClassicButtonShaper() }
-    val borderPainter = AuroraSkin.painters.borderPainter
+    val outlinePainter = AuroraSkin.painters.outlinePainter
 
     Box(modifier = modifier) {
         Canvas(modifier = Modifier.matchParentSize()) {
@@ -55,10 +86,13 @@ internal fun TitleLabel(
                     clipOp = ClipOp.Intersect
                 )
             }) {
-                // Fill the background with accented fill color
+                val neutralColorTokens = skinColors.getNeutralContainerTokens(decorationAreaType)
                 drawRect(
-                    color = skinColors.getBackgroundColorScheme(decorationAreaType)
-                        .accentedBackgroundFillColor,
+                    color = if (neutralColorTokens.isDark) {
+                        neutralColorTokens.containerSurfaceLow
+                    } else {
+                        neutralColorTokens.containerSurfaceHigh
+                    },
                     topLeft = Offset.Zero,
                     size = this.size,
                     style = Fill
@@ -83,35 +117,14 @@ internal fun TitleLabel(
                     return@withTransform
                 }
 
-                val borderColorScheme = skinColors.getColorScheme(
-                    decorationAreaType = decorationAreaType,
-                    associationKind = ColorSchemeAssociationKind.Border,
-                    componentState = ComponentState.Enabled
-                )
-
-                val innerBorderOutline = if (borderPainter.isPaintingInnerOutline)
-                    buttonShaper.getButtonOutline(
-                        layoutDirection = layoutDirection,
-                        width = width,
-                        height = height,
-                        extraInsets = 1.0f,
-                        isInner = true,
-                        sides = Sides(
-                            straightSides = Side.entries.toSet(),
-                            openSides = setOf(Side.Leading, Side.Trailing)
-                        ),
-                        outlineKind = OutlineKind.Border,
-                        density = this
-                    ) else null
-
-                borderPainter.paintBorder(
-                    this,
-                    this.size,
-                    borderOutline,
-                    innerBorderOutline,
-                    borderColorScheme,
-                    1.0f
-                )
+                paintOutline(
+                    drawScope = this,
+                    componentState = ComponentState.Enabled,
+                    outlinePainter = outlinePainter,
+                    size = this.size,
+                    alpha = 1.0f,
+                    outlineSupplier = TitleLabelOutlineSuppler,
+                    colorTokens = neutralColorTokens)
             }
         }
         // The title of the current command group
