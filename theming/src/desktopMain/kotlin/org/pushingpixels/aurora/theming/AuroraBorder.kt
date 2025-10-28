@@ -20,21 +20,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.DrawModifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.painter.border.AuroraBorderPainter
+import org.pushingpixels.aurora.theming.painter.outline.AuroraOutlinePainter
+import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
+import org.pushingpixels.aurora.theming.utils.getClassicCornerRadius
+import org.pushingpixels.aurora.theming.utils.paintOutline
 
 @Composable
 fun Modifier.auroraBorder(): Modifier = this.then(
     AuroraBorder(
         decorationAreaType = AuroraSkin.decorationAreaType,
         colors = AuroraSkin.colors,
-        borderPainter = AuroraSkin.painters.borderPainter
+        outlinePainter = AuroraSkin.painters.outlinePainter
     )
 )
 
@@ -43,52 +49,75 @@ fun Modifier.auroraBorder(sides: Sides): Modifier = this.then(
     AuroraBorderWithSides(
         decorationAreaType = AuroraSkin.decorationAreaType,
         colors = AuroraSkin.colors,
-        borderPainter = AuroraSkin.painters.borderPainter,
-        layoutDirection = LocalLayoutDirection.current,
+        outlinePainter = AuroraSkin.painters.outlinePainter,
         sides = sides
     )
 )
 
+private object BorderOutlineSuppler: OutlineSupplier {
+    override fun getOutline(
+        layoutDirection: LayoutDirection,
+        density: Density,
+        size: Size,
+        insets: Float,
+        radiusAdjustment: Float,
+        outlineKind: OutlineKind
+    ): Outline {
+        val cornerRadius = with (density) {
+            2.0f.dp.toPx()
+        }
+        return getBaseOutline(
+            layoutDirection = layoutDirection,
+            width = size.width,
+            height = size.height,
+            radius = cornerRadius - radiusAdjustment,
+            sides = Sides(),
+            insets = insets,
+            outlineKind = outlineKind,
+        )
+    }
+}
+
+private class BorderWithSidesOutlineSuppler(val sides: Sides): OutlineSupplier {
+    override fun getOutline(
+        layoutDirection: LayoutDirection,
+        density: Density,
+        size: Size,
+        insets: Float,
+        radiusAdjustment: Float,
+        outlineKind: OutlineKind
+    ): Outline {
+        val cornerRadius = with (density) {
+            2.0f.dp.toPx()
+        }
+        return getBaseOutline(
+            layoutDirection = layoutDirection,
+            width = size.width,
+            height = size.height,
+            radius = cornerRadius - radiusAdjustment,
+            sides = sides,
+            insets = insets,
+            outlineKind = outlineKind,
+        )
+    }
+}
+
 private class AuroraBorder(
     private val decorationAreaType: DecorationAreaType,
     private val colors: AuroraSkinColors,
-    private val borderPainter: AuroraBorderPainter,
+    private val outlinePainter: AuroraOutlinePainter,
 ) : DrawModifier {
     override fun ContentDrawScope.draw() {
-        val borderScheme = colors.getColorScheme(
-            decorationAreaType = decorationAreaType,
-            associationKind = ColorSchemeAssociationKind.Border,
-            componentState = ComponentState.Enabled
-        )
+        val borderTokens = colors.getNeutralContainerTokens(decorationAreaType = decorationAreaType)
 
-        val outerRadius = CornerRadius(2.0f.dp.toPx(), 2.0f.dp.toPx())
-        val innerRadius = CornerRadius(1.0f.dp.toPx(), 1.0f.dp.toPx())
-        val borderOutline = Outline.Rounded(
-            roundRect = RoundRect(
-                left = 0.5f, top = 0.5f,
-                right = size.width - 0.5f, bottom = size.height - 0.5f,
-                topLeftCornerRadius = outerRadius,
-                topRightCornerRadius = outerRadius,
-                bottomRightCornerRadius = outerRadius,
-                bottomLeftCornerRadius = outerRadius
-            )
-        )
-
-        val innerBorderOutline = if (borderPainter.isPaintingInnerOutline)
-            Outline.Rounded(
-                roundRect = RoundRect(
-                    left = 1.0f, top = 1.0f,
-                    right = size.width - 1.0f, bottom = size.height - 1.0f,
-                    topLeftCornerRadius = innerRadius,
-                    topRightCornerRadius = innerRadius,
-                    bottomRightCornerRadius = innerRadius,
-                    bottomLeftCornerRadius = innerRadius
-                )
-            ) else null
-
-        borderPainter.paintBorder(
-            this, size, borderOutline, innerBorderOutline, borderScheme, 1.0f
-        )
+        paintOutline(
+            drawScope = this,
+            componentState = ComponentState.Enabled,
+            outlinePainter = outlinePainter,
+            size = this.size,
+            alpha = 1.0f,
+            outlineSupplier = BorderOutlineSuppler,
+            colorTokens = borderTokens)
 
         // And don't forget to draw the content
         drawContent()
@@ -98,41 +127,20 @@ private class AuroraBorder(
 private class AuroraBorderWithSides(
     private val decorationAreaType: DecorationAreaType,
     private val colors: AuroraSkinColors,
-    private val borderPainter: AuroraBorderPainter,
-    private val layoutDirection: LayoutDirection,
+    private val outlinePainter: AuroraOutlinePainter,
     private val sides: Sides
 ) : DrawModifier {
     override fun ContentDrawScope.draw() {
-        val borderScheme = colors.getColorScheme(
-            decorationAreaType = decorationAreaType,
-            associationKind = ColorSchemeAssociationKind.Border,
-            componentState = ComponentState.Enabled
-        )
+        val borderTokens = colors.getNeutralContainerTokens(decorationAreaType = decorationAreaType)
 
-        val borderOutline = getBaseOutline(
-            layoutDirection = layoutDirection,
-            width = size.width,
-            height = size.height,
-            radius = 2.0f.dp.toPx(),
-            sides = sides,
-            insets = 0.5f,
-            outlineKind = OutlineKind.Border
-        )
-
-        val innerBorderOutline = if (borderPainter.isPaintingInnerOutline)
-            getBaseOutline(
-                layoutDirection = layoutDirection,
-                width = size.width,
-                height = size.height,
-                radius = 1.0f.dp.toPx(),
-                sides = sides,
-                insets = 1.0f,
-                outlineKind = OutlineKind.Border
-            )  else null
-
-        borderPainter.paintBorder(
-            this, size, borderOutline, innerBorderOutline, borderScheme, 1.0f
-        )
+        paintOutline(
+            drawScope = this,
+            componentState = ComponentState.Enabled,
+            outlinePainter = outlinePainter,
+            size = this.size,
+            alpha = 1.0f,
+            outlineSupplier = BorderWithSidesOutlineSuppler(sides),
+            colorTokens = borderTokens)
 
         // And don't forget to draw the content
         drawContent()

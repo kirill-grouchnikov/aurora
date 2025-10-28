@@ -36,10 +36,7 @@ import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.painter.outline.InsetKind
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
-import org.pushingpixels.aurora.theming.utils.ContainerType
-import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
-import org.pushingpixels.aurora.theming.utils.getBaseOutline
-import org.pushingpixels.aurora.theming.utils.getClassicCornerRadius
+import org.pushingpixels.aurora.theming.utils.*
 
 @Immutable
 private class BoxWithHighlightsDrawingCache(
@@ -105,7 +102,6 @@ fun AuroraBoxWithHighlights(
     val density = LocalDensity.current
 
     val decorationAreaType = AuroraSkin.decorationAreaType
-    val buttonShaper = AuroraSkin.buttonShaper
 
     // Transition for the selection state
     val selectionTransition = updateTransition(selected)
@@ -241,8 +237,8 @@ fun AuroraBoxWithHighlights(
             associationKind = ContainerColorTokensAssociationKind.Highlight,
             inactiveContainerType = ContainerType.Neutral)
 
-        val surfacePainter = AuroraSkin.painters.surfacePainter
-        val outlinePainter = AuroraSkin.painters.outlinePainter
+        val surfacePainter = AuroraSkin.painters.highlightSurfacePainter
+        val outlinePainter = AuroraSkin.painters.highlightOutlinePainter
 
         val alpha = 1.0f
 

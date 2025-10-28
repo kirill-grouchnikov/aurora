@@ -343,36 +343,6 @@ class AuroraColorSchemeBundle(
         }
     }
 
-    fun hasHighlightAlphaFor(componentState: ComponentState) : Boolean {
-        return stateHighlightAlphaMap.containsKey(componentState)
-    }
-
-    /**
-     * Returns the alpha channel of the highlight color schemes for the specified component state.
-     *
-     * @param componentState Component state.
-     * @return Highlight color scheme alpha channel.
-     */
-    fun getHighlightAlpha(componentState: ComponentState): Float {
-        val registered = stateHighlightAlphaMap[componentState]
-        return registered ?: 1.0f
-    }
-
-    fun hasAlphaFor(componentState: ComponentState) : Boolean {
-        return stateAlphaMap.containsKey(componentState)
-    }
-
-    /**
-     * Returns the alpha channel of color schemes for the specified component state.
-     *
-     * @param componentState Component state.
-     * @return Color scheme alpha channel.
-     */
-    fun getAlpha(componentState: ComponentState): Float {
-        val registered = stateAlphaMap[componentState]
-        return registered ?: 1.0f
-    }
-
     /**
      * Returns the set of all component states that have non-trivial alpha
      * associated with them. Non-trivial alpha is a value that is strictly less
@@ -469,94 +439,6 @@ class AuroraSkinColors {
      */
     private val statesWithAlpha: MutableSet<ComponentState> = hashSetOf()
 
-    /**
-     * Returns the color scheme that matches the decoration area type and
-     * component state.
-     *
-     * @param decorationAreaType Decoration area type.
-     * @param componentState Component state.
-     * @return The color scheme that matches the decoration area type and
-     * component state.
-     */
-    fun getColorScheme(
-        decorationAreaType: DecorationAreaType,
-        componentState: ComponentState
-    ): AuroraColorScheme {
-        // small optimization - lookup the decoration area only if there
-        // are decoration-specific scheme bundles.
-        if (colorSchemeBundleMap.size > 1) {
-            if (colorSchemeBundleMap.containsKey(decorationAreaType)) {
-                return colorSchemeBundleMap[decorationAreaType]!!.getColorScheme(componentState)
-            }
-        }
-        return colorSchemeBundleMap[DecorationAreaType.None]!!.getColorScheme(componentState)
-    }
-
-    /**
-     * Returns the alpha channel of the highlight color scheme.
-     *
-     * @param decorationAreaType Decoration area type.
-     * @param componentState Component state.
-     * @return Highlight color scheme alpha channel.
-     */
-    fun getHighlightAlpha(
-        decorationAreaType: DecorationAreaType,
-        componentState: ComponentState
-    ): Float {
-        // small optimization - lookup the decoration area only if there
-        // are decoration-specific scheme bundles.
-        if (colorSchemeBundleMap.size > 1) {
-            if (colorSchemeBundleMap.containsKey(decorationAreaType)) {
-                if (colorSchemeBundleMap[decorationAreaType]!!.hasHighlightAlphaFor(componentState)) {
-                    return colorSchemeBundleMap[decorationAreaType]!!.getHighlightAlpha(componentState)
-                }
-            }
-        }
-        if (colorSchemeBundleMap[DecorationAreaType.None]!!.hasHighlightAlphaFor(componentState)) {
-            return colorSchemeBundleMap[DecorationAreaType.None]!!.getHighlightAlpha(componentState)
-        }
-        val isRollover = componentState.isFacetActive(ComponentStateFacet.Rollover)
-        val isSelected = componentState.isFacetActive(ComponentStateFacet.Selection)
-        if (isRollover && isSelected) {
-            return 0.9f
-        }
-        if (isSelected) {
-            return 0.7f
-        }
-        return if (isRollover) {
-            0.4f
-        } else 0.0f
-    }
-
-    /**
-     * Returns the alpha channel of the color scheme.
-     *
-     * @param decorationAreaType Decoration area type.
-     * @param componentState Component state.
-     * @return Color scheme alpha channel.
-     */
-    fun getAlpha(decorationAreaType: DecorationAreaType, componentState: ComponentState): Float {
-        // optimization - if the state does not have hard fallback, and it is not registered in any
-        // scheme bundle with custom alpha, return 1.0
-        val fallback = componentState.hardFallback
-        if (fallback == null && !statesWithAlpha.contains(componentState)) {
-            return 1.0f
-        }
-
-        // small optimization - lookup the decoration area only if there
-        // are decoration-specific scheme bundles.
-        if (colorSchemeBundleMap.size > 1) {
-            if (colorSchemeBundleMap.containsKey(decorationAreaType)) {
-                if (colorSchemeBundleMap[decorationAreaType]!!.hasAlphaFor(componentState)) {
-                    return colorSchemeBundleMap[decorationAreaType]!!.getAlpha(componentState)
-                }
-            }
-        }
-        if (colorSchemeBundleMap[DecorationAreaType.None]!!.hasAlphaFor(componentState)) {
-            return colorSchemeBundleMap[DecorationAreaType.None]!!.getAlpha(componentState)
-        }
-        return fallback?.let { getAlpha(decorationAreaType, it) } ?: 1.0f
-    }
 
     /**
      * Registers the specified color scheme bundle and background color scheme
@@ -744,24 +626,6 @@ class AuroraSkinColors {
     }
 
     /**
-     * Returns the main disabled color scheme for the specific decoration area
-     * type. Custom painting code that needs to consult the colors of the
-     * specific component should use [.getColorScheme] method and various
-     * [AuroraColorScheme] methods.
-     *
-     * @param decorationAreaType Decoration area type.
-     * @return The main disabled color scheme for this skin.
-     * @see .getColorScheme
-     */
-    fun getDisabledColorScheme(
-        decorationAreaType: DecorationAreaType
-    ): AuroraColorScheme {
-        return if (colorSchemeBundleMap.containsKey(decorationAreaType)) {
-            colorSchemeBundleMap[decorationAreaType]!!.getDisabledColorScheme()
-        } else colorSchemeBundleMap[DecorationAreaType.None]!!.getDisabledColorScheme()
-    }
-
-    /**
      * Returns the color scheme to be used for painting the specified visual
      * area of components in the specified decoration area.
      *
@@ -784,31 +648,6 @@ class AuroraSkinColors {
         }
         return colorSchemeBundleMap[DecorationAreaType.None]!!
             .getColorScheme(associationKind, componentState, true)!!
-    }
-
-    /**
-     * Returns the color scheme to be used for painting the specified visual
-     * area of components in the specified decoration area.
-     *
-     * @param decorationAreaType Decoration area type.
-     * @param associationKind Color scheme association kind.
-     * @param componentState  Component state.
-     * @return Color scheme to be used for painting the specified visual area of
-     * the component under the specified component state.
-     */
-    fun getDirectColorScheme(
-        decorationAreaType: DecorationAreaType,
-        associationKind: ColorSchemeAssociationKind,
-        componentState: ComponentState
-    ): AuroraColorScheme? {
-        // small optimization - lookup the decoration area only if there
-        // are decoration-specific scheme bundles.
-        if (colorSchemeBundleMap.size > 1) {
-            if (colorSchemeBundleMap.containsKey(decorationAreaType)) {
-                return colorSchemeBundleMap[decorationAreaType]?.getColorScheme(associationKind, componentState, false)
-            }
-        }
-        return colorSchemeBundleMap[DecorationAreaType.None]?.getColorScheme(associationKind, componentState, false)
     }
 
     /**

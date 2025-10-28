@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.pushingpixels.aurora.component.utils
+package org.pushingpixels.aurora.theming.utils
 
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
@@ -24,7 +24,7 @@ import org.pushingpixels.aurora.theming.painter.outline.AuroraOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.painter.surface.AuroraSurfacePainter
 
-internal fun paintSurface(
+fun paintSurface(
     drawScope: DrawScope,
     componentState: ComponentState,
     surfacePainter: AuroraSurfacePainter,
