@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import org.pushingpixels.aurora.theming.DecorationAreaType
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 
 /**
@@ -33,24 +32,6 @@ import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 class FlatDecorationPainter : AuroraDecorationPainter {
     override val displayName: String
         get() = "Flat"
-
-    override fun paintDecorationArea(
-        drawScope: DrawScope,
-        decorationAreaType: DecorationAreaType,
-        componentSize: Size,
-        outline: Outline,
-        rootSize: Size,
-        offsetFromRoot: Offset,
-        colorScheme: AuroraColorScheme
-    ) {
-        with(drawScope) {
-            drawOutline(
-                outline = outline,
-                style = Fill,
-                color = colorScheme.backgroundFillColor
-            )
-        }
-    }
 
     override fun paintDecorationArea(
         drawScope: DrawScope,

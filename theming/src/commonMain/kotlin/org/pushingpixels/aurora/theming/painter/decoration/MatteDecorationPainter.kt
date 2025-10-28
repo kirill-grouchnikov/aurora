@@ -24,9 +24,7 @@ import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.theming.DecorationAreaType
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 
 /**
@@ -38,49 +36,6 @@ import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 class MatteDecorationPainter : AuroraDecorationPainter {
     override val displayName: String
         get() = "Matte"
-
-    override fun paintDecorationArea(
-        drawScope: DrawScope,
-        decorationAreaType: DecorationAreaType,
-        componentSize: Size,
-        outline: Outline,
-        rootSize: Size,
-        offsetFromRoot: Offset,
-        colorScheme: AuroraColorScheme
-    ) {
-//        with(drawScope) {
-//            val startColor = colorScheme.lightColor
-//            val endColor = startColor.interpolateTowards(colorScheme.midColor, 0.4f)
-//            val flexPoint = FLEX_POINT.dp.toPx()
-//            val gradientHeight = kotlin.math.max(
-//                flexPoint,
-//                componentSize.height - offsetFromRoot.y
-//            )
-//            // 0 - flex : light -> medium
-//            // flex - : medium fill
-//            val paint = if (gradientHeight == flexPoint)
-//                Brush.verticalGradient(
-//                    0.0f to startColor,
-//                    1.0f to endColor,
-//                    startY = -offsetFromRoot.y,
-//                    endY = gradientHeight - offsetFromRoot.y,
-//                    tileMode = TileMode.Clamp
-//                )
-//            else Brush.verticalGradient(
-//                0.0f to startColor,
-//                flexPoint / gradientHeight to endColor,
-//                1.0f to endColor,
-//                startY = -offsetFromRoot.y,
-//                endY = componentSize.height - offsetFromRoot.y,
-//                tileMode = TileMode.Clamp
-//            )
-//            drawOutline(
-//                outline = outline,
-//                style = Fill,
-//                brush = paint
-//            )
-//        }
-    }
 
     override fun paintDecorationArea(
         drawScope: DrawScope,
