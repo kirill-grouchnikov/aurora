@@ -16,7 +16,6 @@
 package org.pushingpixels.aurora.theming
 
 import androidx.compose.ui.graphics.toArgb
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
@@ -40,82 +39,11 @@ import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.palette.overlayWith
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
-import org.pushingpixels.aurora.theming.utils.getColorSchemes
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
 import org.pushingpixels.ephemeral.chroma.hct.Hct
 
 private fun autumnSkinColors(): AuroraSkinColors {
     val result = AuroraSkinColors()
-    val schemes = getColorSchemes(
-        AuroraSkin::class.java.getResourceAsStream(
-            "/org/pushingpixels/aurora/theming/autumn.colorschemes"
-        )
-    )
-
-    val activeScheme = schemes["Autumn Active"]
-    val enabledScheme = schemes["Autumn Enabled"]
-    val disabledScheme = enabledScheme
-
-    val defaultSchemeBundle = AuroraColorSchemeBundle(
-        activeScheme, enabledScheme, disabledScheme
-    )
-
-    defaultSchemeBundle.registerAlpha(0.6f, ComponentState.DisabledUnselected, ComponentState.DisabledSelected)
-    defaultSchemeBundle.registerColorScheme(
-        disabledScheme, ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        activeScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected
-    )
-
-    result.registerDecorationAreaSchemeBundle(
-        defaultSchemeBundle,
-        DecorationAreaType.None
-    )
-
-    val titlePaneSchemeBundle = AuroraColorSchemeBundle(
-        activeScheme, enabledScheme, disabledScheme
-    )
-    titlePaneSchemeBundle.registerAlpha(0.6f, ComponentState.DisabledUnselected, ComponentState.DisabledSelected)
-    titlePaneSchemeBundle.registerColorScheme(
-        disabledScheme, ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected
-    )
-    titlePaneSchemeBundle.registerColorScheme(
-        activeScheme, ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected
-    )
-
-    val borderScheme = enabledScheme.saturate(0.2f)
-    titlePaneSchemeBundle.registerColorScheme(
-        borderScheme,
-        ColorSchemeAssociationKind.Border, ComponentState.Enabled
-    )
-
-    result.registerDecorationAreaSchemeBundle(
-        bundle = titlePaneSchemeBundle,
-        backgroundColorScheme = activeScheme,
-        DecorationAreaType.TitlePane
-    )
-
-    val backgroundScheme = schemes["Autumn Background"]
-
-    result.registerAsDecorationArea(
-        activeScheme,
-        DecorationAreaType.TitlePane,
-        DecorationAreaType.Header
-    )
-
-    result.registerAsDecorationArea(
-        backgroundScheme,
-        DecorationAreaType.ControlPane, DecorationAreaType.Footer,
-        DecorationAreaType.Toolbar
-    )
-
-    // TODO - remove everything above this comment
 
     // For active containers, use softer text / icon colors.
     // Also use higher alpha values for disabled controls for better contrast.
