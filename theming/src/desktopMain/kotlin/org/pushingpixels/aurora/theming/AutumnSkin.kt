@@ -16,7 +16,6 @@
 package org.pushingpixels.aurora.theming
 
 import androidx.compose.ui.graphics.toArgb
-import org.pushingpixels.aurora.common.hexadecimal
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
@@ -181,8 +180,6 @@ private fun autumnSkinColors(): AuroraSkinColors {
         neutralContainerTokens = autumnDefaultNeutralTokens,
         isSystemDark = false
     )
-
-    println("Configuring muted : ${autumnDefaultBundle.getMutedContainerTokens().containerSurface.hexadecimal}")
 
     // Custom visuals for controls in selected state:
     // 1. Deeper container surfaces (more saturated seed in fidelity mode)

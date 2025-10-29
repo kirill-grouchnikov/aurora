@@ -40,7 +40,7 @@ abstract class FractionBasedTonalPainter(
     init {
         val length = fractions.size
         require(fractions[0] == 0.0f) { "Start fraction must be 0.0f" }
-        require(fractions[length - 1] == 1.0f) { "End fraction must be 0.0f" }
+        require(fractions[length - 1] == 1.0f) { "End fraction must be 1.0f" }
         for (i in 0 until length - 1) {
             require(fractions[i + 1] > fractions[i]) { "Fractions must be strictly increasing" }
         }
