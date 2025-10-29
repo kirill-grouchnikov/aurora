@@ -418,9 +418,9 @@ internal fun <E> AuroraComboBox(
                                     colorTokens.containerSurface
                                 } else {
                                     if (colorTokens.isDark) {
-                                        colorTokens.containerSurfaceHighest
+                                        colorTokens.containerSurfaceHigh
                                     } else {
-                                        colorTokens.containerSurfaceLowest
+                                        colorTokens.containerSurfaceLow
                                     }
                                 }
                             },
