@@ -17,15 +17,15 @@ package org.pushingpixels.aurora.theming
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.common.withBrightness
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colorscheme.ColorSchemes
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
+import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolver
 import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 import org.pushingpixels.aurora.theming.utils.getColorSchemes
 
@@ -157,12 +157,14 @@ class AccentBuilder {
     }
 }
 
-object ColorTransforms {
-    fun alpha(alpha: Float): (Color) -> Color {
-        return { it.withAlpha(alpha) }
-    }
-
-    fun brightness(brightnessFactor: Float): (Color) -> Color {
-        return { it.withBrightness(brightnessFactor) }
-    }
-}
+data class AccentContainerColorTokens(
+    internal val defaultAreaPaletteColorResolver: TokenPaletteColorResolver = DefaultPaletteColorResolver,
+    internal val defaultAreaActiveTokens: ContainerColorTokens? = null,
+    internal val defaultAreaMutedTokens: ContainerColorTokens? = null,
+    internal val defaultAreaNeutralTokens: ContainerColorTokens? = null,
+    internal val defaultAreaHighlightTokens: ContainerColorTokens? = null,
+    internal val defaultAreaSelectedTokens: ContainerColorTokens? = null,
+    internal val headerAreaActiveTokens: ContainerColorTokens? = null,
+    internal val headerAreaMutedTokens: ContainerColorTokens? = null,
+    internal val headerAreaNeutralTokens: ContainerColorTokens? = null,
+    internal val headerAreaHighlightTokens: ContainerColorTokens? = null)

@@ -15,82 +15,70 @@
  */
 package org.pushingpixels.aurora.theming
 
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.BrushedMetalDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
+import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopShadowOverlayPainter
+import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
+import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
-import org.pushingpixels.aurora.theming.utils.getColorSchemes
+import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
+import org.pushingpixels.ephemeral.chroma.hct.Hct
 
-private fun businessBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
+private fun businessBaseSkinColors(
+    accentContainerColorTokens: AccentContainerColorTokens,
+    isHeaderDark: Boolean
+): AuroraSkinColors {
     val result = AuroraSkinColors()
-    val businessSchemes = getColorSchemes(
-        AuroraSkin::class.java.getResourceAsStream(
-            "/org/pushingpixels/aurora/theming/business.colorschemes"
-        )
-    )
 
-    val enabledScheme = businessSchemes["Business Enabled"]
+    val businessDefaultBundle = ContainerColorTokensBundle(
+        activeContainerTokens = accentContainerColorTokens.defaultAreaActiveTokens!!,
+        mutedContainerTokens = accentContainerColorTokens.defaultAreaMutedTokens!!,
+        neutralContainerTokens = accentContainerColorTokens.defaultAreaNeutralTokens!!,
+        isSystemDark = false)
 
-    val defaultSchemeBundle = AuroraColorSchemeBundle(
-        accentBuilder.activeControlsAccent!!, enabledScheme, enabledScheme
-    )
+    businessDefaultBundle.registerActiveContainerTokens(
+        colorTokens = accentContainerColorTokens.defaultAreaHighlightTokens!!,
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        activeStates = ComponentState.activeStates)
+    businessDefaultBundle.registerActiveContainerTokens(
+        colorTokens = accentContainerColorTokens.defaultAreaActiveTokens,
+        associationKind = ContainerColorTokensAssociationKind.Tab,
+        ComponentState.Selected, ComponentState.RolloverSelected)
+    result.registerDecorationAreaTokensBundle(businessDefaultBundle, DecorationAreaType.None)
 
-    defaultSchemeBundle.registerHighlightColorScheme(accentBuilder.highlightsAccent!!)
-
-    defaultSchemeBundle.registerAlpha(
-        0.5f,
-        ComponentState.DisabledUnselected, ComponentState.DisabledSelected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        enabledScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        accentBuilder.activeControlsAccent!!,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected, ComponentState.Selected
-    )
-
-    defaultSchemeBundle.registerColorScheme(
-        accentBuilder.activeControlsAccent!!,
-        ColorSchemeAssociationKind.Tab, ComponentState.Selected,
-        ComponentState.RolloverSelected
-    )
-
-    result.registerDecorationAreaSchemeBundle(defaultSchemeBundle, DecorationAreaType.None)
-
-    result.registerAsDecorationArea(
-        accentBuilder.windowChromeAccent!!,
-        DecorationAreaType.TitlePane,
-        DecorationAreaType.Header, DecorationAreaType.Footer
-    )
-
-    val kitchenSinkSchemes = getColorSchemes(
-        AuroraSkin::class.java.getResourceAsStream(
-            "/org/pushingpixels/aurora/theming/kitchen-sink.colorschemes"
-        )
-    )
-
-    result.registerAsDecorationArea(
-        kitchenSinkSchemes["LightGray Control Pane Background"],
-        DecorationAreaType.ControlPane
-    )
+    val businessDefaultHeaderBundle = ContainerColorTokensBundle(
+        activeContainerTokens = accentContainerColorTokens.headerAreaActiveTokens!!,
+        mutedContainerTokens = accentContainerColorTokens.headerAreaMutedTokens!!,
+        neutralContainerTokens = accentContainerColorTokens.headerAreaNeutralTokens!!,
+        isSystemDark = isHeaderDark)
+    if (accentContainerColorTokens.headerAreaHighlightTokens != null) {
+        businessDefaultHeaderBundle.registerActiveContainerTokens(
+            colorTokens = accentContainerColorTokens.headerAreaHighlightTokens,
+            associationKind = ContainerColorTokensAssociationKind.Highlight,
+            activeStates = ComponentState.activeStates)
+    }
+    result.registerDecorationAreaTokensBundle(businessDefaultHeaderBundle,
+        DecorationAreaType.TitlePane, DecorationAreaType.Header)
 
     return result
 }
 
 private fun businessBasePainters(): AuroraPainters {
     val painters = AuroraPainters(
-        fillPainter = SpecularRectangularFillPainter(ClassicFillPainter(), 0.5f),
+        fillPainter = SpecularRectangularFillPainter(ClassicFillPainter(), 1.0f),
         borderPainter = ClassicBorderPainter(),
         decorationPainter = BrushedMetalDecorationPainter(),
-        highlightFillPainter = ClassicFillPainter()
+        highlightFillPainter = ClassicFillPainter(),
+        surfacePainter = SpecularRectangularSurfacePainter(base = ClassicSurfacePainter(), baseAlpha = 0.5f),
+        outlinePainter = FlatOutlinePainter(),
+        highlightSurfacePainter = ClassicSurfacePainter(),
     )
 
     // add an overlay painter to paint a drop shadow along the top edge of toolbars
@@ -98,94 +86,135 @@ private fun businessBasePainters(): AuroraPainters {
 
     // add an overlay painter to paint separator lines along the bottom
     // edges of title panes and menu bars
-//    painters.addOverlayPainter(
-//        BottomLineOverlayPainter(colorTokensQuery = { it.midColor }),
-//        DecorationAreaType.Header
-//    )
+    painters.addOverlayPainter(
+        BottomLineOverlayPainter(colorTokensQuery = { it.containerOutline }),
+        DecorationAreaType.Header
+    )
 
     return painters
 }
 
 fun businessSkin(): AuroraSkinDefinition {
+    val accentContainerColorTokens = AccentContainerColorTokens(
+        defaultAreaActiveTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFEAEDF3u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        defaultAreaMutedTokens= getContainerTokens(
+            seed = Hct.fromInt(0xFFC4C8CCu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        defaultAreaNeutralTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFE4EAF0u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        defaultAreaHighlightTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFEBD296u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        headerAreaActiveTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFEAEDF3u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        headerAreaMutedTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFDEDDDFu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        headerAreaNeutralTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFBDC8D3u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        headerAreaHighlightTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFEBD296u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight())
+    )
     return AuroraSkinDefinition(
         displayName = "Business",
         colors = businessBaseSkinColors(
-            AccentBuilder()
-                .withAccentResource("/org/pushingpixels/aurora/theming/business.colorschemes")
-                .withWindowChromeAccent("Business Enabled")
-                .withActiveControlsAccent("Business Active")
-                .withHighlightsAccent("Business Highlight")
-        ),
+            accentContainerColorTokens = accentContainerColorTokens,
+            isHeaderDark = false
+        ).also {
+            val businessControlPaneBundle = ContainerColorTokensBundle(
+                activeContainerTokens = getContainerTokens(
+                    seed = Hct.fromInt(0xFFEAEDF3u.toInt()),
+                    containerConfiguration = ContainerConfiguration.defaultLight()),
+                 mutedContainerTokens = getContainerTokens(
+                    seed = Hct.fromInt(0xFFC4C8CCu.toInt()),
+                    containerConfiguration = ContainerConfiguration.defaultLight()),
+                 neutralContainerTokens = getContainerTokens(
+                    seed = Hct.fromInt(0xFFD4D9DFu.toInt()),
+                    containerConfiguration = ContainerConfiguration.defaultLight()),
+                isSystemDark = false
+            )
+            businessControlPaneBundle.registerActiveContainerTokens(
+                colorTokens = accentContainerColorTokens.defaultAreaHighlightTokens!!,
+                associationKind = ContainerColorTokensAssociationKind.Highlight,
+                activeStates = ComponentState.activeStates)
+            it.registerDecorationAreaTokensBundle(businessControlPaneBundle, DecorationAreaType.ControlPane)
+
+            val businessFooterBundle = ContainerColorTokensBundle(
+                activeContainerTokens = accentContainerColorTokens.headerAreaActiveTokens!!,
+                mutedContainerTokens = accentContainerColorTokens.headerAreaMutedTokens!!,
+                neutralContainerTokens = accentContainerColorTokens.headerAreaNeutralTokens!!,
+                isSystemDark = false
+            )
+            businessFooterBundle.registerActiveContainerTokens(
+                accentContainerColorTokens.defaultAreaHighlightTokens,
+                associationKind = ContainerColorTokensAssociationKind.Highlight,
+                activeStates = ComponentState.activeStates)
+            it.registerDecorationAreaTokensBundle(businessFooterBundle, DecorationAreaType.Footer)
+        },
         painters = businessBasePainters(),
         buttonShaper = ClassicButtonShaper()
     )
 }
 
 fun businessBlackSteelSkin(): AuroraSkinDefinition {
+    val accentContainerColorTokens = AccentContainerColorTokens(
+        defaultAreaActiveTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF98B7CCu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        defaultAreaMutedTokens= getContainerTokens(
+            seed = Hct.fromInt(0xFFC4C8CCu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        defaultAreaNeutralTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFE4EAF0u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        defaultAreaHighlightTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFA1BCCFu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        headerAreaActiveTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF404040u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark()),
+        headerAreaMutedTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF606060u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark()),
+        headerAreaNeutralTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF555555u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark()),
+        headerAreaHighlightTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF85A3B5u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight())
+    )
+
+
     return AuroraSkinDefinition(
-        displayName = "Business Black Steel",
+        displayName = "Business Blue Steel",
         colors = businessBaseSkinColors(
-            AccentBuilder()
-                .withAccentResource("/org/pushingpixels/aurora/theming/business.colorschemes")
-                .withWindowChromeAccent("Business Black Steel Active Header")
-                .withActiveControlsAccent("Business Black Steel Active")
-                .withHighlightsAccent("Business Black Steel Active")
+            accentContainerColorTokens = accentContainerColorTokens,
+            isHeaderDark = true
         ).also {
-            val businessSchemes = getColorSchemes(
-                AuroraSkin::class.java.getResourceAsStream(
-                    "/org/pushingpixels/aurora/theming/business.colorschemes"
-                )
+            val businessBlueSteelControlBundle = ContainerColorTokensBundle(
+                activeContainerTokens = getContainerTokens(
+                    seed = Hct.fromInt(0xFF94B9D3u.toInt()),
+                    containerConfiguration = ContainerConfiguration.defaultLight()),
+                mutedContainerTokens = getContainerTokens(
+                    seed = Hct.fromInt(0xFFBFCFDBu.toInt()),
+                    containerConfiguration = ContainerConfiguration.defaultLight()),
+                neutralContainerTokens = getContainerTokens(
+                    seed = Hct.fromInt(0xFFBFCFDBu.toInt()),
+                    containerConfiguration = ContainerConfiguration.defaultLight()),
+                isSystemDark = false
             )
-
-            val activeScheme = businessSchemes["Business Black Steel Active"]
-            val disabledScheme = businessSchemes["Business Black Steel Disabled"]
-
-            // color scheme bundle for title panes
-            val activeHeaderScheme = businessSchemes["Business Black Steel Active Header"]
-            val enabledHeaderScheme = businessSchemes["Business Black Steel Enabled Header"]
-            val headerSchemeBundle = AuroraColorSchemeBundle(
-                activeHeaderScheme, enabledHeaderScheme, disabledScheme
-            )
-            headerSchemeBundle.registerAlpha(
-                0.5f,
-                ComponentState.DisabledUnselected, ComponentState.DisabledSelected
-            )
-            headerSchemeBundle.registerColorScheme(
-                enabledHeaderScheme,
-                ColorSchemeAssociationKind.Fill,
-                ComponentState.DisabledUnselected, ComponentState.DisabledSelected
-            )
-            headerSchemeBundle.registerHighlightAlpha(0.6f, ComponentState.RolloverUnselected)
-            headerSchemeBundle.registerHighlightAlpha(0.8f, ComponentState.Selected)
-            headerSchemeBundle.registerHighlightAlpha(0.95f, ComponentState.RolloverSelected)
-            headerSchemeBundle.registerHighlightColorScheme(
-                activeScheme, ComponentState.RolloverUnselected,
-                ComponentState.Selected, ComponentState.RolloverSelected
-            )
-
-            it.registerDecorationAreaSchemeBundle(
-                headerSchemeBundle, activeHeaderScheme,
-                DecorationAreaType.TitlePane, DecorationAreaType.Header
-            )
-
-            // color scheme bundle for control pane areas
-            val activeControlPaneScheme =
-                businessSchemes["Business Black Steel Active Control Pane"]
-            val enabledControlPaneScheme =
-                businessSchemes["Business Black Steel Enabled Control Pane"]
-            val controlPaneSchemeBundle = AuroraColorSchemeBundle(
-                activeControlPaneScheme, enabledControlPaneScheme, disabledScheme
-            )
-            controlPaneSchemeBundle.registerAlpha(0.5f, ComponentState.DisabledUnselected)
-            controlPaneSchemeBundle.registerColorScheme(
-                disabledScheme,
-                ColorSchemeAssociationKind.Fill,
-                ComponentState.DisabledUnselected
-            )
-            it.registerDecorationAreaSchemeBundle(
-                controlPaneSchemeBundle, DecorationAreaType.Footer,
-                DecorationAreaType.ControlPane
-            )
+            businessBlueSteelControlBundle.registerActiveContainerTokens(
+                colorTokens = accentContainerColorTokens.defaultAreaActiveTokens!!,
+                associationKind = ContainerColorTokensAssociationKind.Highlight,
+                activeStates = ComponentState.activeStates)
+            it.registerDecorationAreaTokensBundle(businessBlueSteelControlBundle,
+                DecorationAreaType.ControlPane, DecorationAreaType.Footer)
         },
         painters = businessBasePainters(),
         buttonShaper = ClassicButtonShaper()
@@ -193,58 +222,57 @@ fun businessBlackSteelSkin(): AuroraSkinDefinition {
 }
 
 fun businessBlueSteelSkin(): AuroraSkinDefinition {
+    val accentContainerColorTokens = AccentContainerColorTokens(
+        defaultAreaActiveTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF98B7CCu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        defaultAreaMutedTokens= getContainerTokens(
+            seed = Hct.fromInt(0xFFC4C8CCu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        defaultAreaNeutralTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFE4EAF0u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        defaultAreaHighlightTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFEBD296u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        headerAreaActiveTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF91B6CBu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        headerAreaMutedTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF9BBACDu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        headerAreaNeutralTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFA1BCD0u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        headerAreaHighlightTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF83AFCEu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight())
+    )
+
     return AuroraSkinDefinition(
         displayName = "Business Blue Steel",
         colors = businessBaseSkinColors(
-            AccentBuilder()
-                .withAccentResource("/org/pushingpixels/aurora/theming/business.colorschemes")
-                .withWindowChromeAccent("Business Blue Steel Active Header")
-                .withActiveControlsAccent("Business Blue Steel Active")
-                .withHighlightsAccent("Business Blue Steel Highlight")
+            accentContainerColorTokens = accentContainerColorTokens,
+            isHeaderDark = false
         ).also {
-            val businessSchemes = getColorSchemes(
-                AuroraSkin::class.java.getResourceAsStream(
-                    "/org/pushingpixels/aurora/theming/business.colorschemes"
-                )
+            val businessBlackSteelControlBundle = ContainerColorTokensBundle(
+                activeContainerTokens = getContainerTokens(
+                    seed = Hct.fromInt(0xFFAFBEC7u.toInt()),
+                    containerConfiguration = ContainerConfiguration.defaultLight()),
+                mutedContainerTokens = getContainerTokens(
+                    seed = Hct.fromInt(0xFFD5DBDFu.toInt()),
+                    containerConfiguration = ContainerConfiguration.defaultLight()),
+                neutralContainerTokens = getContainerTokens(
+                    seed = Hct.fromInt(0xFFD5DBDFu.toInt()),
+                    containerConfiguration = ContainerConfiguration.defaultLight()),
+                isSystemDark = false
             )
-
-            val disabledScheme = businessSchemes["Business Blue Steel Disabled"]
-
-            val activeHeaderScheme = businessSchemes["Business Blue Steel Active Header"]
-            val enabledHeaderScheme = businessSchemes["Business Blue Steel Enabled Header"]
-            val headerSchemeBundle = AuroraColorSchemeBundle(
-                activeHeaderScheme, enabledHeaderScheme, enabledHeaderScheme
-            )
-            headerSchemeBundle.registerAlpha(0.5f,
-                ComponentState.DisabledUnselected, ComponentState.DisabledSelected)
-            headerSchemeBundle.registerColorScheme(
-                enabledHeaderScheme,
-                ColorSchemeAssociationKind.Fill,
-                ComponentState.DisabledUnselected, ComponentState.DisabledSelected
-            )
-            it.registerDecorationAreaSchemeBundle(
-                headerSchemeBundle,
-                DecorationAreaType.TitlePane, DecorationAreaType.Header
-            )
-
-            val activeControlPaneScheme =
-                businessSchemes["Business Blue Steel Active Control Pane"]
-            val enabledControlPaneScheme =
-                businessSchemes["Business Blue Steel Enabled Control Pane"]
-            val controlPaneSchemeBundle = AuroraColorSchemeBundle(
-                activeControlPaneScheme, enabledControlPaneScheme, disabledScheme
-            )
-            controlPaneSchemeBundle.registerAlpha(0.7f, ComponentState.DisabledUnselected)
-            controlPaneSchemeBundle.registerColorScheme(
-                enabledControlPaneScheme,
-                ColorSchemeAssociationKind.Fill,
-                ComponentState.DisabledUnselected
-            )
-            it.registerDecorationAreaSchemeBundle(
-                controlPaneSchemeBundle, DecorationAreaType.Footer,
-                DecorationAreaType.ControlPane
-            )
-
+            businessBlackSteelControlBundle.registerActiveContainerTokens(
+                colorTokens = accentContainerColorTokens.defaultAreaActiveTokens!!,
+                associationKind = ContainerColorTokensAssociationKind.Highlight,
+                activeStates = ComponentState.activeStates)
+            it.registerDecorationAreaTokensBundle(businessBlackSteelControlBundle,
+                DecorationAreaType.ControlPane, DecorationAreaType.Footer)
         },
         painters = businessBasePainters(),
         buttonShaper = ClassicButtonShaper()

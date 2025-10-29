@@ -26,7 +26,8 @@ import java.nio.ByteOrder
 
 class SpecularRectangularSurfacePainter(
     base: AuroraSurfacePainter,
-    private val colorTokensQuery: (ContainerColorTokens) -> Color,
+    private val colorTokensQuery: (ContainerColorTokens) -> Color =
+        { if (it.isDark) it.containerSurfaceHigh else it.containerSurfaceLow },
     private val baseAlpha: Float = 1.0f) :
     ShaderWrapperSurfacePainter(
         runtimeEffect = getSpecularRectangularEffect(),
