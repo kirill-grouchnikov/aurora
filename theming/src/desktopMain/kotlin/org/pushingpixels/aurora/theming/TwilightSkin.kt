@@ -1,7 +1,7 @@
 /*
  * Copyright 2020-2025 Aurora, Kirill Grouchnikov
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -15,180 +15,167 @@
  */
 package org.pushingpixels.aurora.theming
 
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
+import androidx.compose.ui.graphics.toArgb
+import org.pushingpixels.aurora.common.interpolateTowards
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.theming.colorscheme.composite
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
+import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.DelegateFractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
+import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
+import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
+import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopBezelOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopLineOverlayPainter
+import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
+import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
+import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
+import org.pushingpixels.aurora.theming.palette.getContainerTokens
+import org.pushingpixels.aurora.theming.palette.overlayWith
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
-import org.pushingpixels.aurora.theming.utils.getColorSchemes
+import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
+import org.pushingpixels.ephemeral.chroma.hct.Hct
 
 private fun twilightSkinColors(): AuroraSkinColors {
     val result = AuroraSkinColors()
-    val schemes = getColorSchemes(
-        AuroraSkin::class.java.getResourceAsStream(
-            "/org/pushingpixels/aurora/theming/twilight.colorschemes"
+
+    // For muted containers (enabled controls), use higher alpha values for disabled
+    // controls for better contrast.
+    val mutedResolver = DefaultPaletteColorResolver.overlayWith(
+        TokenPaletteColorResolverOverlay(
+            containerSurfaceDisabledAlpha = { 0.5f },
+            onContainerDisabledAlpha = { 0.6f },
+            containerOutlineDisabledAlpha = { 0.55f },
+        )
+    )
+    val twilightDefaultMutedTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFF3B3A32u.toInt()),
+        containerConfiguration = ContainerConfiguration(
+            /* isDark */ true,
+            /* contrastLevel */ -0.1),
+        colorResolver = mutedResolver)
+
+    // For active containers, use higher alpha values for disabled
+    // controls for better contrast. Also use muted outlines for border consistency
+    // with enabled controls.
+    val resolver = DefaultPaletteColorResolver.overlayWith(
+        TokenPaletteColorResolverOverlay(
+            containerOutline = { twilightDefaultMutedTokens.containerOutline.toArgb() },
+            containerOutlineVariant = { twilightDefaultMutedTokens.containerOutlineVariant.toArgb() },
+            containerSurfaceDisabledAlpha = { 0.4f },
+            onContainerDisabledAlpha = { 0.6f },
+            containerOutlineDisabledAlpha = { 0.55f },
+        )
+    )
+    val twilightDefaultActiveTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFF8F8B7Au.toInt()),
+        containerConfiguration = ContainerConfiguration(
+            /* isDark */ false,
+            /* contrastLevel */ 0.2),
+        colorResolver = resolver)
+
+    // For neutral containers, use the text / icon colors from the muted containers
+    // for better visual consistency
+    val neutralResolver = DefaultPaletteColorResolver.overlayWith(
+        TokenPaletteColorResolverOverlay(
+            containerOutline = { twilightDefaultMutedTokens.containerOutline.toArgb() },
+            containerOutlineVariant = { twilightDefaultMutedTokens.containerOutlineVariant.toArgb() },
+        )
+    )
+    val twilightDefaultNeutralTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFF48443Bu.toInt()),
+        containerConfiguration = ContainerConfiguration(
+            /* isDark */ true,
+            /* contrastLevel */ -0.1),
+        colorResolver = neutralResolver)
+
+    val twilightPaletteContainerColorResolver = DefaultPaletteColorResolver.overlayWith(
+        TokenPaletteColorResolverOverlay(
+            containerOutline = { it.onContainer },
+            containerOutlineVariant = { it.onContainerVariant },
         )
     )
 
-    val activeScheme = schemes["Twilight Active"]
-    val enabledScheme = schemes["Twilight Enabled"]
+    val twilightSelectedContainerTokens =
+        getContainerTokens(
+            seed = Hct.fromInt(0xFF91865Du.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ -0.1),
+            colorResolver = twilightPaletteContainerColorResolver)
+    val twilightSelectedHighlightContainerTokens =
+        getContainerTokens(
+            seed = Hct.fromInt(0xFF8F8B7Au.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight(),
+            colorResolver = twilightPaletteContainerColorResolver)
 
-    val defaultSchemeBundle = AuroraColorSchemeBundle(
-        activeScheme, enabledScheme, enabledScheme
+    val twilightDefaultBundle = ContainerColorTokensBundle(
+        activeContainerTokens = twilightDefaultActiveTokens,
+        mutedContainerTokens = twilightDefaultMutedTokens,
+        neutralContainerTokens = twilightDefaultNeutralTokens,
+        isSystemDark = true
     )
-    defaultSchemeBundle.registerAlpha(0.6f, ComponentState.DisabledUnselected, ComponentState.DisabledSelected)
-    defaultSchemeBundle.registerColorScheme(
-        enabledScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        activeScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected
-    )
+    // More saturated seed for controls in selected state
+    twilightDefaultBundle.registerActiveContainerTokens(
+        colorTokens = twilightSelectedContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Default,
+        ComponentState.Selected)
+    // And less saturated seed for selected highlights
+    twilightDefaultBundle.registerActiveContainerTokens(
+        colorTokens = twilightSelectedHighlightContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        ComponentState.Selected)
+    // Selected tabs with active (not muted) outlines
+    twilightDefaultBundle.registerActiveContainerTokens(
+        colorTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF91865Du.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ -0.1)),
+        associationKind = ContainerColorTokensAssociationKind.Tab,
+        ComponentState.Selected)
+    twilightDefaultBundle.registerActiveContainerTokens(
+        colorTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF8F8B7Au.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ -0.1)),
+        associationKind = ContainerColorTokensAssociationKind.Tab,
+        ComponentState.RolloverSelected, ComponentState.RolloverUnselected)
+    result.registerDecorationAreaTokensBundle(twilightDefaultBundle, DecorationAreaType.None)
 
-    // borders
-    val borderDisabledSelectedScheme = schemes["Twilight Selected Disabled Border"]
-    val borderScheme = schemes["Twilight Border"]
-    defaultSchemeBundle.registerColorScheme(
-        borderDisabledSelectedScheme,
-        ColorSchemeAssociationKind.Border, ComponentState.DisabledSelected
-    )
-    defaultSchemeBundle.registerColorScheme(borderScheme, ColorSchemeAssociationKind.Border)
+    // Toolbars, footers
+    result.registerAsDecorationArea(
+        getContainerTokens(
+            seed = Hct.fromInt(0xFF45433Au.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark()),
+        DecorationAreaType.Footer, DecorationAreaType.Toolbar)
 
-    // marks
-    val markActiveScheme = schemes["Twilight Mark Active"]
-    defaultSchemeBundle.registerAlpha(
-        0.6f, ComponentState.DisabledUnselected,
-        ComponentState.DisabledSelected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        markActiveScheme, ColorSchemeAssociationKind.Mark,
-        *ComponentState.activeStates
-    )
-    defaultSchemeBundle.registerColorScheme(
-        markActiveScheme,
-        ColorSchemeAssociationKind.Mark, ComponentState.DisabledSelected,
-        ComponentState.DisabledUnselected
-    )
+    // Control panes
+    result.registerAsDecorationArea(
+        getContainerTokens(
+            seed = Hct.fromInt(0xFF504E45u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark()),
+        DecorationAreaType.ControlPane)
 
-    // separators
-    val separatorScheme = schemes["Twilight Separator"]
-    defaultSchemeBundle.registerColorScheme(
-        separatorScheme,
-        ColorSchemeAssociationKind.Separator
-    )
-
-    // tab borders
-    defaultSchemeBundle.registerColorScheme(
-        schemes["Twilight Tab Border"],
-        ColorSchemeAssociationKind.TabBorder, *ComponentState.activeStates
-    )
-
-    val backgroundScheme = schemes["Twilight Background"]
-
-    result.registerDecorationAreaSchemeBundle(
-        defaultSchemeBundle, backgroundScheme,
-        DecorationAreaType.None
-    )
-
-    val decorationsSchemeBundle = AuroraColorSchemeBundle(
-        activeScheme, enabledScheme, enabledScheme
-    )
-    decorationsSchemeBundle.registerAlpha(0.5f, ComponentState.DisabledUnselected)
-    decorationsSchemeBundle.registerColorScheme(
-        enabledScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected
-    )
-
-    // borders
-    decorationsSchemeBundle.registerColorScheme(
-        borderDisabledSelectedScheme,
-        ColorSchemeAssociationKind.Border, ComponentState.DisabledSelected
-    )
-    decorationsSchemeBundle.registerColorScheme(
-        borderScheme,
-        ColorSchemeAssociationKind.Border
-    )
-
-    // marks
-    decorationsSchemeBundle.registerColorScheme(
-        markActiveScheme,
-        ColorSchemeAssociationKind.Mark, *ComponentState.activeStates
-    )
-
-    // separators
-    val separatorDecorationsScheme = schemes["Twilight Decorations Separator"]
-    decorationsSchemeBundle.registerColorScheme(
-        separatorDecorationsScheme,
-        ColorSchemeAssociationKind.Separator
-    )
-
-    val decorationsBackgroundScheme = schemes["Twilight Decorations Background"]
-    result.registerDecorationAreaSchemeBundle(
-        decorationsSchemeBundle, decorationsBackgroundScheme,
-        DecorationAreaType.Toolbar, DecorationAreaType.Footer
-    )
-
-    val backgroundControlPaneScheme = schemes["Twilight Control Pane Background"]
-    result.registerDecorationAreaSchemeBundle(
-        decorationsSchemeBundle, backgroundControlPaneScheme,
-        DecorationAreaType.ControlPane
-    )
-
-    val headerSchemeBundle = AuroraColorSchemeBundle(
-        activeScheme,
-        enabledScheme, enabledScheme
-    )
-    headerSchemeBundle.registerAlpha(0.5f, ComponentState.DisabledUnselected)
-    headerSchemeBundle.registerColorScheme(
-        enabledScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected
-    )
-
-    // borders
-    val headerBorderScheme = schemes["Twilight Header Border"]
-    headerSchemeBundle.registerColorScheme(
-        borderDisabledSelectedScheme,
-        ColorSchemeAssociationKind.Border, ComponentState.DisabledSelected
-    )
-    headerSchemeBundle.registerColorScheme(
-        headerBorderScheme,
-        ColorSchemeAssociationKind.Border
-    )
-    // marks
-    headerSchemeBundle.registerColorScheme(
-        markActiveScheme, ColorSchemeAssociationKind.Mark,
-        *ComponentState.activeStates
-    )
-
-    headerSchemeBundle.registerHighlightAlpha(0.7f, ComponentState.RolloverUnselected)
-    headerSchemeBundle.registerHighlightAlpha(0.8f, ComponentState.Selected)
-    headerSchemeBundle.registerHighlightAlpha(1.0f, ComponentState.RolloverSelected)
-    headerSchemeBundle.registerHighlightColorScheme(
-        activeScheme,
-        ComponentState.RolloverUnselected, ComponentState.Selected, ComponentState.RolloverSelected
-    )
-
-    val headerBackgroundScheme = schemes["Twilight Header Background"]
-
-    result.registerDecorationAreaSchemeBundle(
-        headerSchemeBundle, headerBackgroundScheme,
-        DecorationAreaType.TitlePane, DecorationAreaType.Header
-    )
-
+    // Headers
+    result.registerAsDecorationArea(
+        getContainerTokens(
+            seed = Hct.fromInt(0xFF0E0E0Eu.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.4)),
+        DecorationAreaType.TitlePane, DecorationAreaType.Header)
+    
     return result
 }
 
@@ -209,7 +196,26 @@ fun twilightSkin(): AuroraSkinDefinition {
                 masks = longArrayOf(0x40FFFFFF, 0x20FFFFFF, 0x00FFFFFF),
                 transform = { it.tint(0.2f) })),
         decorationPainter = MatteDecorationPainter(),
-        highlightFillPainter = ClassicFillPainter()
+        highlightFillPainter = ClassicFillPainter(),
+        surfacePainter = FractionBasedSurfacePainter(
+            ColorStop(fraction = 0.0f, colorQuery = {
+                it.containerSurfaceHigh.interpolateTowards(it.containerSurface, 0.4f)
+            }),
+            ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerSurface),
+            ColorStop(fraction = 1.0f, colorQuery = ContainerColorTokens::containerSurface),
+            displayName = "Twilight"
+        ),
+        highlightSurfacePainter = ClassicSurfacePainter(),
+        outlinePainter = InlayOutlinePainter(
+            displayName = "Twilight",
+            outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutline),
+            inner = OutlineSpec(
+                ColorStop(fraction = 0.0f, alpha = 0.125f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+                ColorStop(fraction = 0.5f, alpha = 0.09375f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+                ColorStop(fraction = 1.0f, alpha = 0.09375f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+            )
+        ),
+        highlightOutlinePainter = FlatOutlinePainter(),
     )
 
     // Add overlay painters to paint drop shadows along the bottom
@@ -219,28 +225,26 @@ fun twilightSkin(): AuroraSkinDefinition {
 
     // add an overlay painter to paint a dark line along the bottom
     // edge of toolbars
-//    painters.addOverlayPainter(
-//        BottomLineOverlayPainter(
-//            composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.5f))
-//        ), DecorationAreaType.Toolbar
-//    )
+    painters.addOverlayPainter(
+        BottomLineOverlayPainter( { it.containerOutlineVariant } ),
+        DecorationAreaType.Toolbar
+    )
 
-    // add an overlay painter to paint a dark line along the bottom
+    // add an overlay painter to paint a light line along the top
     // edge of toolbars
-//    painters.addOverlayPainter(
-//        TopLineOverlayPainter(
-//            composite({ it.foregroundColor }, ColorTransforms.alpha(0.125f))
-//        ), DecorationAreaType.Toolbar
-//    )
+    painters.addOverlayPainter(
+        TopLineOverlayPainter( { it.inverseContainerOutline.withAlpha(0.125f) } ),
+        DecorationAreaType.Toolbar
+    )
 
     // add an overlay painter to paint a bezel line along the top
     // edge of footer
-//    painters.addOverlayPainter(
-//        TopBezelOverlayPainter(
-//            colorTokensQueryTop = composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.5f)),
-//            colorTokensQueryBottom = composite({ it.foregroundColor }, ColorTransforms.alpha(0.125f))
-//        ), DecorationAreaType.Footer
-//    )
+    painters.addOverlayPainter(
+        TopBezelOverlayPainter(
+            colorTokensQueryTop = { it.containerOutlineVariant },
+            colorTokensQueryBottom = { it.inverseContainerOutline.withAlpha(0.28125f) }
+        ), DecorationAreaType.Footer
+    )
 
     return AuroraSkinDefinition(
         displayName = "Twilight",

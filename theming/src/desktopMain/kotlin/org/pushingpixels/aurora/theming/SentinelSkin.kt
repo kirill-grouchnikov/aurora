@@ -1,7 +1,7 @@
 /*
  * Copyright 2020-2025 Aurora, Kirill Grouchnikov
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -15,201 +15,156 @@
  */
 package org.pushingpixels.aurora.theming
 
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.theming.colorscheme.composite
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
+import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopShadowOverlayPainter
+import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
+import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
+import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
+import org.pushingpixels.aurora.theming.palette.getContainerTokens
+import org.pushingpixels.aurora.theming.palette.overlayWith
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
-import org.pushingpixels.aurora.theming.utils.getColorSchemes
+import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
+import org.pushingpixels.ephemeral.chroma.hct.Hct
 
 private fun sentinelSkinColors(): AuroraSkinColors {
     val result = AuroraSkinColors()
-    val schemes = getColorSchemes(
-        AuroraSkin::class.java.getResourceAsStream(
-            "/org/pushingpixels/aurora/theming/sentinel.colorschemes"
-        )
-    )
 
-    val activeScheme = schemes["Sentinel Active"]
-    val enabledScheme = schemes["Sentinel Enabled"]
-    val disabledScheme = schemes["Sentinel Disabled"]
-    val disabledSelectedScheme = schemes["Sentinel Disabled Selected"]
+    val sentinelDefaultBundle = ContainerColorTokensBundle(
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFFEB79Eu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFE8C3A6u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFFFD8B6u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        isSystemDark = false)
 
-    val defaultSchemeBundle = AuroraColorSchemeBundle(
-        activeScheme, enabledScheme, disabledScheme
-    )
-    defaultSchemeBundle.registerAlpha(
-        0.6f,
-        ComponentState.DisabledUnselected,
-        ComponentState.DisabledSelected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        disabledScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        disabledSelectedScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected
-    )
+    val sentinelSelectedContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFFF9E7Bu.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultLight())
+    val sentinelSelectedHighlightContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFFFC0A5u.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultLight())
 
-    // borders
-    val borderScheme = schemes["Sentinel Border"]
-    defaultSchemeBundle.registerColorScheme(borderScheme, ColorSchemeAssociationKind.Border)
+    // More saturated seed for controls in selected state
+    sentinelDefaultBundle.registerActiveContainerTokens(
+        colorTokens = sentinelSelectedContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Default,
+        ComponentState.Selected)
+    // Less saturated seed for selected highlights
+    sentinelDefaultBundle.registerActiveContainerTokens(
+        colorTokens = sentinelSelectedHighlightContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        ComponentState.Selected)
+    result.registerDecorationAreaTokensBundle(sentinelDefaultBundle, DecorationAreaType.None)
 
-    // marks
-    val markScheme = schemes["Sentinel Mark"]
-    defaultSchemeBundle.registerColorScheme(markScheme, ColorSchemeAssociationKind.Mark)
+    // Headers
+    val sentinelHeaderBundle = ContainerColorTokensBundle(
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFFEB79Eu.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ 0.8)),
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF4A2C25u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.8)),
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF2A0C05u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.6)),
+        isSystemDark = true)
 
-    // separators
-    val separatorScheme = schemes["Sentinel Separator"]
-    defaultSchemeBundle.registerColorScheme(separatorScheme, ColorSchemeAssociationKind.Separator)
+    sentinelHeaderBundle.registerActiveContainerTokens(
+        colorTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFDE9D87u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        activeStates = ComponentState.activeStates)
+    // Lighter outlines for checkboxes and radio button menu items
+    sentinelHeaderBundle.registerMutedContainerTokens(
+        colorTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF4A2C25u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark(),
+            colorResolver = DefaultPaletteColorResolver.overlayWith(
+                TokenPaletteColorResolverOverlay(
+                    containerOutline = { it.onContainer and 0xC0FFFFFFu.toInt() },
+                    containerOutlineVariant = { it.containerOutlineVariant and 0xC0FFFFFFu.toInt() },
+                )
+            )
+        ),
+        associationKind = ContainerColorTokensAssociationKind.Mark)
+    sentinelHeaderBundle.registerActiveContainerTokens(
+        colorTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF2A0C05u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.2),
+            colorResolver = DefaultPaletteColorResolver.overlayWith(
+                TokenPaletteColorResolverOverlay(
+                    containerOutline = { it.onContainer and 0xC0FFFFFFu.toInt() },
+                    containerOutlineVariant = { it.containerOutlineVariant and 0xC0FFFFFFu.toInt() },
+                )
+            )
+        ),
+        associationKind = ContainerColorTokensAssociationKind.Mark,
+        activeStates = ComponentState.activeStates)
+    result.registerDecorationAreaTokensBundle(sentinelHeaderBundle,
+        DecorationAreaType.TitlePane, DecorationAreaType.Header)
 
-    // tab borders
-    defaultSchemeBundle.registerColorScheme(
-        schemes["Sentinel Tab Border"],
-        ColorSchemeAssociationKind.TabBorder, *ComponentState.activeStates
-    )
+    // Control panes
+    val sentinelControlPaneBundle = ContainerColorTokensBundle(
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFFEB79Eu.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ -0.6)),
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF8F543Bu.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ -0.7)),
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF754133u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ -0.7)),
+        isSystemDark = true)
 
-    // highlights
-    val highlightScheme = schemes["Sentinel Highlight"]
-    defaultSchemeBundle.registerHighlightColorScheme(highlightScheme)
+    result.registerDecorationAreaTokensBundle(sentinelControlPaneBundle, DecorationAreaType.ControlPane)
 
-    val backgroundScheme = schemes["Sentinel Background"]
-
-    result.registerDecorationAreaSchemeBundle(
-        defaultSchemeBundle,
-        backgroundScheme,
-        DecorationAreaType.None
-    )
-
-    val activeDecorationsScheme = schemes["Sentinel Decorations Active"]
-    val enabledDecorationsScheme = schemes["Sentinel Decorations Enabled"]
-    val decorationsSchemeBundle = AuroraColorSchemeBundle(
-        activeDecorationsScheme, enabledDecorationsScheme, enabledDecorationsScheme
-    )
-    decorationsSchemeBundle.registerAlpha(0.4f, ComponentState.DisabledUnselected)
-    decorationsSchemeBundle.registerColorScheme(
-        enabledDecorationsScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected
-    )
-
-    // borders
-    val borderDecorationsScheme = schemes["Sentinel Decorations Border"]
-    decorationsSchemeBundle.registerColorScheme(
-        borderDecorationsScheme,
-        ColorSchemeAssociationKind.Border
-    )
-
-    // marks
-    val markDecorationsScheme = schemes["Sentinel Decorations Mark"]
-    decorationsSchemeBundle.registerColorScheme(
-        markDecorationsScheme,
-        ColorSchemeAssociationKind.Mark
-    )
-
-    // separators
-    val separatorDecorationsScheme = schemes["Sentinel Decorations Separator"]
-    decorationsSchemeBundle.registerColorScheme(
-        separatorDecorationsScheme,
-        ColorSchemeAssociationKind.Separator
-    )
-
-    val decorationsBackgroundScheme = schemes["Sentinel Decorations Background"]
-    result.registerDecorationAreaSchemeBundle(
-        decorationsSchemeBundle, decorationsBackgroundScheme,
-        DecorationAreaType.Toolbar, DecorationAreaType.Footer
-    )
-
-    val activeControlPaneScheme = schemes["Sentinel Control Pane Active"]
-    val enabledControlPaneScheme = schemes["Sentinel Control Pane Enabled"]
-    val controlPaneSchemeBundle = AuroraColorSchemeBundle(
-        activeControlPaneScheme, enabledControlPaneScheme, enabledControlPaneScheme
-    )
-    controlPaneSchemeBundle.registerAlpha(0.4f, ComponentState.DisabledUnselected)
-    controlPaneSchemeBundle.registerColorScheme(
-        enabledControlPaneScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected
-    )
-
-    // borders
-    val borderControlPaneScheme = schemes["Sentinel Control Pane Border"]
-    controlPaneSchemeBundle.registerColorScheme(
-        borderControlPaneScheme,
-        ColorSchemeAssociationKind.Border
-    )
-
-    // marks
-    val markControlPaneScheme = schemes["Sentinel Control Pane Mark"]
-    controlPaneSchemeBundle.registerColorScheme(
-        markControlPaneScheme,
-        ColorSchemeAssociationKind.Mark, *ComponentState.activeStates
-    )
-
-    // separators
-    val separatorControlPaneScheme = schemes["Sentinel Control Pane Separator"]
-    controlPaneSchemeBundle.registerColorScheme(
-        separatorControlPaneScheme,
-        ColorSchemeAssociationKind.Separator
-    )
-    val backgroundControlPaneScheme = schemes["Sentinel Control Pane Background"]
-    result.registerDecorationAreaSchemeBundle(
-        controlPaneSchemeBundle, backgroundControlPaneScheme,
-        DecorationAreaType.ControlPane
-    )
-
-    val activeHeaderScheme = schemes["Sentinel Header Active"]
-    val enabledHeaderScheme = schemes["Sentinel Header Enabled"]
-    val disabledHeaderScheme = schemes["Sentinel Header Disabled"]
-    val headerSchemeBundle = AuroraColorSchemeBundle(
-        activeHeaderScheme,
-        enabledHeaderScheme, disabledHeaderScheme
-    )
-    headerSchemeBundle.registerAlpha(0.95f, ComponentState.DisabledUnselected)
-    headerSchemeBundle.registerColorScheme(
-        disabledHeaderScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected
-    )
-
-    // borders
-    val headerBorderScheme = schemes["Sentinel Header Border"]
-    headerSchemeBundle.registerColorScheme(headerBorderScheme, ColorSchemeAssociationKind.Border)
-    // marks
-    val headerMarkScheme = schemes["Sentinel Header Mark"]
-    headerSchemeBundle.registerColorScheme(headerMarkScheme, ColorSchemeAssociationKind.Mark)
-    headerSchemeBundle.registerColorScheme(
-        disabledHeaderScheme, ColorSchemeAssociationKind.Mark,
-        ComponentState.DisabledUnselected, ComponentState.DisabledSelected
-    )
-    // separators
-    val separatorHeaderScheme = schemes["Sentinel Header Separator"]
-    headerSchemeBundle.registerColorScheme(
-        separatorHeaderScheme,
-        ColorSchemeAssociationKind.Separator
-    )
-
-    headerSchemeBundle.registerHighlightAlpha(0.85f, ComponentState.RolloverUnselected)
-    headerSchemeBundle.registerHighlightAlpha(0.9f, ComponentState.Selected)
-    headerSchemeBundle.registerHighlightAlpha(1.0f, ComponentState.RolloverSelected)
-    headerSchemeBundle.registerHighlightColorScheme(highlightScheme)
-
-    val headerBackgroundScheme = schemes["Sentinel Header Background"]
-
-    result.registerDecorationAreaSchemeBundle(
-        headerSchemeBundle, headerBackgroundScheme,
-        DecorationAreaType.TitlePane,
-        DecorationAreaType.Header
-    )
+    // Toolbars and footers
+    val sentinelBarsBundle = ContainerColorTokensBundle(
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFFEB79Eu.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ 0.1)),
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF703723u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.1)),
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF53281Au.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.1)),
+        isSystemDark = true)
+    result.registerDecorationAreaTokensBundle(sentinelBarsBundle,
+        DecorationAreaType.Toolbar, DecorationAreaType.Footer)
 
     return result
 }
@@ -219,7 +174,11 @@ fun sentinelSkin(): AuroraSkinDefinition {
         fillPainter = ClassicFillPainter(),
         borderPainter = ClassicBorderPainter(),
         decorationPainter = MatteDecorationPainter(),
-        highlightFillPainter = ClassicFillPainter()
+        highlightFillPainter = ClassicFillPainter(),
+        surfacePainter = MatteSurfacePainter(),
+        outlinePainter = FlatOutlinePainter(),
+        highlightSurfacePainter = MatteSurfacePainter(),
+        highlightOutlinePainter = FlatOutlinePainter(),
     )
 
     // Add overlay painters to paint drop shadow and a dark line along the bottom
@@ -228,22 +187,18 @@ fun sentinelSkin(): AuroraSkinDefinition {
         BottomShadowOverlayPainter.getInstance(100),
         DecorationAreaType.Toolbar
     )
-//    painters.addOverlayPainter(
-//        BottomLineOverlayPainter(
-//            composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.1f))
-//        ),
-//        DecorationAreaType.Toolbar
-//    )
+    painters.addOverlayPainter(
+        BottomLineOverlayPainter( { it.containerOutline } ),
+        DecorationAreaType.Toolbar
+    )
 
     // Add overlay painters to paint drop shadow and a dark line along the top
     // edges of footers
     painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(15), DecorationAreaType.Footer)
-//    painters.addOverlayPainter(
-//        TopLineOverlayPainter(
-//            composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.1f))
-//        ),
-//        DecorationAreaType.Footer
-//    )
+    painters.addOverlayPainter(
+        TopLineOverlayPainter( { it.containerOutline } ),
+        DecorationAreaType.Footer
+    )
 
     return AuroraSkinDefinition(
         displayName = "Sentinel",

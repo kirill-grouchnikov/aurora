@@ -1,7 +1,7 @@
 /*
  * Copyright 2020-2025 Aurora, Kirill Grouchnikov
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -15,129 +15,112 @@
  */
 package org.pushingpixels.aurora.theming
 
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.theming.colorscheme.DarkMetallicColorScheme
-import org.pushingpixels.aurora.theming.colorscheme.EbonyColorScheme
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.border.GlassBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.GlassFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
+import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
+import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.GlassSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
+import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
+import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
+import org.pushingpixels.aurora.theming.palette.getContainerTokens
+import org.pushingpixels.aurora.theming.palette.overlayWith
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
-import org.pushingpixels.aurora.theming.utils.getColorSchemes
+import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
+import org.pushingpixels.ephemeral.chroma.hct.Hct
 
 private fun ravenSkinColors(): AuroraSkinColors {
     val result = AuroraSkinColors()
 
-    val schemes = getColorSchemes(
-        AuroraSkin::class.java.getResourceAsStream(
-            "/org/pushingpixels/aurora/theming/graphite.colorschemes"
+    val ravenDefaultBundle = ContainerColorTokensBundle(
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF424242u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.4),
+            colorResolver = DefaultPaletteColorResolver.overlayWith(
+                // For active containers, use higher alpha values for
+                // disabled controls for better contrast.
+                TokenPaletteColorResolverOverlay(
+                    containerSurfaceDisabledAlpha = { 0.4f },
+                    onContainerDisabledAlpha = { 0.3f },
+                    containerOutlineDisabledAlpha = { 0.55f }
+                )
+            )
+        ),        
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF504842u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.4),
+            colorResolver = DefaultPaletteColorResolver.overlayWith(
+                // For muted containers (enabled controls), use higher alpha values for
+                // disabled controls for better contrast.
+                TokenPaletteColorResolverOverlay(
+                    containerSurfaceDisabledAlpha = { 0.5f },
+                    onContainerDisabledAlpha = { 0.3f },
+                    containerOutlineDisabledAlpha = { 0.55f }
+                )
+            )
+        ),        
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF333333u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.4)),
+        isSystemDark = true)
+
+    val ravenHighlightContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFC4C3C5u.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultLight())
+
+    val ravenSelectedContainerTokens =
+        getContainerTokens(
+            seed = Hct.fromInt(0xFFCDD0D5u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ 0.3),
+            colorResolver = DefaultPaletteColorResolver.overlayWith(
+                TokenPaletteColorResolverOverlay(
+                    containerSurfaceDisabledAlpha = { 0.4f },
+                    onContainerDisabledAlpha = { 1.0f },
+                    containerOutlineDisabledAlpha = { 0.55f }
+                )
+            )
         )
-    )
-    val activeScheme = EbonyColorScheme()
-    val enabledScheme = DarkMetallicColorScheme()
-    val disabledScheme = schemes["Raven Disabled"]
 
-    val defaultSchemeBundle = AuroraColorSchemeBundle(
-        activeScheme, enabledScheme, disabledScheme
-    )
+    // Highlight tokens for controls in selected states
+    ravenDefaultBundle.registerActiveContainerTokens(
+        colorTokens = ravenSelectedContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Default,
+        ComponentState.Selected, ComponentState.RolloverSelected)
+    // Highlight rollover for controls in rollover state
+    ravenDefaultBundle.registerActiveContainerTokens(
+        colorTokens = ravenHighlightContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Default,
+        ComponentState.RolloverUnselected)
+    // Highlights
+    ravenDefaultBundle.registerActiveContainerTokens(
+        colorTokens = ravenHighlightContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        activeStates = ComponentState.activeStates)
 
-    // highlight fill scheme + custom alpha for rollover unselected state
-    val highlightScheme = schemes["Graphite Highlight"]
-    defaultSchemeBundle.registerHighlightAlpha(0.6f, ComponentState.RolloverUnselected)
-    defaultSchemeBundle.registerHighlightAlpha(0.8f, ComponentState.Selected)
-    defaultSchemeBundle.registerHighlightAlpha(1.0f, ComponentState.RolloverSelected)
-    defaultSchemeBundle.registerHighlightColorScheme(
-        highlightScheme, ComponentState.RolloverUnselected,
-        ComponentState.Selected, ComponentState.RolloverSelected
-    )
+    result.registerDecorationAreaTokensBundle(ravenDefaultBundle, DecorationAreaType.None)
 
-    // highlight border scheme
-    defaultSchemeBundle.registerColorScheme(
-        EbonyColorScheme(),
-        ColorSchemeAssociationKind.HighlightBorder, *ComponentState.activeStates
-    )
-
-    // text highlight scheme
-    val textHighlightScheme = schemes["Graphite Text Highlight"]
-    defaultSchemeBundle.registerColorScheme(
-        textHighlightScheme,
-        ColorSchemeAssociationKind.HighlightText,
-        ComponentState.Selected, ComponentState.RolloverSelected
-    )
-
-    defaultSchemeBundle.registerColorScheme(
-        highlightScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.RolloverUnselected
-    )
-
-    val highlightMarkScheme = schemes["Raven Highlight Mark"]
-    defaultSchemeBundle.registerColorScheme(
-        highlightMarkScheme,
-        ColorSchemeAssociationKind.HighlightMark, *ComponentState.activeStates
-    )
-
-    defaultSchemeBundle.registerAlpha(0.5f, ComponentState.DisabledUnselected, ComponentState.DisabledSelected)
-    defaultSchemeBundle.registerColorScheme(
-        disabledScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        highlightScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected
-    )
-
-    val tabHighlightScheme = schemes["Graphite Tab Highlight"]
-    defaultSchemeBundle.registerColorScheme(
-        highlightScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.Selected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        tabHighlightScheme,
-        ColorSchemeAssociationKind.Tab, ComponentState.Selected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        activeScheme,
-        ColorSchemeAssociationKind.Border, ComponentState.Selected,
-        ComponentState.RolloverSelected,
-        ComponentState.RolloverUnselected
-    )
-
-    val selectedMarkScheme = schemes["Raven Selected Mark"]
-    defaultSchemeBundle.registerColorScheme(
-        selectedMarkScheme,
-        ColorSchemeAssociationKind.Mark, ComponentState.Selected,
-        ComponentState.RolloverSelected,
-        ComponentState.DisabledSelected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        selectedMarkScheme,
-        ColorSchemeAssociationKind.Mark,
-        ComponentState.RolloverUnselected
-    )
-
-    defaultSchemeBundle.registerColorScheme(
-        activeScheme,
-        ColorSchemeAssociationKind.Border,
-        ComponentState.DisabledSelected
-    )
-
-    result.registerDecorationAreaSchemeBundle(
-        defaultSchemeBundle,
-        schemes["Graphite Background"].shade(0.4f), DecorationAreaType.None
-    )
-
+    // Decoration areas
     result.registerAsDecorationArea(
-        enabledScheme,
-        DecorationAreaType.TitlePane,
-        DecorationAreaType.Header, DecorationAreaType.Footer,
-        DecorationAreaType.ControlPane, DecorationAreaType.Toolbar
-    )
+        getContainerTokens(
+            seed = Hct.fromInt(0xFF4E463Eu.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.6)),
+        DecorationAreaType.TitlePane, DecorationAreaType.Header, DecorationAreaType.Toolbar,
+        DecorationAreaType.ControlPane, DecorationAreaType.Footer)
 
     return result
 }
@@ -150,7 +133,11 @@ fun ravenSkin(): AuroraSkinDefinition {
             fillPainter = SpecularRectangularFillPainter(GlassFillPainter(), 0.6f),
             borderPainter = GlassBorderPainter(),
             decorationPainter = ArcDecorationPainter(),
-            highlightFillPainter = ClassicFillPainter()
+            highlightFillPainter = ClassicFillPainter(),
+            surfacePainter = SpecularRectangularSurfacePainter(GlassSurfacePainter(), 0.5f),
+            outlinePainter = FlatOutlinePainter(),
+            highlightSurfacePainter = ClassicSurfacePainter(),
+            highlightOutlinePainter = FlatOutlinePainter(),
         ),
         buttonShaper = ClassicButtonShaper()
     )

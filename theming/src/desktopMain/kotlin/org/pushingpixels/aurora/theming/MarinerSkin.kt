@@ -15,183 +15,124 @@
  */
 package org.pushingpixels.aurora.theming
 
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.theming.colorscheme.composite
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
+import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.border.FractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
+import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
+import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
+import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopBezelOverlayPainter
+import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
+import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
+import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
+import org.pushingpixels.aurora.theming.palette.getContainerTokens
+import org.pushingpixels.aurora.theming.palette.overlayWith
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
-import org.pushingpixels.aurora.theming.utils.getColorSchemes
+import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
+import org.pushingpixels.ephemeral.chroma.hct.Hct
 
 private fun marinerSkinColors(): AuroraSkinColors {
     val result = AuroraSkinColors()
-    val schemes = getColorSchemes(
-        AuroraSkin::class.java.getResourceAsStream(
-            "/org/pushingpixels/aurora/theming/mariner.colorschemes"
-        )
-    )
 
-    val activeScheme = schemes["Mariner Active"]
-    val enabledScheme = schemes["Mariner Enabled"]
-    val disabledScheme = schemes["Mariner Disabled"]
+    val marinerDefaultBundle = ContainerColorTokensBundle(
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFF6DD9Du.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFD9D8D5u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFECF0F3u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        isSystemDark = false);
 
-    val disabledSelectedScheme = schemes["Mariner Disabled Selected"]
+    val marinerSelectedContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFF5D47Au.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultLight())
+    val marinerSelectedHighlightContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFF7D997u.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultLight())
 
-    val defaultSchemeBundle = AuroraColorSchemeBundle(
-        activeScheme, enabledScheme, disabledScheme
-    )
+    // More saturated seed for controls in selected state
+    marinerDefaultBundle.registerActiveContainerTokens(
+        colorTokens = marinerSelectedContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Default,
+        ComponentState.Selected)
+    // And less saturated seed for selected highlights
+    marinerDefaultBundle.registerActiveContainerTokens(
+        colorTokens = marinerSelectedHighlightContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        ComponentState.Selected)
+    result.registerDecorationAreaTokensBundle(marinerDefaultBundle, DecorationAreaType.None)
 
-    defaultSchemeBundle.registerAlpha(0.8f, ComponentState.DisabledSelected)
-    defaultSchemeBundle.registerAlpha(0.8f, ComponentState.DisabledUnselected)
-    defaultSchemeBundle.registerColorScheme(
-        disabledSelectedScheme, ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        disabledScheme, ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected
-    )
+    val marinerHeaderBundle = ContainerColorTokensBundle(
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFF5D47Au.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.8)),
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF281D1Eu.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.8)),
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF261D1Eu.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 1.0),
+            colorResolver = DefaultPaletteColorResolver.overlayWith(
+                TokenPaletteColorResolverOverlay(
+                    containerOutline = { it.containerOutlineVariant }
+                )
+            )
+        ),
+        isSystemDark = true);
 
-    // borders
-    val activeBorderScheme = schemes["Mariner Active Border"]
-    val enabledBorderScheme = schemes["Mariner Enabled Border"]
-    val disabledSelectedBorderScheme = schemes["Mariner Disabled Selected Border"]
-    defaultSchemeBundle.registerColorScheme(
-        activeBorderScheme,
-        ColorSchemeAssociationKind.Border, *ComponentState.activeStates
-    )
-    defaultSchemeBundle.registerColorScheme(
-        disabledSelectedBorderScheme,
-        ColorSchemeAssociationKind.Border, ComponentState.DisabledSelected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        enabledBorderScheme,
-        ColorSchemeAssociationKind.Border, ComponentState.Enabled
-    )
+    // More saturated seed for controls in selected state
+    marinerHeaderBundle.registerActiveContainerTokens(
+        colorTokens = marinerSelectedContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Default,
+        activeStates = ComponentState.activeStates)
+    // More saturated highlights
+    marinerHeaderBundle.registerActiveContainerTokens(
+        colorTokens = marinerSelectedContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        activeStates = ComponentState.activeStates)
+    // More muted separators
+    marinerHeaderBundle.registerNeutralContainerTokens(
+        getContainerTokens(
+            seed = Hct.fromInt(0xFF261D1Eu.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.7)),
+        ContainerColorTokensAssociationKind.Separator)
+    result.registerDecorationAreaTokensBundle(marinerHeaderBundle,
+        DecorationAreaType.TitlePane, DecorationAreaType.Header)
 
-    // marks
-    val activeMarkScheme = schemes["Mariner Active Mark"]
-    val enabledMarkScheme = schemes["Mariner Enabled Mark"]
-    defaultSchemeBundle.registerColorScheme(
-        activeMarkScheme, ColorSchemeAssociationKind.Mark,
-        *ComponentState.activeStates
-    )
-    defaultSchemeBundle.registerColorScheme(
-        enabledMarkScheme, ColorSchemeAssociationKind.Mark,
-        ComponentState.Enabled
-    )
+    val marinerFooterBundle = ContainerColorTokensBundle (
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFF6DD9Du.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFC5C4C2u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFB9B7B9u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        isSystemDark = false);
 
-    result.registerDecorationAreaSchemeBundle(defaultSchemeBundle, DecorationAreaType.None)
+    result.registerDecorationAreaTokensBundle(marinerFooterBundle,
+        DecorationAreaType.Footer, DecorationAreaType.Toolbar, DecorationAreaType.ControlPane)
 
-    // header color scheme bundle
-    val headerColorScheme = schemes["Mariner Header"]
-    val headerBorderColorScheme = schemes["Mariner Header Border"]
-    val headerSchemeBundle = AuroraColorSchemeBundle(
-        headerColorScheme, headerColorScheme, headerColorScheme
-    )
-    headerSchemeBundle.registerAlpha(
-        0.4f,
-        ComponentState.DisabledSelected,
-        ComponentState.DisabledUnselected
-    )
-    headerSchemeBundle.registerColorScheme(
-        headerColorScheme, ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected, ComponentState.DisabledUnselected
-    )
-    headerSchemeBundle.registerColorScheme(
-        activeScheme, ColorSchemeAssociationKind.Fill,
-        ComponentState.RolloverUnselected, ComponentState.RolloverSelected
-    )
-    headerSchemeBundle.registerColorScheme(headerColorScheme, ColorSchemeAssociationKind.Mark)
-    headerSchemeBundle.registerColorScheme(
-        headerBorderColorScheme,
-        ColorSchemeAssociationKind.Border
-    )
-    headerSchemeBundle.registerColorScheme(
-        enabledMarkScheme.shade(0.8f), ColorSchemeAssociationKind.Mark,
-        ComponentState.Selected, ComponentState.RolloverSelected,
-        ComponentState.PressedSelected
-    )
-    headerSchemeBundle.registerColorScheme(
-        enabledMarkScheme.shade(0.7f), ColorSchemeAssociationKind.Mark,
-        ComponentState.RolloverUnselected
-    )
-
-    headerSchemeBundle.registerHighlightAlpha(1.0f)
-    headerSchemeBundle.registerHighlightColorScheme(activeScheme)
-    // the next line is to have consistent coloring during the rollover menu animations
-    headerSchemeBundle.registerHighlightAlpha(0.0f, ComponentState.Enabled)
-
-    result.registerDecorationAreaSchemeBundle(
-        headerSchemeBundle, headerColorScheme,
-        DecorationAreaType.TitlePane, DecorationAreaType.Header
-    )
-
-    // footer color scheme bundle
-    val enabledFooterScheme = schemes["Mariner Footer Enabled"]
-    val disabledFooterScheme = schemes["Mariner Footer Disabled"]
-
-    val footerSchemeBundle = AuroraColorSchemeBundle(
-        activeScheme,
-        enabledFooterScheme, disabledFooterScheme
-    )
-
-    footerSchemeBundle.registerAlpha(0.5f, ComponentState.DisabledSelected)
-    footerSchemeBundle.registerAlpha(0.8f, ComponentState.DisabledUnselected)
-    footerSchemeBundle.registerColorScheme(
-        activeScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected
-    )
-    footerSchemeBundle.registerColorScheme(
-        disabledFooterScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected
-    )
-
-    // borders
-    val footerEnabledBorderScheme = schemes["Mariner Footer Enabled Border"]
-    footerSchemeBundle.registerColorScheme(
-        activeBorderScheme,
-        ColorSchemeAssociationKind.Border, *ComponentState.activeStates
-    )
-    footerSchemeBundle.registerColorScheme(
-        activeBorderScheme,
-        ColorSchemeAssociationKind.Border, ComponentState.DisabledSelected
-    )
-    footerSchemeBundle.registerColorScheme(
-        footerEnabledBorderScheme,
-        ColorSchemeAssociationKind.Border, ComponentState.Enabled
-    )
-
-    // marks
-    val footerEnabledMarkScheme = schemes["Mariner Footer Enabled Mark"]
-    footerSchemeBundle.registerColorScheme(
-        activeMarkScheme, ColorSchemeAssociationKind.Mark,
-        *ComponentState.activeStates
-    )
-    footerSchemeBundle.registerColorScheme(
-        footerEnabledMarkScheme,
-        ColorSchemeAssociationKind.Mark, ComponentState.Enabled
-    )
-
-    // separators
-    val footerSeparatorScheme = schemes["Mariner Footer Separator"]
-    footerSchemeBundle.registerColorScheme(
-        footerSeparatorScheme,
-        ColorSchemeAssociationKind.Separator
-    )
-
-    val footerBackgroundColorScheme = schemes["Mariner Footer Background"]
-    result.registerDecorationAreaSchemeBundle(
-        footerSchemeBundle, footerBackgroundColorScheme,
-        DecorationAreaType.Footer, DecorationAreaType.Toolbar, DecorationAreaType.ControlPane
-    )
     return result
 }
 
@@ -210,27 +151,54 @@ fun marinerSkin(): AuroraSkinDefinition {
             displayName = "Mariner"
         ),
         decorationPainter = MatteDecorationPainter(),
-        highlightFillPainter = ClassicFillPainter()
+        highlightFillPainter = ClassicFillPainter(),
+        surfacePainter = FractionBasedSurfacePainter(
+            ColorStop(fraction = 0.0f, colorQuery = {
+                if (it.isDark) it.containerSurfaceHigh else it.containerSurfaceLowest
+            }),
+            ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerSurface),
+            ColorStop(fraction = 1.0f, colorQuery = {
+                if (it.isDark) it.containerSurfaceLow else it.containerSurfaceHigh
+            }),
+            displayName = "Mariner"
+        ),
+        highlightSurfacePainter = FractionBasedSurfacePainter(
+            ColorStop(fraction = 0.0f, colorQuery = {
+                if (it.isDark) it.containerSurfaceLow else it.containerSurfaceHigh
+            }),
+            ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerSurface),
+            ColorStop(fraction = 1.0f, colorQuery = {
+                if (it.isDark) it.containerSurfaceHigh else it.containerSurfaceLow
+            }),
+            displayName = "Mariner Highlight"
+        ),
+        outlinePainter = InlayOutlinePainter(
+            displayName = "Mariner",
+            outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutline),
+            inner = OutlineSpec(
+                ColorStop(fraction = 0.0f, alpha = 0.25f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+                ColorStop(fraction = 1.0f, alpha = 0.25f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+            )
+        ),
+        highlightOutlinePainter = FlatOutlinePainter(),
     )
 
     // add an overlay painter to paint a bezel line along the top
     // edge of footer
-//    painters.addOverlayPainter(
-//        TopBezelOverlayPainter(
-//            colorTokensQueryTop = { it.ultraDarkColor },
-//            colorTokensQueryBottom = { it.lightColor }
-//        ),
-//        DecorationAreaType.Footer
-//    )
+    painters.addOverlayPainter(
+        TopBezelOverlayPainter(
+            colorTokensQueryTop = { it.containerOutline.withAlpha(0.3125f) },
+            colorTokensQueryBottom = { it.inverseContainerOutline.withAlpha(0.1875f) }
+        ),
+        DecorationAreaType.Footer
+    )
 
     // add two overlay painters to create a bezel line between
     // menu bar and toolbars
-//    painters.addOverlayPainter(
-//        BottomLineOverlayPainter(
-//            composite({ it.ultraDarkColor }, ColorTransforms.brightness(0.5f))
-//        ),
-//        DecorationAreaType.Header
-//    )
+    painters.addOverlayPainter(
+        BottomLineOverlayPainter( { it.containerSurfaceHighest } ),
+        DecorationAreaType.Header
+    )
 
     // add overlay painter to paint drop shadows along the bottom
     // edges of toolbars
@@ -241,10 +209,10 @@ fun marinerSkin(): AuroraSkinDefinition {
 
     // add overlay painter to paint a dark line along the bottom
     // edge of toolbars
-//    painters.addOverlayPainter(
-//        BottomLineOverlayPainter(colorTokensQuery = { it.ultraDarkColor }),
-//        DecorationAreaType.Toolbar
-//    )
+    painters.addOverlayPainter(
+        BottomLineOverlayPainter(colorTokensQuery = { it.containerOutline.withAlpha(0.5f) }),
+        DecorationAreaType.Toolbar
+    )
 
     return AuroraSkinDefinition(
         displayName = "Mariner",

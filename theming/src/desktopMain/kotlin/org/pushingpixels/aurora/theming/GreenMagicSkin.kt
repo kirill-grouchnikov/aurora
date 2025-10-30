@@ -1,7 +1,7 @@
 /*
  * Copyright 2020-2025 Aurora, Kirill Grouchnikov
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -15,47 +15,103 @@
  */
 package org.pushingpixels.aurora.theming
 
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.theming.colorscheme.composite
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
+import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
+import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomShadowOverlayPainter
+import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
+import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
+import org.pushingpixels.aurora.theming.palette.getBimodalContainerTokens
+import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
-import org.pushingpixels.aurora.theming.utils.getColorSchemes
+import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
+import org.pushingpixels.ephemeral.chroma.dynamiccolor.DynamicBimodalPalette
+import org.pushingpixels.ephemeral.chroma.hct.Hct
 
 private fun greenMagicSkinColors(): AuroraSkinColors {
     val result = AuroraSkinColors()
-    val schemes = getColorSchemes(
-        AuroraSkin::class.java.getResourceAsStream(
-            "/org/pushingpixels/aurora/theming/greenmagic.colorschemes"
-        )
-    )
 
-    val activeScheme = schemes["Green Magic Active"]
-    val enabledScheme = schemes["Green Magic Enabled"]
-    val disabledScheme = schemes["Green Magic Disabled"]
+    val greenMagicDefaultBundle = ContainerColorTokensBundle(
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF00C5A9u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ 0.6)),
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF8CDFB5u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ 0.6)),
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFA3ECB9u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ 0.6)),
+        isSystemDark = false)
 
-    val defaultSchemeBundle = AuroraColorSchemeBundle(
-        activeScheme, enabledScheme, disabledScheme
-    )
-    result.registerDecorationAreaSchemeBundle(
-        defaultSchemeBundle,
-        DecorationAreaType.None
-    )
+    val greenMagicSelectedContainerTokens = getBimodalContainerTokens(
+        seedOne = Hct.fromInt(0xFF00C6A8u.toInt()),
+        seedTwo = Hct.fromInt(0xFF00E68Au.toInt()),
+        transitionRange = DynamicBimodalPalette.TransitionRange.TONAL_CONTAINER_SURFACES,
+        fidelityTone = 75.0,  // lighter tone for selected and rollover states
+        containerConfiguration = ContainerConfiguration(
+            /* isDark */ false,
+            /* contrastLevel */ 0.6),
+        colorResolver = DefaultPaletteColorResolver)
+    val greenMagicPressedContainerTokens = getBimodalContainerTokens(
+        seedOne = Hct.fromInt(0xFF00BF7Fu.toInt()),
+        seedTwo = Hct.fromInt(0xFF00B39Au.toInt()),
+        transitionRange = DynamicBimodalPalette.TransitionRange.TONAL_CONTAINER_SURFACES,
+        fidelityTone = 65.0,  // darker tone for pressed states
+        containerConfiguration = ContainerConfiguration(
+            /* isDark */ false,
+            /* contrastLevel */ 0.6),
+        colorResolver = DefaultPaletteColorResolver)
 
-    // mark title panes and headers as decoration areas
+    greenMagicDefaultBundle.registerActiveContainerTokens(
+        colorTokens = greenMagicSelectedContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Default,
+        ComponentState.Selected, ComponentState.RolloverUnselected, ComponentState.RolloverSelected)
+    greenMagicDefaultBundle.registerActiveContainerTokens(
+        colorTokens = greenMagicSelectedContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        ComponentState.Selected, ComponentState.RolloverUnselected, ComponentState.RolloverSelected)
+    greenMagicDefaultBundle.registerActiveContainerTokens(
+        colorTokens = greenMagicPressedContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Default,
+        ComponentState.PressedSelected, ComponentState.PressedUnselected)
+    greenMagicDefaultBundle.registerActiveContainerTokens(
+        colorTokens = greenMagicPressedContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        ComponentState.PressedSelected, ComponentState.PressedUnselected)
+    result.registerDecorationAreaTokensBundle(greenMagicDefaultBundle, DecorationAreaType.None)
+
+    // Headers
+    result.registerAsDecorationArea(getBimodalContainerTokens(
+        seedOne = Hct.fromInt(0xFF4ECDAAu.toInt()),
+        seedTwo = Hct.fromInt(0xFFA3ECB9u.toInt()),
+        transitionRange = DynamicBimodalPalette.TransitionRange.TONAL_CONTAINER_SURFACES,
+        fidelityTone = 85.0,
+        containerConfiguration = ContainerConfiguration(
+            /* isDark */ false,
+            /* contrastLevel */ 0.6),
+        colorResolver = DefaultPaletteColorResolver),
+        DecorationAreaType.TitlePane, DecorationAreaType.Header)
+
+    // Footers
     result.registerAsDecorationArea(
-        enabledScheme,
-        DecorationAreaType.TitlePane,
-        DecorationAreaType.Header
-    )
-
-    val footerFillScheme = schemes["Green Magic Footer Fill"]
-    result.registerAsDecorationArea(footerFillScheme, DecorationAreaType.Footer)
+        getContainerTokens(
+            seed = Hct.fromInt(0xFF8ADFB5u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        DecorationAreaType.Footer)
 
     return result
 }
@@ -70,18 +126,25 @@ fun greenMagicSkin(): AuroraSkinDefinition {
         ),
         borderPainter = ClassicBorderPainter(),
         decorationPainter = ArcDecorationPainter(),
-        highlightFillPainter = ClassicFillPainter()
+        highlightFillPainter = ClassicFillPainter(),
+        surfacePainter = FractionBasedSurfacePainter(
+            ColorStop(fraction = 0.0f, colorQuery = ContainerColorTokens::containerSurfaceLowest),
+            ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerSurface),
+            ColorStop(fraction = 1.0f, colorQuery = ContainerColorTokens::containerSurface),
+            displayName = "Green Magic"
+        ),
+        outlinePainter = FlatOutlinePainter(),
+        highlightSurfacePainter = ClassicSurfacePainter(),
+        highlightOutlinePainter = FlatOutlinePainter(),
     )
 
     // Add overlay painters to paint drop shadow and a dark line along the bottom
     // edges of headers
     painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.Header)
-//    painters.addOverlayPainter(
-//        BottomLineOverlayPainter(
-//            composite({ it.darkColor }, ColorTransforms.alpha(0.5f))
-//        ),
-//        DecorationAreaType.Header
-//    )
+    painters.addOverlayPainter(
+        BottomLineOverlayPainter( { it.containerOutlineVariant } ),
+        DecorationAreaType.Header
+    )
 
     return AuroraSkinDefinition(
         displayName = "Green Magic",

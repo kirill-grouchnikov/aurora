@@ -15,162 +15,114 @@
  */
 package org.pushingpixels.aurora.theming
 
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.border.GlassBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.GlassFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
+import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopShadowOverlayPainter
+import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.GlassSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
+import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
-import org.pushingpixels.aurora.theming.utils.getColorSchemes
+import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
+import org.pushingpixels.ephemeral.chroma.hct.Hct
 
 private fun ceruleanSkinColors(): AuroraSkinColors {
     val result = AuroraSkinColors()
-    val schemes = getColorSchemes(
-        AuroraSkin::class.java.getResourceAsStream(
-            "/org/pushingpixels/aurora/theming/cerulean.colorschemes"
-        )
-    )
 
-    val activeScheme = schemes["Cerulean Active"]
-    val enabledScheme = schemes["Cerulean Enabled"]
-    val disabledScheme = schemes["Cerulean Disabled"]
+    val ceruleanDefaultBundle = ContainerColorTokensBundle(
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFD2E0EDu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFECECEDu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFFBFCFCu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        isSystemDark = false)
 
-    val defaultSchemeBundle = AuroraColorSchemeBundle(
-        activeScheme, enabledScheme, disabledScheme
-    )
+    val ceruleanSelectedContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFC0DBEEu.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultLight())
+    val ceruleanSelectedHighlightContainerTokens =
+        getContainerTokens(
+            seed = Hct.fromInt(0xFFFBDCA1u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight())
+    val ceruleanRolloverHighlightContainerTokens =
+        getContainerTokens(
+            seed = Hct.fromInt(0xFFF7E5C4u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight())
+    val ceruleanTextHighlightContainerTokens =
+        getContainerTokens(
+            seed = Hct.fromInt(0xFFFEDB7Cu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight())
+    val ceruleanDeterminateContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFCFEAFEu.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultLight())
 
-    defaultSchemeBundle.registerColorScheme(
-        schemes["Cerulean Pressed"],
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.PressedSelected, ComponentState.PressedUnselected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        schemes["Cerulean Disabled Selected"],
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        schemes["Cerulean Selected"],
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.Selected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        schemes["Cerulean Rollover Selected"],
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.RolloverSelected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        schemes["Cerulean Rollover Unselected"],
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.RolloverUnselected
-    )
+    // More saturated blue seed for controls in selected state
+    ceruleanDefaultBundle.registerActiveContainerTokens(
+        colorTokens = ceruleanSelectedContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Default,
+        ComponentState.Selected)
+    // Yellow saturated seed for selected highlights
+    ceruleanDefaultBundle.registerActiveContainerTokens(
+        colorTokens = ceruleanSelectedHighlightContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        ComponentState.Selected)
+    // Lighter yellow seed for rollover highlights
+    ceruleanDefaultBundle.registerActiveContainerTokens(
+        colorTokens = ceruleanRolloverHighlightContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        ComponentState.RolloverUnselected, ComponentState.RolloverSelected, ComponentState.RolloverMixed)
+    // Text highlights
+    ceruleanDefaultBundle.registerActiveContainerTokens(
+        colorTokens = ceruleanTextHighlightContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.HighlightText,
+        activeStates = ComponentState.activeStates)
+    // Progress bars
+    ceruleanDefaultBundle.registerActiveContainerTokens(
+        colorTokens = ceruleanDeterminateContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Default,
+        ComponentState.Determinate, ComponentState.Indeterminate)
+    result.registerDecorationAreaTokensBundle(ceruleanDefaultBundle, DecorationAreaType.None)
 
-    defaultSchemeBundle.registerColorScheme(
-        schemes["Cerulean Mark"],
-        ColorSchemeAssociationKind.Mark, *ComponentState.activeStates
-    )
-    defaultSchemeBundle.registerColorScheme(
-        schemes["Cerulean Border"],
-        ColorSchemeAssociationKind.Border, *ComponentState.activeStates
-    )
-
-    // for progress bars
-    val determinateState = ComponentState(
-        "determinate enabled", arrayOf(
-            ComponentStateFacet.Enable,
-            ComponentStateFacet.Determinate, ComponentStateFacet.Selection
-        ),
-        null
-    )
-    val determinateDisabledState = ComponentState(
-        "determinate disabled", arrayOf(
-            ComponentStateFacet.Determinate,
-            ComponentStateFacet.Selection
-        ), arrayOf(ComponentStateFacet.Enable)
-    )
-    val indeterminateState = ComponentState(
-        "indeterminate enabled", arrayOf(
-            ComponentStateFacet.Enable,
-            ComponentStateFacet.Selection
-        ), arrayOf(ComponentStateFacet.Determinate)
-    )
-    val indeterminateDisabledState = ComponentState(
-        "indeterminate disabled",
-        null, arrayOf(
-            ComponentStateFacet.Determinate,
-            ComponentStateFacet.Enable, ComponentStateFacet.Selection
-        )
-    )
-    val rolloverSelectedScheme = schemes["Cerulean Rollover Selected"]
-    defaultSchemeBundle.registerColorScheme(
-        rolloverSelectedScheme,
-        ColorSchemeAssociationKind.Fill,
-        determinateState, indeterminateState
-    )
-    defaultSchemeBundle.registerColorScheme(
-        rolloverSelectedScheme,
-        ColorSchemeAssociationKind.Border, determinateState, indeterminateState
-    )
-    defaultSchemeBundle.registerColorScheme(
-        disabledScheme,
-        ColorSchemeAssociationKind.Fill,
-        determinateDisabledState, indeterminateDisabledState
-    )
-    defaultSchemeBundle.registerColorScheme(
-        disabledScheme, ColorSchemeAssociationKind.Border,
-        determinateDisabledState, indeterminateDisabledState
-    )
-
-    // for text highlight
-    val kitchenSinkSchemes = getColorSchemes(
-        AuroraSkin::class.java.getResourceAsStream(
-            "/org/pushingpixels/aurora/theming/kitchen-sink.colorschemes"
-        )
-    )
-
-    val highlightColorScheme = kitchenSinkSchemes["Moderate Highlight"]
-    defaultSchemeBundle.registerHighlightColorScheme(highlightColorScheme)
-
-    result.registerDecorationAreaSchemeBundle(defaultSchemeBundle, DecorationAreaType.None)
-
-    val activeHeaderScheme = schemes["Cerulean Active Header"]
-    val headerScheme = schemes["Cerulean Header"]
-    val disabledHeaderScheme = schemes["Cerulean Header Disabled"]
-    val headerSchemeBundle = AuroraColorSchemeBundle(
-        activeHeaderScheme, headerScheme, disabledHeaderScheme
-    )
-    headerSchemeBundle.registerAlpha(
-        0.6f, ComponentState.DisabledUnselected,
-        ComponentState.DisabledSelected
-    )
-    headerSchemeBundle.registerColorScheme(
-        activeHeaderScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected, ComponentState.DisabledUnselected
-    )
-    headerSchemeBundle.registerColorScheme(
-        activeHeaderScheme,
-        ColorSchemeAssociationKind.Mark,
-        ComponentState.DisabledSelected, ComponentState.DisabledUnselected
-    )
-    result.registerDecorationAreaSchemeBundle(
-        headerSchemeBundle, headerScheme,
-        DecorationAreaType.TitlePane, DecorationAreaType.Header
-    )
+    val ceruleanHeaderBundle = ContainerColorTokensBundle(
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFC0DBEEu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF3B7BA8u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark()),
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF3B7BA8u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark()),
+        isSystemDark = true);
+    ceruleanHeaderBundle.registerActiveContainerTokens(
+        colorTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFAEDCFFu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        activeStates = ComponentState.activeStates)
+    // Text highlights
+    ceruleanHeaderBundle.registerActiveContainerTokens(
+        colorTokens = ceruleanTextHighlightContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.HighlightText,
+        activeStates = ComponentState.activeStates)
+    result.registerDecorationAreaTokensBundle(ceruleanHeaderBundle,
+        DecorationAreaType.TitlePane, DecorationAreaType.Header)
 
     result.registerAsDecorationArea(
-        backgroundColorScheme = schemes["Cerulean Footer"],
-        noneTransformationOverlay = {
-            it.registerColorScheme(
-                schemes["Cerulean Footer Separator"],
-                ColorSchemeAssociationKind.Separator
-            )
-        },
-        areaTypes = arrayOf(DecorationAreaType.Footer, DecorationAreaType.ControlPane)
-    )
+        getContainerTokens(
+            seed = Hct.fromInt(0xFFCBD1D7u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        DecorationAreaType.Footer, DecorationAreaType.ControlPane)
 
     return result
 }
@@ -180,7 +132,10 @@ fun ceruleanSkin(): AuroraSkinDefinition {
         fillPainter = SpecularRectangularFillPainter(ClassicFillPainter(), 0.5f),
         borderPainter = GlassBorderPainter(),
         decorationPainter = ArcDecorationPainter(),
-        highlightFillPainter = GlassFillPainter()
+        highlightFillPainter = GlassFillPainter(),
+        surfacePainter = SpecularRectangularSurfacePainter(base = ClassicSurfacePainter(), baseAlpha = 0.5f),
+        outlinePainter = FlatOutlinePainter(),
+        highlightSurfacePainter = GlassSurfacePainter(),
     )
 
     // Add an overlay painter to paint a drop shadow along the top

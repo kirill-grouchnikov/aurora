@@ -1,7 +1,7 @@
 /*
  * Copyright 2020-2025 Aurora, Kirill Grouchnikov
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -15,159 +15,87 @@
  */
 package org.pushingpixels.aurora.theming
 
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.theming.colorscheme.composite
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
+import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.DelegateFractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
+import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
+import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
+import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopBezelOverlayPainter
+import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
+import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
-import org.pushingpixels.aurora.theming.utils.getColorSchemes
+import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
+import org.pushingpixels.ephemeral.chroma.hct.Hct
 
 private fun nightShadeSkinColors(): AuroraSkinColors {
     val result = AuroraSkinColors()
-    val schemes = getColorSchemes(
-        AuroraSkin::class.java.getResourceAsStream(
-            "/org/pushingpixels/aurora/theming/nightshade.colorschemes"
-        )
-    )
 
-    val activeScheme = schemes["Night Shade Active"]
-    val enabledScheme = schemes["Night Shade Enabled"]
-    val disabledScheme = schemes["Night Shade Disabled"]
-    val disabledSelectedScheme = schemes["Night Shade Disabled Selected"]
+    val nightShadeDefaultBundle = ContainerColorTokensBundle(
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF4E5562u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.5)),
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF373B45u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.5)),
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF292A32u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.5)),
+        /* isSystemDark */ true)
 
-    val defaultSchemeBundle = AuroraColorSchemeBundle(
-        activeScheme, enabledScheme, disabledScheme
-    )
-    defaultSchemeBundle.registerAlpha(0.6f, ComponentState.DisabledUnselected, ComponentState.DisabledSelected)
-    defaultSchemeBundle.registerColorScheme(disabledScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected)
-    defaultSchemeBundle.registerColorScheme(disabledSelectedScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected)
+    val nightShadeSelectedContainerTokens =
+        getContainerTokens(
+            seed = Hct.fromInt(0xFF3D4B63u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark())
+    val nightShadeSelectedHighlightContainerTokens =
+        getContainerTokens(
+            seed = Hct.fromInt(0xFF414752u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark())
 
-    // borders
-    val borderScheme = schemes["Night Shade Border"]
-    defaultSchemeBundle.registerColorScheme(borderScheme, ColorSchemeAssociationKind.Border)
+    // More saturated seed for controls in selected state
+    nightShadeDefaultBundle.registerActiveContainerTokens(
+        colorTokens = nightShadeSelectedContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Default,
+        ComponentState.Selected)
+    // And less saturated seed for selected highlights
+    nightShadeDefaultBundle.registerActiveContainerTokens(
+        colorTokens = nightShadeSelectedHighlightContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        ComponentState.Selected)
+    result.registerDecorationAreaTokensBundle(nightShadeDefaultBundle, DecorationAreaType.None)
 
-    // marks
-    val markActiveScheme = schemes["Night Shade Mark Active"]
-    defaultSchemeBundle.registerColorScheme(
-        markActiveScheme, ColorSchemeAssociationKind.Mark,
-        *ComponentState.activeStates
-    )
-    defaultSchemeBundle.registerColorScheme(
-        markActiveScheme,
-        ColorSchemeAssociationKind.Mark, ComponentState.DisabledSelected,
-        ComponentState.DisabledUnselected
-    )
+    // Toolbars, footers, control panes
+    result.registerAsDecorationArea(
+        getContainerTokens(
+            seed = Hct.fromInt(0xFF22252Au.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark()),
+        DecorationAreaType.Footer, DecorationAreaType.Toolbar, DecorationAreaType.ControlPane)
 
-    // separators
-    val separatorScheme = schemes["Night Shade Separator"]
-    defaultSchemeBundle.registerColorScheme(separatorScheme, ColorSchemeAssociationKind.Separator)
-
-    // tab borders
-    defaultSchemeBundle.registerColorScheme(
-        schemes["Night Shade Tab Border"],
-        ColorSchemeAssociationKind.TabBorder, *ComponentState.activeStates
-    )
-
-    val backgroundScheme = schemes["Night Shade Background"]
-
-    result.registerDecorationAreaSchemeBundle(defaultSchemeBundle, backgroundScheme, DecorationAreaType.None)
-
-    val decorationsSchemeBundle = AuroraColorSchemeBundle(
-        activeScheme, enabledScheme, disabledScheme
-    )
-    decorationsSchemeBundle.registerAlpha(0.4f, ComponentState.DisabledUnselected)
-    decorationsSchemeBundle.registerColorScheme(enabledScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected)
-
-    // borders
-    decorationsSchemeBundle.registerColorScheme(borderScheme, ColorSchemeAssociationKind.Border)
-
-    // marks
-    decorationsSchemeBundle.registerColorScheme(
-        markActiveScheme,
-        ColorSchemeAssociationKind.Mark, *ComponentState.activeStates
-    )
-
-    // separators
-    val separatorDecorationsScheme = schemes["Night Shade Decorations Separator"]
-    decorationsSchemeBundle.registerColorScheme(
-        separatorDecorationsScheme,
-        ColorSchemeAssociationKind.Separator
-    )
-
-    val decorationsBackgroundScheme = schemes["Night Shade Decorations Background"]
-    result.registerDecorationAreaSchemeBundle(
-        decorationsSchemeBundle, decorationsBackgroundScheme,
-        DecorationAreaType.Toolbar, DecorationAreaType.Footer
-    )
-
-    val controlPaneBackgroundScheme = schemes["Night Shade Control Pane Background"]
-    result.registerDecorationAreaSchemeBundle(
-        decorationsSchemeBundle, controlPaneBackgroundScheme,
-        DecorationAreaType.ControlPane
-    )
-
-    val headerSchemeBundle = AuroraColorSchemeBundle(
-        activeScheme,
-        enabledScheme, disabledScheme
-    )
-    headerSchemeBundle.registerAlpha(
-        0.6f, ComponentState.DisabledUnselected,
-        ComponentState.DisabledSelected
-    )
-    headerSchemeBundle.registerColorScheme(disabledScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected)
-    headerSchemeBundle.registerColorScheme(disabledSelectedScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected)
-
-    // borders
-    val headerBorderScheme = schemes["Night Shade Header Border"]
-    headerSchemeBundle.registerColorScheme(headerBorderScheme, ColorSchemeAssociationKind.Border)
-    // marks
-    headerSchemeBundle.registerColorScheme(
-        markActiveScheme, ColorSchemeAssociationKind.Mark,
-        *ComponentState.activeStates
-    )
-    headerSchemeBundle.registerColorScheme(
-        markActiveScheme,
-        ColorSchemeAssociationKind.Mark, ComponentState.DisabledSelected,
-        ComponentState.DisabledUnselected
-    )
-    headerSchemeBundle.registerColorScheme(
-        separatorDecorationsScheme,
-        ColorSchemeAssociationKind.Separator
-    )
-
-    headerSchemeBundle.registerHighlightAlpha(0.7f, ComponentState.RolloverUnselected)
-    headerSchemeBundle.registerHighlightAlpha(0.8f, ComponentState.Selected)
-    headerSchemeBundle.registerHighlightAlpha(1.0f, ComponentState.RolloverSelected)
-    headerSchemeBundle.registerHighlightColorScheme(
-        activeScheme,
-        ComponentState.RolloverUnselected, ComponentState.Selected, ComponentState.RolloverSelected
-    )
-
-    val headerBackgroundScheme = schemes["Night Shade Header Background"]
-
-    result.registerDecorationAreaSchemeBundle(
-        headerSchemeBundle, headerBackgroundScheme,
-        DecorationAreaType.TitlePane,
-        DecorationAreaType.Header
-    )
+    // Headers
+    result.registerAsDecorationArea(
+        getContainerTokens(
+            seed = Hct.fromInt(0xFF22252Au.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.6)),
+        DecorationAreaType.TitlePane, DecorationAreaType.Header)
 
     return result
 }
@@ -189,7 +117,23 @@ fun nightShadeSkin(): AuroraSkinDefinition {
                 masks = longArrayOf(0x40FFFFFF, 0x20FFFFFF, 0x00FFFFFF),
                 transform = { it.tint(0.2f) })),
         decorationPainter = MatteDecorationPainter(),
-        highlightFillPainter = ClassicFillPainter()
+        highlightFillPainter = ClassicFillPainter(),
+        surfacePainter = FractionBasedSurfacePainter(
+            ColorStop(fraction = 0.0f, colorQuery = ContainerColorTokens::containerSurfaceLow),
+            ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerSurface),
+            ColorStop(fraction = 1.0f, colorQuery = ContainerColorTokens::containerSurface),
+            displayName = "Night Shade"
+        ),
+        highlightSurfacePainter = MatteSurfacePainter(),
+        outlinePainter = InlayOutlinePainter(
+            displayName = "Night Shade",
+            outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutline),
+            inner = OutlineSpec(
+                ColorStop(fraction = 0.0f, alpha = 0.125f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+                ColorStop(fraction = 1.0f, alpha = 0.046875f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+            )
+        ),
+        highlightOutlinePainter = FlatOutlinePainter(),
     )
 
     // Add overlay painters to paint drop shadows along the bottom
@@ -201,16 +145,15 @@ fun nightShadeSkin(): AuroraSkinDefinition {
 
     // add an overlay painter to paint a dark line along the bottom
     // edge of toolbars
-//    painters.addOverlayPainter(BottomLineOverlayPainter(
-//        composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.5f))
-//    ), DecorationAreaType.Toolbar)
+    painters.addOverlayPainter(BottomLineOverlayPainter( { it.containerOutlineVariant } ),
+        DecorationAreaType.Toolbar)
 
     // add an overlay painter to paint a bezel line along the top
     // edge of footer
-//    painters.addOverlayPainter(TopBezelOverlayPainter(
-//        colorTokensQueryTop = composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.5f)),
-//        colorTokensQueryBottom = composite({ it.foregroundColor }, ColorTransforms.alpha(0.125f))
-//    ), DecorationAreaType.Footer)
+    painters.addOverlayPainter(TopBezelOverlayPainter(
+        colorTokensQueryTop = { it.containerOutlineVariant },
+        colorTokensQueryBottom = { it.inverseContainerOutline.withAlpha(0.28125f) }
+    ), DecorationAreaType.Footer)
 
     return AuroraSkinDefinition(
         displayName = "Night Shade",
