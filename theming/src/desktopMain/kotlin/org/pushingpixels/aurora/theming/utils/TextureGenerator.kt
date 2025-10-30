@@ -77,7 +77,8 @@ internal fun getBrushedMetalShader(): Shader {
 internal fun getSpecularRectangularEffect(): RuntimeEffect {
     @Language("GLSL")
     val specularRectangularDesc = """
-            uniform vec4 color;
+            uniform vec4 topColor;
+            uniform vec4 bottomColor;
             uniform float alpha;
             uniform float width;
             uniform float height;
@@ -136,13 +137,15 @@ internal fun getSpecularRectangularEffect(): RuntimeEffect {
                     float falpha = alpha * 
                         spline(start, control1, control2, end, dfraction).y *
                         spline(start, control1, control2, end, 1.0 - cfraction).y;
-                    return half4(color.r * falpha, color.g * falpha, color.b * falpha, falpha); 
+                    vec4 fullAlphaColor = mix(topColor, bottomColor, cfraction);
+                    return half4(fullAlphaColor.r * falpha, fullAlphaColor.g * falpha, fullAlphaColor.b * falpha, falpha); 
                 }
                 
                 // Otherwise account for the downwards fade based on the Y coordinate
                 float cfraction = (fragcoord.y - gap - ramp) / (height / 2.0 - gap - ramp);
                 float falpha = alpha * spline(start, control1, control2, end, 1.0 - cfraction).y;
-                return half4(color.r * falpha, color.g * falpha, color.b * falpha, falpha); 
+                vec4 fullAlphaColor = mix(topColor, bottomColor, cfraction);
+                return half4(fullAlphaColor.r * falpha, fullAlphaColor.g * falpha, fullAlphaColor.b * falpha, falpha); 
             }
         """
 

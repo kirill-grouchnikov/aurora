@@ -26,7 +26,9 @@ import java.nio.ByteOrder
 
 class SpecularRectangularSurfacePainter(
     base: AuroraSurfacePainter,
-    private val colorTokensQuery: (ContainerColorTokens) -> Color =
+    private val topQuery: (ContainerColorTokens) -> Color =
+        { if (it.isDark) it.containerSurfaceHighest else it.containerSurfaceLowest },
+    private val bottomQuery: (ContainerColorTokens) -> Color =
         { if (it.isDark) it.containerSurfaceHigh else it.containerSurfaceLow },
     private val baseAlpha: Float = 1.0f) :
     ShaderWrapperSurfacePainter(
@@ -41,18 +43,24 @@ class SpecularRectangularSurfacePainter(
         colorTokens: ContainerColorTokens,
         alpha: Float
     ): Data {
-        val dataBuffer = ByteBuffer.allocate(44).order(ByteOrder.LITTLE_ENDIAN)
-        // RGBA for the specular highlight color
-        val color = colorTokensQuery.invoke(colorTokens)
-        dataBuffer.putFloat(0, color.red)
-        dataBuffer.putFloat(4, color.green)
-        dataBuffer.putFloat(8, color.blue)
-        dataBuffer.putFloat(12, color.alpha)
+        val dataBuffer = ByteBuffer.allocate(60).order(ByteOrder.LITTLE_ENDIAN)
+        // RGBA for the top highlight color
+        val colorTop = topQuery.invoke(colorTokens)
+        dataBuffer.putFloat(0, colorTop.red)
+        dataBuffer.putFloat(4, colorTop.green)
+        dataBuffer.putFloat(8, colorTop.blue)
+        dataBuffer.putFloat(12, colorTop.alpha)
+        // RGBA for the bottom highlight color
+        val colorBottom = bottomQuery.invoke(colorTokens)
+        dataBuffer.putFloat(16, colorBottom.red)
+        dataBuffer.putFloat(20, colorBottom.green)
+        dataBuffer.putFloat(24, colorBottom.blue)
+        dataBuffer.putFloat(28, colorBottom.alpha)
         // Alpha
-        dataBuffer.putFloat(16, alpha * baseAlpha)
+        dataBuffer.putFloat(32, alpha * baseAlpha)
         // Width and height
-        dataBuffer.putFloat(20, outline.bounds.width)
-        dataBuffer.putFloat(24, outline.bounds.height)
+        dataBuffer.putFloat(36, outline.bounds.width)
+        dataBuffer.putFloat(40, outline.bounds.height)
 
         // This is not ideal, but supporting Path-based outlines would mean having to pass that
         // information to the underlying shader.
@@ -68,13 +76,13 @@ class SpecularRectangularSurfacePainter(
                 topRightRadius = 0.0f
             }
         }
-        dataBuffer.putFloat(28, topLeftRadius)
-        dataBuffer.putFloat(32, topRightRadius)
+        dataBuffer.putFloat(44, topLeftRadius)
+        dataBuffer.putFloat(48, topRightRadius)
 
         // Gap
-        dataBuffer.putFloat(36, 1.0f * density.density)
+        dataBuffer.putFloat(52, 1.0f * density.density)
         // Ramp
-        dataBuffer.putFloat(40, 2.0f * density.density)
+        dataBuffer.putFloat(56, 2.0f * density.density)
 
         return Data.makeFromBytes(dataBuffer.array())
     }

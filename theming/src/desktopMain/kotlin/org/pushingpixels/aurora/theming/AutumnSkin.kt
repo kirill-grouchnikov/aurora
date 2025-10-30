@@ -209,7 +209,8 @@ fun autumnSkin(): AuroraSkinDefinition {
         decorationPainter = MarbleNoiseDecorationPainter(textureAlpha = 1.0f),
         surfacePainter = SpecularRectangularSurfacePainter(
             base = MatteSurfacePainter(),
-            colorTokensQuery = { it.containerSurfaceLow },
+            topQuery = { it.containerSurfaceLow },
+            bottomQuery = { it.containerSurfaceLow },
             baseAlpha = 0.7f),
         outlinePainter = InlayOutlinePainter(
             displayName = "Autumn",

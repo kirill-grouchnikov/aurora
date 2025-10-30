@@ -76,7 +76,7 @@ private fun businessBasePainters(): AuroraPainters {
         borderPainter = ClassicBorderPainter(),
         decorationPainter = BrushedMetalDecorationPainter(),
         highlightFillPainter = ClassicFillPainter(),
-        surfacePainter = SpecularRectangularSurfacePainter(base = ClassicSurfacePainter(), baseAlpha = 0.5f),
+        surfacePainter = SpecularRectangularSurfacePainter(base = ClassicSurfacePainter(), baseAlpha = 0.8f),
         outlinePainter = FlatOutlinePainter(),
         highlightSurfacePainter = ClassicSurfacePainter(),
     )
