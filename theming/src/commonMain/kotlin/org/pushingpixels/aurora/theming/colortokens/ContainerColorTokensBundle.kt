@@ -30,7 +30,7 @@ import org.pushingpixels.ephemeral.chroma.hct.Hct
  * @author Kirill Grouchnikov
  * @see org.pushingpixels.aurora.theming.DecorationAreaType
  * @see ContainerColorTokensAssociationKind
- * @see org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+ * @see org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
  */
 class ContainerColorTokensBundle {
     private val activeContainerTokens: ContainerColorTokens
@@ -469,7 +469,7 @@ class AuroraSkinColors {
 
     /**
      * Set of all decoration area types that are not explicitly registered in
-     * [.colorSchemeBundleMap] but still are considered as decoration
+     * [.colorTokensBundleMap] but still are considered as decoration
      * areas in this skin. Controls in such areas will have their background painted by
      * [AuroraDecorationPainter.paintDecorationArea] instead of a simple background fill.
      */

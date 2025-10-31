@@ -83,7 +83,7 @@ class ComponentStateFacet(var name: String, value: Int) {
  * Component state name. Does not have to be unique. The name is
  * only used in the [.toString].
  * @param hardFallback
- * The fallback state that will be used in [AuroraColorSchemeBundle.getColorScheme]
+ * The fallback state that will be used in color tokens querying
  * in case [.bestFit] returns `null`
  * @param facetsOn
  * Indicates that are turned on for this state. For example, [.RolloverSelected] should pass both
@@ -608,122 +608,6 @@ class ComponentState(
         allStates.add(this)
     }
 }
-
-/**
- * Allows associating different color schemes to different visual parts of UI components. For
- * example, the checkbox has three different visual areas:
- *
- *  * Border - associated with [.Border]
- *  * Fill - associated with [.MarkBox]
- *  * Check mark - associated with [.Mark]
- *
- * Applications can create custom instances of this class to further refine the control over the
- * painting. In this case, the custom UI delegates must be created to use these new association
- * kinds.
- *
- * @author Kirill Grouchnikov
- */
-class ColorSchemeAssociationKind(
-    /**
-     * Name for this association kind.
-     */
-    private val name: String,
-    /**
-     * Fallback for this association kind. This is used when no color scheme is associated with
-     * this kind. For example, [.TabBorder] specifies that its fallback is
-     * [.Border]. When the tabs are painted, it will
-     * try to use the color scheme associated with [.TabBorder]. If none was registered,
-     * it will fall back to use the color scheme associated with [.Border], and if that is
-     * not registered as well, will use the color scheme associated with [.Fill].
-     */
-    val fallback: ColorSchemeAssociationKind?
-) {
-    override fun toString(): String {
-        return name
-    }
-
-    companion object {
-        /**
-         * All known association kind values.
-         */
-        private val values: MutableSet<ColorSchemeAssociationKind> = HashSet()
-
-        /**
-         * The default visual area that is used for the inner part of most controls.
-         */
-        val Fill = ColorSchemeAssociationKind("fill", null)
-
-        /**
-         * Visual area of separators.
-         */
-        val Separator = ColorSchemeAssociationKind("separator", Fill)
-
-        /**
-         * Fill visual area of the tabs.
-         */
-        val Tab = ColorSchemeAssociationKind("tab", Fill)
-
-        /**
-         * Border visual area of non-tab controls.
-         */
-        val Border = ColorSchemeAssociationKind("border", Fill)
-
-        /**
-         * Visual area of marks. Used for painting check marks of checkboxes and radio buttons, as
-         * well as arrow icons of combo boxes, spinners and more.
-         */
-        val Mark = ColorSchemeAssociationKind("mark", Border)
-
-        /**
-         * Visual area of mark boxes. Used for painting the box of checkboxes and radio buttons.
-         */
-        val MarkBox = ColorSchemeAssociationKind("markBox", Fill)
-
-        /**
-         * Visual area of focus indication.
-         */
-        val Focus = ColorSchemeAssociationKind("focus", Mark)
-
-        /**
-         * Border visual area of the tabs.
-         */
-        val TabBorder = ColorSchemeAssociationKind("tabBorder", Border)
-
-        /**
-         * Highlight visual areas for lists, tables, trees and menus.
-         */
-        val Highlight = ColorSchemeAssociationKind("highlight", Fill)
-
-        /**
-         * Highlight visual areas for text components.
-         */
-        val HighlightText = ColorSchemeAssociationKind("highlightText", Highlight)
-
-        /**
-         * Border visual areas for highlighted regions of lists, tables, trees and menus.
-         */
-        val HighlightBorder = ColorSchemeAssociationKind("highlightBorder", Border)
-
-        /**
-         * Visual area of marks in highlighted regions of lists, tables, trees and menus.
-         */
-        val HighlightMark = ColorSchemeAssociationKind("highlightMark", Mark)
-
-        /**
-         * Returns all available association kinds.
-         *
-         * @return All available association kinds.
-         */
-        fun values(): Set<ColorSchemeAssociationKind> {
-            return values.toCollection(LinkedHashSet(values.size))
-        }
-    }
-
-    init {
-        values.add(this)
-    }
-}
-
 
 /**
  * Allows associating different color schemes to different visual parts of UI components. For

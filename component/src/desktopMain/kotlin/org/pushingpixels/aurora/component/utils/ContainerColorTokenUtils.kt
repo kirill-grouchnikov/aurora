@@ -661,7 +661,7 @@ internal fun getTextColor(
         var aggrBlue = 0f
         for ((activeState, value) in activeStates) {
             val contribution = value.contribution
-            val activeColorScheme = getContainerTokens(
+            val activeTokens = getContainerTokens(
                 colors = colors,
                 decorationAreaType = decorationAreaType,
                 associationKind = associationKind,
@@ -670,7 +670,7 @@ internal fun getTextColor(
                 inactiveContainerType = inactiveContainerType,
                 skipFlatCheck = skipFlatCheck
             )
-            val activeForeground = activeColorScheme.onContainer
+            val activeForeground = activeTokens.onContainer
             aggrRed += contribution * activeForeground.red
             aggrGreen += contribution * activeForeground.green
             aggrBlue += contribution * activeForeground.blue
@@ -728,7 +728,7 @@ internal fun getTextVariantColor(
         var aggrBlue = 0f
         for ((activeState, value) in activeStates) {
             val contribution = value.contribution
-            val activeColorScheme = getContainerTokens(
+            val activeTokens = getContainerTokens(
                 colors = colors,
                 decorationAreaType = decorationAreaType,
                 associationKind = associationKind,
@@ -737,7 +737,7 @@ internal fun getTextVariantColor(
                 inactiveContainerType = inactiveContainerType,
                 skipFlatCheck = skipFlatCheck
             )
-            val activeForeground = activeColorScheme.onContainerVariant
+            val activeForeground = activeTokens.onContainerVariant
             aggrRed += contribution * activeForeground.red
             aggrGreen += contribution * activeForeground.green
             aggrBlue += contribution * activeForeground.blue
