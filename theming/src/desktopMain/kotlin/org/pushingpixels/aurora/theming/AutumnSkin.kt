@@ -185,6 +185,14 @@ private fun autumnSkinColors(): AuroraSkinColors {
 }
 
 fun autumnSkin(): AuroraSkinDefinition {
+    val outlinePainter = InlayOutlinePainter(
+        displayName = "Autumn",
+        outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutlineVariant),
+        inner = OutlineSpec(
+            ColorStop(fraction = 0.0f, alpha = 0.9375f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+            ColorStop(fraction = 1.0f, alpha = 0.9375f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+        )
+    )
     val painters = AuroraPainters(
         decorationPainter = MarbleNoiseDecorationPainter(textureAlpha = 1.0f),
         surfacePainter = SpecularRectangularSurfacePainter(
@@ -192,15 +200,9 @@ fun autumnSkin(): AuroraSkinDefinition {
             topQuery = { it.containerSurfaceLow },
             bottomQuery = { it.containerSurfaceLow },
             baseAlpha = 0.7f),
-        outlinePainter = InlayOutlinePainter(
-            displayName = "Autumn",
-            outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutlineVariant),
-            inner = OutlineSpec(
-                ColorStop(fraction = 0.0f, alpha = 0.9375f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
-                ColorStop(fraction = 1.0f, alpha = 0.9375f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
-            )
-        ),
-        highlightSurfacePainter = ClassicSurfacePainter()
+        outlinePainter = outlinePainter,
+        highlightSurfacePainter = ClassicSurfacePainter(),
+        highlightOutlinePainter = outlinePainter
     )
     // add an overlay painter to paint a drop shadow along the top
     // edge of toolbars

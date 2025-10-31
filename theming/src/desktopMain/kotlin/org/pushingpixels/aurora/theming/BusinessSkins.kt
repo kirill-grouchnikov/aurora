@@ -73,6 +73,7 @@ private fun businessBasePainters(): AuroraPainters {
         surfacePainter = SpecularRectangularSurfacePainter(base = ClassicSurfacePainter(), baseAlpha = 0.8f),
         outlinePainter = FlatOutlinePainter(),
         highlightSurfacePainter = ClassicSurfacePainter(),
+        highlightOutlinePainter = FlatOutlinePainter()
     )
 
     // add an overlay painter to paint a drop shadow along the top edge of toolbars

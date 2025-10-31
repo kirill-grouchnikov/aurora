@@ -175,6 +175,15 @@ private fun twilightSkinColors(): AuroraSkinColors {
 }
 
 fun twilightSkin(): AuroraSkinDefinition {
+    val outlinePainter = InlayOutlinePainter(
+        displayName = "Twilight",
+        outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutline),
+        inner = OutlineSpec(
+            ColorStop(fraction = 0.0f, alpha = 0.125f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+            ColorStop(fraction = 0.5f, alpha = 0.09375f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+            ColorStop(fraction = 1.0f, alpha = 0.09375f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+        )
+    )
     val painters = AuroraPainters(
         decorationPainter = MatteDecorationPainter(),
         surfacePainter = FractionBasedSurfacePainter(
@@ -185,17 +194,9 @@ fun twilightSkin(): AuroraSkinDefinition {
             ColorStop(fraction = 1.0f, colorQuery = ContainerColorTokens::containerSurface),
             displayName = "Twilight"
         ),
+        outlinePainter = outlinePainter,
         highlightSurfacePainter = ClassicSurfacePainter(),
-        outlinePainter = InlayOutlinePainter(
-            displayName = "Twilight",
-            outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutline),
-            inner = OutlineSpec(
-                ColorStop(fraction = 0.0f, alpha = 0.125f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
-                ColorStop(fraction = 0.5f, alpha = 0.09375f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
-                ColorStop(fraction = 1.0f, alpha = 0.09375f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
-            )
-        ),
-        highlightOutlinePainter = FlatOutlinePainter(),
+        highlightOutlinePainter = outlinePainter,
     )
 
     // Add overlay painters to paint drop shadows along the bottom

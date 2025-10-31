@@ -103,6 +103,7 @@ fun moderateSkin(): AuroraSkinDefinition {
         surfacePainter = SpecularRectangularSurfacePainter(base = GlassSurfacePainter(), baseAlpha = 0.5f),
         outlinePainter = FlatOutlinePainter(),
         highlightSurfacePainter = ClassicSurfacePainter(),
+        highlightOutlinePainter = FlatOutlinePainter()
     )
     // add an overlay painter to paint a drop shadow along the top
     // edge of toolbars

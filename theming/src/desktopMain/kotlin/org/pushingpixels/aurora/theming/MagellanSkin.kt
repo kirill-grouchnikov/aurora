@@ -187,6 +187,15 @@ private fun magellanSkinColors(): AuroraSkinColors {
 }
 
 fun magellanSkin(): AuroraSkinDefinition {
+    val outlinePainter = InlayOutlinePainter(
+        displayName = "Magellan",
+        outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutline),
+        inner = OutlineSpec(
+            ColorStop(fraction = 0.0f, alpha = 0.4375f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+            ColorStop(fraction = 0.5f, alpha = 0.3125f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+            ColorStop(fraction = 1.0f, alpha = 0.25f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+        )
+    )
     val painters = AuroraPainters(
         decorationPainter = MatteDecorationPainter(),
         surfacePainter = FractionBasedSurfacePainter(
@@ -206,16 +215,9 @@ fun magellanSkin(): AuroraSkinDefinition {
             }),
             displayName = "Magellan"
         ),
-        outlinePainter = InlayOutlinePainter(
-            displayName = "Magellan",
-            outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutline),
-            inner = OutlineSpec(
-                ColorStop(fraction = 0.0f, alpha = 0.4375f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
-                ColorStop(fraction = 0.5f, alpha = 0.3125f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
-                ColorStop(fraction = 1.0f, alpha = 0.25f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
-            )
-        ),
-        highlightSurfacePainter = ClassicSurfacePainter()
+        outlinePainter = outlinePainter,
+        highlightSurfacePainter = ClassicSurfacePainter(),
+        highlightOutlinePainter = outlinePainter
     )
 
     // add overlay painter to paint drop shadows along the bottom

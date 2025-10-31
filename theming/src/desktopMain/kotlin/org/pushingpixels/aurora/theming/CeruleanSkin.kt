@@ -129,6 +129,7 @@ fun ceruleanSkin(): AuroraSkinDefinition {
         surfacePainter = SpecularRectangularSurfacePainter(base = ClassicSurfacePainter(), baseAlpha = 0.5f),
         outlinePainter = FlatOutlinePainter(),
         highlightSurfacePainter = GlassSurfacePainter(),
+        highlightOutlinePainter = FlatOutlinePainter()
     )
 
     // Add an overlay painter to paint a drop shadow along the top

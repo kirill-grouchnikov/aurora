@@ -73,19 +73,20 @@ private fun cremeBaseSkinColors(accentContainerColorTokens: AccentContainerColor
 }
 
 private fun cremeBasePainters(): AuroraPainters {
+    val outlinePainter = InlayOutlinePainter(
+        displayName = "Creme",
+        outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutline),
+        inner = OutlineSpec(
+            ColorStop(fraction = 0.0f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+            ColorStop(fraction = 1.0f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+        )
+    )
     val painters = AuroraPainters(
         decorationPainter = ArcDecorationPainter(),
         surfacePainter = SpecularRectangularSurfacePainter(MatteSurfacePainter(), 0.5f),
-        outlinePainter = InlayOutlinePainter(
-            displayName = "Creme",
-            outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutline),
-            inner = OutlineSpec(
-                ColorStop(fraction = 0.0f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
-                ColorStop(fraction = 1.0f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
-            )
-        ),
+        outlinePainter = outlinePainter,
         highlightSurfacePainter = MatteSurfacePainter(),
-        highlightOutlinePainter = FlatOutlinePainter(),
+        highlightOutlinePainter = outlinePainter
     )
 
     // Add overlay painters to paint drop shadows along the bottom edges of toolbars

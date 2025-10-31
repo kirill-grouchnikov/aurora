@@ -28,7 +28,7 @@ data class AuroraPainters(
     val surfacePainter: AuroraSurfacePainter,
     val outlinePainter: AuroraOutlinePainter,
     val highlightSurfacePainter: AuroraSurfacePainter,
-    val highlightOutlinePainter: AuroraOutlinePainter = FlatOutlinePainter(),
+    val highlightOutlinePainter: AuroraOutlinePainter,
     val overlayPaintersMap: MutableMap<DecorationAreaType, MutableList<AuroraOverlayPainter>> = hashMapOf()
 ) {
     /**

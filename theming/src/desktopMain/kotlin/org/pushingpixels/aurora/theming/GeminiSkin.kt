@@ -23,7 +23,6 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.ColorStop
-import org.pushingpixels.aurora.theming.painter.border.FractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
@@ -236,13 +235,6 @@ private fun geminiSkinColors(): AuroraSkinColors {
 }
 
 fun geminiSkin(): AuroraSkinDefinition {
-    val outerBorderPainter = FractionBasedBorderPainter(
-        0.0f to { it.ultraDarkColor },
-        0.5f to { it.ultraDarkColor },
-        1.0f to { it.ultraDarkColor },
-        displayName = "Gemini Outer"
-    )
-
     val painters = AuroraPainters(
         decorationPainter = MatteDecorationPainter(),
         surfacePainter = FractionBasedSurfacePainter(

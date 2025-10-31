@@ -96,6 +96,14 @@ private fun nightShadeSkinColors(): AuroraSkinColors {
 }
 
 fun nightShadeSkin(): AuroraSkinDefinition {
+    val outlinePainter = InlayOutlinePainter(
+        displayName = "Night Shade",
+        outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutline),
+        inner = OutlineSpec(
+            ColorStop(fraction = 0.0f, alpha = 0.125f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+            ColorStop(fraction = 1.0f, alpha = 0.046875f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+        )
+    )
     val painters = AuroraPainters(
         decorationPainter = MatteDecorationPainter(),
         surfacePainter = FractionBasedSurfacePainter(
@@ -104,16 +112,9 @@ fun nightShadeSkin(): AuroraSkinDefinition {
             ColorStop(fraction = 1.0f, colorQuery = ContainerColorTokens::containerSurface),
             displayName = "Night Shade"
         ),
+        outlinePainter = outlinePainter,
         highlightSurfacePainter = MatteSurfacePainter(),
-        outlinePainter = InlayOutlinePainter(
-            displayName = "Night Shade",
-            outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutline),
-            inner = OutlineSpec(
-                ColorStop(fraction = 0.0f, alpha = 0.125f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
-                ColorStop(fraction = 1.0f, alpha = 0.046875f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
-            )
-        ),
-        highlightOutlinePainter = FlatOutlinePainter(),
+        highlightOutlinePainter = outlinePainter,
     )
 
     // Add overlay painters to paint drop shadows along the bottom
