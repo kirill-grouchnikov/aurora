@@ -22,7 +22,7 @@ import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.ComponentState
 import org.pushingpixels.aurora.theming.ContainerColorTokensAssociationKind
 import org.pushingpixels.aurora.theming.DecorationAreaType
-import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 

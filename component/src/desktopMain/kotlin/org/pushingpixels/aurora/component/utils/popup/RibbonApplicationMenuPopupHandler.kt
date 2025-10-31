@@ -46,7 +46,7 @@ import org.pushingpixels.aurora.component.utils.TitleLabel
 import org.pushingpixels.aurora.component.utils.appmenu.CommandButtonLayoutManagerAppMenuLevel2
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import java.awt.*
 import java.awt.geom.Rectangle2D
 import javax.swing.JPopupMenu

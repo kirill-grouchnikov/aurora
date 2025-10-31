@@ -16,7 +16,7 @@
 package org.pushingpixels.aurora.theming
 
 import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.ColorStop

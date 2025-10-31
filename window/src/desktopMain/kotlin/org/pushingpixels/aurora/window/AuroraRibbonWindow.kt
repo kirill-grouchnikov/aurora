@@ -55,8 +55,8 @@ import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.ribbon.Ribbon
 import org.pushingpixels.aurora.component.ribbon.RibbonTask
 import org.pushingpixels.aurora.component.ribbon.impl.*
-import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
+import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
@@ -101,10 +101,9 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneMainContent(
     val skinColors = AuroraSkin.colors
     val showsIcon = (icon != null)
 
-    val contextualTaskGroupSeparatorScheme = AuroraSkin.colors.getColorScheme(
+    val contextualTaskGroupSeparatorTokens = AuroraSkin.colors.getNeutralContainerTokens(
         decorationAreaType = AuroraSkin.decorationAreaType,
-        associationKind = ColorSchemeAssociationKind.Separator,
-        componentState = ComponentState.Enabled
+        associationKind = ContainerColorTokensAssociationKind.Separator,
     )
 
     // Layout info for the contextual task groups is one frame behind, so we need to test
@@ -185,11 +184,17 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneMainContent(
                                     strokeWidth = 1.5f * density
                                 )
 
+                                val separatorPrimaryColor = if (contextualTaskGroupSeparatorTokens.isDark) {
+                                    contextualTaskGroupSeparatorTokens.complementaryContainerOutline.withAlpha(0.28125f)
+                                } else {
+                                    contextualTaskGroupSeparatorTokens.containerOutline.withAlpha(0.375f)
+                                }
+
                                 // Vertical separators along the left and right edges
                                 val separatorBrush = Brush.verticalGradient(
-                                    0.0f to contextualTaskGroupSeparatorScheme.separatorPrimaryColor.withAlpha(0.0f),
-                                    size.height / 3.0f to contextualTaskGroupSeparatorScheme.separatorPrimaryColor,
-                                    1.0f to contextualTaskGroupSeparatorScheme.separatorPrimaryColor,
+                                    0.0f to separatorPrimaryColor.withAlpha(0.0f),
+                                    size.height / 3.0f to separatorPrimaryColor,
+                                    1.0f to separatorPrimaryColor,
                                     startY = 0.0f,
                                     endY = size.height + 1,
                                     tileMode = TileMode.Repeated

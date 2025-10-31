@@ -48,7 +48,7 @@ import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper

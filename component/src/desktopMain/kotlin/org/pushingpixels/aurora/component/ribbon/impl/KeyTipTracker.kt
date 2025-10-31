@@ -50,7 +50,7 @@ import org.pushingpixels.aurora.component.ribbon.Ribbon
 import org.pushingpixels.aurora.theming.utils.paintOutline
 import org.pushingpixels.aurora.theming.utils.paintSurface
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.painter.outline.InsetKind
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper

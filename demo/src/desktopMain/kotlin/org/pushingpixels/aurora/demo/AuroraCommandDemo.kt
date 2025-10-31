@@ -1041,15 +1041,16 @@ fun AuroraWindowScope.DemoCommandContent(
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
                     ),
+                    // TODO - add color token overlays
                     secondaryOverlays = hashMapOf(
-                        customSecondary3 to BaseCommandButtonPresentationModel.Overlay(
-                            colorSchemeBundle = generateColorSchemeBundle(
-                                active = SunfireRedColorScheme(),
-                                enabled = AuroraSkin.colors.getEnabledColorScheme(DecorationAreaType.None),
-                                foregroundSourceActive = { Color.White },
-                                foregroundSourceEnabled = null
-                            )
-                        )
+//                        customSecondary3 to BaseCommandButtonPresentationModel.Overlay(
+//                            colorSchemeBundle = generateColorSchemeBundle(
+//                                active = SunfireRedColorScheme(),
+//                                enabled = AuroraSkin.colors.getEnabledColorScheme(DecorationAreaType.None),
+//                                foregroundSourceActive = { Color.White },
+//                                foregroundSourceEnabled = null
+//                            )
+//                        )
                     )
                 ).project()
             }

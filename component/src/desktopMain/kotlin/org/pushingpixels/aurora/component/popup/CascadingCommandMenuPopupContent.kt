@@ -35,7 +35,7 @@ import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonKeyTipChainRoot
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import java.awt.*
 import java.awt.geom.Rectangle2D
 import javax.swing.JPopupMenu

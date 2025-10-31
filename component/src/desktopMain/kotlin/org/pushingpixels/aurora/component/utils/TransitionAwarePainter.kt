@@ -26,7 +26,7 @@ import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.ContainerColorTokensAssociationKind
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.ModelStateInfoSnapshot
-import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens

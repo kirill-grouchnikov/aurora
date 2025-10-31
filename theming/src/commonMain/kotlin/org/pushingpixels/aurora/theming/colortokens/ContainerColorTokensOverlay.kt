@@ -21,7 +21,6 @@ import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.ComponentState
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.SystemContainerType
-import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.utils.getPressedSelectedTokens
 import org.pushingpixels.aurora.theming.utils.getPressedUnselectedTokens
 import org.pushingpixels.aurora.theming.utils.getRolloverSelectedTokens

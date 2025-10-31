@@ -56,7 +56,7 @@ import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.impl.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.painter.outline.InsetKind
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier

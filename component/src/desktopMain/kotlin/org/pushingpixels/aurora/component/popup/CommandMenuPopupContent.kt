@@ -37,7 +37,7 @@ import org.pushingpixels.aurora.theming.AuroraPainters
 import org.pushingpixels.aurora.theming.AuroraSkin
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
-import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import java.awt.Component
 import java.awt.Rectangle

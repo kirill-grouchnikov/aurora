@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.toArgb
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
-import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.ColorStop

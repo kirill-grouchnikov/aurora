@@ -192,11 +192,14 @@ fun main() = auroraApplication {
             val commandMf = MessageFormat(resourceBundle.getString("Group.entrySimple"))
             Box(modifier = Modifier.fillMaxSize().padding(6.dp)) {
                 val itemsList = (0 until itemCount).toList()
-                val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
-                    decorationAreaType = AuroraSkin.decorationAreaType
-                )
-                val backgroundEvenRows = backgroundColorScheme.backgroundFillColor
-                val backgroundOddRows = backgroundColorScheme.accentedBackgroundFillColor
+                val backgroundColorTokens = AuroraSkin.colors.getNeutralContainerTokens(
+                    decorationAreaType = AuroraSkin.decorationAreaType)
+                val backgroundEvenRows = backgroundColorTokens.containerSurface
+                val backgroundOddRows = if (backgroundColorTokens.isDark) {
+                    backgroundColorTokens.containerSurfaceHigh
+                } else {
+                    backgroundColorTokens.containerSurfaceLow
+                }
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
                         .padding(end = ScrollBarSizingConstants.DefaultScrollBarThickness),

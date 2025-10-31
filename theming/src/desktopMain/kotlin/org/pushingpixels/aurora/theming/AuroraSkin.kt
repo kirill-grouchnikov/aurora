@@ -20,7 +20,7 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
 import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolver

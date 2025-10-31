@@ -33,7 +33,7 @@ import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.ModelStateInfoSnapshot
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
-import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.utils.ContainerType
 
 internal object ArrowSizingConstants {

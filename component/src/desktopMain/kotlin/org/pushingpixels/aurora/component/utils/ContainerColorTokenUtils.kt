@@ -18,7 +18,7 @@ package org.pushingpixels.aurora.component.utils
 import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
