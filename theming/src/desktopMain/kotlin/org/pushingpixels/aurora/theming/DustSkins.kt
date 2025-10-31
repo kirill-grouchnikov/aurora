@@ -1,7 +1,7 @@
 /*
  * Copyright 2020-2025 Aurora, Kirill Grouchnikov
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -15,9 +15,11 @@
  */
 package org.pushingpixels.aurora.theming
 
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.theming.colorscheme.composite
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
+import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.DelegateFractionBasedBorderPainter
@@ -25,129 +27,99 @@ import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainte
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.MatteFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
+import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
+import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopLineOverlayPainter
+import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
+import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
-import org.pushingpixels.aurora.theming.utils.getColorSchemes
+import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
+import org.pushingpixels.ephemeral.chroma.hct.Hct
 
-private fun dustBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
+private fun dustBaseSkinColors(accentContainerColorTokens: AccentContainerColorTokens): AuroraSkinColors {
     val result = AuroraSkinColors()
-    val schemes = getColorSchemes(
-        AuroraSkin::class.java.getResourceAsStream(
-            "/org/pushingpixels/aurora/theming/dust.colorschemes"
-        )
-    )
 
-    val activeControlsAccent = accentBuilder.activeControlsAccent!!
-    val enabledControlsAccent = accentBuilder.enabledControlsAccent!!
-
-    val defaultSchemeBundle = AuroraColorSchemeBundle(
-        activeControlsAccent, enabledControlsAccent, enabledControlsAccent
-    )
-    defaultSchemeBundle.registerAlpha(
-        0.5f,
-        ComponentState.DisabledUnselected, ComponentState.DisabledSelected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        enabledControlsAccent,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        activeControlsAccent,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected
-    )
-
-    // borders and marks
-    val borderEnabledScheme = schemes["Dust Border Enabled"]
-    val borderActiveScheme = schemes["Dust Border Active"]
-    val markEnabledScheme = schemes["Dust Mark Enabled"]
-
-    defaultSchemeBundle.registerColorScheme(
-        borderEnabledScheme,
-        ColorSchemeAssociationKind.Border, ComponentState.Enabled,
-        ComponentState.DisabledSelected, ComponentState.DisabledUnselected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        borderActiveScheme,
-        ColorSchemeAssociationKind.Border, *ComponentState.activeStates
-    )
-    defaultSchemeBundle.registerColorScheme(
-        markEnabledScheme,
-        ColorSchemeAssociationKind.Mark
-    )
-
-    // text highlight
-    defaultSchemeBundle.registerColorScheme(
-        accentBuilder.highlightsAccent!!,
-        ColorSchemeAssociationKind.HighlightText,
-        ComponentState.Selected, ComponentState.RolloverSelected
-    )
-
-    // custom highlight alphas
-    defaultSchemeBundle.registerHighlightAlpha(0.6f, ComponentState.RolloverUnselected)
-    defaultSchemeBundle.registerHighlightAlpha(0.8f, ComponentState.Selected)
-    defaultSchemeBundle.registerHighlightAlpha(1.0f, ComponentState.RolloverSelected)
-    defaultSchemeBundle.registerHighlightColorScheme(
-        accentBuilder.highlightsAccent!!,
+    val dustDefaultBundle = ContainerColorTokensBundle(
+        activeContainerTokens = accentContainerColorTokens.defaultAreaActiveTokens!!,
+        mutedContainerTokens = accentContainerColorTokens.defaultAreaMutedTokens!!,
+        neutralContainerTokens = accentContainerColorTokens.defaultAreaNeutralTokens!!,
+        isSystemDark = false)
+    dustDefaultBundle.registerActiveContainerTokens(
+        colorTokens = accentContainerColorTokens.defaultAreaSelectedTokens!!,
+        associationKind = ContainerColorTokensAssociationKind.Default,
+        ComponentState.Selected)
+    dustDefaultBundle.registerActiveContainerTokens(
+        colorTokens = accentContainerColorTokens.defaultAreaHighlightTokens!!,
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
         ComponentState.RolloverUnselected, ComponentState.Selected,
-        ComponentState.RolloverSelected
-    )
+        ComponentState.RolloverSelected)
+    dustDefaultBundle.registerActiveContainerTokens(
+        colorTokens = accentContainerColorTokens.defaultAreaHighlightTokens,
+        associationKind = ContainerColorTokensAssociationKind.HighlightText,
+        ComponentState.Selected, ComponentState.RolloverSelected)
+    result.registerDecorationAreaTokensBundle(dustDefaultBundle, DecorationAreaType.None)
 
-    result.registerDecorationAreaSchemeBundle(
-        defaultSchemeBundle, accentBuilder.backgroundAccent!!,
-        DecorationAreaType.None
-    )
+    val dustHeaderBundle = ContainerColorTokensBundle(
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF5E3D2Bu.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.4)),
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF3C3B37u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.4)),
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF2B2A28u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.2)),
+        isSystemDark = true)
+    dustHeaderBundle.registerActiveContainerTokens(
+        colorTokens = accentContainerColorTokens.headerAreaHighlightTokens!!,
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        ComponentState.RolloverUnselected, ComponentState.Selected,
+        ComponentState.RolloverSelected)
+    result.registerDecorationAreaTokensBundle(dustHeaderBundle,
+        DecorationAreaType.TitlePane, DecorationAreaType.Header, DecorationAreaType.Footer)
 
-    // header color scheme bundle
-    val headerActiveScheme = schemes["Dust Header Active"]
-    val headerEnabledScheme = schemes["Dust Header Enabled"]
-    val headerDisabledScheme = schemes["Dust Header Disabled"]
-
-    val headerBackgroundScheme = schemes["Dust Header Background"]
-    val headerSeparatorScheme = schemes["Dust Header Separator"]
-    val headerBorderScheme = schemes["Dust Header Border"]
-
-    val headerSchemeBundle = AuroraColorSchemeBundle(
-        headerActiveScheme, headerEnabledScheme, headerDisabledScheme
-    )
-    headerSchemeBundle.registerAlpha(
-        0.7f,
-        ComponentState.DisabledUnselected, ComponentState.DisabledSelected
-    )
-    headerSchemeBundle.registerColorScheme(
-        headerDisabledScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected, ComponentState.DisabledSelected
-    )
-
-    headerSchemeBundle.registerColorScheme(
-        headerBorderScheme,
-        ColorSchemeAssociationKind.Border
-    )
-    headerSchemeBundle.registerColorScheme(
-        headerSeparatorScheme,
-        ColorSchemeAssociationKind.Separator
-    )
-
-    headerSchemeBundle.registerHighlightAlpha(1.0f)
-    headerSchemeBundle.registerHighlightColorScheme(headerActiveScheme)
-    // the next line is to have consistent coloring during the rollover menu animations
-    headerSchemeBundle.registerHighlightAlpha(0.0f, ComponentState.Enabled)
-
-    result.registerDecorationAreaSchemeBundle(headerSchemeBundle, DecorationAreaType.Toolbar)
-
-    result.registerDecorationAreaSchemeBundle(
-        headerSchemeBundle, headerBackgroundScheme,
-        DecorationAreaType.TitlePane,
-        DecorationAreaType.Header, DecorationAreaType.Footer
-    )
+    val dustToolbarBundle = ContainerColorTokensBundle(
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF5E3D2Bu.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.4)),
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF3C3B37u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.4)),
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF3A3935u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark()),
+        isSystemDark = true)
+    dustToolbarBundle.registerActiveContainerTokens(
+        colorTokens = accentContainerColorTokens.headerAreaHighlightTokens,
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        ComponentState.RolloverUnselected, ComponentState.Selected,
+        ComponentState.RolloverSelected)
+    result.registerDecorationAreaTokensBundle(dustToolbarBundle, DecorationAreaType.Toolbar)
 
     return result
 }
 
 private fun dustBasePainters(): AuroraPainters {
+    val outlinePainter = InlayOutlinePainter(
+        displayName = "Dust",
+        outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutline),
+        inner = OutlineSpec(
+            ColorStop(fraction = 0.0f, alpha = 0.25f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+            ColorStop(fraction = 1.0f, alpha = 0.25f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+        )
+    )
     val painters = AuroraPainters(
         fillPainter = SpecularRectangularFillPainter(MatteFillPainter(), 0.8f),
         borderPainter = CompositeBorderPainter(
@@ -166,55 +138,88 @@ private fun dustBasePainters(): AuroraPainters {
                 }
             )),
         decorationPainter = MatteDecorationPainter(),
-        highlightFillPainter = ClassicFillPainter()
+        highlightFillPainter = ClassicFillPainter(),
+        surfacePainter = SpecularRectangularSurfacePainter(MatteSurfacePainter(), 0.3f),
+        outlinePainter = outlinePainter,
+        highlightSurfacePainter = MatteSurfacePainter(),
+        highlightOutlinePainter = outlinePainter,
     )
 
     // add two overlay painters to create a bezel line between menu bar and toolbars
-//    painters.addOverlayPainter(
-//        BottomLineOverlayPainter(
-//            composite(
-//                { it.ultraDarkColor },
-//                ColorTransforms.brightness(-0.5f)
-//            )
-//        ), DecorationAreaType.Header
-//    )
-//    painters.addOverlayPainter(TopLineOverlayPainter(
-//        composite(
-//            { it.foregroundColor },
-//            ColorTransforms.alpha(0.125f)
-//        )
-//    ), DecorationAreaType.Toolbar)
+    painters.addOverlayPainter(
+        BottomLineOverlayPainter( { it.containerOutline } ),
+        DecorationAreaType.Header
+    )
+    painters.addOverlayPainter(
+        TopLineOverlayPainter( { it.inverseContainerOutline.withAlpha(0.375f) } ),
+        DecorationAreaType.Toolbar)
 
     return painters
 }
 
 fun dustSkin(): AuroraSkinDefinition {
+    val accentContainerColorTokens = AccentContainerColorTokens(
+        defaultAreaActiveTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFADA59Au.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        defaultAreaMutedTokens= getContainerTokens(
+            seed = Hct.fromInt(0xFFE5E2DBu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        defaultAreaNeutralTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFEAE7E2u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        defaultAreaSelectedTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFAE9B7Au.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        defaultAreaHighlightTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFB7A78Eu.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ 0.3)),
+        headerAreaHighlightTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF5E4436u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.3)),
+    )
+
     return AuroraSkinDefinition(
         displayName = "Dust",
-        colors = dustBaseSkinColors(
-            AccentBuilder()
-                .withAccentResource("/org/pushingpixels/aurora/theming/dust.colorschemes")
-                .withActiveControlsAccent("Dust Active")
-                .withEnabledControlsAccent("Dust Enabled")
-                .withBackgroundAccent("Dust Enabled")
-                .withHighlightsAccent("Dust Highlight")
-        ),
+        colors = dustBaseSkinColors(accentContainerColorTokens),
         painters = dustBasePainters(),
         buttonShaper = ClassicButtonShaper(),
     )
 }
 
 fun dustCoffeeSkin(): AuroraSkinDefinition {
+    val accentContainerColorTokens = AccentContainerColorTokens(
+        defaultAreaActiveTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFDDC49Cu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        defaultAreaMutedTokens= getContainerTokens(
+            seed = Hct.fromInt(0xFFDBCFADu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        defaultAreaNeutralTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFE9D9B8u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        defaultAreaSelectedTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFDEBD7Du.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        defaultAreaHighlightTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFD0B18Bu.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ 0.3)),
+        headerAreaHighlightTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF5E4436u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ true,
+                /* contrastLevel */ 0.3)),
+    )
+
     return AuroraSkinDefinition(
         displayName = "Dust Coffee",
-        colors = dustBaseSkinColors(
-            AccentBuilder()
-                .withAccentResource("/org/pushingpixels/aurora/theming/dust.colorschemes")
-                .withActiveControlsAccent("Dust Coffee Active")
-                .withEnabledControlsAccent("Dust Coffee Enabled")
-                .withBackgroundAccent("Dust Coffee Background")
-                .withHighlightsAccent("Dust Coffee Text Highlight")
-        ),
+        colors = dustBaseSkinColors(accentContainerColorTokens),
         painters = dustBasePainters(),
         buttonShaper = ClassicButtonShaper()
     )

@@ -1,7 +1,7 @@
 /*
  * Copyright 2020-2025 Aurora, Kirill Grouchnikov
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -15,112 +15,95 @@
  */
 package org.pushingpixels.aurora.theming
 
-import org.pushingpixels.aurora.theming.colorscheme.*
+import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.border.FlatBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MarbleNoiseDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.SubduedFillPainter
+import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopShadowOverlayPainter
+import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
+import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
-import org.pushingpixels.aurora.theming.utils.getColorSchemes
+import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
+import org.pushingpixels.ephemeral.chroma.hct.Hct
 
-private fun nebulaBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
+private fun nebulaBaseSkinColors(accentContainerColorTokens: AccentContainerColorTokens): AuroraSkinColors {
     val result = AuroraSkinColors()
-    val schemes = getColorSchemes(
-        AuroraSkin::class.java.getResourceAsStream(
-            "/org/pushingpixels/aurora/theming/nebula.colorschemes"
-        )
-    )
 
-    val activeScheme = schemes["Nebula Active"]
-    val enabledScheme = schemes["Nebula Enabled"]
-    val rolloverUnselectedScheme = schemes["Nebula Rollover Unselected"]
-    val pressedScheme = schemes["Nebula Pressed"]
-    val rolloverSelectedScheme = schemes["Nebula Rollover Selected"]
-    val disabledScheme = schemes["Nebula Disabled"]
+    val nebulaDefaultBundle = ContainerColorTokensBundle(
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFBAD2E3u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFD7DBE1u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFF3F7FDu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        isSystemDark = false)
 
-    val defaultSchemeBundle = AuroraColorSchemeBundle(
-        activeScheme, enabledScheme, disabledScheme
-    )
-    defaultSchemeBundle.registerColorScheme(
-        rolloverUnselectedScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.RolloverUnselected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        rolloverSelectedScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.RolloverSelected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        pressedScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.PressedSelected, ComponentState.PressedUnselected
-    )
+    val nebulaRolloverHighlightContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFF6B92AFu.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultDark())
+    val nebulaPressedContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFF276792u.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultDark())
+    val nebulaSelectedHighlightContainerTokens =
+        getContainerTokens(
+            seed = Hct.fromInt(0xFF5B85A6u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark())
+    val nebulaDeterminateContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFD2852Fu.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultDark())
 
-    defaultSchemeBundle.registerColorScheme(
-        rolloverUnselectedScheme,
-        ColorSchemeAssociationKind.Border, ComponentState.Selected
-    )
+    nebulaDefaultBundle.registerActiveContainerTokens(
+        colorTokens = nebulaPressedContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Default,
+        ComponentState.PressedSelected, ComponentState.PressedUnselected)
 
-    defaultSchemeBundle.registerHighlightAlpha(0.6f, ComponentState.RolloverUnselected)
-    defaultSchemeBundle.registerHighlightAlpha(0.8f, ComponentState.Selected)
-    defaultSchemeBundle.registerHighlightAlpha(0.95f, ComponentState.RolloverSelected)
-    defaultSchemeBundle.registerHighlightColorScheme(
-        pressedScheme, ComponentState.RolloverUnselected,
-        ComponentState.Selected, ComponentState.RolloverSelected
-    )
+    // Highlights
+    nebulaDefaultBundle.registerActiveContainerTokens(
+        colorTokens = nebulaRolloverHighlightContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        ComponentState.RolloverSelected, ComponentState.RolloverUnselected)
+    nebulaDefaultBundle.registerActiveContainerTokens(
+        colorTokens = nebulaSelectedHighlightContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        ComponentState.Selected)
 
-    // for progress bars
-    val determinateScheme = schemes["Nebula Determinate"]
-    val determinateBorderScheme = schemes["Nebula Determinate Border"]
-    defaultSchemeBundle.registerColorScheme(
-        determinateScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.Determinate, ComponentState.Indeterminate
-    )
-    defaultSchemeBundle.registerColorScheme(
-        determinateBorderScheme,
-        ColorSchemeAssociationKind.Border,
-        ComponentState.Determinate, ComponentState.Indeterminate
-    )
+    // Progress bars
+    nebulaDefaultBundle.registerActiveContainerTokens(
+        colorTokens = nebulaDeterminateContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Default,
+        ComponentState.Determinate, ComponentState.Indeterminate)
 
-    val determinateDisabledScheme = schemes["Nebula Determinate Disabled"]
-    val determinateDisabledBorderScheme = schemes["Nebula Determinate Disabled Border"]
-    defaultSchemeBundle.registerColorScheme(
-        determinateDisabledScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledDeterminate, ComponentState.DisabledIndeterminate
-    )
-    defaultSchemeBundle.registerColorScheme(
-        determinateDisabledBorderScheme,
-        ColorSchemeAssociationKind.Border,
-        ComponentState.DisabledDeterminate, ComponentState.DisabledIndeterminate
-    )
+    result.registerDecorationAreaTokensBundle(nebulaDefaultBundle, DecorationAreaType.None)
 
-    result.registerDecorationAreaSchemeBundle(
-        defaultSchemeBundle, DecorationAreaType.None
-    )
+    val nebulaDecorationsColorTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFC2D1DAu.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultLight())
+    result.registerAsDecorationArea(nebulaDecorationsColorTokens,
+        DecorationAreaType.ControlPane, DecorationAreaType.Footer)
 
-    result.registerAsDecorationArea(
-        backgroundColorScheme = schemes["Nebula Decorations"],
-        noneTransformationOverlay = { bundle ->
-            bundle.registerColorScheme(
-                schemes["Nebula Decorations Separator"],
-                ColorSchemeAssociationKind.Separator
-            )
-        },
-        areaTypes = arrayOf(DecorationAreaType.Footer, DecorationAreaType.ControlPane)
-    )
-
-    result.registerAsDecorationArea(
-        accentBuilder.windowChromeAccent!!,
-        DecorationAreaType.TitlePane, DecorationAreaType.Header
-    )
+    val nebulaHeaderBundle = ContainerColorTokensBundle(
+        activeContainerTokens = accentContainerColorTokens.headerAreaActiveTokens!!,
+        mutedContainerTokens = accentContainerColorTokens.headerAreaMutedTokens!!,
+        neutralContainerTokens = accentContainerColorTokens.headerAreaNeutralTokens!!,
+        isSystemDark = false)
+    nebulaHeaderBundle.registerActiveContainerTokens(
+        colorTokens = nebulaRolloverHighlightContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        activeStates = ComponentState.activeStates)
+    result.registerDecorationAreaTokensBundle(nebulaHeaderBundle,
+        DecorationAreaType.TitlePane, DecorationAreaType.Header)
 
     return result
 }
@@ -133,7 +116,11 @@ private fun nebulaBasePainters(): AuroraPainters {
             textureAlpha = 0.2f,
             baseDecorationPainter = ArcDecorationPainter()
         ),
-        highlightFillPainter = ClassicFillPainter()
+        highlightFillPainter = ClassicFillPainter(),
+        surfacePainter = SpecularRectangularSurfacePainter(ClassicSurfacePainter(), 1.0f),
+        outlinePainter = FlatOutlinePainter(),
+        highlightSurfacePainter = MatteSurfacePainter(),
+        highlightOutlinePainter = FlatOutlinePainter(),
     )
 
     // add an overlay painter to paint a drop shadow along the top edge of toolbars
@@ -144,65 +131,75 @@ private fun nebulaBasePainters(): AuroraPainters {
 
     // add an overlay painter to paint separator lines along the bottom
     // edges of title panes and menu bars
-//    painters.addOverlayPainter(
-//        BottomLineOverlayPainter(
-//            composite({ it.darkColor }, ColorTransforms.alpha(0.625f))
-//        ),
-//        DecorationAreaType.TitlePane, DecorationAreaType.Header
-//    )
+    painters.addOverlayPainter(
+        BottomLineOverlayPainter( { it.containerOutline } ),
+        DecorationAreaType.TitlePane, DecorationAreaType.Header
+    )
 
     return painters
 }
 
 fun nebulaSkin(): AuroraSkinDefinition {
+    val accentContainerColorTokens = AccentContainerColorTokens(
+        headerAreaActiveTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFD9E8EDu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        headerAreaMutedTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFD6E3EEu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        headerAreaNeutralTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFD6E3EEu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+    )
     return AuroraSkinDefinition(
         displayName = "Nebula",
-        colors = nebulaBaseSkinColors(
-            AccentBuilder()
-                .withAccentResource("/org/pushingpixels/aurora/theming/nebula.colorschemes")
-                .withWindowChromeAccent("Nebula Decorations")
-        ),
+        colors = nebulaBaseSkinColors(accentContainerColorTokens),
         painters = nebulaBasePainters(),
         buttonShaper = ClassicButtonShaper()
     )
 }
 
 fun nebulaAmethystSkin(): AuroraSkinDefinition {
-    val accentBuilder = AccentBuilder()
-        .withAccentResource("/org/pushingpixels/aurora/theming/nebula.colorschemes")
-        .withWindowChromeAccent(PurpleColorScheme())
+    val accentContainerColorTokens = AccentContainerColorTokens(
+        headerAreaActiveTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFC2A9EFu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        headerAreaMutedTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFD1A9F1u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        headerAreaNeutralTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFD1A9F1u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+    )
 
     return AuroraSkinDefinition(
         displayName = "Nebula Amethyst",
-        colors = nebulaBaseSkinColors(
-            AccentBuilder().withWindowChromeAccent(PurpleColorScheme())
-        ).also {
-            val windowChromeAccent = accentBuilder.windowChromeAccent!!
-            val windowChromeDisabled =
-                accentBuilder.getColorScheme("Nebula Amethyst Title Disabled")!!
-            val toolbarBundle = AuroraColorSchemeBundle(
-                windowChromeAccent.saturate(0.1f), windowChromeAccent, windowChromeDisabled
-            )
-            toolbarBundle.registerAlpha(
-                0.8f, ComponentState.DisabledSelected,
-                ComponentState.DisabledUnselected
-            )
-            toolbarBundle.registerColorScheme(
-                windowChromeAccent.saturate(0.08f),
-                ColorSchemeAssociationKind.Separator
-            )
-            it.registerDecorationAreaSchemeBundle(toolbarBundle, DecorationAreaType.Toolbar)
+        colors = nebulaBaseSkinColors(accentContainerColorTokens).also {
+            // Also extend the window chrome accent color to the TOOLBAR area
+            val nebulaAmethystToolbarBundle = ContainerColorTokensBundle(
+                activeContainerTokens = getContainerTokens(
+                    seed = Hct.fromInt(0xFFD264EBu.toInt()),
+                    containerConfiguration = ContainerConfiguration.defaultLight()),
+                 mutedContainerTokens = accentContainerColorTokens.headerAreaMutedTokens!!,
+                 neutralContainerTokens = accentContainerColorTokens.headerAreaNeutralTokens!!,
+                 isSystemDark = false)
+            nebulaAmethystToolbarBundle.registerNeutralContainerTokens(getContainerTokens(
+                seed = Hct.fromInt(0xFFD1A9F1u.toInt()),
+                containerConfiguration = ContainerConfiguration(
+                    /* isDark */ false,
+                    /* contrastLevel */ -1.0)),
+                ContainerColorTokensAssociationKind.Separator)
+            it.registerDecorationAreaTokensBundle(nebulaAmethystToolbarBundle,
+                DecorationAreaType.Toolbar)
         },
         painters = nebulaBasePainters().also { painters ->
             // Clear the top shadow painter on the toolbars and add combined
             // separator + drop shadow along the toolbar bottom
             painters.clearOverlayPainters(DecorationAreaType.Toolbar)
             painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.Toolbar)
-//            painters.addOverlayPainter(
-//                BottomLineOverlayPainter(
-//                    composite({ it.darkColor }, ColorTransforms.alpha(0.625f))
-//                ), DecorationAreaType.Toolbar
-//            )
+            painters.addOverlayPainter(
+                BottomLineOverlayPainter({ it.containerOutline }), DecorationAreaType.Toolbar
+            )
 
         },
         buttonShaper = ClassicButtonShaper()
@@ -210,11 +207,20 @@ fun nebulaAmethystSkin(): AuroraSkinDefinition {
 }
 
 fun nebulaBrickWallSkin(): AuroraSkinDefinition {
+    val accentContainerColorTokens = AccentContainerColorTokens(
+        headerAreaActiveTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFFBAC23u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        headerAreaMutedTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFF6C272u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        headerAreaNeutralTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFF6C272u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+    )
     return AuroraSkinDefinition(
         displayName = "Nebula Brick Wall",
-        colors = nebulaBaseSkinColors(
-            AccentBuilder().withWindowChromeAccent(OrangeColorScheme())
-        ),
+        colors = nebulaBaseSkinColors(accentContainerColorTokens),
         painters = nebulaBasePainters(),
         buttonShaper = ClassicButtonShaper()
     )

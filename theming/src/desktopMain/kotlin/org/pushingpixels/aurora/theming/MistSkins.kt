@@ -15,72 +15,56 @@
  */
 package org.pushingpixels.aurora.theming
 
-import org.pushingpixels.aurora.theming.colorscheme.AquaColorScheme
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.MatteFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
+import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
+import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
+import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.shaper.PillButtonShaper
-import org.pushingpixels.aurora.theming.utils.getColorSchemes
+import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
+import org.pushingpixels.ephemeral.chroma.hct.Hct
 
-private fun mistBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
+private fun mistBaseSkinColors(accentContainerColorTokens: AccentContainerColorTokens): AuroraSkinColors {
     val result = AuroraSkinColors()
-    val schemes = getColorSchemes(
-        AuroraSkin::class.java.getResourceAsStream(
-            "/org/pushingpixels/aurora/theming/mist.colorschemes"
-        )
-    )
-
-    val enabledScheme = schemes["Mist Enabled"]
-    val disabledScheme = schemes["Mist Disabled"]
-
-    val defaultSchemeBundle = AuroraColorSchemeBundle(
-        accentBuilder.activeControlsAccent!!, enabledScheme, disabledScheme
-    )
-    defaultSchemeBundle.registerColorScheme(
-        accentBuilder.highlightsAccent!!,
-        ColorSchemeAssociationKind.HighlightText,
-        ComponentState.Selected, ComponentState.RolloverSelected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        accentBuilder.highlightsAccent!!,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.Selected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        enabledScheme,
-        ColorSchemeAssociationKind.Border, ComponentState.Selected
-    )
-
-    defaultSchemeBundle.registerColorScheme(
-        accentBuilder.activeControlsAccent!!,
-        ColorSchemeAssociationKind.Tab,
-        ComponentState.Selected, ComponentState.RolloverSelected
-    )
-
-    result.registerDecorationAreaSchemeBundle(
-        defaultSchemeBundle,
-        DecorationAreaType.None
-    )
-
-    val controlPaneBackgroundScheme = schemes["Mist Control Pane Background"]
-    result.registerDecorationAreaSchemeBundle(
-        AuroraColorSchemeBundle(
-            accentBuilder.activeControlsAccent!!, enabledScheme, disabledScheme
-        ),
-        controlPaneBackgroundScheme,
-        DecorationAreaType.ControlPane
-    )
+    
+    val mistDefaultBundle = ContainerColorTokensBundle(
+        activeContainerTokens = accentContainerColorTokens.defaultAreaActiveTokens!!,
+        mutedContainerTokens = accentContainerColorTokens.defaultAreaMutedTokens!!,
+        neutralContainerTokens = accentContainerColorTokens.defaultAreaNeutralTokens!!,
+        isSystemDark = false)
+    mistDefaultBundle.registerActiveContainerTokens(
+        colorTokens = accentContainerColorTokens.defaultAreaHighlightTokens!!,
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        ComponentState.RolloverUnselected, ComponentState.Selected,
+        ComponentState.RolloverSelected)
+    mistDefaultBundle.registerActiveContainerTokens(
+        colorTokens = accentContainerColorTokens.defaultAreaHighlightTokens,
+        associationKind = ContainerColorTokensAssociationKind.HighlightText,
+        ComponentState.Selected, ComponentState.RolloverSelected)
+    result.registerDecorationAreaTokensBundle(mistDefaultBundle, DecorationAreaType.None)
 
     result.registerAsDecorationArea(
-        enabledScheme,
-        DecorationAreaType.TitlePane,
-        DecorationAreaType.Header, DecorationAreaType.Footer,
-        DecorationAreaType.Toolbar
-    )
+        getContainerTokens(
+            seed = Hct.fromInt(0xFFB9C0C8u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ 0.4
+            )),
+        DecorationAreaType.TitlePane, DecorationAreaType.Header,
+        DecorationAreaType.Toolbar, DecorationAreaType.Footer)
+
+    result.registerAsDecorationArea(
+        getContainerTokens(
+            seed = Hct.fromInt(0xFFCDD8E0u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        DecorationAreaType.ControlPane)
 
     return result
 }
@@ -90,32 +74,69 @@ private fun mistBasePainters(): AuroraPainters {
         fillPainter = SpecularRectangularFillPainter(MatteFillPainter(), 0.5f),
         borderPainter = ClassicBorderPainter(),
         decorationPainter = MatteDecorationPainter(),
-        highlightFillPainter = ClassicFillPainter()
+        highlightFillPainter = ClassicFillPainter(),
+        surfacePainter = SpecularRectangularSurfacePainter(MatteSurfacePainter(), 0.5f),
+        outlinePainter = FlatOutlinePainter(),
+        highlightSurfacePainter = ClassicSurfacePainter(),
+        highlightOutlinePainter = FlatOutlinePainter(),
     )
 }
 
 fun mistSilverSkin(): AuroraSkinDefinition {
+    val accentContainerColorTokens = AccentContainerColorTokens(
+        defaultAreaActiveTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFD4DEE5u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ 0.6)),
+        defaultAreaMutedTokens= getContainerTokens(
+            seed = Hct.fromInt(0xFFD6D9DDu.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ 0.6)),
+        defaultAreaNeutralTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFEBF0F4u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ 0.6)),
+        defaultAreaHighlightTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFD0B18Bu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+    )
+
     return AuroraSkinDefinition(
         displayName = "Mist Silver",
-        colors = mistBaseSkinColors(
-            AccentBuilder()
-                .withAccentResource("/org/pushingpixels/aurora/theming/mist.colorschemes")
-                .withActiveControlsAccent("Mist Silver Light Blue")
-                .withHighlightsAccent("Mist Silver Light Blue")
-        ),
+        colors = mistBaseSkinColors(accentContainerColorTokens),
         painters = mistBasePainters(),
         buttonShaper = PillButtonShaper()
     )
 }
 
 fun mistAquaSkin(): AuroraSkinDefinition {
+    val accentContainerColorTokens = AccentContainerColorTokens(
+        defaultAreaActiveTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF8ACBE9u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ 0.6)),
+        defaultAreaMutedTokens= getContainerTokens(
+            seed = Hct.fromInt(0xFFD6D9DDu.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ 0.6)),
+        defaultAreaNeutralTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFEBF0F4u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ 0.6)),
+        defaultAreaHighlightTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF8CC7E1u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+    )
+
     return AuroraSkinDefinition(
         displayName = "Mist Aqua",
-        colors = mistBaseSkinColors(
-            AccentBuilder()
-                .withActiveControlsAccent(AquaColorScheme())
-                .withHighlightsAccent(AquaColorScheme())
-        ),
+        colors = mistBaseSkinColors(accentContainerColorTokens),
         painters = mistBasePainters(),
         buttonShaper = PillButtonShaper()
     )
