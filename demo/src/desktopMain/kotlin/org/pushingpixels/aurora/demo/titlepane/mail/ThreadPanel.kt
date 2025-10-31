@@ -30,23 +30,22 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.IconProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.demo.svg.material.*
-import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.AuroraSkin
+import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.theming.auroraBackground
+import org.pushingpixels.aurora.theming.resolveAuroraDefaults
 import org.pushingpixels.aurora.window.AuroraWindowScope
 
 @Composable
 fun AuroraWindowScope.ThreadPanel(modifier: Modifier) {
     Column(modifier = modifier.fillMaxHeight().auroraBackground()) {
-        val fillScheme = AuroraSkin.colors.getColorScheme(
-            AuroraSkin.decorationAreaType, ColorSchemeAssociationKind.Fill,
-            ComponentState.Enabled
-        )
-        val iconColorFilter = ColorFilter.tint(color = fillScheme.foregroundColor.withAlpha(0.8f))
+        val fillTokens = AuroraSkin.colors.getMutedContainerTokens(AuroraSkin.decorationAreaType)
+        val iconColorFilter = ColorFilter.tint(color = fillTokens.onContainerVariant)
 
         // This row is part of the integrated title pane, so we need to wrap it in
         // a WindowDraggableArea
@@ -169,14 +168,11 @@ fun AuroraWindowScope.ThreadPanel(modifier: Modifier) {
 @Composable
 private fun CollapsedMessagePanel(from: String, title: String, timestamp: String) {
     Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 2.dp)) {
-        val fillScheme = AuroraSkin.colors.getColorScheme(
-            AuroraSkin.decorationAreaType,
-            ColorSchemeAssociationKind.Fill, ComponentState.Enabled
-        )
+        val fillTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
         Row(
             modifier = Modifier.fillMaxWidth()
                 .background(
-                    color = fillScheme.ultraLightColor,
+                    color = fillTokens.containerSurfaceHighest,
                     shape = RoundedCornerShape(4.dp)
                 )
                 .padding(vertical = 10.dp),
@@ -223,14 +219,11 @@ private fun ExpandedMessagePanel(
     iconColorFilter: ColorFilter
 ) {
     Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 2.dp)) {
-        val fillScheme = AuroraSkin.colors.getColorScheme(
-            AuroraSkin.decorationAreaType,
-            ColorSchemeAssociationKind.Fill, ComponentState.Enabled
-        )
+        val fillTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
         Column(
             modifier = Modifier.fillMaxWidth()
                 .background(
-                    color = fillScheme.ultraLightColor,
+                    color = fillTokens.containerSurfaceHighest,
                     shape = RoundedCornerShape(4.dp)
                 )
                 .padding(start = 16.dp, end = 16.dp, top = 10.dp, bottom = 16.dp)

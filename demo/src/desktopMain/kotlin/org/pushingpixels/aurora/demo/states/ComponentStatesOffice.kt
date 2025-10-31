@@ -1,7 +1,7 @@
 /*
  * Copyright 2020-2025 Aurora, Kirill Grouchnikov
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
@@ -39,19 +40,29 @@ import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
+import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.DelegateFractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.FractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
+import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
+import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
+import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
+import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
+import org.pushingpixels.aurora.theming.palette.*
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
-import org.pushingpixels.aurora.theming.utils.getColorSchemes
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import org.pushingpixels.aurora.window.auroraApplication
+import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
+import org.pushingpixels.ephemeral.chroma.dynamiccolor.DynamicBimodalPalette
+import org.pushingpixels.ephemeral.chroma.hct.Hct
 
 @Composable
 private fun StateRow(
@@ -95,97 +106,158 @@ private fun StateRow(
 
 private fun officeSkin(): AuroraSkinDefinition {
     val officeColors = AuroraSkinColors()
-    val officeSchemes = getColorSchemes(
-        AuroraSkin::class.java.getResourceAsStream(
-            "/org/pushingpixels/aurora/demo/office2007.colorschemes"
+    
+    val officeSilverDefaultBundle = ContainerColorTokensBundle(
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFC6CACFu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFE6EAEEu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFF2F5F5u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        isSystemDark = false)
+
+    val rolloverContainerTokens =
+        getContainerTokens(
+            seed = Hct.fromInt(0xFFFFD111u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ 0.6),
+            colorResolver = DefaultPaletteColorResolver.overlayWith(
+                TokenPaletteColorResolverOverlay(
+                    containerOutline = { it.containerOutlineVariant },
+                    containerOutlineVariant = { it.containerOutlineVariant },
+                )
+            ))
+    val selectedContainerTokens = getBimodalContainerTokens(
+        seedOne = Hct.fromInt(0xFFFFA300u.toInt()),
+        seedTwo = Hct.fromInt(0xFFFFD007u.toInt()),
+        transitionRange = DynamicBimodalPalette.TransitionRange.TONAL_CONTAINER_SURFACES,
+        fidelityTone = 83.0,
+        containerConfiguration = ContainerConfiguration(
+            /* isDark */ false,
+            /* contrastLevel */ 0.2,
+            /* surfaceRangeAmplitudeFactor */ 1.0),
+        colorResolver = DefaultPaletteColorResolver
+    )
+    val rolloverSelectedContainerTokens = getBimodalContainerTokens(
+        seedOne = Hct.fromInt(0xFFFFA300u.toInt()),
+        seedTwo = Hct.fromInt(0xFFFFD007u.toInt()),
+        transitionRange = DynamicBimodalPalette.TransitionRange.TONAL_CONTAINER_SURFACES,
+        fidelityTone = 79.0,
+        containerConfiguration = ContainerConfiguration(
+            /* isDark */ false,
+            /* contrastLevel */ 0.2,
+            /* surfaceRangeAmplitudeFactor */ 1.0),
+        colorResolver = DefaultPaletteColorResolver
+    )
+    val pressedContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFFF8C18u.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultLight())
+    val pressedSelectedContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFFF991Cu.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultLight())
+
+    // register state-specific color tokens on rollovers, presses and selections
+    officeSilverDefaultBundle.registerActiveContainerTokens(
+        colorTokens = rolloverContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Default,
+        ComponentState.RolloverUnselected)
+    officeSilverDefaultBundle.registerActiveContainerTokens(
+        colorTokens = rolloverSelectedContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Default,
+        ComponentState.RolloverSelected)
+    officeSilverDefaultBundle.registerActiveContainerTokens(
+        colorTokens = selectedContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Default,
+        ComponentState.Selected)
+    officeSilverDefaultBundle.registerActiveContainerTokens(
+        colorTokens = pressedContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Default,
+        ComponentState.PressedUnselected)
+    officeSilverDefaultBundle.registerActiveContainerTokens(
+        colorTokens = pressedSelectedContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Default,
+        ComponentState.PressedSelected)
+
+    // register state-specific highlight color tokens on rollover and selections
+    officeSilverDefaultBundle.registerActiveContainerTokens(
+        colorTokens = rolloverContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        ComponentState.RolloverUnselected)
+    officeSilverDefaultBundle.registerActiveContainerTokens(
+        colorTokens = selectedContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        ComponentState.Selected)
+    officeSilverDefaultBundle.registerActiveContainerTokens(
+        colorTokens = rolloverSelectedContainerTokens,
+        ContainerColorTokensAssociationKind.Highlight,
+        ComponentState.RolloverSelected)
+
+    val activeMarksColorResolver = DefaultPaletteColorResolver.overlayWith(
+        TokenPaletteColorResolverOverlay(
+            onContainer = { it.containerOutline },
         )
     )
-    val activeScheme = officeSchemes["Office Silver Active"]
-    val enabledScheme = officeSchemes["Office Silver Enabled"]
 
-    val bundle = AuroraColorSchemeBundle(activeScheme, enabledScheme, enabledScheme)
-    bundle.registerAlpha(
-        0.5f, ComponentState.DisabledUnselected, ComponentState.DisabledSelected
-    )
-    bundle.registerColorScheme(
-        enabledScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected
-    )
-    bundle.registerColorScheme(
-        activeScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected
-    )
-    val rolloverScheme = officeSchemes["Office Silver Rollover"]
-    val rolloverSelectedScheme = officeSchemes["Office Silver Rollover Selected"]
-    val selectedScheme = officeSchemes["Office Silver Selected"]
-    val pressedScheme = officeSchemes["Office Silver Pressed"]
-    val pressedSelectedScheme = officeSchemes["Office Silver Pressed Selected"]
+    val rolloverMarkContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFFFD111u.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultLight(),
+        colorResolver = activeMarksColorResolver)
+    val selectedMarkContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFFFBD51u.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultLight(),
+        colorResolver = activeMarksColorResolver)
+    val rolloverSelectedMarkContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFFFA400u.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultLight(),
+        colorResolver = activeMarksColorResolver)
+    val pressedMarkContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFFF8C18u.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultLight(),
+        colorResolver = activeMarksColorResolver)
+    val pressedSelectedMarkContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFFF991Cu.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultLight(),
+        colorResolver = activeMarksColorResolver)
 
-    val borderEnabledScheme = officeSchemes["Office Silver Border Enabled"]
-    val borderRolloverScheme = officeSchemes["Office Border Rollover"]
-    val borderRolloverSelectedScheme = officeSchemes["Office Border Rollover Selected"]
-    val borderSelectedScheme = officeSchemes["Office Border Selected"]
-    val borderPressedScheme = officeSchemes["Office Border Pressed"]
+    // register state-specific color tokens on mark rollovers, presses and selections
+    officeSilverDefaultBundle.registerActiveContainerTokens(
+        colorTokens = rolloverMarkContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Mark,
+        ComponentState.RolloverUnselected)
+    officeSilverDefaultBundle.registerActiveContainerTokens(
+        colorTokens = rolloverSelectedMarkContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Mark,
+        ComponentState.RolloverSelected)
+    officeSilverDefaultBundle.registerActiveContainerTokens(
+        colorTokens = selectedMarkContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Mark,
+        ComponentState.Selected)
+    officeSilverDefaultBundle.registerActiveContainerTokens(
+        colorTokens = pressedMarkContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Mark,
+        ComponentState.PressedUnselected)
+    officeSilverDefaultBundle.registerActiveContainerTokens(
+        colorTokens = pressedSelectedMarkContainerTokens,
+        associationKind = ContainerColorTokensAssociationKind.Mark,
+        ComponentState.PressedSelected)
 
-    bundle.registerColorScheme(
-        rolloverScheme, ColorSchemeAssociationKind.Fill,
-        ComponentState.RolloverUnselected
-    )
-    bundle.registerColorScheme(
-        rolloverSelectedScheme, ColorSchemeAssociationKind.Fill,
-        ComponentState.RolloverSelected
-    )
-    bundle.registerColorScheme(
-        selectedScheme, ColorSchemeAssociationKind.Fill,
-        ComponentState.Selected
-    )
-    bundle.registerColorScheme(
-        pressedScheme, ColorSchemeAssociationKind.Fill,
-        ComponentState.PressedUnselected
-    )
-    bundle.registerColorScheme(
-        pressedSelectedScheme, ColorSchemeAssociationKind.Fill,
-        ComponentState.PressedSelected
-    )
-    bundle.registerColorScheme(
-        selectedScheme.tone(0.2f), ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected
-    )
+    officeColors.registerDecorationAreaTokensBundle(officeSilverDefaultBundle, DecorationAreaType.None)
 
-    bundle.registerColorScheme(
-        borderEnabledScheme,
-        ColorSchemeAssociationKind.Border, ComponentState.Enabled
-    )
-    bundle.registerColorScheme(
-        borderEnabledScheme,
-        ColorSchemeAssociationKind.Border,
-        ComponentState.DisabledSelected,
-        ComponentState.DisabledUnselected
-    )
-    bundle.registerColorScheme(
-        borderRolloverScheme,
-        ColorSchemeAssociationKind.Border,
-        ComponentState.RolloverUnselected
-    )
-    bundle.registerColorScheme(
-        borderRolloverSelectedScheme,
-        ColorSchemeAssociationKind.Border,
-        ComponentState.RolloverSelected
-    )
-    bundle.registerColorScheme(
-        borderSelectedScheme,
-        ColorSchemeAssociationKind.Border, ComponentState.Selected
-    )
-    bundle.registerColorScheme(
-        borderPressedScheme,
-        ColorSchemeAssociationKind.Border,
-        ComponentState.PressedSelected,
-        ComponentState.PressedUnselected
-    )
+    officeColors.registerAsDecorationArea(
+        getContainerTokens(
+            seed = Hct.fromInt(0xFFCFD4DEu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        DecorationAreaType.Header, DecorationAreaType.Toolbar, DecorationAreaType.Footer)
 
-    officeColors.registerDecorationAreaSchemeBundle(bundle, DecorationAreaType.None)
+    officeColors.registerAsDecorationArea(
+        getContainerTokens(
+            seed = Hct.fromInt(0xFFCFCFD0u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        DecorationAreaType.TitlePane, DecorationAreaType.ControlPane)
 
     val outerBorderPainter = FractionBasedBorderPainter(
         0.0f to { it.lightColor },
@@ -214,9 +286,28 @@ private fun officeSkin(): AuroraSkinDefinition {
                     masks = longArrayOf(0xFFFFFFFFL, 0xFFFFFFFFL, 0xFFFFFFFFL),
                 ) { it.tint(0.5f) }),
             decorationPainter = MatteDecorationPainter(),
-            highlightFillPainter = ClassicFillPainter()
+            highlightFillPainter = ClassicFillPainter(),
+            surfacePainter = FractionBasedSurfacePainter(
+                ColorStop(fraction = 0.0f, colorQuery = ContainerColorTokens::containerSurfaceLow),
+                ColorStop(fraction = 0.49999f, colorQuery = {
+                    it.containerSurfaceLow.interpolateTowards(it.containerSurfaceLowest, 0.7f)
+                }),
+                ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerSurface),
+                ColorStop(fraction = 1.0f, colorQuery = ContainerColorTokens::containerSurfaceLow),
+                displayName = "Office Silver"
+            ),
+            highlightSurfacePainter = ClassicSurfacePainter(),
+            outlinePainter = InlayOutlinePainter(
+                displayName = "Office Silver",
+                outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutline),
+                inner = OutlineSpec(
+                    ColorStop(fraction = 0.0f, alpha = 0.9375f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+                    ColorStop(fraction = 1.0f, alpha = 0.9375f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+                )
+            ),
+            highlightOutlinePainter = FlatOutlinePainter(),
         ),
-        buttonShaper = ClassicButtonShaper()
+        buttonShaper = ClassicButtonShaper(),
     )
 }
 

@@ -17,7 +17,6 @@ package org.pushingpixels.aurora.theming
 
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
@@ -40,7 +39,6 @@ import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.palette.overlayWith
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
-import org.pushingpixels.aurora.theming.utils.getColorSchemes
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
 import org.pushingpixels.ephemeral.chroma.hct.Hct
 
@@ -126,82 +124,6 @@ private fun graphiteBasePainters(
             )
         ),
         highlightOutlinePainter = FlatOutlinePainter(),
-    )
-}
-
-private fun graphiteSkinColorsBaseExtensions(bundle: AuroraColorSchemeBundle) {
-    // Unlike other accented Graphite skins that use the same highlight appearance on
-    // checkboxes and radio buttons as on active renderers, this skin uses a more muted
-    // appearance for checkboxes and radio buttons.
-    // The following sections remove the accent from those controls and use darker, less
-    // vibrant appearance.
-    val schemes = getColorSchemes(
-        AuroraSkin::class.java.getResourceAsStream(
-            "/org/pushingpixels/aurora/theming/graphite.colorschemes"
-        )
-    )
-
-    bundle.registerAlpha(0.65f, ComponentState.DisabledSelected)
-    val highlightMarkScheme = schemes["Graphite Highlight Mark"]
-    bundle.registerColorScheme(
-        highlightMarkScheme,
-        ColorSchemeAssociationKind.HighlightMark, *ComponentState.activeStates
-    )
-    bundle.registerColorScheme(
-        highlightMarkScheme,
-        ColorSchemeAssociationKind.Mark, ComponentState.RolloverSelected,
-        ComponentState.RolloverUnselected
-    )
-
-    val selectedScheme = schemes["Graphite Selected"]
-    val borderScheme = schemes["Graphite Border"]
-    bundle.registerColorScheme(
-        selectedScheme, ColorSchemeAssociationKind.Fill,
-        ComponentState.Selected
-    )
-    bundle.registerColorScheme(
-        borderScheme, ColorSchemeAssociationKind.Mark,
-        ComponentState.Selected
-    )
-
-    val selectedDisabledScheme = schemes["Graphite Selected Disabled"]
-    val disabledScheme = schemes["Graphite Disabled"]
-    bundle.registerColorScheme(
-        disabledScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected
-    )
-    bundle.registerColorScheme(
-        selectedDisabledScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected
-    )
-    bundle.registerColorScheme(
-        disabledScheme, ColorSchemeAssociationKind.Mark,
-        ComponentState.DisabledUnselected, ComponentState.DisabledSelected
-    )
-
-    val pressedSelectedScheme = schemes["Graphite Pressed Selected"]
-    val pressedUnselectedScheme = schemes["Graphite Pressed Unselected"]
-    bundle.registerColorScheme(
-        pressedSelectedScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.PressedSelected
-    )
-    bundle.registerColorScheme(
-        pressedSelectedScheme,
-        ColorSchemeAssociationKind.Mark,
-        ComponentState.PressedSelected
-    )
-    bundle.registerColorScheme(
-        pressedUnselectedScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.PressedUnselected
-    )
-    bundle.registerColorScheme(
-        pressedUnselectedScheme,
-        ColorSchemeAssociationKind.Mark,
-        ComponentState.PressedUnselected
     )
 }
 

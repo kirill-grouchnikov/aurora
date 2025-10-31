@@ -1,7 +1,7 @@
 /*
  * Copyright 2020-2025 Aurora, Kirill Grouchnikov
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -16,108 +16,122 @@
 package org.pushingpixels.aurora.demo.titlepane.mail
 
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.theming.colorscheme.SunGlareColorScheme
-import org.pushingpixels.aurora.theming.colorscheme.TerracottaColorScheme
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
+import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.BrushedMetalDecorationPainter
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
+import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
+import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
+import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
+import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
+import org.pushingpixels.aurora.theming.palette.getContainerTokens
+import org.pushingpixels.aurora.theming.palette.overlayWith
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
-import org.pushingpixels.aurora.theming.utils.getColorSchemes
+import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
+import org.pushingpixels.ephemeral.chroma.hct.Hct
 
 private fun visorSkinColors(): AuroraSkinColors {
     val result = AuroraSkinColors()
-    val schemes = getColorSchemes(
-        AuroraSkin::class.java.getResourceAsStream(
-            "/org/pushingpixels/aurora/demo/visor.colorschemes"
+
+    val visorDefaultBundle = ContainerColorTokensBundle(
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF9FC5E8u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFDEDDDFu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFEFF8FFu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        isSystemDark = false)
+    result.registerDecorationAreaTokensBundle(visorDefaultBundle, DecorationAreaType.None)
+
+    // Custom palette resolver for the highlights in the threads decoration area
+    // to set outline colors to be identical to surface colors (effectively removing the
+    // visuals of the outlines)
+    val threadsHighlightsPaletteResolver = DefaultPaletteColorResolver.overlayWith(
+        TokenPaletteColorResolverOverlay(
+            containerOutline = { it.containerSurface },
+            containerOutlineVariant = { it.containerSurfaceHigh },
         )
     )
+    val visorThreadsBundle = ContainerColorTokensBundle(
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF9CBDD3u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFC9D5DEu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFE1EFF7u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        isSystemDark = false)
+    visorThreadsBundle.registerActiveContainerTokens(
+        colorTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF5B91F8u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark(),
+            colorResolver = threadsHighlightsPaletteResolver),
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        ComponentState.Selected, ComponentState.RolloverSelected)
+    visorThreadsBundle.registerActiveContainerTokens(
+        colorTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF80B6CBu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark(),
+            colorResolver = threadsHighlightsPaletteResolver),
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        ComponentState.RolloverUnselected)
+    result.registerDecorationAreaTokensBundle(visorThreadsBundle, VisorDecorations.Threads)
 
-    val activeScheme = schemes["Visor Active"]
-    val enabledScheme = schemes["Visor Enabled"]
-    val disabledScheme = schemes["Visor Disabled"]
+    // Custom palette resolver for the highlights in the threads decoration area
+    // to set outline colors to be identical to surface colors (effectively removing the
+    // visuals of the outlines)
+    val destinationsHighlightsPaletteResolver = DefaultPaletteColorResolver.overlayWith(
+        TokenPaletteColorResolverOverlay(
+            containerOutline = { it.containerOutlineVariant },
+            containerOutlineVariant = { it.containerOutlineVariant },
+        )
+    )
+    val visorDestinationsBundle = ContainerColorTokensBundle(
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF9CBDD3u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFC9D5DEu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFD3E2EFu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+        isSystemDark = false)
+    visorDestinationsBundle.registerActiveContainerTokens(
+        colorTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFE8EDAFu.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ 0.6),
+            /* colorResolver */ destinationsHighlightsPaletteResolver),
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        ComponentState.Selected, ComponentState.RolloverSelected)
+    visorDestinationsBundle.registerActiveContainerTokens(
+        colorTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFD7E1C2u.toInt()),
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ 0.6),
+            /* colorResolver */ destinationsHighlightsPaletteResolver),
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        ComponentState.RolloverUnselected)
+    result.registerDecorationAreaTokensBundle(visorDestinationsBundle, VisorDecorations.Destinations)
 
-    val defaultSchemeBundle = AuroraColorSchemeBundle(
-        activeScheme, enabledScheme, disabledScheme
-    )
-
-    defaultSchemeBundle.registerAlpha(0.5f, ComponentState.DisabledSelected)
-    defaultSchemeBundle.registerColorScheme(
-        activeScheme, ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected
-    )
-
-    result.registerDecorationAreaSchemeBundle(defaultSchemeBundle, DecorationAreaType.None)
-
-    val activeDestinationsScheme = schemes["Visor Active Destinations"]
-    val enabledDestinationsScheme = schemes["Visor Enabled Destinations"]
-    val destinationsSchemeBundle = AuroraColorSchemeBundle(
-        activeDestinationsScheme, enabledDestinationsScheme, disabledScheme
-    )
-    destinationsSchemeBundle.registerAlpha(0.7f, ComponentState.DisabledUnselected)
-    destinationsSchemeBundle.registerColorScheme(
-        enabledDestinationsScheme,
-        ColorSchemeAssociationKind.Fill, ComponentState.DisabledUnselected
-    )
-
-    // use SunGlare for destinations highlights
-    val destinationsHighlight = SunGlareColorScheme()
-    destinationsSchemeBundle.registerAlpha(0.75f, ComponentState.RolloverUnselected)
-    destinationsSchemeBundle.registerHighlightColorScheme(
-        destinationsHighlight,
-        ComponentState.RolloverUnselected
-    )
-    destinationsSchemeBundle.registerAlpha(0.9f, ComponentState.Selected)
-    destinationsSchemeBundle.registerHighlightColorScheme(
-        destinationsHighlight,
-        ComponentState.Selected
-    )
-    destinationsSchemeBundle.registerAlpha(1.0f, ComponentState.RolloverSelected)
-    destinationsSchemeBundle.registerHighlightColorScheme(
-        destinationsHighlight,
-        ComponentState.RolloverSelected
-    )
-
-    // use Terracotta for borders of destinations highlights
-    destinationsSchemeBundle.registerColorScheme(
-        TerracottaColorScheme(),
-        ColorSchemeAssociationKind.HighlightBorder,
-        *ComponentState.activeStates
-    )
-
-    result.registerDecorationAreaSchemeBundle(destinationsSchemeBundle, VisorDecorations.Destinations)
-
-    val threadsSchemeBundle = AuroraColorSchemeBundle(
-        activeScheme, enabledScheme, disabledScheme
-    )
-
-    threadsSchemeBundle.registerAlpha(0.5f, ComponentState.DisabledSelected)
-    threadsSchemeBundle.registerColorScheme(
-        activeScheme, ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected
-    )
-    // Configure white-on-dark-blue highlights for the threads view
-    val threadsHighlight = schemes["Visor Threads Highlight"]
-    val threadsHighlightLight = schemes["Visor Threads Highlight Light"]
-    threadsSchemeBundle.registerAlpha(1.0f, ComponentState.RolloverUnselected)
-    threadsSchemeBundle.registerHighlightColorScheme(
-        threadsHighlightLight,
-        ComponentState.RolloverUnselected
-    )
-    threadsSchemeBundle.registerAlpha(0.9f, ComponentState.Selected)
-    threadsSchemeBundle.registerHighlightColorScheme(
-        threadsHighlight,
-        ComponentState.Selected
-    )
-    threadsSchemeBundle.registerAlpha(1.0f, ComponentState.RolloverSelected)
-    threadsSchemeBundle.registerHighlightColorScheme(
-        threadsHighlight,
-        ComponentState.RolloverSelected
-    )
-
-    result.registerDecorationAreaSchemeBundle(threadsSchemeBundle, VisorDecorations.Threads)
+    // For the overall frame decoration border
+    result.registerAsDecorationArea(getContainerTokens(
+        seed = Hct.fromInt(0xFFC9D6DFu.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultLight()),
+        DecorationAreaType.TitlePane)
 
     return result
 }
@@ -131,7 +145,15 @@ fun visorSkin(): AuroraSkinDefinition {
             0.0f to { it.extraLightColor },
             1.0f to { it.extraLightColor },
             displayName = "Visor Highlight"
-        )
+        ),
+        surfacePainter = MatteSurfacePainter(),
+        outlinePainter = FlatOutlinePainter(),
+        highlightSurfacePainter = FractionBasedSurfacePainter(
+            ColorStop(fraction = 0.0f, colorQuery = ContainerColorTokens::containerSurface),
+            ColorStop(fraction = 1.0f, colorQuery = ContainerColorTokens::containerSurface),
+            displayName = "Visor Highlight"
+        ),
+        highlightOutlinePainter = FlatOutlinePainter(),
     )
 
     return AuroraSkinDefinition(

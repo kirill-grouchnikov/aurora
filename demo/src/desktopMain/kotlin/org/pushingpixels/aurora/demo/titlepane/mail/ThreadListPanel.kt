@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.AuroraBoxWithHighlights
 import org.pushingpixels.aurora.component.AuroraVerticalScrollbar
 import org.pushingpixels.aurora.component.ScrollBarSizingConstants
@@ -210,15 +211,14 @@ private fun ThreadListEntry(threadInfo: ThreadInfo) {
 
 @Composable
 private fun ThreadListPanelHeaderSeparator() {
-    val separatorScheme = AuroraSkin.colors.getColorScheme(
+    val separatorTokens = AuroraSkin.colors.getNeutralContainerTokens(
         decorationAreaType = AuroraSkin.decorationAreaType,
-        associationKind = ColorSchemeAssociationKind.Separator,
-        componentState = ComponentState.Enabled
+        associationKind = ContainerColorTokensAssociationKind.Separator,
     )
 
     Canvas(modifier = Modifier.fillMaxWidth().height(1.dp)) {
         drawLine(
-            color = separatorScheme.separatorPrimaryColor,
+            color = separatorTokens.containerOutline.withAlpha(0.5f),
             start = Offset(0.0f, 0.5f),
             end = Offset(size.width, 0.5f),
             strokeWidth = 1.0f
