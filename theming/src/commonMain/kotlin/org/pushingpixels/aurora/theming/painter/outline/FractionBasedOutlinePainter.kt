@@ -27,7 +27,7 @@ import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.OutlineKind
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.painter.ColorStop
-import org.pushingpixels.aurora.theming.painter.FractionBasedTonalPainter
+import org.pushingpixels.aurora.theming.painter.FractionBasedPainter
 
 /**
  * Outline painter with fraction-based stops and a color query associated with
@@ -40,7 +40,7 @@ open class FractionBasedOutlinePainter(
     vararg colorQueryStops: ColorStop,
     displayName: String,
     val strokeWidth: Float = 1.0f,
-) : FractionBasedTonalPainter(displayName, *colorQueryStops), AuroraOutlinePainter {
+) : FractionBasedPainter(displayName, *colorQueryStops), AuroraOutlinePainter {
     override fun paintOutline(
         drawScope: DrawScope,
         size: Size,

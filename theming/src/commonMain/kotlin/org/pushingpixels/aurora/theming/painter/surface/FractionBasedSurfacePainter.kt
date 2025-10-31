@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.painter.ColorStop
-import org.pushingpixels.aurora.theming.painter.FractionBasedTonalPainter
+import org.pushingpixels.aurora.theming.painter.FractionBasedPainter
 
 /**
  * Surface painter with fraction-based stops and a color query associated with each
@@ -35,7 +35,7 @@ import org.pushingpixels.aurora.theming.painter.FractionBasedTonalPainter
 open class FractionBasedSurfacePainter(
     vararg colorQueryStops: ColorStop,
     displayName: String
-) : FractionBasedTonalPainter(displayName, *colorQueryStops), AuroraSurfacePainter {
+) : FractionBasedPainter(displayName, *colorQueryStops), AuroraSurfacePainter {
     override fun paintContourBackground(
         drawScope: DrawScope,
         size: Size,

@@ -29,7 +29,7 @@ import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 
 data class ColorStop(val fraction: Float, val alpha: Float = 1.0f, val colorQuery: (ContainerColorTokens) -> Color)
 
-abstract class FractionBasedTonalPainter(
+abstract class FractionBasedPainter(
     override val displayName: String,
     vararg colorQueryStops: ColorStop
 ) : AuroraTrait {
