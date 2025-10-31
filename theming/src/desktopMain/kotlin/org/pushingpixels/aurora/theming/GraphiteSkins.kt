@@ -1,7 +1,7 @@
 /*
  * Copyright 2020-2025 Aurora, Kirill Grouchnikov
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -15,155 +15,78 @@
  */
 package org.pushingpixels.aurora.theming
 
+import org.pushingpixels.aurora.common.interpolateTowards
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
-import org.pushingpixels.aurora.theming.colorscheme.SunsetColorScheme
-import org.pushingpixels.aurora.theming.colorscheme.composite
-import org.pushingpixels.aurora.theming.painter.border.AuroraBorderPainter
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
+import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.DelegateFractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.FlatDecorationPainter
-import org.pushingpixels.aurora.theming.painter.fill.AuroraFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
-import org.pushingpixels.aurora.theming.painter.fill.GlassFillPainter
+import org.pushingpixels.aurora.theming.painter.outline.AuroraOutlinePainter
+import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
+import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
+import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopLineOverlayPainter
+import org.pushingpixels.aurora.theming.painter.surface.*
+import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
+import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
+import org.pushingpixels.aurora.theming.palette.getContainerTokens
+import org.pushingpixels.aurora.theming.palette.overlayWith
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.getColorSchemes
+import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
+import org.pushingpixels.ephemeral.chroma.hct.Hct
 
-private fun graphiteBaseSkinColors(accentBuilder: AccentBuilder): AuroraSkinColors {
-    val result = AuroraSkinColors()
-    val schemes = getColorSchemes(
-        AuroraSkin::class.java.getResourceAsStream(
-            "/org/pushingpixels/aurora/theming/graphite.colorschemes"
-        )
-    )
+private fun getDefaultTokensBundle(accentContainerColorTokens: AccentContainerColorTokens): ContainerColorTokensBundle {
+    val graphiteDefaultBundle = ContainerColorTokensBundle(
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF636363u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark(),
+            colorResolver = accentContainerColorTokens.defaultAreaPaletteColorResolver),
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF424242u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark(),
+            colorResolver = accentContainerColorTokens.defaultAreaPaletteColorResolver),
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF424242u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark(),
+            colorResolver = accentContainerColorTokens.defaultAreaPaletteColorResolver),
+        isSystemDark = true)
 
-    val activeScheme = schemes["Graphite Active"]
-    val selectedDisabledScheme = schemes["Graphite Selected Disabled"]
-    val selectedScheme = schemes["Graphite Selected"]
-    val disabledScheme = schemes["Graphite Disabled"]
+    graphiteDefaultBundle.registerActiveContainerTokens(
+        colorTokens = accentContainerColorTokens.defaultAreaSelectedTokens!!,
+        associationKind = ContainerColorTokensAssociationKind.Default,
+        ComponentState.RolloverUnselected, ComponentState.Selected, ComponentState.RolloverSelected)
+    // Highlights
+    graphiteDefaultBundle.registerActiveContainerTokens(
+        colorTokens = accentContainerColorTokens.defaultAreaHighlightTokens!!,
+        associationKind = ContainerColorTokensAssociationKind.Highlight,
+        activeStates = ComponentState.activeStates)
+    // Tabs
+    graphiteDefaultBundle.registerActiveContainerTokens(
+        colorTokens = accentContainerColorTokens.defaultAreaHighlightTokens,
+        associationKind = ContainerColorTokensAssociationKind.Tab,
+        ComponentState.Selected, ComponentState.RolloverSelected)
+    // Text highlights
+    graphiteDefaultBundle.registerActiveContainerTokens(
+        colorTokens = accentContainerColorTokens.defaultAreaHighlightTokens,
+        associationKind = ContainerColorTokensAssociationKind.HighlightText,
+        ComponentState.Selected, ComponentState.RolloverSelected)
 
-    val enabledScheme = schemes["Graphite Enabled"]
-    val backgroundScheme = schemes["Graphite Background"]
-
-    val defaultSchemeBundle = AuroraColorSchemeBundle(
-        activeScheme, enabledScheme,
-        disabledScheme
-    )
-
-    // border scheme
-    val borderScheme = schemes["Graphite Border"]
-    val separatorScheme = schemes["Graphite Separator"]
-    defaultSchemeBundle.registerColorScheme(borderScheme, ColorSchemeAssociationKind.Border)
-    defaultSchemeBundle.registerColorScheme(separatorScheme, ColorSchemeAssociationKind.Separator)
-
-    defaultSchemeBundle.registerAlpha(0.5f, ComponentState.DisabledUnselected)
-    defaultSchemeBundle.registerAlpha(0.65f, ComponentState.DisabledSelected)
-    defaultSchemeBundle.registerColorScheme(
-        disabledScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        selectedDisabledScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        disabledScheme, ColorSchemeAssociationKind.Mark,
-        ComponentState.DisabledUnselected, ComponentState.DisabledSelected
-    )
-
-    defaultSchemeBundle.registerColorScheme(
-        selectedScheme,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.Selected
-    )
-
-    result.registerDecorationAreaSchemeBundle(
-        defaultSchemeBundle, backgroundScheme,
-        DecorationAreaType.None
-    )
-
-    // highlight fill scheme + custom alpha for rollover unselected state
-    defaultSchemeBundle.registerHighlightAlpha(0.9f, ComponentState.Selected)
-    defaultSchemeBundle.registerHighlightAlpha(0.8f, ComponentState.RolloverUnselected)
-    defaultSchemeBundle.registerHighlightAlpha(1.0f, ComponentState.RolloverSelected)
-    defaultSchemeBundle.registerHighlightColorScheme(
-        accentBuilder.highlightsAccent!!,
-        ComponentState.RolloverUnselected,
-        ComponentState.Selected, ComponentState.RolloverSelected
-    )
-
-    defaultSchemeBundle.registerAlpha(0.5f, ComponentState.DisabledSelected)
-    defaultSchemeBundle.registerColorScheme(
-        accentBuilder.activeControlsAccent!!,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        accentBuilder.activeControlsAccent!!,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.Selected, ComponentState.RolloverSelected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        accentBuilder.activeControlsAccent!!.shade(0.2f).saturate(0.2f),
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.PressedSelected, ComponentState.PressedUnselected
-    )
-    defaultSchemeBundle.registerColorScheme(
-        accentBuilder.activeControlsAccent!!,
-        ColorSchemeAssociationKind.Tab,
-        ComponentState.Selected, ComponentState.RolloverSelected
-    )
-
-    defaultSchemeBundle.registerColorScheme(
-        borderScheme,
-        ColorSchemeAssociationKind.HighlightBorder, *ComponentState.activeStates
-    )
-    defaultSchemeBundle.registerColorScheme(
-        borderScheme,
-        ColorSchemeAssociationKind.Border, *ComponentState.activeStates
-    )
-
-    defaultSchemeBundle.registerColorScheme(
-        accentBuilder.activeControlsAccent!!,
-        ColorSchemeAssociationKind.Mark,
-        ComponentState.Selected, ComponentState.PressedSelected,
-        ComponentState.PressedUnselected, ComponentState.RolloverUnselected,
-        ComponentState.RolloverSelected
-    )
-    defaultSchemeBundle.registerAlpha(0.5f, ComponentState.DisabledSelected)
-    defaultSchemeBundle.registerColorScheme(
-        accentBuilder.activeControlsAccent!!,
-        ColorSchemeAssociationKind.Mark,
-        ComponentState.DisabledSelected
-    )
-
-    // text highlight scheme
-
-    // text highlight scheme
-    defaultSchemeBundle.registerColorScheme(
-        accentBuilder.highlightsAccent!!,
-        ColorSchemeAssociationKind.HighlightText,
-        ComponentState.Selected, ComponentState.RolloverSelected
-    )
-
-    defaultSchemeBundle.registerColorScheme(
-        accentBuilder.activeControlsAccent!!,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.RolloverUnselected
-    )
-
-    return result
+    return graphiteDefaultBundle
 }
 
 private fun graphiteBasePainters(
-    borderPainter: AuroraBorderPainter? = null,
-    highlightFillPainter: AuroraFillPainter? = null
+    surfacePainter: AuroraSurfacePainter? = null,
+    outlinePainter: AuroraOutlinePainter? = null,
+    highlightSurfacePainter: AuroraSurfacePainter? = null
 ): AuroraPainters {
     return AuroraPainters(
         fillPainter = FractionBasedFillPainter(
@@ -172,7 +95,7 @@ private fun graphiteBasePainters(
             1.0f to { it.lightColor },
             displayName = "Graphite"
         ),
-        borderPainter = borderPainter ?: CompositeBorderPainter(
+        borderPainter = CompositeBorderPainter(
             displayName = "Graphite",
             outer = DelegateFractionBasedBorderPainter(
                 displayName = "Graphite Outer",
@@ -185,7 +108,24 @@ private fun graphiteBasePainters(
                 masks = longArrayOf(0xA0FFFFFF, 0x90FFFFFF, 0xA0FFFFFF),
                 transform = { it.tint(0.25f) })),
         decorationPainter = FlatDecorationPainter(),
-        highlightFillPainter = highlightFillPainter ?: ClassicFillPainter()
+        highlightFillPainter = ClassicFillPainter(),
+        surfacePainter = surfacePainter ?: FractionBasedSurfacePainter(
+            ColorStop(fraction = 0.0f, colorQuery = ContainerColorTokens::containerSurfaceHigh),
+            ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerSurface),
+            ColorStop(fraction = 1.0f, colorQuery = ContainerColorTokens::containerSurface),
+            displayName = "Graphite"
+        ),
+        highlightSurfacePainter = highlightSurfacePainter ?: MatteSurfacePainter(),
+        outlinePainter = outlinePainter ?: InlayOutlinePainter(
+            displayName = "Graphite",
+            outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutline),
+            inner = OutlineSpec(
+                ColorStop(fraction = 0.0f, alpha = 0.359375f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+                ColorStop(fraction = 0.5f, alpha = 0.25f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+                ColorStop(fraction = 1.0f, alpha = 0.359375f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+            )
+        ),
+        highlightOutlinePainter = FlatOutlinePainter(),
     )
 }
 
@@ -266,245 +206,301 @@ private fun graphiteSkinColorsBaseExtensions(bundle: AuroraColorSchemeBundle) {
 }
 
 fun graphiteSkin(): AuroraSkinDefinition {
+    val accentContainerColorTokens = AccentContainerColorTokens(
+        defaultAreaSelectedTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF606060u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark()),
+        defaultAreaHighlightTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFEBECF0u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+    )
+
+    val defaultTokensBundle = getDefaultTokensBundle(accentContainerColorTokens).also {
+         it.registerActiveContainerTokens(
+             colorTokens = getContainerTokens(
+                 seed = Hct.fromInt(0xFFEBECF0u.toInt()),
+                 containerConfiguration = ContainerConfiguration(
+                    /* isDark */ false,
+                    /* contrastLevel */ 0.6)),
+             associationKind = ContainerColorTokensAssociationKind.Default,
+            ComponentState.RolloverUnselected, ComponentState.RolloverSelected)
+        it.registerActiveContainerTokens(
+            colorTokens = getContainerTokens(
+                seed = Hct.fromInt(0xFFACB2B9u.toInt()),
+                containerConfiguration = ContainerConfiguration(
+                    /* isDark */ false,
+                    /* contrastLevel */ 0.6)),
+            associationKind = ContainerColorTokensAssociationKind.Default,
+            ComponentState.PressedUnselected, ComponentState.PressedSelected)
+    }
+
+    val colors = AuroraSkinColors()
+    colors.registerDecorationAreaTokensBundle(defaultTokensBundle, DecorationAreaType.None)
+
     return AuroraSkinDefinition(
         displayName = "Graphite",
-        colors = graphiteBaseSkinColors(
-            AccentBuilder()
-                .withAccentResource("/org/pushingpixels/aurora/theming/graphite.colorschemes")
-                .withActiveControlsAccent("Graphite Highlight")
-                .withHighlightsAccent("Graphite Highlight")
-        ).also {
-            it.registerAsDecorationArea(
-                backgroundColorScheme = it.getBackgroundColorScheme(DecorationAreaType.None),
-                noneTransformationOverlay = { bundle ->
-                    graphiteSkinColorsBaseExtensions(bundle)
-                },
-                areaTypes = arrayOf(DecorationAreaType.None)
-            )
-        },
+        colors = colors,
         painters = graphiteBasePainters(),
         buttonShaper = ClassicButtonShaper()
     )
 }
 
 fun graphiteAquaSkin(): AuroraSkinDefinition {
+    val accentContainerColorTokens = AccentContainerColorTokens(
+        defaultAreaSelectedTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF3E70FFu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark()),
+        defaultAreaHighlightTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF3E70FFu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark()),
+    )
+
+    val defaultTokensBundle = getDefaultTokensBundle(accentContainerColorTokens)
+
+    val colors = AuroraSkinColors()
+    colors.registerDecorationAreaTokensBundle(defaultTokensBundle, DecorationAreaType.None)
+
     return AuroraSkinDefinition(
         displayName = "Graphite Aqua",
-        colors = graphiteBaseSkinColors(
-            AccentBuilder()
-                .withAccentResource("/org/pushingpixels/aurora/theming/graphite.colorschemes")
-                .withActiveControlsAccent("Graphite Aqua")
-                .withHighlightsAccent("Graphite Aqua")
-        ).also {
-            it.registerAsDecorationArea(
-                backgroundColorScheme = it.getBackgroundColorScheme(DecorationAreaType.None),
-                noneTransformationOverlay = { bundle ->
-                    // Use disabled color scheme for marks of disabled selected checkboxes and radio buttons
-                    // for better contrast
-                    val schemes = getColorSchemes(
-                        AuroraSkin::class.java.getResourceAsStream(
-                            "/org/pushingpixels/aurora/theming/graphite.colorschemes"
-                        )
-                    )
-                    bundle.registerColorScheme(
-                        schemes["Graphite Disabled"],
-                        ColorSchemeAssociationKind.Mark, ComponentState.DisabledSelected
-                    )
-                },
-                areaTypes = arrayOf(DecorationAreaType.None)
-            )
-        },
+        colors = colors,
         painters = graphiteBasePainters(),
         buttonShaper = ClassicButtonShaper()
     )
 }
 
 fun graphiteChalkSkin(): AuroraSkinDefinition {
+    val accentContainerColorTokens = AccentContainerColorTokens(
+        defaultAreaPaletteColorResolver = DefaultPaletteColorResolver.overlayWith(
+            TokenPaletteColorResolverOverlay(
+                containerOutline = { it.complementaryContainerOutline and 0xA0FFFFFFu.toInt() },
+                containerOutlineVariant = { it.complementaryContainerOutline and 0x80FFFFFFu.toInt() },
+                complementaryContainerOutline = { it.containerOutline }
+            )
+        ),
+        defaultAreaSelectedTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF606060u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark()),
+        defaultAreaHighlightTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFEBECF0u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+    )
+
+    val defaultTokensBundle = getDefaultTokensBundle(accentContainerColorTokens).also {
+        it.registerActiveContainerTokens(
+            colorTokens = getContainerTokens(
+                seed = Hct.fromInt(0xFFEBECF0u.toInt()),
+                containerConfiguration = ContainerConfiguration(
+                    /* isDark */ false,
+                    /* contrastLevel */ 0.6)),
+            associationKind = ContainerColorTokensAssociationKind.Default,
+            ComponentState.RolloverUnselected, ComponentState.RolloverSelected)
+        it.registerActiveContainerTokens(
+            colorTokens = getContainerTokens(
+                seed = Hct.fromInt(0xFFACB2B9u.toInt()),
+                containerConfiguration = ContainerConfiguration(
+                    /* isDark */ false,
+                    /* contrastLevel */ 0.6)),
+            associationKind = ContainerColorTokensAssociationKind.Default,
+            ComponentState.PressedUnselected, ComponentState.PressedSelected)
+    }
+
+    val colors = AuroraSkinColors()
+    colors.registerDecorationAreaTokensBundle(defaultTokensBundle, DecorationAreaType.None)
     return AuroraSkinDefinition(
         displayName = "Graphite Chalk",
-        colors = graphiteBaseSkinColors(
-            AccentBuilder()
-                .withAccentResource("/org/pushingpixels/aurora/theming/graphite.colorschemes")
-                .withActiveControlsAccent("Graphite Highlight")
-                .withHighlightsAccent("Graphite Highlight")
-        ).also {
-            it.registerAsDecorationArea(
-                backgroundColorScheme = it.getBackgroundColorScheme(DecorationAreaType.None),
-                noneTransformationOverlay = { bundle ->
-                    graphiteSkinColorsBaseExtensions(bundle)
-
-                    val schemes = getColorSchemes(
-                        AuroraSkin::class.java.getResourceAsStream(
-                            "/org/pushingpixels/aurora/theming/graphite.colorschemes"
-                        )
-                    )
-                    val chalkScheme = schemes["Chalk"]
-                    bundle.registerColorScheme(
-                        chalkScheme,
-                        ColorSchemeAssociationKind.TabBorder,
-                        *ComponentState.activeStates
-                    )
-                    bundle.registerColorScheme(
-                        chalkScheme,
-                        ColorSchemeAssociationKind.Border,
-                        ComponentState.Enabled
-                    )
-                    bundle.registerColorScheme(
-                        chalkScheme,
-                        ColorSchemeAssociationKind.Border,
-                        *ComponentState.activeStates
-                    )
-                    bundle.registerAlpha(
-                        0.5f,
-                        ComponentState.DisabledUnselected, ComponentState.DisabledSelected
-                    )
-                    bundle.registerColorScheme(
-                        chalkScheme,
-                        ColorSchemeAssociationKind.Border,
-                        ComponentState.DisabledUnselected, ComponentState.DisabledSelected
-                    )
-                    bundle.registerColorScheme(
-                        chalkScheme,
-                        ColorSchemeAssociationKind.HighlightBorder,
-                        *ComponentState.activeStates
-                    )
-
-                    val markScheme = schemes["Graphite Mark"]
-                    bundle.registerColorScheme(markScheme, ColorSchemeAssociationKind.Mark)
-
-                    val separatorScheme = schemes["Chalk Separator"]
-                    bundle.registerColorScheme(
-                        separatorScheme,
-                        ColorSchemeAssociationKind.Separator, ComponentState.Enabled
-                    )
-                },
-                areaTypes = arrayOf(DecorationAreaType.None)
-            )
-        },
-        painters = graphiteBasePainters(borderPainter = ClassicBorderPainter()),
+        colors = colors,
+        painters = graphiteBasePainters(outlinePainter = FlatOutlinePainter()),
         buttonShaper = ClassicButtonShaper()
     )
 }
 
 fun graphiteGlassSkin(): AuroraSkinDefinition {
+    val accentContainerColorTokens = AccentContainerColorTokens(
+        defaultAreaSelectedTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF606060u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultDark()),
+        defaultAreaHighlightTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFEBECF0u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+    )
+
+    val defaultTokensBundle = getDefaultTokensBundle(accentContainerColorTokens).also {
+        it.registerActiveContainerTokens(
+            colorTokens = getContainerTokens(
+                seed = Hct.fromInt(0xFFEBECF0u.toInt()),
+                containerConfiguration = ContainerConfiguration(
+                    /* isDark */ false,
+                    /* contrastLevel */ 0.6)),
+            associationKind = ContainerColorTokensAssociationKind.Default,
+            ComponentState.RolloverUnselected, ComponentState.RolloverSelected)
+        it.registerActiveContainerTokens(
+            colorTokens = getContainerTokens(
+                seed = Hct.fromInt(0xFFACB2B9u.toInt()),
+                containerConfiguration = ContainerConfiguration(
+                    /* isDark */ false,
+                    /* contrastLevel */ 0.6)),
+            associationKind = ContainerColorTokensAssociationKind.Default,
+            ComponentState.PressedUnselected, ComponentState.PressedSelected)
+    }
+
+    val colors = AuroraSkinColors()
+    colors.registerDecorationAreaTokensBundle(defaultTokensBundle, DecorationAreaType.None)
+
+    // Headers
+    colors.registerAsDecorationArea(
+        getContainerTokens(
+            /* seed */ Hct.fromInt(0xFF4F4F4Fu.toInt()),
+            /* containerConfiguration */ ContainerConfiguration.defaultDark()),
+        DecorationAreaType.TitlePane, DecorationAreaType.Header)
+
     return AuroraSkinDefinition(
         displayName = "Graphite Glass",
-        colors = graphiteBaseSkinColors(
-            AccentBuilder()
-                .withAccentResource("/org/pushingpixels/aurora/theming/graphite.colorschemes")
-                .withActiveControlsAccent("Graphite Highlight")
-                .withHighlightsAccent("Graphite Highlight")
-        ).also {
-            val schemes = getColorSchemes(
-                AuroraSkin::class.java.getResourceAsStream(
-                    "/org/pushingpixels/aurora/theming/graphite.colorschemes"
-                )
-            )
-            val backgroundScheme = schemes["Graphite Background"]
-            it.registerAsDecorationArea(
-                backgroundScheme,
-                DecorationAreaType.TitlePane, DecorationAreaType.Header
-            )
-        },
+        colors = colors,
         painters = graphiteBasePainters(
-            borderPainter = ClassicBorderPainter(),
-            highlightFillPainter = GlassFillPainter()
+            surfacePainter = SpecularRectangularSurfacePainter(
+                base = FractionBasedSurfacePainter(
+                    ColorStop(fraction = 0.0f, colorQuery = ContainerColorTokens::containerSurfaceHigh),
+                    ColorStop(fraction = 0.4999999f, colorQuery = {
+                        it.containerSurfaceHigh.interpolateTowards(it.containerSurfaceHighest, 0.5f)
+                    }),
+                    ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerSurface),
+                    ColorStop(fraction = 1.0f, colorQuery = ContainerColorTokens::containerSurface),
+                    displayName = "Graphite Glass"
+                )
+            ),
+            highlightSurfacePainter = GlassSurfacePainter()
         ).also {
             // add two overlay painters to create a bezel line between
             // menu bar and toolbars
-//            it.addOverlayPainter(
-//                BottomLineOverlayPainter(colorTokensQuery = { scheme -> scheme.midColor }),
-//                DecorationAreaType.Header
-//            )
-//            it.addOverlayPainter(
-//                TopLineOverlayPainter(
-//                    composite(
-//                        { scheme -> scheme.foregroundColor },
-//                        ColorTransforms.alpha(0.125f)
-//                    )
-//                ), DecorationAreaType.Toolbar
-//            )
-
+            it.addOverlayPainter(BottomLineOverlayPainter(colorTokensQuery = { tokens -> tokens.containerOutline }),
+                DecorationAreaType.Header)
+            it.addOverlayPainter(TopLineOverlayPainter(colorTokensQuery = {
+                tokens -> tokens.inverseContainerOutline.withAlpha(0.375f)
+            }), DecorationAreaType.Toolbar)
         },
         buttonShaper = ClassicButtonShaper()
     )
 }
 
 fun graphiteElectricSkin(): AuroraSkinDefinition {
+    val accentContainerColorTokens = AccentContainerColorTokens(
+        defaultAreaSelectedTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF00FF9Cu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight(),
+            colorResolver = DefaultPaletteColorResolver.overlayWith(
+                TokenPaletteColorResolverOverlay(
+                    containerSurfaceDisabledAlpha = { 0.4f },
+                    onContainerDisabledAlpha = { 0.8f },
+                    containerOutlineDisabledAlpha = { 0.4f },
+                )
+            )
+        ),
+        defaultAreaHighlightTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFF00FF9Cu.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+    )
+
+    val defaultTokensBundle = getDefaultTokensBundle(accentContainerColorTokens)
+
+    val colors = AuroraSkinColors()
+    colors.registerDecorationAreaTokensBundle(defaultTokensBundle, DecorationAreaType.None)
+
     return AuroraSkinDefinition(
         displayName = "Graphite Electric",
-        colors = graphiteBaseSkinColors(
-            AccentBuilder()
-                .withAccentResource("/org/pushingpixels/aurora/theming/graphite.colorschemes")
-                .withActiveControlsAccent("Graphite Electric")
-                .withHighlightsAccent("Graphite Electric")
-        ),
+        colors = colors,
         painters = graphiteBasePainters(),
         buttonShaper = ClassicButtonShaper()
     )
 }
 
 fun graphiteGoldSkin(): AuroraSkinDefinition {
+    val accentContainerColorTokens = AccentContainerColorTokens(
+        defaultAreaSelectedTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFFFC900u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight(),
+            colorResolver = DefaultPaletteColorResolver.overlayWith(
+                TokenPaletteColorResolverOverlay(
+                    containerSurfaceDisabledAlpha = { 0.4f },
+                    onContainerDisabledAlpha = { 0.8f },
+                    containerOutlineDisabledAlpha = { 0.4f },
+                )
+            )
+        ),
+        defaultAreaHighlightTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFFFC900u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+    )
+
+    val defaultTokensBundle = getDefaultTokensBundle(accentContainerColorTokens)
+
+    val colors = AuroraSkinColors()
+    colors.registerDecorationAreaTokensBundle(defaultTokensBundle, DecorationAreaType.None)
+
     return AuroraSkinDefinition(
         displayName = "Graphite Gold",
-        colors = graphiteBaseSkinColors(
-            AccentBuilder()
-                .withAccentResource("/org/pushingpixels/aurora/theming/graphite.colorschemes")
-                .withActiveControlsAccent("Graphite Gold")
-                .withHighlightsAccent("Graphite Gold")
-        ),
+        colors = colors,
         painters = graphiteBasePainters(),
         buttonShaper = ClassicButtonShaper()
     )
 }
 
 fun graphiteSiennaSkin(): AuroraSkinDefinition {
+    val accentContainerColorTokens = AccentContainerColorTokens(
+        defaultAreaSelectedTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFB27565u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight(),
+            colorResolver = DefaultPaletteColorResolver.overlayWith(
+                TokenPaletteColorResolverOverlay(
+                    containerSurfaceDisabledAlpha = { 0.45f },
+                    onContainerDisabledAlpha = { 0.5f },
+                    containerOutlineDisabledAlpha = { 0.45f },
+                )
+            )
+        ),
+        defaultAreaHighlightTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFB27565u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+    )
+
+    val defaultTokensBundle = getDefaultTokensBundle(accentContainerColorTokens)
+
+    val colors = AuroraSkinColors()
+    colors.registerDecorationAreaTokensBundle(defaultTokensBundle, DecorationAreaType.None)
+
     return AuroraSkinDefinition(
         displayName = "Graphite Sienna",
-        colors = graphiteBaseSkinColors(
-            AccentBuilder()
-                .withAccentResource("/org/pushingpixels/aurora/theming/graphite.colorschemes")
-                .withActiveControlsAccent("Graphite Sienna")
-                .withHighlightsAccent("Graphite Sienna")
-        ),
+        colors = colors,
         painters = graphiteBasePainters(),
         buttonShaper = ClassicButtonShaper()
     )
 }
 
 fun graphiteSunsetSkin(): AuroraSkinDefinition {
-    val accentScheme = SunsetColorScheme()
+    val accentContainerColorTokens = AccentContainerColorTokens(
+        defaultAreaSelectedTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFFF7B00u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight(),
+            colorResolver = DefaultPaletteColorResolver.overlayWith(
+                TokenPaletteColorResolverOverlay(
+                    containerSurfaceDisabledAlpha = { 0.4f },
+                    onContainerDisabledAlpha = { 0.8f },
+                    containerOutlineDisabledAlpha = { 0.4f },
+                )
+            )
+        ),
+        defaultAreaHighlightTokens = getContainerTokens(
+            seed = Hct.fromInt(0xFFFF7B00u.toInt()),
+            containerConfiguration = ContainerConfiguration.defaultLight()),
+    )
+
+    val defaultTokensBundle = getDefaultTokensBundle(accentContainerColorTokens)
+
+    val colors = AuroraSkinColors()
+    colors.registerDecorationAreaTokensBundle(defaultTokensBundle, DecorationAreaType.None)
 
     return AuroraSkinDefinition(
         displayName = "Graphite Sunset",
-        colors = graphiteBaseSkinColors(
-            AccentBuilder()
-                .withActiveControlsAccent(accentScheme)
-                .withHighlightsAccent(accentScheme)
-        ).also {
-            it.registerAsDecorationArea(
-                backgroundColorScheme = it.getBackgroundColorScheme(DecorationAreaType.None),
-                noneTransformationOverlay = { bundle ->
-                    // Sunset needs tweaks for the enabled / disabled visuals of checkbox and radio button marks
-                    // for better contrast
-
-                    // Sunset needs tweaks for the enabled / disabled visuals of checkbox and radio button marks
-                    // for better contrast
-                    bundle.registerColorScheme(
-                        accentScheme,
-                        ColorSchemeAssociationKind.Mark,
-                        ComponentState.Selected
-                    )
-                    bundle.registerAlpha(0.7f, ComponentState.DisabledSelected)
-                    bundle.registerColorScheme(
-                        accentScheme.shade(0.4f),
-                        ColorSchemeAssociationKind.Mark,
-                        ComponentState.DisabledSelected
-                    )
-                },
-                areaTypes = arrayOf(DecorationAreaType.None)
-            )
-        },
+        colors = colors,
         painters = graphiteBasePainters(),
         buttonShaper = ClassicButtonShaper()
     )
