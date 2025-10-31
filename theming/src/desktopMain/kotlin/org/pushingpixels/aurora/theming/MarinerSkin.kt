@@ -20,10 +20,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.ColorStop
-import org.pushingpixels.aurora.theming.painter.border.FractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
-import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
-import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
@@ -138,20 +135,7 @@ private fun marinerSkinColors(): AuroraSkinColors {
 
 fun marinerSkin(): AuroraSkinDefinition {
     val painters = AuroraPainters(
-        fillPainter = FractionBasedFillPainter(
-            0.0f to { it.extraLightColor },
-            0.5f to { it.lightColor },
-            1.0f to { it.midColor },
-            displayName = "Mariner"
-        ),
-        borderPainter = FractionBasedBorderPainter(
-            0.0f to { it.ultraDarkColor },
-            0.5f to { it.darkColor },
-            1.0f to { it.midColor },
-            displayName = "Mariner"
-        ),
         decorationPainter = MatteDecorationPainter(),
-        highlightFillPainter = ClassicFillPainter(),
         surfacePainter = FractionBasedSurfacePainter(
             ColorStop(fraction = 0.0f, colorQuery = {
                 if (it.isDark) it.containerSurfaceHigh else it.containerSurfaceLowest

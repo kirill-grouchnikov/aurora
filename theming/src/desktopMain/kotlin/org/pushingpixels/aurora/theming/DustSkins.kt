@@ -20,13 +20,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.ColorStop
-import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
-import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
-import org.pushingpixels.aurora.theming.painter.border.DelegateFractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
-import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
-import org.pushingpixels.aurora.theming.painter.fill.MatteFillPainter
-import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
 import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
@@ -121,24 +115,7 @@ private fun dustBasePainters(): AuroraPainters {
         )
     )
     val painters = AuroraPainters(
-        fillPainter = SpecularRectangularFillPainter(MatteFillPainter(), 0.8f),
-        borderPainter = CompositeBorderPainter(
-            displayName = "Dust",
-            outer = ClassicBorderPainter(),
-            inner = DelegateFractionBasedBorderPainter(
-                displayName = "Dust Inner",
-                delegate = ClassicBorderPainter(),
-                masks = longArrayOf(0x60FFFFFF, 0x40FFFFFF, 0x20FFFFFF),
-                transform = {
-                    it.shift(
-                        backgroundShiftColor = it.ultraLightColor, backgroundShiftFactor = 0.8f,
-                        foregroundShiftColor = it.foregroundColor, foregroundShiftFactor = 0.0f
-                    ).tint(0.6f)
-                        .saturate(0.2f)
-                }
-            )),
         decorationPainter = MatteDecorationPainter(),
-        highlightFillPainter = ClassicFillPainter(),
         surfacePainter = SpecularRectangularSurfacePainter(MatteSurfacePainter(), 0.3f),
         outlinePainter = outlinePainter,
         highlightSurfacePainter = MatteSurfacePainter(),

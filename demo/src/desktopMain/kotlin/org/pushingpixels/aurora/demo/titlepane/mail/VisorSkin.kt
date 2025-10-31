@@ -20,10 +20,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.ColorStop
-import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.BrushedMetalDecorationPainter
-import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
-import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
@@ -138,14 +135,7 @@ private fun visorSkinColors(): AuroraSkinColors {
 
 fun visorSkin(): AuroraSkinDefinition {
     val painters = AuroraPainters(
-        fillPainter = ClassicFillPainter(),
-        borderPainter = ClassicBorderPainter(),
         decorationPainter = BrushedMetalDecorationPainter(),
-        highlightFillPainter = FractionBasedFillPainter(
-            0.0f to { it.extraLightColor },
-            1.0f to { it.extraLightColor },
-            displayName = "Visor Highlight"
-        ),
         surfacePainter = MatteSurfacePainter(),
         outlinePainter = FlatOutlinePainter(),
         highlightSurfacePainter = FractionBasedSurfacePainter(

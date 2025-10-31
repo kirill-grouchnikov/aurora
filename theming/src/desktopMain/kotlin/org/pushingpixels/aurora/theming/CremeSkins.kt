@@ -19,13 +19,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.ColorStop
-import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
-import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
-import org.pushingpixels.aurora.theming.painter.border.DelegateFractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
-import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
-import org.pushingpixels.aurora.theming.painter.fill.MatteFillPainter
-import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
@@ -80,17 +74,7 @@ private fun cremeBaseSkinColors(accentContainerColorTokens: AccentContainerColor
 
 private fun cremeBasePainters(): AuroraPainters {
     val painters = AuroraPainters(
-        fillPainter = SpecularRectangularFillPainter(MatteFillPainter(), 0.7f),
-        borderPainter = CompositeBorderPainter(
-            displayName = "Creme",
-            outer = ClassicBorderPainter(),
-            inner = DelegateFractionBasedBorderPainter(
-                displayName = "Creme Inner",
-                delegate = ClassicBorderPainter(),
-                masks = longArrayOf(0xFFFFFFFFL, 0xFFFFFFFFL, 0xFFFFFFFFL),
-                transform = { it.tint(0.9f) })),
         decorationPainter = ArcDecorationPainter(),
-        highlightFillPainter = ClassicFillPainter(),
         surfacePainter = SpecularRectangularSurfacePainter(MatteSurfacePainter(), 0.5f),
         outlinePainter = InlayOutlinePainter(
             displayName = "Creme",

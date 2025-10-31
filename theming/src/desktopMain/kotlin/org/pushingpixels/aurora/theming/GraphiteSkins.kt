@@ -21,12 +21,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.ColorStop
-import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
-import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
-import org.pushingpixels.aurora.theming.painter.border.DelegateFractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.FlatDecorationPainter
-import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
-import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
 import org.pushingpixels.aurora.theming.painter.outline.AuroraOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
@@ -87,26 +82,7 @@ private fun graphiteBasePainters(
     highlightSurfacePainter: AuroraSurfacePainter? = null
 ): AuroraPainters {
     return AuroraPainters(
-        fillPainter = FractionBasedFillPainter(
-            0.0f to { it.ultraLightColor },
-            0.5f to { it.lightColor },
-            1.0f to { it.lightColor },
-            displayName = "Graphite"
-        ),
-        borderPainter = CompositeBorderPainter(
-            displayName = "Graphite",
-            outer = DelegateFractionBasedBorderPainter(
-                displayName = "Graphite Outer",
-                delegate = ClassicBorderPainter(),
-                masks = longArrayOf(0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF),
-                transform = { it.shade(0.4f) }),
-            inner = DelegateFractionBasedBorderPainter(
-                displayName = "Graphite Inner",
-                delegate = ClassicBorderPainter(),
-                masks = longArrayOf(0xA0FFFFFF, 0x90FFFFFF, 0xA0FFFFFF),
-                transform = { it.tint(0.25f) })),
         decorationPainter = FlatDecorationPainter(),
-        highlightFillPainter = ClassicFillPainter(),
         surfacePainter = surfacePainter ?: FractionBasedSurfacePainter(
             ColorStop(fraction = 0.0f, colorQuery = ContainerColorTokens::containerSurfaceHigh),
             ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerSurface),

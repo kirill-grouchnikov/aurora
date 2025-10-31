@@ -17,12 +17,8 @@ package org.pushingpixels.aurora.theming
 
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
-import org.pushingpixels.aurora.theming.painter.border.FlatBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MarbleNoiseDecorationPainter
-import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
-import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
-import org.pushingpixels.aurora.theming.painter.fill.SubduedFillPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomShadowOverlayPainter
@@ -110,13 +106,10 @@ private fun nebulaBaseSkinColors(accentContainerColorTokens: AccentContainerColo
 
 private fun nebulaBasePainters(): AuroraPainters {
     val painters = AuroraPainters(
-        fillPainter = SpecularRectangularFillPainter(SubduedFillPainter(), 0.3f),
-        borderPainter = FlatBorderPainter(),
         decorationPainter = MarbleNoiseDecorationPainter(
             textureAlpha = 0.2f,
             baseDecorationPainter = ArcDecorationPainter()
         ),
-        highlightFillPainter = ClassicFillPainter(),
         surfacePainter = SpecularRectangularSurfacePainter(ClassicSurfacePainter(), 1.0f),
         outlinePainter = FlatOutlinePainter(),
         highlightSurfacePainter = MatteSurfacePainter(),

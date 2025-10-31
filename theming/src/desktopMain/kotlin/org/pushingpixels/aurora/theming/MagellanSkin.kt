@@ -21,13 +21,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.ColorStop
-import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
-import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
-import org.pushingpixels.aurora.theming.painter.border.DelegateFractionBasedBorderPainter
-import org.pushingpixels.aurora.theming.painter.border.FractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
-import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
-import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
 import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
@@ -194,27 +188,7 @@ private fun magellanSkinColors(): AuroraSkinColors {
 
 fun magellanSkin(): AuroraSkinDefinition {
     val painters = AuroraPainters(
-        fillPainter = FractionBasedFillPainter(
-            0.0f to { it.extraLightColor },
-            0.5f to { it.lightColor },
-            1.0f to { it.midColor },
-            displayName = "Magellan"
-        ),
-        borderPainter = CompositeBorderPainter(
-            displayName = "Magellan",
-            outer = FractionBasedBorderPainter(
-                0.0f to { it.ultraDarkColor },
-                0.5f to { it.darkColor },
-                1.0f to { it.darkColor },
-                displayName = "Magellan Outer"
-            ),
-            inner = DelegateFractionBasedBorderPainter(
-                displayName = "Magellan Inner",
-                delegate = ClassicBorderPainter(),
-                masks = longArrayOf(0xA0FFFFFF, 0x60FFFFFF, 0x40FFFFFF),
-                transform = { it.tint(0.5f) })),
         decorationPainter = MatteDecorationPainter(),
-        highlightFillPainter = ClassicFillPainter(),
         surfacePainter = FractionBasedSurfacePainter(
             ColorStop(fraction = 0.0f, colorQuery = {
                 if (it.isDark) {

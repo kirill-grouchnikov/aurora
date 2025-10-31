@@ -17,11 +17,7 @@ package org.pushingpixels.aurora.theming
 
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
-import org.pushingpixels.aurora.theming.painter.border.GlassBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
-import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
-import org.pushingpixels.aurora.theming.painter.fill.GlassFillPainter
-import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.GlassSurfacePainter
@@ -130,10 +126,7 @@ fun ravenSkin(): AuroraSkinDefinition {
         displayName = "Raven",
         colors = ravenSkinColors(),
         painters = AuroraPainters(
-            fillPainter = SpecularRectangularFillPainter(GlassFillPainter(), 0.6f),
-            borderPainter = GlassBorderPainter(),
             decorationPainter = ArcDecorationPainter(),
-            highlightFillPainter = ClassicFillPainter(),
             surfacePainter = SpecularRectangularSurfacePainter(GlassSurfacePainter(), 0.5f),
             outlinePainter = FlatOutlinePainter(),
             highlightSurfacePainter = ClassicSurfacePainter(),

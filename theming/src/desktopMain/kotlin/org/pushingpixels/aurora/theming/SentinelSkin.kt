@@ -17,9 +17,7 @@ package org.pushingpixels.aurora.theming
 
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
-import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
-import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomShadowOverlayPainter
@@ -171,10 +169,7 @@ private fun sentinelSkinColors(): AuroraSkinColors {
 
 fun sentinelSkin(): AuroraSkinDefinition {
     val painters = AuroraPainters(
-        fillPainter = ClassicFillPainter(),
-        borderPainter = ClassicBorderPainter(),
         decorationPainter = MatteDecorationPainter(),
-        highlightFillPainter = ClassicFillPainter(),
         surfacePainter = MatteSurfacePainter(),
         outlinePainter = FlatOutlinePainter(),
         highlightSurfacePainter = MatteSurfacePainter(),

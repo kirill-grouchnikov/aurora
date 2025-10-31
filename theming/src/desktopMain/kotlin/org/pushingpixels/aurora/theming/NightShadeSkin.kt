@@ -20,12 +20,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.ColorStop
-import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
-import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
-import org.pushingpixels.aurora.theming.painter.border.DelegateFractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
-import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
-import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
@@ -102,22 +97,7 @@ private fun nightShadeSkinColors(): AuroraSkinColors {
 
 fun nightShadeSkin(): AuroraSkinDefinition {
     val painters = AuroraPainters(
-        fillPainter = FractionBasedFillPainter(
-            0.0f to { it.ultraLightColor },
-            0.5f to { it.lightColor },
-            1.0f to { it.lightColor },
-            displayName = "Night Shade"
-        ),
-        borderPainter = CompositeBorderPainter(
-            displayName = "Night Shade",
-            outer = ClassicBorderPainter(),
-            inner = DelegateFractionBasedBorderPainter(
-                displayName = "Night Shade Inner", 
-                delegate = ClassicBorderPainter(),
-                masks = longArrayOf(0x40FFFFFF, 0x20FFFFFF, 0x00FFFFFF),
-                transform = { it.tint(0.2f) })),
         decorationPainter = MatteDecorationPainter(),
-        highlightFillPainter = ClassicFillPainter(),
         surfacePainter = FractionBasedSurfacePainter(
             ColorStop(fraction = 0.0f, colorQuery = ContainerColorTokens::containerSurfaceLow),
             ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerSurface),

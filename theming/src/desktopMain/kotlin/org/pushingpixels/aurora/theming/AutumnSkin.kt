@@ -20,13 +20,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.ColorStop
-import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
-import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
-import org.pushingpixels.aurora.theming.painter.border.DelegateFractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MarbleNoiseDecorationPainter
-import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
-import org.pushingpixels.aurora.theming.painter.fill.MatteFillPainter
-import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
 import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
@@ -192,20 +186,6 @@ private fun autumnSkinColors(): AuroraSkinColors {
 
 fun autumnSkin(): AuroraSkinDefinition {
     val painters = AuroraPainters(
-        fillPainter = SpecularRectangularFillPainter(MatteFillPainter(), 0.2f),
-        borderPainter = CompositeBorderPainter(
-            displayName = "Autumn",
-            outer = DelegateFractionBasedBorderPainter(
-                displayName = "Autumn Outer",
-                delegate = ClassicBorderPainter(),
-                masks = longArrayOf(0xFFFFFFFFL, 0xFFFFFFFFL, 0xFFFFFFFFL),
-                transform = { it.shade(0.1f) }),
-            inner = DelegateFractionBasedBorderPainter(
-                displayName = "Autumn Inner",
-                delegate = ClassicBorderPainter(),
-                masks = longArrayOf(0xFFFFFFFFL, 0xFFFFFFFFL, 0xFFFFFFFFL),
-                transform = { it.tint(0.8f) })),
-        highlightFillPainter = ClassicFillPainter(),
         decorationPainter = MarbleNoiseDecorationPainter(textureAlpha = 1.0f),
         surfacePainter = SpecularRectangularSurfacePainter(
             base = MatteSurfacePainter(),

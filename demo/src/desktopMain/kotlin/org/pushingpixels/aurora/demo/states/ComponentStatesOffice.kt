@@ -44,12 +44,8 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.ColorStop
-import org.pushingpixels.aurora.theming.painter.border.CompositeBorderPainter
-import org.pushingpixels.aurora.theming.painter.border.DelegateFractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.border.FractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
-import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
-import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
@@ -270,23 +266,7 @@ private fun officeSkin(): AuroraSkinDefinition {
         displayName = "Office Silver",
         colors = officeColors,
         painters = AuroraPainters(
-            fillPainter = FractionBasedFillPainter(
-                0.0f to { it.ultraLightColor },
-                0.499999f to { it.lightColor },
-                0.5f to { it.ultraDarkColor },
-                1.0f to { it.extraLightColor },
-                displayName = "Office"
-            ),
-            borderPainter = CompositeBorderPainter(
-                displayName = "Office",
-                outer = outerBorderPainter,
-                inner = DelegateFractionBasedBorderPainter(
-                    displayName = "Office Inner",
-                    delegate = outerBorderPainter,
-                    masks = longArrayOf(0xFFFFFFFFL, 0xFFFFFFFFL, 0xFFFFFFFFL),
-                ) { it.tint(0.5f) }),
             decorationPainter = MatteDecorationPainter(),
-            highlightFillPainter = ClassicFillPainter(),
             surfacePainter = FractionBasedSurfacePainter(
                 ColorStop(fraction = 0.0f, colorQuery = ContainerColorTokens::containerSurfaceLow),
                 ColorStop(fraction = 0.49999f, colorQuery = {

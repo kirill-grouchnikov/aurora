@@ -19,10 +19,7 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.ColorStop
-import org.pushingpixels.aurora.theming.painter.border.ClassicBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
-import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
-import org.pushingpixels.aurora.theming.painter.fill.FractionBasedFillPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.BottomShadowOverlayPainter
@@ -118,15 +115,7 @@ private fun greenMagicSkinColors(): AuroraSkinColors {
 
 fun greenMagicSkin(): AuroraSkinDefinition {
     val painters = AuroraPainters(
-        fillPainter = FractionBasedFillPainter(
-            0.0f to { it.ultraLightColor },
-            0.5f to { it.lightColor },
-            1.0f to { it.lightColor },
-            displayName = "Green Magic"
-        ),
-        borderPainter = ClassicBorderPainter(),
         decorationPainter = ArcDecorationPainter(),
-        highlightFillPainter = ClassicFillPainter(),
         surfacePainter = FractionBasedSurfacePainter(
             ColorStop(fraction = 0.0f, colorQuery = ContainerColorTokens::containerSurfaceLowest),
             ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerSurface),

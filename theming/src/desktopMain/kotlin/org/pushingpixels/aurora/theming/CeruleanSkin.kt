@@ -17,11 +17,7 @@ package org.pushingpixels.aurora.theming
 
 import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
-import org.pushingpixels.aurora.theming.painter.border.GlassBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
-import org.pushingpixels.aurora.theming.painter.fill.ClassicFillPainter
-import org.pushingpixels.aurora.theming.painter.fill.GlassFillPainter
-import org.pushingpixels.aurora.theming.painter.fill.SpecularRectangularFillPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
@@ -129,10 +125,7 @@ private fun ceruleanSkinColors(): AuroraSkinColors {
 
 fun ceruleanSkin(): AuroraSkinDefinition {
     val painters = AuroraPainters(
-        fillPainter = SpecularRectangularFillPainter(ClassicFillPainter(), 0.5f),
-        borderPainter = GlassBorderPainter(),
         decorationPainter = ArcDecorationPainter(),
-        highlightFillPainter = GlassFillPainter(),
         surfacePainter = SpecularRectangularSurfacePainter(base = ClassicSurfacePainter(), baseAlpha = 0.5f),
         outlinePainter = FlatOutlinePainter(),
         highlightSurfacePainter = GlassSurfacePainter(),
