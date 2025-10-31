@@ -20,6 +20,7 @@ import org.pushingpixels.aurora.theming.AuroraSkinDefinition
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.tools.screenshot.screenshot
 import org.pushingpixels.aurora.window.auroraApplication
+import java.io.File
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -44,6 +45,9 @@ private fun getAuroraDarkSeedBasedSkins(): List<Pair<String, AuroraSkinDefinitio
 }
 
 fun main(args: Array<String>) = auroraApplication {
+    val folder = args[0]
+    File(folder).mkdirs()
+
     val auroraLightSkins = getAuroraLightSeedBasedSkins()
     val lightCounter = AtomicInteger(auroraLightSkins.size)
     for (auroraLightSkinDef in auroraLightSkins) {
