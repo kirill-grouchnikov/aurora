@@ -27,6 +27,7 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 
 data class ModelStateInfoSnapshot(
@@ -41,8 +42,8 @@ val LocalModelStateInfoSnapshot = staticCompositionLocalOf<ModelStateInfoSnapsho
 }
 
 @AuroraInternalApi
-val LocalColorSchemeBundle = staticCompositionLocalOf<AuroraColorSchemeBundle?> {
-    error("LocalColorSchemeBundle not provided")
+val LocalColorTokensOverlay = staticCompositionLocalOf<ContainerColorTokensOverlay?> {
+    error("LocalColorTokensOverlay not provided")
 }
 
 @AuroraInternalApi

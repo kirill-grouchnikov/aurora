@@ -40,7 +40,7 @@ import org.pushingpixels.aurora.component.popup.CascadingCommandMenuHandler
 import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.component.utils.getLabelPreferredSingleLineWidth
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import kotlin.math.max
 
 data class CustomComplexCommand(
@@ -166,7 +166,7 @@ data class CustomComplexCommandPopupMenuPresentationModel(
 
 data class CustomComplexCommandButtonPresentationModel(
     override val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-    override val colorSchemeBundle: AuroraColorSchemeBundle? = null,
+    override val colorTokensOverlay: ContainerColorTokensOverlay? = null,
     override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
     override val iconDimension: DpSize? = null,
     override val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
@@ -203,7 +203,7 @@ data class CustomComplexCommandButtonPresentationModel(
 
     override fun overlayWith(overlay: BaseCommandButtonPresentationModel.Overlay): CustomComplexCommandButtonPresentationModel {
         return CustomComplexCommandButtonPresentationModel(
-            colorSchemeBundle = overlay.colorSchemeBundle ?: this.colorSchemeBundle,
+            colorTokensOverlay = overlay.colorTokensOverlay ?: this.colorTokensOverlay,
             backgroundAppearanceStrategy = overlay.backgroundAppearanceStrategy
                 ?: this.backgroundAppearanceStrategy,
             horizontalAlignment = overlay.horizontalAlignment ?: this.horizontalAlignment,

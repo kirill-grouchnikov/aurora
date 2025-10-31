@@ -17,8 +17,6 @@ package org.pushingpixels.aurora.theming
 
 import androidx.compose.ui.graphics.toArgb
 import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
 import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
@@ -39,56 +37,6 @@ import org.pushingpixels.aurora.theming.palette.overlayWith
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
 import org.pushingpixels.ephemeral.chroma.hct.Hct
-
-/**
- * Applies the specified highlight schemes on the relevant parts of the
- * specified scheme bundle.
- *
- * @param schemeBundle    Scheme bundle.
- * @param highlightScheme Highlight scheme.
- */
-private fun applyHighlightColorScheme(
-    schemeBundle: AuroraColorSchemeBundle,
-    highlightScheme: AuroraColorScheme
-) {
-    // specify custom alpha values for the highlights
-    schemeBundle.registerHighlightAlpha(0.85f, ComponentState.RolloverUnselected)
-    schemeBundle.registerHighlightAlpha(0.9f, ComponentState.Selected)
-    schemeBundle.registerHighlightColorScheme(
-        highlightScheme, ComponentState.RolloverUnselected,
-        ComponentState.Selected, ComponentState.RolloverSelected
-    )
-}
-
-private fun applyHighlightAsFill(
-    schemeBundle: AuroraColorSchemeBundle,
-    highlightScheme: AuroraColorScheme, highlightBorderScheme: AuroraColorScheme
-) {
-    // use for borders on rollover controls
-    schemeBundle.registerColorScheme(
-        highlightBorderScheme, ColorSchemeAssociationKind.Border,
-        ComponentState.RolloverSelected,
-        ComponentState.RolloverUnselected
-    )
-
-    // use for fill of selected controls
-    schemeBundle.registerColorScheme(
-        highlightScheme, ColorSchemeAssociationKind.Fill,
-        ComponentState.Selected, ComponentState.RolloverSelected
-    )
-
-    // use for borders of highlights
-    schemeBundle.registerColorScheme(
-        highlightScheme,
-        ColorSchemeAssociationKind.HighlightBorder, *ComponentState.activeStates
-    )
-
-    // use for text highlight
-    schemeBundle.registerColorScheme(
-        highlightScheme, ColorSchemeAssociationKind.HighlightText,
-        ComponentState.Selected, ComponentState.RolloverSelected
-    )
-}
 
 private fun geminiSkinColors(): AuroraSkinColors {
     val result = AuroraSkinColors()

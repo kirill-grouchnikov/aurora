@@ -35,9 +35,9 @@ import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.demo.svg.vaadin.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
-import org.pushingpixels.aurora.theming.colorscheme.LimeGreenColorScheme
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
+import org.pushingpixels.aurora.theming.palette.TonalPaletteSeeds
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.window.AuroraApplicationScope
 import org.pushingpixels.aurora.window.AuroraWindow
@@ -167,7 +167,7 @@ fun DemoColorsProgress(enabled: Boolean) {
                 enabled = enabled,
                 progress = animatedStateProgress.value
             ),
-            presentationModel = LinearProgressPresentationModel(colorSchemeBundle = demoSchemeBundle())
+            presentationModel = LinearProgressPresentationModel(colorTokensOverlay = demoTokensOverlay())
         ).project()
 
         CommandButtonProjection(
@@ -260,7 +260,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                         iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
                         iconEnabledFilterStrategy = IconFilterStrategy.Original,
                         iconActiveFilterStrategy = IconFilterStrategy.Original,
-                        colorSchemeBundle = demoSchemeBundle()
+                        colorTokensOverlay = demoTokensOverlay()
                     )
                 ).project()
 
@@ -280,7 +280,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                         iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
-                        colorSchemeBundle = demoSchemeBundle()
+                        colorTokensOverlay = demoTokensOverlay()
                     )
                 ).project()
 
@@ -409,7 +409,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                             mainIconSize = DpSize(36.dp, 36.dp),
                             footerIconSize = DpSize(20.dp, 20.dp)
                         ),
-                        colorSchemeBundle = demoSchemeBundle()
+                        colorTokensOverlay = demoTokensOverlay()
                     )
                 ).project()
 
@@ -486,7 +486,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                         checkboxSelected = !checkboxSelected
                     }
                 ), presentationModel = SelectorPresentationModel(
-                    colorSchemeBundle = demoSchemeBundle()
+                    colorTokensOverlay = demoTokensOverlay()
                 )).project()
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -501,7 +501,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                             selected = radioState,
                             onClick = { radioState = true }
                         ), presentationModel = SelectorPresentationModel(
-                            colorSchemeBundle = demoSchemeBundle()
+                            colorTokensOverlay = demoTokensOverlay()
                         )).project()
 
                     RadioButtonProjection(
@@ -511,7 +511,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                             selected = !radioState,
                             onClick = { radioState = false }
                         ), presentationModel = SelectorPresentationModel(
-                            colorSchemeBundle = demoSchemeBundle()
+                            colorTokensOverlay = demoTokensOverlay()
                         )).project()
                 }
             }
@@ -533,7 +533,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                             }
                         }
                     ), presentationModel = SelectorPresentationModel(
-                        colorSchemeBundle = demoSchemeBundle()
+                        colorTokensOverlay = demoTokensOverlay()
                     )).project()
             }
 
@@ -556,7 +556,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                         switchEnabledSelected = !switchEnabledSelected
                     }
                 ), presentationModel = SwitchPresentationModel(
-                    colorSchemeBundle = demoSchemeBundle()
+                    colorTokensOverlay = demoTokensOverlay()
                 )).project()
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -571,7 +571,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                         switchEnabledUnselected = !switchEnabledUnselected
                     }
                 ), presentationModel = SwitchPresentationModel(
-                    colorSchemeBundle = demoSchemeBundle()
+                    colorTokensOverlay = demoTokensOverlay()
                 )).project()
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -586,7 +586,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                         switchDisabledSelected = !switchDisabledSelected
                     }
                 ), presentationModel = SwitchPresentationModel(
-                    colorSchemeBundle = demoSchemeBundle()
+                    colorTokensOverlay = demoTokensOverlay()
                 )).project()
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -601,7 +601,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                         switchDisabledUnselected = !switchDisabledUnselected
                     }
                 ), presentationModel = SwitchPresentationModel(
-                    colorSchemeBundle = demoSchemeBundle()
+                    colorTokensOverlay = demoTokensOverlay()
                 )).project()
             }
 
@@ -824,7 +824,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                 // Example of an indeterminate linear progress bar
                 IndeterminateLinearProgressProjection(
                     contentModel = IndeterminateProgressContentModel(enabled = contentEnabled),
-                    presentationModel = LinearProgressPresentationModel(colorSchemeBundle = demoSchemeBundle())
+                    presentationModel = LinearProgressPresentationModel(colorTokensOverlay = demoTokensOverlay())
                 ).project()
 
                 Spacer(modifier = Modifier.width(16.dp))
@@ -837,7 +837,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                 // Example of a circular progress indicator
                 IndeterminateCircularProgressProjection(
                     contentModel = IndeterminateProgressContentModel(enabled = contentEnabled),
-                    presentationModel = CircularProgressPresentationModel(colorSchemeBundle = demoSchemeBundle())
+                    presentationModel = CircularProgressPresentationModel(colorTokensOverlay = demoTokensOverlay())
                 ).project()
 
                 Spacer(modifier = Modifier.width(16.dp))
@@ -846,7 +846,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                 IndeterminateCircularProgressProjection(
                     contentModel = IndeterminateProgressContentModel(enabled = contentEnabled),
                     presentationModel = CircularProgressPresentationModel(
-                        colorSchemeBundle = demoSchemeBundle(),
+                        colorTokensOverlay = demoTokensOverlay(),
                         radius = 14.dp
                     )
                 ).project()
@@ -868,7 +868,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                         onValueChangeEnd = { println("Slider change done!") },
                         enabled = contentEnabled
                     ), presentationModel = SliderPresentationModel(
-                        colorSchemeBundle = demoSchemeBundle()
+                        colorTokensOverlay = demoTokensOverlay()
                     )
                 ).project()
 
@@ -891,7 +891,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                         tickSteps = 9,
                         snapToTicks = true,
                         drawTicks = true,
-                        colorSchemeBundle = demoSchemeBundle()
+                        colorTokensOverlay = demoTokensOverlay()
                     )
                 ).project()
             }
@@ -914,7 +914,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                         placeholder = resourceBundle.getString("Control.textfield.area"),
                         onValueChange = { text1 = it },
                         enabled = contentEnabled
-                    ), presentationModel = TextFieldPresentationModel(colorSchemeBundle = demoSchemeBundle())
+                    ), presentationModel = TextFieldPresentationModel(colorTokensOverlay = demoTokensOverlay())
                 ).project()
 
                 Spacer(modifier = Modifier.width(16.dp))
@@ -929,7 +929,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                         enabled = contentEnabled
                     ),
                     presentationModel = TextFieldPresentationModel(
-                        colorSchemeBundle = demoSchemeBundle(),
+                        colorTokensOverlay = demoTokensOverlay(),
                         singleLine = true
                     )
                 ).project()
@@ -1115,12 +1115,7 @@ fun AuroraApplicationScope.DemoColorsContent(
     }
 }
 
-private fun demoSchemeBundle(): AuroraColorSchemeBundle {
-    return generateColorSchemeBundle(
-        active = LimeGreenColorScheme().hueShift(0.03f),
-        enabled = LimeGreenColorScheme().saturate(-0.2f),
-        foregroundSourceActive = { it.darkColor },
-        foregroundSourceEnabled = { it.darkColor }
-    )
+private fun demoTokensOverlay(): ContainerColorTokensOverlay {
+    return generateColorTokensOverlay(seed = TonalPaletteSeeds.LimeGreen)
 }
 

@@ -27,6 +27,7 @@ import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 import org.pushingpixels.aurora.theming.Sides
 import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 
 object CommandButtonSizingConstants {
     val WideButtonContentPadding = PaddingValues(start = 10.dp, top = 3.dp, end = 10.dp, bottom = 4.dp)
@@ -74,7 +75,7 @@ enum class SelectedStateHighlight {
 
 interface BaseCommandButtonPresentationModel : PresentationModel {
     val presentationState: CommandButtonPresentationState
-    val colorSchemeBundle: AuroraColorSchemeBundle?
+    val colorTokensOverlay: ContainerColorTokensOverlay?
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy
     val horizontalAlignment: HorizontalAlignment
     val iconDimension: DpSize?
@@ -108,7 +109,7 @@ interface BaseCommandButtonPresentationModel : PresentationModel {
 
     data class Overlay(
         val presentationState: CommandButtonPresentationState? = null,
-        val colorSchemeBundle: AuroraColorSchemeBundle? = null,
+        val colorTokensOverlay: ContainerColorTokensOverlay? = null,
         val backgroundAppearanceStrategy: BackgroundAppearanceStrategy? = null,
         val horizontalAlignment: HorizontalAlignment? = null,
         val iconDimension: DpSize? = null,
@@ -146,7 +147,7 @@ interface BaseCommandButtonPresentationModel : PresentationModel {
 
 data class CommandButtonPresentationModel(
     override val presentationState: CommandButtonPresentationState = CommandButtonPresentationState.Medium,
-    override val colorSchemeBundle: AuroraColorSchemeBundle? = null,
+    override val colorTokensOverlay: ContainerColorTokensOverlay? = null,
     override val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
     override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
     override val iconDimension: DpSize? = null,
@@ -181,7 +182,7 @@ data class CommandButtonPresentationModel(
     override fun overlayWith(overlay: BaseCommandButtonPresentationModel.Overlay): CommandButtonPresentationModel {
         return CommandButtonPresentationModel(
             presentationState = overlay.presentationState ?: this.presentationState,
-            colorSchemeBundle = overlay.colorSchemeBundle ?: this.colorSchemeBundle,
+            colorTokensOverlay = overlay.colorTokensOverlay ?: this.colorTokensOverlay,
             backgroundAppearanceStrategy = overlay.backgroundAppearanceStrategy
                 ?: this.backgroundAppearanceStrategy,
             horizontalAlignment = overlay.horizontalAlignment ?: this.horizontalAlignment,

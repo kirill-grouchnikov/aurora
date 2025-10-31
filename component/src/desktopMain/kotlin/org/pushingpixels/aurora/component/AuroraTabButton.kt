@@ -507,7 +507,7 @@ private fun TabButtonIconContent(
             CompositionLocalProvider(
                 LocalTextColor provides textColor,
                 LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currState),
-                LocalColorSchemeBundle provides presentationModel.colorSchemeBundle
+                LocalColorTokensOverlay provides presentationModel.colorTokensOverlay
             ) {
                 AuroraThemedIcon(
                     icon = icon,

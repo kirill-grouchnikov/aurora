@@ -19,7 +19,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.SpringSpec
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 
 data class IndeterminateProgressContentModel(
     val enabled: Boolean = true,
@@ -42,13 +42,13 @@ object ProgressConstants {
 }
 
 data class CircularProgressPresentationModel(
-    val colorSchemeBundle: AuroraColorSchemeBundle? = null,
+    val colorTokensOverlay: ContainerColorTokensOverlay? = null,
     val radius: Dp = 10.dp,
     val strokeWidth: Dp = 2.0f.dp
 ): PresentationModel
 
 data class LinearProgressPresentationModel(
-    val colorSchemeBundle: AuroraColorSchemeBundle? = null,
+    val colorTokensOverlay: ContainerColorTokensOverlay? = null,
     val primarySize : Dp = ProgressConstants.DefaultWidth,
     val secondarySize : Dp = ProgressConstants.DefaultHeight
 ): PresentationModel

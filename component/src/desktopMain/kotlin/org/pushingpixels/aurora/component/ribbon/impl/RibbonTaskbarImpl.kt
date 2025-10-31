@@ -41,7 +41,7 @@ import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.*
 import org.pushingpixels.aurora.component.utils.getEndwardDoubleArrowIcon
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.utils.ContainerType
 
@@ -83,7 +83,7 @@ private class TaskbarExpandCommandButtonPresentationModel(
     override val presentationState = CommandButtonPresentationState.Small
     override val backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
     override val contentPadding: PaddingValues = PaddingValues(all = 2.dp)
-    override val colorSchemeBundle: AuroraColorSchemeBundle? = null
+    override val colorTokensOverlay: ContainerColorTokensOverlay? = null
     override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center
     override val iconDimension: DpSize? = null
     override val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original

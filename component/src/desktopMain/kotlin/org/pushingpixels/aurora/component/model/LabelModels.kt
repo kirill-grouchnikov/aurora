@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.theming.IconFilterStrategy
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 
 data class LabelContentModel(
     val text: String,
@@ -38,7 +38,7 @@ object LabelSizingConstants {
 }
 
 data class LabelPresentationModel(
-    val colorSchemeBundle: AuroraColorSchemeBundle? = null,
+    val colorTokensOverlay: ContainerColorTokensOverlay? = null,
     val contentPadding: PaddingValues = LabelSizingConstants.DefaultLabelContentPadding,
     val iconDimension: DpSize = LabelSizingConstants.DefaultLabelIconSize,
     val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,

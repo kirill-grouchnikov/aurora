@@ -37,7 +37,7 @@ import org.pushingpixels.aurora.component.popup.CascadingCommandMenuHandler
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.AbstractRibbonBand
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 
 internal data class RibbonBandCollapsedCommand(
     override val text: String,
@@ -80,7 +80,7 @@ internal data class RibbonBandCollapsedCommandButtonPresentationModel(
     override val contentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
 ) : BaseCommandButtonPresentationModel {
     override val presentationState = CommandButtonPresentationState.Big
-    override val colorSchemeBundle: AuroraColorSchemeBundle? = null
+    override val colorTokensOverlay: ContainerColorTokensOverlay? = null
     override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center
     override val iconDimension: DpSize? = null
     override val forceAllocateSpaceForIcon = false

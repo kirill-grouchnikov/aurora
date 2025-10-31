@@ -20,7 +20,7 @@ import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 
 data class SelectorContentModel(
     val text: String,
@@ -56,7 +56,7 @@ object SelectorSizingConstants {
 }
 
 data class SelectorPresentationModel(
-    val colorSchemeBundle: AuroraColorSchemeBundle? = null,
+    val colorTokensOverlay: ContainerColorTokensOverlay? = null,
     val contentPadding: PaddingValues = SelectorSizingConstants.DefaultSelectorContentPadding,
     val markSize: Dp = SelectorSizingConstants.SelectorMarkSize,
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Leading,
@@ -65,7 +65,7 @@ data class SelectorPresentationModel(
 ): PresentationModel
 
 data class SwitchPresentationModel(
-    val colorSchemeBundle: AuroraColorSchemeBundle? = null,
+    val colorTokensOverlay: ContainerColorTokensOverlay? = null,
     val contentPadding: PaddingValues = SelectorSizingConstants.DefaultSelectorContentPadding,
     val trackSize: DpSize = DpSize(width = SelectorSizingConstants.SwitchTrackWidth,
         height = SelectorSizingConstants.SwitchTrackHeight),

@@ -1831,7 +1831,7 @@ private fun CommandButtonIconContent(
             CompositionLocalProvider(
                 LocalTextColor provides defaultIconColor,
                 LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currState),
-                LocalColorSchemeBundle provides presentationModel.colorSchemeBundle
+                LocalColorTokensOverlay provides presentationModel.colorTokensOverlay
             ) {
                 AuroraThemedIcon(
                     icon = icon!!,

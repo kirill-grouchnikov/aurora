@@ -25,7 +25,7 @@ import org.pushingpixels.aurora.component.utils.ArrowSizingConstants
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorSchemeBundle
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 
 data class ComboBoxContentModel<E>(
     val items: List<E>,
@@ -47,7 +47,7 @@ object ComboBoxSizingConstants {
 }
 
 data class ComboBoxPresentationModel<E>(
-    val colorSchemeBundle: AuroraColorSchemeBundle? = null,
+    val colorTokensOverlay: ContainerColorTokensOverlay? = null,
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
     val displayConverter: (E) -> String,
     val displayIconConverter: ((E) -> Painter)? = null,

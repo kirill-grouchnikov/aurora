@@ -20,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
@@ -38,12 +39,17 @@ import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colorscheme.*
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
+import org.pushingpixels.aurora.theming.palette.TonalPaletteSeeds
+import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowScope
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import org.pushingpixels.aurora.window.auroraApplication
+import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
+import org.pushingpixels.ephemeral.chroma.hct.Hct
 import java.text.MessageFormat
 import java.util.*
 
@@ -1062,11 +1068,8 @@ fun AuroraWindowScope.DemoCommandContent(
                         action = { println("Green!") },
                         isActionEnabled = actionEnabled),
                     presentationModel = CommandButtonPresentationModel(
-                        colorSchemeBundle = generateColorSchemeBundle(
-                            active = LimeGreenColorScheme(),
-                            enabled = LimeGreenColorScheme(),
-                            foregroundSourceActive = { it.darkColor },
-                            foregroundSourceEnabled = { it.darkColor }
+                        colorTokensOverlay = generateColorTokensOverlay(
+                            seed = TonalPaletteSeeds.LimeGreen
                         ),
                         backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -1081,11 +1084,8 @@ fun AuroraWindowScope.DemoCommandContent(
                         action = { println("Yellow!") },
                         isActionEnabled = actionEnabled),
                     presentationModel = CommandButtonPresentationModel(
-                        colorSchemeBundle = generateColorSchemeBundle(
-                            active = SunGlareColorScheme(),
-                            enabled = SunGlareColorScheme(),
-                            foregroundSourceActive = { it.darkColor },
-                            foregroundSourceEnabled = { it.darkColor }
+                        colorTokensOverlay = generateColorTokensOverlay(
+                            seed = TonalPaletteSeeds.SunGlare
                         ),
                         backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -1100,11 +1100,8 @@ fun AuroraWindowScope.DemoCommandContent(
                         action = { println("Red!") },
                         isActionEnabled = actionEnabled),
                     presentationModel = CommandButtonPresentationModel(
-                        colorSchemeBundle = generateColorSchemeBundle(
-                            active = SunfireRedColorScheme(),
-                            enabled = SunfireRedColorScheme(),
-                            foregroundSourceActive = { Color.White },
-                            foregroundSourceEnabled = { Color.White }
+                        colorTokensOverlay = generateColorTokensOverlay(
+                            seed = TonalPaletteSeeds.SunfireRed
                         ),
                         backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -1157,57 +1154,29 @@ fun AuroraWindowScope.DemoCommandContent(
     }
 }
 
-internal fun generateColorSchemeBundle(
-    active: AuroraColorScheme,
-    enabled: AuroraColorScheme,
-    foregroundSourceActive: (AuroraColorScheme) -> Color,
-    foregroundSourceEnabled: ((AuroraColorScheme) -> Color)?
-): AuroraColorSchemeBundle {
+internal fun generateColorTokensOverlay(seed: Color): ContainerColorTokensOverlay {
     // Use a few of Aurora APIs to tweak the colors of the incoming color schemes. In the real application
     // it is highly recommended to use the getColorSchemes API and define custom color schemes from
     // explicitly-stated RGB values and roles.
-    val tweakedActive = ShiftColorScheme(
-        origScheme = active,
-        backgroundShiftColor = Color.White,
-        backgroundShiftFactor = 0.0f,
-        foregroundShiftColor = foregroundSourceActive.invoke(active),
-        foregroundShiftFactor = 1.0f,
-        shiftByBrightness = false
-    )
-    val saturatedActive = tweakedActive.saturate(0.4f)
-
-    val tweakedEnabled = if (foregroundSourceEnabled != null) {
-        ShiftColorScheme(
-            origScheme = enabled,
-            backgroundShiftColor = Color.White,
-            backgroundShiftFactor = 0.0f,
-            foregroundShiftColor = foregroundSourceEnabled.invoke(active),
-            foregroundShiftFactor = 1.0f,
-            shiftByBrightness = false
+    return ContainerColorTokensOverlay(
+        activeContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(seed.toArgb()),
+            containerConfiguration = ContainerConfiguration.defaultLight()
+        ),
+        mutedContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(seed.toArgb()).also { it.tone *= 1.2 },
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ 0.25
+            )
+        ),
+        neutralContainerTokens = getContainerTokens(
+            seed = Hct.fromInt(seed.toArgb()).also { it.tone /= 3.5 },
+            containerConfiguration = ContainerConfiguration(
+                /* isDark */ false,
+                /* contrastLevel */ 0.8
+            )
         )
-    } else {
-        enabled
-    }
-    val result = AuroraColorSchemeBundle(
-        activeColorScheme = saturatedActive,
-        enabledColorScheme = tweakedEnabled,
-        disabledColorScheme = tweakedEnabled
     )
-    // Translucent for disabled state
-    result.registerAlpha(0.5f, ComponentState.DisabledSelected, ComponentState.DisabledUnselected)
-    result.registerColorScheme(
-        tweakedEnabled, ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledUnselected
-    )
-    result.registerColorScheme(
-        saturatedActive,
-        ColorSchemeAssociationKind.Fill,
-        ComponentState.DisabledSelected
-    )
-
-    // Darker borders
-    result.registerColorScheme(tweakedActive.shade(0.5f), associationKind = ColorSchemeAssociationKind.Border)
-    return result
 }
-
 
