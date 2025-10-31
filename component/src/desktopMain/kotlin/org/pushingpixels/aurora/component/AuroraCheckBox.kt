@@ -37,11 +37,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
+import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
@@ -318,6 +314,8 @@ internal fun AuroraCheckBox(
             .map { it.value }
             .sumOf { it.contribution.toDouble() }
             .toFloat()
+        val onContainerAlpha = if (currentState.value.isDisabled)
+            drawingCache.colorTokens.onContainerDisabledAlpha else 1.0f
 
         // Text color. Note that the text doesn't "participate" in state changes that
         // involve rollover, selection or pressed bits
@@ -387,7 +385,7 @@ internal fun AuroraCheckBox(
                         cap = StrokeCap.Round,
                         join = StrokeJoin.Round
                     ),
-                    alpha = 1.0f
+                    alpha = onContainerAlpha
                 )
             }
         }

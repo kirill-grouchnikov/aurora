@@ -46,6 +46,7 @@ import org.pushingpixels.aurora.component.utils.getEndwardDoubleArrowIcon
 import org.pushingpixels.aurora.component.utils.getStartwardDoubleArrowIcon
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.ContainerType
+import org.pushingpixels.aurora.theming.utils.getContainerTokens
 import kotlin.math.max
 
 @OptIn(AuroraInternalApi::class)
@@ -163,9 +164,14 @@ internal fun AuroraTabs(
         fontFamilyResolver = fontFamilyResolver
     )
 
-    val underlineColorTokens = AuroraSkin.colors.getNeutralContainerTokens(
+    val underlineColorTokens = getContainerTokens(
+        colors = AuroraSkin.colors,
         decorationAreaType = AuroraSkin.decorationAreaType,
-        associationKind = ContainerColorTokensAssociationKind.Tab)
+        associationKind = ContainerColorTokensAssociationKind.Tab,
+        componentState = ComponentState.Selected,
+        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
+        inactiveContainerType = ContainerType.Neutral
+    )
     val underlineColor = if (underlineColorTokens.isDark) {
         underlineColorTokens.complementaryContainerOutline
     } else {

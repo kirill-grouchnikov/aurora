@@ -167,20 +167,23 @@ fun graphiteAquaSkin(): AuroraSkinDefinition {
 }
 
 fun graphiteChalkSkin(): AuroraSkinDefinition {
+    val paletteColorResolver = DefaultPaletteColorResolver.overlayWith(
+        TokenPaletteColorResolverOverlay(
+            containerOutline = { it.complementaryContainerOutline and 0xA0FFFFFFu.toInt() },
+            containerOutlineVariant = { it.complementaryContainerOutline and 0x80FFFFFFu.toInt() },
+            complementaryContainerOutline = { it.containerOutline }
+        )
+    )
     val accentContainerColorTokens = AccentContainerColorTokens(
-        defaultAreaPaletteColorResolver = DefaultPaletteColorResolver.overlayWith(
-            TokenPaletteColorResolverOverlay(
-                containerOutline = { it.complementaryContainerOutline and 0xA0FFFFFFu.toInt() },
-                containerOutlineVariant = { it.complementaryContainerOutline and 0x80FFFFFFu.toInt() },
-                complementaryContainerOutline = { it.containerOutline }
-            )
-        ),
+        defaultAreaPaletteColorResolver = paletteColorResolver,
         defaultAreaSelectedTokens = getContainerTokens(
             seed = Hct.fromInt(0xFF606060u.toInt()),
-            containerConfiguration = ContainerConfiguration.defaultDark()),
+            containerConfiguration = ContainerConfiguration.defaultDark(),
+            colorResolver = paletteColorResolver),
         defaultAreaHighlightTokens = getContainerTokens(
             seed = Hct.fromInt(0xFFEBECF0u.toInt()),
-            containerConfiguration = ContainerConfiguration.defaultLight()),
+            containerConfiguration = ContainerConfiguration.defaultLight(),
+            colorResolver = paletteColorResolver),
     )
 
     val defaultTokensBundle = getDefaultTokensBundle(accentContainerColorTokens).also {
@@ -189,7 +192,8 @@ fun graphiteChalkSkin(): AuroraSkinDefinition {
                 seed = Hct.fromInt(0xFFEBECF0u.toInt()),
                 containerConfiguration = ContainerConfiguration(
                     /* isDark */ false,
-                    /* contrastLevel */ 0.6)),
+                    /* contrastLevel */ 0.6),
+                colorResolver = paletteColorResolver),
             associationKind = ContainerColorTokensAssociationKind.Default,
             ComponentState.RolloverUnselected, ComponentState.RolloverSelected)
         it.registerActiveContainerTokens(
@@ -197,7 +201,8 @@ fun graphiteChalkSkin(): AuroraSkinDefinition {
                 seed = Hct.fromInt(0xFFACB2B9u.toInt()),
                 containerConfiguration = ContainerConfiguration(
                     /* isDark */ false,
-                    /* contrastLevel */ 0.6)),
+                    /* contrastLevel */ 0.6),
+                colorResolver = paletteColorResolver),
             associationKind = ContainerColorTokensAssociationKind.Default,
             ComponentState.PressedUnselected, ComponentState.PressedSelected)
     }

@@ -846,6 +846,6 @@ internal fun getTextFillBackground(
     val rolloverStrength = modelStateInfo.strength(ComponentStateFacet.Rollover)
     val activeStrength = max(selectionStrength, rolloverStrength) / 4.0f
 
-    return textBackgroundFillColor.interpolateTowards(textHighlightedBackgroundFillColor, activeStrength)
+    return textBackgroundFillColor.interpolateTowards(textHighlightedBackgroundFillColor, 1.0f - activeStrength)
 }
 

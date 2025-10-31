@@ -325,7 +325,7 @@ fun getContainerTokens(
     // special case - if the component is marked as flat, get the color tokens of the parent.
     // However, flat toolbars should be ignored, since they are
     // the "top" level decoration area.
-    if (!skipFlatCheck && (backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat)) {
+    if (!skipFlatCheck && !componentState.isActive && (backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat)) {
         val result: ContainerColorTokens = if (tokensOverlay != null)
             tokensOverlay.neutralContainerTokens
         else

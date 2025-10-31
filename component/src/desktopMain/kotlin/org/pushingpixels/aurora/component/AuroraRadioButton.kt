@@ -303,6 +303,8 @@ internal fun AuroraRadioButton(
                 .map { it.value }
                 .sumOf { it.contribution.toDouble() }
                 .toFloat()
+        val onContainerAlpha = if (currentState.value.isDisabled)
+            drawingCache.colorTokens.onContainerDisabledAlpha else 1.0f
 
         // Text color. Note that the text doesn't "participate" in state changes that
         // involve rollover, selection or pressed bits
@@ -369,7 +371,7 @@ internal fun AuroraRadioButton(
                 outline = outlineMark,
                 color = markColor.withAlpha(markAlpha.value),
                 style = Fill,
-                alpha = 1.0f
+                alpha = onContainerAlpha
             )
         }
         Spacer(modifier = Modifier.width(SelectorSizingConstants.SelectorMarkTextGap *
