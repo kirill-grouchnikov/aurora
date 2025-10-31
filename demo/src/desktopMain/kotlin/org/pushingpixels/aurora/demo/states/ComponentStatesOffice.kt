@@ -44,7 +44,6 @@ import org.pushingpixels.aurora.theming.colorscheme.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.ColorStop
-import org.pushingpixels.aurora.theming.painter.border.FractionBasedBorderPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
@@ -254,13 +253,6 @@ private fun officeSkin(): AuroraSkinDefinition {
             seed = Hct.fromInt(0xFFCFCFD0u.toInt()),
             containerConfiguration = ContainerConfiguration.defaultLight()),
         DecorationAreaType.TitlePane, DecorationAreaType.ControlPane)
-
-    val outerBorderPainter = FractionBasedBorderPainter(
-        0.0f to { it.lightColor },
-        0.5f to { it.ultraDarkColor },
-        1.0f to { it.midColor },
-        displayName = "Office Outer"
-    )
 
     return AuroraSkinDefinition(
         displayName = "Office Silver",

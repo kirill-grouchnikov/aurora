@@ -20,15 +20,10 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
-import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.theming.colorscheme.AuroraColorScheme
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
-import org.pushingpixels.aurora.theming.painter.ColorQueryStop
 import org.pushingpixels.aurora.theming.painter.ColorStop
-import org.pushingpixels.aurora.theming.painter.FractionBasedPainter
 import org.pushingpixels.aurora.theming.painter.FractionBasedTonalPainter
-import org.pushingpixels.aurora.theming.painter.fill.AuroraFillPainter
 
 /**
  * Surface painter with fraction-based stops and a color query associated with each
