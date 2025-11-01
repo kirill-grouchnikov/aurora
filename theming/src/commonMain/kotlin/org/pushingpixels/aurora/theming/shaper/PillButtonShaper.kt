@@ -35,20 +35,16 @@ class PillButtonShaper : AuroraButtonShaper, RectangularButtonShaper {
     override fun getButtonOutline(
         width: Float,
         height: Float,
-        extraInsets: Float,
-        isInner: Boolean,
+        insets: Float,
         sides: Sides,
+        radiusAdjustment: Float,
         outlineKind: OutlineKind,
         layoutDirection: LayoutDirection,
         density: Density
     ): Outline {
-        var radius = getCornerRadius(width, height, extraInsets, density)
-        if (isInner) {
-            radius -= 1.0f
-            if (radius < 0.0f) radius = 0.0f
-        }
+        val radius = (getCornerRadius(width, height, insets, density) - radiusAdjustment).coerceAtLeast(0.0f)
 
-        return getBaseOutline(layoutDirection, width, height, radius, sides, extraInsets, outlineKind)
+        return getBaseOutline(layoutDirection, width, height, radius, sides, insets, outlineKind)
     }
 
     override fun getCornerRadius(width: Float, height: Float, insets: Float, density: Density): Float {

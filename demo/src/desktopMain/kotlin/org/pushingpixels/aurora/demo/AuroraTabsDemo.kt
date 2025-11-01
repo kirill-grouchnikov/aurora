@@ -34,8 +34,7 @@ import org.pushingpixels.aurora.theming.AuroraSkinDefinition
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
-import org.pushingpixels.aurora.theming.geminiSkin
-import org.pushingpixels.aurora.theming.marinerSkin
+import org.pushingpixels.aurora.theming.magellanSkin
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowScope
@@ -50,7 +49,7 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(400.dp, 280.dp)
     )
-    var skin by remember { mutableStateOf(geminiSkin()) }
+    var skin by remember { mutableStateOf(magellanSkin()) }
     val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }

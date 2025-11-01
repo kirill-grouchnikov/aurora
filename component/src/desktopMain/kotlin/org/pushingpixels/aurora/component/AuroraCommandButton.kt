@@ -62,6 +62,7 @@ import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.painter.outline.InsetKind
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
+import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 import org.pushingpixels.aurora.theming.utils.*
 import java.awt.event.KeyEvent
 import kotlin.math.max
@@ -552,7 +553,10 @@ private fun Modifier.commandButtonPopupModifier(
     }
 )
 
-private class CommandButtonOutlineSuppler(val presentationModel: BaseCommandButtonPresentationModel): OutlineSupplier {
+private class CommandButtonOutlineSuppler(
+    val buttonShaper: AuroraButtonShaper,
+    val presentationModel: BaseCommandButtonPresentationModel
+): OutlineSupplier {
     override fun getOutline(
         layoutDirection: LayoutDirection,
         density: Density,
@@ -561,15 +565,15 @@ private class CommandButtonOutlineSuppler(val presentationModel: BaseCommandButt
         radiusAdjustment: Float,
         outlineKind: OutlineKind
     ): Outline {
-        val cornerRadius = density.getClassicCornerRadius()
-        return getBaseOutline(
-            layoutDirection = layoutDirection,
+        return buttonShaper.getButtonOutline(
             width = size.width,
             height = size.height,
-            radius = cornerRadius - radiusAdjustment,
-            sides = presentationModel.sides,
             insets = insets,
+            sides = presentationModel.sides,
+            radiusAdjustment = radiusAdjustment,
             outlineKind = outlineKind,
+            layoutDirection = layoutDirection,
+            density = density
         )
     }
 }
@@ -1056,7 +1060,7 @@ internal fun <M : BaseCommandMenuContentModel,
                     )
                     actionAlpha = actionAlpha.coerceIn(0.0f, 1.0f)
 
-                    val outlineSupplier = CommandButtonOutlineSuppler(presentationModel)
+                    val outlineSupplier = CommandButtonOutlineSuppler(buttonShaper, presentationModel)
 
                     Canvas(modifier = Modifier.matchParentSize()) {
                         withTransform({
@@ -1179,7 +1183,7 @@ internal fun <M : BaseCommandMenuContentModel,
                     )
                     popupAlpha = popupAlpha.coerceIn(0.0f, 1.0f)
 
-                    val outlineSupplier = CommandButtonOutlineSuppler(presentationModel)
+                    val outlineSupplier = CommandButtonOutlineSuppler(buttonShaper, presentationModel)
 
                     Canvas(modifier = Modifier.matchParentSize()) {
                         withTransform({

@@ -101,12 +101,12 @@ internal fun TitleLabel(
                     layoutDirection = layoutDirection,
                     width = width,
                     height = height,
-                    extraInsets = 0.5f,
-                    isInner = false,
+                    insets = 0.5f,
                     sides = Sides(
                         straightSides = Side.entries.toSet(),
                         openSides = setOf(Side.Leading, Side.Trailing)
                     ),
+                    radiusAdjustment = 0.0f,
                     outlineKind = OutlineKind.Border,
                     density = this
                 )

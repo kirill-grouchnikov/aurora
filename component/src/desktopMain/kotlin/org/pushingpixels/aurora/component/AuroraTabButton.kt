@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
@@ -262,6 +263,20 @@ internal fun AuroraTabButton(
                         skipFlatCheck = false,
                         inactiveContainerType = ContainerType.Muted)
 
+                    val underlineColorTokens = getContainerTokens(
+                        colors = AuroraSkin.colors,
+                        decorationAreaType = AuroraSkin.decorationAreaType,
+                        associationKind = ContainerColorTokensAssociationKind.Tab,
+                        componentState = ComponentState.Selected,
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
+                        inactiveContainerType = ContainerType.Neutral
+                    )
+                    val underlineColor = if (underlineColorTokens.isDark) {
+                        underlineColorTokens.complementaryContainerOutline
+                    } else {
+                        underlineColorTokens.containerOutline
+                    }
+
                     val outlinePainter = AuroraSkin.painters.outlinePainter
 
                     val actionAlpha = max(actionRolloverFraction,
@@ -338,14 +353,21 @@ internal fun AuroraTabButton(
                                 top = -actionAreaOffset.y
                             )
                         }) {
-                            paintOutline(
-                                drawScope = this,
-                                componentState = currentActionState.value,
-                                outlinePainter = outlinePainter,
-                                size = this.size,
-                                alpha = actionAlpha,
-                                outlineSupplier = outlineSupplier,
-                                colorTokens = drawingCache.colorTokens)
+                            drawOutline(
+                                outline = outlineSupplier.getOutline(
+                                    layoutDirection = this.layoutDirection,
+                                    density = this,
+                                    size = size,
+                                    insets = 0.5f,
+                                    radiusAdjustment = 0.0f,
+                                    outlineKind = OutlineKind.Border
+                                ),
+                                style = Stroke(width = 1.0f),
+                                color = underlineColor,
+                                alpha = if (currentActionState.value.isDisabled) {
+                                    actionAlpha * underlineColorTokens.onContainerDisabledAlpha
+                                } else actionAlpha
+                            )
                         }
                     }
                 }

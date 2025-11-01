@@ -56,7 +56,7 @@ open class FractionBasedOutlinePainter(
                 layoutDirection = this.layoutDirection,
                 density = this,
                 size = size,
-                insets = strokeWidth - 1.0f,
+                insets = strokeWidth - 0.5f,
                 radiusAdjustment = 0.0f,
                 outlineKind = OutlineKind.Border
             )

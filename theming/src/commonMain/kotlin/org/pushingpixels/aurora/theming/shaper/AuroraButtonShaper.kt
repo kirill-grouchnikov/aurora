@@ -31,8 +31,8 @@ import org.pushingpixels.aurora.theming.Sides
 interface AuroraButtonShaper : AuroraTrait {
     /** Returns the outline path. */
     fun getButtonOutline(
-        width: Float, height: Float, extraInsets: Float,
-        isInner: Boolean, sides: Sides, outlineKind: OutlineKind,
+        width: Float, height: Float, insets: Float,
+        sides: Sides, radiusAdjustment: Float, outlineKind: OutlineKind,
         layoutDirection: LayoutDirection, density: Density
     ): Outline
 
