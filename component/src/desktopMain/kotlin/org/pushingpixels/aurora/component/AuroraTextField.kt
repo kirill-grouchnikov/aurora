@@ -36,7 +36,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
@@ -304,19 +306,25 @@ internal fun AuroraTextField(
             )
 
             if (presentationModel.showBorder) {
-                paintOutline(
-                    drawScope = this,
-                    componentState = currentState.value,
-                    outlinePainter = outlinePainter,
-                    size = this.size,
-                    alpha = 1.0f,
-                    outlineSupplier = TextFieldOutlineSuppler,
-                    colorTokens = drawingCache.colorTokens)
+                // Get the base border color
+                var borderColor = drawingCache.colorTokens.containerOutline
+                drawOutline(
+                    outline = TextFieldOutlineSuppler.getOutline(
+                        layoutDirection = this.layoutDirection,
+                        density = this,
+                        size = size,
+                        insets = 0.5f,
+                        radiusAdjustment = 0.0f,
+                        outlineKind = OutlineKind.Border
+                    ),
+                    style = Stroke(width = 1.0f),
+                    color = borderColor,
+                    alpha = if (currentState.value.isDisabled) {
+                        drawingCache.colorTokens.onContainerDisabledAlpha
+                    } else 1.0f
+                )
 
                 if (!contentModel.readOnly) {
-                    // Get the base border color
-                    var borderColor = drawingCache.colorTokens.containerOutline
-
                     if (!currentState.value.isDisabled && (modelStateInfo.stateContributionMap.size > 1)) {
                         // If we have more than one active state, compute the composite color from all
                         // the contributions

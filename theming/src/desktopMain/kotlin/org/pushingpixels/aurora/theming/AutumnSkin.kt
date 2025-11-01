@@ -15,7 +15,9 @@
  */
 package org.pushingpixels.aurora.theming
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import org.pushingpixels.aurora.common.interpolateTowardsAsRGB
 import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
@@ -43,6 +45,7 @@ private fun autumnSkinColors(): AuroraSkinColors {
     // Also use higher alpha values for disabled controls for better contrast.
     val resolver = DefaultPaletteColorResolver.overlayWith(
         TokenPaletteColorResolverOverlay(
+            containerOutline = { Color(it.containerOutline).interpolateTowardsAsRGB(Color(it.containerOutlineVariant), 0.3f) },
             onContainer = { it.containerOutline },
             onContainerVariant = { it.containerOutlineVariant and 0xC0FFFFFFu.toInt() },
             containerSurfaceDisabledAlpha = { 0.4f },
