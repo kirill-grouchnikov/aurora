@@ -15,10 +15,13 @@
  */
 package org.pushingpixels.aurora.demo.titlepane.mail
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -87,8 +90,9 @@ fun AuroraWindowScope.DestinationsPanel(modifier: Modifier) {
                             selected = (stateSelection.value == item),
                             onClick = { stateSelection.value = item },
                             sides = Sides.ClosedRectangle,
-                            content = {
-                                Row(modifier = Modifier.padding(horizontal = 6.dp)) {
+                            content = { colorTokens ->
+                                Row(modifier = Modifier.padding(vertical = 6.dp, horizontal = 8.dp),
+                                    verticalAlignment = Alignment.CenterVertically) {
                                     LabelProjection(
                                         contentModel = LabelContentModel(
                                             text = item.title, icon = item.icon
@@ -97,14 +101,25 @@ fun AuroraWindowScope.DestinationsPanel(modifier: Modifier) {
                                             inheritStateFromParent = true,
                                             iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                                             horizontalGapScaleFactor = 2.0f,
-                                            horizontalAlignment = HorizontalAlignment.Leading
+                                            horizontalAlignment = HorizontalAlignment.Leading,
+                                            contentPadding = PaddingValues.Zero
                                         )
                                     ).project(modifier = Modifier.weight(1.0f))
                                     if (item.unread > 0) {
                                         LabelProjection(
                                             contentModel = LabelContentModel(text = "${item.unread}"),
-                                            presentationModel = LabelPresentationModel(inheritStateFromParent = true)
-                                        ).project()
+                                            presentationModel = LabelPresentationModel(inheritStateFromParent = true,
+                                                contentPadding = PaddingValues.Zero)
+                                        ).project(modifier =
+                                            Modifier
+                                                .border(
+                                                    width = 0.dp,
+                                                    color = colorTokens.containerOutlineVariant,
+                                                    shape = CircleShape)
+                                                .background(color = colorTokens.containerSurfaceLow,
+                                                    shape = CircleShape)
+                                                .padding(vertical = 2.dp, horizontal = 10.dp)
+                                        )
                                     }
                                 }
                             })

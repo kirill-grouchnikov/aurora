@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.demo.titlepane.mail
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.window.WindowDraggableArea
@@ -168,13 +169,14 @@ fun AuroraWindowScope.ThreadPanel(modifier: Modifier) {
 @Composable
 private fun CollapsedMessagePanel(from: String, title: String, timestamp: String) {
     Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 2.dp)) {
-        val fillTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
+        val colorTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
         Row(
             modifier = Modifier.fillMaxWidth()
                 .background(
-                    color = fillTokens.containerSurfaceHighest,
+                    color = colorTokens.containerSurfaceHighest,
                     shape = RoundedCornerShape(4.dp)
                 )
+                .border(width = 0.dp, color = colorTokens.containerOutlineVariant)
                 .padding(vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -219,13 +221,14 @@ private fun ExpandedMessagePanel(
     iconColorFilter: ColorFilter
 ) {
     Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 2.dp)) {
-        val fillTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
+        val colorTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
         Column(
             modifier = Modifier.fillMaxWidth()
                 .background(
-                    color = fillTokens.containerSurfaceHighest,
+                    color = colorTokens.containerSurfaceHighest,
                     shape = RoundedCornerShape(4.dp)
                 )
+                .border(width = 0.dp, color = colorTokens.containerOutlineVariant)
                 .padding(start = 16.dp, end = 16.dp, top = 10.dp, bottom = 16.dp)
         ) {
             Row(
