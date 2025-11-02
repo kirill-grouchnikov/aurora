@@ -113,7 +113,7 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneMainContent(
     Layout(modifier = Modifier.fillMaxWidth(),
         content = {
             if (showsIcon) {
-                val colorTokens = skinColors.getMutedContainerTokens(DecorationAreaType.TitlePane)
+                val colorTokens = skinColors.getNeutralContainerTokens(DecorationAreaType.TitlePane)
                 val colorFilter: ColorFilter? = when (iconFilterStrategy) {
                     IconFilterStrategy.ThemedFollowText ->
                         ColorFilter.tint(color = colorTokens.onContainer)

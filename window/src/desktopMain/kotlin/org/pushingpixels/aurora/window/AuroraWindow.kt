@@ -42,6 +42,7 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.common.Platform
+import org.pushingpixels.aurora.common.hexadecimal
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
@@ -105,7 +106,7 @@ private val TitlePaneButtonPresentationModel = CommandButtonPresentationModel(
     contentPadding = WindowTitlePaneSizingConstants.TitlePaneButtonContentPadding,
     horizontalGapScaleFactor = 1.0f,
     verticalGapScaleFactor = 1.0f,
-    iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+    iconEnabledFilterStrategy = IconFilterStrategy.Original
 )
 
 @Composable
@@ -119,17 +120,12 @@ fun AuroraWindowScope.AuroraWindowTitlePaneButton(titlePaneCommand: Command) {
 @Composable
 fun AuroraWindowScope.AuroraWindowTitlePaneTitleText(title: String) {
     val skinColors = AuroraSkin.colors
-    val density = LocalDensity.current
 
     val colorTokens =
         skinColors.getNeutralContainerTokens(DecorationAreaType.TitlePane)
     val titleTextStyle = TextStyle(
         color = colorTokens.onContainer,
         fontWeight = FontWeight.Bold,
-        shadow = Shadow(
-            color = colorTokens.complementaryOnContainer,
-            blurRadius = density.density
-        )
     )
     LabelProjection(
         contentModel = LabelContentModel(text = title),
@@ -157,7 +153,7 @@ internal fun AuroraWindowScope.WindowTitlePaneTextAndIcon(
     Layout(modifier = Modifier.fillMaxWidth(),
         content = {
             if (showsIcon) {
-                val colorTokens = skinColors.getMutedContainerTokens(DecorationAreaType.TitlePane)
+                val colorTokens = skinColors.getNeutralContainerTokens(DecorationAreaType.TitlePane)
                 val colorFilter: ColorFilter? = when (iconFilterStrategy) {
                     IconFilterStrategy.ThemedFollowText ->
                         ColorFilter.tint(color = colorTokens.onContainer)
