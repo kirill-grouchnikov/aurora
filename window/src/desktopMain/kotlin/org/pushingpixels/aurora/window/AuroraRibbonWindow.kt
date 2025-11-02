@@ -757,7 +757,7 @@ fun AuroraWindowScope.AuroraRibbonWindowContent(
     Box(
         Modifier
             .fillMaxSize()
-            .drawAuroraWindowBorder(neutralColorTokens)
+            .auroraWindowBorder(neutralColorTokens)
             .padding(WindowSizingConstants.DecoratedBorderThickness)
     ) {
         RibbonWindowInnerContent(

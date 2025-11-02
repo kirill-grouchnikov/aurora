@@ -25,7 +25,6 @@ import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -42,7 +41,6 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.common.Platform
-import org.pushingpixels.aurora.common.hexadecimal
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
@@ -831,7 +829,7 @@ private fun AuroraWindowScope.WindowInnerContent(
     }
 }
 
-internal fun Modifier.drawAuroraWindowBorder(colorTokens: ContainerColorTokens): Modifier = drawBehind {
+internal fun Modifier.auroraWindowBorder(colorTokens: ContainerColorTokens): Modifier = drawBehind {
     val width: Float = size.width
     val height: Float = size.height
     val thickness = WindowSizingConstants.DecoratedBorderThickness.toPx()
@@ -845,7 +843,7 @@ internal fun Modifier.drawAuroraWindowBorder(colorTokens: ContainerColorTokens):
         )
 
         val quarterThickness = thickness / 4.0f
-        // bottom and right in border ultra dark
+        // bottom and right as outline
         drawLine(
             color = colorTokens.containerOutline,
             start = Offset(x = 0f, y = height - quarterThickness / 2.0f),
@@ -860,60 +858,18 @@ internal fun Modifier.drawAuroraWindowBorder(colorTokens: ContainerColorTokens):
             strokeWidth = quarterThickness,
             cap = StrokeCap.Butt
         )
-        // top and left in border dark
+        // top and left as outline variant
         drawLine(
             color = colorTokens.containerOutlineVariant,
             start = Offset(x = 0f, y = quarterThickness / 2.0f),
-            end = Offset(x = width, y = quarterThickness / 2.0f),
+            end = Offset(x = width - quarterThickness, y = quarterThickness / 2.0f),
             strokeWidth = quarterThickness,
             cap = StrokeCap.Butt
         )
         drawLine(
             color = colorTokens.containerOutlineVariant,
             start = Offset(x = quarterThickness / 2.0f, y = 0f),
-            end = Offset(x = quarterThickness / 2.0f, y = height),
-            strokeWidth = quarterThickness,
-            cap = StrokeCap.Butt
-        )
-        // inner bottom and right in background mid
-        drawLine(
-            color = colorTokens.containerSurface,
-            start = Offset(
-                x = quarterThickness,
-                y = height - 1.5f * quarterThickness
-            ),
-            end = Offset(
-                x = width - quarterThickness,
-                y = height - 1.5f * quarterThickness
-            ),
-            strokeWidth = quarterThickness,
-            cap = StrokeCap.Butt
-        )
-        drawLine(
-            color = colorTokens.containerOutline,
-            start = Offset(
-                x = width - 1.5f * quarterThickness,
-                y = quarterThickness
-            ),
-            end = Offset(
-                x = width - 1.5f * quarterThickness,
-                y = height - quarterThickness
-            ),
-            strokeWidth = quarterThickness,
-            cap = StrokeCap.Butt
-        )
-        // inner top and left in background mid
-        drawLine(
-            color = colorTokens.containerOutline,
-            start = Offset(x = quarterThickness, y = 1.5f * quarterThickness),
-            end = Offset(x = width - quarterThickness, y = 1.5f * quarterThickness),
-            strokeWidth = quarterThickness,
-            cap = StrokeCap.Butt
-        )
-        drawLine(
-            color = colorTokens.containerOutline,
-            start = Offset(x = 1.5f * quarterThickness, y = quarterThickness),
-            end = Offset(x = 1.5f * quarterThickness, y = height - quarterThickness),
+            end = Offset(x = quarterThickness / 2.0f, y = height - quarterThickness),
             strokeWidth = quarterThickness,
             cap = StrokeCap.Butt
         )
@@ -940,7 +896,7 @@ fun AuroraWindowScope.AuroraWindowContent(
             Box(
                 Modifier
                     .fillMaxSize()
-                    .drawAuroraWindowBorder(neutralColorTokens)
+                    .auroraWindowBorder(neutralColorTokens)
                     .padding(WindowSizingConstants.DecoratedBorderThickness)
             ) {
                 WindowInnerContent(
