@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.painter.outline.InsetKind
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.utils.*
@@ -52,12 +53,11 @@ private object BoxWithHighlightsOutlineSuppler: OutlineSupplier {
         radiusAdjustment: Float,
         outlineKind: OutlineKind
     ): Outline {
-        val cornerRadius = density.getClassicCornerRadius()
         return getBaseOutline(
             layoutDirection = layoutDirection,
             width = size.width,
             height = size.height,
-            radius = cornerRadius - radiusAdjustment,
+            radius = 0.0f,
             sides = Sides(),
             insets = insets,
             outlineKind = outlineKind,
@@ -82,7 +82,7 @@ fun AuroraBoxWithHighlights(
     selected: Boolean = false,
     onClick: (() -> Unit)? = null,
     sides: Sides = Sides(),
-    content: @Composable () -> Unit
+    content: @Composable (colorTokens: ContainerColorTokens) -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val drawingCache = remember { BoxWithHighlightsDrawingCache() }
@@ -237,8 +237,8 @@ fun AuroraBoxWithHighlights(
             associationKind = ContainerColorTokensAssociationKind.Highlight,
             inactiveContainerType = ContainerType.Neutral)
 
-        val surfacePainter = AuroraSkin.painters.highlightSurfacePainter
-        val outlinePainter = AuroraSkin.painters.highlightOutlinePainter
+        val highlightSurfacePainter = AuroraSkin.painters.highlightSurfacePainter
+        val highlightOutlinePainter = AuroraSkin.painters.highlightOutlinePainter
 
         val alpha = 1.0f
 
@@ -255,7 +255,7 @@ fun AuroraBoxWithHighlights(
                     clipOp = ClipOp.Intersect
                 )
             }) {
-                val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
+                val outlineInset = highlightOutlinePainter.getOutlineInset(InsetKind.Surface)
                 val outlineFill = BoxWithHighlightsOutlineSuppler.getOutline(
                     layoutDirection = layoutDirection,
                     density = density,
@@ -271,7 +271,7 @@ fun AuroraBoxWithHighlights(
                 paintSurface(
                     drawScope = this,
                     componentState = currentState.value,
-                    surfacePainter = surfacePainter,
+                    surfacePainter = highlightSurfacePainter,
                     size = this.size,
                     alpha = alpha,
                     outline = outlineFill,
@@ -280,7 +280,7 @@ fun AuroraBoxWithHighlights(
                 paintOutline(
                     drawScope = this,
                     componentState = currentState.value,
-                    outlinePainter = outlinePainter,
+                    outlinePainter = highlightOutlinePainter,
                     size = this.size,
                     alpha = alpha,
                     outlineSupplier = BoxWithHighlightsOutlineSuppler,
@@ -293,7 +293,7 @@ fun AuroraBoxWithHighlights(
             LocalTextColor provides textColor,
             LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value)
         ) {
-            content()
+            content(drawingCache.colorTokens)
         }
     }
 }

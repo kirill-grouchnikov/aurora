@@ -541,7 +541,7 @@ internal fun populateColorTokensForHighlights(
     colorTokens.isDarkAttr = currColorTokens.isDark
     colorTokens.containerSurfaceLowestAttr = containerSurfaceLowest
     colorTokens.containerSurfaceLowAttr = containerSurfaceLow
-    colorTokens.containerSurfaceAttr = containerSurfaceLow
+    colorTokens.containerSurfaceAttr = containerSurface
     colorTokens.containerSurfaceHighAttr = containerSurfaceHigh
     colorTokens.containerSurfaceHighestAttr = containerSurfaceHighest
     colorTokens.containerSurfaceDimAttr = containerSurfaceDim
