@@ -20,7 +20,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
@@ -40,15 +39,11 @@ import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
-import org.pushingpixels.aurora.theming.palette.TonalPaletteSeeds
-import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowScope
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import org.pushingpixels.aurora.window.auroraApplication
-import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
-import org.pushingpixels.ephemeral.chroma.hct.Hct
 import java.text.MessageFormat
 import java.util.*
 
@@ -1046,50 +1041,75 @@ fun AuroraWindowScope.DemoCommandContent(
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
                     ),
-                    // TODO - add color token overlays
                     secondaryOverlays = hashMapOf(
-//                        customSecondary3 to BaseCommandButtonPresentationModel.Overlay(
-//                            colorSchemeBundle = generateColorSchemeBundle(
-//                                active = SunfireRedColorScheme(),
-//                                enabled = AuroraSkin.colors.getEnabledColorScheme(DecorationAreaType.None),
-//                                foregroundSourceActive = { Color.White },
-//                                foregroundSourceEnabled = null
-//                            )
-//                        )
+                        customSecondary3 to BaseCommandButtonPresentationModel.Overlay(
+                            colorTokensOverlayProvider = ContainerColorTokensOverlay.defaultMenuSystemOverlayProvider(
+                                systemContainerType = SystemContainerType.Error)
+                        )
                     )
                 ).project()
             }
 
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
-                // TODO - convert overlay provider to use skin's system tokens
                 CommandButtonProjection(
-                    contentModel = Command(text = "green",
+                    contentModel = Command(text = resourceBundle.getString("Status.success"),
                         icon = history_black_24dp(),
-                        action = { println("Green!") },
+                        action = { println("Success!") },
                         isActionEnabled = actionEnabled),
                     presentationModel = CommandButtonPresentationModel(
                         colorTokensOverlayProvider =
-                            ContainerColorTokensOverlay.Provider { _, _ ->
-                                generateColorTokensOverlay(seed = TonalPaletteSeeds.LimeGreen)
-                            },
-                        backgroundAppearanceStrategy = backgroundAppearanceStrategy,
+                            ContainerColorTokensOverlay.defaultSystemOverlayProvider(
+                                systemContainerType = SystemContainerType.Success),
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText
                     )
                 ).project()
                 Spacer(modifier = Modifier.width(8.dp))
-                // TODO - convert overlay provider to use skin's system tokens
                 CommandButtonProjection(
-                    contentModel = Command(text = "yellow",
+                    contentModel = Command(text = resourceBundle.getString("Status.warning"),
                         icon = storage_24px(),
-                        action = { println("Yellow!") },
+                        action = { println("Warning!") },
                         isActionEnabled = actionEnabled),
                     presentationModel = CommandButtonPresentationModel(
                         colorTokensOverlayProvider =
-                            ContainerColorTokensOverlay.Provider { _, _ ->
-                                generateColorTokensOverlay(seed = TonalPaletteSeeds.SunGlare)
-                            },
+                            ContainerColorTokensOverlay.defaultSystemOverlayProvider(
+                                systemContainerType = SystemContainerType.Warning),
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                        iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                    )
+                ).project()
+                Spacer(modifier = Modifier.width(8.dp))
+                CommandButtonProjection(
+                    contentModel = Command(text = resourceBundle.getString("Status.error"),
+                        icon = mail_outline_black_24dp(),
+                        action = { println("Error!") },
+                        isActionEnabled = actionEnabled),
+                    presentationModel = CommandButtonPresentationModel(
+                        colorTokensOverlayProvider =
+                            ContainerColorTokensOverlay.defaultSystemOverlayProvider(
+                                systemContainerType = SystemContainerType.Error),
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                        iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                    )
+                ).project()
+
+                Spacer(modifier = Modifier.width(24.dp))
+
+                CommandButtonProjection(
+                    contentModel = Command(text = resourceBundle.getString("Status.success"),
+                        icon = history_black_24dp(),
+                        action = { println("Success!") },
+                        isActionEnabled = actionEnabled),
+                    presentationModel = CommandButtonPresentationModel(
+                        colorTokensOverlayProvider =
+                            ContainerColorTokensOverlay.defaultSystemOverlayProvider(
+                                systemContainerType = SystemContainerType.Success),
                         backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -1097,17 +1117,31 @@ fun AuroraWindowScope.DemoCommandContent(
                     )
                 ).project()
                 Spacer(modifier = Modifier.width(8.dp))
-                // TODO - convert overlay provider to use skin's system tokens
                 CommandButtonProjection(
-                    contentModel = Command(text = "red",
-                        icon = mail_outline_black_24dp(),
-                        action = { println("Red!") },
+                    contentModel = Command(text = resourceBundle.getString("Status.warning"),
+                        icon = storage_24px(),
+                        action = { println("Warning!") },
                         isActionEnabled = actionEnabled),
                     presentationModel = CommandButtonPresentationModel(
                         colorTokensOverlayProvider =
-                            ContainerColorTokensOverlay.Provider { _, _ ->
-                                generateColorTokensOverlay(seed = TonalPaletteSeeds.SunfireRed)
-                            },
+                            ContainerColorTokensOverlay.defaultSystemOverlayProvider(
+                                systemContainerType = SystemContainerType.Warning),
+                        backgroundAppearanceStrategy = backgroundAppearanceStrategy,
+                        iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                    )
+                ).project()
+                Spacer(modifier = Modifier.width(8.dp))
+                CommandButtonProjection(
+                    contentModel = Command(text = resourceBundle.getString("Status.error"),
+                        icon = mail_outline_black_24dp(),
+                        action = { println("Error!") },
+                        isActionEnabled = actionEnabled),
+                    presentationModel = CommandButtonPresentationModel(
+                        colorTokensOverlayProvider =
+                            ContainerColorTokensOverlay.defaultSystemOverlayProvider(
+                                systemContainerType = SystemContainerType.Error),
                         backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -1157,31 +1191,5 @@ fun AuroraWindowScope.DemoCommandContent(
             )
         }
     }
-}
-
-internal fun generateColorTokensOverlay(seed: Color): ContainerColorTokensOverlay {
-    // Use a few of Aurora APIs to tweak the colors of the incoming color schemes. In the real application
-    // it is highly recommended to use the getColorSchemes API and define custom color schemes from
-    // explicitly-stated RGB values and roles.
-    return ContainerColorTokensOverlay(
-        activeContainerTokens = getContainerTokens(
-            seed = Hct.fromInt(seed.toArgb()),
-            containerConfiguration = ContainerConfiguration.defaultLight()
-        ),
-        mutedContainerTokens = getContainerTokens(
-            seed = Hct.fromInt(seed.toArgb()).also { it.tone *= 1.05 },
-            containerConfiguration = ContainerConfiguration(
-                /* isDark */ false,
-                /* contrastLevel */ 0.6
-            )
-        ),
-        neutralContainerTokens = getContainerTokens(
-            seed = Hct.fromInt(seed.toArgb()).also { it.tone *= 1.03 },
-            containerConfiguration = ContainerConfiguration(
-                /* isDark */ false,
-                /* contrastLevel */ 0.8
-            )
-        )
-    )
 }
 
