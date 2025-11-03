@@ -95,7 +95,7 @@ object WindowTitlePaneSizingConstants {
 
     // Content padding for each title pane control button
     val TitlePaneButtonContentPadding =
-        PaddingValues(start = 1.dp, end = 2.dp, top = 1.dp, bottom = 2.dp)
+        PaddingValues(start = 0.dp, end = 1.dp, top = 1.dp, bottom = 2.dp)
 }
 
 private val TitlePaneButtonPresentationModel = CommandButtonPresentationModel(

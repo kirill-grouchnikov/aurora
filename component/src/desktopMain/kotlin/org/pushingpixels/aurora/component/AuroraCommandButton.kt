@@ -461,8 +461,7 @@ private fun Modifier.commandButtonPopupModifier(
     factory = {
         // Start building the chain. First the semantics role
         var result = this.semantics(mergeDescendants = true) {
-            // TODO - use Role.DropdownList after upgrading to Compose that has it
-            this.role = Role.Button
+            this.role = Role.DropdownList
         }
         // Then treating "Enter" key up event to fire the popup
         result = result.then(onKeyEvent {

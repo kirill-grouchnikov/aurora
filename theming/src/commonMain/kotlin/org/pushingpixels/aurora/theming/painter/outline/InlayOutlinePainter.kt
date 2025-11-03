@@ -46,7 +46,6 @@ class InlayOutlinePainter(
         colorTokens: ContainerColorTokens,
         alpha: Float
     ) {
-        // TODO - skip text components and scroll bars?
         with(drawScope) {
             translate(left = strokeWidth, top = strokeWidth) {
                 paintSingleOutline(

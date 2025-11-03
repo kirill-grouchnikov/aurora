@@ -797,7 +797,6 @@ internal fun getTextSelectionBackground(
         inactiveContainerType = ContainerType.Muted,
         skipFlatCheck = false
     )
-    // TODO: align with Radiance for the surface fill, including the animations
     var result = currStateTokens.containerSurface
     if (!tweakedCurrState.isDisabled && (activeStates.size > 1)) {
         // If we have more than one active state, compute the composite color from all
@@ -826,8 +825,7 @@ internal fun getTextSelectionBackground(
                 inactiveContainerType = ContainerType.Muted,
                 skipFlatCheck = false
             )
-            // TODO: align with Radiance for the surface fill, including the animations
-            var active = activeStateTokens.containerSurface
+            val active = activeStateTokens.containerSurface
             result = result.interpolateTowards(active, 1.0f - contribution)
         }
     }
