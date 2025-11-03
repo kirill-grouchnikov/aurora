@@ -172,17 +172,8 @@ internal fun AuroraSlider(
     val trackSelectedState =
         if (contentModel.enabled) ComponentState.Selected else ComponentState.DisabledSelected
 
-    val skinColors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
-    val painters = AuroraSkin.painters
 
-    val fillColorTokens = getContainerTokens(
-        colors = AuroraSkin.colors,
-        decorationAreaType = AuroraSkin.decorationAreaType,
-        componentState = trackFillState,
-        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-        inactiveContainerType = ContainerType.Muted
-    )
     val selectionColorTokens = getActiveContainerTokens(
         colors = AuroraSkin.colors,
         tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
@@ -191,6 +182,7 @@ internal fun AuroraSlider(
     )
     val tickColorTokens = getContainerTokens(
         colors = AuroraSkin.colors,
+        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
         decorationAreaType = AuroraSkin.decorationAreaType,
         associationKind = ContainerColorTokensAssociationKind.Separator,
         componentState = trackFillState,
@@ -392,6 +384,7 @@ internal fun AuroraSlider(
         populateColorTokens(
             colorTokens = drawingCache.colorTokens,
             colors = AuroraSkin.colors,
+            tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
             decorationAreaType = decorationAreaType,
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
@@ -406,6 +399,7 @@ internal fun AuroraSlider(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colors = AuroraSkin.colors,
+            tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
             decorationAreaType = decorationAreaType,
             associationKind = ContainerColorTokensAssociationKind.Default,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,

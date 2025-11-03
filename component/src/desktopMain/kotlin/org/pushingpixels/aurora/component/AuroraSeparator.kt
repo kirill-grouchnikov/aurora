@@ -44,6 +44,7 @@ internal fun AuroraVerticalSeparator(
 ) {
     val separatorTokens = getContainerTokens(
         colors = AuroraSkin.colors,
+        tokensOverlayProvider = null,
         decorationAreaType = AuroraSkin.decorationAreaType,
         associationKind = ContainerColorTokensAssociationKind.Separator,
         componentState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected,
@@ -110,6 +111,7 @@ internal fun AuroraHorizontalSeparator(
 ) {
     val separatorTokens = getContainerTokens(
         colors = AuroraSkin.colors,
+        tokensOverlayProvider = null,
         decorationAreaType = AuroraSkin.decorationAreaType,
         associationKind = ContainerColorTokensAssociationKind.Separator,
         componentState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected,

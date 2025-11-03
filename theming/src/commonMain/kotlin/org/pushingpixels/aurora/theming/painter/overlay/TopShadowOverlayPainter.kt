@@ -51,6 +51,7 @@ class TopShadowOverlayPainter private constructor(private val startAlpha: Float)
     ) {
         val shadowColor = getContainerTokens(
             colors = colors,
+            tokensOverlayProvider = null,
             decorationAreaType = decorationAreaType,
             componentState = ComponentState.Enabled,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,

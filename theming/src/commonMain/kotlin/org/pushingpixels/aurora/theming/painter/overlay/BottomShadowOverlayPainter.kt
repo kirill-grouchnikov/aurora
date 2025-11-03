@@ -52,6 +52,7 @@ class BottomShadowOverlayPainter private constructor(private val endAlpha: Float
     ) {
         val shadowColor = getContainerTokens(
             colors = colors,
+            tokensOverlayProvider = null,
             decorationAreaType = decorationAreaType,
             componentState = ComponentState.Enabled,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,

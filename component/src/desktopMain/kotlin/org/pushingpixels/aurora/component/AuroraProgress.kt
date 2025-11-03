@@ -83,6 +83,7 @@ internal fun AuroraIndeterminateCircularProgress(
     val componentState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
     val colorTokens = getContainerTokens(
         colors = AuroraSkin.colors,
+        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
         decorationAreaType = AuroraSkin.decorationAreaType,
         componentState = componentState,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
@@ -139,6 +140,7 @@ internal fun AuroraDeterminateCircularProgress(
     val componentState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
     val colorTokens = getContainerTokens(
         colors = AuroraSkin.colors,
+        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
         decorationAreaType = AuroraSkin.decorationAreaType,
         componentState = componentState,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
@@ -227,6 +229,7 @@ internal fun AuroraIndeterminateLinearProgress(
         if (contentModel.enabled) ComponentState.Indeterminate else ComponentState.DisabledIndeterminate
     val fillColorTokens = getContainerTokens(
         colors = AuroraSkin.colors,
+        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
         decorationAreaType = AuroraSkin.decorationAreaType,
         componentState = componentState,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
@@ -336,6 +339,7 @@ internal fun AuroraDeterminateLinearProgress(
 
     val fillColorTokens = getContainerTokens(
         colors = AuroraSkin.colors,
+        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
         decorationAreaType = AuroraSkin.decorationAreaType,
         componentState = fillState,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,

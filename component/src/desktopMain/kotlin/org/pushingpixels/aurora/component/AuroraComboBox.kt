@@ -448,6 +448,7 @@ internal fun <E> AuroraComboBox(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colors = skinColors,
+            tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
             decorationAreaType = decorationAreaType,
             associationKind = ContainerColorTokensAssociationKind.Default,
             backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
@@ -460,6 +461,7 @@ internal fun <E> AuroraComboBox(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colors = AuroraSkin.colors,
+            tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
             decorationAreaType = decorationAreaType,
             associationKind = ContainerColorTokensAssociationKind.Default,
             backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
@@ -473,6 +475,7 @@ internal fun <E> AuroraComboBox(
             populateColorTokens(
                 colorTokens = drawingCache.colorTokens,
                 colors = AuroraSkin.colors,
+                tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
                 decorationAreaType = decorationAreaType,
                 modelStateInfo = modelStateInfo,
                 currState = currentState.value,

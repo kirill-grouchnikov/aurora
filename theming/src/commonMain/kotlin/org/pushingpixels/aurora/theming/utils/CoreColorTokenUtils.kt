@@ -158,10 +158,7 @@ fun getActiveContainerTokens(
     componentState: ComponentState
 ): ContainerColorTokens {
 
-    val tokensOverlay: ContainerColorTokensOverlay? = if (tokensOverlayProvider != null)
-        tokensOverlayProvider.getOverlay(colors, decorationAreaType)
-    else
-        null
+    val tokensOverlay = tokensOverlayProvider?.getOverlay(colors, decorationAreaType)
 
     val result = if (tokensOverlay != null)
         tokensOverlay.getActiveContainerTokens(componentState)
@@ -173,6 +170,7 @@ fun getActiveContainerTokens(
 @AuroraInternalApi
 fun getContainerTokens(
     colors: AuroraSkinColors,
+    tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
     decorationAreaType: DecorationAreaType,
     componentState: ComponentState,
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
@@ -180,12 +178,7 @@ fun getContainerTokens(
 ): ContainerColorTokens {
     var componentState = componentState
 
-    // TODO - wire this to a composition local
-    val tokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null
-    val tokensOverlay: ContainerColorTokensOverlay? = if (tokensOverlayProvider != null)
-        tokensOverlayProvider.getOverlay(colors, decorationAreaType)
-    else
-        null
+    val tokensOverlay = tokensOverlayProvider?.getOverlay(colors, decorationAreaType)
 
     // special case - if the component is marked as flat and
     // it is in the default state, or it is a component
@@ -238,14 +231,15 @@ fun getContainerTokens(
 @AuroraInternalApi
 fun getContainerTokens(
     colors: AuroraSkinColors,
+    tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
     decorationAreaType: DecorationAreaType,
     associationKind: ContainerColorTokensAssociationKind,
     componentState: ComponentState,
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     inactiveContainerType: ContainerType
 ): ContainerColorTokens {
-    return getContainerTokens(colors, decorationAreaType, associationKind, componentState,
-        backgroundAppearanceStrategy, inactiveContainerType, false)
+    return getContainerTokens(colors, tokensOverlayProvider, decorationAreaType, associationKind,
+        componentState, backgroundAppearanceStrategy, inactiveContainerType, false)
 }
 
 /**
@@ -259,6 +253,7 @@ fun getContainerTokens(
 @AuroraInternalApi
 fun getContainerTokens(
     colors: AuroraSkinColors,
+    tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
     decorationAreaType: DecorationAreaType,
     associationKind: ContainerColorTokensAssociationKind,
     componentState: ComponentState,
@@ -268,12 +263,7 @@ fun getContainerTokens(
 ): ContainerColorTokens {
     var componentState = componentState
 
-    // TODO - wire this to a composition local
-    val tokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null
-    val tokensOverlay: ContainerColorTokensOverlay? = if (tokensOverlayProvider != null)
-        tokensOverlayProvider.getOverlay(colors, decorationAreaType)
-    else
-        null
+    val tokensOverlay = tokensOverlayProvider?.getOverlay(colors, decorationAreaType)
 
     // special case - if the component is marked as flat, get the color tokens of the parent.
     // However, flat toolbars should be ignored, since they are

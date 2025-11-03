@@ -1169,14 +1169,14 @@ internal fun generateColorTokensOverlay(seed: Color): ContainerColorTokensOverla
             containerConfiguration = ContainerConfiguration.defaultLight()
         ),
         mutedContainerTokens = getContainerTokens(
-            seed = Hct.fromInt(seed.toArgb()).also { it.tone *= 1.2 },
+            seed = Hct.fromInt(seed.toArgb()).also { it.tone *= 1.05 },
             containerConfiguration = ContainerConfiguration(
                 /* isDark */ false,
-                /* contrastLevel */ 0.25
+                /* contrastLevel */ 0.6
             )
         ),
         neutralContainerTokens = getContainerTokens(
-            seed = Hct.fromInt(seed.toArgb()).also { it.tone /= 3.5 },
+            seed = Hct.fromInt(seed.toArgb()).also { it.tone *= 1.03 },
             containerConfiguration = ContainerConfiguration(
                 /* isDark */ false,
                 /* contrastLevel */ 0.8

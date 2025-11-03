@@ -255,6 +255,7 @@ internal fun AuroraTabButton(
                     populateColorTokens(
                         colorTokens = drawingCache.colorTokens,
                         colors = AuroraSkin.colors,
+                        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
                         decorationAreaType = decorationAreaType,
                         modelStateInfo = actionModelStateInfo,
                         currState = currentActionState.value,
@@ -266,6 +267,7 @@ internal fun AuroraTabButton(
 
                     val underlineColorTokens = getContainerTokens(
                         colors = AuroraSkin.colors,
+                        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
                         decorationAreaType = AuroraSkin.decorationAreaType,
                         associationKind = ContainerColorTokensAssociationKind.Tab,
                         componentState = ComponentState.Selected,
@@ -474,6 +476,7 @@ private fun TabButtonTextContent(
         modelStateInfo = modelStateInfo,
         currState = currState,
         colors = skinColors,
+        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
         decorationAreaType = decorationAreaType,
         associationKind = ContainerColorTokensAssociationKind.Tab,
         backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
@@ -519,6 +522,7 @@ private fun TabButtonIconContent(
                 modelStateInfo = modelStateInfo,
                 currState = currState,
                 colors = skinColors,
+                tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
                 decorationAreaType = decorationAreaType,
                 associationKind = ContainerColorTokensAssociationKind.Tab,
                 backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,

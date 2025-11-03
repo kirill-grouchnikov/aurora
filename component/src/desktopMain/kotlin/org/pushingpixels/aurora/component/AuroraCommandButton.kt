@@ -1037,6 +1037,7 @@ internal fun <M : BaseCommandMenuContentModel,
                     // based on the current model state info
                     populateColorTokens(
                         colorTokens = drawingCache.actionColorTokens,
+                        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
                         colors = AuroraSkin.colors,
                         decorationAreaType = decorationAreaType,
                         modelStateInfo = actionModelStateInfoToUse,
@@ -1161,6 +1162,7 @@ internal fun <M : BaseCommandMenuContentModel,
                     populateColorTokens(
                         colorTokens = drawingCache.popupColorTokens,
                         colors = AuroraSkin.colors,
+                        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
                         decorationAreaType = decorationAreaType,
                         modelStateInfo = popupModelStateInfo,
                         currState = currentPopupState.value,
@@ -1248,6 +1250,7 @@ internal fun <M : BaseCommandMenuContentModel,
                     modelStateInfo = modelStateInfoForIcon,
                     currState = currStateForIcon,
                     colors = AuroraSkin.colors,
+                    tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
                     decorationAreaType = decorationAreaType,
                     associationKind = ContainerColorTokensAssociationKind.Default,
                     backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
@@ -1290,6 +1293,7 @@ internal fun <M : BaseCommandMenuContentModel,
                 modelStateInfo = modelStateInfoForText,
                 currState = currStateForText,
                 colors = AuroraSkin.colors,
+                tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
                 decorationAreaType = decorationAreaType,
                 associationKind = ContainerColorTokensAssociationKind.Default,
                 backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
@@ -1301,6 +1305,7 @@ internal fun <M : BaseCommandMenuContentModel,
                 modelStateInfo = modelStateInfoForText,
                 currState = currStateForText,
                 colors = AuroraSkin.colors,
+                tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
                 decorationAreaType = decorationAreaType,
                 associationKind = ContainerColorTokensAssociationKind.Default,
                 backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
@@ -1735,6 +1740,7 @@ private fun CommandButtonIconContent(
 
                 val highlightColorTokens = getContainerTokens(
                     colors = skinColors,
+                    tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
                     decorationAreaType = decorationAreaType,
                     associationKind = ContainerColorTokensAssociationKind.Highlight,
                     componentState = stateForBackground,
@@ -1780,6 +1786,7 @@ private fun CommandButtonIconContent(
                 modelStateInfo = modelStateInfo,
                 currState = currState,
                 colors = AuroraSkin.colors,
+                tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
                 decorationAreaType = decorationAreaType,
                 associationKind = ContainerColorTokensAssociationKind.Mark,
                 backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
@@ -1789,6 +1796,7 @@ private fun CommandButtonIconContent(
 
             val markColorTokens = getContainerTokens(
                 colors = AuroraSkin.colors,
+                tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
                 decorationAreaType = decorationAreaType,
                 associationKind = ContainerColorTokensAssociationKind.Mark,
                 componentState = currState,
@@ -1864,6 +1872,7 @@ private fun CommandButtonPopupIconContent(
         modelStateInfo = modelStateInfo,
         currState = currState,
         colors = AuroraSkin.colors,
+        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
         decorationAreaType = decorationAreaType,
         associationKind = ContainerColorTokensAssociationKind.Mark,
         backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
@@ -1936,7 +1945,8 @@ private fun CommandButtonKeyTip(
                 insets = 0.dp,
                 decorationAreaType = decorationAreaType,
                 painters = painters,
-                skinColors = skinColors
+                skinColors = skinColors,
+                tokensOverlayProvider = originalProjection.presentationModel.colorTokensOverlayProvider,
             )
         }
     }

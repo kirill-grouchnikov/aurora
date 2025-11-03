@@ -51,6 +51,7 @@ import org.pushingpixels.aurora.theming.utils.paintOutline
 import org.pushingpixels.aurora.theming.utils.paintSurface
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.painter.outline.InsetKind
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
@@ -259,6 +260,7 @@ fun RibbonKeyTipOverlay(modifier: Modifier, insets: Dp) {
                             insets,
                             decorationAreaType,
                             skinColors,
+                            null,
                             painters
                         )
                     }
@@ -339,6 +341,7 @@ internal fun DrawScope.drawKeyTip(
     insets: Dp,
     decorationAreaType: DecorationAreaType,
     skinColors: AuroraSkinColors,
+    tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
     painters: AuroraPainters
 ) {
     val keyTipFont = Font(Typeface.makeEmpty()).also {
@@ -351,6 +354,7 @@ internal fun DrawScope.drawKeyTip(
     val state = if (keyTipInfo.isEnabled) ComponentState.Enabled else ComponentState.DisabledUnselected
     val colorTokens = getContainerTokens(
         colors = skinColors,
+        tokensOverlayProvider = tokensOverlayProvider,
         decorationAreaType = decorationAreaType,
         componentState = state,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
@@ -384,7 +388,7 @@ internal fun DrawScope.drawKeyTip(
             drawScope = this,
             componentState = state,
             surfacePainter = surfacePainter,
-            size = this.size,
+            size = Size(tipWidth, tipHeight),
             alpha = 1.0f,
             outline = outlineFill,
             colorTokens = colorTokens)
@@ -393,7 +397,7 @@ internal fun DrawScope.drawKeyTip(
             drawScope = this,
             componentState = state,
             outlinePainter = outlinePainter,
-            size = this.size,
+            size = Size(tipWidth, tipHeight),
             alpha = 1.0f,
             outlineSupplier = KeyTipOutlineSuppler,
             colorTokens = colorTokens)

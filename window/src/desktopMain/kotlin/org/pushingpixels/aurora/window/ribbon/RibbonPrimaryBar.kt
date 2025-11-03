@@ -331,6 +331,7 @@ internal fun RibbonPrimaryBar(
         Canvas(modifier = Modifier.fillMaxSize()) {
             val separatorTokens = getContainerTokens(
                 colors = skinColors,
+                tokensOverlayProvider = null,
                 decorationAreaType = decorationAreaType,
                 associationKind = ContainerColorTokensAssociationKind.Separator,
                 componentState = ComponentState.Enabled,

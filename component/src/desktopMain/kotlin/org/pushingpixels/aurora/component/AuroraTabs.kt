@@ -166,6 +166,7 @@ internal fun AuroraTabs(
 
     val underlineColorTokens = getContainerTokens(
         colors = AuroraSkin.colors,
+        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
         decorationAreaType = AuroraSkin.decorationAreaType,
         associationKind = ContainerColorTokensAssociationKind.Tab,
         componentState = ComponentState.Selected,
@@ -185,6 +186,7 @@ internal fun AuroraTabs(
         icon = getStartwardDoubleArrowIcon(
             decorationAreaType = decorationAreaType,
             skinColors = colors,
+            tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
             inactiveContainerType = ContainerType.Muted,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             density = density
@@ -201,6 +203,7 @@ internal fun AuroraTabs(
         icon = getEndwardDoubleArrowIcon(
             decorationAreaType = decorationAreaType,
             skinColors = colors,
+            tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
             inactiveContainerType = ContainerType.Muted,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             density = density

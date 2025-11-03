@@ -100,6 +100,7 @@ fun AuroraHorizontallyScrollableBox(
         icon = getStartwardDoubleArrowIcon(
             decorationAreaType = decorationAreaType,
             skinColors = colors,
+            tokensOverlayProvider = null,
             inactiveContainerType = ContainerType.Muted,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             density = density
@@ -114,6 +115,7 @@ fun AuroraHorizontallyScrollableBox(
         icon = getEndwardDoubleArrowIcon(
             decorationAreaType = decorationAreaType,
             skinColors = colors,
+            tokensOverlayProvider = null,
             inactiveContainerType = ContainerType.Muted,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
             density = density
@@ -277,6 +279,7 @@ fun AuroraVerticallyScrollableBox(
                     iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
                     decorationAreaType = decorationAreaType,
                     skinColors = colors,
+                    tokensOverlayProvider = null,
                     inactiveContainerType = ContainerType.Muted,
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                     modelStateInfoSnapshot = modelStateInfoSnapshot,
@@ -322,6 +325,7 @@ fun AuroraVerticallyScrollableBox(
                     iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
                     decorationAreaType = decorationAreaType,
                     skinColors = colors,
+                    tokensOverlayProvider = null,
                     inactiveContainerType = ContainerType.Muted,
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                     modelStateInfoSnapshot = modelStateInfoSnapshot,

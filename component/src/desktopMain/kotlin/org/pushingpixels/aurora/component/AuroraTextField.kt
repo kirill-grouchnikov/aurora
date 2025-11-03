@@ -242,6 +242,7 @@ internal fun AuroraTextField(
     populateColorTokens(
         colorTokens = drawingCache.colorTokens,
         colors = AuroraSkin.colors,
+        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
         decorationAreaType = decorationAreaType,
         modelStateInfo = modelStateInfo,
         currState = currentState.value,
@@ -259,6 +260,7 @@ internal fun AuroraTextField(
             currentState.value
         },
         colors = skinColors,
+        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
         decorationAreaType = decorationAreaType,
         associationKind = ContainerColorTokensAssociationKind.Default,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
@@ -294,6 +296,7 @@ internal fun AuroraTextField(
                     modelStateInfo = modelStateInfo,
                     currState = currentState.value,
                     colors = skinColors,
+                    tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
                     decorationAreaType = decorationAreaType
                 )
             }
@@ -338,6 +341,7 @@ internal fun AuroraTextField(
                             }
                             val activeColorTokens = getContainerTokens(
                                 colors = skinColors,
+                                tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
                                 decorationAreaType = decorationAreaType,
                                 componentState = activeState,
                                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
@@ -375,6 +379,7 @@ internal fun AuroraTextField(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colors = skinColors,
+            tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
             decorationAreaType = decorationAreaType
         )
         CompositionLocalProvider(

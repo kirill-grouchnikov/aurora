@@ -761,6 +761,7 @@ private fun RibbonBandTitle(band: AbstractRibbonBand) {
                         icon = getEndwardDoubleArrowIcon(
                             decorationAreaType = decorationAreaType,
                             skinColors = colors,
+                            tokensOverlayProvider = null,
                             inactiveContainerType = ContainerType.Muted,
                             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                             density = density

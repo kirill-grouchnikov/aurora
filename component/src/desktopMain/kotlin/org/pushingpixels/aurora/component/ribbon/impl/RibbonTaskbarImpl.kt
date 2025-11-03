@@ -286,6 +286,7 @@ fun RibbonTaskbar(
                     icon = getEndwardDoubleArrowIcon(
                         decorationAreaType = decorationAreaType,
                         skinColors = colors,
+                        tokensOverlayProvider = null,
                         inactiveContainerType = ContainerType.Muted,
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
                         density = density

@@ -58,6 +58,7 @@ import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.painter.outline.InsetKind
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
@@ -330,6 +331,7 @@ internal fun RibbonTaskToggleButton(
                             override fun getContainerTokensForActiveState(state: ComponentState): ContainerColorTokens {
                                 return getContainerTokens(
                                     colors = skinColors,
+                                    tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
                                     decorationAreaType = decorationAreaType,
                                     componentState = state,
                                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
@@ -341,6 +343,7 @@ internal fun RibbonTaskToggleButton(
                                 return if (state == ComponentState.Enabled) {
                                     getContainerTokens(
                                         colors = skinColors,
+                                        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
                                         decorationAreaType = decorationAreaType,
                                         componentState = state,
                                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
@@ -349,6 +352,7 @@ internal fun RibbonTaskToggleButton(
                                 } else {
                                     getContainerTokens(
                                         colors = skinColors,
+                                        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
                                         decorationAreaType = decorationAreaType,
                                         componentState = state,
                                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
@@ -529,7 +533,8 @@ internal fun RibbonTaskToggleButton(
 @OptIn(AuroraInternalApi::class)
 @Composable
 private fun TaskToggleButtonTextContent(
-    text: String, presentationModel: CommandButtonPresentationModel,
+    text: String,
+    presentationModel: CommandButtonPresentationModel,
     modelStateInfo: ModelStateInfo,
     currState: ComponentState,
     currStateIgnoreSelection: ComponentState,
@@ -544,6 +549,7 @@ private fun TaskToggleButtonTextContent(
         currState = currState,
         currStateIgnoreSelection = currStateIgnoreSelection,
         skinColors = skinColors,
+        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
         decorationAreaType = decorationAreaType,
         containerColorTokensAssociationKind = ContainerColorTokensAssociationKind.Default
     )
@@ -569,6 +575,7 @@ private fun getTextColor(
     currState: ComponentState,
     currStateIgnoreSelection: ComponentState,
     skinColors: AuroraSkinColors,
+    tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
     decorationAreaType: DecorationAreaType,
     containerColorTokensAssociationKind: ContainerColorTokensAssociationKind
 ): Color {
@@ -576,6 +583,7 @@ private fun getTextColor(
 
     val buttonColorTokens = getContainerTokens(
         colors = skinColors,
+        tokensOverlayProvider = tokensOverlayProvider,
         decorationAreaType = decorationAreaType,
         componentState = currStateIgnoreSelection,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
@@ -603,6 +611,7 @@ private fun getTextColor(
 
         val activeColorTokens = getContainerTokens(
             colors = skinColors,
+            tokensOverlayProvider = tokensOverlayProvider,
             decorationAreaType = decorationAreaType,
             associationKind = containerColorTokensAssociationKind,
             componentState = activeState,

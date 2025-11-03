@@ -197,7 +197,7 @@ private fun Scrollbar(
     modifier: Modifier = Modifier,
     reverseLayout: Boolean,
     isVertical: Boolean
-) = with(LocalDensity.current) {
+) = with (LocalDensity.current) {
     val interactionSource = remember { MutableInteractionSource() }
     val drawingCache = remember { ScrollBarDrawingCache() }
     val rollover by interactionSource.collectIsHoveredAsState()
@@ -364,6 +364,7 @@ private fun Scrollbar(
                 populateColorTokens(
                     colorTokens = drawingCache.colorTokens,
                     colors = AuroraSkin.colors,
+                    tokensOverlayProvider = null,
                     decorationAreaType = decorationAreaType,
                     modelStateInfo = modelStateInfo,
                     currState = currentState.value,

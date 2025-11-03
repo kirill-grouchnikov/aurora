@@ -34,6 +34,7 @@ import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.ModelStateInfoSnapshot
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.utils.ContainerType
 
 internal object ArrowSizingConstants {
@@ -225,6 +226,7 @@ internal fun drawDoubleArrow(
 internal fun getStartwardDoubleArrowIcon(
     decorationAreaType: DecorationAreaType,
     skinColors: AuroraSkinColors,
+    tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
     inactiveContainerType: ContainerType,
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     density: Density
@@ -235,6 +237,7 @@ internal fun getStartwardDoubleArrowIcon(
                 iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
                 decorationAreaType = decorationAreaType,
                 skinColors = skinColors,
+                tokensOverlayProvider = tokensOverlayProvider,
                 inactiveContainerType = inactiveContainerType,
                 backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                 modelStateInfoSnapshot = modelStateInfoSnapshot,
@@ -273,6 +276,7 @@ internal fun getStartwardDoubleArrowIcon(
 fun getEndwardDoubleArrowIcon(
     decorationAreaType: DecorationAreaType,
     skinColors: AuroraSkinColors,
+    tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
     inactiveContainerType: ContainerType,
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     density: Density
@@ -283,6 +287,7 @@ fun getEndwardDoubleArrowIcon(
                 iconSize = ArrowSizingConstants.DefaultDoubleArrowWidth,
                 decorationAreaType = decorationAreaType,
                 skinColors = skinColors,
+                tokensOverlayProvider = tokensOverlayProvider,
                 inactiveContainerType = inactiveContainerType,
                 backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                 modelStateInfoSnapshot = modelStateInfoSnapshot,

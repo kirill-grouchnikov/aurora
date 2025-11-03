@@ -20,6 +20,7 @@ import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
 import org.pushingpixels.aurora.theming.utils.getContainerTokens
@@ -144,6 +145,7 @@ fun populateColorTokens(
 internal fun populateColorTokens(
     colorTokens: MutableContainerColorTokens,
     colors: AuroraSkinColors,
+    tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
     decorationAreaType: DecorationAreaType,
     modelStateInfo: ModelStateInfo,
     currState: ComponentState,
@@ -158,6 +160,7 @@ internal fun populateColorTokens(
     } else {
         getContainerTokens(
             colors = colors,
+            tokensOverlayProvider = tokensOverlayProvider,
             decorationAreaType = decorationAreaType,
             associationKind = associationKind,
             componentState = currState,
@@ -205,6 +208,7 @@ internal fun populateColorTokens(
             } else {
                 getContainerTokens(
                     colors = colors,
+                    tokensOverlayProvider = tokensOverlayProvider,
                     decorationAreaType = decorationAreaType,
                     associationKind = associationKind,
                     componentState = contribution.key,
@@ -287,6 +291,7 @@ internal fun populateColorTokens(
 internal fun populateColorTokens(
     colorTokens: MutableContainerColorTokens,
     colors: AuroraSkinColors,
+    tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
     decorationAreaType: DecorationAreaType,
     modelStateInfoSnapshot: ModelStateInfoSnapshot,
     associationKind: ContainerColorTokensAssociationKind,
@@ -300,6 +305,7 @@ internal fun populateColorTokens(
     } else {
         getContainerTokens(
             colors = colors,
+            tokensOverlayProvider = tokensOverlayProvider,
             decorationAreaType = decorationAreaType,
             associationKind = associationKind,
             componentState = modelStateInfoSnapshot.currModelState,
@@ -347,6 +353,7 @@ internal fun populateColorTokens(
             } else {
                 getContainerTokens(
                     colors = colors,
+                    tokensOverlayProvider = tokensOverlayProvider,
                     decorationAreaType = decorationAreaType,
                     associationKind = associationKind,
                     componentState = contribution.key,
@@ -429,6 +436,7 @@ internal fun populateColorTokens(
 internal fun populateColorTokensForHighlights(
     colorTokens: MutableContainerColorTokens,
     colors: AuroraSkinColors,
+    tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
     decorationAreaType: DecorationAreaType,
     modelStateInfo: ModelStateInfo,
     currState: ComponentState,
@@ -437,6 +445,7 @@ internal fun populateColorTokensForHighlights(
 
     val currColorTokens = getContainerTokens(
         colors = colors,
+        tokensOverlayProvider = tokensOverlayProvider,
         decorationAreaType = decorationAreaType,
         associationKind = associationKind,
         componentState = currState,
@@ -486,6 +495,7 @@ internal fun populateColorTokensForHighlights(
         // Get the color tokens that match the contribution state
         val contributionTokens = getContainerTokens(
             colors = colors,
+            tokensOverlayProvider = tokensOverlayProvider,
             decorationAreaType = decorationAreaType,
             associationKind = associationKind,
             componentState = contribution.key,
@@ -566,6 +576,7 @@ internal fun getStateAwareColor(
     modelStateInfo: ModelStateInfo,
     currState: ComponentState,
     colors: AuroraSkinColors,
+    tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
     decorationAreaType: DecorationAreaType,
     associationKind: ContainerColorTokensAssociationKind,
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
@@ -575,6 +586,7 @@ internal fun getStateAwareColor(
 ): Color {
     val currStateTokens = getContainerTokens(
         colors = colors,
+        tokensOverlayProvider = tokensOverlayProvider,
         decorationAreaType = decorationAreaType,
         associationKind = associationKind,
         componentState = currState,
@@ -603,6 +615,7 @@ internal fun getStateAwareColor(
         // Get the color scheme that matches the contribution state
         val contributionColorTokens = getContainerTokens(
             colors = colors,
+            tokensOverlayProvider = tokensOverlayProvider,
             decorationAreaType = decorationAreaType,
             associationKind = associationKind,
             componentState = contribution.key,
@@ -623,6 +636,7 @@ internal fun getTextColor(
     modelStateInfo: ModelStateInfo?,
     currState: ComponentState,
     colors: AuroraSkinColors,
+    tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
     decorationAreaType: DecorationAreaType,
     associationKind: ContainerColorTokensAssociationKind,
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
@@ -642,6 +656,7 @@ internal fun getTextColor(
 
     val colorTokens = getContainerTokens(
         colors = colors,
+        tokensOverlayProvider = tokensOverlayProvider,
         decorationAreaType = decorationAreaType,
         associationKind = associationKind,
         componentState = tweakedCurrState,
@@ -663,6 +678,7 @@ internal fun getTextColor(
             val contribution = value.contribution
             val activeTokens = getContainerTokens(
                 colors = colors,
+                tokensOverlayProvider = tokensOverlayProvider,
                 decorationAreaType = decorationAreaType,
                 associationKind = associationKind,
                 componentState = activeState,
@@ -690,6 +706,7 @@ internal fun getTextVariantColor(
     modelStateInfo: ModelStateInfo?,
     currState: ComponentState,
     colors: AuroraSkinColors,
+    tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
     decorationAreaType: DecorationAreaType,
     associationKind: ContainerColorTokensAssociationKind,
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
@@ -709,6 +726,7 @@ internal fun getTextVariantColor(
 
     val colorTokens = getContainerTokens(
         colors = colors,
+        tokensOverlayProvider = tokensOverlayProvider,
         decorationAreaType = decorationAreaType,
         associationKind = associationKind,
         componentState = tweakedCurrState,
@@ -730,6 +748,7 @@ internal fun getTextVariantColor(
             val contribution = value.contribution
             val activeTokens = getContainerTokens(
                 colors = colors,
+                tokensOverlayProvider = tokensOverlayProvider,
                 decorationAreaType = decorationAreaType,
                 associationKind = associationKind,
                 componentState = activeState,
@@ -757,6 +776,7 @@ internal fun getTextSelectionBackground(
     modelStateInfo: ModelStateInfo,
     currState: ComponentState,
     colors: AuroraSkinColors,
+    tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
     decorationAreaType: DecorationAreaType
 ): Color {
     val activeStates = modelStateInfo.stateContributionMap
@@ -769,6 +789,7 @@ internal fun getTextSelectionBackground(
 
     val currStateTokens = getContainerTokens(
         colors = colors,
+        tokensOverlayProvider = tokensOverlayProvider,
         decorationAreaType = decorationAreaType,
         associationKind = ContainerColorTokensAssociationKind.Default,
         componentState = currState,
@@ -797,6 +818,7 @@ internal fun getTextSelectionBackground(
 
             val activeStateTokens = getContainerTokens(
                 colors = colors,
+                tokensOverlayProvider = tokensOverlayProvider,
                 decorationAreaType = decorationAreaType,
                 associationKind = ContainerColorTokensAssociationKind.Default,
                 componentState = activeState,
@@ -817,12 +839,14 @@ internal fun getTextFillBackground(
     modelStateInfo: ModelStateInfo,
     currState: ComponentState,
     colors: AuroraSkinColors,
+    tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
     decorationAreaType: DecorationAreaType
 ): Color {
     val stateForQuery =
         if (currState.isDisabled) ComponentState.DisabledUnselected else ComponentState.Enabled
     val tokens = getContainerTokens(
         colors = colors,
+        tokensOverlayProvider = tokensOverlayProvider,
         decorationAreaType = decorationAreaType,
         associationKind = ContainerColorTokensAssociationKind.Default,
         componentState = stateForQuery,

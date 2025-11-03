@@ -29,6 +29,7 @@ import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.ModelStateInfoSnapshot
 import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
 
@@ -51,6 +52,7 @@ class TransitionAwarePainter(
     val iconSize: Dp,
     val decorationAreaType: DecorationAreaType,
     val skinColors: AuroraSkinColors,
+    val tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
     val inactiveContainerType: ContainerType,
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     val modelStateInfoSnapshot: ModelStateInfoSnapshot,
@@ -67,6 +69,7 @@ class TransitionAwarePainter(
         populateColorTokens(
             colorTokens = mutableColorTokens,
             colors = skinColors,
+            tokensOverlayProvider = tokensOverlayProvider,
             decorationAreaType = decorationAreaType,
             modelStateInfoSnapshot = modelStateInfoSnapshot,
             associationKind = ContainerColorTokensAssociationKind.Mark,

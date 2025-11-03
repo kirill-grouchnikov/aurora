@@ -275,6 +275,7 @@ internal fun AuroraRadioButton(
         populateColorTokens(
             colorTokens = drawingCache.colorTokens,
             colors = AuroraSkin.colors,
+            tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
             decorationAreaType = decorationAreaType,
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
@@ -289,6 +290,7 @@ internal fun AuroraRadioButton(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colors = AuroraSkin.colors,
+            tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
             decorationAreaType = decorationAreaType,
             associationKind = ContainerColorTokensAssociationKind.Mark,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
@@ -313,6 +315,7 @@ internal fun AuroraRadioButton(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colors = AuroraSkin.colors,
+            tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
             decorationAreaType = decorationAreaType,
             associationKind = ContainerColorTokensAssociationKind.Default,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,

@@ -219,6 +219,7 @@ fun AuroraBoxWithHighlights(
             modelStateInfo = modelStateInfo,
             currState = currentState.value,
             colors = AuroraSkin.colors,
+            tokensOverlayProvider = null,
             decorationAreaType = decorationAreaType,
             associationKind = ContainerColorTokensAssociationKind.Highlight,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
@@ -232,6 +233,7 @@ fun AuroraBoxWithHighlights(
         populateColorTokensForHighlights(
             colorTokens = drawingCache.colorTokens,
             colors = AuroraSkin.colors,
+            tokensOverlayProvider = null,
             decorationAreaType = decorationAreaType,
             modelStateInfo = modelStateInfo,
             currState = currentState.value,

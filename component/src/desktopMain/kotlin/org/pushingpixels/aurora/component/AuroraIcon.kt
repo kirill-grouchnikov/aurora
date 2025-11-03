@@ -80,6 +80,7 @@ internal fun AuroraIcon(
                 modelStateInfo = null,
                 currState = state,
                 colors = skinColors,
+                tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
                 decorationAreaType = decorationAreaType,
                 associationKind = ContainerColorTokensAssociationKind.Default,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,

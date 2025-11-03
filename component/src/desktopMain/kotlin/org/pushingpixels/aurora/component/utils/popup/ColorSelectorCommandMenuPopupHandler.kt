@@ -517,6 +517,7 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
     private fun BottomLine() {
         val separatorTokens = getContainerTokens(
             colors = AuroraSkin.colors,
+            tokensOverlayProvider = null,
             decorationAreaType = AuroraSkin.decorationAreaType,
             associationKind = ContainerColorTokensAssociationKind.Separator,
             componentState = ComponentState.Enabled,
@@ -613,6 +614,7 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
                 if (rolloverFraction > 0.0f) {
                     val highlightColorTokens = getContainerTokens(
                         colors = skinColors,
+                        tokensOverlayProvider = null,
                         decorationAreaType = decorationAreaType,
                         associationKind = ContainerColorTokensAssociationKind.Highlight,
                         componentState = ComponentState.RolloverUnselected,

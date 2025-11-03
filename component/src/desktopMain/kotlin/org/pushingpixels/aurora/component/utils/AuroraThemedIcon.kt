@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.DpSize
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
 import org.pushingpixels.aurora.theming.utils.getContainerColorTokensFilter
@@ -42,6 +43,7 @@ private class CombinedIconModifier(
     val enabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val activeFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val skinColors: AuroraSkinColors,
+    val tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
     val decorationAreaType: DecorationAreaType,
     val modelStateInfoSnapshot: ModelStateInfoSnapshot,
     val textColor: Color,
@@ -56,6 +58,7 @@ private class CombinedIconModifier(
                     getContainerColorTokensFilter(
                         colorTokens = getContainerTokens(
                             colors = skinColors,
+                            tokensOverlayProvider = tokensOverlayProvider,
                             decorationAreaType = decorationAreaType,
                             componentState = modelStateInfoSnapshot.currModelState,
                             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
@@ -83,6 +86,7 @@ private class CombinedIconModifier(
                         populateColorTokens(
                             colorTokens = mutableContainerColorTokens,
                             colors = skinColors,
+                            tokensOverlayProvider = tokensOverlayProvider,
                             decorationAreaType = decorationAreaType,
                             modelStateInfoSnapshot = modelStateInfoSnapshot,
                             associationKind = ContainerColorTokensAssociationKind.Default,
@@ -126,6 +130,7 @@ internal fun AuroraThemedIcon(
 
     val textColor = LocalTextColor.current
     val colors = AuroraSkin.colors
+    val tokensOverlayProvider = LocalColorTokensOverlayProvider.current
     val decorationAreaType = AuroraSkin.decorationAreaType
 
     if (currModelState.isDisabled) {
@@ -150,6 +155,7 @@ internal fun AuroraThemedIcon(
                         colorFilter = getContainerColorTokensFilter(
                             colorTokens = getContainerTokens(
                                 colors = colors,
+                                tokensOverlayProvider = tokensOverlayProvider,
                                 decorationAreaType = decorationAreaType,
                                 componentState = modelStateInfoSnapshot.currModelState,
                                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
@@ -174,6 +180,7 @@ internal fun AuroraThemedIcon(
                         enabledFilterStrategy,
                         activeFilterStrategy,
                         colors,
+                        tokensOverlayProvider,
                         decorationAreaType,
                         modelStateInfoSnapshot,
                         textColor,
