@@ -21,6 +21,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -38,6 +39,7 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCascadingCommandMenuPopupLayoutInfo
 import org.pushingpixels.aurora.component.popup.CascadingCommandMenuHandler
 import org.pushingpixels.aurora.component.projection.*
+import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.component.utils.getLabelPreferredSingleLineWidth
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
@@ -142,16 +144,17 @@ data class CustomComplexCommandPopupMenuPresentationModel(
         ),
     val headerTitlePresentationModel: LabelPresentationModel =
         LabelPresentationModel(
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
             textMaxLines = 1,
             textStyle = TextStyle(fontWeight = FontWeight.Bold)
         ),
     val headerSignInPresentationModel: CommandButtonPresentationModel =
         CommandButtonPresentationModel(
             presentationState = CommandButtonPresentationState.Medium,
-            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-            sides = Sides.ClosedRectangle,
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp)
+            colorTokensOverlayProvider = ContainerColorTokensOverlay.defaultSystemOverlayProvider(
+                systemContainerType = SystemContainerType.Info),
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+            contentPadding = CommandButtonSizingConstants.WideButtonContentPadding
         ),
     val headerSeparatorHeight: Dp = 2.0.dp,
     val footerPresentationModel: CommandButtonPresentationModel =
@@ -428,6 +431,15 @@ object CustomComplexCommandMenuPopupHandler : CascadingCommandMenuHandler<
                             density = density,
                             fontFamilyResolver = fontFamilyResolver
                         )
+                        val titleHeight = getLabelPreferredHeight(
+                            contentModel = LabelContentModel(text = entry.title),
+                            presentationModel = menuPresentationModel.headerTitlePresentationModel,
+                            resolvedTextStyle = textStyle,
+                            layoutDirection = layoutDirection,
+                            density = density,
+                            fontFamilyResolver = fontFamilyResolver,
+                            availableWidth = Float.MAX_VALUE,
+                        )
 
                         maxPrimaryWidth = max(maxPrimaryWidth, titleWidth)
 
@@ -447,7 +459,7 @@ object CustomComplexCommandMenuPopupHandler : CascadingCommandMenuHandler<
                         maxActionWidth = max(maxActionWidth, signInPreferredSize.width)
 
                         val itemHeight =
-                            signInPreferredSize.height + menuPresentationModel.headerSeparatorHeight.value * density.density
+                            titleHeight + menuPresentationModel.headerSeparatorHeight.value * density.density
 
                         combinedHeight += itemHeight
                         itemHeights[entryIndex] = itemHeight
@@ -640,7 +652,8 @@ object CustomComplexCommandMenuPopupHandler : CascadingCommandMenuHandler<
                                     (popupContentLayoutInfo.itemHeights[entryIndex] / density.density).dp
                                 )
                             ) {
-                                Row(modifier = Modifier.fillMaxWidth().weight(1.0f)) {
+                                Row(modifier = Modifier.fillMaxWidth().weight(1.0f),
+                                    verticalAlignment = Alignment.CenterVertically) {
                                     LabelProjection(
                                         contentModel = LabelContentModel(text = entry.title),
                                         presentationModel = menuPresentationModel.headerTitlePresentationModel
@@ -648,20 +661,10 @@ object CustomComplexCommandMenuPopupHandler : CascadingCommandMenuHandler<
 
                                     Spacer(modifier = Modifier.weight(1.0f))
 
-                                    Box(
-                                        modifier = Modifier.background(
-                                            if (neutralColorTokens.isDark) {
-                                                neutralColorTokens.containerSurfaceHighest
-                                            } else {
-                                                neutralColorTokens.containerSurfaceLowest
-                                            }
-                                        )
-                                    ) {
-                                        CommandButtonProjection(
-                                            contentModel = entry.commandSignIn,
-                                            presentationModel = menuPresentationModel.headerSignInPresentationModel
-                                        ).project()
-                                    }
+                                    CommandButtonProjection(
+                                        contentModel = entry.commandSignIn,
+                                        presentationModel = menuPresentationModel.headerSignInPresentationModel
+                                    ).project(modifier = Modifier.padding(end = 8.dp))
                                 }
                                 Canvas(
                                     modifier = Modifier.fillMaxWidth()
@@ -682,9 +685,9 @@ object CustomComplexCommandMenuPopupHandler : CascadingCommandMenuHandler<
                                     .height((popupContentLayoutInfo.itemHeights[entryIndex] / density.density).dp)
                                     .background(
                                         if (neutralColorTokens.isDark) {
-                                            neutralColorTokens.containerSurfaceHighest
+                                            neutralColorTokens.containerSurfaceHigh
                                         } else {
-                                            neutralColorTokens.containerSurfaceLowest
+                                            neutralColorTokens.containerSurfaceLow
                                         }
                                     )
                             ) {

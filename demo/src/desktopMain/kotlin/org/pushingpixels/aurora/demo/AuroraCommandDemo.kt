@@ -53,7 +53,7 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.Center),
         size = DpSize(800.dp, 540.dp)
     )
-    var skin by remember { mutableStateOf(geminiSkin()) }
+    var skin by remember { mutableStateOf(marinerSkin()) }
     val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
@@ -451,6 +451,10 @@ fun DemoCommandComplex(resourceBundle: ResourceBundle) {
 
     val managedByMf = MessageFormat(resourceBundle.getString("Menu.managedBy"))
 
+    val deleteAccountCommand = Command(
+        text = resourceBundle.getString("Menu.deleteAccount"),
+        action = { println("Delete account") }
+    )
     CustomComplexCommandButtonProjection(
         contentModel = CustomComplexCommand(
             icon = menu_black_24dp(),
@@ -572,7 +576,8 @@ fun DemoCommandComplex(resourceBundle: ResourceBundle) {
                                         )
                                     )
                                 )
-                            )
+                            ),
+                            CustomComplexPopupMenuCommand(command = deleteAccountCommand)
                         )
                     ),
                     CustomComplexMenuContentSection(
@@ -592,6 +597,12 @@ fun DemoCommandComplex(resourceBundle: ResourceBundle) {
             popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignEnd,
             iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
             iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+        ),
+        secondaryOverlays = hashMapOf(
+            deleteAccountCommand to BaseCommandButtonPresentationModel.Overlay(
+                colorTokensOverlayProvider = ContainerColorTokensOverlay.defaultMenuSystemOverlayProvider(
+                    systemContainerType = SystemContainerType.Error)
+            )
         )
     ).project()
 
