@@ -36,21 +36,27 @@ import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.demo.svg.vaadin.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.palette.TonalPaletteSeeds
+import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.window.AuroraApplicationScope
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import org.pushingpixels.aurora.window.auroraApplication
+import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
+import org.pushingpixels.ephemeral.chroma.hct.Hct
+import org.pushingpixels.ephemeral.chroma.palettes.BaseTonalPalette
+import org.pushingpixels.ephemeral.chroma.palettes.TonalPalette
 import java.util.*
 
 fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
-        size = DpSize(720.dp, 750.dp)
+        size = DpSize(760.dp, 780.dp)
     )
     val aboutState = rememberWindowState(
         placement = WindowPlacement.Floating,
@@ -1117,7 +1123,54 @@ fun AuroraApplicationScope.DemoColorsContent(
 }
 
 private fun demoTokensOverlay(): ContainerColorTokensOverlay.Provider {
-    return ContainerColorTokensOverlay.Provider {
-        _, _ -> generateColorTokensOverlay(seed = TonalPaletteSeeds.LimeGreen) }
+    return object: ContainerColorTokensOverlay.Provider {
+        override fun getOverlay(
+            skinColors: AuroraSkinColors,
+            decorationAreaType: DecorationAreaType
+        ): ContainerColorTokensOverlay {
+            val activePalette: BaseTonalPalette = TonalPalette.fromHct(Hct.from(300.0, 40.0, 40.0))
+            val mutedPalette: BaseTonalPalette = TonalPalette.fromHct(Hct.from(300.0, 18.0, 40.0))
+            val neutralPalette: BaseTonalPalette = TonalPalette.fromHct(Hct.from(300.0, 8.0, 40.0))
+
+            val lightOverlay = ContainerColorTokensOverlay(
+                activeContainerTokens = getContainerTokens( 
+                    seed = activePalette.getHct(80.0),
+                    containerConfiguration = ContainerConfiguration.defaultLight()
+                ),  
+                mutedContainerTokens = getContainerTokens(
+                    seed = mutedPalette.getHct(85.0),  
+                    containerConfiguration = ContainerConfiguration.defaultLight()
+                ),  
+                neutralContainerTokens = getContainerTokens(
+                    seed = neutralPalette.getHct(95.0),  
+                    containerConfiguration = ContainerConfiguration.defaultLight()
+                )
+            )
+
+            val darkOverlay = ContainerColorTokensOverlay(
+                activeContainerTokens = getContainerTokens( 
+                    seed = activePalette.getHct(40.0),  
+                    /* containerConfiguration */
+                    ContainerConfiguration.defaultDark()
+                ),  
+                mutedContainerTokens = getContainerTokens( 
+                    seed = mutedPalette.getHct(32.0),  
+                    containerConfiguration = ContainerConfiguration.defaultDark()
+                ),  
+                neutralContainerTokens = getContainerTokens( 
+                    seed = neutralPalette.getHct(26.0),  
+                    containerConfiguration = ContainerConfiguration.defaultDark()
+                )
+            )
+
+            // Return the purple overlay that matches the skin's darkness in this decoration area type
+            val skinNeutralTokens = skinColors.getNeutralContainerTokens(decorationAreaType)
+            return if (skinNeutralTokens.isDark) {
+                darkOverlay
+            } else {
+                lightOverlay
+            }
+        }
+    }
 }
 
