@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.ComponentState
@@ -40,6 +41,7 @@ import org.pushingpixels.aurora.theming.utils.getContainerTokens
 class TopShadowOverlayPainter private constructor(private val startAlpha: Float) : AuroraOverlayPainter {
     override val displayName = "Top Shadow"
 
+    @OptIn(AuroraInternalApi::class)
     override fun paintOverlay(
         drawScope: DrawScope,
         decorationAreaType: DecorationAreaType,

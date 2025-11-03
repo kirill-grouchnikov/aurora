@@ -57,6 +57,7 @@ import kotlin.math.max
 import kotlin.math.roundToInt
 
 @Immutable
+@OptIn(AuroraInternalApi::class)
 private class TabButtonDrawingCache(
     val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens()
 )

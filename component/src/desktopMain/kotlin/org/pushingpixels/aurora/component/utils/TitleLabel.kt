@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.model.LabelPresentationModel
 import org.pushingpixels.aurora.component.projection.LabelProjection
@@ -61,6 +62,7 @@ private object TitleLabelOutlineSuppler: OutlineSupplier {
 }
 
 @Composable
+@OptIn(AuroraInternalApi::class)
 internal fun TitleLabel(
     modifier: Modifier,
     title: String,

@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.ContainerColorTokensAssociationKind
 import org.pushingpixels.aurora.theming.DecorationAreaType
@@ -45,6 +46,7 @@ abstract class TransitionAwarePainterDelegate: Painter() {
  * Painter with transition-aware capabilities. Has a delegate that does the actual
  * painting based on the transition color tokens.
  */
+@OptIn(AuroraInternalApi::class)
 class TransitionAwarePainter(
     val iconSize: Dp,
     val decorationAreaType: DecorationAreaType,

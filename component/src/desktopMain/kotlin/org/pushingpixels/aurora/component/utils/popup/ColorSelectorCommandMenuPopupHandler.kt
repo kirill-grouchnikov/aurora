@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.HSBtoRGB
 import org.pushingpixels.aurora.common.RGBtoHSB
@@ -512,6 +513,7 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
     }
 
     @Composable
+    @OptIn(AuroraInternalApi::class)
     private fun BottomLine() {
         val separatorTokens = getContainerTokens(
             colors = AuroraSkin.colors,
@@ -543,6 +545,7 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
     }
 
     @Composable
+    @OptIn(AuroraInternalApi::class)
     private fun ColorSelectorCell(
         menuContentModel: ColorSelectorMenuContentModel,
         menuPresentationModel: ColorSelectorCommandPopupMenuPresentationModel,

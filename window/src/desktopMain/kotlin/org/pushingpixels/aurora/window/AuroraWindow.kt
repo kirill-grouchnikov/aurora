@@ -381,6 +381,7 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                         (window as? Frame)?.extendedState = JFrame.ICONIFIED
                     },
                     icon = object : TransitionAwarePainterDelegate() {
+                        @OptIn(AuroraInternalApi::class)
                         override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
                             return TransitionAwarePainter(
                                 iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
@@ -425,6 +426,7 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                         }
                     },
                     icon = object : TransitionAwarePainterDelegate() {
+                        @OptIn(AuroraInternalApi::class)
                         override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
                             return if (isMaximized.value) {
                                 TransitionAwarePainter(
@@ -473,6 +475,7 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                         )
                     },
                     icon = object : TransitionAwarePainterDelegate() {
+                        @OptIn(AuroraInternalApi::class)
                         override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
                             return TransitionAwarePainter(
                                 iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
@@ -593,6 +596,7 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                         (window as? Frame)?.extendedState = JFrame.ICONIFIED
                     },
                     icon = object : TransitionAwarePainterDelegate() {
+                        @OptIn(AuroraInternalApi::class)
                         override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
                             return TransitionAwarePainter(
                                 iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
@@ -655,6 +659,7 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                         }
                     },
                     icon = object : TransitionAwarePainterDelegate() {
+                        @OptIn(AuroraInternalApi::class)
                         override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
                             return if (isMaximized.value) {
                                 TransitionAwarePainter(
@@ -703,6 +708,7 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                         )
                     },
                     icon = object : TransitionAwarePainterDelegate() {
+                        @OptIn(AuroraInternalApi::class)
                         override fun createNewIcon(modelStateInfoSnapshot: ModelStateInfoSnapshot): Painter {
                             return TransitionAwarePainter(
                                 iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,

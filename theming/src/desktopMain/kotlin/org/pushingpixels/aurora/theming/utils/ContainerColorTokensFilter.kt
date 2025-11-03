@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asComposeColorFilter
 import org.jetbrains.skia.ColorMatrix
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.colorBrightness
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
@@ -27,6 +28,7 @@ import kotlin.math.roundToInt
 private val interpolations: MutableMap<ContainerColorTokens, Array<Color?>> = hashMapOf()
 private const val MapSteps = 256
 
+@OptIn(AuroraInternalApi::class)
 private fun getInterpolatedColors(colorTokens: ContainerColorTokens): Array<Color?> {
     if ((colorTokens !is MutableContainerColorTokens) && interpolations.containsKey(colorTokens)) {
         return interpolations[colorTokens]!!

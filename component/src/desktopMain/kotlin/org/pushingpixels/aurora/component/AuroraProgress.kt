@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.CircularProgressPresentationModel
 import org.pushingpixels.aurora.component.model.DeterminateProgressContentModel
 import org.pushingpixels.aurora.component.model.IndeterminateProgressContentModel
@@ -55,6 +56,7 @@ internal fun circularProgressIntrinsicSize(
 }
 
 @Composable
+@OptIn(AuroraInternalApi::class)
 internal fun AuroraIndeterminateCircularProgress(
     modifier: Modifier,
     contentModel: IndeterminateProgressContentModel,
@@ -127,6 +129,7 @@ internal fun AuroraIndeterminateCircularProgress(
 }
 
 @Composable
+@OptIn(AuroraInternalApi::class)
 internal fun AuroraDeterminateCircularProgress(
     modifier: Modifier,
     contentModel: DeterminateProgressContentModel,
@@ -200,6 +203,7 @@ internal fun linearProgressIntrinsicSize(
 }
 
 @Composable
+@OptIn(AuroraInternalApi::class)
 internal fun AuroraIndeterminateLinearProgress(
     modifier: Modifier,
     contentModel: IndeterminateProgressContentModel,
@@ -316,6 +320,7 @@ internal fun AuroraIndeterminateLinearProgress(
 }
 
 @Composable
+@OptIn(AuroraInternalApi::class)
 internal fun AuroraDeterminateLinearProgress(
     modifier: Modifier,
     contentModel: DeterminateProgressContentModel,

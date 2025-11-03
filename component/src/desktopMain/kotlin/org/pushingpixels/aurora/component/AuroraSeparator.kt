@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.TileMode
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.SeparatorContentModel
 import org.pushingpixels.aurora.component.model.SeparatorPresentationModel
@@ -35,6 +36,7 @@ import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.getContainerTokens
 
 @Composable
+@OptIn(AuroraInternalApi::class)
 internal fun AuroraVerticalSeparator(
     modifier: Modifier,
     contentModel: SeparatorContentModel,
@@ -100,6 +102,7 @@ internal fun AuroraVerticalSeparator(
 }
 
 @Composable
+@OptIn(AuroraInternalApi::class)
 internal fun AuroraHorizontalSeparator(
     modifier: Modifier,
     contentModel: SeparatorContentModel,

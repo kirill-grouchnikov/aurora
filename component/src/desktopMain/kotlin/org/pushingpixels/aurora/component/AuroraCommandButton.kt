@@ -69,6 +69,7 @@ import kotlin.math.max
 import kotlin.math.roundToInt
 
 @Immutable
+@OptIn(AuroraInternalApi::class)
 private class CommandButtonDrawingCache(
     val actionColorTokens: MutableContainerColorTokens = MutableContainerColorTokens(),
     val popupColorTokens: MutableContainerColorTokens = MutableContainerColorTokens(),

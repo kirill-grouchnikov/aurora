@@ -55,6 +55,7 @@ object ScrollBarSizingConstants {
 }
 
 @Immutable
+@OptIn(AuroraInternalApi::class)
 private class ScrollBarDrawingCache(
     val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens()
 )

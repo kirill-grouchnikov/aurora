@@ -36,6 +36,7 @@ import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
 import org.pushingpixels.aurora.theming.utils.getContainerColorTokensFilter
 import org.pushingpixels.aurora.theming.utils.getContainerTokens
 
+@OptIn(AuroraInternalApi::class)
 private class CombinedIconModifier(
     val icon: Painter,
     val enabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
@@ -103,6 +104,7 @@ private class CombinedIconModifier(
 }
 
 @Immutable
+@OptIn(AuroraInternalApi::class)
 private class IconDrawingCache(
     val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens()
 )

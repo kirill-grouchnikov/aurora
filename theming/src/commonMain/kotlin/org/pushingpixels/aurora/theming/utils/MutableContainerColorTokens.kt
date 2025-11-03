@@ -16,8 +16,10 @@
 package org.pushingpixels.aurora.theming.utils
 
 import androidx.compose.ui.graphics.Color
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 
+@AuroraInternalApi
 data class MutableContainerColorTokens(
     var isDarkAttr: Boolean = false,
     var containerSurfaceLowestAttr: Color = Color.Unspecified,

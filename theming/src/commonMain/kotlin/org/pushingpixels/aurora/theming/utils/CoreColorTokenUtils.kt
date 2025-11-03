@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.theming.utils
 
 import androidx.compose.ui.graphics.Color
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.overlayWith
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
@@ -142,17 +143,14 @@ private fun ContainerColorTokens.overlay(overlay: Color, overlayAmount: Float): 
  * Enumeration of available container types. Each entry corresponds to the matching container
  * color tokens passed to [ContainerColorTokensBundle].
  */
+@AuroraInternalApi
 enum class ContainerType {
     Neutral,
     Muted,
     Active
 }
 
-fun getActiveContainerTokens(colors: AuroraSkinColors, decorationAreaType: DecorationAreaType):
-        ContainerColorTokens {
-    return colors.getActiveContainerTokens(decorationAreaType)
-}
-
+@AuroraInternalApi
 fun getActiveContainerTokens(
     colors: AuroraSkinColors, decorationAreaType: DecorationAreaType,
     componentState: ComponentState
@@ -172,54 +170,7 @@ fun getActiveContainerTokens(
     return result
 }
 
-fun getMutedContainerTokens(colors: AuroraSkinColors, decorationAreaType: DecorationAreaType):
-        ContainerColorTokens {
-    return colors.getMutedContainerTokens(decorationAreaType)
-}
-
-fun getMutedContainerTokens(
-    colors: AuroraSkinColors, decorationAreaType: DecorationAreaType,
-    componentState: ComponentState
-): ContainerColorTokens {
-
-    // TODO - wire this to a composition local
-    val tokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null
-    val tokensOverlay: ContainerColorTokensOverlay? = if (tokensOverlayProvider != null)
-        tokensOverlayProvider.invoke(colors, decorationAreaType)
-    else
-        null
-
-    val result = if (tokensOverlay != null)
-        tokensOverlay.mutedContainerTokens
-    else
-        colors.getMutedContainerTokens(decorationAreaType)
-    return result
-}
-
-fun getNeutralContainerTokens(colors: AuroraSkinColors, decorationAreaType: DecorationAreaType):
-        ContainerColorTokens {
-    return colors.getNeutralContainerTokens(decorationAreaType)
-}
-
-fun getNeutralContainerTokens(
-    colors: AuroraSkinColors, decorationAreaType: DecorationAreaType,
-    componentState: ComponentState
-): ContainerColorTokens {
-
-    // TODO - wire this to a composition local
-    val tokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null
-    val tokensOverlay: ContainerColorTokensOverlay? = if (tokensOverlayProvider != null)
-        tokensOverlayProvider.invoke(colors, decorationAreaType)
-    else
-        null
-
-    val result = if (tokensOverlay != null)
-        tokensOverlay.neutralContainerTokens
-    else
-        colors.getNeutralContainerTokens(decorationAreaType)
-    return result
-}
-
+@AuroraInternalApi
 fun getContainerTokens(
     colors: AuroraSkinColors,
     decorationAreaType: DecorationAreaType,
@@ -284,6 +235,7 @@ fun getContainerTokens(
  * @param componentState  Component state.
  * @return Component color tokens.
  */
+@AuroraInternalApi
 fun getContainerTokens(
     colors: AuroraSkinColors,
     decorationAreaType: DecorationAreaType,
@@ -304,6 +256,7 @@ fun getContainerTokens(
  * @param componentState  Component state.
  * @return Component color tokens.
  */
+@AuroraInternalApi
 fun getContainerTokens(
     colors: AuroraSkinColors,
     decorationAreaType: DecorationAreaType,

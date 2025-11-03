@@ -49,6 +49,7 @@ import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.utils.*
 
 @Immutable
+@OptIn(AuroraInternalApi::class)
 private class TriStateCheckBoxDrawingCache(
     val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens(),
     val markPath: Path = Path()

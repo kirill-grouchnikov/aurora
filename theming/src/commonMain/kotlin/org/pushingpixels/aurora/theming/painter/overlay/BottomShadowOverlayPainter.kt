@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.ComponentState
@@ -41,6 +42,7 @@ import org.pushingpixels.aurora.theming.utils.getContainerTokens
 class BottomShadowOverlayPainter private constructor(private val endAlpha: Float) : AuroraOverlayPainter {
     override val displayName = "Bottom Shadow"
 
+    @OptIn(AuroraInternalApi::class)
     override fun paintOverlay(
         drawScope: DrawScope,
         decorationAreaType: DecorationAreaType,

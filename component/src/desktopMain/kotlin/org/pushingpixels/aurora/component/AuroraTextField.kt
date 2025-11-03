@@ -58,6 +58,7 @@ import org.pushingpixels.aurora.theming.utils.getContainerTokens
 import kotlin.math.max
 
 @Immutable
+@OptIn(AuroraInternalApi::class)
 private class TextFieldDrawingCache(
     val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens()
 )

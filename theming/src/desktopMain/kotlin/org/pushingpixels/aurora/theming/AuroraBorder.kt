@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.painter.outline.AuroraOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
@@ -102,6 +103,7 @@ private class AuroraBorder(
     private val colors: AuroraSkinColors,
     private val outlinePainter: AuroraOutlinePainter,
 ) : DrawModifier {
+    @OptIn(AuroraInternalApi::class)
     override fun ContentDrawScope.draw() {
         val borderTokens = colors.getNeutralContainerTokens(decorationAreaType = decorationAreaType)
 
@@ -125,6 +127,8 @@ private class AuroraBorderWithSides(
     private val outlinePainter: AuroraOutlinePainter,
     private val sides: Sides
 ) : DrawModifier {
+
+    @OptIn(AuroraInternalApi::class)
     override fun ContentDrawScope.draw() {
         val borderTokens = colors.getNeutralContainerTokens(decorationAreaType = decorationAreaType)
 

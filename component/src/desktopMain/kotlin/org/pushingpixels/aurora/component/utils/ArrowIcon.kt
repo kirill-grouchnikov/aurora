@@ -221,6 +221,7 @@ internal fun drawDoubleArrow(
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 internal fun getStartwardDoubleArrowIcon(
     decorationAreaType: DecorationAreaType,
     skinColors: AuroraSkinColors,
