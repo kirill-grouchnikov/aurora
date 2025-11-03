@@ -57,7 +57,7 @@ internal fun AuroraIcon(
     Box(modifier = modifier) {
         if (presentationModel.inheritStateFromParent) {
             CompositionLocalProvider(
-                LocalColorTokensOverlay provides presentationModel.colorTokensOverlay
+                LocalColorTokensOverlayProvider provides presentationModel.colorTokensOverlayProvider
             ) {
                 AuroraThemedIcon(
                     icon = contentModel.icon,
@@ -96,7 +96,7 @@ internal fun AuroraIcon(
                     stateContributionMap = mapOf(state to 1.0f),
                     activeStrength = 1.0f
                 ),
-                LocalColorTokensOverlay provides presentationModel.colorTokensOverlay
+                LocalColorTokensOverlayProvider provides presentationModel.colorTokensOverlayProvider
             ) {
                 AuroraThemedIcon(
                     icon = contentModel.icon,

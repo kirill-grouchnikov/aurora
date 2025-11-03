@@ -171,7 +171,7 @@ private fun LabelIconContent(
 
     if (presentationModel.inheritStateFromParent) {
         CompositionLocalProvider(
-            LocalColorTokensOverlay provides presentationModel.colorTokensOverlay
+            LocalColorTokensOverlayProvider provides presentationModel.colorTokensOverlayProvider
         ) {
             AuroraThemedIcon(
                 icon = contentModel.icon,
@@ -205,7 +205,7 @@ private fun LabelIconContent(
                 stateContributionMap = mapOf(currState to 1.0f),
                 activeStrength = 1.0f
             ),
-            LocalColorTokensOverlay provides presentationModel.colorTokensOverlay
+            LocalColorTokensOverlayProvider provides presentationModel.colorTokensOverlayProvider
         ) {
             AuroraThemedIcon(
                 icon = contentModel.icon,

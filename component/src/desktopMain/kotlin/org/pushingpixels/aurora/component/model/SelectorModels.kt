@@ -56,7 +56,7 @@ object SelectorSizingConstants {
 }
 
 data class SelectorPresentationModel(
-    val colorTokensOverlay: ContainerColorTokensOverlay? = null,
+    val colorTokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null,
     val contentPadding: PaddingValues = SelectorSizingConstants.DefaultSelectorContentPadding,
     val markSize: Dp = SelectorSizingConstants.SelectorMarkSize,
     val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Leading,
@@ -65,7 +65,7 @@ data class SelectorPresentationModel(
 ): PresentationModel
 
 data class SwitchPresentationModel(
-    val colorTokensOverlay: ContainerColorTokensOverlay? = null,
+    val colorTokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null,
     val contentPadding: PaddingValues = SelectorSizingConstants.DefaultSelectorContentPadding,
     val trackSize: DpSize = DpSize(width = SelectorSizingConstants.SwitchTrackWidth,
         height = SelectorSizingConstants.SwitchTrackHeight),

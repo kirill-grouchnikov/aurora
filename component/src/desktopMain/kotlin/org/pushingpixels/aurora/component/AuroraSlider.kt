@@ -185,6 +185,7 @@ internal fun AuroraSlider(
     )
     val selectionColorTokens = getActiveContainerTokens(
         colors = AuroraSkin.colors,
+        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
         decorationAreaType = AuroraSkin.decorationAreaType,
         componentState = trackSelectedState,
     )

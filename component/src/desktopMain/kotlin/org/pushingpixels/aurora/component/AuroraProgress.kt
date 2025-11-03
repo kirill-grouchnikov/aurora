@@ -234,6 +234,7 @@ internal fun AuroraIndeterminateLinearProgress(
     )
     val progressColorTokens = getActiveContainerTokens(
         colors = AuroraSkin.colors,
+        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
         decorationAreaType = AuroraSkin.decorationAreaType,
         componentState = componentState,
     )
@@ -342,6 +343,7 @@ internal fun AuroraDeterminateLinearProgress(
     )
     val progressColorTokens = getActiveContainerTokens(
         colors = AuroraSkin.colors,
+        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
         decorationAreaType = AuroraSkin.decorationAreaType,
         componentState = progressState,
     )

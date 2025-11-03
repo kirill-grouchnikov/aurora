@@ -47,7 +47,7 @@ data class TabsContentModel(
 ) : ContentModel
 
 data class TabsPresentationModel(
-    val colorTokensOverlay: ContainerColorTokensOverlay? = null,
+    val colorTokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null,
     val leadingMargin: Dp = TabConstants.LeadingMargin,
     val trailingMargin: Dp = TabConstants.TrailingMargin,
     val interTabMargin: Dp = TabConstants.InterTabMargin,

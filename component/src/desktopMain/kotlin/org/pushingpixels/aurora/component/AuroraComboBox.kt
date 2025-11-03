@@ -582,7 +582,7 @@ internal fun <E> AuroraComboBox(
         CompositionLocalProvider(
             LocalTextColor provides textColor,
             LocalModelStateInfoSnapshot provides modelStateInfo.getSnapshot(currentState.value),
-            LocalColorTokensOverlay provides presentationModel.colorTokensOverlay
+            LocalColorTokensOverlayProvider provides presentationModel.colorTokensOverlayProvider
         ) {
             Row(
                 modifier = Modifier.defaultMinSize(

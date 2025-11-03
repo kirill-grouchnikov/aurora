@@ -37,14 +37,16 @@ class ContainerColorTokensOverlay(
 ) {
     private val activeTokenOverrides: MutableMap<ComponentState, ContainerColorTokens> = hashMapOf()
 
-    interface Provider : (AuroraSkinColors, DecorationAreaType) -> ContainerColorTokensOverlay
+    fun interface Provider {
+        fun getOverlay(skinColors: AuroraSkinColors, decorationAreaType: DecorationAreaType): ContainerColorTokensOverlay
+    }
 
     abstract class DefaultOverlayProvider : Provider {
         private val overlays: MutableMap<Pair<ContainerColorTokens, ContainerColorTokens>, ContainerColorTokensOverlay> =
             hashMapOf()
 
         protected abstract fun getContainerTokens(
-            skin: AuroraSkinColors,
+            skinColors: AuroraSkinColors,
             decorationAreaType: DecorationAreaType
         ): ContainerColorTokens
 
@@ -53,15 +55,15 @@ class ContainerColorTokensOverlay(
             decorationAreaType: DecorationAreaType
         ): ContainerColorTokens
 
-        override fun invoke(
-            skin: AuroraSkinColors,
+        override fun getOverlay(
+            skinColors: AuroraSkinColors,
             decorationAreaType: DecorationAreaType
         ): ContainerColorTokensOverlay {
             val systemContainerTokens: ContainerColorTokens = this.getContainerTokens(
-                skin, decorationAreaType
+                skinColors, decorationAreaType
             )
             val inverseSystemContainerTokens =
-                this.getInverseContainerTokens(skin, decorationAreaType)
+                this.getInverseContainerTokens(skinColors, decorationAreaType)
             val key = Pair(systemContainerTokens, inverseSystemContainerTokens)
 
             var result: ContainerColorTokensOverlay? = this.overlays[key]
@@ -151,7 +153,7 @@ class ContainerColorTokensOverlay(
             decorationAreaType: DecorationAreaType
         ): ContainerColorTokens
 
-        override fun invoke(
+        override fun getOverlay(
             skinColors: AuroraSkinColors,
             decorationAreaType: DecorationAreaType
         ): ContainerColorTokensOverlay {
@@ -307,10 +309,10 @@ class ContainerColorTokensOverlay(
         ): Provider {
             return object : DefaultOverlayProvider() {
                 override fun getContainerTokens(
-                    skin: AuroraSkinColors,
+                    skinColors: AuroraSkinColors,
                     decorationAreaType: DecorationAreaType
                 ): ContainerColorTokens {
-                    return skin.getSystemContainerTokens(decorationAreaType, systemContainerType)
+                    return skinColors.getSystemContainerTokens(decorationAreaType, systemContainerType)
                 }
 
                 override fun getInverseContainerTokens(
@@ -334,10 +336,10 @@ class ContainerColorTokensOverlay(
                 )
 
                 override fun getContainerTokens(
-                    skin: AuroraSkinColors,
+                    skinColors: AuroraSkinColors,
                     decorationAreaType: DecorationAreaType
                 ): ContainerColorTokens {
-                    val neutrals: ContainerColorTokens = skin.getNeutralContainerTokens(decorationAreaType)
+                    val neutrals: ContainerColorTokens = skinColors.getNeutralContainerTokens(decorationAreaType)
                     return if (neutrals.isDark) darkTokens else lightTokens
                 }
 

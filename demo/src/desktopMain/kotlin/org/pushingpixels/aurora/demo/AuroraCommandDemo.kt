@@ -1061,15 +1061,17 @@ fun AuroraWindowScope.DemoCommandContent(
             }
 
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
+                // TODO - convert overlay provider to use skin's system tokens
                 CommandButtonProjection(
                     contentModel = Command(text = "green",
                         icon = history_black_24dp(),
                         action = { println("Green!") },
                         isActionEnabled = actionEnabled),
                     presentationModel = CommandButtonPresentationModel(
-                        colorTokensOverlay = generateColorTokensOverlay(
-                            seed = TonalPaletteSeeds.LimeGreen
-                        ),
+                        colorTokensOverlayProvider =
+                            ContainerColorTokensOverlay.Provider { _, _ ->
+                                generateColorTokensOverlay(seed = TonalPaletteSeeds.LimeGreen)
+                            },
                         backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -1077,15 +1079,17 @@ fun AuroraWindowScope.DemoCommandContent(
                     )
                 ).project()
                 Spacer(modifier = Modifier.width(8.dp))
+                // TODO - convert overlay provider to use skin's system tokens
                 CommandButtonProjection(
                     contentModel = Command(text = "yellow",
                         icon = storage_24px(),
                         action = { println("Yellow!") },
                         isActionEnabled = actionEnabled),
                     presentationModel = CommandButtonPresentationModel(
-                        colorTokensOverlay = generateColorTokensOverlay(
-                            seed = TonalPaletteSeeds.SunGlare
-                        ),
+                        colorTokensOverlayProvider =
+                            ContainerColorTokensOverlay.Provider { _, _ ->
+                                generateColorTokensOverlay(seed = TonalPaletteSeeds.SunGlare)
+                            },
                         backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -1093,15 +1097,17 @@ fun AuroraWindowScope.DemoCommandContent(
                     )
                 ).project()
                 Spacer(modifier = Modifier.width(8.dp))
+                // TODO - convert overlay provider to use skin's system tokens
                 CommandButtonProjection(
                     contentModel = Command(text = "red",
                         icon = mail_outline_black_24dp(),
                         action = { println("Red!") },
                         isActionEnabled = actionEnabled),
                     presentationModel = CommandButtonPresentationModel(
-                        colorTokensOverlay = generateColorTokensOverlay(
-                            seed = TonalPaletteSeeds.SunfireRed
-                        ),
+                        colorTokensOverlayProvider =
+                            ContainerColorTokensOverlay.Provider { _, _ ->
+                                generateColorTokensOverlay(seed = TonalPaletteSeeds.SunfireRed)
+                            },
                         backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,

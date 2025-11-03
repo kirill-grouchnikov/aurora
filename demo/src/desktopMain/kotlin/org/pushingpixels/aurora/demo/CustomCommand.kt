@@ -70,7 +70,7 @@ data class CustomCommandPopupMenuPresentationModel(
 
 data class CustomCommandButtonPresentationModel(
     override val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-    override val colorTokensOverlay: ContainerColorTokensOverlay? = null,
+    override val colorTokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null,
     override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
     override val iconDimension: DpSize? = null,
     override val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
@@ -107,7 +107,7 @@ data class CustomCommandButtonPresentationModel(
 
     override fun overlayWith(overlay: BaseCommandButtonPresentationModel.Overlay): CustomCommandButtonPresentationModel {
         return CustomCommandButtonPresentationModel(
-            colorTokensOverlay = overlay.colorTokensOverlay ?: this.colorTokensOverlay,
+            colorTokensOverlayProvider = overlay.colorTokensOverlayProvider ?: this.colorTokensOverlayProvider,
             backgroundAppearanceStrategy = overlay.backgroundAppearanceStrategy
                 ?: this.backgroundAppearanceStrategy,
             horizontalAlignment = overlay.horizontalAlignment ?: this.horizontalAlignment,

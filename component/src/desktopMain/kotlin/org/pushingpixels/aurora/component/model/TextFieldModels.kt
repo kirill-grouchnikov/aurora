@@ -48,7 +48,7 @@ object TextFieldSizingConstants {
 }
 
 data class TextFieldPresentationModel(
-    val colorTokensOverlay: ContainerColorTokensOverlay? = null,
+    val colorTokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null,
     val keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     val keyboardActions: KeyboardActions = KeyboardActions(),
     val contentPadding: PaddingValues = TextFieldSizingConstants.DefaultTextFieldContentPadding,

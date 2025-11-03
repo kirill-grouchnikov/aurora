@@ -41,8 +41,8 @@ val LocalModelStateInfoSnapshot = staticCompositionLocalOf<ModelStateInfoSnapsho
 }
 
 @AuroraInternalApi
-val LocalColorTokensOverlay = staticCompositionLocalOf<ContainerColorTokensOverlay?> {
-    error("LocalColorTokensOverlay not provided")
+val LocalColorTokensOverlayProvider = staticCompositionLocalOf<ContainerColorTokensOverlay.Provider?> {
+    error("LocalColorTokensOverlayProvider not provided")
 }
 
 @AuroraInternalApi

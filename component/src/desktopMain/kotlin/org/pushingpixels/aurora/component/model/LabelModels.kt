@@ -38,7 +38,7 @@ object LabelSizingConstants {
 }
 
 data class LabelPresentationModel(
-    val colorTokensOverlay: ContainerColorTokensOverlay? = null,
+    val colorTokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null,
     val contentPadding: PaddingValues = LabelSizingConstants.DefaultLabelContentPadding,
     val iconDimension: DpSize = LabelSizingConstants.DefaultLabelIconSize,
     val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,

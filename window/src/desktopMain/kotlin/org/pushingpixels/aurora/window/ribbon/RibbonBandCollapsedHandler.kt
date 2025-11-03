@@ -80,7 +80,7 @@ internal data class RibbonBandCollapsedCommandButtonPresentationModel(
     override val contentPadding: PaddingValues = CommandButtonSizingConstants.CompactButtonContentPadding,
 ) : BaseCommandButtonPresentationModel {
     override val presentationState = CommandButtonPresentationState.Big
-    override val colorTokensOverlay: ContainerColorTokensOverlay? = null
+    override val colorTokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null
     override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center
     override val iconDimension: DpSize? = null
     override val forceAllocateSpaceForIcon = false

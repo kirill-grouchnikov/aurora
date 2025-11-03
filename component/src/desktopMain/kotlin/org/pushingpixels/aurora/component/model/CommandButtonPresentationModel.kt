@@ -74,7 +74,7 @@ enum class SelectedStateHighlight {
 
 interface BaseCommandButtonPresentationModel : PresentationModel {
     val presentationState: CommandButtonPresentationState
-    val colorTokensOverlay: ContainerColorTokensOverlay?
+    val colorTokensOverlayProvider: ContainerColorTokensOverlay.Provider?
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy
     val horizontalAlignment: HorizontalAlignment
     val iconDimension: DpSize?
@@ -108,7 +108,7 @@ interface BaseCommandButtonPresentationModel : PresentationModel {
 
     data class Overlay(
         val presentationState: CommandButtonPresentationState? = null,
-        val colorTokensOverlay: ContainerColorTokensOverlay? = null,
+        val colorTokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null,
         val backgroundAppearanceStrategy: BackgroundAppearanceStrategy? = null,
         val horizontalAlignment: HorizontalAlignment? = null,
         val iconDimension: DpSize? = null,
@@ -146,7 +146,7 @@ interface BaseCommandButtonPresentationModel : PresentationModel {
 
 data class CommandButtonPresentationModel(
     override val presentationState: CommandButtonPresentationState = CommandButtonPresentationState.Medium,
-    override val colorTokensOverlay: ContainerColorTokensOverlay? = null,
+    override val colorTokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null,
     override val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
     override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
     override val iconDimension: DpSize? = null,
@@ -181,7 +181,7 @@ data class CommandButtonPresentationModel(
     override fun overlayWith(overlay: BaseCommandButtonPresentationModel.Overlay): CommandButtonPresentationModel {
         return CommandButtonPresentationModel(
             presentationState = overlay.presentationState ?: this.presentationState,
-            colorTokensOverlay = overlay.colorTokensOverlay ?: this.colorTokensOverlay,
+            colorTokensOverlayProvider = overlay.colorTokensOverlayProvider ?: this.colorTokensOverlayProvider,
             backgroundAppearanceStrategy = overlay.backgroundAppearanceStrategy
                 ?: this.backgroundAppearanceStrategy,
             horizontalAlignment = overlay.horizontalAlignment ?: this.horizontalAlignment,

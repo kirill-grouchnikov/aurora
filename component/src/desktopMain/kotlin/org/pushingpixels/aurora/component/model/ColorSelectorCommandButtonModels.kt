@@ -137,7 +137,7 @@ data class ColorSelectorMenuContentModel(
 
 data class ColorSelectorCommandButtonPresentationModel(
     override val presentationState: CommandButtonPresentationState = CommandButtonPresentationState.Medium,
-    override val colorTokensOverlay: ContainerColorTokensOverlay? = null,
+    override val colorTokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null,
     override val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
     override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
     override val iconDimension: DpSize? = null,
@@ -174,7 +174,7 @@ data class ColorSelectorCommandButtonPresentationModel(
     override fun overlayWith(overlay: BaseCommandButtonPresentationModel.Overlay): ColorSelectorCommandButtonPresentationModel {
         return ColorSelectorCommandButtonPresentationModel(
             presentationState = overlay.presentationState ?: this.presentationState,
-            colorTokensOverlay = overlay.colorTokensOverlay ?: this.colorTokensOverlay,
+            colorTokensOverlayProvider = overlay.colorTokensOverlayProvider ?: this.colorTokensOverlayProvider,
             backgroundAppearanceStrategy = overlay.backgroundAppearanceStrategy
                 ?: this.backgroundAppearanceStrategy,
             horizontalAlignment = overlay.horizontalAlignment ?: this.horizontalAlignment,

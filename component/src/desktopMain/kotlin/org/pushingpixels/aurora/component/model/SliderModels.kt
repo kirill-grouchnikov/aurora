@@ -37,7 +37,7 @@ object SliderSizingConstants {
 }
 
 data class SliderPresentationModel(
-    val colorTokensOverlay: ContainerColorTokensOverlay? = null,
+    val colorTokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null,
     val tickSteps: Int = 0, // Zero means continuous slider value range
     val snapToTicks: Boolean = false,
     val drawTicks: Boolean = false

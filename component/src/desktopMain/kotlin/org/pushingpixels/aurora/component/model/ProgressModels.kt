@@ -42,13 +42,13 @@ object ProgressConstants {
 }
 
 data class CircularProgressPresentationModel(
-    val colorTokensOverlay: ContainerColorTokensOverlay? = null,
+    val colorTokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null,
     val radius: Dp = 10.dp,
     val strokeWidth: Dp = 2.0f.dp
 ): PresentationModel
 
 data class LinearProgressPresentationModel(
-    val colorTokensOverlay: ContainerColorTokensOverlay? = null,
+    val colorTokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null,
     val primarySize : Dp = ProgressConstants.DefaultWidth,
     val secondarySize : Dp = ProgressConstants.DefaultHeight
 ): PresentationModel

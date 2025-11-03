@@ -47,7 +47,7 @@ object ComboBoxSizingConstants {
 }
 
 data class ComboBoxPresentationModel<E>(
-    val colorTokensOverlay: ContainerColorTokensOverlay? = null,
+    val colorTokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null,
     val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
     val displayConverter: (E) -> String,
     val displayIconConverter: ((E) -> Painter)? = null,

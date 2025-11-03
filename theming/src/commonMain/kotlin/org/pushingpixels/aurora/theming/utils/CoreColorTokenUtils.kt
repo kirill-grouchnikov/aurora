@@ -152,14 +152,14 @@ enum class ContainerType {
 
 @AuroraInternalApi
 fun getActiveContainerTokens(
-    colors: AuroraSkinColors, decorationAreaType: DecorationAreaType,
+    colors: AuroraSkinColors,
+    tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
+    decorationAreaType: DecorationAreaType,
     componentState: ComponentState
 ): ContainerColorTokens {
 
-    // TODO - wire this to a composition local
-    val tokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null
     val tokensOverlay: ContainerColorTokensOverlay? = if (tokensOverlayProvider != null)
-        tokensOverlayProvider.invoke(colors, decorationAreaType)
+        tokensOverlayProvider.getOverlay(colors, decorationAreaType)
     else
         null
 
@@ -183,7 +183,7 @@ fun getContainerTokens(
     // TODO - wire this to a composition local
     val tokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null
     val tokensOverlay: ContainerColorTokensOverlay? = if (tokensOverlayProvider != null)
-        tokensOverlayProvider.invoke(colors, decorationAreaType)
+        tokensOverlayProvider.getOverlay(colors, decorationAreaType)
     else
         null
 
@@ -271,7 +271,7 @@ fun getContainerTokens(
     // TODO - wire this to a composition local
     val tokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null
     val tokensOverlay: ContainerColorTokensOverlay? = if (tokensOverlayProvider != null)
-        tokensOverlayProvider.invoke(colors, decorationAreaType)
+        tokensOverlayProvider.getOverlay(colors, decorationAreaType)
     else
         null
 

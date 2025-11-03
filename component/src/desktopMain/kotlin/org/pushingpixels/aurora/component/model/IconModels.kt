@@ -34,7 +34,7 @@ object IconSizingConstants {
 data class IconPresentationModel(
     val iconDimension: DpSize = IconSizingConstants.DefaultIconSize,
     val iconColorFilter: ColorFilter? = null,
-    val colorTokensOverlay: ContainerColorTokensOverlay? = null,
+    val colorTokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null,
     val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
     val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     val inheritStateFromParent: Boolean = false,
