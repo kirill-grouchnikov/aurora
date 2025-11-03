@@ -32,15 +32,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
@@ -57,7 +52,9 @@ import org.pushingpixels.aurora.component.model.TextFieldValueContentModel
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
-import org.pushingpixels.aurora.theming.utils.*
+import org.pushingpixels.aurora.theming.utils.ContainerType
+import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
+import org.pushingpixels.aurora.theming.utils.getContainerTokens
 import kotlin.math.max
 
 @Immutable
@@ -137,8 +134,6 @@ internal fun AuroraTextField(
             )
         )
     }
-
-    val density = LocalDensity.current
 
     // Transition for the selection state
     val selectionTransition = updateTransition(isFocused)
@@ -240,7 +235,6 @@ internal fun AuroraTextField(
 
     val skinColors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
-    val outlinePainter = AuroraSkin.painters.outlinePainter
 
     // Populate the cached color tokens for drawing the text field border
     // based on the current model state info
@@ -258,7 +252,11 @@ internal fun AuroraTextField(
 
     val textColor = getTextColor(
         modelStateInfo = modelStateInfo,
-        currState = currentState.value,
+        currState = if (contentModel.readOnly) {
+            if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
+        } else {
+            currentState.value
+        },
         colors = skinColors,
         decorationAreaType = decorationAreaType,
         associationKind = ContainerColorTokensAssociationKind.Default,
@@ -289,7 +287,7 @@ internal fun AuroraTextField(
             // Read-only text fields use the regular background fill. Editable text fields
             // use text background fill (with rollover and focused transitions)
             val backgroundFillColor = if (contentModel.readOnly) {
-                drawingCache.colorTokens.containerSurface
+                skinColors.getNeutralContainerTokens(decorationAreaType).containerSurface
             } else {
                 getTextFillBackground(
                     modelStateInfo = modelStateInfo,
