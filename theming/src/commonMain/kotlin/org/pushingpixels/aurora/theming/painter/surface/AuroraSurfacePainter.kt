@@ -29,4 +29,28 @@ interface AuroraSurfacePainter: AuroraTrait {
         colorTokens: ContainerColorTokens,
         alpha: Float,
     )
+
+    fun interface Overlay {
+        fun paintSurfaceOverlay(
+            drawScope: DrawScope,
+            size: Size,
+            outline: Outline,
+            colorTokens: ContainerColorTokens,
+            alpha: Float,
+        )
+    }
+
+    class CompositeOverlay(vararg val overlays: Overlay): Overlay {
+        override fun paintSurfaceOverlay(
+            drawScope: DrawScope,
+            size: Size,
+            outline: Outline,
+            colorTokens: ContainerColorTokens,
+            alpha: Float
+        ) {
+            for (overlay in overlays) {
+                overlay.paintSurfaceOverlay(drawScope, size, outline, colorTokens, alpha)
+            }
+        }
+    }
 }

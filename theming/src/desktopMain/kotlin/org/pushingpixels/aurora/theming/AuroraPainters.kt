@@ -15,12 +15,13 @@
  */
 package org.pushingpixels.aurora.theming
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter
 import org.pushingpixels.aurora.theming.painter.outline.AuroraOutlinePainter
-import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.overlay.AuroraOverlayPainter
 import org.pushingpixels.aurora.theming.painter.surface.AuroraSurfacePainter
-import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
 import java.util.*
 
 data class AuroraPainters(
@@ -103,4 +104,21 @@ data class AuroraPainters(
         } else Collections.unmodifiableList(overlayPaintersMap[decorationAreaType])
     }
 }
+
+data class AuroraPainterOverlays(
+    val surfacePainterOverlay: AuroraSurfacePainter.Overlay? = null,
+    val outlinePainterOverlay: AuroraOutlinePainter.Overlay? = null,
+)
+
+@OptIn(AuroraInternalApi::class)
+@Composable
+fun AuroraPainterOverlays(
+    painterOverlays: AuroraPainterOverlays? = null,
+    content: @Composable () -> Unit
+) {
+    CompositionLocalProvider(LocalPainterOverlays provides painterOverlays) {
+        content()
+    }
+}
+
 

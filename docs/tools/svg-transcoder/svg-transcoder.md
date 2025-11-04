@@ -98,7 +98,7 @@ The following table summarizes the level of support for different SVG elements.
   * `batik-all-1.19.jar`
   * `xml-apis-1.4.01.jar`
   * `xml-apis-ext-1.3.04.jar`
-  * `xmlgraphics-commons-2.10.jar`
+  * `xmlgraphics-commons-2.11.jar`
 * For **1.3.0**, use
   * `batik-all-1.16.jar`
   * `xml-apis-1.4.01.jar`

@@ -1,0 +1,218 @@
+/*
+ * Copyright 2020-2025 Aurora, Kirill Grouchnikov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.pushingpixels.aurora.demo
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.WindowPlacement
+import androidx.compose.ui.window.WindowPosition
+import androidx.compose.ui.window.rememberWindowState
+import org.pushingpixels.aurora.component.model.Command
+import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
+import org.pushingpixels.aurora.component.projection.CommandButtonProjection
+import org.pushingpixels.aurora.demo.svg.material.history_black_24dp
+import org.pushingpixels.aurora.demo.svg.material.mail_outline_black_24dp
+import org.pushingpixels.aurora.demo.svg.material.storage_24px
+import org.pushingpixels.aurora.demo.svg.radiance_menu
+import org.pushingpixels.aurora.demo.svg.vaadin.check_square_o
+import org.pushingpixels.aurora.demo.svg.vaadin.paintbrush
+import org.pushingpixels.aurora.demo.svg.vaadin.palete
+import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
+import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
+import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.window.AuroraWindow
+import org.pushingpixels.aurora.window.AuroraWindowScope
+import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
+import org.pushingpixels.aurora.window.auroraApplication
+import java.util.*
+
+fun main() = auroraApplication {
+    val state = rememberWindowState(
+        placement = WindowPlacement.Floating,
+        position = WindowPosition.Aligned(Alignment.Center),
+        size = DpSize(800.dp, 540.dp)
+    )
+    var skin by remember { mutableStateOf(marinerSkin()) }
+    val resourceBundle by derivedStateOf {
+        ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
+    }
+
+    AuroraWindow(
+        skin = skin,
+        title = "Aurora Demo",
+        icon = radiance_menu(),
+        iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
+        state = state,
+        windowTitlePaneConfiguration = AuroraWindowTitlePaneConfigurations.AuroraPlain(),
+        onCloseRequest = ::exitApplication,
+    ) {
+        DemoPaintersContent({ skin = it }, resourceBundle)
+    }
+}
+
+
+@Composable
+fun AuroraWindowScope.DemoPaintersContent(
+    onSkinChange: (AuroraSkinDefinition) -> Unit,
+    resourceBundle: ResourceBundle
+) {
+    var selected by remember { mutableStateOf(false) }
+    var actionEnabled by remember { mutableStateOf(true) }
+    var popupEnabled by remember { mutableStateOf(true) }
+    var flat by remember { mutableStateOf(false) }
+
+    val backgroundAppearanceStrategy by derivedStateOf {
+        if (flat) BackgroundAppearanceStrategy.Flat
+        else BackgroundAppearanceStrategy.Always
+    }
+
+    Row(modifier = Modifier.fillMaxSize().padding(4.dp)) {
+
+        Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
+            Row(modifier = Modifier.wrapContentHeight().fillMaxWidth()) {
+                AuroraDecorationArea(
+                    decorationAreaType = DecorationAreaType.None,
+                    buttonShaper = ClassicButtonShaper.Instance
+                ) {
+                    AuroraSkinSwitcher(onSkinChange = onSkinChange)
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    AuroraLocaleSwitcher(resourceBundle)
+                }
+            }
+
+            DemoHeader(
+                resourceBundle.getString("Group.colortokenoverlays"),
+                palete(),
+                true
+            )
+
+            Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
+                CommandButtonProjection(
+                    contentModel = Command(text = resourceBundle.getString("Status.success"),
+                        icon = history_black_24dp(),
+                        action = { println("Success!") },
+                        isActionEnabled = actionEnabled),
+                    presentationModel = CommandButtonPresentationModel(
+                        colorTokensOverlayProvider =
+                            ContainerColorTokensOverlay.defaultSystemOverlayProvider(
+                                systemContainerType = SystemContainerType.Success),
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                        iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                    )
+                ).project()
+                Spacer(modifier = Modifier.width(8.dp))
+                CommandButtonProjection(
+                    contentModel = Command(text = resourceBundle.getString("Status.warning"),
+                        icon = storage_24px(),
+                        action = { println("Warning!") },
+                        isActionEnabled = actionEnabled),
+                    presentationModel = CommandButtonPresentationModel(
+                        colorTokensOverlayProvider =
+                            ContainerColorTokensOverlay.defaultSystemOverlayProvider(
+                                systemContainerType = SystemContainerType.Warning),
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                        iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                    )
+                ).project()
+                Spacer(modifier = Modifier.width(8.dp))
+                CommandButtonProjection(
+                    contentModel = Command(text = resourceBundle.getString("Status.error"),
+                        icon = mail_outline_black_24dp(),
+                        action = { println("Error!") },
+                        isActionEnabled = actionEnabled),
+                    presentationModel = CommandButtonPresentationModel(
+                        colorTokensOverlayProvider =
+                            ContainerColorTokensOverlay.defaultSystemOverlayProvider(
+                                systemContainerType = SystemContainerType.Error),
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+                        iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                    )
+                ).project()
+
+                Spacer(modifier = Modifier.width(24.dp))
+
+                CommandButtonProjection(
+                    contentModel = Command(text = resourceBundle.getString("Status.success"),
+                        icon = history_black_24dp(),
+                        action = { println("Success!") },
+                        isActionEnabled = actionEnabled),
+                    presentationModel = CommandButtonPresentationModel(
+                        colorTokensOverlayProvider =
+                            ContainerColorTokensOverlay.defaultSystemOverlayProvider(
+                                systemContainerType = SystemContainerType.Success),
+                        backgroundAppearanceStrategy = backgroundAppearanceStrategy,
+                        iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                    )
+                ).project()
+                Spacer(modifier = Modifier.width(8.dp))
+                CommandButtonProjection(
+                    contentModel = Command(text = resourceBundle.getString("Status.warning"),
+                        icon = storage_24px(),
+                        action = { println("Warning!") },
+                        isActionEnabled = actionEnabled),
+                    presentationModel = CommandButtonPresentationModel(
+                        colorTokensOverlayProvider =
+                            ContainerColorTokensOverlay.defaultSystemOverlayProvider(
+                                systemContainerType = SystemContainerType.Warning),
+                        backgroundAppearanceStrategy = backgroundAppearanceStrategy,
+                        iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                    )
+                ).project()
+                Spacer(modifier = Modifier.width(8.dp))
+                CommandButtonProjection(
+                    contentModel = Command(text = resourceBundle.getString("Status.error"),
+                        icon = mail_outline_black_24dp(),
+                        action = { println("Error!") },
+                        isActionEnabled = actionEnabled),
+                    presentationModel = CommandButtonPresentationModel(
+                        colorTokensOverlayProvider =
+                            ContainerColorTokensOverlay.defaultSystemOverlayProvider(
+                                systemContainerType = SystemContainerType.Error),
+                        backgroundAppearanceStrategy = backgroundAppearanceStrategy,
+                        iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                    )
+                ).project()
+            }
+
+
+            DemoHeader(
+                resourceBundle.getString("Group.painteroverlays"),
+                paintbrush(),
+                true
+            )
+        }
+    }
+}
+

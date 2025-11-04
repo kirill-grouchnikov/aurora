@@ -46,4 +46,28 @@ interface AuroraOutlinePainter : AuroraTrait {
     )
 
     fun getOutlineInset(insetKind: InsetKind): Float
+
+    fun interface Overlay {
+        fun paintOutlineOverlay(
+            drawScope: DrawScope,
+            size: Size,
+            outlineSupplier: OutlineSupplier,
+            colorTokens: ContainerColorTokens,
+            alpha: Float
+        )
+    }
+
+    class CompositeOverlay(vararg val overlays: Overlay): Overlay {
+        override fun paintOutlineOverlay(
+            drawScope: DrawScope,
+            size: Size,
+            outlineSupplier: OutlineSupplier,
+            colorTokens: ContainerColorTokens,
+            alpha: Float
+        ) {
+            for (overlay in overlays) {
+                overlay.paintOutlineOverlay(drawScope, size, outlineSupplier, colorTokens, alpha)
+            }
+        }
+    }
 }
