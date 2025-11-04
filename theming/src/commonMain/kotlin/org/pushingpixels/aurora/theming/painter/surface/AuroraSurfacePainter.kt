@@ -22,7 +22,7 @@ import org.pushingpixels.aurora.theming.AuroraTrait
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 
 interface AuroraSurfacePainter: AuroraTrait {
-    fun paintContourBackground(
+    fun paintSurface(
         drawScope: DrawScope,
         size: Size,
         outline: Outline,

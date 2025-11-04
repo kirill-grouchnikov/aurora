@@ -50,7 +50,7 @@ abstract class ShaderWrapperSurfacePainter(
         alpha: Float
     ): Data
 
-    override fun paintContourBackground(
+    override fun paintSurface(
         drawScope: DrawScope,
         size: Size,
         outline: Outline,
@@ -58,7 +58,7 @@ abstract class ShaderWrapperSurfacePainter(
         alpha: Float
     ) {
         with(drawScope) {
-            baseSurfacePainter.paintContourBackground(
+            baseSurfacePainter.paintSurface(
                 drawScope = this,
                 size = size,
                 outline = outline,

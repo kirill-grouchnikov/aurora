@@ -38,7 +38,7 @@ fun paintSurface(
     // If we're in a disabled state, apply the matching alpha
     val containerSurfaceAlpha = alpha *
             (if (componentState.isDisabled) colorTokens.containerSurfaceDisabledAlpha else 1.0f)
-    surfacePainter.paintContourBackground(
+    surfacePainter.paintSurface(
         drawScope = drawScope,
         size = size,
         outline = outline,

@@ -36,7 +36,7 @@ open class FractionBasedSurfacePainter(
     vararg colorQueryStops: ColorStop,
     displayName: String
 ) : FractionBasedPainter(displayName, *colorQueryStops), AuroraSurfacePainter {
-    override fun paintContourBackground(
+    override fun paintSurface(
         drawScope: DrawScope,
         size: Size,
         outline: Outline,
