@@ -1123,28 +1123,23 @@ fun AuroraApplicationScope.DemoColorsContent(
 }
 
 private fun demoTokensOverlay(): ContainerColorTokensOverlay.Provider {
-    return object: ContainerColorTokensOverlay.Provider {
-        override fun getOverlay(
-            skinColors: AuroraSkinColors,
-            decorationAreaType: DecorationAreaType
-        ): ContainerColorTokensOverlay {
-            val activePalette: BaseTonalPalette = TonalPalette.fromHct(Hct.from(300.0, 40.0, 40.0))
-            val mutedPalette: BaseTonalPalette = TonalPalette.fromHct(Hct.from(300.0, 18.0, 40.0))
-            val neutralPalette: BaseTonalPalette = TonalPalette.fromHct(Hct.from(300.0, 8.0, 40.0))
+    return ContainerColorTokensOverlay.Provider { skinColors, decorationAreaType ->
+        val activePalette: BaseTonalPalette = TonalPalette.fromHct(Hct.from(300.0, 40.0, 40.0))
+        val mutedPalette: BaseTonalPalette = TonalPalette.fromHct(Hct.from(300.0, 18.0, 40.0))
+        val neutralPalette: BaseTonalPalette = TonalPalette.fromHct(Hct.from(300.0, 8.0, 40.0))
 
-            val lightOverlay = ContainerColorTokensOverlay(
-                activeContainerTokens = getContainerTokens( 
-                    seed = activePalette.getHct(80.0),
-                    containerConfiguration = ContainerConfiguration.defaultLight()
-                ),  
-                mutedContainerTokens = getContainerTokens(
-                    seed = mutedPalette.getHct(85.0),  
-                    containerConfiguration = ContainerConfiguration.defaultLight()
-                ),  
-                neutralContainerTokens = getContainerTokens(
-                    seed = neutralPalette.getHct(95.0),  
-                    containerConfiguration = ContainerConfiguration.defaultLight()
-                )
+        val lightOverlay = ContainerColorTokensOverlay(
+            activeContainerTokens = getContainerTokens(
+                seed = activePalette.getHct(80.0),
+                containerConfiguration = ContainerConfiguration.defaultLight()
+            ),
+            mutedContainerTokens = getContainerTokens(
+                seed = mutedPalette.getHct(85.0),
+                containerConfiguration = ContainerConfiguration.defaultLight()
+            ),
+            neutralContainerTokens = getContainerTokens(
+                seed = neutralPalette.getHct(95.0),
+                containerConfiguration = ContainerConfiguration.defaultLight()
             )
         )
 
