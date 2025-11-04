@@ -58,6 +58,12 @@ object AuroraSkin {
         get() = LocalPainters.current
 
     @OptIn(AuroraInternalApi::class)
+    val painterOverlays: AuroraPainterOverlays?
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalPainterOverlays.current
+
+    @OptIn(AuroraInternalApi::class)
     val animationConfig: AnimationConfig
         @Composable
         @ReadOnlyComposable

@@ -438,6 +438,7 @@ internal fun RibbonTaskToggleButton(
                                 drawScope = this,
                                 componentState = currentActionState.value,
                                 outlinePainter = outlinePainter,
+                                outlinePainterOverlay = null,
                                 size = this.size,
                                 alpha = actionAlpha,
                                 outlineSupplier = outlineSupplier,

@@ -113,7 +113,7 @@ data class AuroraPainterOverlays(
 @OptIn(AuroraInternalApi::class)
 @Composable
 fun AuroraPainterOverlays(
-    painterOverlays: AuroraPainterOverlays? = null,
+    painterOverlays: AuroraPainterOverlays?,
     content: @Composable () -> Unit
 ) {
     CompositionLocalProvider(LocalPainterOverlays provides painterOverlays) {

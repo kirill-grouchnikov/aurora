@@ -122,6 +122,7 @@ internal fun TitleLabel(
                     drawScope = this,
                     componentState = ComponentState.Enabled,
                     outlinePainter = outlinePainter,
+                    outlinePainterOverlay = null,
                     size = this.size,
                     alpha = 1.0f,
                     outlineSupplier = TitleLabelOutlineSuppler,

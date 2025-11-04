@@ -362,7 +362,6 @@ internal fun DrawScope.drawKeyTip(
     )
     val surfacePainter = painters.surfacePainter
     val outlinePainter = painters.outlinePainter
-    val buttonShaper = ClassicButtonShaper.Instance
 
     val tipSizingInfo = getKeyTipSize(keyTipInfo.keyTip, textStyle, density, fontFamilyResolver, layoutDirection)
     val tipWidth = tipSizingInfo.first.width
@@ -388,6 +387,7 @@ internal fun DrawScope.drawKeyTip(
             drawScope = this,
             componentState = state,
             surfacePainter = surfacePainter,
+            surfacePainterOverlay = null,
             size = Size(tipWidth, tipHeight),
             alpha = 1.0f,
             outline = outlineFill,
@@ -397,6 +397,7 @@ internal fun DrawScope.drawKeyTip(
             drawScope = this,
             componentState = state,
             outlinePainter = outlinePainter,
+            outlinePainterOverlay = null,
             size = Size(tipWidth, tipHeight),
             alpha = 1.0f,
             outlineSupplier = KeyTipOutlineSuppler,

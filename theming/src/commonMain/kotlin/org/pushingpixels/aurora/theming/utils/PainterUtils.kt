@@ -30,6 +30,7 @@ fun paintSurface(
     drawScope: DrawScope,
     componentState: ComponentState,
     surfacePainter: AuroraSurfacePainter,
+    surfacePainterOverlay: AuroraSurfacePainter.Overlay?,
     size: Size,
     alpha: Float,
     outline: Outline,
@@ -45,6 +46,14 @@ fun paintSurface(
         colorTokens = colorTokens,
         alpha = containerSurfaceAlpha
     )
+
+    surfacePainterOverlay?.paintSurfaceOverlay(
+        drawScope = drawScope,
+        size = size,
+        outline = outline,
+        colorTokens = colorTokens,
+        alpha = containerSurfaceAlpha
+    )
 }
 
 @AuroraInternalApi
@@ -52,6 +61,7 @@ fun paintOutline(
     drawScope: DrawScope,
     componentState: ComponentState,
     outlinePainter: AuroraOutlinePainter,
+    outlinePainterOverlay: AuroraOutlinePainter.Overlay?,
     size: Size,
     alpha: Float,
     outlineSupplier: OutlineSupplier,
@@ -61,6 +71,14 @@ fun paintOutline(
     val containerOutlineAlpha = alpha *
             (if (componentState.isDisabled) colorTokens.containerOutlineDisabledAlpha else 1.0f)
     outlinePainter.paintOutline(
+        drawScope = drawScope,
+        size = size,
+        colorTokens = colorTokens,
+        alpha = containerOutlineAlpha,
+        outlineSupplier = outlineSupplier,
+    )
+
+    outlinePainterOverlay?.paintOutlineOverlay(
         drawScope = drawScope,
         size = size,
         colorTokens = colorTokens,

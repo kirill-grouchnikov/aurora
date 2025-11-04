@@ -396,7 +396,9 @@ internal fun AuroraTriStateCheckBox(
         )
 
         val surfacePainter = AuroraSkin.painters.surfacePainter
+        val surfacePainterOverlay = AuroraSkin.painterOverlays?.surfacePainterOverlay
         val outlinePainter = AuroraSkin.painters.outlinePainter
+        val outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay
 
         Canvas(Modifier.wrapContentSize(Alignment.Center).size(presentationModel.markSize)) {
             val width = this.size.width
@@ -415,6 +417,7 @@ internal fun AuroraTriStateCheckBox(
                 drawScope = this,
                 componentState = currentState.value,
                 surfacePainter = surfacePainter,
+                surfacePainterOverlay = surfacePainterOverlay,
                 size = this.size,
                 alpha = 1.0f,
                 outline = outlineFill,
@@ -424,6 +427,7 @@ internal fun AuroraTriStateCheckBox(
                 drawScope = this,
                 componentState = currentState.value,
                 outlinePainter = outlinePainter,
+                outlinePainterOverlay = outlinePainterOverlay,
                 size = this.size,
                 alpha = 1.0f,
                 outlineSupplier = TriStateCheckBoxMarkOutlineSuppler,

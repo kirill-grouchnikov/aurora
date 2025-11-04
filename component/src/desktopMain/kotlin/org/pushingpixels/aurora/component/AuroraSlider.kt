@@ -191,8 +191,10 @@ internal fun AuroraSlider(
     )
 
     val surfacePainter = AuroraSkin.painters.surfacePainter
+    val surfacePainterOverlay = AuroraSkin.painterOverlays?.surfacePainterOverlay
     val trackSurfacePainter = MatteSurfacePainter()
     val outlinePainter = AuroraSkin.painters.outlinePainter
+    val outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay
 
     val dragStartX = remember { mutableStateOf(0.0f) }
     val cumulativeDragAmount = remember { mutableStateOf(0.0f) }
@@ -461,6 +463,7 @@ internal fun AuroraSlider(
                     drawScope = this,
                     componentState = currentState.value,
                     surfacePainter = trackSurfacePainter,
+                    surfacePainterOverlay = surfacePainterOverlay,
                     size = trackSize,
                     alpha = 1.0f,
                     outline = outlineFill,
@@ -470,6 +473,7 @@ internal fun AuroraSlider(
                     drawScope = this,
                     componentState = currentState.value,
                     outlinePainter = outlinePainter,
+                    outlinePainterOverlay = outlinePainterOverlay,
                     size = trackSize,
                     alpha = 1.0f,
                     outlineSupplier = SliderTrackOutlineSuppler,
@@ -504,6 +508,7 @@ internal fun AuroraSlider(
                             drawScope = this,
                             componentState = currentState.value,
                             surfacePainter = trackSurfacePainter,
+                            surfacePainterOverlay = surfacePainterOverlay,
                             size = selectionSize,
                             alpha = 1.0f,
                             outline = selectedFill,
@@ -513,6 +518,7 @@ internal fun AuroraSlider(
                             drawScope = this,
                             componentState = currentState.value,
                             outlinePainter = outlinePainter,
+                            outlinePainterOverlay = outlinePainterOverlay,
                             size = selectionSize,
                             alpha = 1.0f,
                             outlineSupplier = SliderTrackOutlineSuppler,
@@ -537,6 +543,7 @@ internal fun AuroraSlider(
                             drawScope = this,
                             componentState = currentState.value,
                             surfacePainter = trackSurfacePainter,
+                            surfacePainterOverlay = surfacePainterOverlay,
                             size = selectionSize,
                             alpha = 1.0f,
                             outline = selectedFill,
@@ -546,6 +553,7 @@ internal fun AuroraSlider(
                             drawScope = this,
                             componentState = currentState.value,
                             outlinePainter = outlinePainter,
+                            outlinePainterOverlay = outlinePainterOverlay,
                             size = selectionSize,
                             alpha = 1.0f,
                             outlineSupplier = SliderTrackOutlineSuppler,
@@ -627,6 +635,7 @@ internal fun AuroraSlider(
                     drawScope = this,
                     componentState = currentState.value,
                     surfacePainter = surfacePainter,
+                    surfacePainterOverlay = surfacePainterOverlay,
                     size = Size(thumbSize, thumbSize),
                     alpha = 1.0f,
                     outline = thumbOutlineFill,
@@ -636,6 +645,7 @@ internal fun AuroraSlider(
                     drawScope = this,
                     componentState = currentState.value,
                     outlinePainter = outlinePainter,
+                    outlinePainterOverlay = outlinePainterOverlay,
                     size = Size(thumbSize, thumbSize),
                     alpha = 1.0f,
                     outlineSupplier = SliderThumbOutlineSuppler,

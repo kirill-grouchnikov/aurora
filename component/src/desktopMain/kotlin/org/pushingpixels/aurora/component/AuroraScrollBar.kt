@@ -375,7 +375,9 @@ private fun Scrollbar(
                     inactiveContainerType = ContainerType.Muted)
 
                 val surfacePainter = AuroraSkin.painters.surfacePainter
+                val surfacePainterOverlay = AuroraSkin.painterOverlays?.surfacePainterOverlay
                 val outlinePainter = AuroraSkin.painters.outlinePainter
+                val outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay
 
                 Canvas(Modifier.matchParentSize()) {
                     val outlineSupplier = if (isVertical) {
@@ -396,6 +398,7 @@ private fun Scrollbar(
                         drawScope = this,
                         componentState = currentState.value,
                         surfacePainter = surfacePainter,
+                        surfacePainterOverlay = surfacePainterOverlay,
                         size = this.size,
                         alpha = 1.0f,
                         outline = outlineFill,
@@ -405,6 +408,7 @@ private fun Scrollbar(
                         drawScope = this,
                         componentState = currentState.value,
                         outlinePainter = outlinePainter,
+                        outlinePainterOverlay = outlinePainterOverlay,
                         size = this.size,
                         alpha = 1.0f,
                         outlineSupplier = outlineSupplier,

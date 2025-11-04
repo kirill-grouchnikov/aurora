@@ -1146,30 +1146,30 @@ private fun demoTokensOverlay(): ContainerColorTokensOverlay.Provider {
                     containerConfiguration = ContainerConfiguration.defaultLight()
                 )
             )
+        )
 
-            val darkOverlay = ContainerColorTokensOverlay(
-                activeContainerTokens = getContainerTokens( 
-                    seed = activePalette.getHct(40.0),  
-                    /* containerConfiguration */
-                    ContainerConfiguration.defaultDark()
-                ),  
-                mutedContainerTokens = getContainerTokens( 
-                    seed = mutedPalette.getHct(32.0),  
-                    containerConfiguration = ContainerConfiguration.defaultDark()
-                ),  
-                neutralContainerTokens = getContainerTokens( 
-                    seed = neutralPalette.getHct(26.0),  
-                    containerConfiguration = ContainerConfiguration.defaultDark()
-                )
+        val darkOverlay = ContainerColorTokensOverlay(
+            activeContainerTokens = getContainerTokens(
+                seed = activePalette.getHct(40.0),
+                /* containerConfiguration */
+                ContainerConfiguration.defaultDark()
+            ),
+            mutedContainerTokens = getContainerTokens(
+                seed = mutedPalette.getHct(32.0),
+                containerConfiguration = ContainerConfiguration.defaultDark()
+            ),
+            neutralContainerTokens = getContainerTokens(
+                seed = neutralPalette.getHct(26.0),
+                containerConfiguration = ContainerConfiguration.defaultDark()
             )
+        )
 
-            // Return the purple overlay that matches the skin's darkness in this decoration area type
-            val skinNeutralTokens = skinColors.getNeutralContainerTokens(decorationAreaType)
-            return if (skinNeutralTokens.isDark) {
-                darkOverlay
-            } else {
-                lightOverlay
-            }
+        // Return the purple overlay that matches the skin's darkness in this decoration area type
+        val skinNeutralTokens = skinColors.getNeutralContainerTokens(decorationAreaType)
+        if (skinNeutralTokens.isDark) {
+            darkOverlay
+        } else {
+            lightOverlay
         }
     }
 }

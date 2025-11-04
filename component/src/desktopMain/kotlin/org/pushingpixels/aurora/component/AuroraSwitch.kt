@@ -280,7 +280,9 @@ internal fun AuroraSwitch(
             drawingCache.colorTokens.onContainerDisabledAlpha else 1.0f
 
         val surfacePainter = AuroraSkin.painters.surfacePainter
+        val surfacePainterOverlay = AuroraSkin.painterOverlays?.surfacePainterOverlay
         val outlinePainter = AuroraSkin.painters.outlinePainter
+        val outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay
 
         Canvas(Modifier.wrapContentSize(Alignment.Center).size(presentationModel.trackSize)) {
             val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
@@ -296,6 +298,7 @@ internal fun AuroraSwitch(
                 drawScope = this,
                 componentState = currentState.value,
                 surfacePainter = surfacePainter,
+                surfacePainterOverlay = surfacePainterOverlay,
                 size = this.size,
                 alpha = 1.0f,
                 outline = outlineFill,
@@ -305,6 +308,7 @@ internal fun AuroraSwitch(
                 drawScope = this,
                 componentState = currentState.value,
                 outlinePainter = outlinePainter,
+                outlinePainterOverlay = outlinePainterOverlay,
                 size = this.size,
                 alpha = 1.0f,
                 outlineSupplier = SwitchOutlineSuppler,

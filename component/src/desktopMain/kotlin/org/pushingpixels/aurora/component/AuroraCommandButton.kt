@@ -1048,7 +1048,9 @@ internal fun <M : BaseCommandMenuContentModel,
                         inactiveContainerType = ContainerType.Muted)
 
                     val surfacePainter = AuroraSkin.painters.surfacePainter
+                    val surfacePainterOverlay = AuroraSkin.painterOverlays?.surfacePainterOverlay
                     val outlinePainter = AuroraSkin.painters.outlinePainter
+                    val outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay
 
                     var actionAlpha = max(combinedRolloverFraction,
                         if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat) {
@@ -1094,6 +1096,7 @@ internal fun <M : BaseCommandMenuContentModel,
                                 drawScope = this,
                                 componentState = currentActionStateToUse.value,
                                 surfacePainter = surfacePainter,
+                                surfacePainterOverlay = surfacePainterOverlay,
                                 size = buttonSize.value.asSize(),
                                 alpha = actionAlpha,
                                 outline = outlineFill,
@@ -1103,6 +1106,7 @@ internal fun <M : BaseCommandMenuContentModel,
                                 drawScope = this,
                                 componentState = currentActionStateToUse.value,
                                 outlinePainter = outlinePainter,
+                                outlinePainterOverlay = outlinePainterOverlay,
                                 size = buttonSize.value.asSize(),
                                 alpha = actionAlpha,
                                 outlineSupplier = outlineSupplier,
@@ -1172,7 +1176,9 @@ internal fun <M : BaseCommandMenuContentModel,
                         inactiveContainerType = ContainerType.Muted)
 
                     val surfacePainter = AuroraSkin.painters.surfacePainter
+                    val surfacePainterOverlay = AuroraSkin.painterOverlays?.surfacePainterOverlay
                     val outlinePainter = AuroraSkin.painters.outlinePainter
+                    val outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay
 
                     var popupAlpha = max(combinedRolloverFraction,
                         if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat) {
@@ -1218,6 +1224,7 @@ internal fun <M : BaseCommandMenuContentModel,
                                 drawScope = this,
                                 componentState = currentPopupState.value,
                                 surfacePainter = surfacePainter,
+                                surfacePainterOverlay = surfacePainterOverlay,
                                 size = buttonSize.value.asSize(),
                                 alpha = popupAlpha,
                                 outline = outlineFill,
@@ -1227,6 +1234,7 @@ internal fun <M : BaseCommandMenuContentModel,
                                 drawScope = this,
                                 componentState = currentPopupState.value,
                                 outlinePainter = outlinePainter,
+                                outlinePainterOverlay = outlinePainterOverlay,
                                 size = buttonSize.value.asSize(),
                                 alpha = popupAlpha,
                                 outlineSupplier = outlineSupplier,
@@ -1760,6 +1768,7 @@ private fun CommandButtonIconContent(
                     drawScope = this,
                     componentState = stateForBackground,
                     surfacePainter = surfacePainter,
+                    surfacePainterOverlay = null,
                     size = this.size,
                     alpha = selectionAlpha,
                     outline = outlineFill,
@@ -1769,6 +1778,7 @@ private fun CommandButtonIconContent(
                     drawScope = this,
                     componentState = stateForBackground,
                     outlinePainter = outlinePainter,
+                    outlinePainterOverlay = null,
                     size = this.size,
                     alpha = selectionAlpha,
                     outlineSupplier = CommandButtonSelectedIconOutlineSuppler,

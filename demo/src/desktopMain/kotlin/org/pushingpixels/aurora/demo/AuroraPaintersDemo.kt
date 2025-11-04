@@ -19,13 +19,22 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.addOutline
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
+import org.pushingpixels.aurora.component.model.CommandButtonSizingConstants
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.demo.svg.material.history_black_24dp
 import org.pushingpixels.aurora.demo.svg.material.mail_outline_black_24dp
@@ -35,9 +44,12 @@ import org.pushingpixels.aurora.demo.svg.vaadin.check_square_o
 import org.pushingpixels.aurora.demo.svg.vaadin.paintbrush
 import org.pushingpixels.aurora.demo.svg.vaadin.palete
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
+import org.pushingpixels.aurora.theming.painter.surface.AuroraSurfacePainter
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.utils.paintSurface
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowScope
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
@@ -108,14 +120,17 @@ fun AuroraWindowScope.DemoPaintersContent(
 
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
                 CommandButtonProjection(
-                    contentModel = Command(text = resourceBundle.getString("Status.success"),
+                    contentModel = Command(
+                        text = resourceBundle.getString("Status.success"),
                         icon = history_black_24dp(),
                         action = { println("Success!") },
-                        isActionEnabled = actionEnabled),
+                        isActionEnabled = actionEnabled
+                    ),
                     presentationModel = CommandButtonPresentationModel(
                         colorTokensOverlayProvider =
                             ContainerColorTokensOverlay.defaultSystemOverlayProvider(
-                                systemContainerType = SystemContainerType.Success),
+                                systemContainerType = SystemContainerType.Success
+                            ),
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -124,14 +139,17 @@ fun AuroraWindowScope.DemoPaintersContent(
                 ).project()
                 Spacer(modifier = Modifier.width(8.dp))
                 CommandButtonProjection(
-                    contentModel = Command(text = resourceBundle.getString("Status.warning"),
+                    contentModel = Command(
+                        text = resourceBundle.getString("Status.warning"),
                         icon = storage_24px(),
                         action = { println("Warning!") },
-                        isActionEnabled = actionEnabled),
+                        isActionEnabled = actionEnabled
+                    ),
                     presentationModel = CommandButtonPresentationModel(
                         colorTokensOverlayProvider =
                             ContainerColorTokensOverlay.defaultSystemOverlayProvider(
-                                systemContainerType = SystemContainerType.Warning),
+                                systemContainerType = SystemContainerType.Warning
+                            ),
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -140,14 +158,17 @@ fun AuroraWindowScope.DemoPaintersContent(
                 ).project()
                 Spacer(modifier = Modifier.width(8.dp))
                 CommandButtonProjection(
-                    contentModel = Command(text = resourceBundle.getString("Status.error"),
+                    contentModel = Command(
+                        text = resourceBundle.getString("Status.error"),
                         icon = mail_outline_black_24dp(),
                         action = { println("Error!") },
-                        isActionEnabled = actionEnabled),
+                        isActionEnabled = actionEnabled
+                    ),
                     presentationModel = CommandButtonPresentationModel(
                         colorTokensOverlayProvider =
                             ContainerColorTokensOverlay.defaultSystemOverlayProvider(
-                                systemContainerType = SystemContainerType.Error),
+                                systemContainerType = SystemContainerType.Error
+                            ),
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -158,14 +179,17 @@ fun AuroraWindowScope.DemoPaintersContent(
                 Spacer(modifier = Modifier.width(24.dp))
 
                 CommandButtonProjection(
-                    contentModel = Command(text = resourceBundle.getString("Status.success"),
+                    contentModel = Command(
+                        text = resourceBundle.getString("Status.success"),
                         icon = history_black_24dp(),
                         action = { println("Success!") },
-                        isActionEnabled = actionEnabled),
+                        isActionEnabled = actionEnabled
+                    ),
                     presentationModel = CommandButtonPresentationModel(
                         colorTokensOverlayProvider =
                             ContainerColorTokensOverlay.defaultSystemOverlayProvider(
-                                systemContainerType = SystemContainerType.Success),
+                                systemContainerType = SystemContainerType.Success
+                            ),
                         backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -174,14 +198,17 @@ fun AuroraWindowScope.DemoPaintersContent(
                 ).project()
                 Spacer(modifier = Modifier.width(8.dp))
                 CommandButtonProjection(
-                    contentModel = Command(text = resourceBundle.getString("Status.warning"),
+                    contentModel = Command(
+                        text = resourceBundle.getString("Status.warning"),
                         icon = storage_24px(),
                         action = { println("Warning!") },
-                        isActionEnabled = actionEnabled),
+                        isActionEnabled = actionEnabled
+                    ),
                     presentationModel = CommandButtonPresentationModel(
                         colorTokensOverlayProvider =
                             ContainerColorTokensOverlay.defaultSystemOverlayProvider(
-                                systemContainerType = SystemContainerType.Warning),
+                                systemContainerType = SystemContainerType.Warning
+                            ),
                         backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -190,14 +217,17 @@ fun AuroraWindowScope.DemoPaintersContent(
                 ).project()
                 Spacer(modifier = Modifier.width(8.dp))
                 CommandButtonProjection(
-                    contentModel = Command(text = resourceBundle.getString("Status.error"),
+                    contentModel = Command(
+                        text = resourceBundle.getString("Status.error"),
                         icon = mail_outline_black_24dp(),
                         action = { println("Error!") },
-                        isActionEnabled = actionEnabled),
+                        isActionEnabled = actionEnabled
+                    ),
                     presentationModel = CommandButtonPresentationModel(
                         colorTokensOverlayProvider =
                             ContainerColorTokensOverlay.defaultSystemOverlayProvider(
-                                systemContainerType = SystemContainerType.Error),
+                                systemContainerType = SystemContainerType.Error
+                            ),
                         backgroundAppearanceStrategy = backgroundAppearanceStrategy,
                         iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
                         iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
@@ -212,7 +242,82 @@ fun AuroraWindowScope.DemoPaintersContent(
                 paintbrush(),
                 true
             )
+
+            Row(modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(vertical = 8.dp)) {
+                StaticSurfacePainterOverlay {
+                    CommandButtonProjection(
+                        contentModel = Command(
+                            text = resourceBundle.getString("Control.button.static"),
+                            action = { println("Clicked!") },
+                            isActionEnabled = actionEnabled
+                        ),
+                        presentationModel = CommandButtonPresentationModel(
+                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+                            contentPadding = CommandButtonSizingConstants.WideButtonContentPadding,
+                            iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                            iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                            iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                        )
+                    ).project()
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+            }
         }
     }
+}
+
+@Composable
+private fun StaticSurfacePainterOverlay(
+    content: @Composable () -> Unit
+) {
+    val surfacePainterOverlay = object: AuroraSurfacePainter.Overlay {
+        override fun paintSurfaceOverlay(
+            drawScope: DrawScope,
+            size: Size,
+            outline: Outline,
+            colorTokens: ContainerColorTokens,
+            alpha: Float
+        ) {
+            with (drawScope) {
+                val clipPath = Path()
+                clipPath.addOutline(outline)
+                clipPath(path = clipPath) {
+                    val start1 = colorTokens.containerSurfaceLow
+                    val start2 = colorTokens.containerSurface
+                    val end1 = colorTokens.containerSurface
+                    val end2 = colorTokens.containerSurfaceHigh
+
+                    val cellDim = 8.0f * density
+
+                    val rows = (this.size.height / cellDim).toInt()
+                    val columns = (this.size.width / cellDim).toInt()
+
+                    if ((rows == 0) || (columns == 0)) {
+                        return
+                    }
+
+                    for (col in 0..columns) {
+                        val columnFactor = col.toFloat() / columns.toFloat()
+                        val alt1 = start1.interpolateTowards(end1, 1.0f - columnFactor)
+                        val alt2 = start2.interpolateTowards(end2, 1.0f - columnFactor)
+
+                        for (row in 0..rows) {
+                            val cellColor = if ((col + row) % 2 == 0) alt1 else alt2
+                            drawRect(
+                                color = cellColor,
+                                topLeft = Offset(x = col * cellDim, y = row * cellDim),
+                                size = Size(cellDim, cellDim)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    AuroraPainterOverlays(
+        painterOverlays = AuroraPainterOverlays(surfacePainterOverlay = surfacePainterOverlay),
+        content = content
+    )
 }
 

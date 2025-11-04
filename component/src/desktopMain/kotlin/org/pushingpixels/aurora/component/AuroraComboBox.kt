@@ -486,7 +486,9 @@ internal fun <E> AuroraComboBox(
                 inactiveContainerType = ContainerType.Muted)
 
             val surfacePainter = AuroraSkin.painters.surfacePainter
+            val surfacePainterOverlay = AuroraSkin.painterOverlays?.surfacePainterOverlay
             val outlinePainter = AuroraSkin.painters.outlinePainter
+            val outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay
 
             // Handle flat comboboxes
             val alpha =
@@ -528,6 +530,7 @@ internal fun <E> AuroraComboBox(
                         drawScope = this,
                         componentState = currentState.value,
                         surfacePainter = surfacePainter,
+                        surfacePainterOverlay = surfacePainterOverlay,
                         size = this.size,
                         alpha = alpha,
                         outline = outlineFill,
@@ -537,6 +540,7 @@ internal fun <E> AuroraComboBox(
                         drawScope = this,
                         componentState = currentState.value,
                         outlinePainter = outlinePainter,
+                        outlinePainterOverlay = outlinePainterOverlay,
                         size = this.size,
                         alpha = alpha,
                         outlineSupplier = ComboBoxOutlineSuppler,

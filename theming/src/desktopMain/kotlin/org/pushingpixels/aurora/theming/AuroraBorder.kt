@@ -36,7 +36,8 @@ fun Modifier.auroraBorder(): Modifier = this.then(
     AuroraBorder(
         decorationAreaType = AuroraSkin.decorationAreaType,
         colors = AuroraSkin.colors,
-        outlinePainter = AuroraSkin.painters.outlinePainter
+        outlinePainter = AuroraSkin.painters.outlinePainter,
+        outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay
     )
 )
 
@@ -46,6 +47,7 @@ fun Modifier.auroraBorder(sides: Sides): Modifier = this.then(
         decorationAreaType = AuroraSkin.decorationAreaType,
         colors = AuroraSkin.colors,
         outlinePainter = AuroraSkin.painters.outlinePainter,
+        outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay,
         sides = sides
     )
 )
@@ -102,6 +104,7 @@ private class AuroraBorder(
     private val decorationAreaType: DecorationAreaType,
     private val colors: AuroraSkinColors,
     private val outlinePainter: AuroraOutlinePainter,
+    private val outlinePainterOverlay: AuroraOutlinePainter.Overlay?,
 ) : DrawModifier {
     @OptIn(AuroraInternalApi::class)
     override fun ContentDrawScope.draw() {
@@ -111,6 +114,7 @@ private class AuroraBorder(
             drawScope = this,
             componentState = ComponentState.Enabled,
             outlinePainter = outlinePainter,
+            outlinePainterOverlay = outlinePainterOverlay,
             size = this.size,
             alpha = 1.0f,
             outlineSupplier = BorderOutlineSuppler,
@@ -125,6 +129,7 @@ private class AuroraBorderWithSides(
     private val decorationAreaType: DecorationAreaType,
     private val colors: AuroraSkinColors,
     private val outlinePainter: AuroraOutlinePainter,
+    private val outlinePainterOverlay: AuroraOutlinePainter.Overlay?,
     private val sides: Sides
 ) : DrawModifier {
 
@@ -136,6 +141,7 @@ private class AuroraBorderWithSides(
             drawScope = this,
             componentState = ComponentState.Enabled,
             outlinePainter = outlinePainter,
+            outlinePainterOverlay = outlinePainterOverlay,
             size = this.size,
             alpha = 1.0f,
             outlineSupplier = BorderWithSidesOutlineSuppler(sides),

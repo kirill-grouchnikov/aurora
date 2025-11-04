@@ -243,6 +243,7 @@ internal fun AuroraIndeterminateLinearProgress(
     )
 
     val outlinePainter = AuroraSkin.painters.outlinePainter
+    val outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay
 
     Canvas(
         modifier
@@ -316,6 +317,7 @@ internal fun AuroraIndeterminateLinearProgress(
             drawScope = this,
             componentState = componentState,
             outlinePainter = outlinePainter,
+            outlinePainterOverlay = outlinePainterOverlay,
             size = this.size,
             alpha = 1.0f,
             outlineSupplier = LinearProgressOutlineSuppler,
@@ -353,7 +355,9 @@ internal fun AuroraDeterminateLinearProgress(
     )
 
     val surfacePainter = AuroraSkin.painters.surfacePainter
+    val surfacePainterOverlay = AuroraSkin.painterOverlays?.surfacePainterOverlay
     val outlinePainter = AuroraSkin.painters.outlinePainter
+    val outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay
 
     Canvas(
         modifier
@@ -386,6 +390,7 @@ internal fun AuroraDeterminateLinearProgress(
                 drawScope = this,
                 componentState = fillState,
                 surfacePainter = surfacePainter,
+                surfacePainterOverlay = surfacePainterOverlay,
                 size = this.size,
                 alpha = 1.0f,
                 outline = Outline.Rectangle(Rect(offset = Offset.Zero, size = size)),
@@ -398,6 +403,7 @@ internal fun AuroraDeterminateLinearProgress(
                     drawScope = this,
                     componentState = progressState,
                     surfacePainter = surfacePainter,
+                    surfacePainterOverlay = surfacePainterOverlay,
                     size = this.size,
                     alpha = 1.0f,
                     outline = Outline.Rectangle(
@@ -416,6 +422,7 @@ internal fun AuroraDeterminateLinearProgress(
             drawScope = this,
             componentState = fillState,
             outlinePainter = outlinePainter,
+            outlinePainterOverlay = outlinePainterOverlay,
             size = this.size,
             alpha = 1.0f,
             outlineSupplier = LinearProgressOutlineSuppler,

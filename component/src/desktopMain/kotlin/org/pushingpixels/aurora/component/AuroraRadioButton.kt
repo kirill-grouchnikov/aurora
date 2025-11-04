@@ -325,7 +325,9 @@ internal fun AuroraRadioButton(
         )
 
         val surfacePainter = AuroraSkin.painters.surfacePainter
+        val surfacePainterOverlay = AuroraSkin.painterOverlays?.surfacePainterOverlay
         val outlinePainter = AuroraSkin.painters.outlinePainter
+        val outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay
 
         Canvas(
             Modifier.wrapContentSize(Alignment.Center).size(presentationModel.markSize)
@@ -343,6 +345,7 @@ internal fun AuroraRadioButton(
                 drawScope = this,
                 componentState = currentState.value,
                 surfacePainter = surfacePainter,
+                surfacePainterOverlay = surfacePainterOverlay,
                 size = this.size,
                 alpha = 1.0f,
                 outline = outlineFill,
@@ -352,6 +355,7 @@ internal fun AuroraRadioButton(
                 drawScope = this,
                 componentState = currentState.value,
                 outlinePainter = outlinePainter,
+                outlinePainterOverlay = outlinePainterOverlay,
                 size = this.size,
                 alpha = 1.0f,
                 outlineSupplier = RadioButtonMarkOutlineSuppler,
