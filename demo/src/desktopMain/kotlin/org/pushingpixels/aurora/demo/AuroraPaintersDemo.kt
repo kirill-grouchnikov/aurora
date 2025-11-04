@@ -15,23 +15,25 @@
  */
 package org.pushingpixels.aurora.demo
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.addOutline
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.common.interpolateTowards
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.model.CommandButtonSizingConstants
@@ -40,29 +42,31 @@ import org.pushingpixels.aurora.demo.svg.material.history_black_24dp
 import org.pushingpixels.aurora.demo.svg.material.mail_outline_black_24dp
 import org.pushingpixels.aurora.demo.svg.material.storage_24px
 import org.pushingpixels.aurora.demo.svg.radiance_menu
-import org.pushingpixels.aurora.demo.svg.vaadin.check_square_o
 import org.pushingpixels.aurora.demo.svg.vaadin.paintbrush
 import org.pushingpixels.aurora.demo.svg.vaadin.palete
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
+import org.pushingpixels.aurora.theming.painter.outline.AuroraOutlinePainter
+import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.painter.surface.AuroraSurfacePainter
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
-import org.pushingpixels.aurora.theming.utils.paintSurface
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowScope
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import org.pushingpixels.aurora.window.auroraApplication
 import java.util.*
+import kotlin.math.abs
+import kotlin.math.floor
 
 fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
-        size = DpSize(800.dp, 540.dp)
+        size = DpSize(600.dp, 320.dp)
     )
-    var skin by remember { mutableStateOf(marinerSkin()) }
+    var skin by remember { mutableStateOf(geminiSkin()) }
     val resourceBundle by derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
     }
@@ -261,6 +265,75 @@ fun AuroraWindowScope.DemoPaintersContent(
                     ).project()
                 }
                 Spacer(modifier = Modifier.width(8.dp))
+                StaticSurfacePainterOverlay {
+                    CommandButtonProjection(
+                        contentModel = Command(
+                            text = resourceBundle.getString("Control.button.static"),
+                            action = { println("Clicked!") },
+                            isActionEnabled = actionEnabled,
+                            isActionToggle = true,
+                            isActionToggleSelected = true
+                        ),
+                        presentationModel = CommandButtonPresentationModel(
+                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+                            contentPadding = CommandButtonSizingConstants.WideButtonContentPadding,
+                            iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                            iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                            iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                        )
+                    ).project()
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                AnimatedSurfacePainterOverlay {
+                    CommandButtonProjection(
+                        contentModel = Command(
+                            text = resourceBundle.getString("Control.button.animated"),
+                            action = { println("Clicked!") },
+                            isActionEnabled = actionEnabled
+                        ),
+                        presentationModel = CommandButtonPresentationModel(
+                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+                            contentPadding = CommandButtonSizingConstants.WideButtonContentPadding,
+                            iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                            iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                            iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                        )
+                    ).project()
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                AnimatedArrowsSurfacePainterOverlay {
+                    CommandButtonProjection(
+                        contentModel = Command(
+                            text = resourceBundle.getString("Control.button.animated"),
+                            action = { println("Clicked!") },
+                            isActionEnabled = actionEnabled
+                        ),
+                        presentationModel = CommandButtonPresentationModel(
+                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+                            contentPadding = CommandButtonSizingConstants.WideButtonContentPadding,
+                            iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                            iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                            iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                        )
+                    ).project()
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                AnimatedOutlinePainterOverlay {
+                    CommandButtonProjection(
+                        contentModel = Command(
+                            text = resourceBundle.getString("Control.button.animated"),
+                            action = { println("Clicked!") },
+                            isActionEnabled = actionEnabled
+                        ),
+                        presentationModel = CommandButtonPresentationModel(
+                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+                            contentPadding = CommandButtonSizingConstants.WideButtonContentPadding,
+                            iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                            iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                            iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowText
+                        )
+                    ).project()
+                }
             }
         }
     }
@@ -321,3 +394,232 @@ private fun StaticSurfacePainterOverlay(
     )
 }
 
+@Composable
+private fun AnimatedSurfacePainterOverlay(
+    content: @Composable () -> Unit
+) {
+    val infiniteTransition = rememberInfiniteTransition(label = "animated dots")
+    val animationPosition by infiniteTransition.animateFloat(
+        initialValue = -4.0f,
+        targetValue = 5.0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 2000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart),
+        label = "animationPosition"
+    )
+
+    val surfacePainterOverlay = object: AuroraSurfacePainter.Overlay {
+        override fun paintSurfaceOverlay(
+            drawScope: DrawScope,
+            size: Size,
+            outline: Outline,
+            colorTokens: ContainerColorTokens,
+            alpha: Float
+        ) {
+            with (drawScope) {
+                val clipPath = Path()
+                clipPath.addOutline(outline)
+                clipPath(path = clipPath) {
+                    val start = if (colorTokens.isDark) {
+                        colorTokens.containerSurfaceHighest
+                    } else {
+                        colorTokens.containerSurfaceLowest
+                    }
+                    val end = if (colorTokens.isDark) {
+                        colorTokens.containerSurfaceLowest
+                    } else {
+                        colorTokens.containerSurfaceHighest
+                    }
+
+                    val cellDim = 6.0f * density
+                    val dotDiameter = 3.0f * density
+
+                    val rows = (this.size.height / cellDim).toInt()
+                    val columns = (this.size.width / cellDim).toInt()
+
+                    if ((rows == 0) || (columns == 0)) {
+                        return
+                    }
+
+                    for (col in 0..columns) {
+                        val columnFactor = col.toFloat() / columns.toFloat()
+                        val intensity = abs(columnFactor - animationPosition).coerceIn(0.0f, 1.0f)
+                        val cellColor = start.interpolateTowards(end, 1.0f - intensity)
+                        val dotCenterX = (col + 0.6f) * cellDim
+
+                        for (row in 0..rows) {
+                            val dotCenterY = (row + (if (col % 2 == 0) 0.5f else 0.0f)) * cellDim
+
+                            drawCircle(
+                                color = cellColor,
+                                radius = dotDiameter / 2.0f,
+                                center = Offset(dotCenterX, dotCenterY)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    AuroraPainterOverlays(
+        painterOverlays = AuroraPainterOverlays(surfacePainterOverlay = surfacePainterOverlay),
+        content = content
+    )
+}
+
+@Composable
+private fun AnimatedArrowsSurfacePainterOverlay(
+    content: @Composable () -> Unit
+) {
+    val infiniteTransition = rememberInfiniteTransition(label = "animated arrows")
+    val animationPosition by infiniteTransition.animateFloat(
+        initialValue = 0.0f,
+        targetValue = 1.0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 500, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart),
+        label = "animationPosition"
+    )
+
+    val ArrowMask = arrayOf(
+        booleanArrayOf(true, true, true, false, false),
+        booleanArrayOf(false, true, true, true, false),
+        booleanArrayOf(false, false, true, true, true),
+        booleanArrayOf(false, true, true, true, false),
+        booleanArrayOf(true, true, true, false, false),
+    )
+
+    val ArrowSize = 5
+    val ArrowGap = 2
+    val Rows = 7
+
+    val offColors = arrayOfNulls<Color>(Rows)
+    val onColors = arrayOfNulls<Color>(Rows)
+
+    val surfacePainterOverlay = object: AuroraSurfacePainter.Overlay {
+        override fun paintSurfaceOverlay(
+            drawScope: DrawScope,
+            size: Size,
+            outline: Outline,
+            colorTokens: ContainerColorTokens,
+            alpha: Float
+        ) {
+            with (drawScope) {
+
+                val clipPath = Path()
+                clipPath.addOutline(outline)
+                clipPath(path = clipPath) {
+                    val dotSize = size.height / (2.0f * Rows + 1)
+                    val columns = floor((size.width - 2 * dotSize) / dotSize).toInt()
+                    val verticalMargin = dotSize
+                    val horizontalMargin = (size.width - columns * dotSize) / 2.0f
+
+                    if (columns == 0) {
+                        return
+                    }
+
+                    val offTop = if (colorTokens.isDark) {
+                        colorTokens.containerSurfaceHighest
+                    } else {
+                        colorTokens.containerSurfaceLowest
+                    }
+                    val offBottom = colorTokens.containerSurface
+                    val on = colorTokens.onContainerVariant
+
+                    for (row in 0..<Rows) {
+                        val rowFactor = row.toFloat() / Rows.toFloat()
+                        offColors[row] = offTop.interpolateTowards(offBottom, 1.0f - rowFactor)
+                        onColors[row] = offColors[row]!!.interpolateTowards(on, 0.666f)
+                    }
+
+                    val firstArrowColumn = (animationPosition * (ArrowSize + ArrowGap)).toInt()
+                    for (col in 0..<columns) {
+                        val columnWithinArrow = (ArrowSize + ArrowGap + col - firstArrowColumn) %
+                                (ArrowSize + ArrowGap)
+                        val isInVerticalGap = (columnWithinArrow >= ArrowSize)
+
+                        val dotCenterX = horizontalMargin + 2 * (col + 0.5f) * dotSize
+
+                        for (row in 0..<Rows) {
+                            var isInArrow = false
+                            if (!isInVerticalGap) {
+                                isInArrow = (row >= 1) && (row < (Rows - 1)) &&
+                                        ArrowMask[row - 1][columnWithinArrow]
+                            }
+
+                            val cellColor = if (isInArrow) onColors[row] else offColors[row]
+
+                            val dotCenterY = verticalMargin +
+                                    2 * (row + 0.5f) * dotSize - 0.5f * dotSize
+
+                            drawCircle(
+                                color = cellColor!!,
+                                radius = dotSize / 2.0f,
+                                center = Offset(dotCenterX, dotCenterY)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    AuroraPainterOverlays(
+        painterOverlays = AuroraPainterOverlays(surfacePainterOverlay = surfacePainterOverlay),
+        content = content
+    )
+}
+
+@Composable
+private fun AnimatedOutlinePainterOverlay(
+    content: @Composable () -> Unit
+) {
+    val infiniteTransition = rememberInfiniteTransition(label = "animated outline")
+    val animationPosition by infiniteTransition.animateFloat(
+        initialValue = -2.0f,
+        targetValue = 3.0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 2000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart),
+        label = "animationPosition"
+    )
+
+    val density = LocalDensity.current
+    val outlinePainterOverlay = object: AuroraOutlinePainter.Overlay {
+        override fun paintOutlineOverlay(
+            drawScope: DrawScope,
+            size: Size,
+            outlineSupplier: OutlineSupplier,
+            colorTokens: ContainerColorTokens,
+            alpha: Float
+        ) {
+            with (drawScope) {
+                val intensity = 1.0f - (2.0f * abs(0.5f - animationPosition)).coerceIn(0.0f, 1.0f)
+                val accented = colorTokens.accentOnContainer
+                val outlineColor = accented.withAlpha(intensity)
+
+                val outline = outlineSupplier.getOutline(
+                    layoutDirection = layoutDirection,
+                    size = this.size,
+                    density = density,
+                    insets = 1.0f,
+                    radiusAdjustment = 0.0f,
+                    outlineKind = OutlineKind.Border
+                )
+
+                drawOutline(
+                    outline = outline,
+                    style = Stroke(width = 2.0f),
+                    color = outlineColor,
+                    alpha = alpha
+                )
+            }
+        }
+    }
+
+    AuroraPainterOverlays(
+        painterOverlays = AuroraPainterOverlays(outlinePainterOverlay = outlinePainterOverlay),
+        content = content
+    )
+}
