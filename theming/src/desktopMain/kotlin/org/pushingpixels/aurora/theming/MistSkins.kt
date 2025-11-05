@@ -16,11 +16,15 @@
 package org.pushingpixels.aurora.theming
 
 import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
+import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.LuminousOutlinePainter
 import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.LuminousSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
@@ -69,9 +73,23 @@ private fun mistBaseSkinColors(accentContainerColorTokens: AccentContainerColorT
 private fun mistBasePainters(): AuroraPainters {
     return AuroraPainters(
         decorationPainter = MatteDecorationPainter(),
-        surfacePainter = SpecularRectangularSurfacePainter(MatteSurfacePainter(), 0.5f),
+        surfacePainter = LuminousSurfacePainter(),
         outlinePainter = LuminousOutlinePainter(),
-        highlightSurfacePainter = ClassicSurfacePainter(),
+        highlightSurfacePainter = LuminousSurfacePainter(
+            base = FractionBasedSurfacePainter(
+                ColorStop(fraction = 0.0f, colorQuery = ContainerColorTokens::containerSurface),
+                ColorStop(fraction = 1.0f, colorQuery = ContainerColorTokens::containerSurface),
+                displayName = "Mist Highlight Surface Base"
+            ),
+            baseAlpha = 1.0f,
+            query = { tokens ->
+                if (tokens.isDark) {
+                    tokens.containerSurfaceHighest
+                } else {
+                    tokens.containerSurfaceLow
+                }
+            }
+        ),
         highlightOutlinePainter = FlatOutlinePainter(),
     )
 }

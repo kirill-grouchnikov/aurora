@@ -151,3 +151,167 @@ internal fun getSpecularRectangularEffect(): RuntimeEffect {
 
     return RuntimeEffect.makeForShader(specularRectangularDesc)
 }
+
+
+internal fun getLuminousEffect(): RuntimeEffect {
+    @Language("GLSL")
+    val specularRectangularDesc = """
+            uniform vec4 color;
+            uniform float alpha;
+            uniform float width;
+            uniform float height;
+            uniform float topLeftCornerRadius;
+            uniform float topRightCornerRadius;
+            uniform float bottomLeftCornerRadius;
+            uniform float bottomRightCornerRadius;
+
+            vec2 start = vec2(0.0, 0.0);
+            vec2 control1 = vec2(0.5, 0.1);
+            vec2 control2 = vec2(0.6, 0.9);
+            vec2 end = vec2(1.0, 1.0);
+            
+            vec2 spline(vec2 start, vec2 control1, vec2 control2, vec2 end, float t) {
+                // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+                float invT = 1.0 - t;
+                return start * invT * invT * invT + control1 * 3.0 * t * invT * invT + control2 * 3.0 * t * t * invT + end * t * t * t;
+            }
+
+            // SDF (signed distance function) for a rounded box
+            // from https://www.iquilezles.org/www/articles/distfunctions2d/distfunctions2d.htm
+            float sdRoundedBox( in vec2 p, in vec2 b, in vec4 r ) {
+                r.xy = (p.x > 0.0)? r.xy : r.zw;
+                r.x  = (p.y > 0.0)? r.x  : r.y;
+                vec2 q = abs(p) - b + r.x;
+                return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - r.x;  
+            }
+
+            half4 main(vec2 fragcoord) {
+                if (fragcoord.y < height / 2.0) {
+                    // Top half emulates the light hitting the top edge of the shape and diffusing
+                    // downwards into it
+
+                    // Get distance from the edge of the box
+                    vec2 rectangle = vec2(width, height) / 2.0;
+                    vec4 radius = vec4(0.0, topRightCornerRadius, 0.0, topLeftCornerRadius);
+                    float distanceToClosestEdge = sdRoundedBox(
+                        fragcoord - rectangle, rectangle, radius);
+    
+                    // Nothing outside the box
+                    if (distanceToClosestEdge > 0.0) {
+                        return half4(0.0, 0.0, 0.0, 0.0);
+                    }
+
+                    float ramp = height / 6.0;
+                    float verticalDistanceFromTop = fragcoord.y;
+                    if (topLeftCornerRadius > 0.0) {
+                        if ((fragcoord.y <= topLeftCornerRadius) && (fragcoord.x <= topLeftCornerRadius)) {
+                            // We are in the quarter-circle of the top left part of the shape.
+                            // Compute the vertical distance from this point upwards towards
+                            // the shape's top left curved corner. This will determine how much
+                            // diffusion we get.
+                            float rowOfOutline = topLeftCornerRadius - 
+                                sqrt(topLeftCornerRadius * topLeftCornerRadius - 
+                                    (topLeftCornerRadius - fragcoord.x) * (topLeftCornerRadius - fragcoord.x));
+                            verticalDistanceFromTop = max(0.0, fragcoord.y - rowOfOutline);
+                        }
+                    }
+                    if (topRightCornerRadius > 0.0) {
+                        if ((fragcoord.y <= topRightCornerRadius) && (fragcoord.x >= (width - topRightCornerRadius))) {
+                            // We are in the quarter-circle of the top right part of the shape
+                            // Compute the vertical distance from this point upwards towards
+                            // the shape's top right curved corner. This will determine how much
+                            // diffusion we get.
+                            float rowOfOutline = topRightCornerRadius - 
+                                sqrt(topRightCornerRadius * topRightCornerRadius - 
+                                    (fragcoord.x - (width - topRightCornerRadius)) * (fragcoord.x - (width - topRightCornerRadius)));
+                            verticalDistanceFromTop = max(0.0, fragcoord.y - rowOfOutline);
+                        }
+                    }
+                    
+                    if (verticalDistanceFromTop >= ramp) {
+                        // Too far from the top of the outline
+                        return half4(0.0, 0.0, 0.0, 0.0);
+                    } else {
+                        float cfraction = 1.0 - verticalDistanceFromTop / ramp;
+                        float falpha = 0.9 * color.a * alpha * cfraction;
+                        return half4(color.r * falpha, color.g * falpha, color.b * falpha, falpha);
+                    }
+                } else {
+                    // Bottom half emulates the light bouncing off of the bottom edge of the shape
+                    // and upwards back into it
+                    
+                    // Compute the y-based alpha for this row
+                    // ramp-down from the bottom to the top
+                    float yfraction = (fragcoord.y - height / 2.0) / (height / 2.0);
+                    float yalpha = spline(start, control1, control2, end, yfraction).y;
+                    
+                    float rowFactor = (height - fragcoord.y) / height;
+                    
+                    // x-alpha is based on the distance from left / right edges
+                    float xalpha = 1.0;
+                    float invertedRow = height - fragcoord.y;
+                    
+                    if (fragcoord.x <= width / 2) {
+                        // We are closer to the left edge
+
+                        // Compute max gap and ramp based on the corner radius of the bottom
+                        // left corner
+                        float maxGap = floor(bottomLeftCornerRadius / 1.75);
+                        float maxRamp = ceil(bottomLeftCornerRadius / 0.6);
+                        // Gap - max at the top row, zero at the bottom row
+                        float gap = maxGap * rowFactor;
+                        // Ramp - max at the top row, smaller at the bottom row
+                        float ramp = maxRamp * 0.5 * (1.0 + rowFactor);
+
+                        float overlayXStart = gap;
+                        if ((bottomLeftCornerRadius > 0.0) && (invertedRow <= (gap + bottomLeftCornerRadius))) {
+                            // We are within the vertical span of the top-left corner
+                            float dy = gap + bottomLeftCornerRadius - invertedRow;
+                            float dx = sqrt(bottomLeftCornerRadius * bottomLeftCornerRadius - dy * dy);
+                            overlayXStart = gap + bottomLeftCornerRadius - dx;
+                        }
+                        if (fragcoord.x < overlayXStart) {
+                            // leading horizontal gap
+                            xalpha = 0.0;
+                        } else if (fragcoord.x < (overlayXStart + ramp)) {
+                            // ramp-up to full alpha horizontally
+                            float cfraction = (fragcoord.x - overlayXStart - gap) / ramp;
+                            xalpha = spline(start, control1, control2, end, cfraction).y;
+                        }
+                    } else {
+                        // closer to the right edge
+
+                        // Compute max gap and ramp based on the corner radius of the bottom
+                        // right corner
+                        float maxGap = floor(bottomRightCornerRadius / 1.75);
+                        float maxRamp = ceil(bottomRightCornerRadius / 0.6);
+                        // Gap - max at the top row, zero at the bottom row
+                        float gap = maxGap * rowFactor;
+                        // Ramp - max at the top row, smaller at the bottom row
+                        float ramp = maxRamp * 0.5 * (1.0 + rowFactor);
+
+                        float overlayXEnd = width - gap - 1.0;
+                        if ((bottomRightCornerRadius > 0.0) && (invertedRow <= (gap + bottomRightCornerRadius))) {
+                            // We are within the vertical span of the top-right corner
+                            float dy = gap + bottomRightCornerRadius - invertedRow;
+                            float dx = sqrt(bottomRightCornerRadius * bottomRightCornerRadius - dy * dy);
+                            overlayXEnd = width - gap - 1 - bottomRightCornerRadius + dx;
+                        }
+                        if (fragcoord.x >= overlayXEnd) {
+                            // trailing horizontal gap
+                            xalpha = 0.0;
+                        } else if (fragcoord.x >= (overlayXEnd - ramp)) {
+                            // ramp-down to zero alpha horizontally
+                            float cfraction = (fragcoord.x - (overlayXEnd - gap - ramp)) / ramp;
+                            xalpha = spline(start, control1, control2, end, 1.0 - cfraction).y;
+                        }
+                    }
+                    
+                    float falpha = 0.9 * alpha * color.a * xalpha * yalpha;
+                    return half4(color.r * falpha, color.g * falpha, color.b * falpha, falpha);
+                }
+            }
+        """
+
+    return RuntimeEffect.makeForShader(specularRectangularDesc)
+}
