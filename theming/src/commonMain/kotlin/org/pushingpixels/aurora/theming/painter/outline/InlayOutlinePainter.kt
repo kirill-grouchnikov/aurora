@@ -48,8 +48,7 @@ class InlayOutlinePainter(
     ) {
         with(drawScope) {
             translate(left = strokeWidth, top = strokeWidth) {
-                paintSingleOutline(
-                    drawScope = drawScope,
+                this.paintSingleOutline(
                     size = Size(
                         width = size.width - 2.0f * strokeWidth,
                         height = size.height - 2.0f * strokeWidth
@@ -61,8 +60,7 @@ class InlayOutlinePainter(
                     alpha = alpha
                 )
             }
-            paintSingleOutline(
-                drawScope = drawScope,
+            this.paintSingleOutline(
                 size = size,
                 radiusAdjustment = 0.0f,
                 outlineSupplier = outlineSupplier,
@@ -73,8 +71,7 @@ class InlayOutlinePainter(
         }
     }
 
-    private fun paintSingleOutline(
-        drawScope: DrawScope,
+    private fun DrawScope.paintSingleOutline(
         size: Size,
         radiusAdjustment: Float,
         outlineSupplier: OutlineSupplier,
@@ -82,33 +79,31 @@ class InlayOutlinePainter(
         outlineSpec: OutlineSpec,
         alpha: Float
     ) {
-        with(drawScope) {
-            val colorsNoAlpha = outlineSpec.colorQueries.map { it.invoke(colorTokens) }
-            val colors = colorsNoAlpha.zip(outlineSpec.alphas) { color, alpha -> color.withAlpha(alpha) }
+        val colorsNoAlpha = outlineSpec.colorQueries.map { it.invoke(colorTokens) }
+        val colors = colorsNoAlpha.zip(outlineSpec.alphas) { color, alpha -> color.withAlpha(alpha) }
 
-            val outline = outlineSupplier.getOutline(
-                layoutDirection = this.layoutDirection,
-                density = this,
-                size = size,
-                insets = strokeWidth - 0.5f,
-                radiusAdjustment = radiusAdjustment,
-                outlineKind = OutlineKind.Border
-            )
-            drawOutline(
-                outline = outline,
-                style = Stroke(width = strokeWidth),
-                brush = ShaderBrush(
-                    LinearGradientShader(
-                        from = Offset.Zero,
-                        to = Offset(0.0f, size.height),
-                        colors = colors,
-                        colorStops = outlineSpec.fractions,
-                        tileMode = TileMode.Repeated
-                    )
-                ),
-                alpha = alpha
-            )
-        }
+        val outline = outlineSupplier.getOutline(
+            layoutDirection = this.layoutDirection,
+            density = this,
+            size = size,
+            insets = strokeWidth - 0.5f,
+            radiusAdjustment = radiusAdjustment,
+            outlineKind = OutlineKind.Border
+        )
+        drawOutline(
+            outline = outline,
+            style = Stroke(width = strokeWidth),
+            brush = ShaderBrush(
+                LinearGradientShader(
+                    from = Offset.Zero,
+                    to = Offset(0.0f, size.height),
+                    colors = colors,
+                    colorStops = outlineSpec.fractions,
+                    tileMode = TileMode.Repeated
+                )
+            ),
+            alpha = alpha
+        )
     }
 
     override fun getOutlineInset(insetKind: InsetKind): Float {

@@ -84,7 +84,7 @@ fun getBaseOutline(
     // Open sides are handled differently for fill and border outline kinds. For fill we need
     // to return a fully continuous and closed path so that it can be filled. For border, we
     // respect the open sides, using moveTo instead of lineTo for the relevant side(s).
-    val isTopOpen = openSides!!.contains(Side.Top) && (outlineKind == OutlineKind.Border)
+    val isTopOpen = openSides.contains(Side.Top) && (outlineKind == OutlineKind.Border)
     val isBottomOpen = openSides.contains(Side.Bottom) && (outlineKind == OutlineKind.Border)
     val isLeftOpen = openSides.contains(leftSide) && (outlineKind == OutlineKind.Border)
     val isRightOpen = openSides.contains(rightSide) && (outlineKind == OutlineKind.Border)

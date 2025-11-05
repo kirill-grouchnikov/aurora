@@ -19,6 +19,7 @@ import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
+import org.pushingpixels.aurora.theming.painter.outline.LuminousOutlinePainter
 import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
@@ -69,7 +70,7 @@ private fun mistBasePainters(): AuroraPainters {
     return AuroraPainters(
         decorationPainter = MatteDecorationPainter(),
         surfacePainter = SpecularRectangularSurfacePainter(MatteSurfacePainter(), 0.5f),
-        outlinePainter = FlatOutlinePainter(),
+        outlinePainter = LuminousOutlinePainter(),
         highlightSurfacePainter = ClassicSurfacePainter(),
         highlightOutlinePainter = FlatOutlinePainter(),
     )
@@ -82,7 +83,7 @@ fun mistSilverSkin(): AuroraSkinDefinition {
             containerConfiguration = ContainerConfiguration(
                 /* isDark */ false,
                 /* contrastLevel */ 0.6)),
-        defaultAreaMutedTokens= getContainerTokens(
+        defaultAreaMutedTokens = getContainerTokens(
             seed = Hct.fromInt(0xFFD6D9DDu.toInt()),
             containerConfiguration = ContainerConfiguration(
                 /* isDark */ false,
