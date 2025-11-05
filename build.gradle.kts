@@ -29,6 +29,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven("https://central.sonatype.com/repository/maven-snapshots/")
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         maven("https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev")
         maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
