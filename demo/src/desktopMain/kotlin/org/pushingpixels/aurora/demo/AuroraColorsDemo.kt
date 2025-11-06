@@ -56,7 +56,7 @@ fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
-        size = DpSize(400.dp, 300.dp)
+        size = DpSize(800.dp, 780.dp)
     )
     val aboutState = rememberWindowState(
         placement = WindowPlacement.Floating,
