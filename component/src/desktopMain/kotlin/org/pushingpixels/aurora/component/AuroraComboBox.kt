@@ -247,6 +247,7 @@ internal fun <E> AuroraComboBox(
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
     val painters = AuroraSkin.painters
+    val buttonShaper = AuroraSkin.buttonShaper
     val popupOriginator = LocalPopupMenu.current ?: LocalWindow.current.rootPane
 
     val comboBoxTopLeftOffset = AuroraOffset(0.0f, 0.0f)
@@ -399,6 +400,7 @@ internal fun <E> AuroraComboBox(
                         fontFamilyResolver = fontFamilyResolver,
                         skinColors = skinColors,
                         skinPainters = painters,
+                        buttonShaper = buttonShaper,
                         decorationAreaType = decorationAreaType,
                         compositionLocalContext = compositionLocalContext,
                         anchorBoundsInWindow = Rect(

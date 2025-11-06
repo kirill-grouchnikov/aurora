@@ -51,6 +51,7 @@ import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.component.utils.getLabelPreferredSingleLineWidth
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
+import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import kotlin.math.ceil
 import kotlin.math.max
@@ -111,6 +112,7 @@ internal fun getBandContentHeight(
     density: Density,
     resolvedTextStyle: TextStyle,
     fontFamilyResolver: FontFamily.Resolver,
+    buttonShaper: AuroraButtonShaper
 ): Int {
     val gap = (RibbonBandContentGap.value * density.density).toInt()
 
@@ -133,7 +135,7 @@ internal fun getBandContentHeight(
             presentationForSizing
         )
     return (sizingLayoutManager.getPreferredSize(
-        commandForSizing, presentationForSizing, sizingPreLayoutInfo
+        commandForSizing, presentationForSizing, sizingPreLayoutInfo, buttonShaper
     ).height + 2 * gap).toInt()
 }
 
@@ -164,10 +166,11 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
     val fontFamilyResolver = LocalFontFamilyResolver.current
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
     val gap = (RibbonBandContentGap.value * density.density).toInt()
+    val buttonShaper = AuroraSkin.buttonShaper
 
     val bands = ribbonTask.bands
 
-    val bandContentHeight = getBandContentHeight(layoutDirection, density, resolvedTextStyle, fontFamilyResolver)
+    val bandContentHeight = getBandContentHeight(layoutDirection, density, resolvedTextStyle, fontFamilyResolver, buttonShaper)
     val bandTitleHeight = getBandTitleHeight(layoutDirection, density, resolvedTextStyle, fontFamilyResolver)
     val bandFullHeight = (bandContentHeight + bandTitleHeight)
     val bandFullHeightDp = (bandFullHeight / density.density).dp

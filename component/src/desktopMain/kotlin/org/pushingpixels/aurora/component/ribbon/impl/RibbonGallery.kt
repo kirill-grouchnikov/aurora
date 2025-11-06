@@ -97,6 +97,7 @@ internal fun RibbonGallery(
     val layoutDirection = LocalLayoutDirection.current
     val baseTextStyle = LocalTextStyle.current
     val fontFamilyResolver = LocalFontFamilyResolver.current
+    val buttonShaper = LocalButtonShaper.current
 
     val resolvedTextStyle = remember { resolveDefaults(baseTextStyle, layoutDirection) }
     val colors = AuroraSkin.colors
@@ -377,7 +378,8 @@ internal fun RibbonGallery(
                     preLayoutInfo = buttonLayoutManager.getPreLayoutInfo(
                         command = contentModel.commandGroups[0].commands[index],
                         presentationModel = buttonPresentationModel
-                    )
+                    ),
+                    buttonShaper = buttonShaper
                 )
                 buttonRowWidth += buttonPreferredSize.width
                 buttonRowHeight = max(buttonRowHeight, buttonPreferredSize.height)
@@ -409,7 +411,8 @@ internal fun RibbonGallery(
                     preLayoutInfo = scrollerLayoutManager.getPreLayoutInfo(
                         command = scrollerCommand,
                         presentationModel = scrollerButtonPresentationModel
-                    )
+                    ),
+                    buttonShaper = buttonShaper
                 )
                 scrollerColumnWidth = max(scrollerColumnWidth, scrollerButtonPreferredSize.width)
             }

@@ -43,6 +43,7 @@ import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.component.utils.getLabelPreferredSingleLineWidth
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
+import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 import kotlin.math.max
 
 data class CustomComplexCommand(
@@ -244,7 +245,8 @@ object CustomComplexCommandMenuPopupHandler : CascadingCommandMenuHandler<
         layoutDirection: LayoutDirection,
         density: Density,
         textStyle: TextStyle,
-        fontFamilyResolver: FontFamily.Resolver
+        fontFamilyResolver: FontFamily.Resolver,
+        buttonShaper: AuroraButtonShaper
     ): CustomComplexPopupContentLayoutInfo {
         // Command presentation for menu content, taking some values from
         // the popup menu presentation model configured on the top-level presentation model
@@ -293,7 +295,8 @@ object CustomComplexCommandMenuPopupHandler : CascadingCommandMenuHandler<
                             preLayoutInfo = layoutManager.getPreLayoutInfo(
                                 command = entry.command,
                                 presentationModel = itemButtonPresentationModel
-                            )
+                            ),
+                            buttonShaper = buttonShaper
                         )
                         maxPrimaryWidth = max(maxPrimaryWidth, preferredSize.width)
                         combinedHeight += preferredSize.height
@@ -325,7 +328,8 @@ object CustomComplexCommandMenuPopupHandler : CascadingCommandMenuHandler<
                             preLayoutInfo = zoomLayoutManager.getPreLayoutInfo(
                                 command = entry.commandZoomOut,
                                 presentationModel = menuPresentationModel.zoomPresentationModel
-                            )
+                            ),
+                            buttonShaper = buttonShaper
                         )
                         val zoomLabelWidth = getLabelPreferredSingleLineWidth(
                             contentModel = LabelContentModel(
@@ -342,7 +346,8 @@ object CustomComplexCommandMenuPopupHandler : CascadingCommandMenuHandler<
                             preLayoutInfo = zoomLayoutManager.getPreLayoutInfo(
                                 command = entry.commandZoomIn,
                                 presentationModel = menuPresentationModel.zoomPresentationModel
-                            )
+                            ),
+                            buttonShaper = buttonShaper
                         )
 
                         val fullScreenLayoutManager =
@@ -355,7 +360,8 @@ object CustomComplexCommandMenuPopupHandler : CascadingCommandMenuHandler<
                             preLayoutInfo = fullScreenLayoutManager.getPreLayoutInfo(
                                 command = entry.commandFullScreen,
                                 presentationModel = menuPresentationModel.fullScreenPresentationModel
-                            )
+                            ),
+                            buttonShaper = buttonShaper
                         )
 
                         maxActionWidth = max(
@@ -393,7 +399,8 @@ object CustomComplexCommandMenuPopupHandler : CascadingCommandMenuHandler<
                             preLayoutInfo = editLayoutManager.getPreLayoutInfo(
                                 command = entry.commandCut,
                                 presentationModel = menuPresentationModel.editPresentationModel
-                            )
+                            ),
+                            buttonShaper = buttonShaper
                         )
                         val copyPreferredSize = editLayoutManager.getPreferredSize(
                             command = entry.commandCopy,
@@ -401,7 +408,8 @@ object CustomComplexCommandMenuPopupHandler : CascadingCommandMenuHandler<
                             preLayoutInfo = editLayoutManager.getPreLayoutInfo(
                                 command = entry.commandCopy,
                                 presentationModel = menuPresentationModel.editPresentationModel
-                            )
+                            ),
+                            buttonShaper = buttonShaper
                         )
                         val pastePreferredSize = editLayoutManager.getPreferredSize(
                             command = entry.commandPaste,
@@ -409,7 +417,8 @@ object CustomComplexCommandMenuPopupHandler : CascadingCommandMenuHandler<
                             preLayoutInfo = editLayoutManager.getPreLayoutInfo(
                                 command = entry.commandPaste,
                                 presentationModel = menuPresentationModel.editPresentationModel
-                            )
+                            ),
+                            buttonShaper = buttonShaper
                         )
 
                         maxActionWidth = max(
@@ -453,7 +462,8 @@ object CustomComplexCommandMenuPopupHandler : CascadingCommandMenuHandler<
                             preLayoutInfo = signInLayoutManager.getPreLayoutInfo(
                                 command = entry.commandSignIn,
                                 presentationModel = menuPresentationModel.editPresentationModel
-                            )
+                            ),
+                            buttonShaper = buttonShaper
                         )
 
                         maxActionWidth = max(maxActionWidth, signInPreferredSize.width)
@@ -476,7 +486,8 @@ object CustomComplexCommandMenuPopupHandler : CascadingCommandMenuHandler<
                             preLayoutInfo = footerLayoutManager.getPreLayoutInfo(
                                 command = entry.commandFooter,
                                 presentationModel = menuPresentationModel.footerPresentationModel
-                            )
+                            ),
+                            buttonShaper = buttonShaper
                         )
                         maxPrimaryWidth = max(maxPrimaryWidth, preferredSize.width)
                         combinedHeight += preferredSize.height

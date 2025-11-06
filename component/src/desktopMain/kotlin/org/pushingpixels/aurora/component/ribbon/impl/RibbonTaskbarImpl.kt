@@ -43,6 +43,7 @@ import org.pushingpixels.aurora.component.utils.getEndwardDoubleArrowIcon
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
+import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 import org.pushingpixels.aurora.theming.utils.ContainerType
 
 private data class TaskbarExpandCommand(
@@ -134,7 +135,8 @@ private object TaskbarExpandCommandMenuPopupHandler : CascadingCommandMenuHandle
         layoutDirection: LayoutDirection,
         density: Density,
         textStyle: TextStyle,
-        fontFamilyResolver: FontFamily.Resolver
+        fontFamilyResolver: FontFamily.Resolver,
+        buttonShaper: AuroraButtonShaper
     ): TaskbarExpandPopupContentLayoutInfo {
 
         val startPadding = TaskbarExpandPopupContentPadding.calculateStartPadding(layoutDirection)

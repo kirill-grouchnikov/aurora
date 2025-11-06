@@ -58,6 +58,7 @@ fun Modifier.auroraContextMenu(
     val fontFamilyResolver = LocalFontFamilyResolver.current
     val skinColors = AuroraSkin.colors
     val painters = AuroraSkin.painters
+    val buttonShaper = AuroraSkin.buttonShaper
     val decorationAreaType = AuroraSkin.decorationAreaType
     val popupOriginator = LocalPopupMenu.current ?: LocalWindow.current.rootPane
     val compositionLocalContext by rememberUpdatedState(currentCompositionLocalContext)
@@ -79,6 +80,7 @@ fun Modifier.auroraContextMenu(
                     fontFamilyResolver = fontFamilyResolver,
                     skinColors = skinColors,
                     skinPainters = painters,
+                    buttonShaper = buttonShaper,
                     decorationAreaType = decorationAreaType,
                     compositionLocalContext = compositionLocalContext,
                     anchorBoundsInWindow = Rect(

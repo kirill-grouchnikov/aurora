@@ -36,6 +36,7 @@ import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
+import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 import kotlin.math.max
 
 data class CustomCommand(
@@ -144,7 +145,8 @@ object CustomCommandMenuPopupHandler : CascadingCommandMenuHandler<
         layoutDirection: LayoutDirection,
         density: Density,
         textStyle: TextStyle,
-        fontFamilyResolver: FontFamily.Resolver
+        fontFamilyResolver: FontFamily.Resolver,
+        buttonShaper: AuroraButtonShaper
     ): CustomPopupContentLayoutInfo {
 
         // If at least one secondary command in this popup menu has icon factory
@@ -194,7 +196,8 @@ object CustomCommandMenuPopupHandler : CascadingCommandMenuHandler<
                 preLayoutInfo = layoutManager.getPreLayoutInfo(
                     command = entry,
                     presentationModel = itemButtonPresentationModel
-                )
+                ),
+                buttonShaper = buttonShaper
             )
             maxWidth = max(maxWidth, preferredSize.width)
             combinedHeight += preferredSize.height

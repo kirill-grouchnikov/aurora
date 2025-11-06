@@ -135,7 +135,6 @@ internal fun RibbonTaskToggleButton(
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
     val buttonShaper = ClassicButtonShaper.Instance
-    val painters = AuroraSkin.painters
 
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -464,7 +463,8 @@ internal fun RibbonTaskToggleButton(
             constraints = constraints,
             command = command,
             presentationModel = presentationModel,
-            preLayoutInfo = preLayoutInfo
+            preLayoutInfo = preLayoutInfo,
+            buttonShaper = buttonShaper
         )
 
         // Measure the action box

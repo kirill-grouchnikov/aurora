@@ -39,6 +39,7 @@ import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.Sides
 import org.pushingpixels.aurora.theming.auroraBackground
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
+import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 
 private object WindowMenuBarLayout {
     private class CommandButtonLayoutManagerMenuBar(
@@ -60,7 +61,8 @@ private object WindowMenuBarLayout {
         override fun getPreferredSize(
             command: BaseCommand,
             presentationModel: BaseCommandButtonPresentationModel,
-            preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
+            preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
+            buttonShaper: AuroraButtonShaper
         ): Size {
             val paddingValues = presentationModel.contentPadding
             val by = presentationModel.verticalGapScaleFactor * paddingValues.verticalPaddings.toPx()
@@ -108,9 +110,10 @@ private object WindowMenuBarLayout {
             constraints: Constraints,
             command: BaseCommand,
             presentationModel: BaseCommandButtonPresentationModel,
-            preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
+            preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
+            buttonShaper: AuroraButtonShaper
         ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
-            val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo)
+            val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo, buttonShaper)
 
             val paddingValues = presentationModel.contentPadding
             val top = presentationModel.verticalGapScaleFactor * paddingValues.topPadding.toPx()

@@ -81,6 +81,7 @@ internal fun RibbonPrimaryBar(
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
     val fontFamilyResolver = LocalFontFamilyResolver.current
+    val buttonShaper = AuroraSkin.buttonShaper
 
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
 
@@ -117,7 +118,8 @@ internal fun RibbonPrimaryBar(
             preLayoutInfo = applicationMenuCommandButtonLayoutManager.getPreLayoutInfo(
                 ribbon.applicationMenuCommandButtonProjection!!.contentModel,
                 ribbon.applicationMenuCommandButtonProjection!!.presentationModel
-            )
+            ),
+            buttonShaper = buttonShaper
         )
     }
 
@@ -198,7 +200,8 @@ internal fun RibbonPrimaryBar(
             preLayoutInfo = taskButtonLayoutManager.getPreLayoutInfo(
                 ribbonTaskInfo.taskCommand,
                 taskButtonPresentationModel
-            )
+            ),
+            buttonShaper = buttonShaper
         )
         combinedTaskButtonsWidth += currTaskButtonPreferredSize.width.toInt()
         maxTaskButtonHeight = max(maxTaskButtonHeight, currTaskButtonPreferredSize.height.toInt())
@@ -255,7 +258,8 @@ internal fun RibbonPrimaryBar(
             preLayoutInfo = layoutManagerWithOriginal.getPreLayoutInfo(
                 anchoredCommandProjection.contentModel,
                 presentationModelWithOriginal
-            )
+            ),
+            buttonShaper = buttonShaper
         )
         val currAnchoredCommandSmallPreferredSize = layoutManagerWithSmall.getPreferredSize(
             command = anchoredCommandProjection.contentModel,
@@ -263,7 +267,8 @@ internal fun RibbonPrimaryBar(
             preLayoutInfo = layoutManagerWithSmall.getPreLayoutInfo(
                 anchoredCommandProjection.contentModel,
                 presentationModelWithSmall
-            )
+            ),
+            buttonShaper = buttonShaper
         )
 
         combinedAnchoredCommandsOriginalWidth += currAnchoredCommandOriginalPreferredSize.width.toInt()

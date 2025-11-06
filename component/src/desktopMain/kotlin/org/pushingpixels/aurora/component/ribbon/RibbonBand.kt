@@ -29,6 +29,7 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizePolicies
 import org.pushingpixels.aurora.component.ribbon.resize.RibbonBandResizePolicy
+import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 import kotlin.math.min
 
 sealed interface AbstractRibbonBand {
@@ -119,7 +120,8 @@ object RibbonBandCommandButtonPresentationStates {
         override fun getPreferredSize(
             command: BaseCommand,
             presentationModel: BaseCommandButtonPresentationModel,
-            preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
+            preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
+            buttonShaper: AuroraButtonShaper
         ): Size {
             val paddingValues = presentationModel.contentPadding
             val buttonText = command.text
@@ -162,9 +164,10 @@ object RibbonBandCommandButtonPresentationStates {
             constraints: Constraints,
             command: BaseCommand,
             presentationModel: BaseCommandButtonPresentationModel,
-            preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
+            preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
+            buttonShaper: AuroraButtonShaper
         ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
-            val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo)
+            val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo, buttonShaper)
 
             val paddingValues = presentationModel.contentPadding
             val startInset = presentationModel.horizontalGapScaleFactor *

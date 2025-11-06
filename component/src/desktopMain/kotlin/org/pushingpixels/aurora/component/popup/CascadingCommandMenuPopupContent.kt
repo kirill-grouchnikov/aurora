@@ -36,6 +36,7 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonKeyTipChainRoot
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
+import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 import java.awt.*
 import java.awt.geom.Rectangle2D
 import javax.swing.JPopupMenu
@@ -62,7 +63,8 @@ interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
         layoutDirection: LayoutDirection,
         density: Density,
         textStyle: TextStyle,
-        fontFamilyResolver: FontFamily.Resolver
+        fontFamilyResolver: FontFamily.Resolver,
+        buttonShaper: AuroraButtonShaper
     ): L
 
     @Composable
@@ -82,6 +84,7 @@ interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
         fontFamilyResolver: FontFamily.Resolver,
         skinColors: AuroraSkinColors,
         skinPainters: AuroraPainters,
+        buttonShaper: AuroraButtonShaper,
         decorationAreaType: DecorationAreaType,
         compositionLocalContext: CompositionLocalContext,
         anchorBoundsInWindow: Rect,
@@ -102,7 +105,8 @@ interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
             layoutDirection = layoutDirection,
             density = density,
             textStyle = textStyle,
-            fontFamilyResolver = fontFamilyResolver
+            fontFamilyResolver = fontFamilyResolver,
+            buttonShaper = buttonShaper
         )
 
         // From this point, all coordinates are in Swing display units - which are density independent.

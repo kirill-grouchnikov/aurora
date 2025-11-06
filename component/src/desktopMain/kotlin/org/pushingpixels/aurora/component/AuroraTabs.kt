@@ -60,6 +60,7 @@ internal fun tabsIntrinsicSize(
     val textStyle = LocalTextStyle.current
     val fontFamilyResolver = LocalFontFamilyResolver.current
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
+    val buttonShaper = LocalButtonShaper.current
 
     // Presentation model for the content - copy fields from the tabs presentation model
     val contentPresentationModel = CommandButtonPresentationModel(
@@ -88,7 +89,7 @@ internal fun tabsIntrinsicSize(
         val currentTabCommand = Command(text = tabModel.text, icon = tabModel.icon)
         val preLayoutInfo = layoutManager.getPreLayoutInfo(currentTabCommand, contentPresentationModel)
         val currentTabIntrinsicSize = layoutManager.getPreferredSize(
-            currentTabCommand, contentPresentationModel, preLayoutInfo
+            currentTabCommand, contentPresentationModel, preLayoutInfo, buttonShaper
         )
         width += currentTabIntrinsicSize.width
         height = max(height, currentTabIntrinsicSize.height)
@@ -121,6 +122,7 @@ internal fun AuroraTabs(
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
     val fontFamilyResolver = LocalFontFamilyResolver.current
+    val buttonShaper = LocalButtonShaper.current
 
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
 
@@ -369,7 +371,7 @@ internal fun AuroraTabs(
                     scrollerPresentationModel
                 )
             val leftScrollerSize = scrollerLayoutManager.getPreferredSize(
-                startwardScrollerCommand, scrollerPresentationModel, leftScrollerPreLayoutInfo
+                startwardScrollerCommand, scrollerPresentationModel, leftScrollerPreLayoutInfo, buttonShaper
             )
 
             // How big is the right scroller?
@@ -379,7 +381,7 @@ internal fun AuroraTabs(
                     scrollerPresentationModel
                 )
             val rightScrollerSize = scrollerLayoutManager.getPreferredSize(
-                endwardScrollerCommand, scrollerPresentationModel, rightScrollerPreLayoutInfo
+                endwardScrollerCommand, scrollerPresentationModel, rightScrollerPreLayoutInfo, buttonShaper
             )
 
             // How much space does the scrollable content need?
@@ -403,7 +405,7 @@ internal fun AuroraTabs(
                             contentPresentationModel
                         )
                     val commandSize = contentLayoutManager.getPreferredSize(
-                        command, contentPresentationModel, commandPreLayoutInfo
+                        command, contentPresentationModel, commandPreLayoutInfo, buttonShaper
                     )
                     boxRequiredWidth += commandSize.width
                     boxHeight = commandSize.height.toInt()
@@ -419,7 +421,7 @@ internal fun AuroraTabs(
                         contentPresentationModel
                     )
                 boxHeight = contentLayoutManager.getPreferredSize(
-                    forSizing, contentPresentationModel, commandPreLayoutInfo
+                    forSizing, contentPresentationModel, commandPreLayoutInfo, buttonShaper
                 ).height.toInt()
             }
 

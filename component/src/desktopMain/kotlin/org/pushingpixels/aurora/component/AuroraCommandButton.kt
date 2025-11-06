@@ -932,6 +932,7 @@ internal fun <M : BaseCommandMenuContentModel,
                 fontFamilyResolver = fontFamilyResolver,
                 skinColors = skinColors,
                 skinPainters = painters,
+                buttonShaper = buttonShaper,
                 decorationAreaType = decorationAreaType,
                 compositionLocalContext = compositionLocalContext,
                 anchorBoundsInWindow = Rect(
@@ -1411,7 +1412,8 @@ internal fun <M : BaseCommandMenuContentModel,
             constraints = constraints,
             command = command,
             presentationModel = presentationModel,
-            preLayoutInfo = preLayoutInfo
+            preLayoutInfo = preLayoutInfo,
+            buttonShaper = buttonShaper
         )
 
         // Measure the action and popup boxes

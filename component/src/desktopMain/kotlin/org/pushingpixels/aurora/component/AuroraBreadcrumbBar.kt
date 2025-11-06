@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
+import org.pushingpixels.aurora.theming.LocalButtonShaper
 import org.pushingpixels.aurora.theming.LocalTextStyle
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
 
@@ -64,6 +65,7 @@ internal fun breadcrumbBarIntrinsicSize(
     val textStyle = LocalTextStyle.current
     val fontFamilyResolver = LocalFontFamilyResolver.current
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
+    val buttonShaper = LocalButtonShaper.current
 
     val contentPresentationModel = getCommandButtonPresentationModel(presentationModel)
     val contentLayoutManager = contentPresentationModel.presentationState.createLayoutManager(
@@ -80,7 +82,8 @@ internal fun breadcrumbBarIntrinsicSize(
         preLayoutInfo = contentLayoutManager.getPreLayoutInfo(
             forSizing,
             contentPresentationModel
-        )
+        ),
+        buttonShaper = buttonShaper
     ).height
     val width = contentModel.commands.sumOf { command ->
         val commandPreLayoutInfo =
@@ -89,7 +92,7 @@ internal fun breadcrumbBarIntrinsicSize(
                 contentPresentationModel
             )
         val commandSize = contentLayoutManager.getPreferredSize(
-            command, contentPresentationModel, commandPreLayoutInfo
+            command, contentPresentationModel, commandPreLayoutInfo, buttonShaper
         )
         commandSize.width.toDouble()
     }
@@ -108,6 +111,7 @@ internal fun AuroraBreadcrumbBar(
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
     val fontFamilyResolver = LocalFontFamilyResolver.current
+    val buttonShaper = LocalButtonShaper.current
 
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
 
@@ -127,7 +131,8 @@ internal fun AuroraBreadcrumbBar(
         preLayoutInfo = contentLayoutManager.getPreLayoutInfo(
             forSizing,
             contentPresentationModel
-        )
+        ),
+        buttonShaper = buttonShaper
     ).height.toInt()
 
     AuroraHorizontallyScrollableBox(
@@ -141,7 +146,7 @@ internal fun AuroraBreadcrumbBar(
                         contentPresentationModel
                     )
                 val commandSize = contentLayoutManager.getPreferredSize(
-                    command, contentPresentationModel, commandPreLayoutInfo
+                    command, contentPresentationModel, commandPreLayoutInfo, buttonShaper
                 )
                 commandSize.width.toDouble()
             }.toInt()

@@ -43,6 +43,7 @@ import org.pushingpixels.aurora.component.utils.TitleLabel
 import org.pushingpixels.aurora.theming.AuroraSkin
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
+import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 import kotlin.math.max
 
 private fun LazyListScope.rowOfItems(
@@ -389,6 +390,7 @@ internal fun getPreferredCommandPopupMenuPanelSize(
     contentModel: CommandPanelContentModel,
     presentationModel: CommandPopupMenuPanelPresentationModel,
     buttonLayoutManager: CommandButtonLayoutManager,
+    buttonShaper: AuroraButtonShaper,
     layoutDirection: LayoutDirection,
     density: Density
 ): Size {
@@ -425,7 +427,8 @@ internal fun getPreferredCommandPopupMenuPanelSize(
             val preferredSize = buttonLayoutManager.getPreferredSize(
                 command = command,
                 presentationModel = baseCommandButtonPresentationModel,
-                preLayoutInfo = preLayoutInfo
+                preLayoutInfo = preLayoutInfo,
+                buttonShaper = buttonShaper
             )
             maxButtonWidth = max(maxButtonWidth, preferredSize.width.toInt())
             maxButtonHeight = max(maxButtonHeight, preferredSize.height.toInt())

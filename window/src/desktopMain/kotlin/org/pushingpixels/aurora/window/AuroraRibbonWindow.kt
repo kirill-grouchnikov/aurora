@@ -689,13 +689,14 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
     val fontFamilyResolver = LocalFontFamilyResolver.current
     val skinColors = AuroraSkin.colors
     val painters = AuroraSkin.painters
+    val buttonShaper = AuroraSkin.buttonShaper
     val decorationAreaType = AuroraSkin.decorationAreaType
     val popupOriginator = LocalPopupMenu.current ?: LocalWindow.current.rootPane
     val compositionLocalContext by rememberUpdatedState(currentCompositionLocalContext)
     val resolvedTextStyle = remember { resolveDefaults(mergedTextStyle, layoutDirection) }
     val coroutineScope = rememberCoroutineScope()
 
-    val bandContentHeight = getBandContentHeight(layoutDirection, density, resolvedTextStyle, fontFamilyResolver)
+    val bandContentHeight = getBandContentHeight(layoutDirection, density, resolvedTextStyle, fontFamilyResolver, buttonShaper)
     val bandTitleHeight = getBandTitleHeight(layoutDirection, density, resolvedTextStyle, fontFamilyResolver)
     val bandFullHeight = (bandContentHeight + bandTitleHeight)
 
@@ -710,6 +711,7 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
                 fontFamilyResolver = fontFamilyResolver,
                 skinColors = skinColors,
                 skinPainters = painters,
+                buttonShaper = buttonShaper,
                 decorationAreaType = decorationAreaType,
                 compositionLocalContext = compositionLocalContext,
                 anchorBoundsInWindow = Rect(
@@ -1004,6 +1006,7 @@ private fun Modifier.ribbonContextMenu(ribbon: Ribbon): Modifier {
     val fontFamilyResolver = LocalFontFamilyResolver.current
     val skinColors = AuroraSkin.colors
     val painters = AuroraSkin.painters
+    val buttonShaper = AuroraSkin.buttonShaper
     val decorationAreaType = AuroraSkin.decorationAreaType
     val popupOriginator = LocalPopupMenu.current ?: LocalWindow.current.rootPane
     val compositionLocalContext by rememberUpdatedState(currentCompositionLocalContext)
@@ -1036,8 +1039,6 @@ private fun Modifier.ribbonContextMenu(ribbon: Ribbon): Modifier {
                 // Convert them to the underlying pixels using the density factor.
                 val eventX = lastMouseEvent.x * density.density
                 val eventY = lastMouseEvent.y * density.density
-
-                println("Testing ${lastMouseEvent.x}x${lastMouseEvent.y} -> ${eventX}x${eventY} in $popupOriginator")
 
                 val ribbonGallery = getGalleryProjectionUnder(eventX, eventY)
                 if (ribbonGallery != null) {
@@ -1082,6 +1083,7 @@ private fun Modifier.ribbonContextMenu(ribbon: Ribbon): Modifier {
                     fontFamilyResolver = fontFamilyResolver,
                     skinColors = skinColors,
                     skinPainters = painters,
+                    buttonShaper = buttonShaper,
                     decorationAreaType = decorationAreaType,
                     compositionLocalContext = compositionLocalContext,
                     anchorBoundsInWindow = Rect(
@@ -1110,11 +1112,6 @@ private fun Modifier.ribbonContextMenu(ribbon: Ribbon): Modifier {
             }
         }
     })
-//
-//
-//    this.then(Modifier.auroraContextMenu(enabled = true,
-//        contentModel = CommandMenuContentModel()
-//    ))
 }
 
 @Composable

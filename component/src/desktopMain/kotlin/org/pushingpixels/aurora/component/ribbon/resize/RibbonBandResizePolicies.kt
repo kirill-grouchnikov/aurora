@@ -28,6 +28,7 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.*
 import org.pushingpixels.aurora.component.utils.getLabelPreferredSingleLineWidth
+import org.pushingpixels.aurora.theming.LocalButtonShaper
 import org.pushingpixels.aurora.theming.LocalTextStyle
 import kotlin.math.ceil
 import kotlin.math.max
@@ -498,6 +499,7 @@ object CoreRibbonResizePolicies {
             val textStyle = LocalTextStyle.current
             val fontFamilyResolver = LocalFontFamilyResolver.current
             val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
+            val buttonShaper = LocalButtonShaper.current
 
             val iconCommand = Command(
                 text = ribbonBand.title,
@@ -519,7 +521,7 @@ object CoreRibbonResizePolicies {
                 )
             return min(
                 layoutManager.getPreferredSize(
-                    iconCommand, iconPresentationModel, preLayoutInfo
+                    iconCommand, iconPresentationModel, preLayoutInfo, buttonShaper
                 ).width.toInt(), availableHeight * 5 / 4
             )
         }

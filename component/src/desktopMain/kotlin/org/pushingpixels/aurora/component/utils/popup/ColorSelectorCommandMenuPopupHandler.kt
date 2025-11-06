@@ -54,6 +54,7 @@ import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.utils.TitleLabel
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
 import org.pushingpixels.aurora.theming.utils.getContainerTokens
@@ -78,7 +79,8 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
         layoutDirection: LayoutDirection,
         density: Density,
         textStyle: TextStyle,
-        fontFamilyResolver: FontFamily.Resolver
+        fontFamilyResolver: FontFamily.Resolver,
+        buttonShaper: AuroraButtonShaper
     ): ColorSelectorPopupContentLayoutInfo {
         // Command presentation for menu content, taking some values from
         // the popup menu presentation model configured on the top-level presentation model
@@ -152,7 +154,8 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
                         preLayoutInfo = layoutManager.getPreLayoutInfo(
                             command = entry.command,
                             presentationModel = itemButtonPresentationModelWithOverlay
-                        )
+                        ),
+                        buttonShaper = buttonShaper
                     )
                     maxWidth = max(maxWidth, preferredSize.width)
                     combinedHeight += preferredSize.height

@@ -47,6 +47,7 @@ import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.auroraBackground
+import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
@@ -74,7 +75,8 @@ object GeneralCommandMenuPopupHandler : CascadingCommandMenuHandler<
         layoutDirection: LayoutDirection,
         density: Density,
         textStyle: TextStyle,
-        fontFamilyResolver: FontFamily.Resolver
+        fontFamilyResolver: FontFamily.Resolver,
+        buttonShaper: AuroraButtonShaper
     ): GeneralPopupContentLayoutInfo {
         val hasButtonPanel = (menuContentModel.panelContentModel != null)
         val panelButtonLayoutManager =
@@ -91,6 +93,7 @@ object GeneralCommandMenuPopupHandler : CascadingCommandMenuHandler<
                 contentModel = menuContentModel.panelContentModel!!,
                 presentationModel = menuPresentationModel.panelPresentationModel!!,
                 buttonLayoutManager = panelButtonLayoutManager!!,
+                buttonShaper = buttonShaper,
                 layoutDirection = layoutDirection,
                 density = density
             ) else Size(0.0f, 0.0f)
@@ -160,7 +163,8 @@ object GeneralCommandMenuPopupHandler : CascadingCommandMenuHandler<
                     preLayoutInfo = regularButtonLayoutManager.getPreLayoutInfo(
                         command = secondaryCommand,
                         presentationModel = regularButtonPresentationModelWithOverlay
-                    )
+                    ),
+                    buttonShaper = buttonShaper
                 )
                 regularButtonColumnWidth = max(regularButtonColumnWidth, preferredSize.width)
                 regularButtonHeight = max(regularButtonHeight, preferredSize.height)
@@ -181,7 +185,8 @@ object GeneralCommandMenuPopupHandler : CascadingCommandMenuHandler<
                 preLayoutInfo = regularButtonLayoutManager.getPreLayoutInfo(
                     command = displayPrototypeCommand,
                     presentationModel = regularButtonPresentationModelWithOverlay
-                )
+                ),
+                buttonShaper = buttonShaper
             )
             regularButtonColumnWidth = max(regularButtonColumnWidth, displayPrototypePreferredSize.width)
         }

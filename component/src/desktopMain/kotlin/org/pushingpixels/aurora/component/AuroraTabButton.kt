@@ -114,6 +114,7 @@ internal fun AuroraTabButton(
     val layoutDirection = LocalLayoutDirection.current
     val mergedTextStyle = LocalTextStyle.current.merge(presentationModel.textStyle)
     val fontFamilyResolver = LocalFontFamilyResolver.current
+    val buttonShaper = LocalButtonShaper.current
 
     val resolvedTextStyle = remember { resolveDefaults(mergedTextStyle, layoutDirection) }
 
@@ -402,7 +403,8 @@ internal fun AuroraTabButton(
             constraints = constraints,
             command = command,
             presentationModel = presentationModel,
-            preLayoutInfo = preLayoutInfo
+            preLayoutInfo = preLayoutInfo,
+            buttonShaper = buttonShaper
         )
 
         // Measure the action box

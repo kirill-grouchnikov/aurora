@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.*
+import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 import kotlin.math.max
 
 @AuroraInternalApi
@@ -126,7 +127,8 @@ open class CommandButtonLayoutManagerMedium(
     override fun getPreferredSize(
         command: BaseCommand,
         presentationModel: BaseCommandButtonPresentationModel,
-        preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
+        preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
+        buttonShaper: AuroraButtonShaper
     ): Size {
         val preferredSizeIgnoringMinWidth = getPreferredSizeIgnoringMinWidth(command, presentationModel, preLayoutInfo)
         return Size(
@@ -161,12 +163,13 @@ open class CommandButtonLayoutManagerMedium(
         constraints: Constraints,
         command: BaseCommand,
         presentationModel: BaseCommandButtonPresentationModel,
-        preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
+        preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
+        buttonShaper: AuroraButtonShaper
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
         val preferredSizeIgnoringMinWidth = getPreferredSizeIgnoringMinWidth(
             command, presentationModel, preLayoutInfo
         )
-        val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo)
+        val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo, buttonShaper)
         val paddingTop = presentationModel.verticalGapScaleFactor *
                 presentationModel.contentPadding.topPadding.toPx()
         val paddingBottom = presentationModel.verticalGapScaleFactor *
