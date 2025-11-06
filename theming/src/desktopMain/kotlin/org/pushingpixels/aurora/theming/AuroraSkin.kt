@@ -16,8 +16,11 @@
 package org.pushingpixels.aurora.theming
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.resolveDefaults
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
@@ -74,6 +77,18 @@ object AuroraSkin {
 @Composable
 fun resolveAuroraDefaults() =
     resolveDefaults(LocalTextStyle.current, LocalLayoutDirection.current)
+
+@OptIn(AuroraInternalApi::class)
+@Composable
+fun AuroraTypography(
+    fontFamily: FontFamily,
+    content: @Composable () -> Unit
+) {
+    CompositionLocalProvider(
+        LocalTextStyle provides TextStyle(fontFamily = fontFamily),
+        content = content
+    )
+}
 
 data class AuroraSkinDefinition(
     override val displayName: String,

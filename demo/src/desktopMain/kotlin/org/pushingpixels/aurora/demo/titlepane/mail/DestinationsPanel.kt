@@ -42,11 +42,14 @@ import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.Sides
 import org.pushingpixels.aurora.theming.auroraBackground
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
+import org.pushingpixels.aurora.theming.resolveAuroraDefaults
 import org.pushingpixels.aurora.window.AuroraWindowScope
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneButton
 
 @Composable
 fun AuroraWindowScope.DestinationsPanel(modifier: Modifier) {
+    // Resolve the default text style
+    val resolvedTextStyle = resolveAuroraDefaults()
     AuroraDecorationArea(decorationAreaType = VisorDecorations.Destinations) {
         Column(modifier = modifier.fillMaxHeight().auroraBackground()) {
             // This row is part of the integrated title pane, so we need to wrap it in
@@ -74,7 +77,8 @@ fun AuroraWindowScope.DestinationsPanel(modifier: Modifier) {
             ) {
                 LabelProjection(
                     contentModel = LabelContentModel(text = "MAIL"),
-                    presentationModel = LabelPresentationModel(textStyle = TextStyle(fontWeight = FontWeight.Bold))
+                    presentationModel = LabelPresentationModel(
+                        textStyle = resolvedTextStyle.copy(fontWeight = FontWeight.Bold))
                 ).project()
             }
 

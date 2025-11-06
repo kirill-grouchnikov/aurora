@@ -51,6 +51,8 @@ import org.pushingpixels.aurora.window.AuroraWindowScope
 @Composable
 fun AuroraWindowScope.ThreadListPanel(modifier: Modifier) {
     AuroraDecorationArea(decorationAreaType = VisorDecorations.Threads) {
+        // Resolve the default text style
+        val resolvedTextStyle = resolveAuroraDefaults()
         Column(modifier = modifier.fillMaxHeight().auroraBackground()) {
             // This row is part of the integrated title pane, so we need to wrap it in
             // a WindowDraggableArea
@@ -60,13 +62,11 @@ fun AuroraWindowScope.ThreadListPanel(modifier: Modifier) {
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Resolve the default text style to get the default font size
-                    val resolvedTextStyle = resolveAuroraDefaults()
                     val fontSize = resolvedTextStyle.fontSize
                     // Compute a larger font size
                     val largerFontSize = TextUnit(fontSize.value + 1.0f, fontSize.type)
                     // And create our own text style with larger font size
-                    val textStyle = TextStyle(fontSize = largerFontSize)
+                    val textStyle = resolvedTextStyle.copy(fontSize = largerFontSize)
 
                     TextFieldStringProjection(
                         contentModel = TextFieldStringContentModel(
@@ -103,7 +103,7 @@ fun AuroraWindowScope.ThreadListPanel(modifier: Modifier) {
                         icon = refresh_black_24dp(), text = "Inbox"
                     ), presentationModel = LabelPresentationModel(
                         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                        textStyle = TextStyle(fontWeight = FontWeight.Bold),
+                        textStyle = resolvedTextStyle.copy(fontWeight = FontWeight.Bold),
                         horizontalGapScaleFactor = 2.0f
                     )
                 ).project()
@@ -163,7 +163,7 @@ private fun ThreadListEntry(threadInfo: ThreadInfo) {
                     iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
                     horizontalGapScaleFactor = 2.0f,
                     horizontalAlignment = HorizontalAlignment.Leading,
-                    textStyle = TextStyle(fontSize = largerFontSize, fontWeight = FontWeight.Bold)
+                    textStyle = resolvedTextStyle.copy(fontSize = largerFontSize, fontWeight = FontWeight.Bold)
                 )
             ).project(modifier = Modifier.weight(1.0f))
             LabelProjection(
@@ -181,7 +181,7 @@ private fun ThreadListEntry(threadInfo: ThreadInfo) {
                     inheritStateFromParent = true,
                     contentPadding = PaddingValues(horizontal = 0.dp, vertical = 2.dp),
                     horizontalAlignment = HorizontalAlignment.Leading,
-                    textStyle = TextStyle(fontWeight = FontWeight.Bold)
+                    textStyle = resolvedTextStyle.copy(fontWeight = FontWeight.Bold)
                 )
             ).project(modifier = Modifier.weight(1.0f))
         }

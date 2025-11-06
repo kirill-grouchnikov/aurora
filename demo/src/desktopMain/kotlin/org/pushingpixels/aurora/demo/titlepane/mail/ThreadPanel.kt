@@ -48,6 +48,9 @@ fun AuroraWindowScope.ThreadPanel(modifier: Modifier) {
         val fillTokens = AuroraSkin.colors.getMutedContainerTokens(AuroraSkin.decorationAreaType)
         val iconColorFilter = ColorFilter.tint(color = fillTokens.onContainerVariant)
 
+        // Resolve the default text style
+        val resolvedTextStyle = resolveAuroraDefaults()
+
         // This row is part of the integrated title pane, so we need to wrap it in
         // a WindowDraggableArea
         WindowDraggableArea() {
@@ -96,13 +99,11 @@ fun AuroraWindowScope.ThreadPanel(modifier: Modifier) {
 
         // Header
         Row(modifier = Modifier.fillMaxWidth()) {
-            // Resolve the default text style to get the default font size
-            val resolvedTextStyle = resolveAuroraDefaults()
             val fontSize = resolvedTextStyle.fontSize
             // Compute a larger font size
             val largerFontSize = TextUnit(fontSize.value + 6.0f, fontSize.type)
             // And create our own text style with larger font size and bold weight
-            val textStyle = TextStyle(fontSize = largerFontSize, fontWeight = FontWeight.Bold)
+            val textStyle = resolvedTextStyle.copy(fontSize = largerFontSize, fontWeight = FontWeight.Bold)
 
             LabelProjection(
                 contentModel = LabelContentModel(text = "Keys found"),
@@ -168,6 +169,9 @@ fun AuroraWindowScope.ThreadPanel(modifier: Modifier) {
 
 @Composable
 private fun CollapsedMessagePanel(from: String, title: String, timestamp: String) {
+    // Resolve the default text style
+    val resolvedTextStyle = resolveAuroraDefaults()
+
     Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 2.dp)) {
         val colorTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
         Row(
@@ -185,7 +189,7 @@ private fun CollapsedMessagePanel(from: String, title: String, timestamp: String
                 contentModel = LabelContentModel(text = from),
                 presentationModel = LabelPresentationModel(
                     contentPadding = PaddingValues(horizontal = 16.dp),
-                    textStyle = TextStyle(fontWeight = FontWeight.Bold)
+                    textStyle = resolvedTextStyle.copy(fontWeight = FontWeight.Bold)
                 )
             ).project()
 
@@ -208,7 +212,7 @@ private fun CollapsedMessagePanel(from: String, title: String, timestamp: String
                 contentModel = LabelContentModel(text = timestamp),
                 presentationModel = LabelPresentationModel(
                     contentPadding = PaddingValues(horizontal = 16.dp),
-                    textStyle = TextStyle(fontSize = smallerFontSize)
+                    textStyle = resolvedTextStyle.copy(fontSize = smallerFontSize)
                 )
             ).project()
         }
@@ -220,6 +224,9 @@ private fun ExpandedMessagePanel(
     from: String, timestamp: String, to: String, message: String,
     iconColorFilter: ColorFilter
 ) {
+    // Resolve the default text style
+    val resolvedTextStyle = resolveAuroraDefaults()
+
     Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 2.dp)) {
         val colorTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
         Column(
@@ -240,7 +247,7 @@ private fun ExpandedMessagePanel(
                     contentModel = LabelContentModel(text = from),
                     presentationModel = LabelPresentationModel(
                         contentPadding = PaddingValues(horizontal = 0.dp),
-                        textStyle = TextStyle(fontWeight = FontWeight.Bold)
+                        textStyle = resolvedTextStyle.copy(fontWeight = FontWeight.Bold)
                     )
                 ).project()
 
@@ -255,7 +262,7 @@ private fun ExpandedMessagePanel(
                     contentModel = LabelContentModel(text = timestamp),
                     presentationModel = LabelPresentationModel(
                         contentPadding = PaddingValues(horizontal = 16.dp),
-                        textStyle = TextStyle(fontSize = smallerFontSize)
+                        textStyle = resolvedTextStyle.copy(fontSize = smallerFontSize)
                     )
                 ).project()
 
@@ -323,7 +330,7 @@ private fun ExpandedMessagePanel(
                     presentationModel = LabelPresentationModel(
                         contentPadding = PaddingValues(horizontal = 4.dp),
                         horizontalAlignment = HorizontalAlignment.Leading,
-                        textStyle = TextStyle(color = historyColor)
+                        textStyle = resolvedTextStyle.copy(color = historyColor)
                     )
                 ).project()
             }
