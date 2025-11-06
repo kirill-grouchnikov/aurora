@@ -82,10 +82,13 @@ fun resolveAuroraDefaults() =
 @Composable
 fun AuroraTypography(
     fontFamily: FontFamily,
+    textStyleTransform: ((TextStyle) -> TextStyle)? = null,
     content: @Composable () -> Unit
 ) {
+    val baseTextStyle = TextStyle(fontFamily = fontFamily)
+    val textStyle = textStyleTransform?.invoke(baseTextStyle) ?: baseTextStyle
     CompositionLocalProvider(
-        LocalTextStyle provides TextStyle(fontFamily = fontFamily),
+        LocalTextStyle provides textStyle,
         content = content
     )
 }
