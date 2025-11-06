@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.theming.shaper
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.unit.Density
@@ -47,5 +48,9 @@ interface AuroraButtonShaper : AuroraTrait {
      *            (plain rectangular button).
      * @return The preferred size for the specified dimensions.
      */
-    fun getPreferredSize(uiPreferredWidth: Float, uiPreferredHeight: Float): Size
+    fun getExtraContentPadding(
+        uiPreferredSize: Size,
+        layoutDirection: LayoutDirection,
+        density: Density
+    ): PaddingValues
 }

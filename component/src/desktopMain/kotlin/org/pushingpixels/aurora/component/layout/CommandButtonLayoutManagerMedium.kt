@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.component.layout
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -54,6 +55,7 @@ open class CommandButtonLayoutManagerMedium(
     private fun getPreferredSizeIgnoringMinWidth(
         command: BaseCommand,
         presentationModel: BaseCommandButtonPresentationModel,
+        buttonShaper: AuroraButtonShaper,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): Size {
         val paddingValues = presentationModel.contentPadding
@@ -121,7 +123,23 @@ open class CommandButtonLayoutManagerMedium(
 
         // and remove the padding before the first and after the last elements
         width -= 2 * layoutHGap
-        return Size(width, by + max(prefIconHeight, textHeight))
+        val preferred = Size(width, by + max(prefIconHeight, textHeight))
+        return if (hasText) {
+            val extraContentPadding = buttonShaper.getExtraContentPadding(
+                uiPreferredSize = preferred,
+                layoutDirection = layoutDirection,
+                density = _density
+            )
+            val extraStartPx = with (_density) {
+                extraContentPadding.startPadding.toPx()
+            }
+            val extraEndPx = with (_density) {
+                extraContentPadding.startPadding.toPx()
+            }
+            Size(preferred.width + extraStartPx + extraEndPx, preferred.height)
+        } else {
+            preferred
+        }
     }
 
     override fun getPreferredSize(
@@ -130,7 +148,8 @@ open class CommandButtonLayoutManagerMedium(
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
         buttonShaper: AuroraButtonShaper
     ): Size {
-        val preferredSizeIgnoringMinWidth = getPreferredSizeIgnoringMinWidth(command, presentationModel, preLayoutInfo)
+        val preferredSizeIgnoringMinWidth = getPreferredSizeIgnoringMinWidth(
+            command, presentationModel, buttonShaper, preLayoutInfo)
         return Size(
             width = max(
                 preferredSizeIgnoringMinWidth.width,
@@ -167,13 +186,24 @@ open class CommandButtonLayoutManagerMedium(
         buttonShaper: AuroraButtonShaper
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
         val preferredSizeIgnoringMinWidth = getPreferredSizeIgnoringMinWidth(
-            command, presentationModel, preLayoutInfo
+            command, presentationModel, buttonShaper, preLayoutInfo
         )
         val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo, buttonShaper)
-        val paddingTop = presentationModel.verticalGapScaleFactor *
-                presentationModel.contentPadding.topPadding.toPx()
-        val paddingBottom = presentationModel.verticalGapScaleFactor *
-                presentationModel.contentPadding.bottomPadding.toPx()
+        val originalPaddingValues = presentationModel.contentPadding
+        val extraPaddingValues = buttonShaper.getExtraContentPadding(
+            uiPreferredSize = preferredSizeIgnoringMinWidth,
+            layoutDirection = layoutDirection,
+            density = _density
+        )
+        val paddingValues = PaddingValues(
+            start = originalPaddingValues.startPadding + extraPaddingValues.startPadding,
+            end = originalPaddingValues.endPadding + extraPaddingValues.endPadding,
+            top = originalPaddingValues.topPadding,
+            bottom = originalPaddingValues.bottomPadding
+        )
+
+        val paddingTop = presentationModel.verticalGapScaleFactor * paddingValues.topPadding.toPx()
+        val paddingBottom = presentationModel.verticalGapScaleFactor * paddingValues.bottomPadding.toPx()
 
         val buttonText = command.text
         val layoutHGap = (CommandButtonSizingConstants.DefaultHorizontalContentLayoutGap *
@@ -227,7 +257,6 @@ open class CommandButtonLayoutManagerMedium(
             finalHeight = constraints.maxHeight.toFloat()
         }
 
-        val paddingValues = presentationModel.contentPadding
         var actionClickArea = Rect.Zero
         var popupClickArea = Rect.Zero
         var separatorArea = Rect.Zero

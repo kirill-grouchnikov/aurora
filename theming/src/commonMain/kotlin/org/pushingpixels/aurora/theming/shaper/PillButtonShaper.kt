@@ -15,10 +15,12 @@
  */
 package org.pushingpixels.aurora.theming.shaper
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.theming.OutlineKind
 import org.pushingpixels.aurora.theming.Sides
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
@@ -47,17 +49,22 @@ class PillButtonShaper : AuroraButtonShaper, RectangularButtonShaper {
         return getBaseOutline(layoutDirection, width, height, radius, sides, insets, outlineKind)
     }
 
+    override fun getExtraContentPadding(uiPreferredSize: Size, layoutDirection: LayoutDirection, density: Density): PaddingValues {
+        // Account for additional horizontal space needed for the pill shape -
+        // half the height on the left and half the height on the right
+        val horizontal = if (uiPreferredSize.width > uiPreferredSize.height) {
+            uiPreferredSize.height / 2
+        } else {
+            0.0f
+        }
+        return PaddingValues(horizontal = (horizontal / density.density).dp, vertical = 0.dp)
+    }
+
     override fun getCornerRadius(width: Float, height: Float, insets: Float, density: Density): Float {
         return if (width > height) {
             (height - 2 * insets) / 2.0f
         } else {
             (width - 2 * insets) / 2.0f
         }
-    }
-
-    override fun getPreferredSize(uiPreferredWidth: Float, uiPreferredHeight: Float): Size {
-        // Account for additional horizontal space needed for the pill shape -
-        // half the height on the left and half the height on the right
-        return Size(uiPreferredWidth + uiPreferredHeight, uiPreferredHeight)
     }
 }
