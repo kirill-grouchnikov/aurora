@@ -23,7 +23,7 @@ kotlin {
 
 compose {
     resources {
-        publicResClass = true
+        publicResClass = false
         packageOfResClass = "org.pushingpixels.aurora.demo.resources"
         generateResClass = always
     }

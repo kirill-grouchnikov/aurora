@@ -43,7 +43,6 @@ import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import org.pushingpixels.aurora.window.auroraApplication
 
-
 object VisorDecorations {
     val Destinations = DecorationAreaType("Visor Destinations")
     val Threads = DecorationAreaType("Visor Threads")
