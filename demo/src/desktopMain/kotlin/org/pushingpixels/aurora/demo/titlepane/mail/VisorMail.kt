@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -77,7 +78,11 @@ fun main() = auroraApplication {
             Font(resource = Res.font.CommitMono_400_Italic, weight = FontWeight.Normal, style = FontStyle.Italic),
             Font(resource = Res.font.CommitMono_700_Italic, weight = FontWeight.Bold, style = FontStyle.Italic),
         )
-        AuroraTypography(fontFamily = commitMonoFamily, textStyleTransform = {it.copy(letterSpacing = (-0.3).sp) }) {
+        val commitMonoTextStyle = TextStyle(
+            fontFamily = commitMonoFamily,
+            letterSpacing = (-0.3).sp
+        )
+        AuroraTypography(defaultTextStyle = commitMonoTextStyle) {
             Row(modifier = Modifier.fillMaxSize()) {
                 // In the real app the space allocation between the panels will probably be
                 // more intelligent, allowing the user to reallocate the available space.
