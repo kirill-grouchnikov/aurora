@@ -26,6 +26,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
@@ -49,9 +50,13 @@ import org.pushingpixels.aurora.component.ribbon.RibbonContextualTaskGroup
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackBounds
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackKeyTips
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.getContainerTokens
+import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
+import org.pushingpixels.ephemeral.chroma.hct.Hct
+import org.pushingpixels.ephemeral.chroma.palettes.TonalPalette
 import java.lang.Integer.min
 import kotlin.math.max
 
@@ -468,21 +473,26 @@ internal fun RibbonPrimaryBar(
                                         )
                                     )
                                     if (ribbonTaskInfo.contextualTaskGroup != null) {
-                                        // TODO - wire container color tokens overlay provider based on the hue
-//                                        presentationForCurrent = presentationForCurrent.overlayWith(
-//                                            BaseCommandButtonPresentationModel.Overlay(
-//                                                colorSchemeBundle = generateColorSchemeBundle(
-//                                                    active = AuroraSkin.colors.getActiveColorScheme(
-//                                                        DecorationAreaType.ControlPane
-//                                                    ),
-//                                                    enabled = AuroraSkin.colors.getEnabledColorScheme(
-//                                                        DecorationAreaType.ControlPane
-//                                                    ),
-//                                                    hueColor = ribbonTaskInfo.contextualTaskGroup.hueColor,
-//                                                    hueAmount = 0.25f
-//                                                )
-//                                            )
-//                                        )
+                                        val isDark = skinColors.getNeutralContainerTokens(DecorationAreaType.ControlPane).isDark
+                                        val palette = TonalPalette.fromHct(Hct.fromInt(
+                                            ribbonTaskInfo.contextualTaskGroup.hueColor.toArgb()))
+                                        val surface = if (isDark) palette.getHct(80.0) else palette.getHct(45.0)
+                                        val containerColorTokens = org.pushingpixels.aurora.theming.palette.getContainerTokens(
+                                            seed = surface,
+                                            containerConfiguration = if (isDark) ContainerConfiguration.defaultDark()
+                                                else ContainerConfiguration.defaultLight()
+                                        )
+                                        presentationForCurrent = presentationForCurrent.overlayWith(
+                                            BaseCommandButtonPresentationModel.Overlay(
+                                                colorTokensOverlayProvider = ContainerColorTokensOverlay.Provider { _, _ ->
+                                                    ContainerColorTokensOverlay(
+                                                        activeContainerTokens = containerColorTokens,
+                                                        mutedContainerTokens = containerColorTokens,
+                                                        neutralContainerTokens = containerColorTokens
+                                                    )
+                                                },
+                                            )
+                                        )
                                     }
 
                                     RibbonTaskToggleButton(
