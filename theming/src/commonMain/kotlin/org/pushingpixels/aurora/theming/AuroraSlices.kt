@@ -770,9 +770,14 @@ data class Sides(
 }
 
 enum class OutlineKind {
-    Fill,
-    Border
+    Surface,
+    Outline
 }
+enum class InsetKind {
+    Surface,
+    Content
+}
+
 
 /**
  * Enumerates available background appearance strategies.

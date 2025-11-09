@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.theming.AuroraTrait
+import org.pushingpixels.aurora.theming.InsetKind
 import org.pushingpixels.aurora.theming.OutlineKind
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 
@@ -29,11 +30,6 @@ interface OutlineSupplier {
         layoutDirection: LayoutDirection, density: Density,
         size: Size, insets: Float, radiusAdjustment: Float, outlineKind: OutlineKind
     ): Outline
-}
-
-// TODO - merge this with AuroraSlices.OutlineKind?
-enum class InsetKind {
-    Surface, Content
 }
 
 interface AuroraOutlinePainter : AuroraTrait {

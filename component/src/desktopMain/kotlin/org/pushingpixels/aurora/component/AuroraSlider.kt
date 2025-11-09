@@ -51,7 +51,6 @@ import org.pushingpixels.aurora.component.model.SliderPresentationModel
 import org.pushingpixels.aurora.component.model.SliderSizingConstants
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.painter.outline.InsetKind
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
 import org.pushingpixels.aurora.theming.utils.*
@@ -456,7 +455,7 @@ internal fun AuroraSlider(
                 size = trackSize,
                 insets = outlineInset,
                 radiusAdjustment = 0.0f,
-                outlineKind = OutlineKind.Fill)
+                outlineKind = OutlineKind.Surface)
 
             translate(left = drawingCache.trackRect.x, top = drawingCache.trackRect.y) {
                 paintSurface(
@@ -502,7 +501,7 @@ internal fun AuroraSlider(
                             size = selectionSize,
                             insets = outlineInset,
                             radiusAdjustment = 0.0f,
-                            outlineKind = OutlineKind.Fill)
+                            outlineKind = OutlineKind.Surface)
 
                         paintSurface(
                             drawScope = this,
@@ -537,7 +536,7 @@ internal fun AuroraSlider(
                             size = selectionSize,
                             insets = outlineInset,
                             radiusAdjustment = 0.0f,
-                            outlineKind = OutlineKind.Fill)
+                            outlineKind = OutlineKind.Surface)
 
                         paintSurface(
                             drawScope = this,
@@ -629,7 +628,7 @@ internal fun AuroraSlider(
                     size = Size(thumbSize, thumbSize),
                     insets = thumbOutlineInset,
                     radiusAdjustment = 0.0f,
-                    outlineKind = OutlineKind.Fill)
+                    outlineKind = OutlineKind.Surface)
 
                 paintSurface(
                     drawScope = this,

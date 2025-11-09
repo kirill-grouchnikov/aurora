@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.AuroraTrait
+import org.pushingpixels.aurora.theming.InsetKind
 import org.pushingpixels.aurora.theming.OutlineKind
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.painter.ColorStop
@@ -88,7 +89,7 @@ class InlayOutlinePainter(
             size = size,
             insets = strokeWidth - 0.5f,
             radiusAdjustment = radiusAdjustment,
-            outlineKind = OutlineKind.Border
+            outlineKind = OutlineKind.Outline
         )
         drawOutline(
             outline = outline,

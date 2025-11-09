@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.theming.InsetKind
 import org.pushingpixels.aurora.theming.OutlineKind
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.painter.ColorStop
@@ -58,7 +59,7 @@ open class FractionBasedOutlinePainter(
                 size = size,
                 insets = strokeWidth - 0.5f,
                 radiusAdjustment = 0.0f,
-                outlineKind = OutlineKind.Border
+                outlineKind = OutlineKind.Outline
             )
             drawOutline(
                 outline = outline,

@@ -46,7 +46,6 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.painter.outline.InsetKind
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.utils.*
 
@@ -522,7 +521,7 @@ internal fun <E> AuroraComboBox(
                         size = this.size,
                         insets = outlineInset,
                         radiusAdjustment = 0.0f,
-                        outlineKind = OutlineKind.Fill)
+                        outlineKind = OutlineKind.Surface)
                     val outlineBoundingRect = outlineFill.bounds
                     if (outlineBoundingRect.isEmpty) {
                         return@withTransform

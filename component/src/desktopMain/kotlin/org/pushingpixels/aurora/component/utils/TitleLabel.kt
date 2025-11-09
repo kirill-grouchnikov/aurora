@@ -109,7 +109,7 @@ internal fun TitleLabel(
                         openSides = setOf(Side.Leading, Side.Trailing)
                     ),
                     radiusAdjustment = 0.0f,
-                    outlineKind = OutlineKind.Border,
+                    outlineKind = OutlineKind.Outline,
                     density = this
                 )
 

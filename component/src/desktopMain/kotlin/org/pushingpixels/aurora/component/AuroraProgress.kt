@@ -39,8 +39,6 @@ import org.pushingpixels.aurora.component.model.CircularProgressPresentationMode
 import org.pushingpixels.aurora.component.model.DeterminateProgressContentModel
 import org.pushingpixels.aurora.component.model.IndeterminateProgressContentModel
 import org.pushingpixels.aurora.component.model.LinearProgressPresentationModel
-import org.pushingpixels.aurora.theming.utils.paintOutline
-import org.pushingpixels.aurora.theming.utils.paintSurface
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.utils.*

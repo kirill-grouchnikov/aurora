@@ -35,7 +35,6 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
-import org.pushingpixels.aurora.theming.painter.outline.InsetKind
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.utils.*
 
@@ -265,7 +264,7 @@ fun AuroraBoxWithHighlights(
                     size = this.size,
                     insets = outlineInset,
                     radiusAdjustment = 0.0f,
-                    outlineKind = OutlineKind.Fill)
+                    outlineKind = OutlineKind.Surface)
                 val outlineBoundingRect = outlineFill.bounds
                 if (outlineBoundingRect.isEmpty) {
                     return@withTransform

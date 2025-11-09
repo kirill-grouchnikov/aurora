@@ -60,7 +60,6 @@ import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.ribbon.impl.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.painter.outline.InsetKind
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 import org.pushingpixels.aurora.theming.utils.*
@@ -1087,7 +1086,7 @@ internal fun <M : BaseCommandMenuContentModel,
                                 size = buttonSize.value.asSize(),
                                 insets = outlineInset,
                                 radiusAdjustment = 0.0f,
-                                outlineKind = OutlineKind.Fill)
+                                outlineKind = OutlineKind.Surface)
                             val outlineBoundingRect = outlineFill.bounds
                             if (outlineBoundingRect.isEmpty) {
                                 return@withTransform
@@ -1215,7 +1214,7 @@ internal fun <M : BaseCommandMenuContentModel,
                                 size = buttonSize.value.asSize(),
                                 insets = outlineInset,
                                 radiusAdjustment = 0.0f,
-                                outlineKind = OutlineKind.Fill)
+                                outlineKind = OutlineKind.Surface)
                             val outlineBoundingRect = outlineFill.bounds
                             if (outlineBoundingRect.isEmpty) {
                                 return@withTransform
@@ -1764,7 +1763,7 @@ private fun CommandButtonIconContent(
                     size = this.size,
                     insets = outlineInset,
                     radiusAdjustment = 0.0f,
-                    outlineKind = OutlineKind.Fill)
+                    outlineKind = OutlineKind.Surface)
 
                 paintSurface(
                     drawScope = this,

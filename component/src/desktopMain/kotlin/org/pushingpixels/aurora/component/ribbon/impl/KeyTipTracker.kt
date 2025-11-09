@@ -52,9 +52,8 @@ import org.pushingpixels.aurora.theming.utils.paintSurface
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
-import org.pushingpixels.aurora.theming.painter.outline.InsetKind
+import org.pushingpixels.aurora.theming.InsetKind
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
-import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
 import org.pushingpixels.aurora.theming.utils.getClassicCornerRadius
@@ -381,7 +380,7 @@ internal fun DrawScope.drawKeyTip(
             size = Size(tipWidth, tipHeight),
             insets = outlineInset,
             radiusAdjustment = 0.0f,
-            outlineKind = OutlineKind.Fill)
+            outlineKind = OutlineKind.Surface)
 
         paintSurface(
             drawScope = this,

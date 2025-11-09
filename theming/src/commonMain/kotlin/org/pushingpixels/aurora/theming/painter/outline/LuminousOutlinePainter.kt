@@ -17,16 +17,12 @@ package org.pushingpixels.aurora.theming.painter.outline
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.LinearGradientShader
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.ShaderBrush
-import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import org.pushingpixels.aurora.common.interpolateTowards
+import org.pushingpixels.aurora.theming.InsetKind
 import org.pushingpixels.aurora.theming.OutlineKind
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.painter.ColorStop
@@ -105,7 +101,7 @@ class LuminousOutlinePainter : AuroraOutlinePainter {
             size = size,
             insets = strokeWidth - 0.5f,
             radiusAdjustment = 0.0f,
-            outlineKind = OutlineKind.Border
+            outlineKind = OutlineKind.Outline
         )
 
         drawOutline(
@@ -141,7 +137,7 @@ class LuminousOutlinePainter : AuroraOutlinePainter {
             size = size,
             insets = strokeWidth - 0.5f,
             radiusAdjustment = radiusAdjustment,
-            outlineKind = OutlineKind.Border
+            outlineKind = OutlineKind.Outline
         )
 
         var topLeftRadius: Float

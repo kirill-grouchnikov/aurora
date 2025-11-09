@@ -38,7 +38,7 @@ fun getBaseOutline(
     layoutDirection: LayoutDirection,
     width: Float, height: Float,
     radius: Float, sides: Sides? = null,
-    insets: Float = 0.0f, outlineKind: OutlineKind = OutlineKind.Border
+    insets: Float = 0.0f, outlineKind: OutlineKind = OutlineKind.Outline
 ): Outline {
     val leftSide = if (layoutDirection == LayoutDirection.Ltr) Side.Leading else Side.Trailing
     val rightSide = if (layoutDirection == LayoutDirection.Ltr) Side.Trailing else Side.Leading
@@ -84,10 +84,10 @@ fun getBaseOutline(
     // Open sides are handled differently for fill and border outline kinds. For fill we need
     // to return a fully continuous and closed path so that it can be filled. For border, we
     // respect the open sides, using moveTo instead of lineTo for the relevant side(s).
-    val isTopOpen = openSides.contains(Side.Top) && (outlineKind == OutlineKind.Border)
-    val isBottomOpen = openSides.contains(Side.Bottom) && (outlineKind == OutlineKind.Border)
-    val isLeftOpen = openSides.contains(leftSide) && (outlineKind == OutlineKind.Border)
-    val isRightOpen = openSides.contains(rightSide) && (outlineKind == OutlineKind.Border)
+    val isTopOpen = openSides.contains(Side.Top) && (outlineKind == OutlineKind.Outline)
+    val isBottomOpen = openSides.contains(Side.Bottom) && (outlineKind == OutlineKind.Outline)
+    val isLeftOpen = openSides.contains(leftSide) && (outlineKind == OutlineKind.Outline)
+    val isRightOpen = openSides.contains(rightSide) && (outlineKind == OutlineKind.Outline)
 
     val path = Path()
     // Start in top left

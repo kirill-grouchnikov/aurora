@@ -40,9 +40,11 @@ import androidx.compose.ui.unit.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.component.utils.*
+import org.pushingpixels.aurora.component.utils.ModelStateInfo
+import org.pushingpixels.aurora.component.utils.StateTransitionTracker
+import org.pushingpixels.aurora.component.utils.TransitionInfo
+import org.pushingpixels.aurora.component.utils.populateColorTokens
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.painter.outline.InsetKind
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.utils.*
 import kotlin.math.roundToInt
@@ -392,7 +394,7 @@ private fun Scrollbar(
                         size = this.size,
                         insets = outlineInset,
                         radiusAdjustment = 0.0f,
-                        outlineKind = OutlineKind.Fill)
+                        outlineKind = OutlineKind.Surface)
 
                     paintSurface(
                         drawScope = this,

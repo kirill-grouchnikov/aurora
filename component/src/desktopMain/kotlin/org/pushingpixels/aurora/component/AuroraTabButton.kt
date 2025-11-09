@@ -50,7 +50,6 @@ import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.painter.outline.InsetKind
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.utils.*
 import kotlin.math.max
@@ -319,7 +318,7 @@ internal fun AuroraTabButton(
                                 size = this.size,
                                 insets = outlineInset,
                                 radiusAdjustment = 0.0f,
-                                outlineKind = OutlineKind.Fill)
+                                outlineKind = OutlineKind.Surface)
 
                             withTransform({
                                 clipRect(
@@ -364,7 +363,7 @@ internal fun AuroraTabButton(
                                     size = size,
                                     insets = 0.5f,
                                     radiusAdjustment = 0.0f,
-                                    outlineKind = OutlineKind.Border
+                                    outlineKind = OutlineKind.Outline
                                 ),
                                 style = Stroke(width = 1.0f),
                                 color = underlineColor,

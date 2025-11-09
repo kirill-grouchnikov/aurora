@@ -317,7 +317,7 @@ internal fun AuroraTextField(
                         size = size,
                         insets = 0.5f,
                         radiusAdjustment = 0.0f,
-                        outlineKind = OutlineKind.Border
+                        outlineKind = OutlineKind.Outline
                     ),
                     style = Stroke(width = 1.0f),
                     color = borderColor,

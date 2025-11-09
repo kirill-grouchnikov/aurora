@@ -605,7 +605,7 @@ private fun AnimatedOutlinePainterOverlay(
                     density = density,
                     insets = 1.0f,
                     radiusAdjustment = 0.0f,
-                    outlineKind = OutlineKind.Border
+                    outlineKind = OutlineKind.Outline
                 )
 
                 drawOutline(
