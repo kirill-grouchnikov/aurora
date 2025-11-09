@@ -32,10 +32,8 @@ import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.demo.svg.material.keyboard_capslock_24px
 import org.pushingpixels.aurora.demo.svg.radiance_menu
-import org.pushingpixels.aurora.demo.svg.tango.edit_paste
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
-import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.theming.twilightSkin
 import org.pushingpixels.aurora.window.AuroraApplicationScope
 import org.pushingpixels.aurora.window.AuroraWindow

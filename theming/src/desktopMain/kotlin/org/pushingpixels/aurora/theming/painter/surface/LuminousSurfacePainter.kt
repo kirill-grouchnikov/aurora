@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.Density
 import org.jetbrains.skia.Data
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.utils.getLuminousEffect
-import org.pushingpixels.aurora.theming.utils.getSpecularRectangularEffect
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 

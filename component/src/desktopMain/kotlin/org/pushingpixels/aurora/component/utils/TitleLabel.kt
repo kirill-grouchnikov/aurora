@@ -35,7 +35,8 @@ import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
-import org.pushingpixels.aurora.theming.utils.*
+import org.pushingpixels.aurora.theming.utils.getBaseOutline
+import org.pushingpixels.aurora.theming.utils.paintOutline
 
 private object TitleLabelOutlineSuppler: OutlineSupplier {
     override fun getOutline(

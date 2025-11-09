@@ -43,7 +43,6 @@ import org.pushingpixels.aurora.component.ribbon.RibbonGalleryContentModel
 import org.pushingpixels.aurora.component.ribbon.RibbonGalleryInlineState
 import org.pushingpixels.aurora.component.ribbon.RibbonGalleryPresentationModel
 import org.pushingpixels.aurora.component.utils.*
-import org.pushingpixels.aurora.component.utils.ArrowSizingConstants
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import kotlin.math.max

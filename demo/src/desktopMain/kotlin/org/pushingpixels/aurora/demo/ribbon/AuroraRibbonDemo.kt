@@ -57,7 +57,6 @@ import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.geminiSkin
-import org.pushingpixels.aurora.theming.nebulaAmethystSkin
 import org.pushingpixels.aurora.window.AuroraRibbonWindow
 import org.pushingpixels.aurora.window.auroraApplication
 import java.awt.GraphicsEnvironment

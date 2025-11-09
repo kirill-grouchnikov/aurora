@@ -22,11 +22,8 @@ import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.LuminousOutlinePainter
-import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.LuminousSurfacePainter
-import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
-import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.shaper.PillButtonShaper
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration

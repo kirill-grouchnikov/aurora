@@ -20,7 +20,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.resolveDefaults
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors

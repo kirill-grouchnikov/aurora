@@ -47,17 +47,11 @@ import org.pushingpixels.aurora.component.model.ContentModel
 import org.pushingpixels.aurora.component.model.PresentationModel
 import org.pushingpixels.aurora.component.projection.Projection
 import org.pushingpixels.aurora.component.ribbon.Ribbon
-import org.pushingpixels.aurora.theming.utils.paintOutline
-import org.pushingpixels.aurora.theming.utils.paintSurface
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
-import org.pushingpixels.aurora.theming.InsetKind
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
-import org.pushingpixels.aurora.theming.utils.ContainerType
-import org.pushingpixels.aurora.theming.utils.getBaseOutline
-import org.pushingpixels.aurora.theming.utils.getClassicCornerRadius
-import org.pushingpixels.aurora.theming.utils.getContainerTokens
+import org.pushingpixels.aurora.theming.utils.*
 
 @AuroraInternalApi
 object KeyTipTracker {

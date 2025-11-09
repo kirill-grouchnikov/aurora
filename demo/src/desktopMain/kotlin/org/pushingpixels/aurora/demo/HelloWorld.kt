@@ -33,7 +33,6 @@ import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.theming.auroraBackground
 import org.pushingpixels.aurora.theming.autumnSkin
-import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import org.pushingpixels.aurora.window.auroraApplication

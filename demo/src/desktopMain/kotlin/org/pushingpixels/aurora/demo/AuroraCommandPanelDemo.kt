@@ -31,7 +31,6 @@ import org.pushingpixels.aurora.demo.svg.material.*
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.IconFilterStrategy
-import org.pushingpixels.aurora.theming.businessSkin
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.geminiSkin
 import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
