@@ -72,23 +72,6 @@ object AuroraSkin {
         get() = LocalAnimationConfig.current
 }
 
-@OptIn(AuroraInternalApi::class)
-@Composable
-fun resolveAuroraDefaults() =
-    resolveDefaults(LocalTextStyle.current, LocalLayoutDirection.current)
-
-@OptIn(AuroraInternalApi::class)
-@Composable
-fun AuroraTypography(
-    defaultTextStyle: TextStyle,
-    content: @Composable () -> Unit
-) {
-    CompositionLocalProvider(
-        LocalTextStyle provides defaultTextStyle,
-        content = content
-    )
-}
-
 data class AuroraSkinDefinition(
     override val displayName: String,
     val colors: AuroraSkinColors,
