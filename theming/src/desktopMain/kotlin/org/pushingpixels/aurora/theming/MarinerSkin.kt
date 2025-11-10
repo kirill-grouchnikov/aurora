@@ -46,7 +46,7 @@ private fun marinerSkinColors(): AuroraSkinColors {
         neutralContainerTokens = getContainerTokens(
             seed = Hct.fromInt(0xFFECF0F3u.toInt()),
             containerConfiguration = ContainerConfiguration.defaultLight()),
-        isSystemDark = false);
+        isSystemDark = false)
 
     val marinerSelectedContainerTokens = getContainerTokens(
         seed = Hct.fromInt(0xFFF5D47Au.toInt()),
@@ -89,7 +89,7 @@ private fun marinerSkinColors(): AuroraSkinColors {
                 )
             )
         ),
-        isSystemDark = true);
+        isSystemDark = true)
 
     // More saturated seed for controls in selected state
     marinerHeaderBundle.registerActiveContainerTokens(

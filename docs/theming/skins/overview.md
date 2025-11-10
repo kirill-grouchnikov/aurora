@@ -22,15 +22,15 @@ The core Aurora skins are in the `org.pushingpixels.aurora.theming` package, and
 
 The skin definition consists of the following:
 
-* Decoration areas and color scheme bundles:
+* Decoration areas and color token bundles:
   * List of supported [decoration areas](../painters/decoration.md).
-  * [Color scheme bundles](colorschemebundles.md) for the supported decoration areas.
+  * [Color tokens bundles](colortokensbundles.md) for the supported decoration areas.
   * Optional background [color tokens](colortokens.md) for the supported decoration areas.
 * Painters:
-  * [Fill painter](../painters/fill.md).
-  * [Border painter](../painters/border.md).
+  * [Surface painter](../painters/surface.md).
+  * [Outline painter](../painters/outline.md).
+  * [Highlight painters](../painters/highlight.md)
   * [Decoration painter](../painters/decoration.md).
-  * [Highlight painter](../painters/highlight.md)
 * Miscellaneous:
   * Button shaper.
   * Optional [overlay painters](../painters/overlay.md) for some decoration areas.
@@ -46,129 +46,103 @@ The documentation on [decoration painters](../painters/decoration.md) explains t
 <img alt="Nebula Amethyst" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/nebulaamethyst.png" width="350" height="280">
 </p>
 
-In order to register a custom color scheme bundle and an optional background color scheme on the specific decoration area type(s), use the following APIs:
+In order to register a custom color tokens bundle on the specific decoration area type(s), use the following API:
 
 ```kotlin
-  /**
-   * Registers the specified color scheme bundle to be used on controls in
-   * decoration areas.
-   *
-   * @param bundle
-   *     The color scheme bundle to use on controls in decoration areas.
-   * @param areaTypes
-   *     Enumerates the area types that are affected by the parameters.
-   */
-   fun registerDecorationAreaSchemeBundle(
-         bundle: AuroraColorSchemeBundle,
-         vararg areaTypes: DecorationAreaType
-   )
-
-  /**
-   * Registers the specified color scheme bundle and background color scheme
-   * to be used on controls in decoration areas.
-   *
-   * @param bundle
-   *     The color scheme bundle to use on controls in decoration areas.
-   * @param backgroundColorScheme
-   *     The color scheme to use for background of controls in decoration
-   *     areas.
-   * @param areaTypes
-   *     Enumerates the area types that are affected by the parameters.
-   */
-   fun registerDecorationAreaSchemeBundle(
-         bundle: AuroraColorSchemeBundle,
-         backgroundColorScheme: AuroraColorScheme,
-         vararg areaTypes: DecorationAreaType
-   )
+/**
+ * Registers the specified color tokens bundle to be used on controls in
+ * decoration areas.
+ *
+ * @param bundle    The color tokens bundle to use on controls in decoration
+ * areas.
+ * @param areaTypes Enumerates the area types that are affected by the parameters.
+ */
+fun registerDecorationAreaTokensBundle(
+    bundle: ContainerColorTokensBundle, vararg areaTypes: DecorationAreaType
+) {
 ```
 
-Decoration areas registered with these APIs will have their background painted by the skin's [decoration painter](../painters/decoration.md) based on the default color scheme of the registered color scheme bundle. You can also use the following API to use a custom default color scheme on the specified decoration area types (in this case the controls in those decoration areas will use the default color scheme bundle):
+Decoration areas registered with these APIs will have their background painted by the skin's [decoration painter](../painters/decoration.md) based on the default color tokens of the registered color tokens bundle. You can also use the following API to use custom default color tokens on the specified decoration area types (in this case the controls in those decoration areas will use the default color tokens bundle):
 
 ```kotlin
-  /**
-   * Registers the specified background color scheme to be used on controls in
-   * decoration areas.
-   *
-   * @param backgroundColorScheme
-   *     The color scheme to use for background of controls in decoration
-   *     areas.
-   * @param areaTypes
-   *     Enumerates the area types that are affected by the parameters. Each
-   *     decoration area type will be painted by [AuroraDecorationPainter.paintDecorationArea].
-   */
-   fun registerAsDecorationArea(
-         backgroundColorScheme: AuroraColorScheme,
-         vararg areaTypes: DecorationAreaType
-   )
+/**
+ * Registers the specified neutral color tokens to be used on controls in
+ * decoration areas.
+ *
+ * @param neutralContainerTokens The neutral tokens to use in specified decoration areas.
+ * @param areaTypes             Enumerates the area types that are affected by the parameters.
+ * Each decoration area type will be painted by
+ * [RadianceDecorationPainter.paintDecorationArea]
+ */
+fun registerAsDecorationArea(
+    neutralContainerTokens: ContainerColorTokens,
+    vararg areaTypes: DecorationAreaType
+)
 ```
 
 Here is an example of specifying the default color scheme bundle for the [Mariner skin](toneddown.md#mariner):
 
 ```kotlin
 val result = AuroraSkinColors()
-val schemes = getColorSchemes(
-    AuroraSkin::class.java.getResourceAsStream(
-        "/org/pushingpixels/aurora/theming/mariner.colorschemes"
-    )
-)
 
-val activeScheme = schemes["Mariner Active"]
-val enabledScheme = schemes["Mariner Enabled"]
-val disabledScheme = schemes["Mariner Disabled"]
-
-val disabledSelectedScheme = schemes["Mariner Disabled Selected"]
-
-val defaultSchemeBundle = AuroraColorSchemeBundle(
-    activeScheme, enabledScheme, disabledScheme
-)
-
-defaultSchemeBundle.registerAlpha(0.8f, ComponentState.DisabledSelected)
-defaultSchemeBundle.registerAlpha(0.8f, ComponentState.DisabledUnselected)
-defaultSchemeBundle.registerColorScheme(
-    disabledSelectedScheme, ColorSchemeAssociationKind.Fill,
-    ComponentState.DisabledSelected
-)
-defaultSchemeBundle.registerColorScheme(
-    disabledScheme, ColorSchemeAssociationKind.Fill,
-    ComponentState.DisabledUnselected
-)
+val marinerDefaultBundle = ContainerColorTokensBundle(
+    activeContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFF6DD9Du.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultLight()),
+    mutedContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFD9D8D5u.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultLight()),
+    neutralContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFECF0F3u.toInt()),
+        containerConfiguration = ContainerConfiguration.defaultLight()),
+    isSystemDark = false)
 
 ...
 
-result.registerDecorationAreaSchemeBundle(defaultSchemeBundle, DecorationAreaType.None)
+result.registerDecorationAreaTokensBundle(marinerDefaultBundle, DecorationAreaType.None)
 ```
 and a custom color scheme bundle for the `header`-type decoration areas:
 
 ```java
-val headerColorScheme = schemes["Mariner Header"]
-val headerBorderColorScheme = schemes["Mariner Header Border"]
-val headerSchemeBundle = AuroraColorSchemeBundle(
-    headerColorScheme, headerColorScheme, headerColorScheme
-)
-headerSchemeBundle.registerAlpha(0.4f, ComponentState.DisabledSelected, ComponentState.DisabledUnselected)
-headerSchemeBundle.registerColorScheme(
-    headerColorScheme, ColorSchemeAssociationKind.Fill,
-    ComponentState.DisabledSelected, ComponentState.DisabledUnselected
-)
+val marinerHeaderBundle = ContainerColorTokensBundle(
+    activeContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFFF5D47Au.toInt()),
+        containerConfiguration = ContainerConfiguration(
+            /* isDark */ true,
+            /* contrastLevel */ 0.8)),
+    mutedContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFF281D1Eu.toInt()),
+        containerConfiguration = ContainerConfiguration(
+            /* isDark */ true,
+            /* contrastLevel */ 0.8)),
+    neutralContainerTokens = getContainerTokens(
+        seed = Hct.fromInt(0xFF261D1Eu.toInt()),
+        containerConfiguration = ContainerConfiguration(
+            /* isDark */ true,
+            /* contrastLevel */ 1.0),
+        colorResolver = DefaultPaletteColorResolver.overlayWith(
+            TokenPaletteColorResolverOverlay(
+                containerOutline = { it.containerOutlineVariant }
+            )
+        )
+    ),
+    isSystemDark = true)
 
 ...
 
-result.registerDecorationAreaSchemeBundle(
-        headerSchemeBundle, headerColorScheme,
-        DecorationAreaType.TitlePane,
-        DecorationAreaType.Header
-)
+result.registerDecorationAreaTokensBundle(marinerHeaderBundle,
+    DecorationAreaType.TitlePane, DecorationAreaType.Header)
 ```
 
-And here is an example of specifying a number of decoration area types to have their background painted by the decoration painter and the specific color scheme, without registering a custom color scheme bundle for those areas:
+And here is an example of specifying a number of decoration area types to have their background painted by the decoration painter and the specific color tokens, without registering a custom color tokens bundle for those areas:
 
 ```kotlin
 result.registerAsDecorationArea(
-        enabledScheme,
-        DecorationAreaType.TitlePane,
-        DecorationAreaType.Header,
-        DecorationAreaType.Footer,
-        DecorationAreaType.Toolbar
+    neutralContainerColorTokens,
+    DecorationAreaType.TitlePane,
+    DecorationAreaType.Header,
+    DecorationAreaType.Footer,
+    DecorationAreaType.Toolbar
 )
 ```
 
@@ -204,9 +178,7 @@ painters.addOverlayPainter(
 // add an overlay painter to paint separator lines along the bottom
 // edges of title panes and menu bars
 painters.addOverlayPainter(
-    BottomLineOverlayPainter(
-        composite({ it.darkColor }, ColorTransforms.alpha(0.625f))
-    ),
+    BottomLineOverlayPainter( { it.containerOutline } ),
     DecorationAreaType.TitlePane, DecorationAreaType.Header
 )
 ```
@@ -221,70 +193,84 @@ and here is how it looks like:
 
 ```kotlin
 fun marinerSkin(): AuroraSkinDefinition {
-    val painters = AuroraPainters(
-        fillPainter = FractionBasedFillPainter(
-            0.0f to { it.extraLightColor },
-            0.5f to { it.lightColor },
-            1.0f to { it.midColor },
-            displayName = "Mariner"
-        ),
-        borderPainter = FractionBasedBorderPainter(
-            0.0f to { it.ultraDarkColor },
-            0.5f to { it.darkColor },
-            1.0f to { it.midColor },
-            displayName = "Mariner"
-        ),
-        decorationPainter = MatteDecorationPainter(),
-        highlightFillPainter = ClassicFillPainter()
-    )
+  val painters = AuroraPainters(
+      decorationPainter = MatteDecorationPainter(),
+      surfacePainter = FractionBasedSurfacePainter(
+          ColorStop(fraction = 0.0f, colorQuery = {
+              if (it.isDark) it.containerSurfaceHigh else it.containerSurfaceLowest
+          }),
+          ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerSurface),
+          ColorStop(fraction = 1.0f, colorQuery = {
+              if (it.isDark) it.containerSurfaceLow else it.containerSurfaceHigh
+          }),
+          displayName = "Mariner"
+      ),
+      highlightSurfacePainter = FractionBasedSurfacePainter(
+          ColorStop(fraction = 0.0f, colorQuery = {
+              if (it.isDark) it.containerSurfaceLow else it.containerSurfaceHigh
+          }),
+          ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerSurface),
+          ColorStop(fraction = 1.0f, colorQuery = {
+              if (it.isDark) it.containerSurfaceHigh else it.containerSurfaceLow
+          }),
+          displayName = "Mariner Highlight"
+      ),
+      outlinePainter = InlayOutlinePainter(
+          displayName = "Mariner",
+          outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutline),
+          inner = OutlineSpec(
+              ColorStop(fraction = 0.0f, alpha = 0.25f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+              ColorStop(fraction = 1.0f, alpha = 0.25f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+          )
+      ),
+      highlightOutlinePainter = FlatOutlinePainter(),
+  )
 
-    // add an overlay painter to paint a bezel line along the top
-    // edge of footer
-    painters.addOverlayPainter(
-        TopBezelOverlayPainter(
-            colorSchemeQueryTop = { it.ultraDarkColor },
-            colorSchemeQueryBottom = { it.lightColor }
-        ),
-        DecorationAreaType.Footer
-    )
+  // add an overlay painter to paint a bezel line along the top
+  // edge of footer
+  painters.addOverlayPainter(
+      TopBezelOverlayPainter(
+          colorTokensQueryTop = { it.containerOutline.withAlpha(0.3125f) },
+          colorTokensQueryBottom = { it.inverseContainerOutline.withAlpha(0.1875f) }
+      ),
+      DecorationAreaType.Footer
+  )
 
-    // add two overlay painters to create a bezel line between
-    // menu bar and toolbars
-    painters.addOverlayPainter(
-        BottomLineOverlayPainter(
-            composite({ it.ultraDarkColor }, ColorTransforms.brightness(0.5f))
-        ),
-        DecorationAreaType.Header
-    )
+  // add two overlay painters to create a bezel line between
+  // menu bar and toolbars
+  painters.addOverlayPainter(
+      BottomLineOverlayPainter( { it.containerSurfaceHighest } ),
+      DecorationAreaType.Header
+  )
 
-    // add overlay painter to paint drop shadows along the bottom
-    // edges of toolbars
-    painters.addOverlayPainter(
-        BottomShadowOverlayPainter.getInstance(100),
-        DecorationAreaType.Toolbar
-    )
+  // add overlay painter to paint drop shadows along the bottom
+  // edges of toolbars
+  painters.addOverlayPainter(
+      BottomShadowOverlayPainter.getInstance(100),
+      DecorationAreaType.Toolbar
+  )
 
-    // add overlay painter to paint a dark line along the bottom
-    // edge of toolbars
-    painters.addOverlayPainter(
-        BottomLineOverlayPainter(colorSchemeQuery = { it.ultraDarkColor }),
-        DecorationAreaType.Toolbar
-    )
+  // add overlay painter to paint a dark line along the bottom
+  // edge of toolbars
+  painters.addOverlayPainter(
+      BottomLineOverlayPainter(colorTokensQuery = { it.containerOutline.withAlpha(0.5f) }),
+      DecorationAreaType.Toolbar
+  )
 
-    return AuroraSkinDefinition(
-        displayName = "Mariner",
-        colors = marinerSkinColors(),
-        painters = painters,
-        buttonShaper = ClassicButtonShaper()
-    )
+  return AuroraSkinDefinition(
+      displayName = "Mariner",
+      colors = marinerSkinColors(),
+      painters = painters,
+      buttonShaper = ClassicButtonShaper()
+  )
 }
 ```
 
 ### Accented skins
 
-Aurora provides a fine-grained mechanism for creating related skin variations by using **accented skins**. This can be done by using the `AccentBuilder` APIs.
+Aurora provides a fine-grained mechanism for creating related skin variations by using **accented skins**. This can be done by using the `AccentContainerColorTokens` APIs.
 
-Such skins "declare" themselves to support one particular, narrowly scoped kind of derivation - providing up to five [color schemes](colorschemes.md) as accents. It is up to a skin that declares itself as accented to "decide" how to apply those accent colors.
+Such skins "declare" themselves to support one particular, narrowly scoped kind of derivation - providing up to 9 [color tokens](colortokens.md) as accents. It is up to a skin that declares itself as accented to "decide" how to apply those accent color tokens.
 
 For example, here are two `Creme` skins that extend the core `CremeAccentedSkin` class:
 
@@ -293,7 +279,7 @@ For example, here are two `Creme` skins that extend the core `CremeAccentedSkin`
 <img alt="Creme Coffee" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/cremecoffee.png" width="350" height="280">
 </p>
 
-The first passes a light blue color scheme as the accent for active controls and cell highlights, while the second passes a light brown scheme as the accent for the same parts of the UI. This particular accented skin family uses these two accent types for selected tabs, checkboxes, radio buttons, default buttons, scroll bars and active cells in tables, trees, and lists.
+The first passes light blue color tokens as the accent for active controls and cell highlights, while the second passes light brown tokens as the accent for the same parts of the UI. This particular accented skin family uses these two accent types for selected tabs, checkboxes, radio buttons, default buttons, scroll bars and active cells in tables, trees, and lists.
 
 As another example, here are two `Nebula` skins that extend the core `NebulaAccentedSkin` class:
 
@@ -302,7 +288,7 @@ As another example, here are two `Nebula` skins that extend the core `NebulaAcce
 <img alt="Nebula Brick Wall" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/nebulabrickwall.png" width="350" height="280">
 </p>
 
-The first passes a light silver scheme as the window chrome accent, while the second passes an orange scheme as the window chrome accent. This particular accented skin family uses the window chrome accent on the root pane border, the title pane and the menu bar - while maintaining the overall consistency of its visual "language", such as decoration painter, fill painter, color scheme for active controls in the main UI area, etc.
+The first passes light silver color tokens as the window chrome accent, while the second passes orange tokens as the window chrome accent. This particular accented skin family uses the window chrome accent on the root pane border, the title pane and the menu bar - while maintaining the overall consistency of its visual "language", such as decoration painter, surface painter, color tokens for active controls in the main UI area, etc.
 
 ### Sample code to work with Aurora skins
 

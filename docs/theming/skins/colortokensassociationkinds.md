@@ -1,6 +1,6 @@
 ## Aurora theming - color tokens association kinds
 
-Color tokens association kinds in Radiance are best illustrated by a simple example:
+Color tokens association kinds in Aurora are best illustrated by a simple example:
 
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/color-tokens-association-kinds.png" width="350" height="280"/>
 
@@ -9,11 +9,11 @@ This is a screenshot of a sample application UI window with a variety of Aurora 
 * The green checkbox and radio button (with "Enabled selected" text)
 * The light blue button in the bottom right corner (with "OK" text)
 
-All three have their selected bit turned on, but the button is light blue while the other two controls tokens with different visual areas of Swing controls.
+All three have their selected bit turned on, but the button is light blue while the other two controls tokens with different visual areas of Aurora controls.
 
 The `ContainerColorTokensAssociationKind` is the base class for core and custom color tokens association kinds. Where is this class used?
 
-* The skin definition, and more specifically the `ContainerColorTokensBundle` APIs that allow associating different color tokens with different visual areas of Swing controls.
+* The skin definition, and more specifically the `ContainerColorTokensBundle` APIs that allow associating different color tokens with different visual areas of Aurora controls.
 * The specific UI delegates that query the current skin for the color tokens that match the relevant visual areas of the specific control that is painted by that UI delegate.
 
 Let's go back to our application window above. How do we use the color tokens association kinds to specify different color tokens for controls (buttons vs checkboxes and radio buttons) in selected state?
