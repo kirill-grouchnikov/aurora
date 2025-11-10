@@ -25,7 +25,7 @@ The skin definition consists of the following:
 * Decoration areas and color scheme bundles:
   * List of supported [decoration areas](../painters/decoration.md).
   * [Color scheme bundles](colorschemebundles.md) for the supported decoration areas.
-  * Optional background [color schemes](colorschemes.md) for the supported decoration areas.
+  * Optional background [color tokens](colortokens.md) for the supported decoration areas.
 * Painters:
   * [Fill painter](../painters/fill.md).
   * [Border painter](../painters/border.md).
