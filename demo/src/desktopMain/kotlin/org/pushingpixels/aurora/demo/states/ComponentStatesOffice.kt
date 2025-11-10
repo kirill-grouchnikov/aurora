@@ -79,7 +79,7 @@ private fun StateRow(
             ),
             presentationModel = CommandButtonPresentationModel(
                 presentationState = CommandButtonPresentationState.Medium,
-                minWidth = 72.dp
+                contentPadding = PaddingValues(start = 20.dp, top = 3.dp, end = 20.dp, bottom = 4.dp)
             )
         ).project(
             modifier = Modifier.fillMaxWidth(1.0f),
