@@ -19,8 +19,8 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.theming.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.IconFilterStrategy
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 
 data class IconContentModel(
     val icon: Painter,

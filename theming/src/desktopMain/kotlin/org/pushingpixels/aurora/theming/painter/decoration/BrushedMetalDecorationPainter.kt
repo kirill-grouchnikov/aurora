@@ -19,7 +19,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.Density
 import org.jetbrains.skia.Data
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.aurora.theming.utils.getBrushedMetalShader
 import org.pushingpixels.aurora.theming.utils.getDuotoneEffect
 import java.nio.ByteBuffer

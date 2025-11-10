@@ -22,7 +22,7 @@ import org.jetbrains.skia.ColorMatrix
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.colorBrightness
 import org.pushingpixels.aurora.common.interpolateTowards
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.ContainerColorTokens
 import kotlin.math.roundToInt
 
 private val interpolations: MutableMap<ContainerColorTokens, Array<Color?>> = hashMapOf()

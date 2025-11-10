@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.theming.ComponentState
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.aurora.theming.painter.outline.AuroraOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.painter.surface.AuroraSurfacePainter

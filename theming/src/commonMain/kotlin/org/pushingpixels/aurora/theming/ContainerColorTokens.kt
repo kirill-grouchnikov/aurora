@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.pushingpixels.aurora.theming.colortokens
+package org.pushingpixels.aurora.theming
 
 import androidx.compose.ui.graphics.Color
 

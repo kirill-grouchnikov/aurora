@@ -25,8 +25,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpSize
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
-import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 
 data class ModelStateInfoSnapshot(

@@ -20,9 +20,9 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.theming.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.TabContentSeparatorKind
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 
 object TabConstants {
     val LeadingMargin = 2.dp

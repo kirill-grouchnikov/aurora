@@ -21,9 +21,9 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.theming.AuroraTrait
+import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.aurora.theming.InsetKind
 import org.pushingpixels.aurora.theming.OutlineKind
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 
 interface OutlineSupplier {
     fun getOutline(

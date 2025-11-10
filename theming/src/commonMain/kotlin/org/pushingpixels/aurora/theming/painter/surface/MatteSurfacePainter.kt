@@ -15,7 +15,7 @@
  */
 package org.pushingpixels.aurora.theming.painter.surface
 
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.aurora.theming.painter.ColorStop
 
 /**

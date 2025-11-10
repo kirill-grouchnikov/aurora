@@ -17,7 +17,7 @@ package org.pushingpixels.aurora.theming.painter
 
 import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.theming.AuroraTrait
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.ContainerColorTokens
 
 /**
  * Base painter with fraction-based stops and a color query associated with each

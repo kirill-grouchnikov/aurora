@@ -21,8 +21,8 @@ import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
+import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.aurora.theming.DecorationAreaType
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 
 /**
  * Decoration painter that paints a flat appearance.

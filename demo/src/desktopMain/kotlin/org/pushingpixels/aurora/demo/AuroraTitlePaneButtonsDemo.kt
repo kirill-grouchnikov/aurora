@@ -30,8 +30,8 @@ import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandGroup
 import org.pushingpixels.aurora.component.model.CommandMenuContentModel
 import org.pushingpixels.aurora.demo.svg.radiance_menu
+import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.aurora.theming.IconFilterStrategy
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations

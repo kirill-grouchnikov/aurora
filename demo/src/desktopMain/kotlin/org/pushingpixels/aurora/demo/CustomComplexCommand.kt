@@ -42,7 +42,6 @@ import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.component.utils.getLabelPreferredSingleLineWidth
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 import kotlin.math.max
 

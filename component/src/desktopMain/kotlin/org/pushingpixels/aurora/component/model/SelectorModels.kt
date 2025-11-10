@@ -20,7 +20,7 @@ import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
+import org.pushingpixels.aurora.theming.ContainerColorTokensOverlay
 
 data class SelectorContentModel(
     val text: String,

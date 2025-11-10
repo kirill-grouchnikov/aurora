@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.utils.*
 

@@ -23,7 +23,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
+import org.pushingpixels.aurora.theming.ContainerColorTokensOverlay
 
 data class TextFieldValueContentModel(
     val value: TextFieldValue,

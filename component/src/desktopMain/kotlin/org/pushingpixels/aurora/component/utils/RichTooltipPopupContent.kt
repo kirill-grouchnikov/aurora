@@ -51,7 +51,6 @@ import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjecti
 import org.pushingpixels.aurora.component.projection.IconProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import java.awt.*
 import java.awt.geom.Rectangle2D
 import javax.swing.JPopupMenu

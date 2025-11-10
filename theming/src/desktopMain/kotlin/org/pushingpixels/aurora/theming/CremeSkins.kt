@@ -15,9 +15,6 @@
  */
 package org.pushingpixels.aurora.theming
 
-import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter

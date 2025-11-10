@@ -45,8 +45,6 @@ import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.vaadin.paintbrush
 import org.pushingpixels.aurora.demo.svg.vaadin.palete
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.painter.outline.AuroraOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier

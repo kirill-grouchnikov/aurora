@@ -28,7 +28,7 @@ import org.pushingpixels.aurora.component.model.HorizontalAlignment
 import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.model.LabelPresentationModel
 import org.pushingpixels.aurora.component.projection.LabelProjection
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.ContainerColorTokens
 
 enum class Variant {
     Compact, Wide

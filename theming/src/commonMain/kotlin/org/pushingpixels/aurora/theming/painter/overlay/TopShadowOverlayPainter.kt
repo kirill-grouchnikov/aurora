@@ -24,10 +24,10 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.theming.AuroraSkinColors
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.ComponentState
 import org.pushingpixels.aurora.theming.DecorationAreaType
-import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.getContainerTokens
 
@@ -77,9 +77,9 @@ class TopShadowOverlayPainter private constructor(private val startAlpha: Float)
     }
 
     companion object {
-        private val MAP: MutableMap<Int, TopShadowOverlayPainter> = HashMap()
-        private const val DEFAULT_SHADOW_START_ALPHA = 160.0f / 255.0f
-        private const val MIN_SHADOW_START_ALPHA = 32.0f / 255.0f
+        private val Map: MutableMap<Int, TopShadowOverlayPainter> = HashMap()
+        private const val DefaultShadowStartAlpha = 160.0f / 255.0f
+        private const val MinShadowStartAlpha = 32.0f / 255.0f
 
         /**
          * Returns an instance of top shadow overlay painter with the requested strength.
@@ -89,13 +89,13 @@ class TopShadowOverlayPainter private constructor(private val startAlpha: Float)
          */
         @Synchronized
         fun getInstance(strength: Int): TopShadowOverlayPainter {
-            require(!(strength < 0 || strength > 100)) { "Strength must be in [0..100] range" }
-            var result = MAP[strength]
+            require(strength in 0..100) { "Strength must be in [0..100] range" }
+            var result = Map[strength]
             if (result == null) {
-                val startAlpha = MIN_SHADOW_START_ALPHA +
-                        (DEFAULT_SHADOW_START_ALPHA - MIN_SHADOW_START_ALPHA) * strength / 100
+                val startAlpha = MinShadowStartAlpha +
+                        (DefaultShadowStartAlpha - MinShadowStartAlpha) * strength / 100
                 result = TopShadowOverlayPainter(startAlpha = startAlpha)
-                MAP[strength] = result
+                Map[strength] = result
             }
             return result
         }

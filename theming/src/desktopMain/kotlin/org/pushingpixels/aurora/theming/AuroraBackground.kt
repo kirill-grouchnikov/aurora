@@ -27,7 +27,6 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.platform.LocalDensity
 import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter
 import org.pushingpixels.aurora.theming.painter.overlay.AuroraOverlayPainter
 

@@ -16,7 +16,7 @@
 package org.pushingpixels.aurora.tools.svgtranscoder
 
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.Matrix
 import org.apache.batik.bridge.SVGPatternElementBridge
 import org.apache.batik.bridge.TextNode
 import org.apache.batik.ext.awt.LinearGradientPaint
@@ -27,16 +27,13 @@ import org.apache.batik.gvt.*
 import org.pushingpixels.aurora.tools.svgtranscoder.utils.McCrashyGraphics2D
 import org.pushingpixels.aurora.tools.svgtranscoder.utils.RasterScanner
 import java.awt.*
-import java.awt.Color
-import java.awt.Paint
-import java.awt.Shape
 import java.awt.geom.*
-import java.awt.geom.PathIterator as AwtPathIterator
 import java.awt.image.ImageObserver
 import java.awt.image.RenderedImage
 import java.io.*
 import java.util.*
 import kotlin.math.sqrt
+import java.awt.geom.PathIterator as AwtPathIterator
 
 /**
  * SVG to Compose transcoder.

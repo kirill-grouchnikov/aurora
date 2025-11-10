@@ -40,9 +40,6 @@ import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter

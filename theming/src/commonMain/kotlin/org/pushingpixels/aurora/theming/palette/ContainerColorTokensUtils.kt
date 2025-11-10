@@ -16,7 +16,7 @@
 package org.pushingpixels.aurora.theming.palette
 
 import androidx.compose.ui.graphics.Color
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.DynamicBimodalPalette
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.DynamicPalette

@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.ContainerColorTokens
 import kotlin.math.roundToInt
 
 internal fun drawCloseIcon(

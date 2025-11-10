@@ -24,9 +24,9 @@ import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.aurora.theming.InsetKind
 import org.pushingpixels.aurora.theming.OutlineKind
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.FractionBasedPainter
 

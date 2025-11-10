@@ -19,7 +19,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.SpringSpec
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
+import org.pushingpixels.aurora.theming.ContainerColorTokensOverlay
 
 data class IndeterminateProgressContentModel(
     val enabled: Boolean = true,

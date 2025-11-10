@@ -50,7 +50,6 @@ import org.pushingpixels.aurora.component.ribbon.RibbonContextualTaskGroup
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackBounds
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackKeyTips
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.getContainerTokens

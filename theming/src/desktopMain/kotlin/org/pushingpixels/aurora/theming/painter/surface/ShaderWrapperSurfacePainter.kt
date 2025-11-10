@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.Density
 import org.jetbrains.skia.Data
 import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.Shader
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.ContainerColorTokens
 
 /**
  * Implementation of [AuroraSurfacePainter] that uses a Skia shader to paint on

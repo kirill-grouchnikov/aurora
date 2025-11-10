@@ -13,14 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.pushingpixels.aurora.theming.colortokens
+package org.pushingpixels.aurora.theming
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.theming.ComponentState
-import org.pushingpixels.aurora.theming.DecorationAreaType
-import org.pushingpixels.aurora.theming.SystemContainerType
 import org.pushingpixels.aurora.theming.utils.getPressedSelectedTokens
 import org.pushingpixels.aurora.theming.utils.getPressedUnselectedTokens
 import org.pushingpixels.aurora.theming.utils.getRolloverSelectedTokens

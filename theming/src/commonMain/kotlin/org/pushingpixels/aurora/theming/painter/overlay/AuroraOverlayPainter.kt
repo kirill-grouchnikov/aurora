@@ -16,9 +16,9 @@
 package org.pushingpixels.aurora.theming.painter.overlay
 
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import org.pushingpixels.aurora.theming.AuroraSkinColors
 import org.pushingpixels.aurora.theming.AuroraTrait
 import org.pushingpixels.aurora.theming.DecorationAreaType
-import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 
 /**
  * Overlay painter interface.

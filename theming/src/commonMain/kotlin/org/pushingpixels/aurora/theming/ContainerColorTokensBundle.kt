@@ -13,12 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.pushingpixels.aurora.theming.colortokens
+package org.pushingpixels.aurora.theming
 
-import org.pushingpixels.aurora.theming.ComponentState
-import org.pushingpixels.aurora.theming.ContainerColorTokensAssociationKind
-import org.pushingpixels.aurora.theming.DecorationAreaType
-import org.pushingpixels.aurora.theming.SystemContainerType
 import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter
 import org.pushingpixels.aurora.theming.utils.*
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration

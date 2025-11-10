@@ -22,9 +22,9 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import org.pushingpixels.aurora.common.interpolateTowards
+import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.aurora.theming.InsetKind
 import org.pushingpixels.aurora.theming.OutlineKind
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 import org.pushingpixels.aurora.theming.painter.ColorStop
 import kotlin.math.max
 import kotlin.math.min
@@ -199,14 +199,14 @@ class LuminousOutlinePainter : AuroraOutlinePainter {
     }
 
     companion object {
-        private val OuterStrokeWidth = 1.0f
+        private const val OuterStrokeWidth = 1.0f
         private val OuterVerticalColorStops = arrayOf(
             ColorStop(fraction = 0.0f, colorQuery = ContainerColorTokens::containerOutline),
             ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerOutline),
             ColorStop(fraction = 1.0f, colorQuery = ContainerColorTokens::containerOutlineVariant),
         )
 
-        private val InnerStrokeWidth = 2.0f
+        private const val InnerStrokeWidth = 2.0f
         private val InnerHorizontalLightQuery: (ContainerColorTokens) -> Color =
             { it.containerSurface.interpolateTowards(it.containerOutlineVariant, 0.4f)}
         private val InnerHorizontalDarkQuery: (ContainerColorTokens) -> Color =
@@ -272,5 +272,4 @@ class LuminousOutlinePainter : AuroraOutlinePainter {
             }
         )
     }
-
 }

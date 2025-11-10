@@ -17,7 +17,7 @@ package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
+import org.pushingpixels.aurora.theming.ContainerColorTokensOverlay
 
 data class SliderContentModel(
     val value: Float,

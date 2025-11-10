@@ -41,7 +41,6 @@ import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.*
 import org.pushingpixels.aurora.component.utils.getEndwardDoubleArrowIcon
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 import org.pushingpixels.aurora.theming.utils.ContainerType

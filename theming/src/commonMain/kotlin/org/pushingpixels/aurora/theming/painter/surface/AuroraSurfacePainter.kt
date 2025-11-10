@@ -19,7 +19,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import org.pushingpixels.aurora.theming.AuroraTrait
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
+import org.pushingpixels.aurora.theming.ContainerColorTokens
 
 interface AuroraSurfacePainter: AuroraTrait {
     fun paintSurface(

@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
 import org.pushingpixels.aurora.theming.painter.outline.AuroraOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
 import org.pushingpixels.aurora.theming.utils.getBaseOutline

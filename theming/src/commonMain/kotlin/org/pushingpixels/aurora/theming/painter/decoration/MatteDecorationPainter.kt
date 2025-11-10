@@ -24,8 +24,8 @@ import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.aurora.theming.DecorationAreaType
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
 
 /**
  * Implementation of [AuroraDecorationPainter] that uses matte painting
@@ -47,12 +47,13 @@ class MatteDecorationPainter : AuroraDecorationPainter {
         colorTokens: ContainerColorTokens
     ) {
         with(drawScope) {
-            val startColor = if (colorTokens.isDark)
+            val startColor = if (colorTokens.isDark) {
                 colorTokens.containerSurfaceHigh
-            else
+            } else {
                 colorTokens.containerSurfaceLowest
+            }
             val endColor = colorTokens.containerSurface
-            val flexPoint = FLEX_POINT.dp.toPx()
+            val flexPoint = FlexPoint.toPx()
             val gradientHeight = kotlin.math.max(
                 flexPoint,
                 componentSize.height - offsetFromRoot.y
@@ -84,6 +85,6 @@ class MatteDecorationPainter : AuroraDecorationPainter {
     }
 
     companion object {
-        private const val FLEX_POINT = 50
+        private val FlexPoint = 50.dp
     }
 }

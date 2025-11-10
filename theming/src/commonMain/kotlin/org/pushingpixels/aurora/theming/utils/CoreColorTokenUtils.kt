@@ -19,13 +19,13 @@ import androidx.compose.ui.graphics.Color
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.overlayWith
 import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.theming.AuroraSkinColors
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.ComponentState
+import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.aurora.theming.ContainerColorTokensAssociationKind
+import org.pushingpixels.aurora.theming.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.DecorationAreaType
-import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 
 internal fun getRolloverUnselectedTokens(baseTokens: ContainerColorTokens): ContainerColorTokens {
     // Mixing in 20% of surface bright on top of base

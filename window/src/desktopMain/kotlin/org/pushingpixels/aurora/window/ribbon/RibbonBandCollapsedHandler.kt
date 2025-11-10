@@ -37,7 +37,6 @@ import org.pushingpixels.aurora.component.popup.CascadingCommandMenuHandler
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.AbstractRibbonBand
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 
 internal data class RibbonBandCollapsedCommand(

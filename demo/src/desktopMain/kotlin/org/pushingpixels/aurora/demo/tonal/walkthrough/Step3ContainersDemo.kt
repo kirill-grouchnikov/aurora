@@ -32,9 +32,9 @@ import org.pushingpixels.aurora.demo.tonal.ContainerPalettePreview
 import org.pushingpixels.aurora.demo.tonal.ContainerPreview
 import org.pushingpixels.aurora.demo.tonal.TonalPalettePreview
 import org.pushingpixels.aurora.demo.tonal.Variant
+import org.pushingpixels.aurora.theming.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.businessSkin
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensBundle
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations

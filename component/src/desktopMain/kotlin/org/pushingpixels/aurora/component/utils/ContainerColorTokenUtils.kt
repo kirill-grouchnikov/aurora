@@ -21,9 +21,6 @@ import org.pushingpixels.aurora.common.byAlpha
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokens
-import org.pushingpixels.aurora.theming.colortokens.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
 import org.pushingpixels.aurora.theming.utils.getContainerTokens
