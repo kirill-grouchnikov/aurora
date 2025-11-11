@@ -103,7 +103,7 @@ For the main content area:
 * The enabled button is a **muted container**.
 * The disabled button is a **muted container**. The draw logic uses the three `xyzDisabledAlpha` tokens for rendering the background, the border and the text.
 * All buttons use the same color tokens:
-  * `containerOutline` for the border
+  * `containerOutline` for the outline / border
   * `onContainer` for the text
   * A combination of various `containerSurfaceXyz` tokens for the gradient stops of the background fill
 * What is different between drawing a selected button and an enabled button? The draw logic uses the same tokens (surface, outline and content). The difference is that a selected button is an **active container** while an enabled button is a **muted container**. In this particular case, an active container uses a higher chroma value as the seed for its tonal palette, resulting in more vibrant purple colors - while an enabled container uses a lower chroma value as the seed for its tonal palette, resulting in more muted purple colors.

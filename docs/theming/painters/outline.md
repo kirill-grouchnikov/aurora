@@ -14,7 +14,7 @@ fun paintOutline(
 )
 ```
 
-The `outlineSupplier` parameter is used to compute the outline to paint, while the `colorTokens` specifies the color tokens to be used to compute the border colors..
+The `outlineSupplier` parameter is used to compute the outline to paint, while the `colorTokens` specifies the color tokens to be used to compute the outline colors.
 
 Applications that wish to provide a custom (branding) outline painter may utilize the existing `FractionBasedOutlinePainter` base class. Most core Aurora outline painters extend this class. In addition, the `InlayOutlinePainter` classes can be used for more complex visuals that two nested outlines - outer and inner.
 
