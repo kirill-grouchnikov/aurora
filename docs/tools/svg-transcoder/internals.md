@@ -16,7 +16,7 @@ Let's take a look at each one of these parts.
 
 ### Traversing the Batik tree
 
-The 'GraphicsNode' that we get from Batik's `GVTBuilder` is the root of a hierarchical representation of the original SVG content. Here it is important to note that it is *not* the DOM tree of the original SVG document - some of the SVG elements such as `<style>` or `<defs>` might be in a different place in the `GraphicsNode` hierarchy - "attached" to the specific elements that use them.
+The `GraphicsNode` that we get from Batik's `GVTBuilder` is the root of a hierarchical representation of the original SVG content. Here it is important to note that it is *not* the DOM tree of the original SVG document - some of the SVG elements such as `<style>` or `<defs>` might be in a different place in the `GraphicsNode` hierarchy - "attached" to the specific elements that use them.
 
 The traversal itself looks at two main types of nodes - `GraphicsNode` and `Paint`. Each supported sub-class of these two classes is transcoded in its own method. For example, `PatternPaint` is transcoded by the `transcodePatternPaint` and `TextNode` is transcoded by `transcodeTextNode`.
 

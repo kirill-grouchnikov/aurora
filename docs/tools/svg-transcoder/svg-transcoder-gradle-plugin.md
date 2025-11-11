@@ -31,7 +31,7 @@ In case you want to use the latest snapshot version of the plugin, use the Sonat
 buildscript {
     repositories {
         maven {
-            url 'https://oss.sonatype.org/content/repositories/snapshots'
+            url 'https://central.sonatype.com/repository/maven-snapshots/'
         }
     }
     dependencies {
